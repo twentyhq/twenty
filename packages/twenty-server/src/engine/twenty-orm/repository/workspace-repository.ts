@@ -718,7 +718,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       : this.options.runInNewTransaction(work);
   }
 
-  private runWithValidationRules<TResult>({
+  private async runWithValidationRules<TResult>({
     write,
     inputRecordIds,
   }: {
@@ -735,7 +735,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (validationRules.length === 0) {
-      return write(this);
+      return (await this.options.internalContext.recordPermissions.isRecomputingRecordAccessGroupIdsOnWrite(
+        {
+          featureFlagsMap: this.options.internalContext.featureFlagsMap,
+          workspaceId: this.options.internalContext.workspaceId,
+          objectMetadataId: this.options.flatObjectMetadata.id,
+        },
+      ))
+        ? this.runAtomically((repository) => write(repository))
+        : write(this);
     }
 
     return this.runAtomically((repository) =>
@@ -1044,6 +1052,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
+    await this.recomputeRecordAccessGroupIdsOfRecords(insertedIds);
+
     await this.emitCreateEvents(insertedIds);
 
     return {
@@ -1222,6 +1232,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     await validateWrittenRecords?.(generatedMaps);
+
+    await this.recomputeRecordAccessGroupIdsOfRecords(
+      generatedMaps.map((record) => record.id).filter(isNonEmptyString),
+    );
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1597,6 +1611,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await validateWrittenRecords?.(mutationResult.generatedMaps);
 
+    if (kind === 'update') {
+      await this.recomputeRecordAccessGroupIdsOfRecords(
+        mutationResult.generatedMaps
+          .map((record) => record.id)
+          .filter(isNonEmptyString),
+      );
+    }
+
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
@@ -1701,6 +1723,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         updates,
         formatRecords: (rawRecords) =>
           this.formatResult<ObjectRecord[]>(rawRecords),
+        transactionScope: this.buildRecordPermissionTransactionScope(),
+      },
+    );
+  }
+
+  private async recomputeRecordAccessGroupIdsOfRecords(
+    recordIds: string[],
+  ): Promise<void> {
+    await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRecords(
+      {
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        workspaceId: this.options.internalContext.workspaceId,
+        objectMetadataId: this.options.flatObjectMetadata.id,
+        recordIds,
         transactionScope: this.buildRecordPermissionTransactionScope(),
       },
     );
@@ -1899,7 +1935,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    return this.options.internalContext.recordPermissions.buildRecordsAccessCondition(
+    return this.options.internalContext.recordPermissions.buildManyRecordsAccessCondition(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         objectMetadataId: flatObjectMetadata.id,

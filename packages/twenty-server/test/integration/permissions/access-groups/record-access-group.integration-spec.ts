@@ -1,11 +1,17 @@
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
+  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
@@ -52,10 +58,12 @@ describe('access group ids on records (integration)', () => {
 
   const syncAndRecompute = async () => {
     await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
-    await recordAccessGroupService.recomputeRecordAccessGroupIds({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      objectMetadataId,
-    });
+    await recordAccessGroupService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        objectMetadataId,
+      },
+    );
   };
 
   beforeAll(async () => {
@@ -186,6 +194,112 @@ describe('access group ids on records (integration)', () => {
       );
       expect(londonPersonAfterEdit.accessGroupIds).toContain(londonCompactId);
     } finally {
+      await deleteOneRole({
+        expectToFail: false,
+        input: { idToDelete: roleId },
+      });
+    }
+  });
+
+  it('should recompute the groups of a record when it is created or updated', async () => {
+    const roleLabel = 'Access group ids on record writes';
+    const { data } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: roleLabel,
+        description: roleLabel,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+      },
+    });
+    const roleId = data.createOneRole.id;
+    const predicateGroupId = v4();
+    let createdPersonId: string | undefined;
+
+    await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: {
+        roleId,
+        objectMetadataId,
+        predicateGroups: [
+          {
+            id: predicateGroupId,
+            objectMetadataId,
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          },
+        ],
+        predicates: [
+          {
+            id: v4(),
+            fieldMetadataId: jobTitleFieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Paris',
+            rowLevelPermissionPredicateGroupId: predicateGroupId,
+          },
+        ],
+      },
+    });
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
+    try {
+      await syncAndRecompute();
+
+      const [parisCompactId] = await readCompactIds({
+        roleLabel,
+        predicateGroupId,
+      });
+      const readCreatedPersonAccessGroupIds = async (): Promise<number[]> => {
+        const [{ accessGroupIds }] = await global.testDataSource.query(
+          `SELECT "_accessGroupIds" AS "accessGroupIds" FROM ${PERSON_TABLE} WHERE "id" = $1`,
+          [createdPersonId],
+        );
+
+        return accessGroupIds;
+      };
+
+      const { data: createData } = await createOneOperation<{
+        id: string;
+        jobTitle: string;
+      }>({
+        objectMetadataSingularName: 'person',
+        input: { id: v4(), jobTitle: 'Paris office' },
+      });
+
+      createdPersonId = createData.createOneResponse.id;
+
+      expect(await readCreatedPersonAccessGroupIds()).toContain(parisCompactId);
+
+      await makeGraphqlApiRequest(
+        updateOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          recordId: createdPersonId,
+          data: { jobTitle: 'Berlin office' },
+        }),
+      );
+
+      expect(await readCreatedPersonAccessGroupIds()).not.toContain(
+        parisCompactId,
+      );
+    } finally {
+      if (isDefined(createdPersonId)) {
+        await global.testDataSource.query(
+          `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
+          [createdPersonId],
+        );
+      }
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
       await deleteOneRole({
         expectToFail: false,
         input: { idToDelete: roleId },

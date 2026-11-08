@@ -75,7 +75,6 @@ export class AccessGroupService {
         canDeleteStaleAccessGroups && !newGroupHashes.has(groupHash),
     );
 
-    // Queued before writing, so a sync that fails after its writes cannot lose them
     await this.scheduleRecordAccessGroupIdsRecompute({
       workspaceId,
       objectMetadataIds: new Set(
@@ -84,6 +83,7 @@ export class AccessGroupService {
           .filter((objectMetadataId) =>
             isObjectUsingRecordAccessGroups({
               rolesPermissions: workspaceCache.rolesPermissions,
+              flatObjectMetadataMaps: workspaceCache.flatObjectMetadataMaps,
               objectMetadataId,
             }),
           ),
