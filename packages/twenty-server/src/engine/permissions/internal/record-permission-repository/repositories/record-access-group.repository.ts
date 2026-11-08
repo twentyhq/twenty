@@ -89,7 +89,9 @@ export class RecordAccessGroupRepository {
               SELECT "target".${escapeIdentifier(targetColumnName)}
               FROM ${targetTable} AS "target"
               WHERE "target"."id" = ANY(:recordIds)
-            )`,
+            )
+          ORDER BY "source"."id"
+          FOR NO KEY UPDATE OF "source"`,
         parameters: {
           recordIds,
           joinValuesBefore: recordsBefore

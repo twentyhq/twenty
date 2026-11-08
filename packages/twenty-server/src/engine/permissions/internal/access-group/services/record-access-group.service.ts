@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
@@ -13,6 +12,7 @@ import {
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
+import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
 import { buildRecordAccessGroupConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-conditions.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -162,7 +162,8 @@ export class RecordAccessGroupService {
     );
   }
 
-  async recomputeRecordAccessGroupIdsOfRelatedRecords({
+  // Locks the related records, so concurrent writes evaluate them one after the other
+  async findRelatedRecords({
     workspaceId,
     objectMetadataId,
     recordIds,
@@ -174,21 +175,24 @@ export class RecordAccessGroupService {
     recordIds: string[];
     recordsBefore: Record<string, unknown>[];
     transactionScope: RecordPermissionTransactionScope;
-  }): Promise<void> {
+  }): Promise<RelatedRecords[]> {
     const metadataMaps = await this.findMetadataMaps(workspaceId);
-    const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    const relationFieldMetadatas = findRlsRuleRelationHopsToObject({
+      ...metadataMaps,
+      objectMetadataId,
+    });
+
+    if (relationFieldMetadatas.length === 0) {
+      return [];
+    }
+
+    const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: objectMetadataId,
       flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
     });
+    const relatedRecords: RelatedRecords[] = [];
 
-    if (!isDefined(targetFlatObjectMetadata)) {
-      return;
-    }
-
-    for (const relationFieldMetadata of findRlsRuleRelationHopsToObject({
-      ...metadataMaps,
-      objectMetadataId,
-    })) {
+    for (const relationFieldMetadata of relationFieldMetadatas) {
       const sourceFlatObjectMetadata =
         findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityId: relationFieldMetadata.objectMetadataId,
@@ -199,8 +203,10 @@ export class RecordAccessGroupService {
           relationFieldMetadata,
           flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
         });
-      const relatedRecordIds =
-        await this.recordAccessGroupRepository.findRelatedRecordIds({
+
+      relatedRecords.push({
+        objectMetadataId: sourceFlatObjectMetadata.id,
+        recordIds: await this.recordAccessGroupRepository.findRelatedRecordIds({
           workspaceId,
           sourceFlatObjectMetadata,
           targetFlatObjectMetadata,
@@ -209,15 +215,11 @@ export class RecordAccessGroupService {
           recordIds,
           recordsBefore,
           transactionScope,
-        });
-
-      await this.recomputeRecordAccessGroupIdsOfRecords({
-        workspaceId,
-        objectMetadataId: sourceFlatObjectMetadata.id,
-        recordIds: relatedRecordIds,
-        transactionScope,
+        }),
       });
     }
+
+    return relatedRecords;
   }
 
   private findObjectAccessGroups({

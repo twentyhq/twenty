@@ -1,4 +1,5 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
@@ -19,6 +20,8 @@ import { v4 } from 'uuid';
 import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
 import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -374,5 +377,96 @@ describe('RLS rules through a relation (integration)', () => {
     });
 
     expect(await findCompanies()).toEqual([otherCompany.id]);
+  });
+
+  it('should update the related record a system write moves away from', async () => {
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'Hop title' WHERE "id" = $1`,
+      [person.id],
+    );
+    await assignRuleThroughRelation({
+      objectMetadataId: companyObjectMetadataId,
+      relationFieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: companyObjectMetadataId,
+        name: 'people',
+      }),
+      fieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: personObjectMetadataId,
+        name: 'jobTitle',
+      }),
+      value: 'Hop title',
+    });
+
+    const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
+      'WorkspaceOrmManager',
+    );
+
+    await workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const personRepository =
+        workspaceOrmManager.getRepositoryWithoutPermissionChecks('person', {
+          shouldSkipEventEmission: true,
+        });
+
+      await personRepository.update(person.id, { companyId: otherCompany.id });
+    }, buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID));
+
+    expect(
+      await findIdsAsMember({
+        singular: 'company',
+        plural: 'companies',
+        ids: [company.id, otherCompany.id],
+      }),
+    ).toEqual([otherCompany.id]);
+  });
+
+  it('should update related records when their related record is destroyed', async () => {
+    const companyToDestroyId = v4();
+    const personOfCompanyId = v4();
+
+    await global.testDataSource.query(
+      `INSERT INTO ${COMPANY_TABLE} ("id", "name") VALUES ($1, 'Hop destroy')`,
+      [companyToDestroyId],
+    );
+    await global.testDataSource.query(
+      `INSERT INTO ${PERSON_TABLE} ("id", "companyId") VALUES ($1, $2)`,
+      [personOfCompanyId, companyToDestroyId],
+    );
+    await assignRuleThroughRelation({
+      objectMetadataId: personObjectMetadataId,
+      relationFieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: personObjectMetadataId,
+        name: 'company',
+      }),
+      fieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: companyObjectMetadataId,
+        name: 'name',
+      }),
+      value: 'Hop destroy',
+    });
+
+    const findPerson = () =>
+      findIdsAsMember({
+        singular: 'person',
+        plural: 'people',
+        ids: [personOfCompanyId],
+      });
+
+    expect(await findPerson()).toEqual([personOfCompanyId]);
+
+    const response = await makeGraphqlApiRequest(
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        recordId: companyToDestroyId,
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(await findPerson()).toEqual([]);
+
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
+      [personOfCompanyId],
+    );
   });
 });

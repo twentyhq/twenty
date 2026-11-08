@@ -18,6 +18,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -1054,10 +1055,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
     await this.recomputeRecordAccessGroupIdsOfRecords(insertedIds);
-    await this.recomputeRecordAccessGroupIdsOfRelatedRecords({
-      recordIds: insertedIds,
-      recordsBefore: [],
-    });
+    await this.recomputeRecordAccessGroupIdsOfRelatedRecords(
+      await this.findRelatedRecords({
+        recordIds: insertedIds,
+        recordsBefore: [],
+      }),
+    );
 
     await this.emitCreateEvents(insertedIds);
 
@@ -1241,12 +1244,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     await this.recomputeRecordAccessGroupIdsOfRecords(
       generatedMaps.map((record) => record.id).filter(isNonEmptyString),
     );
-    await this.recomputeRecordAccessGroupIdsOfRelatedRecords({
-      recordIds: generatedMaps
-        .map((record) => record.id)
-        .filter(isNonEmptyString),
-      recordsBefore,
-    });
+    await this.recomputeRecordAccessGroupIdsOfRelatedRecords(
+      await this.findRelatedRecords({
+        recordIds: generatedMaps
+          .map((record) => record.id)
+          .filter(isNonEmptyString),
+        recordsBefore,
+      }),
+    );
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1529,7 +1534,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    // The before-image only feeds events, scoped-write checks and files field diffs
+    // The before-image only feeds events, scoped-write checks, files field diffs and related record recomputes
     const canSkipBeforeImage =
       this.options.shouldBypassPermissionChecks &&
       this.options.shouldSkipEventEmission &&
@@ -1540,7 +1545,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           data,
           this.options.flatObjectMetadata.id,
         )
-      );
+      ) &&
+      !(await this.options.internalContext.recordPermissions.isObjectReachedByRlsRuleRelationHop(
+        {
+          featureFlagsMap: this.options.internalContext.featureFlagsMap,
+          workspaceId: this.options.internalContext.workspaceId,
+          objectMetadataId: this.options.flatObjectMetadata.id,
+        },
+      ));
 
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
@@ -1603,6 +1615,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
+    // A hard delete can null the join columns pointing at these records, so they are read first
+    const relatedRecordsBeforeDelete =
+      kind === 'delete'
+        ? await this.findRelatedRecords({
+            recordIds: recordsBefore
+              .map((recordBefore) => recordBefore.id)
+              .filter(isNonEmptyString),
+            recordsBefore,
+          })
+        : [];
+
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
@@ -1630,12 +1653,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    await this.recomputeRecordAccessGroupIdsOfRelatedRecords({
-      recordIds: mutationResult.generatedMaps
-        .map((record) => record.id)
-        .filter(isNonEmptyString),
-      recordsBefore,
-    });
+    await this.recomputeRecordAccessGroupIdsOfRelatedRecords(
+      kind === 'delete'
+        ? relatedRecordsBeforeDelete
+        : await this.findRelatedRecords({
+            recordIds: mutationResult.generatedMaps
+              .map((record) => record.id)
+              .filter(isNonEmptyString),
+            recordsBefore,
+          }),
+    );
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1746,23 +1773,37 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  private async recomputeRecordAccessGroupIdsOfRelatedRecords({
+  private findRelatedRecords({
     recordIds,
     recordsBefore,
   }: {
     recordIds: string[];
     recordsBefore: ObjectRecord[];
-  }): Promise<void> {
-    await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRelatedRecords(
-      {
-        featureFlagsMap: this.options.internalContext.featureFlagsMap,
-        workspaceId: this.options.internalContext.workspaceId,
-        objectMetadataId: this.options.flatObjectMetadata.id,
-        recordIds,
-        recordsBefore,
-        transactionScope: this.buildRecordPermissionTransactionScope(),
-      },
-    );
+  }): Promise<RelatedRecords[]> {
+    return this.options.internalContext.recordPermissions.findRelatedRecords({
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      workspaceId: this.options.internalContext.workspaceId,
+      objectMetadataId: this.options.flatObjectMetadata.id,
+      recordIds,
+      recordsBefore,
+      transactionScope: this.buildRecordPermissionTransactionScope(),
+    });
+  }
+
+  private async recomputeRecordAccessGroupIdsOfRelatedRecords(
+    relatedRecords: RelatedRecords[],
+  ): Promise<void> {
+    for (const { objectMetadataId, recordIds } of relatedRecords) {
+      await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRecords(
+        {
+          featureFlagsMap: this.options.internalContext.featureFlagsMap,
+          workspaceId: this.options.internalContext.workspaceId,
+          objectMetadataId,
+          recordIds,
+          transactionScope: this.buildRecordPermissionTransactionScope(),
+        },
+      );
+    }
   }
 
   private async recomputeRecordAccessGroupIdsOfRecords(

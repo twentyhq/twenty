@@ -21,6 +21,7 @@ import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/f
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
 import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
 import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
 import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
@@ -125,20 +126,34 @@ export class RecordPermissionsService {
     );
   }
 
-  async recomputeRecordAccessGroupIdsOfRelatedRecords(
-    args: Parameters<
-      RecordAccessGroupService['recomputeRecordAccessGroupIdsOfRelatedRecords']
-    >[0] & {
+  async isObjectReachedByRlsRuleRelationHop({
+    featureFlagsMap,
+    workspaceId,
+    objectMetadataId,
+  }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<boolean> {
+    return (
+      areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
+      (await this.recordAccessGroupService.isObjectReachedByRlsRuleRelationHop({
+        workspaceId,
+        objectMetadataId,
+      }))
+    );
+  }
+
+  async findRelatedRecords(
+    args: Parameters<RecordAccessGroupService['findRelatedRecords']>[0] & {
       featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     },
-  ): Promise<void> {
+  ): Promise<RelatedRecords[]> {
     if (!areRecordAccessGroupsEnabled(args)) {
-      return;
+      return [];
     }
 
-    await this.recordAccessGroupService.recomputeRecordAccessGroupIdsOfRelatedRecords(
-      args,
-    );
+    return this.recordAccessGroupService.findRelatedRecords(args);
   }
 
   async recomputeRecordAccessGroupIdsOfRecords({

@@ -165,11 +165,15 @@ const joinConditions = (
   return `(${conditions.join(` ${logicalOperator} `)})`;
 };
 
-const renderRelationHopCondition = (
-  relationFieldMetadata: OrmFlatFieldMetadata,
-  targetFilter: RecordGqlOperationFilter,
-  context: SqlRenderingContext,
-): string => {
+const renderRelationHopCondition = ({
+  relationFieldMetadata,
+  targetFilter,
+  context,
+}: {
+  relationFieldMetadata: OrmFlatFieldMetadata;
+  targetFilter: RecordGqlOperationFilter;
+  context: SqlRenderingContext;
+}): string => {
   const { workspaceId, tableAlias, flatFieldMetadataMaps } = context;
   const targetFlatObjectMetadata = isDefined(
     relationFieldMetadata.relationTargetObjectMetadataId,
@@ -240,11 +244,11 @@ const renderFieldCondition = (
     isReferencedByFieldName &&
     isMorphOrRelationFlatFieldMetadata(fieldMetadata)
   ) {
-    return renderRelationHopCondition(
-      fieldMetadata,
-      filterValue as RecordGqlOperationFilter,
+    return renderRelationHopCondition({
+      relationFieldMetadata: fieldMetadata,
+      targetFilter: filterValue as RecordGqlOperationFilter,
       context,
-    );
+    });
   }
 
   if (isCompositeFieldMetadataType(fieldMetadata.type)) {

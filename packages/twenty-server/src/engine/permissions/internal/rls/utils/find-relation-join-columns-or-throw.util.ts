@@ -26,7 +26,6 @@ const findJoinColumnName = (
   );
 };
 
-// The source column of the relation's object, and the target column it equals on the other side
 export const findRelationJoinColumnsOrThrow = ({
   relationFieldMetadata,
   flatFieldMetadataMaps,
