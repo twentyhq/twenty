@@ -17,7 +17,7 @@ const StyledInputsContainer = styled.div`
 `;
 
 type SettingsMcpServerFormFieldsProps = {
-  mcpServer?: Pick<McpServer, 'id' | 'applicationId'>;
+  mcpServer?: Pick<McpServer, 'id' | 'applicationId' | 'connectionProviderId'>;
 };
 
 export const SettingsMcpServerFormFields = ({
@@ -27,6 +27,7 @@ export const SettingsMcpServerFormFields = ({
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isNewMcpServer = !isDefined(mcpServer);
+  const isUrlLocked = isDefined(mcpServer?.connectionProviderId);
   const instanceIdPrefix = mcpServer?.id ?? 'new-mcp-server';
   const connectionProviderApplicationId =
     mcpServer?.applicationId ??
@@ -68,6 +69,12 @@ export const SettingsMcpServerFormFields = ({
             instanceId={`${instanceIdPrefix}-url`}
             label={t`URL`}
             placeholder={t`https://mcp.example.com/mcp`}
+            hint={
+              isUrlLocked
+                ? t`Remove the connection provider to change the URL.`
+                : undefined
+            }
+            disabled={isUrlLocked}
           />
           {isDefined(connectionProviderApplicationId) && (
             <SettingsMcpServerConnectionProviderSelect
