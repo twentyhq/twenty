@@ -1,2 +1,2 @@
 export const ADD_OAUTH_DISCOVERY_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME =
-  '2.57.0_AddOauthDiscoveryToConnectionProviderFastInstanceCommand_1794128038366';
+  '2.57.0_AddOauthDiscoveryToConnectionProviderFastInstanceCommand_1794145882765';
