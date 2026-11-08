@@ -6230,7 +6230,7 @@ msgstr "Valitse, mihin Twenty voi päästä tukeakseen sinua ja parantaakseen tu
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Valitse, milloin {assistantName} osallistuu keskusteluihin työtilassasi"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Ei koskaan vanhene"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Ei koskaan pitää {assistantName}-avustajan poissa. Vain mainittaessa pyytää {assistantName}-avustajaa vastaamaan, kun se merkitään. Automaattinen antaa {assistantName}-avustajan päättää, milloin se vastaa. Keskusteluihin, joissa olette vain sinä ja {assistantName}-avustaja, vastataan aina."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

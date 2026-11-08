@@ -11683,7 +11683,7 @@ msgstr "Versoekte lêerreeks kan nie bedien word nie."
 #. js-lingui-id: WIwnbY
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr ""
+msgstr "Verpligte velde en verwantskappe kan nie op 'n toestemmingreël op ryvlak beperk word nie."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -11836,7 +11836,7 @@ msgstr "Rol \"{roleLabel}\" kan nie aan toepassings toegeken word nie"
 #. js-lingui-id: xIGy+v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to this agent"
-msgstr ""
+msgstr "Rol \"{roleLabel}\" kan nie aan hierdie agent toegeken word nie"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11858,7 +11858,7 @@ msgstr "Rol \"{roleLabel}\" kan nie toegewys word nie: gepasmaakte rolle vereis 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the application to be assigned to its agents"
-msgstr ""
+msgstr "Rol \"{roleLabel}\" moet deur die toepassing besit word om aan sy agente toegeken te word"
 
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
@@ -15114,7 +15114,7 @@ msgstr "Hierdie rol kan nie gewysig word nie aangesien dit 'n stelselrol is. Sle
 #. js-lingui-id: ujHiJC
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This row level permission rule does not belong to this role and object."
-msgstr ""
+msgstr "Hierdie toestemmingreël op ryvlak behoort nie aan hierdie rol en voorwerp nie."
 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

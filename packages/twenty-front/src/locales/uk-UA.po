@@ -6230,7 +6230,7 @@ msgstr "Виберіть, до чого Twenty може отримувати д�
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Виберіть, коли {assistantName} бере участь у розмовах у вашому робочому просторі"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Ніколи не закінчується"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Ніколи не залучає {assistantName}. Лише за згадуванням просить {assistantName} відповідати, коли його позначено. Автоматично дозволяє {assistantName} вирішувати, коли відповідати. У чатах лише з вами та {assistantName} відповіді надходять завжди."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

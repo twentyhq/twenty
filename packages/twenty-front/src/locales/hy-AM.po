@@ -6230,7 +6230,7 @@ msgstr "Ընտրեք, թե Twenty-ն ինչին կարող է հասանելիո
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Ընտրեք, թե երբ է {assistantName}-ը մասնակցում ձեր աշխատատարածքի զրույցներին"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Ժամկետը երբեք չի ավարտվում"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "«Երբեք»-ը {assistantName}-ին զրույցներից դուրս է պահում։ «Միայն հիշատակման դեպքում»-ը {assistantName}-ին խնդրում է պատասխանել, երբ այն նշվում է։ «Ավտոմատ»-ը թույլ է տալիս {assistantName}-ին որոշել, թե երբ պատասխանել։ Միայն ձեր և {assistantName}-ի մասնակցությամբ զրույցները միշտ պատասխաններ են ստանում։"
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

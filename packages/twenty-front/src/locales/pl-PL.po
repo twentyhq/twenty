@@ -6230,7 +6230,7 @@ msgstr "Wybierz, do czego Twenty może uzyskiwać dostęp, aby Cię wspierać i 
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Wybierz, kiedy {assistantName} uczestniczy w rozmowach w całym obszarze roboczym"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Nigdy nie wygasa"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Nigdy wyklucza {assistantName}. Tylko po wzmiance prosi {assistantName} o odpowiedź po oznaczeniu. Automatycznie pozwala {assistantName} decydować, kiedy odpowiedzieć. Czaty tylko z Tobą i {assistantName} zawsze otrzymują odpowiedzi."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

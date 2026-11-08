@@ -6230,7 +6230,7 @@ msgstr "Izaberite čemu Twenty može da pristupi kako bi vam pružio podršku i 
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Odaberite kada {assistantName} učestvuje u razgovorima u vašem radnom prostoru"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Nikada ne ističe"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Nikad drži {assistantName} van razgovora. Samo kada je pomenut traži od {assistantName} da odgovori kada je označen. Automatski omogućava {assistantName} da odluči kada da odgovori. Na razgovore samo sa vama i {assistantName} se uvek odgovara."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

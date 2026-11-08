@@ -6230,7 +6230,7 @@ msgstr "Escolha o que o Twenty pode acessar para oferecer suporte a você e melh
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Escolha quando {assistantName} participa de conversas em todo o seu espaço de trabalho"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Nunca expira"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Nunca mantém {assistantName} de fora. Somente quando mencionado pede que {assistantName} responda quando marcado. Automático permite que {assistantName} decida quando responder. Conversas apenas entre você e {assistantName} sempre recebem respostas."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

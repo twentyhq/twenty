@@ -6230,7 +6230,7 @@ msgstr "Velg hva Twenty kan få tilgang til for å hjelpe deg og forbedre produk
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Velg når {assistantName} deltar i samtaler på tvers av arbeidsområdet ditt"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Utløper aldri"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Aldri holder {assistantName} ute. Bare når nevnt ber {assistantName} om å svare når den er tagget. Auto lar {assistantName} avgjøre når den skal svare. Chatter med bare deg og {assistantName} får alltid svar."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

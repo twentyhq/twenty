@@ -6230,7 +6230,7 @@ msgstr "Size destek olmak ve ürünü geliştirmek için Twenty'nin neler erişe
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "{assistantName} öğesinin çalışma alanınızdaki konuşmalara ne zaman katılacağını seçin"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Asla sona ermez"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Asla, {assistantName} öğesini dışarıda tutar. Yalnızca bahsedildiğinde, {assistantName} öğesinden etiketlendiğinde yanıt vermesini ister. Otomatik, {assistantName} öğesinin ne zaman yanıt vereceğine karar vermesini sağlar. Yalnızca siz ve {assistantName} arasındaki sohbetler her zaman yanıt alır."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

@@ -11683,7 +11683,7 @@ msgstr "Non è possibile fornire l'intervallo di file richiesto."
 #. js-lingui-id: WIwnbY
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr ""
+msgstr "I campi e le relazioni obbligatori non possono essere limitati in una regola di autorizzazione a livello di riga."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -11836,7 +11836,7 @@ msgstr "Il ruolo \"{roleLabel}\" non può essere assegnato alle applicazioni"
 #. js-lingui-id: xIGy+v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to this agent"
-msgstr ""
+msgstr "Il ruolo \"{roleLabel}\" non può essere assegnato a questo agente"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11858,7 +11858,7 @@ msgstr "Impossibile assegnare il ruolo \"{roleLabel}\": i ruoli personalizzati r
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the application to be assigned to its agents"
-msgstr ""
+msgstr "Il ruolo \"{roleLabel}\" deve essere di proprietà dell'applicazione per poter essere assegnato ai relativi agenti"
 
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
@@ -15114,7 +15114,7 @@ msgstr "Questo ruolo non può essere modificato perché è un ruolo di sistema. 
 #. js-lingui-id: ujHiJC
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This row level permission rule does not belong to this role and object."
-msgstr ""
+msgstr "Questa regola di autorizzazione a livello di riga non appartiene a questo ruolo e oggetto."
 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

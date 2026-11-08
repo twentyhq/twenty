@@ -11683,7 +11683,7 @@ msgstr "So‘ralgan fayl diapazoniga xizmat ko‘rsatib bo‘lmaydi."
 #. js-lingui-id: WIwnbY
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr ""
+msgstr "Majburiy maydonlar va munosabatlar satr darajasidagi ruxsat qoidasida cheklanishi mumkin emas."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -11836,7 +11836,7 @@ msgstr "\"{roleLabel}\" rolini ilovalarga biriktirib bo‘lmaydi"
 #. js-lingui-id: xIGy+v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to this agent"
-msgstr ""
+msgstr "\"{roleLabel}\" roli ushbu agentga biriktirilishi mumkin emas"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11858,7 +11858,7 @@ msgstr "\"{roleLabel}\" roli tayinlanmaydi: maxsus rollar uchun Tashkilot tarifi
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the application to be assigned to its agents"
-msgstr ""
+msgstr "\"{roleLabel}\" roli uning agentlariga biriktirilishi uchun ilovaga tegishli bo‘lishi kerak"
 
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
@@ -15114,7 +15114,7 @@ msgstr "Bu rolni o‘zgartirib bo‘lmaydi, chunki u tizim roli hisoblanadi. Faq
 #. js-lingui-id: ujHiJC
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This row level permission rule does not belong to this role and object."
-msgstr ""
+msgstr "Ushbu satr darajasidagi ruxsat qoidasi ushbu rol va obyektga tegishli emas."
 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

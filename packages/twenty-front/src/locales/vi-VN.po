@@ -6230,7 +6230,7 @@ msgstr "Chọn những gì Twenty có thể truy cập để hỗ trợ bạn v�
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Chọn thời điểm {assistantName} tham gia các cuộc trò chuyện trong toàn bộ không gian làm việc của bạn"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Không bao giờ hết hạn"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Không bao giờ sẽ không để {assistantName} tham gia. Chỉ khi được nhắc đến sẽ yêu cầu {assistantName} trả lời khi được gắn thẻ. Tự động cho phép {assistantName} quyết định thời điểm trả lời. Các cuộc trò chuyện chỉ có bạn và {assistantName} luôn nhận được phản hồi."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

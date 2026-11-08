@@ -11683,7 +11683,7 @@ msgstr "No es pot servir l'interval de fitxer sol·licitat."
 #. js-lingui-id: WIwnbY
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr ""
+msgstr "Els camps obligatoris i les relacions no es poden restringir en una regla de permisos de nivell de fila."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -11836,7 +11836,7 @@ msgstr "No es pot assignar el rol \"{roleLabel}\" a les aplicacions"
 #. js-lingui-id: xIGy+v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to this agent"
-msgstr ""
+msgstr "El rol \"{roleLabel}\" no es pot assignar a aquest agent"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11858,7 +11858,7 @@ msgstr "No es pot assignar el rol \"{roleLabel}\": els rols personalitzats reque
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the application to be assigned to its agents"
-msgstr ""
+msgstr "El rol \"{roleLabel}\" ha de ser propietat de l'aplicació per poder assignar-se als seus agents"
 
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
@@ -15114,7 +15114,7 @@ msgstr "Aquest rol no es pot modificar perquè és un rol de sistema. Només es 
 #. js-lingui-id: ujHiJC
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This row level permission rule does not belong to this role and object."
-msgstr ""
+msgstr "Aquesta regla de permisos de nivell de fila no pertany a aquest rol i objecte."
 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

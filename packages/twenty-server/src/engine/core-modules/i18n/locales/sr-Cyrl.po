@@ -11683,7 +11683,7 @@ msgstr "Захтевани опсег датотеке није могуће п�
 #. js-lingui-id: WIwnbY
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr ""
+msgstr "Обавезна поља и релације не могу бити ограничени правилом дозвола на нивоу реда."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -11836,7 +11836,7 @@ msgstr "Улогу \"{roleLabel}\" није могуће доделити апл
 #. js-lingui-id: xIGy+v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to this agent"
-msgstr ""
+msgstr "Улогу \"{roleLabel}\" није могуће доделити овом агенту"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11858,7 +11858,7 @@ msgstr "Улога \"{roleLabel}\" не може бити додељена: пр
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the application to be assigned to its agents"
-msgstr ""
+msgstr "Улога \"{roleLabel}\" мора бити у власништву апликације да би се могла доделити њеним агентима"
 
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
@@ -15114,7 +15114,7 @@ msgstr "Ова улога не може бити измењена јер је с
 #. js-lingui-id: ujHiJC
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This row level permission rule does not belong to this role and object."
-msgstr ""
+msgstr "Ово правило дозвола на нивоу реда не припада овој улози и објекту."
 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

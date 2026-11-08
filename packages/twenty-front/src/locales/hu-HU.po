@@ -6230,7 +6230,7 @@ msgstr "Válassza ki, mihez férhet hozzá a Twenty, hogy támogathassa Önt és
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Válaszd ki, hogy {assistantName} mikor vegyen részt a munkaterületed beszélgetéseiben"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Sosem jár le"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "A Soha kizárja {assistantName}-t. A Csak említéskor arra kéri {assistantName}-t, hogy válaszoljon, amikor megjelölik. Az Automatikus lehetővé teszi, hogy {assistantName} döntse el, mikor válaszoljon. Azokban a csevegésekben, amelyekben csak te és {assistantName} vesztek részt, mindig érkezik válasz."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
