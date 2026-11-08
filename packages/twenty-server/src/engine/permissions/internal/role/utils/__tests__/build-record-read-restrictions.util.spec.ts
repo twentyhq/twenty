@@ -58,4 +58,23 @@ describe('buildRecordReadRestrictions', () => {
 
     expect(unreadableFieldMetadataIds).toEqual(new Set(['jobTitle', 'name']));
   });
+
+  it('should not throw on a cache entry written before the upgrade', () => {
+    const cachedEntry = JSON.parse(
+      JSON.stringify({
+        canCreateAllRecords: true,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: true,
+        canDestroyAllRecords: true,
+        restrictedFields: {},
+      }),
+    );
+
+    expect(
+      buildRecordReadRestrictions({
+        recordsPermissions: { objects: { 'object-id': cachedEntry } },
+      }).unreadableFieldMetadataIds.size,
+    ).toBe(0);
+  });
 });

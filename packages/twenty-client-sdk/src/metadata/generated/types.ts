@@ -10312,6 +10312,9 @@ export default {
             "objectMetadataId": [
                 548
             ],
+            "restrictedFields": [
+                335
+            ],
             "rowLevelPermissionPredicateGroups": [
                 474
             ],
@@ -10429,6 +10432,9 @@ export default {
             ],
             "objectMetadataId": [
                 548
+            ],
+            "restrictedFields": [
+                335
             ],
             "rowLevelRecordsPermissions": [
                 479

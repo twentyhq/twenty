@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import GraphQLJSON from 'graphql-type-json';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RowLevelRecordsPermissionsDTO } from 'src/engine/permissions/dtos/row-level-records-permissions.dto';
 
@@ -22,6 +24,14 @@ export class ObjectRecordsPermissionsDTO {
 
   @Field(() => Boolean)
   canDestroyAllRecords: boolean;
+
+  @Field(() => GraphQLJSON, {
+    deprecationReason: 'Use unreadableFields and uneditableFields',
+  })
+  restrictedFields: Record<
+    string,
+    { canRead: boolean | null; canUpdate: boolean | null }
+  >;
 
   @Field(() => [UUIDScalarType])
   unreadableFields: string[];

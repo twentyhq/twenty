@@ -3,9 +3,26 @@ import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { type ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { buildDeprecatedRestrictedFields } from 'src/engine/metadata-modules/role/utils/build-deprecated-restricted-fields.util';
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
 import { type ObjectRecordsPermissionsDTO } from 'src/engine/permissions/dtos/object-records-permissions.dto';
+
+// Cached role permissions keep their old shape until the upgrade recomputes them
+const buildFieldLists = ({
+  unreadableFields,
+  uneditableFields,
+}: Pick<ObjectRecordsPermissions, 'unreadableFields' | 'uneditableFields'>) => {
+  const fieldLists = {
+    unreadableFields: unreadableFields ?? [],
+    uneditableFields: uneditableFields ?? [],
+  };
+
+  return {
+    ...fieldLists,
+    restrictedFields: buildDeprecatedRestrictedFields(fieldLists),
+  };
+};
 
 const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
   objectMetadataId,
@@ -31,8 +48,7 @@ const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
     objectRecordsPermissions,
     operationType: 'destroy',
   }),
-  unreadableFields: objectRecordsPermissions.unreadableFields,
-  uneditableFields: objectRecordsPermissions.uneditableFields,
+  ...buildFieldLists(objectRecordsPermissions),
   rowLevelPermissionPredicates:
     objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
   rowLevelPermissionPredicateGroups:
@@ -60,8 +76,7 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       canUpdateAllRecords: permissions.canUpdateAllRecords,
       canSoftDeleteAllRecords: permissions.canSoftDeleteAllRecords,
       canDestroyAllRecords: permissions.canDestroyAllRecords,
-      unreadableFields: permissions.unreadableFields,
-      uneditableFields: permissions.uneditableFields,
+      ...buildFieldLists(permissions),
       rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
     });
     legacyObjectPermissions.push(

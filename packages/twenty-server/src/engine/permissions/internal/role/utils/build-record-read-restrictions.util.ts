@@ -29,7 +29,9 @@ export const buildRecordReadRestrictions = ({
       unreadableObjectMetadataIds.add(objectMetadataId);
     }
 
-    for (const fieldMetadataId of objectRecordsPermissions.unreadableFields) {
+    // Cached role permissions keep their old shape until the upgrade recomputes them
+    for (const fieldMetadataId of objectRecordsPermissions.unreadableFields ??
+      []) {
       unreadableFieldMetadataIds.add(fieldMetadataId);
     }
   }

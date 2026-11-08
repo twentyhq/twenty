@@ -3854,6 +3854,7 @@ type ObjectPermission {
   canSoftDeleteObjectRecords: Boolean
   canUpdateObjectRecords: Boolean
   objectMetadataId: UUID!
+  restrictedFields: JSON @deprecated(reason: "Use unreadableFields and uneditableFields")
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
   uneditableFields: [UUID!]
@@ -3916,6 +3917,7 @@ type ObjectRecordsPermissions {
   canSoftDeleteAllRecords: Boolean!
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
+  restrictedFields: JSON! @deprecated(reason: "Use unreadableFields and uneditableFields")
   rowLevelRecordsPermissions: RowLevelRecordsPermissions
   uneditableFields: [UUID!]!
   unreadableFields: [UUID!]!
