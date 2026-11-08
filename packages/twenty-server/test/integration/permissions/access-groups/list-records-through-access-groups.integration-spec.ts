@@ -131,7 +131,7 @@ describe('listing records through access groups (integration)', () => {
     ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
     await getAppProviderByClassName<RecordAccessGroupService>(
       'RecordAccessGroupService',
-    ).recomputeRecordAccessGroupIds({
+    ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
     });

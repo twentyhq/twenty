@@ -103,7 +103,7 @@ export class RecordPermissionsService {
     return areRecordAccessGroupsEnabled({ featureFlagsMap });
   }
 
-  async recomputeRecordAccessGroupIds({
+  async recomputeRecordAccessGroupIdsOfRecords({
     featureFlagsMap,
     workspaceId,
     objectMetadataId,

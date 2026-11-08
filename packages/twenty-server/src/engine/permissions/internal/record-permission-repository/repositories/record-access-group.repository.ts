@@ -49,7 +49,7 @@ export class RecordAccessGroupRepository {
     return rows.map(({ id }) => id);
   }
 
-  async recomputeRecordAccessGroupIds({
+  async updateRecordAccessGroupIds({
     workspaceId,
     flatObjectMetadata,
     recordAccessGroupConditions,

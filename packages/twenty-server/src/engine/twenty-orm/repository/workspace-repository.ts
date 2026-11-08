@@ -1048,7 +1048,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
-    await this.recomputeRecordAccessGroupIds(insertedIds);
+    await this.recomputeRecordAccessGroupIdsOfRecords(insertedIds);
 
     await this.emitCreateEvents(insertedIds);
 
@@ -1229,7 +1229,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await validateWrittenRecords?.(generatedMaps);
 
-    await this.recomputeRecordAccessGroupIds(
+    await this.recomputeRecordAccessGroupIdsOfRecords(
       generatedMaps.map((record) => record.id).filter(isNonEmptyString),
     );
 
@@ -1608,7 +1608,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     await validateWrittenRecords?.(mutationResult.generatedMaps);
 
     if (kind === 'update') {
-      await this.recomputeRecordAccessGroupIds(
+      await this.recomputeRecordAccessGroupIdsOfRecords(
         mutationResult.generatedMaps
           .map((record) => record.id)
           .filter(isNonEmptyString),
@@ -1724,10 +1724,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  private async recomputeRecordAccessGroupIds(
+  private async recomputeRecordAccessGroupIdsOfRecords(
     recordIds: string[],
   ): Promise<void> {
-    await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIds(
+    await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRecords(
       {
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
         workspaceId: this.options.internalContext.workspaceId,

@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -10,6 +10,7 @@ import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
+import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { buildRecordAccessGroupConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-conditions.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
@@ -29,7 +30,7 @@ export class RecordAccessGroupService {
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
   ) {}
 
-  async recomputeRecordAccessGroupIds({
+  async recomputeRecordAccessGroupIdsOfAllObjectRecords({
     workspaceId,
     objectMetadataId,
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
@@ -52,22 +53,6 @@ export class RecordAccessGroupService {
       flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
     });
 
-    // The sync queues this job before writing, so groups are read once its writes are done
-    const accessGroups = await this.cacheLockService.withLock(
-      () =>
-        this.accessGroupRepository.findObjectAccessGroups({
-          workspaceId,
-          objectMetadataId,
-        }),
-      buildAccessGroupSyncLockKey(workspaceId),
-      ACCESS_GROUP_SYNC_LOCK_OPTIONS,
-    );
-    const recordAccessGroupConditions = buildRecordAccessGroupConditions({
-      flatObjectMetadata,
-      metadataMaps,
-      accessGroups,
-    });
-
     let recordIds = await this.recordAccessGroupRepository.findRecordIds({
       workspaceId,
       flatObjectMetadata,
@@ -76,10 +61,9 @@ export class RecordAccessGroupService {
     });
 
     while (isNonEmptyArray(recordIds)) {
-      await this.recordAccessGroupRepository.recomputeRecordAccessGroupIds({
+      await this.recomputeRecordAccessGroupIdsOfRecords({
         workspaceId,
-        flatObjectMetadata,
-        recordAccessGroupConditions,
+        objectMetadataId,
         recordIds,
       });
 
@@ -101,7 +85,7 @@ export class RecordAccessGroupService {
     workspaceId: string;
     objectMetadataId: string;
     recordIds: string[];
-    transactionScope: RecordPermissionTransactionScope;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
     if (recordIds.length === 0) {
       return;
@@ -124,24 +108,50 @@ export class RecordAccessGroupService {
       flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
     });
 
-    const accessGroups =
-      await this.accessGroupRepository.findObjectAccessGroups({
-        workspaceId,
-        objectMetadataId,
-        transactionScope,
-      });
-
-    await this.recordAccessGroupRepository.recomputeRecordAccessGroupIds({
+    await this.recordAccessGroupRepository.updateRecordAccessGroupIds({
       workspaceId,
       flatObjectMetadata,
       recordAccessGroupConditions: buildRecordAccessGroupConditions({
         flatObjectMetadata,
         metadataMaps,
-        accessGroups,
+        accessGroups: await this.findObjectAccessGroups({
+          workspaceId,
+          objectMetadataId,
+          transactionScope,
+        }),
       }),
       recordIds,
       transactionScope,
     });
+  }
+
+  private findObjectAccessGroups({
+    workspaceId,
+    objectMetadataId,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<AccessGroup[]> {
+    if (isDefined(transactionScope)) {
+      return this.accessGroupRepository.findObjectAccessGroups({
+        workspaceId,
+        objectMetadataId,
+        transactionScope,
+      });
+    }
+
+    // The sync queues this job before writing, so groups are read once its writes are done
+    return this.cacheLockService.withLock(
+      () =>
+        this.accessGroupRepository.findObjectAccessGroups({
+          workspaceId,
+          objectMetadataId,
+        }),
+      buildAccessGroupSyncLockKey(workspaceId),
+      ACCESS_GROUP_SYNC_LOCK_OPTIONS,
+    );
   }
 
   private findMetadataMaps(workspaceId: string) {
