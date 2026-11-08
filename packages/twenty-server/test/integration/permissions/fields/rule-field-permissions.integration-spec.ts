@@ -235,6 +235,23 @@ describe('field permissions on a row level permission rule (integration)', () =>
 
     expect(rows).toEqual([{ ruleId }, { ruleId: null }]);
 
+    const { errors: updateErrors } = await upsertFieldPermissions({
+      expectToFail: false,
+      input: {
+        roleId,
+        fieldPermissions: [
+          {
+            objectMetadataId,
+            fieldMetadataId: avatarUrlFieldMetadataId,
+            canReadFieldValue: false,
+            canUpdateFieldValue: false,
+          },
+        ],
+      },
+    });
+
+    expect(updateErrors).toBeUndefined();
+
     await upsertFieldPermissions({
       expectToFail: false,
       input: {
@@ -243,6 +260,7 @@ describe('field permissions on a row level permission rule (integration)', () =>
           {
             objectMetadataId,
             fieldMetadataId: avatarUrlFieldMetadataId,
+            canReadFieldValue: null,
             canUpdateFieldValue: null,
           },
         ],

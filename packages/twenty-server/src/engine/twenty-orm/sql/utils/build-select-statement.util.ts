@@ -91,6 +91,8 @@ export type SelectStatementState = {
 export const quoteColumn = (alias: string, columnName: string): string =>
   `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
 
+const PLAIN_COLUMN_EXPRESSION = /^"?(\w+)"?\."?(\w+)"?$/;
+
 const renderProjectedColumn = ({
   state,
   alias,
@@ -308,12 +310,16 @@ export const buildProjection = (
   const aliases = collectStatementAliases(state);
 
   for (const extraSelect of state.extraSelectClauses) {
-    expressions.push(
-      `${quoteQualifiedAliasReferences(
-        extraSelect.expression,
-        aliases,
-      )} AS ${escapeIdentifier(extraSelect.alias)}`,
-    );
+    const plainColumn = extraSelect.expression.match(PLAIN_COLUMN_EXPRESSION);
+    const expression = isDefined(plainColumn)
+      ? renderProjectedColumn({
+          state,
+          alias: plainColumn[1],
+          columnName: plainColumn[2],
+        })
+      : quoteQualifiedAliasReferences(extraSelect.expression, aliases);
+
+    expressions.push(`${expression} AS ${escapeIdentifier(extraSelect.alias)}`);
   }
 
   return { expressions, mainAliasColumnNames };

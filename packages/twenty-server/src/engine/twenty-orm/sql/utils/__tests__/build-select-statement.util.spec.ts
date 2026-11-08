@@ -75,6 +75,19 @@ describe('buildSelectStatement', () => {
     );
   });
 
+  it('should mask a column selected under its own alias', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnMaskConditions: { person: { id: ['"person"."x" = :x'] } },
+        extraSelectClauses: [{ expression: '"person"."id"', alias: 'imageId' }],
+      }),
+    );
+
+    expect(sql).toContain(
+      'CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END AS "imageId"',
+    );
+  });
+
   it('should not mask columns in a grouped query', () => {
     const sql = buildSelectStatement(
       buildState({
