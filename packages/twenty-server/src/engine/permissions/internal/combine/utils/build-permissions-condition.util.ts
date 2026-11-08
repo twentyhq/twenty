@@ -10,7 +10,7 @@ import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/inter
 import { buildPermissionsCreatorCondition } from 'src/engine/permissions/internal/private-record/utils/build-permissions-creator-condition.util';
 import { buildPermissionsShareCondition } from 'src/engine/permissions/internal/record-share/utils/build-permissions-share-condition.util';
 import { buildPermissionsRlsCondition } from 'src/engine/permissions/internal/rls/utils/build-permissions-rls-condition.util';
-import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-row-level-permission-filter.util';
+import { resolvePermissionsRlsSqlCondition } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-rls-sql-condition.util';
 import { buildPermissionsAllRecordsCondition } from 'src/engine/permissions/internal/all-records/utils/build-permissions-all-records-condition.util';
 
 const combineWithOr = (conditions: SqlCondition[]): SqlCondition =>
@@ -59,19 +59,14 @@ export const buildPermissionsCondition = ({
     buildPermissionsShareCondition(sqlRequest),
     buildPermissionsCreatorCondition(sqlRequest),
   ].filter(isDefined);
-  const rowLevelPermissionFilter = areRecordGrantsHeldToRowLevelPermissions(
-    sqlRequest,
-  )
-    ? resolvePermissionsRowLevelPermissionFilter(sqlRequest)
+  const rlsCondition = areRecordGrantsHeldToRowLevelPermissions(sqlRequest)
+    ? resolvePermissionsRlsSqlCondition(sqlRequest)
     : undefined;
 
-  if (isDefined(rowLevelPermissionFilter) && recordConditions.length > 0) {
+  if (isDefined(rlsCondition) && recordConditions.length > 0) {
     return combineWithOr([
       ...roleConditions,
-      combineSqlConditions([
-        rowLevelPermissionFilter.condition,
-        combineWithOr(recordConditions),
-      ]),
+      combineSqlConditions([rlsCondition, combineWithOr(recordConditions)]),
     ]);
   }
 

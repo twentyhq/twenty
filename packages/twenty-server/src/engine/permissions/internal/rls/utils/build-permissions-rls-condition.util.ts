@@ -7,25 +7,24 @@ import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { combineSqlConditions } from 'src/engine/permissions/internal/combine/utils/combine-sql-conditions.util';
 import { buildRecordPrivacyCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-condition.util';
 import { areRoleGrantsLimitedToPublicRecords } from 'src/engine/permissions/internal/role/utils/are-role-grants-limited-to-public-records.util';
-import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-row-level-permission-filter.util';
+import { resolvePermissionsRlsSqlCondition } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-rls-sql-condition.util';
 
 export const buildPermissionsRlsCondition = (
   request: PermissionsRowAccessSqlRequest,
 ): SqlCondition | undefined => {
-  const rowLevelPermissionFilter =
-    resolvePermissionsRowLevelPermissionFilter(request);
+  const rlsCondition = resolvePermissionsRlsSqlCondition(request);
 
-  if (!isDefined(rowLevelPermissionFilter)) {
+  if (!isDefined(rlsCondition)) {
     return undefined;
   }
 
   return areRoleGrantsLimitedToPublicRecords(request)
     ? combineSqlConditions([
-        rowLevelPermissionFilter.condition,
+        rlsCondition,
         buildRecordPrivacyCondition({
           tableAlias: request.tableAlias,
           isPrivate: false,
         }),
       ])
-    : rowLevelPermissionFilter.condition;
+    : rlsCondition;
 };

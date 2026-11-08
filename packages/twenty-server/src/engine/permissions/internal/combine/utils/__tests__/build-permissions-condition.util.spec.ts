@@ -447,6 +447,39 @@ describe('buildPermissionsCondition', () => {
     );
   });
 
+  it('checks the role rule through the caller access groups when given', () => {
+    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
+      NOTE_FILTER,
+    );
+    const policy = buildConditionOutcome({
+      principals: readEverything,
+      metadataMaps,
+      tableAlias: 'person',
+      flatObjectMetadata: person,
+      operationType: 'read',
+      callerAccessGroupCompactIds: [42, 43],
+    });
+
+    if (policy.kind !== 'gated') {
+      throw new Error('Expected a grant gate');
+    }
+    expect(policy.condition.sql).toContain(
+      '"person"."_accessGroupIds" && CAST(',
+    );
+    expect(policy.condition.sql).not.toContain('"person"."title"');
+    expect(Object.values(policy.condition.parameters)).toContainEqual([42, 43]);
+  });
+
+  it('keeps the role rule when the object is not listed through access groups', () => {
+    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
+      NOTE_FILTER,
+    );
+
+    expect(
+      gatedSql({ principals: readEverything, flatObjectMetadata: person }),
+    ).not.toContain('_accessGroupIds');
+  });
+
   it('keeps private records gated regardless of the sharing UI flag', () => {
     const policy = buildConditionOutcome({
       principals: readEverything,

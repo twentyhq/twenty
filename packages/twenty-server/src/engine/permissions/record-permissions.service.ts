@@ -16,6 +16,8 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
+import { isListingThroughRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-listing-through-record-access-groups.util';
 import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
@@ -89,6 +91,7 @@ export class RecordPermissionsService {
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly principalPermissionsService: PrincipalPermissionsService,
     private readonly recordAccessGroupService: RecordAccessGroupService,
+    private readonly accessGroupService: AccessGroupService,
   ) {}
 
   async recomputeRecordAccessGroupIds({
@@ -371,13 +374,31 @@ export class RecordPermissionsService {
     tableAlias: string;
   }): Promise<SqlCondition | boolean> {
     const { principals } = question;
+    const objectAccessRequest =
+      await this.findObjectAccessRequestOrThrow(question);
 
     return buildPermissionsCondition({
-      ...(await this.findObjectAccessRequestOrThrow(question)),
+      ...objectAccessRequest,
       tableAlias,
       recordShareTableExpression: buildRecordShareTableExpression({
         workspaceId: principals.workspaceId,
       }),
+      callerAccessGroupCompactIds:
+        await this.findCallerAccessGroupCompactIds(objectAccessRequest),
+    });
+  }
+
+  private async findCallerAccessGroupCompactIds(
+    objectAccessRequest: PermissionsObjectAccessRequest,
+  ): Promise<number[] | undefined> {
+    if (!isListingThroughRecordAccessGroups(objectAccessRequest)) {
+      return undefined;
+    }
+
+    return this.accessGroupService.findCallerCompactIds({
+      principals: objectAccessRequest.principals,
+      objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+      operationType: objectAccessRequest.operationType,
     });
   }
 
