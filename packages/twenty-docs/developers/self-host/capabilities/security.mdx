@@ -310,7 +310,11 @@ services:
       SERVER_INTERNAL_URL: http://server:3000
 ```
 
-On Kubernetes, use the cluster DNS name of the server's Service. With the Lambda driver, the address must be reachable from the Lambda subnets. Keep it private: anything that can reach it skips the proxy.
+On Kubernetes, use the cluster DNS name of the server's Service. Keep it private: anything that can reach it skips the proxy.
+
+This works with the local logic function driver only. Lambda functions run outside your network, so they can't reach a private address.
+
+Some URLs that functions use still point at `SERVER_URL` and stay blocked: file upload URLs when presigned S3 URLs are off, file download URLs, and `getPublicAssetUrl`.
 
 ## Verify your setup
 
