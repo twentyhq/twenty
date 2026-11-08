@@ -1,3 +1,4 @@
+import { getApplicationGrantRoleUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4, v5 } from 'uuid';
 
@@ -196,7 +197,10 @@ const buildDesiredGrantUniversalFlatEntityMaps = ({
         createdAt: existingGrant.flatRole.createdAt,
       }
     : {
-        universalIdentifier: v4(),
+        universalIdentifier: getApplicationGrantRoleUniversalIdentifier({
+          grantedApplicationUniversalIdentifier:
+            targetFlatApplication.universalIdentifier,
+        }),
         label: computeApplicationGrantRoleLabel({
           applicationName: targetFlatApplication.name,
           flatRoleMaps: flatEntityMaps.flatRoleMaps,

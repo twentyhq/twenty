@@ -1,5 +1,6 @@
 import { msg, t } from '@lingui/core/macro';
 import {
+  getApplicationGrantRoleUniversalIdentifier,
   OBJECT_PERMISSION_ACTIONS,
   type ObjectPermissionAction,
 } from 'twenty-shared/application';
@@ -30,9 +31,7 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
   flatRole:
     | Pick<
         UniversalFlatRole,
-        | 'universalIdentifier'
-        | 'applicationUniversalIdentifier'
-        | 'canBeAssignedToApplications'
+        'universalIdentifier' | 'applicationUniversalIdentifier'
       >
     | undefined;
   applicationDefaultRoleUniversalIdentifier: string | undefined;
@@ -52,8 +51,16 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
     return [];
   }
 
-  // A grant copies its application's default role, disabled actions included
-  if (flatRole?.canBeAssignedToApplications === true) {
+  // A grant copies its application's default role. Temporary: to be checked
+  // through the grant's application target once validation order allows it
+  if (
+    isDefined(flatRole) &&
+    flatRole.universalIdentifier ===
+      getApplicationGrantRoleUniversalIdentifier({
+        grantedApplicationUniversalIdentifier:
+          flatObjectMetadata.applicationUniversalIdentifier,
+      })
+  ) {
     return [];
   }
 
