@@ -130,10 +130,12 @@ export class AdminPanelHealthService {
     const indicatorStatus = this.getServiceStatus(result[0], indicatorId);
 
     if (indicatorId === HealthIndicatorId.worker) {
+      const workerQueues: WorkerQueueHealth[] =
+        'queues' in indicatorStatus ? (indicatorStatus.queues ?? []) : [];
+
       return {
         ...indicatorStatus,
-        // @ts-expect-error legacy noImplicitAny
-        queues: (indicatorStatus?.queues ?? []).map((queue) => ({
+        queues: workerQueues.map((queue) => ({
           id: `${indicatorId}-${queue.queueName}`,
           queueName: queue.queueName,
           status:
