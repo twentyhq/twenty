@@ -45,13 +45,10 @@ export class BarChartDataInput {
   @ValidateIf(
     ({
       dashboardFilterValues,
-      dashboardFilterTimeZone,
-    }: Pick<
-      BarChartDataInput,
-      'dashboardFilterValues' | 'dashboardFilterTimeZone'
-    >) =>
-      isDefined(dashboardFilterValues) || isDefined(dashboardFilterTimeZone),
+      viewerTimeZone,
+    }: Pick<BarChartDataInput, 'dashboardFilterValues' | 'viewerTimeZone'>) =>
+      isDefined(dashboardFilterValues) || isDefined(viewerTimeZone),
   )
   @IsTimeZone()
-  dashboardFilterTimeZone?: string | null;
+  viewerTimeZone?: string | null;
 }
