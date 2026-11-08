@@ -13,9 +13,9 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type UnreadableFieldsWithSqlCondition } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-sql-condition.type';
-import { buildUnreadableFieldsWithRecordFilter } from 'src/engine/permissions/internal/masking/utils/build-unreadable-fields-with-record-filter.util';
-import { buildUnreadableFieldsWithSqlCondition } from 'src/engine/permissions/internal/masking/utils/build-unreadable-fields-with-sql-condition.util';
+import { type UnreadableFieldsWithRlsRuleSqlCondition } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-rls-rule-sql-condition.type';
+import { buildUnreadableFieldsWithRlsRuleFilter } from 'src/engine/permissions/internal/masking/utils/build-unreadable-fields-with-rls-rule-filter.util';
+import { buildUnreadableFieldsWithRlsRuleSqlCondition } from 'src/engine/permissions/internal/masking/utils/build-unreadable-fields-with-rls-rule-sql-condition.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -418,12 +418,12 @@ export class RecordPermissionsService {
     });
   }
 
-  async findUnreadableFieldsWithSqlConditionOrThrow({
+  async findUnreadableFieldsWithRlsRuleSqlConditionOrThrow({
     principals,
     objectMetadataId,
     tableAlias,
   }: ObjectQuestion & { tableAlias: string }): Promise<
-    UnreadableFieldsWithSqlCondition[]
+    UnreadableFieldsWithRlsRuleSqlCondition[]
   > {
     if (!isDefined(principals)) {
       return [];
@@ -445,12 +445,14 @@ export class RecordPermissionsService {
       );
     }
 
-    return buildUnreadableFieldsWithSqlCondition({
-      unreadableFieldsWithRecordFilter: buildUnreadableFieldsWithRecordFilter({
-        principals,
-        metadataMaps,
-        flatObjectMetadata,
-      }),
+    return buildUnreadableFieldsWithRlsRuleSqlCondition({
+      unreadableFieldsWithRlsRuleFilter: buildUnreadableFieldsWithRlsRuleFilter(
+        {
+          principals,
+          metadataMaps,
+          flatObjectMetadata,
+        },
+      ),
       flatObjectMetadata,
       metadataMaps,
       tableAlias,

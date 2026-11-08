@@ -1796,10 +1796,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<void> {
     await this.applyRowLevelPermissionPredicates(queryBuilder);
     await this.validateQueryIsPermitted(queryBuilder);
-    await this.nullifyUnreadableFieldsWithSqlCondition(queryBuilder);
+    await this.nullifyUnreadableFieldsWithRlsRuleSqlCondition(queryBuilder);
   }
 
-  private async nullifyUnreadableFieldsWithSqlCondition(
+  private async nullifyUnreadableFieldsWithRlsRuleSqlCondition(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
     if (this.options.shouldBypassPermissionChecks) {
@@ -1822,8 +1822,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
-      const unreadableFieldsWithSqlCondition =
-        await this.options.internalContext.recordPermissions.findUnreadableFieldsWithSqlConditionOrThrow(
+      const unreadableFieldsWithRlsRuleSqlCondition =
+        await this.options.internalContext.recordPermissions.findUnreadableFieldsWithRlsRuleSqlConditionOrThrow(
           {
             principals: this.resolvePermissionsPrincipalsOrThrow(),
             objectMetadataId: tableShape.objectMetadataId,
@@ -1831,7 +1831,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           },
         );
 
-      if (!isNonEmptyArray(unreadableFieldsWithSqlCondition)) {
+      if (!isNonEmptyArray(unreadableFieldsWithRlsRuleSqlCondition)) {
         continue;
       }
 
@@ -1846,8 +1846,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       for (const {
         fieldMetadataIds,
-        sqlCondition,
-      } of unreadableFieldsWithSqlCondition) {
+        rlsRuleSqlCondition,
+      } of unreadableFieldsWithRlsRuleSqlCondition) {
         queryBuilder.nullifyColumnsWhen({
           alias,
           columnNames: columnEntries
@@ -1855,7 +1855,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               fieldMetadataIds.includes(fieldMetadataId),
             )
             .map(([columnName]) => columnName),
-          condition: sqlCondition,
+          condition: rlsRuleSqlCondition,
         });
       }
     }
