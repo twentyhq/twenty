@@ -115,7 +115,7 @@ const buildRepository = ({
         assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
         assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
         recomputeRecordAccessGroupIdsOfRecords: jest.fn(),
-        findRlsRuleUnreadableColumns: jest.fn().mockResolvedValue([]),
+        findUnreadableFieldsWithCondition: jest.fn().mockResolvedValue([]),
         isRecomputingRecordAccessGroupIdsOnWrite: jest
           .fn()
           .mockReturnValue(false),
