@@ -29,7 +29,7 @@ export const validateFieldPermissionGrantsNoDisabledAction = ({
   flatRole:
     | Pick<
         UniversalFlatRole,
-        'universalIdentifier' | 'applicationUniversalIdentifier' | 'isEditable'
+        'universalIdentifier' | 'applicationUniversalIdentifier'
       >
     | undefined;
   applicationDefaultRoleUniversalIdentifier: string | undefined;

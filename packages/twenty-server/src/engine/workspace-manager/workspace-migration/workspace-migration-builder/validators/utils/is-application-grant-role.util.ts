@@ -12,14 +12,13 @@ export const isApplicationGrantRole = ({
   flatRole:
     | Pick<
         UniversalFlatRole,
-        'universalIdentifier' | 'applicationUniversalIdentifier' | 'isEditable'
+        'universalIdentifier' | 'applicationUniversalIdentifier'
       >
     | undefined;
   grantedApplicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
 }): boolean =>
   isDefined(flatRole) &&
-  !flatRole.isEditable &&
   flatRole.applicationUniversalIdentifier ===
     workspaceCustomApplicationUniversalIdentifier &&
   flatRole.universalIdentifier ===

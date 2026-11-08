@@ -32,7 +32,7 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
   flatRole:
     | Pick<
         UniversalFlatRole,
-        'universalIdentifier' | 'applicationUniversalIdentifier' | 'isEditable'
+        'universalIdentifier' | 'applicationUniversalIdentifier'
       >
     | undefined;
   applicationDefaultRoleUniversalIdentifier: string | undefined;

@@ -43,20 +43,17 @@ const OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
 const owningApplicationDefaultRole = {
   universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
-  isEditable: true,
 };
 
 const owningApplicationOtherRole = {
   universalIdentifier: 'stripe-other-role-universal-identifier',
   applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
-  isEditable: true,
 };
 
 const otherApplicationDefaultRole = {
   universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   applicationUniversalIdentifier:
     WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-  isEditable: true,
 };
 
 const OWNING_APPLICATION_GRANT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -67,17 +64,9 @@ const OWNING_APPLICATION_GRANT_ROLE_UNIVERSAL_IDENTIFIER =
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   });
 
-const editableRoleTakingGrantIdentifier = {
-  universalIdentifier: OWNING_APPLICATION_GRANT_ROLE_UNIVERSAL_IDENTIFIER,
-  applicationUniversalIdentifier:
-    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-  isEditable: true,
-};
-
 const nonCustomRoleTakingGrantIdentifier = {
   universalIdentifier: OWNING_APPLICATION_GRANT_ROLE_UNIVERSAL_IDENTIFIER,
   applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
-  isEditable: false,
 };
 
 describe('validateFieldPermissionGrantsNoDisabledAction', () => {
@@ -101,7 +90,6 @@ describe('validateFieldPermissionGrantsNoDisabledAction', () => {
     for (const flatRole of [
       owningApplicationOtherRole,
       otherApplicationDefaultRole,
-      editableRoleTakingGrantIdentifier,
       nonCustomRoleTakingGrantIdentifier,
     ]) {
       expect(
@@ -150,7 +138,6 @@ describe('validateFieldPermissionGrantsNoDisabledAction', () => {
             }),
             applicationUniversalIdentifier:
               WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-            isEditable: false,
           },
           applicationDefaultRoleUniversalIdentifier: undefined,
           workspaceCustomApplicationUniversalIdentifier:
