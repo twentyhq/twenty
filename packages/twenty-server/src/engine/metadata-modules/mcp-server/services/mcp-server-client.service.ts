@@ -36,8 +36,7 @@ const LIST_TOOLS_TIMEOUT_MS = 20_000;
 const CALL_TOOL_TIMEOUT_MS = 60_000;
 const LIST_TOOLS_MAX_PAGES = 10;
 const SIGN_IN_PROBE_TIMEOUT_MS = 5_000;
-// A refresh behind the lock may discover the authorization server and then exchange the
-// token, each on its own 15 s budget; waiters give it 30 s before giving up.
+// Waiters outlast a refresh that discovers the authorization server and then exchanges the token, 15 s each.
 const CONNECTED_ACCOUNT_REFRESH_LOCK_OPTIONS = { ms: 250, maxRetries: 120 };
 
 type McpServerTarget = Pick<
@@ -327,8 +326,7 @@ export class McpServerClientService {
       );
     }
 
-    // Refresh tokens rotate: concurrent refreshes are serialized and re-read the row so
-    // the later caller reuses the fresh tokens instead of burning the consumed one.
+    // Refresh tokens rotate: the later of two concurrent refreshes must reuse the first one's tokens, not burn the consumed one.
     return this.cacheLockService.withLock(
       async () => {
         const latestConnectedAccount =

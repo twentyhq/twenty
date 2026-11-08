@@ -1,8 +1,7 @@
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 
-// Only a provider Twenty created for this server goes away with it; one an app declared never does.
-// A generated provider is its own universal identifier, a synced one carries the manifest's.
+// Only a provider Twenty generated goes away with its server; one an app declared carries the manifest's universal identifier, never its own id.
 export const isMcpServerSignInConnectionProvider = ({
   flatConnectionProvider,
   flatMcpServer,
