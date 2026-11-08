@@ -146,7 +146,7 @@ export class McpServerClientService {
     const refreshedAccessToken = await this.resolveAccessTokenOrMarkAuthFailed({
       connectedAccount,
       workspaceId,
-      forceRefresh: true,
+      shouldForceRefresh: true,
     });
 
     try {
@@ -355,14 +355,14 @@ export class McpServerClientService {
   private async resolveAccessTokenOrMarkAuthFailed({
     connectedAccount,
     workspaceId,
-    forceRefresh = false,
+    shouldForceRefresh = false,
   }: {
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
-    forceRefresh?: boolean;
+    shouldForceRefresh?: boolean;
   }): Promise<string> {
     const { accessToken } =
-      !forceRefresh &&
+      !shouldForceRefresh &&
       (await this.connectedAccountRefreshTokensService.isAccessTokenStillValid(
         connectedAccount,
       ))
@@ -373,7 +373,7 @@ export class McpServerClientService {
         : await this.refreshTokensOrMarkAuthFailed({
             connectedAccount,
             workspaceId,
-            forceRefresh,
+            shouldForceRefresh,
           });
 
     return this.connectedAccountTokenEncryptionService.decrypt({
@@ -386,11 +386,11 @@ export class McpServerClientService {
   private async refreshTokensOrMarkAuthFailed({
     connectedAccount,
     workspaceId,
-    forceRefresh,
+    shouldForceRefresh,
   }: {
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
-    forceRefresh: boolean;
+    shouldForceRefresh: boolean;
   }) {
     return this.cacheLockService.withLock(
       async () => {
@@ -404,7 +404,7 @@ export class McpServerClientService {
           connectedAccount.lastCredentialsRefreshedAt?.getTime();
 
         try {
-          return forceRefresh && !isAlreadyRefreshed
+          return shouldForceRefresh && !isAlreadyRefreshed
             ? await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
                 latestConnectedAccount,
                 workspaceId,
