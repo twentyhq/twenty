@@ -439,7 +439,10 @@ export class RecordPermissionsService {
     });
 
     if (!isDefined(flatObjectMetadata)) {
-      return [];
+      throw new PermissionsException(
+        PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
+        PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
     }
 
     return buildUnreadableFieldsWithCondition({
