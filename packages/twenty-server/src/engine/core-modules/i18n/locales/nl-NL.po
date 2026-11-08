@@ -16372,7 +16372,6 @@ msgstr "Gebruiker maakt geen deel uit van de werkruimte."
 
 #. js-lingui-id: siJgSI
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/user/user.exception.ts
 msgid "User not found."
 msgstr "Gebruiker niet gevonden."
