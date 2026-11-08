@@ -12778,7 +12778,7 @@ msgstr "リカバリーコードの取り消しに失敗しました。"
 #. js-lingui-id: umTjkJ
 #: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
 msgid "Failed to save assistant settings. Try again."
-msgstr ""
+msgstr "アシスタント設定の保存に失敗しました。もう一度お試しください。"
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts

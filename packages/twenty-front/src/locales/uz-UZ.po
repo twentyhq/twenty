@@ -12778,7 +12778,7 @@ msgstr "Tiklash kodini bekor qilib bo‘lmadi."
 #. js-lingui-id: umTjkJ
 #: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
 msgid "Failed to save assistant settings. Try again."
-msgstr ""
+msgstr "Yordamchi sozlamalarini saqlab bo‘lmadi. Qayta urinib ko‘ring."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts

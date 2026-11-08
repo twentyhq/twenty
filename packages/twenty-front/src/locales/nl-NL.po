@@ -12778,7 +12778,7 @@ msgstr "Herstelcode intrekken mislukt."
 #. js-lingui-id: umTjkJ
 #: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
 msgid "Failed to save assistant settings. Try again."
-msgstr ""
+msgstr "Kan de assistentinstellingen niet opslaan. Probeer het opnieuw."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
