@@ -134,6 +134,7 @@ const filterByStatus = (status: string) =>
 
 const buildContext = (): RowAccessEvaluationContext => ({
   shouldIgnoreSoftDeleteDefaultFilter: false,
+  findRelationHopJoinValues: jest.fn().mockResolvedValue([]),
   fetchRecordShares: jest.fn(async ({ recordIds }) =>
     recordShares.filter((recordShare) =>
       recordIds.includes(recordShare.recordId),

@@ -10,7 +10,8 @@ import { findRowLevelPermissionMatchingRecordIds } from 'src/engine/permissions/
 export const findRecordIdsGrantedByRls = async (
   request: PermissionsRowAccessEvaluationRequest,
 ): Promise<string[]> => {
-  const matchingRecordIds = findRowLevelPermissionMatchingRecordIds(request);
+  const matchingRecordIds =
+    await findRowLevelPermissionMatchingRecordIds(request);
 
   if (!isDefined(matchingRecordIds)) {
     return [];

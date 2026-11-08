@@ -106,6 +106,7 @@ const filter = ({
     },
     objectMetadata: invoice,
     recordsPermissions,
+    rlsRuleFilterByRoleId: new Map(),
     metadataMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

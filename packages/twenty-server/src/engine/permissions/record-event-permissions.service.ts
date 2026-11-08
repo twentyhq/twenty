@@ -16,6 +16,7 @@ import { type PrivateRecordState } from 'src/engine/permissions/internal/private
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
+import { resolveRlsRuleFiltersByRole } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-filters-by-role.util';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -72,6 +73,18 @@ export class RecordEventPermissionsService {
     }
 
     return filterReadableEvents({
+      rlsRuleFilterByRoleId: await resolveRlsRuleFiltersByRole({
+        principals,
+        metadataMaps,
+        flatObjectMetadata: eventBatch.objectMetadata,
+        fieldList: 'unreadableFields',
+        records: resolveEventRecordSnapshots(events),
+        findRelationHopJoinValues: (args) =>
+          this.recordPermissionReadRepository.findRelationHopJoinValues({
+            ...args,
+            workspaceId: eventBatch.workspaceId,
+          }),
+      }),
       events,
       readableRecordIds: await findReadableRecordIdsInBatch(principals),
       principals,
@@ -188,6 +201,11 @@ export class RecordEventPermissionsService {
           shouldIgnoreSoftDeleteDefaultFilter: true,
           fetchRecordShares,
           findPrivateRecordStates,
+          findRelationHopJoinValues: (args) =>
+            this.recordPermissionReadRepository.findRelationHopJoinValues({
+              ...args,
+              workspaceId,
+            }),
         },
       });
 

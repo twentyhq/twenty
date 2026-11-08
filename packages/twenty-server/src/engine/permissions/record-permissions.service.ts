@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import {
   type FeatureFlagKey,
   type ObjectRecordsOperationType,
-  type RecordGqlOperationFilter,
   type RecordShareAccessLevel,
   type ObjectRecord,
 } from 'twenty-shared/types';
@@ -14,6 +13,7 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { composeRecordFieldMetadataIds } from 'src/engine/permissions/internal/masking/utils/compose-record-field-metadata-ids.util';
+import { resolveRlsRuleFiltersByRole } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-filters-by-role.util';
 import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/masking/utils/find-rls-rule-fields-by-role.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter-for-role.util';
@@ -544,11 +544,16 @@ export class RecordPermissionsService {
         operationType: 'create',
       });
 
-    validateRLSPredicatesForRecords({
+    await validateRLSPredicatesForRecords({
       records,
       objectMetadata: flatObjectMetadata,
       principals,
       metadataMaps,
+      findRelationHopJoinValues: (args) =>
+        this.recordPermissionReadRepository.findRelationHopJoinValues({
+          ...args,
+          workspaceId: principals.workspaceId,
+        }),
     });
   }
 
@@ -587,12 +592,13 @@ export class RecordPermissionsService {
       return;
     }
 
-    this.assertUpdatedColumnsAreEditableOrThrow({
+    await this.assertUpdatedColumnsAreEditableOrThrow({
       principals,
       metadataMaps,
       flatObjectMetadata,
       updates,
       formatRecords,
+      transactionScope,
     });
 
     const context = this.buildWriteRowAccessEvaluationContext({
@@ -642,12 +648,13 @@ export class RecordPermissionsService {
     }
   }
 
-  private assertUpdatedColumnsAreEditableOrThrow({
+  private async assertUpdatedColumnsAreEditableOrThrow({
     principals,
     metadataMaps,
     flatObjectMetadata,
     updates,
     formatRecords,
+    transactionScope,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
     metadataMaps: PermissionsMetadataMaps;
@@ -657,16 +664,28 @@ export class RecordPermissionsService {
       setColumns: Record<string, unknown>;
     }[];
     formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
-  }): void {
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
     const columnNameToFieldMetadataId = getColumnNameToFieldMetadataIdMap(
       flatObjectMetadata,
       metadataMaps.flatFieldMetadataMaps,
     );
 
-    const rlsRuleFilterByRoleId = new Map<
-      string,
-      RecordGqlOperationFilter | null
-    >();
+    const rlsRuleFilterByRoleId = await resolveRlsRuleFiltersByRole({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      fieldList: 'uneditableFields',
+      records: formatRecords(
+        updates.map(({ rawRecordBefore }) => rawRecordBefore),
+      ),
+      findRelationHopJoinValues: (args) =>
+        this.recordPermissionReadRepository.findRelationHopJoinValues({
+          ...args,
+          workspaceId: principals.workspaceId,
+          transactionScope,
+        }),
+    });
 
     for (const { rawRecordBefore, setColumns } of updates) {
       const uneditableFieldMetadataIds = composeRecordFieldMetadataIds({
@@ -1006,6 +1025,12 @@ export class RecordPermissionsService {
 
     return {
       shouldIgnoreSoftDeleteDefaultFilter: false,
+      findRelationHopJoinValues: (args) =>
+        this.recordPermissionReadRepository.findRelationHopJoinValues({
+          ...args,
+          workspaceId,
+          transactionScope,
+        }),
       fetchRecordShares: async ({
         objectMetadataId,
         recordIds: requestedRecordIds,

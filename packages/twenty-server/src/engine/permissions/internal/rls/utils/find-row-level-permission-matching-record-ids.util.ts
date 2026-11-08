@@ -3,14 +3,15 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { resolveRelationHopsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relation-hops-in-record-filter.util';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-row-level-permission-filter.util';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
-export const findRowLevelPermissionMatchingRecordIds = ({
+export const findRowLevelPermissionMatchingRecordIds = async ({
   records,
   context,
   ...request
-}: PermissionsRowAccessEvaluationRequest): string[] | undefined => {
+}: PermissionsRowAccessEvaluationRequest): Promise<string[] | undefined> => {
   const rowLevelPermissionFilter = resolvePermissionsRowLevelPermissionFilter({
     ...request,
     tableAlias: request.flatObjectMetadata.nameSingular,
@@ -20,11 +21,19 @@ export const findRowLevelPermissionMatchingRecordIds = ({
     return undefined;
   }
 
+  const recordFilter = await resolveRelationHopsInRecordFilter({
+    recordFilter: rowLevelPermissionFilter.recordFilter,
+    flatObjectMetadata: request.flatObjectMetadata,
+    records,
+    metadataMaps: request.metadataMaps,
+    findRelationHopJoinValues: context.findRelationHopJoinValues,
+  });
+
   return records
     .filter((record) =>
       isRecordMatchingFilter({
         record,
-        filter: rowLevelPermissionFilter.recordFilter,
+        filter: recordFilter,
         flatObjectMetadata: request.flatObjectMetadata,
         flatFieldMetadataMaps: request.metadataMaps.flatFieldMetadataMaps,
         shouldIgnoreSoftDeleteDefaultFilter:

@@ -31,7 +31,7 @@ export const findGrantedRecordIds = async (
   ]);
   const rowLevelPermissionMatchingRecordIds =
     areRecordGrantsHeldToRowLevelPermissions(request)
-      ? findRowLevelPermissionMatchingRecordIds(request)
+      ? await findRowLevelPermissionMatchingRecordIds(request)
       : undefined;
   const recordGrantCandidateIds = isDefined(rowLevelPermissionMatchingRecordIds)
     ? new Set(rowLevelPermissionMatchingRecordIds)

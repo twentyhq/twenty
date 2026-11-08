@@ -212,6 +212,50 @@ export class RecordPermissionReadRepository {
     );
   }
 
+  async findRelationHopJoinValues({
+    workspaceId,
+    targetFlatObjectMetadata,
+    targetColumnName,
+    tableAlias,
+    condition,
+    joinValues,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    targetFlatObjectMetadata: FlatObjectMetadata;
+    targetColumnName: string;
+    tableAlias: string;
+    condition: SqlCondition | null;
+    joinValues: string[];
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<string[]> {
+    if (joinValues.length === 0) {
+      return [];
+    }
+
+    const quotedTableAlias = escapeIdentifier(tableAlias);
+    const quotedColumn = `${quotedTableAlias}.${escapeIdentifier(targetColumnName)}`;
+    const rows = await this.recordPermissionQueryService.execute<{
+      joinValue: string;
+    }>({
+      workspaceId,
+      transactionScope,
+      query: {
+        sql: `SELECT DISTINCT ${quotedColumn} AS "joinValue"
+          FROM ${buildWorkspaceTableExpression({
+            workspaceId,
+            tableName: computeObjectTargetTable(targetFlatObjectMetadata),
+          })} AS ${quotedTableAlias}
+          WHERE ${quotedColumn} = ANY(:joinValues)
+            AND ${quotedTableAlias}."deletedAt" IS NULL
+            ${condition ? `AND (${condition.sql})` : ''}`,
+        parameters: { ...(condition?.parameters ?? {}), joinValues },
+      },
+    });
+
+    return rows.map(({ joinValue }) => joinValue);
+  }
+
   async findRecordIdsMatchingCondition({
     workspaceId,
     flatObjectMetadata,

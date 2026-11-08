@@ -1,3 +1,4 @@
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
@@ -17,6 +18,7 @@ import { v4 } from 'uuid';
 
 import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
 import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -69,12 +71,20 @@ describe('RLS rules through a relation (integration)', () => {
         label: `RLS hop ${v4()}`,
         description: 'RLS hop',
         canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: false,
+        canUpdateAllObjectRecords: true,
         canSoftDeleteAllObjectRecords: false,
         canDestroyAllObjectRecords: false,
       },
     });
     const roleId = data.createOneRole.id;
+
+    await global.testDataSource.query(
+      `UPDATE core."role" SET "canCreateAllObjectRecords" = TRUE WHERE "id" = $1`,
+      [roleId],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['rolesPermissions']);
     const ruleId = v4();
 
     roleIds.push(roleId);
@@ -276,6 +286,58 @@ describe('RLS rules through a relation (integration)', () => {
     });
 
     expect(await findPerson()).toEqual([]);
+  });
+
+  it('should check creates and updates through the relation', async () => {
+    await global.testDataSource.query(
+      `UPDATE ${COMPANY_TABLE} SET "name" = 'Hop match' WHERE "id" = $1`,
+      [company.id],
+    );
+    await assignRuleThroughRelation({
+      objectMetadataId: personObjectMetadataId,
+      relationFieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: personObjectMetadataId,
+        name: 'company',
+      }),
+      fieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: companyObjectMetadataId,
+        name: 'name',
+      }),
+      value: 'Hop match',
+    });
+
+    const createPerson = (companyId: string) =>
+      makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          data: { id: v4(), companyId },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+    const accepted = await createPerson(company.id);
+    const rejected = await createPerson(otherCompany.id);
+
+    expect(accepted.body.errors).toBeUndefined();
+    expect(rejected.body.errors).toBeDefined();
+
+    const movedAway = await makeGraphqlApiRequest(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id',
+        recordId: person.id,
+        data: { companyId: otherCompany.id },
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(movedAway.body.errors).toBeDefined();
+
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
+      [accepted.body.data.createPerson.id],
+    );
   });
 
   it('should follow a one to many relation and a related record moving away', async () => {

@@ -4,7 +4,11 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import {
+  type PermissionsMetadataMaps,
+  type RowAccessEvaluationContext,
+} from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { resolveRelationHopsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relation-hops-in-record-filter.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import {
   PermissionsException,
@@ -18,14 +22,16 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectRecord> = {
   objectMetadata: FlatObjectMetadata;
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
+  findRelationHopJoinValues: RowAccessEvaluationContext['findRelationHopJoinValues'];
 };
 
-export const validateRLSPredicatesForRecords = <T extends ObjectRecord>({
+export const validateRLSPredicatesForRecords = async <T extends ObjectRecord>({
   records,
   objectMetadata,
   principals,
   metadataMaps,
-}: ValidateRLSPredicatesForRecordsArgs<T>): void => {
+  findRelationHopJoinValues,
+}: ValidateRLSPredicatesForRecordsArgs<T>): Promise<void> => {
   const recordFilter = resolveRowLevelPermissionRecordFilter({
     principals,
     metadataMaps,
@@ -36,10 +42,18 @@ export const validateRLSPredicatesForRecords = <T extends ObjectRecord>({
     return;
   }
 
+  const resolvedRecordFilter = await resolveRelationHopsInRecordFilter({
+    recordFilter,
+    flatObjectMetadata: objectMetadata,
+    records,
+    metadataMaps,
+    findRelationHopJoinValues,
+  });
+
   for (const record of records) {
     const matchesRLS = isRecordMatchingFilter({
       record,
-      filter: recordFilter,
+      filter: resolvedRecordFilter,
       flatObjectMetadata: objectMetadata,
       flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     });

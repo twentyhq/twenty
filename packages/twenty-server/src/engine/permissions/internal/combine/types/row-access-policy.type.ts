@@ -14,6 +14,7 @@ import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/internal
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
+import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export type PermissionsMetadataMaps = {
@@ -52,6 +53,13 @@ export type RowAccessEvaluationContext = {
     objectMetadataId: string;
     recordIds: string[];
   }) => Promise<Map<string, PrivateRecordState>>;
+  findRelationHopJoinValues: (args: {
+    targetFlatObjectMetadata: FlatObjectMetadata;
+    targetColumnName: string;
+    tableAlias: string;
+    condition: SqlCondition | null;
+    joinValues: string[];
+  }) => Promise<string[]>;
 };
 
 export type PermissionsRowAccessEvaluationRequest =
