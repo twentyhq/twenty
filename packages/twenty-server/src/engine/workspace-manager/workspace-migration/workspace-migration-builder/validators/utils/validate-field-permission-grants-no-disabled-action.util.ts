@@ -1,14 +1,12 @@
 import { msg, t } from '@lingui/core/macro';
-import {
-  type FieldPermissionAction,
-  getApplicationGrantRoleUniversalIdentifier,
-} from 'twenty-shared/application';
+import { type FieldPermissionAction } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
+import { isApplicationGrantRole } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-application-grant-role.util';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 export const validateFieldPermissionGrantsNoDisabledAction = ({
@@ -50,15 +48,13 @@ export const validateFieldPermissionGrantsNoDisabledAction = ({
     return [];
   }
 
-  // A grant copies its application's default role. Temporary: to be checked
-  // through the grant's application target once validation order allows it
+  // A grant copies its application's default role
   if (
-    isDefined(flatRole) &&
-    flatRole.universalIdentifier ===
-      getApplicationGrantRoleUniversalIdentifier({
-        grantedApplicationUniversalIdentifier:
-          flatFieldMetadata.applicationUniversalIdentifier,
-      })
+    isApplicationGrantRole({
+      flatRole,
+      grantedApplicationUniversalIdentifier:
+        flatFieldMetadata.applicationUniversalIdentifier,
+    })
   ) {
     return [];
   }
