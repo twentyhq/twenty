@@ -4,7 +4,6 @@ import { isDefined, isPlainObject, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { stripEmptyValues } from 'src/engine/core-modules/tool-provider/output-transforms/strip-empty-values.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { McpServerToolCallService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-call.service';
@@ -18,6 +17,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { isWorkflowMcpToolAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/guards/is-workflow-mcp-tool-action.guard';
+import { removeNullToolArguments } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/utils/remove-null-tool-arguments.util';
 
 @Injectable()
 export class McpToolWorkflowAction implements WorkflowAction {
@@ -86,7 +86,9 @@ export class McpToolWorkflowAction implements WorkflowAction {
       },
     );
 
-    const filledToolInput = stripEmptyValues(resolveInput(toolInput, context));
+    const filledToolInput = removeNullToolArguments(
+      resolveInput(toolInput, context),
+    );
 
     const { output } = await this.mcpServerToolCallService.callTool({
       mcpServer,

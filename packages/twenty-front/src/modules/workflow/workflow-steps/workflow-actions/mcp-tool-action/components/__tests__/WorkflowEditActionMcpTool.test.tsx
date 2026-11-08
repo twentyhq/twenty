@@ -91,18 +91,17 @@ describe('WorkflowEditActionMcpTool', () => {
     await userEvent.type(screen.getByLabelText('query'), 'invoices');
     await userEvent.type(screen.getByLabelText('cursor'), 'page-2');
 
-    await waitFor(() =>
-      expect(onActionUpdate).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          settings: expect.objectContaining({
-            input: {
-              mcpServerId: 'mcp-server-id',
-              toolName: 'search_docs',
-              toolInput: { query: 'invoices', cursor: 'page-2' },
-            },
-          }),
+    await waitFor(() => expect(onActionUpdate).toHaveBeenCalledTimes(1));
+    expect(onActionUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        settings: expect.objectContaining({
+          input: {
+            mcpServerId: 'mcp-server-id',
+            toolName: 'search_docs',
+            toolInput: { query: 'invoices', cursor: 'page-2' },
+          },
         }),
-      ),
+      }),
     );
   });
 

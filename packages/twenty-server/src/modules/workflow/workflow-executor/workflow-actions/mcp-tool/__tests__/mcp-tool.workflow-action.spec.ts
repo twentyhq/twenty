@@ -49,7 +49,13 @@ const buildInput = (toolName = 'search_docs'): WorkflowActionInput => {
       input: {
         mcpServerId: MCP_SERVER.id,
         toolName,
-        toolInput: { query: '{{trigger.query}}', limit: null },
+        toolInput: {
+          query: '{{trigger.query}}',
+          limit: null,
+          tags: [],
+          note: '',
+          filter: { status: null },
+        },
       },
     },
   };
@@ -118,15 +124,16 @@ const setup = async (mcpServer: typeof MCP_SERVER = MCP_SERVER) => {
 };
 
 describe('McpToolWorkflowAction', () => {
-  it('calls the tool as the run user with the filled-in arguments', async () => {
+  it('calls the tool as the run user, dropping only the untouched null inputs', async () => {
     const { action, callTool } = await setup();
 
     const output = await action.execute(buildInput());
 
+    expect(callTool).toHaveBeenCalledTimes(1);
     expect(callTool).toHaveBeenCalledWith({
       mcpServer: MCP_SERVER,
       toolName: 'search_docs',
-      toolArguments: { query: 'invoices' },
+      toolArguments: { query: 'invoices', tags: [], note: '' },
       userWorkspaceId: 'user-workspace-id',
     });
     expect(output).toEqual({ result: { total: 2 } });
@@ -190,6 +197,9 @@ describe('McpToolWorkflowAction', () => {
     });
 
     await expect(action.execute(buildInput())).rejects.toBe(forbidden);
+    expect(
+      assertRunApplicationCanTriggerStepTargetOrThrow,
+    ).toHaveBeenCalledTimes(1);
     expect(
       assertRunApplicationCanTriggerStepTargetOrThrow,
     ).toHaveBeenCalledWith(

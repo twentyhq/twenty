@@ -121,7 +121,7 @@ export const SidePanelWorkflowSelectAction = ({
   }) => {
     onActionSelected({
       type: 'MCP_TOOL',
-      defaultSettings: { input: { mcpServerId, toolName, toolInput: {} } },
+      defaultSettings: { input: { mcpServerId, toolName } },
     });
   };
 
