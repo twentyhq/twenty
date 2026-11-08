@@ -418,7 +418,7 @@ export class RecordPermissionsService {
     });
   }
 
-  async findUnreadableFieldsWithSqlCondition({
+  async findUnreadableFieldsWithSqlConditionOrThrow({
     principals,
     objectMetadataId,
     tableAlias,

@@ -12,6 +12,25 @@ import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/wor
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
+import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
+
+const isSameRowLevelPermissionPredicateGroup = ({
+  fieldPermission,
+  otherFieldPermission,
+}: {
+  fieldPermission: Pick<
+    UniversalFlatFieldPermission,
+    'rowLevelPermissionPredicateGroupUniversalIdentifier'
+  >;
+  otherFieldPermission: Pick<
+    UniversalFlatFieldPermission,
+    'rowLevelPermissionPredicateGroupUniversalIdentifier'
+  >;
+}): boolean =>
+  (fieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier ??
+    null) ===
+  (otherFieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier ??
+    null);
 
 @Injectable()
 export class FlatFieldPermissionValidatorService {
@@ -132,9 +151,10 @@ export class FlatFieldPermissionValidatorService {
           flatFieldPermissionToValidate.objectMetadataUniversalIdentifier &&
         fp.fieldMetadataUniversalIdentifier ===
           flatFieldPermissionToValidate.fieldMetadataUniversalIdentifier &&
-        (fp.rowLevelPermissionPredicateGroupUniversalIdentifier ?? null) ===
-          (flatFieldPermissionToValidate.rowLevelPermissionPredicateGroupUniversalIdentifier ??
-            null) &&
+        isSameRowLevelPermissionPredicateGroup({
+          fieldPermission: fp,
+          otherFieldPermission: flatFieldPermissionToValidate,
+        }) &&
         fp.universalIdentifier !==
           flatFieldPermissionToValidate.universalIdentifier,
     );
@@ -276,9 +296,10 @@ export class FlatFieldPermissionValidatorService {
           updatedFlatFieldPermission.objectMetadataUniversalIdentifier &&
         fp.fieldMetadataUniversalIdentifier ===
           updatedFlatFieldPermission.fieldMetadataUniversalIdentifier &&
-        (fp.rowLevelPermissionPredicateGroupUniversalIdentifier ?? null) ===
-          (updatedFlatFieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier ??
-            null) &&
+        isSameRowLevelPermissionPredicateGroup({
+          fieldPermission: fp,
+          otherFieldPermission: updatedFlatFieldPermission,
+        }) &&
         fp.universalIdentifier !== universalIdentifier,
     );
 

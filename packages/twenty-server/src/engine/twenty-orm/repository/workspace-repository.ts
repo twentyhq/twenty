@@ -1823,7 +1823,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }
 
       const unreadableFieldsWithSqlCondition =
-        await this.options.internalContext.recordPermissions.findUnreadableFieldsWithSqlCondition(
+        await this.options.internalContext.recordPermissions.findUnreadableFieldsWithSqlConditionOrThrow(
           {
             principals: this.resolvePermissionsPrincipalsOrThrow(),
             objectMetadataId: tableShape.objectMetadataId,
