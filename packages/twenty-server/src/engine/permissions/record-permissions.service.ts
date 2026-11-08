@@ -287,14 +287,14 @@ export class RecordPermissionsService {
   }
 
   findUnreadableFields(question: ObjectQuestion): Promise<Set<string>> {
-    return this.findObjectFields({
+    return this.findObjectFieldMetadataIds({
       ...question,
       fieldList: 'unreadableFields',
     });
   }
 
   findUneditableFields(question: ObjectQuestion): Promise<Set<string>> {
-    return this.findObjectFields({
+    return this.findObjectFieldMetadataIds({
       ...question,
       fieldList: 'uneditableFields',
     });
@@ -838,7 +838,7 @@ export class RecordPermissionsService {
     });
   }
 
-  private async findObjectFields({
+  private async findObjectFieldMetadataIds({
     principals,
     objectMetadataId,
     fieldList,

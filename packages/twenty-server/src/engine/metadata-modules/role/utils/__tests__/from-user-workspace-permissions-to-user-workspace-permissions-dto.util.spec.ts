@@ -1,4 +1,4 @@
-import { type PermissionFlagType } from 'twenty-shared/constants';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
@@ -14,8 +14,15 @@ const ALL_RECORDS = {
   canDestroyAllRecords: true,
 };
 
-const NO_PERMISSION_FLAGS: Record<PermissionFlagType, boolean> =
-  JSON.parse('{}');
+const buildPermissionFlags = () => {
+  const permissionFlags = {} as Record<PermissionFlagType, boolean>;
+
+  for (const permissionFlag of Object.values(PermissionFlagType)) {
+    permissionFlags[permissionFlag] = false;
+  }
+
+  return permissionFlags;
+};
 
 const toDto = (objectRecordsPermissions: ObjectRecordsPermissions) =>
   fromUserWorkspacePermissionsToUserWorkspacePermissionsDto({
@@ -23,7 +30,7 @@ const toDto = (objectRecordsPermissions: ObjectRecordsPermissions) =>
       ...NO_ROLE_RECORDS_PERMISSIONS,
       objects: { [OBJECT_METADATA_ID]: objectRecordsPermissions },
     },
-    permissionFlags: NO_PERMISSION_FLAGS,
+    permissionFlags: buildPermissionFlags(),
   }).objectRecordsPermissions?.[0];
 
 describe('fromUserWorkspacePermissionsToUserWorkspacePermissionsDto', () => {
