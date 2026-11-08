@@ -264,6 +264,34 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     expect(refreshRequests[0].get('resource')).toBe(fakeMcpServer.url);
   });
 
+  it('asks to sign in again once the authorization server rejects the refresh token', async () => {
+    const expireAccessToken = () =>
+      globalThis.testDataSource.query(
+        `UPDATE core."connectedAccount" SET "accessTokenExpiresAt" = now() - interval '1 hour', "lastCredentialsRefreshedAt" = now() - interval '2 hours' WHERE "connectionProviderId" = $1`,
+        [getConnectionProviderId()],
+      );
+    const [{ refreshToken: consumedRefreshToken }] =
+      await readConnectedAccounts(getConnectionProviderId());
+
+    await expireAccessToken();
+    await syncMcpServerTools(mcpServer.id);
+    await globalThis.testDataSource.query(
+      `UPDATE core."connectedAccount" SET "refreshToken" = $2 WHERE "connectionProviderId" = $1`,
+      [getConnectionProviderId(), consumedRefreshToken],
+    );
+    await expireAccessToken();
+
+    const syncResponse = await syncMcpServerTools(mcpServer.id);
+    const [connectedAccount] = await readConnectedAccounts(
+      getConnectionProviderId(),
+    );
+
+    expect(syncResponse.body.data.syncMcpServerTools.toolsSyncError).toBe(
+      'The connected account for this MCP server was signed out. Sign in again to use it.',
+    );
+    expect(connectedAccount.authFailedAt).not.toBeNull();
+  });
+
   it('lists the connection to its owner only and lets them remove it', async () => {
     const findServerConnections = async (token?: string) => {
       const response = await getMyConnectedAccounts(token);

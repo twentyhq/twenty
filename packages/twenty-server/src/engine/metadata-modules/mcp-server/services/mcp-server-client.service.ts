@@ -24,6 +24,10 @@ import {
   McpServerException,
   McpServerExceptionCode,
 } from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
+import {
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 const MCP_CLIENT_INFO = { name: 'twenty', version: '1.0.0' };
@@ -255,15 +259,49 @@ export class McpServerClientService {
       );
     }
 
-    const { accessToken } =
-      await this.connectedAccountRefreshTokensService.resolveTokens(
-        connectedAccount,
-        workspaceId,
-      );
+    const { accessToken } = await this.resolveTokensOrMarkAuthFailed({
+      connectedAccount,
+      workspaceId,
+    });
 
     return this.connectedAccountTokenEncryptionService.decrypt({
       ciphertext: accessToken,
       workspaceId,
     });
+  }
+
+  // No app logic reports failures for these accounts, so a rejected refresh is flagged here
+  // and the member is asked to sign in again instead of the account being retried forever.
+  private async resolveTokensOrMarkAuthFailed({
+    connectedAccount,
+    workspaceId,
+  }: {
+    connectedAccount: ConnectedAccountEntity;
+    workspaceId: string;
+  }) {
+    try {
+      return await this.connectedAccountRefreshTokensService.resolveTokens(
+        connectedAccount,
+        workspaceId,
+      );
+    } catch (error) {
+      if (
+        !(error instanceof ConnectedAccountRefreshAccessTokenException) ||
+        error.code !==
+          ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN
+      ) {
+        throw error;
+      }
+
+      await this.connectedAccountRepository.update(
+        { id: connectedAccount.id, workspaceId },
+        { authFailedAt: new Date(), authFailedReason: error.message },
+      );
+
+      throw new McpServerException(
+        'The connected account for this MCP server was signed out. Sign in again to use it.',
+        McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
+      );
+    }
   }
 }
