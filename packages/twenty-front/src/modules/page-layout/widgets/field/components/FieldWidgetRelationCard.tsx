@@ -5,13 +5,15 @@ import { FieldWidgetRelationRecordsCard } from '@/page-layout/widgets/field/comp
 import { useFieldWidgetRelationRecordsTotalCount } from '@/page-layout/widgets/field/hooks/useFieldWidgetRelationRecordsTotalCount';
 import { useFieldWidgetRelationSeeAllHref } from '@/page-layout/widgets/field/hooks/useFieldWidgetRelationSeeAllHref';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { isDefined } from 'twenty-shared/utils';
 
 type FieldWidgetRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
-  relationValue: any;
+  relationValue: unknown;
   isInSidePanel: boolean;
 };
+
+const isObjectRecord = (value: unknown): value is ObjectRecord =>
+  typeof value === 'object' && value !== null;
 
 export const FieldWidgetRelationCard = ({
   fieldDefinition,
@@ -37,7 +39,7 @@ export const FieldWidgetRelationCard = ({
 
   const records: ObjectRecord[] = Array.isArray(relationValue)
     ? relationValue
-    : isDefined(relationValue)
+    : isObjectRecord(relationValue)
       ? [relationValue]
       : [];
 

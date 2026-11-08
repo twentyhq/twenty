@@ -6,7 +6,7 @@ import { useFieldWidgetJunctionRelationRecords } from '@/page-layout/widgets/fie
 
 type FieldWidgetJunctionRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
-  relationValue: any;
+  relationValue: unknown;
   isInSidePanel: boolean;
   junctionConfig: ValidResolvedJunctionConfig;
 };

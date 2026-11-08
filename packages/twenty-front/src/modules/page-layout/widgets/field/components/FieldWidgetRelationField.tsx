@@ -6,9 +6,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 type FieldWidgetRelationFieldProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
-  relationValue: any;
+  relationValue: unknown;
   isInSidePanel: boolean;
 };
+
+const isObjectRecord = (value: unknown): value is ObjectRecord =>
+  typeof value === 'object' && value !== null;
 
 export const FieldWidgetRelationField = ({
   fieldDefinition,
@@ -28,9 +31,11 @@ export const FieldWidgetRelationField = ({
     return null;
   }
 
-  const relatedRecords: ObjectRecord[] = isOneToMany
+  const relatedRecords: ObjectRecord[] = Array.isArray(relationValue)
     ? relationValue
-    : [relationValue];
+    : isObjectRecord(relationValue)
+      ? [relationValue]
+      : [];
 
   return (
     <FieldWidgetRelationRecordChips

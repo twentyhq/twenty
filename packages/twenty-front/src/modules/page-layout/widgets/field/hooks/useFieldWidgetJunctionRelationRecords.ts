@@ -8,7 +8,7 @@ export const useFieldWidgetJunctionRelationRecords = ({
   relationValue,
   junctionConfig,
 }: {
-  relationValue: any;
+  relationValue: unknown;
   junctionConfig: Pick<ValidJunctionConfig, 'targetFields'>;
 }): FieldWidgetRelationRecord[] => {
   const { objectMetadataItems } = useObjectMetadataItems();

@@ -3,7 +3,7 @@ import { FieldWidgetRelationRecordChips } from '@/page-layout/widgets/field/comp
 import { useFieldWidgetJunctionRelationRecords } from '@/page-layout/widgets/field/hooks/useFieldWidgetJunctionRelationRecords';
 
 type FieldWidgetJunctionRelationFieldProps = {
-  relationValue: any;
+  relationValue: unknown;
   isInSidePanel: boolean;
   junctionConfig: ValidResolvedJunctionConfig;
 };

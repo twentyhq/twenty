@@ -9,7 +9,11 @@ import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-l
 import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
 import { RecordDetailRelationRecordsListItem } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem';
 import { RecordDetailRelationRecordsListItemEffect } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItemEffect';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import {
+  FieldContext,
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
   FieldInputEventContext,
   type FieldInputEvent,
@@ -93,25 +97,21 @@ export const FieldWidgetRelationRecordsCard = ({
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const useUpdateOneObjectRecordMutation = () => {
-    const updateEntity = ({
-      variables,
-    }: {
-      variables: {
-        where: { id: string };
-        updateOneRecordInput: Record<string, unknown>;
-      };
-    }) => {
+  const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+      const idToUpdate = variables.where.id;
+
+      if (typeof idToUpdate !== 'string') {
+        return;
+      }
+
       updateOneRecord({
         objectNameSingular: targetRecord.targetObjectNameSingular,
-        idToUpdate: variables.where.id,
+        idToUpdate,
         updateOneRecordInput: variables.updateOneRecordInput,
       });
     };
-    return [updateEntity, { loading: false }] as [
-      (params: any) => void,
-      { loading: boolean },
-    ];
+    return [updateEntity, { loading: false }];
   };
 
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
