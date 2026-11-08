@@ -2,10 +2,10 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { findMyConnectedAccounts } from 'test/integration/metadata/suites/connected-account/utils/find-my-connected-accounts.util';
-import { createOneOidcIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-oidc-identity-provider.util';
 import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
+import { createTestOidcIdentityProvider } from 'test/integration/sso/utils/create-test-oidc-identity-provider.util';
 import { getSsoTestIdentityProvider } from 'test/integration/sso/utils/get-sso-test-identity-provider.util';
-import { insertOtherWorkspaceOidcIdentityProvider } from 'test/integration/sso/utils/insert-other-workspace-oidc-identity-provider.util';
+import { getYcombinatorAdminAccessToken } from 'test/integration/sso/utils/get-ycombinator-admin-access-token.util';
 import { signInWithOidc } from 'test/integration/sso/utils/sign-in-with-oidc.util';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -30,6 +30,7 @@ const deleteOidcConnectedAccounts = async (token: string) => {
   }
 };
 
+// activationStatus has no update API, so the suspension is set directly
 const setOtherWorkspaceActivationStatus = (
   activationStatus: WorkspaceActivationStatus,
 ) =>
@@ -66,7 +67,8 @@ const signInThroughVerifyUrl = async (verifyUrl: URL) => {
 describe('SSO login should succeed', () => {
   const testIdentityProvider = getSsoTestIdentityProvider();
   let identityProviderId: string;
-  const insertedIdentityProviderIds: string[] = [];
+  let ycombinatorAdminAccessToken: string;
+  let otherWorkspaceIdentityProviderId: string | undefined;
   let otherWorkspaceAccessToken: string | undefined;
   let isOtherWorkspaceSuspended = false;
 
@@ -78,17 +80,8 @@ describe('SSO login should succeed', () => {
     });
 
   beforeAll(async () => {
-    const { data } = await createOneOidcIdentityProvider({
-      expectToFail: false,
-      input: {
-        name: 'SSO integration test identity provider',
-        issuer: testIdentityProvider.issuer,
-        clientID: testIdentityProvider.clientId,
-        clientSecret: testIdentityProvider.clientSecret,
-      },
-    });
-
-    identityProviderId = data.createOIDCIdentityProvider.id;
+    identityProviderId = await createTestOidcIdentityProvider();
+    ycombinatorAdminAccessToken = await getYcombinatorAdminAccessToken();
   });
 
   afterEach(async () => {
@@ -102,10 +95,14 @@ describe('SSO login should succeed', () => {
       otherWorkspaceAccessToken = undefined;
     }
 
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."workspaceSSOIdentityProvider" WHERE "id" = ANY($1)`,
-      [insertedIdentityProviderIds.splice(0)],
-    );
+    if (isDefined(otherWorkspaceIdentityProviderId)) {
+      await deleteOneSsoIdentityProvider({
+        identityProviderId: otherWorkspaceIdentityProviderId,
+        token: ycombinatorAdminAccessToken,
+        expectToFail: false,
+      });
+      otherWorkspaceIdentityProviderId = undefined;
+    }
 
     await deleteOidcConnectedAccounts(APPLE_PHIL_GUEST_ACCESS_TOKEN);
   });
@@ -130,10 +127,9 @@ describe('SSO login should succeed', () => {
     });
 
     it('should sign an existing member into a suspended workspace', async () => {
-      const otherWorkspaceIdentityProviderId =
-        await insertOtherWorkspaceOidcIdentityProvider();
-
-      insertedIdentityProviderIds.push(otherWorkspaceIdentityProviderId);
+      otherWorkspaceIdentityProviderId = await createTestOidcIdentityProvider({
+        token: ycombinatorAdminAccessToken,
+      });
 
       await setOtherWorkspaceActivationStatus(
         WorkspaceActivationStatus.SUSPENDED,
