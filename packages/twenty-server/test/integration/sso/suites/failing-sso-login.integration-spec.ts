@@ -1,0 +1,262 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { SAML_IDENTITY_PROVIDER_CERTIFICATE } from 'test/integration/metadata/suites/sso-identity-provider/constants/saml-identity-provider-certificate.constant';
+import { createOneOidcIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-oidc-identity-provider.util';
+import { createOneSamlIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-saml-identity-provider.util';
+import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
+import { updateOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/update-one-sso-identity-provider.util';
+import { authorizeWithPassword } from 'test/integration/sso/utils/authorize-with-password.util';
+import { completeOidcLogin } from 'test/integration/sso/utils/complete-oidc-login.util';
+import { expectSsoErrorRedirect } from 'test/integration/sso/utils/expect-sso-error-redirect.util';
+import { getAuthorizationUrlForSso } from 'test/integration/sso/utils/get-authorization-url-for-sso.util';
+import { getSsoTestIdentityProvider } from 'test/integration/sso/utils/get-sso-test-identity-provider.util';
+import { replayOnTestApp } from 'test/integration/sso/utils/replay-on-test-app.util';
+import { signInWithOidc } from 'test/integration/sso/utils/sign-in-with-oidc.util';
+import { startOidcLogin } from 'test/integration/sso/utils/start-oidc-login.util';
+import { v4 as uuidv4 } from 'uuid';
+
+import { SsoIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
+const APPLE_SUBDOMAIN = 'apple';
+const DEFAULT_SUBDOMAIN = 'app';
+
+// The OIDC strategy keys the login session by identity provider id
+const buildMissingLoginSessionErrorMessage = (identityProviderId: string) =>
+  `Authentication error: did not find expected authorization request details in session, req.session["${identityProviderId}"] is undefined`;
+
+const replayRedirect = async (url: URL) => {
+  const response = await replayOnTestApp(url);
+
+  expect(response.status).toBe(302);
+
+  return new URL(response.headers.location);
+};
+
+// Only Apple has a test session, so the other workspace's invite hash is read directly
+const findOtherWorkspaceInviteHash = async (): Promise<string> => {
+  const [{ inviteHash }] = await globalThis.testDataSource.query(
+    `SELECT "inviteHash" FROM core."workspace" WHERE "id" = $1`,
+    [SEED_YCOMBINATOR_WORKSPACE_ID],
+  );
+
+  return inviteHash;
+};
+
+describe('SSO login should fail', () => {
+  const testIdentityProvider = getSsoTestIdentityProvider();
+  const createdIdentityProviderIds: string[] = [];
+
+  const createOidcIdentityProvider = async ({
+    clientSecret = testIdentityProvider.clientSecret,
+  }: { clientSecret?: string } = {}) => {
+    const { data } = await createOneOidcIdentityProvider({
+      expectToFail: false,
+      input: {
+        name: 'SSO integration test identity provider',
+        issuer: testIdentityProvider.issuer,
+        clientID: testIdentityProvider.clientId,
+        clientSecret,
+      },
+    });
+
+    createdIdentityProviderIds.push(data.createOIDCIdentityProvider.id);
+
+    return data.createOIDCIdentityProvider.id;
+  };
+
+  const signInAsPhil = ({
+    identityProviderId,
+    workspaceInviteHash,
+  }: {
+    identityProviderId: string;
+    workspaceInviteHash?: string;
+  }) =>
+    signInWithOidc({
+      identityProviderId,
+      workspaceInviteHash,
+      username: testIdentityProvider.username,
+      password: testIdentityProvider.password,
+    });
+
+  const authorizeAsPhil = async (identityProviderId: string) => {
+    const { data } = await getAuthorizationUrlForSso({
+      input: { identityProviderId },
+    });
+
+    const { authorizationUrl, sessionCookie } = await startOidcLogin(
+      new URL(data.getAuthorizationUrlForSSO.authorizationURL),
+    );
+
+    const callbackUrl = await authorizeWithPassword({
+      authorizationUrl,
+      username: testIdentityProvider.username,
+      password: testIdentityProvider.password,
+    });
+
+    return { callbackUrl, sessionCookie };
+  };
+
+  afterEach(async () => {
+    for (const identityProviderId of createdIdentityProviderIds.splice(0)) {
+      await deleteOneSsoIdentityProvider({
+        identityProviderId,
+        expectToFail: false,
+      });
+    }
+  });
+
+  describe('OIDC', () => {
+    it('when the login page asks for an unknown identity provider', async () => {
+      const { errors } = await getAuthorizationUrlForSso({
+        input: { identityProviderId: uuidv4() },
+        expectToFail: true,
+      });
+
+      expectOneNotInternalServerErrorSnapshot({ errors });
+    });
+
+    it('when the login route targets an unknown identity provider', async () => {
+      const redirectUrl = await replayRedirect(
+        new URL(`http://localhost/auth/oidc/login/${uuidv4()}`),
+      );
+
+      expectSsoErrorRedirect({
+        redirectUrl,
+        workspaceSubdomain: DEFAULT_SUBDOMAIN,
+        errorMessage: 'Identity provider not found',
+      });
+    });
+
+    it('when the login route targets a SAML identity provider', async () => {
+      const samlIdentityProviderId = uuidv4();
+
+      await createOneSamlIdentityProvider({
+        expectToFail: false,
+        input: {
+          id: samlIdentityProviderId,
+          name: 'SAML identity provider',
+          issuer: testIdentityProvider.issuer,
+          ssoURL: `${testIdentityProvider.issuer}/sso`,
+          certificate: SAML_IDENTITY_PROVIDER_CERTIFICATE,
+        },
+      });
+
+      createdIdentityProviderIds.push(samlIdentityProviderId);
+
+      const redirectUrl = await replayRedirect(
+        new URL(`http://localhost/auth/oidc/login/${samlIdentityProviderId}`),
+      );
+
+      expectSsoErrorRedirect({
+        redirectUrl,
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        errorMessage: 'Authentication error: Invalid Identity Provider type',
+      });
+    });
+
+    it('when the identity provider is inactive', async () => {
+      const identityProviderId = await createOidcIdentityProvider();
+
+      await updateOneSsoIdentityProvider({
+        expectToFail: false,
+        input: {
+          id: identityProviderId,
+          status: SsoIdentityProviderStatus.Inactive,
+        },
+      });
+
+      expectSsoErrorRedirect({
+        redirectUrl: await signInAsPhil({ identityProviderId }),
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        errorMessage: 'Identity provider not found',
+      });
+    });
+
+    it('when the invite hash belongs to another workspace', async () => {
+      const identityProviderId = await createOidcIdentityProvider();
+
+      expectSsoErrorRedirect({
+        redirectUrl: await signInAsPhil({
+          identityProviderId,
+          workspaceInviteHash: await findOtherWorkspaceInviteHash(),
+        }),
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        errorMessage: 'Identity provider does not belong to this workspace',
+      });
+    });
+
+    it('when the invite hash is unknown', async () => {
+      const identityProviderId = await createOidcIdentityProvider();
+
+      expectSsoErrorRedirect({
+        redirectUrl: await signInAsPhil({
+          identityProviderId,
+          workspaceInviteHash: uuidv4(),
+        }),
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        errorMessage: 'Workspace not found',
+      });
+    });
+
+    it('when the client secret is wrong', async () => {
+      const identityProviderId = await createOidcIdentityProvider({
+        clientSecret: 'wrong-client-secret',
+      });
+
+      expectSsoErrorRedirect({
+        redirectUrl: await signInAsPhil({ identityProviderId }),
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        errorMessage: /^Authentication error: invalid_client/,
+      });
+    });
+
+    it('when the callback comes without the login session', async () => {
+      const identityProviderId = await createOidcIdentityProvider();
+
+      const { callbackUrl } = await authorizeAsPhil(identityProviderId);
+
+      expectSsoErrorRedirect({
+        redirectUrl: await completeOidcLogin({
+          callbackUrl,
+          sessionCookie: '',
+        }),
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        errorMessage: buildMissingLoginSessionErrorMessage(identityProviderId),
+      });
+    });
+
+    it('when the callback state names another identity provider', async () => {
+      const identityProviderId = await createOidcIdentityProvider();
+      const otherIdentityProviderId = await createOidcIdentityProvider();
+
+      const { callbackUrl, sessionCookie } =
+        await authorizeAsPhil(identityProviderId);
+
+      callbackUrl.searchParams.set(
+        'state',
+        JSON.stringify({ identityProviderId: otherIdentityProviderId }),
+      );
+
+      expectSsoErrorRedirect({
+        redirectUrl: await completeOidcLogin({ callbackUrl, sessionCookie }),
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        errorMessage: buildMissingLoginSessionErrorMessage(
+          otherIdentityProviderId,
+        ),
+      });
+    });
+
+    it('when the callback has no state', async () => {
+      const redirectUrl = await replayRedirect(
+        new URL('http://localhost/auth/oidc/callback?code=code'),
+      );
+
+      expectSsoErrorRedirect({
+        redirectUrl,
+        workspaceSubdomain: DEFAULT_SUBDOMAIN,
+        errorMessage:
+          'Authentication error: Invalid OIDC identity provider params',
+      });
+    });
+  });
+});

@@ -7,18 +7,21 @@ type SignInWithOidcArgs = {
   identityProviderId: string;
   username: string;
   password: string;
+  workspaceInviteHash?: string;
 };
 
 export const signInWithOidc = async ({
   identityProviderId,
   username,
   password,
+  workspaceInviteHash,
 }: SignInWithOidcArgs) => {
-  const { authorizationURL: loginUrl } =
-    await getAuthorizationUrlForSso(identityProviderId);
+  const { data } = await getAuthorizationUrlForSso({
+    input: { identityProviderId, workspaceInviteHash },
+  });
 
   const { authorizationUrl, sessionCookie } = await startOidcLogin(
-    new URL(loginUrl),
+    new URL(data.getAuthorizationUrlForSSO.authorizationURL),
   );
 
   const callbackUrl = await authorizeWithPassword({
