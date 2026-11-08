@@ -11,6 +11,7 @@ export type FakeOAuthServer = {
   registeredClientIds: string[];
   tokenRequests: URLSearchParams[];
   issuedAccessTokens: Set<string>;
+  issuedRefreshTokens: Set<string>;
   forgetRegisteredClients: () => void;
 };
 
@@ -286,6 +287,7 @@ const createFakeOAuthServer = () => {
       registeredClientIds,
       tokenRequests,
       issuedAccessTokens,
+      issuedRefreshTokens,
       forgetRegisteredClients: () => {
         registeredClientIds.length = 0;
       },

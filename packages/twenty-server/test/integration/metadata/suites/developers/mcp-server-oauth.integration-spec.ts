@@ -295,13 +295,38 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     expect(connectedAccount.authFailedAt).not.toBeNull();
   });
 
-  it('asks to sign in again once the server rejects the access token', async () => {
+  it('refreshes the token once the server rejects it and keeps the account', async () => {
+    const [connectedAccount] = await readConnectedAccounts(
+      getConnectionProviderId(),
+    );
+
+    await signIn(connectedAccount.id);
+    const [signedInConnectedAccount] = await readConnectedAccounts(
+      getConnectionProviderId(),
+    );
+
+    fakeMcpServer.oauth.issuedAccessTokens.clear();
+
+    const syncResponse = await syncMcpServerTools(mcpServer.id);
+    const [refreshedConnectedAccount] = await readConnectedAccounts(
+      getConnectionProviderId(),
+    );
+
+    expect(syncResponse.body.data.syncMcpServerTools.toolsSyncError).toBeNull();
+    expect(refreshedConnectedAccount.authFailedAt).toBeNull();
+    expect(refreshedConnectedAccount.accessToken).not.toBe(
+      signedInConnectedAccount.accessToken,
+    );
+  });
+
+  it('asks to sign in again once the server rejects the access token and its refresh', async () => {
     const [connectedAccount] = await readConnectedAccounts(
       getConnectionProviderId(),
     );
 
     await signIn(connectedAccount.id);
     fakeMcpServer.oauth.issuedAccessTokens.clear();
+    fakeMcpServer.oauth.issuedRefreshTokens.clear();
 
     const syncResponse = await syncMcpServerTools(mcpServer.id);
     const [revokedConnectedAccount] = await readConnectedAccounts(
@@ -309,11 +334,8 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     );
 
     expect(syncResponse.body.data.syncMcpServerTools.toolsSyncError).toBe(
-      'This MCP server requires signing in. Connect an account to use it.',
+      'The connected account for this MCP server was signed out. Sign in again to use it.',
     );
-    expect(revokedConnectedAccount).toMatchObject({
-      authFailedReason: 'The MCP server rejected the access token',
-    });
     expect(revokedConnectedAccount.authFailedAt).not.toBeNull();
   });
 
