@@ -149,7 +149,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
         variables: { workspaceId, usageLimitId: row.usageLimitId },
       });
 
-      if (data?.deleteWorkspaceUsageLimit !== true) {
+      if (!data?.deleteWorkspaceUsageLimit) {
         enqueueToast({
           status: 'error',
           children: t`This override no longer exists. Reload to see the current limit.`,

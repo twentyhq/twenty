@@ -150,7 +150,7 @@ export const SettingsAdminQueueJobsTable = ({
     selectedJobs.every((job) => job.state === JobState.FAILED);
 
   const handleToggleAll = () => {
-    const shouldClearSelection = allJobsSelected === true;
+    const shouldClearSelection = allJobsSelected;
 
     if (shouldClearSelection) {
       setSelectedJobIds(new Set());

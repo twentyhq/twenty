@@ -73,7 +73,7 @@ export const DeleteTwoFactorAuthentication = () => {
       dedupeKey: '2fa-dedupe-key',
     });
 
-    if (isTwoFactorAuthenticationEnforced === true) {
+    if (isTwoFactorAuthenticationEnforced) {
       await signOut();
     } else {
       navigate(SettingsPath.ProfilePage);
