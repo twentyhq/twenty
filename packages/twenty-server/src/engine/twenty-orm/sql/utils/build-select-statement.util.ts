@@ -98,7 +98,10 @@ const renderProjectedColumn = ({
   alias,
   columnName,
 }: {
-  state: SelectStatementState;
+  state: Pick<
+    SelectStatementState,
+    'columnMaskConditions' | 'groupByExpressions'
+  >;
   alias: string;
   columnName: string;
 }): string => {

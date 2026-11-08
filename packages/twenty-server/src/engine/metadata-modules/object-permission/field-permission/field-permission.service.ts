@@ -11,6 +11,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatFieldPermissionMaps } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission-maps.type';
 import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
 import { fromCreateFieldPermissionInputToUniversalFlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/utils/from-create-field-permission-input-to-universal-flat-field-permission.util';
@@ -41,18 +42,17 @@ const keyFrom = ({
   objectMetadataId,
   fieldMetadataId,
   rowLevelPermissionPredicateGroupId,
-}: {
-  objectMetadataId: string;
-  fieldMetadataId: string;
-  rowLevelPermissionPredicateGroupId?: string | null;
-}) =>
+}: Pick<DesiredFieldPermission, 'objectMetadataId' | 'fieldMetadataId'> &
+  Partial<
+    Pick<DesiredFieldPermission, 'rowLevelPermissionPredicateGroupId'>
+  >) =>
   `${objectMetadataId}:${fieldMetadataId}:${rowLevelPermissionPredicateGroupId ?? ''}`;
 
 const isFlatFieldMetadataOneToManyRelation = (
   flatFieldMetadata: FlatFieldMetadata,
 ): boolean =>
-  (flatFieldMetadata.settings as { relationType?: string } | undefined)
-    ?.relationType === RelationType.ONE_TO_MANY;
+  isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
+  flatFieldMetadata.settings.relationType === RelationType.ONE_TO_MANY;
 
 const toUniversalFlatFieldPermissionToDelete = (
   fieldPermission: FlatFieldPermission,
@@ -439,7 +439,7 @@ export class FieldPermissionService {
     }
 
     if (isDefined(fieldPermission.rowLevelPermissionPredicateGroupId)) {
-      this.validateRuleFieldPermission({
+      this.validateRuleFieldPermissionOrThrow({
         rowLevelPermissionPredicateGroupId:
           fieldPermission.rowLevelPermissionPredicateGroupId,
         flatFieldMetadata,
@@ -465,7 +465,7 @@ export class FieldPermissionService {
     }
   }
 
-  private validateRuleFieldPermission({
+  private validateRuleFieldPermissionOrThrow({
     rowLevelPermissionPredicateGroupId,
     flatFieldMetadata,
     flatRowLevelPermissionPredicateGroupMaps,
@@ -492,8 +492,9 @@ export class FieldPermissionService {
       flatRowLevelPermissionPredicateGroup.objectMetadataId !==
         flatFieldMetadata.objectMetadataId
     ) {
-      throw new UserInputError(
+      throw new PermissionsException(
         'Field permissions can only target a root row level permission group of the same role and object',
+        PermissionsExceptionCode.INVALID_ARG,
         {
           userFriendlyMessage: msg`This row level permission rule does not belong to this role and object.`,
         },
@@ -505,8 +506,9 @@ export class FieldPermissionService {
       flatFieldMetadata.isNullable === false ||
       isFlatFieldMetadataOneToManyRelation(flatFieldMetadata)
     ) {
-      throw new UserInputError(
+      throw new PermissionsException(
         `Field ${flatFieldMetadata.name} cannot be restricted on a row level permission rule`,
+        PermissionsExceptionCode.INVALID_ARG,
         {
           userFriendlyMessage: msg`Required fields and list relations cannot be restricted on a row level permission rule.`,
         },
@@ -569,9 +571,7 @@ export class FieldPermissionService {
       });
       if (inputKeys.has(targetKey)) {
         const targetInInput = inputFieldPermissions.find(
-          (fp) =>
-            fp.objectMetadataId === targetObjectId &&
-            fp.fieldMetadataId === targetFieldId,
+          (fp) => keyFrom(fp) === targetKey,
         );
         if (isDefined(targetInInput)) {
           const hasConflict =

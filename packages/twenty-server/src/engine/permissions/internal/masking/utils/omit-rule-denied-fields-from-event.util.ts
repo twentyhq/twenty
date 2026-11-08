@@ -10,11 +10,6 @@ import { filterFieldNamesInEventProperties } from 'src/engine/permissions/utils/
 import { getFieldNamesInEventProperties } from 'src/engine/permissions/utils/get-field-names-in-event-properties.util';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
-type EventRecordStates = {
-  before?: Record<string, unknown>;
-  after?: Record<string, unknown>;
-};
-
 export const omitRuleDeniedFieldsFromEvent = <
   TEvent extends ObjectRecordEvent,
 >({
@@ -28,8 +23,11 @@ export const omitRuleDeniedFieldsFromEvent = <
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): TEvent => {
-  const { before, after } = event.properties as EventRecordStates;
-  const eventRecords = [before, after].filter(isDefined);
+  const { properties } = event;
+  const eventRecords = [
+    'before' in properties ? properties.before : undefined,
+    'after' in properties ? properties.after : undefined,
+  ].filter(isDefined);
 
   // A record leaving the rule still shows values the rule denied in its before state
   const deniedFieldNames = new Set(

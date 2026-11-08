@@ -1,4 +1,5 @@
 import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const getFieldPermissionUniversalIdentifier = ({
   applicationUniversalIdentifier,
@@ -16,7 +17,7 @@ export const getFieldPermissionUniversalIdentifier = ({
     value: [
       roleUniversalIdentifier,
       fieldUniversalIdentifier,
-      ...(rowLevelPermissionPredicateGroupUniversalIdentifier
+      ...(isDefined(rowLevelPermissionPredicateGroupUniversalIdentifier)
         ? [rowLevelPermissionPredicateGroupUniversalIdentifier]
         : []),
     ].join(':'),

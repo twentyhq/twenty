@@ -1,6 +1,6 @@
 import {
-  type RowLevelPermissionPredicate,
   RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 
 import { computeRoleRecordsPermissions } from 'src/engine/permissions/role/utils/compute-role-records-permissions.util';
@@ -10,7 +10,13 @@ const RULE_ID = 'rule-id';
 const OTHER_RULE_ID = 'other-rule-id';
 const LABEL_FIELD_ID = 'label-field-id';
 
-const predicateGroup = (id: string, parentId: string | null) => ({
+const predicateGroup = ({
+  id,
+  parentId,
+}: {
+  id: string;
+  parentId: string | null;
+}) => ({
   id,
   roleId: 'role-id',
   objectMetadataId: OBJECT_METADATA_ID,
@@ -51,12 +57,18 @@ const computeObjectPermissions = (
           roleId: 'role-id',
           objectMetadataId: OBJECT_METADATA_ID,
           fieldMetadataId: 'filtered-field-id',
-        } as RowLevelPermissionPredicate,
+          operand: RowLevelPermissionPredicateOperand.CONTAINS,
+          value: 'value',
+          subFieldName: null,
+          rowLevelPermissionPredicateGroupId: RULE_ID,
+          workspaceMemberFieldMetadataId: null,
+          workspaceMemberSubFieldName: null,
+        },
       ],
       rowLevelPermissionPredicateGroups: [
-        predicateGroup(RULE_ID, null),
-        predicateGroup(OTHER_RULE_ID, null),
-        predicateGroup('child-group-id', RULE_ID),
+        predicateGroup({ id: RULE_ID, parentId: null }),
+        predicateGroup({ id: OTHER_RULE_ID, parentId: null }),
+        predicateGroup({ id: 'child-group-id', parentId: RULE_ID }),
       ],
     },
     objectMetadataCollection: [
