@@ -1,19 +1,18 @@
-import request from 'supertest';
+import { replayOnTestApp } from 'test/integration/sso/utils/replay-on-test-app.util';
 
 type CompleteOidcLoginArgs = {
   callbackUrl: URL;
   sessionCookie: string;
 };
 
-// The identity provider redirects to SERVER_URL, so the callback is replayed
-// against the port the test app listens on.
 export const completeOidcLogin = async ({
   callbackUrl,
   sessionCookie,
 }: CompleteOidcLoginArgs) => {
-  const response = await request(`http://localhost:${APP_PORT}`)
-    .get(`${callbackUrl.pathname}${callbackUrl.search}`)
-    .set('Cookie', sessionCookie);
+  const response = await replayOnTestApp(callbackUrl).set(
+    'Cookie',
+    sessionCookie,
+  );
 
   if (response.status !== 302) {
     throw new Error(

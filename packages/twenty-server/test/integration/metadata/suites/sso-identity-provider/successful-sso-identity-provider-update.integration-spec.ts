@@ -1,23 +1,26 @@
 import { SAML_IDENTITY_PROVIDER_CERTIFICATE } from 'test/integration/metadata/suites/sso-identity-provider/constants/saml-identity-provider-certificate.constant';
 import { createOneSamlIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-saml-identity-provider.util';
+import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
+import { findSsoIdentityProviders } from 'test/integration/metadata/suites/sso-identity-provider/utils/find-sso-identity-providers.util';
 import { updateOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/update-one-sso-identity-provider.util';
 import { v4 as uuidv4 } from 'uuid';
 
 import { SsoIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 describe('SSO identity provider update should succeed', () => {
-  const identityProviderId = uuidv4();
+  let identityProviderId: string;
 
-  const findStoredStatus = async () => {
-    const [{ status }] = await globalThis.testDataSource.query(
-      `SELECT "status" FROM core."workspaceSSOIdentityProvider" WHERE id = $1`,
-      [identityProviderId],
-    );
+  const findListedStatus = async () => {
+    const { data } = await findSsoIdentityProviders();
 
-    return status;
+    return data.getSSOIdentityProviders.find(
+      ({ id }) => id === identityProviderId,
+    )?.status;
   };
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    identityProviderId = uuidv4();
+
     await createOneSamlIdentityProvider({
       expectToFail: false,
       input: {
@@ -30,11 +33,11 @@ describe('SSO identity provider update should succeed', () => {
     });
   });
 
-  afterAll(async () => {
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."workspaceSSOIdentityProvider" WHERE id = $1`,
-      [identityProviderId],
-    );
+  afterEach(async () => {
+    await deleteOneSsoIdentityProvider({
+      identityProviderId,
+      expectToFail: false,
+    });
   });
 
   it('should deactivate an identity provider', async () => {
@@ -51,10 +54,18 @@ describe('SSO identity provider update should succeed', () => {
       type: 'SAML',
       status: SsoIdentityProviderStatus.Inactive,
     });
-    expect(await findStoredStatus()).toBe(SsoIdentityProviderStatus.Inactive);
+    expect(await findListedStatus()).toBe(SsoIdentityProviderStatus.Inactive);
   });
 
   it('should reactivate an identity provider', async () => {
+    await updateOneSsoIdentityProvider({
+      expectToFail: false,
+      input: {
+        id: identityProviderId,
+        status: SsoIdentityProviderStatus.Inactive,
+      },
+    });
+
     const { data } = await updateOneSsoIdentityProvider({
       expectToFail: false,
       input: {
@@ -67,6 +78,6 @@ describe('SSO identity provider update should succeed', () => {
       id: identityProviderId,
       status: SsoIdentityProviderStatus.Active,
     });
-    expect(await findStoredStatus()).toBe(SsoIdentityProviderStatus.Active);
+    expect(await findListedStatus()).toBe(SsoIdentityProviderStatus.Active);
   });
 });
