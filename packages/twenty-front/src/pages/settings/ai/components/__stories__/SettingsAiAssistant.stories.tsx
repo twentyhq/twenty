@@ -326,6 +326,26 @@ export const SavingWhileOpen: Story = {
   },
 };
 
+export const SavingNameKeepsNavigationClick: Story = {
+  render: SavingWhileOpen.render,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Customize' }));
+    await userEvent.type(
+      await body.findByRole('textbox', { name: 'Assistant name' }),
+      'x',
+    );
+    await userEvent.click(body.getByRole('button', { name: /^Shape/ }));
+
+    expect(args.onChange).toHaveBeenLastCalledWith({ displayName: 'Adax' });
+    expect(
+      await body.findByRole('menuitemradio', { name: 'Cloud' }),
+    ).toBeDisabled();
+  },
+};
+
 export const FailedChange: Story = {
   args: {
     errorMessage: 'Unable to save assistant settings. Try again.',
