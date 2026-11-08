@@ -16,19 +16,9 @@ const WORKSPACE_BOUND_PROPERTIES = [
   'targetRecordId',
 ] as const;
 
-// A non-editable role is not in manifests, so neither are the permissions it holds
-const ROLE_PERMISSION_METADATA_NAMES: AllMetadataName[] = [
-  'objectPermission',
-  'fieldPermission',
-  'rolePermissionFlag',
-  'rowLevelPermissionPredicate',
-  'rowLevelPermissionPredicateGroup',
-];
-
 type ProbedPropertyName =
   | (typeof WORKSPACE_BOUND_PROPERTIES)[number]
-  | 'frontComponentUniversalIdentifier'
-  | 'roleUniversalIdentifier';
+  | 'frontComponentUniversalIdentifier';
 
 type ProbedFlatEntity = {
   universalIdentifier: string;
@@ -38,11 +28,11 @@ type ProbedFlatEntity = {
 export const canManifestExpressFlatEntity = ({
   metadataName,
   flatEntity,
-  nonEditableRoleUniversalIdentifiers = new Set(),
+  parentFlatRole,
 }: {
   metadataName: AllMetadataName;
   flatEntity: ProbedFlatEntity;
-  nonEditableRoleUniversalIdentifiers?: Set<string>;
+  parentFlatRole?: ProbedFlatEntity;
 }): boolean => {
   if (METADATA_NAMES_WITHOUT_MANIFEST_REPRESENTATION.includes(metadataName)) {
     return false;
@@ -60,10 +50,13 @@ export const canManifestExpressFlatEntity = ({
     return false;
   }
 
+  // What a role holds is only in a manifest if the role itself is
   if (
-    ROLE_PERMISSION_METADATA_NAMES.includes(metadataName) &&
-    isDefined(flatEntity.roleUniversalIdentifier) &&
-    nonEditableRoleUniversalIdentifiers.has(flatEntity.roleUniversalIdentifier)
+    isDefined(parentFlatRole) &&
+    !canManifestExpressFlatEntity({
+      metadataName: 'role',
+      flatEntity: parentFlatRole,
+    })
   ) {
     return false;
   }
