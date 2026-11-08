@@ -83,8 +83,6 @@ const rolesPermissions: Record<string, RoleRecordsPermissions> = {
           roleId: BROKEN_ROLE_ID,
         },
       ],
-      unreadableFields: [],
-      uneditableFields: [],
     },
   }),
 };

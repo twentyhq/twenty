@@ -58,21 +58,6 @@ const intersectRestrictedFields = (
   return restrictedFields;
 };
 
-const unionRlsRuleFieldList = ({
-  objectRecordsPermissionsPerRole,
-  fieldList,
-}: {
-  objectRecordsPermissionsPerRole: (ObjectRecordsPermissions | undefined)[];
-  fieldList: 'unreadableFields' | 'uneditableFields';
-}): string[] => [
-  ...new Set(
-    objectRecordsPermissionsPerRole.flatMap(
-      (objectRecordsPermissions) =>
-        objectRecordsPermissions?.rowLevelRecordsPermissions?.[fieldList] ?? [],
-    ),
-  ),
-];
-
 const intersectObjectRecordsPermissions = (
   objectRecordsPermissionsPerRole: (ObjectRecordsPermissions | undefined)[],
 ): ObjectRecordsPermissions => {
@@ -137,14 +122,6 @@ const intersectObjectRecordsPermissions = (
         ),
       ),
       predicateGroups: [],
-      unreadableFields: unionRlsRuleFieldList({
-        objectRecordsPermissionsPerRole,
-        fieldList: 'unreadableFields',
-      }),
-      uneditableFields: unionRlsRuleFieldList({
-        objectRecordsPermissionsPerRole,
-        fieldList: 'uneditableFields',
-      }),
     },
   };
 };

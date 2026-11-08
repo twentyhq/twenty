@@ -103,8 +103,6 @@ const buildRowLevelPermissions = ({
     canDestroyRecords: false,
     predicates,
     predicateGroups,
-    unreadableFields: [],
-    uneditableFields: [],
   },
 });
 

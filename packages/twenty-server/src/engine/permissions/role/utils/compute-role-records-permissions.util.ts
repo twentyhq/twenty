@@ -6,7 +6,6 @@ import {
   type RestrictedFieldsPermissions,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
-  type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -192,7 +191,7 @@ const buildRestrictedFields = ({
   return restrictedFields;
 };
 
-const buildRlsRuleFieldLists = ({
+const buildRlsRuleUnreadableAndUneditableFields = ({
   objectMetadata,
   fieldPermissions,
   predicateGroups,
@@ -202,10 +201,7 @@ const buildRlsRuleFieldLists = ({
   fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'];
   predicateGroups: RowLevelPermissionPredicateGroup[];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
-}): Pick<
-  RowLevelRecordsPermissions,
-  'unreadableFields' | 'uneditableFields'
-> => {
+}): { unreadableFields: string[]; uneditableFields: string[] } => {
   // Filters compile one root group, picked by another ordering, so a list on any root applies rather than risk dropping one
   const rlsRuleIds = new Set(
     predicateGroups
@@ -255,16 +251,15 @@ const buildObjectRecordsPermissions = ({
   restrictedFields,
   predicates,
   predicateGroups,
-  rlsRuleFieldLists,
+  unreadableFields,
+  uneditableFields,
 }: {
   objectRecordsAccess: ObjectRecordsAccess;
   restrictedFields: RestrictedFieldsPermissions;
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
-  rlsRuleFieldLists: Pick<
-    RowLevelRecordsPermissions,
-    'unreadableFields' | 'uneditableFields'
-  >;
+  unreadableFields: string[];
+  uneditableFields: string[];
 }): ObjectRecordsPermissions => {
   if (predicates.length === 0) {
     return {
@@ -292,7 +287,8 @@ const buildObjectRecordsPermissions = ({
       canDestroyRecords: objectRecordsAccess.canDestroy,
       predicates,
       predicateGroups,
-      ...rlsRuleFieldLists,
+      unreadableFields,
+      uneditableFields,
     },
   };
 };
@@ -345,6 +341,15 @@ export const computeRoleRecordsPermissions = ({
         rowLevelPermissionPredicateGroup.objectMetadataId === objectMetadataId,
     );
 
+    const { unreadableFields, uneditableFields } = isWorkflowObject
+      ? { unreadableFields: [], uneditableFields: [] }
+      : buildRlsRuleUnreadableAndUneditableFields({
+          objectMetadata,
+          fieldPermissions,
+          predicateGroups,
+          resolveMorphRelationPermissionFieldIds,
+        });
+
     objects[objectMetadataId] = buildObjectRecordsPermissions({
       objectRecordsAccess: {
         canCreate: objectRecordsAccess.canCreate && hasAiAccess,
@@ -359,14 +364,8 @@ export const computeRoleRecordsPermissions = ({
           rowLevelPermissionPredicate.objectMetadataId === objectMetadataId,
       ),
       predicateGroups,
-      rlsRuleFieldLists: isWorkflowObject
-        ? { unreadableFields: [], uneditableFields: [] }
-        : buildRlsRuleFieldLists({
-            objectMetadata,
-            fieldPermissions,
-            predicateGroups,
-            resolveMorphRelationPermissionFieldIds,
-          }),
+      unreadableFields,
+      uneditableFields,
     });
   }
 

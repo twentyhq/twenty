@@ -37,8 +37,6 @@ describe('getCommandMenuContextApiObjectPermissions', () => {
             canDestroyRecords: false,
             predicates: [ROW_LEVEL_PERMISSION_PREDICATE],
             predicateGroups: [],
-            unreadableFields: [],
-            uneditableFields: [],
           },
         },
       }),

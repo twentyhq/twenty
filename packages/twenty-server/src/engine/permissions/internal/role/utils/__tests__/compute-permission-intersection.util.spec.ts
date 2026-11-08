@@ -370,8 +370,6 @@ describe('computePermissionIntersection', () => {
                 canDestroyRecords: false,
               },
             ],
-            unreadableFields: [],
-            uneditableFields: [],
           },
         },
       });
@@ -449,8 +447,6 @@ describe('computePermissionIntersection', () => {
           canDestroyRecords: false,
           predicates: [],
           predicateGroups: [],
-          unreadableFields: [],
-          uneditableFields: [],
         },
       });
     });

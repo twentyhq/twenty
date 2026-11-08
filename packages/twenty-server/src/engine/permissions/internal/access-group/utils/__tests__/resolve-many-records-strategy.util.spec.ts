@@ -37,8 +37,6 @@ const withRlsRule: ObjectRecordsPermissions = {
     canDestroyRecords: false,
     predicates: [],
     predicateGroups: [],
-    unreadableFields: [],
-    uneditableFields: [],
   },
 };
 

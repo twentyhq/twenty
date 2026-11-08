@@ -26,8 +26,6 @@ const recordsPermissions: RoleRecordsPermissions = {
         canDestroyRecords: true,
         predicates: [],
         predicateGroups: [],
-        unreadableFields: [],
-        uneditableFields: [],
       },
     },
   },

@@ -47,8 +47,6 @@ const ROLE_WITH_RULE = buildRole({
     canDestroyRecords: false,
     predicates: [],
     predicateGroups: [],
-    unreadableFields: [],
-    uneditableFields: [],
   },
 });
 
