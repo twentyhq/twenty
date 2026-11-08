@@ -262,16 +262,81 @@ export class McpServerService {
     userWorkspaceId?: string;
     shouldDiscardToolsOnFailure?: boolean;
   }): Promise<McpServerDTO> {
+    const flatMcpServer = findFlatMcpServerByIdOrThrow({
+      flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
+      mcpServerId: id,
+    });
+
     await this.mcpServerToolSyncService.syncTools({
-      ...findFlatMcpServerByIdOrThrow({
-        flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
-        mcpServerId: id,
-      }),
+      ...flatMcpServer,
       userWorkspaceId,
       shouldDiscardToolsOnFailure,
     });
 
-    return this.findByIdOrThrow({ id, workspaceId });
+    const syncedMcpServer = await this.findByIdOrThrow({ id, workspaceId });
+
+    // The sign-in check at creation can miss a server that was down or started asking later
+    if (
+      isDefined(flatMcpServer.connectionProviderId) ||
+      !isDefined(syncedMcpServer.toolsSyncError)
+    ) {
+      return syncedMcpServer;
+    }
+
+    const isSignInAttached = await this.attachSignInIfRequired({
+      flatMcpServer,
+      workspaceId,
+    });
+
+    return isSignInAttached
+      ? this.findByIdOrThrow({ id, workspaceId })
+      : syncedMcpServer;
+  }
+
+  private async attachSignInIfRequired({
+    flatMcpServer,
+    workspaceId,
+  }: {
+    flatMcpServer: FlatMcpServer;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const signInFlatConnectionProvider =
+      await this.buildSignInFlatConnectionProviderIfRequired({
+        mcpServer: flatMcpServer,
+        flatApplication: {
+          id: flatMcpServer.applicationId,
+          universalIdentifier: flatMcpServer.applicationUniversalIdentifier,
+        },
+        scope: 'USER',
+      });
+
+    if (!isDefined(signInFlatConnectionProvider)) {
+      return false;
+    }
+
+    await this.runMigrationOrThrow({
+      mcpServerOperation: {
+        flatEntityToUpdate: [
+          fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow({
+            flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
+            mcpServerId: flatMcpServer.id,
+            update: {
+              connectionProviderId: signInFlatConnectionProvider.id,
+              connectionProviderUniversalIdentifier:
+                signInFlatConnectionProvider.universalIdentifier,
+            },
+          }),
+        ],
+      },
+      connectionProviderOperation: {
+        flatEntityToCreate: [signInFlatConnectionProvider],
+      },
+      workspaceId,
+      errorMessage:
+        'Multiple validation errors occurred while setting up the MCP server sign-in',
+    });
+
+    return true;
   }
 
   async delete(id: string, workspaceId: string): Promise<McpServerDTO> {

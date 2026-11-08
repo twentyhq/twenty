@@ -206,6 +206,7 @@ export class ConnectionProviderOAuthDiscoveryService {
         await this.oauthClientService.deleteClient({
           connectionProviderId: provider.id,
           workspaceId,
+          clientId: storedClient.clientInformation.client_id,
         });
       }
     }
@@ -258,6 +259,7 @@ export class ConnectionProviderOAuthDiscoveryService {
         await this.oauthClientService.deleteClient({
           connectionProviderId: provider.id,
           workspaceId,
+          clientId: storedClient.clientInformation.client_id,
         });
       }
 

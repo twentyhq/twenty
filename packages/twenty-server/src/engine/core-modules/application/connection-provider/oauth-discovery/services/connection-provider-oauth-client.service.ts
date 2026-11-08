@@ -101,15 +101,19 @@ export class ConnectionProviderOAuthClientService {
     }
   }
 
+  // Scoped to the rejected client so a replacement registered meanwhile survives
   async deleteClient({
     connectionProviderId,
     workspaceId,
+    clientId,
   }: {
     connectionProviderId: string;
     workspaceId: string;
+    clientId: string;
   }): Promise<void> {
     await this.oauthClientRepository.delete(workspaceId, {
       connectionProviderId,
+      clientId,
     });
   }
 

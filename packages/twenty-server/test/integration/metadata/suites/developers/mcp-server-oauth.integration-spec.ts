@@ -522,6 +522,37 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     }
   });
 
+  it('sets up sign-in on sync when a server starts asking for it later', async () => {
+    const laterSignInMcpServer = await startFakeMcpServer();
+    const createResponse = await createMcpServer({
+      name: `later_${uuidv4().slice(0, 8)}`,
+      label: 'Fake docs that add sign-in',
+      url: laterSignInMcpServer.url,
+    });
+    const laterSignInMcpServerRecord: CreatedMcpServer =
+      createResponse.body.data.createMcpServer;
+
+    try {
+      expect(laterSignInMcpServerRecord.connectionProviderId).toBeNull();
+
+      laterSignInMcpServer.startRequiringSignIn();
+
+      const syncResponse = await syncMcpServerTools(
+        laterSignInMcpServerRecord.id,
+      );
+
+      expect(syncResponse.body.data.syncMcpServerTools).toMatchObject({
+        connectionProviderId: expect.any(String),
+        signInScope: 'USER',
+        toolsSyncError:
+          'This MCP server requires signing in. Connect an account to use it.',
+      });
+    } finally {
+      await deleteMcpServer(laterSignInMcpServerRecord.id);
+      await laterSignInMcpServer.close();
+    }
+  });
+
   it('leaves a server that does not ask for sign-in without a provider', async () => {
     const openMcpServer = await startFakeMcpServer();
     const createResponse = await createMcpServer({

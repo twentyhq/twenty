@@ -18,6 +18,7 @@ export type FakeMcpServer = {
   url: string;
   receivedAuthorizationHeaders: (string | undefined)[];
   stopOfferingSearchDocs: () => void;
+  startRequiringSignIn: () => void;
   oauth: FakeOAuthServer;
   close: () => Promise<void>;
 };
@@ -307,13 +308,14 @@ export const startFakeMcpServer = ({
     };
     const fakeOAuthServer = createFakeOAuthServer();
     let baseUrl = '';
+    let isSignInRequiredNow = isSignInRequired;
 
     const handleRequest = async (
       request: http.IncomingMessage,
       response: http.ServerResponse,
     ): Promise<void> => {
       if (
-        isSignInRequired &&
+        isSignInRequiredNow &&
         (await fakeOAuthServer.handleRequest({ request, response, baseUrl }))
       ) {
         return;
@@ -322,7 +324,7 @@ export const startFakeMcpServer = ({
       receivedAuthorizationHeaders.push(request.headers.authorization);
 
       if (
-        isSignInRequired &&
+        isSignInRequiredNow &&
         !fakeOAuthServer.isAuthorized(request.headers.authorization)
       ) {
         response
@@ -360,6 +362,9 @@ export const startFakeMcpServer = ({
         oauth: fakeOAuthServer.state,
         stopOfferingSearchDocs: () => {
           state.isSearchDocsOffered = false;
+        },
+        startRequiringSignIn: () => {
+          isSignInRequiredNow = true;
         },
         close: () =>
           new Promise((resolveClose) => {
