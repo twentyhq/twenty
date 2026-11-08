@@ -4,10 +4,10 @@ import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/f
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type RlsRuleUnreadableFields } from 'src/engine/permissions/internal/masking/types/rls-rule-unreadable-fields.type';
-import { type RlsRuleFieldMask } from 'src/engine/permissions/internal/masking/types/rls-rule-field-mask.type';
+import { type RlsRuleUnreadableColumns } from 'src/engine/permissions/internal/masking/types/rls-rule-unreadable-columns.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 
-export const buildRlsRuleFieldMasks = ({
+export const buildRlsRulesUnreadableColumns = ({
   rlsRulesUnreadableFields,
   flatObjectMetadata,
   metadataMaps,
@@ -17,7 +17,7 @@ export const buildRlsRuleFieldMasks = ({
   flatObjectMetadata: FlatObjectMetadata;
   metadataMaps: Pick<PermissionsMetadataMaps, 'flatFieldMetadataMaps'>;
   tableAlias: string;
-}): RlsRuleFieldMask[] => {
+}): RlsRuleUnreadableColumns[] => {
   if (rlsRulesUnreadableFields.length === 0) {
     return [];
   }

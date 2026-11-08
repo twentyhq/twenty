@@ -1795,10 +1795,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<void> {
     await this.applyRowLevelPermissionPredicates(queryBuilder);
     await this.validateQueryIsPermitted(queryBuilder);
-    await this.applyRlsRuleFieldMasks(queryBuilder);
+    await this.nullifyRlsRuleUnreadableColumns(queryBuilder);
   }
 
-  private async applyRlsRuleFieldMasks(
+  private async nullifyRlsRuleUnreadableColumns(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
     if (this.options.shouldBypassPermissionChecks) {
@@ -1816,13 +1816,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     for (const { alias, tableShape } of aliases) {
       if (
         !isDefined(tableShape) ||
-        !queryBuilder.markColumnMasksApplied(alias)
+        !queryBuilder.markColumnNullifyApplied(alias)
       ) {
         continue;
       }
 
-      const rlsRuleFieldMasks =
-        await this.options.internalContext.recordPermissions.findRlsRuleFieldMasks(
+      const rlsRulesUnreadableColumns =
+        await this.options.internalContext.recordPermissions.findRlsRuleUnreadableColumns(
           {
             principals: this.resolvePermissionsPrincipalsOrThrow(),
             objectMetadataId: tableShape.objectMetadataId,
@@ -1830,8 +1830,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           },
         );
 
-      for (const { columnNames, condition } of rlsRuleFieldMasks) {
-        queryBuilder.addColumnMask({ alias, columnNames, condition });
+      for (const { columnNames, condition } of rlsRulesUnreadableColumns) {
+        queryBuilder.nullifyColumnsWhen({ alias, columnNames, condition });
       }
     }
   }

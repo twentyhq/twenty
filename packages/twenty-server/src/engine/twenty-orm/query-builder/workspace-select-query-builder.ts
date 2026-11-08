@@ -46,7 +46,7 @@ import {
   type JoinClause,
   type OrderByClause,
   type SelectClause,
-  type ColumnMaskConditions,
+  type ColumnNullifyConditions,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
@@ -101,8 +101,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private includeDeleted = false;
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
-  private readonly aliasesWithColumnMasksApplied = new Set<string>();
-  private readonly columnMaskConditions: ColumnMaskConditions = {};
+  private readonly aliasesWithColumnNullifyApplied = new Set<string>();
+  private readonly columnNullifyConditions: ColumnNullifyConditions = {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -695,17 +695,17 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return Number(rows[0]?.count ?? 0);
   }
 
-  markColumnMasksApplied(alias: string): boolean {
-    if (this.aliasesWithColumnMasksApplied.has(alias)) {
+  markColumnNullifyApplied(alias: string): boolean {
+    if (this.aliasesWithColumnNullifyApplied.has(alias)) {
       return false;
     }
 
-    this.aliasesWithColumnMasksApplied.add(alias);
+    this.aliasesWithColumnNullifyApplied.add(alias);
 
     return true;
   }
 
-  addColumnMask({
+  nullifyColumnsWhen({
     alias,
     columnNames,
     condition,
@@ -714,11 +714,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     columnNames: string[];
     condition: SqlCondition;
   }): this {
-    const columnMaskConditionsOfAlias = (this.columnMaskConditions[alias] ??=
-      {});
+    const columnNullifyConditionsOfAlias = (this.columnNullifyConditions[
+      alias
+    ] ??= {});
 
     for (const columnName of columnNames) {
-      (columnMaskConditionsOfAlias[columnName] ??= []).push(condition.sql);
+      (columnNullifyConditionsOfAlias[columnName] ??= []).push(condition.sql);
     }
 
     return this.setParameters(condition.parameters);
@@ -1304,7 +1305,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
-      columnMaskConditions: this.columnMaskConditions,
+      columnNullifyConditions: this.columnNullifyConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,

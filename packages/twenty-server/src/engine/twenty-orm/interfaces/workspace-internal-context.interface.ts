@@ -34,7 +34,7 @@ export interface WorkspaceInternalContext {
     | 'assertUpdatesKeepRecordAccessOrThrow'
     | 'recomputeRecordAccessGroupIdsOfRecords'
     | 'isRecomputingRecordAccessGroupIdsOnWrite'
-    | 'findRlsRuleFieldMasks'
+    | 'findRlsRuleUnreadableColumns'
   >;
   recordStock: Pick<
     WorkspaceRecordStockService,

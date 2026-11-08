@@ -13,9 +13,9 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type RlsRuleFieldMask } from 'src/engine/permissions/internal/masking/types/rls-rule-field-mask.type';
+import { type RlsRuleUnreadableColumns } from 'src/engine/permissions/internal/masking/types/rls-rule-unreadable-columns.type';
 import { buildRlsRulesUnreadableFields } from 'src/engine/permissions/internal/masking/utils/build-rls-rules-unreadable-fields.util';
-import { buildRlsRuleFieldMasks } from 'src/engine/permissions/internal/masking/utils/build-rls-rule-field-masks.util';
+import { buildRlsRulesUnreadableColumns } from 'src/engine/permissions/internal/masking/utils/build-rls-rules-unreadable-columns.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -418,11 +418,13 @@ export class RecordPermissionsService {
     });
   }
 
-  async findRlsRuleFieldMasks({
+  async findRlsRuleUnreadableColumns({
     principals,
     objectMetadataId,
     tableAlias,
-  }: ObjectQuestion & { tableAlias: string }): Promise<RlsRuleFieldMask[]> {
+  }: ObjectQuestion & { tableAlias: string }): Promise<
+    RlsRuleUnreadableColumns[]
+  > {
     if (!isDefined(principals)) {
       return [];
     }
@@ -440,7 +442,7 @@ export class RecordPermissionsService {
       return [];
     }
 
-    return buildRlsRuleFieldMasks({
+    return buildRlsRulesUnreadableColumns({
       rlsRulesUnreadableFields: buildRlsRulesUnreadableFields({
         principals,
         metadataMaps,

@@ -159,7 +159,7 @@ describe('field permissions on an RLS rule (integration)', () => {
     }
   });
 
-  it('should mask the field on a record the RLS rule matches', async () => {
+  it('should read the unreadable field as empty on a record the RLS rule matches', async () => {
     expect(await listPeopleAsMember()).toEqual([
       { id: originalPeople[0].id, avatarUrl: '', jobTitle: 'Paris office' },
     ]);

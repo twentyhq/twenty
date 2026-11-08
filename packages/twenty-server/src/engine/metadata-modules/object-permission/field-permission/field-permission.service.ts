@@ -499,7 +499,7 @@ export class FieldPermissionService {
       );
     }
 
-    // A masked value reads as null, which a required field cannot return, and a join would still read through a masked relation
+    // An unreadable column reads as null, which a required field cannot return, and a join would still read through an unreadable relation
     if (
       flatFieldMetadata.isNullable === false ||
       isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)

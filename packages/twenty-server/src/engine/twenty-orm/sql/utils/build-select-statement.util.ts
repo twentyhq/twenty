@@ -65,7 +65,7 @@ export type OrderByClause = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
-export type ColumnMaskConditions = Record<string, Record<string, string[]>>;
+export type ColumnNullifyConditions = Record<string, Record<string, string[]>>;
 
 export type SelectStatementState = {
   alias: string;
@@ -74,7 +74,7 @@ export type SelectStatementState = {
   explicitSelection?: string[];
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
-  columnMaskConditions: ColumnMaskConditions;
+  columnNullifyConditions: ColumnNullifyConditions;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -100,21 +100,21 @@ const renderProjectedColumn = ({
 }: {
   state: Pick<
     SelectStatementState,
-    'columnMaskConditions' | 'groupByExpressions'
+    'columnNullifyConditions' | 'groupByExpressions'
   >;
   alias: string;
   columnName: string;
 }): string => {
   const quotedColumn = quoteColumn(alias, columnName);
-  const maskConditions = state.columnMaskConditions[alias]?.[columnName];
+  const nullifyConditions = state.columnNullifyConditions[alias]?.[columnName];
 
   // A grouped query projects no plain column, and a CASE on one wouldn't be grouped
-  if (!isDefined(maskConditions) || state.groupByExpressions.length > 0) {
+  if (!isDefined(nullifyConditions) || state.groupByExpressions.length > 0) {
     return quotedColumn;
   }
 
-  return `CASE WHEN ${maskConditions
-    .map((maskCondition) => `(${maskCondition})`)
+  return `CASE WHEN ${nullifyConditions
+    .map((nullifyCondition) => `(${nullifyCondition})`)
     .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
 };
 

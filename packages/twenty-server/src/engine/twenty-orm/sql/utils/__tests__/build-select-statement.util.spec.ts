@@ -38,7 +38,7 @@ const buildState = (
   findOptions: { select: { id: true } },
   extraSelectClauses: [],
   columnSelections: [],
-  columnMaskConditions: {},
+  columnNullifyConditions: {},
   joinClauses: [],
   whereClauses: [],
   rowAccessConditions: [],
@@ -59,10 +59,10 @@ const OR_CHAIN_WHERE_CLAUSES: SelectStatementState['whereClauses'] = [
 const ROW_ACCESS_CONDITION = '"person"."ownerId" = :ownerId';
 
 describe('buildSelectStatement', () => {
-  it('should project a masked column as null when its condition holds', () => {
+  it('should project a column as null when its nullify condition holds', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnMaskConditions: {
+        columnNullifyConditions: {
           person: {
             id: ['"person"."ownerId" = :ownerId', '"person"."x" = :x'],
           },
@@ -75,10 +75,10 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should mask a column selected under its own alias', () => {
+  it('should nullify a column selected under its own alias', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnMaskConditions: { person: { id: ['"person"."x" = :x'] } },
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
         extraSelectClauses: [{ expression: '"person"."id"', alias: 'imageId' }],
       }),
     );
@@ -88,10 +88,10 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should not mask columns in a grouped query', () => {
+  it('should not nullify columns in a grouped query', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnMaskConditions: { person: { id: ['"person"."x" = :x'] } },
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
         groupByExpressions: ['"person"."id"'],
       }),
     );
