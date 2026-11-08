@@ -48,28 +48,31 @@ export class ImapFetchMessageAttachmentService implements MessageAttachmentDrive
         uid: true,
       })
       .catch(async (error: Error) => {
-        await this.releaseConnection(client, mailboxLock);
+        await this.releaseConnection({ client, mailboxLock });
 
         throw error;
       });
 
     if (!isDefined(content)) {
-      await this.releaseConnection(client, mailboxLock);
+      await this.releaseConnection({ client, mailboxLock });
 
       return null;
     }
 
     finished(content, () => {
-      void this.releaseConnection(client, mailboxLock);
+      void this.releaseConnection({ client, mailboxLock });
     });
 
     return content;
   }
 
-  private async releaseConnection(
-    client: ImapFlow,
-    mailboxLock: MailboxLockObject,
-  ): Promise<void> {
+  private async releaseConnection({
+    client,
+    mailboxLock,
+  }: {
+    client: ImapFlow;
+    mailboxLock: MailboxLockObject;
+  }): Promise<void> {
     mailboxLock.release();
     await this.imapClientProvider.closeClient(client);
   }

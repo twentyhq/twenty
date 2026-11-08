@@ -31,8 +31,12 @@ export const extractImapBodyStructureAttachments = (
       continue;
     }
 
+    const filename =
+      node.dispositionParameters?.filename ?? node.parameters?.name;
+
     if (
       !isAttachmentDisposition &&
+      !isNonEmptyString(filename) &&
       IMAP_BODY_TEXT_CONTENT_TYPES.includes(contentType)
     ) {
       continue;
@@ -40,9 +44,7 @@ export const extractImapBodyStructureAttachments = (
 
     attachments.push({
       externalId: node.part ?? IMAP_SINGLE_PART_MESSAGE_PART_PATH,
-      filename:
-        (node.dispositionParameters?.filename ?? node.parameters?.name) ||
-        'unnamed-attachment',
+      filename: filename || 'unnamed-attachment',
       size: estimateImapPartDecodedSize(node),
       contentType,
       isInline: disposition === 'inline' || isNonEmptyString(node.id),

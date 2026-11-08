@@ -110,6 +110,23 @@ describe('extractImapBodyStructureAttachments', () => {
     ]);
   });
 
+  it('should keep a named text part that has no attachment disposition', () => {
+    expect(
+      extractImapBodyStructureAttachments({
+        type: 'multipart/mixed',
+        childNodes: [
+          { part: '1', type: 'text/plain', size: 120 },
+          {
+            part: '2',
+            type: 'text/plain',
+            parameters: { name: 'notes.txt' },
+            size: 240,
+          },
+        ],
+      }).map(({ filename, externalId }) => ({ filename, externalId })),
+    ).toEqual([{ filename: 'notes.txt', externalId: '2' }]);
+  });
+
   it('should use part 1 for a message whose whole body is the attachment', () => {
     expect(
       extractImapBodyStructureAttachments({

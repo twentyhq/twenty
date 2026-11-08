@@ -293,7 +293,9 @@ export class EmailComposerService {
       );
     }
 
-    this.assertAttachmentsSizeWithinLimit(fileEntities);
+    this.assertAttachmentsSizeWithinLimit(
+      files.flatMap(({ id }) => fileEntityMap.get(id) ?? []),
+    );
 
     const attachments: MessageAttachment[] = [];
 

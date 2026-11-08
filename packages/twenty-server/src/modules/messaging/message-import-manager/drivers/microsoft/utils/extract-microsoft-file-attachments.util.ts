@@ -23,7 +23,7 @@ export const extractMicrosoftFileAttachments = (
         filename: attachment.name,
         size: attachment.size ?? 0,
         contentType: attachment.contentType ?? '',
-        isInline: attachment.isInline === true,
+        isInline: attachment.isInline ?? false,
       },
     ];
   });

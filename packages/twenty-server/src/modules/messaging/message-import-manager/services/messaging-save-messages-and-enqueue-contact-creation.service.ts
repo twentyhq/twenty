@@ -203,17 +203,21 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   message.externalId,
                 );
 
-              return isDefined(messageId) &&
-                isDefined(messageChannelMessageAssociationId) &&
-                isNonEmptyArray(message.attachments)
-                ? [
-                    {
-                      messageId,
-                      messageChannelMessageAssociationId,
-                      attachments: message.attachments,
-                    },
-                  ]
-                : [];
+              if (
+                !isDefined(messageId) ||
+                !isDefined(messageChannelMessageAssociationId) ||
+                !isNonEmptyArray(message.attachments)
+              ) {
+                return [];
+              }
+
+              return [
+                {
+                  messageId,
+                  messageChannelMessageAssociationId,
+                  attachments: message.attachments,
+                },
+              ];
             }),
             workspaceId,
             transactionScope,

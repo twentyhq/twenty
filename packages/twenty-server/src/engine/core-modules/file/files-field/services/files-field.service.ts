@@ -14,7 +14,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { REMOTE_FILE_LINK_MAX_AGE_MS } from 'src/engine/core-modules/file/files-field/constants/remote-file-link-max-age-ms.constant';
 import {
   FilesFieldException,
   FilesFieldExceptionCode,
@@ -148,9 +147,6 @@ export class FilesFieldService {
     const settings = {
       isTemporaryFile: true,
       toDelete: false,
-      expiresAt: new Date(
-        Date.now() + REMOTE_FILE_LINK_MAX_AGE_MS,
-      ).toISOString(),
     };
 
     const remoteFiles = files.map(({ filename, size, remoteOrigin }) => {

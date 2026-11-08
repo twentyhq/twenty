@@ -63,7 +63,7 @@ export class PendingFileCleanupService {
       const expiredTemporaryFiles = await this.fileRepository
         .createQueryBuilder('file')
         .where({
-          status: Not(FILE_STATUS.PENDING),
+          status: FILE_STATUS.UPLOADED,
           workspaceId: Not(IsNull()),
           id: Not(In(staleFiles.map((file) => file.id))),
         })
@@ -85,7 +85,7 @@ export class PendingFileCleanupService {
       try {
         if (
           (file.path.startsWith(`${FileFolder.RecordExport}/`) ||
-            (file.status !== FILE_STATUS.PENDING &&
+            (file.status === FILE_STATUS.UPLOADED &&
               file.settings?.isTemporaryFile &&
               isDefined(file.settings.expiresAt))) &&
           isDefined(file.workspaceId)
