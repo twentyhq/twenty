@@ -91,7 +91,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     ),
   ];
 
-  const hasFieldsToDisplay = groups.length > 0 || shouldShowHiddenFields;
+  const hasFieldsToDisplay = groups.length > 0;
 
   const shouldDisplayGroupHeaders =
     displayMode === 'grouped' && groups.length > 1;
