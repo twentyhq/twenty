@@ -339,7 +339,8 @@ export const SavingNameKeepsNavigationClick: Story = {
     );
     await userEvent.click(body.getByRole('button', { name: /^Shape/ }));
 
-    expect(args.onChange).toHaveBeenLastCalledWith({ displayName: 'Adax' });
+    expect(args.onChange).toHaveBeenCalledOnce();
+    expect(args.onChange).toHaveBeenCalledWith({ displayName: 'Adax' });
     expect(
       await body.findByRole('menuitemradio', { name: 'Cloud' }),
     ).toBeDisabled();
