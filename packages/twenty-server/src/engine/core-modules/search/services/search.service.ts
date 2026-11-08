@@ -866,11 +866,17 @@ export class SearchService {
       }
 
       return (
-        // @ts-expect-error legacy noImplicitAny
-        (STANDARD_OBJECTS_BY_PRIORITY_RANK[b.objectNameSingular] || 0) -
-        // @ts-expect-error legacy noImplicitAny
-        (STANDARD_OBJECTS_BY_PRIORITY_RANK[a.objectNameSingular] || 0)
+        this.getObjectPriorityRank(b.objectNameSingular) -
+        this.getObjectPriorityRank(a.objectNameSingular)
       );
     });
+  }
+
+  private getObjectPriorityRank(objectNameSingular: string): number {
+    const entry = Object.entries(STANDARD_OBJECTS_BY_PRIORITY_RANK).find(
+      ([name]) => name === objectNameSingular,
+    );
+
+    return entry?.[1] || 0;
   }
 }

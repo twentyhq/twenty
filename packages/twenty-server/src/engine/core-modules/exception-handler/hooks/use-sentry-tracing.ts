@@ -4,7 +4,12 @@ import {
   type Plugin,
   getDocumentString,
 } from '@envelop/core';
-import { type OperationDefinitionNode, Kind, print } from 'graphql';
+import {
+  type DefinitionNode,
+  type OperationDefinitionNode,
+  Kind,
+  print,
+} from 'graphql';
 
 import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 
@@ -15,9 +20,9 @@ export const useSentryTracing = <
     onExecute({ args }) {
       const transactionName = args.operationName || 'Anonymous Operation';
       const rootOperation = args.document.definitions.find(
-        // @ts-expect-error legacy noImplicitAny
-        (o) => o.kind === Kind.OPERATION_DEFINITION,
-      ) as OperationDefinitionNode;
+        (o: DefinitionNode): o is OperationDefinitionNode =>
+          o.kind === Kind.OPERATION_DEFINITION,
+      );
       const operationType = rootOperation.operation;
 
       const user = args.contextValue.user;

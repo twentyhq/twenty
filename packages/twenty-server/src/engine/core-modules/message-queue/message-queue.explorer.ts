@@ -210,8 +210,7 @@ export class MessageQueueExplorer implements OnModuleInit {
     const filteredProcessMethodNames = processMethodNames.filter(
       (processMethodName) => {
         const metadata = this.metadataAccessor.getProcessMetadata(
-          // @ts-expect-error legacy noImplicitAny
-          instance[processMethodName],
+          Reflect.get(instance, processMethodName),
         );
 
         return metadata && job.name === metadata.jobName;
@@ -264,14 +263,17 @@ export class MessageQueueExplorer implements OnModuleInit {
   ) {
     for (const processMethodName of processMethodNames) {
       try {
-        // @ts-expect-error legacy noImplicitAny
-        await instance[processMethodName].call(instance, job.data, {
-          jobId: job.id,
-          abortSignal: job.abortSignal,
-          retryLimit: job.retryLimit,
-          updateData: job.updateData,
-          updateProgress: job.updateProgress,
-        });
+        await Reflect.get(instance, processMethodName).call(
+          instance,
+          job.data,
+          {
+            jobId: job.id,
+            abortSignal: job.abortSignal,
+            retryLimit: job.retryLimit,
+            updateData: job.updateData,
+            updateProgress: job.updateProgress,
+          },
+        );
       } catch (err) {
         if (shouldCaptureException(err)) {
           this.exceptionHandlerService.captureExceptions([err]);

@@ -11,8 +11,8 @@ export const objectRecordChangedProperties = <
   newRecord: PRecord,
 ) => {
   const changedProperties = Object.keys(newRecord).filter(
-    // @ts-expect-error legacy noImplicitAny
-    (key) => !fastDeepEqual(oldRecord[key], newRecord[key]),
+    (key) =>
+      !fastDeepEqual(Reflect.get(oldRecord, key), Reflect.get(newRecord, key)),
   );
 
   return changedProperties;

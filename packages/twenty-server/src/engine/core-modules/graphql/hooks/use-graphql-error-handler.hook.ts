@@ -6,6 +6,7 @@ import {
 } from '@envelop/core';
 import { msg } from '@lingui/core/macro';
 import {
+  type DefinitionNode,
   GraphQLError,
   Kind,
   type OperationDefinitionNode,
@@ -75,9 +76,9 @@ export const useGraphQLErrorHandlerHook = <
     async onExecute({ args }) {
       const exceptionHandlerService = options.exceptionHandlerService;
       const rootOperation = args.document.definitions.find(
-        // @ts-expect-error legacy noImplicitAny
-        (o) => o.kind === Kind.OPERATION_DEFINITION,
-      ) as OperationDefinitionNode;
+        (o: DefinitionNode): o is OperationDefinitionNode =>
+          o.kind === Kind.OPERATION_DEFINITION,
+      );
 
       if (!rootOperation) {
         return;

@@ -49,6 +49,17 @@ const toCancellationDetailsJson = (
   };
 };
 
+const toCollectionMethod = (
+  value: Stripe.Subscription.CollectionMethod,
+): BillingSubscriptionCollectionMethod => {
+  switch (value) {
+    case 'charge_automatically':
+      return BillingSubscriptionCollectionMethod.CHARGE_AUTOMATICALLY;
+    case 'send_invoice':
+      return BillingSubscriptionCollectionMethod.SEND_INVOICE;
+  }
+};
+
 export const transformStripeSubscriptionEventToDatabaseSubscription = (
   workspaceId: string,
   subscription: SubscriptionWithSchedule,
@@ -72,11 +83,7 @@ export const transformStripeSubscriptionEventToDatabaseSubscription = (
     currentPeriodEnd: getDateFromTimestamp(firstItem.current_period_end),
     currentPeriodStart: getDateFromTimestamp(firstItem.current_period_start),
     metadata: subscription.metadata,
-    collectionMethod:
-      // @ts-expect-error legacy noImplicitAny
-      BillingSubscriptionCollectionMethod[
-        subscription.collection_method.toUpperCase()
-      ],
+    collectionMethod: toCollectionMethod(subscription.collection_method),
     automaticTax: toAutomaticTaxJson(subscription.automatic_tax),
     cancellationDetails: toCancellationDetailsJson(
       subscription.cancellation_details,

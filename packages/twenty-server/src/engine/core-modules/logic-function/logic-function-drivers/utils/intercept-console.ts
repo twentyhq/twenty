@@ -1,6 +1,19 @@
 /* oxlint-disable no-console */
+type ConsoleMethod = 'log' | 'error' | 'warn' | 'info' | 'debug';
+
+const CONSOLE_METHODS: ConsoleMethod[] = [
+  'log',
+  'error',
+  'warn',
+  'info',
+  'debug',
+];
+
 export class ConsoleListener {
-  private readonly originalConsole;
+  private readonly originalConsole: Record<
+    ConsoleMethod,
+    (...args: unknown[]) => void
+  >;
 
   constructor() {
     this.originalConsole = {
@@ -14,21 +27,16 @@ export class ConsoleListener {
 
   // oxlint-disable-next-line typescript/no-explicit-any
   intercept(callback: (type: string, message: any[]) => void) {
-    Object.keys(this.originalConsole).forEach((method) => {
-      // @ts-expect-error legacy noImplicitAny
-      // oxlint-disable-next-line typescript/no-explicit-any
-      console[method] = (...args: any[]) => {
+    CONSOLE_METHODS.forEach((method) => {
+      console[method] = (...args: unknown[]) => {
         callback(method, args);
       };
     });
   }
 
   release() {
-    Object.keys(this.originalConsole).forEach((method) => {
-      // @ts-expect-error legacy noImplicitAny
-      // oxlint-disable-next-line typescript/no-explicit-any
-      console[method] = (...args: any[]) => {
-        // @ts-expect-error legacy noImplicitAny
+    CONSOLE_METHODS.forEach((method) => {
+      console[method] = (...args: unknown[]) => {
         this.originalConsole[method](...args);
       };
     });
