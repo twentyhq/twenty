@@ -432,7 +432,11 @@ export class FieldPermissionService {
       );
     }
 
-    if (isDefined(fieldPermission.rowLevelPermissionPredicateGroupId)) {
+    if (
+      isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) &&
+      (isDefined(fieldPermission.canReadFieldValue) ||
+        isDefined(fieldPermission.canUpdateFieldValue))
+    ) {
       this.validateRlsRuleFieldPermissionOrThrow({
         rowLevelPermissionPredicateGroupId:
           fieldPermission.rowLevelPermissionPredicateGroupId,
