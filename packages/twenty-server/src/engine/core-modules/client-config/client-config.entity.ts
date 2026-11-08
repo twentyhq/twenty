@@ -17,7 +17,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
-import { type AiModelKind } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
+import { type AiModelKind } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.constant';
 import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
