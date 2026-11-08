@@ -102,7 +102,8 @@ export class McpServerClientService {
       signal: AbortSignal;
     }) => Promise<TResult>;
   }): Promise<TResult> {
-    const accessToken = await this.resolveAccessToken(target);
+    const connectedAccountCredentials =
+      await this.resolveConnectedAccountCredentials(target);
     const signal = AbortSignal.timeout(timeoutMs);
     const client = new Client(MCP_CLIENT_INFO);
     const transport = new StreamableHTTPClientTransport(new URL(target.url), {
@@ -111,8 +112,12 @@ export class McpServerClientService {
         context: { workspaceId: target.workspaceId, source: 'mcp-server' },
         timeoutMs,
       }),
-      requestInit: isDefined(accessToken)
-        ? { headers: { Authorization: `Bearer ${accessToken}` } }
+      requestInit: isDefined(connectedAccountCredentials)
+        ? {
+            headers: {
+              Authorization: `Bearer ${connectedAccountCredentials.accessToken}`,
+            },
+          }
         : undefined,
     });
 
@@ -122,6 +127,15 @@ export class McpServerClientService {
       return await run({ client, signal });
     } catch (error) {
       if (error instanceof StreamableHTTPError && error.code === 401) {
+        if (isDefined(connectedAccountCredentials)) {
+          // A revoked token would otherwise keep being picked ahead of a fresh connection
+          await this.markConnectedAccountAuthFailed({
+            connectedAccountId: connectedAccountCredentials.connectedAccountId,
+            workspaceId: target.workspaceId,
+            reason: 'The MCP server rejected the access token',
+          });
+        }
+
         // Lands in toolsSyncError, which settings show as is.
         throw new McpServerException(
           'This MCP server requires signing in. Connect an account to use it.',
@@ -241,9 +255,9 @@ export class McpServerClientService {
     );
   }
 
-  private async resolveAccessToken(
+  private async resolveConnectedAccountCredentials(
     target: McpServerTarget,
-  ): Promise<string | null> {
+  ): Promise<{ connectedAccountId: string; accessToken: string } | null> {
     const { connectionProviderId, workspaceId } = target;
 
     if (!isDefined(connectionProviderId)) {
@@ -264,10 +278,28 @@ export class McpServerClientService {
       workspaceId,
     });
 
-    return this.connectedAccountTokenEncryptionService.decrypt({
-      ciphertext: accessToken,
-      workspaceId,
-    });
+    return {
+      connectedAccountId: connectedAccount.id,
+      accessToken: this.connectedAccountTokenEncryptionService.decrypt({
+        ciphertext: accessToken,
+        workspaceId,
+      }),
+    };
+  }
+
+  private async markConnectedAccountAuthFailed({
+    connectedAccountId,
+    workspaceId,
+    reason,
+  }: {
+    connectedAccountId: string;
+    workspaceId: string;
+    reason: string;
+  }): Promise<void> {
+    await this.connectedAccountRepository.update(
+      { id: connectedAccountId, workspaceId },
+      { authFailedAt: new Date(), authFailedReason: reason },
+    );
   }
 
   // No app logic reports failures for these accounts, so a rejected refresh is flagged here
@@ -293,10 +325,11 @@ export class McpServerClientService {
         throw error;
       }
 
-      await this.connectedAccountRepository.update(
-        { id: connectedAccount.id, workspaceId },
-        { authFailedAt: new Date(), authFailedReason: error.message },
-      );
+      await this.markConnectedAccountAuthFailed({
+        connectedAccountId: connectedAccount.id,
+        workspaceId,
+        reason: error.message,
+      });
 
       throw new McpServerException(
         'The connected account for this MCP server was signed out. Sign in again to use it.',

@@ -87,18 +87,23 @@ export class ConnectionProviderOAuthDiscoveryService {
       });
 
     const firstAttempt = await prepare(storedClient, true);
+    const isRejected = (authorizationUrl: URL) =>
+      this.isClientRejected({ authorizationUrl, fetchFn });
 
     // A server that forgot our client, or rejects our metadata document, would strand the user on its error page.
-    const attempt = (await this.isClientRejected({
-      authorizationUrl: firstAttempt.authorizationUrl,
-      fetchFn,
-    }))
+    // The replacement is kept only if accepted: other members' refresh tokens belong to the stored client.
+    const retryAttempt = (await isRejected(firstAttempt.authorizationUrl))
       ? await prepare(
           null,
           firstAttempt.clientToPersist.registrationMethod !==
             'CLIENT_ID_METADATA_DOCUMENT',
         )
-      : firstAttempt;
+      : null;
+    const attempt =
+      isDefined(retryAttempt) &&
+      !(await isRejected(retryAttempt.authorizationUrl))
+        ? retryAttempt
+        : firstAttempt;
 
     await this.oauthClientService.saveClient({
       ...attempt.clientToPersist,

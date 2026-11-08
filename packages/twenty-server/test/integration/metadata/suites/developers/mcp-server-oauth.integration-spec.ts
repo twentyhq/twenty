@@ -292,6 +292,28 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     expect(connectedAccount.authFailedAt).not.toBeNull();
   });
 
+  it('asks to sign in again once the server rejects the access token', async () => {
+    const [connectedAccount] = await readConnectedAccounts(
+      getConnectionProviderId(),
+    );
+
+    await signIn(connectedAccount.id);
+    fakeMcpServer.oauth.issuedAccessTokens.clear();
+
+    const syncResponse = await syncMcpServerTools(mcpServer.id);
+    const [revokedConnectedAccount] = await readConnectedAccounts(
+      getConnectionProviderId(),
+    );
+
+    expect(syncResponse.body.data.syncMcpServerTools.toolsSyncError).toBe(
+      'This MCP server requires signing in. Connect an account to use it.',
+    );
+    expect(revokedConnectedAccount).toMatchObject({
+      authFailedReason: 'The MCP server rejected the access token',
+    });
+    expect(revokedConnectedAccount.authFailedAt).not.toBeNull();
+  });
+
   it('lists the connection to its owner only and lets them remove it', async () => {
     const findServerConnections = async (token?: string) => {
       const response = await getMyConnectedAccounts(token);
