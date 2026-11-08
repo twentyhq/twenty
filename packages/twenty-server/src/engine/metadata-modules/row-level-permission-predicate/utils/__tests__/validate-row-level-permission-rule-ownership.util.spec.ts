@@ -87,6 +87,7 @@ const buildFlatPredicateGroup = (
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
   positionInRowLevelPermissionPredicateGroup: null,
   canReadRecords: true,
+  canCreateRecords: true,
   canUpdateRecords: true,
   canSoftDeleteRecords: true,
   canDestroyRecords: true,

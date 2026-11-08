@@ -225,17 +225,14 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
           (recordBeforeToFind) => recordBeforeToFind.id === recordAfter.id,
         );
 
-        let updatedFields;
-        let diff;
-
-        diff = objectRecordChangedValues(
+        const diff = objectRecordChangedValues(
           correspondingRecordBefore ?? {},
           recordAfter,
           objectMetadataItem,
           flatFieldMetadataMaps,
         ) as Partial<ObjectRecordDiff<T>>;
 
-        updatedFields = computeUpdatedFieldsFromDiff(
+        const updatedFields = computeUpdatedFieldsFromDiff(
           diff,
           objectMetadataItem,
           flatFieldMetadataMaps,

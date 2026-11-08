@@ -1725,6 +1725,11 @@ msgstr "Om din app"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Accepterade och signerade PUB:er för den här arbetsytan, med deras mallversion och datum."
 
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Åtkomstgrupper"
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -3980,6 +3985,11 @@ msgstr "Gäller för"
 msgid "Apply"
 msgstr "Verkställ"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Tillämpa privata poster på objekt som inte är privata som standard. Alltid aktivt för arbetsytor som har angett postdelning. Om du stänger av detta blir poster som angetts som privata på dessa objekt synliga igen."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -5961,6 +5971,11 @@ msgstr "Checklista"
 msgid "Check recent runs"
 msgstr "Kontrollera senaste körningarna"
 
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Kontrollera behörigheten att skapa separat när poster skapas, i stället för behörigheten att uppdatera."
+
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -6899,6 +6914,11 @@ msgstr "Förhandsvisning av komponent med exempeldata"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Skriv e-post"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Beräkna de åtkomstgrupper som postlistor ska använda för behörigheter på radnivå. Aktivera när arbetsyteuppgraderingen har slutförts."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -8171,6 +8191,11 @@ msgstr "Skapa post"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Skapa post"
+
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Behörighet att skapa poster"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -10255,6 +10280,7 @@ msgid "Downgrade to monthly"
 msgstr "Nedgradera till månadsvis"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
@@ -14326,6 +14352,11 @@ msgstr "Identifierare"
 msgid "Happy"
 msgstr "Glad"
 
+#. js-lingui-id: WsF7cD
+#: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
+msgid "Has attachments"
+msgstr "Har bilagor"
+
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Has many"
@@ -18265,6 +18296,7 @@ msgid "More advanced fields for advanced projects"
 msgstr "Fler avancerade fält för avancerade projekt"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -22158,6 +22190,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "Förhindra användare från att tilldela samma värde till olika poster"
 
 #. js-lingui-id: rdUucN
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -22329,6 +22362,11 @@ msgstr "Integritetspolicy"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Privat"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Privata poster"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -23675,11 +23713,6 @@ msgstr "Replit-installationslänkar kräver en HTTPS MCP-URL."
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Svara"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Svara..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

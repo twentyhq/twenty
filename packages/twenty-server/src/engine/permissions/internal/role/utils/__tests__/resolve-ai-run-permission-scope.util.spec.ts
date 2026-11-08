@@ -93,6 +93,7 @@ describe('resolveAiRunPermissionScope', () => {
     });
 
     expect(recordsPermissions.objects[PERSON_ID]).toMatchObject({
+      canCreateAllRecords: false,
       canReadAllRecords: true,
       canUpdateAllRecords: false,
     });
@@ -183,6 +184,7 @@ describe('resolveAiRunPermissionScope', () => {
         resolve({ permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG] })
           .recordsPermissions.objects[WORKFLOW_ID],
       ).toMatchObject({
+        canCreateAllRecords: true,
         canReadAllRecords: true,
         canUpdateAllRecords: true,
         canDestroyAllRecords: true,
@@ -202,6 +204,7 @@ describe('resolveAiRunPermissionScope', () => {
           ],
         }).recordsPermissions.objects[WORKFLOW_ID],
       ).toMatchObject({
+        canCreateAllRecords: false,
         canReadAllRecords: true,
         canUpdateAllRecords: false,
         canDestroyAllRecords: false,
@@ -255,6 +258,7 @@ describe('resolveAiRunPermissionScope', () => {
     it('leaves it readable but not writable when the scope grants nothing', () => {
       expect(resolve({}).recordsPermissions.objects[CAMPAIGN_ID]).toMatchObject(
         {
+          canCreateAllRecords: false,
           canReadAllRecords: true,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
@@ -304,6 +308,7 @@ describe('resolveAiRunPermissionScope', () => {
                 ...NO_ROLE_RECORDS_PERMISSIONS,
                 objects: {
                   [CAMPAIGN_ID]: {
+                    canCreateAllRecords: true,
                     canReadAllRecords: true,
                     canUpdateAllRecords: true,
                     canSoftDeleteAllRecords: true,

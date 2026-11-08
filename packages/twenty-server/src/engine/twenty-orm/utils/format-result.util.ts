@@ -307,7 +307,9 @@ function getCompositeFieldMetadataMapFromCollection(
     compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
       const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
-      if (!compositeType) return [];
+      if (!compositeType) {
+        return [];
+      }
 
       return compositeType.properties.map((compositeProperty) => [
         computeCompositeColumnName(fieldMetadata.name, compositeProperty),
@@ -358,7 +360,9 @@ function transformCompositeFieldNullValue(
   compositePropertyName: string,
   fieldMetadata: OrmFlatFieldMetadata,
 ) {
-  if (!isNull(value)) return value;
+  if (!isNull(value)) {
+    return value;
+  }
 
   return (
     DEFAULT_COMPOSITE_FIELDS_NULL_EQUIVALENT_VALUE[fieldMetadata.type]?.[

@@ -30,7 +30,9 @@ export const validateDateTimeFieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): unknown => {
-  if (isNull(value)) return null;
+  if (isNull(value)) {
+    return null;
+  }
 
   if (isDate(value) && isValid(value)) {
     return Temporal.Instant.fromEpochMilliseconds(value.getTime()).toString();

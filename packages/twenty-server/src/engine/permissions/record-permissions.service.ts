@@ -19,8 +19,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
-import { RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
-import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-orm/utils/build-record-share-table-expression.util';
+import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-share-table-expression.util';
 import {
   type PermissionsMetadataMaps,
   type PermissionsObjectAccessRequest,
@@ -33,6 +33,7 @@ import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/intern
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/internal/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-denied-to-principals.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
+import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-condition.util';
@@ -54,7 +55,7 @@ import { type RecordReadRestrictions } from 'src/engine/permissions/types/record
 
 type RecordOperationQuestion = {
   principals: PermissionsPrincipalsWithRolesContext;
-  flatObjectMetadata: FlatObjectMetadata;
+  objectMetadataId: string;
   operationType: ObjectRecordsOperationType;
 };
 
@@ -75,10 +76,6 @@ type RecordsQuestion = ObjectQuestion & {
 
 type RecordsOperationQuestion = RecordsQuestion & ObjectOperationQuestion;
 
-type FieldsQuestion = Omit<ObjectQuestion, 'principals'> & {
-  principals: PermissionsPrincipalsWithRolesContext;
-};
-
 @Injectable()
 export class RecordPermissionsService {
   private readonly sharedAccessLevelsByPrincipals = new WeakMap<
@@ -88,7 +85,7 @@ export class RecordPermissionsService {
 
   constructor(
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
-    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
+    private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
 
@@ -130,22 +127,6 @@ export class RecordPermissionsService {
         },
       ]),
     );
-  }
-
-  async findRestrictedFields({
-    principals,
-    objectMetadataId,
-  }: ObjectQuestion): Promise<RestrictedFieldsPermissions> {
-    if (!isDefined(principals)) {
-      return {};
-    }
-
-    const { objects } =
-      await this.permissionsMetadataMapsService.loadRecordsPermissionsForPrincipals(
-        { principals },
-      );
-
-    return objects[objectMetadataId]?.restrictedFields ?? {};
   }
 
   async canAccessSomeRecords({
@@ -204,9 +185,17 @@ export class RecordPermissionsService {
         { principals },
       );
 
+    const { featureFlagsMap } =
+      await this.permissionsMetadataMapsService.loadForPrincipals({
+        principals,
+      });
+
     return canReachSomeRecords({
       objectRecordsPermissions: objects[objectMetadataId],
-      operationType,
+      operationType: getEnforcedOperationType({
+        operationType,
+        featureFlagsMap,
+      }),
     });
   }
 
@@ -221,7 +210,7 @@ export class RecordPermissionsService {
     );
   }
 
-  async findGrantedRecordIdsOnReadableObject(
+  async filterGrantedRecordIds(
     request: RecordsOperationQuestion,
   ): Promise<Set<string>> {
     const readRequest = await this.findObjectAccessRequest({
@@ -241,22 +230,12 @@ export class RecordPermissionsService {
     return this.findGrantedRecordIds(request);
   }
 
-  public findUnreadableFieldMetadataIdsOrThrow(
-    question: FieldsQuestion,
-  ): Promise<Set<string>> {
-    return this.findDeniedFieldMetadataIdsOrThrow({
-      ...question,
-      fieldPermission: 'canRead',
-    });
+  findUnreadableFields(question: ObjectQuestion): Promise<Set<string>> {
+    return this.findDeniedFields({ ...question, fieldPermission: 'canRead' });
   }
 
-  public findNonUpdatableFieldMetadataIdsOrThrow(
-    question: FieldsQuestion,
-  ): Promise<Set<string>> {
-    return this.findDeniedFieldMetadataIdsOrThrow({
-      ...question,
-      fieldPermission: 'canUpdate',
-    });
+  findUneditableFields(question: ObjectQuestion): Promise<Set<string>> {
+    return this.findDeniedFields({ ...question, fieldPermission: 'canUpdate' });
   }
 
   async filterRoleIdsWithoutReadAccess({
@@ -303,50 +282,49 @@ export class RecordPermissionsService {
     });
   }
 
-  async isOperationDisabled(
-    question: RecordOperationQuestion,
-  ): Promise<boolean> {
-    return isObjectOperationDisabledToPrincipals({
-      ...question,
-      metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
-        { principals: question.principals },
-      ),
-    });
+  async isReadDisabled({
+    principals,
+    objectMetadataId,
+  }: Omit<RecordOperationQuestion, 'operationType'>): Promise<boolean> {
+    return isObjectOperationDisabledToPrincipals(
+      await this.findObjectAccessRequestOrThrow({
+        principals,
+        objectMetadataId,
+        operationType: 'read',
+      }),
+    );
   }
 
-  async assertObjectOperationAccessibleOrThrow(
-    question: RecordOperationQuestion,
-  ): Promise<void> {
-    const metadataMaps =
-      await this.permissionsMetadataMapsService.loadForPrincipals({
-        principals: question.principals,
-      });
+  async assertCanRunOperationOrThrow({
+    principals,
+    objectMetadataId,
+    operationType,
+    selectedColumns,
+    updatedColumns = [],
+  }: RecordOperationQuestion & {
+    selectedColumns: string[];
+    updatedColumns?: string[];
+  }): Promise<void> {
+    const request = await this.findObjectAccessRequestOrThrow({
+      principals,
+      objectMetadataId,
+      operationType,
+    });
+    const { flatObjectMetadata, metadataMaps } = request;
 
-    if (
-      !isObjectOperationDisabledToPrincipals({ ...question, metadataMaps }) &&
-      isObjectOperationDeniedToPrincipals({ ...question, metadataMaps })
-    ) {
+    if (isObjectOperationDisabledToPrincipals(request)) {
+      throw new PermissionsException(
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${flatObjectMetadata.nameSingular}" are not ${operationType === 'read' ? 'readable' : 'writable'} through the API`,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    if (isObjectOperationDeniedToPrincipals(request)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
-  }
-
-  async assertColumnsReadableAndUpdatableOrThrow({
-    principals,
-    flatObjectMetadata,
-    operationType,
-    selectedColumns,
-    updatedColumns,
-  }: RecordOperationQuestion & {
-    selectedColumns: string[];
-    updatedColumns: string[];
-  }): Promise<void> {
-    const metadataMaps =
-      await this.permissionsMetadataMapsService.loadForPrincipals({
-        principals,
-      });
 
     validateOperationIsPermittedOrThrow({
       entityName: flatObjectMetadata.nameSingular,
@@ -366,20 +344,15 @@ export class RecordPermissionsService {
   }
 
   async buildRecordsAccessCondition({
-    principals,
-    flatObjectMetadata,
-    operationType,
     tableAlias,
+    ...question
   }: RecordOperationQuestion & {
     tableAlias: string;
   }): Promise<SqlCondition | boolean> {
+    const { principals } = question;
+
     return buildPermissionsCondition({
-      principals,
-      metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
-        { principals },
-      ),
-      flatObjectMetadata,
-      operationType,
+      ...(await this.findObjectAccessRequestOrThrow(question)),
       tableAlias,
       recordShareTableExpression: buildRecordShareTableExpression({
         workspaceId: principals.workspaceId,
@@ -389,32 +362,37 @@ export class RecordPermissionsService {
 
   async assertCreatedRecordsMatchRowLevelPermissionsOrThrow({
     principals,
-    flatObjectMetadata,
+    objectMetadataId,
     records,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
-    flatObjectMetadata: FlatObjectMetadata;
+    objectMetadataId: string;
     records: ObjectRecord[];
   }): Promise<void> {
+    const { flatObjectMetadata, metadataMaps } =
+      await this.findObjectAccessRequestOrThrow({
+        principals,
+        objectMetadataId,
+        operationType: 'create',
+      });
+
     validateRLSPredicatesForRecords({
       records,
       objectMetadata: flatObjectMetadata,
       principals,
-      metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
-        { principals },
-      ),
+      metadataMaps,
     });
   }
 
   async assertUpdatesKeepRecordAccessOrThrow({
     principals,
-    flatObjectMetadata,
+    objectMetadataId,
     updates,
     formatRecords,
     transactionScope,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
-    flatObjectMetadata: FlatObjectMetadata;
+    objectMetadataId: string;
     updates: {
       rawRecordBefore: ObjectRecord;
       setColumns: Record<string, unknown>;
@@ -422,9 +400,11 @@ export class RecordPermissionsService {
     formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
-    const metadataMaps =
-      await this.permissionsMetadataMapsService.loadForPrincipals({
+    const { flatObjectMetadata, metadataMaps } =
+      await this.findObjectAccessRequestOrThrow({
         principals,
+        objectMetadataId,
+        operationType: 'update',
       });
 
     if (
@@ -524,7 +504,7 @@ export class RecordPermissionsService {
       return new Set();
     }
 
-    return this.recordPermissionReadOrmService.findRecordIdsMatchingCondition({
+    return this.recordPermissionReadRepository.findRecordIdsMatchingCondition({
       workspaceId: principals.workspaceId,
       flatObjectMetadata: request.flatObjectMetadata,
       recordIds: uniqueRecordIds,
@@ -584,7 +564,7 @@ export class RecordPermissionsService {
         : true,
     );
     const recordIdsByCondition =
-      await this.recordPermissionReadOrmService.findRecordIdsMatchingConditions(
+      await this.recordPermissionReadRepository.findRecordIdsMatchingConditions(
         {
           workspaceId,
           flatObjectMetadata,
@@ -654,15 +634,17 @@ export class RecordPermissionsService {
     });
   }
 
-  private async findDeniedFieldMetadataIdsOrThrow({
+  private async findDeniedFields({
     principals,
     objectMetadataId,
     fieldPermission,
-  }: {
-    principals: PermissionsPrincipalsWithRolesContext;
-    objectMetadataId: string;
+  }: ObjectQuestion & {
     fieldPermission: keyof RestrictedFieldPermissions;
   }): Promise<Set<string>> {
+    if (!isDefined(principals)) {
+      return new Set();
+    }
+
     const flatObjectMetadata = this.findFlatObjectMetadata({
       metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
         { principals },
@@ -725,6 +707,21 @@ export class RecordPermissionsService {
     return { principals, metadataMaps, flatObjectMetadata, operationType };
   }
 
+  private async findObjectAccessRequestOrThrow(
+    question: RecordOperationQuestion,
+  ): Promise<PermissionsObjectAccessRequest> {
+    const request = await this.findObjectAccessRequest(question);
+
+    if (!isDefined(request)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return request;
+  }
+
   private findFlatObjectMetadata({
     metadataMaps,
     objectMetadataId,
@@ -749,7 +746,7 @@ export class RecordPermissionsService {
     }
 
     const sharedAccessLevels =
-      this.recordPermissionReadOrmService.findRecordShareAccessLevelsByObjectMetadataId(
+      this.recordPermissionReadRepository.findRecordShareAccessLevelsByObjectMetadataId(
         {
           workspaceId: principals.workspaceId,
           principalIds: getPermissionsPrincipalsShareKeys(principals),
@@ -795,7 +792,7 @@ export class RecordPermissionsService {
       }) => {
         const recordShareGrants =
           recordShareGrantsByObjectMetadataId.get(objectMetadataId) ??
-          this.recordPermissionReadOrmService.findRecordShares({
+          this.recordPermissionReadRepository.findRecordShares({
             workspaceId,
             objectMetadataId,
             recordIds,
@@ -815,7 +812,7 @@ export class RecordPermissionsService {
       },
       findPrivateRecordStates: async () =>
         (privateRecordStates ??=
-          this.recordPermissionReadOrmService.findPrivateRecordStates({
+          this.recordPermissionReadRepository.findPrivateRecordStates({
             workspaceId,
             flatObjectMetadata,
             flatFieldMetadataMaps,

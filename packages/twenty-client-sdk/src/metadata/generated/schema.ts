@@ -1571,7 +1571,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2830,6 +2830,7 @@ export interface ObjectRecordEventWithQueryIds {
 export type ObjectRecordGroupByDateGranularity = 'DAY' | 'DAY_OF_THE_WEEK' | 'MONTH' | 'MONTH_OF_THE_YEAR' | 'NONE' | 'QUARTER' | 'QUARTER_OF_THE_YEAR' | 'WEEK' | 'YEAR'
 
 export interface ObjectRecordsPermissions {
+    canCreateAllRecords: Scalars['Boolean']
     canDestroyAllRecords: Scalars['Boolean']
     canReadAllRecords: Scalars['Boolean']
     canSoftDeleteAllRecords: Scalars['Boolean']
@@ -3458,6 +3459,7 @@ export type RowLevelPermissionPredicateGroupLogicalOperator = 'AND' | 'OR'
 export type RowLevelPermissionPredicateOperand = 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'GREATER_THAN_OR_EQUAL' | 'IS' | 'IS_AFTER' | 'IS_BEFORE' | 'IS_EMPTY' | 'IS_IN_FUTURE' | 'IS_IN_PAST' | 'IS_NOT' | 'IS_NOT_EMPTY' | 'IS_NOT_NULL' | 'IS_RELATIVE' | 'IS_TODAY' | 'LESS_THAN_OR_EQUAL' | 'VECTOR_SEARCH'
 
 export interface RowLevelRecordsPermissions {
+    canCreateRecords: Scalars['Boolean']
     canDestroyRecords: Scalars['Boolean']
     canReadRecords: Scalars['Boolean']
     canSoftDeleteRecords: Scalars['Boolean']
@@ -7577,6 +7579,7 @@ export interface ObjectRecordEventWithQueryIdsGenqlSelection{
 }
 
 export interface ObjectRecordsPermissionsGenqlSelection{
+    canCreateAllRecords?: boolean | number
     canDestroyAllRecords?: boolean | number
     canReadAllRecords?: boolean | number
     canSoftDeleteAllRecords?: boolean | number
@@ -8258,6 +8261,7 @@ export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Sca
 export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
+    canCreateRecords?: boolean | number
     canDestroyRecords?: boolean | number
     canReadRecords?: boolean | number
     canSoftDeleteRecords?: boolean | number
@@ -12895,6 +12899,7 @@ export const enumEventLogTable = {
 }
 
 export const enumFeatureFlagKey = {
+   IS_ACCESS_GROUPS_ENABLED: 'IS_ACCESS_GROUPS_ENABLED' as const,
    IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED: 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' as const,
    IS_AI_CHAT_COMPONENT_BUILDER_ENABLED: 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' as const,
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
@@ -12902,9 +12907,11 @@ export const enumFeatureFlagKey = {
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
+   IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
+   IS_PRIVATE_RECORDS_ENABLED: 'IS_PRIVATE_RECORDS_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RELATED_RECORD_PATHS_ENABLED: 'IS_RELATED_RECORD_PATHS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,

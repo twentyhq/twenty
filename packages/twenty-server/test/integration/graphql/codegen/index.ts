@@ -120,7 +120,9 @@ const writeTestFile = (
   content: string | null,
   force = false,
 ): string => {
-  if (!content) return 'skipped';
+  if (!content) {
+    return 'skipped';
+  }
 
   const fileName = `${pascalToKebab(queryName)}.integration-spec.ts`;
   const filePath = path.join(TEST_OUTPUT_DIR, fileName);
@@ -156,8 +158,12 @@ const generateTests = async (force = false) => {
   for (const query of queryType.fields) {
     const queryName = query.name;
 
-    if (hasRequiredArgs(query.args)) continue;
-    if (queryName.includes('Duplicates')) continue;
+    if (hasRequiredArgs(query.args)) {
+      continue;
+    }
+    if (queryName.includes('Duplicates')) {
+      continue;
+    }
 
     const queryReturnType = unwrapType(query.type);
 
@@ -193,8 +199,12 @@ const generateTests = async (force = false) => {
           const content = generateTestContent(queryName, nodeTypeInfo?.fields);
           const result = writeTestFile(queryName, content, force);
 
-          if (result === 'created') createdCount++;
-          if (result === 'updated') updatedCount++;
+          if (result === 'created') {
+            createdCount++;
+          }
+          if (result === 'updated') {
+            updatedCount++;
+          }
         }
       }
     }

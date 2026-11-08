@@ -55,6 +55,7 @@ const buildRoleRecordsPermissions = (
 
 const agentRolePermissions = buildRoleRecordsPermissions({
   [OBJECT_ID]: {
+    canCreateAllRecords: false,
     canReadAllRecords: true,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
@@ -65,6 +66,7 @@ const agentRolePermissions = buildRoleRecordsPermissions({
 
 const defaultRolePermissions = buildRoleRecordsPermissions({
   [OBJECT_ID]: {
+    canCreateAllRecords: false,
     canReadAllRecords: false,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
@@ -385,6 +387,7 @@ const INVOICE_ID = 'invoice-id';
 const AMOUNT_FIELD_ID = 'amount-field-id';
 
 const FULL_ACCESS: ObjectRecordsPermissions = {
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
@@ -699,12 +702,14 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     ...disabledActionRolesPermissions,
     'user-role-id': buildRoleRecordsPermissions({
       [INVOICE_ID]: {
+        canCreateAllRecords: false,
         canReadAllRecords: false,
         canUpdateAllRecords: false,
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
         restrictedFields: {},
         rowLevelRecordsPermissions: {
+          canCreateRecords: true,
           canReadRecords: true,
           canUpdateRecords: true,
           canSoftDeleteRecords: true,

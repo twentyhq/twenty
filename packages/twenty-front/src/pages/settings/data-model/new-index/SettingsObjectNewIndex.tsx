@@ -34,9 +34,15 @@ import {
 } from '@/settings/data-model/indexes/forms/validation-schemas/settingsObjectNewIndexFormSchema';
 
 const isFieldIndexable = (field: FieldMetadataItem): boolean => {
-  if (field.name === SEARCH_VECTOR_FIELD_NAME) return false;
-  if (field.isSystem === true) return false;
-  if (field.isActive !== true) return false;
+  if (field.name === SEARCH_VECTOR_FIELD_NAME) {
+    return false;
+  }
+  if (field.isSystem === true) {
+    return false;
+  }
+  if (field.isActive !== true) {
+    return false;
+  }
 
   // Only MANY_TO_ONE relations have a join column on this side to index
   const relationType =

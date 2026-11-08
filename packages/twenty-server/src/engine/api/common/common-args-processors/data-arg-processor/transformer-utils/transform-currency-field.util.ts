@@ -12,7 +12,9 @@ export const transformCurrencyField = (
   amountMicros?: number | null;
   currencyCode?: string | null;
 } | null => {
-  if (isNull(value)) return null;
+  if (isNull(value)) {
+    return null;
+  }
 
   return {
     amountMicros: isUndefined(value.amountMicros)

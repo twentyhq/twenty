@@ -70,7 +70,9 @@ export const SettingsAdminWorkerMetricsGraph = ({
   };
 
   const getMaxYValue = () => {
-    if (!hasData) return 2;
+    if (!hasData) {
+      return 2;
+    }
 
     let maxValue = 0;
     metricsData.forEach((series) => {
