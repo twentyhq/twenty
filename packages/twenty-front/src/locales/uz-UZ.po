@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, one {bepul kredit} other {bepul kredit}}"
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} va {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -20602,12 +20602,12 @@ msgstr "Nol qiymatlarni hisobga olmaslik"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "{dayName} da"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "{remainingDays} va {lastDay} kunlari"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "faqat {dayName} kuni"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "faqat {remainingDays} va {lastDay} kunlari"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

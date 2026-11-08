@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, one {ingyenes kredit} other {ingyenes kredi
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} és {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -20602,12 +20602,12 @@ msgstr "Nulla értékek kihagyása"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "a(z) {dayName} esetén"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "{remainingDays} és {lastDay} napján"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "csak {dayName}-on"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "csak {remainingDays} és {lastDay}-on"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
