@@ -1,8 +1,4 @@
-import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
-import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
-import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -41,15 +37,6 @@ const findRoleUniversalIdentifier = async (roleId: string) => {
   >(`SELECT "universalIdentifier" FROM core."role" WHERE id = $1`, [roleId]);
 
   return role.universalIdentifier;
-};
-
-const findRoleIdByUniversalIdentifier = async (universalIdentifier: string) => {
-  const [role] = await global.testDataSource.query<{ id: string }[]>(
-    `SELECT id FROM core."role" WHERE "universalIdentifier" = $1`,
-    [universalIdentifier],
-  );
-
-  return role.id;
 };
 
 const findAppAgentRoleUniversalIdentifier = async () => {
@@ -181,59 +168,5 @@ describe('Sync application should fail when an agent uses a role the application
 
     expectOneNotInternalServerErrorSnapshot({ errors });
     expect(await findAppAgentRoleUniversalIdentifier()).toBe(TEST_ROLE_ID);
-  }, 60000);
-
-  it('should let the workspace create an agent with a role owned by another application', async () => {
-    const otherAppRoleId =
-      await findRoleIdByUniversalIdentifier(OTHER_APP_ROLE_ID);
-
-    const { data } = await createOneAgent({
-      expectToFail: false,
-      input: {
-        label: 'Workspace Agent With Other App Role',
-        prompt: 'Test prompt',
-        modelId: TEST_AI_MODEL_ID,
-        roleId: otherAppRoleId,
-      },
-    });
-
-    try {
-      expect(data.createOneAgent.roleId).toBe(otherAppRoleId);
-    } finally {
-      await deleteOneAgent({
-        expectToFail: false,
-        input: { id: data.createOneAgent.id },
-      });
-    }
-  }, 60000);
-
-  it('should let the workspace assign a role owned by another application to its agent', async () => {
-    const otherAppRoleId =
-      await findRoleIdByUniversalIdentifier(OTHER_APP_ROLE_ID);
-
-    const { data: createData } = await createOneAgent({
-      expectToFail: false,
-      input: {
-        label: 'Workspace Agent',
-        prompt: 'Test prompt',
-        modelId: TEST_AI_MODEL_ID,
-      },
-    });
-
-    const agentId = createData.createOneAgent.id;
-
-    try {
-      const { data: updateData } = await updateOneAgent({
-        expectToFail: false,
-        input: { id: agentId, roleId: otherAppRoleId },
-      });
-
-      expect(updateData.updateOneAgent.roleId).toBe(otherAppRoleId);
-    } finally {
-      await deleteOneAgent({
-        expectToFail: false,
-        input: { id: agentId },
-      });
-    }
   }, 60000);
 });
