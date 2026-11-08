@@ -1,5 +1,4 @@
 import { t } from '@lingui/core/macro';
-import { assertUnreachable } from 'twenty-shared/utils';
 import {
   BarChartLayout,
   WidgetConfigurationType,
@@ -43,6 +42,6 @@ export const getWidgetTitle = (
     case WidgetConfigurationType.TIMELINE:
     case WidgetConfigurationType.FIELD_RICH_TEXT:
     default:
-      assertUnreachable(configuration.configurationType as never);
+      throw new Error("Didn't expect to get here.");
   }
 };
