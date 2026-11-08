@@ -1,3 +1,4 @@
+import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
@@ -52,16 +53,14 @@ const signInThroughVerifyUrl = async (verifyUrl: URL) => {
     expectToFail: false,
   });
 
-  const accessToken =
-    authTokensData.getAuthTokensFromLoginToken.tokens
-      .accessOrWorkspaceAgnosticToken.token;
-
   const { data: currentUserData } = await getCurrentUser({
-    accessToken,
+    accessToken:
+      authTokensData.getAuthTokensFromLoginToken.tokens
+        .accessOrWorkspaceAgnosticToken.token,
     expectToFail: false,
   });
 
-  return { accessToken, currentUser: currentUserData.currentUser };
+  return currentUserData.currentUser;
 };
 
 describe('SSO login should succeed', () => {
@@ -69,7 +68,6 @@ describe('SSO login should succeed', () => {
   let identityProviderId: string;
   let ycombinatorAdminAccessToken: string;
   let otherWorkspaceIdentityProviderId: string | undefined;
-  let otherWorkspaceAccessToken: string | undefined;
   let isOtherWorkspaceSuspended = false;
 
   const signInAsPhil = (signInIdentityProviderId = identityProviderId) =>
@@ -90,12 +88,14 @@ describe('SSO login should succeed', () => {
       isOtherWorkspaceSuspended = false;
     }
 
-    if (isDefined(otherWorkspaceAccessToken)) {
-      await deleteOidcConnectedAccounts(otherWorkspaceAccessToken);
-      otherWorkspaceAccessToken = undefined;
-    }
-
     if (isDefined(otherWorkspaceIdentityProviderId)) {
+      await deleteOidcConnectedAccounts(
+        await getAccessTokenForCredentials({
+          email: 'phil.schiler@apple.dev',
+          workspaceSubdomain: 'yc',
+        }),
+      );
+
       await deleteOneSsoIdentityProvider({
         identityProviderId: otherWorkspaceIdentityProviderId,
         token: ycombinatorAdminAccessToken,
@@ -116,9 +116,7 @@ describe('SSO login should succeed', () => {
 
   describe('OIDC', () => {
     it('should sign an existing workspace member in', async () => {
-      const { currentUser } = await signInThroughVerifyUrl(
-        await signInAsPhil(),
-      );
+      const currentUser = await signInThroughVerifyUrl(await signInAsPhil());
 
       expect(currentUser).toMatchObject({
         id: USER_DATA_SEED_IDS.PHIL,
@@ -136,11 +134,9 @@ describe('SSO login should succeed', () => {
       );
       isOtherWorkspaceSuspended = true;
 
-      const { accessToken, currentUser } = await signInThroughVerifyUrl(
+      const currentUser = await signInThroughVerifyUrl(
         await signInAsPhil(otherWorkspaceIdentityProviderId),
       );
-
-      otherWorkspaceAccessToken = accessToken;
 
       expect(currentUser).toMatchObject({
         id: USER_DATA_SEED_IDS.PHIL,

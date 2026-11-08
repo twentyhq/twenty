@@ -10,9 +10,7 @@ type GetAccessTokenForCredentialsArgs = {
   workspaceSubdomain?: string;
 };
 
-// Logs a seeded user in with email/password and returns a usable access
-// token, minting it dynamically rather than relying on a pre-baked entry in
-// test-tokens.json.
+// Mints a token by logging a seeded user in, instead of a pre-baked test-tokens.json entry
 export const getAccessTokenForCredentials = async ({
   email,
   password = 'tim@apple.dev',
