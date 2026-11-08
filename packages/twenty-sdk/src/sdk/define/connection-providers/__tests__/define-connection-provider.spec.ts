@@ -132,6 +132,35 @@ describe('defineConnectionProvider', () => {
     },
   );
 
+  describe('oauth-discovery type', () => {
+    const baseOAuthDiscoveryConfig = {
+      universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3ebbbc',
+      name: 'linear-mcp',
+      displayName: 'Linear MCP',
+      type: 'oauth-discovery' as const,
+      oauthDiscovery: { resourceUrl: 'https://mcp.linear.app/mcp' },
+    };
+
+    it('returns success for a valid config', () => {
+      const result = defineConnectionProvider(baseOAuthDiscoveryConfig);
+
+      expect(result.success).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('rejects a resource URL that is not HTTP', () => {
+      const result = defineConnectionProvider({
+        ...baseOAuthDiscoveryConfig,
+        oauthDiscovery: { resourceUrl: 'mcp.linear.app' },
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toEqual([
+        "Connection provider with type 'oauth-discovery' must declare oauthDiscovery.resourceUrl as an HTTP or HTTPS URL",
+      ]);
+    });
+  });
+
   describe('custom type', () => {
     const baseCustomConfig = {
       universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3ebbbb',

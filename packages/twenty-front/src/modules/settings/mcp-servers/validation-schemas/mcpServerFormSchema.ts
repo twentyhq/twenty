@@ -4,6 +4,7 @@ import { isHttpUrl } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { MCP_SERVER_NAME_PATTERN } from '@/settings/mcp-servers/constants/McpServerNamePattern';
+import { ConnectionProviderScope } from '~/generated-metadata/graphql';
 
 export const getMcpServerFormSchema = () =>
   z.object({
@@ -30,7 +31,7 @@ export const getMcpServerFormSchema = () =>
       .refine(isHttpUrl, {
         error: () => t`Please enter a valid http(s) URL`,
       }),
-    connectionProviderId: z.string().nullable(),
+    signInScope: z.enum(ConnectionProviderScope).nullable(),
   });
 
 export type McpServerFormValues = z.infer<

@@ -18,9 +18,7 @@ export const useUpdateMcpServer = () => {
     update,
   }: {
     mcpServerId: string;
-    update: Partial<
-      Pick<McpServerFormValues, 'label' | 'url' | 'connectionProviderId'>
-    >;
+    update: Partial<Pick<McpServerFormValues, 'label' | 'url' | 'signInScope'>>;
   }) => {
     try {
       const { data } = await updateMcpServerMutation({

@@ -1806,6 +1806,7 @@ export type CreateMcpServerInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label: Scalars['String']['input'];
   name: Scalars['String']['input'];
+  signInScope?: InputMaybe<ConnectionProviderScope>;
   url: Scalars['String']['input'];
 };
 
@@ -3338,6 +3339,7 @@ export type McpServer = {
   isActive: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  signInScope?: Maybe<ConnectionProviderScope>;
   tools: Array<McpServerTool>;
   toolsSyncError?: Maybe<Scalars['String']['output']>;
   toolsSyncedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -7711,6 +7713,7 @@ export type UpdateMcpServerInputUpdates = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  signInScope?: InputMaybe<ConnectionProviderScope>;
   url?: InputMaybe<Scalars['String']['input']>;
 };
 

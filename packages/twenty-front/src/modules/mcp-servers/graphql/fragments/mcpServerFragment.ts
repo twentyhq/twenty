@@ -7,6 +7,7 @@ export const MCP_SERVER_FRAGMENT = gql`
     label
     url
     connectionProviderId
+    signInScope
     isActive
     tools {
       name

@@ -1,8 +1,10 @@
+import { useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsMcpServerConnectionsSection } from '@/settings/mcp-servers/components/SettingsMcpServerConnectionsSection';
 import { SettingsMcpServerDangerZone } from '@/settings/mcp-servers/components/SettingsMcpServerDangerZone';
 import { SettingsMcpServerFormFields } from '@/settings/mcp-servers/components/SettingsMcpServerFormFields';
 import { SettingsMcpServerFormLayout } from '@/settings/mcp-servers/components/SettingsMcpServerFormLayout';
@@ -14,7 +16,10 @@ import {
   getMcpServerFormSchema,
   type McpServerFormValues,
 } from '@/settings/mcp-servers/validation-schemas/mcpServerFormSchema';
-import { type McpServerFragmentFragment } from '~/generated-metadata/graphql';
+import {
+  ApplicationConnectionProvidersDocument,
+  type McpServerFragmentFragment,
+} from '~/generated-metadata/graphql';
 
 type SettingsMcpServerEditFormProps = {
   mcpServer: McpServerFragmentFragment;
@@ -34,19 +39,35 @@ export const SettingsMcpServerEditForm = ({
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
 
+  const { signInScope } = mcpServer;
+  const { data: connectionProvidersData } = useQuery(
+    ApplicationConnectionProvidersDocument,
+    {
+      variables: { applicationId: mcpServer.applicationId },
+      skip: !isDefined(signInScope),
+    },
+  );
+  const signInConnectionProvider = isDefined(signInScope)
+    ? connectionProvidersData?.applicationConnectionProviders.find(
+        (connectionProvider) =>
+          connectionProvider.id === mcpServer.connectionProviderId,
+      )
+    : undefined;
+
   const handleSave = async ({
     label,
     url,
-    connectionProviderId,
+    signInScope: nextSignInScope,
   }: McpServerFormValues) => {
     const savedFormValues = getMcpServerFormValues(mcpServer);
 
     const update = {
       ...(label !== savedFormValues.label && { label }),
       ...(url !== savedFormValues.url && { url }),
-      ...(connectionProviderId !== savedFormValues.connectionProviderId && {
-        connectionProviderId,
-      }),
+      ...(isDefined(nextSignInScope) &&
+        nextSignInScope !== savedFormValues.signInScope && {
+          signInScope: nextSignInScope,
+        }),
     };
 
     if (isEmptyObject(update)) {
@@ -79,7 +100,20 @@ export const SettingsMcpServerEditForm = ({
           />
         }
       >
-        <SettingsMcpServerFormFields mcpServer={mcpServer} />
+        <SettingsMcpServerFormFields
+          mcpServer={mcpServer}
+          // A sign-in provider follows the URL; another provider's tokens must not reach a new host
+          isUrlLocked={
+            isDefined(mcpServer.connectionProviderId) && !isDefined(signInScope)
+          }
+        />
+        {isDefined(signInScope) && isDefined(signInConnectionProvider) && (
+          <SettingsMcpServerConnectionsSection
+            mcpServerId={mcpServer.id}
+            connectionProvider={signInConnectionProvider}
+            signInScope={signInScope}
+          />
+        )}
         <SettingsMcpServerToolsSection mcpServer={mcpServer} />
         <SettingsMcpServerDangerZone mcpServer={mcpServer} />
       </SettingsMcpServerFormLayout>

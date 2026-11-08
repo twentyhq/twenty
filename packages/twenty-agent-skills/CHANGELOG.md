@@ -10,6 +10,7 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 
 ### Changed
 
+- `develop-app`: documented `oauth-discovery` connection providers for services that publish their OAuth settings, such as remote MCP servers.
 - `use-twenty-mcp`: the Twenty MCP server now lists every tool by name by default; `learn_tools -> execute_tool` applies to `/mcp?mode=meta`.
 - Made Twenty UI the default for visible front components in `develop-app` and both app bootstrap instruction files, with essential renderer rules and links to current component APIs.
 - Consolidated canonical skills, shared references, and Codex metadata into `packages/twenty-agent-skills`, replacing the separate source and generated packages. The Codex plugin identifier remains `twenty`.
