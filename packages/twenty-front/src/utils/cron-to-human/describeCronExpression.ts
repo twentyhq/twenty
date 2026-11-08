@@ -71,16 +71,15 @@ export const describeCronExpression = (
       parts.dayOfMonth,
       mergedOptions,
     );
-    const dayOfWeekDesc = getDayOfWeekDescription(
-      parts.dayOfWeek,
-      mergedOptions,
-      localeCatalog,
-    );
-
     const hasDayOfMonth =
       isDefined(dayOfMonthDesc) &&
       dayOfMonthDesc !== '' &&
       parts.dayOfMonth !== '*';
+    const dayOfWeekDesc = getDayOfWeekDescription(
+      parts.dayOfWeek,
+      { ...mergedOptions, isCombinedWithDayOfMonth: hasDayOfMonth },
+      localeCatalog,
+    );
     const hasDayOfWeek =
       isDefined(dayOfWeekDesc) &&
       dayOfWeekDesc !== '' &&

@@ -132,22 +132,30 @@ export const getDayOfWeekDescription = (
 
     if (dayNames.length === 1) {
       const dayName = dayNames[0];
-      return t`only on ${dayName}`;
+      return options.isCombinedWithDayOfMonth
+        ? t`on ${dayName}`
+        : t`only on ${dayName}`;
     }
     if (dayNames.length === 2) {
       const firstDay = dayNames[0];
       const secondDay = dayNames[1];
-      return t`only on ${firstDay} and ${secondDay}`;
+      return options.isCombinedWithDayOfMonth
+        ? t`on ${firstDay} and ${secondDay}`
+        : t`only on ${firstDay} and ${secondDay}`;
     }
     const lastDay = dayNames.pop();
     const remainingDays = dayNames.join(', ');
-    return t`only on ${remainingDays} and ${lastDay ?? ''}`;
+    return options.isCombinedWithDayOfMonth
+      ? t`on ${remainingDays} and ${lastDay ?? ''}`
+      : t`only on ${remainingDays} and ${lastDay ?? ''}`;
   }
 
   const dayNum = parseInt(dayOfWeek, 10);
   if (!isNaN(dayNum)) {
     const dayName = getDayName(dayNum, dayOfWeekStartIndexZero, localeCatalog);
-    return t`only on ${dayName}`;
+    return options.isCombinedWithDayOfMonth
+      ? t`on ${dayName}`
+      : t`only on ${dayName}`;
   }
 
   return dayOfWeek;
