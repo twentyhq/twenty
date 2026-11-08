@@ -736,7 +736,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (validationRules.length === 0) {
-      return write(this);
+      return this.isRecordAccessGroupsEnabled()
+        ? this.runAtomically((repository) => write(repository))
+        : write(this);
     }
 
     return this.runAtomically((repository) =>
@@ -1721,15 +1723,18 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  // Runs for every writer, system ones included, since any write can move a record between groups
+  private isRecordAccessGroupsEnabled(): boolean {
+    return (
+      this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED
+      ] === true
+    );
+  }
+
   private async recomputeRecordAccessGroupIds(
     recordIds: string[],
   ): Promise<void> {
-    if (
-      !this.options.internalContext.featureFlagsMap[
-        FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED
-      ]
-    ) {
+    if (!this.isRecordAccessGroupsEnabled()) {
       return;
     }
 

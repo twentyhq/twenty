@@ -39,7 +39,7 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
         FROM ${tableExpression} AS ${alias}
         ${isDefined(recordSelection) ? `WHERE ${recordSelection.sql}` : ''}
         ORDER BY ${alias}."id"
-        ${isDefined(limit) ? `LIMIT ${limit}` : ''}
+        ${isDefined(limit) ? 'LIMIT :recordAccessGroupBatchSize' : ''}
       ), "recordAccessGroupUpdate" AS (
         UPDATE ${tableExpression} AS ${alias}
         SET ${accessGroupIdsColumn} = "recordAccessGroupBatch"."accessGroupIds"
@@ -49,7 +49,7 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
       )
       SELECT "id" FROM "recordAccessGroupBatch" ORDER BY "id" DESC LIMIT 1`,
     parameters: Object.assign(
-      {},
+      { recordAccessGroupBatchSize: limit },
       recordSelection?.parameters ?? {},
       ...recordAccessGroupConditions.map(
         ({ condition }) => condition?.parameters ?? {},
