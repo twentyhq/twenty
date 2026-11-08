@@ -206,18 +206,22 @@ const buildRuleFieldLists = ({
   RowLevelRecordsPermissions,
   'unreadableFields' | 'uneditableFields'
 > => {
-  // Filters only compile the first root group of a role, so that one is the rule
-  const ruleId = predicateGroups.find(
-    ({ parentRowLevelPermissionPredicateGroupId }) =>
-      !isDefined(parentRowLevelPermissionPredicateGroupId),
-  )?.id;
+  // Filters compile one root group, picked by another ordering, so a list on any root applies rather than risk dropping one
+  const ruleIds = new Set(
+    predicateGroups
+      .filter(
+        ({ parentRowLevelPermissionPredicateGroupId }) =>
+          !isDefined(parentRowLevelPermissionPredicateGroupId),
+      )
+      .map(({ id }) => id),
+  );
   const unreadableFields = new Set<string>();
   const uneditableFields = new Set<string>();
 
   for (const fieldPermission of fieldPermissions) {
     if (
-      !isDefined(ruleId) ||
-      fieldPermission.rowLevelPermissionPredicateGroupId !== ruleId
+      !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) ||
+      !ruleIds.has(fieldPermission.rowLevelPermissionPredicateGroupId)
     ) {
       continue;
     }

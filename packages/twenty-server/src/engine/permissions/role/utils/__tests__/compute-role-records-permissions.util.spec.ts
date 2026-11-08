@@ -7,6 +7,7 @@ import { computeRoleRecordsPermissions } from 'src/engine/permissions/role/utils
 
 const OBJECT_METADATA_ID = 'object-id';
 const RULE_ID = 'rule-id';
+const OTHER_RULE_ID = 'other-rule-id';
 const LABEL_FIELD_ID = 'label-field-id';
 
 const predicateGroup = (id: string, parentId: string | null) => ({
@@ -54,6 +55,7 @@ const computeObjectPermissions = (
       ],
       rowLevelPermissionPredicateGroups: [
         predicateGroup(RULE_ID, null),
+        predicateGroup(OTHER_RULE_ID, null),
         predicateGroup('child-group-id', RULE_ID),
       ],
     },
@@ -126,6 +128,23 @@ describe('computeRoleRecordsPermissions', () => {
         },
       ])?.rowLevelRecordsPermissions?.unreadableFields,
     ).toEqual([]);
+  });
+
+  it('should apply the lists of every root group of the role', () => {
+    expect(
+      computeObjectPermissions([
+        {
+          fieldMetadataId: 'first-rule-field-id',
+          rowLevelPermissionPredicateGroupId: RULE_ID,
+          canReadFieldValue: false,
+        },
+        {
+          fieldMetadataId: 'other-rule-field-id',
+          rowLevelPermissionPredicateGroupId: OTHER_RULE_ID,
+          canReadFieldValue: false,
+        },
+      ])?.rowLevelRecordsPermissions?.unreadableFields,
+    ).toEqual(['first-rule-field-id', 'other-rule-field-id']);
   });
 
   it('should ignore a field permission that targets another group than the rule', () => {
