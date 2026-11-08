@@ -9,6 +9,7 @@ import { completeOidcLogin } from 'test/integration/sso/utils/complete-oidc-logi
 import { expectSsoErrorRedirect } from 'test/integration/sso/utils/expect-sso-error-redirect.util';
 import { getAuthorizationUrlForSso } from 'test/integration/sso/utils/get-authorization-url-for-sso.util';
 import { getSsoTestIdentityProvider } from 'test/integration/sso/utils/get-sso-test-identity-provider.util';
+import { insertOtherWorkspaceOidcIdentityProvider } from 'test/integration/sso/utils/insert-other-workspace-oidc-identity-provider.util';
 import { replayOnTestApp } from 'test/integration/sso/utils/replay-on-test-app.util';
 import { signInWithOidc } from 'test/integration/sso/utils/sign-in-with-oidc.util';
 import { startOidcLogin } from 'test/integration/sso/utils/start-oidc-login.util';
@@ -18,6 +19,7 @@ import { SsoIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace
 import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const APPLE_SUBDOMAIN = 'apple';
+const YCOMBINATOR_SUBDOMAIN = 'yc';
 const DEFAULT_SUBDOMAIN = 'app';
 
 // The OIDC strategy keys the login session by identity provider id
@@ -45,6 +47,7 @@ const findOtherWorkspaceInviteHash = async (): Promise<string> => {
 describe('SSO login should fail', () => {
   const testIdentityProvider = getSsoTestIdentityProvider();
   const createdIdentityProviderIds: string[] = [];
+  const insertedIdentityProviderIds: string[] = [];
 
   const createOidcIdentityProvider = async ({
     clientSecret = testIdentityProvider.clientSecret,
@@ -74,8 +77,8 @@ describe('SSO login should fail', () => {
     signInWithOidc({
       identityProviderId,
       workspaceInviteHash,
-      username: testIdentityProvider.username,
-      password: testIdentityProvider.password,
+      username: testIdentityProvider.member.username,
+      password: testIdentityProvider.member.password,
     });
 
   const authorizeAsPhil = async (identityProviderId: string) => {
@@ -89,8 +92,8 @@ describe('SSO login should fail', () => {
 
     const callbackUrl = await authorizeWithPassword({
       authorizationUrl,
-      username: testIdentityProvider.username,
-      password: testIdentityProvider.password,
+      username: testIdentityProvider.member.username,
+      password: testIdentityProvider.member.password,
     });
 
     return { callbackUrl, sessionCookie };
@@ -103,6 +106,11 @@ describe('SSO login should fail', () => {
         expectToFail: false,
       });
     }
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."workspaceSSOIdentityProvider" WHERE "id" = ANY($1)`,
+      [insertedIdentityProviderIds.splice(0)],
+    );
   });
 
   describe('OIDC', () => {
@@ -195,6 +203,23 @@ describe('SSO login should fail', () => {
         }),
         workspaceSubdomain: APPLE_SUBDOMAIN,
         errorMessage: 'Workspace not found',
+      });
+    });
+
+    it('when the user is not a member of the identity provider workspace', async () => {
+      const identityProviderId =
+        await insertOtherWorkspaceOidcIdentityProvider();
+
+      insertedIdentityProviderIds.push(identityProviderId);
+
+      expectSsoErrorRedirect({
+        redirectUrl: await signInWithOidc({
+          identityProviderId,
+          username: testIdentityProvider.nonMember.username,
+          password: testIdentityProvider.nonMember.password,
+        }),
+        workspaceSubdomain: YCOMBINATOR_SUBDOMAIN,
+        errorMessage: 'User does not have access to this workspace',
       });
     });
 

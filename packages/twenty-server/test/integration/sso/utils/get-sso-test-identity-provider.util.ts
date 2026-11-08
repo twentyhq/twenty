@@ -26,10 +26,20 @@ export const getSsoTestIdentityProvider = () => ({
   clientSecret: getRequiredEnvironmentVariable(
     SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.clientSecret,
   ),
-  username: getRequiredEnvironmentVariable(
-    SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.username,
-  ),
-  password: getRequiredEnvironmentVariable(
-    SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.password,
-  ),
+  member: {
+    username: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.memberUsername,
+    ),
+    password: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.memberPassword,
+    ),
+  },
+  nonMember: {
+    username: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.nonMemberUsername,
+    ),
+    password: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.nonMemberPassword,
+    ),
+  },
 });
