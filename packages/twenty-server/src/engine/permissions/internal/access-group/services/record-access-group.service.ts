@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -68,20 +68,28 @@ export class RecordAccessGroupService {
       accessGroups,
     });
 
-    let afterRecordId: string | null = null;
+    let recordIds = await this.recordAccessGroupRepository.findRecordIds({
+      workspaceId,
+      flatObjectMetadata,
+      afterRecordId: null,
+      limit: RECOMPUTE_BATCH_SIZE,
+    });
 
-    do {
-      afterRecordId =
-        await this.recordAccessGroupRepository.recomputeRecordAccessGroupIdsBatch(
-          {
-            workspaceId,
-            flatObjectMetadata,
-            recordAccessGroupConditions,
-            afterRecordId,
-            batchSize: RECOMPUTE_BATCH_SIZE,
-          },
-        );
-    } while (isDefined(afterRecordId));
+    while (isNonEmptyArray(recordIds)) {
+      await this.recordAccessGroupRepository.recomputeRecordAccessGroupIds({
+        workspaceId,
+        flatObjectMetadata,
+        recordAccessGroupConditions,
+        recordIds,
+      });
+
+      recordIds = await this.recordAccessGroupRepository.findRecordIds({
+        workspaceId,
+        flatObjectMetadata,
+        afterRecordId: recordIds[recordIds.length - 1],
+        limit: RECOMPUTE_BATCH_SIZE,
+      });
+    }
   }
 
   async recomputeRecordAccessGroupIdsOfRecords({
@@ -123,19 +131,17 @@ export class RecordAccessGroupService {
         transactionScope,
       });
 
-    await this.recordAccessGroupRepository.recomputeRecordAccessGroupIdsOfRecords(
-      {
-        workspaceId,
+    await this.recordAccessGroupRepository.recomputeRecordAccessGroupIds({
+      workspaceId,
+      flatObjectMetadata,
+      recordAccessGroupConditions: buildRecordAccessGroupConditions({
         flatObjectMetadata,
-        recordAccessGroupConditions: buildRecordAccessGroupConditions({
-          flatObjectMetadata,
-          metadataMaps,
-          accessGroups,
-        }),
-        recordIds,
-        transactionScope,
-      },
-    );
+        metadataMaps,
+        accessGroups,
+      }),
+      recordIds,
+      transactionScope,
+    });
   }
 
   private findMetadataMaps(workspaceId: string) {
