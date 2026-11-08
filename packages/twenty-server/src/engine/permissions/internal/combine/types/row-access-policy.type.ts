@@ -63,4 +63,5 @@ export type PermissionsRowAccessEvaluationRequest =
 export type PermissionsRowAccessSqlRequest = PermissionsRowAccessRequest & {
   recordShareTableExpression: string;
   tableAlias: string;
+  callerAccessGroupCompactIds?: number[];
 };

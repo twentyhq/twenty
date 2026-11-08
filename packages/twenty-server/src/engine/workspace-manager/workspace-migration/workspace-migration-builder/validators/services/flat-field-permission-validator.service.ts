@@ -12,6 +12,7 @@ import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/wor
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
+import { isSameRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-same-row-level-permission-predicate-group.util';
 
 @Injectable()
 export class FlatFieldPermissionValidatorService {
@@ -132,6 +133,10 @@ export class FlatFieldPermissionValidatorService {
           flatFieldPermissionToValidate.objectMetadataUniversalIdentifier &&
         fp.fieldMetadataUniversalIdentifier ===
           flatFieldPermissionToValidate.fieldMetadataUniversalIdentifier &&
+        isSameRowLevelPermissionPredicateGroup({
+          fieldPermission: fp,
+          otherFieldPermission: flatFieldPermissionToValidate,
+        }) &&
         fp.universalIdentifier !==
           flatFieldPermissionToValidate.universalIdentifier,
     );
@@ -273,6 +278,10 @@ export class FlatFieldPermissionValidatorService {
           updatedFlatFieldPermission.objectMetadataUniversalIdentifier &&
         fp.fieldMetadataUniversalIdentifier ===
           updatedFlatFieldPermission.fieldMetadataUniversalIdentifier &&
+        isSameRowLevelPermissionPredicateGroup({
+          fieldPermission: fp,
+          otherFieldPermission: updatedFlatFieldPermission,
+        }) &&
         fp.universalIdentifier !== universalIdentifier,
     );
 

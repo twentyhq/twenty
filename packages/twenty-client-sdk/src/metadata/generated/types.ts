@@ -5221,6 +5221,9 @@ export default {
             "roleId": [
                 548
             ],
+            "rowLevelPermissionPredicateGroupId": [
+                548
+            ],
             "__typename": [
                 1
             ]
@@ -5236,6 +5239,9 @@ export default {
                 548
             ],
             "objectMetadataId": [
+                548
+            ],
+            "rowLevelPermissionPredicateGroupId": [
                 548
             ],
             "__typename": [

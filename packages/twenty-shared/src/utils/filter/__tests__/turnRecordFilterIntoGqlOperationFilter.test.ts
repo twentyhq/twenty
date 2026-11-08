@@ -1,8 +1,4 @@
-import {
-  FieldMetadataType,
-  RelationType,
-  ViewFilterOperand as RecordFilterOperand,
-} from '@/types';
+import { FieldMetadataType, RelationType, RecordFilterOperand } from '@/types';
 import { type RecordFilter } from '@/utils';
 import {
   type FieldShared,

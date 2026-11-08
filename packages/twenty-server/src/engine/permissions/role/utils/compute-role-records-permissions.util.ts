@@ -46,6 +46,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
     FieldPermissionEntity,
     | 'objectMetadataId'
     | 'fieldMetadataId'
+    | 'rowLevelPermissionPredicateGroupId'
     | 'canReadFieldValue'
     | 'canUpdateFieldValue'
   >[];
@@ -153,7 +154,10 @@ const buildRestrictedFields = ({
   const restrictedFields: RestrictedFieldsPermissions = {};
 
   for (const fieldPermission of fieldPermissions) {
-    if (fieldPermission.objectMetadataId !== objectMetadata.id) {
+    if (
+      fieldPermission.objectMetadataId !== objectMetadata.id ||
+      isDefined(fieldPermission.rowLevelPermissionPredicateGroupId)
+    ) {
       continue;
     }
 
@@ -187,16 +191,75 @@ const buildRestrictedFields = ({
   return restrictedFields;
 };
 
+const buildRlsRuleUnreadableAndUneditableFields = ({
+  objectMetadata,
+  fieldPermissions,
+  predicateGroups,
+  resolveMorphRelationPermissionFieldIds,
+}: {
+  objectMetadata: Pick<ObjectMetadataEntity, 'labelIdentifierFieldMetadataId'>;
+  fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'];
+  predicateGroups: RowLevelPermissionPredicateGroup[];
+  resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
+}): { unreadableFields: string[]; uneditableFields: string[] } => {
+  // Filters compile one root group, picked by another ordering, so a list on any root applies rather than risk dropping one
+  const rlsRuleIds = new Set(
+    predicateGroups
+      .filter(
+        ({ parentRowLevelPermissionPredicateGroupId }) =>
+          !isDefined(parentRowLevelPermissionPredicateGroupId),
+      )
+      .map(({ id }) => id),
+  );
+  const unreadableFields = new Set<string>();
+  const uneditableFields = new Set<string>();
+
+  for (const fieldPermission of fieldPermissions) {
+    if (
+      !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) ||
+      !rlsRuleIds.has(fieldPermission.rowLevelPermissionPredicateGroupId)
+    ) {
+      continue;
+    }
+
+    const isUnreadable =
+      fieldPermission.canReadFieldValue === false &&
+      fieldPermission.fieldMetadataId !==
+        objectMetadata.labelIdentifierFieldMetadataId;
+
+    for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
+      fieldPermission.fieldMetadataId,
+    )) {
+      if (isUnreadable) {
+        unreadableFields.add(restrictedFieldId);
+      }
+
+      if (isUnreadable || fieldPermission.canUpdateFieldValue === false) {
+        uneditableFields.add(restrictedFieldId);
+      }
+    }
+  }
+
+  return {
+    unreadableFields: [...unreadableFields],
+    uneditableFields: [...uneditableFields],
+  };
+};
+
 const buildObjectRecordsPermissions = ({
   objectRecordsAccess,
   restrictedFields,
   predicates,
   predicateGroups,
+  unreadableFields,
+  uneditableFields,
 }: {
   objectRecordsAccess: ObjectRecordsAccess;
   restrictedFields: RestrictedFieldsPermissions;
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
+  unreadableFields: string[];
+  uneditableFields: string[];
 }): ObjectRecordsPermissions => {
   if (predicates.length === 0) {
     return {
@@ -224,6 +287,8 @@ const buildObjectRecordsPermissions = ({
       canDestroyRecords: objectRecordsAccess.canDestroy,
       predicates,
       predicateGroups,
+      unreadableFields,
+      uneditableFields,
     },
   };
 };
@@ -271,6 +336,20 @@ export const computeRoleRecordsPermissions = ({
         STANDARD_OBJECTS.agentChatThread.universalIdentifier ||
       isPermissionFlagGranted(PermissionFlagType.AI);
 
+    const predicateGroups = rowLevelPermissionPredicateGroups.filter(
+      (rowLevelPermissionPredicateGroup) =>
+        rowLevelPermissionPredicateGroup.objectMetadataId === objectMetadataId,
+    );
+
+    const { unreadableFields, uneditableFields } = isWorkflowObject
+      ? { unreadableFields: [], uneditableFields: [] }
+      : buildRlsRuleUnreadableAndUneditableFields({
+          objectMetadata,
+          fieldPermissions,
+          predicateGroups,
+          resolveMorphRelationPermissionFieldIds,
+        });
+
     objects[objectMetadataId] = buildObjectRecordsPermissions({
       objectRecordsAccess: {
         canCreate: objectRecordsAccess.canCreate && hasAiAccess,
@@ -284,11 +363,9 @@ export const computeRoleRecordsPermissions = ({
         (rowLevelPermissionPredicate) =>
           rowLevelPermissionPredicate.objectMetadataId === objectMetadataId,
       ),
-      predicateGroups: rowLevelPermissionPredicateGroups.filter(
-        (rowLevelPermissionPredicateGroup) =>
-          rowLevelPermissionPredicateGroup.objectMetadataId ===
-          objectMetadataId,
-      ),
+      predicateGroups,
+      unreadableFields,
+      uneditableFields,
     });
   }
 

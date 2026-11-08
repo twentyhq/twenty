@@ -3,19 +3,26 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  type FeatureFlagKey,
   type ObjectRecordsOperationType,
   type RecordShareAccessLevel,
   type RestrictedFieldPermissions,
-  type RestrictedFieldsPermissions,
   type ObjectRecord,
 } from 'twenty-shared/types';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type UnreadableFieldsWithRlsRuleSqlCondition } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-rls-rule-sql-condition.type';
+import { buildUnreadableFieldsWithRlsRuleFilter } from 'src/engine/permissions/internal/masking/utils/build-unreadable-fields-with-rls-rule-filter.util';
+import { buildUnreadableFieldsWithRlsRuleSqlCondition } from 'src/engine/permissions/internal/masking/utils/build-unreadable-fields-with-rls-rule-sql-condition.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
+import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
+import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
+import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
@@ -87,7 +94,52 @@ export class RecordPermissionsService {
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordAccessGroupService: RecordAccessGroupService,
+    private readonly accessGroupService: AccessGroupService,
   ) {}
+
+  async isRecomputingRecordAccessGroupIdsOnWrite({
+    featureFlagsMap,
+    workspaceId,
+    objectMetadataId,
+  }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<boolean> {
+    return (
+      areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
+      (await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
+        workspaceId,
+        objectMetadataId,
+      }))
+    );
+  }
+
+  async recomputeRecordAccessGroupIdsOfRecords({
+    featureFlagsMap,
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    transactionScope,
+  }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    if (!areRecordAccessGroupsEnabled({ featureFlagsMap })) {
+      return;
+    }
+
+    await this.recordAccessGroupService.recomputeRecordAccessGroupIdsOfRecords({
+      workspaceId,
+      objectMetadataId,
+      recordIds,
+      transactionScope,
+    });
+  }
 
   async findRecordsActions({
     authContext,
@@ -199,7 +251,9 @@ export class RecordPermissionsService {
     });
   }
 
-  async canAccessRecords(question: RecordsOperationQuestion): Promise<boolean> {
+  async canAccessKnownRecords(
+    question: RecordsOperationQuestion,
+  ): Promise<boolean> {
     const grantedRecordIds = await this.findGrantedRecordIds(question);
 
     return (
@@ -210,7 +264,7 @@ export class RecordPermissionsService {
     );
   }
 
-  async filterGrantedRecordIds(
+  async filterAccessibleKnownRecordIds(
     request: RecordsOperationQuestion,
   ): Promise<Set<string>> {
     const readRequest = await this.findObjectAccessRequest({
@@ -343,20 +397,79 @@ export class RecordPermissionsService {
     });
   }
 
-  async buildRecordsAccessCondition({
+  async buildManyRecordsAccessCondition({
     tableAlias,
     ...question
   }: RecordOperationQuestion & {
     tableAlias: string;
   }): Promise<SqlCondition | boolean> {
     const { principals } = question;
+    const objectAccessRequest =
+      await this.findObjectAccessRequestOrThrow(question);
 
     return buildPermissionsCondition({
-      ...(await this.findObjectAccessRequestOrThrow(question)),
+      ...objectAccessRequest,
       tableAlias,
       recordShareTableExpression: buildRecordShareTableExpression({
         workspaceId: principals.workspaceId,
       }),
+      callerAccessGroupCompactIds:
+        await this.findCallerAccessGroupCompactIds(objectAccessRequest),
+    });
+  }
+
+  async findUnreadableFieldsWithRlsRuleSqlConditionOrThrow({
+    principals,
+    objectMetadataId,
+    tableAlias,
+  }: ObjectQuestion & { tableAlias: string }): Promise<
+    UnreadableFieldsWithRlsRuleSqlCondition[]
+  > {
+    if (!isDefined(principals)) {
+      return [];
+    }
+
+    const metadataMaps =
+      await this.permissionsMetadataMapsService.loadForPrincipals({
+        principals,
+      });
+    const flatObjectMetadata = this.findFlatObjectMetadata({
+      metadataMaps,
+      objectMetadataId,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
+        PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
+    return buildUnreadableFieldsWithRlsRuleSqlCondition({
+      unreadableFieldsWithRlsRuleFilter: buildUnreadableFieldsWithRlsRuleFilter(
+        {
+          principals,
+          metadataMaps,
+          flatObjectMetadata,
+        },
+      ),
+      flatObjectMetadata,
+      metadataMaps,
+      tableAlias,
+    });
+  }
+
+  private async findCallerAccessGroupCompactIds(
+    objectAccessRequest: PermissionsObjectAccessRequest,
+  ): Promise<number[] | undefined> {
+    if (resolveManyRecordsStrategy(objectAccessRequest) !== 'accessGroups') {
+      return undefined;
+    }
+
+    return this.accessGroupService.findCallerCompactIds({
+      principals: objectAccessRequest.principals,
+      objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+      operationType: objectAccessRequest.operationType,
     });
   }
 

@@ -1648,6 +1648,7 @@ export interface FieldPermission {
     id: Scalars['UUID']
     objectMetadataId: Scalars['UUID']
     roleId: Scalars['UUID']
+    rowLevelPermissionPredicateGroupId?: Scalars['UUID']
     __typename: 'FieldPermission'
 }
 
@@ -6317,11 +6318,12 @@ export interface FieldPermissionGenqlSelection{
     id?: boolean | number
     objectMetadataId?: boolean | number
     roleId?: boolean | number
+    rowLevelPermissionPredicateGroupId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
-export interface FieldPermissionInput {canReadFieldValue?: (Scalars['Boolean'] | null),canUpdateFieldValue?: (Scalars['Boolean'] | null),fieldMetadataId: Scalars['UUID'],objectMetadataId: Scalars['UUID']}
+export interface FieldPermissionInput {canReadFieldValue?: (Scalars['Boolean'] | null),canUpdateFieldValue?: (Scalars['Boolean'] | null),fieldMetadataId: Scalars['UUID'],objectMetadataId: Scalars['UUID'],rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null)}
 
 export interface FieldRichTextConfigurationGenqlSelection{
     configurationType?: boolean | number

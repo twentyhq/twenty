@@ -10,7 +10,7 @@ type FieldMetadataRelatedProperties =
 type Assertions = [
   // FieldMetadataEntity has both ManyToOne and OneToMany relations
   // ManyToOne: object, workspace, application, relationTargetFieldMetadata, relationTargetObjectMetadata
-  // OneToMany: indexFieldMetadatas, fieldPermissions, viewFields, viewFilters, kanbanAggregateOperationViews, calendarViews, calendarEndViews, mainGroupByFieldMetadataViews, viewSorts, searchFieldMetadatas
+  // OneToMany: indexFieldMetadatas, fieldPermissions, viewFields, viewFilters, kanbanAggregateOperationViews, calendarViews, calendarEndViews, mainGroupByFieldMetadataViews, viewSorts, searchFieldMetadatas, fieldMetadataOptions
   Expect<
     Equal<
       FieldMetadataRelatedProperties,
@@ -29,6 +29,7 @@ type Assertions = [
       | 'mainGroupByFieldMetadataViews'
       | 'viewSorts'
       | 'searchFieldMetadatas'
+      | 'fieldMetadataOptions'
     >
   >,
 ];
