@@ -17,8 +17,7 @@ import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissio
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
-import { findObjectMetadataIdsToRecompute } from 'src/engine/permissions/internal/access-group/utils/find-object-metadata-ids-to-recompute.util';
-import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
+import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -34,19 +33,15 @@ export class AccessGroupService {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  // A full recompute covers records left stale while the flag was off, which a sync with no group change would skip
-  async syncAccessGroups(jobData: SyncAccessGroupsJobData): Promise<void> {
+  async syncAccessGroups(workspaceId: string): Promise<void> {
     await this.cacheLockService.withLock(
-      () => this.syncAccessGroupsWithLock(jobData),
-      buildAccessGroupSyncLockKey(jobData.workspaceId),
+      () => this.syncAccessGroupsWithLock(workspaceId),
+      buildAccessGroupSyncLockKey(workspaceId),
       ACCESS_GROUP_SYNC_LOCK_OPTIONS,
     );
   }
 
-  private async syncAccessGroupsWithLock({
-    workspaceId,
-    shouldRecomputeEveryRecord,
-  }: SyncAccessGroupsJobData): Promise<void> {
+  private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
@@ -80,15 +75,18 @@ export class AccessGroupService {
         canDeleteStaleAccessGroups && !newGroupHashes.has(groupHash),
     );
 
-    // Queued before writing, so a sync that fails after its writes cannot lose them
     await this.scheduleRecordAccessGroupIdsRecompute({
       workspaceId,
-      objectMetadataIds: findObjectMetadataIdsToRecompute({
-        shouldRecomputeEveryRecord,
-        flatObjectMetadataMaps: workspaceCache.flatObjectMetadataMaps,
-        rolesPermissions: workspaceCache.rolesPermissions,
-        changedAccessGroups: [...insertedAccessGroups, ...staleAccessGroups],
-      }),
+      objectMetadataIds: new Set(
+        [...insertedAccessGroups, ...staleAccessGroups]
+          .map(({ objectMetadataId }) => objectMetadataId)
+          .filter((objectMetadataId) =>
+            isObjectUsingRecordAccessGroups({
+              rolesPermissions: workspaceCache.rolesPermissions,
+              objectMetadataId,
+            }),
+          ),
+      ),
     });
 
     await this.accessGroupRepository.insertAccessGroups({

@@ -53,10 +53,7 @@ describe('access group sync (integration)', () => {
   });
 
   it('should create a group per grant, keep their ids and remove stale ones', async () => {
-    await accessGroupService.syncAccessGroups({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      shouldRecomputeEveryRecord: false,
-    });
+    await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
     const accessGroups = await readAccessGroups();
 
@@ -67,10 +64,7 @@ describe('access group sync (integration)', () => {
       [await findAdminRoleId(), await findPersonObjectMetadataId()],
     );
 
-    await accessGroupService.syncAccessGroups({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      shouldRecomputeEveryRecord: false,
-    });
+    await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
     expect(await readAccessGroups()).toEqual(accessGroups);
   });
@@ -130,18 +124,12 @@ describe('access group sync (integration)', () => {
 
     try {
       await upsertRule('Paris');
-      await accessGroupService.syncAccessGroups({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        shouldRecomputeEveryRecord: false,
-      });
+      await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
       const [parisAccessGroup] = await readRuleAccessGroups();
 
       await upsertRule('London');
-      await accessGroupService.syncAccessGroups({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        shouldRecomputeEveryRecord: false,
-      });
+      await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
       const londonAccessGroups = await readRuleAccessGroups();
 
@@ -162,10 +150,7 @@ describe('access group sync (integration)', () => {
   });
 
   it('should resolve the caller to the groups of its role', async () => {
-    await accessGroupService.syncAccessGroups({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      shouldRecomputeEveryRecord: false,
-    });
+    await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
     const principals = buildRolePermissionsPrincipals({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
