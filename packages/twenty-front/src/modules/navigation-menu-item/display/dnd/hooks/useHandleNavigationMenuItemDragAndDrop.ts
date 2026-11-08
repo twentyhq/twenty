@@ -66,11 +66,15 @@ export const useHandleNavigationMenuItemDragAndDrop = (
 
     if (isDraftMode) {
       const draft = store.get(navigationMenuItemsDraftState.atom);
-      if (!draft) return;
+      if (!draft) {
+        return;
+      }
 
       setNavigationMenuItemsDraft(
         draft.map((item): NavigationMenuItem => {
-          if (item.id !== draggableId) return item;
+          if (item.id !== draggableId) {
+            return item;
+          }
           return { ...item, position: newPosition, ...folderUpdate };
         }),
       );
@@ -122,7 +126,9 @@ export const useHandleNavigationMenuItemDragAndDrop = (
   ) => {
     const { destination, source, draggableId } = result;
 
-    if (!destination) return;
+    if (!destination) {
+      return;
+    }
 
     if (
       destination.droppableId === source.droppableId &&
@@ -131,10 +137,14 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    if (!isDropAllowed(source.droppableId, destination.droppableId)) return;
+    if (!isDropAllowed(source.droppableId, destination.droppableId)) {
+      return;
+    }
 
     const draggedItem = allItems.find((item) => item.id === draggableId);
-    if (!draggedItem) return;
+    if (!draggedItem) {
+      return;
+    }
 
     const destinationFolderId = extractFolderIdFromDroppableId(
       destination.droppableId,
@@ -189,12 +199,11 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    const insertBeforeIndex =
-      result.insertBeforeItemId != null
-        ? destinationList.findIndex(
-            (item) => item.id === result.insertBeforeItemId,
-          )
-        : -1;
+    const insertBeforeIndex = isDefined(result.insertBeforeItemId)
+      ? destinationList.findIndex(
+          (item) => item.id === result.insertBeforeItemId,
+        )
+      : -1;
 
     await computeAndApplyReorder(
       draggableId,

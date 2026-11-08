@@ -6,7 +6,7 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
-import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
+import { StandardObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -24,7 +24,7 @@ export const ComposeEmailCommand = () => {
   } = useHeadlessCommandContextApi();
 
   const objectNameSingular = objectMetadataItem?.nameSingular ?? null;
-  const isPerson = objectNameSingular === CoreObjectNameSingular.Person;
+  const isPerson = objectNameSingular === StandardObjectNameSingular.Person;
 
   const isBulkPerson =
     isPerson &&
@@ -32,7 +32,7 @@ export const ComposeEmailCommand = () => {
 
   const { records: bulkPersonRecords, loading: bulkLoading } =
     useFindManyRecords({
-      objectNameSingular: CoreObjectNameSingular.Person,
+      objectNameSingular: StandardObjectNameSingular.Person,
       filter: graphqlFilter ?? undefined,
       recordGqlFields: { id: true, emails: { primaryEmail: true } },
       limit: MAX_EMAIL_RECIPIENTS,

@@ -12,12 +12,16 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
-export const createOneFieldMetadata = async <T extends FieldMetadataType>({
+export const createOneFieldMetadata = async <
+  T extends FieldMetadataType,
+  TField = FieldMetadataDTO<T>,
+>({
   input,
   gqlFields,
   expectToFail,
+  token,
 }: PerformMetadataQueryParams<CreateOneFieldFactoryInput>): CommonResponseBody<{
-  createOneField: FieldMetadataDTO<T>;
+  createOneField: TField;
 }> => {
   const graphqlOperation = createOneFieldMetadataQueryFactory({
     input,
@@ -26,7 +30,7 @@ export const createOneFieldMetadata = async <T extends FieldMetadataType>({
 
   await waitForDeferredWorkspaceMigrationActionsOrThrow();
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

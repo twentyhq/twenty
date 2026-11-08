@@ -48,7 +48,7 @@ describe('buildSpendersFromAuthContext', () => {
       type: 'user',
       workspace,
       userWorkspaceId: 'user-workspace-1',
-      viaApplication: { id: 'app-1' },
+      application: { id: 'app-1' },
     } as WorkspaceAuthContext;
 
     expect(buildSpendersFromAuthContext(authContext)).toContainEqual({

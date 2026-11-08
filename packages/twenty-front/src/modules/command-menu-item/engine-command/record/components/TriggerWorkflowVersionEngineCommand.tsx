@@ -10,7 +10,7 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -33,7 +33,7 @@ export const TriggerWorkflowVersionEngineCommand = () => {
   const { fetchAllRecords } = useLazyFetchAllRecords({
     objectNameSingular:
       mountedCommandState.objectMetadataItem?.nameSingular ??
-      CoreObjectNameSingular.Person,
+      StandardObjectNameSingular.Person,
     filter: mountedCommandState.graphqlFilter ?? noMatchFilter,
     limit: DEFAULT_QUERY_PAGE_SIZE,
   });

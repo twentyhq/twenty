@@ -8,6 +8,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
 import {
+  type ApplicationBilling,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   type Manifest,
 } from 'twenty-shared/application';
@@ -629,15 +630,21 @@ export class ApplicationRegistrationService {
 
     const updateData: Record<string, unknown> = {};
 
-    if (isDefined(update.name)) updateData.name = update.name;
-    if (isDefined(update.oAuthRedirectUris))
+    if (isDefined(update.name)) {
+      updateData.name = update.name;
+    }
+    if (isDefined(update.oAuthRedirectUris)) {
       updateData.oAuthRedirectUris = update.oAuthRedirectUris;
-    if (isDefined(update.oAuthScopes))
+    }
+    if (isDefined(update.oAuthScopes)) {
       updateData.oAuthScopes = update.oAuthScopes;
-    if (isDefined(instanceFlags.isListed))
+    }
+    if (isDefined(instanceFlags.isListed)) {
       updateData.isListed = instanceFlags.isListed;
-    if (isDefined(instanceFlags.isPreInstalled))
+    }
+    if (isDefined(instanceFlags.isPreInstalled)) {
       updateData.isPreInstalled = instanceFlags.isPreInstalled;
+    }
 
     if (Object.keys(updateData).length === 0) {
       return;
@@ -1299,12 +1306,13 @@ export class ApplicationRegistrationService {
     periodEnd: Date;
   }): Promise<CreditUsedItemDTO[] | null> {
     try {
-      const installations = await this.findInstallations({
-        applicationRegistrationId,
-      });
+      const [installations, billing] = await Promise.all([
+        this.findInstallations({ applicationRegistrationId }),
+        this.findBilling(applicationRegistrationId),
+      ]);
 
       return await this.usageAnalyticsService.getCreditsUsedBreakdownForInstallations(
-        { installations, periodStart, periodEnd },
+        { installations, billing, periodStart, periodEnd },
       );
     } catch (error) {
       this.logger.warn(
@@ -1345,6 +1353,21 @@ export class ApplicationRegistrationService {
       .orderBy('application.workspaceId')
       .addOrderBy('application.id')
       .getRawMany<ApplicationInstallation>();
+  }
+
+  // Reads only the jsonb path: the full manifest can be large
+  async findBilling(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationBilling | null> {
+    const row = await this.applicationRegistrationRepository
+      .createQueryBuilder('registration')
+      .select("registration.manifest -> 'application' -> 'billing'", 'billing')
+      .where('registration.id = :applicationRegistrationId', {
+        applicationRegistrationId,
+      })
+      .getRawOne<{ billing: ApplicationBilling | null }>();
+
+    return row?.billing ?? null;
   }
 
   // Admin panel only, which views apps across all workspaces, so ownership is not enforced

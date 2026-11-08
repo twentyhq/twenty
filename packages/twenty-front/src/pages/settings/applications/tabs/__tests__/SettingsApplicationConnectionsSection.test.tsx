@@ -104,7 +104,7 @@ describe('SettingsApplicationConnectionsSection', () => {
       'href',
       '/settings/applications/app-1/connections/account-1',
     );
-    expect(screen.getByText('Reconnect needed')).toBeVisible();
+    expect(screen.getByText('Sync failed')).toBeVisible();
     expect(
       screen.queryByRole('button', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();

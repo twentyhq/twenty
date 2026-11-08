@@ -60,7 +60,7 @@ class ClassTokenList implements WorkerClassTokenList {
     );
   }
 
-  toggle(token: string, force?: boolean): boolean {
+  toggle(token: string, force?: boolean | null): boolean {
     const tokenToToggle = toValidClassTokenOrThrow(token);
 
     const currentTokens = this.readCurrentTokens();

@@ -182,6 +182,10 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'agentId',
     },
     apiKey: null,
+    webhook: {
+      foreignKey: 'webhookId',
+    },
+    targetApplication: null,
     workspace: null,
     application: null,
   },
@@ -256,6 +260,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     fieldMetadata: {
       foreignKey: 'fieldMetadataId',
+    },
+    relationFieldMetadata: {
+      foreignKey: 'relationFieldMetadataId',
     },
     workspaceMemberFieldMetadata: {
       foreignKey: 'workspaceMemberFieldMetadataId',
@@ -350,6 +357,13 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     tsVectorFieldMetadata: {
       foreignKey: 'tsVectorFieldMetadataId',
+    },
+  },
+  fieldMetadataOption: {
+    workspace: null,
+    application: null,
+    fieldMetadata: {
+      foreignKey: 'fieldMetadataId',
     },
   },
   relatedRecordPath: {

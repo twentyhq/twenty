@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { MessageParticipantRole } from 'twenty-shared/types';
+import { FeatureFlagKey, MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { APP_INGESTION_LOCK_OPTIONS } from 'src/engine/metadata-modules/message-channel/constants/app-ingestion-lock-options.constant';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
@@ -23,6 +24,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
@@ -47,6 +49,7 @@ export class ApplicationMessageIngestionService {
     private readonly personHandleFieldService: PersonHandleFieldService,
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async ingest({
@@ -108,6 +111,7 @@ export class ApplicationMessageIngestionService {
           messageChannel,
           connectedAccount,
           workspaceId,
+          folderLinkUpdate: 'add',
           personHandleField: personHandleField ?? undefined,
         }),
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
@@ -125,6 +129,11 @@ export class ApplicationMessageIngestionService {
       messageExternalIdsAndIdsMap,
       messageExternalIdToMessageThreadIdMap,
     } = savedMessages;
+
+    const messageIdsWithAttachments = await this.findMessageIdsWithAttachments({
+      workspaceId,
+      messageIds: [...new Set(messageExternalIdsAndIdsMap.values())],
+    });
 
     // never drop a row: the app would see success with nothing to retry
     return {
@@ -145,9 +154,53 @@ export class ApplicationMessageIngestionService {
           externalId: message.externalId,
           messageId,
           messageThreadId,
+          hasAttachments: messageIdsWithAttachments.has(messageId),
         };
       }),
     };
+  }
+
+  private async findMessageIdsWithAttachments({
+    workspaceId,
+    messageIds,
+  }: {
+    workspaceId: string;
+    messageIds: string[];
+  }): Promise<Set<string>> {
+    if (messageIds.length === 0) {
+      return new Set();
+    }
+
+    const isMessageAttachmentEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+        workspaceId,
+      );
+
+    if (!isMessageAttachmentEnabled) {
+      return new Set();
+    }
+
+    const attachments =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.workspaceOrmManager
+            .getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
+              'attachment',
+            )
+            .find({
+              where: { targetMessageId: In(messageIds) },
+              select: { targetMessageId: true },
+            }),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
+
+    return new Set(
+      attachments
+        .map(({ targetMessageId }) => targetMessageId)
+        .filter(isDefined),
+    );
   }
 
   private toMessageWithParticipants({
@@ -177,6 +230,7 @@ export class ApplicationMessageIngestionService {
         channelHandle: messageChannel.handle,
       }),
       attachments: [],
+      attachmentFiles: message.attachments ?? [],
       participants: message.participants.map((participant) => ({
         role: participant.role,
         handle: participant.handle,
@@ -326,10 +380,10 @@ export class ApplicationMessageIngestionService {
       return;
     }
 
-    const repository = this.workspaceOrmManager.getRepository(
-      objectMetadataName,
-      { shouldBypassPermissionChecks: true },
-    );
+    const repository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        objectMetadataName,
+      );
 
     const found = await repository.find({
       where: { id: In([...ids]) },

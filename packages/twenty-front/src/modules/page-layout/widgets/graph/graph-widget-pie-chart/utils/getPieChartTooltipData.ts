@@ -25,7 +25,9 @@ export const getPieChartTooltipData = ({
   const item = enrichedData.find(
     (enrichedDataItem) => enrichedDataItem.key === datum.data.key,
   );
-  if (!isDefined(item)) return null;
+  if (!isDefined(item)) {
+    return null;
+  }
 
   const formattedValue = getPieChartFormattedValue({
     datum,
@@ -33,7 +35,9 @@ export const getPieChartTooltipData = ({
     formatOptions,
     displayType,
   });
-  if (!isDefined(formattedValue)) return null;
+  if (!isDefined(formattedValue)) {
+    return null;
+  }
 
   return {
     tooltipItem: {

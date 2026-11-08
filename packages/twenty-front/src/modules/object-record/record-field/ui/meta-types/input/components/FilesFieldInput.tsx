@@ -300,7 +300,9 @@ export const FilesFieldInput = () => {
   };
 
   const handlePreview = (file: FieldFilesValue) => {
-    if (!isAttachmentPreviewEnabled) return;
+    if (!isAttachmentPreviewEnabled) {
+      return;
+    }
     setFilePreview(file);
   };
 

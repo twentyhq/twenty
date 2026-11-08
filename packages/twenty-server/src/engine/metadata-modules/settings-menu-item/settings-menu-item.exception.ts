@@ -10,6 +10,8 @@ export enum SettingsMenuItemExceptionCode {
   SETTINGS_MENU_ITEM_FRONT_COMPONENT_NOT_FOUND = 'SETTINGS_MENU_ITEM_FRONT_COMPONENT_NOT_FOUND',
   SETTINGS_MENU_ITEM_POSITION_ALREADY_TAKEN = 'SETTINGS_MENU_ITEM_POSITION_ALREADY_TAKEN',
   RESERVED_SETTINGS_MENU_ITEM_TITLE = 'RESERVED_SETTINGS_MENU_ITEM_TITLE',
+  INVALID_SETTINGS_MENU_ITEM_SLUG = 'INVALID_SETTINGS_MENU_ITEM_SLUG',
+  SETTINGS_MENU_ITEM_SLUG_ALREADY_TAKEN = 'SETTINGS_MENU_ITEM_SLUG_ALREADY_TAKEN',
 }
 
 const getSettingsMenuItemExceptionUserFriendlyMessage = (
@@ -26,6 +28,10 @@ const getSettingsMenuItemExceptionUserFriendlyMessage = (
       return msg`Another settings menu item of this application already uses this position.`;
     case SettingsMenuItemExceptionCode.RESERVED_SETTINGS_MENU_ITEM_TITLE:
       return msg`This settings menu item title is reserved.`;
+    case SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_SLUG:
+      return msg`This settings menu item slug is invalid or reserved.`;
+    case SettingsMenuItemExceptionCode.SETTINGS_MENU_ITEM_SLUG_ALREADY_TAKEN:
+      return msg`Another settings menu item of this application already uses this slug.`;
     default:
       assertUnreachable(code);
   }

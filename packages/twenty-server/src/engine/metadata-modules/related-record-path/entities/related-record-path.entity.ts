@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 
 import { ADD_RELATED_RECORD_PATH_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-related-record-path-table-upgrade-command-name.constant';
+import { ADD_RELATED_RECORD_PATH_IS_INHERENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-related-record-path-is-inherent-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -86,6 +87,14 @@ export class RelatedRecordPathEntity
   @ManyToOne(() => FieldMetadataEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'thirdFieldMetadataId' })
   thirdFieldMetadata: Relation<FieldMetadataEntity> | null;
+
+  // Inherent paths apply however the source record became readable; others only when access starts on it.
+  @Column({ nullable: false, type: 'boolean', default: false })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_RELATED_RECORD_PATH_IS_INHERENT_UPGRADE_COMMAND_NAME,
+  })
+  isInherent: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -63,17 +63,15 @@ export class CreateCompanyAndPersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = this.workspaceOrmManager.getRepository(
-        PersonWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+      const personRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          PersonWorkspaceEntity,
+        );
 
-      const workspaceMemberRepository = this.workspaceOrmManager.getRepository(
-        WorkspaceMemberWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const workspaceMemberRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          WorkspaceMemberWorkspaceEntity,
+        );
 
       const workspaceMembers = await workspaceMemberRepository.find();
 
@@ -194,9 +192,8 @@ export class CreateCompanyAndPersonService {
     const accountOwner =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             WorkspaceMemberWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
           );
 
         return workspaceMemberRepository.findOne({
@@ -276,7 +273,9 @@ export class CreateCompanyAndPersonService {
         },
       );
 
-      if (!isDefined(existingPersonOnAdditionalEmails)) continue;
+      if (!isDefined(existingPersonOnAdditionalEmails)) {
+        continue;
+      }
 
       shouldCreateOrRestorePeopleByHandleMap.set(contact.handle.toLowerCase(), {
         existingPerson: existingPersonOnAdditionalEmails,
@@ -314,8 +313,12 @@ export class CreateCompanyAndPersonService {
             ? getDomainNameFromHandle(contact.handle)
             : undefined;
 
-          if (!isDefined(companyDomainName) || !isWorkDomain(companyDomainName))
+          if (
+            !isDefined(companyDomainName) ||
+            !isWorkDomain(companyDomainName)
+          ) {
             return undefined;
+          }
 
           return {
             domainName: companyDomainName,
@@ -488,8 +491,9 @@ export class CreateCompanyAndPersonService {
         handle.toLowerCase(),
       )?.existingPerson;
 
-      if (!isDefined(existingPerson) || isNull(existingPerson.deletedAt))
+      if (!isDefined(existingPerson) || isNull(existingPerson.deletedAt)) {
         continue;
+      }
 
       const companyId = companiesMap[getDomainNameFromHandle(handle)];
 

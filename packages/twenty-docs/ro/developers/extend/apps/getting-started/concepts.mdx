@@ -18,10 +18,12 @@ your-app/
 │   ├── roles/                   ← defineRole
 │   ├── objects/                 ← defineObject
 │   ├── fields/                  ← defineField
+│   ├── validation-rules/        ← defineValidationRule
 │   ├── logic-functions/         ← defineLogicFunction
 │   ├── front-components/        ← defineFrontComponent
 │   ├── skills/                  ← defineSkill
 │   ├── agents/                  ← defineAgent
+│   ├── mcp-servers/             ← defineMcpServer
 │   ├── views/                   ← defineView
 │   ├── navigation-menu-items/   ← defineNavigationMenuItem
 │   ├── settings-menu-items/     ← defineSettingsMenuItem
@@ -45,12 +47,14 @@ your-app/
 | **Obiect**                        | Tipuri de înregistrări personalizate cu câmpuri                                            | [Objects](/ro/developers/extend/apps/data/objects)                                                                      |
 | **Câmp**                          | Adăugați câmpuri la obiecte din alte aplicații                                             | [Extending Objects](/ro/developers/extend/apps/data/extending-objects)                                                  |
 | **Relație**                       | Legături bidirecționale între obiecte                                                      | [Relations](/ro/developers/extend/apps/data/relations)                                                                  |
+| **Regulă de validare**            | Condiții pe care o înregistrare trebuie să le îndeplinească înainte de a putea fi salvată  | [Reguli de validare](/ro/developers/extend/apps/data/validation-rules)                                                  |
 | **Funcție logică**                | TypeScript pe partea de server cu declanșatoare                                            | [Funcții logice](/ro/developers/extend/apps/logic/logic-functions)                                                      |
 | **Abilitate**                     | Instrucțiuni reutilizabile pentru agenți AI                                                | [Abilități și agenți](/ro/developers/extend/apps/logic/skills-and-agents)                                               |
 | **Agent**                         | Agenți AI cu prompturi personalizate                                                       | [Abilități și agenți](/ro/developers/extend/apps/logic/skills-and-agents)                                               |
 | **Flux de lucru**                 | Fluxuri de lucru gata făcute cu un declanșator și pași                                     | [Workflows](/ro/developers/extend/apps/logic/workflows)                                                                 |
 | **Furnizor de conexiune**         | OAuth sau conectare personalizată pentru conturi terțe                                     | [Connections](/ro/developers/extend/apps/logic/connections)                                                             |
 | **Furnizor de mesagerie**         | Trimite răspunsuri de pe canalele de mesagerie ale unei aplicații printr-o conexiune       | [Canale de mesagerie](/ro/developers/extend/apps/logic/messaging-channels#sending-replies)                              |
+| **Server MCP**                    | Server MCP extern pe care AI-ul spațiului de lucru îl poate apela                          | [Abilități și agenți](/ro/developers/extend/apps/logic/skills-and-agents)                                               |
 | **Vizualizare**                   | Vizualizări preconfigurate ale listelor de înregistrări                                    | [Views](/ro/developers/extend/apps/layout/views)                                                                        |
 | **Element de meniu de navigare**  | Intrări personalizate în bara laterală                                                     | [Navigation Menu Items](/ro/developers/extend/apps/layout/navigation-menu-items)                                        |
 | **Layout pagină**                 | File și widgeturi pe pagina de detalii a unei înregistrări                                 | [Page Layouts](/ro/developers/extend/apps/layout/page-layouts)                                                          |
@@ -84,7 +88,7 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`douăzeci de aplicații dev`** — îți urmărește fișierele sursă și modificările live-syncs la un server conectat. Clientul API tipizat este regenerat automat atunci când schema se schimbă.
+* **`douăzeci de aplicații dev`** — îți urmărește fișierele sursă și modificările live-syncs la un server conectat. După o sincronizare reușită, regenerează clientul API tipizat atunci când schema sau pachetul generator instalat s-au modificat ori când fișierele client generate lipsesc sau au fost modificate. Pentru a reîmprospăta tipurile după schimbarea spațiului de lucru în interfața cu utilizatorul, rulează `twenty app generate-client`.
 * **`douăzeci de aplicații construite`** — compilează TypeScript, împachetează funcțiile logice și componentele frontale cu esbuild, și produce un manifest.
 * **Hook-uri pre/post-instalare și dezinstalare** — funcții opționale care rulează în timpul instalării sau chiar înainte de eliminare. Vezi [Install Hooks](/ro/developers/extend/apps/config/install-hooks) pentru detalii.
 

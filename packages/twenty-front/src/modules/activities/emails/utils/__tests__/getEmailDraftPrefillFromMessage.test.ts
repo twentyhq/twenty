@@ -1,25 +1,23 @@
-import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
-const buildDraftMessage = (text: string): EmailThreadMessageWithSender =>
-  ({
-    id: 'draft-message-id',
-    subject: 'Your payment did not go through',
-    text,
-    messageParticipants: [
-      {
-        role: MessageParticipantRole.FROM,
-        handle: 'marie@twenty.com',
-        displayName: 'Marie',
-      },
-      {
-        role: MessageParticipantRole.TO,
-        handle: 'pedro@example.com',
-        displayName: 'Pedro',
-      },
-    ],
-  }) as unknown as EmailThreadMessageWithSender;
+const buildDraftMessage = (text: string) => ({
+  id: 'draft-message-id',
+  subject: 'Your payment did not go through',
+  text,
+  messageParticipants: [
+    {
+      role: MessageParticipantRole.FROM,
+      handle: 'marie@twenty.com',
+      displayName: 'Marie',
+    },
+    {
+      role: MessageParticipantRole.TO,
+      handle: 'pedro@example.com',
+      displayName: 'Pedro',
+    },
+  ],
+});
 
 describe('getEmailDraftPrefillFromMessage', () => {
   it('keeps the line breaks of the synced draft text in the composer body', () => {

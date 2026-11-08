@@ -5,6 +5,8 @@ import { commonQueryRunnerToGraphqlApiExceptionHandler } from 'src/engine/api/co
 import { GraphqlDirectExecutionException } from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
 import { graphqlDirectExecutionToGraphqlApiExceptionHandler } from 'src/engine/api/graphql/direct-execution/utils/graphql-direct-execution-to-graphql-api-exception-handler.util';
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { RecordFilterException } from 'src/engine/record-filter/exceptions/record-filter.exception';
+import { recordFilterGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/record-filter-graphql-api-exception-handler.util';
 import { graphqlQueryRunnerExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/graphql-query-runner-exception-handler.util';
 import { workspaceExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-exception-handler.util';
 import { WorkspaceQueryRunnerException } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
@@ -18,10 +20,10 @@ import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.
 import { throttlerToGraphqlApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-graphql-api-exception-handler.util';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { usageLimitToGraphqlApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-graphql-api-exception-handler.util';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
-import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
-import { recordShareGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-share/utils/record-share-graphql-api-exception-handler.util';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
+import { permissionGraphqlApiExceptionHandler } from 'src/engine/permissions/utils/permission-graphql-api-exception-handler.util';
+import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
+import { recordShareGraphqlApiExceptionHandler } from 'src/engine/permissions/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { RecordValidationRuleException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
 import { recordValidationRuleGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/validation-rule/utils/record-validation-rule-graphql-api-exception-handler.util';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -47,6 +49,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return graphqlQueryRunnerExceptionHandler(error);
     case error instanceof TwentyOrmException:
       return twentyOrmGraphqlApiExceptionHandler(error);
+    case error instanceof RecordFilterException:
+      return recordFilterGraphqlApiExceptionHandler(error);
     case error instanceof RecordValidationRuleException:
       return recordValidationRuleGraphqlApiExceptionHandler(error);
     case error instanceof CommonQueryRunnerException:

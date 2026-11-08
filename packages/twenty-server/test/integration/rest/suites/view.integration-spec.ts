@@ -64,7 +64,9 @@ describe('View REST API', () => {
   });
 
   afterEach(async () => {
-    if (!testViewId) return;
+    if (!testViewId) {
+      return;
+    }
 
     await destroyOneView({
       viewId: testViewId,

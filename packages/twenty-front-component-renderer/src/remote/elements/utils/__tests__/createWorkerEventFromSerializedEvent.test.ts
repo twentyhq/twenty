@@ -8,6 +8,7 @@ import { installEventConstructorPolyfills } from '@/polyfills/events/utils/insta
 import { installHostEventRetargetingPolyfill } from '@/polyfills/events/utils/installHostEventRetargetingPolyfill';
 import { isHostOriginatedEvent } from '@/polyfills/events/utils/isHostOriginatedEvent';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 import { createWorkerEventFromSerializedEvent } from '../createWorkerEventFromSerializedEvent';
 
@@ -35,9 +36,8 @@ describe('createWorkerEventFromSerializedEvent', () => {
     'should use the existing worker %s constructor',
     (eventType, eventClassName) => {
       const polyfillWindow = new Window();
-      const listeningElement = polyfillWindow.document.createElement(
-        'input',
-      ) as unknown as Element;
+      const listeningElement =
+        toDomWindow(polyfillWindow).document.createElement('input');
       const eventClassScope = toGlobalScopeRecord(polyfillWindow);
       const eventClass = eventClassScope[eventClassName];
 

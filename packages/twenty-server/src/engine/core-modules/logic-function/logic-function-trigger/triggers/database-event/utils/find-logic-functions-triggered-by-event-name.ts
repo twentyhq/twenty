@@ -1,16 +1,22 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
 import { computeTriggerEventNamesMatchingEvent } from 'src/engine/workspace-event-emitter/utils/compute-trigger-event-names-matching-event.util';
 
-export const findLogicFunctionsTriggeredByEventName = ({
+export const findLogicFunctionsTriggeredByEventName = <
+  TLogicFunction extends Pick<
+    FlatLogicFunction,
+    'deletedAt' | 'databaseEventTriggerSettings'
+  >,
+>({
   flatLogicFunctionMaps,
   eventName,
 }: {
-  flatLogicFunctionMaps: FlatLogicFunctionMaps;
+  flatLogicFunctionMaps: {
+    byUniversalIdentifier: Partial<Record<string, TLogicFunction>>;
+  };
   eventName: string;
-}): FlatLogicFunction[] => {
+}): TLogicFunction[] => {
   const matchingTriggerEventNames =
     computeTriggerEventNamesMatchingEvent(eventName);
 

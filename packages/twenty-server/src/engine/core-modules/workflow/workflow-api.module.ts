@@ -14,21 +14,21 @@ import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/re
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CoreWorkflowServicesModule } from 'src/engine/core-modules/workflow/core-workflow-services.module';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
-import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';
+import { CodeActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code-action.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/workflow-trigger.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     CoreWorkflowAccessModule,
     WorkflowCoreModule,
     WorkflowTriggerModule,
@@ -42,6 +42,8 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowVersionCoreModule,
     WorkflowVersionValidationModule,
     CoreWorkflowServicesModule,
+    CodeActionModule,
+    WorkspaceCacheModule,
   ],
   controllers: [WorkflowTriggerController],
   providers: [
@@ -51,7 +53,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     CoreWorkflowResolver,
     CoreWorkflowVersionMutationResolver,
     CoreWorkflowRunResolver,
-    provideWorkspaceScopedRepository(WorkflowVersionEntity),
   ],
 })
 export class WorkflowApiModule {}

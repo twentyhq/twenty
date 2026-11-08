@@ -32,14 +32,13 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       },
       objectPermissionsByObjectMetadataId: {
         [personObjectMetadataItem.id]: {
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
-          objectMetadataId: personObjectMetadataItem.id,
+          canCreateAllRecords: true,
+          canReadAllRecords: true,
+          canUpdateAllRecords: true,
+          canSoftDeleteAllRecords: true,
+          canDestroyAllRecords: true,
           restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
+          rowLevelRecordsPermissions: null,
         },
       },
     });
@@ -153,14 +152,13 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       recordGqlFields: { company: { id: true }, id: true, name: true },
       objectPermissionsByObjectMetadataId: {
         [personObjectMetadataItem.id]: {
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
-          objectMetadataId: personObjectMetadataItem.id,
+          canCreateAllRecords: true,
+          canReadAllRecords: true,
+          canUpdateAllRecords: true,
+          canSoftDeleteAllRecords: true,
+          canDestroyAllRecords: true,
           restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
+          rowLevelRecordsPermissions: null,
         },
       },
     });

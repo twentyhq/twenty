@@ -1,6 +1,11 @@
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
 import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-refresh-token-for-token.util';
 
+type FetchCall = [
+  url: string,
+  init: { headers: Record<string, string>; body: string },
+];
+
 const buildResponse = (
   json: unknown,
   options: { ok?: boolean; status?: number } = {},
@@ -24,7 +29,7 @@ const baseExchangeArgs = {
 
 describe('exchangeCodeForToken', () => {
   it('POSTs form-urlencoded with the OAuth2 standard fields and parses the response', async () => {
-    const fetchFn = jest.fn(async () =>
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
       buildResponse({
         access_token: 'lin_access',
         refresh_token: 'lin_refresh',
@@ -35,7 +40,7 @@ describe('exchangeCodeForToken', () => {
 
     const result = await exchangeCodeForToken({
       ...baseExchangeArgs,
-      fetchFn: fetchFn as unknown as typeof globalThis.fetch,
+      fetchFn,
       codeVerifier: 'verifier_123',
     });
 
@@ -44,14 +49,10 @@ describe('exchangeCodeForToken', () => {
       refreshToken: 'lin_refresh',
       idToken: null,
       scopes: ['read', 'write'],
+      accessTokenExpiresAt: expect.any(Date),
     });
 
-    const init = (
-      fetchFn.mock.calls[0] as unknown as [
-        string,
-        { headers: Record<string, string>; body: string },
-      ]
-    )[1];
+    const init = fetchFn.mock.calls[0][1];
 
     expect(init.headers['Content-Type']).toBe(
       'application/x-www-form-urlencoded',
@@ -67,22 +68,17 @@ describe('exchangeCodeForToken', () => {
   });
 
   it('POSTs JSON when contentType is json', async () => {
-    const fetchFn = jest.fn(async () =>
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
       buildResponse({ access_token: 'a', refresh_token: 'r' }),
     );
 
     await exchangeCodeForToken({
       ...baseExchangeArgs,
       contentType: 'json',
-      fetchFn: fetchFn as unknown as typeof globalThis.fetch,
+      fetchFn,
     });
 
-    const init = (
-      fetchFn.mock.calls[0] as unknown as [
-        string,
-        { headers: Record<string, string>; body: string },
-      ]
-    )[1];
+    const init = fetchFn.mock.calls[0][1];
 
     expect(init.headers['Content-Type']).toBe('application/json');
     expect(JSON.parse(init.body)).toMatchObject({
@@ -92,25 +88,27 @@ describe('exchangeCodeForToken', () => {
   });
 
   it('throws on non-2xx response', async () => {
-    const fetchFn = jest.fn(async () =>
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
       buildResponse({ error: 'invalid_grant' }, { ok: false, status: 400 }),
     );
 
     await expect(
       exchangeCodeForToken({
         ...baseExchangeArgs,
-        fetchFn: fetchFn as unknown as typeof globalThis.fetch,
+        fetchFn,
       }),
     ).rejects.toThrow(/400/);
   });
 
   it('throws when 200 response is missing access_token', async () => {
-    const fetchFn = jest.fn(async () => buildResponse({ refresh_token: 'r' }));
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
+      buildResponse({ refresh_token: 'r' }),
+    );
 
     await expect(
       exchangeCodeForToken({
         ...baseExchangeArgs,
-        fetchFn: fetchFn as unknown as typeof globalThis.fetch,
+        fetchFn,
       }),
     ).rejects.toThrow(/access_token/);
   });
@@ -126,7 +124,7 @@ describe('exchangeRefreshTokenForToken', () => {
   };
 
   it('uses grant_type=refresh_token and returns the rotated tokens', async () => {
-    const fetchFn = jest.fn(async () =>
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
       buildResponse({
         access_token: 'new_access',
         refresh_token: 'new_refresh',
@@ -135,7 +133,7 @@ describe('exchangeRefreshTokenForToken', () => {
 
     const result = await exchangeRefreshTokenForToken({
       ...baseRefreshArgs,
-      fetchFn: fetchFn as unknown as typeof globalThis.fetch,
+      fetchFn,
     });
 
     expect(result).toEqual({
@@ -143,11 +141,10 @@ describe('exchangeRefreshTokenForToken', () => {
       refreshToken: 'new_refresh',
       idToken: null,
       scopes: null,
+      accessTokenExpiresAt: null,
     });
 
-    const init = (
-      fetchFn.mock.calls[0] as unknown as [string, { body: string }]
-    )[1];
+    const init = fetchFn.mock.calls[0][1];
     const params = new URLSearchParams(init.body);
 
     expect(params.get('grant_type')).toBe('refresh_token');
@@ -155,13 +152,13 @@ describe('exchangeRefreshTokenForToken', () => {
   });
 
   it('returns refreshToken=null when the provider omits it (caller applies fallback)', async () => {
-    const fetchFn = jest.fn(async () =>
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
       buildResponse({ access_token: 'new_access' }),
     );
 
     const result = await exchangeRefreshTokenForToken({
       ...baseRefreshArgs,
-      fetchFn: fetchFn as unknown as typeof globalThis.fetch,
+      fetchFn,
     });
 
     expect(result.refreshToken).toBeNull();

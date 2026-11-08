@@ -6,7 +6,6 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { WidgetType } from 'twenty-shared/types';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   type DashboardToolContextWithPermissions,
   type DashboardToolDependencies,
@@ -19,10 +18,20 @@ const getDashboardSchema = z.object({
 });
 
 export const createGetDashboardTool = (
-  deps: Pick<
-    DashboardToolDependencies,
-    'pageLayoutService' | 'workspaceOrmManager' | 'flatEntityMapsCacheService'
-  >,
+  deps: {
+    pageLayoutService: Pick<
+      DashboardToolDependencies['pageLayoutService'],
+      'findByIdOrThrow'
+    >;
+    workspaceOrmManager: Pick<
+      DashboardToolDependencies['workspaceOrmManager'],
+      'executeInWorkspaceContext' | 'getRepository'
+    >;
+    flatEntityMapsCacheService: Pick<
+      DashboardToolDependencies['flatEntityMapsCacheService'],
+      'getOrRecomputeManyOrAllFlatEntityMaps'
+    >;
+  },
   context: DashboardToolContextWithPermissions,
 ) => ({
   name: 'get_dashboard' as const,
@@ -30,7 +39,6 @@ export const createGetDashboardTool = (
   inputSchema: getDashboardSchema,
   execute: async (parameters: { dashboardId: string }) => {
     try {
-      const authContext = buildSystemAuthContext(context.workspaceId);
       const { flatFieldMetadataMaps } =
         await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
@@ -77,13 +85,10 @@ export const createGetDashboardTool = (
 
       const dashboard =
         await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const repo = deps.workspaceOrmManager.getRepository(
-            'dashboard',
-            context.rolePermissionConfig,
-          );
+          const repo = deps.workspaceOrmManager.getRepository('dashboard');
 
           return repo.findOne({ where: { id: parameters.dashboardId } });
-        }, authContext);
+        }, context.authContext);
 
       if (!isDefined(dashboard)) {
         return {

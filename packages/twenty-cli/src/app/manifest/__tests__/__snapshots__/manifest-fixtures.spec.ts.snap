@@ -24,12 +24,14 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       "my.role.ts",
     ],
     "settingsMenuItems": [],
     "skills": [],
     "timelineActivityTypes": [],
+    "validationRules": [],
     "viewFields": [],
     "views": [],
     "workflows": [],
@@ -88,6 +90,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -111,6 +114,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
     "settingsMenuItems": [],
     "skills": [],
     "timelineActivityTypes": [],
+    "validationRules": [],
     "viewFields": [],
     "views": [],
     "workflows": [],
@@ -161,12 +165,14 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       "my.role.ts",
     ],
     "settingsMenuItems": [],
     "skills": [],
     "timelineActivityTypes": [],
+    "validationRules": [],
     "viewFields": [],
     "views": [],
     "workflows": [],
@@ -253,6 +259,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -276,6 +283,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "settingsMenuItems": [],
     "skills": [],
     "timelineActivityTypes": [],
+    "validationRules": [],
     "viewFields": [],
     "views": [],
     "workflows": [],
@@ -350,6 +358,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "publicAssets": [
       "public/favicon.png",
     ],
+    "relatedRecordPaths": [],
     "roles": [
       "src/roles/default-function.role.ts",
       "src/root.role.ts",
@@ -360,6 +369,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       "src/timeline-activity-types/post-card-created.timeline-activity-type.ts",
       "src/timeline-activity-types/post-card-linked.timeline-activity-type.ts",
     ],
+    "validationRules": [],
     "viewFields": [
       "src/viewFields/post-card-number-view-field.ts",
     ],
@@ -1167,6 +1177,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "fileType": "png",
       },
     ],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -1257,6 +1268,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "universalIdentifier": "f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501",
       },
     ],
+    "validationRules": [],
     "viewFields": [
       {
         "fieldMetadataUniversalIdentifier": "7b57bd63-5a4c-46ca-9d52-42c8f02d1df6",
@@ -1439,12 +1451,14 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       "my.role.ts",
     ],
     "settingsMenuItems": [],
     "skills": [],
     "timelineActivityTypes": [],
+    "validationRules": [],
     "viewFields": [],
     "views": [],
     "workflows": [],
@@ -1496,6 +1510,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -1519,6 +1534,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "settingsMenuItems": [],
     "skills": [],
     "timelineActivityTypes": [],
+    "validationRules": [],
     "viewFields": [],
     "views": [],
     "workflows": [],

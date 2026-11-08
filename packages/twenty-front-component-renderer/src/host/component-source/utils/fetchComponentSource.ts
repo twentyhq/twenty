@@ -12,9 +12,11 @@ import { writeComponentSourceToCache } from '@/host/component-source/utils/write
 export const fetchComponentSource = async ({
   url,
   headers,
+  credentials,
 }: {
   url: string;
   headers?: Record<string, string>;
+  credentials?: RequestCredentials;
 }): Promise<string> => {
   const expectedChecksum = extractComponentChecksumFromUrl({ url });
 
@@ -40,7 +42,11 @@ export const fetchComponentSource = async ({
     }
   }
 
-  const source = await fetchComponentSourceFromNetwork({ url, headers });
+  const source = await fetchComponentSourceFromNetwork({
+    url,
+    headers,
+    credentials,
+  });
 
   if (!isDefined(expectedChecksum)) {
     return source;

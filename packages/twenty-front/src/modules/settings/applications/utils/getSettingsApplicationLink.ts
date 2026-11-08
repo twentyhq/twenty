@@ -10,5 +10,5 @@ export const getSettingsApplicationLink = ({
   applicationId: string;
 }) =>
   linkTarget === 'applicationPreferences'
-    ? getSettingsPath(SettingsPath.ApplicationPreferences, { applicationId })
+    ? getSettingsPath(SettingsPath.AppPreferencesApp, { applicationId })
     : getSettingsPath(SettingsPath.ApplicationDetail, { applicationId });

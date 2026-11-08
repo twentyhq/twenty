@@ -5,8 +5,8 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
 export type ActivityLinkConfig = {
@@ -25,8 +25,8 @@ export const useActivityLinkConfig = ({
     'id' | 'targetObjectNameSingular'
   >;
   activityObjectNameSingular:
-    | CoreObjectNameSingular.MessageThread
-    | CoreObjectNameSingular.CalendarEvent;
+    | StandardObjectNameSingular.MessageThread
+    | StandardObjectNameSingular.CalendarEvent;
 }): ActivityLinkConfig | null => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -35,17 +35,20 @@ export const useActivityLinkConfig = ({
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: activityObjectNameSingular,
   });
-  const { canUpdateObjectRecords: canLinkActivities } =
-    useObjectPermissionsForObject(
-      junctionConfig?.junctionObjectMetadata.id ?? '',
-    );
+  const junctionObjectPermissions = useObjectPermissionsForObject(
+    junctionConfig?.junctionObjectMetadata.id ?? '',
+  );
+  const canLinkActivities = canReachSomeRecords({
+    objectRecordsPermissions: junctionObjectPermissions,
+    operationType: 'create',
+  });
 
   const companyRelationField = objectMetadataItem.fields.find(
     (field) =>
       field.isActive &&
       field.relation?.type === RelationType.MANY_TO_ONE &&
       field.relation.targetObjectMetadata.nameSingular ===
-        CoreObjectNameSingular.Company,
+        StandardObjectNameSingular.Company,
   );
 
   const targetJoinColumnName = isDefined(junctionConfig)

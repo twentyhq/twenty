@@ -1,4 +1,6 @@
-export const APPLICATION_CAPABILITIES = ['microphone', 'camera'] as const;
+import { MEDIA_CAPABILITIES } from '../constants/MediaCapabilities';
+
+export const APPLICATION_CAPABILITIES = MEDIA_CAPABILITIES;
 
 export type ApplicationCapability = (typeof APPLICATION_CAPABILITIES)[number];
 

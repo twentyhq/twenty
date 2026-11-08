@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { isHiddenWorkspaceWorkflowRunRelationField } from '@/object-core/workflows/utils/isHiddenWorkspaceWorkflowRunRelationField';
 
@@ -8,7 +8,7 @@ describe('isHiddenWorkspaceWorkflowRunRelationField', () => {
     (fieldName) => {
       expect(
         isHiddenWorkspaceWorkflowRunRelationField({
-          objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+          objectNameSingular: StandardObjectNameSingular.WorkflowRun,
           fieldName,
         }),
       ).toBe(true);
@@ -18,7 +18,7 @@ describe('isHiddenWorkspaceWorkflowRunRelationField', () => {
   it('should keep the other workflow run fields', () => {
     expect(
       isHiddenWorkspaceWorkflowRunRelationField({
-        objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+        objectNameSingular: StandardObjectNameSingular.WorkflowRun,
         fieldName: 'status',
       }),
     ).toBe(false);
@@ -27,7 +27,7 @@ describe('isHiddenWorkspaceWorkflowRunRelationField', () => {
   it('should keep the workflow relation of other objects', () => {
     expect(
       isHiddenWorkspaceWorkflowRunRelationField({
-        objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+        objectNameSingular: StandardObjectNameSingular.WorkflowVersion,
         fieldName: 'workflow',
       }),
     ).toBe(false);

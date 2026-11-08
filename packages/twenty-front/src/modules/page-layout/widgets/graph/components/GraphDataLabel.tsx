@@ -1,3 +1,4 @@
+import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
 import { calculateGraphLabelStyles } from '@/page-layout/widgets/graph/utils/calculateGraphLabelStyles';
 import { animated } from '@react-spring/web';
@@ -30,7 +31,7 @@ export const GraphDataLabel = ({
       dominantBaseline={styles.dominantBaseline}
       style={{
         fill: theme.font.color.light,
-        fontSize: 11,
+        fontSize: COMMON_CHART_CONSTANTS.DATA_LABEL_FONT_SIZE,
         fontWeight: theme.font.weight.medium,
         transform: styles.transformOffset,
       }}

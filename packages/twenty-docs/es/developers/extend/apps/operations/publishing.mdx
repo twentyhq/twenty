@@ -61,10 +61,10 @@ twenty auth login --url https://your-twenty-server.com --name production
 Compila y sube tu aplicación al servidor en un solo paso:
 
 ```bash filename="Terminal"
-twenty app publish --private
-# To deploy to a specific remote:
-# twenty app publish --private --remote production
+twenty app publish --private --remote production
 ```
+
+El uso explícito de `--remote production` selecciona la conexión guardada anteriormente, aunque otro remoto sea el predeterminado. Guardar un remoto con nombre no cambia un valor predeterminado existente.
 
 ### Compartir una aplicación desplegada
 
@@ -83,7 +83,7 @@ Al actualizar una aplicación tarball ya desplegada, el servidor requiere que la
 Para publicar una actualización:
 
 1. Incrementa el campo `version` en tu `package.json` (p. ej., `1.2.3` → `1.2.4`, `1.3.0` o `2.0.0`)
-2. Ejecuta `twenty app publish --private` (o `twenty app publish --private --remote production`)
+2. Ejecuta `twenty app publish --private --remote production`
 3. Los espacios de trabajo que tienen la aplicación instalada y la actualización automática habilitada (en la pestaña General de la aplicación) se actualizan automáticamente en segundo plano; los demás verán la actualización disponible en su configuración
 
 <Note>
@@ -223,7 +223,7 @@ Los flujos de trabajo `ci.yml` y `cd.yml` hacen referencia a acciones reutilizab
 
 ## Publicación en npm
 
-Publicarla en npm hace que tu aplicación sea apta para el marketplace de Twenty. Después de la sincronización del catálogo y de cualquier [configuración de rutas de servidor](#setting-up-server-routes) necesaria, los espacios de trabajo pueden explorarla, instalarla y actualizarla desde la interfaz de usuario. Las aplicaciones de la comunidad aparecen cuando los usuarios desactivan el filtro **Solo verificadas**.
+Publicarla en npm hace que tu aplicación sea apta para el marketplace de Twenty. Tras la sincronización del catálogo y cualquier [configuración de rutas del servidor](#setting-up-server-routes) necesaria, los espacios de trabajo pueden buscarla, instalarla y actualizarla desde la interfaz de usuario una vez que supere la [revisión del marketplace](/es/developers/extend/apps/operations/marketplace-review).
 
 ### Requisitos
 
@@ -372,17 +372,13 @@ Si tienes problemas para reclamar tu aplicación, contáctanos en [Discord](http
   Esta configuración ya está gestionada por ti en Twenty Cloud.
 </Accordion>
 
-## Visibilidad y verificación en el marketplace
+## Visibilidad y revisión en Marketplace
 
-La reclamación establece la propiedad; no otorga una insignia de **Verificada**. El marketplace muestra **Solo verificadas** de forma predeterminada. Para encontrar aplicaciones de la comunidad, ve a **Configuración > Aplicaciones > Marketplace**, abre el filtro y desmarca **Solo verificadas**. También puedes compartir la página de instalación directa de tu aplicación mediante **Mis aplicaciones > tu aplicación > Distribución > Copiar enlace para compartir**.
+Todas las aplicaciones incluidas en Marketplace han superado la revisión de seguridad y calidad de Twenty. Una aplicación recién publicada permanece sin listar hasta que supera la [revisión del marketplace](/es/developers/extend/apps/operations/marketplace-review); reclamarla establece la propiedad, pero no la incluye en la lista.
 
-Actualmente, la etiqueta Verificada se aplica a las aplicaciones mantenidas por Twenty, cuya seguridad y calidad el equipo puede garantizar. Las aplicaciones de terceros se pueden publicar e instalar sin esta etiqueta.
+Una aplicación sin listar aún se puede instalar. En **Configuración > Aplicaciones > Marketplace**, abre el filtro y activa **Mostrar aplicaciones sin listar**, o comparte la página de instalación directa de la aplicación mediante **Mis aplicaciones > tu aplicación > Distribución > Copiar enlace para compartir**. Los espacios de trabajo ven una advertencia de que la aplicación no ha sido revisada por Twenty.
 
-La propuesta de [lista de verificación para la evaluación de marketplaces de terceros](/es/developers/extend/apps/operations/marketplace-review)
-es un trabajo en curso. Describe criterios de revisión específicos de cada versión y pruebas,
-no un programa de certificación disponible.
-
-Si tu aplicación sigue sin aparecer con **Solo verificadas** desactivado, confirma que la sincronización del catálogo haya finalizado, que se hayan completado todas las variables de servidor requeridas y que se haya completado cualquier configuración de rutas de servidor.
+Si tu aplicación está incluida en la lista pero aún no aparece en Marketplace, confirma que la sincronización del catálogo se haya completado, que se hayan rellenado todas las variables de servidor necesarias y que se haya completado cualquier configuración de rutas del servidor.
 
 ## Instalar aplicaciones
 
@@ -392,11 +388,13 @@ Ve a la página **Configuración > Aplicaciones** en Twenty, donde se pueden exp
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-También puedes instalar aplicaciones desde la línea de comandos:
+Desde el directorio de la aplicación, instala su versión publicada en el espacio de trabajo de destino:
 
 ```bash filename="Terminal"
-twenty app install
+twenty app install --remote production
 ```
+
+Usa el nombre del remoto para el espacio de trabajo donde quieres instalar la aplicación. Para instalar sin un proyecto local, pasa `--universal-identifier \<id>`.
 
 <Note>
 El servidor aplica el versionado semver al instalar, reflejando las reglas del despliegue:
@@ -404,7 +402,7 @@ El servidor aplica el versionado semver al instalar, reflejando las reglas del d
 * Instalar la misma versión que ya está instalada en tu espacio de trabajo se rechaza con un error `APP_ALREADY_INSTALLED`.
 * Instalar una versión inferior a la que está instalada actualmente se rechaza con un error `CANNOT_DOWNGRADE_APPLICATION`.
 
-Para instalar una versión más reciente, primero despliégala o publícala y luego vuelve a ejecutar `twenty app install`.
+Para instalar una versión más reciente, primero despliégala o publícala y luego vuelve a ejecutar `twenty app install --remote production`.
 
 </Note>
 

@@ -1,8 +1,11 @@
 import { msg, t } from '@lingui/core/macro';
-import { type ObjectPermissionAction } from 'twenty-shared/application';
+import {
+  OBJECT_PERMISSION_ACTIONS,
+  type ObjectPermissionAction,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
@@ -47,12 +50,17 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
     return [];
   }
 
-  return (flatObjectMetadata.disabledObjectPermissionActions ?? [])
-    .filter((action) => flatObjectPermission[action])
-    .map((action) => ({
-      code: PermissionsExceptionCode.INVALID_SETTING,
-      message: t`${action} is disabled on object ${flatObjectPermission.objectMetadataUniversalIdentifier}`,
-      userFriendlyMessage: msg`This permission is disabled on the object and cannot be granted`,
-      value: action,
-    }));
+  const disabledActions: string[] =
+    flatObjectMetadata.disabledObjectPermissionActions ?? [];
+
+  // create follows update for now, so disabling create alone must not block granting update
+  return OBJECT_PERMISSION_ACTIONS.filter(
+    (action) =>
+      disabledActions.includes(action) && flatObjectPermission[action],
+  ).map((action) => ({
+    code: PermissionsExceptionCode.INVALID_SETTING,
+    message: t`${action} is disabled on object ${flatObjectPermission.objectMetadataUniversalIdentifier}`,
+    userFriendlyMessage: msg`This permission is disabled on the object and cannot be granted`,
+    value: action,
+  }));
 };

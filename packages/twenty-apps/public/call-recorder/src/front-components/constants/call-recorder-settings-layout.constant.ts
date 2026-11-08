@@ -1,19 +1,16 @@
 import {
   IconCalendarEvent,
   IconClockPlay,
-  IconColorSwatch,
   IconDoorEnter,
   IconHourglassHigh,
   IconLanguage,
   IconMessage,
-  IconPhoto,
   IconPlayerStop,
   IconSparkles,
   type IconComponent,
 } from 'twenty-ui/icon';
 
 import { CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-additional-summary-prompt-env-var-name';
-import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-bot-image-background-env-var-name';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds-env-var-name';
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
@@ -22,10 +19,11 @@ import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/log
 import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
 import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/constants/call-recorder-recording-notice-max-length';
 import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
+import { CALL_RECORDER_STYLE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-style-env-var-name';
 import { CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-summary-enabled-env-var-name';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
-import { CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-use-workspace-logo-env-var-name';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds-env-var-name';
+import { type CallRecorderStyle } from 'src/logic-functions/types/call-recorder-style.type';
 
 export type CallRecorderCounterRow = {
   variableKey: string;
@@ -97,18 +95,20 @@ export const CALL_RECORDER_SUMMARY_ENABLED_ROW = {
   Icon: IconSparkles,
 };
 
-export const CALL_RECORDER_USE_WORKSPACE_LOGO_ROW = {
-  variableKey: CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME,
-  title: 'Show workspace logo',
-  description: 'Display your logo on the recorder camera tile.',
-  Icon: IconPhoto,
+export const CALL_RECORDER_STYLE_FIELD = {
+  variableKey: CALL_RECORDER_STYLE_ENV_VAR_NAME,
+  label: 'Style',
+  hint: 'Applies to recorders scheduled after you change it.',
 };
 
-export const CALL_RECORDER_TILE_BACKGROUND_ROW = {
-  variableKey: CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME,
-  title: 'Tile background',
-  description: 'Colour drawn behind the logo on the camera tile.',
-  Icon: IconColorSwatch,
+export const CALL_RECORDER_STYLE_DESCRIPTIONS: Record<
+  CallRecorderStyle,
+  string
+> = {
+  TWENTY: 'Shows the Twenty logo and name.',
+  WORKSPACE: 'Uses the workspace name and logo from Settings > General.',
+  MINIMAL: 'Shows the word Twenty, no logo.',
+  NONE: 'Sends no image. People only see the recorder name.',
 };
 
 export const CALL_RECORDER_NAME_FIELD = {
@@ -134,6 +134,5 @@ export const CALL_RECORDER_MAPPED_VARIABLE_KEYS: string[] = [
   CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
   CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey,
   CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
-  CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
-  CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
+  CALL_RECORDER_STYLE_FIELD.variableKey,
 ];

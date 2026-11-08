@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactElement, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getIconTileColorShades } from 'twenty-ui/components/data-display';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
+import { IconApps, type IconComponent } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import {
   type ButtonSize,
@@ -24,6 +24,7 @@ import { getIconPickerSearchScore } from '@/ui/input/utils/getIconPickerSearchSc
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
+import { useLingui } from '@lingui/react/macro';
 
 type IconPickerProps = {
   disabled?: boolean;
@@ -85,6 +86,7 @@ export const IconPicker = ({
   iconColorPicker,
   iconColor,
 }: IconPickerProps) => {
+  const { t } = useLingui();
   const [searchString, setSearchString] = useState('');
   const [visibleCount, setVisibleCount] = useAtomFamilyState(
     iconPickerVisibleCountState,

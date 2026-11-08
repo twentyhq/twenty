@@ -2,7 +2,9 @@ import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import {
+  AiChatAssistantMode,
   AiModelTier,
   OnboardingStatus,
   PermissionFlagType,
@@ -78,6 +80,7 @@ export const mockCurrentWorkspace = {
   isPasswordAuthEnabled: true,
   isMicrosoftAuthEnabled: false,
   isCustomDomainEnabled: false,
+  iframeMediaPermissions: [],
   isPasswordAuthBypassEnabled: false,
   isGoogleAuthBypassEnabled: false,
   isMicrosoftAuthBypassEnabled: false,
@@ -91,6 +94,12 @@ export const mockCurrentWorkspace = {
   metadataVersion: 1,
   trashRetentionDays: 14,
   aiChatModelTier: AiModelTier.fast,
+  aiChatAssistantProfile: {
+    ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+    __typename: 'AiChatAssistantProfile',
+  },
+  aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+  aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},
@@ -210,16 +219,15 @@ export const mockedUserData: MockedUser = {
       PermissionFlagType.CONNECTED_ACCOUNTS,
     ],
     twoFactorAuthenticationMethodSummary: [],
-    objectsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
+    objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
       (item) => ({
         objectMetadataId: item.id,
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
+        canCreateAllRecords: true,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: true,
+        canDestroyAllRecords: true,
         restrictedFields: {},
-        rowLevelPermissionPredicates: [],
-        rowLevelPermissionPredicateGroups: [],
       }),
     ),
   },
@@ -238,21 +246,22 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
   ...mockedUserData,
   currentUserWorkspace: {
     ...mockedUserData.currentUserWorkspace,
-    objectsPermissions: getTestEnrichedObjectMetadataItemsMock().map((item) => {
-      const hasAccess =
-        item.nameSingular !== 'task' && item.nameSingular !== 'opportunity';
+    objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
+      (item) => {
+        const hasAccess =
+          item.nameSingular !== 'task' && item.nameSingular !== 'opportunity';
 
-      return {
-        objectMetadataId: item.id,
-        canReadObjectRecords: hasAccess,
-        canUpdateObjectRecords: hasAccess,
-        canSoftDeleteObjectRecords: hasAccess,
-        canDestroyObjectRecords: hasAccess,
-        restrictedFields: {},
-        rowLevelPermissionPredicates: [],
-        rowLevelPermissionPredicateGroups: [],
-      };
-    }),
+        return {
+          objectMetadataId: item.id,
+          canCreateAllRecords: hasAccess,
+          canReadAllRecords: hasAccess,
+          canUpdateAllRecords: hasAccess,
+          canSoftDeleteAllRecords: hasAccess,
+          canDestroyAllRecords: hasAccess,
+          restrictedFields: {},
+        };
+      },
+    ),
   },
 };
 
@@ -275,16 +284,15 @@ export const mockedOnboardingUserData = (
     currentWorkspace: mockCurrentWorkspace,
     currentUserWorkspace: {
       permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-      objectPermissions: getTestEnrichedObjectMetadataItemsMock().map(
+      objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
         (item) => ({
           objectMetadataId: item.id,
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
+          canCreateAllRecords: true,
+          canReadAllRecords: true,
+          canUpdateAllRecords: true,
+          canSoftDeleteAllRecords: true,
+          canDestroyAllRecords: true,
           restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
         }),
       ),
     },

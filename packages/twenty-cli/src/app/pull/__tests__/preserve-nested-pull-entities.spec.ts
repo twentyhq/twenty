@@ -176,4 +176,69 @@ describe('preserveNestedPullEntities', () => {
     expect(result.deletions).toEqual([]);
     expect(result.skipped).toHaveLength(2);
   });
+
+  it('preserves the code step files of a preserved workflow file', () => {
+    const workflowIdentifier = '55555555-5555-4555-8555-555555555555';
+    const stepIdentifier = '66666666-6666-4666-8666-666666666666';
+    const localStepIdentifier = '77777777-7777-4777-8777-777777777777';
+    const workflowPath = 'src/workflows/greet.workflow.ts';
+    const workflowEntity: PullEntity = {
+      ...createEntity('pageLayout', {
+        universalIdentifier: workflowIdentifier,
+        version: { steps: [{ universalIdentifier: stepIdentifier }] },
+      }),
+      kind: 'workflow',
+      definer: 'defineWorkflow',
+    };
+    const codeStepWrite: PullWrite = {
+      ...createWrite(workflowEntity, 'src/workflows/greet/format.code.ts'),
+      universalIdentifier: stepIdentifier,
+    };
+    const otherWrite = createWrite(tabEntity, 'src/workflows/greeting.ts');
+    const otherWorkflowCodeStepWrite: PullWrite = {
+      ...createWrite(tabEntity, 'src/workflows/greet/other-format.code.ts'),
+      universalIdentifier: '88888888-8888-4888-8888-888888888888',
+    };
+
+    const result = protect({
+      entities: [workflowEntity, tabEntity],
+      protectedIdentifiers: new Set(),
+      scannedFiles: [
+        {
+          relativePath: workflowPath,
+          entityKey: 'workflows',
+          targetFunctionName: 'defineWorkflow',
+          universalIdentifier: workflowIdentifier,
+          isReadable: true,
+          config: {
+            universalIdentifier: workflowIdentifier,
+            version: {
+              steps: [
+                { universalIdentifier: stepIdentifier },
+                { universalIdentifier: localStepIdentifier },
+              ],
+            },
+          },
+        },
+      ],
+      writes: [
+        createWrite(workflowEntity, workflowPath),
+        codeStepWrite,
+        otherWrite,
+        otherWorkflowCodeStepWrite,
+      ],
+      deletions: [
+        {
+          universalIdentifier: stepIdentifier,
+          relativePath: 'src/workflows/greet/renamed.code.ts',
+        },
+      ],
+    });
+
+    expect(result.writes).toEqual([otherWrite, otherWorkflowCodeStepWrite]);
+    expect(result.deletions).toEqual([]);
+    expect(result.skipped).toEqual([
+      expect.objectContaining({ universalIdentifier: workflowIdentifier }),
+    ]);
+  });
 });

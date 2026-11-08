@@ -17,9 +17,7 @@ import { canCallerReachApplication } from 'src/engine/core-modules/application/u
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { APPLICATION_KEEPALIVE_INTERVAL_MS } from 'src/engine/subscriptions/constants/application-keepalive-interval-ms.constant';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -34,6 +32,7 @@ import { getClickHouseTableName } from './registry/event-log-registry';
 import { isEventLogRowMatchingFieldFilters } from './utils/is-event-log-row-matching-field-filters.util';
 import { normalizeEventLogRecords } from './utils/normalize-event-log-records';
 import { validateEventLogFieldFilterOrThrow } from './utils/validate-event-log-field-filter-or-throw.util';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 type WorkspaceEventLivePayload = {
   table: string;
@@ -66,15 +65,9 @@ const isRowMatchingVariables = ({
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 @UsePipes(ResolverValidationPipe)
-export class EventLogsLiveResolver {
-  constructor(
-    private readonly eventLogsService: EventLogsService,
-    private readonly subscriptionService: SubscriptionService,
-    private readonly workspaceEventLiveService: EventLogLiveService,
-  ) {}
-
-  @UseGuards(
-    AuthPrincipalGuard({
+@UseGuards(
+  AccessPolicyGuard({
+    authPrincipals: {
       userSession: {
         standard: true,
         impersonated: true,
@@ -84,9 +77,17 @@ export class EventLogsLiveResolver {
       apiKey: true,
       oauthClient: true,
       application: true,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.SECURITY),
-  )
+    },
+    requiredPermissionFlags: [PermissionFlagType.SECURITY],
+  }),
+)
+export class EventLogsLiveResolver {
+  constructor(
+    private readonly eventLogsService: EventLogsService,
+    private readonly subscriptionService: SubscriptionService,
+    private readonly workspaceEventLiveService: EventLogLiveService,
+  ) {}
+
   @Subscription(() => [EventLogRecord], {
     nullable: true,
     filter: (
@@ -148,6 +149,9 @@ export class EventLogsLiveResolver {
               applicationId: isString(row.applicationId)
                 ? row.applicationId
                 : undefined,
+              operation: 'read',
+              workspaceCustomApplicationId:
+                workspace.workspaceCustomApplicationId,
             }),
           );
 

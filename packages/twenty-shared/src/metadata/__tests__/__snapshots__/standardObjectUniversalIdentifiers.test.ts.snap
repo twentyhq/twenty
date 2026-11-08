@@ -2,6 +2,62 @@
 
 exports[`STANDARD_OBJECTS universal identifiers should never change without an explicit snapshot update 1`] = `
 {
+  "accessGroup": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "33aeb537-bd63-5f25-8623-d0e62867de62",
+      },
+      "createdBy": {
+        "universalIdentifier": "25371b89-ffee-5d25-a2d9-48d877189573",
+      },
+      "deletedAt": {
+        "universalIdentifier": "16080650-3c69-5b30-bea7-8f684bcee608",
+      },
+      "groupHash": {
+        "universalIdentifier": "04687cce-1268-4774-b47e-04076a152630",
+      },
+      "id": {
+        "universalIdentifier": "24bab7ca-6503-5243-8d11-8c35f5cb8855",
+      },
+      "memberFieldValues": {
+        "universalIdentifier": "a0d519f8-cc6b-4bb5-b107-89213d683705",
+      },
+      "objectMetadataId": {
+        "universalIdentifier": "a1e1a495-ed2e-4e8d-8814-6ef0d1e484d0",
+      },
+      "position": {
+        "universalIdentifier": "0e58d739-4e5d-53b2-b472-1f747198202e",
+      },
+      "roleId": {
+        "universalIdentifier": "0f8c81b0-6d46-4593-97cb-97216de930ff",
+      },
+      "rowLevelPermissionPredicateGroupId": {
+        "universalIdentifier": "03f12114-2b40-4dc0-9963-6c2e059bc4b3",
+      },
+      "searchVector": {
+        "universalIdentifier": "a6e1fe3d-d28c-55dd-9416-2e5c5984f186",
+      },
+      "updatedAt": {
+        "universalIdentifier": "4ee4a2f8-a42c-5b14-917f-a9ff57d4a40f",
+      },
+      "updatedBy": {
+        "universalIdentifier": "63f9ebe7-c3d5-53b2-b6eb-e4c527ee7c20",
+      },
+    },
+    "indexes": {
+      "groupHashUniqueIndex": {
+        "universalIdentifier": "dcb0d254-43ae-442e-9223-8ac052eddb28",
+      },
+      "objectMetadataIdIndex": {
+        "universalIdentifier": "60e48c2a-a3db-4f11-b25b-49c7e8a385bc",
+      },
+      "roleIdIndex": {
+        "universalIdentifier": "933f2eee-0856-46fd-b144-ffd4bad7e9c8",
+      },
+    },
+    "universalIdentifier": "47f4ed44-4312-467f-b6f5-787f91037a1d",
+    "views": {},
+  },
   "agentChatThread": {
     "fields": {
       "activeStreamId": {
@@ -39,6 +95,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "deletedAt": {
         "universalIdentifier": "58116005-31cb-59be-9a8d-da2dd428d9b7",
+      },
+      "directMessageFirstWorkspaceMemberId": {
+        "universalIdentifier": "dd7e093b-06af-47f3-a246-57ae2de33244",
+      },
+      "directMessageSecondWorkspaceMemberId": {
+        "universalIdentifier": "730c7491-35fa-4bce-90e1-29901e08eba3",
       },
       "id": {
         "universalIdentifier": "59b74693-2b88-5eb9-82ef-23b1e75c2b78",
@@ -108,6 +170,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "channelLastActivityIndex": {
         "universalIdentifier": "bd129bd1-db66-4c74-a64e-819d2edd3062",
       },
+      "directMessagePairUniqueIndex": {
+        "universalIdentifier": "365c5b24-cd52-4ebc-98d2-23c5684216d5",
+      },
       "workspaceMemberIndex": {
         "universalIdentifier": "079f2dd7-6c11-4eae-be8a-cce2d1bee0fb",
       },
@@ -136,6 +201,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "lastReadAt": {
         "universalIdentifier": "7e3a8319-c127-4c4f-add4-6feac37ea555",
+      },
+      "mentionsResolvedAt": {
+        "universalIdentifier": "12c0b0c8-86b2-48e5-8e2f-56a9eb9162c4",
       },
       "snoozedUntil": {
         "universalIdentifier": "65bc5785-877d-4363-b65c-95175ba20fd0",
@@ -524,6 +592,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "targetDashboard": {
         "universalIdentifier": "3af87717-6757-5d61-940e-3016cff35cdc",
       },
+      "targetMessage": {
+        "universalIdentifier": "4d1a84b6-ba6c-5f18-baf6-084aae64eccd",
+      },
       "targetNote": {
         "universalIdentifier": "a627557c-db37-53be-8a59-9aa2d45cd7ee",
       },
@@ -555,6 +626,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "dashboardIdIndex": {
         "universalIdentifier": "c10eba2d-ff1a-4eab-9285-50481c12a003",
+      },
+      "messageIdIndex": {
+        "universalIdentifier": "83c77988-2dc4-4575-bac5-f0f50c05568e",
       },
       "noteIdIndex": {
         "universalIdentifier": "9d31ea73-13b6-4e06-84ee-c66c72bf7787",
@@ -1639,6 +1713,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "message": {
     "fields": {
+      "attachments": {
+        "universalIdentifier": "cd2ccd87-c134-5aba-a8e7-937a4a1ca2d6",
+      },
       "createdAt": {
         "universalIdentifier": "74d0ddc0-4dbe-5c29-8d4a-2e512c1e66ab",
       },

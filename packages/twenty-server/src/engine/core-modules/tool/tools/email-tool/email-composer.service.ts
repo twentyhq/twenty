@@ -316,9 +316,8 @@ export class EmailComposerService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository =
-        this.workspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
           'message',
-          { shouldBypassPermissionChecks: true },
         );
 
       const parentMessage = await messageRepository.findOne({
@@ -334,9 +333,8 @@ export class EmailComposerService {
       }
 
       const associationRepository =
-        this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
           'messageChannelMessageAssociation',
-          { shouldBypassPermissionChecks: true },
         );
 
       const [association, ancestorMessages] = await Promise.all([

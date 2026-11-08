@@ -44,7 +44,9 @@ export const useScrollRestoration = (componentInstanceId: string) => {
   );
 
   useEffect(() => {
-    if (isRestoring) return;
+    if (isRestoring) {
+      return;
+    }
 
     if (scrollWrapperScrollTop <= SCROLL_RESTORATION_TOP_THRESHOLD_PX) {
       sessionStorage.removeItem(storageKey);

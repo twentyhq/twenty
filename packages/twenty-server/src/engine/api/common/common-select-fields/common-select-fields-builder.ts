@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  FieldMetadataType,
-  RelationType,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { CommonSelectFieldsException } from 'src/engine/api/common/common-select-fields/common-select-fields.exception';
 import { type SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
@@ -17,11 +13,82 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
 @Injectable()
 export class CommonSelectFieldsBuilder {
-  buildFromDepth = ({
-    objectsPermissions,
+  constructor(
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
+  ) {}
+
+  // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
+  async findObjectSelectionMetadataIdsOrThrow({
+    authContext,
+    objectMetadataId,
+    flatObjectMetadataMaps,
+    shouldIncludeRelationTargets,
+  }: {
+    authContext: PermissionsAuthContext;
+    objectMetadataId: string;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    shouldIncludeRelationTargets: boolean;
+  }): Promise<{
+    readableObjectMetadataIds: Set<string>;
+    unreadableFieldMetadataIds: Set<string>;
+  }> {
+    const principals =
+      await this.principalPermissionsService.resolvePermissionsPrincipalsOrThrow(
+        {
+          authContext,
+        },
+      );
+
+    const flatObjectMetadatas = shouldIncludeRelationTargets
+      ? Object.values(flatObjectMetadataMaps.byUniversalIdentifier).filter(
+          isDefined,
+        )
+      : [];
+    const readableFlags = await Promise.all(
+      flatObjectMetadatas.map((relationTargetObjectMetadata) =>
+        this.recordPermissionsService.canAccessSomeRecords({
+          operationType: 'read',
+          principals,
+          objectMetadataId: relationTargetObjectMetadata.id,
+        }),
+      ),
+    );
+    const readableObjectMetadataIds = new Set(
+      flatObjectMetadatas
+        .filter((_, index) => readableFlags[index])
+        .map((readableObjectMetadata) => readableObjectMetadata.id),
+    );
+
+    const unreadableFieldMetadataIdsPerObject = await Promise.all(
+      [...new Set([objectMetadataId, ...readableObjectMetadataIds])].map(
+        (selectedObjectMetadataId) =>
+          this.recordPermissionsService.findUnreadableFields({
+            principals,
+            objectMetadataId: selectedObjectMetadataId,
+          }),
+      ),
+    );
+
+    return {
+      readableObjectMetadataIds,
+      unreadableFieldMetadataIds: new Set(
+        unreadableFieldMetadataIdsPerObject.flatMap((fieldMetadataIds) => [
+          ...fieldMetadataIds,
+        ]),
+      ),
+    };
+  }
+
+  buildFromDepth({
+    unreadableFieldMetadataIds,
+    readableObjectMetadataIds,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     flatObjectMetadata,
@@ -31,7 +98,8 @@ export class CommonSelectFieldsBuilder {
     requestedFields,
     maximumDefaultFieldCount,
   }: {
-    objectsPermissions: ObjectsPermissions;
+    unreadableFieldMetadataIds: ReadonlySet<string>;
+    readableObjectMetadataIds: ReadonlySet<string>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatObjectMetadata: FlatObjectMetadata;
@@ -42,14 +110,11 @@ export class CommonSelectFieldsBuilder {
     maximumDefaultFieldCount?: number;
   }): {
     selectedFields: CommonSelectedFields;
-  } => {
-    const restrictedFields =
-      objectsPermissions[flatObjectMetadata.id].restrictedFields;
-
+  } {
     const readableFlatFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityIds: flatObjectMetadata.fieldIds,
       flatEntityMaps: flatFieldMetadataMaps,
-    }).filter((flatField) => restrictedFields[flatField.id]?.canRead !== false);
+    }).filter((flatField) => !unreadableFieldMetadataIds.has(flatField.id));
 
     const fieldsFromDepth = readableFlatFields.filter(
       (field) =>
@@ -84,8 +149,8 @@ export class CommonSelectFieldsBuilder {
     const relationsSelectFields = buildRelationSelectionFromDepth({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      flatObjectMetadata,
-      objectsPermissions,
+      unreadableFieldMetadataIds,
+      readableObjectMetadataIds,
       depth,
       onlyUseLabelIdentifierFieldsInRelations,
       recurseIntoJunctionTableRelations,
@@ -93,7 +158,7 @@ export class CommonSelectFieldsBuilder {
     });
 
     const selectableFields = buildFieldSelection({
-      restrictedFields,
+      unreadableFieldMetadataIds,
       flatObjectMetadata,
       flatFields,
     });
@@ -104,7 +169,7 @@ export class CommonSelectFieldsBuilder {
         ...relationsSelectFields,
       },
     };
-  };
+  }
 
   private validateRequestedFields({
     requestedFields,
@@ -117,7 +182,9 @@ export class CommonSelectFieldsBuilder {
     objectNameSingular: string;
     fieldNamesFromDepth: ReadonlySet<string>;
   }): ReadonlySet<string> | undefined {
-    if (!isDefined(requestedFields)) return undefined;
+    if (!isDefined(requestedFields)) {
+      return undefined;
+    }
 
     if (requestedFields.size === 0) {
       throw new CommonSelectFieldsException(

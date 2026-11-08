@@ -48,6 +48,8 @@ export const PULL_ENTITY_KINDS = [
   'workflow',
   'skill',
   'agent',
+  'validationRule',
+  'relatedRecordPath',
 ] as const;
 
 export type PullEntityKind = (typeof PULL_ENTITY_KINDS)[number];
@@ -198,6 +200,27 @@ export const buildPullEntities = ({
         fieldLocationByUniversalIdentifier,
       }),
       parentName: objectName,
+    });
+  }
+
+  for (const validationRuleManifest of manifest.validationRules ?? []) {
+    entities.push({
+      kind: 'validationRule',
+      universalIdentifier: validationRuleManifest.universalIdentifier,
+      definer: 'defineValidationRule',
+      config: validationRuleManifest,
+      enumBindings: [],
+      defaultFolder: 'src/validation-rules',
+      fileSuffix: '.validation-rule.ts',
+      fileBaseName: toFileBaseName({
+        segments: [validationRuleManifest.name],
+        universalIdentifier: validationRuleManifest.universalIdentifier,
+      }),
+      parentName: getObjectNameForPullFile({
+        objectUniversalIdentifier:
+          validationRuleManifest.objectUniversalIdentifier,
+        manifest,
+      }),
     });
   }
 
@@ -407,6 +430,23 @@ export const buildPullEntities = ({
       fileBaseName: toFileBaseName({
         segments: [skillManifest.name],
         universalIdentifier: skillManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const relatedRecordPathManifest of manifest.relatedRecordPaths ?? []) {
+    entities.push({
+      kind: 'relatedRecordPath',
+      universalIdentifier: relatedRecordPathManifest.universalIdentifier,
+      definer: 'defineRelatedRecordPath',
+      config: relatedRecordPathManifest,
+      enumBindings: [],
+      defaultFolder: 'src/related-record-paths',
+      fileSuffix: '.related-record-path.ts',
+      fileBaseName: toFileBaseName({
+        segments: [],
+        universalIdentifier: relatedRecordPathManifest.universalIdentifier,
       }),
       parentName: null,
     });

@@ -5,13 +5,8 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import {
-  MetadataReadability,
-  MetadataWritability,
-  ObjectOpenRecordIn,
-  ObjectSharingReach,
-} from 'twenty-shared/types';
-import { type ObjectPermissionAction } from 'twenty-shared/application';
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { type DisableableObjectPermissionAction } from 'twenty-shared/application';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
@@ -19,9 +14,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 
 registerEnumType(ObjectOpenRecordIn, { name: 'ObjectOpenRecordIn' });
-registerEnumType(MetadataReadability, { name: 'MetadataReadability' });
-registerEnumType(MetadataWritability, { name: 'MetadataWritability' });
-registerEnumType(ObjectSharingReach, { name: 'ObjectSharingReach' });
 
 @ObjectType('Object')
 export class ObjectMetadataDTO {
@@ -88,19 +80,8 @@ export class ObjectMetadataDTO {
   @Field(() => ObjectOpenRecordIn)
   openRecordIn: ObjectOpenRecordIn;
 
-  @Field(() => MetadataReadability)
-  readability: MetadataReadability;
-
-  @Field(() => [UUIDScalarType], { nullable: true })
-  readabilityParentFieldUniversalIdentifiers: string[] | null;
-
   @Field(() => [String], { nullable: true })
-  disabledObjectPermissionActions?: ObjectPermissionAction[] | null;
-
-  @Field(() => ObjectSharingReach)
-  sharingReach: ObjectSharingReach;
-  @Field(() => MetadataWritability)
-  writability: MetadataWritability;
+  disabledObjectPermissionActions?: DisableableObjectPermissionAction[] | null;
 
   @HideField()
   workspaceId: string;

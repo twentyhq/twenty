@@ -4,7 +4,8 @@ import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-
 
 describe('MCP Controller (integration)', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
-  const endpoint = '/mcp';
+  // Meta mode: the call-every-listed-tool test below must not reach direct mode's write tools
+  const endpoint = '/mcp?mode=meta';
 
   const postMcp = (
     body: any,

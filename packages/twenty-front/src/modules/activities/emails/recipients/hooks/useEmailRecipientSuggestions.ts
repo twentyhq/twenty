@@ -1,7 +1,6 @@
 import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EMAIL_RECIPIENT_MEMBER_SUGGESTIONS_LIMIT } from '@/activities/emails/recipients/constants/EmailRecipientMemberSuggestionsLimit';
@@ -16,6 +15,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 type UseEmailRecipientSuggestionsArgs = {
   searchInput: string;
@@ -70,6 +70,7 @@ export const useEmailRecipientSuggestions = ({
   excludedRecipientKeys,
   contextRecord,
 }: UseEmailRecipientSuggestionsArgs) => {
+  const { t } = useLingui();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
@@ -78,21 +79,22 @@ export const useEmailRecipientSuggestions = ({
   const hasSearchInput = trimmedSearchInput.length > 0;
 
   const isCompanyContext =
-    contextRecord?.objectNameSingular === CoreObjectNameSingular.Company;
+    contextRecord?.objectNameSingular === StandardObjectNameSingular.Company;
   const isPersonContext =
-    contextRecord?.objectNameSingular === CoreObjectNameSingular.Person;
+    contextRecord?.objectNameSingular === StandardObjectNameSingular.Person;
   const isOpportunityContext =
-    contextRecord?.objectNameSingular === CoreObjectNameSingular.Opportunity;
+    contextRecord?.objectNameSingular ===
+    StandardObjectNameSingular.Opportunity;
 
   const { record: contextPerson } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Person,
+    objectNameSingular: StandardObjectNameSingular.Person,
     objectRecordId: contextRecord?.recordId ?? '',
     recordGqlFields: { id: true, companyId: true },
     skip: !isPersonContext,
   });
 
   const { record: contextOpportunity } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Opportunity,
+    objectNameSingular: StandardObjectNameSingular.Opportunity,
     objectRecordId: contextRecord?.recordId ?? '',
     recordGqlFields: { id: true, companyId: true },
     skip: !isOpportunityContext,
@@ -103,7 +105,7 @@ export const useEmailRecipientSuggestions = ({
     : (contextPerson?.companyId ?? contextOpportunity?.companyId ?? null);
 
   const { records: contextPeopleRecords } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Person,
+    objectNameSingular: StandardObjectNameSingular.Person,
     filter: { companyId: { eq: contextCompanyId ?? '' } },
     recordGqlFields: { id: true, name: true, avatarUrl: true, emails: true },
     limit: EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT,
@@ -112,8 +114,8 @@ export const useEmailRecipientSuggestions = ({
 
   const { searchRecords, error } = useObjectRecordSearchRecords({
     objectNameSingulars: [
-      CoreObjectNameSingular.Person,
-      CoreObjectNameSingular.WorkspaceMember,
+      StandardObjectNameSingular.Person,
+      StandardObjectNameSingular.WorkspaceMember,
     ],
     searchInput: hasSearchInput ? trimmedSearchInput : undefined,
     limit:
@@ -124,13 +126,13 @@ export const useEmailRecipientSuggestions = ({
   const searchedPersonIds = searchRecords
     .filter(
       (searchRecord) =>
-        searchRecord.objectNameSingular === CoreObjectNameSingular.Person,
+        searchRecord.objectNameSingular === StandardObjectNameSingular.Person,
     )
     .map((searchRecord) => searchRecord.recordId)
     .slice(0, EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT);
 
   const { records: searchedPeopleRecords } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Person,
+    objectNameSingular: StandardObjectNameSingular.Person,
     filter: { id: { in: searchedPersonIds } },
     recordGqlFields: { id: true, name: true, avatarUrl: true, emails: true },
     limit: EMAIL_RECIPIENT_PEOPLE_SUGGESTIONS_LIMIT,
@@ -168,7 +170,7 @@ export const useEmailRecipientSuggestions = ({
   let memberSuggestionCount = 0;
 
   for (const searchRecord of searchRecords) {
-    if (searchRecord.objectNameSingular === CoreObjectNameSingular.Person) {
+    if (searchRecord.objectNameSingular === StandardObjectNameSingular.Person) {
       const person = searchedPeopleById.get(searchRecord.recordId);
 
       if (isDefined(person) && isSuggestablePerson(person)) {

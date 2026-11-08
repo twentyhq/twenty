@@ -37,10 +37,6 @@ export class DisabledDriver implements LogicFunctionDriver {
     );
   }
 
-  async getDependenciesBuildCacheKey(): Promise<never> {
-    return this.buildDependencies();
-  }
-
   async installPrebuiltBundle(): Promise<void> {
     throw new LogicFunctionException(
       'Logic function prebuilt install is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',

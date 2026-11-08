@@ -1,25 +1,16 @@
-import { isDefined } from 'twenty-shared/utils';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
+import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
-
-// Sessions and API keys keep workspace-wide reach behind their permission
-// flags; an application token only reaches its own application.
 export const canCallerReachApplication = ({
-  callingApplication,
   applicationId,
-}: {
-  callingApplication:
-    | Pick<FlatApplication, 'id' | 'sourceType'>
-    | null
-    | undefined;
+  ...callerOperation
+}: ApplicationCallerOperation & {
   applicationId: string | null | undefined;
 }): boolean => {
-  const scopedCallingApplication =
-    getScopedCallingApplication(callingApplication);
+  const reachableApplications = getReachableApplications(callerOperation);
 
   return (
-    !isDefined(scopedCallingApplication) ||
-    applicationId === scopedCallingApplication.id
+    reachableApplications.type === 'all' ||
+    reachableApplications.applicationId === applicationId
   );
 };

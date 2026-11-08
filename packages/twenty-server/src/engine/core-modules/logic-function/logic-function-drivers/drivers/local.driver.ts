@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { dirname, join } from 'path';
 import { NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import {
@@ -35,7 +36,6 @@ import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/
 import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { copyFrontComponentBuilder } from 'src/engine/metadata-modules/ai/ai-front-component/utils/copy-front-component-builder.util';
-import { getFrontComponentBuilderName } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-builder-name.util';
 import {
   FrontComponentException,
   FrontComponentExceptionCode,
@@ -112,6 +112,21 @@ export class LocalDriver implements LogicFunctionDriver {
         sourcemap: true,
         packages: 'external',
         banner: NODE_ESM_CJS_BANNER,
+      }).catch((error: unknown) => {
+        // esbuild reports source diagnostics in `errors`; anything else is not the user's code
+        if (
+          !(error instanceof Error) ||
+          !('errors' in error) ||
+          !Array.isArray(error.errors) ||
+          !isNonEmptyArray(error.errors)
+        ) {
+          throw error;
+        }
+
+        throw new LogicFunctionException(
+          `Function code compilation failed: ${error.message}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED,
+        );
       });
 
       const builtCode = await fs.readFile(builtBundleFilePath, 'utf-8');
@@ -120,17 +135,6 @@ export class LocalDriver implements LogicFunctionDriver {
     } finally {
       await temporaryDirManager.clean();
     }
-  }
-
-  async getDependenciesBuildCacheKey({
-    workspaceId,
-  }: Pick<BrowserDependenciesBuildParams, 'workspaceId'>) {
-    const name = await getFrontComponentBuilderName({
-      workspaceId,
-      namespace: 'local',
-      action: 'buildDependencies',
-    });
-    return `local:${name}`;
   }
 
   async buildDependencies({
@@ -312,20 +316,22 @@ export class LocalDriver implements LogicFunctionDriver {
             timeoutMs,
           });
 
-        if (stdout)
+        if (stdout) {
           logs +=
             stdout
               .split('\n')
               .filter(Boolean)
               .map((l) => `${new Date().toISOString()} INFO ${l}`)
               .join('\n') + '\n';
-        if (stderr)
+        }
+        if (stderr) {
           logs +=
             stderr
               .split('\n')
               .filter(Boolean)
               .map((l) => `${new Date().toISOString()} ERROR ${l}`)
               .join('\n') + '\n';
+        }
 
         const duration = Date.now() - startTime;
 

@@ -1,6 +1,9 @@
 import { badgeTest } from '@/__stories__/twenty-ui-gallery/utils/badgeTest';
 import { currencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/currencyPickerTest';
 import { dropdownTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownTest';
+import { dropdownOutsidePreventedTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownOutsidePreventedTest';
+import { dropdownReopeningTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownReopeningTest';
+import { createDropdownOutsideDismissalTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownOutsideDismissalTest';
 import { phoneCountryPickerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTest';
 import { phoneCountryPickerTriggerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTriggerTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
@@ -45,9 +48,11 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
 import { statusControlsTest } from '@/__stories__/twenty-ui-gallery/utils/statusControlsTest';
 import { tagControlsTest } from '@/__stories__/twenty-ui-gallery/utils/tagControlsTest';
+import { SelectPageDecorator } from '@/__stories__/twenty-ui-gallery/components/SelectPageDecorator';
 import { PortalBoundsDecorator } from '@/__stories__/twenty-ui-gallery/components/PortalBoundsDecorator';
 import { OverflowingListInstancesDecorator } from '@/__stories__/twenty-ui-gallery/components/OverflowingListInstancesDecorator';
 import { portalBoundsTest } from '@/__stories__/twenty-ui-gallery/utils/portalBoundsTest';
+import { portalZoomTest } from '@/__stories__/twenty-ui-gallery/utils/portalZoomTest';
 
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
 import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
@@ -58,6 +63,8 @@ import {
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
 import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
+import { selectLongListTest } from '@/__stories__/twenty-ui-gallery/utils/selectLongListTest';
+import { tooltipFirstHoverTest } from '@/__stories__/twenty-ui-gallery/utils/tooltipFirstHoverTest';
 import { switchTest } from '@/__stories__/twenty-ui-gallery/utils/switchTest';
 import { tabsTest } from '@/__stories__/twenty-ui-gallery/utils/tabsTest';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
@@ -408,6 +415,18 @@ export const TooltipPreact: Story = createGalleryStory({
   play: tooltipEscapeDismissalTest,
 });
 
+export const TooltipFirstHoverReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tooltip-first-hover',
+  runtime: 'react',
+  play: tooltipFirstHoverTest,
+});
+
+export const TooltipFirstHoverPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tooltip-first-hover',
+  runtime: 'preact',
+  play: tooltipFirstHoverTest,
+});
+
 export const PortalBoundsReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-portals',
   runtime: 'react',
@@ -422,6 +441,40 @@ export const PortalBoundsPreact: Story = createGalleryStory({
   play: portalBoundsTest,
 });
 
+export const PortalZoomPrevention: Story = {
+  ...PortalBoundsReact,
+  args: {
+    ...PortalBoundsReact.args,
+    shouldPreventPageZoom: true,
+  },
+  play: portalZoomTest,
+};
+
+export const PortalZoomPreventionPreact: Story = {
+  ...PortalBoundsPreact,
+  args: {
+    ...PortalBoundsPreact.args,
+    shouldPreventPageZoom: true,
+  },
+  play: portalZoomTest,
+};
+
+export const PortalBrowserZoom: Story = {
+  ...PortalZoomPrevention,
+  args: {
+    ...PortalZoomPrevention.args,
+    shouldPreventPageZoom: false,
+  },
+};
+
+export const PortalBrowserZoomPreact: Story = {
+  ...PortalZoomPreventionPreact,
+  args: {
+    ...PortalZoomPreventionPreact.args,
+    shouldPreventPageZoom: false,
+  },
+};
+
 export const DropdownReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'react',
@@ -432,6 +485,82 @@ export const DropdownPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'preact',
   play: dropdownTest,
+});
+
+export const DropdownReopeningReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'react',
+  decorators: [PortalBoundsDecorator],
+  play: dropdownReopeningTest,
+});
+
+export const DropdownReopeningPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'preact',
+  decorators: [PortalBoundsDecorator],
+  play: dropdownReopeningTest,
+});
+
+export const DropdownOutsideWorkerReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'react',
+  decorators: [PortalBoundsDecorator],
+  play: createDropdownOutsideDismissalTest({ target: 'worker' }),
+});
+
+export const DropdownOutsideWorkerPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'preact',
+  decorators: [PortalBoundsDecorator],
+  play: createDropdownOutsideDismissalTest({ target: 'worker' }),
+});
+
+export const DropdownOutsideHostReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'react',
+  decorators: [PortalBoundsDecorator],
+  play: createDropdownOutsideDismissalTest({ target: 'host' }),
+});
+
+export const DropdownOutsideHostPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'preact',
+  decorators: [PortalBoundsDecorator],
+  play: createDropdownOutsideDismissalTest({ target: 'host' }),
+});
+
+export const DropdownCustomContainerReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'react',
+  decorators: [PortalBoundsDecorator],
+  play: createDropdownOutsideDismissalTest({
+    target: 'host',
+    shouldUseCustomContainer: true,
+  }),
+});
+
+export const DropdownCustomContainerPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'preact',
+  decorators: [PortalBoundsDecorator],
+  play: createDropdownOutsideDismissalTest({
+    target: 'host',
+    shouldUseCustomContainer: true,
+  }),
+});
+
+export const DropdownOutsidePreventedReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'react',
+  decorators: [PortalBoundsDecorator],
+  play: dropdownOutsidePreventedTest,
+});
+
+export const DropdownOutsidePreventedPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown-dismissal',
+  runtime: 'preact',
+  decorators: [PortalBoundsDecorator],
+  play: dropdownOutsidePreventedTest,
 });
 
 export const PhoneCountryPickerTriggersReact: Story = createGalleryStory({
@@ -467,6 +596,20 @@ export const SelectPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-select',
   runtime: 'preact',
   play: selectTest,
+});
+
+export const SelectLongListReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-select-long-list',
+  runtime: 'react',
+  decorators: [SelectPageDecorator],
+  play: selectLongListTest,
+});
+
+export const SelectLongListPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-select-long-list',
+  runtime: 'preact',
+  decorators: [SelectPageDecorator],
+  play: selectLongListTest,
 });
 
 export const ToastReact: Story = createGalleryStory({

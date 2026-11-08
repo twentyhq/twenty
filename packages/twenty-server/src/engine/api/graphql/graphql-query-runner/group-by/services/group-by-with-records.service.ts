@@ -76,7 +76,6 @@ export class GroupByWithRecordsService {
 
     const {
       authContext,
-      rolePermissionConfig,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -90,7 +89,7 @@ export class GroupByWithRecordsService {
       flatFieldMetadataMaps,
     });
 
-    const { sql, parameters } = this.buildRankedRecordsStatement({
+    const { sql, parameters } = await this.buildRankedRecordsStatement({
       subQueryBuilder: queryBuilderWithFiltersAndWithoutGroupBy,
       columnsToSelect,
       groupsResult,
@@ -124,7 +123,6 @@ export class GroupByWithRecordsService {
         aggregate: selectedFieldsResult.aggregate,
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
-        rolePermissionConfig,
         selectedFields: selectedFieldsResult.select,
         ...nestedRelationsReadPathOptions,
       });
@@ -149,7 +147,7 @@ export class GroupByWithRecordsService {
     });
   }
 
-  private buildRankedRecordsStatement({
+  private async buildRankedRecordsStatement({
     subQueryBuilder,
     columnsToSelect,
     groupsResult,
@@ -169,7 +167,7 @@ export class GroupByWithRecordsService {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     offsetForRecords: number;
-  }): { sql: string; parameters: Record<string, unknown> } {
+  }): Promise<{ sql: string; parameters: Record<string, unknown> }> {
     const objectAlias = getObjectAlias(flatObjectMetadata);
 
     subQueryBuilder.select([]);
@@ -215,7 +213,7 @@ export class GroupByWithRecordsService {
       'record_row_number',
     );
 
-    subQueryBuilder.applyRowLevelPermissions();
+    await subQueryBuilder.applyRowLevelPermissions();
 
     const groupByAliases = groupByDefinitions
       .map((groupByDefinition) => `"${groupByDefinition.alias}"`)

@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { AGENT_CHAT_ASSISTANT_NAME } from 'twenty-shared/ai';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -23,6 +24,7 @@ export enum AiExceptionCode {
   CHAT_THREAD_CANNOT_LEAVE_CHANNEL = 'CHAT_THREAD_CANNOT_LEAVE_CHANNEL',
   CHAT_CHANNEL_NOT_FOUND = 'CHAT_CHANNEL_NOT_FOUND',
   CHAT_CHANNELS_UNAVAILABLE = 'CHAT_CHANNELS_UNAVAILABLE',
+  CHAT_UPGRADE_IN_PROGRESS = 'CHAT_UPGRADE_IN_PROGRESS',
   CHAT_CHANNEL_NOT_EMPTY = 'CHAT_CHANNEL_NOT_EMPTY',
   CHAT_CHANNEL_BUSY = 'CHAT_CHANNEL_BUSY',
   CHAT_CHANNEL_IS_STANDARD = 'CHAT_CHANNEL_IS_STANDARD',
@@ -47,6 +49,8 @@ export enum AiExceptionCode {
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
   TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
   THREAD_AWAITING_ANSWER = 'THREAD_AWAITING_ANSWER',
+  CHAT_RECIPIENTS_CANNOT_REPLY = 'CHAT_RECIPIENTS_CANNOT_REPLY',
+  MODEL_NOT_ALLOWED_BY_DATA_POLICY = 'MODEL_NOT_ALLOWED_BY_DATA_POLICY',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -87,6 +91,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Channel not found.`;
     case AiExceptionCode.CHAT_CHANNELS_UNAVAILABLE:
       return msg`Channels are not available yet. Try again in a few minutes.`;
+    case AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS:
+      return msg`Chats are not available yet. Try again in a few minutes.`;
     case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
       return msg`Move this channel's chats to another channel before deleting it.`;
     case AiExceptionCode.CHAT_CHANNEL_BUSY:
@@ -135,6 +141,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`You are not allowed to answer this request.`;
     case AiExceptionCode.THREAD_AWAITING_ANSWER:
       return msg`This conversation is waiting on an earlier request. Send your message once it is answered or done.`;
+    case AiExceptionCode.CHAT_RECIPIENTS_CANNOT_REPLY:
+      return msg`None of the people you picked can reply in this chat. Add ${AGENT_CHAT_ASSISTANT_NAME} or someone who can reply.`;
+    case AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY:
+      return msg`No AI model meets this workspace's privacy settings.`;
     default:
       assertUnreachable(code);
   }

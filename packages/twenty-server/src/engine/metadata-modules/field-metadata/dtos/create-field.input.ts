@@ -19,8 +19,8 @@ export class CreateFieldInput extends OmitType(
     'applicationId',
     'morphId',
     'universalIdentifier',
-    'writability',
     'disabledFieldPermissionActions',
+    'isSystemSideEffect',
   ] as const,
   InputType,
 ) {

@@ -22,10 +22,12 @@ import {
   type StandalonePageLayoutWidgetManifest,
 } from './pageLayoutManifestType';
 import { type PermissionFlagManifest } from './permissionFlagManifestType';
+import { type RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 import { type RoleManifest } from './roleManifestType';
 import { type SettingsMenuItemManifest } from './settingsMenuItemManifestType';
 import { type SkillManifest } from './skillManifestType';
 import { type TimelineActivityTypeManifest } from './timelineActivityTypeManifestType';
+import { type ValidationRuleManifest } from './validationRuleManifestType';
 import {
   type StandaloneViewFieldManifest,
   type ViewManifest,
@@ -60,5 +62,7 @@ export type Manifest = {
   commandMenuItems: CommandMenuItemManifest[];
   timelineActivityTypes: TimelineActivityTypeManifest[];
   settingsMenuItems: SettingsMenuItemManifest[];
+  validationRules?: ValidationRuleManifest[];
+  relatedRecordPaths?: RelatedRecordPathManifest[];
   translations?: TranslationsManifest;
 };

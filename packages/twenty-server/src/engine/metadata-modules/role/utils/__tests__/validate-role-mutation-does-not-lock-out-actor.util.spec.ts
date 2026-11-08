@@ -1,8 +1,9 @@
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import {
   validateRoleDeletionDoesNotLockOutActorOrThrow,
   validateRoleUpdateDoesNotLockOutActorOrThrow,
@@ -20,10 +21,7 @@ const createFlatRole = (overrides: Partial<FlatRole>): FlatRole =>
     ...overrides,
   }) as FlatRole;
 
-const emptyFlagMaps = {
-  byUniversalIdentifier: {},
-  universalIdentifierById: {},
-} as unknown as FlatRolePermissionFlagMaps;
+const emptyFlagMaps: FlatRolePermissionFlagMaps = createEmptyFlatEntityMaps();
 
 describe('validateRoleDeletionDoesNotLockOutActorOrThrow', () => {
   it('throws when deleting a role the actor holds', () => {
@@ -68,17 +66,27 @@ describe('validateRoleUpdateDoesNotLockOutActorOrThrow', () => {
 
   it('allows the revocation when the role keeps an explicit ROLES permission flag', () => {
     const rolePermissionFlagId = 'role-permission-flag-id';
-    const flagMaps = {
+    const flagMaps: FlatRolePermissionFlagMaps = {
       byUniversalIdentifier: {
         [rolePermissionFlagId]: {
           id: rolePermissionFlagId,
+          universalIdentifier: rolePermissionFlagId,
+          permissionFlagId: 'permission-flag-id',
           permissionFlagUniversalIdentifier: SystemPermissionFlag.ROLES,
+          roleId: actingRoleId,
+          roleUniversalIdentifier: actingRoleId,
+          workspaceId: 'workspace-id',
+          applicationId: 'application-id',
+          applicationUniversalIdentifier: 'application-universal-identifier',
+          createdAt: '2026-01-01T00:00:00.000Z',
+          updatedAt: '2026-01-01T00:00:00.000Z',
         },
       },
       universalIdentifierById: {
         [rolePermissionFlagId]: rolePermissionFlagId,
       },
-    } as unknown as FlatRolePermissionFlagMaps;
+      universalIdentifiersByApplicationId: {},
+    };
 
     expect(() =>
       validateRoleUpdateDoesNotLockOutActorOrThrow({

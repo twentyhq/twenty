@@ -2,7 +2,6 @@ import { AnimatedFormattedNumber } from '@/settings/billing/components/internal/
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type ElementType, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,6 +15,7 @@ import {
 import { Button, Slider } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const PACKAGE_SUMMARY_ROW_HEIGHT = 24;
 const PACKAGE_SUMMARY_ROW_GAP = 4;
@@ -202,6 +202,7 @@ export const ResourceCreditPackagePickerModal = ({
   selectedPriceAmountValue,
   selectedPriceIndex,
 }: ResourceCreditPackagePickerModalProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const renderPackageSummaryRow = ({

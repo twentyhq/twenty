@@ -5,6 +5,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-write-access-policy.constant';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 
@@ -42,7 +43,7 @@ const updateNavigationMenuItemInputSchema = z.object({
 @DefineTool({
   name: 'update_navigation_menu_item',
   category: ToolCategory.NAVIGATION_MENU_ITEM,
-  requiredPermissionFlags: [],
+  accessPolicy: NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY,
   description: `Update a navigation menu item (rename, recolor, move between folders, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.`,
 })
 export class UpdateNavigationMenuItemTool extends BaseTool<
@@ -58,28 +59,39 @@ export class UpdateNavigationMenuItemTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId, application, agentId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<
     typeof updateNavigationMenuItemInputSchema
   >): Promise<ToolOutput> {
     try {
       const update: Partial<UpdateNavigationMenuItemInput> = {};
 
-      if (input.name !== undefined) update.name = input.name;
-      if (input.icon !== undefined) update.icon = input.icon;
-      if (input.color !== undefined) update.color = input.color;
-      if (input.position !== undefined) update.position = input.position;
-      if (input.folderId !== undefined) update.folderId = input.folderId;
-      if (input.link !== undefined) update.link = input.link;
-      if (input.pageLayoutId !== undefined)
+      if (input.name !== undefined) {
+        update.name = input.name;
+      }
+      if (input.icon !== undefined) {
+        update.icon = input.icon;
+      }
+      if (input.color !== undefined) {
+        update.color = input.color;
+      }
+      if (input.position !== undefined) {
+        update.position = input.position;
+      }
+      if (input.folderId !== undefined) {
+        update.folderId = input.folderId;
+      }
+      if (input.link !== undefined) {
+        update.link = input.link;
+      }
+      if (input.pageLayoutId !== undefined) {
         update.pageLayoutId = input.pageLayoutId;
+      }
 
       const updated = await this.navigationMenuItemService.update({
         input: { id: input.id, ...update },
         workspaceId,
         authUserWorkspaceId: userWorkspaceId,
-        authApplicationId: application?.id,
-        authAgentId: agentId,
       });
 
       return {

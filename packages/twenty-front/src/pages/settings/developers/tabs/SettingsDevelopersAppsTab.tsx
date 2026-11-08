@@ -15,9 +15,9 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { CommandBlock } from 'twenty-ui/components/data-display';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
-import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
+import { IconArrowUpRight, IconCopy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistrationListItemFragment,
   FindManyApplicationRegistrationsDocument,
@@ -25,7 +25,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
-import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
+import { SettingsApplicationsTableApplicationRow } from '@/settings/applications/components/SettingsApplicationsTableApplicationRow';
 import { SettingsClaimApplicationSection } from '~/pages/settings/applications/components/SettingsClaimApplicationSection';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
@@ -46,7 +46,6 @@ const StyledTableRowsContainer = styled.div`
 
 export const SettingsDevelopersAppsTab = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { copyToClipboard } = useCopyToClipboard();
@@ -130,23 +129,13 @@ export const SettingsDevelopersAppsTab = () => {
           <Table>
             <SettingsApplicationTableHeaderRow middleColumn="type" />
             <StyledTableRowsContainer>
-              {registrations.map((registration) => {
-                return (
-                  <SettingsApplicationTableRow
-                    key={registration.id}
-                    application={registration}
-                    sourceType={registration.sourceType}
-                    action={
-                      <IconChevronRight
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                        color={theme.font.color.light}
-                      />
-                    }
-                    link={getRegistrationLink(registration)}
-                  />
-                );
-              })}
+              {registrations.map((registration) => (
+                <SettingsApplicationsTableApplicationRow
+                  key={registration.id}
+                  application={registration}
+                  link={getRegistrationLink(registration)}
+                />
+              ))}
             </StyledTableRowsContainer>
           </Table>
         </Section.Root>

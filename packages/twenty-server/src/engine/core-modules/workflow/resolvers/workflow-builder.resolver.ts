@@ -14,40 +14,41 @@ import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/cor
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { msg } from '@lingui/core/macro';
 
-import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
+import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
+import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @CoreResolver()
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
     },
-    apiKey: false,
-    oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
   }),
-  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -60,16 +61,17 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 export class WorkflowBuilderResolver {
   constructor(
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
-    @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
-    private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
-    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
+    private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
   ) {}
 
   @Mutation(() => graphqlTypeJson)
   async computeStepOutputSchema(
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args('input')
     { step, coreWorkflowVersionId }: ComputeStepOutputSchemaInput,
   ): Promise<OutputSchema> {
@@ -79,6 +81,8 @@ export class WorkflowBuilderResolver {
       workflowVersionContent: await this.resolveWorkflowVersionContent({
         workspaceId,
         userWorkspaceId,
+        callerApplication,
+        workspaceCustomApplicationId,
         coreWorkflowVersionId,
       }),
     });
@@ -87,8 +91,10 @@ export class WorkflowBuilderResolver {
   private async resolveWorkflowVersionContent({
     workspaceId,
     userWorkspaceId,
+    callerApplication,
+    workspaceCustomApplicationId,
     coreWorkflowVersionId,
-  }: {
+  }: CoreWorkflowReadCaller & {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     coreWorkflowVersionId?: string;
@@ -100,17 +106,13 @@ export class WorkflowBuilderResolver {
       return undefined;
     }
 
-    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
-      {
+    const coreWorkflowVersion =
+      await this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
         workspaceId,
         userWorkspaceId,
-        coreWorkflowVersionIds: [coreWorkflowVersionId],
-      },
-    );
-
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
+        callerApplication,
+        workspaceCustomApplicationId,
+        coreWorkflowVersionId,
       });
 
     if (!isDefined(coreWorkflowVersion)) {
@@ -124,7 +126,7 @@ export class WorkflowBuilderResolver {
     }
 
     return {
-      trigger: coreWorkflowVersion.triggers?.[0] ?? null,
+      trigger: coreWorkflowVersion.trigger,
       steps: coreWorkflowVersion.steps,
     };
   }

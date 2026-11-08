@@ -266,6 +266,22 @@ yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
 
+## Job Queue Memory Limits
+
+The queue Redis runs with `noeviction`: once it is full, every enqueue fails for every workspace. To keep one workspace or application from filling it, each one may use a share of the memory the others leave free, and each job is capped in size.
+
+| Variable | Default | What it does |
+|----------|---------|--------------|
+| `IS_REDIS_MEMORY_FAIRNESS_ENABLED` | `false` | Refuse jobs over the size cap or over their share. |
+| `JOB_QUEUE_MAX_JOB_SIZE_BYTES` | `5242880` | Largest serialized job accepted. |
+| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID` | `0.3` | Share of the free memory one workspace may hold. |
+| `JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER` | `0.4` | Share of the free memory one application may hold, across all workspaces. |
+| `JOB_QUEUE_MEMORY_RESERVE` | `0.1` | Share of `maxmemory` never given to jobs. |
+
+The share limit needs `maxmemory` set on the queue Redis. Refusals are logged and counted in `job_memory_limit_refused_total` by queue, job name and reason, and `twenty_queue_memory_used_ratio` tracks memory use. If your provider holds back part of `maxmemory` (for example ElastiCache `reserved-memory-percent`), include it in `JOB_QUEUE_MEMORY_RESERVE` unless `maxmemory` already excludes it.
+
+A job is charged until it completes or fails for good, and charges do not expire. A job removed from a queue outside the worker (admin panel delete, queue clean) keeps its charge until you run `yarn command:prod job-memory:reconcile`. The command releases the charge of every job that is gone or finished, checking twice a few seconds apart (`--grace-seconds`, default 10) so a job being enqueued is not released by mistake.
+
 ## Outbound Connections to Internal Hosts
 
 By default, Twenty refuses outbound connections to private/internal IP addresses (SSRF protection). This covers HTTP workflow actions, webhooks, SSO identity providers and IMAP/SMTP/CalDAV connections. If your identity provider, mail or calendar server runs on a private network, list its hostname or IP literal:
@@ -465,7 +481,10 @@ LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
 LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
 LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
 LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET=your-layer-bucket
 ```
+
+The Lambda driver uploads each app's dependency layer to `LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET`, a bucket you own in the same region as your functions. When it is not set, the driver uses your storage bucket (`STORAGE_S3_NAME`). If neither is set, logic functions fail with a configuration error.
 
 **To disable logic functions:**
 ```bash

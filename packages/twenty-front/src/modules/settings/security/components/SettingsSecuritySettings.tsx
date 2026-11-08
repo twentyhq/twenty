@@ -11,12 +11,14 @@ import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles'
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
+import { SettingsSecurityIframeMediaPermissions } from '@/settings/security/components/SettingsSecurityIframeMediaPermissions';
 import { SettingsSecurityIframeOrigins } from '@/settings/security/components/SettingsSecurityIframeOrigins';
 import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { ImpersonationSwitch } from '@/settings/workspace/components/ImpersonationSwitch';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -27,6 +29,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   BillingEntitlementKey,
   UpdateWorkspaceDocument,
@@ -57,6 +60,9 @@ export const SettingsSecuritySettings = () => {
 
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
+  );
+  const isAiDataPolicyEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED,
   );
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
   const authProviders = useAtomStateValue(authProvidersState);
@@ -201,6 +207,7 @@ export const SettingsSecuritySettings = () => {
         </Section.Root>
         <SettingsRoleDefaultRole roles={roles} />
         <SettingsSecurityIframeOrigins />
+        <SettingsSecurityIframeMediaPermissions />
         {shouldShowBypassSection && (
           <Section.Root>
             <StyledContainer>
@@ -212,13 +219,15 @@ export const SettingsSecuritySettings = () => {
             </StyledContainer>
           </Section.Root>
         )}
-        {isMultiWorkspaceEnabled && (
+        {isMultiWorkspaceEnabled && !isAiDataPolicyEnabled && (
           <Section.Root>
             <Section.Header
               title={t`Support`}
               description={t`Manage support access settings`}
             />
-            <ImpersonationSwitch />
+            <Card.Root>
+              <ImpersonationSwitch />
+            </Card.Root>
           </Section.Root>
         )}
         <Section.Root>

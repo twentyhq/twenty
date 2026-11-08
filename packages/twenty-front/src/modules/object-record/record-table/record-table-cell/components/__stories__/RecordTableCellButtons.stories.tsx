@@ -28,7 +28,9 @@ export const Default: Story = {
     const frameInset =
       parseFloat(frameStyle.borderLeftWidth) +
       parseFloat(frameStyle.paddingLeft);
-    await expect(getComputedStyle(edit).width).toBe('24px');
+    await expect(getComputedStyle(edit).width).toBe('20px');
+    await expect(getComputedStyle(edit).height).toBe('20px');
+    await expect(group.offsetHeight).toBe(26);
     await expect(getComputedStyle(group).gap).toBe('2px');
     await expect(parseFloat(getComputedStyle(edit).borderTopLeftRadius)).toBe(
       parseFloat(frameStyle.borderTopLeftRadius) - frameInset,

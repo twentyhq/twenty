@@ -20,6 +20,7 @@ type JobOperationResult = {
   error?: string;
 };
 
+// Bypasses the job memory limiter on purpose, so administrators can always retry or delete jobs
 @Injectable()
 export class AdminPanelQueueService {
   constructor(private readonly redisClient: RedisClientService) {}

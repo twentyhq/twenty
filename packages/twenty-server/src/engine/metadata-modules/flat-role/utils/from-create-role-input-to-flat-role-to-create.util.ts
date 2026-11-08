@@ -37,6 +37,8 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     canAccessAllAgentChatChannels:
       createRoleInput.canAccessAllAgentChatChannels ?? false,
     canReadAllObjectRecords: createRoleInput.canReadAllObjectRecords ?? false,
+    canCreateAllObjectRecords:
+      createRoleInput.canUpdateAllObjectRecords ?? false,
     canUpdateAllObjectRecords:
       createRoleInput.canUpdateAllObjectRecords ?? false,
     canSoftDeleteAllObjectRecords:
@@ -46,6 +48,7 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     canBeAssignedToUsers: createRoleInput.canBeAssignedToUsers ?? true,
     canBeAssignedToAgents: createRoleInput.canBeAssignedToAgents ?? true,
     canBeAssignedToApiKeys: createRoleInput.canBeAssignedToApiKeys ?? true,
+    canBeAssignedToApplications: false,
     isEditable: true,
     workspaceId,
     createdAt: now,

@@ -15,12 +15,14 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
-import { AUTH_PRINCIPAL_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/auth-principal-guard-config-key.constant';
-import { FEATURE_FLAG_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/feature-flag-guard-config-key.constant';
-import { SETTINGS_PERMISSION_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/settings-permission-guard-config-key.constant';
+import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
+import { type DefineToolOptions } from 'src/engine/core-modules/tool-provider/types/define-tool-options.type';
+import { ACCESS_POLICY_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/access-policy-guard-config-key.constant';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
+import { withAgentsAdmitted } from 'src/engine/guards/access-policy/utils/with-agents-admitted.util';
 
 type UserSessionVariant = Extract<
   AuthPrincipalVariant,
@@ -40,7 +42,7 @@ type AcceptedAuthPrincipals = {
 };
 
 type EndpointPermissionDeclarations = {
-  authPrincipalGuards: AcceptedAuthPrincipals[];
+  acceptedAuthPrincipals: AcceptedAuthPrincipals | null;
   requiredPermissionFlags: PermissionFlagType[];
   requiredFeatureFlags: FeatureFlagKey[];
   applicationTarget: ApplicationTarget | null;
@@ -119,13 +121,19 @@ const readGuardConfigs = <TGuardConfig>({
 // The guard's own decisions, so a shorthand such as `application: true`
 // shows what it leaves out
 const toAcceptedAuthPrincipals = (
-  authPrincipalGuardConfig: AuthPrincipalGuardConfig,
-): AcceptedAuthPrincipals => {
+  authPrincipalGuardConfigs: AuthPrincipalGuardConfig[],
+): AcceptedAuthPrincipals | null => {
+  if (authPrincipalGuardConfigs.length === 0) {
+    return null;
+  }
+
   const isAccepted = (authPrincipalVariant: AuthPrincipalVariant): boolean =>
-    isAuthPrincipalVariantAccepted({
-      authPrincipalGuardConfig,
-      authPrincipalVariant,
-    });
+    authPrincipalGuardConfigs.every((authPrincipalGuardConfig) =>
+      isAuthPrincipalVariantAccepted({
+        authPrincipalGuardConfig,
+        authPrincipalVariant,
+      }),
+    );
 
   return {
     userSession: {
@@ -171,6 +179,20 @@ const toAcceptedAuthPrincipals = (
   };
 };
 
+// Tools are checked by AccessPolicyService.isToolAccessPolicySatisfied, not the endpoint guards
+const toToolPermissionDeclarations = ({
+  authPrincipals,
+  requiredPermissionFlags,
+  requiredFeatureFlags = [],
+}: AccessPolicy): EndpointPermissionDeclarations => ({
+  acceptedAuthPrincipals: toAcceptedAuthPrincipals([
+    withAgentsAdmitted(authPrincipals),
+  ]),
+  requiredPermissionFlags: toSortedUniqueValues(requiredPermissionFlags),
+  requiredFeatureFlags: toSortedUniqueValues(requiredFeatureFlags),
+  applicationTarget: null,
+});
+
 const compareCodePoints = (left: string, right: string): number =>
   left < right ? -1 : left > right ? 1 : 0;
 
@@ -204,6 +226,24 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
   for (const { endpointClass, isController } of discoverClasses(
     discoveryService,
   )) {
+    const defineToolOptions = reflector.get<DefineToolOptions | undefined>(
+      DEFINE_TOOL_METADATA_KEY,
+      endpointClass,
+    );
+
+    if (isDefined(defineToolOptions)) {
+      const tool = `tool:${defineToolOptions.name}`;
+
+      if (declarationsByEndpoint.has(tool)) {
+        throw new Error(`${tool} is declared by two different classes`);
+      }
+
+      declarationsByEndpoint.set(
+        tool,
+        toToolPermissionDeclarations(defineToolOptions.accessPolicy),
+      );
+    }
+
     const prototype = endpointClass.prototype;
 
     for (const methodName of metadataScanner.getAllMethodNames(prototype)) {
@@ -222,28 +262,27 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
       }
 
       const guardsOwners = [endpointClass, handler];
+      const accessPolicies = readGuardConfigs<AccessPolicy>({
+        reflector,
+        guardsOwners,
+        guardConfigKey: ACCESS_POLICY_GUARD_CONFIG_KEY,
+      });
 
-      // Every class and method guard must pass, so the union of their flags
-      // is what the endpoint requires
+      // Every class and method guard must pass, so an endpoint accepts what
+      // all its principal guards accept and requires the union of their flags
       declarationsByEndpoint.set(endpoint, {
-        authPrincipalGuards: readGuardConfigs<AuthPrincipalGuardConfig>({
-          reflector,
-          guardsOwners,
-          guardConfigKey: AUTH_PRINCIPAL_GUARD_CONFIG_KEY,
-        }).map(toAcceptedAuthPrincipals),
+        acceptedAuthPrincipals: toAcceptedAuthPrincipals(
+          accessPolicies.map(({ authPrincipals }) => authPrincipals),
+        ),
         requiredPermissionFlags: toSortedUniqueValues(
-          readGuardConfigs<PermissionFlagType[]>({
-            reflector,
-            guardsOwners,
-            guardConfigKey: SETTINGS_PERMISSION_GUARD_CONFIG_KEY,
-          }).flat(),
+          accessPolicies.flatMap(
+            ({ requiredPermissionFlags }) => requiredPermissionFlags,
+          ),
         ),
         requiredFeatureFlags: toSortedUniqueValues(
-          readGuardConfigs<FeatureFlagKey>({
-            reflector,
-            guardsOwners,
-            guardConfigKey: FEATURE_FLAG_GUARD_CONFIG_KEY,
-          }),
+          accessPolicies.flatMap(
+            ({ requiredFeatureFlags = [] }) => requiredFeatureFlags,
+          ),
         ),
         applicationTarget:
           reflector.get<ApplicationTarget | undefined>(

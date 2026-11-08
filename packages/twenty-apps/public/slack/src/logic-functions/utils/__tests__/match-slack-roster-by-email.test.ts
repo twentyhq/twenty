@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { matchSlackRosterByEmail } from 'src/logic-functions/utils/match-slack-roster-by-email';
@@ -43,15 +42,14 @@ vi.mock(
 
 const SLACK_TEAM_ID = 'T-installed';
 
-const buildSlackClient = (members: SlackRosterMember[]): WebClient =>
-  ({
-    users: {
-      list: vi.fn().mockResolvedValue({
-        members,
-        response_metadata: { next_cursor: undefined },
-      }),
-    },
-  }) as unknown as WebClient;
+const buildSlackClient = (members: SlackRosterMember[]) => ({
+  users: {
+    list: vi.fn().mockResolvedValue({
+      members,
+      response_metadata: { next_cursor: undefined },
+    }),
+  },
+});
 
 const fullMember = ({
   id,
@@ -327,7 +325,7 @@ describe('matchSlackRosterByEmail', () => {
     const summary = await matchSlackRosterByEmail({
       slackClient: {
         users: { list: usersListMock },
-      } as unknown as WebClient,
+      },
       slackTeamId: SLACK_TEAM_ID,
     });
 

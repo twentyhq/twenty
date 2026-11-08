@@ -37,10 +37,8 @@ export class BackfillCoreWorkflowIdOnWorkflowVersionsCommand extends Provisioned
     try {
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workflowRepository =
-          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowWorkspaceEntity>(
+            'workflow');
 
         return workflowRepository.count();
       }, buildSystemAuthContext(workspaceId));

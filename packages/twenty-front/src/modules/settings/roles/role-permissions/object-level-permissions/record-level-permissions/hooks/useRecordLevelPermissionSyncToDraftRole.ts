@@ -35,10 +35,12 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
 
   const syncToDraftRole = useCallback(() => {
     setSettingsDraftRole((previousRole) => {
-      const otherObjectPredicates = (
+      const predicatesNotManagedByFilters = (
         previousRole.rowLevelPermissionPredicates ?? []
       ).filter(
-        (predicate) => predicate.objectMetadataId !== objectMetadataItem.id,
+        (predicate) =>
+          predicate.objectMetadataId !== objectMetadataItem.id ||
+          isDefined(predicate.relationFieldMetadataId),
       );
 
       const currentObjectGroupIds = new Set(
@@ -65,18 +67,25 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
         convertRecordFilterToPredicate(filter, roleId, objectMetadataItem.id),
       );
 
-      const newPredicateGroups = currentRecordFilterGroups.map((group) =>
-        convertRecordFilterGroupToPredicateGroup(
-          group,
-          roleId,
-          objectMetadataItem.id,
+      const previousPredicateGroupById = new Map(
+        (previousRole.rowLevelPermissionPredicateGroups ?? []).map(
+          (predicateGroup) => [predicateGroup.id, predicateGroup],
         ),
+      );
+
+      const newPredicateGroups = currentRecordFilterGroups.map((group) =>
+        convertRecordFilterGroupToPredicateGroup({
+          filterGroup: group,
+          roleId,
+          objectMetadataId: objectMetadataItem.id,
+          existingPredicateGroup: previousPredicateGroupById.get(group.id),
+        }),
       );
 
       return {
         ...previousRole,
         rowLevelPermissionPredicates: [
-          ...otherObjectPredicates,
+          ...predicatesNotManagedByFilters,
           ...newPredicates,
         ],
         rowLevelPermissionPredicateGroups: [

@@ -16,6 +16,7 @@ import { DETAILS_ROW_PROP_DESCRIPTIONS } from './detailsRowPropDescriptions';
 import { PROGRESS_PART_PROP_DESCRIPTIONS } from './progressPartPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
+import { ASSISTANT_AVATAR_PROP_DESCRIPTIONS } from './assistantAvatarPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
 import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
 import { STACK_ICON_PROP_DESCRIPTIONS } from './stackIconPropDescriptions';
@@ -984,6 +985,21 @@ export const DOCUMENTED_COMPONENTS = [
     propDefaults: { size: 'sm' },
   },
   {
+    name: 'AssistantAvatar',
+    nativeProps: 'span',
+    source: 'components/data-display/AssistantAvatar/AssistantAvatar.tsx',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/assistant-avatar',
+    propDescriptions: ASSISTANT_AVATAR_PROP_DESCRIPTIONS,
+    propDefaults: {
+      shape: 'circle',
+      color: 'blue',
+      face: 'default',
+      size: '24',
+      isAnimated: 'false',
+    },
+  },
+  {
     name: 'AvatarGroup',
     source: 'components/data-display/AvatarGroup/AvatarGroup.tsx',
     entryPoint: 'twenty-ui/components/data-display',
@@ -1126,15 +1142,15 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'Icon',
-    source: 'icon/components/Icon.tsx',
-    entryPoint: 'twenty-ui/icon',
+    source: 'icon/provider/components/Icon.tsx',
+    entryPoint: 'twenty-ui/icon/provider',
     slug: 'icon/icon',
     propDescriptions: ICON_PROP_DESCRIPTIONS,
   },
   {
     name: 'IconsProvider',
-    source: 'icon/providers/IconsProvider.tsx',
-    entryPoint: 'twenty-ui/icon',
+    source: 'icon/provider/IconsProvider.tsx',
+    entryPoint: 'twenty-ui/icon/provider',
     slug: 'icon/icons-provider',
     propDescriptions: ICONS_PROVIDER_PROP_DESCRIPTIONS,
   },

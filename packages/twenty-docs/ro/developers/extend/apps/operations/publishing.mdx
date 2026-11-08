@@ -61,10 +61,10 @@ twenty auth login --url https://your-twenty-server.com --name production
 Construiește și încarcă aplicația ta pe server într-un singur pas:
 
 ```bash filename="Terminal"
-twenty app publish --private
-# To deploy to a specific remote:
-# twenty app publish --private --remote production
+twenty app publish --private --remote production
 ```
+
+`--remote production` explicit selectează conexiunea salvată mai sus, chiar dacă o altă conexiune la distanță este implicită. Salvarea unei conexiuni la distanță cu nume nu schimbă o conexiune implicită existentă.
 
 ### Partajarea unei aplicații implementate
 
@@ -83,7 +83,7 @@ Când actualizezi o aplicație tarball deja implementată, serverul solicită ca
 Pentru a lansa o actualizare:
 
 1. Incrementează câmpul `version` din `package.json` (de ex. `1.2.3` → `1.2.4`, `1.3.0` sau `2.0.0`)
-2. Rulează `twenty app publish --private` (sau `twenty app publish --private --remote production`)
+2. Rulează `twenty app publish --private --remote production`
 3. Spațiile de lucru care au aplicația instalată și au activat actualizarea automată pentru aceasta (în fila General a aplicației) sunt actualizate automat în fundal; celelalte vor vedea actualizarea disponibilă în setările lor
 
 <Note>
@@ -223,7 +223,7 @@ Fluxurile de lucru `ci.yml` și `cd.yml` fac referire la acțiuni reutilizabile 
 
 ## Publicarea pe npm
 
-Publicarea pe npm face ca aplicația ta să fie eligibilă pentru marketplace-ul Twenty. După sincronizarea catalogului și orice [configurare necesară a rutelor de server](#setting-up-server-routes), spațiile de lucru o pot răsfoi, instala și actualiza din interfața cu utilizatorul. Aplicațiile comunității apar când utilizatorii dezactivează filtrul **Doar verificate**.
+Publicarea pe npm face ca aplicația ta să fie eligibilă pentru marketplace-ul Twenty. După sincronizarea catalogului și orice [setare necesară a rutelor de server](#setting-up-server-routes), spațiile de lucru o pot răsfoi, instala și actualiza din interfață după ce trece de [evaluarea Marketplace](/ro/developers/extend/apps/operations/marketplace-review).
 
 ### Cerințe
 
@@ -372,17 +372,13 @@ Dacă întâmpini probleme la revendicarea aplicației tale, contactează-ne pe 
   Această configurare este deja gestionată pentru tine pe Twenty Cloud.
 </Accordion>
 
-## Vizibilitatea și verificarea în marketplace
+## Vizibilitate și evaluare în Marketplace
 
-Revendicarea stabilește proprietatea; nu acordă o insignă **Verificată**. Marketplace-ul afișează implicit **Doar verificate**. Pentru a găsi aplicații ale comunității, accesează **Setări > Aplicații > Marketplace**, deschide filtrul și debifează **Doar verificate**. De asemenea, poți partaja pagina de instalare directă a aplicației tale folosind **Aplicațiile mele > aplicația ta > Distribuire > Copiază linkul de partajare**.
+Fiecare aplicație listată în Marketplace a trecut de evaluarea Twenty privind securitatea și calitatea. O aplicație publicată recent rămâne nelistată până trece de [evaluarea Marketplace](/ro/developers/extend/apps/operations/marketplace-review); revendicarea stabilește proprietatea, dar nu o listează.
 
-Eticheta Verificată se aplică în prezent aplicațiilor întreținute de Twenty, pentru care echipa poate garanta securitatea și calitatea. Aplicațiile terților pot fi publicate și instalate fără această etichetă.
+O aplicație nelistată poate fi totuși instalată. În **Setări > Aplicații > Marketplace**, deschideți filtrul și activați **Afișează aplicațiile nelistate** sau partajați pagina de instalare directă a aplicației folosind **Aplicațiile mele > aplicația dvs. > Distribuire > Copiere link de partajare**. Spațiile de lucru văd un avertisment că aplicația nu a fost evaluată de Twenty.
 
-[Lista de verificare propusă pentru evaluarea marketplace-urilor terțe](/ro/developers/extend/apps/operations/marketplace-review)
-este în curs de elaborare. Descrie criterii de evaluare și dovezi specifice versiunii,
-nu un program de certificare disponibil.
-
-Dacă aplicația ta încă lipsește cu **Doar verificate** dezactivat, confirmă că sincronizarea catalogului s-a finalizat, că toate variabilele de server necesare sunt completate și că orice configurare a rutelor de server este finalizată.
+Dacă aplicația dvs. este listată, dar încă lipsește din Marketplace, confirmați că sincronizarea catalogului s-a finalizat, că toate variabilele de server necesare sunt completate și că orice setare a rutelor de server este finalizată.
 
 ## Instalarea aplicațiilor
 
@@ -392,11 +388,13 @@ Mergi la pagina **Setări > Aplicații** din Twenty, unde pot fi parcurse și in
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-Poți instala aplicații și din linia de comandă:
+Din directorul aplicației, instalează versiunea sa publicată în spațiul de lucru țintă:
 
 ```bash filename="Terminal"
-twenty app install
+twenty app install --remote production
 ```
+
+Folosește numele conexiunii la distanță pentru spațiul de lucru în care dorești să instalezi aplicația. Pentru a instala fără un proiect local, transmite `--universal-identifier \<id>`.
 
 <Note>
 Serverul impune versionarea semver la instalare, reflectând regulile de la deploy:
@@ -404,7 +402,7 @@ Serverul impune versionarea semver la instalare, reflectând regulile de la depl
 * Instalarea aceleiași versiuni care este deja instalată în spațiul tău de lucru este respinsă cu o eroare `APP_ALREADY_INSTALLED`.
 * Instalarea unei versiuni mai mici decât cea instalată în prezent este respinsă cu o eroare `CANNOT_DOWNGRADE_APPLICATION`.
 
-Pentru a instala o versiune mai nouă, implementeaz-o sau public-o mai întâi, apoi rulează din nou `twenty app install`.
+Pentru a instala o versiune mai nouă, fă mai întâi deploy sau public-o, apoi rulează din nou `twenty app install --remote production`.
 
 </Note>
 

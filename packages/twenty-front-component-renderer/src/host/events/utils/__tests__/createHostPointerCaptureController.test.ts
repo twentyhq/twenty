@@ -1,7 +1,27 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 
 import { createHostPointerCaptureController } from '../createHostPointerCaptureController';
+
+const findRegisteredListener = ({
+  addEventListenerCalls,
+  eventType,
+}: {
+  addEventListenerCalls: Parameters<EventTarget['addEventListener']>[];
+  eventType: string;
+}): EventListener => {
+  const listener = addEventListenerCalls.find(
+    ([registeredEventType]) => registeredEventType === eventType,
+  )?.[1];
+
+  if (!isDefined(listener) || 'handleEvent' in listener) {
+    throw new Error(`Expected a ${eventType} listener function`);
+  }
+
+  return listener;
+};
 
 const createCaptureFixture = () => {
   const element = Object.assign(document.createElement('div'), {
@@ -33,35 +53,25 @@ const startCapturedGesture = ({
 
   controller.startPointerCapture({ element, pointerId });
 
-  const findListener = ({
-    addListener,
-    eventType,
-  }: {
-    addListener: typeof addDocumentListener | typeof addElementListener;
-    eventType: string;
-  }) =>
-    addListener.mock.calls.find(
-      ([listenedEventType]) => listenedEventType === eventType,
-    )![1] as (event: PointerEvent) => void;
   const capturedGestureListeners = {
-    handlePointerMove: findListener({
-      addListener: addDocumentListener,
+    handlePointerMove: findRegisteredListener({
+      addEventListenerCalls: addDocumentListener.mock.calls,
       eventType: 'pointermove',
     }),
-    handlePointerUp: findListener({
-      addListener: addDocumentListener,
+    handlePointerUp: findRegisteredListener({
+      addEventListenerCalls: addDocumentListener.mock.calls,
       eventType: 'pointerup',
     }),
-    handleCapturingElementPointerMove: findListener({
-      addListener: addElementListener,
+    handleCapturingElementPointerMove: findRegisteredListener({
+      addEventListenerCalls: addElementListener.mock.calls,
       eventType: 'pointermove',
     }),
-    handleCapturingElementPointerUp: findListener({
-      addListener: addElementListener,
+    handleCapturingElementPointerUp: findRegisteredListener({
+      addEventListenerCalls: addElementListener.mock.calls,
       eventType: 'pointerup',
     }),
-    handleCaptureLoss: findListener({
-      addListener: addElementListener,
+    handleCaptureLoss: findRegisteredListener({
+      addEventListenerCalls: addElementListener.mock.calls,
       eventType: 'lostpointercapture',
     }),
   };
@@ -72,21 +82,88 @@ const startCapturedGesture = ({
   return capturedGestureListeners;
 };
 
-const createNativePointerEvent = (
-  overrides: Partial<Record<string, unknown>>,
-) =>
-  ({
+const createNativePointerEvent = (overrides: Partial<PointerEvent>): Event => {
+  const nativePointerEvent = {
     type: 'pointermove',
     pointerId: 1,
     isTrusted: true,
     target: document.body,
+    bubbles: true,
+    cancelBubble: false,
+    cancelable: true,
+    composed: true,
+    currentTarget: null,
+    defaultPrevented: false,
+    eventPhase: Event.NONE,
+    returnValue: true,
+    srcElement: document.body,
+    timeStamp: 0,
+    NONE: Event.NONE,
+    CAPTURING_PHASE: Event.CAPTURING_PHASE,
+    AT_TARGET: Event.AT_TARGET,
+    BUBBLING_PHASE: Event.BUBBLING_PHASE,
+    composedPath: jest.fn(),
+    initEvent: jest.fn(),
+    preventDefault: jest.fn(),
+    stopImmediatePropagation: jest.fn(),
+    stopPropagation: jest.fn(),
     ...overrides,
-  }) as unknown as PointerEvent;
+  };
+
+  return nativePointerEvent;
+};
 
 describe('createHostPointerCaptureController', () => {
   afterEach(() => {
     jest.restoreAllMocks();
     document.body.replaceChildren();
+  });
+
+  it('keeps a release after capture loss on the captured event path until it is forwarded', () => {
+    const { controller, element, pushCapturedPointerEvent } =
+      createCaptureFixture();
+    const { handleCaptureLoss, handlePointerUp } = startCapturedGesture({
+      controller,
+      element,
+      pointerId: 0,
+    });
+
+    try {
+      element.hasPointerCapture.mockReturnValue(false);
+      handleCaptureLoss(
+        createNativePointerEvent({ type: 'lostpointercapture', pointerId: 0 }),
+      );
+      const event = createNativePointerEvent({
+        type: 'pointerup',
+        pointerId: 0,
+      });
+
+      expect(controller.hasActivePointerCaptureForEvent(event)).toBe(true);
+      expect(
+        controller.hasActivePointerCaptureForEvent(
+          createNativePointerEvent({ type: 'pointerup', pointerId: 1 }),
+        ),
+      ).toBe(false);
+      expect(
+        controller.hasActivePointerCaptureForEvent(
+          createNativePointerEvent({
+            type: 'pointerup',
+            pointerId: 0,
+            isTrusted: false,
+          }),
+        ),
+      ).toBe(false);
+      handlePointerUp(event);
+
+      expect(
+        pushCapturedPointerEvent.mock.calls.map(
+          ([update]) => update.eventData.type,
+        ),
+      ).toEqual(['lostpointercapture', 'pointerup']);
+      expect(controller.hasActivePointerCaptureForEvent(event)).toBe(false);
+    } finally {
+      controller.reset();
+    }
   });
 
   it('should forward every event of the captured pointer, inside or outside the element, until its release', () => {

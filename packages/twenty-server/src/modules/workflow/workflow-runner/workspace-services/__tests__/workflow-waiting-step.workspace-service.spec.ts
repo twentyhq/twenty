@@ -63,9 +63,6 @@ const buildService = ({
   const workflowExecutionContextService = {
     getExecutionContext: jest.fn().mockResolvedValue({
       authContext: { type: 'system' },
-      rolePermissionConfig: {
-        intersectionOf: { userWorkspaceRoleId: 'role-id' },
-      },
     }),
   };
   const findRecordsService = {

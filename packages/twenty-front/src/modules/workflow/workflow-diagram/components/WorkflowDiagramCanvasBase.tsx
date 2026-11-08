@@ -502,7 +502,9 @@ export const WorkflowDiagramCanvasBase = ({
       event.preventDefault();
 
       const bounds = containerRef.current?.getBoundingClientRect();
-      if (!bounds) return;
+      if (!bounds) {
+        return;
+      }
 
       const x = event.clientX - bounds.left;
       const y = event.clientY - bounds.top;

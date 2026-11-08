@@ -7,7 +7,9 @@ const CLI_CALLBACK_URL = 'http://127.0.0.1:53682/callback';
 
 // Same browser flow as `twenty remote add`: authorize the CLI client with PKCE
 // as the workspace admin, then exchange the code for the CLI access token.
-export const loginAsTwentyCli = async (): Promise<string> => {
+export const loginAsTwentyCli = async (
+  accessToken?: string,
+): Promise<string> => {
   const baseUrl = `http://localhost:${APP_PORT}`;
 
   const discovery = await request(baseUrl)
@@ -21,24 +23,27 @@ export const loginAsTwentyCli = async (): Promise<string> => {
     .update(codeVerifier)
     .digest('base64url');
 
-  const authorizeResponse = await makeMetadataApiRequest({
-    query: gql`
-      mutation AuthorizeApp(
-        $clientId: String!
-        $codeChallenge: String
-        $redirectUrl: String!
-      ) {
-        authorizeApp(
-          clientId: $clientId
-          codeChallenge: $codeChallenge
-          redirectUrl: $redirectUrl
+  const authorizeResponse = await makeMetadataApiRequest(
+    {
+      query: gql`
+        mutation AuthorizeApp(
+          $clientId: String!
+          $codeChallenge: String
+          $redirectUrl: String!
         ) {
-          redirectUrl
+          authorizeApp(
+            clientId: $clientId
+            codeChallenge: $codeChallenge
+            redirectUrl: $redirectUrl
+          ) {
+            redirectUrl
+          }
         }
-      }
-    `,
-    variables: { clientId, codeChallenge, redirectUrl: CLI_CALLBACK_URL },
-  });
+      `,
+      variables: { clientId, codeChallenge, redirectUrl: CLI_CALLBACK_URL },
+    },
+    accessToken,
+  );
 
   expect(authorizeResponse.body.errors).toBeUndefined();
 

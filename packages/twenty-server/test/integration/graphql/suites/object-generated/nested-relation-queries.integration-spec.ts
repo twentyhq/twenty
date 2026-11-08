@@ -1168,7 +1168,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    let response = await makeGraphqlApiRequest(updatePetOwnerSurveyResultOp);
+    const response = await makeGraphqlApiRequest(updatePetOwnerSurveyResultOp);
 
     expect(response.body.errors).toBeTruthy();
   });

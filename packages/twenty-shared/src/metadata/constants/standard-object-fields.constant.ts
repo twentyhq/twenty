@@ -20,6 +20,12 @@ export const STANDARD_OBJECT_FIELDS = {
     conversationType: {
       universalIdentifier: '66f93c2f-ae10-4c1a-8510-355a521f7899',
     },
+    directMessageFirstWorkspaceMemberId: {
+      universalIdentifier: 'dd7e093b-06af-47f3-a246-57ae2de33244',
+    },
+    directMessageSecondWorkspaceMemberId: {
+      universalIdentifier: '730c7491-35fa-4bce-90e1-29901e08eba3',
+    },
     isAssistantParticipant: {
       universalIdentifier: 'd901f5bc-23ba-48ac-9103-145da4b76afe',
     },
@@ -114,6 +120,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     lastMentionedAt: {
       universalIdentifier: '52a54602-633f-496a-966a-9a70437fa887',
+    },
+    mentionsResolvedAt: {
+      universalIdentifier: '12c0b0c8-86b2-48e5-8e2f-56a9eb9162c4',
     },
   },
   agentChatThreadTarget: {
@@ -554,6 +563,16 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
         relationTargetObjectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
+      }),
+    },
+    targetMessage: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message,
       }),
     },
   },
@@ -1122,6 +1141,16 @@ export const STANDARD_OBJECT_FIELDS = {
     isDraft: {
       universalIdentifier: '20202020-4d3a-4b6e-9c1f-2a5e7b9d0c34',
     },
+    attachments: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
+      }),
+    },
   },
   note: {
     ...buildStandardObjectSystemFields(
@@ -1366,6 +1395,26 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     listMemberships: {
       universalIdentifier: '8b8d1be0-4c94-4413-a2c9-c7ede205a81d',
+    },
+  },
+  accessGroup: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.accessGroup,
+    ),
+    objectMetadataId: {
+      universalIdentifier: 'a1e1a495-ed2e-4e8d-8814-6ef0d1e484d0',
+    },
+    roleId: {
+      universalIdentifier: '0f8c81b0-6d46-4593-97cb-97216de930ff',
+    },
+    rowLevelPermissionPredicateGroupId: {
+      universalIdentifier: '03f12114-2b40-4dc0-9963-6c2e059bc4b3',
+    },
+    memberFieldValues: {
+      universalIdentifier: 'a0d519f8-cc6b-4bb5-b107-89213d683705',
+    },
+    groupHash: {
+      universalIdentifier: '04687cce-1268-4774-b47e-04076a152630',
     },
   },
   recordShare: {

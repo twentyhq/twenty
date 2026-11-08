@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-has-unresolved-mention-predicate.constant';
 import { AGENT_CHAT_CHANNEL_THREAD_PREDICATES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-thread-predicates.constant';
 import {
   AGENT_CHAT_CHANNEL_THREADS_DEFAULT_PAGE_SIZE,
@@ -10,10 +12,11 @@ import {
 import { type AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
 import { type AgentChatChannelThreadIdsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-thread-ids.dto';
 import { AgentChatChannelAssignmentFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-assignment-filter.enum';
+import { AgentChatChannelThreadFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-filter.enum';
 import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-status.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
+import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { buildAgentChatChannelThreadCursorFilter } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-thread-cursor-filter.util';
 import { decodeAgentChatChannelThreadCursorOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/decode-agent-chat-channel-thread-cursor-or-throw.util';
 import { encodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/encode-agent-chat-channel-thread-cursor.util';
@@ -28,7 +31,13 @@ const { IS_UNREAD, STATUS } = AGENT_CHAT_CHANNEL_THREAD_PREDICATES;
 const IS_ASSIGNED_TO_ME =
   'thread."assigneeId" = :channelThreadsWorkspaceMemberId::uuid';
 
-type MemberArgs = Omit<AgentChatThreadAccessArgs, 'threadId'>;
+const IS_ASSIGNED = 'thread."assigneeId" IS NOT NULL';
+
+const IS_UNASSIGNED = 'thread."assigneeId" IS NULL';
+
+const NEEDS_INPUT = 'thread."pendingQuestionMessageId" IS NOT NULL';
+
+const IS_WORKSPACE_MEMBER_UNREAD = `(:channelThreadsWorkspaceMemberId::uuid IS NOT NULL AND ${IS_UNREAD})`;
 
 type ReadableThreadsQuery = (readableThreads: {
   fromClause: string;
@@ -37,8 +46,15 @@ type ReadableThreadsQuery = (readableThreads: {
 
 const ASSIGNMENT_FILTERS: Record<AgentChatChannelAssignmentFilter, string> = {
   [AgentChatChannelAssignmentFilter.ANY]: '',
-  [AgentChatChannelAssignmentFilter.UNASSIGNED]: `AND thread."assigneeId" IS NULL`,
+  [AgentChatChannelAssignmentFilter.ASSIGNED]: `AND ${IS_ASSIGNED}`,
+  [AgentChatChannelAssignmentFilter.UNASSIGNED]: `AND ${IS_UNASSIGNED}`,
   [AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME]: `AND ${IS_ASSIGNED_TO_ME}`,
+};
+
+const THREAD_FILTERS: Record<AgentChatChannelThreadFilter, string> = {
+  [AgentChatChannelThreadFilter.ANY]: '',
+  [AgentChatChannelThreadFilter.NEEDS_INPUT]: `AND ${NEEDS_INPUT}`,
+  [AgentChatChannelThreadFilter.MENTIONED]: `AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}`,
 };
 
 // Computed here because the client cannot load every chat of every channel to sort them
@@ -51,16 +67,19 @@ export class AgentChatChannelThreadsService {
   ) {}
 
   async findThreadIds({
+    authContext,
     channelId,
     status,
     assignment,
+    filter,
     first,
     after,
-    ...args
-  }: MemberArgs & {
+  }: {
+    authContext: AgentInboxCallerAuthContext;
     channelId: string;
     status: AgentChatChannelThreadStatus | null;
     assignment: AgentChatChannelAssignmentFilter | null;
+    filter: AgentChatChannelThreadFilter | null;
     first: number | null;
     after: string | null;
   }): Promise<AgentChatChannelThreadIdsDTO> {
@@ -72,12 +91,12 @@ export class AgentChatChannelThreadsService {
       ? decodeAgentChatChannelThreadCursorOrThrow(after)
       : null;
 
-    if (!(await this.sharingService.hasChannels(args.workspaceId))) {
+    if (!(await this.sharingService.hasChannels(authContext.workspace.id))) {
       throwAgentChatChannelsUnavailable();
     }
 
-    await this.channelAccessService.assertChannelAccess({
-      ...args,
+    await this.channelAccessService.assertCallerChannelAccessOrThrow({
+      authContext,
       channelId,
     });
 
@@ -85,7 +104,7 @@ export class AgentChatChannelThreadsService {
       id: string;
       lastActivityAt: string | null;
     }>({
-      ...args,
+      authContext,
       buildQuery: ({ fromClause, parameters }) => ({
         sql: `SELECT thread.id,
               to_char(thread."lastActivityAt" AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS "lastActivityAt"
@@ -93,6 +112,7 @@ export class AgentChatChannelThreadsService {
             AND thread."channelId" = :channelThreadsChannelId::uuid
             AND ${STATUS[status ?? AgentChatChannelThreadStatus.OPEN]}
             ${ASSIGNMENT_FILTERS[assignment ?? AgentChatChannelAssignmentFilter.ANY]}
+            ${THREAD_FILTERS[filter ?? AgentChatChannelThreadFilter.ANY]}
             ${buildAgentChatChannelThreadCursorFilter(cursor)}
             ORDER BY thread."lastActivityAt" DESC NULLS LAST, thread.id DESC
             LIMIT :channelThreadsLimit`,
@@ -118,13 +138,17 @@ export class AgentChatChannelThreadsService {
     };
   }
 
-  async findSummaries(args: MemberArgs): Promise<AgentChatChannelSummaryDTO[]> {
-    if (!(await this.sharingService.hasChannels(args.workspaceId))) {
+  async findSummaries({
+    authContext,
+  }: {
+    authContext: AgentInboxCallerAuthContext;
+  }): Promise<AgentChatChannelSummaryDTO[]> {
+    if (!(await this.sharingService.hasChannels(authContext.workspace.id))) {
       return [];
     }
 
     const channels =
-      await this.channelAccessService.findAccessibleChannels(args);
+      await this.channelAccessService.findCallerAccessibleChannels(authContext);
 
     if (channels.length === 0) {
       return [];
@@ -133,21 +157,29 @@ export class AgentChatChannelThreadsService {
     const counts = await this.queryReadableThreads<{
       channelId: string;
       openCount: number;
+      needsInputCount: number;
+      mentionedCount: number;
       assignedToMeCount: number;
+      assignedCount: number;
+      unassignedCount: number;
       snoozedCount: number;
       doneCount: number;
       hasUnreadOpen: boolean;
       hasUnreadAssignedToMe: boolean;
     }>({
-      ...args,
+      authContext,
       buildQuery: ({ fromClause, parameters }) => ({
         sql: `SELECT thread."channelId",
               count(*) FILTER (WHERE ${STATUS.OPEN})::int AS "openCount",
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${NEEDS_INPUT})::int AS "needsInputCount",
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE})::int AS "mentionedCount",
               count(*) FILTER (WHERE ${STATUS.OPEN} AND ${IS_ASSIGNED_TO_ME})::int AS "assignedToMeCount",
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${IS_ASSIGNED})::int AS "assignedCount",
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${IS_UNASSIGNED})::int AS "unassignedCount",
               count(*) FILTER (WHERE ${STATUS.SNOOZED})::int AS "snoozedCount",
               count(*) FILTER (WHERE ${STATUS.DONE})::int AS "doneCount",
-              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_UNREAD}), false) AS "hasUnreadOpen",
-              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_ASSIGNED_TO_ME} AND ${IS_UNREAD}), false) AS "hasUnreadAssignedToMe"
+              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_WORKSPACE_MEMBER_UNREAD}), false) AS "hasUnreadOpen",
+              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_ASSIGNED_TO_ME} AND ${IS_WORKSPACE_MEMBER_UNREAD}), false) AS "hasUnreadAssignedToMe"
             ${fromClause}
             AND thread."channelId" = ANY(:channelThreadsChannelIds::uuid[])
             GROUP BY thread."channelId"`,
@@ -165,7 +197,11 @@ export class AgentChatChannelThreadsService {
     return channels.map(({ id }) => ({
       channelId: id,
       openCount: countByChannelId.get(id)?.openCount ?? 0,
+      needsInputCount: countByChannelId.get(id)?.needsInputCount ?? 0,
+      mentionedCount: countByChannelId.get(id)?.mentionedCount ?? 0,
       assignedToMeCount: countByChannelId.get(id)?.assignedToMeCount ?? 0,
+      assignedCount: countByChannelId.get(id)?.assignedCount ?? 0,
+      unassignedCount: countByChannelId.get(id)?.unassignedCount ?? 0,
       snoozedCount: countByChannelId.get(id)?.snoozedCount ?? 0,
       doneCount: countByChannelId.get(id)?.doneCount ?? 0,
       hasUnreadOpen: countByChannelId.get(id)?.hasUnreadOpen ?? false,
@@ -176,32 +212,38 @@ export class AgentChatChannelThreadsService {
 
   // Row level permissions inlined as a subquery so filtering and paging stay one query
   private async queryReadableThreads<TRow extends Record<string, unknown>>({
+    authContext,
     buildQuery,
-    ...args
-  }: MemberArgs & { buildQuery: ReadableThreadsQuery }): Promise<TRow[]> {
-    const authContext = await this.sharingService.getAuthContext(args);
-    const schema = escapeIdentifier(getWorkspaceSchemaName(args.workspaceId));
+  }: {
+    authContext: AgentInboxCallerAuthContext;
+    buildQuery: ReadableThreadsQuery;
+  }): Promise<TRow[]> {
+    await this.sharingService.assertCallerHasAiPermissionOrThrow(authContext);
+
+    const workspaceId = authContext.workspace.id;
+    const workspaceMemberId = isUserAuthContext(authContext)
+      ? authContext.workspaceMemberId
+      : null;
+    const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          'agentChatThread',
-        );
-      const readableThreadQueryBuilder = repository
+        this.workspaceOrmManager.getRepository('agentChatThread');
+      const readableThreadQueryBuilder = await repository
         .createQueryBuilder('readableThread')
         .select('"readableThread"."id"', 'id')
         .applyRowLevelPermissions();
 
       const { sql, parameters } = buildQuery({
         fromClause: `FROM ${schema}."agentChatThread" thread
-          LEFT JOIN ${getAgentChatThreadParticipantTable(args.workspaceId)} participant
+          LEFT JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
             ON participant."threadId" = thread.id
             AND participant."workspaceMemberId" = :channelThreadsWorkspaceMemberId::uuid
           WHERE thread."deletedAt" IS NULL
             AND thread.id IN (${readableThreadQueryBuilder.getQuery()})`,
         parameters: {
           ...readableThreadQueryBuilder.getParameters(),
-          channelThreadsWorkspaceMemberId: args.workspaceMemberId,
+          channelThreadsWorkspaceMemberId: workspaceMemberId,
         },
       });
 
