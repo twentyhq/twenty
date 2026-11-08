@@ -7,11 +7,21 @@ import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-m
 export const isApplicationGrantRole = ({
   flatRole,
   grantedApplicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
-  flatRole: Pick<UniversalFlatRole, 'universalIdentifier'> | undefined;
+  flatRole:
+    | Pick<
+        UniversalFlatRole,
+        'universalIdentifier' | 'applicationUniversalIdentifier' | 'isEditable'
+      >
+    | undefined;
   grantedApplicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier: string;
 }): boolean =>
   isDefined(flatRole) &&
+  !flatRole.isEditable &&
+  flatRole.applicationUniversalIdentifier ===
+    workspaceCustomApplicationUniversalIdentifier &&
   flatRole.universalIdentifier ===
     getApplicationGrantRoleUniversalIdentifier({
       grantedApplicationUniversalIdentifier,

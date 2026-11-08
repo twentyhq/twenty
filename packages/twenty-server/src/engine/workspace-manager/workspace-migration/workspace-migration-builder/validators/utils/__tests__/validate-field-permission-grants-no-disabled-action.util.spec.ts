@@ -23,6 +23,9 @@ const buildFieldPermission = (
   ...overrides,
 });
 
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'workspace-custom-universal-identifier';
+
 const OWNING_APPLICATION_UNIVERSAL_IDENTIFIER =
   '5f1d3a2b-7c4e-4d6f-8a9b-1c2d3e4f5a6b';
 
@@ -40,16 +43,39 @@ const OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
 const owningApplicationDefaultRole = {
   universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+  isEditable: true,
 };
 
 const owningApplicationOtherRole = {
   universalIdentifier: 'stripe-other-role-universal-identifier',
   applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+  isEditable: true,
 };
 
 const otherApplicationDefaultRole = {
   universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  applicationUniversalIdentifier: 'workspace-custom-universal-identifier',
+  applicationUniversalIdentifier:
+    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  isEditable: true,
+};
+
+const OWNING_APPLICATION_GRANT_ROLE_UNIVERSAL_IDENTIFIER =
+  getApplicationGrantRoleUniversalIdentifier({
+    grantedApplicationUniversalIdentifier:
+      OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+  });
+
+const editableRoleTakingGrantIdentifier = {
+  universalIdentifier: OWNING_APPLICATION_GRANT_ROLE_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier:
+    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  isEditable: true,
+};
+
+const nonCustomRoleTakingGrantIdentifier = {
+  universalIdentifier: OWNING_APPLICATION_GRANT_ROLE_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+  isEditable: false,
 };
 
 describe('validateFieldPermissionGrantsNoDisabledAction', () => {
@@ -63,6 +89,8 @@ describe('validateFieldPermissionGrantsNoDisabledAction', () => {
         flatRole: owningApplicationDefaultRole,
         applicationDefaultRoleUniversalIdentifier:
           OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+        workspaceCustomApplicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       }),
     ).toEqual([]);
   });
@@ -71,6 +99,8 @@ describe('validateFieldPermissionGrantsNoDisabledAction', () => {
     for (const flatRole of [
       owningApplicationOtherRole,
       otherApplicationDefaultRole,
+      editableRoleTakingGrantIdentifier,
+      nonCustomRoleTakingGrantIdentifier,
     ]) {
       expect(
         validateFieldPermissionGrantsNoDisabledAction({
@@ -81,6 +111,8 @@ describe('validateFieldPermissionGrantsNoDisabledAction', () => {
           flatRole,
           applicationDefaultRoleUniversalIdentifier:
             OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+          workspaceCustomApplicationUniversalIdentifier:
+            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         }),
       ).toEqual([expect.objectContaining({ value: 'canUpdateFieldValue' })]);
     }
@@ -113,9 +145,12 @@ describe('validateFieldPermissionGrantsNoDisabledAction', () => {
               grantedApplicationUniversalIdentifier,
             }),
             applicationUniversalIdentifier:
-              'workspace-custom-universal-identifier',
+              WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isEditable: false,
           },
           applicationDefaultRoleUniversalIdentifier: undefined,
+          workspaceCustomApplicationUniversalIdentifier:
+            WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         }),
       ).toEqual(expectedErrors);
     },

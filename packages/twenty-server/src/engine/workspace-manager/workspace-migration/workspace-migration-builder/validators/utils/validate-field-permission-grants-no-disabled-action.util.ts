@@ -14,6 +14,7 @@ export const validateFieldPermissionGrantsNoDisabledAction = ({
   flatFieldMetadata,
   flatRole,
   applicationDefaultRoleUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   flatFieldPermission: Pick<
     UniversalFlatFieldPermission,
@@ -28,10 +29,11 @@ export const validateFieldPermissionGrantsNoDisabledAction = ({
   flatRole:
     | Pick<
         UniversalFlatRole,
-        'universalIdentifier' | 'applicationUniversalIdentifier'
+        'universalIdentifier' | 'applicationUniversalIdentifier' | 'isEditable'
       >
     | undefined;
   applicationDefaultRoleUniversalIdentifier: string | undefined;
+  workspaceCustomApplicationUniversalIdentifier: string;
 }): FlatEntityValidationError[] => {
   if (!isDefined(flatFieldMetadata)) {
     return [];
@@ -54,6 +56,7 @@ export const validateFieldPermissionGrantsNoDisabledAction = ({
       flatRole,
       grantedApplicationUniversalIdentifier:
         flatFieldMetadata.applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
     })
   ) {
     return [];

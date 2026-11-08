@@ -98,6 +98,8 @@ export class FlatObjectPermissionValidatorService {
         flatRole: referencedRole,
         applicationDefaultRoleUniversalIdentifier:
           buildOptions.applicationDefaultRoleUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
       }),
     );
 
@@ -216,6 +218,8 @@ export class FlatObjectPermissionValidatorService {
         flatRole: referencedRole,
         applicationDefaultRoleUniversalIdentifier:
           buildOptions.applicationDefaultRoleUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
       }),
     );
 

@@ -17,6 +17,7 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 import { doesRoleRequireCustomRolesEntitlement } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/does-role-require-custom-roles-entitlement.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util';
+import { validateRoleDoesNotTakeApplicationGrantUniversalIdentifier } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-does-not-take-application-grant-universal-identifier.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
 import { validateRoleRequiredPropertiesAreDefined } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util';
@@ -56,6 +57,13 @@ export class FlatRoleValidatorService {
       ...validateRoleLabelUniqueness({
         label: flatEntityToValidate.label,
         existingFlatRoles: existingRoles,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...validateRoleDoesNotTakeApplicationGrantUniversalIdentifier({
+        flatRole: flatEntityToValidate,
+        buildOptions,
       }),
     );
 

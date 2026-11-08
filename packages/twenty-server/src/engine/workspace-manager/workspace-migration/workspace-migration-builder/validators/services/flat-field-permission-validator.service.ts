@@ -115,6 +115,8 @@ export class FlatFieldPermissionValidatorService {
         flatRole: referencedRole,
         applicationDefaultRoleUniversalIdentifier:
           buildOptions.applicationDefaultRoleUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
       }),
     );
 
@@ -252,6 +254,8 @@ export class FlatFieldPermissionValidatorService {
         flatRole: referencedRole,
         applicationDefaultRoleUniversalIdentifier:
           buildOptions.applicationDefaultRoleUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
       }),
     );
 
