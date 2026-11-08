@@ -1,4 +1,4 @@
-import { isDefined, isEmptyObject, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
@@ -41,7 +41,7 @@ export const buildUnreadableFieldsWithRlsRuleFilter = ({
       }),
     });
 
-    return isDefined(rlsRuleFilter) && !isEmptyObject(rlsRuleFilter)
+    return isDefined(rlsRuleFilter)
       ? [{ rlsRuleFilter, fieldMetadataIds }]
       : [];
   });
