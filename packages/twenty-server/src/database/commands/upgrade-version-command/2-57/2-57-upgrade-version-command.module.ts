@@ -10,10 +10,12 @@ import { ReadCreatePermissionInCommandMenuItemsCommand } from 'src/database/comm
 import { RecomputeRolesPermissionsWithCreateKeysCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794045345000-recompute-roles-permissions-with-create-keys.command';
 import { EnablePrivateRecordsForSharingWorkspacesCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794067670000-enable-private-records-for-sharing-workspaces.command';
 import { AddAccessGroupObjectMetadataIdCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794067568000-add-access-group-object-metadata-id.command';
+import { RecomputeRecordAccessGroupsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794096521000-recompute-record-access-groups.command';
 import { RefreshOutlookDraftsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794061333000-refresh-outlook-drafts.command';
 import { ReplaceWithdrawnCurrencyCodeCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794064503000-replace-withdrawn-currency-code.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { AccessGroupModule } from 'src/engine/permissions/internal/access-group/access-group.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -21,6 +23,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 @Module({
   imports: [
     TypeOrmModule.forFeature([MessageChannelEntity]),
+    AccessGroupModule,
     ApplicationModule,
     FeatureFlagModule,
     WorkspaceCacheModule,
@@ -35,6 +38,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     EnablePrivateRecordsForSharingWorkspacesCommand,
     MoveFindRecordsSortsToRecordSortsCommand,
     ReadCreatePermissionInCommandMenuItemsCommand,
+    RecomputeRecordAccessGroupsCommand,
     RecomputeRolesPermissionsWithCreateKeysCommand,
     RefreshOutlookDraftsCommand,
     ReplaceWithdrawnCurrencyCodeCommand,

@@ -42,9 +42,10 @@ export class AccessGroupSyncListener {
   async handleMetadataEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
       workspaceId,
-    );
+      shouldRecomputeEveryRecord: false,
+    });
   }
 
   @OnCustomBatchEvent(FEATURE_FLAG_ENABLED_EVENT)
@@ -59,9 +60,12 @@ export class AccessGroupSyncListener {
       isDefined(workspaceId) &&
       events.some(({ key }) => FLAGS_AFFECTING_ACCESS_GROUPS.includes(key))
     ) {
-      await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+      await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
         workspaceId,
-      );
+        shouldRecomputeEveryRecord: events.some(
+          ({ key }) => key === FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+        ),
+      });
     }
   }
 
@@ -117,8 +121,9 @@ export class AccessGroupSyncListener {
       'flatWorkspaceMemberMaps',
     ]);
 
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
       workspaceId,
-    );
+      shouldRecomputeEveryRecord: false,
+    });
   }
 }

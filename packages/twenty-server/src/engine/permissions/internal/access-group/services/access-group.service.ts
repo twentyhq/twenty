@@ -35,13 +35,38 @@ export class AccessGroupService {
 
   async syncAccessGroups(workspaceId: string): Promise<void> {
     await this.cacheLockService.withLock(
-      () => this.syncAccessGroupsWithLock(workspaceId),
+      () =>
+        this.syncAccessGroupsWithLock({
+          workspaceId,
+          shouldRecomputeEveryRecord: false,
+        }),
       buildAccessGroupSyncLockKey(workspaceId),
       ACCESS_GROUP_SYNC_LOCK_OPTIONS,
     );
   }
 
-  private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
+  // Records go stale while the flag is off, and a sync with no group change would not recompute them
+  async syncAccessGroupsAndRecomputeEveryRecord(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.cacheLockService.withLock(
+      () =>
+        this.syncAccessGroupsWithLock({
+          workspaceId,
+          shouldRecomputeEveryRecord: true,
+        }),
+      buildAccessGroupSyncLockKey(workspaceId),
+      ACCESS_GROUP_SYNC_LOCK_OPTIONS,
+    );
+  }
+
+  private async syncAccessGroupsWithLock({
+    workspaceId,
+    shouldRecomputeEveryRecord,
+  }: {
+    workspaceId: string;
+    shouldRecomputeEveryRecord: boolean;
+  }): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
@@ -75,13 +100,21 @@ export class AccessGroupService {
         canDeleteStaleAccessGroups && !newGroupHashes.has(groupHash),
     );
 
+    const objectMetadataIdsToRecompute = shouldRecomputeEveryRecord
+      ? Object.values(
+          workspaceCache.flatObjectMetadataMaps.byUniversalIdentifier,
+        )
+          .filter(isDefined)
+          .map(({ id }) => id)
+      : [...insertedAccessGroups, ...staleAccessGroups].map(
+          ({ objectMetadataId }) => objectMetadataId,
+        );
+
     // Queued before writing, so a sync that fails after its writes cannot lose them
     await this.scheduleRecordAccessGroupIdsRecompute({
       workspaceId,
       objectMetadataIds: new Set(
-        [...insertedAccessGroups, ...staleAccessGroups]
-          .map(({ objectMetadataId }) => objectMetadataId)
-          .filter((objectMetadataId) =>
+        objectMetadataIdsToRecompute.filter((objectMetadataId) =>
             isObjectUsingRecordAccessGroups({
               rolesPermissions: workspaceCache.rolesPermissions,
               objectMetadataId,

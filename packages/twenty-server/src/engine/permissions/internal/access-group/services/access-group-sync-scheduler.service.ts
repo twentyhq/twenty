@@ -28,14 +28,17 @@ export class AccessGroupSyncSchedulerService {
     return featureFlagsMap[FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED] ?? false;
   }
 
-  async scheduleSyncIfEnabled(workspaceId: string): Promise<void> {
+  async scheduleSyncIfEnabled({
+    workspaceId,
+    shouldRecomputeEveryRecord,
+  }: SyncAccessGroupsJobData): Promise<void> {
     if (!(await this.isEnabled(workspaceId))) {
       return;
     }
 
     await this.messageQueueService.add<SyncAccessGroupsJobData>(
       SYNC_ACCESS_GROUPS_JOB_NAME,
-      { workspaceId },
+      { workspaceId, shouldRecomputeEveryRecord },
       {
         isWorkspaceJob: true,
         workspaceId,
