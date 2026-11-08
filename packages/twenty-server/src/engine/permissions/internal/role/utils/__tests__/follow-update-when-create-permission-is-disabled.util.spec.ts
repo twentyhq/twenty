@@ -17,7 +17,8 @@ const recordsPermissions: RoleRecordsPermissions = {
       canUpdateAllRecords: false,
       canSoftDeleteAllRecords: false,
       canDestroyAllRecords: false,
-      restrictedFields: {},
+      unreadableFields: [],
+      uneditableFields: [],
       rowLevelRecordsPermissions: {
         canCreateRecords: false,
         canReadRecords: true,

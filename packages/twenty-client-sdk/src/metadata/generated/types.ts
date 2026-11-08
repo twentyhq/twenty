@@ -10321,6 +10321,12 @@ export default {
             "rowLevelPermissionPredicates": [
                 473
             ],
+            "uneditableFields": [
+                548
+            ],
+            "unreadableFields": [
+                548
+            ],
             "__typename": [
                 1
             ]
@@ -10432,6 +10438,12 @@ export default {
             ],
             "rowLevelRecordsPermissions": [
                 479
+            ],
+            "uneditableFields": [
+                548
+            ],
+            "unreadableFields": [
+                548
             ],
             "__typename": [
                 1
@@ -12549,6 +12561,9 @@ export default {
             "permissionFlags": [
                 471
             ],
+            "rowLevelPermissionFieldPermissions": [
+                282
+            ],
             "rowLevelPermissionPredicateGroups": [
                 474
             ],
@@ -12753,6 +12768,12 @@ export default {
             ],
             "predicates": [
                 473
+            ],
+            "uneditableFields": [
+                548
+            ],
+            "unreadableFields": [
+                548
             ],
             "__typename": [
                 1

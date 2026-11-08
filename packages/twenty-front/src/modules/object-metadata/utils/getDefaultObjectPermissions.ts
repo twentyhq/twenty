@@ -7,5 +7,6 @@ export const getDefaultObjectPermissions = (): ObjectRecordsPermissions => ({
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 });

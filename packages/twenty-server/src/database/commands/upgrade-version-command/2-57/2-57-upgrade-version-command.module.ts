@@ -9,6 +9,7 @@ import { BackfillApplicationGrantRolesCommand } from 'src/database/commands/upgr
 import { BackfillCanCreatePermissionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793995651000-backfill-can-create-permissions.command';
 import { MoveFindRecordsSortsToRecordSortsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793965625303-move-find-records-sorts-to-record-sorts.command';
 import { ReadCreatePermissionInCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794037630000-read-create-permission-in-command-menu-items.command';
+import { RecomputeRolesPermissionsWithFieldListsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794163150000-recompute-roles-permissions-with-field-lists.command';
 import { RecomputeRolesPermissionsWithCreateKeysCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794045345000-recompute-roles-permissions-with-create-keys.command';
 import { EnablePrivateRecordsForSharingWorkspacesCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794067670000-enable-private-records-for-sharing-workspaces.command';
 import { AddAccessGroupObjectMetadataIdCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794067568000-add-access-group-object-metadata-id.command';
@@ -40,6 +41,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MoveFindRecordsSortsToRecordSortsCommand,
     ReadCreatePermissionInCommandMenuItemsCommand,
     RecomputeRolesPermissionsWithCreateKeysCommand,
+    RecomputeRolesPermissionsWithFieldListsCommand,
     RefreshOutlookDraftsCommand,
     ReplaceWithdrawnCurrencyCodeCommand,
   ],

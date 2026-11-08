@@ -192,22 +192,17 @@ describe('getJunctionRelationPickerData', () => {
     const taskTargetObjectMetadata =
       getMockObjectMetadataItemOrThrow('taskTarget');
     const companyObjectMetadata = getMockObjectMetadataItemOrThrow('company');
-    const companyTargetRestrictedFields = Object.fromEntries(
-      (
-        getMockFieldMetadataItemOrThrow({
-          objectMetadataItem: taskTargetObjectMetadata,
-          fieldName: 'target',
-        }).morphRelations ?? []
+    const companyTargetUneditableFields = (
+      getMockFieldMetadataItemOrThrow({
+        objectMetadataItem: taskTargetObjectMetadata,
+        fieldName: 'target',
+      }).morphRelations ?? []
+    )
+      .filter(
+        ({ targetObjectMetadata }) =>
+          targetObjectMetadata.id === companyObjectMetadata.id,
       )
-        .filter(
-          ({ targetObjectMetadata }) =>
-            targetObjectMetadata.id === companyObjectMetadata.id,
-        )
-        .map(({ sourceFieldMetadata }) => [
-          sourceFieldMetadata.id,
-          { canRead: true, canUpdate: false },
-        ]),
-    );
+      .map(({ sourceFieldMetadata }) => sourceFieldMetadata.id);
 
     const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
       (objectMetadataItem) =>
@@ -217,7 +212,8 @@ describe('getJunctionRelationPickerData', () => {
               ...getPermittedFields({
                 fields: objectMetadataItem.fields,
                 objectPermissions: {
-                  restrictedFields: companyTargetRestrictedFields,
+                  unreadableFields: [],
+                  uneditableFields: companyTargetUneditableFields,
                 },
               }),
             }

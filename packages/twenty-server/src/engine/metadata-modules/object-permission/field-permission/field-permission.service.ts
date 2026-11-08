@@ -18,6 +18,7 @@ import { fromCreateFieldPermissionInputToUniversalFlatFieldPermission } from 'sr
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
+import { filterFieldPermissionsOfInput } from 'src/engine/metadata-modules/object-permission/utils/filter-field-permissions-of-input.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -288,12 +289,10 @@ export class FieldPermissionService {
       flatEntityToUpdate.length === 0 &&
       flatEntityToDelete.length === 0
     ) {
-      const desiredObjectMetadataIds = new Set(
-        input.fieldPermissions.map((fp) => fp.objectMetadataId),
-      );
-      return currentFieldPermissionsForRole.filter((fp) =>
-        desiredObjectMetadataIds.has(fp.objectMetadataId),
-      );
+      return filterFieldPermissionsOfInput({
+        fieldPermissions: currentFieldPermissionsForRole,
+        input,
+      });
     }
 
     const buildAndRunResult =
@@ -341,13 +340,10 @@ export class FieldPermissionService {
         isDefined(fp) && fp.roleUniversalIdentifier === roleUniversalIdentifier,
     );
 
-    const desiredObjectMetadataIds = new Set(
-      input.fieldPermissions.map((fp) => fp.objectMetadataId),
-    );
-    const filtered = resultFieldPermissions.filter((fp) =>
-      desiredObjectMetadataIds.has(fp.objectMetadataId),
-    );
-    return filtered;
+    return filterFieldPermissionsOfInput({
+      fieldPermissions: resultFieldPermissions,
+      input,
+    });
   }
 
   private validateFieldPermission({
