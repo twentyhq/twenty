@@ -37,7 +37,7 @@ type GetLineChartDataParams = {
   objectMetadataId: string;
   configuration: LineChartConfigurationDTO;
   dashboardFilterValues?: DashboardFilterValueInput[] | null;
-  dashboardFilterTimeZone?: string | null;
+  viewerTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
   locale: keyof typeof APP_LOCALES;
 };
@@ -56,7 +56,7 @@ export class LineChartDataService {
     objectMetadataId,
     configuration,
     dashboardFilterValues,
-    dashboardFilterTimeZone,
+    viewerTimeZone,
     authContext,
     locale,
   }: GetLineChartDataParams): Promise<LineChartDataDTO> {
@@ -151,7 +151,7 @@ export class LineChartDataService {
         filter: configuration.filter,
         dashboardFilterBindings: configuration.dashboardFilterBindings,
         dashboardFilterValues,
-        dashboardFilterTimeZone,
+        viewerTimeZone,
         dateGranularity: configuration.primaryAxisDateGranularity,
         userTimezone,
         firstDayOfTheWeek,

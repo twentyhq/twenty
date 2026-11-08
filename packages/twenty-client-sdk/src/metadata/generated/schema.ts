@@ -5300,7 +5300,7 @@ export interface BarChartDataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface BarChartDataInput {configuration: Scalars['JSON'],dashboardFilterTimeZone?: (Scalars['String'] | null),dashboardFilterValues?: (DashboardFilterValueInput[] | null),objectMetadataId: Scalars['UUID']}
+export interface BarChartDataInput {configuration: Scalars['JSON'],dashboardFilterValues?: (DashboardFilterValueInput[] | null),objectMetadataId: Scalars['UUID'],viewerTimeZone?: (Scalars['String'] | null)}
 
 export interface BarChartSeriesGenqlSelection{
     key?: boolean | number
@@ -6746,7 +6746,7 @@ export interface LineChartDataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface LineChartDataInput {configuration: Scalars['JSON'],dashboardFilterTimeZone?: (Scalars['String'] | null),dashboardFilterValues?: (DashboardFilterValueInput[] | null),objectMetadataId: Scalars['UUID']}
+export interface LineChartDataInput {configuration: Scalars['JSON'],dashboardFilterValues?: (DashboardFilterValueInput[] | null),objectMetadataId: Scalars['UUID'],viewerTimeZone?: (Scalars['String'] | null)}
 
 export interface LineChartDataPointGenqlSelection{
     x?: boolean | number
@@ -7815,7 +7815,7 @@ export interface PieChartDataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface PieChartDataInput {configuration: Scalars['JSON'],dashboardFilterTimeZone?: (Scalars['String'] | null),dashboardFilterValues?: (DashboardFilterValueInput[] | null),objectMetadataId: Scalars['UUID']}
+export interface PieChartDataInput {configuration: Scalars['JSON'],dashboardFilterValues?: (DashboardFilterValueInput[] | null),objectMetadataId: Scalars['UUID'],viewerTimeZone?: (Scalars['String'] | null)}
 
 export interface PieChartDataItemGenqlSelection{
     key?: boolean | number
