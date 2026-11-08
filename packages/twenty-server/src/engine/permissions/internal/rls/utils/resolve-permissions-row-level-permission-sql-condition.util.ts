@@ -7,7 +7,7 @@ import { buildRecordAccessGroupsCondition } from 'src/engine/permissions/interna
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-row-level-permission-filter.util';
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 
-export const resolvePermissionsRlsSqlCondition = (
+export const resolvePermissionsRowLevelPermissionSqlCondition = (
   request: PermissionsRowAccessSqlRequest,
 ): SqlCondition | undefined => {
   const rowLevelPermissionFilter =
