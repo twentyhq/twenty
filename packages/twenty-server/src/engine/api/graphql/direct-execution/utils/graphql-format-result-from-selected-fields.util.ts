@@ -327,18 +327,23 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
           continue;
         }
 
+        const pageInfoValues = new Map<string, unknown>(
+          Object.entries(connection.pageInfo),
+        );
+
         pageInfoFormatted[pageInfoKey] =
-          (connection.pageInfo as unknown as Record<string, unknown>)[
-            pageInfoKey
-          ] ?? null;
+          pageInfoValues.get(pageInfoKey) ?? null;
       }
 
       formatted.pageInfo = pageInfoFormatted;
       continue;
     }
 
-    const rawAggregateValue =
-      (connection as unknown as Record<string, unknown>)[key] ?? null;
+    const connectionValues = new Map<string, unknown>(
+      Object.entries(connection),
+    );
+
+    const rawAggregateValue = connectionValues.get(key) ?? null;
 
     formatted[key] =
       isNonEmptyString(rawAggregateValue) && isFinite(Number(rawAggregateValue))
