@@ -2,13 +2,13 @@ import { isDefined, isEmptyObject, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { type RlsRuleUnreadableFields } from 'src/engine/permissions/internal/masking/types/rls-rule-unreadable-fields.type';
+import { type UnreadableFieldsWithRecordFilter } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-record-filter.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { buildRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
 import { resolveRowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-workspace-member.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
-export const buildRlsRulesUnreadableFields = ({
+export const buildUnreadableFieldsWithRecordFilter = ({
   principals,
   metadataMaps,
   flatObjectMetadata,
@@ -16,7 +16,7 @@ export const buildRlsRulesUnreadableFields = ({
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
   flatObjectMetadata: FlatObjectMetadata;
-}): RlsRuleUnreadableFields[] =>
+}): UnreadableFieldsWithRecordFilter[] =>
   getPermissionsPrincipalsRoleIds(principals).flatMap((roleId) => {
     const unreadableFieldMetadataIds =
       metadataMaps.rolesPermissions[roleId]?.objects[flatObjectMetadata.id]

@@ -1796,10 +1796,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<void> {
     await this.applyRowLevelPermissionPredicates(queryBuilder);
     await this.validateQueryIsPermitted(queryBuilder);
-    await this.nullifyUnreadableFieldsWithCondition(queryBuilder);
+    await this.nullifyUnreadableFieldsWithSqlCondition(queryBuilder);
   }
 
-  private async nullifyUnreadableFieldsWithCondition(
+  private async nullifyUnreadableFieldsWithSqlCondition(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
     if (this.options.shouldBypassPermissionChecks) {
@@ -1822,8 +1822,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
-      const unreadableFieldsWithCondition =
-        await this.options.internalContext.recordPermissions.findUnreadableFieldsWithCondition(
+      const unreadableFieldsWithSqlCondition =
+        await this.options.internalContext.recordPermissions.findUnreadableFieldsWithSqlCondition(
           {
             principals: this.resolvePermissionsPrincipalsOrThrow(),
             objectMetadataId: tableShape.objectMetadataId,
@@ -1831,7 +1831,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           },
         );
 
-      if (!isNonEmptyArray(unreadableFieldsWithCondition)) {
+      if (!isNonEmptyArray(unreadableFieldsWithSqlCondition)) {
         continue;
       }
 
@@ -1847,7 +1847,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       for (const {
         fieldMetadataIds,
         condition,
-      } of unreadableFieldsWithCondition) {
+      } of unreadableFieldsWithSqlCondition) {
         queryBuilder.nullifyColumnsWhen({
           alias,
           columnNames: columnEntries

@@ -1,6 +1,6 @@
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 
-export type UnreadableFieldsWithCondition = {
+export type UnreadableFieldsWithSqlCondition = {
   fieldMetadataIds: string[];
-  condition: SqlCondition;
+  sqlCondition: SqlCondition;
 };

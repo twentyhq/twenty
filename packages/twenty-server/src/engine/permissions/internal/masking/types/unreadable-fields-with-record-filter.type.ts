@@ -1,6 +1,6 @@
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
-export type RlsRuleUnreadableFields = {
+export type UnreadableFieldsWithRecordFilter = {
   recordFilter: RecordGqlOperationFilter;
   unreadableFieldMetadataIds: string[];
 };

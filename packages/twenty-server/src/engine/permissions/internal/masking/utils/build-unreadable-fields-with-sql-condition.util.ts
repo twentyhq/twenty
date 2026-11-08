@@ -2,32 +2,32 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { type RlsRuleUnreadableFields } from 'src/engine/permissions/internal/masking/types/rls-rule-unreadable-fields.type';
-import { type UnreadableFieldsWithCondition } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-condition.type';
+import { type UnreadableFieldsWithRecordFilter } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-record-filter.type';
+import { type UnreadableFieldsWithSqlCondition } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-sql-condition.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 
-export const buildUnreadableFieldsWithCondition = ({
-  rlsRulesUnreadableFields,
+export const buildUnreadableFieldsWithSqlCondition = ({
+  unreadableFieldsWithRecordFilter,
   flatObjectMetadata,
   metadataMaps,
   tableAlias,
 }: {
-  rlsRulesUnreadableFields: RlsRuleUnreadableFields[];
+  unreadableFieldsWithRecordFilter: UnreadableFieldsWithRecordFilter[];
   flatObjectMetadata: FlatObjectMetadata;
   metadataMaps: Pick<PermissionsMetadataMaps, 'flatFieldMetadataMaps'>;
   tableAlias: string;
-}): UnreadableFieldsWithCondition[] =>
-  rlsRulesUnreadableFields.flatMap(
+}): UnreadableFieldsWithSqlCondition[] =>
+  unreadableFieldsWithRecordFilter.flatMap(
     ({ recordFilter, unreadableFieldMetadataIds }) => {
-      const condition = renderRowLevelPermissionFilterToSql({
+      const sqlCondition = renderRowLevelPermissionFilterToSql({
         recordFilter,
         tableAlias,
         objectMetadata: flatObjectMetadata,
         flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
       });
 
-      return isDefined(condition)
-        ? [{ condition, fieldMetadataIds: unreadableFieldMetadataIds }]
+      return isDefined(sqlCondition)
+        ? [{ sqlCondition, fieldMetadataIds: unreadableFieldMetadataIds }]
         : [];
     },
   );

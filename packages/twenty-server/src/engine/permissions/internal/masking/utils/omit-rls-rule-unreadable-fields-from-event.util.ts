@@ -5,21 +5,21 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RlsRuleUnreadableFields } from 'src/engine/permissions/internal/masking/types/rls-rule-unreadable-fields.type';
+import { type UnreadableFieldsWithRecordFilter } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-record-filter.type';
 import { filterFieldNamesInEventProperties } from 'src/engine/permissions/utils/filter-field-names-in-event-properties.util';
 import { getFieldNamesInEventProperties } from 'src/engine/permissions/utils/get-field-names-in-event-properties.util';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
-export const omitRlsRuleUnreadableFieldsFromEvent = <
+export const omitUnreadableFieldsWithRecordFilterFromEvent = <
   TEvent extends ObjectRecordEvent,
 >({
   event,
-  rlsRulesUnreadableFields,
+  unreadableFieldsWithRecordFilter,
   flatObjectMetadata,
   flatFieldMetadataMaps,
 }: {
   event: TEvent;
-  rlsRulesUnreadableFields: RlsRuleUnreadableFields[];
+  unreadableFieldsWithRecordFilter: UnreadableFieldsWithRecordFilter[];
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): TEvent => {
@@ -31,7 +31,7 @@ export const omitRlsRuleUnreadableFieldsFromEvent = <
 
   // A record leaving the RLS rule still shows unreadable values in its before state
   const unreadableFieldNames = new Set(
-    rlsRulesUnreadableFields
+    unreadableFieldsWithRecordFilter
       .filter(({ recordFilter }) =>
         eventRecords.some((record) =>
           isRecordMatchingFilter({

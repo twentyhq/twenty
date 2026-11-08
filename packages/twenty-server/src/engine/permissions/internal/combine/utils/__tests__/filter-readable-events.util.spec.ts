@@ -9,7 +9,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { filterReadableEvents } from 'src/engine/permissions/internal/combine/utils/filter-readable-events.util';
-import { type RlsRuleUnreadableFields } from 'src/engine/permissions/internal/masking/types/rls-rule-unreadable-fields.type';
+import { type UnreadableFieldsWithRecordFilter } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-record-filter.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
@@ -79,18 +79,18 @@ const buildUpdateEvent = ({
 const filter = ({
   events,
   recordsPermissions,
-  rlsRulesUnreadableFields = [],
+  unreadableFieldsWithRecordFilter = [],
 }: {
   events: ObjectRecordUpdateEvent[];
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
-  rlsRulesUnreadableFields?: RlsRuleUnreadableFields[];
+  unreadableFieldsWithRecordFilter?: UnreadableFieldsWithRecordFilter[];
 }) =>
   filterReadableEvents({
     events,
     readableRecordIds: new Set(['record-1', 'record-2']),
     objectMetadata: invoice,
     recordsPermissions,
-    rlsRulesUnreadableFields,
+    unreadableFieldsWithRecordFilter,
     metadataMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
   });
 
@@ -153,7 +153,7 @@ describe('filterReadableEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      rlsRulesUnreadableFields: [
+      unreadableFieldsWithRecordFilter: [
         {
           recordFilter: { name: { eq: 'New' } },
           unreadableFieldMetadataIds: ['secret-field-id'],
@@ -174,7 +174,7 @@ describe('filterReadableEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      rlsRulesUnreadableFields: [
+      unreadableFieldsWithRecordFilter: [
         {
           recordFilter: { name: { eq: 'Another' } },
           unreadableFieldMetadataIds: ['secret-field-id'],
