@@ -5,12 +5,17 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
+import { type AiModelTier } from 'twenty-shared/ai';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { billingState } from '@/client-config/states/billingState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
+import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { SettingsPrivacy } from '@/settings/privacy/components/SettingsPrivacy';
 import {
   type ClientAiModelConfig,
@@ -57,6 +62,7 @@ const renderSettingsPrivacy = ({
   isMultiWorkspaceEnabled,
   aiModels,
   aiDataPolicy = null,
+  pinnedModelIdByTier,
   updateWorkspaceError,
 }: {
   isMultiWorkspaceEnabled: boolean;
@@ -66,6 +72,7 @@ const renderSettingsPrivacy = ({
     isZeroDataRetentionRequired: boolean;
     isProductImprovementDataSharingEnabled: boolean;
   } | null;
+  pinnedModelIdByTier?: Partial<Record<AiModelTier, string>>;
   updateWorkspaceError?: Error;
 }) => {
   const store = createStore();
@@ -79,6 +86,10 @@ const renderSettingsPrivacy = ({
   store.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
     aiDataPolicy,
+    ...(pinnedModelIdByTier && {
+      isAutoModelSelectionEnabled: false,
+      aiModelIdByTier: pinnedModelIdByTier,
+    }),
   });
 
   return render(
@@ -180,7 +191,7 @@ describe('SettingsPrivacy', () => {
     expect(screen.queryByText('Zero data retention')).not.toBeInTheDocument();
   });
 
-  it('lists the agents a policy in force excludes', async () => {
+  it('links the agents and pinned tiers a policy in force excludes', async () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: true,
       aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
@@ -189,11 +200,21 @@ describe('SettingsPrivacy', () => {
         isZeroDataRetentionRequired: true,
         isProductImprovementDataSharingEnabled: true,
       },
+      pinnedModelIdByTier: { smart: 'openai/gpt' },
     });
 
+    const agentLink = await screen.findByRole('link', { name: 'Sales agent' });
+
+    expect(agentLink).toHaveAttribute('href', getCoreAgentLink('Sales agent'));
+    expect(screen.getByRole('link', { name: 'Smart' })).toHaveAttribute(
+      'href',
+      `${getSettingsPath(SettingsPath.AI)}#${SETTINGS_AI_TABS.TABS_IDS.MODELS}`,
+    );
+    expect(screen.getByText('Will fail')).toBeInTheDocument();
+    expect(screen.getByText('Falls back')).toBeInTheDocument();
     expect(
-      await screen.findByText(/they fail when they run: Sales agent$/),
-    ).toBeInTheDocument();
+      screen.queryByRole('link', { name: 'Allowed agent' }),
+    ).not.toBeInTheDocument();
   });
 
   it('disables the controls during a save and restores the value when it fails', async () => {

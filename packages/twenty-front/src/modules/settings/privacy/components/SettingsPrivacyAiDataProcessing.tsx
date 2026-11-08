@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type DataResidencyRegion } from 'twenty-shared/ai';
 import { Callout } from 'twenty-ui/components/feedback';
@@ -19,6 +20,12 @@ import { Select } from '@/ui/input/components/Select';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const WORLDWIDE_OPTION_VALUE = 'worldwide';
+
+const StyledContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
 
 type DataResidencyRegionOptionValue =
   | DataResidencyRegion
@@ -55,12 +62,12 @@ export const SettingsPrivacyAiDataProcessing = () => {
     aiModels.length > 0 && workspaceAiModels.length === 0;
 
   return (
-    <>
-      <Section.Root>
-        <Section.Header
-          title={t`AI data processing`}
-          description={t`Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more.`}
-        />
+    <Section.Root>
+      <Section.Header
+        title={t`AI data processing`}
+        description={t`Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more.`}
+      />
+      <StyledContent>
         <Card.Root>
           {dataResidencyRegions.length > 0 && (
             <SettingsOptionCardContentSelect
@@ -103,22 +110,22 @@ export const SettingsPrivacyAiDataProcessing = () => {
             />
           )}
         </Card.Root>
-      </Section.Root>
-      <SettingsPrivacyAffectedByAiDataPolicy />
-      {hasNoCompliantModel && (
-        <Callout
-          status="warning"
-          icon={
-            <IconAlertTriangle
-              size={themeCssVariables.icon.size.md}
-              aria-hidden="true"
-            />
-          }
-          fullWidth
-          title={t`AI is paused`}
-          description={t`No AI model on this workspace meets these settings.`}
-        />
-      )}
-    </>
+        {hasNoCompliantModel && (
+          <Callout
+            status="warning"
+            icon={
+              <IconAlertTriangle
+                size={themeCssVariables.icon.size.md}
+                aria-hidden="true"
+              />
+            }
+            fullWidth
+            title={t`AI is paused`}
+            description={t`No AI model on this workspace meets these settings.`}
+          />
+        )}
+        <SettingsPrivacyAffectedByAiDataPolicy />
+      </StyledContent>
+    </Section.Root>
   );
 };
