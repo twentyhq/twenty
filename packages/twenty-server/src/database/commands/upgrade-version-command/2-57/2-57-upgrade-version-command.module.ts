@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
-import { BackfillFieldMetadataOptionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793916608344-backfill-field-metadata-options.command';
+import { BackfillFieldMetadataOptionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794142104606-backfill-field-metadata-options.command';
 import { DropUndeclaredKeysFromCreateAndUpsertRecordsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793954288001-drop-undeclared-keys-from-create-and-upsert-records.command';
 import { BackfillCanCreatePermissionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793995651000-backfill-can-create-permissions.command';
 import { MoveFindRecordsSortsToRecordSortsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793965625303-move-find-records-sorts-to-record-sorts.command';
