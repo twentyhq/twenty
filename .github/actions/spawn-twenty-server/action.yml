@@ -84,6 +84,14 @@ runs:
         npx nx build twenty-shared
         npx nx build twenty-server
 
+    # Without the nx daemon, any later nx build rewrites twenty-shared/dist and crashes a booting worker
+    - name: Build Twenty CLI from checkout
+      if: inputs.source == 'local'
+      shell: bash
+      run: |
+        npx nx build twenty-cli
+        echo "TWENTY_CLI=$GITHUB_WORKSPACE/packages/twenty-cli/dist/cli.cjs" >> "$GITHUB_ENV"
+
     - name: Write server env and create databases
       if: inputs.source == 'local'
       shell: bash

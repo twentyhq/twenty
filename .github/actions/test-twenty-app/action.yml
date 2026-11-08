@@ -51,6 +51,7 @@ runs:
       uses: ./.github/actions/yarn-install
 
     - name: Build Twenty CLI from checkout
+      if: env.TWENTY_CLI == ''
       shell: bash
       run: |
         npx nx build twenty-cli
