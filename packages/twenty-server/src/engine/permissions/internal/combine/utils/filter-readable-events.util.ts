@@ -1,4 +1,5 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
@@ -27,6 +28,11 @@ export const filterReadableEvents = <TEvent extends ObjectRecordEvent>({
     recordsPermissions,
   });
 
+  const rlsRuleFilterByRoleId = new Map<
+    string,
+    RecordGqlOperationFilter | null
+  >();
+
   return events
     .filter((event) => readableRecordIds.has(event.recordId))
     .map((event) =>
@@ -37,6 +43,7 @@ export const filterReadableEvents = <TEvent extends ObjectRecordEvent>({
         recordsPermissions,
         recordReadRestrictions,
         metadataMaps,
+        rlsRuleFilterByRoleId,
       }),
     )
     .filter((event) => !isUpdateOfHiddenFieldsOnly(event));

@@ -1,4 +1,5 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -21,6 +22,7 @@ export const omitUnreadableFieldsFromEvent = <
   recordsPermissions,
   recordReadRestrictions,
   metadataMaps,
+  rlsRuleFilterByRoleId,
 }: {
   event: TEvent;
   principals: PermissionsPrincipalsWithRolesContext;
@@ -28,6 +30,7 @@ export const omitUnreadableFieldsFromEvent = <
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   recordReadRestrictions: RecordReadRestrictions;
   metadataMaps: PermissionsMetadataMaps;
+  rlsRuleFilterByRoleId: Map<string, RecordGqlOperationFilter | null>;
 }): TEvent => {
   const { properties } = event;
   const unreadableFieldNames = new Set(
@@ -44,6 +47,7 @@ export const omitUnreadableFieldsFromEvent = <
           'before' in properties ? properties.before : undefined,
           'after' in properties ? properties.after : undefined,
         ].filter(isDefined),
+        rlsRuleFilterByRoleId,
       }),
     ].flatMap((fieldMetadataId) => {
       const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({

@@ -74,21 +74,17 @@ const filterFieldPermissionsOfInput = ({
   fieldPermissions: FlatFieldPermission[];
   input: UpsertFieldPermissionsInput;
 }): FlatFieldPermission[] => {
-  const objectMetadataIds = new Set(
-    input.fieldPermissions.map(({ objectMetadataId }) => objectMetadataId),
-  );
-  const rowLevelPermissionPredicateGroupIds = new Set(
+  const inputScopes = new Set(
     input.fieldPermissions.map(
-      ({ rowLevelPermissionPredicateGroupId }) =>
-        rowLevelPermissionPredicateGroupId ?? null,
+      ({ objectMetadataId, rowLevelPermissionPredicateGroupId }) =>
+        `${objectMetadataId}:${rowLevelPermissionPredicateGroupId ?? ''}`,
     ),
   );
 
   return fieldPermissions.filter(
     ({ objectMetadataId, rowLevelPermissionPredicateGroupId }) =>
-      objectMetadataIds.has(objectMetadataId) &&
-      rowLevelPermissionPredicateGroupIds.has(
-        rowLevelPermissionPredicateGroupId ?? null,
+      inputScopes.has(
+        `${objectMetadataId}:${rowLevelPermissionPredicateGroupId ?? ''}`,
       ),
   );
 };

@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import {
   type FeatureFlagKey,
   type ObjectRecordsOperationType,
+  type RecordGqlOperationFilter,
   type RecordShareAccessLevel,
   type ObjectRecord,
 } from 'twenty-shared/types';
@@ -638,6 +639,11 @@ export class RecordPermissionsService {
       metadataMaps.flatFieldMetadataMaps,
     );
 
+    const rlsRuleFilterByRoleId = new Map<
+      string,
+      RecordGqlOperationFilter | null
+    >();
+
     for (const { rawRecordBefore, setColumns } of updates) {
       const uneditableFieldMetadataIds = composeRecordFieldMetadataIds({
         principals,
@@ -646,6 +652,7 @@ export class RecordPermissionsService {
         fieldList: 'uneditableFields',
         objectFieldMetadataIds: [],
         records: formatRecords([rawRecordBefore]),
+        rlsRuleFilterByRoleId,
       });
 
       if (

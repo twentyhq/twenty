@@ -1,3 +1,4 @@
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -15,6 +16,7 @@ export const composeRecordFieldMetadataIds = ({
   fieldList,
   objectFieldMetadataIds,
   records,
+  rlsRuleFilterByRoleId,
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
@@ -22,6 +24,7 @@ export const composeRecordFieldMetadataIds = ({
   fieldList: 'unreadableFields' | 'uneditableFields';
   objectFieldMetadataIds: string[];
   records: object[];
+  rlsRuleFilterByRoleId: Map<string, RecordGqlOperationFilter | null>;
 }): Set<string> => {
   const fieldMetadataIds = new Set(objectFieldMetadataIds);
 
@@ -31,12 +34,19 @@ export const composeRecordFieldMetadataIds = ({
     objectMetadataId: flatObjectMetadata.id,
     fieldList,
   })) {
-    const rlsRuleFilter = resolveRowLevelPermissionRecordFilterForRole({
-      principals,
-      metadataMaps,
-      flatObjectMetadata,
-      roleId: rlsRuleFields.roleId,
-    });
+    if (!rlsRuleFilterByRoleId.has(rlsRuleFields.roleId)) {
+      rlsRuleFilterByRoleId.set(
+        rlsRuleFields.roleId,
+        resolveRowLevelPermissionRecordFilterForRole({
+          principals,
+          metadataMaps,
+          flatObjectMetadata,
+          roleId: rlsRuleFields.roleId,
+        }),
+      );
+    }
+
+    const rlsRuleFilter = rlsRuleFilterByRoleId.get(rlsRuleFields.roleId);
 
     if (
       isDefined(rlsRuleFilter) &&
