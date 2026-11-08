@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 
-export const findApplicationGrantFlatRoleTarget = ({
+export const findApplicationGrantRoleFlatRoleTarget = ({
   flatRoleTargetMaps,
   applicationUniversalIdentifier,
 }: {

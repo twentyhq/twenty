@@ -5,11 +5,11 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
-  APPLICATION_GRANT_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
-  buildApplicationGrantFromToFlatEntityMaps,
-} from 'src/engine/core-modules/application/application-grant/utils/build-application-grant-from-to-flat-entity-maps.util';
-import { findApplicationGrantFlatRoleTarget } from 'src/engine/core-modules/application/application-grant/utils/find-application-grant-flat-role-target.util';
-import { isApplicationGrantable } from 'src/engine/core-modules/application/application-grant/utils/is-application-grantable.util';
+  APPLICATION_GRANT_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
+  buildApplicationGrantRoleFromToFlatEntityMaps,
+} from 'src/engine/core-modules/application/application-grant-role/utils/build-application-grant-role-from-to-flat-entity-maps.util';
+import { findApplicationGrantRoleFlatRoleTarget } from 'src/engine/core-modules/application/application-grant-role/utils/find-application-grant-role-flat-role-target.util';
+import { canApplicationHaveGrantRole } from 'src/engine/core-modules/application/application-grant-role/utils/can-application-have-grant-role.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -18,11 +18,11 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 @RegisteredWorkspaceCommand('2.57.0', 1794155089946)
 @Command({
-  name: 'upgrade:2-57:backfill-application-grants',
+  name: 'upgrade:2-57:backfill-application-grant-roles',
   description:
     'Give twenty-standard and every installed application without a grant a copy of its requested role',
 })
-export class BackfillApplicationGrantsCommand extends ProvisionedWorkspaceCommandRunner {
+export class BackfillApplicationGrantRolesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -47,17 +47,17 @@ export class BackfillApplicationGrantsCommand extends ProvisionedWorkspaceComman
         'flatRoleTargetMaps',
       ]);
 
-    const flatApplicationsWithoutGrant = Object.values(flatApplicationMaps.byId)
+    const flatApplicationsWithoutGrantRole = Object.values(flatApplicationMaps.byId)
       .filter(isDefined)
       .filter(
         (flatApplication) =>
           !isDefined(flatApplication.deletedAt) &&
-          isApplicationGrantable({
+          canApplicationHaveGrantRole({
             flatApplication,
             workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
           }) &&
           !isDefined(
-            findApplicationGrantFlatRoleTarget({
+            findApplicationGrantRoleFlatRoleTarget({
               flatRoleTargetMaps,
               applicationUniversalIdentifier:
                 flatApplication.universalIdentifier,
@@ -67,7 +67,7 @@ export class BackfillApplicationGrantsCommand extends ProvisionedWorkspaceComman
 
     const failedApplicationUniversalIdentifiers: string[] = [];
 
-    for (const flatApplication of flatApplicationsWithoutGrant) {
+    for (const flatApplication of flatApplicationsWithoutGrantRole) {
       // Reloaded for each application so grant labels stay unique across the batch
       const {
         featureFlagsMap,
@@ -80,7 +80,7 @@ export class BackfillApplicationGrantsCommand extends ProvisionedWorkspaceComman
         flatRowLevelPermissionPredicateGroupMaps,
         ...otherDependencyFlatEntityMaps
       } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        ...APPLICATION_GRANT_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
+        ...APPLICATION_GRANT_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
         'flatRoleMaps',
         'flatObjectPermissionMaps',
         'flatFieldPermissionMaps',
@@ -132,10 +132,10 @@ export class BackfillApplicationGrantsCommand extends ProvisionedWorkspaceComman
               applicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
             },
-            fromToAllFlatEntityMaps: buildApplicationGrantFromToFlatEntityMaps({
+            fromToAllFlatEntityMaps: buildApplicationGrantRoleFromToFlatEntityMaps({
               targetFlatApplication: flatApplication,
               requestedFlatRole,
-              existingGrant: undefined,
+              existingGrantRole: undefined,
               workspaceCustomApplicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
               flatEntityMaps,

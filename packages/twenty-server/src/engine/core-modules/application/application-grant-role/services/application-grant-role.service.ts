@@ -3,11 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  APPLICATION_GRANT_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
-  buildApplicationGrantFromToFlatEntityMaps,
-} from 'src/engine/core-modules/application/application-grant/utils/build-application-grant-from-to-flat-entity-maps.util';
-import { findApplicationGrantFlatRoleTarget } from 'src/engine/core-modules/application/application-grant/utils/find-application-grant-flat-role-target.util';
-import { isApplicationGrantable } from 'src/engine/core-modules/application/application-grant/utils/is-application-grantable.util';
+  APPLICATION_GRANT_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
+  buildApplicationGrantRoleFromToFlatEntityMaps,
+} from 'src/engine/core-modules/application/application-grant-role/utils/build-application-grant-role-from-to-flat-entity-maps.util';
+import { findApplicationGrantRoleFlatRoleTarget } from 'src/engine/core-modules/application/application-grant-role/utils/find-application-grant-role-flat-role-target.util';
+import { canApplicationHaveGrantRole } from 'src/engine/core-modules/application/application-grant-role/utils/can-application-have-grant-role.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -16,12 +16,10 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// A grant is a non-editable copy of an application's requested role, owned by the
-// workspace custom application and assigned to the application through a role target.
-// See twentyhq/core-team-issues#3139.
+// A grant role copies an application's requested role, see twentyhq/core-team-issues#3139
 @Injectable()
-export class ApplicationGrantService {
-  private readonly logger = new Logger(ApplicationGrantService.name);
+export class ApplicationGrantRoleService {
+  private readonly logger = new Logger(ApplicationGrantRoleService.name);
 
   constructor(
     private readonly applicationService: ApplicationService,
@@ -29,16 +27,19 @@ export class ApplicationGrantService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
-  async syncGrant({
+  async upsertGrantRole({
     workspaceId,
     applicationId,
   }: {
     workspaceId: string;
     applicationId: string;
   }): Promise<void> {
-    const state = await this.loadGrantState({ workspaceId, applicationId });
+    const grantRoleSources = await this.findGrantRoleSources({
+      workspaceId,
+      applicationId,
+    });
 
-    if (!isDefined(state)) {
+    if (!isDefined(grantRoleSources)) {
       return;
     }
 
@@ -49,11 +50,11 @@ export class ApplicationGrantService {
       grantFlatRole,
       grantFlatRoleTarget,
       flatEntityMaps,
-    } = state;
+    } = grantRoleSources;
 
     if (!isDefined(requestedFlatRole)) {
       this.logger.log(
-        `Application ${flatApplication.universalIdentifier} has no default role in workspace ${workspaceId}, it gets no grant`,
+        `Application ${flatApplication.universalIdentifier} has no default role in workspace ${workspaceId}, it gets no grant role`,
       );
 
       return;
@@ -64,7 +65,7 @@ export class ApplicationGrantService {
       billingEntitlements,
       ...dependencyFlatEntityMaps
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      ...APPLICATION_GRANT_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
+      ...APPLICATION_GRANT_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
       'featureFlagsMap',
       'billingEntitlements',
     ]);
@@ -79,21 +80,22 @@ export class ApplicationGrantService {
             applicationUniversalIdentifier:
               workspaceCustomFlatApplication.universalIdentifier,
           },
-          fromToAllFlatEntityMaps: buildApplicationGrantFromToFlatEntityMaps({
-            targetFlatApplication: flatApplication,
-            requestedFlatRole,
-            existingGrant:
-              isDefined(grantFlatRole) && isDefined(grantFlatRoleTarget)
-                ? {
-                    flatRole: grantFlatRole,
-                    flatRoleTarget: grantFlatRoleTarget,
-                  }
-                : undefined,
-            workspaceCustomApplicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
-            flatEntityMaps,
-            now: new Date().toISOString(),
-          }),
+          fromToAllFlatEntityMaps:
+            buildApplicationGrantRoleFromToFlatEntityMaps({
+              targetFlatApplication: flatApplication,
+              requestedFlatRole,
+              existingGrantRole:
+                isDefined(grantFlatRole) && isDefined(grantFlatRoleTarget)
+                  ? {
+                      flatRole: grantFlatRole,
+                      flatRoleTarget: grantFlatRoleTarget,
+                    }
+                  : undefined,
+              workspaceCustomApplicationUniversalIdentifier:
+                workspaceCustomFlatApplication.universalIdentifier,
+              flatEntityMaps,
+              now: new Date().toISOString(),
+            }),
           // The builder mutates these maps, so it must not get the cache's own
           dependencyAllFlatEntityMaps: structuredClone(
             dependencyFlatEntityMaps,
@@ -105,23 +107,28 @@ export class ApplicationGrantService {
     if (result.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         result,
-        'Validation errors occurred while writing an application grant',
+        'Validation errors occurred while writing an application grant role',
       );
     }
   }
 
-  async deleteGrant({
+  async deleteGrantRole({
     workspaceId,
     applicationId,
   }: {
     workspaceId: string;
     applicationId: string;
   }): Promise<void> {
-    const state = await this.loadGrantState({ workspaceId, applicationId });
+    const grantRoleSources = await this.findGrantRoleSources({
+      workspaceId,
+      applicationId,
+    });
 
-    if (!isDefined(state) || !isDefined(state.grantFlatRole)) {
+    if (!isDefined(grantRoleSources?.grantFlatRole)) {
       return;
     }
+
+    const { grantFlatRole, workspaceCustomFlatApplication } = grantRoleSources;
 
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -129,12 +136,12 @@ export class ApplicationGrantService {
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
-            state.workspaceCustomFlatApplication.universalIdentifier,
+            workspaceCustomFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             role: {
               flatEntityToCreate: [],
               flatEntityToUpdate: [],
-              flatEntityToDelete: [state.grantFlatRole],
+              flatEntityToDelete: [grantFlatRole],
             },
           },
         },
@@ -143,12 +150,12 @@ export class ApplicationGrantService {
     if (result.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         result,
-        'Validation errors occurred while deleting an application grant',
+        'Validation errors occurred while deleting an application grant role',
       );
     }
   }
 
-  private async loadGrantState({
+  private async findGrantRoleSources({
     workspaceId,
     applicationId,
   }: {
@@ -179,7 +186,7 @@ export class ApplicationGrantService {
 
     if (
       !isDefined(flatApplication) ||
-      !isApplicationGrantable({
+      !canApplicationHaveGrantRole({
         flatApplication,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       })
@@ -187,7 +194,7 @@ export class ApplicationGrantService {
       return undefined;
     }
 
-    const grantFlatRoleTarget = findApplicationGrantFlatRoleTarget({
+    const grantFlatRoleTarget = findApplicationGrantRoleFlatRoleTarget({
       flatRoleTargetMaps: flatEntityMaps.flatRoleTargetMaps,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     });

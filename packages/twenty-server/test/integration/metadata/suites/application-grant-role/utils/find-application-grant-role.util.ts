@@ -11,7 +11,7 @@ type RoleRow = {
   canBeAssignedToApplications: boolean;
 };
 
-export type ApplicationGrant = {
+export type ApplicationGrantRole = {
   role: RoleRow;
   roleTarget: { id: string; applicationId: string };
 };
@@ -43,13 +43,13 @@ export const findApplicationIdByUniversalIdentifier = async ({
   return application?.id;
 };
 
-export const findApplicationGrant = async ({
+export const findApplicationGrantRole = async ({
   applicationId,
   workspaceId,
 }: {
   applicationId: string;
   workspaceId: string;
-}): Promise<ApplicationGrant | undefined> => {
+}): Promise<ApplicationGrantRole | undefined> => {
   const [row] = await globalThis.testDataSource.query(
     `SELECT "roleTarget".id AS "roleTargetId",
             "roleTarget"."applicationId" AS "roleTargetApplicationId",

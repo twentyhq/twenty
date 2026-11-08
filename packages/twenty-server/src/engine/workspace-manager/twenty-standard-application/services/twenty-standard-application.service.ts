@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationGrantService } from 'src/engine/core-modules/application/application-grant/services/application-grant.service';
+import { ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -32,7 +32,7 @@ export class TwentyStandardApplicationService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly applicationGrantService: ApplicationGrantService,
+    private readonly applicationGrantRoleService: ApplicationGrantRoleService,
   ) {}
 
   async synchronizeTwentyStandardApplicationOrThrow({
@@ -128,7 +128,7 @@ export class TwentyStandardApplicationService {
       });
     }
 
-    await this.applicationGrantService.syncGrant({
+    await this.applicationGrantRoleService.upsertGrantRole({
       workspaceId,
       applicationId: twentyStandardFlatApplication.id,
     });

@@ -5,11 +5,11 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import {
-  findApplicationGrant,
+  findApplicationGrantRole,
   findApplicationIdByUniversalIdentifier,
   findRolePermissionSnapshot,
   findWorkspaceCustomApplicationIdFromDatabase,
-} from 'test/integration/metadata/suites/application-grant/utils/find-application-grant.util';
+} from 'test/integration/metadata/suites/application-grant-role/utils/find-application-grant-role.util';
 import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -32,7 +32,7 @@ const findAdminRoleId = async (workspaceId: string): Promise<string> => {
   return adminRole.id;
 };
 
-const findGrantByApplicationUniversalIdentifier = async ({
+const findGrantRoleByApplicationUniversalIdentifier = async ({
   universalIdentifier,
   workspaceId,
 }: {
@@ -46,7 +46,10 @@ const findGrantByApplicationUniversalIdentifier = async ({
 
   expect(applicationId).toBeDefined();
 
-  return findApplicationGrant({ applicationId: applicationId!, workspaceId });
+  return findApplicationGrantRole({
+    applicationId: applicationId!,
+    workspaceId,
+  });
 };
 
 describe('Application grants of twenty-standard and of exempt applications', () => {
@@ -102,7 +105,7 @@ describe('Application grants of twenty-standard and of exempt applications', () 
     });
 
     it('gives twenty-standard a grant equal to Admin', async () => {
-      const grant = await findGrantByApplicationUniversalIdentifier({
+      const grant = await findGrantRoleByApplicationUniversalIdentifier({
         universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
         workspaceId: workspaceId!,
       });
@@ -120,7 +123,7 @@ describe('Application grants of twenty-standard and of exempt applications', () 
     });
 
     it('gives the workspace custom application no grant', async () => {
-      const grant = await findApplicationGrant({
+      const grant = await findApplicationGrantRole({
         applicationId: await findWorkspaceCustomApplicationIdFromDatabase(
           workspaceId!,
         ),
@@ -147,7 +150,7 @@ describe('Application grants of twenty-standard and of exempt applications', () 
     });
 
     it('gives no grant', async () => {
-      const grant = await findGrantByApplicationUniversalIdentifier({
+      const grant = await findGrantRoleByApplicationUniversalIdentifier({
         universalIdentifier:
           TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
         workspaceId: SEED_APPLE_WORKSPACE_ID,

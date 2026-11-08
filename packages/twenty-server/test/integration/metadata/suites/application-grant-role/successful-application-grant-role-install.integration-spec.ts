@@ -1,10 +1,10 @@
 import {
   findApplicationDefaultRoleId,
-  findApplicationGrant,
+  findApplicationGrantRole,
   findApplicationIdByUniversalIdentifier,
   findRolePermissionSnapshot,
   findWorkspaceCustomApplicationIdFromDatabase,
-} from 'test/integration/metadata/suites/application-grant/utils/find-application-grant.util';
+} from 'test/integration/metadata/suites/application-grant-role/utils/find-application-grant-role.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
@@ -73,13 +73,13 @@ const install = async (version: string) => {
   expect(errors).toBeUndefined();
 };
 
-const expectGrantToMatchRequestedRole = async () => {
+const expectGrantRoleToMatchRequestedRole = async () => {
   const applicationId = await findApplicationIdByUniversalIdentifier({
     universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceId: SEED_APPLE_WORKSPACE_ID,
   });
 
-  const grant = await findApplicationGrant({
+  const grant = await findApplicationGrantRole({
     applicationId: applicationId!,
     workspaceId: SEED_APPLE_WORKSPACE_ID,
   });
@@ -122,7 +122,7 @@ describe('Application grant on install and upgrade', () => {
     await install('1.0.0');
 
     const { grant: installedGrant, grantSnapshot: installedSnapshot } =
-      await expectGrantToMatchRequestedRole();
+      await expectGrantRoleToMatchRequestedRole();
 
     expect(installedSnapshot.switches.canUpdateAllObjectRecords).toBe(false);
     expect(installedSnapshot.objectPermissions).toHaveLength(1);
@@ -138,7 +138,7 @@ describe('Application grant on install and upgrade', () => {
     await install('2.0.0');
 
     const { grant: upgradedGrant, grantSnapshot: upgradedSnapshot } =
-      await expectGrantToMatchRequestedRole();
+      await expectGrantRoleToMatchRequestedRole();
 
     expect(upgradedGrant.role.id).toBe(installedGrant.role.id);
     expect(upgradedSnapshot.switches.canUpdateAllObjectRecords).toBe(true);

@@ -1,10 +1,10 @@
 import {
   findApplicationDefaultRoleId,
-  findApplicationGrant,
+  findApplicationGrantRole,
   findApplicationIdByUniversalIdentifier,
   findRolePermissionSnapshot,
   findWorkspaceCustomApplicationIdFromDatabase,
-} from 'test/integration/metadata/suites/application-grant/utils/find-application-grant.util';
+} from 'test/integration/metadata/suites/application-grant-role/utils/find-application-grant-role.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -13,8 +13,8 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 as uuidv4 } from 'uuid';
 
-import { type BackfillApplicationGrantsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794155089946-backfill-application-grants.command';
-import { type ApplicationGrantService } from 'src/engine/core-modules/application/application-grant/services/application-grant.service';
+import { type BackfillApplicationGrantRolesCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794155089946-backfill-application-grant-roles.command';
+import { type ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -24,7 +24,7 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
 const ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
 
 describe('2-57 workspace command - backfill application grants (integration)', () => {
-  let command: BackfillApplicationGrantsCommand;
+  let command: BackfillApplicationGrantRolesCommand;
   let applicationIds: string[];
 
   const runOnWorkspace = (options: { dryRun?: boolean } = {}) =>
@@ -36,10 +36,10 @@ describe('2-57 workspace command - backfill application grants (integration)', (
       dataSource: global.testDataSource,
     });
 
-  const findGrants = () =>
+  const findGrantRoles = () =>
     Promise.all(
       applicationIds.map((applicationId) =>
-        findApplicationGrant({
+        findApplicationGrantRole({
           applicationId,
           workspaceId: SEED_APPLE_WORKSPACE_ID,
         }),
@@ -47,8 +47,8 @@ describe('2-57 workspace command - backfill application grants (integration)', (
     );
 
   beforeAll(async () => {
-    command = getAppProviderByClassName<BackfillApplicationGrantsCommand>(
-      'BackfillApplicationGrantsCommand',
+    command = getAppProviderByClassName<BackfillApplicationGrantRolesCommand>(
+      'BackfillApplicationGrantRolesCommand',
     );
 
     await setupApplicationForSync({
@@ -98,13 +98,13 @@ describe('2-57 workspace command - backfill application grants (integration)', (
       ),
     );
 
-    const applicationGrantService =
-      getAppProviderByClassName<ApplicationGrantService>(
-        'ApplicationGrantService',
+    const applicationGrantRoleService =
+      getAppProviderByClassName<ApplicationGrantRoleService>(
+        'ApplicationGrantRoleService',
       );
 
     for (const applicationId of applicationIds) {
-      await applicationGrantService.deleteGrant({
+      await applicationGrantRoleService.deleteGrantRole({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         applicationId,
       });
@@ -122,13 +122,13 @@ describe('2-57 workspace command - backfill application grants (integration)', (
   it('writes nothing on a dry run', async () => {
     await runOnWorkspace({ dryRun: true });
 
-    expect(await findGrants()).toEqual([undefined, undefined]);
+    expect(await findGrantRoles()).toEqual([undefined, undefined]);
   });
 
   it('gives twenty-standard and the installed application a grant equal to their requested role', async () => {
     await runOnWorkspace();
 
-    const grants = await findGrants();
+    const grants = await findGrantRoles();
     const workspaceCustomApplicationId =
       await findWorkspaceCustomApplicationIdFromDatabase(
         SEED_APPLE_WORKSPACE_ID,
@@ -155,10 +155,10 @@ describe('2-57 workspace command - backfill application grants (integration)', (
   });
 
   it('leaves existing grants untouched on a second run', async () => {
-    const grantsBefore = await findGrants();
+    const grantsBefore = await findGrantRoles();
 
     await runOnWorkspace();
 
-    expect(await findGrants()).toEqual(grantsBefore);
+    expect(await findGrantRoles()).toEqual(grantsBefore);
   });
 });

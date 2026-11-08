@@ -1,11 +1,11 @@
 import { createUpsertObjectPermissionsOperation } from 'test/integration/graphql/utils/upsert-object-permission-operation-factory.util';
 import {
   findApplicationDefaultRoleId,
-  findApplicationGrant,
+  findApplicationGrantRole,
   findApplicationIdByUniversalIdentifier,
   findRolePermissionSnapshot,
   findWorkspaceCustomApplicationIdFromDatabase,
-} from 'test/integration/metadata/suites/application-grant/utils/find-application-grant.util';
+} from 'test/integration/metadata/suites/application-grant-role/utils/find-application-grant-role.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -114,7 +114,7 @@ const syncRequestedRole = async (requestedRole: RoleManifest) => {
   expect(errors).toBeUndefined();
 };
 
-const findSyncedApplicationGrant = async () => {
+const findUpsertedApplicationGrantRole = async () => {
   const applicationId = await findApplicationIdByUniversalIdentifier({
     universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -126,7 +126,7 @@ const findSyncedApplicationGrant = async () => {
 
   return {
     applicationId,
-    grant: await findApplicationGrant({
+    grant: await findApplicationGrantRole({
       applicationId,
       workspaceId: SEED_APPLE_WORKSPACE_ID,
     }),
@@ -152,7 +152,7 @@ describe('Application grant on dev sync', () => {
   it('creates a grant owned by the workspace custom application, equal to the requested role', async () => {
     await syncRequestedRole(INITIAL_REQUESTED_ROLE);
 
-    const { applicationId, grant } = await findSyncedApplicationGrant();
+    const { applicationId, grant } = await findUpsertedApplicationGrantRole();
     const workspaceCustomApplicationId =
       await findWorkspaceCustomApplicationIdFromDatabase(
         SEED_APPLE_WORKSPACE_ID,
@@ -186,11 +186,11 @@ describe('Application grant on dev sync', () => {
   it('rewrites the same grant when the requested role changes', async () => {
     await syncRequestedRole(INITIAL_REQUESTED_ROLE);
 
-    const { grant: initialGrant } = await findSyncedApplicationGrant();
+    const { grant: initialGrant } = await findUpsertedApplicationGrantRole();
 
     await syncRequestedRole(CHANGED_REQUESTED_ROLE);
 
-    const { applicationId, grant } = await findSyncedApplicationGrant();
+    const { applicationId, grant } = await findUpsertedApplicationGrantRole();
     const requestedRoleId = await findApplicationDefaultRoleId(applicationId);
 
     expect(grant?.role.id).toBe(initialGrant?.role.id);
@@ -209,7 +209,7 @@ describe('Application grant on dev sync', () => {
   it('removes the grant role, its target and its permissions on uninstall', async () => {
     await syncRequestedRole(INITIAL_REQUESTED_ROLE);
 
-    const { grant } = await findSyncedApplicationGrant();
+    const { grant } = await findUpsertedApplicationGrantRole();
 
     const { errors } = await uninstallApplication({
       universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -242,7 +242,7 @@ describe('Application grant on dev sync', () => {
     beforeEach(async () => {
       await syncRequestedRole(INITIAL_REQUESTED_ROLE);
 
-      const { grant } = await findSyncedApplicationGrant();
+      const { grant } = await findUpsertedApplicationGrantRole();
 
       grantRoleId = grant!.role.id;
     }, 60000);
