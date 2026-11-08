@@ -23,7 +23,7 @@ const buildObjectPermission = (
 });
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
-  'workspace-custom-universal-identifier';
+  '0c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f';
 
 const OWNING_APPLICATION_UNIVERSAL_IDENTIFIER =
   '5f1d3a2b-7c4e-4d6f-8a9b-1c2d3e4f5a6b';
@@ -60,6 +60,8 @@ const OWNING_APPLICATION_GRANT_ROLE_UNIVERSAL_IDENTIFIER =
   getApplicationGrantRoleUniversalIdentifier({
     grantedApplicationUniversalIdentifier:
       OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+    workspaceCustomApplicationUniversalIdentifier:
+      WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   });
 
 const editableRoleTakingGrantIdentifier = {
@@ -160,6 +162,8 @@ describe('validateObjectPermissionGrantsNoDisabledAction', () => {
           flatRole: {
             universalIdentifier: getApplicationGrantRoleUniversalIdentifier({
               grantedApplicationUniversalIdentifier,
+              workspaceCustomApplicationUniversalIdentifier:
+                WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
             }),
             applicationUniversalIdentifier:
               WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,

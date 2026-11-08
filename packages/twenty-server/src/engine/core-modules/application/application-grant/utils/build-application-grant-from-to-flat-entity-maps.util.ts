@@ -200,6 +200,7 @@ const buildDesiredGrantUniversalFlatEntityMaps = ({
         universalIdentifier: getApplicationGrantRoleUniversalIdentifier({
           grantedApplicationUniversalIdentifier:
             targetFlatApplication.universalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
         }),
         label: computeApplicationGrantRoleLabel({
           applicationName: targetFlatApplication.name,

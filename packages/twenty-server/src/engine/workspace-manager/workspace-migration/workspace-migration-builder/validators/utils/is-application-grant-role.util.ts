@@ -25,4 +25,5 @@ export const isApplicationGrantRole = ({
   flatRole.universalIdentifier ===
     getApplicationGrantRoleUniversalIdentifier({
       grantedApplicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
     });

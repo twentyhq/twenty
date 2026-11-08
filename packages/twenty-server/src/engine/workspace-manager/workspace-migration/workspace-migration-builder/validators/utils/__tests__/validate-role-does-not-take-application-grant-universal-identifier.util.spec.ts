@@ -35,6 +35,8 @@ const grantFlatRole = {
   universalIdentifier: getApplicationGrantRoleUniversalIdentifier({
     grantedApplicationUniversalIdentifier:
       INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
+    workspaceCustomApplicationUniversalIdentifier:
+      WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   }),
 };
 

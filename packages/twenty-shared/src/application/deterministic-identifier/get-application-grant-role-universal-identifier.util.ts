@@ -2,11 +2,14 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 
 export const getApplicationGrantRoleUniversalIdentifier = ({
   grantedApplicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   grantedApplicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'role',
     value: `${grantedApplicationUniversalIdentifier}:APPLICATION_GRANT`,
-    applicationUniversalIdentifier: grantedApplicationUniversalIdentifier,
+    applicationUniversalIdentifier:
+      workspaceCustomApplicationUniversalIdentifier,
   });

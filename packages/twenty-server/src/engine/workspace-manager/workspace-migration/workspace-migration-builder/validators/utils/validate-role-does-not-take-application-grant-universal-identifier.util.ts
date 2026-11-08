@@ -36,6 +36,7 @@ export const validateRoleDoesNotTakeApplicationGrantUniversalIdentifier = ({
       getApplicationGrantRoleUniversalIdentifier({
         grantedApplicationUniversalIdentifier:
           flatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
       }) === flatRole.universalIdentifier,
   );
 
