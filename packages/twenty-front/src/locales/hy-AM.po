@@ -6227,10 +6227,10 @@ msgstr "Ընտրեք, թե ինչ կլինի, երբ սեղմեք էլ. փոստ
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Ընտրեք, թե Twenty-ն ինչին կարող է հասանելիություն ունենալ՝ ձեզ աջակցելու և արտադրանքը բարելավելու համար։"
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Ընտրեք, թե երբ է {AGENT_CHAT_ASSISTANT_NAME}-ը մասնակցում ձեր աշխատատարածքի զրույցներին"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr ""
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Երբեք"
 msgid "Never expires"
 msgstr "Ժամկետը երբեք չի ավարտվում"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "«Երբեք»-ը {AGENT_CHAT_ASSISTANT_NAME}-ին չի ներգրավում։ «Միայն հիշատակելիս»-ը խնդրում է {AGENT_CHAT_ASSISTANT_NAME}-ին պատասխանել, երբ այն նշվում է։ «Ավտոմատ»-ը թույլ է տալիս {AGENT_CHAT_ASSISTANT_NAME}-ին որոշել, թե երբ պատասխանել։ Միայն ձեր և {AGENT_CHAT_ASSISTANT_NAME}-ի միջև զրույցները միշտ պատասխան են ստանում։"
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr ""
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
