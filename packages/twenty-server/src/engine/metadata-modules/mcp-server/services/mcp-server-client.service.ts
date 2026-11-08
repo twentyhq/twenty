@@ -14,6 +14,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { buildSecureFetchLike } from 'src/engine/core-modules/secure-http-client/utils/build-secure-fetch-like.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -47,6 +48,7 @@ export class McpServerClientService {
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
+    private readonly cacheLockService: CacheLockService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
@@ -311,49 +313,51 @@ export class McpServerClientService {
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
   }) {
-    try {
-      return await this.connectedAccountRefreshTokensService.resolveTokens(
+    if (
+      await this.connectedAccountRefreshTokensService.isAccessTokenStillValid(
+        connectedAccount,
+      )
+    ) {
+      return this.connectedAccountRefreshTokensService.resolveTokens(
         connectedAccount,
         workspaceId,
       );
-    } catch (error) {
-      if (
-        !(error instanceof ConnectedAccountRefreshAccessTokenException) ||
-        error.code !==
-          ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN
-      ) {
-        throw error;
-      }
+    }
 
+    // Refresh tokens rotate: concurrent refreshes are serialized and re-read the row so
+    // the later caller reuses the fresh tokens instead of burning the consumed one.
+    return this.cacheLockService.withLock(async () => {
       const latestConnectedAccount =
-        await this.connectedAccountRepository.findOneBy({
+        (await this.connectedAccountRepository.findOneBy({
           id: connectedAccount.id,
           workspaceId,
-        });
+        })) ?? connectedAccount;
 
-      // A concurrent call may have used the same rotating refresh token first; its tokens are good
-      if (
-        isDefined(latestConnectedAccount) &&
-        !isDefined(latestConnectedAccount.authFailedAt) &&
-        latestConnectedAccount.lastCredentialsRefreshedAt?.getTime() !==
-          connectedAccount.lastCredentialsRefreshedAt?.getTime()
-      ) {
-        return this.connectedAccountRefreshTokensService.resolveTokens(
+      try {
+        return await this.connectedAccountRefreshTokensService.resolveTokens(
           latestConnectedAccount,
           workspaceId,
         );
+      } catch (error) {
+        if (
+          !(error instanceof ConnectedAccountRefreshAccessTokenException) ||
+          error.code !==
+            ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN
+        ) {
+          throw error;
+        }
+
+        await this.markConnectedAccountAuthFailed({
+          connectedAccountId: connectedAccount.id,
+          workspaceId,
+          reason: error.message,
+        });
+
+        throw new McpServerException(
+          'The connected account for this MCP server was signed out. Sign in again to use it.',
+          McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
+        );
       }
-
-      await this.markConnectedAccountAuthFailed({
-        connectedAccountId: connectedAccount.id,
-        workspaceId,
-        reason: error.message,
-      });
-
-      throw new McpServerException(
-        'The connected account for this MCP server was signed out. Sign in again to use it.',
-        McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
-      );
-    }
+    }, `mcp-server-connected-account-refresh:${workspaceId}:${connectedAccount.id}`);
   }
 }
