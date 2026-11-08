@@ -362,6 +362,25 @@ describe('RestApiClient', () => {
       expect(url).toBe('https://api.twenty.test/rest/companies');
       expect(fetchMock).not.toHaveBeenCalled();
     });
+
+    it('should keep resolved urls on the public api url when an internal api url is provided', () => {
+      (globalThis as Record<string, unknown>).process = {
+        env: {
+          TWENTY_API_URL: 'https://api.twenty.test',
+          TWENTY_INTERNAL_API_URL: 'http://twenty-server:3000',
+          TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
+        },
+      };
+
+      const client = new RestApiClient({ fetch: vi.fn() });
+
+      expect(client.resolveUrl('/s/documents/view')).toBe(
+        'https://api.twenty.test/s/documents/view',
+      );
+      expect(client.resolveUrl('/rest/companies')).toBe(
+        'https://api.twenty.test/rest/companies',
+      );
+    });
   });
 
   it('should refresh the access token once on a 401 and retry the request', async () => {

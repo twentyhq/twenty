@@ -53,6 +53,9 @@ export class RestApiClientError extends Error {
 
 type ProcessEnvironment = Record<string, string | undefined>;
 
+// Resolved links are handed to browsers and third parties, which can't reach the internal URL.
+type BaseUrlUsage = 'request' | 'link';
+
 const getProcessEnvironment = (): ProcessEnvironment => {
   const processObject = (
     globalThis as { process?: { env?: ProcessEnvironment } }
@@ -131,7 +134,7 @@ export class RestApiClient {
     path: string,
     requestOptions?: Pick<RestApiRequestOptions, 'query'>,
   ): string {
-    const target = this.resolveTarget(path);
+    const target = this.resolveTarget(path, 'link');
 
     return buildRequestUrl(target.baseUrl, target.path, requestOptions?.query);
   }
@@ -164,9 +167,13 @@ export class RestApiClient {
     return this.execute<TResponse>('DELETE', path, undefined, options);
   }
 
-  private resolveBaseUrl(): string {
+  private resolveBaseUrl(usage: BaseUrlUsage): string {
+    const processEnvironment = getProcessEnvironment();
     const baseUrl =
-      this.baseUrl ?? resolveApiUrlFromEnvironment(getProcessEnvironment());
+      this.baseUrl ??
+      (usage === 'request'
+        ? resolveApiUrlFromEnvironment(processEnvironment)
+        : processEnvironment[DEFAULT_API_URL_NAME]);
 
     if (!isDefined(baseUrl) || baseUrl.trim().length === 0) {
       throw new RestApiClientError(
@@ -188,14 +195,18 @@ export class RestApiClient {
     return functionsBaseUrl.trim().replace(/\/+$/, '');
   }
 
-  private resolveTarget(path: string): { baseUrl: string; path: string } {
+  private resolveTarget(
+    path: string,
+    usage: BaseUrlUsage,
+  ): { baseUrl: string; path: string } {
     if (isDefined(this.baseUrl) || !isAppRoutePath(path)) {
-      return { baseUrl: this.resolveBaseUrl(), path };
+      return { baseUrl: this.resolveBaseUrl(usage), path };
     }
 
     // TWENTY_FUNCTIONS_URL is a complete base URL (isolated domains serve at the root, self-host bakes /s in).
     return {
-      baseUrl: this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`,
+      baseUrl:
+        this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl(usage)}/s`,
       path: stripAppRoutePrefix(path),
     };
   }
@@ -357,7 +368,7 @@ export class RestApiClient {
     body: unknown,
     requestOptions?: RestApiRequestOptions,
   ): Promise<TResponse> {
-    const target = this.resolveTarget(path);
+    const target = this.resolveTarget(path, 'request');
     const url = buildRequestUrl(
       target.baseUrl,
       target.path,
