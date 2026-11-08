@@ -132,6 +132,9 @@ export class FlatFieldPermissionValidatorService {
           flatFieldPermissionToValidate.objectMetadataUniversalIdentifier &&
         fp.fieldMetadataUniversalIdentifier ===
           flatFieldPermissionToValidate.fieldMetadataUniversalIdentifier &&
+        (fp.rowLevelPermissionPredicateGroupUniversalIdentifier ?? null) ===
+          (flatFieldPermissionToValidate.rowLevelPermissionPredicateGroupUniversalIdentifier ??
+            null) &&
         fp.universalIdentifier !==
           flatFieldPermissionToValidate.universalIdentifier,
     );

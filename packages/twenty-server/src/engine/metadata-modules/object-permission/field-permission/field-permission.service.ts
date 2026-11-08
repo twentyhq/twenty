@@ -22,6 +22,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -31,12 +32,27 @@ import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-r
 type DesiredFieldPermission = {
   objectMetadataId: string;
   fieldMetadataId: string;
+  rowLevelPermissionPredicateGroupId: string | null;
   canReadFieldValue?: boolean | null;
   canUpdateFieldValue?: boolean | null;
 };
 
-const keyFrom = (objectMetadataId: string, fieldMetadataId: string) =>
-  `${objectMetadataId}:${fieldMetadataId}`;
+const keyFrom = ({
+  objectMetadataId,
+  fieldMetadataId,
+  rowLevelPermissionPredicateGroupId,
+}: {
+  objectMetadataId: string;
+  fieldMetadataId: string;
+  rowLevelPermissionPredicateGroupId?: string | null;
+}) =>
+  `${objectMetadataId}:${fieldMetadataId}:${rowLevelPermissionPredicateGroupId ?? ''}`;
+
+const isFlatFieldMetadataOneToManyRelation = (
+  flatFieldMetadata: FlatFieldMetadata,
+): boolean =>
+  (flatFieldMetadata.settings as { relationType?: string } | undefined)
+    ?.relationType === RelationType.ONE_TO_MANY;
 
 const toUniversalFlatFieldPermissionToDelete = (
   fieldPermission: FlatFieldPermission,
@@ -49,6 +65,8 @@ const toUniversalFlatFieldPermissionToDelete = (
     fieldPermission.objectMetadataUniversalIdentifier,
   fieldMetadataUniversalIdentifier:
     fieldPermission.fieldMetadataUniversalIdentifier,
+  rowLevelPermissionPredicateGroupUniversalIdentifier:
+    fieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
   canReadFieldValue: fieldPermission.canReadFieldValue ?? undefined,
   canUpdateFieldValue: fieldPermission.canUpdateFieldValue ?? undefined,
   createdAt: fieldPermission.createdAt,
@@ -80,6 +98,7 @@ export class FieldPermissionService {
               'flatRoleMaps',
               'flatObjectMetadataMaps',
               'flatFieldMetadataMaps',
+              'flatRowLevelPermissionPredicateGroupMaps',
             ],
           },
         ),
@@ -92,6 +111,8 @@ export class FieldPermissionService {
       flatMapsForRoleObjectField.flatObjectMetadataMaps;
     const flatFieldMetadataMaps =
       flatMapsForRoleObjectField.flatFieldMetadataMaps;
+    const flatRowLevelPermissionPredicateGroupMaps =
+      flatMapsForRoleObjectField.flatRowLevelPermissionPredicateGroupMaps;
     const flatFieldPermissionMapsResolved: FlatFieldPermissionMaps = (
       flatFieldPermissionMapsResult as unknown as {
         flatFieldPermissionMaps: FlatFieldPermissionMaps;
@@ -126,6 +147,7 @@ export class FieldPermissionService {
         fieldPermission,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatRowLevelPermissionPredicateGroupMaps,
         rolesPermissions,
         flatRole,
       });
@@ -140,18 +162,14 @@ export class FieldPermissionService {
         continue;
       }
 
-      desiredMap.set(
-        keyFrom(
-          fieldPermission.objectMetadataId,
-          fieldPermission.fieldMetadataId,
-        ),
-        {
-          objectMetadataId: fieldPermission.objectMetadataId,
-          fieldMetadataId: fieldPermission.fieldMetadataId,
-          canReadFieldValue: fieldPermission.canReadFieldValue,
-          canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
-        },
-      );
+      desiredMap.set(keyFrom(fieldPermission), {
+        objectMetadataId: fieldPermission.objectMetadataId,
+        fieldMetadataId: fieldPermission.fieldMetadataId,
+        rowLevelPermissionPredicateGroupId:
+          fieldPermission.rowLevelPermissionPredicateGroupId ?? null,
+        canReadFieldValue: fieldPermission.canReadFieldValue,
+        canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
+      });
     }
 
     const mirroredFieldKeys = this.addRelatedFieldPermissionsToDesired({
@@ -161,9 +179,7 @@ export class FieldPermissionService {
     });
 
     const inputFieldKeys = new Set(
-      input.fieldPermissions.map((fp) =>
-        keyFrom(fp.objectMetadataId, fp.fieldMetadataId),
-      ),
+      input.fieldPermissions.map((fp) => keyFrom(fp)),
     );
 
     const { workspaceCustomFlatApplication } =
@@ -178,16 +194,11 @@ export class FieldPermissionService {
     const flatEntityToDelete: UniversalFlatFieldPermission[] = [];
 
     const currentByKey = new Map(
-      currentFieldPermissionsForRole.map((fp) => [
-        keyFrom(fp.objectMetadataId, fp.fieldMetadataId),
-        fp,
-      ]),
+      currentFieldPermissionsForRole.map((fp) => [keyFrom(fp), fp]),
     );
 
     for (const [key, desired] of desiredMap) {
-      const current = currentByKey.get(
-        keyFrom(desired.objectMetadataId, desired.fieldMetadataId),
-      );
+      const current = currentByKey.get(key);
 
       if (!isDefined(current)) {
         const canReadFieldValue = desired.canReadFieldValue ?? null;
@@ -202,6 +213,8 @@ export class FieldPermissionService {
             fieldPermissionInput: {
               objectMetadataId: desired.objectMetadataId,
               fieldMetadataId: desired.fieldMetadataId,
+              rowLevelPermissionPredicateGroupId:
+                desired.rowLevelPermissionPredicateGroupId,
               canReadFieldValue,
               canUpdateFieldValue,
             },
@@ -210,6 +223,7 @@ export class FieldPermissionService {
             flatRoleMaps,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
+            flatRowLevelPermissionPredicateGroupMaps,
           }),
         );
       } else {
@@ -254,6 +268,8 @@ export class FieldPermissionService {
               current.objectMetadataUniversalIdentifier,
             fieldMetadataUniversalIdentifier:
               current.fieldMetadataUniversalIdentifier,
+            rowLevelPermissionPredicateGroupUniversalIdentifier:
+              current.rowLevelPermissionPredicateGroupUniversalIdentifier,
             canReadFieldValue: effectiveCanRead,
             canUpdateFieldValue: effectiveCanUpdate,
             createdAt: current.createdAt,
@@ -264,7 +280,7 @@ export class FieldPermissionService {
     }
 
     for (const current of currentFieldPermissionsForRole) {
-      const key = keyFrom(current.objectMetadataId, current.fieldMetadataId);
+      const key = keyFrom(current);
 
       if (inputFieldKeys.has(key) && !desiredMap.has(key)) {
         flatEntityToDelete.push(
@@ -345,6 +361,7 @@ export class FieldPermissionService {
     fieldPermission,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    flatRowLevelPermissionPredicateGroupMaps,
     rolesPermissions,
     flatRole,
   }: {
@@ -352,12 +369,12 @@ export class FieldPermissionService {
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
     rolesPermissions: Record<string, RoleRecordsPermissions> | undefined;
     flatRole: { id: string } | undefined;
   }) {
     const duplicateFieldPermissions = allFieldPermissions.filter(
-      (permission) =>
-        permission.fieldMetadataId === fieldPermission.fieldMetadataId,
+      (permission) => keyFrom(permission) === keyFrom(fieldPermission),
     );
 
     if (duplicateFieldPermissions.length > 1) {
@@ -421,6 +438,16 @@ export class FieldPermissionService {
       );
     }
 
+    if (isDefined(fieldPermission.rowLevelPermissionPredicateGroupId)) {
+      this.validateRuleFieldPermission({
+        rowLevelPermissionPredicateGroupId:
+          fieldPermission.rowLevelPermissionPredicateGroupId,
+        flatFieldMetadata,
+        flatRowLevelPermissionPredicateGroupMaps,
+        roleId: flatRole?.id,
+      });
+    }
+
     const rolePermissionOnObject = isDefined(flatRole)
       ? rolesPermissions?.[flatRole.id]?.objects[
           fieldPermission.objectMetadataId
@@ -438,6 +465,55 @@ export class FieldPermissionService {
     }
   }
 
+  private validateRuleFieldPermission({
+    rowLevelPermissionPredicateGroupId,
+    flatFieldMetadata,
+    flatRowLevelPermissionPredicateGroupMaps,
+    roleId,
+  }: {
+    rowLevelPermissionPredicateGroupId: string;
+    flatFieldMetadata: FlatFieldMetadata;
+    flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
+    roleId: string | undefined;
+  }) {
+    const flatRowLevelPermissionPredicateGroup =
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: rowLevelPermissionPredicateGroupId,
+        flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+      });
+
+    if (
+      !isDefined(flatRowLevelPermissionPredicateGroup) ||
+      isDefined(flatRowLevelPermissionPredicateGroup.deletedAt) ||
+      isDefined(
+        flatRowLevelPermissionPredicateGroup.parentRowLevelPermissionPredicateGroupId,
+      ) ||
+      flatRowLevelPermissionPredicateGroup.roleId !== roleId ||
+      flatRowLevelPermissionPredicateGroup.objectMetadataId !==
+        flatFieldMetadata.objectMetadataId
+    ) {
+      throw new UserInputError(
+        'Field permissions can only target a root row level permission group of the same role and object',
+        {
+          userFriendlyMessage: msg`This row level permission rule does not belong to this role and object.`,
+        },
+      );
+    }
+
+    // A masked value reads as null, which a required GraphQL field or a list relation cannot return
+    if (
+      flatFieldMetadata.isNullable === false ||
+      isFlatFieldMetadataOneToManyRelation(flatFieldMetadata)
+    ) {
+      throw new UserInputError(
+        `Field ${flatFieldMetadata.name} cannot be restricted on a row level permission rule`,
+        {
+          userFriendlyMessage: msg`Required fields and list relations cannot be restricted on a row level permission rule.`,
+        },
+      );
+    }
+  }
+
   private addRelatedFieldPermissionsToDesired({
     desiredMap,
     inputFieldPermissions,
@@ -447,14 +523,15 @@ export class FieldPermissionService {
     inputFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Set<string> {
-    const inputKeys = new Set(
-      inputFieldPermissions.map((fp) =>
-        keyFrom(fp.objectMetadataId, fp.fieldMetadataId),
-      ),
-    );
+    const inputKeys = new Set(inputFieldPermissions.map((fp) => keyFrom(fp)));
     const mirroredKeys = new Set<string>();
 
     for (const fieldPermission of inputFieldPermissions) {
+      // A rule filters one object, so it has no meaning on the other side of a relation
+      if (isDefined(fieldPermission.rowLevelPermissionPredicateGroupId)) {
+        continue;
+      }
+
       const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: fieldPermission.fieldMetadataId,
         flatEntityMaps: flatFieldMetadataMaps,
@@ -486,7 +563,10 @@ export class FieldPermissionService {
         continue;
       }
 
-      const targetKey = keyFrom(targetObjectId, targetFieldId);
+      const targetKey = keyFrom({
+        objectMetadataId: targetObjectId,
+        fieldMetadataId: targetFieldId,
+      });
       if (inputKeys.has(targetKey)) {
         const targetInInput = inputFieldPermissions.find(
           (fp) =>
@@ -519,6 +599,7 @@ export class FieldPermissionService {
       desiredMap.set(targetKey, {
         objectMetadataId: targetObjectId,
         fieldMetadataId: targetFieldId,
+        rowLevelPermissionPredicateGroupId: null,
         canReadFieldValue: sourceIsCleared
           ? null
           : fieldPermission.canReadFieldValue,

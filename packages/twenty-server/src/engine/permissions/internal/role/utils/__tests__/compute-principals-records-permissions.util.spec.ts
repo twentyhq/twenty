@@ -716,6 +716,8 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
           canDestroyRecords: true,
           predicates: [USER_PREDICATE],
           predicateGroups: [],
+          unreadableFields: [],
+          uneditableFields: [],
         },
       },
     }),

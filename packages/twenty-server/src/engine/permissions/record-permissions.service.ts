@@ -13,6 +13,9 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type RuleFieldMask } from 'src/engine/permissions/internal/masking/types/rule-field-mask.type';
+import { buildRuleFieldDenials } from 'src/engine/permissions/internal/masking/utils/build-rule-field-denials.util';
+import { buildRuleFieldMasks } from 'src/engine/permissions/internal/masking/utils/build-rule-field-masks.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -412,6 +415,40 @@ export class RecordPermissionsService {
       }),
       callerAccessGroupCompactIds:
         await this.findCallerAccessGroupCompactIds(objectAccessRequest),
+    });
+  }
+
+  async findRuleFieldMasks({
+    principals,
+    objectMetadataId,
+    tableAlias,
+  }: ObjectQuestion & { tableAlias: string }): Promise<RuleFieldMask[]> {
+    if (!isDefined(principals)) {
+      return [];
+    }
+
+    const metadataMaps =
+      await this.permissionsMetadataMapsService.loadForPrincipals({
+        principals,
+      });
+    const flatObjectMetadata = this.findFlatObjectMetadata({
+      metadataMaps,
+      objectMetadataId,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      return [];
+    }
+
+    return buildRuleFieldMasks({
+      ruleFieldDenials: buildRuleFieldDenials({
+        principals,
+        metadataMaps,
+        flatObjectMetadata,
+      }),
+      flatObjectMetadata,
+      metadataMaps,
+      tableAlias,
     });
   }
 

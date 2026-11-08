@@ -38,6 +38,7 @@ const buildState = (
   findOptions: { select: { id: true } },
   extraSelectClauses: [],
   columnSelections: [],
+  columnMaskConditions: {},
   joinClauses: [],
   whereClauses: [],
   rowAccessConditions: [],
@@ -58,6 +59,33 @@ const OR_CHAIN_WHERE_CLAUSES: SelectStatementState['whereClauses'] = [
 const ROW_ACCESS_CONDITION = '"person"."ownerId" = :ownerId';
 
 describe('buildSelectStatement', () => {
+  it('should project a masked column as null when its condition holds', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnMaskConditions: {
+          person: {
+            id: ['"person"."ownerId" = :ownerId', '"person"."x" = :x'],
+          },
+        },
+      }),
+    );
+
+    expect(sql).toContain(
+      'CASE WHEN ("person"."ownerId" = :ownerId) OR ("person"."x" = :x) THEN NULL ELSE "person"."id" END AS',
+    );
+  });
+
+  it('should not mask columns in a grouped query', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnMaskConditions: { person: { id: ['"person"."x" = :x'] } },
+        groupByExpressions: ['"person"."id"'],
+      }),
+    );
+
+    expect(sql).not.toContain('CASE WHEN');
+  });
+
   it('should keep row access conditions outside a user OR chain', () => {
     const sql = buildSelectStatement(
       buildState({

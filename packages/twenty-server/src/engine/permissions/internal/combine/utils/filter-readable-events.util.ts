@@ -4,6 +4,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/internal/masking/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/internal/masking/utils/omit-restricted-fields-from-event.util';
+import { type RuleFieldDenial } from 'src/engine/permissions/internal/masking/types/rule-field-denial.type';
+import { omitRuleDeniedFieldsFromEvent } from 'src/engine/permissions/internal/masking/utils/omit-rule-denied-fields-from-event.util';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
@@ -12,12 +14,14 @@ export const filterReadableEvents = <TEvent extends ObjectRecordEvent>({
   readableRecordIds,
   objectMetadata,
   recordsPermissions,
+  ruleFieldDenials,
   metadataMaps,
 }: {
   events: TEvent[];
   readableRecordIds: Set<string>;
-  objectMetadata: Pick<FlatObjectMetadata, 'id' | 'nameSingular'>;
+  objectMetadata: FlatObjectMetadata;
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
+  ruleFieldDenials: RuleFieldDenial[];
   metadataMaps: Pick<
     PermissionsMetadataMaps,
     'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
@@ -31,7 +35,12 @@ export const filterReadableEvents = <TEvent extends ObjectRecordEvent>({
     .filter((event) => readableRecordIds.has(event.recordId))
     .map((event) =>
       omitRestrictedFieldsFromEvent({
-        event,
+        event: omitRuleDeniedFieldsFromEvent({
+          event,
+          ruleFieldDenials,
+          flatObjectMetadata: objectMetadata,
+          flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        }),
         objectMetadata,
         recordsPermissions,
         recordReadRestrictions,

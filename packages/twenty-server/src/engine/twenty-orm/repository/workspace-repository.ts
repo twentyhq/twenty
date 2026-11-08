@@ -1795,6 +1795,45 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<void> {
     await this.applyRowLevelPermissionPredicates(queryBuilder);
     await this.validateQueryIsPermitted(queryBuilder);
+    await this.applyRuleFieldMasks(queryBuilder);
+  }
+
+  private async applyRuleFieldMasks(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ): Promise<void> {
+    if (this.options.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    const aliases = [
+      { alias: queryBuilder.alias, tableShape: this.options.tableShape },
+      ...queryBuilder.getJoinAliases().map(({ name }) => ({
+        alias: name,
+        tableShape: queryBuilder.getJoinedTableShape(name),
+      })),
+    ];
+
+    for (const { alias, tableShape } of aliases) {
+      if (
+        !isDefined(tableShape) ||
+        !queryBuilder.markColumnMasksApplied(alias)
+      ) {
+        continue;
+      }
+
+      const ruleFieldMasks =
+        await this.options.internalContext.recordPermissions.findRuleFieldMasks(
+          {
+            principals: this.resolvePermissionsPrincipalsOrThrow(),
+            objectMetadataId: tableShape.objectMetadataId,
+            tableAlias: alias,
+          },
+        );
+
+      for (const { columnNames, condition } of ruleFieldMasks) {
+        queryBuilder.addColumnMask({ alias, columnNames, condition });
+      }
+    }
   }
 
   private async validateQueryIsPermitted(

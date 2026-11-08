@@ -46,9 +46,11 @@ import {
   type JoinClause,
   type OrderByClause,
   type SelectClause,
+  type ColumnMaskConditions,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
+import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -99,6 +101,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private includeDeleted = false;
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
+  private readonly aliasesWithColumnMasksApplied = new Set<string>();
+  private readonly columnMaskConditions: ColumnMaskConditions = {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -691,6 +695,35 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return Number(rows[0]?.count ?? 0);
   }
 
+  markColumnMasksApplied(alias: string): boolean {
+    if (this.aliasesWithColumnMasksApplied.has(alias)) {
+      return false;
+    }
+
+    this.aliasesWithColumnMasksApplied.add(alias);
+
+    return true;
+  }
+
+  addColumnMask({
+    alias,
+    columnNames,
+    condition,
+  }: {
+    alias: string;
+    columnNames: string[];
+    condition: SqlCondition;
+  }): this {
+    const columnMaskConditionsOfAlias = (this.columnMaskConditions[alias] ??=
+      {});
+
+    for (const columnName of columnNames) {
+      (columnMaskConditionsOfAlias[columnName] ??= []).push(condition.sql);
+    }
+
+    return this.setParameters(condition.parameters);
+  }
+
   addJoinCondition(alias: string, condition: string): this {
     const joinClause = this.joinClauses.find(
       (candidate) => candidate.alias === alias,
@@ -1271,6 +1304,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
+      columnMaskConditions: this.columnMaskConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,

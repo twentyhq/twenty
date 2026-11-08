@@ -70,6 +70,8 @@ const PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS: CurrentUserWorksp
       canDestroyRecords: false,
       predicates: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE],
       predicateGroups: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP],
+      unreadableFields: [],
+      uneditableFields: [],
     },
   };
 

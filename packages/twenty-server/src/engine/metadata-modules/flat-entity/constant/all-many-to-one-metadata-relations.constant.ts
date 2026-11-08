@@ -402,6 +402,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
     },
+    rowLevelPermissionPredicateGroup: {
+      metadataName: 'rowLevelPermissionPredicateGroup',
+      foreignKey: 'rowLevelPermissionPredicateGroupId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey:
+        'rowLevelPermissionPredicateGroupUniversalIdentifier',
+    },
   },
   pageLayout: {
     workspace: null,

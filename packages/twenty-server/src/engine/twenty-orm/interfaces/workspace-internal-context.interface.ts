@@ -34,6 +34,7 @@ export interface WorkspaceInternalContext {
     | 'assertUpdatesKeepRecordAccessOrThrow'
     | 'recomputeRecordAccessGroupIdsOfRecords'
     | 'isRecomputingRecordAccessGroupIdsOnWrite'
+    | 'findRuleFieldMasks'
   >;
   recordStock: Pick<
     WorkspaceRecordStockService,
