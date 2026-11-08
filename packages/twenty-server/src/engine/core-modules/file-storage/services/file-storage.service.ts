@@ -136,8 +136,8 @@ export class FileStorageService {
       .select('COUNT(*)::bigint', 'quantity')
       .addSelect('COALESCE(SUM(file.size), 0)::bigint', 'bytes')
       .where('file.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('file.status != :remoteStatus', {
-        remoteStatus: FILE_STATUS.REMOTE,
+      .andWhere('file.status IN (:...storedFileStatuses)', {
+        storedFileStatuses: [FILE_STATUS.PENDING, FILE_STATUS.UPLOADED],
       })
       .withDeleted();
 
