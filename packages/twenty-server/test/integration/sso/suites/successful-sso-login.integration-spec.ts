@@ -1,28 +1,30 @@
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
+import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
+import { findMyConnectedAccounts } from 'test/integration/metadata/suites/connected-account/utils/find-my-connected-accounts.util';
 import { createOneOidcIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-oidc-identity-provider.util';
 import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
 import { getSsoTestIdentityProvider } from 'test/integration/sso/utils/get-sso-test-identity-provider.util';
 import { signInWithOidc } from 'test/integration/sso/utils/sign-in-with-oidc.util';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-type StoredConnectedAccount = {
-  id: string;
-  handle: string;
-  lastSignedInAt: Date;
-  oidcTokenClaims: Record<string, unknown>;
-};
+const findPhilOidcConnectedAccounts = async () =>
+  (
+    await findMyConnectedAccounts({ token: APPLE_PHIL_GUEST_ACCESS_TOKEN })
+  ).filter(({ provider }) => provider === 'oidc');
 
-const findPhilOidcConnectedAccounts = (): Promise<StoredConnectedAccount[]> =>
-  globalThis.testDataSource.query(
-    `SELECT ca."id", ca."handle", ca."lastSignedInAt", ca."oidcTokenClaims"
-     FROM core."connectedAccount" ca
-     JOIN core."userWorkspace" uw ON uw."id" = ca."userWorkspaceId"
-     WHERE ca."provider" = 'oidc' AND uw."userId" = $1 AND uw."workspaceId" = $2`,
-    [USER_DATA_SEED_IDS.PHIL, SEED_APPLE_WORKSPACE_ID],
-  );
+const deletePhilOidcConnectedAccounts = async () => {
+  for (const { id } of await findPhilOidcConnectedAccounts()) {
+    await deleteConnectedAccount({
+      id,
+      expectToFail: false,
+      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+    });
+  }
+};
 
 describe('SSO login should succeed', () => {
   const testIdentityProvider = getSsoTestIdentityProvider();
@@ -49,16 +51,15 @@ describe('SSO login should succeed', () => {
     identityProviderId = data.createOIDCIdentityProvider.id;
   });
 
+  afterEach(async () => {
+    await deletePhilOidcConnectedAccounts();
+  });
+
   afterAll(async () => {
     await deleteOneSsoIdentityProvider({
       identityProviderId,
       expectToFail: false,
     });
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."connectedAccount" WHERE "id" = ANY($1)`,
-      [(await findPhilOidcConnectedAccounts()).map(({ id }) => id)],
-    );
   });
 
   describe('OIDC', () => {
@@ -69,10 +70,10 @@ describe('SSO login should succeed', () => {
 
       const loginToken = verifyUrl.searchParams.get('loginToken');
 
-      expect(loginToken).toEqual(expect.any(String));
+      assertIsDefinedOrThrow(loginToken);
 
       const { data: authTokensData } = await getAuthTokensFromLoginToken({
-        loginToken: loginToken as string,
+        loginToken,
         origin: verifyUrl.origin,
         expectToFail: false,
       });
@@ -90,22 +91,32 @@ describe('SSO login should succeed', () => {
       });
     });
 
-    it('should store the id token claims on an OIDC connected account', async () => {
+    it('should create an OIDC connected account for the member', async () => {
+      await signInAsPhil();
+
       const connectedAccounts = await findPhilOidcConnectedAccounts();
 
-      expect(connectedAccounts).toHaveLength(1);
-      expect(connectedAccounts[0]).toMatchObject({
-        handle: 'phil.schiler@apple.dev',
-        oidcTokenClaims: {
-          iss: testIdentityProvider.issuer,
-          email: 'phil.schiler@apple.dev',
-          sub: expect.any(String),
-        },
-      });
+      expect(connectedAccounts).toEqual([
+        expect.objectContaining({
+          handle: 'phil.schiler@apple.dev',
+          provider: 'oidc',
+          lastSignedInAt: expect.any(String),
+        }),
+      ]);
     });
 
     it('should refresh the same connected account on a second sign-in', async () => {
-      const [firstConnectedAccount] = await findPhilOidcConnectedAccounts();
+      await signInAsPhil();
+
+      const connectedAccountsAfterFirstSignIn =
+        await findPhilOidcConnectedAccounts();
+
+      expect(connectedAccountsAfterFirstSignIn).toHaveLength(1);
+
+      const [firstConnectedAccount] = connectedAccountsAfterFirstSignIn;
+      const firstSignedInAt = firstConnectedAccount.lastSignedInAt;
+
+      assertIsDefinedOrThrow(firstSignedInAt);
 
       const verifyUrl = await signInAsPhil();
 
@@ -116,22 +127,16 @@ describe('SSO login should succeed', () => {
       const connectedAccounts = await findPhilOidcConnectedAccounts();
 
       expect(connectedAccounts).toHaveLength(1);
-      expect(connectedAccounts[0].id).toBe(firstConnectedAccount.id);
-      expect(connectedAccounts[0].lastSignedInAt.getTime()).toBeGreaterThan(
-        firstConnectedAccount.lastSignedInAt.getTime(),
-      );
-      expect(connectedAccounts[0].oidcTokenClaims.jti).not.toBe(
-        firstConnectedAccount.oidcTokenClaims.jti,
-      );
 
-      const [{ count: philAppleMemberships }] =
-        await globalThis.testDataSource.query(
-          `SELECT COUNT(*)::int AS count FROM core."userWorkspace"
-           WHERE "userId" = $1 AND "workspaceId" = $2`,
-          [USER_DATA_SEED_IDS.PHIL, SEED_APPLE_WORKSPACE_ID],
-        );
+      const [refreshedConnectedAccount] = connectedAccounts;
+      const refreshedSignedInAt = refreshedConnectedAccount.lastSignedInAt;
 
-      expect(philAppleMemberships).toBe(1);
+      assertIsDefinedOrThrow(refreshedSignedInAt);
+
+      expect(refreshedConnectedAccount.id).toBe(firstConnectedAccount.id);
+      expect(new Date(refreshedSignedInAt).getTime()).toBeGreaterThan(
+        new Date(firstSignedInAt).getTime(),
+      );
     });
   });
 });

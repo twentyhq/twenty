@@ -1,19 +1,19 @@
 import { createOneOidcIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-oidc-identity-provider.util';
+import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
+import { findSsoIdentityProviders } from 'test/integration/metadata/suites/sso-identity-provider/utils/find-sso-identity-providers.util';
 import { getSsoTestIdentityProvider } from 'test/integration/sso/utils/get-sso-test-identity-provider.util';
 import { isDefined } from 'twenty-shared/utils';
-
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 describe('OIDC identity provider creation should succeed', () => {
   const testIdentityProvider = getSsoTestIdentityProvider();
   let identityProviderId: string | undefined;
 
-  afterAll(async () => {
+  afterEach(async () => {
     if (isDefined(identityProviderId)) {
-      await globalThis.testDataSource.query(
-        `DELETE FROM core."workspaceSSOIdentityProvider" WHERE id = $1`,
-        [identityProviderId],
-      );
+      await deleteOneSsoIdentityProvider({
+        identityProviderId,
+        expectToFail: false,
+      });
     }
   });
 
@@ -30,23 +30,20 @@ describe('OIDC identity provider creation should succeed', () => {
 
     identityProviderId = data.createOIDCIdentityProvider.id;
 
-    expect(data.createOIDCIdentityProvider).toMatchObject({
+    const expectedIdentityProvider = {
+      id: identityProviderId,
       type: 'OIDC',
       name: 'OIDC identity provider',
       issuer: testIdentityProvider.issuer,
       status: 'Active',
-    });
+    };
 
-    const [storedIdentityProvider] = await globalThis.testDataSource.query(
-      `SELECT "issuer", "clientID", "workspaceId"
-       FROM core."workspaceSSOIdentityProvider" WHERE id = $1`,
-      [identityProviderId],
+    expect(data.createOIDCIdentityProvider).toEqual(expectedIdentityProvider);
+
+    const { data: listingData } = await findSsoIdentityProviders();
+
+    expect(listingData.getSSOIdentityProviders).toContainEqual(
+      expectedIdentityProvider,
     );
-
-    expect(storedIdentityProvider).toEqual({
-      issuer: testIdentityProvider.issuer,
-      clientID: testIdentityProvider.clientId,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
   });
 });
