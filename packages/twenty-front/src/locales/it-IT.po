@@ -12778,7 +12778,7 @@ msgstr "Impossibile revocare il codice di recupero."
 #. js-lingui-id: umTjkJ
 #: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
 msgid "Failed to save assistant settings. Try again."
-msgstr ""
+msgstr "Impossibile salvare le impostazioni dell'assistente. Riprova."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
