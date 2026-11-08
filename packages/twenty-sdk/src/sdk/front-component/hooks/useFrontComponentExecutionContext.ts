@@ -1,4 +1,5 @@
-import { useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { fastDeepEqual } from 'twenty-shared/utils';
 import {
   getFrontComponentExecutionContext,
   subscribeToFrontComponentExecutionContext,
@@ -6,19 +7,36 @@ import {
 } from '../context/frontComponentContext';
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
 
-const subscribe = (listener: () => void) => {
-  subscribeToFrontComponentExecutionContext(listener);
-
-  return () => unsubscribeFromFrontComponentExecutionContext(listener);
-};
-
-export const useFrontComponentExecutionContext = <TSelected>(
-  selector: (context: FrontComponentExecutionContext) => TSelected,
-): TSelected =>
-  selector(
-    useSyncExternalStore(
-      subscribe,
-      getFrontComponentExecutionContext,
-      getFrontComponentExecutionContext,
-    ),
+export const useFrontComponentExecutionContext = <T>(
+  selector: (context: FrontComponentExecutionContext) => T,
+): T => {
+  const [currentSelectedValue, setCurrentSelectedValue] = useState(() =>
+    selector(getFrontComponentExecutionContext()),
   );
+
+  const previousSelectedValueRef = useRef(currentSelectedValue);
+
+  useEffect(() => {
+    const onContextChange = () => {
+      const newSelectedValue = selector(getFrontComponentExecutionContext());
+
+      const hasSelectedValueChanged = !fastDeepEqual(
+        newSelectedValue,
+        previousSelectedValueRef.current,
+      );
+
+      if (hasSelectedValueChanged) {
+        previousSelectedValueRef.current = newSelectedValue;
+        setCurrentSelectedValue(newSelectedValue);
+      }
+    };
+
+    subscribeToFrontComponentExecutionContext(onContextChange);
+
+    onContextChange();
+
+    return () => unsubscribeFromFrontComponentExecutionContext(onContextChange);
+  }, [selector]);
+
+  return currentSelectedValue;
+};
