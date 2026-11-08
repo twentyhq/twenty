@@ -18,7 +18,7 @@ import {
   AI_SDK_OPENAI,
   AI_SDK_OPENAI_COMPATIBLE,
   AI_SDK_XAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 
 type AnthropicEffort = NonNullable<AnthropicLanguageModelOptions['effort']>;
 type BedrockEffort = NonNullable<

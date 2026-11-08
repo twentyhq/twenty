@@ -10,7 +10,7 @@ import {
   AI_SDK_OPENAI_COMPATIBLE,
   AI_SDK_TYPESAFE_AI,
   AI_SDK_XAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import { type NativeModelTools } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tools.type';
 
 export const NATIVE_MODEL_TOOLS_BY_SDK_PACKAGE = {
