@@ -30,6 +30,9 @@ jobs:
         packages/twenty-client-sdk/**
         packages/twenty-emails/**
         packages/twenty-shared/**
+        .github/actions/spawn-twenty-server/**
+        .github/actions/test-twenty-app/**
+        .github/workflows/ci-server.yaml
 
   upgrade-changed-files-check:
     if: github.event_name != 'merge_group'
@@ -328,6 +331,10 @@ jobs:
           api-key: ${{ steps.twenty.outputs.api-key }}
           app-path: ${{ matrix.app.path }}
           mode: installation-only
+          install-monorepo-dependencies: 'false'
+      - name: Dump server and worker logs on failure
+        if: failure()
+        run: tail -n 150 /tmp/twenty-server.log /tmp/twenty-worker.log || true
 
   ci-server-status-check:
     if: always() && !cancelled()
