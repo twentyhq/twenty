@@ -11,6 +11,8 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
 describe('isRecordMatchingFilter', () => {
@@ -545,4 +547,21 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(expected);
     },
   );
+});
+
+describe('isRecordMatchingFilter with an empty filter', () => {
+  it('should match every record', () => {
+    expect(
+      isRecordMatchingFilter({
+        record: { id: 'record-id' },
+        filter: {},
+        flatObjectMetadata: getFlatObjectMetadataMock({
+          id: 'person',
+          universalIdentifier: 'person',
+        }),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        shouldIgnoreSoftDeleteDefaultFilter: true,
+      }),
+    ).toBe(true);
+  });
 });
