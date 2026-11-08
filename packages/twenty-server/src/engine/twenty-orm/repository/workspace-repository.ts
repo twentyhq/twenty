@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  FeatureFlagKey,
   type ObjectRecord,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
@@ -736,7 +735,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (validationRules.length === 0) {
-      return this.isRecordAccessGroupsEnabled()
+      return this.options.internalContext.recordPermissions.isRecomputingRecordAccessGroupIdsOnWrite(
+        { featureFlagsMap: this.options.internalContext.featureFlagsMap },
+      )
         ? this.runAtomically((repository) => write(repository))
         : write(this);
     }
@@ -1723,23 +1724,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  private isRecordAccessGroupsEnabled(): boolean {
-    return (
-      this.options.internalContext.featureFlagsMap[
-        FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED
-      ] === true
-    );
-  }
-
   private async recomputeRecordAccessGroupIds(
     recordIds: string[],
   ): Promise<void> {
-    if (!this.isRecordAccessGroupsEnabled()) {
-      return;
-    }
-
     await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIds(
       {
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
         workspaceId: this.options.internalContext.workspaceId,
         objectMetadataId: this.options.flatObjectMetadata.id,
         recordIds,

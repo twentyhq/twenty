@@ -3,10 +3,10 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  type FeatureFlagKey,
   type ObjectRecordsOperationType,
   type RecordShareAccessLevel,
   type RestrictedFieldPermissions,
-  type RestrictedFieldsPermissions,
   type ObjectRecord,
 } from 'twenty-shared/types';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
@@ -16,6 +16,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
 import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
 import { isListingThroughRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-listing-through-record-access-groups.util';
 import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
@@ -94,17 +95,31 @@ export class RecordPermissionsService {
     private readonly accessGroupService: AccessGroupService,
   ) {}
 
+  isRecomputingRecordAccessGroupIdsOnWrite({
+    featureFlagsMap,
+  }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+  }): boolean {
+    return areRecordAccessGroupsEnabled({ featureFlagsMap });
+  }
+
   async recomputeRecordAccessGroupIds({
+    featureFlagsMap,
     workspaceId,
     objectMetadataId,
     recordIds,
     transactionScope,
   }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     workspaceId: string;
     objectMetadataId: string;
     recordIds: string[];
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
+    if (!areRecordAccessGroupsEnabled({ featureFlagsMap })) {
+      return;
+    }
+
     await this.recordAccessGroupService.recomputeRecordAccessGroupIdsOfRecords({
       workspaceId,
       objectMetadataId,

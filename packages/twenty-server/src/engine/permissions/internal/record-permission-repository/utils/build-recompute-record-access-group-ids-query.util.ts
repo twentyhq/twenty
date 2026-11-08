@@ -12,7 +12,6 @@ import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// Selects the last recomputed record id, so batches can continue after it
 export const buildRecomputeRecordAccessGroupIdsQuery = ({
   workspaceId,
   flatObjectMetadata,

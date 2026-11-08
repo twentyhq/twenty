@@ -33,6 +33,7 @@ export interface WorkspaceInternalContext {
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
     | 'recomputeRecordAccessGroupIds'
+    | 'isRecomputingRecordAccessGroupIdsOnWrite'
   >;
   recordStock: Pick<
     WorkspaceRecordStockService,
