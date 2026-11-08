@@ -83,6 +83,7 @@ export class AccessGroupService {
           .filter((objectMetadataId) =>
             isObjectUsingRecordAccessGroups({
               rolesPermissions: workspaceCache.rolesPermissions,
+              flatObjectMetadataMaps: workspaceCache.flatObjectMetadataMaps,
               objectMetadataId,
             }),
           ),

@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
@@ -16,7 +16,6 @@ import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/rec
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
-import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const RECOMPUTE_BATCH_SIZE = 1_000;
@@ -36,17 +35,22 @@ export class RecordAccessGroupService {
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
-    const objectUsingRecordAccessGroups =
-      await this.findObjectUsingRecordAccessGroups({
-        workspaceId,
-        objectMetadataId,
-      });
+    const metadataMaps = await this.findMetadataMaps(workspaceId);
 
-    if (!isDefined(objectUsingRecordAccessGroups)) {
+    if (
+      !isObjectUsingRecordAccessGroups({
+        rolesPermissions: metadataMaps.rolesPermissions,
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+        objectMetadataId,
+      })
+    ) {
       return;
     }
 
-    const { flatObjectMetadata, metadataMaps } = objectUsingRecordAccessGroups;
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+    });
 
     // The sync queues this job before writing, so groups are read once its writes are done
     const accessGroups = await this.cacheLockService.withLock(
@@ -95,17 +99,22 @@ export class RecordAccessGroupService {
       return;
     }
 
-    const objectUsingRecordAccessGroups =
-      await this.findObjectUsingRecordAccessGroups({
-        workspaceId,
-        objectMetadataId,
-      });
+    const metadataMaps = await this.findMetadataMaps(workspaceId);
 
-    if (!isDefined(objectUsingRecordAccessGroups)) {
+    if (
+      !isObjectUsingRecordAccessGroups({
+        rolesPermissions: metadataMaps.rolesPermissions,
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+        objectMetadataId,
+      })
+    ) {
       return;
     }
 
-    const { flatObjectMetadata, metadataMaps } = objectUsingRecordAccessGroups;
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+    });
 
     const accessGroups =
       await this.accessGroupRepository.findObjectAccessGroups({
@@ -129,39 +138,13 @@ export class RecordAccessGroupService {
     );
   }
 
-  private async findObjectUsingRecordAccessGroups({
-    workspaceId,
-    objectMetadataId,
-  }: {
-    workspaceId: string;
-    objectMetadataId: string;
-  }) {
-    const metadataMaps = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatRowLevelPermissionPredicateGroupMaps',
-        'rolesPermissions',
-      ],
-    );
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: objectMetadataId,
-      flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-    });
-
-    if (
-      !isDefined(flatObjectMetadata) ||
-      isPermissionStorageObject(flatObjectMetadata) ||
-      !isObjectUsingRecordAccessGroups({
-        rolesPermissions: metadataMaps.rolesPermissions,
-        objectMetadataId,
-      })
-    ) {
-      return null;
-    }
-
-    return { flatObjectMetadata, metadataMaps };
+  private findMetadataMaps(workspaceId: string) {
+    return this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
+      'rolesPermissions',
+    ]);
   }
 }
