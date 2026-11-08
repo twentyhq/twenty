@@ -10185,7 +10185,7 @@ msgstr "ID možnosti je povinné"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr ""
+msgstr "ID možnosti musí být UUID verze 4 nebo novější psané malými písmeny"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts

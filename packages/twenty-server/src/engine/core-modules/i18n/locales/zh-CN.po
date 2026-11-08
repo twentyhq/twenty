@@ -10185,7 +10185,7 @@ msgstr "选项 ID 是必需的"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr ""
+msgstr "选项 ID 必须是版本 4 或更高版本的小写 UUID"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
