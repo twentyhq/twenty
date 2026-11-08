@@ -1,3 +1,4 @@
+import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { randomUUID } from 'crypto';
 
 import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
@@ -8,7 +9,6 @@ import {
   findApplicationGrantRole,
   findApplicationIdByUniversalIdentifier,
   findRolePermissionSnapshot,
-  findWorkspaceCustomApplicationIdFromDatabase,
 } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-grant-role.util';
 import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
@@ -35,13 +35,15 @@ const findAdminRoleId = async (workspaceId: string): Promise<string> => {
 const findGrantRoleByApplicationUniversalIdentifier = async ({
   universalIdentifier,
   workspaceId,
+  token,
 }: {
   universalIdentifier: string;
   workspaceId: string;
+  token?: string;
 }) => {
   const applicationId = await findApplicationIdByUniversalIdentifier({
     universalIdentifier,
-    workspaceId,
+    token,
   });
 
   expect(applicationId).toBeDefined();
@@ -55,6 +57,7 @@ const findGrantRoleByApplicationUniversalIdentifier = async ({
 describe('Application grants of twenty-standard and of exempt applications', () => {
   describe('in a new workspace', () => {
     let workspaceId: string | undefined;
+    let workspaceAccessToken: string | undefined;
 
     beforeAll(async () => {
       jest.useRealTimers();
@@ -88,8 +91,11 @@ describe('Application grants of twenty-standard and of exempt applications', () 
         expectToFail: false,
       });
 
+      workspaceAccessToken =
+        authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
+
       await activateWorkspace({
-        accessToken: authTokensData.tokens.accessOrWorkspaceAgnosticToken.token,
+        accessToken: workspaceAccessToken,
         expectToFail: false,
       });
     });
@@ -108,12 +114,12 @@ describe('Application grants of twenty-standard and of exempt applications', () 
       const grant = await findGrantRoleByApplicationUniversalIdentifier({
         universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
         workspaceId: workspaceId!,
+        token: workspaceAccessToken,
       });
 
       expect(grant?.role).toMatchObject({
-        applicationId: await findWorkspaceCustomApplicationIdFromDatabase(
-          workspaceId!,
-        ),
+        applicationId:
+          await findWorkspaceCustomApplicationId(workspaceAccessToken),
         isEditable: false,
         canBeAssignedToApplications: true,
       });
@@ -124,9 +130,8 @@ describe('Application grants of twenty-standard and of exempt applications', () 
 
     it('gives the workspace custom application no grant', async () => {
       const grant = await findApplicationGrantRole({
-        applicationId: await findWorkspaceCustomApplicationIdFromDatabase(
-          workspaceId!,
-        ),
+        applicationId:
+          await findWorkspaceCustomApplicationId(workspaceAccessToken),
         workspaceId: workspaceId!,
       });
 

@@ -1,10 +1,10 @@
+import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { createUpsertObjectPermissionsOperation } from 'test/integration/graphql/utils/upsert-object-permission-operation-factory.util';
 import {
   findApplicationDefaultRoleId,
   findApplicationGrantRole,
   findApplicationIdByUniversalIdentifier,
   findRolePermissionSnapshot,
-  findWorkspaceCustomApplicationIdFromDatabase,
 } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-grant-role.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -117,7 +117,6 @@ const syncRequestedRole = async (requestedRole: RoleManifest) => {
 const findUpsertedApplicationGrantRole = async () => {
   const applicationId = await findApplicationIdByUniversalIdentifier({
     universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
   });
 
   if (applicationId === undefined) {
@@ -154,10 +153,10 @@ describe('Application grant on dev sync', () => {
 
     const { applicationId, grant } = await findUpsertedApplicationGrantRole();
     const workspaceCustomApplicationId =
-      await findWorkspaceCustomApplicationIdFromDatabase(
-        SEED_APPLE_WORKSPACE_ID,
-      );
-    const requestedRoleId = await findApplicationDefaultRoleId(applicationId);
+      await findWorkspaceCustomApplicationId();
+    const requestedRoleId = await findApplicationDefaultRoleId({
+      applicationId: applicationId,
+    });
 
     expect(grant).toBeDefined();
     expect(grant?.role).toMatchObject({
@@ -191,7 +190,9 @@ describe('Application grant on dev sync', () => {
     await syncRequestedRole(CHANGED_REQUESTED_ROLE);
 
     const { applicationId, grant } = await findUpsertedApplicationGrantRole();
-    const requestedRoleId = await findApplicationDefaultRoleId(applicationId);
+    const requestedRoleId = await findApplicationDefaultRoleId({
+      applicationId: applicationId,
+    });
 
     expect(grant?.role.id).toBe(initialGrant?.role.id);
     expect(grant?.roleTarget.id).toBe(initialGrant?.roleTarget.id);

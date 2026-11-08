@@ -1,9 +1,9 @@
+import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import {
   findApplicationDefaultRoleId,
   findApplicationGrantRole,
   findApplicationIdByUniversalIdentifier,
   findRolePermissionSnapshot,
-  findWorkspaceCustomApplicationIdFromDatabase,
 } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-grant-role.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -93,7 +93,6 @@ describe('2-57 workspace command - backfill application grants (integration)', (
         async (universalIdentifier) =>
           (await findApplicationIdByUniversalIdentifier({
             universalIdentifier,
-            workspaceId: SEED_APPLE_WORKSPACE_ID,
           }))!,
       ),
     );
@@ -130,9 +129,7 @@ describe('2-57 workspace command - backfill application grants (integration)', (
 
     const grants = await findGrantRoles();
     const workspaceCustomApplicationId =
-      await findWorkspaceCustomApplicationIdFromDatabase(
-        SEED_APPLE_WORKSPACE_ID,
-      );
+      await findWorkspaceCustomApplicationId();
 
     for (const [index, grant] of grants.entries()) {
       expect(grant?.role).toMatchObject({
@@ -148,7 +145,9 @@ describe('2-57 workspace command - backfill application grants (integration)', (
       );
       expect(await findRolePermissionSnapshot(grant!.role.id)).toEqual(
         await findRolePermissionSnapshot(
-          await findApplicationDefaultRoleId(applicationIds[index]),
+          await findApplicationDefaultRoleId({
+            applicationId: applicationIds[index],
+          }),
         ),
       );
     }

@@ -1,9 +1,9 @@
+import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import {
   findApplicationDefaultRoleId,
   findApplicationGrantRole,
   findApplicationIdByUniversalIdentifier,
   findRolePermissionSnapshot,
-  findWorkspaceCustomApplicationIdFromDatabase,
 } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-grant-role.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -76,7 +76,6 @@ const install = async (version: string) => {
 const expectGrantRoleToMatchRequestedRole = async () => {
   const applicationId = await findApplicationIdByUniversalIdentifier({
     universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
   });
 
   const grant = await findApplicationGrantRole({
@@ -84,8 +83,7 @@ const expectGrantRoleToMatchRequestedRole = async () => {
     workspaceId: SEED_APPLE_WORKSPACE_ID,
   });
 
-  const workspaceCustomApplicationId =
-    await findWorkspaceCustomApplicationIdFromDatabase(SEED_APPLE_WORKSPACE_ID);
+  const workspaceCustomApplicationId = await findWorkspaceCustomApplicationId();
 
   expect(grant?.role.applicationId).toBe(workspaceCustomApplicationId);
   expect(grant?.roleTarget.applicationId).toBe(workspaceCustomApplicationId);
@@ -94,7 +92,7 @@ const expectGrantRoleToMatchRequestedRole = async () => {
 
   expect(grantSnapshot).toEqual(
     await findRolePermissionSnapshot(
-      await findApplicationDefaultRoleId(applicationId!),
+      await findApplicationDefaultRoleId({ applicationId: applicationId! }),
     ),
   );
 

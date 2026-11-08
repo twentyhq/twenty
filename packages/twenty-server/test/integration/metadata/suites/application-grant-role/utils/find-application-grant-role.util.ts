@@ -1,3 +1,4 @@
+import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { isDefined } from 'twenty-shared/utils';
 
 type RoleRow = {
@@ -16,31 +17,20 @@ export type ApplicationGrantRole = {
   roleTarget: { id: string; applicationId: string };
 };
 
-export const findWorkspaceCustomApplicationIdFromDatabase = async (
-  workspaceId: string,
-): Promise<string> => {
-  const [workspace] = await globalThis.testDataSource.query(
-    `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
-    [workspaceId],
-  );
-
-  return workspace.workspaceCustomApplicationId;
-};
-
 export const findApplicationIdByUniversalIdentifier = async ({
   universalIdentifier,
-  workspaceId,
+  token,
 }: {
   universalIdentifier: string;
-  workspaceId: string;
+  token?: string;
 }): Promise<string | undefined> => {
-  const [application] = await globalThis.testDataSource.query(
-    `SELECT id FROM core."application"
-     WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
-    [universalIdentifier, workspaceId],
-  );
+  const { data } = await findOneApplication({
+    input: { universalIdentifier },
+    expectToFail: false,
+    token,
+  });
 
-  return application?.id;
+  return data?.findOneApplication?.id;
 };
 
 export const findApplicationGrantRole = async ({
@@ -75,15 +65,27 @@ export const findApplicationGrantRole = async ({
   };
 };
 
-export const findApplicationDefaultRoleId = async (
-  applicationId: string,
-): Promise<string> => {
-  const [application] = await globalThis.testDataSource.query(
-    `SELECT "defaultRoleId" FROM core."application" WHERE id = $1`,
-    [applicationId],
-  );
+export const findApplicationDefaultRoleId = async ({
+  applicationId,
+  token,
+}: {
+  applicationId: string;
+  token?: string;
+}): Promise<string> => {
+  const { data } = await findOneApplication({
+    input: { id: applicationId },
+    gqlFields: 'id defaultRoleId',
+    expectToFail: false,
+    token,
+  });
 
-  return application.defaultRoleId;
+  const defaultRoleId = data?.findOneApplication?.defaultRoleId;
+
+  if (!isDefined(defaultRoleId)) {
+    throw new Error(`Application ${applicationId} has no default role`);
+  }
+
+  return defaultRoleId;
 };
 
 const sortByKey = <TRow extends Record<string, unknown>>(rows: TRow[]) =>
