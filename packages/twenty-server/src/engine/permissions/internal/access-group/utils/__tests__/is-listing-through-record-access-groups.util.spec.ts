@@ -105,4 +105,32 @@ describe('isListingThroughRecordAccessGroups', () => {
       ),
     ).toBe(false);
   });
+
+  it('should keep the rule when an application role also has a rule on the object', () => {
+    const request = buildRequest({ objectRecordsPermissions: withRule });
+
+    expect(
+      isListingThroughRecordAccessGroups({
+        ...request,
+        principals: {
+          ...request.principals,
+          applicationPrincipal: {
+            type: 'application',
+            roleId: 'application-role-id',
+            applicationId: 'application-id',
+          },
+        },
+        metadataMaps: {
+          ...request.metadataMaps,
+          rolesPermissions: {
+            ...request.metadataMaps.rolesPermissions,
+            'application-role-id': {
+              ...NO_ROLE_RECORDS_PERMISSIONS,
+              objects: { [flatObjectMetadata.id]: withRule },
+            },
+          },
+        },
+      }),
+    ).toBe(false);
+  });
 });
