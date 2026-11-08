@@ -45,13 +45,10 @@ export class PieChartDataInput {
   @ValidateIf(
     ({
       dashboardFilterValues,
-      dashboardFilterTimeZone,
-    }: Pick<
-      PieChartDataInput,
-      'dashboardFilterValues' | 'dashboardFilterTimeZone'
-    >) =>
-      isDefined(dashboardFilterValues) || isDefined(dashboardFilterTimeZone),
+      viewerTimeZone,
+    }: Pick<PieChartDataInput, 'dashboardFilterValues' | 'viewerTimeZone'>) =>
+      isDefined(dashboardFilterValues) || isDefined(viewerTimeZone),
   )
   @IsTimeZone()
-  dashboardFilterTimeZone?: string | null;
+  viewerTimeZone?: string | null;
 }

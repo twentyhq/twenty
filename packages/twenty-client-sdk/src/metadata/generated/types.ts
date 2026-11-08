@@ -2105,14 +2105,14 @@ export default {
             "configuration": [
                 336
             ],
-            "dashboardFilterTimeZone": [
-                1
-            ],
             "dashboardFilterValues": [
                 219
             ],
             "objectMetadataId": [
                 556
+            ],
+            "viewerTimeZone": [
+                1
             ],
             "__typename": [
                 1
@@ -6149,14 +6149,14 @@ export default {
             "configuration": [
                 336
             ],
-            "dashboardFilterTimeZone": [
-                1
-            ],
             "dashboardFilterValues": [
                 219
             ],
             "objectMetadataId": [
                 556
+            ],
+            "viewerTimeZone": [
+                1
             ],
             "__typename": [
                 1
@@ -10923,14 +10923,14 @@ export default {
             "configuration": [
                 336
             ],
-            "dashboardFilterTimeZone": [
-                1
-            ],
             "dashboardFilterValues": [
                 219
             ],
             "objectMetadataId": [
                 556
+            ],
+            "viewerTimeZone": [
+                1
             ],
             "__typename": [
                 1
