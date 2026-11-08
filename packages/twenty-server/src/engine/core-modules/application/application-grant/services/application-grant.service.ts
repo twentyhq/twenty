@@ -224,7 +224,6 @@ export class ApplicationGrantService {
           isSystemBuild: true,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          // The database cascades the role's target and permissions
           allFlatEntityOperationByMetadataName: {
             role: {
               flatEntityToCreate: [],
