@@ -11,7 +11,6 @@ import {
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
-import { type RecordAccessGroupObject } from 'src/engine/permissions/internal/access-group/types/record-access-group-object.type';
 import { buildRecordAccessGroupConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-conditions.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -37,14 +36,17 @@ export class RecordAccessGroupService {
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
-    const recordAccessGroupObject = await this.findRecordAccessGroupObject({
-      workspaceId,
-      objectMetadataId,
-    });
+    const objectUsingRecordAccessGroups =
+      await this.findObjectUsingRecordAccessGroups({
+        workspaceId,
+        objectMetadataId,
+      });
 
-    if (!isDefined(recordAccessGroupObject)) {
+    if (!isDefined(objectUsingRecordAccessGroups)) {
       return;
     }
+
+    const { flatObjectMetadata, metadataMaps } = objectUsingRecordAccessGroups;
 
     // The sync queues this job before writing, so groups are read once its writes are done
     const accessGroups = await this.cacheLockService.withLock(
@@ -57,7 +59,8 @@ export class RecordAccessGroupService {
       ACCESS_GROUP_SYNC_LOCK_OPTIONS,
     );
     const recordAccessGroupConditions = buildRecordAccessGroupConditions({
-      ...recordAccessGroupObject,
+      flatObjectMetadata,
+      metadataMaps,
       accessGroups,
     });
 
@@ -68,7 +71,7 @@ export class RecordAccessGroupService {
         await this.recordAccessGroupRepository.recomputeRecordAccessGroupIdsBatch(
           {
             workspaceId,
-            flatObjectMetadata: recordAccessGroupObject.flatObjectMetadata,
+            flatObjectMetadata,
             recordAccessGroupConditions,
             afterRecordId,
             batchSize: RECOMPUTE_BATCH_SIZE,
@@ -92,14 +95,17 @@ export class RecordAccessGroupService {
       return;
     }
 
-    const recordAccessGroupObject = await this.findRecordAccessGroupObject({
-      workspaceId,
-      objectMetadataId,
-    });
+    const objectUsingRecordAccessGroups =
+      await this.findObjectUsingRecordAccessGroups({
+        workspaceId,
+        objectMetadataId,
+      });
 
-    if (!isDefined(recordAccessGroupObject)) {
+    if (!isDefined(objectUsingRecordAccessGroups)) {
       return;
     }
+
+    const { flatObjectMetadata, metadataMaps } = objectUsingRecordAccessGroups;
 
     const accessGroups =
       await this.accessGroupRepository.findObjectAccessGroups({
@@ -111,9 +117,10 @@ export class RecordAccessGroupService {
     await this.recordAccessGroupRepository.recomputeRecordAccessGroupIdsOfRecords(
       {
         workspaceId,
-        flatObjectMetadata: recordAccessGroupObject.flatObjectMetadata,
+        flatObjectMetadata,
         recordAccessGroupConditions: buildRecordAccessGroupConditions({
-          ...recordAccessGroupObject,
+          flatObjectMetadata,
+          metadataMaps,
           accessGroups,
         }),
         recordIds,
@@ -122,13 +129,13 @@ export class RecordAccessGroupService {
     );
   }
 
-  private async findRecordAccessGroupObject({
+  private async findObjectUsingRecordAccessGroups({
     workspaceId,
     objectMetadataId,
   }: {
     workspaceId: string;
     objectMetadataId: string;
-  }): Promise<RecordAccessGroupObject | null> {
+  }) {
     const metadataMaps = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       [
