@@ -171,7 +171,8 @@ export const getCallRecordingWidgetStoryDecorator =
           canUpdateAllRecords: true,
           canSoftDeleteAllRecords: true,
           canDestroyAllRecords: true,
-          restrictedFields: {},
+          unreadableFields: [],
+          uneditableFields: [],
         },
       ],
     });
