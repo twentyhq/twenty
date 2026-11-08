@@ -1,13 +1,9 @@
-import type { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import {
-  RowLevelPermissionPredicateOperand,
-  ViewFilterOperand,
-} from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { RowLevelPermissionPredicateOperand, ViewFilterOperand } from '@/types';
+import { assertUnreachable } from '@/utils/assertUnreachable';
 
 export const mapRLSOperandToRecordFilterOperand = (
   operand: RowLevelPermissionPredicateOperand,
-): RecordFilterOperand => {
+): ViewFilterOperand => {
   switch (operand) {
     case RowLevelPermissionPredicateOperand.IS:
       return ViewFilterOperand.IS;
@@ -42,6 +38,6 @@ export const mapRLSOperandToRecordFilterOperand = (
     case RowLevelPermissionPredicateOperand.VECTOR_SEARCH:
       return ViewFilterOperand.VECTOR_SEARCH;
     default:
-      assertUnreachable(operand);
+      return assertUnreachable(operand);
   }
 };
