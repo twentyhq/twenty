@@ -277,14 +277,14 @@ export class McpServerService {
 
     // The sign-in check at creation can miss a server that was down or started asking later
     if (
-      isDefined(flatMcpServer.connectionProviderId) ||
+      isDefined(syncedMcpServer.connectionProviderId) ||
       !isDefined(syncedMcpServer.toolsSyncError)
     ) {
       return syncedMcpServer;
     }
 
     const isSignInAttached = await this.attachSignInIfRequired({
-      flatMcpServer,
+      mcpServerId: id,
       workspaceId,
     });
 
@@ -294,12 +294,16 @@ export class McpServerService {
   }
 
   private async attachSignInIfRequired({
-    flatMcpServer,
+    mcpServerId,
     workspaceId,
   }: {
-    flatMcpServer: FlatMcpServer;
+    mcpServerId: string;
     workspaceId: string;
   }): Promise<boolean> {
+    const flatMcpServer = findFlatMcpServerByIdOrThrow({
+      flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
+      mcpServerId,
+    });
     const signInFlatConnectionProvider =
       await this.buildSignInFlatConnectionProviderIfRequired({
         mcpServer: flatMcpServer,
@@ -314,12 +318,26 @@ export class McpServerService {
       return false;
     }
 
+    const flatMcpServerMaps = await this.getFlatMcpServerMaps(workspaceId);
+    const latestFlatMcpServer = findFlatMcpServerByIdOrThrow({
+      flatMcpServerMaps,
+      mcpServerId,
+    });
+
+    // A concurrent update or sync may have set a provider or moved the URL during the probe
+    if (
+      isDefined(latestFlatMcpServer.connectionProviderId) ||
+      latestFlatMcpServer.url !== flatMcpServer.url
+    ) {
+      return false;
+    }
+
     await this.runMigrationOrThrow({
       mcpServerOperation: {
         flatEntityToUpdate: [
           fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow({
-            flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
-            mcpServerId: flatMcpServer.id,
+            flatMcpServerMaps,
+            mcpServerId,
             update: {
               connectionProviderId: signInFlatConnectionProvider.id,
               connectionProviderUniversalIdentifier:
