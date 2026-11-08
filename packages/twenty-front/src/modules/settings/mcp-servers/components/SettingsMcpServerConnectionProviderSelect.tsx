@@ -5,6 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { type McpServerFormValues } from '@/settings/mcp-servers/validation-schemas/mcpServerFormSchema';
 import { Select } from '@/ui/input/components/Select';
+import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ApplicationConnectionProvidersDocument } from '~/generated-metadata/graphql';
 
@@ -26,7 +27,7 @@ export const SettingsMcpServerConnectionProviderSelect = ({
     },
   );
 
-  const options: SelectOption<string | null>[] = [
+  const loadedOptions: SelectOption<string | null>[] = [
     { value: null, label: t`None` },
     // Sign-in providers belong to the server that created them
     ...(data?.applicationConnectionProviders ?? [])
@@ -44,6 +45,21 @@ export const SettingsMcpServerConnectionProviderSelect = ({
       })),
   ];
 
+  const getOptions = (value: string | null): SelectOption<string | null>[] => {
+    const isValueMissing =
+      isDefined(value) &&
+      !loadedOptions.some((option) => option.value === value);
+
+    if (!isValueMissing) {
+      return loadedOptions;
+    }
+
+    return [
+      ...loadedOptions,
+      { value, label: loading ? t`Loading...` : t`Unavailable` },
+    ];
+  };
+
   return (
     <>
       <ToastOnQueryErrorEffect
@@ -58,10 +74,10 @@ export const SettingsMcpServerConnectionProviderSelect = ({
             dropdownId="mcp-server-connection-provider-select"
             label={t`Connection provider`}
             description={t`Optional. When empty, Twenty sets up sign-in if the server asks for it.`}
-            options={options}
+            options={getOptions(value)}
             value={value}
             onChange={onChange}
-            disabled={loading}
+            disabled={loading || isDefined(error)}
             fullWidth
           />
         )}

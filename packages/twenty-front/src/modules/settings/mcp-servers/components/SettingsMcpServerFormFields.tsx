@@ -18,10 +18,12 @@ const StyledInputsContainer = styled.div`
 
 type SettingsMcpServerFormFieldsProps = {
   mcpServer?: Pick<McpServer, 'id' | 'applicationId' | 'connectionProviderId'>;
+  isUrlLocked?: boolean;
 };
 
 export const SettingsMcpServerFormFields = ({
   mcpServer,
+  isUrlLocked = false,
 }: SettingsMcpServerFormFieldsProps) => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -68,6 +70,12 @@ export const SettingsMcpServerFormFields = ({
             instanceId={`${instanceIdPrefix}-url`}
             label={t`URL`}
             placeholder={t`https://mcp.example.com/mcp`}
+            hint={
+              isUrlLocked
+                ? t`Remove the connection provider to change the URL.`
+                : undefined
+            }
+            disabled={isUrlLocked}
           />
           {isDefined(connectionProviderApplicationId) && (
             <SettingsMcpServerConnectionProviderSelect

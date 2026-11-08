@@ -95,7 +95,14 @@ export const SettingsMcpServerEditForm = ({
           />
         }
       >
-        <SettingsMcpServerFormFields mcpServer={mcpServer} />
+        <SettingsMcpServerFormFields
+          mcpServer={mcpServer}
+          // A sign-in provider follows the URL; another provider's tokens must not reach a new host
+          isUrlLocked={
+            isDefined(mcpServer.connectionProviderId) &&
+            !isDefined(signInConnectionProvider)
+          }
+        />
         {isDefined(signInConnectionProvider) && (
           <SettingsMcpServerConnectionsSection
             mcpServerId={mcpServer.id}
