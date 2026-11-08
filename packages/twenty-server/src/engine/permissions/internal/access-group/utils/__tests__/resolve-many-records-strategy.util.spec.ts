@@ -6,7 +6,7 @@ import {
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
-import { isListingThroughRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-listing-through-record-access-groups.util';
+import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 
 const ROLE_ID = 'role-id';
@@ -78,39 +78,39 @@ const buildRequest = ({
   operationType,
 });
 
-describe('isListingThroughRecordAccessGroups', () => {
-  it('should list through access groups when the main role has a rule on the object', () => {
+describe('resolveManyRecordsStrategy', () => {
+  it('should use access groups when the main role has a rule on the object', () => {
     expect(
-      isListingThroughRecordAccessGroups(
+      resolveManyRecordsStrategy(
         buildRequest({ objectRecordsPermissions: withRule }),
       ),
-    ).toBe(true);
+    ).toBe('accessGroups');
   });
 
   it.each([
     ['the flag is off', { isAccessGroupsEnabled: false }],
     ['the operation is not a read', { operationType: 'update' as const }],
-  ])('should keep the rule when %s', (_, overrides) => {
+  ])('should stay degraded when %s', (_, overrides) => {
     expect(
-      isListingThroughRecordAccessGroups(
+      resolveManyRecordsStrategy(
         buildRequest({ objectRecordsPermissions: withRule, ...overrides }),
       ),
-    ).toBe(false);
+    ).toBe('degradedCondition');
   });
 
-  it('should keep the rule when the main role reads every record', () => {
+  it('should use the plain condition when no role has a rule on the object', () => {
     expect(
-      isListingThroughRecordAccessGroups(
+      resolveManyRecordsStrategy(
         buildRequest({ objectRecordsPermissions: allRecords }),
       ),
-    ).toBe(false);
+    ).toBe('plainCondition');
   });
 
-  it('should keep the rule when an application role also has a rule on the object', () => {
+  it('should stay degraded when an application role also has a rule on the object', () => {
     const request = buildRequest({ objectRecordsPermissions: withRule });
 
     expect(
-      isListingThroughRecordAccessGroups({
+      resolveManyRecordsStrategy({
         ...request,
         principals: {
           ...request.principals,
@@ -131,6 +131,6 @@ describe('isListingThroughRecordAccessGroups', () => {
           },
         },
       }),
-    ).toBe(false);
+    ).toBe('degradedCondition');
   });
 });

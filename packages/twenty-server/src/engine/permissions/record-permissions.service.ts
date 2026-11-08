@@ -18,7 +18,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
 import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
-import { isListingThroughRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-listing-through-record-access-groups.util';
+import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
 import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
@@ -95,12 +95,22 @@ export class RecordPermissionsService {
     private readonly accessGroupService: AccessGroupService,
   ) {}
 
-  isRecomputingRecordAccessGroupIdsOnWrite({
+  async isRecomputingRecordAccessGroupIdsOnWrite({
     featureFlagsMap,
+    workspaceId,
+    objectMetadataId,
   }: {
     featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-  }): boolean {
-    return areRecordAccessGroupsEnabled({ featureFlagsMap });
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<boolean> {
+    return (
+      areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
+      (await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
+        workspaceId,
+        objectMetadataId,
+      }))
+    );
   }
 
   async recomputeRecordAccessGroupIdsOfRecords({
@@ -382,7 +392,7 @@ export class RecordPermissionsService {
     });
   }
 
-  async buildRecordsAccessCondition({
+  async buildManyRecordsAccessCondition({
     tableAlias,
     ...question
   }: RecordOperationQuestion & {
@@ -406,7 +416,7 @@ export class RecordPermissionsService {
   private async findCallerAccessGroupCompactIds(
     objectAccessRequest: PermissionsObjectAccessRequest,
   ): Promise<number[] | undefined> {
-    if (!isListingThroughRecordAccessGroups(objectAccessRequest)) {
+    if (resolveManyRecordsStrategy(objectAccessRequest) !== 'accessGroups') {
       return undefined;
     }
 

@@ -24,7 +24,7 @@ const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const ACCESS_GROUP_TABLE = `${SCHEMA}."accessGroup"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
 
-describe('listing records through access groups (integration)', () => {
+describe('querying many records through access groups (integration)', () => {
   let objectMetadataId: string;
   let originalPeople: { id: string; jobTitle: string }[];
   let originalMemberRoleId: string;
@@ -32,7 +32,7 @@ describe('listing records through access groups (integration)', () => {
 
   const parisPersonId = () => originalPeople[0].id;
 
-  const listPersonIdsAsMember = async (): Promise<string[]> => {
+  const findPersonIdsAsMember = async (): Promise<string[]> => {
     const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -78,8 +78,8 @@ describe('listing records through access groups (integration)', () => {
     const { data } = await createOneRole({
       expectToFail: false,
       input: {
-        label: 'Listing through access groups',
-        description: 'Listing through access groups',
+        label: 'Querying through access groups',
+        description: 'Querying through access groups',
         canReadAllObjectRecords: true,
         canUpdateAllObjectRecords: false,
         canSoftDeleteAllObjectRecords: false,
@@ -161,8 +161,8 @@ describe('listing records through access groups (integration)', () => {
     await global.testDataSource.query(`DELETE FROM ${ACCESS_GROUP_TABLE}`);
   });
 
-  it('should list the records the rule reaches', async () => {
-    expect(await listPersonIdsAsMember()).toEqual([parisPersonId()]);
+  it('should return the records the rule reaches', async () => {
+    expect(await findPersonIdsAsMember()).toEqual([parisPersonId()]);
   });
 
   it('should read the stored groups rather than the rule', async () => {
@@ -177,11 +177,11 @@ describe('listing records through access groups (integration)', () => {
     );
 
     try {
-      expect(await listPersonIdsAsMember()).toEqual([]);
+      expect(await findPersonIdsAsMember()).toEqual([]);
 
       await setAccessGroupsEnabled(false);
 
-      expect(await listPersonIdsAsMember()).toEqual([parisPersonId()]);
+      expect(await findPersonIdsAsMember()).toEqual([parisPersonId()]);
     } finally {
       await setAccessGroupsEnabled(true);
       await global.testDataSource.query(

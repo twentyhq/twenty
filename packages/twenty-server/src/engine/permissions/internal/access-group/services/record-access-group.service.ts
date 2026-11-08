@@ -125,6 +125,23 @@ export class RecordAccessGroupService {
     });
   }
 
+  async isObjectUsingRecordAccessGroups({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<boolean> {
+    const { rolesPermissions, flatObjectMetadataMaps } =
+      await this.findMetadataMaps(workspaceId);
+
+    return isObjectUsingRecordAccessGroups({
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      objectMetadataId,
+    });
+  }
+
   private findObjectAccessGroups({
     workspaceId,
     objectMetadataId,

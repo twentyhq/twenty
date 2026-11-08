@@ -718,7 +718,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       : this.options.runInNewTransaction(work);
   }
 
-  private runWithValidationRules<TResult>({
+  private async runWithValidationRules<TResult>({
     write,
     inputRecordIds,
   }: {
@@ -735,9 +735,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (validationRules.length === 0) {
-      return this.options.internalContext.recordPermissions.isRecomputingRecordAccessGroupIdsOnWrite(
-        { featureFlagsMap: this.options.internalContext.featureFlagsMap },
-      )
+      return (await this.options.internalContext.recordPermissions.isRecomputingRecordAccessGroupIdsOnWrite(
+        {
+          featureFlagsMap: this.options.internalContext.featureFlagsMap,
+          workspaceId: this.options.internalContext.workspaceId,
+          objectMetadataId: this.options.flatObjectMetadata.id,
+        },
+      ))
         ? this.runAtomically((repository) => write(repository))
         : write(this);
     }
@@ -1931,7 +1935,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    return this.options.internalContext.recordPermissions.buildRecordsAccessCondition(
+    return this.options.internalContext.recordPermissions.buildManyRecordsAccessCondition(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         objectMetadataId: flatObjectMetadata.id,
