@@ -5,12 +5,12 @@ import { computeApplicationGrantRoleLabel } from 'src/engine/core-modules/applic
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key.type';
-import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
+import { getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-universal-flat-entity-by-universal-identifiers-maps-or-throw.util';
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 
 export const APPLICATION_GRANT_METADATA_NAMES = [
@@ -43,92 +43,111 @@ export type ApplicationGrantFlatEntityMaps = Pick<
   >
 >;
 
-type ApplicationGrantUniversalFlatEntities = {
-  [P in ApplicationGrantMetadataName]: MetadataUniversalFlatEntity<P>[];
+type ApplicationGrantUniversalFlatEntityMaps = Pick<
+  AllUniversalFlatEntityMaps,
+  MetadataToFlatEntityMapsKey<ApplicationGrantMetadataName>
+>;
+
+type RolePermissionUniversalFlatEntityMaps = Omit<
+  ApplicationGrantUniversalFlatEntityMaps,
+  'flatRoleMaps' | 'flatRoleTargetMaps'
+>;
+
+type BuildApplicationGrantFromToFlatEntityMapsArgs = {
+  targetFlatApplication: Pick<FlatApplication, 'name' | 'universalIdentifier'>;
+  requestedFlatRole: FlatRole;
+  existingGrant:
+    | { flatRole: FlatRole; flatRoleTarget: FlatRoleTarget }
+    | undefined;
+  workspaceCustomApplicationUniversalIdentifier: string;
+  flatEntityMaps: ApplicationGrantFlatEntityMaps;
+  now: string;
 };
 
-type ExistingApplicationGrant = {
-  flatRole: FlatRole;
-  flatRoleTarget: FlatRoleTarget;
-};
+const toUniversalFlatEntityMaps = <
+  TUniversalFlatEntity extends { universalIdentifier: string },
+>(
+  universalFlatEntities: TUniversalFlatEntity[],
+) => ({
+  byUniversalIdentifier: Object.fromEntries(
+    universalFlatEntities.map((universalFlatEntity) => [
+      universalFlatEntity.universalIdentifier,
+      universalFlatEntity,
+    ]),
+  ),
+});
 
-const findRolePermissionFlatEntities = ({
+const findRolePermissionUniversalFlatEntityMaps = ({
   flatRole,
   flatEntityMaps,
 }: {
   flatRole: FlatRole;
   flatEntityMaps: ApplicationGrantFlatEntityMaps;
-}): Omit<ApplicationGrantUniversalFlatEntities, 'role' | 'roleTarget'> => ({
-  objectPermission:
-    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
-      flatEntityMaps: flatEntityMaps.flatObjectPermissionMaps,
+}): RolePermissionUniversalFlatEntityMaps => ({
+  flatObjectPermissionMaps:
+    getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow({
+      universalFlatEntityMaps: flatEntityMaps.flatObjectPermissionMaps,
       universalIdentifiers: flatRole.objectPermissionUniversalIdentifiers,
     }),
-  fieldPermission:
-    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
-      flatEntityMaps: flatEntityMaps.flatFieldPermissionMaps,
+  flatFieldPermissionMaps:
+    getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow({
+      universalFlatEntityMaps: flatEntityMaps.flatFieldPermissionMaps,
       universalIdentifiers: flatRole.fieldPermissionUniversalIdentifiers,
     }),
-  rolePermissionFlag:
-    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
-      flatEntityMaps: flatEntityMaps.flatRolePermissionFlagMaps,
+  flatRolePermissionFlagMaps:
+    getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow({
+      universalFlatEntityMaps: flatEntityMaps.flatRolePermissionFlagMaps,
       universalIdentifiers: flatRole.rolePermissionFlagUniversalIdentifiers,
     }),
-  rowLevelPermissionPredicateGroup:
-    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
-      flatEntityMaps: flatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
+  flatRowLevelPermissionPredicateGroupMaps:
+    getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow({
+      universalFlatEntityMaps:
+        flatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
       universalIdentifiers:
         flatRole.rowLevelPermissionPredicateGroupUniversalIdentifiers,
     }),
-  rowLevelPermissionPredicate:
-    findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
-      flatEntityMaps: flatEntityMaps.flatRowLevelPermissionPredicateMaps,
+  flatRowLevelPermissionPredicateMaps:
+    getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow({
+      universalFlatEntityMaps:
+        flatEntityMaps.flatRowLevelPermissionPredicateMaps,
       universalIdentifiers:
         flatRole.rowLevelPermissionPredicateUniversalIdentifiers,
     }),
 });
 
-const findExistingGrantFlatEntities = ({
+const findExistingGrantUniversalFlatEntityMaps = ({
   existingGrant,
   flatEntityMaps,
-}: {
-  existingGrant: ExistingApplicationGrant | undefined;
-  flatEntityMaps: ApplicationGrantFlatEntityMaps;
-}): ApplicationGrantUniversalFlatEntities =>
+}: BuildApplicationGrantFromToFlatEntityMapsArgs): ApplicationGrantUniversalFlatEntityMaps =>
   isDefined(existingGrant)
     ? {
-        role: [existingGrant.flatRole],
-        roleTarget: [existingGrant.flatRoleTarget],
-        ...findRolePermissionFlatEntities({
+        flatRoleMaps: toUniversalFlatEntityMaps([existingGrant.flatRole]),
+        flatRoleTargetMaps: toUniversalFlatEntityMaps([
+          existingGrant.flatRoleTarget,
+        ]),
+        ...findRolePermissionUniversalFlatEntityMaps({
           flatRole: existingGrant.flatRole,
           flatEntityMaps,
         }),
       }
     : {
-        role: [],
-        roleTarget: [],
-        objectPermission: [],
-        fieldPermission: [],
-        rolePermissionFlag: [],
-        rowLevelPermissionPredicateGroup: [],
-        rowLevelPermissionPredicate: [],
+        flatRoleMaps: toUniversalFlatEntityMaps([]),
+        flatRoleTargetMaps: toUniversalFlatEntityMaps([]),
+        flatObjectPermissionMaps: toUniversalFlatEntityMaps([]),
+        flatFieldPermissionMaps: toUniversalFlatEntityMaps([]),
+        flatRolePermissionFlagMaps: toUniversalFlatEntityMaps([]),
+        flatRowLevelPermissionPredicateGroupMaps: toUniversalFlatEntityMaps([]),
+        flatRowLevelPermissionPredicateMaps: toUniversalFlatEntityMaps([]),
       };
 
-const buildDesiredGrantUniversalFlatEntities = ({
+const buildDesiredGrantUniversalFlatEntityMaps = ({
   targetFlatApplication,
   requestedFlatRole,
   existingGrant,
   workspaceCustomApplicationUniversalIdentifier,
   flatEntityMaps,
   now,
-}: {
-  targetFlatApplication: Pick<FlatApplication, 'name' | 'universalIdentifier'>;
-  requestedFlatRole: FlatRole;
-  existingGrant: ExistingApplicationGrant | undefined;
-  workspaceCustomApplicationUniversalIdentifier: string;
-  flatEntityMaps: ApplicationGrantFlatEntityMaps;
-  now: string;
-}): ApplicationGrantUniversalFlatEntities => {
+}: BuildApplicationGrantFromToFlatEntityMapsArgs): ApplicationGrantUniversalFlatEntityMaps => {
   const grantRoleIdentity = isDefined(existingGrant)
     ? {
         universalIdentifier: existingGrant.flatRole.universalIdentifier,
@@ -172,12 +191,19 @@ const buildDesiredGrantUniversalFlatEntities = ({
     updatedAt: now,
   };
 
-  const requested = findRolePermissionFlatEntities({
+  const requested = findRolePermissionUniversalFlatEntityMaps({
     flatRole: requestedFlatRole,
     flatEntityMaps,
   });
 
-  return {
+  const listRequested = <TUniversalFlatEntity>(universalFlatEntityMaps: {
+    byUniversalIdentifier: Partial<Record<string, TUniversalFlatEntity>>;
+  }) =>
+    Object.values(universalFlatEntityMaps.byUniversalIdentifier).filter(
+      isDefined,
+    );
+
+  const desired = {
     role: [
       {
         ...grantRoleIdentity,
@@ -223,39 +249,48 @@ const buildDesiredGrantUniversalFlatEntities = ({
           targetFlatApplication.universalIdentifier,
       },
     ],
-    objectPermission: requested.objectPermission.map((source) => ({
-      ...owner,
-      universalIdentifier: toCopyUniversalIdentifier(
-        source.universalIdentifier,
-      ),
-      objectMetadataUniversalIdentifier:
-        source.objectMetadataUniversalIdentifier,
-      canReadObjectRecords: source.canReadObjectRecords ?? null,
-      canCreateObjectRecords: source.canCreateObjectRecords ?? null,
-      canUpdateObjectRecords: source.canUpdateObjectRecords ?? null,
-      canSoftDeleteObjectRecords: source.canSoftDeleteObjectRecords ?? null,
-      canDestroyObjectRecords: source.canDestroyObjectRecords ?? null,
-    })),
-    fieldPermission: requested.fieldPermission.map((source) => ({
-      ...owner,
-      universalIdentifier: toCopyUniversalIdentifier(
-        source.universalIdentifier,
-      ),
-      objectMetadataUniversalIdentifier:
-        source.objectMetadataUniversalIdentifier,
-      fieldMetadataUniversalIdentifier: source.fieldMetadataUniversalIdentifier,
-      canReadFieldValue: source.canReadFieldValue ?? null,
-      canUpdateFieldValue: source.canUpdateFieldValue ?? null,
-    })),
-    rolePermissionFlag: requested.rolePermissionFlag.map((source) => ({
-      ...owner,
-      universalIdentifier: toCopyUniversalIdentifier(
-        source.universalIdentifier,
-      ),
-      permissionFlagUniversalIdentifier:
-        source.permissionFlagUniversalIdentifier,
-    })),
-    rowLevelPermissionPredicateGroup: requested.rowLevelPermissionPredicateGroup
+    objectPermission: listRequested(requested.flatObjectPermissionMaps).map(
+      (source) => ({
+        ...owner,
+        universalIdentifier: toCopyUniversalIdentifier(
+          source.universalIdentifier,
+        ),
+        objectMetadataUniversalIdentifier:
+          source.objectMetadataUniversalIdentifier,
+        canReadObjectRecords: source.canReadObjectRecords ?? null,
+        canCreateObjectRecords: source.canCreateObjectRecords ?? null,
+        canUpdateObjectRecords: source.canUpdateObjectRecords ?? null,
+        canSoftDeleteObjectRecords: source.canSoftDeleteObjectRecords ?? null,
+        canDestroyObjectRecords: source.canDestroyObjectRecords ?? null,
+      }),
+    ),
+    fieldPermission: listRequested(requested.flatFieldPermissionMaps).map(
+      (source) => ({
+        ...owner,
+        universalIdentifier: toCopyUniversalIdentifier(
+          source.universalIdentifier,
+        ),
+        objectMetadataUniversalIdentifier:
+          source.objectMetadataUniversalIdentifier,
+        fieldMetadataUniversalIdentifier:
+          source.fieldMetadataUniversalIdentifier,
+        canReadFieldValue: source.canReadFieldValue ?? null,
+        canUpdateFieldValue: source.canUpdateFieldValue ?? null,
+      }),
+    ),
+    rolePermissionFlag: listRequested(requested.flatRolePermissionFlagMaps).map(
+      (source) => ({
+        ...owner,
+        universalIdentifier: toCopyUniversalIdentifier(
+          source.universalIdentifier,
+        ),
+        permissionFlagUniversalIdentifier:
+          source.permissionFlagUniversalIdentifier,
+      }),
+    ),
+    rowLevelPermissionPredicateGroup: listRequested(
+      requested.flatRowLevelPermissionPredicateGroupMaps,
+    )
       .filter((source) => !isDefined(source.deletedAt))
       .map((source) => ({
         ...owner,
@@ -280,7 +315,9 @@ const buildDesiredGrantUniversalFlatEntities = ({
         rowLevelPermissionPredicateUniversalIdentifiers: [],
         deletedAt: null,
       })),
-    rowLevelPermissionPredicate: requested.rowLevelPermissionPredicate
+    rowLevelPermissionPredicate: listRequested(
+      requested.flatRowLevelPermissionPredicateMaps,
+    )
       .filter((source) => !isDefined(source.deletedAt))
       .map((source) => ({
         ...owner,
@@ -308,47 +345,58 @@ const buildDesiredGrantUniversalFlatEntities = ({
         deletedAt: null,
       })),
   };
+
+  return {
+    flatRoleMaps: toUniversalFlatEntityMaps(desired.role),
+    flatRoleTargetMaps: toUniversalFlatEntityMaps(desired.roleTarget),
+    flatObjectPermissionMaps: toUniversalFlatEntityMaps(
+      desired.objectPermission,
+    ),
+    flatFieldPermissionMaps: toUniversalFlatEntityMaps(desired.fieldPermission),
+    flatRolePermissionFlagMaps: toUniversalFlatEntityMaps(
+      desired.rolePermissionFlag,
+    ),
+    flatRowLevelPermissionPredicateGroupMaps: toUniversalFlatEntityMaps(
+      desired.rowLevelPermissionPredicateGroup,
+    ),
+    flatRowLevelPermissionPredicateMaps: toUniversalFlatEntityMaps(
+      desired.rowLevelPermissionPredicate,
+    ),
+  };
 };
 
-const toUniversalFlatEntityMaps = <
-  TUniversalFlatEntity extends { universalIdentifier: string },
->(
-  universalFlatEntities: TUniversalFlatEntity[],
-) => ({
-  byUniversalIdentifier: Object.fromEntries(
-    universalFlatEntities.map((universalFlatEntity) => [
-      universalFlatEntity.universalIdentifier,
-      universalFlatEntity,
-    ]),
-  ),
-});
-
 // From is the current grant, to is the grant matching the requested role: the builder diffs them
-export const buildApplicationGrantFromToFlatEntityMaps = ({
-  existingGrant,
-  flatEntityMaps,
-  ...args
-}: Parameters<
-  typeof buildDesiredGrantUniversalFlatEntities
->[0]): FromToAllUniversalFlatEntityMaps => {
-  const from = findExistingGrantFlatEntities({ existingGrant, flatEntityMaps });
-  const to = buildDesiredGrantUniversalFlatEntities({
-    existingGrant,
-    flatEntityMaps,
-    ...args,
-  });
+export const buildApplicationGrantFromToFlatEntityMaps = (
+  args: BuildApplicationGrantFromToFlatEntityMapsArgs,
+): FromToAllUniversalFlatEntityMaps => {
+  const from = findExistingGrantUniversalFlatEntityMaps(args);
+  const to = buildDesiredGrantUniversalFlatEntityMaps(args);
 
-  return Object.fromEntries(
-    APPLICATION_GRANT_METADATA_NAMES.map((metadataName) => [
-      getMetadataFlatEntityMapsKey(metadataName),
-      {
-        from: toUniversalFlatEntityMaps<{ universalIdentifier: string }>(
-          from[metadataName],
-        ),
-        to: toUniversalFlatEntityMaps<{ universalIdentifier: string }>(
-          to[metadataName],
-        ),
-      },
-    ]),
-  ) as FromToAllUniversalFlatEntityMaps;
+  return {
+    flatRoleMaps: { from: from.flatRoleMaps, to: to.flatRoleMaps },
+    flatRoleTargetMaps: {
+      from: from.flatRoleTargetMaps,
+      to: to.flatRoleTargetMaps,
+    },
+    flatObjectPermissionMaps: {
+      from: from.flatObjectPermissionMaps,
+      to: to.flatObjectPermissionMaps,
+    },
+    flatFieldPermissionMaps: {
+      from: from.flatFieldPermissionMaps,
+      to: to.flatFieldPermissionMaps,
+    },
+    flatRolePermissionFlagMaps: {
+      from: from.flatRolePermissionFlagMaps,
+      to: to.flatRolePermissionFlagMaps,
+    },
+    flatRowLevelPermissionPredicateGroupMaps: {
+      from: from.flatRowLevelPermissionPredicateGroupMaps,
+      to: to.flatRowLevelPermissionPredicateGroupMaps,
+    },
+    flatRowLevelPermissionPredicateMaps: {
+      from: from.flatRowLevelPermissionPredicateMaps,
+      to: to.flatRowLevelPermissionPredicateMaps,
+    },
+  };
 };
