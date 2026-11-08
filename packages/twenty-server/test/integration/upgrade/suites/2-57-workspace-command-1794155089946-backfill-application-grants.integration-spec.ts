@@ -13,7 +13,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 as uuidv4 } from 'uuid';
 
-import { type BackfillApplicationGrantsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794140266339-backfill-application-grants.command';
+import { type BackfillApplicationGrantsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794155089946-backfill-application-grants.command';
 import { type ApplicationGrantService } from 'src/engine/core-modules/application/application-grant/services/application-grant.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';

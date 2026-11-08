@@ -16,7 +16,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.57.0', 1794140266339)
+@RegisteredWorkspaceCommand('2.57.0', 1794155089946)
 @Command({
   name: 'upgrade:2-57:backfill-application-grants',
   description:
