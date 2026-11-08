@@ -10,6 +10,7 @@ import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRecordInputFields';
 import { captureMessage } from '@sentry/react';
@@ -111,11 +112,17 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           objectPermissionsByObjectMetadataId,
         });
 
+        const recordInStore = store.get(
+          recordStoreFamilyState.atomFamily(updatedRecord.id),
+        );
+
+        const latestKnownUpdatedAt = (cachedRecord ?? recordInStore)?.updatedAt;
+
         if (
-          isDefined(cachedRecord?.updatedAt) &&
+          isDefined(latestKnownUpdatedAt) &&
           isDefined(updatedRecord.updatedAt) &&
           new Date(updatedRecord.updatedAt as string).getTime() <
-            new Date(cachedRecord!.updatedAt as string).getTime()
+            new Date(latestKnownUpdatedAt as string).getTime()
         ) {
           continue;
         }
@@ -132,6 +139,11 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           !isDefined(cachedRecord) ||
           !isDefined(cachedRecordWithConnection)
         ) {
+          // Table rows loaded by offset live in the record store only
+          if (isDefined(recordInStore)) {
+            upsertRecordsInStore({ partialRecords: [updatedRecord] });
+          }
+
           continue;
         }
 

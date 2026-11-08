@@ -71,6 +71,9 @@ export const useLazyFindManyRecordsWithOffset = ({
             limit,
             offset,
           },
+          // Rows are read from the record store; caching each offset page in Apollo
+          // only grows memory for the life of the tab.
+          fetchPolicy: 'no-cache',
         });
 
       if (result?.error) {
