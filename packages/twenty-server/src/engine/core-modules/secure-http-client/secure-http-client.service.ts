@@ -8,6 +8,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
+import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
 
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 import { ALLOW_ALL_INTERNAL_HOSTS } from 'src/engine/core-modules/secure-http-client/constants/allow-all-internal-hosts.constant';
@@ -131,6 +132,23 @@ export class SecureHttpClientService {
     }
 
     return buildAxiosFetch(this.getHttpClient()) as typeof globalThis.fetch;
+  }
+
+  // For the MCP SDK, which reads SSE from a WHATWG Response; the axios client yields one whatever globalThis.fetch is.
+  createFetchLike({
+    context,
+    timeoutMs,
+  }: {
+    context: OutboundRequestContext;
+    timeoutMs: number;
+  }): FetchLike {
+    const axiosFetch = buildAxiosFetch(
+      this.getHttpClient({ timeout: timeoutMs }, context),
+      (config, _input, init) =>
+        init?.redirect === 'manual' ? { ...config, maxRedirects: 0 } : config,
+    );
+
+    return (url, init) => axiosFetch(url.toString(), init);
   }
 
   // For libraries that only accept an agent (openid-client); undefined means no restriction.

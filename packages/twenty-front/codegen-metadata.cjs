@@ -24,7 +24,6 @@ module.exports = {
     // not the metadata schema, so they must not be validated against /metadata.
     '!./src/modules/settings/legal/**/graphql/**/*.{ts,tsx}',
     './src/modules/logic-functions/graphql/**/*.{ts,tsx}',
-    './src/modules/mcp-servers/graphql/**/*.{ts,tsx}',
 
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
     './src/modules/object-metadata/graphql/**/*.{ts,tsx}',

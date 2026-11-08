@@ -170,9 +170,8 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
 
     expect(response.body.data.syncMcpServerTools).toMatchObject({
       tools: [],
-      toolsSyncError: expect.stringContaining(
-        `No connected account usable by the caller for provider ${getConnectionProviderId()}`,
-      ),
+      toolsSyncError:
+        'No connected account you can use for this MCP server. Connect an account to use it.',
     });
   });
 

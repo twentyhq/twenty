@@ -11,14 +11,19 @@ export const useUpdateMcpServer = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
-  const [updateMcpServerMutation] = useMutation(UpdateMcpServerDocument);
+  const [updateMcpServerMutation, { loading: isUpdatingMcpServer }] =
+    useMutation(UpdateMcpServerDocument);
 
   const updateMcpServer = async ({
     mcpServerId,
     update,
   }: {
     mcpServerId: string;
-    update: Partial<Pick<McpServerFormValues, 'label' | 'url' | 'signInScope'>>;
+    update: Partial<
+      Pick<McpServerFormValues, 'label' | 'url' | 'signInScope'> & {
+        isActive: boolean;
+      }
+    >;
   }) => {
     try {
       const { data } = await updateMcpServerMutation({
@@ -46,5 +51,5 @@ export const useUpdateMcpServer = () => {
     }
   };
 
-  return { updateMcpServer };
+  return { updateMcpServer, isUpdatingMcpServer };
 };

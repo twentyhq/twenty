@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -8,7 +9,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { DELETE_MCP_SERVER_DIALOG_ID } from '@/settings/mcp-servers/constants/DeleteMcpServerDialogId';
 import { useDeleteMcpServer } from '@/settings/mcp-servers/hooks/useDeleteMcpServer';
-import { useSetMcpServerActive } from '@/settings/mcp-servers/hooks/useSetMcpServerActive';
+import { useNavigateToMcpServersList } from '@/settings/mcp-servers/hooks/useNavigateToMcpServersList';
+import { useUpdateMcpServer } from '@/settings/mcp-servers/hooks/useUpdateMcpServer';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type McpServer } from '~/generated-metadata/graphql';
@@ -29,8 +31,19 @@ export const SettingsMcpServerDangerZone = ({
   const { openDialog } = useDialog();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const { deleteMcpServer } = useDeleteMcpServer();
-  const { setMcpServerActive, isSettingMcpServerActive } =
-    useSetMcpServerActive();
+  const { updateMcpServer, isUpdatingMcpServer } = useUpdateMcpServer();
+  const { navigateToMcpServersList } = useNavigateToMcpServersList();
+
+  const toggleActive = async () => {
+    const updatedMcpServer = await updateMcpServer({
+      mcpServerId: mcpServer.id,
+      update: { isActive: !mcpServer.isActive },
+    });
+
+    if (isDefined(updatedMcpServer)) {
+      navigateToMcpServersList();
+    }
+  };
 
   return (
     <Section.Root>
@@ -42,13 +55,8 @@ export const SettingsMcpServerDangerZone = ({
         <Button
           startIcon={mcpServer.isActive ? <IconArchive /> : <IconArchiveOff />}
           size="sm"
-          disabled={isSettingMcpServerActive}
-          onClick={() =>
-            setMcpServerActive({
-              mcpServerId: mcpServer.id,
-              isActive: !mcpServer.isActive,
-            })
-          }
+          disabled={isUpdatingMcpServer}
+          onClick={toggleActive}
         >
           {mcpServer.isActive ? t`Deactivate` : t`Activate`}
         </Button>

@@ -14,8 +14,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { buildSecureFetchLike } from 'src/engine/core-modules/secure-http-client/utils/build-secure-fetch-like.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
@@ -107,8 +107,7 @@ export class McpServerClientService {
     const signal = AbortSignal.timeout(timeoutMs);
     const client = new Client(MCP_CLIENT_INFO);
     const transport = new StreamableHTTPClientTransport(new URL(target.url), {
-      fetch: buildSecureFetchLike({
-        secureHttpClientService: this.secureHttpClientService,
+      fetch: this.secureHttpClientService.createFetchLike({
         context: { workspaceId: target.workspaceId, source: 'mcp-server' },
         timeoutMs,
       }),
@@ -188,28 +187,15 @@ export class McpServerClientService {
     url,
     workspaceId,
   }: Pick<McpServerTarget, 'url' | 'workspaceId'>): Promise<boolean> {
-    const fetchFn = buildSecureFetchLike({
-      secureHttpClientService: this.secureHttpClientService,
-      context: { workspaceId, source: 'mcp-server' },
-      timeoutMs: SIGN_IN_PROBE_TIMEOUT_MS,
+    const { requiresAuthorization } = await probeProtectedResource({
+      resourceUrl: url,
+      fetchFn: this.secureHttpClientService.createFetchLike({
+        context: { workspaceId, source: 'mcp-server' },
+        timeoutMs: SIGN_IN_PROBE_TIMEOUT_MS,
+      }),
     });
 
-    try {
-      const response = await fetchFn(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/event-stream',
-        },
-        body: JSON.stringify({ jsonrpc: '2.0', id: 0, method: 'ping' }),
-      });
-
-      await response.body?.cancel().catch(() => undefined);
-
-      return response.status === 401;
-    } catch {
-      return false;
-    }
+    return requiresAuthorization;
   }
 
   async canCallerConnect(target: McpServerTarget): Promise<boolean> {
@@ -268,7 +254,7 @@ export class McpServerClientService {
 
     if (!isDefined(connectedAccount)) {
       throw new McpServerException(
-        `No connected account usable by the caller for provider ${connectionProviderId} in workspace ${workspaceId}`,
+        'No connected account you can use for this MCP server. Connect an account to use it.',
         McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
       );
     }

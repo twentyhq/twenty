@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   auth,
-  extractWWWAuthenticateParams,
   isHttpsUrl,
   refreshAuthorization,
 } from '@modelcontextprotocol/sdk/client/auth.js';
@@ -22,6 +21,7 @@ import {
   buildOAuthDiscoveryClientMetadata,
   buildOAuthDiscoveryClientMetadataUrl,
 } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
+import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
 import { OAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/oauth-discovery-client-provider';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
@@ -29,7 +29,6 @@ import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/co
 import { parseAccessTokenExpiresAt } from 'src/engine/core-modules/application/connection-provider/utils/parse-access-token-expires-at.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { buildSecureFetchLike } from 'src/engine/core-modules/secure-http-client/utils/build-secure-fetch-like.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS = 15_000;
@@ -64,7 +63,7 @@ export class ConnectionProviderOAuthDiscoveryService {
     codeVerifier: string;
   }> {
     const fetchFn = this.buildFetch(workspaceId);
-    const { resourceMetadataUrl, scope } = await this.probeResource({
+    const { resourceMetadataUrl, scope } = await probeProtectedResource({
       resourceUrl: provider.oauthDiscoveryConfig.resourceUrl,
       fetchFn,
     });
@@ -321,33 +320,6 @@ export class ConnectionProviderOAuthDiscoveryService {
   }
 
   // The resource's 401 names its metadata and the scope it wants; servers that only publish well-known metadata skip this.
-  private async probeResource({
-    resourceUrl,
-    fetchFn,
-  }: {
-    resourceUrl: string;
-    fetchFn: FetchLike;
-  }): Promise<{ resourceMetadataUrl?: URL; scope?: string }> {
-    try {
-      const response = await fetchFn(resourceUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/event-stream',
-        },
-        body: JSON.stringify({ jsonrpc: '2.0', id: 0, method: 'ping' }),
-      });
-
-      await response.body?.cancel().catch(() => undefined);
-
-      return response.status === 401
-        ? extractWWWAuthenticateParams(response)
-        : {};
-    } catch {
-      return {};
-    }
-  }
-
   // Without a browser session the server answers with its login page, unless it does not know the client.
   private async isClientRejected({
     authorizationUrl,
@@ -443,8 +415,7 @@ export class ConnectionProviderOAuthDiscoveryService {
   }
 
   private buildFetch(workspaceId: string): FetchLike {
-    return buildSecureFetchLike({
-      secureHttpClientService: this.secureHttpClientService,
+    return this.secureHttpClientService.createFetchLike({
       context: { workspaceId, source: 'connection-provider' },
       timeoutMs: OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS,
     });
