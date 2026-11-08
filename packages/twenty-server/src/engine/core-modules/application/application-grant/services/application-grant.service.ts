@@ -58,14 +58,6 @@ export class ApplicationGrantService {
         `Application ${flatApplication.universalIdentifier} has no default role in workspace ${workspaceId}, it gets no grant`,
       );
 
-      if (isDefined(grantFlatRole)) {
-        await this.runGrantDeletion({
-          workspaceId,
-          workspaceCustomFlatApplication,
-          grantFlatRole,
-        });
-      }
-
       return;
     }
 
