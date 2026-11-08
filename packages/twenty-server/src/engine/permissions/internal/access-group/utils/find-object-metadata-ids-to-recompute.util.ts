@@ -14,7 +14,10 @@ const findCandidateObjectMetadataIds = ({
   changedAccessGroups,
 }: {
   shouldRecomputeEveryRecord: boolean;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatObjectMetadataMaps: Pick<
+    FlatEntityMaps<FlatObjectMetadata>,
+    'byUniversalIdentifier'
+  >;
   changedAccessGroups: Pick<AccessGroup, 'objectMetadataId'>[];
 }): string[] => {
   if (!shouldRecomputeEveryRecord) {
@@ -33,7 +36,10 @@ export const findObjectMetadataIdsToRecompute = ({
   changedAccessGroups,
 }: {
   shouldRecomputeEveryRecord: boolean;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatObjectMetadataMaps: Pick<
+    FlatEntityMaps<FlatObjectMetadata>,
+    'byUniversalIdentifier'
+  >;
   rolesPermissions: Record<string, RoleRecordsPermissions>;
   changedAccessGroups: Pick<AccessGroup, 'objectMetadataId'>[];
 }): Set<string> =>
