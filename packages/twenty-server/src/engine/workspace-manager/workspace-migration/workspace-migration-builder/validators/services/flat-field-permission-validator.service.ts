@@ -12,25 +12,7 @@ import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/wor
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
-import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
-
-const isSameRowLevelPermissionPredicateGroup = ({
-  fieldPermission,
-  otherFieldPermission,
-}: {
-  fieldPermission: Pick<
-    UniversalFlatFieldPermission,
-    'rowLevelPermissionPredicateGroupUniversalIdentifier'
-  >;
-  otherFieldPermission: Pick<
-    UniversalFlatFieldPermission,
-    'rowLevelPermissionPredicateGroupUniversalIdentifier'
-  >;
-}): boolean =>
-  (fieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier ??
-    null) ===
-  (otherFieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier ??
-    null);
+import { isSameRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-same-row-level-permission-predicate-group.util';
 
 @Injectable()
 export class FlatFieldPermissionValidatorService {
