@@ -4386,7 +4386,7 @@ msgid "Assistant avatar"
 msgstr "助理頭像"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "助理名稱"
 
@@ -11302,7 +11302,7 @@ msgid "Enter a JSON value"
 msgstr "輸入 JSON 值"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "請在單行中輸入長度介於 1 到 {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} 個字元之間的名稱。方括號必須成對，且不可巢狀使用。"
 
@@ -12774,6 +12774,11 @@ msgstr "無法撤銷簽署金鑰。請稍後再試。"
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "撤銷復原碼失敗。"
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr ""
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
