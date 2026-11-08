@@ -1,10 +1,9 @@
-import gql from 'graphql-tag';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { findCurrentWorkspaceInviteHash } from 'test/integration/graphql/utils/find-current-workspace-invite-hash.util';
 import { SAML_IDENTITY_PROVIDER_CERTIFICATE } from 'test/integration/metadata/suites/sso-identity-provider/constants/saml-identity-provider-certificate.constant';
 import { createOneSamlIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-saml-identity-provider.util';
 import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
 import { updateOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/update-one-sso-identity-provider.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { authorizeWithPassword } from 'test/integration/sso/utils/authorize-with-password.util';
 import { completeOidcLogin } from 'test/integration/sso/utils/complete-oidc-login.util';
 import { createTestOidcIdentityProvider } from 'test/integration/sso/utils/create-test-oidc-identity-provider.util';
@@ -15,6 +14,7 @@ import { getYcombinatorAdminAccessToken } from 'test/integration/sso/utils/get-y
 import { replayOnTestApp } from 'test/integration/sso/utils/replay-on-test-app.util';
 import { signInWithOidc } from 'test/integration/sso/utils/sign-in-with-oidc.util';
 import { startOidcLogin } from 'test/integration/sso/utils/start-oidc-login.util';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { SsoIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
@@ -33,25 +33,6 @@ const replayRedirect = async (url: URL) => {
   expect(response.status).toBe(302);
 
   return new URL(response.headers.location);
-};
-
-const findWorkspaceInviteHash = async (token: string): Promise<string> => {
-  const response = await makeMetadataApiRequest(
-    {
-      query: gql`
-        query CurrentWorkspaceInviteHash {
-          currentUser {
-            currentWorkspace {
-              inviteHash
-            }
-          }
-        }
-      `,
-    },
-    token,
-  );
-
-  return response.body.data.currentUser.currentWorkspace.inviteHash;
 };
 
 describe('SSO login should fail', () => {
@@ -196,12 +177,17 @@ describe('SSO login should fail', () => {
     it('when the invite hash belongs to another workspace', async () => {
       const identityProviderId = await createOidcIdentityProvider();
 
+      const { data } = await findCurrentWorkspaceInviteHash({
+        token: ycombinatorAdminAccessToken,
+      });
+      const otherWorkspaceInviteHash = data.currentWorkspace.inviteHash;
+
+      assertIsDefinedOrThrow(otherWorkspaceInviteHash);
+
       expectSsoErrorRedirect({
         redirectUrl: await signInAsPhil({
           identityProviderId,
-          workspaceInviteHash: await findWorkspaceInviteHash(
-            ycombinatorAdminAccessToken,
-          ),
+          workspaceInviteHash: otherWorkspaceInviteHash,
         }),
         workspaceSubdomain: APPLE_SUBDOMAIN,
         errorMessage: 'Identity provider does not belong to this workspace',
