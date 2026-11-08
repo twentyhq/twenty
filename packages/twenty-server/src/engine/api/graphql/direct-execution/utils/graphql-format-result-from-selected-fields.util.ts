@@ -275,6 +275,8 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
   context: GraphQLFormatContext,
 ): Record<string, unknown> => {
   const formatted: Record<string, unknown> = {};
+  const connectionValues: Record<string, unknown> = connection;
+  const pageInfoValues: Record<string, unknown> = connection.pageInfo;
 
   for (const [key, subFields] of Object.entries(selectedFields)) {
     if (key === '__typename') {
@@ -327,23 +329,14 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
           continue;
         }
 
-        const pageInfoValues = new Map<string, unknown>(
-          Object.entries(connection.pageInfo),
-        );
-
-        pageInfoFormatted[pageInfoKey] =
-          pageInfoValues.get(pageInfoKey) ?? null;
+        pageInfoFormatted[pageInfoKey] = pageInfoValues[pageInfoKey] ?? null;
       }
 
       formatted.pageInfo = pageInfoFormatted;
       continue;
     }
 
-    const connectionValues = new Map<string, unknown>(
-      Object.entries(connection),
-    );
-
-    const rawAggregateValue = connectionValues.get(key) ?? null;
+    const rawAggregateValue = connectionValues[key] ?? null;
 
     formatted[key] =
       isNonEmptyString(rawAggregateValue) && isFinite(Number(rawAggregateValue))
