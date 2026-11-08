@@ -23,13 +23,6 @@ inputs:
       "installation-only" (deploy + install only).
     required: false
     default: 'installation-and-integration-test'
-  prepare-monorepo:
-    description: >
-      Set to "false" when a local server is already running from this checkout:
-      it has installed dependencies and built the CLI, and redoing either under
-      it can crash the worker while it boots.
-    required: false
-    default: 'true'
 
 runs:
   using: composite
@@ -46,17 +39,6 @@ runs:
             exit 1
             ;;
         esac
-
-    - name: Install monorepo dependencies
-      if: inputs.prepare-monorepo == 'true'
-      uses: ./.github/actions/yarn-install
-
-    - name: Build Twenty CLI from checkout
-      if: inputs.prepare-monorepo == 'true'
-      shell: bash
-      run: |
-        npx nx build twenty-cli
-        echo "TWENTY_CLI=$GITHUB_WORKSPACE/packages/twenty-cli/dist/cli.cjs" >> "$GITHUB_ENV"
 
     - name: Enable Corepack
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'

@@ -331,7 +331,6 @@ jobs:
           api-key: ${{ steps.twenty.outputs.api-key }}
           app-path: ${{ matrix.app.path }}
           mode: installation-only
-          prepare-monorepo: 'false'
       - name: Dump server and worker logs on failure
         if: failure()
         run: tail -n 150 /tmp/twenty-server.log /tmp/twenty-worker.log || true
