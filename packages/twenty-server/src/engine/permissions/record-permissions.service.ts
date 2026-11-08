@@ -15,7 +15,7 @@ import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-syst
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type RlsRuleFieldMask } from 'src/engine/permissions/internal/masking/types/rls-rule-field-mask.type';
 import { buildRlsRulesUnreadableFields } from 'src/engine/permissions/internal/masking/utils/build-rls-rules-unreadable-fields.util';
-import { buildRlsRlsRuleFieldMasks } from 'src/engine/permissions/internal/masking/utils/build-rls-rule-field-masks.util';
+import { buildRlsRuleFieldMasks } from 'src/engine/permissions/internal/masking/utils/build-rls-rule-field-masks.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -418,7 +418,7 @@ export class RecordPermissionsService {
     });
   }
 
-  async findRlsRlsRuleFieldMasks({
+  async findRlsRuleFieldMasks({
     principals,
     objectMetadataId,
     tableAlias,
@@ -440,7 +440,7 @@ export class RecordPermissionsService {
       return [];
     }
 
-    return buildRlsRlsRuleFieldMasks({
+    return buildRlsRuleFieldMasks({
       rlsRulesUnreadableFields: buildRlsRulesUnreadableFields({
         principals,
         metadataMaps,

@@ -48,12 +48,6 @@ const keyFrom = ({
   >) =>
   `${objectMetadataId}:${fieldMetadataId}:${rowLevelPermissionPredicateGroupId ?? ''}`;
 
-const isFlatFieldMetadataOneToManyRelation = (
-  flatFieldMetadata: FlatFieldMetadata,
-): boolean =>
-  isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
-  flatFieldMetadata.settings.relationType === RelationType.ONE_TO_MANY;
-
 const toUniversalFlatFieldPermissionToDelete = (
   fieldPermission: FlatFieldPermission,
 ): UniversalFlatFieldPermission => ({
@@ -501,16 +495,16 @@ export class FieldPermissionService {
       );
     }
 
-    // A masked value reads as null, which a required GraphQL field or a list relation cannot return
+    // A masked value reads as null, which a required field cannot return, and a join would still read through a masked relation
     if (
       flatFieldMetadata.isNullable === false ||
-      isFlatFieldMetadataOneToManyRelation(flatFieldMetadata)
+      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
     ) {
       throw new PermissionsException(
         `Field ${flatFieldMetadata.name} cannot be restricted on a row level permission rule`,
         PermissionsExceptionCode.INVALID_ARG,
         {
-          userFriendlyMessage: msg`Required fields and list relations cannot be restricted on a row level permission rule.`,
+          userFriendlyMessage: msg`Required fields and relations cannot be restricted on a row level permission rule.`,
         },
       );
     }
@@ -525,7 +519,11 @@ export class FieldPermissionService {
     inputFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Set<string> {
-    const inputKeys = new Set(inputFieldPermissions.map((fp) => keyFrom(fp)));
+    const inputKeys = new Set(
+      inputFieldPermissions.map((inputFieldPermission) =>
+        keyFrom(inputFieldPermission),
+      ),
+    );
     const mirroredKeys = new Set<string>();
 
     for (const fieldPermission of inputFieldPermissions) {
@@ -571,7 +569,7 @@ export class FieldPermissionService {
       });
       if (inputKeys.has(targetKey)) {
         const targetInInput = inputFieldPermissions.find(
-          (fp) => keyFrom(fp) === targetKey,
+          (inputFieldPermission) => keyFrom(inputFieldPermission) === targetKey,
         );
         if (isDefined(targetInInput)) {
           const hasConflict =

@@ -7,7 +7,7 @@ import { type RlsRuleUnreadableFields } from 'src/engine/permissions/internal/ma
 import { type RlsRuleFieldMask } from 'src/engine/permissions/internal/masking/types/rls-rule-field-mask.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 
-export const buildRlsRlsRuleFieldMasks = ({
+export const buildRlsRuleFieldMasks = ({
   rlsRulesUnreadableFields,
   flatObjectMetadata,
   metadataMaps,

@@ -356,6 +356,25 @@ describe('field permissions on an RLS rule (integration)', () => {
     }
   });
 
+  it('should reject a relation field', async () => {
+    const { errors } = await upsertFieldPermissions({
+      expectToFail: true,
+      input: {
+        roleId,
+        fieldPermissions: [
+          {
+            objectMetadataId,
+            fieldMetadataId: await findFieldMetadataId('company'),
+            rowLevelPermissionPredicateGroupId: rlsRuleId,
+            canReadFieldValue: false,
+          },
+        ],
+      },
+    });
+
+    expect(errors).toBeDefined();
+  });
+
   it('should reject a rule that belongs to another role', async () => {
     const { errors } = await upsertFieldPermissions({
       expectToFail: true,
