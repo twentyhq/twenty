@@ -737,15 +737,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (validationRules.length === 0) {
-      return (await this.options.internalContext.recordPermissions.isRecomputingRecordAccessGroupIdsOnWrite(
-        {
-          featureFlagsMap: this.options.internalContext.featureFlagsMap,
-          workspaceId: this.options.internalContext.workspaceId,
-          objectMetadataId: this.options.flatObjectMetadata.id,
-        },
-      ))
-        ? this.runAtomically((repository) => write(repository))
-        : write(this);
+      return this.runAtomicallyWhenRecomputingRecordAccessGroupIds(write);
     }
 
     return this.runAtomically((repository) =>
@@ -759,6 +751,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         }),
       ),
     );
+  }
+
+  private async runAtomicallyWhenRecomputingRecordAccessGroupIds<TResult>(
+    write: (repository: WorkspaceRepository<TEntity>) => Promise<TResult>,
+  ): Promise<TResult> {
+    return (await this.options.internalContext.recordPermissions.isRecomputingRecordAccessGroupIdsOnWrite(
+      {
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        workspaceId: this.options.internalContext.workspaceId,
+        objectMetadataId: this.options.flatObjectMetadata.id,
+      },
+    ))
+      ? this.runAtomically(write)
+      : write(this);
   }
 
   private async findExistingIds(ids: string[]): Promise<Set<string>> {
@@ -1027,6 +1033,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           principals: this.resolvePermissionsPrincipalsOrThrow(),
           objectMetadataId: this.options.flatObjectMetadata.id,
           records: this.formatResult<ObjectRecord[]>(formattedRecords),
+          transactionScope: this.buildRecordPermissionTransactionScope(),
         },
       );
     }
@@ -1485,21 +1492,24 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
+    const write = (
+      repository: WorkspaceRepository<TEntity>,
+      validateWrittenRecords?: ValidateWrittenRecords,
+    ) =>
+      repository.performMutation({
+        ...args,
+        selectQueryBuilder:
+          repository === this
+            ? args.selectQueryBuilder
+            : args.selectQueryBuilder.clone(repository.options.executor),
+        validateWrittenRecords,
+      });
+
     if (args.kind !== 'update') {
-      return this.performMutation(args);
+      return this.runAtomicallyWhenRecomputingRecordAccessGroupIds(write);
     }
 
-    return this.runWithValidationRules({
-      write: (repository, validateWrittenRecords) =>
-        repository.performMutation({
-          ...args,
-          selectQueryBuilder:
-            repository === this
-              ? args.selectQueryBuilder
-              : args.selectQueryBuilder.clone(repository.options.executor),
-          validateWrittenRecords,
-        }),
-    });
+    return this.runWithValidationRules({ write });
   }
 
   private async performMutation({

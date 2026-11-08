@@ -547,10 +547,12 @@ export class RecordPermissionsService {
     principals,
     objectMetadataId,
     records,
+    transactionScope,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
     objectMetadataId: string;
     records: ObjectRecord[];
+    transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
     const { flatObjectMetadata, metadataMaps } =
       await this.findObjectAccessRequestOrThrow({
@@ -568,6 +570,7 @@ export class RecordPermissionsService {
         this.recordPermissionReadRepository.findRelationHopJoinValues({
           ...args,
           workspaceId: principals.workspaceId,
+          transactionScope,
         }),
     });
   }
