@@ -187,7 +187,12 @@ export const SettingsRoleAssignment = ({
   ) => {
     const config = ROLE_TARGET_CONFIG[entityType];
     const existingRole = config.getRoleMap(roleMaps).get(entity.id);
-    const name = config.getName(entity as never);
+    const name =
+      'label' in entity
+        ? ROLE_TARGET_CONFIG.agent.getName(entity)
+        : typeof entity.name === 'string'
+          ? entity.name
+          : `${entity.name.firstName} ${entity.name.lastName}`;
 
     setSelectRoleTarget({
       id: entity.id,
