@@ -5,7 +5,10 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { type McpServerFormValues } from '@/settings/mcp-servers/validation-schemas/mcpServerFormSchema';
-import { UpdateMcpServerDocument } from '~/generated-metadata/graphql';
+import {
+  ApplicationConnectionProvidersDocument,
+  UpdateMcpServerDocument,
+} from '~/generated-metadata/graphql';
 
 export const useUpdateMcpServer = () => {
   const { t } = useLingui();
@@ -23,6 +26,7 @@ export const useUpdateMcpServer = () => {
     try {
       const { data } = await updateMcpServerMutation({
         variables: { input: { id: mcpServerId, update } },
+        refetchQueries: [ApplicationConnectionProvidersDocument],
       });
 
       if (!isDefined(data)) {
