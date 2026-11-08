@@ -8,16 +8,15 @@ import { FieldsWidgetFieldList } from '@/page-layout/widgets/fields/components/F
 import { FieldsWidgetGroupContainer } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupContainer';
 import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay';
 import { useFieldsWidgetHiddenFieldsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetHiddenFieldsForDisplay';
+import { filterReadableFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/filterReadableFieldsWidgetGroups';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { useMemo } from 'react';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { isDefined } from 'twenty-shared/utils';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
@@ -61,70 +60,41 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   const fieldsConfiguration = widget.configuration as FieldsConfiguration;
 
-  const { groups, displayMode } = useFieldsWidgetGroupsForDisplay({
-    widgetId: widget.id,
-    viewId: fieldsConfiguration.viewId ?? null,
-    objectNameSingular: targetRecord.targetObjectNameSingular,
+  const { groups: configuredGroups, displayMode } =
+    useFieldsWidgetGroupsForDisplay({
+      widgetId: widget.id,
+      viewId: fieldsConfiguration.viewId ?? null,
+      objectNameSingular: targetRecord.targetObjectNameSingular,
+    });
+
+  const { hiddenFields: configuredHiddenFields } =
+    useFieldsWidgetHiddenFieldsForDisplay({
+      widgetId: widget.id,
+      viewId: fieldsConfiguration.viewId ?? null,
+      objectNameSingular: targetRecord.targetObjectNameSingular,
+    });
+
+  const groups = filterReadableFieldsWidgetGroups({
+    groups: configuredGroups,
+    readableFields: objectMetadataItem.readableFields,
   });
 
-  const { hiddenFields } = useFieldsWidgetHiddenFieldsForDisplay({
-    widgetId: widget.id,
-    viewId: fieldsConfiguration.viewId ?? null,
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  // Field-level permissions: fields the role has No Access to stay hidden
-  // on the record page, like in the table. Editor paths (layout settings)
-  // keep the unfiltered field list from useFieldsWidgetFields.
-  const readableFieldMetadataIds = useMemo(
-    () =>
-      isDefined(objectMetadataItem)
-        ? new Set(objectMetadataItem.readableFields.map((field) => field.id))
-        : null,
-    [objectMetadataItem],
+  const hiddenFields = configuredHiddenFields.filter((hiddenField) =>
+    objectMetadataItem.readableFields.some(
+      (readableField) => readableField.id === hiddenField.fieldMetadataItem.id,
+    ),
   );
-
-  const permittedGroups = useMemo(() => {
-    if (readableFieldMetadataIds === null) {
-      return groups;
-    }
-
-    let nextGlobalIndex = 0;
-
-    return groups
-      .map((group) => ({
-        ...group,
-        fields: group.fields
-          .filter((field) =>
-            readableFieldMetadataIds.has(field.fieldMetadataItem.id),
-          )
-          // Reindex so globalIndex matches the flattened list below;
-          // hover and edit portals resolve metadata by globalIndex.
-          .map((field) => ({ ...field, globalIndex: nextGlobalIndex++ })),
-      }))
-      .filter((group) => group.fields.length > 0);
-  }, [groups, readableFieldMetadataIds]);
-
-  const permittedHiddenFields = useMemo(() => {
-    if (readableFieldMetadataIds === null) {
-      return hiddenFields;
-    }
-
-    return hiddenFields.filter((field) =>
-      readableFieldMetadataIds.has(field.fieldMetadataItem.id),
-    );
-  }, [hiddenFields, readableFieldMetadataIds]);
 
   const shouldShowHiddenFields =
     fieldsConfiguration.shouldAllowUserToSeeHiddenFields === true &&
-    permittedHiddenFields.length > 0;
+    hiddenFields.length > 0;
 
-  const visibleFields = permittedGroups.flatMap((group) => group.fields);
+  const visibleFields = groups.flatMap((group) => group.fields);
 
   const hiddenFieldsWithOffsetGlobalIndex = shouldShowHiddenFields
-    ? permittedHiddenFields.map((field) => ({
+    ? hiddenFields.map((field, index) => ({
         ...field,
-        globalIndex: field.globalIndex + visibleFields.length,
+        globalIndex: index + visibleFields.length,
       }))
     : [];
 
@@ -135,11 +105,10 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     ),
   ];
 
-  const hasFieldsToDisplay =
-    permittedGroups.length > 0 || shouldShowHiddenFields;
+  const hasFieldsToDisplay = groups.length > 0 || shouldShowHiddenFields;
 
   const shouldDisplayGroupHeaders =
-    displayMode === 'grouped' && permittedGroups.length > 1;
+    displayMode === 'grouped' && groups.length > 1;
 
   if (!hasFieldsToDisplay) {
     return (
@@ -168,7 +137,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
           }}
         >
           {shouldDisplayGroupHeaders ? (
-            permittedGroups.map((group) => (
+            groups.map((group) => (
               <FieldsWidgetGroupContainer key={group.id} title={group.name}>
                 <StyledPropertyBox>
                   <FieldsWidgetFieldList
