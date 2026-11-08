@@ -10185,7 +10185,7 @@ msgstr "옵션 ID가 필요합니다"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr ""
+msgstr "옵션 ID는 버전 4 이상의 소문자 UUID여야 합니다"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts

@@ -10185,7 +10185,7 @@ msgstr "Option-ID ist erforderlich"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr ""
+msgstr "Die Options-ID muss eine UUID der Version 4 oder höher in Kleinbuchstaben sein"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts

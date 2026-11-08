@@ -10185,7 +10185,7 @@ msgstr "Ընտրության id-ն պարտադիր է"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
 msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr ""
+msgstr "Ընտրանքի id-ն պետք է լինի 4-րդ կամ ավելի բարձր տարբերակի փոքրատառ UUID"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
