@@ -7,7 +7,7 @@ import { createStore, Provider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -86,10 +86,12 @@ const renderSettingsPrivacy = ({
   store.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
     aiDataPolicy,
-    ...(pinnedModelIdByTier && {
-      isAutoModelSelectionEnabled: false,
-      aiModelIdByTier: pinnedModelIdByTier,
-    }),
+    ...(isDefined(pinnedModelIdByTier)
+      ? {
+          isAutoModelSelectionEnabled: false,
+          aiModelIdByTier: pinnedModelIdByTier,
+        }
+      : {}),
   });
 
   return render(

@@ -67,7 +67,7 @@ export const SettingsPrivacyAffectedByAiDataPolicy = () => {
     .map(({ id, label }) => ({ id, kind: 'agent', label }));
 
   const affectedModelTiers: AiDataPolicyAffectedEntry[] =
-    currentWorkspace?.isAutoModelSelectionEnabled === true
+    currentWorkspace?.isAutoModelSelectionEnabled
       ? []
       : AI_MODEL_TIERS.filter((tier) => {
           const pinnedModelId = currentWorkspace?.aiModelIdByTier?.[tier];
