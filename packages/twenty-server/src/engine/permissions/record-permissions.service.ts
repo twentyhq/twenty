@@ -13,9 +13,9 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type RuleFieldMask } from 'src/engine/permissions/internal/masking/types/rule-field-mask.type';
-import { buildRuleFieldDenials } from 'src/engine/permissions/internal/masking/utils/build-rule-field-denials.util';
-import { buildRuleFieldMasks } from 'src/engine/permissions/internal/masking/utils/build-rule-field-masks.util';
+import { type RlsRuleFieldMask } from 'src/engine/permissions/internal/masking/types/rls-rule-field-mask.type';
+import { buildRlsRulesUnreadableFields } from 'src/engine/permissions/internal/masking/utils/build-rls-rules-unreadable-fields.util';
+import { buildRlsRlsRuleFieldMasks } from 'src/engine/permissions/internal/masking/utils/build-rls-rule-field-masks.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -418,11 +418,11 @@ export class RecordPermissionsService {
     });
   }
 
-  async findRuleFieldMasks({
+  async findRlsRlsRuleFieldMasks({
     principals,
     objectMetadataId,
     tableAlias,
-  }: ObjectQuestion & { tableAlias: string }): Promise<RuleFieldMask[]> {
+  }: ObjectQuestion & { tableAlias: string }): Promise<RlsRuleFieldMask[]> {
     if (!isDefined(principals)) {
       return [];
     }
@@ -440,8 +440,8 @@ export class RecordPermissionsService {
       return [];
     }
 
-    return buildRuleFieldMasks({
-      ruleFieldDenials: buildRuleFieldDenials({
+    return buildRlsRlsRuleFieldMasks({
+      rlsRulesUnreadableFields: buildRlsRulesUnreadableFields({
         principals,
         metadataMaps,
         flatObjectMetadata,

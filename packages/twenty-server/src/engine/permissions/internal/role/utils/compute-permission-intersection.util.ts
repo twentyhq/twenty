@@ -58,7 +58,7 @@ const intersectRestrictedFields = (
   return restrictedFields;
 };
 
-const unionRuleFieldList = ({
+const unionRlsRuleFieldList = ({
   objectRecordsPermissionsPerRole,
   fieldList,
 }: {
@@ -137,11 +137,11 @@ const intersectObjectRecordsPermissions = (
         ),
       ),
       predicateGroups: [],
-      unreadableFields: unionRuleFieldList({
+      unreadableFields: unionRlsRuleFieldList({
         objectRecordsPermissionsPerRole,
         fieldList: 'unreadableFields',
       }),
-      uneditableFields: unionRuleFieldList({
+      uneditableFields: unionRlsRuleFieldList({
         objectRecordsPermissionsPerRole,
         fieldList: 'uneditableFields',
       }),

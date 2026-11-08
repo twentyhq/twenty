@@ -439,7 +439,7 @@ export class FieldPermissionService {
     }
 
     if (isDefined(fieldPermission.rowLevelPermissionPredicateGroupId)) {
-      this.validateRuleFieldPermissionOrThrow({
+      this.validateRlsRuleFieldPermissionOrThrow({
         rowLevelPermissionPredicateGroupId:
           fieldPermission.rowLevelPermissionPredicateGroupId,
         flatFieldMetadata,
@@ -465,7 +465,7 @@ export class FieldPermissionService {
     }
   }
 
-  private validateRuleFieldPermissionOrThrow({
+  private validateRlsRuleFieldPermissionOrThrow({
     rowLevelPermissionPredicateGroupId,
     flatFieldMetadata,
     flatRowLevelPermissionPredicateGroupMaps,
@@ -529,7 +529,7 @@ export class FieldPermissionService {
     const mirroredKeys = new Set<string>();
 
     for (const fieldPermission of inputFieldPermissions) {
-      // A rule filters one object, so it has no meaning on the other side of a relation
+      // An RLS rule filters one object, so it has no meaning on the other side of a relation
       if (isDefined(fieldPermission.rowLevelPermissionPredicateGroupId)) {
         continue;
       }

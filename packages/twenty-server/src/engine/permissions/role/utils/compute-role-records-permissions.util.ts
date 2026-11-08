@@ -192,7 +192,7 @@ const buildRestrictedFields = ({
   return restrictedFields;
 };
 
-const buildRuleFieldLists = ({
+const buildRlsRuleFieldLists = ({
   objectMetadata,
   fieldPermissions,
   predicateGroups,
@@ -207,7 +207,7 @@ const buildRuleFieldLists = ({
   'unreadableFields' | 'uneditableFields'
 > => {
   // Filters compile one root group, picked by another ordering, so a list on any root applies rather than risk dropping one
-  const ruleIds = new Set(
+  const rlsRuleIds = new Set(
     predicateGroups
       .filter(
         ({ parentRowLevelPermissionPredicateGroupId }) =>
@@ -221,7 +221,7 @@ const buildRuleFieldLists = ({
   for (const fieldPermission of fieldPermissions) {
     if (
       !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) ||
-      !ruleIds.has(fieldPermission.rowLevelPermissionPredicateGroupId)
+      !rlsRuleIds.has(fieldPermission.rowLevelPermissionPredicateGroupId)
     ) {
       continue;
     }
@@ -255,13 +255,13 @@ const buildObjectRecordsPermissions = ({
   restrictedFields,
   predicates,
   predicateGroups,
-  ruleFieldLists,
+  rlsRuleFieldLists,
 }: {
   objectRecordsAccess: ObjectRecordsAccess;
   restrictedFields: RestrictedFieldsPermissions;
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
-  ruleFieldLists: Pick<
+  rlsRuleFieldLists: Pick<
     RowLevelRecordsPermissions,
     'unreadableFields' | 'uneditableFields'
   >;
@@ -292,7 +292,7 @@ const buildObjectRecordsPermissions = ({
       canDestroyRecords: objectRecordsAccess.canDestroy,
       predicates,
       predicateGroups,
-      ...ruleFieldLists,
+      ...rlsRuleFieldLists,
     },
   };
 };
@@ -359,9 +359,9 @@ export const computeRoleRecordsPermissions = ({
           rowLevelPermissionPredicate.objectMetadataId === objectMetadataId,
       ),
       predicateGroups,
-      ruleFieldLists: isWorkflowObject
+      rlsRuleFieldLists: isWorkflowObject
         ? { unreadableFields: [], uneditableFields: [] }
-        : buildRuleFieldLists({
+        : buildRlsRuleFieldLists({
             objectMetadata,
             fieldPermissions,
             predicateGroups,

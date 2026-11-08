@@ -3,22 +3,22 @@ import { isDefined } from 'twenty-shared/utils';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { type RuleFieldDenial } from 'src/engine/permissions/internal/masking/types/rule-field-denial.type';
-import { type RuleFieldMask } from 'src/engine/permissions/internal/masking/types/rule-field-mask.type';
+import { type RlsRuleUnreadableFields } from 'src/engine/permissions/internal/masking/types/rls-rule-unreadable-fields.type';
+import { type RlsRuleFieldMask } from 'src/engine/permissions/internal/masking/types/rls-rule-field-mask.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 
-export const buildRuleFieldMasks = ({
-  ruleFieldDenials,
+export const buildRlsRlsRuleFieldMasks = ({
+  rlsRulesUnreadableFields,
   flatObjectMetadata,
   metadataMaps,
   tableAlias,
 }: {
-  ruleFieldDenials: RuleFieldDenial[];
+  rlsRulesUnreadableFields: RlsRuleUnreadableFields[];
   flatObjectMetadata: FlatObjectMetadata;
   metadataMaps: Pick<PermissionsMetadataMaps, 'flatFieldMetadataMaps'>;
   tableAlias: string;
-}): RuleFieldMask[] => {
-  if (ruleFieldDenials.length === 0) {
+}): RlsRuleFieldMask[] => {
+  if (rlsRulesUnreadableFields.length === 0) {
     return [];
   }
 
@@ -29,7 +29,7 @@ export const buildRuleFieldMasks = ({
     ),
   );
 
-  return ruleFieldDenials.flatMap(
+  return rlsRulesUnreadableFields.flatMap(
     ({ recordFilter, unreadableFieldMetadataIds }) => {
       const condition = renderRowLevelPermissionFilterToSql({
         recordFilter,

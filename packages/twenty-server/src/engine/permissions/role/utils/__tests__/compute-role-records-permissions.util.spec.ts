@@ -6,8 +6,8 @@ import {
 import { computeRoleRecordsPermissions } from 'src/engine/permissions/role/utils/compute-role-records-permissions.util';
 
 const OBJECT_METADATA_ID = 'object-id';
-const RULE_ID = 'rule-id';
-const OTHER_RULE_ID = 'other-rule-id';
+const RLS_RULE_ID = 'rule-id';
+const OTHER_RLS_RULE_ID = 'other-rule-id';
 const LABEL_FIELD_ID = 'label-field-id';
 
 const predicateGroup = ({
@@ -60,15 +60,15 @@ const computeObjectPermissions = (
           operand: RowLevelPermissionPredicateOperand.CONTAINS,
           value: 'value',
           subFieldName: null,
-          rowLevelPermissionPredicateGroupId: RULE_ID,
+          rowLevelPermissionPredicateGroupId: RLS_RULE_ID,
           workspaceMemberFieldMetadataId: null,
           workspaceMemberSubFieldName: null,
         },
       ],
       rowLevelPermissionPredicateGroups: [
-        predicateGroup({ id: RULE_ID, parentId: null }),
-        predicateGroup({ id: OTHER_RULE_ID, parentId: null }),
-        predicateGroup({ id: 'child-group-id', parentId: RULE_ID }),
+        predicateGroup({ id: RLS_RULE_ID, parentId: null }),
+        predicateGroup({ id: OTHER_RLS_RULE_ID, parentId: null }),
+        predicateGroup({ id: 'child-group-id', parentId: RLS_RULE_ID }),
       ],
     },
     objectMetadataCollection: [
@@ -85,11 +85,11 @@ const computeObjectPermissions = (
   }).objects[OBJECT_METADATA_ID];
 
 describe('computeRoleRecordsPermissions', () => {
-  it('should keep rule field permissions out of the object level restrictions', () => {
+  it('should keep RLS rule field permissions out of the object level restrictions', () => {
     const objectPermissions = computeObjectPermissions([
       {
-        fieldMetadataId: 'rule-field-id',
-        rowLevelPermissionPredicateGroupId: RULE_ID,
+        fieldMetadataId: 'rls-rule-field-id',
+        rowLevelPermissionPredicateGroupId: RLS_RULE_ID,
         canReadFieldValue: false,
       },
       {
@@ -104,19 +104,19 @@ describe('computeRoleRecordsPermissions', () => {
     ]);
     expect(
       objectPermissions?.rowLevelRecordsPermissions?.unreadableFields,
-    ).toEqual(['rule-field-id']);
+    ).toEqual(['rls-rule-field-id']);
   });
 
-  it('should make a field the rule cannot read uneditable too', () => {
+  it('should make a field the RLS rule cannot read uneditable too', () => {
     const rowLevelRecordsPermissions = computeObjectPermissions([
       {
         fieldMetadataId: 'hidden-field-id',
-        rowLevelPermissionPredicateGroupId: RULE_ID,
+        rowLevelPermissionPredicateGroupId: RLS_RULE_ID,
         canReadFieldValue: false,
       },
       {
         fieldMetadataId: 'locked-field-id',
-        rowLevelPermissionPredicateGroupId: RULE_ID,
+        rowLevelPermissionPredicateGroupId: RLS_RULE_ID,
         canUpdateFieldValue: false,
       },
     ])?.rowLevelRecordsPermissions;
@@ -130,12 +130,12 @@ describe('computeRoleRecordsPermissions', () => {
     ]);
   });
 
-  it('should keep the label identifier readable on a rule', () => {
+  it('should keep the label identifier readable on an RLS rule', () => {
     expect(
       computeObjectPermissions([
         {
           fieldMetadataId: LABEL_FIELD_ID,
-          rowLevelPermissionPredicateGroupId: RULE_ID,
+          rowLevelPermissionPredicateGroupId: RLS_RULE_ID,
           canReadFieldValue: false,
         },
       ])?.rowLevelRecordsPermissions?.unreadableFields,
@@ -146,20 +146,20 @@ describe('computeRoleRecordsPermissions', () => {
     expect(
       computeObjectPermissions([
         {
-          fieldMetadataId: 'first-rule-field-id',
-          rowLevelPermissionPredicateGroupId: RULE_ID,
+          fieldMetadataId: 'first-rls-rule-field-id',
+          rowLevelPermissionPredicateGroupId: RLS_RULE_ID,
           canReadFieldValue: false,
         },
         {
-          fieldMetadataId: 'other-rule-field-id',
-          rowLevelPermissionPredicateGroupId: OTHER_RULE_ID,
+          fieldMetadataId: 'other-rls-rule-field-id',
+          rowLevelPermissionPredicateGroupId: OTHER_RLS_RULE_ID,
           canReadFieldValue: false,
         },
       ])?.rowLevelRecordsPermissions?.unreadableFields,
-    ).toEqual(['first-rule-field-id', 'other-rule-field-id']);
+    ).toEqual(['first-rls-rule-field-id', 'other-rls-rule-field-id']);
   });
 
-  it('should ignore a field permission that targets another group than the rule', () => {
+  it('should ignore a field permission that targets another group than the RLS rule', () => {
     expect(
       computeObjectPermissions([
         {

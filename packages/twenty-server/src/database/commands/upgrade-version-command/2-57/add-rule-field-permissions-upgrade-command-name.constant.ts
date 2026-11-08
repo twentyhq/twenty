@@ -1,2 +1,0 @@
-export const ADD_RULE_FIELD_PERMISSIONS_UPGRADE_COMMAND_NAME =
-  '2.57.0_AddRuleFieldPermissionsFastInstanceCommand_1794128923088';

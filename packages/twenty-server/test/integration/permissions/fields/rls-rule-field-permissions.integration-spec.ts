@@ -22,13 +22,13 @@ const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
 const RECORD_SHARE_TABLE = `${SCHEMA}."recordShare"`;
 
-describe('field permissions on a row level permission rule (integration)', () => {
+describe('field permissions on an RLS rule (integration)', () => {
   let objectMetadataId: string;
   let avatarUrlFieldMetadataId: string;
   let originalPeople: { id: string; jobTitle: string; avatarUrl: string }[];
   let originalMemberRoleId: string;
   let roleId: string;
-  let ruleId: string;
+  let rlsRuleId: string;
 
   const findFieldMetadataId = async (name: string): Promise<string> => {
     const [{ id }] = await global.testDataSource.query(
@@ -78,8 +78,8 @@ describe('field permissions on a row level permission rule (integration)', () =>
     const { data } = await createOneRole({
       expectToFail: false,
       input: {
-        label: 'Rule field permissions',
-        description: 'Rule field permissions',
+        label: 'RLS rule field permissions',
+        description: 'RLS rule field permissions',
         canReadAllObjectRecords: true,
         canUpdateAllObjectRecords: false,
         canSoftDeleteAllObjectRecords: false,
@@ -88,7 +88,7 @@ describe('field permissions on a row level permission rule (integration)', () =>
     });
 
     roleId = data.createOneRole.id;
-    ruleId = v4();
+    rlsRuleId = v4();
 
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
@@ -97,7 +97,7 @@ describe('field permissions on a row level permission rule (integration)', () =>
         objectMetadataId,
         predicateGroups: [
           {
-            id: ruleId,
+            id: rlsRuleId,
             objectMetadataId,
             logicalOperator:
               RowLevelPermissionPredicateGroupLogicalOperator.AND,
@@ -109,7 +109,7 @@ describe('field permissions on a row level permission rule (integration)', () =>
             fieldMetadataId: await findFieldMetadataId('jobTitle'),
             operand: RowLevelPermissionPredicateOperand.CONTAINS,
             value: 'Paris',
-            rowLevelPermissionPredicateGroupId: ruleId,
+            rowLevelPermissionPredicateGroupId: rlsRuleId,
           },
         ],
       },
@@ -123,7 +123,7 @@ describe('field permissions on a row level permission rule (integration)', () =>
           {
             objectMetadataId,
             fieldMetadataId: avatarUrlFieldMetadataId,
-            rowLevelPermissionPredicateGroupId: ruleId,
+            rowLevelPermissionPredicateGroupId: rlsRuleId,
             canReadFieldValue: false,
           },
         ],
@@ -159,7 +159,7 @@ describe('field permissions on a row level permission rule (integration)', () =>
     }
   });
 
-  it('should mask the field on a record the rule matches', async () => {
+  it('should mask the field on a record the RLS rule matches', async () => {
     expect(await listPeopleAsMember()).toEqual([
       { id: originalPeople[0].id, avatarUrl: '', jobTitle: 'Paris office' },
     ]);
@@ -207,7 +207,7 @@ describe('field permissions on a row level permission rule (integration)', () =>
   it('should keep rule rows out of the role object level field permissions', async () => {
     const [{ count }] = await global.testDataSource.query(
       `SELECT COUNT(*) AS count FROM core."fieldPermission" WHERE "roleId" = $1 AND "rowLevelPermissionPredicateGroupId" = $2`,
-      [roleId, ruleId],
+      [roleId, rlsRuleId],
     );
 
     expect(Number(count)).toBe(1);
@@ -229,11 +229,11 @@ describe('field permissions on a row level permission rule (integration)', () =>
     expect(errors).toBeUndefined();
 
     const rows = await global.testDataSource.query(
-      `SELECT "rowLevelPermissionPredicateGroupId" AS "ruleId" FROM core."fieldPermission" WHERE "roleId" = $1 AND "fieldMetadataId" = $2 ORDER BY "createdAt"`,
+      `SELECT "rowLevelPermissionPredicateGroupId" AS "rlsRuleId" FROM core."fieldPermission" WHERE "roleId" = $1 AND "fieldMetadataId" = $2 ORDER BY "createdAt"`,
       [roleId, avatarUrlFieldMetadataId],
     );
 
-    expect(rows).toEqual([{ ruleId }, { ruleId: null }]);
+    expect(rows).toEqual([{ rlsRuleId }, { rlsRuleId: null }]);
 
     const { errors: updateErrors } = await upsertFieldPermissions({
       expectToFail: false,
@@ -365,7 +365,7 @@ describe('field permissions on a row level permission rule (integration)', () =>
           {
             objectMetadataId,
             fieldMetadataId: avatarUrlFieldMetadataId,
-            rowLevelPermissionPredicateGroupId: ruleId,
+            rowLevelPermissionPredicateGroupId: rlsRuleId,
             canReadFieldValue: false,
           },
         ],

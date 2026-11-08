@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_RULE_FIELD_PERMISSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-rule-field-permissions-upgrade-command-name.constant';
+import { ADD_RLS_RULE_FIELD_PERMISSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-rls-rule-field-permissions-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -26,7 +26,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   { unique: true, where: '"rowLevelPermissionPredicateGroupId" IS NULL' },
 )
 @Index(
-  'IDX_FIELD_PERMISSION_RULE_FIELD_ROLE_GROUP_UNIQUE',
+  'IDX_FIELD_PERMISSION_RLS_RULE_FIELD_ROLE_GROUP_UNIQUE',
   ['fieldMetadataId', 'roleId', 'rowLevelPermissionPredicateGroupId'],
   { unique: true, where: '"rowLevelPermissionPredicateGroupId" IS NOT NULL' },
 )
@@ -71,7 +71,7 @@ export class FieldPermissionEntity extends SyncableEntity {
   fieldMetadata: Relation<FieldMetadataEntity>;
 
   @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_RULE_FIELD_PERMISSIONS_UPGRADE_COMMAND_NAME,
+    upgradeCommandName: ADD_RLS_RULE_FIELD_PERMISSIONS_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'uuid' })
   rowLevelPermissionPredicateGroupId: string | null;

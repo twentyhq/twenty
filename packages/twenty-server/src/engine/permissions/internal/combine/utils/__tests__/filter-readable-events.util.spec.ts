@@ -9,7 +9,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { filterReadableEvents } from 'src/engine/permissions/internal/combine/utils/filter-readable-events.util';
-import { type RuleFieldDenial } from 'src/engine/permissions/internal/masking/types/rule-field-denial.type';
+import { type RlsRuleUnreadableFields } from 'src/engine/permissions/internal/masking/types/rls-rule-unreadable-fields.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
@@ -79,18 +79,18 @@ const buildUpdateEvent = ({
 const filter = ({
   events,
   recordsPermissions,
-  ruleFieldDenials = [],
+  rlsRulesUnreadableFields = [],
 }: {
   events: ObjectRecordUpdateEvent[];
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
-  ruleFieldDenials?: RuleFieldDenial[];
+  rlsRulesUnreadableFields?: RlsRuleUnreadableFields[];
 }) =>
   filterReadableEvents({
     events,
     readableRecordIds: new Set(['record-1', 'record-2']),
     objectMetadata: invoice,
     recordsPermissions,
-    ruleFieldDenials,
+    rlsRulesUnreadableFields,
     metadataMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
   });
 
@@ -144,7 +144,7 @@ describe('filterReadableEvents', () => {
     ).toEqual([]);
   });
 
-  it('should omit a field denied by a rule the record matches', () => {
+  it('should omit a field unreadable on an RLS rule the record matches', () => {
     const [event] = filter({
       events: [
         buildUpdateEvent({
@@ -153,7 +153,7 @@ describe('filterReadableEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      ruleFieldDenials: [
+      rlsRulesUnreadableFields: [
         {
           recordFilter: { name: { eq: 'New' } },
           unreadableFieldMetadataIds: ['secret-field-id'],
@@ -165,7 +165,7 @@ describe('filterReadableEvents', () => {
     expect(event.properties.updatedFields).toEqual(['name']);
   });
 
-  it('should keep a field denied by a rule the record does not match', () => {
+  it('should keep a field unreadable on an RLS rule the record does not match', () => {
     const [event] = filter({
       events: [
         buildUpdateEvent({
@@ -174,7 +174,7 @@ describe('filterReadableEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      ruleFieldDenials: [
+      rlsRulesUnreadableFields: [
         {
           recordFilter: { name: { eq: 'Another' } },
           unreadableFieldMetadataIds: ['secret-field-id'],
