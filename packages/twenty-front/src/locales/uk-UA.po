@@ -6227,10 +6227,10 @@ msgstr "Виберіть, що станеться під час натискан
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Виберіть, до чого Twenty може отримувати доступ, щоб підтримувати вас і вдосконалювати продукт."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Виберіть, коли {AGENT_CHAT_ASSISTANT_NAME} бере участь у розмовах у вашому робочому просторі"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr ""
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Ніколи"
 msgid "Never expires"
 msgstr "Ніколи не закінчується"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Ніколи не допускає {AGENT_CHAT_ASSISTANT_NAME} до розмов. Лише за згадуванням просить {AGENT_CHAT_ASSISTANT_NAME} відповісти, коли його позначено. Автоматично дозволяє {AGENT_CHAT_ASSISTANT_NAME} вирішувати, коли відповідати. У чатах лише з вами та {AGENT_CHAT_ASSISTANT_NAME} відповіді надсилаються завжди."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr ""
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

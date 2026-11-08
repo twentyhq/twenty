@@ -6227,10 +6227,10 @@ msgstr "Emailni bosganingizda nima bo‘lishini tanlang"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Sizni qo‘llab-quvvatlash va mahsulotni yaxshilash uchun Twenty nimalarga kira olishini tanlang."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "{AGENT_CHAT_ASSISTANT_NAME} ish joyingizdagi suhbatlarda qachon ishtirok etishini tanlang"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr ""
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Hech qachon"
 msgid "Never expires"
 msgstr "Muddati hech qachon tugamaydi"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Hech qachon {AGENT_CHAT_ASSISTANT_NAME} chetda qoldirilmaydi. Faqat tilga olinganda, {AGENT_CHAT_ASSISTANT_NAME} belgilanganida undan javob berish so‘raladi. Avtomatik rejim {AGENT_CHAT_ASSISTANT_NAME}ga qachon javob berishni hal qilish imkonini beradi. Faqat siz va {AGENT_CHAT_ASSISTANT_NAME} ishtirok etgan chatlarga doimo javob beriladi."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr ""
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

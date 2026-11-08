@@ -6227,10 +6227,10 @@ msgstr "اختر ما يحدث عند النقر على عنوان بريد إل
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "اختر ما يمكن لـ Twenty الوصول إليه لدعمك وتحسين المنتج."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "اختر متى يشارك {AGENT_CHAT_ASSISTANT_NAME} في المحادثات عبر مساحة العمل الخاصة بك"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr ""
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "أبدا"
 msgid "Never expires"
 msgstr "لا تنتهي صلاحيتها أبدًا"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "يُبقي وضع «أبدًا» {AGENT_CHAT_ASSISTANT_NAME} خارج المحادثات. يطلب وضع «عند الإشارة فقط» من {AGENT_CHAT_ASSISTANT_NAME} الرد عند الإشارة إليه. يتيح وضع «تلقائي» لـ {AGENT_CHAT_ASSISTANT_NAME} تحديد وقت الرد. تحصل المحادثات التي تضمك أنت و{AGENT_CHAT_ASSISTANT_NAME} فقط على ردود دائمًا."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr ""
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

@@ -6227,10 +6227,10 @@ msgstr "이메일 주소를 클릭할 때 수행할 작업을 선택하세요"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "지원을 제공하고 제품을 개선하기 위해 Twenty가 액세스할 수 있는 항목을 선택하세요."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "{AGENT_CHAT_ASSISTANT_NAME}이 워크스페이스 전체의 대화에 참여할 시점을 선택하세요"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr ""
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "결코"
 msgid "Never expires"
 msgstr "절대 만료되지 않음"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "사용 안 함은 {AGENT_CHAT_ASSISTANT_NAME}의 참여를 막습니다. 멘션된 경우에만은 태그되었을 때 {AGENT_CHAT_ASSISTANT_NAME}에게 답변을 요청합니다. 자동은 {AGENT_CHAT_ASSISTANT_NAME}이 답변할 시점을 결정합니다. 나와 {AGENT_CHAT_ASSISTANT_NAME}만 있는 채팅에는 항상 답변이 제공됩니다."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr ""
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

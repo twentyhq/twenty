@@ -6227,10 +6227,10 @@ msgstr "Alege ce se întâmplă când dai clic pe o adresă de e-mail"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Alegeți ce poate accesa Twenty pentru a vă oferi asistență și a îmbunătăți produsul."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Alege când {AGENT_CHAT_ASSISTANT_NAME} participă la conversații în întregul spațiu de lucru"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr ""
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Niciodată"
 msgid "Never expires"
 msgstr "Nu expiră niciodată"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Niciodată îl exclude pe {AGENT_CHAT_ASSISTANT_NAME}. Doar când este menționat îi solicită lui {AGENT_CHAT_ASSISTANT_NAME} să răspundă când este etichetat. Automat îi permite lui {AGENT_CHAT_ASSISTANT_NAME} să decidă când să răspundă. Chat-urile doar cu tine și {AGENT_CHAT_ASSISTANT_NAME} primesc întotdeauna răspunsuri."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr ""
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

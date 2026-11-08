@@ -6227,10 +6227,10 @@ msgstr "Izaberite šta se dešava kada kliknete na adresu e-pošte"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Izaberite čemu Twenty može da pristupi kako bi vam pružio podršku i unapredio proizvod."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Izaberite kada {AGENT_CHAT_ASSISTANT_NAME} učestvuje u razgovorima u vašem radnom prostoru"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr ""
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Nikada"
 msgid "Never expires"
 msgstr "Nikada ne ističe"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Nikada drži {AGENT_CHAT_ASSISTANT_NAME} van razgovora. Samo kada je pomenut traži od {AGENT_CHAT_ASSISTANT_NAME} da odgovori kada je označen. Automatski omogućava {AGENT_CHAT_ASSISTANT_NAME} da odluči kada će odgovoriti. Na razgovore samo između vas i {AGENT_CHAT_ASSISTANT_NAME} se uvek odgovara."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr ""
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
