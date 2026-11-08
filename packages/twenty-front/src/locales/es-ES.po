@@ -4386,7 +4386,7 @@ msgid "Assistant avatar"
 msgstr "Avatar del asistente"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Nombre del asistente"
 
@@ -11302,7 +11302,7 @@ msgid "Enter a JSON value"
 msgstr "Introduce un valor JSON"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Introduce un nombre de entre 1 y {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caracteres en una sola línea. Los corchetes deben estar emparejados y no pueden anidarse."
 
@@ -12774,6 +12774,11 @@ msgstr "No se pudo revocar la clave de firma. Por favor, inténtelo de nuevo má
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "No se pudo revocar el código de recuperación."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "No se pudo guardar la configuración del asistente. Inténtalo de nuevo."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts

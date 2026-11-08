@@ -1,12 +1,11 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { SAML_IDENTITY_PROVIDER_CERTIFICATE } from 'test/integration/metadata/suites/sso-identity-provider/constants/saml-identity-provider-certificate.constant';
 import { createOneSamlIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-saml-identity-provider.util';
+import { insertSamlIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/insert-saml-identity-provider.util';
 import { v4 as uuidv4 } from 'uuid';
 
 import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-// The harness only holds sessions of the Apple workspace, so the existing
-// identity provider is inserted directly into the other seeded workspace.
 describe('SAML identity provider creation should fail', () => {
   const existingIdentityProvider = {
     id: uuidv4(),
@@ -18,19 +17,7 @@ describe('SAML identity provider creation should fail', () => {
   };
 
   beforeAll(async () => {
-    await globalThis.testDataSource.query(
-      `INSERT INTO core."workspaceSSOIdentityProvider"
-         ("id", "name", "type", "issuer", "ssoURL", "certificate", "workspaceId")
-       VALUES ($1, $2, 'SAML', $3, $4, $5, $6)`,
-      [
-        existingIdentityProvider.id,
-        existingIdentityProvider.name,
-        existingIdentityProvider.issuer,
-        existingIdentityProvider.ssoURL,
-        existingIdentityProvider.certificate,
-        existingIdentityProvider.workspaceId,
-      ],
-    );
+    await insertSamlIdentityProvider(existingIdentityProvider);
   });
 
   afterAll(async () => {
