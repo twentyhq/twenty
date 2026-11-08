@@ -17,7 +17,7 @@ const StyledInputsContainer = styled.div`
 `;
 
 type SettingsMcpServerFormFieldsProps = {
-  mcpServer?: Pick<McpServer, 'id' | 'applicationId'>;
+  mcpServer?: Pick<McpServer, 'id' | 'applicationId' | 'connectionProviderId'>;
 };
 
 export const SettingsMcpServerFormFields = ({
@@ -72,6 +72,7 @@ export const SettingsMcpServerFormFields = ({
           {isDefined(connectionProviderApplicationId) && (
             <SettingsMcpServerConnectionProviderSelect
               applicationId={connectionProviderApplicationId}
+              savedConnectionProviderId={mcpServer?.connectionProviderId}
             />
           )}
         </StyledInputsContainer>

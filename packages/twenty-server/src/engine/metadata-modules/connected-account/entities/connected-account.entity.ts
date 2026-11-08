@@ -16,14 +16,12 @@ import { type ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
-import { ADD_MCP_SERVER_OAUTH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-mcp-server-oauth-upgrade-command-name.constant';
 import { ADD_ACCESS_TOKEN_EXPIRES_AT_TO_CONNECTED_ACCOUNT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-access-token-expires-at-to-connected-account-upgrade-command-name.constant';
 import { type EncryptedImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { EXTERNAL_ACCOUNT_ID_MAX_LENGTH } from 'src/engine/metadata-modules/connected-account/constants/external-account-id-max-length.constant';
-import { McpServerEntity } from 'src/engine/metadata-modules/mcp-server/entities/mcp-server.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
@@ -32,7 +30,6 @@ export type ConnectedAccountScope = 'USER' | 'WORKSPACE';
 @Entity({ name: 'connectedAccount', schema: 'core' })
 @Index('IDX_CONNECTED_ACCOUNT_CONNECTION_PROVIDER_ID', ['connectionProviderId'])
 @Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
-@Index('IDX_CONNECTED_ACCOUNT_MCP_SERVER_ID', ['mcpServerId'])
 @Index('IDX_CONNECTED_ACCOUNT_HANDLE_PROVIDER', ['handle', 'provider'])
 @Check(
   'CHK_connectedAccount_accessToken_encrypted',
@@ -127,17 +124,6 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   })
   @JoinColumn({ name: 'connectionProviderId' })
   connectionProvider: Relation<ConnectionProviderEntity> | null;
-
-  // Set for an account that signs in to an MCP server through the server's own OAuth discovery.
-  @Column({ type: 'uuid', nullable: true })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_MCP_SERVER_OAUTH_UPGRADE_COMMAND_NAME,
-  })
-  mcpServerId: string | null;
-
-  @ManyToOne(() => McpServerEntity, { onDelete: 'CASCADE', nullable: true })
-  @JoinColumn({ name: 'mcpServerId' })
-  mcpServer: Relation<McpServerEntity> | null;
 
   @Column({ type: 'uuid', nullable: true })
   applicationId: string | null;

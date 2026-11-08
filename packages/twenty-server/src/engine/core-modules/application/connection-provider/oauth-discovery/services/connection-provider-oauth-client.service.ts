@@ -5,32 +5,32 @@ import { type OAuthClientInformationMixed } from '@modelcontextprotocol/sdk/shar
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { ConnectionProviderOAuthClientEntity } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/entities/connection-provider-oauth-client.entity';
+import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
+import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { McpServerOAuthClientEntity } from 'src/engine/metadata-modules/mcp-server/entities/mcp-server-oauth-client.entity';
-import { type McpServerOAuthStoredClient } from 'src/engine/metadata-modules/mcp-server/oauth/types/mcp-server-oauth-stored-client.type';
-import { type McpServerOAuthRegistrationMethod } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-oauth-registration-method.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
-export class McpServerOAuthClientService {
+export class ConnectionProviderOAuthClientService {
   constructor(
-    @InjectWorkspaceScopedRepository(McpServerOAuthClientEntity)
-    private readonly mcpServerOAuthClientRepository: WorkspaceScopedRepository<McpServerOAuthClientEntity>,
+    @InjectWorkspaceScopedRepository(ConnectionProviderOAuthClientEntity)
+    private readonly oauthClientRepository: WorkspaceScopedRepository<ConnectionProviderOAuthClientEntity>,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   async findStoredClient({
-    mcpServerId,
+    connectionProviderId,
     workspaceId,
   }: {
-    mcpServerId: string;
+    connectionProviderId: string;
     workspaceId: string;
-  }): Promise<McpServerOAuthStoredClient | null> {
-    const oauthClient = await this.mcpServerOAuthClientRepository.findOneBy(
+  }): Promise<OAuthDiscoveryStoredClient | null> {
+    const oauthClient = await this.oauthClientRepository.findOneBy(
       workspaceId,
-      { mcpServerId },
+      { connectionProviderId },
     );
 
     if (!isDefined(oauthClient)) {
@@ -64,24 +64,24 @@ export class McpServerOAuthClientService {
   }
 
   async saveClient({
-    mcpServerId,
+    connectionProviderId,
     workspaceId,
     registrationMethod,
     redirectUri,
     clientInformation,
     discoveryState,
   }: {
-    mcpServerId: string;
+    connectionProviderId: string;
     workspaceId: string;
-    registrationMethod: McpServerOAuthRegistrationMethod;
+    registrationMethod: OAuthDiscoveryRegistrationMethod;
     redirectUri: string;
     clientInformation: OAuthClientInformationMixed;
     discoveryState: OAuthDiscoveryState;
   }): Promise<void> {
-    await this.mcpServerOAuthClientRepository.upsert(
+    await this.oauthClientRepository.upsert(
       workspaceId,
       {
-        mcpServerId,
+        connectionProviderId,
         registrationMethod,
         redirectUri,
         // TypeORM's deep partial cannot express the SDK's open-ended metadata objects
@@ -103,19 +103,19 @@ export class McpServerOAuthClientService {
             ? (clientInformation.token_endpoint_auth_method ?? null)
             : null,
       },
-      ['mcpServerId'],
+      ['connectionProviderId'],
     );
   }
 
   async deleteClient({
-    mcpServerId,
+    connectionProviderId,
     workspaceId,
   }: {
-    mcpServerId: string;
+    connectionProviderId: string;
     workspaceId: string;
   }): Promise<void> {
-    await this.mcpServerOAuthClientRepository.delete(workspaceId, {
-      mcpServerId,
+    await this.oauthClientRepository.delete(workspaceId, {
+      connectionProviderId,
     });
   }
 }

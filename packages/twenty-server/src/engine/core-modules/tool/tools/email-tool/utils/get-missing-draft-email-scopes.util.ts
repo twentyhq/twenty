@@ -27,7 +27,6 @@ export const getMissingDraftEmailScopes = (connectedAccount: {
     case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
     case ConnectedAccountProvider.EMAIL_GROUP:
     case ConnectedAccountProvider.APP:
-    case ConnectedAccountProvider.MCP:
     case ConnectedAccountProvider.OIDC:
     case ConnectedAccountProvider.SAML:
       return [];

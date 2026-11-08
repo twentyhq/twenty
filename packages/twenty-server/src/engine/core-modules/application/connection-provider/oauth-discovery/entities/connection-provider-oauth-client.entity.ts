@@ -1,3 +1,4 @@
+import { type OAuthDiscoveryState } from '@modelcontextprotocol/sdk/client/auth.js';
 import {
   Check,
   Column,
@@ -11,40 +12,41 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { type OAuthDiscoveryState } from '@modelcontextprotocol/sdk/client/auth.js';
-
-import { ADD_MCP_SERVER_OAUTH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-mcp-server-oauth-upgrade-command-name.constant';
+import { ADD_OAUTH_DISCOVERY_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-oauth-discovery-to-connection-provider-upgrade-command-name.constant';
+import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { McpServerEntity } from 'src/engine/metadata-modules/mcp-server/entities/mcp-server.entity';
-import { type McpServerOAuthRegistrationMethod } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-oauth-registration-method.type';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
-// The OAuth client Twenty uses with an MCP server's authorization server, found through discovery.
-@Entity({ name: 'mcpServerOAuthClient', schema: 'core' })
+// The OAuth client an 'oauth-discovery' connection provider found or registered: runtime state, not app metadata.
+@Entity({ name: 'connectionProviderOAuthClient', schema: 'core' })
 @WasIntroducedInUpgrade({
-  upgradeCommandName: ADD_MCP_SERVER_OAUTH_UPGRADE_COMMAND_NAME,
+  upgradeCommandName:
+    ADD_OAUTH_DISCOVERY_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME,
 })
-@Index('IDX_MCP_SERVER_OAUTH_CLIENT_MCP_SERVER_ID_UNIQUE', ['mcpServerId'], {
-  unique: true,
-})
+@Index(
+  'IDX_CONNECTION_PROVIDER_OAUTH_CLIENT_CONNECTION_PROVIDER_ID_UNIQUE',
+  ['connectionProviderId'],
+  { unique: true },
+)
 @Check(
-  'CHK_mcpServerOAuthClient_clientSecret_encrypted',
+  'CHK_connectionProviderOAuthClient_clientSecret_encrypted',
   `"clientSecret" IS NULL OR "clientSecret" LIKE 'enc:v2:%'`,
 )
-export class McpServerOAuthClientEntity extends WorkspaceRelatedEntity {
+export class ConnectionProviderOAuthClientEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'uuid', nullable: false })
-  mcpServerId: string;
+  connectionProviderId: string;
 
-  @ManyToOne(() => McpServerEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'mcpServerId' })
-  mcpServer: Relation<McpServerEntity>;
+  @ManyToOne(() => ConnectionProviderEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'connectionProviderId' })
+  connectionProvider: Relation<ConnectionProviderEntity>;
 
   @Column({ type: 'varchar', nullable: false })
-  registrationMethod: McpServerOAuthRegistrationMethod;
+  registrationMethod: OAuthDiscoveryRegistrationMethod;
 
   @Column({ type: 'varchar', nullable: false })
   clientId: string;

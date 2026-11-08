@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
@@ -15,7 +16,10 @@ import {
   getMcpServerFormSchema,
   type McpServerFormValues,
 } from '@/settings/mcp-servers/validation-schemas/mcpServerFormSchema';
-import { type McpServerFragmentFragment } from '~/generated-metadata/graphql';
+import {
+  ApplicationConnectionProvidersDocument,
+  type McpServerFragmentFragment,
+} from '~/generated-metadata/graphql';
 
 type SettingsMcpServerEditFormProps = {
   mcpServer: McpServerFragmentFragment;
@@ -34,6 +38,17 @@ export const SettingsMcpServerEditForm = ({
   });
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
+
+  const { data: connectionProvidersData } = useQuery(
+    ApplicationConnectionProvidersDocument,
+    { variables: { applicationId: mcpServer.applicationId } },
+  );
+  const signInConnectionProvider =
+    connectionProvidersData?.applicationConnectionProviders.find(
+      (connectionProvider) =>
+        connectionProvider.id === mcpServer.connectionProviderId &&
+        connectionProvider.type === 'oauth-discovery',
+    );
 
   const handleSave = async ({
     label,
@@ -81,8 +96,11 @@ export const SettingsMcpServerEditForm = ({
         }
       >
         <SettingsMcpServerFormFields mcpServer={mcpServer} />
-        {!isDefined(mcpServer.connectionProviderId) && (
-          <SettingsMcpServerConnectionsSection mcpServerId={mcpServer.id} />
+        {isDefined(signInConnectionProvider) && (
+          <SettingsMcpServerConnectionsSection
+            mcpServerId={mcpServer.id}
+            connectionProvider={signInConnectionProvider}
+          />
         )}
         <SettingsMcpServerToolsSection mcpServer={mcpServer} />
         <SettingsMcpServerDangerZone mcpServer={mcpServer} />

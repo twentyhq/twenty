@@ -104,38 +104,33 @@ export const getMcpServer = (id: string) =>
     variables: { id },
   });
 
-const MCP_SERVER_CONNECTION_FIELDS = `
-  id
-  handle
-  scope
-  isOwnedByCurrentUser
-  authFailedAt
-`;
-
-const GET_MCP_SERVER_CONNECTIONS_QUERY = gql`
-  query GetMcpServerConnections($mcpServerId: UUID!) {
-    mcpServerConnections(mcpServerId: $mcpServerId) {
-      ${MCP_SERVER_CONNECTION_FIELDS}
+const MY_CONNECTED_ACCOUNTS_QUERY = gql`
+  query MyConnectedAccounts {
+    myConnectedAccounts {
+      id
+      handle
+      provider
+      scope
+      userWorkspaceId
+      connectionProviderId
+      authFailedAt
     }
   }
 `;
 
-const DELETE_MCP_SERVER_CONNECTION_MUTATION = gql`
-  mutation DeleteMcpServerConnection($id: UUID!) {
-    deleteMcpServerConnection(id: $id) {
-      ${MCP_SERVER_CONNECTION_FIELDS}
+const DELETE_CONNECTED_ACCOUNT_MUTATION = gql`
+  mutation DeleteConnectedAccount($id: UUID!) {
+    deleteConnectedAccount(id: $id) {
+      id
     }
   }
 `;
 
-export const getMcpServerConnections = (mcpServerId: string, token?: string) =>
-  makeMetadataApiRequest(
-    { query: GET_MCP_SERVER_CONNECTIONS_QUERY, variables: { mcpServerId } },
-    token,
-  );
+export const getMyConnectedAccounts = (token?: string) =>
+  makeMetadataApiRequest({ query: MY_CONNECTED_ACCOUNTS_QUERY }, token);
 
-export const deleteMcpServerConnection = (id: string, token?: string) =>
+export const deleteConnectedAccount = (id: string, token?: string) =>
   makeMetadataApiRequest(
-    { query: DELETE_MCP_SERVER_CONNECTION_MUTATION, variables: { id } },
+    { query: DELETE_CONNECTED_ACCOUNT_MUTATION, variables: { id } },
     token,
   );

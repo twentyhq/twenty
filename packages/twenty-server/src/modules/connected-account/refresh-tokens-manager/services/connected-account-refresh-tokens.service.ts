@@ -9,7 +9,6 @@ import { Repository } from 'typeorm';
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
-import { McpServerOAuthTokenRefreshService } from 'src/engine/metadata-modules/mcp-server/oauth/services/mcp-server-oauth-token-refresh.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   ConnectedAccountRefreshAccessTokenException,
@@ -44,7 +43,6 @@ export class ConnectedAccountRefreshTokensService {
     private readonly googleApiRefreshAccessTokenService: GoogleApiRefreshAccessTokenService,
     private readonly microsoftApiRefreshAccessTokenService: MicrosoftApiRefreshAccessTokenService,
     private readonly appOAuthRefreshAccessTokenService: AppOAuthRefreshAccessTokenService,
-    private readonly mcpServerOAuthTokenRefreshService: McpServerOAuthTokenRefreshService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
@@ -150,12 +148,10 @@ export class ConnectedAccountRefreshTokensService {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
       case ConnectedAccountProvider.MICROSOFT:
-      case ConnectedAccountProvider.APP:
-      case ConnectedAccountProvider.MCP: {
+      case ConnectedAccountProvider.APP: {
         // TODO: drive this from the connection provider definition
         if (
-          (connectedAccount.provider === ConnectedAccountProvider.APP ||
-            connectedAccount.provider === ConnectedAccountProvider.MCP) &&
+          connectedAccount.provider === ConnectedAccountProvider.APP &&
           !isDefined(connectedAccount.refreshToken)
         ) {
           return true;
@@ -203,11 +199,6 @@ export class ConnectedAccountRefreshTokensService {
           );
         case ConnectedAccountProvider.APP:
           return await this.appOAuthRefreshAccessTokenService.refreshTokens(
-            connectedAccount,
-            refreshToken,
-          );
-        case ConnectedAccountProvider.MCP:
-          return await this.mcpServerOAuthTokenRefreshService.refreshTokens(
             connectedAccount,
             refreshToken,
           );

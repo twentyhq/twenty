@@ -8,6 +8,8 @@ import {
 } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -18,8 +20,10 @@ import { fromFlatMcpServerToMcpServerDto } from 'src/engine/metadata-modules/fla
 import { fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow } from 'src/engine/metadata-modules/flat-mcp-server/utils/from-update-mcp-server-input-to-flat-mcp-server-to-update-or-throw.util';
 import { type CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
-import { McpServerConnectionService } from 'src/engine/metadata-modules/mcp-server/oauth/services/mcp-server-connection.service';
+import { McpServerClientService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-client.service';
 import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
+import { buildMcpServerSignInFlatConnectionProvider } from 'src/engine/metadata-modules/mcp-server/utils/build-mcp-server-sign-in-flat-connection-provider.util';
+import { isMcpServerSignInConnectionProvider } from 'src/engine/metadata-modules/mcp-server/utils/is-mcp-server-sign-in-connection-provider.util';
 import { type UpdateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/update-mcp-server.input';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -31,7 +35,7 @@ export class McpServerService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly mcpServerToolSyncService: McpServerToolSyncService,
-    private readonly mcpServerConnectionService: McpServerConnectionService,
+    private readonly mcpServerClientService: McpServerClientService,
   ) {}
 
   async findAll(workspaceId: string): Promise<McpServerDTO[]> {
@@ -70,20 +74,40 @@ export class McpServerService {
         { workspaceId },
       );
 
+    const url = this.normalizeUrl(input.url);
+    // Without a chosen provider, a server that asks for sign-in gets one of its own.
+    const signInFlatConnectionProvider = isDefined(input.connectionProviderId)
+      ? null
+      : await this.buildSignInFlatConnectionProviderIfRequired({
+          mcpServer: { name: input.name, label: input.label, url, workspaceId },
+          flatApplication: workspaceCustomFlatApplication,
+        });
+
     const flatMcpServerToCreate =
       fromCreateMcpServerInputToFlatMcpServerToCreate({
-        createMcpServerInput: { ...input, url: this.normalizeUrl(input.url) },
+        createMcpServerInput: {
+          ...input,
+          url,
+          connectionProviderId:
+            signInFlatConnectionProvider?.id ?? input.connectionProviderId,
+        },
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         connectionProviderUniversalIdentifier:
-          await this.resolveConnectionProviderUniversalIdentifier({
+          signInFlatConnectionProvider?.universalIdentifier ??
+          (await this.resolveConnectionProviderUniversalIdentifier({
             connectionProviderId: input.connectionProviderId,
             workspaceId,
-          }),
+          })),
       });
 
     await this.runMigrationOrThrow({
-      operation: { flatEntityToCreate: [flatMcpServerToCreate] },
+      mcpServerOperation: { flatEntityToCreate: [flatMcpServerToCreate] },
+      connectionProviderOperation: {
+        flatEntityToCreate: isDefined(signInFlatConnectionProvider)
+          ? [signInFlatConnectionProvider]
+          : [],
+      },
       workspaceId,
       errorMessage:
         'Multiple validation errors occurred while creating MCP server',
@@ -108,22 +132,54 @@ export class McpServerService {
       );
     const { connectionProviderId, isActive } = input.update;
 
-    const connectionProviderUpdate = isUndefined(connectionProviderId)
-      ? {}
-      : {
-          connectionProviderId,
-          connectionProviderUniversalIdentifier:
-            await this.resolveConnectionProviderUniversalIdentifier({
-              connectionProviderId,
-              workspaceId,
-            }),
-        };
-
-    const flatMcpServerMaps = await this.getFlatMcpServerMaps(workspaceId);
+    const { flatMcpServerMaps, flatConnectionProviderMaps } =
+      await this.getFlatMaps(workspaceId);
     const existingFlatMcpServer = findFlatMcpServerByIdOrThrow({
       flatMcpServerMaps,
       mcpServerId: input.id,
     });
+    const nextUrl = isDefined(url) ? this.normalizeUrl(url) : undefined;
+    const existingSignInFlatConnectionProvider =
+      this.findSignInFlatConnectionProvider({
+        flatMcpServer: existingFlatMcpServer,
+        flatConnectionProviderMaps,
+      });
+
+    // A server on its own sign-in, or on none, follows its new URL: tokens for the old resource stay behind.
+    const shouldRecomputeSignIn =
+      isDefined(nextUrl) &&
+      nextUrl !== existingFlatMcpServer.url &&
+      isUndefined(connectionProviderId) &&
+      (!isDefined(existingFlatMcpServer.connectionProviderId) ||
+        isDefined(existingSignInFlatConnectionProvider));
+
+    const signInFlatConnectionProvider = shouldRecomputeSignIn
+      ? await this.buildSignInFlatConnectionProviderIfRequired({
+          mcpServer: { ...existingFlatMcpServer, url: nextUrl },
+          flatApplication: {
+            id: existingFlatMcpServer.applicationId,
+            universalIdentifier:
+              existingFlatMcpServer.applicationUniversalIdentifier,
+          },
+        })
+      : null;
+
+    const connectionProviderUpdate = shouldRecomputeSignIn
+      ? {
+          connectionProviderId: signInFlatConnectionProvider?.id ?? null,
+          connectionProviderUniversalIdentifier:
+            signInFlatConnectionProvider?.universalIdentifier ?? null,
+        }
+      : isUndefined(connectionProviderId)
+        ? {}
+        : {
+            connectionProviderId,
+            connectionProviderUniversalIdentifier:
+              await this.resolveConnectionProviderUniversalIdentifier({
+                connectionProviderId,
+                workspaceId,
+              }),
+          };
 
     const flatMcpServerToUpdate =
       fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow({
@@ -132,18 +188,34 @@ export class McpServerService {
         update: {
           ...(isDefined(name) && { name }),
           ...(isDefined(label) && { label }),
-          ...(isDefined(url) && { url: this.normalizeUrl(url) }),
+          ...(isDefined(nextUrl) && { url: nextUrl }),
           ...(isDefined(isActive) && { isActive }),
           ...connectionProviderUpdate,
         },
       });
 
     await this.runMigrationOrThrow({
-      operation: { flatEntityToUpdate: [flatMcpServerToUpdate] },
+      mcpServerOperation: { flatEntityToUpdate: [flatMcpServerToUpdate] },
+      connectionProviderOperation: {
+        flatEntityToCreate: isDefined(signInFlatConnectionProvider)
+          ? [signInFlatConnectionProvider]
+          : [],
+      },
       workspaceId,
       errorMessage:
         'Multiple validation errors occurred while updating MCP server',
     });
+
+    if (
+      isDefined(existingSignInFlatConnectionProvider) &&
+      flatMcpServerToUpdate.connectionProviderId !==
+        existingSignInFlatConnectionProvider.id
+    ) {
+      await this.deleteSignInFlatConnectionProviderIfUnused({
+        flatConnectionProvider: existingSignInFlatConnectionProvider,
+        workspaceId,
+      });
+    }
 
     const hasConnectionChanged =
       flatMcpServerToUpdate.url !== existingFlatMcpServer.url ||
@@ -151,11 +223,6 @@ export class McpServerService {
         existingFlatMcpServer.connectionProviderId;
 
     if (hasConnectionChanged) {
-      await this.mcpServerConnectionService.forgetSignIns({
-        mcpServerId: input.id,
-        workspaceId,
-      });
-
       return this.syncTools({
         id: input.id,
         workspaceId,
@@ -201,17 +268,31 @@ export class McpServerService {
   }
 
   async delete(id: string, workspaceId: string): Promise<McpServerDTO> {
+    const { flatMcpServerMaps, flatConnectionProviderMaps } =
+      await this.getFlatMaps(workspaceId);
     const flatMcpServerToDelete = findFlatMcpServerByIdOrThrow({
-      flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
+      flatMcpServerMaps,
       mcpServerId: id,
+    });
+    const signInFlatConnectionProvider = this.findSignInFlatConnectionProvider({
+      flatMcpServer: flatMcpServerToDelete,
+      flatConnectionProviderMaps,
     });
 
     await this.runMigrationOrThrow({
-      operation: { flatEntityToDelete: [flatMcpServerToDelete] },
+      mcpServerOperation: { flatEntityToDelete: [flatMcpServerToDelete] },
       workspaceId,
       errorMessage:
         'Multiple validation errors occurred while deleting MCP server',
     });
+
+    // Deleting a provider cascades to the servers still on it, so it goes once the server is gone.
+    if (isDefined(signInFlatConnectionProvider)) {
+      await this.deleteSignInFlatConnectionProviderIfUnused({
+        flatConnectionProvider: signInFlatConnectionProvider,
+        workspaceId,
+      });
+    }
 
     return fromFlatMcpServerToMcpServerDto(flatMcpServerToDelete);
   }
@@ -245,6 +326,88 @@ export class McpServerService {
     );
   }
 
+  private async buildSignInFlatConnectionProviderIfRequired({
+    mcpServer,
+    flatApplication,
+  }: Parameters<
+    typeof buildMcpServerSignInFlatConnectionProvider
+  >[0]): Promise<FlatConnectionProvider | null> {
+    const requiresSignIn = await this.mcpServerClientService.requiresSignIn({
+      url: mcpServer.url,
+      workspaceId: mcpServer.workspaceId,
+    });
+
+    return requiresSignIn
+      ? buildMcpServerSignInFlatConnectionProvider({
+          mcpServer,
+          flatApplication,
+        })
+      : null;
+  }
+
+  private findSignInFlatConnectionProvider({
+    flatMcpServer,
+    flatConnectionProviderMaps,
+  }: {
+    flatMcpServer: FlatMcpServer;
+    flatConnectionProviderMaps: FlatEntityMaps<FlatConnectionProvider>;
+  }): FlatConnectionProvider | null {
+    if (!isDefined(flatMcpServer.connectionProviderId)) {
+      return null;
+    }
+
+    const flatConnectionProvider = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatMcpServer.connectionProviderId,
+      flatEntityMaps: flatConnectionProviderMaps,
+    });
+
+    return isDefined(flatConnectionProvider) &&
+      isMcpServerSignInConnectionProvider({
+        flatConnectionProvider,
+        flatMcpServer,
+      })
+      ? flatConnectionProvider
+      : null;
+  }
+
+  private async deleteSignInFlatConnectionProviderIfUnused({
+    flatConnectionProvider,
+    workspaceId,
+  }: {
+    flatConnectionProvider: FlatConnectionProvider;
+    workspaceId: string;
+  }): Promise<void> {
+    const { flatMcpServerMaps } = await this.getFlatMaps(workspaceId);
+    const isStillUsed = Object.values(
+      flatMcpServerMaps.byUniversalIdentifier,
+    ).some(
+      (flatMcpServer) =>
+        flatMcpServer?.connectionProviderId === flatConnectionProvider.id,
+    );
+
+    if (isStillUsed) {
+      return;
+    }
+
+    await this.runMigrationOrThrow({
+      connectionProviderOperation: {
+        flatEntityToDelete: [flatConnectionProvider],
+      },
+      workspaceId,
+      errorMessage:
+        'Multiple validation errors occurred while deleting the MCP server sign-in',
+    });
+  }
+
+  private async getFlatMaps(workspaceId: string) {
+    return this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: ['flatMcpServerMaps', 'flatConnectionProviderMaps'],
+      },
+    );
+  }
+
   private async getFlatMcpServerMaps(workspaceId: string) {
     const { flatMcpServerMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -255,14 +418,19 @@ export class McpServerService {
   }
 
   private async runMigrationOrThrow({
-    operation,
+    mcpServerOperation = {},
+    connectionProviderOperation = {},
     workspaceId,
     errorMessage,
   }: {
-    operation: Partial<{
+    mcpServerOperation?: Partial<{
       flatEntityToCreate: FlatMcpServer[];
       flatEntityToUpdate: FlatMcpServer[];
       flatEntityToDelete: FlatMcpServer[];
+    }>;
+    connectionProviderOperation?: Partial<{
+      flatEntityToCreate: FlatConnectionProvider[];
+      flatEntityToDelete: FlatConnectionProvider[];
     }>;
     workspaceId: string;
     errorMessage: string;
@@ -280,7 +448,13 @@ export class McpServerService {
               flatEntityToCreate: [],
               flatEntityToUpdate: [],
               flatEntityToDelete: [],
-              ...operation,
+              ...mcpServerOperation,
+            },
+            connectionProvider: {
+              flatEntityToCreate: [],
+              flatEntityToUpdate: [],
+              flatEntityToDelete: [],
+              ...connectionProviderOperation,
             },
           },
           workspaceId,

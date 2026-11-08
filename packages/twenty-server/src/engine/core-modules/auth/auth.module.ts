@@ -10,8 +10,6 @@ import { ConnectionProviderFlowRedirectService } from 'src/engine/core-modules/a
 import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
 import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
-import { McpServerOAuthController } from 'src/engine/metadata-modules/mcp-server/oauth/controllers/mcp-server-oauth.controller';
-import { McpServerOAuthModule } from 'src/engine/metadata-modules/mcp-server/oauth/mcp-server-oauth.module';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
@@ -117,7 +115,6 @@ import { AuthService } from './services/auth.service';
     ApplicationRegistrationModule,
     ApplicationModule,
     ConnectionProviderModule,
-    McpServerOAuthModule,
     ApplicationConnectionsModule,
     WorkspaceCacheModule,
     SecureHttpClientModule,
@@ -137,7 +134,6 @@ import { AuthService } from './services/auth.service';
     SsoAuthController,
     ConnectionProviderOAuthController,
     ConnectionProviderCustomController,
-    McpServerOAuthController,
   ],
   providers: [
     SignInUpService,

@@ -14,7 +14,6 @@ export const mcpServerGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof McpServerException) {
     switch (error.code) {
       case McpServerExceptionCode.MCP_SERVER_NOT_FOUND:
-      case McpServerExceptionCode.MCP_SERVER_CONNECTION_NOT_FOUND:
         throw new NotFoundError(error);
       case McpServerExceptionCode.INVALID_MCP_SERVER_INPUT:
       case McpServerExceptionCode.INVALID_MCP_SERVER_NAME:
@@ -24,8 +23,6 @@ export const mcpServerGraphqlApiExceptionHandler = (error: Error) => {
       case McpServerExceptionCode.MCP_SERVER_URL_CHANGE_WHILE_CONNECTED:
       case McpServerExceptionCode.MCP_SERVER_TOOL_LIST_TOO_LARGE:
       case McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED:
-      case McpServerExceptionCode.MCP_SERVER_SIGN_IN_NOT_AVAILABLE:
-      case McpServerExceptionCode.MCP_SERVER_SIGN_IN_FAILED:
         throw new UserInputError(error);
       case McpServerExceptionCode.MCP_SERVER_NAME_ALREADY_EXISTS:
         throw new ConflictError(error);

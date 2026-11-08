@@ -147,11 +147,13 @@ export class FlatMcpServerValidatorService {
         : []),
     );
 
-    // Tokens minted for the current resource must not be sent to another host.
+    // Tokens minted for the current resource must not be sent to another host; a new provider brings its own.
     if (
       isDefined(url) &&
       url !== existingMcpServer.url &&
-      isDefined(nextConnectionProviderUniversalIdentifier)
+      isDefined(nextConnectionProviderUniversalIdentifier) &&
+      nextConnectionProviderUniversalIdentifier ===
+        existingMcpServer.connectionProviderUniversalIdentifier
     ) {
       validationResult.errors.push({
         code: McpServerExceptionCode.MCP_SERVER_URL_CHANGE_WHILE_CONNECTED,

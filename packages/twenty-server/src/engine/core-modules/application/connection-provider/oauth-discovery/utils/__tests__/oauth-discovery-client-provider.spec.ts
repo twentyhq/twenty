@@ -1,20 +1,20 @@
 import { auth } from '@modelcontextprotocol/sdk/client/auth.js';
 import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
 
-import { type McpServerOAuthStoredClient } from 'src/engine/metadata-modules/mcp-server/oauth/types/mcp-server-oauth-stored-client.type';
-import { buildMcpServerOAuthClientMetadata } from 'src/engine/metadata-modules/mcp-server/oauth/utils/build-mcp-server-oauth-client-metadata.util';
-import { McpServerOAuthClientProvider } from 'src/engine/metadata-modules/mcp-server/oauth/utils/mcp-server-oauth-client-provider';
+import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
+import { buildOAuthDiscoveryClientMetadata } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
+import { OAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/oauth-discovery-client-provider';
 
 const SERVER_URL = 'https://api.twenty.test';
-const REDIRECT_URL = `${SERVER_URL}/auth/mcp-servers/callback`;
-const CLIENT_METADATA_URL = `${SERVER_URL}/auth/mcp-servers/client-metadata.json`;
+const REDIRECT_URL = `${SERVER_URL}/auth/apps/callback`;
+const CLIENT_METADATA_URL = `${SERVER_URL}/auth/apps/client-metadata.json`;
 const MCP_SERVER_URL = 'https://mcp.example.com/mcp';
 const AUTHORIZATION_SERVER_URL = 'https://auth.example.com';
 const NOW = new Date('2026-11-07T12:00:00Z');
 
 const buildStoredClient = (
-  overrides: Partial<McpServerOAuthStoredClient> = {},
-): McpServerOAuthStoredClient => ({
+  overrides: Partial<OAuthDiscoveryStoredClient> = {},
+): OAuthDiscoveryStoredClient => ({
   registrationMethod: 'DYNAMIC_CLIENT_REGISTRATION',
   redirectUri: REDIRECT_URL,
   discoveryState: { authorizationServerUrl: AUTHORIZATION_SERVER_URL },
@@ -29,15 +29,14 @@ const buildProvider = ({
   storedClient = null,
   clientMetadataUrl = CLIENT_METADATA_URL,
 }: {
-  storedClient?: McpServerOAuthStoredClient | null;
+  storedClient?: OAuthDiscoveryStoredClient | null;
   clientMetadataUrl?: string;
 } = {}) =>
-  new McpServerOAuthClientProvider({
+  new OAuthDiscoveryClientProvider({
     redirectUrl: REDIRECT_URL,
     clientMetadataUrl,
-    clientMetadata: buildMcpServerOAuthClientMetadata(SERVER_URL),
+    clientMetadata: buildOAuthDiscoveryClientMetadata(SERVER_URL),
     storedClient,
-    state: 'state',
     shouldReuseStoredDiscoveryState: false,
     now: NOW,
   });
@@ -89,7 +88,7 @@ const buildAuthorizationServerFetch = ({
   return { fetchFn, requestedUrls };
 };
 
-describe('McpServerOAuthClientProvider', () => {
+describe('OAuthDiscoveryClientProvider', () => {
   it('identifies Twenty by its metadata document when the authorization server supports it', async () => {
     const provider = buildProvider();
     const { fetchFn, requestedUrls } = buildAuthorizationServerFetch({

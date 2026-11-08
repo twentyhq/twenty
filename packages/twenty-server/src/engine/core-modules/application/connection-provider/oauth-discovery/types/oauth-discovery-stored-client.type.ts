@@ -1,10 +1,10 @@
 import { type OAuthDiscoveryState } from '@modelcontextprotocol/sdk/client/auth.js';
 import { type OAuthClientInformationFull } from '@modelcontextprotocol/sdk/shared/auth.js';
 
-import { type McpServerOAuthRegistrationMethod } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-oauth-registration-method.type';
+import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
 
-export type McpServerOAuthStoredClient = {
-  registrationMethod: McpServerOAuthRegistrationMethod;
+export type OAuthDiscoveryStoredClient = {
+  registrationMethod: OAuthDiscoveryRegistrationMethod;
   redirectUri: string;
   discoveryState: OAuthDiscoveryState;
   clientInformation: OAuthClientInformationFull;

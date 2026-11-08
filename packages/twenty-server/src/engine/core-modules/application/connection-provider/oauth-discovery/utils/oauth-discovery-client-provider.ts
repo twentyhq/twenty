@@ -9,15 +9,14 @@ import {
 } from '@modelcontextprotocol/sdk/shared/auth.js';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type McpServerOAuthStoredClient } from 'src/engine/metadata-modules/mcp-server/oauth/types/mcp-server-oauth-stored-client.type';
-import { type McpServerOAuthRegistrationMethod } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-oauth-registration-method.type';
+import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
+import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
 
-type McpServerOAuthClientProviderOptions = {
+type OAuthDiscoveryClientProviderOptions = {
   redirectUrl: string;
   clientMetadataUrl: string | undefined;
   clientMetadata: OAuthClientMetadata;
-  storedClient: McpServerOAuthStoredClient | null;
-  state: string;
+  storedClient: OAuthDiscoveryStoredClient | null;
   codeVerifier?: string;
   // The authorize step discovers afresh; the callback reuses what it found.
   shouldReuseStoredDiscoveryState: boolean;
@@ -26,7 +25,7 @@ type McpServerOAuthClientProviderOptions = {
 
 // Lets the MCP SDK run discovery, client registration and the code exchange
 // while Twenty decides what is persisted, once the SDK is done.
-export class McpServerOAuthClientProvider implements OAuthClientProvider {
+export class OAuthDiscoveryClientProvider implements OAuthClientProvider {
   authorizationUrl: URL | undefined;
   savedCodeVerifier: string | undefined;
   savedTokens: OAuthTokens | undefined;
@@ -36,7 +35,7 @@ export class McpServerOAuthClientProvider implements OAuthClientProvider {
   private discoveredState: OAuthDiscoveryState | undefined;
   private isStoredDiscoveryStateInvalidated = false;
 
-  constructor(private readonly options: McpServerOAuthClientProviderOptions) {}
+  constructor(private readonly options: OAuthDiscoveryClientProviderOptions) {}
 
   get redirectUrl(): string {
     return this.options.redirectUrl;
@@ -48,10 +47,6 @@ export class McpServerOAuthClientProvider implements OAuthClientProvider {
 
   get clientMetadata(): OAuthClientMetadata {
     return this.options.clientMetadata;
-  }
-
-  state(): string {
-    return this.options.state;
   }
 
   clientInformation(): OAuthClientInformationMixed | undefined {
@@ -91,7 +86,7 @@ export class McpServerOAuthClientProvider implements OAuthClientProvider {
 
   codeVerifier(): string {
     if (!isDefined(this.options.codeVerifier)) {
-      throw new Error('No PKCE code verifier for this MCP server sign-in');
+      throw new Error('No PKCE code verifier for this OAuth discovery sign-in');
     }
 
     return this.options.codeVerifier;
@@ -127,7 +122,7 @@ export class McpServerOAuthClientProvider implements OAuthClientProvider {
   }
 
   // What the SDK settled on, to persist once the flow step succeeded.
-  getClientToPersist(): Omit<McpServerOAuthStoredClient, 'redirectUri'> | null {
+  getClientToPersist(): Omit<OAuthDiscoveryStoredClient, 'redirectUri'> | null {
     const clientInformation = this.clientInformation();
     const discoveryState = this.discoveryState();
 
@@ -147,7 +142,7 @@ export class McpServerOAuthClientProvider implements OAuthClientProvider {
 
   private getRegistrationMethod(
     clientInformation: OAuthClientInformationMixed,
-  ): McpServerOAuthRegistrationMethod {
+  ): OAuthDiscoveryRegistrationMethod {
     return clientInformation.client_id === this.options.clientMetadataUrl
       ? 'CLIENT_ID_METADATA_DOCUMENT'
       : 'DYNAMIC_CLIENT_REGISTRATION';

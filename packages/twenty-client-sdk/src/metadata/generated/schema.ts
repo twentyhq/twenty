@@ -2188,16 +2188,6 @@ export interface McpServer {
     __typename: 'McpServer'
 }
 
-export interface McpServerConnection {
-    authFailedAt?: Scalars['DateTime']
-    createdAt: Scalars['DateTime']
-    handle: Scalars['String']
-    id: Scalars['UUID']
-    isOwnedByCurrentUser: Scalars['Boolean']
-    scope: Scalars['String']
-    __typename: 'McpServerConnection'
-}
-
 export interface McpServerTool {
     annotations?: Scalars['JSON']
     description?: Scalars['String']
@@ -2454,7 +2444,6 @@ export interface Mutation {
     deleteFrontComponent: FrontComponent
     deleteManyNavigationMenuItems: NavigationMenuItem[]
     deleteMcpServer: McpServer
-    deleteMcpServerConnection: McpServerConnection
     deleteMessageSuppression: Scalars['Boolean']
     deleteNavigationMenuItem: NavigationMenuItem
     deleteOneAgent: Agent
@@ -3235,7 +3224,6 @@ export interface Query {
     /** @deprecated Use billingPlans instead. */
     listPlans: BillingPlan[]
     mcpServer?: McpServer
-    mcpServerConnections: McpServerConnection[]
     mcpServers: McpServer[]
     messageSuppressions: MessageSuppressionList
     metadataTranslations: MetadataTranslation[]
@@ -6931,17 +6919,6 @@ export interface McpServerGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface McpServerConnectionGenqlSelection{
-    authFailedAt?: boolean | number
-    createdAt?: boolean | number
-    handle?: boolean | number
-    id?: boolean | number
-    isOwnedByCurrentUser?: boolean | number
-    scope?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface McpServerToolGenqlSelection{
     annotations?: boolean | number
     description?: boolean | number
@@ -7183,7 +7160,6 @@ export interface MutationGenqlSelection{
     deleteFrontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {ids: Scalars['UUID'][]} })
     deleteMcpServer?: (McpServerGenqlSelection & { __args: {id: Scalars['UUID']} })
-    deleteMcpServerConnection?: (McpServerConnectionGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteMessageSuppression?: { __args: {id: Scalars['UUID']} }
     deleteNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
@@ -8011,7 +7987,6 @@ export interface QueryGenqlSelection{
     /** @deprecated Use billingPlans instead. */
     listPlans?: BillingPlanGenqlSelection
     mcpServer?: (McpServerGenqlSelection & { __args: {id: Scalars['UUID']} })
-    mcpServerConnections?: (McpServerConnectionGenqlSelection & { __args: {mcpServerId: Scalars['UUID']} })
     mcpServers?: McpServerGenqlSelection
     messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
@@ -11187,14 +11162,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isMcpServer = (obj?: { __typename?: any } | null): obj is McpServer => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMcpServer"')
       return McpServer_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const McpServerConnection_possibleTypes: string[] = ['McpServerConnection']
-    export const isMcpServerConnection = (obj?: { __typename?: any } | null): obj is McpServerConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMcpServerConnection"')
-      return McpServerConnection_possibleTypes.includes(obj.__typename)
     }
     
 

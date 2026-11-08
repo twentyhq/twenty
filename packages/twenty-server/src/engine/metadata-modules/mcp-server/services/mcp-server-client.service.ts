@@ -15,11 +15,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { buildSecureFetchLike } from 'src/engine/core-modules/secure-http-client/utils/build-secure-fetch-like.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
-import { buildMcpServerFetch } from 'src/engine/metadata-modules/mcp-server/utils/build-mcp-server-fetch.util';
 import {
   McpServerException,
   McpServerExceptionCode,
@@ -30,10 +30,11 @@ const MCP_CLIENT_INFO = { name: 'twenty', version: '1.0.0' };
 const LIST_TOOLS_TIMEOUT_MS = 20_000;
 const CALL_TOOL_TIMEOUT_MS = 60_000;
 const LIST_TOOLS_MAX_PAGES = 10;
+const SIGN_IN_PROBE_TIMEOUT_MS = 5_000;
 
 type McpServerTarget = Pick<
   FlatMcpServer,
-  'id' | 'url' | 'connectionProviderId' | 'workspaceId'
+  'url' | 'connectionProviderId' | 'workspaceId'
 > & { userWorkspaceId?: string };
 
 @Injectable()
@@ -101,9 +102,9 @@ export class McpServerClientService {
     const signal = AbortSignal.timeout(timeoutMs);
     const client = new Client(MCP_CLIENT_INFO);
     const transport = new StreamableHTTPClientTransport(new URL(target.url), {
-      fetch: buildMcpServerFetch({
+      fetch: buildSecureFetchLike({
         secureHttpClientService: this.secureHttpClientService,
-        workspaceId: target.workspaceId,
+        context: { workspaceId: target.workspaceId, source: 'mcp-server' },
         timeoutMs,
       }),
       requestInit: isDefined(accessToken)
@@ -164,6 +165,35 @@ export class McpServerClientService {
     return [...page.tools, ...nextPages];
   }
 
+  // An unauthenticated request answered with 401 means the server wants its own sign-in.
+  async requiresSignIn({
+    url,
+    workspaceId,
+  }: Pick<McpServerTarget, 'url' | 'workspaceId'>): Promise<boolean> {
+    const fetchFn = buildSecureFetchLike({
+      secureHttpClientService: this.secureHttpClientService,
+      context: { workspaceId, source: 'mcp-server' },
+      timeoutMs: SIGN_IN_PROBE_TIMEOUT_MS,
+    });
+
+    try {
+      const response = await fetchFn(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json, text/event-stream',
+        },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 0, method: 'ping' }),
+      });
+
+      await response.body?.cancel().catch(() => undefined);
+
+      return response.status === 401;
+    } catch {
+      return false;
+    }
+  }
+
   async canCallerConnect(target: McpServerTarget): Promise<boolean> {
     return (
       !isDefined(target.connectionProviderId) ||
@@ -171,18 +201,18 @@ export class McpServerClientService {
     );
   }
 
-  // Without a connection provider, the accounts come from signing in to the server itself.
   private async findUsableConnectedAccount({
-    id,
     connectionProviderId,
     workspaceId,
     userWorkspaceId,
   }: McpServerTarget): Promise<ConnectedAccountEntity | null> {
+    if (!isDefined(connectionProviderId)) {
+      return null;
+    }
+
     const baseWhere = {
       workspaceId,
-      ...(isDefined(connectionProviderId)
-        ? { connectionProviderId }
-        : { mcpServerId: id }),
+      connectionProviderId,
       archivedAt: IsNull(),
       authFailedAt: IsNull(),
     };
@@ -211,13 +241,14 @@ export class McpServerClientService {
     target: McpServerTarget,
   ): Promise<string | null> {
     const { connectionProviderId, workspaceId } = target;
+
+    if (!isDefined(connectionProviderId)) {
+      return null;
+    }
+
     const connectedAccount = await this.findUsableConnectedAccount(target);
 
     if (!isDefined(connectedAccount)) {
-      if (!isDefined(connectionProviderId)) {
-        return null;
-      }
-
       throw new McpServerException(
         `No connected account usable by the caller for provider ${connectionProviderId} in workspace ${workspaceId}`,
         McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,

@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { HttpResponse } from 'msw';
+import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { SettingsAiMcpServerDetail } from '~/pages/settings/ai/SettingsAiMcpServerDetail';
@@ -10,7 +10,7 @@ import {
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import {
   mockedMcpServer,
-  mockedMcpServerConnections,
+  mockedMcpServerSignInConnectionProvider,
 } from '~/testing/mock-data/mcp-servers';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -25,15 +25,33 @@ const meta: Meta<PageDecoratorArgs> = {
     msw: {
       handlers: [
         metadataGraphql.query('FindOneMcpServer', () =>
-          HttpResponse.json({ data: { mcpServer: mockedMcpServer } }),
-        ),
-        metadataGraphql.query('FindManyMcpServerConnections', () =>
           HttpResponse.json({
-            data: { mcpServerConnections: mockedMcpServerConnections },
+            data: {
+              mcpServer: {
+                ...mockedMcpServer,
+                connectionProviderId:
+                  mockedMcpServerSignInConnectionProvider.id,
+              },
+            },
           }),
         ),
         metadataGraphql.query('ApplicationConnectionProviders', () =>
-          HttpResponse.json({ data: { applicationConnectionProviders: [] } }),
+          HttpResponse.json({
+            data: {
+              applicationConnectionProviders: [
+                mockedMcpServerSignInConnectionProvider,
+              ],
+            },
+          }),
+        ),
+        graphql.query('MyConnectedAccounts', () =>
+          HttpResponse.json({ data: { myConnectedAccounts: [] } }),
+        ),
+        graphql.query('MyMessageChannels', () =>
+          HttpResponse.json({ data: { myMessageChannels: [] } }),
+        ),
+        graphql.query('MyCalendarChannels', () =>
+          HttpResponse.json({ data: { myCalendarChannels: [] } }),
         ),
         metadataGraphql.mutation('SyncMcpServerTools', () =>
           HttpResponse.json({
@@ -73,9 +91,8 @@ export const Default: Story = {
 
     expect(canvas.getByDisplayValue('linear')).toBeDisabled();
     await canvas.findByText('search_issues');
-    await canvas.findByText('tim@apple.dev');
-    expect(canvas.getByText('Sign in again')).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Connect' })).toBeVisible();
+    await canvas.findByText('Sign in to use this server');
+    expect(canvas.getByText('Sign in to the server')).toBeVisible();
     await canvas.findByRole('button', { name: 'Deactivate' });
   },
 };

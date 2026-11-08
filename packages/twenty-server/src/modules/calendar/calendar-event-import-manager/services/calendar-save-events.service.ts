@@ -337,7 +337,6 @@ export class CalendarSaveEventsService {
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.EMAIL_GROUP:
       case ConnectedAccountProvider.APP:
-      case ConnectedAccountProvider.MCP:
         return [];
       default:
         return assertUnreachable(provider);

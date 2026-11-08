@@ -1,72 +1,80 @@
-import { useQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { SettingsMcpServerConnectionsTable } from '@/settings/mcp-servers/components/SettingsMcpServerConnectionsTable';
-import { useTriggerMcpServerOAuth } from '@/settings/mcp-servers/hooks/useTriggerMcpServerOAuth';
-import { FindManyMcpServerConnectionsDocument } from '~/generated-metadata/graphql';
+import { SettingsAppPreferencesConnectionsTable } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable';
+import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
+import { useMyPersonalConnectedAccounts } from '@/settings/app-preferences/hooks/useMyPersonalConnectedAccounts';
+import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
+import { type ApplicationConnectionProviderFragmentFragment } from '~/generated-metadata/graphql';
 
-const StyledActions = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
+const APP_CONNECTED_ACCOUNT_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
+  new Set([ConnectedAccountProvider.APP]);
 
 type SettingsMcpServerConnectionsSectionProps = {
   mcpServerId: string;
+  connectionProvider: Pick<
+    ApplicationConnectionProviderFragmentFragment,
+    'id' | 'applicationId' | 'name' | 'logoUrl'
+  >;
 };
 
 export const SettingsMcpServerConnectionsSection = ({
   mcpServerId,
+  connectionProvider,
 }: SettingsMcpServerConnectionsSectionProps) => {
   const { t } = useLingui();
-  const { triggerMcpServerOAuth } = useTriggerMcpServerOAuth();
-  // Connections change outside this page, through the sign-in redirect.
-  const { data, error } = useQuery(FindManyMcpServerConnectionsDocument, {
-    variables: { mcpServerId },
-    fetchPolicy: 'cache-and-network',
+  const { accounts, loading, error, refetch } = useMyPersonalConnectedAccounts({
+    providers: APP_CONNECTED_ACCOUNT_PROVIDERS,
   });
 
-  const connections = data?.mcpServerConnections ?? [];
+  const connections = accounts.filter(
+    (account) => account.connectionProviderId === connectionProvider.id,
+  );
+  const redirectLocation = getSettingsPath(SettingsPath.AiMcpServerDetail, {
+    mcpServerId,
+  });
 
   return (
     <Section.Root>
-      <ToastOnQueryErrorEffect
-        error={error}
-        message={t`Failed to load MCP server connections`}
-      />
       <Section.Header
-        title={t`Connections`}
-        description={t`Sign in with the server's own accounts. Twenty registers itself with the server automatically.`}
-        actions={
-          <StyledActions>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                triggerMcpServerOAuth({
-                  mcpServerId,
-                  accountScope: 'WORKSPACE',
-                })
-              }
-            >{t`Connect for workspace`}</Button>
-            <Button
-              startIcon={<IconPlus />}
-              size="sm"
-              onClick={() =>
-                triggerMcpServerOAuth({ mcpServerId, accountScope: 'USER' })
-              }
-            >{t`Connect`}</Button>
-          </StyledActions>
-        }
+        title={t`Your connection`}
+        description={t`This server asks each member to sign in with their own account. Twenty registers itself with the server automatically.`}
       />
-      {isNonEmptyArray(connections) && (
-        <SettingsMcpServerConnectionsTable connections={connections} />
+      {isDefined(error) ? (
+        <SettingsApplicationLoadErrorBanner
+          message={t`Your connections could not be loaded. Check your connection and try again.`}
+          onRetry={() => refetch().catch(() => undefined)}
+        />
+      ) : loading || isNonEmptyArray(connections) ? (
+        <>
+          <SettingsAppPreferencesConnectionsTable
+            applicationId={connectionProvider.applicationId}
+            providerName={connectionProvider.name}
+            connections={connections}
+            canStartAuthorization
+            isLoading={loading}
+            reconnectRedirectLocation={redirectLocation}
+          />
+          <SettingsApplicationAddConnectionButton
+            applicationId={connectionProvider.applicationId}
+            providerName={connectionProvider.name}
+            redirectLocation={redirectLocation}
+          />
+        </>
+      ) : (
+        <SettingsApplicationConnectCard
+          applicationId={connectionProvider.applicationId}
+          connectionProvider={connectionProvider}
+          title={t`Sign in to use this server`}
+          redirectLocation={redirectLocation}
+        />
       )}
     </Section.Root>
   );

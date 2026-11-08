@@ -16,7 +16,12 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  buildOAuthDiscoveryClientMetadata,
+  buildOAuthDiscoveryClientMetadataUrl,
+} from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -33,11 +38,25 @@ export class ConnectionProviderOAuthController {
     private readonly customFlowService: ConnectionProviderCustomFlowService,
     private readonly flowRedirectService: ConnectionProviderFlowRedirectService,
     private readonly transientTokenService: TransientTokenService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
+
+  // Authorization servers that read Client ID Metadata Documents identify Twenty here.
+  @Get('client-metadata.json')
+  clientMetadata(@Res() res: Response) {
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
+
+    res.set('Cache-Control', 'public, max-age=3600');
+
+    return res.json({
+      client_id: buildOAuthDiscoveryClientMetadataUrl(serverUrl),
+      ...buildOAuthDiscoveryClientMetadata(serverUrl),
+    });
+  }
 
   // Public: the transient token carries workspace and user context
   @Get('authorize')

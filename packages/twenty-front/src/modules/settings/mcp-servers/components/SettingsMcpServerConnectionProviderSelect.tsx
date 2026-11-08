@@ -10,10 +10,12 @@ import { ApplicationConnectionProvidersDocument } from '~/generated-metadata/gra
 
 type SettingsMcpServerConnectionProviderSelectProps = {
   applicationId: string;
+  savedConnectionProviderId?: string | null;
 };
 
 export const SettingsMcpServerConnectionProviderSelect = ({
   applicationId,
+  savedConnectionProviderId,
 }: SettingsMcpServerConnectionProviderSelectProps) => {
   const { t } = useLingui();
   const { control } = useFormContext<McpServerFormValues>();
@@ -26,12 +28,20 @@ export const SettingsMcpServerConnectionProviderSelect = ({
 
   const options: SelectOption<string | null>[] = [
     { value: null, label: t`None` },
-    ...(data?.applicationConnectionProviders ?? []).map(
-      (connectionProvider) => ({
+    // Sign-in providers belong to the server that created them
+    ...(data?.applicationConnectionProviders ?? [])
+      .filter(
+        (connectionProvider) =>
+          connectionProvider.type !== 'oauth-discovery' ||
+          connectionProvider.id === savedConnectionProviderId,
+      )
+      .map((connectionProvider) => ({
         value: connectionProvider.id,
-        label: connectionProvider.displayName,
-      }),
-    ),
+        label:
+          connectionProvider.type === 'oauth-discovery'
+            ? t`Sign in to the server`
+            : connectionProvider.displayName,
+      })),
   ];
 
   return (
@@ -47,7 +57,7 @@ export const SettingsMcpServerConnectionProviderSelect = ({
           <Select<string | null>
             dropdownId="mcp-server-connection-provider-select"
             label={t`Connection provider`}
-            description={t`Optional. Its connected account authenticates calls to this server.`}
+            description={t`Optional. When empty, Twenty sets up sign-in if the server asks for it.`}
             options={options}
             value={value}
             onChange={onChange}
