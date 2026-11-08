@@ -52,6 +52,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "role",
   "objectMetadata",
   "fieldMetadata",
+  "rowLevelPermissionPredicateGroup",
 ]
 `;
 
