@@ -206,7 +206,7 @@ describe('Application grant on dev sync', () => {
     expect(grantSnapshot.permissionFlags).toEqual([]);
   }, 60000);
 
-  it('removes the grant role and its target on uninstall', async () => {
+  it('removes the grant role, its target and its permissions on uninstall', async () => {
     await syncRequestedRole(INITIAL_REQUESTED_ROLE);
 
     const { grant } = await findSyncedApplicationGrant();
@@ -221,7 +221,15 @@ describe('Application grant on dev sync', () => {
     const remainingRows = await globalThis.testDataSource.query(
       `SELECT id FROM core."role" WHERE id = $1
        UNION ALL
-       SELECT id FROM core."roleTarget" WHERE id = $2`,
+       SELECT id FROM core."roleTarget" WHERE id = $2
+       UNION ALL
+       SELECT id FROM core."objectPermission" WHERE "roleId" = $1
+       UNION ALL
+       SELECT id FROM core."fieldPermission" WHERE "roleId" = $1
+       UNION ALL
+       SELECT id FROM core."rolePermissionFlag" WHERE "roleId" = $1
+       UNION ALL
+       SELECT id FROM core."rowLevelPermissionPredicate" WHERE "roleId" = $1`,
       [grant!.role.id, grant!.roleTarget.id],
     );
 

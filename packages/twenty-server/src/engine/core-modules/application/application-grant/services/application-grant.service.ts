@@ -11,10 +11,9 @@ import { isApplicationGrantable } from 'src/engine/core-modules/application/appl
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
-import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
-import { computeFlatEntityAndRelatedFlatEntitiesToDelete } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-and-related-flat-entities-to-delete.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -63,11 +62,7 @@ export class ApplicationGrantService {
         await this.runGrantDeletion({
           workspaceId,
           workspaceCustomFlatApplication,
-          operations: computeFlatEntityAndRelatedFlatEntitiesToDelete({
-            metadataName: 'role',
-            flatEntity: grantFlatRole,
-            flatEntityMaps,
-          }),
+          grantFlatRole,
         });
       }
 
@@ -141,11 +136,7 @@ export class ApplicationGrantService {
     await this.runGrantDeletion({
       workspaceId,
       workspaceCustomFlatApplication: state.workspaceCustomFlatApplication,
-      operations: computeFlatEntityAndRelatedFlatEntitiesToDelete({
-        metadataName: 'role',
-        flatEntity: state.grantFlatRole,
-        flatEntityMaps: state.flatEntityMaps,
-      }),
+      grantFlatRole: state.grantFlatRole,
     });
   }
 
@@ -171,7 +162,6 @@ export class ApplicationGrantService {
         'flatRolePermissionFlagMaps',
         'flatRowLevelPermissionPredicateMaps',
         'flatRowLevelPermissionPredicateGroupMaps',
-        'flatAgentChatChannelRoleMaps',
       ]);
 
     const flatApplication = findActiveFlatApplicationById(
@@ -221,11 +211,11 @@ export class ApplicationGrantService {
   private async runGrantDeletion({
     workspaceId,
     workspaceCustomFlatApplication,
-    operations,
+    grantFlatRole,
   }: {
     workspaceId: string;
     workspaceCustomFlatApplication: FlatApplication;
-    operations: AllFlatEntityOperationByMetadataName;
+    grantFlatRole: FlatRole;
   }): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -234,7 +224,14 @@ export class ApplicationGrantService {
           isSystemBuild: true,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          allFlatEntityOperationByMetadataName: operations,
+          // The database cascades the role's target and permissions
+          allFlatEntityOperationByMetadataName: {
+            role: {
+              flatEntityToCreate: [],
+              flatEntityToUpdate: [],
+              flatEntityToDelete: [grantFlatRole],
+            },
+          },
         },
       );
 
