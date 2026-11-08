@@ -66,20 +66,21 @@ export const SettingsPrivacyAffectedByAiDataPolicy = () => {
     )
     .map(({ id, label }) => ({ id, kind: 'agent', label }));
 
-  const affectedModelTiers: AiDataPolicyAffectedEntry[] =
-    currentWorkspace?.isAutoModelSelectionEnabled
-      ? []
-      : AI_MODEL_TIERS.filter((tier) => {
-          const pinnedModelId = currentWorkspace?.aiModelIdByTier?.[tier];
+  const pinnedModelTiers = currentWorkspace?.isAutoModelSelectionEnabled
+    ? []
+    : AI_MODEL_TIERS;
 
-          return (
-            isNonEmptyString(pinnedModelId) && isModelExcluded(pinnedModelId)
-          );
-        }).map((tier) => ({
-          id: tier,
-          kind: 'modelTier',
-          label: getAiModelTierLabel(tier),
-        }));
+  const affectedModelTiers: AiDataPolicyAffectedEntry[] = pinnedModelTiers
+    .filter((tier) => {
+      const pinnedModelId = currentWorkspace?.aiModelIdByTier?.[tier];
+
+      return isNonEmptyString(pinnedModelId) && isModelExcluded(pinnedModelId);
+    })
+    .map((tier) => ({
+      id: tier,
+      kind: 'modelTier',
+      label: getAiModelTierLabel(tier),
+    }));
 
   const affectedEntries = [...affectedAgents, ...affectedModelTiers];
 
