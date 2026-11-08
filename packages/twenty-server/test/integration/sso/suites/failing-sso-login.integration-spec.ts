@@ -1,23 +1,26 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { findCurrentWorkspaceInviteHash } from 'test/integration/graphql/utils/find-current-workspace-invite-hash.util';
 import { SAML_IDENTITY_PROVIDER_CERTIFICATE } from 'test/integration/metadata/suites/sso-identity-provider/constants/saml-identity-provider-certificate.constant';
-import { createOneOidcIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-oidc-identity-provider.util';
 import { createOneSamlIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-saml-identity-provider.util';
 import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
 import { updateOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/update-one-sso-identity-provider.util';
 import { authorizeWithPassword } from 'test/integration/sso/utils/authorize-with-password.util';
 import { completeOidcLogin } from 'test/integration/sso/utils/complete-oidc-login.util';
+import { createTestOidcIdentityProvider } from 'test/integration/sso/utils/create-test-oidc-identity-provider.util';
 import { expectSsoErrorRedirect } from 'test/integration/sso/utils/expect-sso-error-redirect.util';
 import { getAuthorizationUrlForSso } from 'test/integration/sso/utils/get-authorization-url-for-sso.util';
 import { getSsoTestIdentityProvider } from 'test/integration/sso/utils/get-sso-test-identity-provider.util';
+import { getYcombinatorAdminAccessToken } from 'test/integration/sso/utils/get-ycombinator-admin-access-token.util';
 import { replayOnTestApp } from 'test/integration/sso/utils/replay-on-test-app.util';
 import { signInWithOidc } from 'test/integration/sso/utils/sign-in-with-oidc.util';
 import { startOidcLogin } from 'test/integration/sso/utils/start-oidc-login.util';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { SsoIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const APPLE_SUBDOMAIN = 'apple';
+const YCOMBINATOR_SUBDOMAIN = 'yc';
 const DEFAULT_SUBDOMAIN = 'app';
 
 // The OIDC strategy keys the login session by identity provider id
@@ -32,36 +35,26 @@ const replayRedirect = async (url: URL) => {
   return new URL(response.headers.location);
 };
 
-// Only Apple has a test session, so the other workspace's invite hash is read directly
-const findOtherWorkspaceInviteHash = async (): Promise<string> => {
-  const [{ inviteHash }] = await globalThis.testDataSource.query(
-    `SELECT "inviteHash" FROM core."workspace" WHERE "id" = $1`,
-    [SEED_YCOMBINATOR_WORKSPACE_ID],
-  );
-
-  return inviteHash;
-};
-
 describe('SSO login should fail', () => {
   const testIdentityProvider = getSsoTestIdentityProvider();
-  const createdIdentityProviderIds: string[] = [];
+  const createdIdentityProviders: {
+    identityProviderId: string;
+    token?: string;
+  }[] = [];
+  let ycombinatorAdminAccessToken: string;
 
   const createOidcIdentityProvider = async ({
-    clientSecret = testIdentityProvider.clientSecret,
-  }: { clientSecret?: string } = {}) => {
-    const { data } = await createOneOidcIdentityProvider({
-      expectToFail: false,
-      input: {
-        name: 'SSO integration test identity provider',
-        issuer: testIdentityProvider.issuer,
-        clientID: testIdentityProvider.clientId,
-        clientSecret,
-      },
+    token,
+    clientSecret,
+  }: { token?: string; clientSecret?: string } = {}) => {
+    const identityProviderId = await createTestOidcIdentityProvider({
+      token,
+      clientSecret,
     });
 
-    createdIdentityProviderIds.push(data.createOIDCIdentityProvider.id);
+    createdIdentityProviders.push({ identityProviderId, token });
 
-    return data.createOIDCIdentityProvider.id;
+    return identityProviderId;
   };
 
   const signInAsPhil = ({
@@ -74,8 +67,8 @@ describe('SSO login should fail', () => {
     signInWithOidc({
       identityProviderId,
       workspaceInviteHash,
-      username: testIdentityProvider.username,
-      password: testIdentityProvider.password,
+      username: testIdentityProvider.member.username,
+      password: testIdentityProvider.member.password,
     });
 
   const authorizeAsPhil = async (identityProviderId: string) => {
@@ -89,17 +82,24 @@ describe('SSO login should fail', () => {
 
     const callbackUrl = await authorizeWithPassword({
       authorizationUrl,
-      username: testIdentityProvider.username,
-      password: testIdentityProvider.password,
+      username: testIdentityProvider.member.username,
+      password: testIdentityProvider.member.password,
     });
 
     return { callbackUrl, sessionCookie };
   };
 
+  beforeAll(async () => {
+    ycombinatorAdminAccessToken = await getYcombinatorAdminAccessToken();
+  });
+
   afterEach(async () => {
-    for (const identityProviderId of createdIdentityProviderIds.splice(0)) {
+    for (const { identityProviderId, token } of createdIdentityProviders.splice(
+      0,
+    )) {
       await deleteOneSsoIdentityProvider({
         identityProviderId,
+        token,
         expectToFail: false,
       });
     }
@@ -141,7 +141,9 @@ describe('SSO login should fail', () => {
         },
       });
 
-      createdIdentityProviderIds.push(samlIdentityProviderId);
+      createdIdentityProviders.push({
+        identityProviderId: samlIdentityProviderId,
+      });
 
       const redirectUrl = await replayRedirect(
         new URL(`http://localhost/auth/oidc/login/${samlIdentityProviderId}`),
@@ -175,10 +177,17 @@ describe('SSO login should fail', () => {
     it('when the invite hash belongs to another workspace', async () => {
       const identityProviderId = await createOidcIdentityProvider();
 
+      const { data } = await findCurrentWorkspaceInviteHash({
+        token: ycombinatorAdminAccessToken,
+      });
+      const otherWorkspaceInviteHash = data.currentWorkspace.inviteHash;
+
+      assertIsDefinedOrThrow(otherWorkspaceInviteHash);
+
       expectSsoErrorRedirect({
         redirectUrl: await signInAsPhil({
           identityProviderId,
-          workspaceInviteHash: await findOtherWorkspaceInviteHash(),
+          workspaceInviteHash: otherWorkspaceInviteHash,
         }),
         workspaceSubdomain: APPLE_SUBDOMAIN,
         errorMessage: 'Identity provider does not belong to this workspace',
@@ -195,6 +204,22 @@ describe('SSO login should fail', () => {
         }),
         workspaceSubdomain: APPLE_SUBDOMAIN,
         errorMessage: 'Workspace not found',
+      });
+    });
+
+    it('when the user is not a member of the identity provider workspace', async () => {
+      const identityProviderId = await createOidcIdentityProvider({
+        token: ycombinatorAdminAccessToken,
+      });
+
+      expectSsoErrorRedirect({
+        redirectUrl: await signInWithOidc({
+          identityProviderId,
+          username: testIdentityProvider.nonMember.username,
+          password: testIdentityProvider.nonMember.password,
+        }),
+        workspaceSubdomain: YCOMBINATOR_SUBDOMAIN,
+        errorMessage: 'User does not have access to this workspace',
       });
     });
 
