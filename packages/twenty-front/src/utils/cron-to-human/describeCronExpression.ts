@@ -1,9 +1,9 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Locale } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getDayOfMonthDescription } from './descriptors/getDayOfMonthDescription';
-import { getDayOfWeekDescription } from './descriptors/getDayOfWeekDescription';
+import { getDaysDescription } from './descriptors/getDaysDescription';
 import { getHoursDescription } from './descriptors/getHoursDescription';
 import { getMinutesDescription } from './descriptors/getMinutesDescription';
 import { getMonthsDescription } from './descriptors/getMonthsDescription';
@@ -67,32 +67,17 @@ export const describeCronExpression = (
     } else if (isDefined(minutesDescription) && minutesDescription !== '') {
       descriptions.push(minutesDescription);
     }
-    const dayOfMonthDesc = getDayOfMonthDescription(
-      parts.dayOfMonth,
-      mergedOptions,
-    );
-    const hasDayOfMonth =
-      isDefined(dayOfMonthDesc) &&
-      dayOfMonthDesc !== '' &&
-      parts.dayOfMonth !== '*';
-    const dayOfWeekDesc = getDayOfWeekDescription(
-      parts.dayOfWeek,
-      { ...mergedOptions, isCombinedWithDayOfMonth: hasDayOfMonth },
+    const daysDescription = getDaysDescription({
+      dayOfMonth: parts.dayOfMonth,
+      dayOfWeek: parts.dayOfWeek,
+      options: mergedOptions,
       localeCatalog,
-    );
-    const hasDayOfWeek =
-      isDefined(dayOfWeekDesc) &&
-      dayOfWeekDesc !== '' &&
-      parts.dayOfWeek !== '*';
+    });
 
-    // When both day fields are restricted, cron runs on days matching either one
-    if (hasDayOfMonth && hasDayOfWeek) {
-      descriptions.push(t`${dayOfMonthDesc} and ${dayOfWeekDesc}`);
-    } else if (hasDayOfMonth) {
-      descriptions.push(dayOfMonthDesc);
-    } else if (hasDayOfWeek) {
-      descriptions.push(dayOfWeekDesc);
+    if (isNonEmptyString(daysDescription)) {
+      descriptions.push(daysDescription);
     }
+
     const monthsDesc = getMonthsDescription(
       parts.month,
       mergedOptions,
