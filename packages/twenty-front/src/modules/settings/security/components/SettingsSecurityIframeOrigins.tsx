@@ -2,35 +2,36 @@ import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, normalizeIframeOrigin } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconPlus, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { SettingsSecurityIframeOriginsTable } from '@/settings/security/components/SettingsSecurityIframeOriginsTable';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import {
   GetWorkspaceAllowedEmbeddingOriginsDocument,
   UpdateWorkspaceAllowedEmbeddingOriginsDocument,
 } from '~/generated-metadata/graphql';
 
-const StyledList = styled.div`
+const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledRow = styled.div`
-  align-items: center;
+const StyledForm = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
 `;
 
-const StyledOrigin = styled.span`
-  overflow-wrap: anywhere;
+const StyledInputContainer = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 export const SettingsSecurityIframeOrigins = () => {
@@ -78,9 +79,7 @@ export const SettingsSecurityIframeOrigins = () => {
     const origin = normalizeIframeOrigin(originInput.trim());
 
     if (!isDefined(origin)) {
-      setError(
-        t`Enter an HTTP or HTTPS origin without a path or wildcard, such as https://portal.example.com.`,
-      );
+      setError(t`Enter an HTTP or HTTPS origin without a path or wildcard.`);
 
       return;
     }
@@ -94,56 +93,46 @@ export const SettingsSecurityIframeOrigins = () => {
   return (
     <Section.Root>
       <Section.Header
-        title={t`Iframe embedding`}
+        title={t`Embedding this workspace`}
         description={t`Websites allowed to embed this workspace. Only add ones you fully trust.`}
       />
-      <StyledList>
+      <StyledContent>
         {isDefined(policyError) && (
           <>
-            <StyledOrigin role="alert">{t`Unable to load embedding settings.`}</StyledOrigin>
+            <Text role="alert">{t`Unable to load embedding settings.`}</Text>
             <Button onClick={() => refetch()}>{t`Retry`}</Button>
           </>
         )}
-        {origins.map((origin) => (
-          <StyledRow key={origin}>
-            <StyledOrigin>{origin}</StyledOrigin>
-            <Button
-              aria-label={t`Remove ${origin}`}
-              startIcon={<IconTrash size={16} />}
-              variant="outline"
-              size="sm"
+        <StyledForm>
+          <StyledInputContainer>
+            <SettingsTextInput
+              instanceId="allowed-iframe-origin"
+              aria-label={t`Website origin`}
+              placeholder="https://portal.example.com"
+              value={originInput}
               disabled={isDisabled}
-              onClick={() => saveOrigin('remove', origin)}
-            >
-              {t`Remove`}
-            </Button>
-          </StyledRow>
-        ))}
-        <SettingsTextInput
-          instanceId="allowed-iframe-origin"
-          label={t`Allowed origin`}
-          placeholder="https://portal.example.com"
-          value={originInput}
-          disabled={isDisabled}
-          onChange={(value) => {
-            setOriginInput(value);
-            setError(undefined);
-          }}
-          onInputEnter={handleAddOrigin}
-          error={error}
-        />
-        <StyledRow>
+              onChange={(value) => {
+                setOriginInput(value);
+                setError(undefined);
+              }}
+              onInputEnter={handleAddOrigin}
+              error={error}
+              fullWidth
+            />
+          </StyledInputContainer>
           <Button
-            variant="outline"
-            size="sm"
-            disabled={isDisabled || originInput.trim() === ''}
-            startIcon={<IconPlus size={16} />}
+            disabled={isDisabled || !isNonEmptyString(originInput.trim())}
             onClick={handleAddOrigin}
           >
-            {t`Add origin`}
+            {t`Add website`}
           </Button>
-        </StyledRow>
-      </StyledList>
+        </StyledForm>
+        <SettingsSecurityIframeOriginsTable
+          disabled={isDisabled}
+          origins={origins}
+          onRemove={(origin) => void saveOrigin('remove', origin)}
+        />
+      </StyledContent>
     </Section.Root>
   );
 };
