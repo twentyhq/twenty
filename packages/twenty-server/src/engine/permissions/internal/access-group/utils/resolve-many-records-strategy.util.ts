@@ -26,12 +26,21 @@ export const resolveManyRecordsStrategy = ({
     return 'plainCondition';
   }
 
-  return operationType === 'read' &&
-    areRecordAccessGroupsEnabled({
+  if (
+    operationType !== 'read' ||
+    !areRecordAccessGroupsEnabled({
       featureFlagsMap: metadataMaps.featureFlagsMap,
-    }) &&
-    roleIdsWithRule.length === 1 &&
-    roleIdsWithRule[0] === principals.mainPrincipal.roleId
-    ? 'accessGroups'
-    : 'degradedCondition';
+    })
+  ) {
+    return 'degradedCondition';
+  }
+
+  if (
+    roleIdsWithRule.length > 1 ||
+    roleIdsWithRule[0] !== principals.mainPrincipal.roleId
+  ) {
+    return 'degradedCondition';
+  }
+
+  return 'accessGroups';
 };
