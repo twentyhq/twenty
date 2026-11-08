@@ -925,9 +925,9 @@ type BarChartData {
 
 input BarChartDataInput {
   configuration: JSON!
-  dashboardFilterTimeZone: String
   dashboardFilterValues: [DashboardFilterValueInput!]
   objectMetadataId: UUID!
+  viewerTimeZone: String
 }
 
 """Display mode for bar charts with secondary grouping"""
@@ -2967,9 +2967,9 @@ type LineChartData {
 
 input LineChartDataInput {
   configuration: JSON!
-  dashboardFilterTimeZone: String
   dashboardFilterValues: [DashboardFilterValueInput!]
   objectMetadataId: UUID!
+  viewerTimeZone: String
 }
 
 type LineChartDataPoint {
@@ -4181,9 +4181,9 @@ type PieChartData {
 
 input PieChartDataInput {
   configuration: JSON!
-  dashboardFilterTimeZone: String
   dashboardFilterValues: [DashboardFilterValueInput!]
   objectMetadataId: UUID!
+  viewerTimeZone: String
 }
 
 type PieChartDataItem {

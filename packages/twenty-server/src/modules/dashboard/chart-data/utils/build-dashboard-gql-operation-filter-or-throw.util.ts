@@ -162,7 +162,7 @@ const getBoundFlatFieldMetadataOrThrow = ({
 
 export const buildDashboardGqlOperationFilterOrThrow = ({
   dashboardFilterValues,
-  dashboardFilterTimeZone,
+  viewerTimeZone,
   dashboardFilterBindings,
   firstDayOfTheWeek,
   objectMetadataId,
@@ -171,7 +171,7 @@ export const buildDashboardGqlOperationFilterOrThrow = ({
   currentWorkspaceMemberId,
 }: {
   dashboardFilterValues: DashboardFilterValueInput[] | null | undefined;
-  dashboardFilterTimeZone: string | null | undefined;
+  viewerTimeZone: string | null | undefined;
   dashboardFilterBindings: DashboardFilterBinding[] | null | undefined;
   firstDayOfTheWeek: CalendarStartDay;
   objectMetadataId: string;
@@ -183,7 +183,7 @@ export const buildDashboardGqlOperationFilterOrThrow = ({
     return {};
   }
 
-  if (!isDefined(dashboardFilterTimeZone)) {
+  if (!isDefined(viewerTimeZone)) {
     throw createInvalidDashboardFilterException(
       'a time zone is required with dashboard filter values',
     );
@@ -212,7 +212,7 @@ export const buildDashboardGqlOperationFilterOrThrow = ({
       values,
       bindings: dashboardFilterBindings,
       fields: boundFields,
-      timeZone: dashboardFilterTimeZone,
+      timeZone: viewerTimeZone,
       firstDayOfTheWeek: convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
         firstDayOfTheWeek,
         FirstDayOfTheWeek.MONDAY,
@@ -230,7 +230,7 @@ export const buildDashboardGqlOperationFilterOrThrow = ({
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
     // IS_TODAY passes through the builder and resolves in this time zone
-    userTimezone: dashboardFilterTimeZone,
+    userTimezone: viewerTimeZone,
     currentWorkspaceMemberId,
   });
 };

@@ -31,7 +31,7 @@ type GetPieChartDataParams = {
   objectMetadataId: string;
   configuration: PieChartConfigurationDTO;
   dashboardFilterValues?: DashboardFilterValueInput[] | null;
-  dashboardFilterTimeZone?: string | null;
+  viewerTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
 };
 
@@ -48,7 +48,7 @@ export class PieChartDataService {
     objectMetadataId,
     configuration,
     dashboardFilterValues,
-    dashboardFilterTimeZone,
+    viewerTimeZone,
     authContext,
   }: GetPieChartDataParams): Promise<PieChartDataDTO> {
     try {
@@ -122,7 +122,7 @@ export class PieChartDataService {
         filter: configuration.filter,
         dashboardFilterBindings: configuration.dashboardFilterBindings,
         dashboardFilterValues,
-        dashboardFilterTimeZone,
+        viewerTimeZone,
         dateGranularity: configuration.dateGranularity,
         userTimezone: configuration.timezone ?? 'UTC',
         firstDayOfTheWeek:
