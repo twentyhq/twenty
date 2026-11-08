@@ -6230,7 +6230,7 @@ msgstr "Alegeți ce poate accesa Twenty pentru a vă oferi asistență și a îm
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Alege când {assistantName} participă la conversațiile din spațiul tău de lucru"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Nu expiră niciodată"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Niciodată îl exclude pe {assistantName}. Doar când este menționat îi cere lui {assistantName} să răspundă când este etichetat. Automat îi permite lui {assistantName} să decidă când să răspundă. Conversațiile doar cu tine și {assistantName} primesc întotdeauna răspunsuri."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

@@ -6230,7 +6230,7 @@ msgstr "지원을 제공하고 제품을 개선하기 위해 Twenty가 액세스
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "{assistantName}이 워크스페이스 전체의 대화에 참여할 시점을 선택하세요"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "절대 만료되지 않음"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "안 함을 선택하면 {assistantName}이 참여하지 않습니다. 언급 시에만을 선택하면 태그되었을 때 {assistantName}이 답장합니다. 자동을 선택하면 {assistantName}이 답장할 시점을 결정합니다. 나와 {assistantName}만 있는 채팅에는 항상 답장이 제공됩니다."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

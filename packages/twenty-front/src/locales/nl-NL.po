@@ -6230,7 +6230,7 @@ msgstr "Kies waartoe Twenty toegang heeft om u te ondersteunen en het product te
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Kies wanneer {assistantName} deelneemt aan gesprekken in je hele werkruimte"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Verloopt nooit"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Nooit houdt {assistantName} buiten. Alleen wanneer vermeld vraagt {assistantName} om te reageren wanneer deze wordt getagd. Automatisch laat {assistantName} beslissen wanneer deze reageert. Chats met alleen jou en {assistantName} krijgen altijd reacties."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

@@ -11685,7 +11685,7 @@ msgstr "Det begärda filintervallet kan inte tillhandahållas."
 #. js-lingui-id: WIwnbY
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr ""
+msgstr "Obligatoriska fält och relationer kan inte begränsas i en behörighetsregel på radnivå."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -11838,7 +11838,7 @@ msgstr "Rollen \"{roleLabel}\" kan inte tilldelas applikationer"
 #. js-lingui-id: xIGy+v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to this agent"
-msgstr ""
+msgstr "Rollen \"{roleLabel}\" kan inte tilldelas denna agent"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11860,7 +11860,7 @@ msgstr "Rollen \"{roleLabel}\" kan inte tilldelas: anpassade roller kräver Orga
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the application to be assigned to its agents"
-msgstr ""
+msgstr "Rollen \"{roleLabel}\" måste ägas av applikationen för att kunna tilldelas dess agenter"
 
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
@@ -15120,7 +15120,7 @@ msgstr "Den här rollen kan inte ändras eftersom det är en systemroll. Endast 
 #. js-lingui-id: ujHiJC
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This row level permission rule does not belong to this role and object."
-msgstr ""
+msgstr "Den här behörighetsregeln på radnivå tillhör inte den här rollen och det här objektet."
 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts

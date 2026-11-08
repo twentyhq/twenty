@@ -6230,7 +6230,7 @@ msgstr "選擇允許 Twenty 存取哪些內容，以便為您提供支援並改�
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "選擇 {assistantName} 何時參與整個工作區的對話"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "永不過期"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "「從不」會讓 {assistantName} 不參與。「僅在提及時」會在標註 {assistantName} 時要求其回覆。「自動」讓 {assistantName} 決定何時回覆。只有您和 {assistantName} 的聊天室一律會收到回覆。"
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

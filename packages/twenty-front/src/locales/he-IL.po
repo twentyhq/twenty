@@ -6230,7 +6230,7 @@ msgstr "בחר למה ל-Twenty יש גישה כדי לתמוך בך ולשפר 
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "בחר מתי {assistantName} משתתף בשיחות ברחבי סביבת העבודה שלך"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "אף פעם לא פוקע"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "האפשרות \"לעולם לא\" משאירה את {assistantName} בחוץ. האפשרות \"רק כשמוזכר\" מבקשת מ-{assistantName} להשיב כשמתייגים אותו. האפשרות \"אוטומטי\" מאפשרת ל-{assistantName} להחליט מתי להשיב. בצ'אטים שבהם נמצאים רק אתה ו-{assistantName} תמיד מתקבלות תשובות."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

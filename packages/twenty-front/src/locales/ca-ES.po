@@ -6230,7 +6230,7 @@ msgstr "Trieu a què pot accedir Twenty per donar-vos suport i millorar el produ
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "Trieu quan {assistantName} participa en les converses de tot el vostre espai de treball"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "Mai caduca"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "Mai manté {assistantName} fora. Només quan se'l menciona demana a {assistantName} que respongui quan se'l etiqueta. Automàtic permet que {assistantName} decideixi quan respondre. Els xats només amb vós i {assistantName} sempre reben respostes."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx

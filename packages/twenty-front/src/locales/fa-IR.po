@@ -6230,7 +6230,7 @@ msgstr "انتخاب کنید Twenty برای پشتیبانی از شما و ب
 #. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {assistantName} participates in conversations across your workspace"
-msgstr ""
+msgstr "انتخاب کنید که {assistantName} چه زمانی در گفتگوهای سراسر فضای کاری شما مشارکت کند"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18717,7 +18717,7 @@ msgstr "هرگز منقضی نمی‌شود"
 #. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
-msgstr ""
+msgstr "«هرگز» {assistantName} را خارج نگه می‌دارد. «فقط هنگام اشاره» از {assistantName} می‌خواهد وقتی برچسب‌گذاری می‌شود پاسخ دهد. «خودکار» به {assistantName} اجازه می‌دهد تصمیم بگیرد چه زمانی پاسخ دهد. گفتگوهایی که فقط شما و {assistantName} در آن‌ها هستید همیشه پاسخ دریافت می‌کنند."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
