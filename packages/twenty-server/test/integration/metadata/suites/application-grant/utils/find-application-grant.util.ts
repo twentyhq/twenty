@@ -96,13 +96,13 @@ export const findRolePermissionSnapshot = async (roleId: string) => {
 
   const [switches] = await query(
     `SELECT "canUpdateAllSettings", "canAccessAllTools", "canAccessAllAgentChatChannels",
-            "canReadAllObjectRecords", "canUpdateAllObjectRecords",
+            "canReadAllObjectRecords", "canCreateAllObjectRecords", "canUpdateAllObjectRecords",
             "canSoftDeleteAllObjectRecords", "canDestroyAllObjectRecords"
      FROM core."role" WHERE id = $1`,
   );
 
   const objectPermissions = await query(
-    `SELECT "objectMetadataId", "canReadObjectRecords", "canUpdateObjectRecords",
+    `SELECT "objectMetadataId", "canReadObjectRecords", "canCreateObjectRecords", "canUpdateObjectRecords",
             "canSoftDeleteObjectRecords", "canDestroyObjectRecords"
      FROM core."objectPermission" WHERE "roleId" = $1`,
   );

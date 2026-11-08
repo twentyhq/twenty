@@ -190,6 +190,7 @@ const buildDesiredGrantUniversalFlatEntities = ({
         canAccessAllAgentChatChannels:
           requestedFlatRole.canAccessAllAgentChatChannels,
         canReadAllObjectRecords: requestedFlatRole.canReadAllObjectRecords,
+        canCreateAllObjectRecords: requestedFlatRole.canCreateAllObjectRecords,
         canUpdateAllObjectRecords: requestedFlatRole.canUpdateAllObjectRecords,
         canSoftDeleteAllObjectRecords:
           requestedFlatRole.canSoftDeleteAllObjectRecords,
@@ -230,6 +231,7 @@ const buildDesiredGrantUniversalFlatEntities = ({
       objectMetadataUniversalIdentifier:
         source.objectMetadataUniversalIdentifier,
       canReadObjectRecords: source.canReadObjectRecords ?? null,
+      canCreateObjectRecords: source.canCreateObjectRecords ?? null,
       canUpdateObjectRecords: source.canUpdateObjectRecords ?? null,
       canSoftDeleteObjectRecords: source.canSoftDeleteObjectRecords ?? null,
       canDestroyObjectRecords: source.canDestroyObjectRecords ?? null,
@@ -263,6 +265,11 @@ const buildDesiredGrantUniversalFlatEntities = ({
         objectMetadataUniversalIdentifier:
           source.objectMetadataUniversalIdentifier,
         logicalOperator: source.logicalOperator,
+        canReadRecords: source.canReadRecords,
+        canCreateRecords: source.canCreateRecords,
+        canUpdateRecords: source.canUpdateRecords,
+        canSoftDeleteRecords: source.canSoftDeleteRecords,
+        canDestroyRecords: source.canDestroyRecords,
         parentRowLevelPermissionPredicateGroupUniversalIdentifier:
           toNullableCopyUniversalIdentifier(
             source.parentRowLevelPermissionPredicateGroupUniversalIdentifier,
