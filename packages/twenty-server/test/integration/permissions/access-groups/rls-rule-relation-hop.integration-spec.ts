@@ -54,8 +54,16 @@ describe('RLS rules through a relation (integration)', () => {
     return id;
   };
 
-  const setFlag = (featureFlag: FeatureFlagKey, value: boolean) =>
-    updateFeatureFlag({ featureFlag, value, expectToFail: false });
+  const findObjectMetadataId = async (
+    nameSingular: string,
+  ): Promise<string> => {
+    const [{ id }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = $2`,
+      [SEED_APPLE_WORKSPACE_ID, nameSingular],
+    );
+
+    return id;
+  };
 
   const assignRuleThroughRelation = async ({
     objectMetadataId,
@@ -183,16 +191,8 @@ describe('RLS rules through a relation (integration)', () => {
   };
 
   beforeAll(async () => {
-    const objects: { id: string; nameSingular: string }[] =
-      await global.testDataSource.query(
-        `SELECT "id", "nameSingular" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" IN ('person', 'company')`,
-        [SEED_APPLE_WORKSPACE_ID],
-      );
-
-    personObjectMetadataId =
-      objects.find(({ nameSingular }) => nameSingular === 'person')?.id ?? '';
-    companyObjectMetadataId =
-      objects.find(({ nameSingular }) => nameSingular === 'company')?.id ?? '';
+    personObjectMetadataId = await findObjectMetadataId('person');
+    companyObjectMetadataId = await findObjectMetadataId('company');
 
     [person] = await global.testDataSource.query(
       `SELECT "id", "jobTitle", "companyId" FROM ${PERSON_TABLE} WHERE "deletedAt" IS NULL AND "companyId" IS NOT NULL ORDER BY "id" LIMIT 1`,
@@ -208,11 +208,16 @@ describe('RLS rules through a relation (integration)', () => {
 
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
 
-    await setFlag(
-      FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      true,
-    );
-    await setFlag(FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED, true);
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
   });
 
   afterEach(async () => {
@@ -241,11 +246,16 @@ describe('RLS rules through a relation (integration)', () => {
   });
 
   afterAll(async () => {
-    await setFlag(FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED, false);
-    await setFlag(
-      FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      false,
-    );
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
     );
@@ -467,6 +477,63 @@ describe('RLS rules through a relation (integration)', () => {
     await global.testDataSource.query(
       `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
       [personOfCompanyId],
+    );
+  });
+
+  it('should only update related records when a compared field is written', async () => {
+    const [{ employees }] = await global.testDataSource.query(
+      `SELECT "employees" FROM ${COMPANY_TABLE} WHERE "id" = $1`,
+      [company.id],
+    );
+    const findPersonAccessGroupIds = async (): Promise<number[] | null> => {
+      const [{ _accessGroupIds }] = await global.testDataSource.query(
+        `SELECT "_accessGroupIds" FROM ${PERSON_TABLE} WHERE "id" = $1`,
+        [person.id],
+      );
+
+      return _accessGroupIds;
+    };
+
+    await global.testDataSource.query(
+      `UPDATE ${COMPANY_TABLE} SET "name" = 'Hop match' WHERE "id" = $1`,
+      [company.id],
+    );
+    await assignRuleThroughRelation({
+      objectMetadataId: personObjectMetadataId,
+      relationFieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: personObjectMetadataId,
+        name: 'company',
+      }),
+      fieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: companyObjectMetadataId,
+        name: 'name',
+      }),
+      value: 'Hop match',
+    });
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL WHERE "id" = $1`,
+      [person.id],
+    );
+
+    await updateAsAdmin({
+      singular: 'company',
+      recordId: company.id,
+      data: { employees: (employees ?? 0) + 1 },
+    });
+
+    expect(await findPersonAccessGroupIds()).toBeNull();
+
+    await updateAsAdmin({
+      singular: 'company',
+      recordId: company.id,
+      data: { name: 'Hop match again' },
+    });
+
+    expect(await findPersonAccessGroupIds()).not.toBeNull();
+
+    await global.testDataSource.query(
+      `UPDATE ${COMPANY_TABLE} SET "employees" = $1 WHERE "id" = $2`,
+      [employees, company.id],
     );
   });
 });

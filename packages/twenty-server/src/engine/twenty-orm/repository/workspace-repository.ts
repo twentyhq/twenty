@@ -1257,6 +1257,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           .map((record) => record.id)
           .filter(isNonEmptyString),
         recordsBefore,
+        updatedColumnNames: distinctUpdatedColumns.flat(),
       }),
     );
 
@@ -1671,6 +1672,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               .map((record) => record.id)
               .filter(isNonEmptyString),
             recordsBefore,
+            updatedColumnNames: isDefined(setColumns)
+              ? Object.keys(setColumns)
+              : undefined,
           }),
     );
 
@@ -1786,9 +1790,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private findRelatedRecords({
     recordIds,
     recordsBefore,
+    updatedColumnNames,
   }: {
     recordIds: string[];
     recordsBefore: ObjectRecord[];
+    updatedColumnNames?: string[];
   }): Promise<RelatedRecords[]> {
     return this.options.internalContext.recordPermissions.findRelatedRecords({
       featureFlagsMap: this.options.internalContext.featureFlagsMap,
@@ -1796,6 +1802,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectMetadataId: this.options.flatObjectMetadata.id,
       recordIds,
       recordsBefore,
+      updatedColumnNames,
       transactionScope: this.buildRecordPermissionTransactionScope(),
     });
   }

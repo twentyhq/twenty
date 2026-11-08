@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isObject } from '@sniptt/guards';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -248,7 +249,7 @@ export class RecordPermissionReadRepository {
           })} AS ${quotedTableAlias}
           WHERE ${quotedColumn} = ANY(:joinValues)
             AND ${quotedTableAlias}."deletedAt" IS NULL
-            ${condition ? `AND (${condition.sql})` : ''}`,
+            ${isDefined(condition) ? `AND (${condition.sql})` : ''}`,
         parameters: { ...(condition?.parameters ?? {}), joinValues },
       },
     });

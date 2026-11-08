@@ -19,6 +19,7 @@ import { type RecordPermissionTransactionScope } from 'src/engine/permissions/ty
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { findRlsRuleRelationHopsToObject } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-relation-hops-to-object.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
+import { isRlsRuleRelationHopAffectedByUpdate } from 'src/engine/permissions/internal/access-group/utils/is-rls-rule-relation-hop-affected-by-update.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -168,21 +169,23 @@ export class RecordAccessGroupService {
     objectMetadataId,
     recordIds,
     recordsBefore,
+    updatedColumnNames,
     transactionScope,
   }: {
     workspaceId: string;
     objectMetadataId: string;
     recordIds: string[];
     recordsBefore: Record<string, unknown>[];
+    updatedColumnNames?: string[];
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<RelatedRecords[]> {
     const metadataMaps = await this.findMetadataMaps(workspaceId);
-    const relationFieldMetadatas = findRlsRuleRelationHopsToObject({
+    const relationHops = findRlsRuleRelationHopsToObject({
       ...metadataMaps,
       objectMetadataId,
     });
 
-    if (relationFieldMetadatas.length === 0) {
+    if (relationHops.length === 0) {
       return [];
     }
 
@@ -192,7 +195,20 @@ export class RecordAccessGroupService {
     });
     const relatedRecords: RelatedRecords[] = [];
 
-    for (const relationFieldMetadata of relationFieldMetadatas) {
+    for (const relationHop of relationHops) {
+      if (
+        isDefined(updatedColumnNames) &&
+        !isRlsRuleRelationHopAffectedByUpdate({
+          relationHop,
+          updatedColumnNames,
+          targetFlatObjectMetadata,
+          flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        })
+      ) {
+        continue;
+      }
+
+      const { relationFieldMetadata } = relationHop;
       const sourceFlatObjectMetadata =
         findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityId: relationFieldMetadata.objectMetadataId,
