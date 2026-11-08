@@ -25,7 +25,7 @@ export const fetchSlackThreadMessages = async ({
   parentMessageTimestamp,
   requestMessageTimestamp,
 }: {
-  client: WebClient;
+  client: { conversations: Pick<WebClient['conversations'], 'replies'> };
   slackChannelId: string;
   parentMessageTimestamp: string;
   requestMessageTimestamp: string;

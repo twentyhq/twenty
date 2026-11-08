@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -14,6 +13,7 @@ import { RecordLevelPermissionVariablePickerContext } from '@/settings/roles/rol
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledRecordLevelPermissionPickerContainer = styled.div<{
   multiline?: boolean;
@@ -57,6 +57,7 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker: VariablePickerComponent =
   ({ instanceId, disabled, multiline }) => {
+    const { t } = useLingui();
     const theme = useTheme();
     const pickerContext = useContext(
       RecordLevelPermissionVariablePickerContext,

@@ -16,7 +16,7 @@ import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
@@ -92,7 +92,9 @@ export const SettingsWorkspaceMembersTeamTab = () => {
   const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
 
   const searchServerFilter = useMemo(() => {
-    if (!debouncedSearchFilter?.trim()) return undefined;
+    if (!debouncedSearchFilter?.trim()) {
+      return undefined;
+    }
 
     const normalizedSearchTerm = normalizeSearchText(debouncedSearchFilter);
     const nameFilters = generateILikeFiltersForCompositeFields(
@@ -115,7 +117,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
     hasNextPage,
     loading,
   } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
     filter: searchServerFilter,
   });
 

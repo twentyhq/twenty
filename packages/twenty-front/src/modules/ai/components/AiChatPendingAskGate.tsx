@@ -100,7 +100,10 @@ export const AiChatPendingAskGate = ({
       )}
       {pendingToolCalls.map((pendingToolCall, index) => (
         <div key={pendingToolCall.toolCallId} hidden={index !== currentIndex}>
-          <AiChatAskCard pendingToolCall={pendingToolCall} />
+          <AiChatAskCard
+            pendingToolCall={pendingToolCall}
+            isActive={index === currentIndex}
+          />
         </div>
       ))}
     </StyledGate>

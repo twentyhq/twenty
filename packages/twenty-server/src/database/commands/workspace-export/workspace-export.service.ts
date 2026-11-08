@@ -252,7 +252,9 @@ export class WorkspaceExportService {
         queryParameters,
       );
 
-      if (!isNonEmptyArray(rows)) break;
+      if (!isNonEmptyArray(rows)) {
+        break;
+      }
 
       if (!columnNames) {
         columnNames = Object.keys(rows[0]).filter(
@@ -279,7 +281,9 @@ export class WorkspaceExportService {
         await once(stream, 'drain');
       }
 
-      if (rows.length < BATCH_SIZE) break;
+      if (rows.length < BATCH_SIZE) {
+        break;
+      }
     }
 
     if (totalRows > 0) {
@@ -304,7 +308,9 @@ export class WorkspaceExportService {
         `SELECT * FROM "${schemaName}"."${tableName}" ORDER BY "id" LIMIT ${BATCH_SIZE} OFFSET ${offset}`,
       );
 
-      if (!isNonEmptyArray(rows)) break;
+      if (!isNonEmptyArray(rows)) {
+        break;
+      }
 
       if (!columnNames) {
         columnNames = Object.keys(rows[0]).filter(
@@ -330,7 +336,9 @@ export class WorkspaceExportService {
         }
       }
 
-      if (rows.length < BATCH_SIZE) break;
+      if (rows.length < BATCH_SIZE) {
+        break;
+      }
     }
 
     if (isNonEmptyArray(columnNames)) {
@@ -379,7 +387,9 @@ export class WorkspaceExportService {
     stream: WriteStream,
   ): Promise<void> {
     for (const objectMetadata of objectMetadatas) {
-      if (!objectMetadata.isActive) continue;
+      if (!objectMetadata.isActive) {
+        continue;
+      }
 
       const tableName = computeTableName(
         objectMetadata.nameSingular,

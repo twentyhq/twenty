@@ -28,7 +28,6 @@ import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 @Injectable()
 export class ToolRegistryService {
@@ -199,7 +198,6 @@ export class ToolRegistryService {
       userId?: string;
       userWorkspaceId?: string;
       locale?: keyof typeof APP_LOCALES;
-      rolePermissionConfig: RolePermissionConfig;
       categories?: ToolCategory[];
       excludeTools?: Set<string>;
       authContext?: WorkspaceAuthContext;
@@ -208,7 +206,6 @@ export class ToolRegistryService {
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
       workspaceId,
-      rolePermissionConfig: options.rolePermissionConfig,
       userId: options.userId,
       userWorkspaceId: options.userWorkspaceId,
       locale: options.locale,
@@ -315,11 +312,14 @@ export class ToolRegistryService {
   async suggestSimilarToolNames(
     toolNames: string[],
     context: ToolContext,
+    isToolAllowed: (toolName: string) => boolean = () => true,
   ): Promise<Record<string, string[]>> {
     const fullContext = this.buildContextFromToolContext(context);
 
     const catalog = await this.getCatalog(fullContext);
-    const candidateToolNames = catalog.map((entry) => entry.name);
+    const candidateToolNames = catalog
+      .map((entry) => entry.name)
+      .filter(isToolAllowed);
 
     const suggestionsByToolName: Record<string, string[]> = {};
 
@@ -421,14 +421,21 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const { categories, excludeTools, compactOutput, spillLargeOutput } =
-      options;
-
-    const descriptors = await this.getCatalog(context, {
+    const {
       categories,
       excludeTools,
-      includeSchemas: true,
-    });
+      isToolOffered = () => true,
+      compactOutput,
+      spillLargeOutput,
+    } = options;
+
+    const descriptors = (
+      await this.getCatalog(context, {
+        categories,
+        excludeTools,
+        includeSchemas: true,
+      })
+    ).filter(isToolOffered);
 
     const toolSet = this.hydrateToolSet(descriptors, context, {
       compactOutput,
@@ -523,7 +530,7 @@ export class ToolRegistryService {
 
     return {
       ...(await context.resolveExecutionContext()),
-      explicitObjectGrantsRoleId: context.explicitObjectGrantsRoleId,
+      explicitObjectGrants: context.explicitObjectGrants,
     };
   }
 
@@ -539,7 +546,6 @@ export class ToolRegistryService {
         : undefined,
       workspaceId: context.workspaceId,
       approvedToolName: context.approvedToolName,
-      rolePermissionConfig: context.rolePermissionConfig,
       authContext: context.authContext,
       application: context.application,
       actorContext: context.actorContext,

@@ -4,6 +4,8 @@
 
 ### Breaking changes
 
+`IconsProvider`, `useIcons`, `Icon` (the by-name icon) and `IconProps` moved from `twenty-ui/icon` (and the root `twenty-ui` entry) to `twenty-ui/icon/provider`. The provider loads the full Tabler catalog, so `twenty-ui/icon` now ships only the named icons and icon types. Change `import { IconsProvider, useIcons } from 'twenty-ui/icon'` to `import { IconsProvider, useIcons } from 'twenty-ui/icon/provider'`.
+
 `Text` and `OverflowingTextWithTooltip` now offer optional theme `size`, `weight` and `color` props. Omitted props preserve inherited typography. Native `color` strings must move to `style={{ color: customColor }}`; `color` accepts `primary`, `secondary`, `tertiary` and `light`.
 
 `OverflowingTextWithTooltip.size` now means font size (`xxs` through `xxl`). The previously removed `small`/`large` height options are not aliases; replace the old `large` 16px height with a native style when needed.

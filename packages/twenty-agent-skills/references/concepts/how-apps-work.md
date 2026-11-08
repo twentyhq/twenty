@@ -17,7 +17,7 @@ A Twenty app depends on two SDK packages:
 | `twenty-sdk`        | Define app entities and access front component runtime APIs | Entity definitions (`twenty-sdk/define`), front component hooks and host APIs (`twenty-sdk/front-component`) |
 | `twenty-client-sdk` | Access workspace data from front components                 | Core object queries (`twenty-client-sdk/core`), metadata queries (`twenty-client-sdk/metadata`)              |
 
-`twenty-sdk/define` provides the registration functions: `defineApplication`, `defineObject`, `defineField`, `defineView`, `definePageLayout`, `defineFrontComponent`, `defineSettingsMenuItem`, `defineNavigationMenuItem`, `defineLogicFunction`, `defineRole`, and others. Every app entity is declared through one of these functions.
+`twenty-sdk/define` provides the registration functions: `defineApplication`, `defineObject`, `defineField`, `defineValidationRule`, `defineView`, `definePageLayout`, `defineFrontComponent`, `defineSettingsMenuItem`, `defineNavigationMenuItem`, `defineLogicFunction`, `defineRole`, and others. Every app entity is declared through one of these functions.
 
 `twenty-sdk/front-component` provides runtime APIs available inside front components: `navigate`, `enqueueSnackbar`, `openSidePanelPage`, `useSelectedRecordIds`, `getApplicationVariable`, and others.
 
@@ -79,6 +79,8 @@ For microphone or camera capture, declare `requestedCapabilities: ['microphone']
 
 Calling `navigator.mediaDevices.getUserMedia()` without a saved grant pauses capture and shows an approval dialog, including for older apps without `requestedCapabilities`. Declining leaves capture blocked before browser permissions are requested. Package updates do not automatically add grants; locally synced development apps receive their declared capabilities. Browser and operating system permissions still apply after workspace approval.
 
+An embedded website such as a phone or video tool needs its exact HTTPS origin declared in `requestedIframeMediaPermissions` in `defineApplication()`, with microphone and camera set separately: `[{ origin: 'https://phone.example.com', microphone: true, camera: false }]`. Declared websites appear during installation for the same workspace-wide approval. Locally synced development apps receive their declared iframe origins automatically. Updates to published apps preserve existing grants and do not automatically grant additional media access. A member who can manage apps can approve new requests from the installed app's **General** tab, under **Embedded website media access** > **Review media access**. This approval uses a native browser confirmation showing the app, website origins, and requested microphone or camera access. After approving, reload open Twenty tabs to apply the updated permissions. Front-component iframes must request the features (`allow="microphone"` or `allow="microphone; camera"`). App-defined `IFRAME` page layout widgets use the owning app's grants instead of workspace security approvals or other apps' grants. Twenty delegates only to granted origins, and only after a member selects the embed's **Enable** control and approves a native browser confirmation showing the app, website origin, and requested microphone or camera access. `srcDoc` iframes and embeds at Twenty's own origin never receive media access.
+
 ## App File Structure
 
 A typical Twenty app after scaffolding:
@@ -91,6 +93,7 @@ my-app/
     constants/
       universal-identifiers.ts          # Stable UUIDs for all entities
     objects/                            # defineObject, defineField, defineRelation
+    validation-rules/                   # defineValidationRule
     views/                              # defineView
     roles/                              # defineRole
     front-components/                   # defineFrontComponent (.tsx)

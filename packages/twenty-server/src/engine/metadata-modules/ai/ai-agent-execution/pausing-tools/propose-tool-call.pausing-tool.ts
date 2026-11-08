@@ -3,6 +3,7 @@ import isEqual from 'lodash.isequal';
 import {
   buildFallbackProposedToolCall,
   PROPOSED_TOOL_CALL_TEMPLATES,
+  isFrontComponentProposedToolCall,
   type ProposeToolCallToolInput,
   type ProposeToolCallToolResult,
   type ProposedToolCall,
@@ -55,7 +56,6 @@ const proposedToolCallSchema: z.ZodType<ProposedToolCall> = z.object({
   arguments: z.record(z.string(), z.unknown()),
   template: z.enum(PROPOSED_TOOL_CALL_TEMPLATES),
   alternativeToolNames: z.array(z.string()).optional(),
-  areArgumentsEditable: z.boolean().optional(),
   objectNameSingular: z.string().optional(),
   recordId: z.string().optional(),
   currentValues: z.record(z.string(), z.unknown()).optional(),
@@ -133,7 +133,7 @@ const buildApprovedArguments = (
   proposal: ProposedToolCall,
   editedArguments: Record<string, unknown> | undefined,
 ): Record<string, unknown> => {
-  if (proposal.areArgumentsEditable === false) {
+  if (isFrontComponentProposedToolCall(proposal)) {
     return proposal.arguments;
   }
 

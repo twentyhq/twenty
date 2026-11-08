@@ -10,9 +10,9 @@ import {
   IconSearch,
   IconTool,
   IconTrash,
-  useIcons,
   type IconComponent,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type SettingsAgentToolApplication } from '~/pages/settings/ai/types/SettingsAgentToolApplication';
@@ -32,11 +32,18 @@ type ApplicationInfo = Pick<SettingsAgentToolApplication, 'name'>;
 type MarketplaceAppInfo = Pick<SettingsAgentToolMarketplaceApp, 'logoUrl'>;
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
-  if (toolName.startsWith('create_')) return IconPlus;
-  if (toolName.startsWith('update_')) return IconEdit;
-  if (toolName.startsWith('delete_')) return IconTrash;
-  if (toolName.startsWith('find_') || toolName.startsWith('get_'))
+  if (toolName.startsWith('create_')) {
+    return IconPlus;
+  }
+  if (toolName.startsWith('update_')) {
+    return IconEdit;
+  }
+  if (toolName.startsWith('delete_')) {
+    return IconTrash;
+  }
+  if (toolName.startsWith('find_') || toolName.startsWith('get_')) {
     return IconSearch;
+  }
 
   return null;
 };

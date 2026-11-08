@@ -63,8 +63,9 @@ describe('agent history workspace metadata', () => {
       if (
         !isMorphOrRelationFlatFieldMetadata(field) ||
         !historyObjectIds.includes(field.objectMetadataUniversalIdentifier)
-      )
+      ) {
         continue;
+      }
       expect(
         validateMorphOrRelationFlatFieldOnDelete({
           universalFlatFieldMetadata: {
@@ -135,6 +136,47 @@ describe('agent history workspace metadata', () => {
       defaultValue: "'STANDARD'",
       disabledFieldPermissionActions: ['canUpdateFieldValue'],
       options: [{ value: 'STANDARD' }, { value: 'DIRECT_MESSAGE' }],
+    });
+  });
+
+  it.each([
+    'directMessageFirstWorkspaceMemberId',
+    'directMessageSecondWorkspaceMemberId',
+  ] as const)('keeps the fixed DM member field %s system managed', (name) => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields[name].universalIdentifier
+      ],
+    ).toMatchObject({
+      name,
+      type: FieldMetadataType.UUID,
+      isSystem: true,
+      isUIEditable: false,
+      isNullable: true,
+      disabledFieldPermissionActions: ['canUpdateFieldValue'],
+    });
+  });
+
+  it('reserves one DM identity per pair including soft-deleted threads', () => {
+    const { fields, indexes } = STANDARD_OBJECTS.agentChatThread;
+
+    expect(
+      allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
+        indexes.directMessagePairUniqueIndex.universalIdentifier
+      ],
+    ).toMatchObject({
+      isUnique: true,
+      indexWhereClause: null,
+      universalFlatIndexFieldMetadatas: [
+        {
+          fieldMetadataUniversalIdentifier:
+            fields.directMessageFirstWorkspaceMemberId.universalIdentifier,
+        },
+        {
+          fieldMetadataUniversalIdentifier:
+            fields.directMessageSecondWorkspaceMemberId.universalIdentifier,
+        },
+      ],
     });
   });
 

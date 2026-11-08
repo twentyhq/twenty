@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -81,7 +80,7 @@ describe('convergeDivergedCallRecordings', () => {
   it('does nothing when the workspace has no candidates', async () => {
     const client = buildClient([]);
     const result = await convergeDivergedCallRecordings({
-      client: client as unknown as CoreApiClient,
+      client,
       now: NOW,
     });
 
@@ -94,7 +93,7 @@ describe('convergeDivergedCallRecordings', () => {
     const client = buildClient([{ id: 'recording-1', status: 'PROCESSING' }]);
 
     await convergeDivergedCallRecordings({
-      client: client as unknown as CoreApiClient,
+      client,
       now: NOW,
     });
 
@@ -132,7 +131,7 @@ describe('convergeDivergedCallRecordings', () => {
       );
 
       await convergeDivergedCallRecordings({
-        client: client as unknown as CoreApiClient,
+        client,
         now: NOW,
       });
 
@@ -149,7 +148,7 @@ describe('convergeDivergedCallRecordings', () => {
     const client = buildClient(nodes);
     const runPage = (after?: string) =>
       convergeDivergedCallRecordings({
-        client: client as unknown as CoreApiClient,
+        client,
         now: NOW,
         after,
       });
@@ -210,7 +209,7 @@ describe('convergeDivergedCallRecordings', () => {
       },
     ]);
     const result = await convergeDivergedCallRecordings({
-      client: client as unknown as CoreApiClient,
+      client,
       now: NOW,
     });
 
@@ -235,7 +234,7 @@ describe('convergeDivergedCallRecordings', () => {
     ]);
 
     await convergeDivergedCallRecordings({
-      client: client as unknown as CoreApiClient,
+      client,
       now: NOW,
     });
 
@@ -260,7 +259,7 @@ describe('convergeDivergedCallRecordings', () => {
     );
 
     await convergeDivergedCallRecordings({
-      client: client as unknown as CoreApiClient,
+      client,
       now: NOW,
     });
 
@@ -290,7 +289,7 @@ describe('convergeDivergedCallRecordings', () => {
     );
 
     await convergeDivergedCallRecordings({
-      client: client as unknown as CoreApiClient,
+      client,
       now: NOW,
     });
 
@@ -323,7 +322,7 @@ describe('convergeDivergedCallRecordings', () => {
     );
 
     await convergeDivergedCallRecordings({
-      client: client as unknown as CoreApiClient,
+      client,
       now: NOW,
     });
 
@@ -347,7 +346,7 @@ describe('convergeDivergedCallRecordings', () => {
 
     await expect(
       convergeDivergedCallRecordings({
-        client: client as unknown as CoreApiClient,
+        client,
         now: NOW,
       }),
     ).rejects.toThrow('Queue unavailable');
@@ -365,7 +364,7 @@ describe('convergeDivergedCallRecordings', () => {
 
     await expect(
       convergeDivergedCallRecordings({
-        client: client as unknown as CoreApiClient,
+        client,
         now: NOW,
         after: 'same',
       }),

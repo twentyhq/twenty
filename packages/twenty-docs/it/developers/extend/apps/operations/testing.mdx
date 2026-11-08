@@ -176,7 +176,7 @@ Puoi anche eseguire il controllo dei tipi sulla tua app senza eseguire i test:
 twenty app typecheck
 ```
 
-Questo esegue `tsc --noEmit` sul file `tsconfig.json` della tua app e riporta eventuali errori di tipo. Le app generate dallo scaffolder includono anche uno script `yarn typecheck` che copre anche i file di test (`tsconfig.spec.json`).
+Questo controlla il file `tsconfig.json` della tua app con il compilatore TypeScript installato, senza generare file, e segnala eventuali errori di tipo. Le app generate dallo scaffolder includono anche uno script `yarn typecheck` che copre anche i file di test (`tsconfig.spec.json`).
 
 ## CI con GitHub Actions
 

@@ -1,7 +1,6 @@
-import { FrontComponentMediaSessionIndicator } from '@/front-components/media-session/components/FrontComponentMediaSessionIndicator';
+import { MediaAccessIndicator } from '@/media-access/components/MediaAccessIndicator';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconSearch } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
@@ -11,6 +10,7 @@ import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenR
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   flex-shrink: 0;
@@ -54,6 +54,7 @@ const StyledWorkspaceDropdownContainer = styled.div`
 `;
 
 export const NavigationDrawerHeader = () => {
+  const { t } = useLingui();
   const isMobile = useIsMobile();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isExpanded = useIsNavigationDrawerContentExpanded();
@@ -77,7 +78,7 @@ export const NavigationDrawerHeader = () => {
         </StyledWorkspaceDropdownContainer>
         {isExpanded && (
           <StyledRightActions>
-            <FrontComponentMediaSessionIndicator />
+            <MediaAccessIndicator />
             {searchButton}
             <NavigationDrawerCollapseButton
               direction="left"
@@ -88,7 +89,7 @@ export const NavigationDrawerHeader = () => {
       </StyledHeaderRow>
       {!isExpanded && !isMobile && (
         <StyledCollapsedSearch>
-          <FrontComponentMediaSessionIndicator />
+          <MediaAccessIndicator />
           {searchButton}
         </StyledCollapsedSearch>
       )}

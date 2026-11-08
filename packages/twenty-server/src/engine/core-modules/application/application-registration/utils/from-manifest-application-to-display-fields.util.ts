@@ -5,7 +5,7 @@ import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-module
 import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
 
 export const fromManifestApplicationToDisplayFields = (
-  application: ApplicationManifest | undefined,
+  application: Partial<ApplicationManifest> | undefined,
 ) => ({
   logo: application?.logo ?? application?.logoUrl ?? null,
   description: application?.description ?? null,

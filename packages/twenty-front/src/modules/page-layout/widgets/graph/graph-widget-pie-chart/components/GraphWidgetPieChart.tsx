@@ -125,7 +125,9 @@ export const GraphWidgetPieChart = ({
       datum: ComputedDatum<PieChartDataItemWithColor>,
       event: ReactMouseEvent<SVGElement>,
     ) => {
-      if (!isDefined(containerRef.current)) return;
+      if (!isDefined(containerRef.current)) {
+        return;
+      }
 
       const containerRect = containerRef.current.getBoundingClientRect();
       setGraphWidgetPieTooltip({

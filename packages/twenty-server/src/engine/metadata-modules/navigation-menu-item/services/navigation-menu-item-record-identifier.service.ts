@@ -11,10 +11,12 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { getMinimalSelectForRecordIdentifier } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-minimal-select-for-record-identifier.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { FileFolder } from 'twenty-shared/types';
 
 @Injectable()
@@ -66,23 +68,11 @@ export class NavigationMenuItemRecordIdentifierService {
         workspace: { id: workspaceId },
       } as WorkspaceAuthContext);
 
-    const record = await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const context = getWorkspaceContext();
-        const rolePermissionConfig = resolveRolePermissionConfig({
-          authContext: context.authContext,
-          userWorkspaceRoleMap: context.userWorkspaceRoleMap,
-          apiKeyRoleMap: context.apiKeyRoleMap,
-          flatRoleTargetByAgentIdMaps: context.flatRoleTargetByAgentIdMaps,
-        });
-
-        if (!rolePermissionConfig) {
-          return null;
-        }
-
+    // A caller who cannot read the record sees no identifier rather than an error
+    const record = await this.workspaceOrmManager
+      .executeInWorkspaceContext(async () => {
         const repository = this.workspaceOrmManager.getRepository(
           objectMetadata.nameSingular,
-          rolePermissionConfig,
         );
 
         const alias = objectMetadata.nameSingular;
@@ -108,9 +98,17 @@ export class NavigationMenuItemRecordIdentifierService {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         );
-      },
-      resolvedAuthContext,
-    );
+      }, resolvedAuthContext)
+      .catch((error: unknown) => {
+        if (
+          error instanceof PermissionsException &&
+          error.code === PermissionsExceptionCode.PERMISSION_DENIED
+        ) {
+          return null;
+        }
+
+        throw error;
+      });
 
     if (!isDefined(record)) {
       return null;

@@ -16,7 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import {
   AppPath,
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   SettingsPath,
 } from 'twenty-shared/types';
 
@@ -81,14 +81,16 @@ export const SettingsObjectDetailPage = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (objectNamePlural === updatedObjectNamePlural)
+    if (objectNamePlural === updatedObjectNamePlural) {
       setUpdatedObjectNamePlural('');
+    }
     if (
       workspaceSurface.type === 'main' &&
       !isDeleting &&
       !isDefined(objectMetadataItem)
-    )
+    ) {
       navigateApp(AppPath.NotFound);
+    }
   }, [
     objectMetadataItem,
     navigateApp,
@@ -124,7 +126,8 @@ export const SettingsObjectDetailPage = () => {
       Icon: IconAppWindow,
       hide:
         objectMetadataItem.isRemote ||
-        objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,
+        objectMetadataItem.nameSingular ===
+          StandardObjectNameSingular.Dashboard,
     },
   ];
 

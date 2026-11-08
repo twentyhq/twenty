@@ -1,0 +1,114 @@
+---
+title: Regole di convalida
+description: Imposta le condizioni che i record devono soddisfare prima di poter essere salvati.
+---
+
+import { PageBanner } from '/snippets/page-banner.mdx';
+
+## Cosa sono le regole di convalida?
+
+Una regola di convalida è una condizione che deve essere vera prima che un record possa essere creato o aggiornato. Se la condizione è falsa, Twenty blocca il salvataggio e mostra un messaggio che spiega cosa deve essere modificato.
+
+Utilizza le regole per richiedere informazioni al momento giusto, ad esempio un importo prima che un'opportunità diventi un cliente, o per impedire valori incoerenti, ad esempio una data di fine precedente a una data di inizio.
+
+<Note>
+  Le regole di convalida sono disponibili nel piano **Organization**. Ti serve l'autorizzazione
+  per modificare il modello di dati e gestirle.
+</Note>
+
+## Crea una regola di convalida
+
+1. Vai a **Settings → Data Model** e seleziona l'oggetto che vuoi configurare.
+2. Apri la scheda **Settings**, trova **Validation rules** e fai clic su **Add rule**.
+3. Assegna un nome alla regola e, facoltativamente, una descrizione per spiegarne lo scopo.
+4. Scrivi una **Condizione**. Inizia a digitare il nome di un campo o di una funzione e seleziona i suggerimenti dal pannello di assistenza.
+5. In **Errore**, inserisci un **Messaggio** che indichi alle persone come correggere il record. Usa **Mostra su** per associarla a un campo specifico o seleziona **Intero record**.
+6. Controlla l'**Anteprima** per vedere come si comporta la condizione sui record esistenti.
+7. Fai clic su **Attiva** per iniziare ad applicare la regola.
+
+Le nuove regole restano inattive finché non le attivi. Una regola richiede un nome, una condizione valida e un messaggio di errore prima di poter essere attivata.
+
+### Visualizza l'anteprima della regola
+
+L'anteprima utilizza fino a tre record recenti dell'oggetto selezionato. Usa le frecce per spostarti tra di essi e controllare i valori usati dalla condizione.
+
+| Stato        | Significato                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------------------- |
+| **Valido**   | Il record soddisfa la condizione.                                                                        |
+| **Bloccato** | Il record non soddisfa la condizione. L'anteprima mostra anche il messaggio di errore.                   |
+| **Errore**   | Non è stato possibile valutare la condizione. Controlla i dettagli dell'errore e modifica l'espressione. |
+
+Visualizzare l'anteprima di una regola non modifica alcun record. Se l'oggetto non ha ancora record, creane alcuni per provare l'anteprima.
+
+## Scrivi una condizione
+
+Scrivi la condizione che consente il salvataggio. Ad esempio, `employees > 0` consente di salvare un'azienda solo quando il numero dei suoi dipendenti è maggiore di zero.
+
+Utilizza nomi di campi come `employees`, anziché etichette visualizzate come **Employees**. La selezione di un campo dall'assistente inserisce il riferimento corretto.
+
+| Sintassi                                                             | Usa                                            |
+| -------------------------------------------------------------------- | ---------------------------------------------- |
+| `==`, `!=`, `\<`, `\<=`, `>`, `>=` | Confronta i valori.                            |
+| `and`, `or`, `not`                                                   | Combina o nega condizioni.                     |
+| `+`, `-`, `*`, `/`                                                   | Calcola valori.                                |
+| `stage in ['NEW', 'CUSTOMER']`                                       | Verifica se un valore è presente in un elenco. |
+| `true`, `false`                                                      | Confronta campi booleani.                      |
+| `now`                                                                | Utilizza la data e l'ora del salvataggio.      |
+
+Racchiudi il testo tra virgolette singole o doppie e usa le parentesi per raggruppare le condizioni. Usa `and` e `or` anziché `&&` e `||`.
+
+### Verifica i valori mancanti
+
+| Funzione                      | Usa                                                                                                                                                |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isEmpty(value)`              | Verifica la presenza di un valore mancante, di testo vuoto, di un elenco vuoto o di un campo composito vuoto.                                      |
+| `isDefined(value)`            | Verifica se un valore è impostato. Il testo vuoto viene comunque considerato definito.                                                             |
+| `isNonEmptyString(value)`     | Verifica che un valore sia un testo con almeno un carattere.                                                                                       |
+| `includes(listOrText, value)` | Verifica se un elenco contiene un valore o se un testo contiene una sottostringa. La corrispondenza del testo distingue tra maiuscole e minuscole. |
+| `arrayLength(list)`           | Ottieni il numero di elementi in un elenco.                                                                                                        |
+
+Per rendere obbligatorio un campo, usa `not isEmpty(fieldName)`. Funziona anche per i campi compositi, come email e indirizzi.
+
+### Fai riferimento a campi compositi e correlati
+
+Usa un punto per leggere una parte di un campo composito, come `name.firstName` o `amount.amountMicros`. Puoi anche leggere un campo tramite una relazione molti-a-uno, come `company.name` per una persona. Seleziona i campi dall'assistente per trovare i percorsi disponibili.
+
+Gli importi in valuta sono memorizzati in micros: un'unità di valuta equivale a `1000000` micros. Ad esempio, `amount.amountMicros >= 100000000` richiede un importo di almeno 100 nella valuta del record.
+
+Per i campi di selezione, confronta il valore dell'opzione memorizzato, come `'CUSTOMER'`, anziché la relativa etichetta visualizzata. Controlla gli esempi dell'assistente per conoscere i valori disponibili per il tuo campo.
+
+## Regole di esempio
+
+Adatta i nomi dei campi e i valori delle opzioni al tuo modello di dati. I campi `startDate`, `endDate` e `tags` riportati di seguito sono esempi di campi personalizzati.
+
+| Obiettivo                                                                      | Condizione                                                             | Messaggio di errore suggerito                                                                   |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Richiedi un nome dell'azienda                                                  | `not isEmpty(name)`                                                    | Inserisci un nome dell'azienda.                                                                 |
+| Richiedi un importo positivo quando un'opportunità raggiunge lo stato Customer | `stage != 'CUSTOMER' or amount.amountMicros > 0`                       | Inserisci un importo maggiore di zero prima di spostare questa opportunità allo stato Customer. |
+| Richiedi che una persona sia collegata a un'azienda                            | `isDefined(company)`                                                   | Seleziona un'azienda per questa persona.                                                        |
+| Richiedi che una data di fine sia uguale o successiva alla data di inizio      | `isDefined(startDate) and isDefined(endDate) and endDate >= startDate` | Inserisci una data di inizio e una data di fine uguale o successiva a essa.                     |
+| Richiedi almeno un tag                                                         | `arrayLength(tags) > 0`                                                | Aggiungi almeno un tag.                                                                         |
+
+L'esempio dell'opportunità usa `or` per rendere condizionale il requisito dell'importo: gli altri stati possono essere salvati senza un importo.
+
+## Quando vengono verificate le regole
+
+Le regole attive vengono verificate quando i record sono creati o aggiornati, incluse le modifiche apportate tramite l'API, le importazioni e i workflow. Per essere salvato, un record deve soddisfare tutte le regole attive per il relativo oggetto.
+
+L'attivazione di una regola non modifica i record esistenti. Un record che non soddisfa la nuova condizione deve essere corretto la volta successiva che viene salvato.
+
+Una condizione che legge un record correlato viene valutata quando viene salvato il record a cui appartiene la regola. La modifica del solo record correlato non comporta una nuova verifica.
+
+## Modifica, disattiva o elimina una regola
+
+Torna a **Impostazioni → Modello di dati → il tuo oggetto → Impostazioni → Regole di convalida**, quindi fai clic sulla regola.
+
+* **Modifica:** aggiorna la condizione o il messaggio, controlla l'anteprima e fai clic su **Salva**. Per una regola inattiva, questo pulsante è **Attiva**.
+* **Disattiva:** in **Zona pericolosa**, fai clic su **Disattiva** per interrompere l'applicazione della regola mantenendone la configurazione. Fai clic su **Abilita** per applicarla nuovamente.
+* **Elimina:** in **Zona pericolosa**, fai clic su **Elimina** e conferma per rimuovere definitivamente la regola. I record esistenti non vengono modificati.
+
+La disattivazione o l'eliminazione di un campo usato in una condizione disattiva anche le regole che lo leggono. Rivedi tali regole prima di abilitarle nuovamente.
+
+Per definire le regole di convalida in un'app, consulta la [guida per sviluppatori](/it/developers/extend/apps/data/validation-rules).
+
+<PageBanner illustration="card-page-validation-rules" />

@@ -153,7 +153,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const flatField of Object.values(
       allUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     )) {
-      if (!isDefined(flatField)) continue;
+      if (!isDefined(flatField)) {
+        continue;
+      }
 
       const bucket =
         fieldsByObjectUniversalIdentifier.get(

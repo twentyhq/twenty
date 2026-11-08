@@ -93,6 +93,24 @@ const computeValueFromContainsOperand = (
   }
 };
 
+const computeValueFromFilterText = (
+  operand: RecordFilterToRecordInputOperand<'TEXT'>,
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.CONTAINS:
+    case ViewFilterOperand.IS:
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return value;
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
+    case ViewFilterOperand.IS_NOT:
+    case ViewFilterOperand.IS_EMPTY:
+      return undefined;
+    default:
+      assertUnreachable(operand);
+  }
+};
+
 const filterDateTimeToInstant = (
   value: string,
   timeZone: string,
@@ -273,9 +291,8 @@ const computeValueFromFilterRelation = (
           return parsedValue?.isCurrentWorkspaceMemberSelected
             ? currentWorkspaceMember?.id
             : undefined;
-        } else {
-          return parsedValue?.selectedRecordIds?.[0];
         }
+        return parsedValue?.selectedRecordIds?.[0];
       }
       return undefined; // todo
     }
@@ -319,7 +336,10 @@ const computeValueFromFilterUUID = (
 const VALUE_HANDLER_REGISTRY: Partial<Record<FieldMetadataType, ValueHandler>> =
   {
     [FieldMetadataType.TEXT]: ({ operand, value }) =>
-      computeValueFromContainsOperand(operand as ContainsBasedOperand, value),
+      computeValueFromFilterText(
+        operand as RecordFilterToRecordInputOperand<'TEXT'>,
+        value,
+      ),
     [FieldMetadataType.ARRAY]: ({ operand, value }) =>
       computeValueFromContainsOperand(operand as ContainsBasedOperand, value),
     [FieldMetadataType.RAW_JSON]: ({ operand, value }) =>

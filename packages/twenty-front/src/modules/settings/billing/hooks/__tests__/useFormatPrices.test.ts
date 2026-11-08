@@ -86,7 +86,7 @@ describe('useFormatPrices', () => {
         [SubscriptionInterval.Year]: 19,
       },
       [BillingPlanKey.ORGANIZATION_V2]: {
-        [SubscriptionInterval.Month]: 49,
+        [SubscriptionInterval.Month]: 52,
         [SubscriptionInterval.Year]: 39,
       },
       [BillingPlanKey.PRO]: {

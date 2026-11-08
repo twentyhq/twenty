@@ -1,15 +1,19 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
 type FetchAllThreadMessagesOperationSignatureFactory = {
   messageThreadId: string | null;
+  isMessageAttachmentEnabled: boolean;
 };
 
 export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperationSignatureFactory<
   FetchAllThreadMessagesOperationSignatureFactory
-> = ({ messageThreadId }: FetchAllThreadMessagesOperationSignatureFactory) => ({
-  objectNameSingular: CoreObjectNameSingular.Message,
+> = ({
+  messageThreadId,
+  isMessageAttachmentEnabled,
+}: FetchAllThreadMessagesOperationSignatureFactory) => ({
+  objectNameSingular: StandardObjectNameSingular.Message,
   variables: {
     filter: {
       messageThreadId: {
@@ -32,6 +36,13 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
     text: true,
     receivedAt: true,
     isDraft: true,
+    // message.attachments only exists once the workspace upgrade has run
+    ...(isMessageAttachmentEnabled && {
+      attachments: {
+        id: true,
+        file: true,
+      },
+    }),
     messageThread: {
       id: true,
     },
@@ -42,6 +53,11 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
       handle: true,
       person: true,
       workspaceMember: true,
+    },
+    messageChannelMessageAssociations: {
+      id: true,
+      messageChannelId: true,
+      direction: true,
     },
   },
 });

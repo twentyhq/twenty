@@ -4,7 +4,7 @@ import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReada
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
@@ -42,7 +42,7 @@ export const useSidePanelSearchRecords = () => {
           (item) => item.nameSingular === searchRecord.objectNameSingular,
         )?.labelSingular ?? searchRecord.objectNameSingular,
       avatarShape:
-        searchRecord.objectNameSingular === CoreObjectNameSingular.Company
+        searchRecord.objectNameSingular === StandardObjectNameSingular.Company
           ? ('square' as const)
           : ('circle' as const),
     }));

@@ -9,7 +9,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { useTimeZoneAbbreviationForNowInUserTimeZone } from '@/object-record/record-filter/hooks/useTimeZoneAbbreviationForNowInUserTimeZone';
-import { type RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { type RecordFilterOperand } from 'twenty-shared/types';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
@@ -19,11 +19,12 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { useLingui } from '@lingui/react/macro';
 
 export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
+  const { t } = useLingui();
   const objectFilterDropdownComponentInstanceId =
     useAvailableComponentInstanceIdOrThrow(
       ObjectFilterDropdownComponentInstanceContext,

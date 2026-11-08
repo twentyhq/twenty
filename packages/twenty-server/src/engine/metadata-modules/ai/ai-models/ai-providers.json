@@ -1299,6 +1299,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 43.4,
           "outputTokensPerSecond": 235.01,
@@ -1497,6 +1498,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 56,
           "outputTokensPerSecond": 136.47,
@@ -1575,6 +1577,7 @@
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 57.6,
           "outputTokensPerSecond": 95.13,

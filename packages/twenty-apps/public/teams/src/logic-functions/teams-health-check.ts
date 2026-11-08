@@ -3,13 +3,12 @@ import {
   type ApplicationHealthCheckResult,
   defineHealthCheck,
 } from 'twenty-sdk/define';
-import { listConnections } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { HEALTH_CHECK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { isTeamsChatEnabled } from 'src/features/chat/logic-functions/utils/is-teams-chat-enabled';
-import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
 import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
+import { listTeamsConnections } from 'src/features/transcripts/logic-functions/utils/list-teams-connections';
 
 export const teamsHealthCheckHandler =
   async (): Promise<ApplicationHealthCheckResult> => {
@@ -17,9 +16,7 @@ export const teamsHealthCheckHandler =
       return { status: 'OK' };
     }
 
-    const connections = await listConnections({
-      providerName: TEAMS_PROVIDER_NAME,
-    });
+    const connections = await listTeamsConnections();
 
     if (!isNonEmptyArray(connections)) {
       return {
@@ -38,6 +35,21 @@ export const teamsHealthCheckHandler =
         description:
           'Microsoft rejected the stored credentials, so meeting transcripts are no longer imported. Remove the Microsoft Teams connection and add it again.',
         action: { label: 'Manage connection', location: '#general' },
+      };
+    }
+
+    const hasWorkingWorkspaceConnection = connections.some(
+      (connection) =>
+        connection.scope === 'WORKSPACE' && !isDefined(connection.authFailedAt),
+    );
+
+    if (isTeamsChatEnabled() && !hasWorkingWorkspaceConnection) {
+      return {
+        status: 'WARNING',
+        title: 'Microsoft Teams chat needs a workspace connection',
+        description:
+          'Chat only answers messages from the Microsoft organization of a working workspace-shared connection, and personal connections do not count. Add a workspace connection, or reconnect the existing one, to use chat.',
+        action: { label: 'Add connection', location: '#general' },
       };
     }
 

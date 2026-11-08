@@ -9,37 +9,31 @@ import { resolveCampaignAudience } from 'src/engine/core-modules/emailing-domain
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 @Injectable()
 export class MessageCampaignAudienceService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly messageSuppressionService: MessageSuppressionService,
-    private readonly userRoleService: UserRoleService,
   ) {}
 
   async resolveNormalizedAudience({
     workspaceId,
     listId,
-    roleId,
     unsubscribeTopicId,
   }: {
     workspaceId: string;
     listId: string;
-    roleId: string;
     unsubscribeTopicId?: string;
   }): Promise<CampaignAudienceResolution> {
     return this.workspaceOrmManager.executeInWorkspaceContext(() =>
       this.resolveAudience({
         workspaceId,
         listId,
-        roleId,
         unsubscribeTopicId,
       }),
     );
@@ -48,18 +42,15 @@ export class MessageCampaignAudienceService {
   private async resolveAudience({
     workspaceId,
     listId,
-    roleId,
     unsubscribeTopicId,
   }: {
     workspaceId: string;
     listId: string;
-    roleId: string;
     unsubscribeTopicId?: string;
   }): Promise<CampaignAudienceResolution> {
     const { rawRecipients, totalMemberCount } =
       await this.resolveRecipientsFromList({
         listId,
-        roleId,
       });
 
     const emailAddresses = rawRecipients
@@ -109,26 +100,18 @@ export class MessageCampaignAudienceService {
 
   async previewAudience({
     workspaceId,
-    userWorkspaceId,
     listId,
     unsubscribeTopicId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
     listId: string;
     unsubscribeTopicId?: string;
   }): Promise<CampaignAudienceResolution['audience']> {
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
-
     const { audience } =
       await this.workspaceOrmManager.executeInWorkspaceContext(() =>
         this.resolveAudience({
           workspaceId,
           listId,
-          roleId,
           unsubscribeTopicId,
         }),
       );
@@ -138,17 +121,14 @@ export class MessageCampaignAudienceService {
 
   private async resolveRecipientsFromList({
     listId,
-    roleId,
   }: {
     listId: string;
-    roleId: string;
   }): Promise<{
     rawRecipients: RawCampaignRecipient[];
     totalMemberCount: number;
   }> {
     const listMemberRepository = this.workspaceOrmManager.getRepository(
       MessageListMemberWorkspaceEntity,
-      buildEmailingRolePermissionConfig(roleId),
     );
 
     const members = await listMemberRepository.find({ where: { listId } });
@@ -160,7 +140,6 @@ export class MessageCampaignAudienceService {
 
     const personRepository = this.workspaceOrmManager.getRepository(
       PersonWorkspaceEntity,
-      buildEmailingRolePermissionConfig(roleId),
     );
 
     const people = await personRepository.find({

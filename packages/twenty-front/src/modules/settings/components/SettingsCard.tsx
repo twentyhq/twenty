@@ -1,6 +1,4 @@
 import { styled } from '@linaria/react';
-
-import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,6 +6,7 @@ import { IconChevronRight } from 'twenty-ui/icon';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsCardProps = {
   description?: string;
@@ -100,6 +99,7 @@ export const SettingsCard = ({
   className,
   Status,
 }: SettingsCardProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const getContentOwner = () => {

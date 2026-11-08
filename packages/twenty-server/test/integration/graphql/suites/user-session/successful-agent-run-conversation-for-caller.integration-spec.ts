@@ -1,4 +1,5 @@
 import { type StepResult, type ToolSet } from 'ai';
+import { buildToolCallStepResult } from 'test/utils/mock-agent-run-turns.util';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import {
@@ -30,24 +31,12 @@ const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 // history keeps a turn's tool calls only for the member who sent it
 const TOOL_CALL_STEPS = [
-  {
-    content: [
-      {
-        type: 'tool-call',
-        toolCallId: 'probe-call',
-        toolName: 'probe',
-        input: {},
-      },
-      {
-        type: 'tool-result',
-        toolCallId: 'probe-call',
-        toolName: 'probe',
-        input: {},
-        output: { isProbed: true },
-      },
-    ],
-  },
-] as unknown as StepResult<ToolSet>[];
+  buildToolCallStepResult({
+    toolCallId: 'probe-call',
+    toolName: 'probe',
+    output: { isProbed: true },
+  }),
+];
 
 type GlobalTestContext = {
   agentUniversalIdentifier: string;
@@ -466,5 +455,49 @@ describe('Agent run conversation should be recorded for the caller', () => {
       messages.map(({ senderWorkspaceMemberId }) => senderWorkspaceMemberId),
     ).toContain(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
     expect(partTypes.filter((type) => type === 'tool-probe')).toHaveLength(2);
+  });
+
+  it('should show the application the tool output of a turn it ran as a member, and another member only its text', async () => {
+    const threadKey = randomUUID();
+
+    await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    const readPartTypes = async (token: string) => {
+      const response = await makeMetadataApiRequest(
+        {
+          query: parse(
+            'query($agentUniversalIdentifier: UUID!, $threadKey: String!) { chatMessages(agentUniversalIdentifier: $agentUniversalIdentifier, threadKey: $threadKey) { parts { type } } }',
+          ),
+          variables: {
+            agentUniversalIdentifier:
+              globalTestContext.agentUniversalIdentifier,
+            threadKey,
+          },
+        },
+        token,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return (
+        response.body.data.chatMessages as { parts: { type: string }[] }[]
+      ).flatMap(({ parts }) => parts.map(({ type }) => type));
+    };
+
+    expect(await readPartTypes(globalTestContext.applicationToken)).toContain(
+      'tool-probe',
+    );
+
+    const partTypesForJane = await readPartTypes(
+      globalTestContext.janeApplicationToken,
+    );
+
+    expect(partTypesForJane).toContain('text');
+    expect(partTypesForJane).not.toContain('tool-probe');
   });
 });

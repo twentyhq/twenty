@@ -6,7 +6,10 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 
-import { ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import {
   isDefined,
   isNonEmptyArray,
@@ -15,6 +18,7 @@ import {
 import { In, Not } from 'typeorm';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
@@ -23,11 +27,11 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
-import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-opened-by-other-member.util';
 
 type AddMessageArgs = {
   threadId: string;
@@ -52,7 +56,6 @@ export class AgentChatService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
-    private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
   private getMessageSenderValues({
@@ -137,25 +140,6 @@ export class AgentChatService {
     };
   }
 
-  async addMessageAndResolveMention({
-    workspaceMemberId,
-    ...message
-  }: AddMessageArgs & { workspaceMemberId: string }) {
-    return this.conversationWriterService.runInTransaction(
-      message.workspaceId,
-      async (scope) => {
-        await this.participantService.resolveMentionInTransaction({
-          workspaceId: message.workspaceId,
-          workspaceMemberId,
-          threadId: message.threadId,
-          scope,
-        });
-
-        return this.addMessage({ ...message, scope });
-      },
-    );
-  }
-
   // the contexts are the thread owner's, so the turns of other participants run without them
   async getThreadContexts({
     threadId,
@@ -209,26 +193,38 @@ export class AgentChatService {
       select: ['id', 'turnId'],
     });
 
-    if (isNonEmptyArray(earlierContexts)) {
-      await this.messageRepository.delete(workspaceId, {
-        id: In(earlierContexts.map(({ id }) => id)),
-      });
-    }
-
     const earlierTurnIds = earlierContexts.flatMap(({ turnId }) =>
       isDefined(turnId) ? [turnId] : [],
     );
 
-    if (isNonEmptyArray(earlierTurnIds)) {
-      await this.turnRepository.delete(workspaceId, {
-        id: In(earlierTurnIds),
-      });
-    }
-
-    return this.conversationWriterService.insertAgentOpenedTurn({
+    return this.conversationWriterService.runInTransaction({
       workspaceId,
       threadId,
-      context,
+      work: async (scope) => {
+        if (isNonEmptyArray(earlierContexts)) {
+          await scope.delete({
+            name: 'agentMessage',
+            where: {
+              id: In(earlierContexts.map(({ id }) => id)),
+              threadId,
+            },
+          });
+        }
+
+        if (isNonEmptyArray(earlierTurnIds)) {
+          await scope.delete({
+            name: 'agentTurn',
+            where: { id: In(earlierTurnIds), threadId },
+          });
+        }
+
+        return this.conversationWriterService.insertAgentOpenedTurn({
+          workspaceId,
+          threadId,
+          context,
+          scope,
+        });
+      },
     });
   }
 
@@ -246,15 +242,22 @@ export class AgentChatService {
   }
 
   async deleteAssistantMessagesForTurn({
+    threadId,
     turnId,
     workspaceId,
   }: {
+    threadId: string;
     turnId: string;
     workspaceId: string;
   }): Promise<void> {
-    await this.messageRepository.delete(workspaceId, {
-      turnId,
-      role: AgentMessageRole.ASSISTANT,
+    await this.conversationWriterService.runInTransaction({
+      workspaceId,
+      threadId,
+      work: (scope) =>
+        scope.delete({
+          name: 'agentMessage',
+          where: { threadId, turnId, role: AgentMessageRole.ASSISTANT },
+        }),
     });
   }
 
@@ -273,6 +276,24 @@ export class AgentChatService {
       workspaceId,
     });
 
+    return this.getMessagesVisibleTo({
+      threadId,
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
+
+  async getMessagesVisibleTo({
+    threadId,
+    workspaceMemberId,
+    applicationId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceMemberId: string | undefined;
+    applicationId?: string;
+    workspaceId: string;
+  }) {
     // contexts are given to the model, never shown
     const [messages, turns] = await Promise.all([
       this.messageRepository.find(workspaceId, {
@@ -288,10 +309,12 @@ export class AgentChatService {
     // the opener is stamped on the turn, so a run resumed in a new turn after a pause is still theirs
     const turnIdsOpenedByOtherMembers = new Set(
       turns
-        .filter(
-          ({ createdBy }) =>
-            isDefined(createdBy.workspaceMemberId) &&
-            createdBy.workspaceMemberId !== workspaceMemberId,
+        .filter(({ createdBy }) =>
+          isAgentTurnOpenedByOtherMember({
+            createdBy,
+            workspaceMemberId,
+            applicationId,
+          }),
         )
         .map(({ id }) => id),
     );
@@ -351,7 +374,12 @@ export class AgentChatService {
       where: { id: threadId },
     });
 
-    if (!thread || thread.title || !messageContent) {
+    if (
+      !isDefined(thread) ||
+      isNonEmptyString(thread.title) ||
+      !isNonEmptyString(messageContent) ||
+      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       return null;
     }
 

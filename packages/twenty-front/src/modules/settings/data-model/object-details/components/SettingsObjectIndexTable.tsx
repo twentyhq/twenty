@@ -16,11 +16,6 @@ import { type SettingsObjectIndexesTableItem } from '@/settings/data-model/types
 
 const OBJECT_INDEX_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 70px 80px 32px';
 
-const StyledTableContainer = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  margin-top: ${themeCssVariables.spacing[3]};
-`;
-
 const StyledActionCell = styled(TableCell)`
   justify-content: flex-end;
   padding-right: 0;
@@ -79,55 +74,51 @@ export const SettingsObjectIndexTable = ({
   const sortedItems = useSortedArray(items, TABLE_METADATA);
 
   return (
-    <StyledTableContainer>
-      <Table>
-        <TableRow
-          gridTemplateColumns={OBJECT_INDEX_TABLE_GRID_TEMPLATE_COLUMNS}
-        >
-          {TABLE_METADATA.fields.map((tableField) => (
-            <SortableTableHeader
-              key={tableField.fieldName}
-              fieldName={tableField.fieldName}
-              label={t(tableField.fieldLabel)}
-              Icon={tableField.FieldIcon}
-              tableId={TABLE_METADATA.tableId}
-              initialSort={TABLE_METADATA.initialSort}
-            />
-          ))}
-          <TableHeader></TableHeader>
-        </TableRow>
-        <TableBody>
-          {sortedItems.length === 0 ? (
-            <StyledEmpty>{t`No indexes match your filters.`}</StyledEmpty>
-          ) : (
-            sortedItems.map((item) => (
-              <TableRow
-                gridTemplateColumns={OBJECT_INDEX_TABLE_GRID_TEMPLATE_COLUMNS}
-                key={item.id}
-              >
-                <TableCell color={themeCssVariables.font.color.primary}>
-                  {item.indexFields}
-                </TableCell>
-                <TableCell>
-                  {item.isUnique ? <IconSquareKey size={14} /> : ''}
-                </TableCell>
-                <TableCell>{item.indexType}</TableCell>
-                <StyledActionCell>
-                  {item.isCustom && !isReadOnly && (
-                    <LightIconButton
-                      emphasis="subtle"
-                      onClick={() => onDeleteIndex(item)}
-                      aria-label={t`Delete index`}
-                    >
-                      <IconTrash />
-                    </LightIconButton>
-                  )}
-                </StyledActionCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </StyledTableContainer>
+    <Table>
+      <TableRow gridTemplateColumns={OBJECT_INDEX_TABLE_GRID_TEMPLATE_COLUMNS}>
+        {TABLE_METADATA.fields.map((tableField) => (
+          <SortableTableHeader
+            key={tableField.fieldName}
+            fieldName={tableField.fieldName}
+            label={t(tableField.fieldLabel)}
+            Icon={tableField.FieldIcon}
+            tableId={TABLE_METADATA.tableId}
+            initialSort={TABLE_METADATA.initialSort}
+          />
+        ))}
+        <TableHeader></TableHeader>
+      </TableRow>
+      <TableBody>
+        {sortedItems.length === 0 ? (
+          <StyledEmpty>{t`No indexes match your filters.`}</StyledEmpty>
+        ) : (
+          sortedItems.map((item) => (
+            <TableRow
+              gridTemplateColumns={OBJECT_INDEX_TABLE_GRID_TEMPLATE_COLUMNS}
+              key={item.id}
+            >
+              <TableCell color={themeCssVariables.font.color.primary}>
+                {item.indexFields}
+              </TableCell>
+              <TableCell>
+                {item.isUnique ? <IconSquareKey size={14} /> : ''}
+              </TableCell>
+              <TableCell>{item.indexType}</TableCell>
+              <StyledActionCell>
+                {item.isCustom && !isReadOnly && (
+                  <LightIconButton
+                    emphasis="subtle"
+                    onClick={() => onDeleteIndex(item)}
+                    aria-label={t`Delete index`}
+                  >
+                    <IconTrash />
+                  </LightIconButton>
+                )}
+              </StyledActionCell>
+            </TableRow>
+          ))
+        )}
+      </TableBody>
+    </Table>
   );
 };

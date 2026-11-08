@@ -1,0 +1,88 @@
+---
+title: Reguli de validare
+description: Definiți condițiile pe care trebuie să le îndeplinească o înregistrare înainte de a putea fi salvată.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+O regulă de validare este o condiție aplicată unei înregistrări. Când este evaluată ca falsă, Twenty respinge înregistrarea și afișează mesajul regulii.
+
+Pentru a configura regulile în Setări, consultați [ghidul utilizatorului pentru regulile de validare](/ro/user-guide/data-model/capabilities/validation-rules).
+
+<Note>
+  Regulile de validare sunt aplicate numai în spațiile de lucru în care funcționalitatea este disponibilă.
+</Note>
+
+Definiți o regulă cu `defineValidationRule` din `twenty-sdk/define`:
+
+```ts filename="src/validation-rules/invoice-has-amount.ts"
+import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';
+
+import { INVOICE_UNIVERSAL_IDENTIFIER } from '../objects/invoice.object';
+
+const { and, field, gt, isNonEmptyString } = ruleExpression;
+
+export default defineValidationRule({
+  universalIdentifier: '8d3f2c6e-1b7a-4f0e-9c52-6a1e0d4b7f31',
+  objectUniversalIdentifier: INVOICE_UNIVERSAL_IDENTIFIER,
+  name: 'Invoice has an amount',
+  expression: and(gt(field('amount'), 0), isNonEmptyString(field('reference'))),
+  message: 'An invoice needs an amount and a reference',
+});
+```
+
+De asemenea, puteți genera una cu CLI-ul:
+
+```bash
+twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
+```
+
+| Proprietate                     | Obligatoriu | Descriere                                                                                         |
+| ------------------------------- | ----------- | ------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`           | Da          | Identificator stabil al regulii                                                                   |
+| `objectUniversalIdentifier`     | Da          | Obiectul căruia i se aplică regula. Poate fi un obiect al aplicației dvs. sau un obiect standard. |
+| `name`                          | Da          | Nume afișat în setări                                                                             |
+| `expresie`                      | Da          | O `ruleExpression` sau un șir                                                                     |
+| `mesaj`                         | Da          | Mesaj afișat când regula eșuează                                                                  |
+| `errorFieldUniversalIdentifier` | Nu          | Câmpul de care este atașat mesajul. Trebuie să aparțină obiectului regulii.                       |
+| `description`                   | Nu          | Descriere mai lungă                                                                               |
+| `icon`                          | Nu          | Numele pictogramei                                                                                |
+
+## Scrierea expresiilor
+
+`ruleExpression` oferă:
+
+* `field('name')` citește un câmp, iar `field('company.employees')` citește un câmp printr-o relație many-to-one.
+* `now` reprezintă data și ora curente.
+* `and`, `or` și `not` combină condiții.
+* `eq`, `notEq`, `gt`, `gte`, `lt` și `lte` compară valori.
+* `add`, `subtract`, `multiply` și `divide` calculează valori.
+* `isIn(field('stage'), ['NEW', 'WON'])` verifică o valoare într-o listă.
+* Funcții precum `isNonEmptyString` și `isDefined`.
+
+Constructorul produce un șir simplu, pe care [`twenty app pull`](/ro/developers/extend/apps/operations/cli) îl scrie înapoi. Puteți scrie acel șir direct:
+
+```ts
+expression: 'amount > 0 and isNonEmptyString(reference)',
+```
+
+Șirurile folosesc `and`, `or`, `not`, `==`, `!=`, `\<`, `\<=`, `>`, `>=`, `+`, `-`, `*`, `/` și `in [...]`, nu `&&` sau `||`. Textul se introduce între ghilimele simple sau duble.
+
+O regulă poate citi câmpurile pe care le declarați și [câmpurile de sistem](/ro/developers/extend/apps/data/system-fields) pe care le pune la dispoziție Twenty, precum `createdAt`. CLI-ul verifică expresiile în raport cu propriile obiecte ale aplicației dvs. Pentru un obiect din afara aplicației dvs., verifică doar sintaxa, iar serverul verifică câmpurile în momentul sincronizării.
+
+## Câmpuri care devin indisponibile
+
+| Situație                                                                                                  | Rezultat                                                                                            |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Aplicația dvs. elimină un câmp pe care îl citește regula sa                                               | Sincronizarea eșuează cu o eroare care indică regula și câmpul                                      |
+| Un spațiu de lucru dezactivează un câmp din afara aplicației                                              | Sincronizarea reușește, iar regula rămâne dezactivată                                               |
+| Un spațiu de lucru șterge un câmp din afara aplicației dvs., iar expresia regulii dvs. rămâne neschimbată | Sincronizarea reușește, iar regula rămâne dezactivată                                               |
+| Un spațiu de lucru redenumește un câmp din afara aplicației                                               | Sincronizarea reușește și păstrează regula sub noul nume, pe care `twenty app pull` îl scrie înapoi |
+| O regulă nouă sau editată menționează un câmp care nu există                                              | Sincronizarea eșuează                                                                               |
+| Un spațiu de lucru șterge câmpul de eroare al regulii                                                     | Sincronizarea reușește, iar regula nu mai este atașată acelui câmp                                  |
+
+O sincronizare păstrează valoarea `isActive` a unei reguli existente, astfel încât o regulă pe care un administrator al spațiului de lucru a dezactivat-o rămâne dezactivată. Doar regulile noi încep ca active.
+
+<PageBanner illustration="card-page-validation-rules" />

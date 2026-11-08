@@ -143,10 +143,10 @@ export class WorkflowCleanWorkflowRunsCronJob {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowRunRepository = this.workspaceOrmManager.getRepository(
-          WorkflowRunWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+        const workflowRunRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            WorkflowRunWorkspaceEntity,
+          );
 
         const hasOldRuns = await workflowRunRepository.exists({
           where: getRunsToCleanFindOptions(),

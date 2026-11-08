@@ -1,3 +1,5 @@
+import { ToolCategory } from 'twenty-shared/ai';
+
 import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
@@ -33,8 +35,20 @@ const EMAIL_BODY = {
   content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] }],
 };
 
+const PUBLISH_TOOL_ENTRY: ToolIndexEntry = {
+  ...PUBLISH_FRONT_COMPONENT_TOOL,
+  label: 'Save component',
+  description: '',
+  category: ToolCategory.ACTION,
+  executionRef: {
+    kind: 'static',
+    toolId: PUBLISH_FRONT_COMPONENT_TOOL.name,
+  },
+};
+
 const findTool = async (toolName: string) =>
   [
+    PUBLISH_TOOL_ENTRY,
     buildCrudEntry('create_one_opportunity', 'create_one'),
     buildCrudEntry('update_one_opportunity', 'update_one'),
     buildCrudEntry('delete_one_opportunity', 'delete_one'),
@@ -64,35 +78,52 @@ const foundRecord = (record: Record<string, unknown>) =>
   });
 
 describe('resolveProposedToolCall', () => {
-  it('takes the component publication editing policy from the registered tool', async () => {
-    const tool: ToolIndexEntry = {
-      ...PUBLISH_FRONT_COMPONENT_TOOL,
-      label: 'Save component',
-      description: '',
-      category: 'ACTION' as ToolIndexEntry['category'],
-      executionRef: {
-        kind: 'static',
-        toolId: PUBLISH_FRONT_COMPONENT_TOOL.name,
-      },
-    };
+  it('takes the component publication template from the registered tool', async () => {
     const resolution = await resolveProposedToolCall({
       input: {
-        toolName: tool.name,
+        toolName: PUBLISH_TOOL_ENTRY.name,
         arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
         summary: 'Save the reviewed component',
       },
-      findTool: async () => tool,
+      findTool,
       executeTool: jest.fn(),
     });
 
     expect(resolution).toMatchObject({
       proposal: {
-        toolName: tool.name,
-        areArgumentsEditable: false,
+        toolName: PUBLISH_TOOL_ENTRY.name,
+        template: 'frontComponent',
         arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
       },
     });
   });
+
+  it.each([
+    { draftId: undefined, checksum: 'reviewed-checksum' },
+    { draftId: '', checksum: 'reviewed-checksum' },
+    { draftId: 42, checksum: 'reviewed-checksum' },
+    { draftId: RECORD_ID, checksum: undefined },
+    { draftId: RECORD_ID, checksum: '' },
+    { draftId: RECORD_ID, checksum: 42 },
+  ])(
+    'refuses a component publication with invalid arguments %j',
+    async (toolArguments) => {
+      const resolution = await resolveProposedToolCall({
+        input: {
+          toolName: PUBLISH_TOOL_ENTRY.name,
+          arguments: toolArguments,
+          summary: 'Save the reviewed component',
+        },
+        findTool,
+        executeTool: jest.fn(),
+      });
+
+      expect(resolution).toEqual({
+        error:
+          'arguments.draftId and arguments.checksum must identify the component draft.',
+      });
+    },
+  );
 
   it('refuses a tool the proposer cannot call', async () => {
     expect(

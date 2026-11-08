@@ -1,0 +1,2 @@
+export const ADD_COMMAND_MENU_ITEM_AVAILABILITY_CORE_OBJECT_NAME_UPGRADE_COMMAND_NAME =
+  '2.56.0_AddCommandMenuItemAvailabilityCoreObjectNameFastInstanceCommand_1793783100803';

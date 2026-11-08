@@ -3,16 +3,15 @@ import { type ToolUIPart } from 'ai';
 import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
 
 const buildToolPart = (
-  type: string,
+  type: `tool-${string}`,
   input: Record<string, unknown>,
-): ToolUIPart =>
-  ({
-    type,
-    toolCallId: 'call_1',
-    state: 'output-available',
-    input,
-    output: {},
-  }) as unknown as ToolUIPart;
+): ToolUIPart => ({
+  type,
+  toolCallId: 'call_1',
+  state: 'output-available',
+  input,
+  output: {},
+});
 
 describe('getEffectiveToolName', () => {
   it('returns the tool name of a direct call', () => {

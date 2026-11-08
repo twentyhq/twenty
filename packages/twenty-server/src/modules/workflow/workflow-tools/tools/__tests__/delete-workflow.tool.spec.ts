@@ -1,6 +1,11 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createDeleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow.tool';
 
 const CORE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: 'workspace-id' },
+} as WorkspaceAuthContext;
 
 const buildTool = () => {
   const coreWorkflowListService = {
@@ -17,7 +22,7 @@ const buildTool = () => {
     } as never,
     {
       workspaceId: 'workspace-id',
-      rolePermissionConfig: { shouldBypassPermissionChecks: true },
+      authContext: AUTH_CONTEXT,
     },
   );
 

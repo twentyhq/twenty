@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import {
   ASK_QUESTION_TOOL_NAME,
+  type AiDataPolicy,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   type ProposeToolCallToolInput,
   REQUEST_FORM_TOOL_NAME,
@@ -22,6 +23,7 @@ import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/to
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
+import { type ExplicitObjectGrants } from 'src/engine/core-modules/tool-provider/interfaces/explicit-object-grants.type';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
@@ -45,19 +47,19 @@ export type AgentRegistryAccess =
       categories: readonly ToolCategory[];
       excludedToolNames: readonly string[];
     }
-  // an agent limited to the objects it was granted, whose few tools are sent with the turn
   | {
       type: 'granted';
       toolContext: ToolContext;
-      agentRoleId: string;
+      explicitObjectGrants: ExplicitObjectGrants;
       categories: readonly ToolCategory[];
-      excludedToolNames: readonly string[];
+      isToolOffered: (tool: ToolIndexEntry) => boolean;
     }
   | { type: 'none' };
 
 export type AgentToolsetInput = {
   registryAccess: AgentRegistryAccess;
   registeredModel: RegisteredAiModel;
+  aiDataPolicy: AiDataPolicy;
   nativeToolOptions: NativeModelToolOptions;
   canAskHumans: boolean;
   isWorkspaceSetupThread?: boolean;
@@ -90,6 +92,7 @@ export class AgentToolsetService {
   async build({
     registryAccess,
     registeredModel,
+    aiDataPolicy,
     nativeToolOptions,
     canAskHumans,
     isWorkspaceSetupThread = false,
@@ -142,10 +145,11 @@ export class AgentToolsetService {
 
     const sentTools: ToolSet = {
       ...directTools,
-      ...this.aiModelConfigService.getNativeModelTools(
-        registeredModel,
-        nativeToolOptions,
-      ),
+      ...this.aiModelConfigService.getNativeModelTools({
+        model: registeredModel,
+        aiDataPolicy,
+        options: nativeToolOptions,
+      }),
       ...pausingTools,
       ...extraTools,
     };
@@ -183,7 +187,6 @@ export class AgentToolsetService {
             userWorkspaceId,
             locale,
             excludeTools: new Set(excludedToolNames),
-            rolePermissionConfig: toolContext.rolePermissionConfig,
             authContext: toolContext.authContext,
             application: toolContext.application,
           },
@@ -221,7 +224,6 @@ export class AgentToolsetService {
           {
             userId,
             userWorkspaceId,
-            rolePermissionConfig: toolContext.rolePermissionConfig,
             authContext: toolContext.authContext,
             application: toolContext.application,
             categories: [...registryAccess.categories],
@@ -245,11 +247,11 @@ export class AgentToolsetService {
         const directTools = await this.toolRegistry.getToolsByCategories(
           {
             ...toolContext,
-            explicitObjectGrantsRoleId: registryAccess.agentRoleId,
+            explicitObjectGrants: registryAccess.explicitObjectGrants,
           },
           {
             categories: [...registryAccess.categories],
-            excludeTools: new Set(registryAccess.excludedToolNames),
+            isToolOffered: registryAccess.isToolOffered,
           },
         );
         // the context lacks the explicit grants the tools were built with, so calls stay within them

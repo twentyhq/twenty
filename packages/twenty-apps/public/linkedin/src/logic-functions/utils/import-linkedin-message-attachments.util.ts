@@ -1,0 +1,87 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
+
+import { LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES } from 'src/constants/linkedin-attachment-max-size-bytes.constant';
+import { LINKEDIN_IMPORTED_ATTACHMENT_TYPES } from 'src/constants/linkedin-imported-attachment-types.constant';
+import { type LinkedinMessageAttachmentFile } from 'src/logic-functions/types/linkedin-message-attachment-file.type';
+import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
+import { type UnipileMessageAttachment } from 'src/unipile/types/unipile-message-attachment.type';
+import { downloadUnipileMessageAttachment } from 'src/unipile/utils/download-unipile-message-attachment.util';
+import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
+
+const isImportableAttachment = (
+  attachment: UnipileMessageAttachment,
+): boolean =>
+  LINKEDIN_IMPORTED_ATTACHMENT_TYPES.includes(attachment.type) &&
+  !attachment.is_unavailable &&
+  (!isDefined(attachment.file_size) ||
+    attachment.file_size <= LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES);
+
+export const importLinkedinMessageAttachments = async ({
+  unipileAccountId,
+  messages,
+  deadlineAtMs,
+  onAttachmentFile,
+}: {
+  unipileAccountId: string;
+  messages: UnipileMessage[];
+  deadlineAtMs: number;
+  onAttachmentFile: (file: LinkedinMessageAttachmentFile) => Promise<void>;
+}): Promise<number> => {
+  let importedCount = 0;
+
+  for (const message of messages) {
+    for (const attachment of (message.attachments ?? []).filter(
+      isImportableAttachment,
+    )) {
+      if (Date.now() >= deadlineAtMs) {
+        console.warn(
+          `[linkedin] chat ${message.chat_id}: attachment import reached the job deadline, remaining files skipped`,
+        );
+
+        return importedCount;
+      }
+
+      try {
+        const content = isNonEmptyString(attachment.content)
+          ? Buffer.from(attachment.content, 'base64')
+          : await downloadUnipileMessageAttachment({
+              accountId: unipileAccountId,
+              chatId: message.chat_id,
+              messageId: message.id,
+              attachmentId: attachment.id,
+              maxSizeBytes: LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES,
+              deadlineAtMs,
+            });
+
+        if (content.byteLength > LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES) {
+          console.warn(
+            `[linkedin] attachment ${attachment.id} of message ${message.id} not imported: larger than ${LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES} bytes`,
+          );
+
+          continue;
+        }
+
+        await onAttachmentFile({
+          messageExternalId: message.id,
+          attachmentId: attachment.id,
+          type: attachment.type,
+          mimeType: attachment.mimetype,
+          content,
+        });
+
+        importedCount += 1;
+      } catch (error) {
+        if (error instanceof UnipileRateLimitError) {
+          throw error;
+        }
+
+        console.warn(
+          `[linkedin] attachment ${attachment.id} of message ${message.id} not imported: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+  }
+
+  return importedCount;
+};

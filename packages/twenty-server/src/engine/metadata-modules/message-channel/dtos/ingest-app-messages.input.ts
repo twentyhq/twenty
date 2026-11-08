@@ -29,6 +29,8 @@ export const MAX_APP_MESSAGE_TEXT_LENGTH = 262_144;
 
 export const MAX_APP_MESSAGE_FOLDERS_PER_MESSAGE = 32;
 
+export const MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE = 20;
+
 @InputType('AppMessageParticipantInput')
 export class AppMessageParticipantInput {
   @Field(() => MessageParticipantRole)
@@ -59,6 +61,19 @@ export class AppMessageParticipantInput {
   @IsOptional()
   @IsUUID()
   workspaceMemberId?: string;
+}
+
+@InputType('AppMessageAttachmentInput')
+export class AppMessageAttachmentInput {
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  fileId: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  label: string;
 }
 
 @InputType('AppMessageInput')
@@ -110,6 +125,14 @@ export class AppMessageInput {
   @IsNotEmpty({ each: true })
   @MaxLength(512, { each: true })
   folderExternalIds?: string[];
+
+  @Field(() => [AppMessageAttachmentInput], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE)
+  @ValidateNested({ each: true })
+  @Type(() => AppMessageAttachmentInput)
+  attachments?: AppMessageAttachmentInput[];
 }
 
 @InputType('IngestAppMessagesInput')

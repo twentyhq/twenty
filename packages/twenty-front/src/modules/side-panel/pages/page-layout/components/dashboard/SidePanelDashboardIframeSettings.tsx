@@ -7,11 +7,11 @@ import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -27,6 +27,7 @@ const StyledSidePanelContainer = styled.div`
 `;
 
 export const SidePanelDashboardIframeSettings = () => {
+  const { t } = useLingui();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);

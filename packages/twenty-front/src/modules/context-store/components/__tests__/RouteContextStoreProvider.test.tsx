@@ -97,6 +97,22 @@ jest.mock('@/context-store/components/RouteContextStoreProviderEffect', () => ({
   ),
 }));
 
+jest.mock(
+  '@/context-store/components/RouteContextStoreCoreObjectNameEffect',
+  () => ({
+    RouteContextStoreCoreObjectNameEffect: ({
+      coreObjectName,
+    }: {
+      coreObjectName: string | null;
+    }) => (
+      <div
+        data-testid="route-context-store-core-object-name"
+        data-core-object-name={coreObjectName ?? 'none'}
+      />
+    ),
+  }),
+);
+
 const MAIN_AND_SIDE_PANEL = ['main', 'side-panel'] as const;
 
 const routeObjects: WorkspaceRouteObject[] = [
@@ -117,6 +133,11 @@ const routeObjects: WorkspaceRouteObject[] = [
   },
   {
     path: AppPath.AiChat,
+    element: null,
+    handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+  },
+  {
+    path: AppPath.AgentIndexPage,
     element: null,
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
@@ -201,6 +222,23 @@ describe('RouteContextStoreProvider', () => {
       'data-is-record-index-page',
       'false',
     );
+  });
+
+  it('sets the workflow core object on the core workflow show page', () => {
+    renderAt('/workflow/core-workflow-id', <MainSurfaceRoutes />);
+
+    expect(
+      screen.getByTestId('route-context-store-core-object-name'),
+    ).toHaveAttribute('data-core-object-name', 'workflow');
+  });
+
+  it('clears the core object on pages without a context store', () => {
+    renderAt('/agents', <MainSurfaceRoutes />);
+
+    expect(screen.queryByTestId('route-context-store')).not.toBeInTheDocument();
+    expect(
+      screen.getByTestId('route-context-store-core-object-name'),
+    ).toHaveAttribute('data-core-object-name', 'none');
   });
 
   it('treats the chat page as the record page of a chat', () => {

@@ -1,5 +1,5 @@
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,7 +16,7 @@ export const agentChatFavoriteThreadsSelector = createAtomSelector<
   key: 'agentChatFavoriteThreadsSelector',
   get: ({ get }) => {
     const chatObjectMetadataItem = get(objectMetadataItemFamilySelector, {
-      objectName: CoreObjectNameSingular.AgentChatThread,
+      objectName: StandardObjectNameSingular.AgentChatThread,
       objectNameType: 'singular',
     });
 
@@ -51,6 +51,11 @@ export const agentChatFavoriteThreadsSelector = createAtomSelector<
             ? {
                 id: loadedThread.id,
                 title: loadedThread.title,
+                conversationType: loadedThread.conversationType,
+                directMessageFirstWorkspaceMemberId:
+                  loadedThread.directMessageFirstWorkspaceMemberId,
+                directMessageSecondWorkspaceMemberId:
+                  loadedThread.directMessageSecondWorkspaceMemberId,
                 deletedAt: loadedThread.deletedAt,
               }
             : {

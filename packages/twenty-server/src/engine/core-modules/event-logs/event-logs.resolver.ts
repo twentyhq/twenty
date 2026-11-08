@@ -16,14 +16,13 @@ import { getReachableApplications } from 'src/engine/core-modules/application/ut
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { EventLogsService } from './event-logs.service';
 
 import { EventLogQueryInput } from './dtos/event-log-query.input';
 import { EventLogQueryResult } from './dtos/event-log-result.dto';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @MetadataResolver()
 @UseFilters(
@@ -34,11 +33,9 @@ import { EventLogQueryResult } from './dtos/event-log-result.dto';
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 @UsePipes(ResolverValidationPipe)
-export class EventLogsResolver {
-  constructor(private readonly eventLogsService: EventLogsService) {}
-
-  @UseGuards(
-    AuthPrincipalGuard({
+@UseGuards(
+  AccessPolicyGuard({
+    authPrincipals: {
       userSession: {
         standard: true,
         impersonated: true,
@@ -48,9 +45,13 @@ export class EventLogsResolver {
       apiKey: true,
       oauthClient: true,
       application: true,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.SECURITY),
-  )
+    },
+    requiredPermissionFlags: [PermissionFlagType.SECURITY],
+  }),
+)
+export class EventLogsResolver {
+  constructor(private readonly eventLogsService: EventLogsService) {}
+
   @Query(() => EventLogQueryResult)
   async eventLogs(
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -639,7 +639,11 @@ export class SignInUpService {
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
-    options?: { displayName?: string; subdomain?: string; partner?: string },
+    options?: {
+      displayName?: string;
+      subdomain?: string;
+      affiliatePartnerName?: string;
+    },
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -790,7 +794,7 @@ export class SignInUpService {
           userEmail: email,
           workspaceId: workspace.id,
           workspaceDisplayName: workspace.displayName,
-          partner: options?.partner,
+          affiliatePartnerName: options?.affiliatePartnerName,
         });
       }
 

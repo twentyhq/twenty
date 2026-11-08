@@ -127,7 +127,7 @@ describe('Sending an inbox message as an application', () => {
         .spyOn(aiModelRegistryService, 'getAvailableModels')
         .mockReturnValue([{ modelId: 'test-model' }] as never),
       jest
-        .spyOn(aiModelRegistryService, 'validateModelAvailability')
+        .spyOn(aiModelRegistryService, 'validateModelAvailabilityOrThrow')
         .mockReturnValue(undefined as never),
     );
     enqueueStream = jest
@@ -323,9 +323,9 @@ describe('Sending an inbox message as an application', () => {
       await workspaceOrmManager.executeInWorkspaceContext(
         () =>
           Object.getPrototypeOf(
-            workspaceOrmManager.getRepository('agentMessagePart', {
-              shouldBypassPermissionChecks: true,
-            }),
+            workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+              'agentMessagePart',
+            ),
           ),
         buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
         { lite: true },

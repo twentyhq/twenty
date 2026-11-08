@@ -33,7 +33,7 @@ Il **livello logico** di un'app Twenty è il codice che *viene eseguito* — han
     <CardTitle>Funzioni Logiche</CardTitle>
     Il blocco principale — tipi di attivazione, payload, e il client API digitato.
   </Card>
-  <Card href="/it/developers/extend/apps/logic/skills-and-agents" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+  <Card href="/it/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/topic-icons-v1/agents.svg">
     <CardTitle>Skills & Agents</CardTitle>
     Istruzioni per l'agente IA riutilizzabile e assistenti con suggerimenti di sistema personalizzati.
   </Card>
@@ -84,7 +84,7 @@ Le funzioni vengono eseguite in sandbox in processi Node.js isolati e accedono a
 <Note>
 **Hook di installazione** — codice che viene eseguito prima o dopo l'installazione — condividono questo runtime ma usano le proprie funzioni define e risiedono in [Config → Install Hooks](/it/developers/extend/apps/config/install-hooks).
 
-Anche il [**controllo dello stato**](/it/developers/extend/apps/logic/logic-functions#health-check) lo condivide. Non dichiara alcun trigger: Twenty lo richiama su richiesta quando si apre la pagina delle impostazioni dell'app.
+Anche il [**controllo dello stato**](/it/developers/extend/apps/logic/logic-functions#health-check) lo condivide. Un'app dichiara un controllo senza trigger. Per impostazione predefinita, Twenty chiama il proprio gestore senza argomenti quando si aprono le impostazioni dell'app dell'area di lavoro. Imposta `runOnUserPreferences: true` per eseguirlo invece nella pagina delle preferenze App di un membro, con il relativo `userWorkspaceId` obbligatorio.
 </Note>
 
 <PageBanner illustration="section-apps-logic" />

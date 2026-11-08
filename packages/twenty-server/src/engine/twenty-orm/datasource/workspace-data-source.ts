@@ -3,10 +3,7 @@ import { Logger } from '@nestjs/common';
 import { type Pool } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type ObjectRecord,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -15,20 +12,22 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type WorkspaceRepositoryOptions } from 'src/engine/twenty-orm/types/workspace-repository-options.type';
+import { TwentyOrmQueryExecutor } from 'src/engine/twenty-orm/datasource/twenty-orm-query-executor';
+import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { ClientQueryExecutor } from 'src/engine/twenty-orm/executor/client-query-executor';
-import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
-import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { ClientQueryExecutor } from 'src/engine/workspace-query-executor/client-query-executor';
+import { PoolQueryExecutor } from 'src/engine/workspace-query-executor/pool-query-executor';
+import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/utils/run-in-rollback-safe-transaction.util';
+import { runInRollbackSafeTransaction } from 'src/engine/workspace-query-executor/utils/run-in-rollback-safe-transaction.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
-import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 
 const tableShapeCache = new WeakMap<
   FlatEntityMaps<OrmFlatFieldMetadata>,
@@ -37,37 +36,49 @@ const tableShapeCache = new WeakMap<
 
 export class WorkspaceDataSource {
   private readonly logger = new Logger(WorkspaceDataSource.name);
-  private readonly pool: Pool;
+  private readonly pool: Pick<Pool, 'connect' | 'query'>;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
-  private readonly objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
 
   constructor({
     pool,
     internalContext,
     authContext,
-    objectPermissionsByRoleId,
   }: {
-    pool: Pool;
+    pool: Pick<Pool, 'connect' | 'query'>;
     internalContext: WorkspaceInternalContext;
     authContext: WorkspaceAuthContext;
-    objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
   }) {
     this.pool = pool;
     this.internalContext = internalContext;
     this.authContext = authContext;
-    this.objectPermissionsByRoleId = objectPermissionsByRoleId;
   }
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     nameSingular: string,
-    rolePermissionConfig?: RolePermissionConfig,
-    repositoryOptions?: { shouldSkipEventEmission?: boolean },
+    repositoryOptions?: WorkspaceRepositoryOptions,
   ): WorkspaceRepository<T> {
     return this.buildRepository<T>({
       nameSingular,
-      rolePermissionConfig,
-      executor: new PoolQueryExecutor({ pool: this.pool }),
+      shouldBypassPermissionChecks: false,
+      executor: new TwentyOrmQueryExecutor({
+        executor: new PoolQueryExecutor({ pool: this.pool }),
+      }),
+      shouldSkipEventEmission:
+        repositoryOptions?.shouldSkipEventEmission ?? false,
+    });
+  }
+
+  getRepositoryWithoutPermissionChecks<T extends ObjectLiteral = ObjectRecord>(
+    nameSingular: string,
+    repositoryOptions?: WorkspaceRepositoryOptions,
+  ): WorkspaceRepository<T> {
+    return this.buildRepository<T>({
+      nameSingular,
+      shouldBypassPermissionChecks: true,
+      executor: new TwentyOrmQueryExecutor({
+        executor: new PoolQueryExecutor({ pool: this.pool }),
+      }),
       shouldSkipEventEmission:
         repositoryOptions?.shouldSkipEventEmission ?? false,
     });
@@ -109,12 +120,26 @@ export class WorkspaceDataSource {
         workspaceId: this.internalContext.workspaceId,
         getRepository: <T extends ObjectLiteral = ObjectRecord>(
           nameSingular: string,
-          rolePermissionConfig?: RolePermissionConfig,
-          repositoryOptions?: { shouldSkipEventEmission?: boolean },
+          repositoryOptions?: WorkspaceRepositoryOptions,
         ) =>
           this.buildRepository<T>({
             nameSingular,
-            rolePermissionConfig,
+            shouldBypassPermissionChecks: false,
+            executor,
+            isTransactional: true,
+            shouldSkipEventEmission:
+              repositoryOptions?.shouldSkipEventEmission ?? false,
+            internalContext: transactionalInternalContext,
+          }),
+        getRepositoryWithoutPermissionChecks: <
+          T extends ObjectLiteral = ObjectRecord,
+        >(
+          nameSingular: string,
+          repositoryOptions?: WorkspaceRepositoryOptions,
+        ) =>
+          this.buildRepository<T>({
+            nameSingular,
+            shouldBypassPermissionChecks: true,
             executor,
             isTransactional: true,
             shouldSkipEventEmission:
@@ -144,22 +169,31 @@ export class WorkspaceDataSource {
   private async runInClientTransaction<T>(
     work: (executor: QueryExecutor) => Promise<T>,
   ): Promise<T> {
-    return runInRollbackSafeTransaction({
-      pool: this.pool,
-      work: (client) => work(new ClientQueryExecutor({ client })),
-    });
+    try {
+      return await runInRollbackSafeTransaction({
+        pool: this.pool,
+        work: (client) =>
+          work(
+            new TwentyOrmQueryExecutor({
+              executor: new ClientQueryExecutor({ client }),
+            }),
+          ),
+      });
+    } catch (error) {
+      throw toTwentyOrmException(error);
+    }
   }
 
   private buildRepository<T extends ObjectLiteral = ObjectRecord>({
     nameSingular,
-    rolePermissionConfig,
+    shouldBypassPermissionChecks,
     executor,
     isTransactional = false,
     shouldSkipEventEmission = false,
     internalContext = this.internalContext,
   }: {
     nameSingular: string;
-    rolePermissionConfig?: RolePermissionConfig;
+    shouldBypassPermissionChecks: boolean;
     executor: QueryExecutor;
     isTransactional?: boolean;
     shouldSkipEventEmission?: boolean;
@@ -177,7 +211,7 @@ export class WorkspaceDataSource {
 
     return this.buildRepositoryForObjectMetadataId<T>({
       objectMetadataId,
-      rolePermissionConfig,
+      shouldBypassPermissionChecks,
       executor,
       isTransactional,
       shouldSkipEventEmission,
@@ -189,14 +223,14 @@ export class WorkspaceDataSource {
     T extends ObjectLiteral = ObjectRecord,
   >({
     objectMetadataId,
-    rolePermissionConfig,
+    shouldBypassPermissionChecks,
     executor,
     isTransactional = false,
     shouldSkipEventEmission = false,
     internalContext = this.internalContext,
   }: {
     objectMetadataId: string;
-    rolePermissionConfig?: RolePermissionConfig;
+    shouldBypassPermissionChecks: boolean;
     executor: QueryExecutor;
     isTransactional?: boolean;
     shouldSkipEventEmission?: boolean;
@@ -205,17 +239,8 @@ export class WorkspaceDataSource {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
-    const repositoryRolePermissionConfig: RolePermissionConfig =
-      rolePermissionConfig ?? { intersectionOf: {} };
-
-    const { objectRecordsPermissions, shouldBypassPermissionChecks } =
-      resolveObjectRecordsPermissions({
-        rolePermissionConfig: repositoryRolePermissionConfig,
-        objectPermissionsByRoleId: this.objectPermissionsByRoleId,
-        flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
-        flatApplicationMaps: this.internalContext.flatApplicationMaps,
-      });
+    const shouldRepositoryBypassPermissionChecks =
+      shouldBypassPermissionChecks || isSystemAuthContext(this.authContext);
 
     return new WorkspaceRepository<T>({
       tableShape: this.getTableShape(objectMetadataId),
@@ -223,9 +248,10 @@ export class WorkspaceDataSource {
       internalContext,
       authContext: this.authContext,
       executor,
-      objectRecordsPermissions,
-      rolePermissionConfig: repositoryRolePermissionConfig,
-      shouldBypassPermissionChecks,
+      permissionsPrincipals: shouldRepositoryBypassPermissionChecks
+        ? undefined
+        : internalContext.permissionsPrincipals,
+      shouldBypassPermissionChecks: shouldRepositoryBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
         this.getTableShape(targetObjectMetadataId),
@@ -238,7 +264,7 @@ export class WorkspaceDataSource {
       ) =>
         this.buildRepositoryForObjectMetadataId<Entity>({
           objectMetadataId: targetObjectMetadataId,
-          rolePermissionConfig,
+          shouldBypassPermissionChecks,
           executor,
           isTransactional,
           shouldSkipEventEmission,
@@ -248,11 +274,15 @@ export class WorkspaceDataSource {
       runInNewTransaction: (work) =>
         this.transaction((transactionScope) =>
           work(
-            transactionScope.getRepository<T>(
-              flatObjectMetadata.nameSingular,
-              rolePermissionConfig,
-              { shouldSkipEventEmission },
-            ),
+            shouldBypassPermissionChecks
+              ? transactionScope.getRepositoryWithoutPermissionChecks<T>(
+                  flatObjectMetadata.nameSingular,
+                  { shouldSkipEventEmission },
+                )
+              : transactionScope.getRepository<T>(
+                  flatObjectMetadata.nameSingular,
+                  { shouldSkipEventEmission },
+                ),
           ),
         ),
     });

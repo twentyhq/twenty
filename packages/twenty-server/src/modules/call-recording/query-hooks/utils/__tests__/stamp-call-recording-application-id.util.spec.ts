@@ -8,7 +8,7 @@ const workspace = { id: '00000000-0000-4000-8000-000000000010' };
 const application = { id: APPLICATION_ID };
 
 const buildAuthContext = (authContext: object) =>
-  ({ workspace, ...authContext }) as unknown as WorkspaceAuthContext;
+  ({ workspace, ...authContext }) as WorkspaceAuthContext;
 
 describe('stampCallRecordingApplicationId', () => {
   it('stamps the application id when an application token creates the record', () => {

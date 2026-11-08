@@ -22,8 +22,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
-
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
 const generateOption = (index: number): Option => ({
@@ -410,7 +408,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
             viewId: createdView.id,
             fieldMetadataId: createOneField.id,
             operand: operandForFieldType,
-            value: createViewFilterValue as unknown as ViewFilterValue,
+            value: createViewFilterValue,
           },
           expectToFail: true,
           gqlFields: `

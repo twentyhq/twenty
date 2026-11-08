@@ -1,7 +1,6 @@
 import { INJECTABLE_WATERMARK } from '@nestjs/common/constants';
 
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
@@ -10,6 +9,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WEBHOOK_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-write-access-policy.constant';
 
 const renameWebhookInputSchema = z.object({ id: z.uuid() });
 
@@ -17,7 +17,7 @@ const RENAME_WEBHOOK_OPTIONS = {
   name: 'rename_webhook',
   category: ToolCategory.WEBHOOK,
   description: 'Rename a webhook.',
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  accessPolicy: WEBHOOK_WRITE_ACCESS_POLICY,
 };
 
 describe('DefineTool', () => {

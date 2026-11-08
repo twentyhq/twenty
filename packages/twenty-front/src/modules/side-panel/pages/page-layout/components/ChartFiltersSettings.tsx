@@ -17,10 +17,10 @@ import { mapRecordFiltersToPersistedRecordFilters } from '@/object-record/record
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useMemo } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledChartFiltersPageContainer = styled.div`
   display: flex;
@@ -40,6 +40,7 @@ export const ChartFiltersSettings = ({
   objectMetadataItem,
   widget,
 }: ChartFiltersSettingsProps) => {
+  const { t } = useLingui();
   const { instanceId } = getChartFiltersSettingsInstanceId({
     widgetId: widget.id,
     objectMetadataItemId: objectMetadataItem.id,

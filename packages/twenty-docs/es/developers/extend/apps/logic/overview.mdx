@@ -33,7 +33,7 @@ La **capa de lógica** de una app de Twenty es el código que *se ejecuta* — c
     <CardTitle>Funciones lógicas</CardTitle>
     El bloque principal de construcción: disparadores de tipos, nóminas y el cliente de la API escribido.
   </Card>
-  <Card href="/es/developers/extend/apps/logic/skills-and-agents" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+  <Card href="/es/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/topic-icons-v1/agents.svg">
     <CardTitle>Habilidades y Agentes</CardTitle>
     Instrucciones de agente de IA reutilizable y asistentes con sugerencias personalizadas del sistema.
   </Card>
@@ -84,7 +84,7 @@ Las funciones se ejecutan en un entorno aislado en procesos independientes de No
 <Note>
 **Hooks de instalación**: el código que se ejecuta antes o después de la instalación comparte este entorno de ejecución pero usa sus propias funciones define y se encuentra en [Config → Install Hooks](/es/developers/extend/apps/config/install-hooks).
 
-La [**comprobación de estado**](/es/developers/extend/apps/logic/logic-functions#health-check) también lo comparte. No declara ningún desencadenador: Twenty la llama cuando se abre la página de configuración de la aplicación.
+La [**comprobación de estado**](/es/developers/extend/apps/logic/logic-functions#health-check) también lo comparte. Una aplicación declara una comprobación sin desencadenante. De forma predeterminada, Twenty llama a su controlador sin argumentos cuando se abren los ajustes de las aplicaciones del espacio de trabajo. Establece `runOnUserPreferences: true` para ejecutarlo en su lugar en la página de preferencias de Apps de un miembro, con su `userWorkspaceId` obligatorio.
 </Note>
 
 <PageBanner illustration="section-apps-logic" />

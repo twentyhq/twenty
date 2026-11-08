@@ -9,7 +9,6 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 
 import { Section } from 'twenty-ui/components/layout';
@@ -19,6 +18,7 @@ import { type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -51,6 +51,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
   roleTargetType,
   roleId,
 }: SettingsRoleAssignmentTableProps<T>) => {
+  const { t } = useLingui();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
@@ -87,7 +88,9 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
   const roleTargets = tableConfig[roleTargetType].roleTargets;
 
   const filteredRoleTargets = useMemo(() => {
-    if (!searchFilter) return roleTargets;
+    if (!searchFilter) {
+      return roleTargets;
+    }
 
     const getSearchableFields = (
       roleTarget: PartialWorkspaceMember | FlatAgent | ApiKeyForRole,

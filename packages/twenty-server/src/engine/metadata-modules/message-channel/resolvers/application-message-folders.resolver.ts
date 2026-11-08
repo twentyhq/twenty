@@ -14,22 +14,23 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ListAppMessageFoldersInput } from 'src/engine/metadata-modules/message-channel/dtos/list-app-message-folders.input';
 import { SyncAppMessageFoldersInput } from 'src/engine/metadata-modules/message-channel/dtos/sync-app-message-folders.input';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { ApplicationMessageFoldersService } from 'src/engine/metadata-modules/message-channel/services/application-message-folders.service';
 import { MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: false,
-    apiKey: false,
-    oauthClient: false,
-    application: true,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: false,
+      apiKey: false,
+      oauthClient: false,
+      application: true,
+    },
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @UseInterceptors(MessageChannelGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)

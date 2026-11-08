@@ -13,6 +13,7 @@ import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
 import { useAgentChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
+import { useAgentChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
@@ -61,6 +62,10 @@ export const AiChatThreadListItem = ({
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
+  const displayLabel = useAgentChatThreadDisplayLabel({
+    thread,
+    fallbackLabel: t`Untitled`,
+  });
   const {
     isRenaming,
     draftTitle,
@@ -97,7 +102,7 @@ export const AiChatThreadListItem = ({
     <AiChatThreadRow
       variant={variant}
       id={thread.id}
-      label={thread.title ?? t`Untitled`}
+      label={displayLabel}
       isSelected={isSelected}
       isChecked={isChecked}
       isEditing={isRenaming}

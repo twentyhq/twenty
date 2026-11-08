@@ -16,11 +16,10 @@ import { useMemo } from 'react';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledPropertyBox = styled.div`
   align-self: stretch;
@@ -50,6 +49,7 @@ type FieldsWidgetProps = {
 };
 
 export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
+  const { t } = useLingui();
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 

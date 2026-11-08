@@ -4,10 +4,10 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationCommandMenuItemSettingsTabProps = {
   label: string;
@@ -53,6 +53,7 @@ export const SettingsApplicationCommandMenuItemSettingsTab = ({
   createdAt,
   updatedAt,
 }: SettingsApplicationCommandMenuItemSettingsTabProps) => {
+  const { t } = useLingui();
   const detailRows: { key: string; label: string; value: ReactNode }[] = [
     {
       key: 'label',

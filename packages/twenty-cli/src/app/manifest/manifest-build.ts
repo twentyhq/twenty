@@ -46,6 +46,7 @@ import {
   type FieldManifest,
   type FrontComponentManifest,
   type IndexManifest,
+  type ValidationRuleManifest,
   type LogicFunctionManifest,
   type Manifest,
   type NavigationMenuItemManifest,
@@ -110,6 +111,7 @@ export const buildManifest = async (
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
+  const validationRules: ValidationRuleManifest[] = [];
   const permissionFlags: PermissionFlagManifest[] = [];
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
@@ -145,6 +147,7 @@ export const buildManifest = async (
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
   const indexesFilePaths: string[] = [];
+  const validationRulesFilePaths: string[] = [];
   const permissionFlagsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
@@ -331,7 +334,13 @@ export const buildManifest = async (
         break;
       }
       case 'logicFunctions': {
-        const extract = await extractManifestFromFile<LogicFunctionConfig>({
+        const extract = await extractManifestFromFile<
+          LogicFunctionConfig &
+            Pick<
+              HealthCheckLogicFunctionApplicationManifest,
+              'runOnUserPreferences'
+            >
+        >({
           appPath,
           filePath,
         });
@@ -348,8 +357,9 @@ export const buildManifest = async (
           );
         }
 
+        const { runOnUserPreferences, ...logicFunctionConfig } = extract.config;
         const config = await fromLogicFunctionConfigToLogicFunctionManifest({
-          logicFunctionConfig: extract.config,
+          logicFunctionConfig,
           sourceCode: fileContent,
           sourcePath: relativePath,
         });
@@ -390,6 +400,9 @@ export const buildManifest = async (
         if (targetFunctionName === 'defineHealthCheck') {
           healthCheckLogicFunctions.push({
             universalIdentifier: extract.config.universalIdentifier,
+            ...(isDefined(runOnUserPreferences)
+              ? { runOnUserPreferences }
+              : {}),
           });
         }
 
@@ -491,6 +504,18 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         indexesFilePaths.push(relativePath);
+        break;
+      }
+      case 'validationRules': {
+        const extract = await extractManifestFromFile<ValidationRuleManifest>({
+          appPath,
+          filePath,
+        });
+
+        validationRules.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        validationRulesFilePaths.push(relativePath);
         break;
       }
       case 'pageLayoutTabs': {
@@ -633,6 +658,8 @@ export const buildManifest = async (
     errors.push('Only one health check is allowed per application');
   }
 
+  const [healthCheckLogicFunction] = healthCheckLogicFunctions;
+
   if (settingsFrontComponentUniversalIdentifiers.length > 1) {
     errors.push('Only one settings front component is allowed per application');
   }
@@ -710,8 +737,8 @@ export const buildManifest = async (
             ...(uninstallLogicFunctions.length >= 1
               ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
               : {}),
-            ...(healthCheckLogicFunctions.length >= 1
-              ? { healthCheckLogicFunction: healthCheckLogicFunctions[0] }
+            ...(isDefined(healthCheckLogicFunction)
+              ? { healthCheckLogicFunction }
               : {}),
             ...(settingsFrontComponentUniversalIdentifiers.length >= 1
               ? {
@@ -765,6 +792,7 @@ export const buildManifest = async (
         commandMenuItems: commandMenuItems.sort(byId),
         timelineActivityTypes: timelineActivityTypes.sort(byId),
         settingsMenuItems: settingsMenuItems.sort(byId),
+        validationRules: validationRules.sort(byId),
         relatedRecordPaths: relatedRecordPaths.sort(byId),
       };
 
@@ -773,6 +801,7 @@ export const buildManifest = async (
     objects: objectsFilePaths,
     fields: fieldsFilePaths,
     indexes: indexesFilePaths,
+    validationRules: validationRulesFilePaths,
     permissionFlags: permissionFlagsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,

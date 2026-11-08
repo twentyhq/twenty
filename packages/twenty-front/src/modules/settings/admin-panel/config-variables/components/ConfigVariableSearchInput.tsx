@@ -1,5 +1,5 @@
-import { t } from '@lingui/core/macro';
 import { SearchInput } from 'twenty-ui/components/input';
+import { useLingui } from '@lingui/react/macro';
 
 type ConfigVariableSearchInputProps = {
   value: string;
@@ -10,6 +10,7 @@ export const ConfigVariableSearchInput = ({
   value,
   onChange,
 }: ConfigVariableSearchInputProps) => {
+  const { t } = useLingui();
   return (
     <SearchInput
       placeholder={t`Search config variables`}

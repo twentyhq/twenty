@@ -102,7 +102,9 @@ export class ViewQueryParamsService {
           flatEntityMaps: flatFieldMetadataMaps,
         });
 
-        if (!field) return null;
+        if (!field) {
+          return null;
+        }
 
         return {
           id: viewFilter.id,
@@ -143,7 +145,9 @@ export class ViewQueryParamsService {
           flatEntityMaps: flatFieldMetadataMaps,
         });
 
-        if (!field) return null;
+        if (!field) {
+          return null;
+        }
 
         return {
           [field.name]:
@@ -172,9 +176,8 @@ export class ViewQueryParamsService {
 
     try {
       const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
-          { shouldBypassPermissionChecks: true },
         );
 
       const workspaceMember = await workspaceMemberRepository.findOne({

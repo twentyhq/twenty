@@ -15,11 +15,7 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @ObjectType('ToolIndexEntry')
 export class ToolIndexEntryDTO {
@@ -53,26 +49,25 @@ export class ToolIndexEntryDTO {
 
 @MetadataResolver()
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [],
   }),
 )
 export class ToolIndexResolver {
-  constructor(
-    private readonly toolRegistryService: ToolRegistryService,
-    private readonly userRoleService: UserRoleService,
-  ) {}
+  constructor(private readonly toolRegistryService: ToolRegistryService) {}
 
   @Query(() => [ToolIndexEntryDTO])
-  @UseGuards(NoPermissionGuard)
   async getToolIndex(
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -81,14 +76,7 @@ export class ToolIndexResolver {
     application: FlatApplication | undefined,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ToolIndexEntryDTO[]> {
-    const { rolePermissionConfig } = await this.resolveCallerRoles({
-      userWorkspaceId,
-      workspaceId: workspace.id,
-      application,
-    });
-
     return this.toolRegistryService.buildToolIndex(workspace.id, {
-      rolePermissionConfig,
       userId: user?.id,
       userWorkspaceId,
       locale,
@@ -99,7 +87,6 @@ export class ToolIndexResolver {
 
   // On demand, so listing the tool index does not compute every tool's schema.
   @Query(() => graphqlTypeJson, { nullable: true })
-  @UseGuards(NoPermissionGuard)
   async getToolInputSchema(
     @Args('toolName') toolName: string,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
@@ -108,17 +95,10 @@ export class ToolIndexResolver {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ): Promise<object | null> {
-    const { rolePermissionConfig } = await this.resolveCallerRoles({
-      userWorkspaceId,
-      workspaceId: workspace.id,
-      application,
-    });
-
     const schemas = await this.toolRegistryService.resolveSchemas({
       toolNames: [toolName],
       context: {
         workspaceId: workspace.id,
-        rolePermissionConfig,
         userId: user?.id,
         userWorkspaceId,
         authContext: getWorkspaceAuthContext(),
@@ -127,29 +107,5 @@ export class ToolIndexResolver {
     });
 
     return schemas.get(toolName) ?? null;
-  }
-
-  private async resolveCallerRoles({
-    userWorkspaceId,
-    workspaceId,
-    application,
-  }: {
-    userWorkspaceId: string;
-    workspaceId: string;
-    application: FlatApplication | undefined;
-  }): Promise<{ rolePermissionConfig: RolePermissionConfig }> {
-    const userRoleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      userWorkspaceId,
-      workspaceId,
-    });
-
-    return {
-      rolePermissionConfig: {
-        intersectionOf: buildUserRoleIdsBySource({
-          userRoleId,
-          application,
-        }),
-      },
-    };
   }
 }

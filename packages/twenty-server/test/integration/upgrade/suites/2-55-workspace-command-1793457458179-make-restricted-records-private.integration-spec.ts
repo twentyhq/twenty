@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -10,6 +9,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+const PRIVATE_RECORD_FEATURE_FLAG_KEY = 'IS_PRIVATE_RECORD_ENABLED';
 
 describe('2-55 workspace command - make restricted records private (integration)', () => {
   let command: MakeRestrictedRecordsPrivateCommand;
@@ -62,7 +62,7 @@ describe('2-55 workspace command - make restricted records private (integration)
     if (!isDefined(value)) {
       await global.testDataSource.query(
         `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
-        [SEED_APPLE_WORKSPACE_ID, FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
+        [SEED_APPLE_WORKSPACE_ID, PRIVATE_RECORD_FEATURE_FLAG_KEY],
       );
 
       return;
@@ -71,18 +71,14 @@ describe('2-55 workspace command - make restricted records private (integration)
     await global.testDataSource.query(
       `INSERT INTO core."featureFlag" ("workspaceId", key, value) VALUES ($1, $2, $3)
          ON CONFLICT ("workspaceId", key) DO UPDATE SET value = $3`,
-      [
-        SEED_APPLE_WORKSPACE_ID,
-        FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED,
-        value,
-      ],
+      [SEED_APPLE_WORKSPACE_ID, PRIVATE_RECORD_FEATURE_FLAG_KEY, value],
     );
   };
 
   const findPrivateRecordFlag = async (): Promise<boolean | undefined> => {
     const [flag] = await global.testDataSource.query(
       `SELECT value FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
-      [SEED_APPLE_WORKSPACE_ID, FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
+      [SEED_APPLE_WORKSPACE_ID, PRIVATE_RECORD_FEATURE_FLAG_KEY],
     );
 
     return flag?.value;

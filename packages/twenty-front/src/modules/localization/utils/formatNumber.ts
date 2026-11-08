@@ -112,7 +112,9 @@ export const formatNumber = (
   value: number,
   opts?: FormatNumberOptions,
 ): string => {
-  if (!Number.isFinite(value)) return String(value);
+  if (!Number.isFinite(value)) {
+    return String(value);
+  }
 
   const options: Required<FormatNumberOptions> = {
     ...defaultOptions,

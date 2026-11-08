@@ -1,3 +1,8 @@
+import {
+  PREVIEW_FRONT_COMPONENT_TOOL_NAME,
+  ToolCategory,
+} from 'twenty-shared/ai';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { WORKSPACE_SETUP_ALTERNATIVE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-alternative-system-prompt.constant';
 import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.constant';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
@@ -56,11 +61,38 @@ const REFERENCED_SKILL: ReferencedSkill = {
 };
 
 describe('buildFullSystemPrompt', () => {
-  it('should inline referenced skills after the skill catalog', () => {
+  it('only adds component authoring guidance when preview is available', () => {
+    const previewTool: ToolIndexEntry = {
+      name: PREVIEW_FRONT_COMPONENT_TOOL_NAME,
+      label: 'Preview frontend component',
+      description: 'Build a sample preview',
+      category: ToolCategory.FRONT_COMPONENT,
+      executionRef: {
+        kind: 'static',
+        toolId: PREVIEW_FRONT_COMPONENT_TOOL_NAME,
+      },
+    };
+    const prompt = buildFullSystemPrompt({
+      toolCatalog: [previewTool],
+      skillCatalog: [],
+      preloadedTools: [],
+      userWorkspaceId: USER_WORKSPACE_ID,
+      workspaceId: EVEN_WORKSPACE_ID,
+    });
+
+    expect(prompt).toContain('## Custom frontend components');
+    expect(prompt).toContain('propose_tool_call for publish_front_component');
+    expect(prompt).toContain('that exact draftId and checksum');
+    expect(buildPrompt(false)).not.toContain('## Custom frontend components');
+  });
+
+  it('should inline referenced skills for the configured assistant', () => {
+    const assistantDisplayName = 'Scout "CRM"';
     const prompt = buildFullSystemPrompt({
       toolCatalog: [],
       skillCatalog: [],
       referencedSkills: [REFERENCED_SKILL],
+      assistantDisplayName,
       preloadedTools: [],
       userWorkspaceId: USER_WORKSPACE_ID,
       workspaceId: EVEN_WORKSPACE_ID,
@@ -68,6 +100,9 @@ describe('buildFullSystemPrompt', () => {
 
     expect(prompt).toContain('## Referenced Skills (already loaded)');
     expect(prompt).toContain('Always create a trigger first.');
+    expect(prompt).toContain(
+      `Your display name in this workspace is ${JSON.stringify(assistantDisplayName)}.`,
+    );
   });
 
   it('should omit the referenced skills section when nothing is referenced', () => {
