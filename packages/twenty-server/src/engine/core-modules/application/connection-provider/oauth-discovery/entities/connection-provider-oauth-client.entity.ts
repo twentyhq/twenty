@@ -26,7 +26,7 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
     ADD_OAUTH_DISCOVERY_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME,
 })
 @Index(
-  'IDX_CONNECTION_PROVIDER_OAUTH_CLIENT_CONNECTION_PROVIDER_ID_UNIQUE',
+  'IDX_CONNECTION_PROVIDER_OAUTH_CLIENT_PROVIDER_ID_UNIQUE',
   ['connectionProviderId'],
   { unique: true },
 )
