@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
@@ -16,6 +17,8 @@ import { buildRecordAccessGroupConditions } from 'src/engine/permissions/interna
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
+import { findRlsRuleRelationHopsToObject } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-relation-hops-to-object.util';
+import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -142,6 +145,81 @@ export class RecordAccessGroupService {
     });
   }
 
+  async isObjectReachedByRlsRuleRelationHop({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<boolean> {
+    const metadataMaps = await this.findMetadataMaps(workspaceId);
+
+    return isNonEmptyArray(
+      findRlsRuleRelationHopsToObject({
+        ...metadataMaps,
+        objectMetadataId,
+      }),
+    );
+  }
+
+  async recomputeRecordAccessGroupIdsOfRelatedRecords({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    recordsBefore,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    recordsBefore: Record<string, unknown>[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    const metadataMaps = await this.findMetadataMaps(workspaceId);
+    const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(targetFlatObjectMetadata)) {
+      return;
+    }
+
+    for (const relationFieldMetadata of findRlsRuleRelationHopsToObject({
+      ...metadataMaps,
+      objectMetadataId,
+    })) {
+      const sourceFlatObjectMetadata =
+        findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: relationFieldMetadata.objectMetadataId,
+          flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+        });
+      const { sourceColumnName, targetColumnName } =
+        findRelationJoinColumnsOrThrow({
+          relationFieldMetadata,
+          flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        });
+      const relatedRecordIds =
+        await this.recordAccessGroupRepository.findRelatedRecordIds({
+          workspaceId,
+          sourceFlatObjectMetadata,
+          targetFlatObjectMetadata,
+          sourceColumnName,
+          targetColumnName,
+          recordIds,
+          recordsBefore,
+          transactionScope,
+        });
+
+      await this.recomputeRecordAccessGroupIdsOfRecords({
+        workspaceId,
+        objectMetadataId: sourceFlatObjectMetadata.id,
+        recordIds: relatedRecordIds,
+        transactionScope,
+      });
+    }
+  }
+
   private findObjectAccessGroups({
     workspaceId,
     objectMetadataId,
@@ -173,6 +251,7 @@ export class RecordAccessGroupService {
 
   private findMetadataMaps(workspaceId: string) {
     return this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'featureFlagsMap',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatRowLevelPermissionPredicateMaps',

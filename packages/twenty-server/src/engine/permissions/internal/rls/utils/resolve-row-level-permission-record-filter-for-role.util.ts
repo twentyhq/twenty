@@ -6,6 +6,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { buildRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
 import { resolveRowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-workspace-member.util';
+import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 export const resolveRowLevelPermissionRecordFilterForRole = ({
@@ -28,6 +29,9 @@ export const resolveRowLevelPermissionRecordFilterForRole = ({
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     objectMetadata: flatObjectMetadata,
     roleId,
+    isRelationHopEnabled: isRowLevelPermissionRelationHopEnabled(
+      metadataMaps.featureFlagsMap,
+    ),
     workspaceMember: resolveRowLevelPermissionWorkspaceMember({
       principals,
       metadataMaps,

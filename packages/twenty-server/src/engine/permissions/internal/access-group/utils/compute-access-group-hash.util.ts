@@ -31,6 +31,9 @@ const buildPredicateGroupContent = ({
           parentPredicateGroupId,
       )
       .map((predicate) => [
+        ...(isDefined(predicate.relationFieldMetadataId)
+          ? [predicate.relationFieldMetadataId]
+          : []),
         predicate.fieldMetadataId,
         predicate.subFieldName,
         predicate.operand,

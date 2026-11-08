@@ -33,6 +33,7 @@ export interface WorkspaceInternalContext {
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
     | 'recomputeRecordAccessGroupIdsOfRecords'
+    | 'recomputeRecordAccessGroupIdsOfRelatedRecords'
     | 'isRecomputingRecordAccessGroupIdsOnWrite'
     | 'findRlsRuleUnreadableFieldsByRole'
     | 'buildRlsRuleSqlConditionOrThrow'

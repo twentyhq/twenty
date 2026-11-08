@@ -1054,6 +1054,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
     await this.recomputeRecordAccessGroupIdsOfRecords(insertedIds);
+    await this.recomputeRecordAccessGroupIdsOfRelatedRecords({
+      recordIds: insertedIds,
+      recordsBefore: [],
+    });
 
     await this.emitCreateEvents(insertedIds);
 
@@ -1237,6 +1241,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     await this.recomputeRecordAccessGroupIdsOfRecords(
       generatedMaps.map((record) => record.id).filter(isNonEmptyString),
     );
+    await this.recomputeRecordAccessGroupIdsOfRelatedRecords({
+      recordIds: generatedMaps
+        .map((record) => record.id)
+        .filter(isNonEmptyString),
+      recordsBefore,
+    });
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1620,6 +1630,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
+    await this.recomputeRecordAccessGroupIdsOfRelatedRecords({
+      recordIds: mutationResult.generatedMaps
+        .map((record) => record.id)
+        .filter(isNonEmptyString),
+      recordsBefore,
+    });
+
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
@@ -1724,6 +1741,25 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         updates,
         formatRecords: (rawRecords) =>
           this.formatResult<ObjectRecord[]>(rawRecords),
+        transactionScope: this.buildRecordPermissionTransactionScope(),
+      },
+    );
+  }
+
+  private async recomputeRecordAccessGroupIdsOfRelatedRecords({
+    recordIds,
+    recordsBefore,
+  }: {
+    recordIds: string[];
+    recordsBefore: ObjectRecord[];
+  }): Promise<void> {
+    await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRelatedRecords(
+      {
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        workspaceId: this.options.internalContext.workspaceId,
+        objectMetadataId: this.options.flatObjectMetadata.id,
+        recordIds,
+        recordsBefore,
         transactionScope: this.buildRecordPermissionTransactionScope(),
       },
     );

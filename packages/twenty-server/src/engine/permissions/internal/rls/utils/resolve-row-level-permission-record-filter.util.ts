@@ -8,6 +8,7 @@ import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/co
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
+import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
 import { resolveRowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-workspace-member.util';
 
 export const resolveRowLevelPermissionRecordFilter = ({
@@ -33,6 +34,9 @@ export const resolveRowLevelPermissionRecordFilter = ({
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     objectMetadata: flatObjectMetadata,
     roleIds,
+    isRelationHopEnabled: isRowLevelPermissionRelationHopEnabled(
+      metadataMaps.featureFlagsMap,
+    ),
     workspaceMember: resolveRowLevelPermissionWorkspaceMember({
       principals,
       metadataMaps,

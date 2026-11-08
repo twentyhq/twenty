@@ -109,12 +109,35 @@ export class RecordPermissionsService {
     workspaceId: string;
     objectMetadataId: string;
   }): Promise<boolean> {
+    if (!areRecordAccessGroupsEnabled({ featureFlagsMap })) {
+      return false;
+    }
+
+    const question = { workspaceId, objectMetadataId };
+
     return (
-      areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
-      (await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
-        workspaceId,
-        objectMetadataId,
-      }))
+      (await this.recordAccessGroupService.isObjectUsingRecordAccessGroups(
+        question,
+      )) ||
+      (await this.recordAccessGroupService.isObjectReachedByRlsRuleRelationHop(
+        question,
+      ))
+    );
+  }
+
+  async recomputeRecordAccessGroupIdsOfRelatedRecords(
+    args: Parameters<
+      RecordAccessGroupService['recomputeRecordAccessGroupIdsOfRelatedRecords']
+    >[0] & {
+      featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+    },
+  ): Promise<void> {
+    if (!areRecordAccessGroupsEnabled(args)) {
+      return;
+    }
+
+    await this.recordAccessGroupService.recomputeRecordAccessGroupIdsOfRelatedRecords(
+      args,
     );
   }
 
@@ -486,6 +509,7 @@ export class RecordPermissionsService {
         tableAlias,
         objectMetadata: flatObjectMetadata,
         flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
       }) ?? { sql: 'TRUE', parameters: {} }
     );
   }

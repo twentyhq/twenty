@@ -36,6 +36,7 @@ export const resolvePermissionsRowLevelPermissionFilter = ({
     tableAlias,
     objectMetadata: flatObjectMetadata,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
   });
 
   if (!isDefined(condition)) {
