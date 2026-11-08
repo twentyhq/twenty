@@ -8,7 +8,6 @@ import { FieldsWidgetFieldList } from '@/page-layout/widgets/fields/components/F
 import { FieldsWidgetGroupContainer } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupContainer';
 import { useFieldsWidgetGroupsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay';
 import { useFieldsWidgetHiddenFieldsForDisplay } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetHiddenFieldsForDisplay';
-import { filterReadableFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/filterReadableFieldsWidgetGroups';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
@@ -60,30 +59,17 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   const fieldsConfiguration = widget.configuration as FieldsConfiguration;
 
-  const { groups: configuredGroups, displayMode } =
-    useFieldsWidgetGroupsForDisplay({
-      widgetId: widget.id,
-      viewId: fieldsConfiguration.viewId ?? null,
-      objectNameSingular: targetRecord.targetObjectNameSingular,
-    });
-
-  const { hiddenFields: configuredHiddenFields } =
-    useFieldsWidgetHiddenFieldsForDisplay({
-      widgetId: widget.id,
-      viewId: fieldsConfiguration.viewId ?? null,
-      objectNameSingular: targetRecord.targetObjectNameSingular,
-    });
-
-  const groups = filterReadableFieldsWidgetGroups({
-    groups: configuredGroups,
-    readableFields: objectMetadataItem.readableFields,
+  const { groups, displayMode } = useFieldsWidgetGroupsForDisplay({
+    widgetId: widget.id,
+    viewId: fieldsConfiguration.viewId ?? null,
+    objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const hiddenFields = configuredHiddenFields.filter((hiddenField) =>
-    objectMetadataItem.readableFields.some(
-      (readableField) => readableField.id === hiddenField.fieldMetadataItem.id,
-    ),
-  );
+  const { hiddenFields } = useFieldsWidgetHiddenFieldsForDisplay({
+    widgetId: widget.id,
+    viewId: fieldsConfiguration.viewId ?? null,
+    objectNameSingular: targetRecord.targetObjectNameSingular,
+  });
 
   const shouldShowHiddenFields =
     fieldsConfiguration.shouldAllowUserToSeeHiddenFields === true &&
@@ -92,9 +78,9 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
   const visibleFields = groups.flatMap((group) => group.fields);
 
   const hiddenFieldsWithOffsetGlobalIndex = shouldShowHiddenFields
-    ? hiddenFields.map((field, index) => ({
+    ? hiddenFields.map((field) => ({
         ...field,
-        globalIndex: index + visibleFields.length,
+        globalIndex: field.globalIndex + visibleFields.length,
       }))
     : [];
 
