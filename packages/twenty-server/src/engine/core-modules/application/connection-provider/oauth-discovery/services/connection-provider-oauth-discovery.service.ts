@@ -56,7 +56,10 @@ export class ConnectionProviderOAuthDiscoveryService {
   async prepareAuthorization({
     provider,
     workspaceId,
-  }: ProviderContext): Promise<{
+    canReuseConcurrentRegistration = true,
+  }: ProviderContext & {
+    canReuseConcurrentRegistration?: boolean;
+  }): Promise<{
     authorizationUrl: URL;
     codeVerifier: string;
   }> {
@@ -70,10 +73,13 @@ export class ConnectionProviderOAuthDiscoveryService {
       workspaceId,
     });
 
-    const prepare = (
-      clientToReuse: OAuthDiscoveryStoredClient | null,
-      isClientIdMetadataDocumentAllowed: boolean,
-    ) =>
+    const prepare = ({
+      clientToReuse,
+      isClientIdMetadataDocumentAllowed,
+    }: {
+      clientToReuse: OAuthDiscoveryStoredClient | null;
+      isClientIdMetadataDocumentAllowed: boolean;
+    }) =>
       this.runAuthorizationRequest({
         provider,
         fetchFn,
@@ -86,36 +92,86 @@ export class ConnectionProviderOAuthDiscoveryService {
         }),
       });
 
-    const firstAttempt = await prepare(storedClient, true);
-    const isRejected = (authorizationUrl: URL) =>
-      this.isClientRejected({ authorizationUrl, fetchFn });
-
-    // A server that forgot our client, or rejects our metadata document, would strand the user on its error page.
-    // The replacement is kept only if accepted: other members' refresh tokens belong to the stored client.
-    const retryAttempt = (await isRejected(firstAttempt.authorizationUrl))
-      ? await prepare(
-          null,
-          firstAttempt.clientToPersist.registrationMethod !==
+    const firstAttempt = await prepare({
+      clientToReuse: storedClient,
+      isClientIdMetadataDocumentAllowed: true,
+    });
+    const retryAttempt = await this.prepareReplacementIfRejected({
+      firstAttempt,
+      fetchFn,
+      prepareReplacement: () =>
+        prepare({
+          clientToReuse: null,
+          isClientIdMetadataDocumentAllowed:
+            firstAttempt.clientToPersist.registrationMethod !==
             'CLIENT_ID_METADATA_DOCUMENT',
-        )
-      : null;
-    const attempt =
-      isDefined(retryAttempt) &&
-      !(await isRejected(retryAttempt.authorizationUrl))
-        ? retryAttempt
-        : firstAttempt;
-
-    await this.oauthClientService.saveClient({
+        }),
+    });
+    const attempt = retryAttempt ?? firstAttempt;
+    const clientToSave = {
       ...attempt.clientToPersist,
       connectionProviderId: provider.id,
       workspaceId,
       redirectUri: this.getRedirectUrl(),
-    });
+    };
+
+    if (isDefined(storedClient) || !canReuseConcurrentRegistration) {
+      await this.oauthClientService.saveClient(clientToSave);
+    } else if (
+      !(await this.oauthClientService.insertClientIfAbsent(clientToSave))
+    ) {
+      // Another member's first sign-in registered a client meanwhile: use it, so one client issues every token
+      return this.prepareAuthorization({
+        provider,
+        workspaceId,
+        canReuseConcurrentRegistration: false,
+      });
+    }
 
     return {
       authorizationUrl: attempt.authorizationUrl,
       codeVerifier: attempt.codeVerifier,
     };
+  }
+
+  // A server that forgot our client, or rejects our metadata document, would strand the user on its error page.
+  // The replacement is kept only if accepted: other members' refresh tokens belong to the stored client.
+  private async prepareReplacementIfRejected<
+    TAttempt extends { authorizationUrl: URL },
+  >({
+    firstAttempt,
+    fetchFn,
+    prepareReplacement,
+  }: {
+    firstAttempt: TAttempt;
+    fetchFn: FetchLike;
+    prepareReplacement: () => Promise<TAttempt>;
+  }): Promise<TAttempt | null> {
+    if (
+      !(await this.isClientRejected({
+        authorizationUrl: firstAttempt.authorizationUrl,
+        fetchFn,
+      }))
+    ) {
+      return null;
+    }
+
+    try {
+      const replacement = await prepareReplacement();
+
+      return (await this.isClientRejected({
+        authorizationUrl: replacement.authorizationUrl,
+        fetchFn,
+      }))
+        ? null
+        : replacement;
+    } catch (error) {
+      this.logger.warn(
+        `Could not register a replacement OAuth client: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return null;
+    }
   }
 
   async exchangeCode({

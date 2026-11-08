@@ -317,6 +317,37 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     expect(revokedConnectedAccount.authFailedAt).not.toBeNull();
   });
 
+  it('keeps a valid account when concurrent calls refresh the same token', async () => {
+    await globalThis.testDataSource.query(
+      `UPDATE core."connectedAccount" SET "accessTokenExpiresAt" = now() - interval '1 hour', "lastCredentialsRefreshedAt" = now() - interval '2 hours', "authFailedAt" = NULL, "authFailedReason" = NULL WHERE "connectionProviderId" = $1`,
+      [getConnectionProviderId()],
+    );
+    const [connectedAccount] = await readConnectedAccounts(
+      getConnectionProviderId(),
+    );
+
+    await signIn(connectedAccount.id);
+    await globalThis.testDataSource.query(
+      `UPDATE core."connectedAccount" SET "accessTokenExpiresAt" = now() - interval '1 hour', "lastCredentialsRefreshedAt" = now() - interval '2 hours' WHERE "connectionProviderId" = $1`,
+      [getConnectionProviderId()],
+    );
+
+    const syncResponses = await Promise.all([
+      syncMcpServerTools(mcpServer.id),
+      syncMcpServerTools(mcpServer.id),
+    ]);
+    const [refreshedConnectedAccount] = await readConnectedAccounts(
+      getConnectionProviderId(),
+    );
+
+    expect(
+      syncResponses.map(
+        (response) => response.body.data.syncMcpServerTools.toolsSyncError,
+      ),
+    ).toEqual([null, null]);
+    expect(refreshedConnectedAccount.authFailedAt).toBeNull();
+  });
+
   it('lists the connection to its owner only and lets them remove it', async () => {
     const findServerConnections = async (token?: string) => {
       const response = await getMyConnectedAccounts(token);
@@ -461,6 +492,34 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     expect(
       await readConnectionProvider(otherMcpServer.connectionProviderId),
     ).toEqual([]);
+  });
+
+  it('shares one registered client between concurrent first sign-ins', async () => {
+    const otherMcpServerResponse = await createMcpServer({
+      name: `oauth_${uuidv4().slice(0, 8)}`,
+      label: 'Concurrent fake OAuth docs',
+      url: fakeMcpServer.url,
+    });
+    const otherMcpServer: CreatedMcpServer =
+      otherMcpServerResponse.body.data.createMcpServer;
+    const previousMcpServer = mcpServer;
+
+    mcpServer = otherMcpServer;
+
+    try {
+      const authorizationUrls = await Promise.all([
+        requestAuthorization(),
+        requestAuthorization(),
+      ]);
+      const [oauthClient] = await readOAuthClients(getConnectionProviderId());
+
+      expect(
+        authorizationUrls.map((url) => url.searchParams.get('client_id')),
+      ).toEqual([oauthClient.clientId, oauthClient.clientId]);
+    } finally {
+      mcpServer = previousMcpServer;
+      await deleteMcpServer(otherMcpServer.id);
+    }
   });
 
   it('leaves a server that does not ask for sign-in without a provider', async () => {

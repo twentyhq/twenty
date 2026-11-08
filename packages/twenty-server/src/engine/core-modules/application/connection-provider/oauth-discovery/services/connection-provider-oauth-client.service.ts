@@ -5,6 +5,7 @@ import { type OAuthClientInformationMixed } from '@modelcontextprotocol/sdk/shar
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { ConnectionProviderOAuthClientEntity } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/entities/connection-provider-oauth-client.entity';
 import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
@@ -12,6 +13,15 @@ import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+type OAuthDiscoveryClientToSave = {
+  connectionProviderId: string;
+  workspaceId: string;
+  registrationMethod: OAuthDiscoveryRegistrationMethod;
+  redirectUri: string;
+  clientInformation: OAuthClientInformationMixed;
+  discoveryState: OAuthDiscoveryState;
+};
 
 @Injectable()
 export class ConnectionProviderOAuthClientService {
@@ -63,48 +73,32 @@ export class ConnectionProviderOAuthClientService {
     };
   }
 
-  async saveClient({
-    connectionProviderId,
-    workspaceId,
-    registrationMethod,
-    redirectUri,
-    clientInformation,
-    discoveryState,
-  }: {
-    connectionProviderId: string;
-    workspaceId: string;
-    registrationMethod: OAuthDiscoveryRegistrationMethod;
-    redirectUri: string;
-    clientInformation: OAuthClientInformationMixed;
-    discoveryState: OAuthDiscoveryState;
-  }): Promise<void> {
+  async saveClient(client: OAuthDiscoveryClientToSave): Promise<void> {
     await this.oauthClientRepository.upsert(
-      workspaceId,
-      {
-        connectionProviderId,
-        registrationMethod,
-        redirectUri,
-        // TypeORM's deep partial cannot express the SDK's open-ended metadata objects
-        discoveryState:
-          discoveryState as QueryDeepPartialEntity<OAuthDiscoveryState>,
-        clientId: clientInformation.client_id,
-        clientSecret:
-          this.connectedAccountTokenEncryptionService.encryptNullable({
-            plaintext: (clientInformation.client_secret ??
-              null) as PlaintextString | null,
-            workspaceId,
-          }),
-        // 0 means the secret never expires (RFC 7591)
-        clientSecretExpiresAt: clientInformation.client_secret_expires_at
-          ? new Date(clientInformation.client_secret_expires_at * 1000)
-          : null,
-        tokenEndpointAuthMethod:
-          'token_endpoint_auth_method' in clientInformation
-            ? (clientInformation.token_endpoint_auth_method ?? null)
-            : null,
-      },
+      client.workspaceId,
+      this.toRow(client),
       ['connectionProviderId'],
     );
+  }
+
+  // Returns false when the provider already has a client, which then stays
+  async insertClientIfAbsent(
+    client: OAuthDiscoveryClientToSave,
+  ): Promise<boolean> {
+    try {
+      await this.oauthClientRepository.insert(
+        client.workspaceId,
+        this.toRow(client),
+      );
+
+      return true;
+    } catch (error) {
+      if (isUniqueViolationError(error)) {
+        return false;
+      }
+
+      throw error;
+    }
   }
 
   async deleteClient({
@@ -117,5 +111,39 @@ export class ConnectionProviderOAuthClientService {
     await this.oauthClientRepository.delete(workspaceId, {
       connectionProviderId,
     });
+  }
+
+  private toRow({
+    connectionProviderId,
+    workspaceId,
+    registrationMethod,
+    redirectUri,
+    clientInformation,
+    discoveryState,
+  }: OAuthDiscoveryClientToSave): QueryDeepPartialEntity<ConnectionProviderOAuthClientEntity> {
+    return {
+      connectionProviderId,
+      registrationMethod,
+      redirectUri,
+      // TypeORM's deep partial cannot express the SDK's open-ended metadata objects
+      discoveryState:
+        discoveryState as QueryDeepPartialEntity<OAuthDiscoveryState>,
+      clientId: clientInformation.client_id,
+      clientSecret: this.connectedAccountTokenEncryptionService.encryptNullable(
+        {
+          plaintext: (clientInformation.client_secret ??
+            null) as PlaintextString | null,
+          workspaceId,
+        },
+      ),
+      // 0 means the secret never expires (RFC 7591)
+      clientSecretExpiresAt: clientInformation.client_secret_expires_at
+        ? new Date(clientInformation.client_secret_expires_at * 1000)
+        : null,
+      tokenEndpointAuthMethod:
+        'token_endpoint_auth_method' in clientInformation
+          ? (clientInformation.token_endpoint_auth_method ?? null)
+          : null,
+    };
   }
 }

@@ -325,6 +325,25 @@ export class McpServerClientService {
         throw error;
       }
 
+      const latestConnectedAccount =
+        await this.connectedAccountRepository.findOneBy({
+          id: connectedAccount.id,
+          workspaceId,
+        });
+
+      // A concurrent call may have used the same rotating refresh token first; its tokens are good
+      if (
+        isDefined(latestConnectedAccount) &&
+        !isDefined(latestConnectedAccount.authFailedAt) &&
+        latestConnectedAccount.lastCredentialsRefreshedAt?.getTime() !==
+          connectedAccount.lastCredentialsRefreshedAt?.getTime()
+      ) {
+        return this.connectedAccountRefreshTokensService.resolveTokens(
+          latestConnectedAccount,
+          workspaceId,
+        );
+      }
+
       await this.markConnectedAccountAuthFailed({
         connectedAccountId: connectedAccount.id,
         workspaceId,
