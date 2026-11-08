@@ -21,12 +21,12 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 
 @Entity('fieldPermission')
 @Index(
-  'IDX_FIELD_PERMISSION_OBJECT_LEVEL_FIELD_METADATA_ID_ROLE_ID_UNIQUE',
+  'IDX_FIELD_PERMISSION_OBJECT_LEVEL_FIELD_ROLE_UNIQUE',
   ['fieldMetadataId', 'roleId'],
   { unique: true, where: '"rowLevelPermissionPredicateGroupId" IS NULL' },
 )
 @Index(
-  'IDX_FIELD_PERMISSION_RULE_FIELD_METADATA_ID_ROLE_ID_GROUP_ID_UNIQUE',
+  'IDX_FIELD_PERMISSION_RULE_FIELD_ROLE_GROUP_UNIQUE',
   ['fieldMetadataId', 'roleId', 'rowLevelPermissionPredicateGroupId'],
   { unique: true, where: '"rowLevelPermissionPredicateGroupId" IS NOT NULL' },
 )
