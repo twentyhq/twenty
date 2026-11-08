@@ -116,7 +116,7 @@ describe('permissions read services', () => {
     authContext: PermissionsAuthContext;
     recordIds: string[];
   }): Promise<boolean> =>
-    recordPermissionsService.canAccessRecords({
+    recordPermissionsService.canAccessKnownRecords({
       operationType,
       principals:
         await principalPermissionsService.resolvePermissionsPrincipals({
@@ -174,7 +174,7 @@ describe('permissions read services', () => {
     });
   });
 
-  describe('canAccessRecords', () => {
+  describe('canAccessKnownRecords', () => {
     it('grants a role reading and updating an existing record it grants', async () => {
       expect(
         await askRecordsQuestion({

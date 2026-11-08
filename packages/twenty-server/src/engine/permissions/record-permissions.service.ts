@@ -248,7 +248,9 @@ export class RecordPermissionsService {
     });
   }
 
-  async canAccessRecords(question: RecordsOperationQuestion): Promise<boolean> {
+  async canAccessKnownRecords(
+    question: RecordsOperationQuestion,
+  ): Promise<boolean> {
     const grantedRecordIds = await this.findGrantedRecordIds(question);
 
     return (
@@ -259,7 +261,7 @@ export class RecordPermissionsService {
     );
   }
 
-  async filterGrantedRecordIds(
+  async filterAccessibleKnownRecordIds(
     request: RecordsOperationQuestion,
   ): Promise<Set<string>> {
     const readRequest = await this.findObjectAccessRequest({
