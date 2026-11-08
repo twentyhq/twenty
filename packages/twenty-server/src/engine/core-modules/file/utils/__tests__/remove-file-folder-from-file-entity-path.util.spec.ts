@@ -2,7 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 
-import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.util';
 
 describe('removeFileFolderFromFileEntityPath', () => {
   it('should remove file folder prefix from path', () => {
