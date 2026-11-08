@@ -1,10 +1,8 @@
-import request from 'supertest';
+import { replayOnTestApp } from 'test/integration/sso/utils/replay-on-test-app.util';
 import { isDefined } from 'twenty-shared/utils';
 
-export const startOidcLogin = async (identityProviderId: string) => {
-  const response = await request(`http://localhost:${APP_PORT}`).get(
-    `/auth/oidc/login/${identityProviderId}`,
-  );
+export const startOidcLogin = async (loginUrl: URL) => {
+  const response = await replayOnTestApp(loginUrl);
 
   const sessionCookies = response.get('Set-Cookie');
 
