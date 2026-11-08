@@ -103,7 +103,6 @@ jobs:
           api-key: ${{ steps.twenty.outputs.api-key }}
           app-path: ${{ matrix.app.path }}
           mode: ${{ matrix.server-source == 'local' && 'installation-and-integration-test' || 'integration-test-only' }}
-          install-monorepo-dependencies: ${{ matrix.server-source != 'local' }}
 
       - name: Dump server and worker logs on failure
         if: failure() && matrix.server-source == 'local'

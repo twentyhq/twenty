@@ -178,6 +178,7 @@ export const resolveAiRunPermissionScope = ({
             {
               objectMetadataId,
               fieldMetadataId: flatFieldMetadata.id,
+              rowLevelPermissionPredicateGroupId: null,
               canReadFieldValue: fieldPermission.canReadFieldValue,
               canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
             },

@@ -2654,6 +2654,7 @@ export type FieldPermission = {
   id: Scalars['UUID']['output'];
   objectMetadataId: Scalars['UUID']['output'];
   roleId: Scalars['UUID']['output'];
+  rowLevelPermissionPredicateGroupId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type FieldPermissionInput = {
@@ -2661,6 +2662,7 @@ export type FieldPermissionInput = {
   canUpdateFieldValue?: InputMaybe<Scalars['Boolean']['input']>;
   fieldMetadataId: Scalars['UUID']['input'];
   objectMetadataId: Scalars['UUID']['input'];
+  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type FieldRichTextConfiguration = {

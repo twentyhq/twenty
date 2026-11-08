@@ -23,12 +23,6 @@ inputs:
       "installation-only" (deploy + install only).
     required: false
     default: 'installation-and-integration-test'
-  install-monorepo-dependencies:
-    description: >
-      Set to "false" when a local server is already running from this checkout:
-      restoring node_modules under it can crash the worker while it boots.
-    required: false
-    default: 'true'
 
 runs:
   using: composite
@@ -45,16 +39,6 @@ runs:
             exit 1
             ;;
         esac
-
-    - name: Install monorepo dependencies
-      if: inputs.install-monorepo-dependencies == 'true'
-      uses: ./.github/actions/yarn-install
-
-    - name: Build Twenty CLI from checkout
-      shell: bash
-      run: |
-        npx nx build twenty-cli
-        echo "TWENTY_CLI=$GITHUB_WORKSPACE/packages/twenty-cli/dist/cli.cjs" >> "$GITHUB_ENV"
 
     - name: Enable Corepack
       if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
