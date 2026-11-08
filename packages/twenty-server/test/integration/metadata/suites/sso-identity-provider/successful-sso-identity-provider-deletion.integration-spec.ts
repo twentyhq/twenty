@@ -19,6 +19,13 @@ describe('SSO identity provider deletion should succeed', () => {
     });
   });
 
+  afterAll(async () => {
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."workspaceSSOIdentityProvider" WHERE id = $1`,
+      [identityProviderId],
+    );
+  });
+
   it('should delete an identity provider', async () => {
     const { data } = await deleteOneSsoIdentityProvider({
       identityProviderId,

@@ -11,7 +11,13 @@ import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-
 
 const APPLE_LOGIN_PAGE_ORIGIN = 'http://apple.localhost:3001';
 
-const buildSamlIdentityProviderInput = (id: string, name: string) => ({
+const buildSamlIdentityProviderInput = ({
+  id,
+  name,
+}: {
+  id: string;
+  name: string;
+}) => ({
   id,
   name,
   issuer: `https://${id}.example.com`,
@@ -27,18 +33,18 @@ describe('SSO identity provider listing should succeed', () => {
   beforeAll(async () => {
     await createOneSamlIdentityProvider({
       expectToFail: false,
-      input: buildSamlIdentityProviderInput(
-        activeIdentityProviderId,
-        'Active identity provider',
-      ),
+      input: buildSamlIdentityProviderInput({
+        id: activeIdentityProviderId,
+        name: 'Active identity provider',
+      }),
     });
 
     await createOneSamlIdentityProvider({
       expectToFail: false,
-      input: buildSamlIdentityProviderInput(
-        inactiveIdentityProviderId,
-        'Inactive identity provider',
-      ),
+      input: buildSamlIdentityProviderInput({
+        id: inactiveIdentityProviderId,
+        name: 'Inactive identity provider',
+      }),
     });
 
     await updateOneSsoIdentityProvider({
@@ -50,10 +56,10 @@ describe('SSO identity provider listing should succeed', () => {
     });
 
     await insertSamlIdentityProvider({
-      ...buildSamlIdentityProviderInput(
-        otherWorkspaceIdentityProviderId,
-        'Other workspace identity provider',
-      ),
+      ...buildSamlIdentityProviderInput({
+        id: otherWorkspaceIdentityProviderId,
+        name: 'Other workspace identity provider',
+      }),
       workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
     });
   });

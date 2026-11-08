@@ -10,8 +10,7 @@ type InsertSamlIdentityProviderArgs = {
   status?: SsoIdentityProviderStatus;
 };
 
-// The harness only holds sessions of the Apple workspace, so identity providers
-// of the other seeded workspace are inserted directly.
+// Only Apple has a test session, so other workspaces' providers are inserted directly
 export const insertSamlIdentityProvider = async ({
   id,
   name,
