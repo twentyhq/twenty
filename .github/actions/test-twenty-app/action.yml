@@ -23,10 +23,11 @@ inputs:
       "installation-only" (deploy + install only).
     required: false
     default: 'installation-and-integration-test'
-  install-monorepo-dependencies:
+  prepare-monorepo:
     description: >
       Set to "false" when a local server is already running from this checkout:
-      restoring node_modules under it can crash the worker while it boots.
+      it has installed dependencies and built the CLI, and redoing either under
+      it can crash the worker while it boots.
     required: false
     default: 'true'
 
@@ -47,11 +48,11 @@ runs:
         esac
 
     - name: Install monorepo dependencies
-      if: inputs.install-monorepo-dependencies == 'true'
+      if: inputs.prepare-monorepo == 'true'
       uses: ./.github/actions/yarn-install
 
     - name: Build Twenty CLI from checkout
-      if: env.TWENTY_CLI == ''
+      if: inputs.prepare-monorepo == 'true'
       shell: bash
       run: |
         npx nx build twenty-cli
