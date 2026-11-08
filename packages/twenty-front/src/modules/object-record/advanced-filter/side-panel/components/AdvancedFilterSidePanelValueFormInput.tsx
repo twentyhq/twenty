@@ -21,7 +21,6 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -30,6 +29,7 @@ import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import {
+  RecordFilterOperand,
   StandardObjectNameSingular,
   FieldMetadataType,
 } from 'twenty-shared/types';
