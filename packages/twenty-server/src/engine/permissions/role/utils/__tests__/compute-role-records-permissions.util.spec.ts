@@ -85,7 +85,7 @@ const computeObjectPermissions = (
   }).objects[OBJECT_METADATA_ID];
 
 describe('computeRoleRecordsPermissions', () => {
-  it('should keep RLS rule field permissions out of the object level restrictions', () => {
+  it('should keep RLS rule field permissions out of the object level lists', () => {
     const objectPermissions = computeObjectPermissions([
       {
         fieldMetadataId: 'rls-rule-field-id',
@@ -99,9 +99,7 @@ describe('computeRoleRecordsPermissions', () => {
       },
     ]);
 
-    expect(Object.keys(objectPermissions?.restrictedFields ?? {})).toEqual([
-      'object-field-id',
-    ]);
+    expect(objectPermissions?.unreadableFields).toEqual(['object-field-id']);
     expect(
       objectPermissions?.rowLevelRecordsPermissions?.unreadableFields,
     ).toEqual(['rls-rule-field-id']);

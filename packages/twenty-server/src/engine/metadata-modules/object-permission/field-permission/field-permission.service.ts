@@ -67,6 +67,32 @@ const toUniversalFlatFieldPermissionToDelete = (
   updatedAt: fieldPermission.updatedAt,
 });
 
+const filterFieldPermissionsOfInput = ({
+  fieldPermissions,
+  input,
+}: {
+  fieldPermissions: FlatFieldPermission[];
+  input: UpsertFieldPermissionsInput;
+}): FlatFieldPermission[] => {
+  const objectMetadataIds = new Set(
+    input.fieldPermissions.map(({ objectMetadataId }) => objectMetadataId),
+  );
+  const rowLevelPermissionPredicateGroupIds = new Set(
+    input.fieldPermissions.map(
+      ({ rowLevelPermissionPredicateGroupId }) =>
+        rowLevelPermissionPredicateGroupId ?? null,
+    ),
+  );
+
+  return fieldPermissions.filter(
+    ({ objectMetadataId, rowLevelPermissionPredicateGroupId }) =>
+      objectMetadataIds.has(objectMetadataId) &&
+      rowLevelPermissionPredicateGroupIds.has(
+        rowLevelPermissionPredicateGroupId ?? null,
+      ),
+  );
+};
+
 @Injectable()
 export class FieldPermissionService {
   constructor(
@@ -288,12 +314,10 @@ export class FieldPermissionService {
       flatEntityToUpdate.length === 0 &&
       flatEntityToDelete.length === 0
     ) {
-      const desiredObjectMetadataIds = new Set(
-        input.fieldPermissions.map((fp) => fp.objectMetadataId),
-      );
-      return currentFieldPermissionsForRole.filter((fp) =>
-        desiredObjectMetadataIds.has(fp.objectMetadataId),
-      );
+      return filterFieldPermissionsOfInput({
+        fieldPermissions: currentFieldPermissionsForRole,
+        input,
+      });
     }
 
     const buildAndRunResult =
@@ -341,13 +365,10 @@ export class FieldPermissionService {
         isDefined(fp) && fp.roleUniversalIdentifier === roleUniversalIdentifier,
     );
 
-    const desiredObjectMetadataIds = new Set(
-      input.fieldPermissions.map((fp) => fp.objectMetadataId),
-    );
-    const filtered = resultFieldPermissions.filter((fp) =>
-      desiredObjectMetadataIds.has(fp.objectMetadataId),
-    );
-    return filtered;
+    return filterFieldPermissionsOfInput({
+      fieldPermissions: resultFieldPermissions,
+      input,
+    });
   }
 
   private validateFieldPermission({

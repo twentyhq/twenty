@@ -10,7 +10,8 @@ const buildObjectRecordsPermissions = (
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
   ...overrides,
 });
 
@@ -44,13 +45,12 @@ describe('buildRecordReadRestrictions', () => {
       recordsPermissions: {
         objects: {
           person: buildObjectRecordsPermissions({
-            restrictedFields: {
-              jobTitle: { canRead: false, canUpdate: false },
-              city: { canRead: true, canUpdate: false },
-            },
+            unreadableFields: ['jobTitle'],
+            uneditableFields: ['jobTitle', 'city'],
           }),
           company: buildObjectRecordsPermissions({
-            restrictedFields: { name: { canRead: false } },
+            unreadableFields: ['name'],
+            uneditableFields: ['name'],
           }),
         },
       },

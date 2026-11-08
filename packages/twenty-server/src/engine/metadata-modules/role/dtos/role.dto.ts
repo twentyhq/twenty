@@ -101,6 +101,9 @@ export class RoleDTO {
   @Field(() => [FieldPermissionDTO], { nullable: true })
   fieldPermissions?: FieldPermissionDTO[];
 
+  @Field(() => [FieldPermissionDTO], { nullable: true })
+  rowLevelPermissionFieldPermissions?: FieldPermissionDTO[];
+
   @Field(() => [RowLevelPermissionPredicateDTO], { nullable: true })
   rowLevelPermissionPredicates?: RowLevelPermissionPredicateDTO[];
 

@@ -59,7 +59,8 @@ const narrowRecordsPermissionsToExplicitDenies = ({
       canDestroyAllRecords:
         grantedObjectRecordsPermissions.canDestroyAllRecords &&
         objectPermission.canDestroyObjectRecords !== false,
-      restrictedFields: grantedObjectRecordsPermissions.restrictedFields,
+      unreadableFields: grantedObjectRecordsPermissions.unreadableFields,
+      uneditableFields: grantedObjectRecordsPermissions.uneditableFields,
       rowLevelRecordsPermissions:
         grantedObjectRecordsPermissions.rowLevelRecordsPermissions,
     };

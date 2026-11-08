@@ -121,6 +121,16 @@ export class RoleService {
         )
         .map(fromFlatFieldPermissionToFieldPermissionDto);
 
+      roleDto.rowLevelPermissionFieldPermissions =
+        findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatRole.fieldPermissionIds,
+          flatEntityMaps: flatFieldPermissionMaps,
+        })
+          .filter(({ rowLevelPermissionPredicateGroupId }) =>
+            isDefined(rowLevelPermissionPredicateGroupId),
+          )
+          .map(fromFlatFieldPermissionToFieldPermissionDto);
+
       return roleDto;
     });
   }

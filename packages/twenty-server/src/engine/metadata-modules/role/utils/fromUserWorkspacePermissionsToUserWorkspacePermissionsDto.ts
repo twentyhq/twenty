@@ -31,7 +31,8 @@ const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
     objectRecordsPermissions,
     operationType: 'destroy',
   }),
-  restrictedFields: objectRecordsPermissions.restrictedFields,
+  unreadableFields: objectRecordsPermissions.unreadableFields,
+  uneditableFields: objectRecordsPermissions.uneditableFields,
   rowLevelPermissionPredicates:
     objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
   rowLevelPermissionPredicateGroups:
@@ -59,7 +60,8 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       canUpdateAllRecords: permissions.canUpdateAllRecords,
       canSoftDeleteAllRecords: permissions.canSoftDeleteAllRecords,
       canDestroyAllRecords: permissions.canDestroyAllRecords,
-      restrictedFields: permissions.restrictedFields,
+      unreadableFields: permissions.unreadableFields,
+      uneditableFields: permissions.uneditableFields,
       rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
     });
     legacyObjectPermissions.push(

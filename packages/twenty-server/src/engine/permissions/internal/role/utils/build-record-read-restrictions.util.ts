@@ -29,12 +29,8 @@ export const buildRecordReadRestrictions = ({
       unreadableObjectMetadataIds.add(objectMetadataId);
     }
 
-    for (const [fieldMetadataId, fieldPermissions] of Object.entries(
-      objectRecordsPermissions.restrictedFields,
-    )) {
-      if (fieldPermissions.canRead === false) {
-        unreadableFieldMetadataIds.add(fieldMetadataId);
-      }
+    for (const fieldMetadataId of objectRecordsPermissions.unreadableFields) {
+      unreadableFieldMetadataIds.add(fieldMetadataId);
     }
   }
 
