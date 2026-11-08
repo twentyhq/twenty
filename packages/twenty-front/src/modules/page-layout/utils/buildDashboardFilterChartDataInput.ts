@@ -4,16 +4,13 @@ import { type BarChartDataInput } from '~/generated-metadata/graphql';
 
 export const buildDashboardFilterChartDataInput = ({
   boundDashboardFilterValues,
-  timeZone,
+  viewerTimeZone,
 }: Pick<WidgetDashboardFilter, 'boundDashboardFilterValues'> & {
-  timeZone: string;
-}): Pick<
-  BarChartDataInput,
-  'dashboardFilterValues' | 'dashboardFilterTimeZone'
-> =>
+  viewerTimeZone: string;
+}): Pick<BarChartDataInput, 'dashboardFilterValues' | 'viewerTimeZone'> =>
   isNonEmptyArray(boundDashboardFilterValues)
     ? {
         dashboardFilterValues: boundDashboardFilterValues,
-        dashboardFilterTimeZone: timeZone,
+        viewerTimeZone,
       }
     : {};

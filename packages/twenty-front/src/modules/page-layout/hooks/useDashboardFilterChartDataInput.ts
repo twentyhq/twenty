@@ -13,7 +13,7 @@ export const useDashboardFilterChartDataInput = (
   return isDefined(dashboardFilters)
     ? buildDashboardFilterChartDataInput({
         boundDashboardFilterValues,
-        timeZone: dashboardFilters.timeZone,
+        viewerTimeZone: dashboardFilters.timeZone,
       })
     : {};
 };

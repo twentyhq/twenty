@@ -6,7 +6,7 @@ describe('buildDashboardFilterChartDataInput', () => {
     expect(
       buildDashboardFilterChartDataInput({
         boundDashboardFilterValues: [],
-        timeZone: 'Europe/Paris',
+        viewerTimeZone: 'Europe/Paris',
       }),
     ).toEqual({});
   });
@@ -24,11 +24,11 @@ describe('buildDashboardFilterChartDataInput', () => {
     expect(
       buildDashboardFilterChartDataInput({
         boundDashboardFilterValues,
-        timeZone: 'Europe/Paris',
+        viewerTimeZone: 'Europe/Paris',
       }),
     ).toEqual({
       dashboardFilterValues: boundDashboardFilterValues,
-      dashboardFilterTimeZone: 'Europe/Paris',
+      viewerTimeZone: 'Europe/Paris',
     });
   });
 });
