@@ -1725,6 +1725,11 @@ msgstr "Alkalmazás névjegye"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Az ehhez a munkaterülethez elfogadott és aláírt DPA-k, a sablon verziójával és dátumával."
 
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Hozzáférési csoportok"
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -3980,6 +3985,11 @@ msgstr "Erre vonatkozik"
 msgid "Apply"
 msgstr "Alkalmaz"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Privát rekordok alkalmazása azokra az objektumokra, amelyek alapértelmezés szerint nem privátak. Mindig be van kapcsolva azoknál a munkaterületeknél, ahol beállították a rekordmegosztást. Kikapcsolásával az ezeken az objektumokon privátként beállított rekordok ismét láthatóvá válnak."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4376,7 +4386,7 @@ msgid "Assistant avatar"
 msgstr "Asszisztens avatárja"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Asszisztens neve"
 
@@ -5961,6 +5971,11 @@ msgstr "Ellenőrzőlista"
 msgid "Check recent runs"
 msgstr "Legutóbbi futások ellenőrzése"
 
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Rekordok létrehozásakor a létrehozási jogosultságot ellenőrizze önmagában, ne a frissítési jogosultságot."
+
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -6899,6 +6914,11 @@ msgstr "Komponens-előnézet mintaadatokkal"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "E-mail írása"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Számítsa ki azokat a hozzáférési csoportokat, amelyeket a rekordlisták sorszintű jogosultságokhoz fognak használni. A munkaterület frissítésének befejezése után engedélyezze."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -8171,6 +8191,11 @@ msgstr "Rekord létrehozása"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Rekord létrehozása"
+
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Rekordok létrehozására vonatkozó jogosultság"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -10255,6 +10280,7 @@ msgid "Downgrade to monthly"
 msgstr "Váltás havi számlázásra"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
@@ -11276,7 +11302,7 @@ msgid "Enter a JSON value"
 msgstr "Adjon meg egy JSON-értéket"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Adjon meg egy 1 és {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} karakter közötti nevet egy sorban. A szögletes zárójeleknek párban kell szerepelniük, és nem ágyazhatók egymásba."
 
@@ -12748,6 +12774,11 @@ msgstr "Az aláírókulcs visszavonása nem sikerült. Kérjük, próbálja meg 
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Nem sikerült visszavonni a helyreállítási kódot."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "Az asszisztens beállításainak mentése sikertelen. Próbálja újra."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -14325,6 +14356,11 @@ msgstr "Azonosító"
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Happy"
 msgstr "Vidám"
+
+#. js-lingui-id: WsF7cD
+#: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
+msgid "Has attachments"
+msgstr "Vannak mellékletei"
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -18263,6 +18299,7 @@ msgid "More advanced fields for advanced projects"
 msgstr "További speciális mezők speciális projektekhez"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -22156,6 +22193,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "Megakadályozza ugyanazon érték hozzárendelését különböző rekordokhoz"
 
 #. js-lingui-id: rdUucN
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -22327,6 +22365,11 @@ msgstr "Adatvédelmi irányelvek"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Privát"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Privát rekordok"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -23673,11 +23716,6 @@ msgstr "A Replit telepítési hivatkozásokhoz HTTPS MCP URL szükséges."
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Válasz"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Válasz..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

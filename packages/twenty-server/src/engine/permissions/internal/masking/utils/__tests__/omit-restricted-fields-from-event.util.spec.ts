@@ -99,6 +99,7 @@ const buildRecordsPermissions = (
   return {
     objects: {
       [OBJECT_METADATA_ID]: {
+        canCreateAllRecords: true,
         canReadAllRecords: true,
         canUpdateAllRecords: true,
         canSoftDeleteAllRecords: true,

@@ -316,20 +316,22 @@ export class LocalDriver implements LogicFunctionDriver {
             timeoutMs,
           });
 
-        if (stdout)
+        if (stdout) {
           logs +=
             stdout
               .split('\n')
               .filter(Boolean)
               .map((l) => `${new Date().toISOString()} INFO ${l}`)
               .join('\n') + '\n';
-        if (stderr)
+        }
+        if (stderr) {
           logs +=
             stderr
               .split('\n')
               .filter(Boolean)
               .map((l) => `${new Date().toISOString()} ERROR ${l}`)
               .join('\n') + '\n';
+        }
 
         const duration = Date.now() - startTime;
 

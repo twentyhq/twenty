@@ -267,6 +267,7 @@ export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOptio
 export type { QueryCursorDirection } from './QueryCursorDirection';
 export type { RecordExportColumn } from './RecordExportColumn';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
+export { RecordFilterOperand } from './RecordFilterOperand';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
 export type { RecordGqlFields } from './RecordGqlFields';
 export type {

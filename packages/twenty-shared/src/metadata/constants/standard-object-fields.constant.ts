@@ -1401,6 +1401,9 @@ export const STANDARD_OBJECT_FIELDS = {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.accessGroup,
     ),
+    objectMetadataId: {
+      universalIdentifier: 'a1e1a495-ed2e-4e8d-8814-6ef0d1e484d0',
+    },
     roleId: {
       universalIdentifier: '0f8c81b0-6d46-4593-97cb-97216de930ff',
     },

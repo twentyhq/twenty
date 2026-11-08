@@ -35,6 +35,7 @@ jest.mock('@/object-record/hooks/useBuildRecordInputFromRLSPredicates', () => ({
 jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
   useObjectPermissionsForObject: () => ({
     canReadAllRecords: true,
+    canCreateAllRecords: true,
     canUpdateAllRecords: true,
     canSoftDeleteAllRecords: true,
     canDestroyAllRecords: true,

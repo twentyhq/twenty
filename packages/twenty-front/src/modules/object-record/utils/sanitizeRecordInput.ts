@@ -39,7 +39,9 @@ export const sanitizeRecordInput = ({
           );
         const potentialMorphRelationJoinColumnNameFieldMetadataItem =
           objectMetadataItem.fields.find((field) => {
-            if (!isFieldMorphRelation(field)) return false;
+            if (!isFieldMorphRelation(field)) {
+              return false;
+            }
             return field.morphRelations?.some((morphRelation) => {
               const computedFieldName = computeMorphRelationGqlFieldName({
                 fieldName: field.name,

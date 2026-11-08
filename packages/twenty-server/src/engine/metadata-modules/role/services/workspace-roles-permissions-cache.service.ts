@@ -100,6 +100,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
 
       permissionsByRoleId[role.id] = computeRoleRecordsPermissions({
         roleDefinition: {
+          canCreateAllObjectRecords: role.canCreateAllObjectRecords,
           canReadAllObjectRecords: role.canReadAllObjectRecords,
           canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
           canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,

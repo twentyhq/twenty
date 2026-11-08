@@ -69,7 +69,7 @@ export class CommonSelectFieldsBuilder {
     const unreadableFieldMetadataIdsPerObject = await Promise.all(
       [...new Set([objectMetadataId, ...readableObjectMetadataIds])].map(
         (selectedObjectMetadataId) =>
-          this.recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow({
+          this.recordPermissionsService.findUnreadableFields({
             principals,
             objectMetadataId: selectedObjectMetadataId,
           }),
@@ -182,7 +182,9 @@ export class CommonSelectFieldsBuilder {
     objectNameSingular: string;
     fieldNamesFromDepth: ReadonlySet<string>;
   }): ReadonlySet<string> | undefined {
-    if (!isDefined(requestedFields)) return undefined;
+    if (!isDefined(requestedFields)) {
+      return undefined;
+    }
 
     if (requestedFields.size === 0) {
       throw new CommonSelectFieldsException(

@@ -1725,6 +1725,11 @@ msgstr "Over je toepassing"
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Geaccepteerde en ondertekende DPA’s voor deze werkruimte, met hun sjabloonversie en datum."
 
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Toegangsgroepen"
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -3980,6 +3985,11 @@ msgstr "Van toepassing op"
 msgid "Apply"
 msgstr "Toepassen"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Privérecords toepassen op objecten die standaard niet privé zijn. Altijd ingeschakeld voor werkruimten waarvoor het delen van records is ingesteld. Als u dit uitschakelt, worden records die op die objecten als privé zijn ingesteld, weer zichtbaar."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4376,7 +4386,7 @@ msgid "Assistant avatar"
 msgstr "Avatar van assistent"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Naam van assistent"
 
@@ -5961,6 +5971,11 @@ msgstr "Checklist"
 msgid "Check recent runs"
 msgstr "Recente uitvoeringen controleren"
 
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Controleer bij het maken van records alleen de machtiging voor het maken, in plaats van de machtiging voor het bijwerken."
+
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -6899,6 +6914,11 @@ msgstr "Componentpreview met voorbeeldgegevens"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "E-mail opstellen"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Bereken de toegangsgroepen die recordlijsten zullen gebruiken voor machtigingen op rijniveau. Schakel in nadat de werkruimte-upgrade is voltooid."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -8171,6 +8191,11 @@ msgstr "Record aanmaken"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Record aanmaken"
+
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Machtiging voor het maken van records"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -10255,6 +10280,7 @@ msgid "Downgrade to monthly"
 msgstr "Downgraden naar maandelijks"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
@@ -11276,7 +11302,7 @@ msgid "Enter a JSON value"
 msgstr "Voer een JSON-waarde in"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Voer op één regel een naam in van 1 tot {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} tekens. Vierkante haken moeten gepaard zijn en mogen niet genest zijn."
 
@@ -12748,6 +12774,11 @@ msgstr "Kon de ondertekeningssleutel niet intrekken. Probeer het later opnieuw."
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Herstelcode intrekken mislukt."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "Kan de assistentinstellingen niet opslaan. Probeer het opnieuw."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -14325,6 +14356,11 @@ msgstr "Handle"
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Happy"
 msgstr "Blij"
+
+#. js-lingui-id: WsF7cD
+#: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
+msgid "Has attachments"
+msgstr "Heeft bijlagen"
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -18263,6 +18299,7 @@ msgid "More advanced fields for advanced projects"
 msgstr "Meer geavanceerde velden voor geavanceerde projecten"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -22156,6 +22193,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "Voorkom dat dezelfde waarde aan verschillende records wordt toegewezen"
 
 #. js-lingui-id: rdUucN
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -22327,6 +22365,11 @@ msgstr "Privacybeleid"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Privé"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Privérecords"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -23673,11 +23716,6 @@ msgstr "Replit-installatielinks vereisen een HTTPS MCP-URL."
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Antwoord"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Antwoord..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

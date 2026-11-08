@@ -109,12 +109,15 @@ const buildRepository = ({
       flatIndexMaps: createEmptyFlatEntityMaps(),
       permissionsPrincipals: undefined,
       recordPermissions: {
-        isOperationDisabled: jest.fn().mockResolvedValue(false),
-        assertObjectOperationAccessibleOrThrow: jest.fn(),
-        assertColumnsReadableAndUpdatableOrThrow: jest.fn(),
-        buildRecordsAccessCondition: jest.fn().mockResolvedValue(true),
+        isReadDisabled: jest.fn().mockResolvedValue(false),
+        assertCanRunOperationOrThrow: jest.fn(),
+        buildManyRecordsAccessCondition: jest.fn().mockResolvedValue(true),
         assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
         assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
+        recomputeRecordAccessGroupIdsOfRecords: jest.fn(),
+        isRecomputingRecordAccessGroupIdsOnWrite: jest
+          .fn()
+          .mockReturnValue(false),
       },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),

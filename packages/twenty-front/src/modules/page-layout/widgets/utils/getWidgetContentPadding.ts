@@ -10,6 +10,7 @@ export const getWidgetContentPadding = (
     case WidgetType.WORKFLOW_RUN:
     case WidgetType.WORKFLOW_VERSION:
     case WidgetType.CHAT:
+    case WidgetType.EMAIL_THREAD:
       return 'none';
     default:
       return 'default';

@@ -17,7 +17,7 @@ export class ObjectRecordCountService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  // Never-analyzed tables report reltuples as -1
+  // reltuples is -1 until a table is analyzed and live tuples reset with stats, so take the larger
   async getApproximateRecordCountByTableName(
     workspaceId: string,
   ): Promise<Map<string, number>> {
@@ -25,7 +25,8 @@ export class ObjectRecordCountService {
 
     const rows: { relname: string; approximate_count: number }[] =
       await this.coreDataSource.query(
-        `SELECT relname, reltuples::bigint AS approximate_count
+        `SELECT c.relname,
+                GREATEST(c.reltuples, pg_stat_get_live_tuples(c.oid))::bigint AS approximate_count
          FROM pg_class c
          JOIN pg_namespace n ON c.relnamespace = n.oid
          WHERE n.nspname = $1

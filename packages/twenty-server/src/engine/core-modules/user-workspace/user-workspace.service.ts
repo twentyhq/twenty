@@ -560,14 +560,18 @@ export class UserWorkspaceService {
         },
       });
 
-      if (!isDefined(userWorkspace?.defaultAvatarUrl)) return;
+      if (!isDefined(userWorkspace?.defaultAvatarUrl)) {
+        return;
+      }
 
       const sourceFileId = extractFileIdFromUrl(
         userWorkspace.defaultAvatarUrl,
         FileFolder.CorePicture,
       );
 
-      if (!isDefined(sourceFileId)) return;
+      if (!isDefined(sourceFileId)) {
+        return;
+      }
 
       try {
         const savedFile =
@@ -592,7 +596,9 @@ export class UserWorkspaceService {
       }
     }
 
-    if (!isDefined(pictureUrl) || pictureUrl === '') return;
+    if (!isDefined(pictureUrl) || pictureUrl === '') {
+      return;
+    }
 
     const savedFile =
       await this.fileCorePictureService.uploadWorkspaceMemberProfilePictureFromUrl(

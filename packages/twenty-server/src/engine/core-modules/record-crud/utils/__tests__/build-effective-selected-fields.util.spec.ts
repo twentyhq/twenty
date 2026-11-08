@@ -425,6 +425,7 @@ describe('buildEffectiveSelectedFields', () => {
     }): Pick<RoleRecordsPermissions, 'objects'> => ({
       objects: {
         'investor-lead-object-id': {
+          canCreateAllRecords: false,
           canReadAllRecords: true,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
@@ -432,6 +433,7 @@ describe('buildEffectiveSelectedFields', () => {
           restrictedFields: sourceRestrictedFields,
         },
         'company-object-id': {
+          canCreateAllRecords: false,
           canReadAllRecords: canReadCompany,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,

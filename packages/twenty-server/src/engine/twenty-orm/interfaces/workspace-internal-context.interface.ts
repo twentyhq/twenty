@@ -27,12 +27,13 @@ export interface WorkspaceInternalContext {
   recordReadRestrictions: RecordReadRestrictions;
   recordPermissions: Pick<
     RecordPermissionsService,
-    | 'isOperationDisabled'
-    | 'assertObjectOperationAccessibleOrThrow'
-    | 'assertColumnsReadableAndUpdatableOrThrow'
-    | 'buildRecordsAccessCondition'
+    | 'isReadDisabled'
+    | 'assertCanRunOperationOrThrow'
+    | 'buildManyRecordsAccessCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
+    | 'recomputeRecordAccessGroupIdsOfRecords'
+    | 'isRecomputingRecordAccessGroupIdsOnWrite'
   >;
   recordStock: Pick<
     WorkspaceRecordStockService,

@@ -153,7 +153,7 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
 
             for (let i = 0; i < groupByFieldNames.length; i++) {
               const fieldName = groupByFieldNames[i];
-              let recordValue = record[fieldName];
+              const recordValue = record[fieldName];
 
               if (!isDefined(recordValue)) {
                 break;

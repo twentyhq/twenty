@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { type AiChatAssistantProfile } from 'twenty-shared/ai';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Card } from 'twenty-ui/primitives/surfaces';
@@ -8,7 +7,7 @@ import { SettingsAiAssistantCustomizeMenu } from '~/pages/settings/ai/components
 
 type SettingsAiAssistantCustomizeProps = {
   value: AiChatAssistantProfile;
-  onChange: (value: AiChatAssistantProfile) => void;
+  onChange: (value: Partial<AiChatAssistantProfile>) => void;
   disabled: boolean;
   isCustom: boolean;
   describedBy?: string;
@@ -22,14 +21,9 @@ export const SettingsAiAssistantCustomize = ({
   describedBy,
 }: SettingsAiAssistantCustomizeProps) => {
   const { t } = useLingui();
-  const [isOpen, setIsOpen] = useState(false);
-
-  if (disabled && isOpen) {
-    setIsOpen(false);
-  }
 
   return (
-    <Dropdown.Root type="panel" open={isOpen} onOpenChange={setIsOpen}>
+    <Dropdown.Root type="panel">
       <Dropdown.Trigger
         disabled={disabled}
         aria-label={t`Customize`}

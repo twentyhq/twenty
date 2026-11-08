@@ -638,8 +638,9 @@ export class S3Driver implements StorageDriver {
     if (
       !isDefined(listedObjects.Contents) ||
       listedObjects.Contents.length === 0
-    )
+    ) {
       return;
+    }
 
     const deleteParams = {
       Bucket: this.bucketName,

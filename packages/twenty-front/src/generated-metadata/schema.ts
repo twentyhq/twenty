@@ -2560,6 +2560,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_ACCESS_GROUPS_ENABLED = 'IS_ACCESS_GROUPS_ENABLED',
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED',
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
@@ -2567,9 +2568,11 @@ export enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
+  IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
+  IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
@@ -5694,6 +5697,7 @@ export enum ObjectRecordGroupByDateGranularity {
 
 export type ObjectRecordsPermissions = {
   __typename?: 'ObjectRecordsPermissions';
+  canCreateAllRecords: Scalars['Boolean']['output'];
   canDestroyAllRecords: Scalars['Boolean']['output'];
   canReadAllRecords: Scalars['Boolean']['output'];
   canSoftDeleteAllRecords: Scalars['Boolean']['output'];
@@ -7018,6 +7022,7 @@ export enum RowLevelPermissionPredicateOperand {
 
 export type RowLevelRecordsPermissions = {
   __typename?: 'RowLevelRecordsPermissions';
+  canCreateRecords: Scalars['Boolean']['output'];
   canDestroyRecords: Scalars['Boolean']['output'];
   canReadRecords: Scalars['Boolean']['output'];
   canSoftDeleteRecords: Scalars['Boolean']['output'];
