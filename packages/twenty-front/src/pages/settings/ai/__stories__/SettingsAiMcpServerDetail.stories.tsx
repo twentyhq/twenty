@@ -7,6 +7,7 @@ import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { ConnectionProviderScope } from '~/generated-metadata/graphql';
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import {
   mockedMcpServer,
@@ -31,6 +32,7 @@ const meta: Meta<PageDecoratorArgs> = {
                 ...mockedMcpServer,
                 connectionProviderId:
                   mockedMcpServerSignInConnectionProvider.id,
+                signInScope: ConnectionProviderScope.USER,
               },
             },
           }),
@@ -92,7 +94,7 @@ export const Default: Story = {
     expect(canvas.getByDisplayValue('linear')).toBeDisabled();
     await canvas.findByText('search_issues');
     await canvas.findByText('Sign in to use this server');
-    expect(canvas.getByText('Sign in to the server')).toBeVisible();
+    expect(canvas.getByText('Each member signs in')).toBeVisible();
     await canvas.findByRole('button', { name: 'Deactivate' });
   },
 };

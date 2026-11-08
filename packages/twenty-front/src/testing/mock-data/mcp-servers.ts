@@ -13,6 +13,7 @@ export const mockedMcpServer: McpServerFragmentFragment = {
   label: 'Linear',
   url: 'https://mcp.linear.app/mcp',
   connectionProviderId: null,
+  signInScope: null,
   isActive: true,
   toolsSyncedAt: '2026-11-04T10:00:00.000Z',
   toolsSyncError: null,

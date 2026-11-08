@@ -8,6 +8,7 @@ const MCP_SERVER_FIELDS = `
   label
   url
   connectionProviderId
+  signInScope
   isActive
   tools {
     name
@@ -66,6 +67,7 @@ export type McpServerInput = {
   url: string;
   connectionProviderId?: string | null;
   isActive?: boolean;
+  signInScope?: 'USER' | 'WORKSPACE';
 };
 
 export const createMcpServer = (input: McpServerInput) =>

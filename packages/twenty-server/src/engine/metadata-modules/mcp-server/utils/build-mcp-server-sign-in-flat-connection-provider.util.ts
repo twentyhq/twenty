@@ -1,3 +1,4 @@
+import { type ConnectionProviderScope } from 'twenty-shared/application';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -5,13 +6,15 @@ import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-co
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { buildMcpServerSignInConnectionProviderName } from 'src/engine/metadata-modules/mcp-server/utils/build-mcp-server-sign-in-connection-provider-name.util';
 
-// Each member signs in with their own account; the server's OAuth settings are discovered at connect time.
+// The server's OAuth settings are discovered at connect time.
 export const buildMcpServerSignInFlatConnectionProvider = ({
   mcpServer,
   flatApplication,
+  scope,
 }: {
   mcpServer: Pick<FlatMcpServer, 'name' | 'label' | 'url' | 'workspaceId'>;
   flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
+  scope: ConnectionProviderScope;
 }): FlatConnectionProvider => {
   const id = v4();
   const now = new Date().toISOString();
@@ -29,7 +32,7 @@ export const buildMcpServerSignInFlatConnectionProvider = ({
     displayName: mcpServer.label,
     logo: null,
     type: 'oauth-discovery',
-    scope: 'USER',
+    scope,
     oauthConfig: null,
     customConfig: null,
     oauthDiscoveryConfig: { resourceUrl: mcpServer.url },

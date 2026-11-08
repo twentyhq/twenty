@@ -4,10 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsMcpServerConnectionProviderSelect } from '@/settings/mcp-servers/components/SettingsMcpServerConnectionProviderSelect';
+import { SettingsMcpServerSignInScopeSelect } from '@/settings/mcp-servers/components/SettingsMcpServerSignInScopeSelect';
 import { SettingsMcpServerTextField } from '@/settings/mcp-servers/components/SettingsMcpServerTextField';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type McpServer } from '~/generated-metadata/graphql';
 
 const StyledInputsContainer = styled.div`
@@ -17,7 +15,7 @@ const StyledInputsContainer = styled.div`
 `;
 
 type SettingsMcpServerFormFieldsProps = {
-  mcpServer?: Pick<McpServer, 'id' | 'applicationId' | 'connectionProviderId'>;
+  mcpServer?: Pick<McpServer, 'id' | 'signInScope'>;
   isUrlLocked?: boolean;
 };
 
@@ -26,13 +24,9 @@ export const SettingsMcpServerFormFields = ({
   isUrlLocked = false,
 }: SettingsMcpServerFormFieldsProps) => {
   const { t } = useLingui();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isNewMcpServer = !isDefined(mcpServer);
   const instanceIdPrefix = mcpServer?.id ?? 'new-mcp-server';
-  const connectionProviderApplicationId =
-    mcpServer?.applicationId ??
-    currentWorkspace?.workspaceCustomApplication?.id;
 
   return (
     <>
@@ -72,15 +66,14 @@ export const SettingsMcpServerFormFields = ({
             placeholder={t`https://mcp.example.com/mcp`}
             hint={
               isUrlLocked
-                ? t`Remove the connection provider to change the URL.`
+                ? t`The app that authenticates calls to this server sets its URL.`
                 : undefined
             }
             disabled={isUrlLocked}
           />
-          {isDefined(connectionProviderApplicationId) && (
-            <SettingsMcpServerConnectionProviderSelect
-              applicationId={connectionProviderApplicationId}
-              savedConnectionProviderId={mcpServer?.connectionProviderId}
+          {isDefined(mcpServer?.signInScope) && (
+            <SettingsMcpServerSignInScopeSelect
+              instanceId={`${instanceIdPrefix}-sign-in-scope`}
             />
           )}
         </StyledInputsContainer>

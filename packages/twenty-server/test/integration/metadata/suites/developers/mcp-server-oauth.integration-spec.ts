@@ -29,6 +29,7 @@ type CreatedMcpServer = {
   name: string;
   applicationId: string;
   connectionProviderId: string | null;
+  signInScope: 'USER' | 'WORKSPACE' | null;
 };
 
 describe('MCP server sign-in through an oauth-discovery connection provider (e2e)', () => {
@@ -67,12 +68,13 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
 
   const requestAuthorization = async (
     reconnectingConnectedAccountId?: string,
+    accessToken: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
   ): Promise<URL> => {
     const [connectionProvider] = await readConnectionProvider(
       getConnectionProviderId(),
     );
     const transient = await generateTransientTokenResponse({
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      token: accessToken,
     });
 
     const response = await twentyServer()
@@ -152,6 +154,7 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
       getConnectionProviderId(),
     );
 
+    expect(mcpServer.signInScope).toBe('USER');
     expect(connectionProvider).toMatchObject({
       type: 'oauth-discovery',
       scope: 'USER',
@@ -394,6 +397,52 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
       [],
     );
     expect(await readOAuthClients(previousConnectionProviderId)).toEqual([]);
+  });
+
+  it('switches to one shared workspace account that only an admin can connect', async () => {
+    const userConnectionProviderId = getConnectionProviderId();
+
+    const response = await updateMcpServer({
+      id: mcpServer.id,
+      update: { signInScope: 'WORKSPACE' },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    mcpServer = response.body.data.updateMcpServer;
+
+    const [connectionProvider] = await readConnectionProvider(
+      getConnectionProviderId(),
+    );
+
+    expect(mcpServer.signInScope).toBe('WORKSPACE');
+    expect(connectionProvider).toMatchObject({
+      type: 'oauth-discovery',
+      scope: 'WORKSPACE',
+    });
+    expect(await readConnectionProvider(userConnectionProviderId)).toEqual([]);
+
+    const memberAuthorizationResponse = await requestAuthorization(
+      undefined,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(
+      memberAuthorizationResponse.searchParams.get('errorMessage'),
+    ).toContain('does not have permission');
+
+    const redirectUrl = await signIn();
+    const connectedAccounts = await readConnectedAccounts(
+      getConnectionProviderId(),
+    );
+
+    expect(redirectUrl.searchParams.get('errorMessage')).toBeNull();
+    expect(connectedAccounts).toEqual([
+      expect.objectContaining({ provider: 'app', scope: 'WORKSPACE' }),
+    ]);
+
+    const syncResponse = await syncMcpServerTools(mcpServer.id);
+
+    expect(syncResponse.body.data.syncMcpServerTools.toolsSyncError).toBeNull();
   });
 
   it('removes its sign-in provider with the server', async () => {

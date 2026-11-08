@@ -39,30 +39,35 @@ export const SettingsMcpServerEditForm = ({
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
 
+  const { signInScope } = mcpServer;
   const { data: connectionProvidersData } = useQuery(
     ApplicationConnectionProvidersDocument,
-    { variables: { applicationId: mcpServer.applicationId } },
+    {
+      variables: { applicationId: mcpServer.applicationId },
+      skip: !isDefined(signInScope),
+    },
   );
-  const signInConnectionProvider =
-    connectionProvidersData?.applicationConnectionProviders.find(
-      (connectionProvider) =>
-        connectionProvider.id === mcpServer.connectionProviderId &&
-        connectionProvider.type === 'oauth-discovery',
-    );
+  const signInConnectionProvider = isDefined(signInScope)
+    ? connectionProvidersData?.applicationConnectionProviders.find(
+        (connectionProvider) =>
+          connectionProvider.id === mcpServer.connectionProviderId,
+      )
+    : undefined;
 
   const handleSave = async ({
     label,
     url,
-    connectionProviderId,
+    signInScope: nextSignInScope,
   }: McpServerFormValues) => {
     const savedFormValues = getMcpServerFormValues(mcpServer);
 
     const update = {
       ...(label !== savedFormValues.label && { label }),
       ...(url !== savedFormValues.url && { url }),
-      ...(connectionProviderId !== savedFormValues.connectionProviderId && {
-        connectionProviderId,
-      }),
+      ...(isDefined(nextSignInScope) &&
+        nextSignInScope !== savedFormValues.signInScope && {
+          signInScope: nextSignInScope,
+        }),
     };
 
     if (isEmptyObject(update)) {
@@ -99,14 +104,14 @@ export const SettingsMcpServerEditForm = ({
           mcpServer={mcpServer}
           // A sign-in provider follows the URL; another provider's tokens must not reach a new host
           isUrlLocked={
-            isDefined(mcpServer.connectionProviderId) &&
-            !isDefined(signInConnectionProvider)
+            isDefined(mcpServer.connectionProviderId) && !isDefined(signInScope)
           }
         />
-        {isDefined(signInConnectionProvider) && (
+        {isDefined(signInScope) && isDefined(signInConnectionProvider) && (
           <SettingsMcpServerConnectionsSection
             mcpServerId={mcpServer.id}
             connectionProvider={signInConnectionProvider}
+            signInScope={signInScope}
           />
         )}
         <SettingsMcpServerToolsSection mcpServer={mcpServer} />

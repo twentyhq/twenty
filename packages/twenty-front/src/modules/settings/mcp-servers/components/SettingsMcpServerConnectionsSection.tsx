@@ -9,10 +9,13 @@ import { Section } from 'twenty-ui/components/layout';
 
 import { SettingsAppPreferencesConnectionsTable } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable';
 import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
-import { useMyPersonalConnectedAccounts } from '@/settings/app-preferences/hooks/useMyPersonalConnectedAccounts';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
-import { type ApplicationConnectionProviderFragmentFragment } from '~/generated-metadata/graphql';
+import {
+  type ApplicationConnectionProviderFragmentFragment,
+  ConnectionProviderScope,
+} from '~/generated-metadata/graphql';
 
 const APP_CONNECTED_ACCOUNT_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
   new Set([ConnectedAccountProvider.APP]);
@@ -23,16 +26,20 @@ type SettingsMcpServerConnectionsSectionProps = {
     ApplicationConnectionProviderFragmentFragment,
     'id' | 'applicationId' | 'name' | 'logoUrl'
   >;
+  signInScope: ConnectionProviderScope;
 };
 
 export const SettingsMcpServerConnectionsSection = ({
   mcpServerId,
   connectionProvider,
+  signInScope,
 }: SettingsMcpServerConnectionsSectionProps) => {
   const { t } = useLingui();
-  const { accounts, loading, error, refetch } = useMyPersonalConnectedAccounts({
+  // Lists what the caller may use: their own accounts, or the provider's shared one
+  const { accounts, loading, error, refetch } = useMyConnectedAccounts({
     providers: APP_CONNECTED_ACCOUNT_PROVIDERS,
   });
+  const isShared = signInScope === ConnectionProviderScope.WORKSPACE;
 
   const connections = accounts.filter(
     (account) => account.connectionProviderId === connectionProvider.id,
@@ -44,8 +51,12 @@ export const SettingsMcpServerConnectionsSection = ({
   return (
     <Section.Root>
       <Section.Header
-        title={t`Your connection`}
-        description={t`This server asks each member to sign in with their own account. Twenty registers itself with the server automatically.`}
+        title={isShared ? t`Shared connection` : t`Your connection`}
+        description={
+          isShared
+            ? t`Every call to this server uses this account. Only admins can connect it.`
+            : t`This server asks each member to sign in with their own account. Twenty registers itself with the server automatically.`
+        }
       />
       {isDefined(error) ? (
         <SettingsApplicationLoadErrorBanner
@@ -72,7 +83,11 @@ export const SettingsMcpServerConnectionsSection = ({
         <SettingsApplicationConnectCard
           applicationId={connectionProvider.applicationId}
           connectionProvider={connectionProvider}
-          title={t`Sign in to use this server`}
+          title={
+            isShared
+              ? t`Connect the shared account`
+              : t`Sign in to use this server`
+          }
           redirectLocation={redirectLocation}
         />
       )}

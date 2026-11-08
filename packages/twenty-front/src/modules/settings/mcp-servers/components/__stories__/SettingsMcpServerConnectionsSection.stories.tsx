@@ -13,6 +13,7 @@ import { SettingsMcpServerConnectionsSection } from '@/settings/mcp-servers/comp
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { ConnectionProviderScope } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
@@ -66,6 +67,7 @@ const meta: Meta<typeof SettingsMcpServerConnectionsSection> = {
   args: {
     mcpServerId: mockedMcpServer.id,
     connectionProvider: mockedMcpServerSignInConnectionProvider,
+    signInScope: ConnectionProviderScope.USER,
   },
 };
 
@@ -113,5 +115,31 @@ export const NotConnected: Story = {
         timeout: 3000,
       }),
     ).toBeVisible();
+  },
+};
+
+export const SharedNotConnected: Story = {
+  // Another provider, so the accounts cached by the other stories do not match
+  args: {
+    connectionProvider: {
+      ...mockedMcpServerSignInConnectionProvider,
+      id: '20202020-6d63-4070-8000-000000000098',
+    },
+    signInScope: ConnectionProviderScope.WORKSPACE,
+  },
+  parameters: {
+    msw: {
+      handlers: buildConnectedAccountsHandlers([]),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Connect the shared account', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(canvas.getByText('Shared connection')).toBeVisible();
   },
 };

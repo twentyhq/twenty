@@ -3730,6 +3730,9 @@ export default {
             "name": [
                 1
             ],
+            "signInScope": [
+                171
+            ],
             "url": [
                 1
             ],
@@ -6572,6 +6575,9 @@ export default {
             ],
             "name": [
                 1
+            ],
+            "signInScope": [
+                171
             ],
             "tools": [
                 363
@@ -14257,6 +14263,9 @@ export default {
             ],
             "name": [
                 1
+            ],
+            "signInScope": [
+                171
             ],
             "url": [
                 1
