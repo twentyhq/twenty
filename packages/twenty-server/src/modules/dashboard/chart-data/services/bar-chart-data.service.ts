@@ -36,7 +36,7 @@ type GetBarChartDataParams = {
   objectMetadataId: string;
   configuration: BarChartConfigurationDTO;
   dashboardFilterValues?: DashboardFilterValueInput[] | null;
-  dashboardFilterTimeZone?: string | null;
+  viewerTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
   locale: keyof typeof APP_LOCALES;
 };
@@ -55,7 +55,7 @@ export class BarChartDataService {
     objectMetadataId,
     configuration,
     dashboardFilterValues,
-    dashboardFilterTimeZone,
+    viewerTimeZone,
     authContext,
     locale,
   }: GetBarChartDataParams): Promise<BarChartDataDTO> {
@@ -148,7 +148,7 @@ export class BarChartDataService {
         filter: configuration.filter,
         dashboardFilterBindings: configuration.dashboardFilterBindings,
         dashboardFilterValues,
-        dashboardFilterTimeZone,
+        viewerTimeZone,
         dateGranularity: configuration.primaryAxisDateGranularity,
         userTimezone,
         firstDayOfTheWeek,

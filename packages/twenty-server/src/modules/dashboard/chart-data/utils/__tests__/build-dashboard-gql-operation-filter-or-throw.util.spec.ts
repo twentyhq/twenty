@@ -83,17 +83,17 @@ const periodValue = (operand: ViewFilterOperand, value: string) => [
 const buildFilterBoundTo = ({
   fieldMetadataId,
   dashboardFilterValues,
-  dashboardFilterTimeZone = VIEWER_TIME_ZONE,
+  viewerTimeZone = VIEWER_TIME_ZONE,
   firstDayOfTheWeek = CalendarStartDay.MONDAY,
 }: {
   fieldMetadataId: string;
   dashboardFilterValues: ReturnType<typeof periodValue> | null;
-  dashboardFilterTimeZone?: string | null;
+  viewerTimeZone?: string | null;
   firstDayOfTheWeek?: CalendarStartDay;
 }) =>
   buildDashboardGqlOperationFilterOrThrow({
     dashboardFilterValues,
-    dashboardFilterTimeZone,
+    viewerTimeZone,
     dashboardFilterBindings: [
       { pageLayoutFilterId: PERIOD_FILTER_ID, fieldMetadataId },
     ],
@@ -314,7 +314,7 @@ describe('buildDashboardGqlOperationFilterOrThrow', () => {
   it.each([
     ['no time zone', null],
     ['a time zone Temporal does not know', 'Mars/Olympus_Mons'],
-  ])('should reject values sent with %s', (_, dashboardFilterTimeZone) => {
+  ])('should reject values sent with %s', (_, viewerTimeZone) => {
     expect(
       catchChartDataException(() =>
         buildFilterBoundTo({
@@ -323,7 +323,7 @@ describe('buildDashboardGqlOperationFilterOrThrow', () => {
             ViewFilterOperand.IS_AFTER,
             '2026-01-01',
           ),
-          dashboardFilterTimeZone,
+          viewerTimeZone,
         }),
       ),
     ).toMatchObject({

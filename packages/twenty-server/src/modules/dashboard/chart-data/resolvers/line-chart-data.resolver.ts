@@ -44,7 +44,7 @@ export class LineChartDataResolver {
       objectMetadataId: input.objectMetadataId,
       configuration: input.configuration,
       dashboardFilterValues: input.dashboardFilterValues,
-      dashboardFilterTimeZone: input.dashboardFilterTimeZone,
+      viewerTimeZone: input.viewerTimeZone,
       workspaceId: authContext.workspace.id,
       authContext,
       locale: context.req.locale,
