@@ -74,6 +74,7 @@ export class RecordEventPermissionsService {
     return filterReadableEvents({
       events,
       readableRecordIds: await findReadableRecordIdsInBatch(principals),
+      principals,
       objectMetadata: eventBatch.objectMetadata,
       recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
         principals,

@@ -97,7 +97,8 @@ const fullAccess: ObjectRecordsPermissions = {
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const rolePrincipals: PermissionsPrincipalsWithRolesContext = {

@@ -5,14 +5,19 @@ import { Injectable } from '@nestjs/common';
 import {
   type FeatureFlagKey,
   type ObjectRecordsOperationType,
+  type RecordGqlOperationFilter,
   type RecordShareAccessLevel,
-  type RestrictedFieldPermissions,
   type ObjectRecord,
 } from 'twenty-shared/types';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { composeRecordFieldMetadataIds } from 'src/engine/permissions/internal/masking/utils/compose-record-field-metadata-ids.util';
+import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/masking/utils/find-rls-rule-fields-by-role.util';
+import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
+import { resolveRowLevelPermissionRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter-for-role.util';
+import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -282,11 +287,17 @@ export class RecordPermissionsService {
   }
 
   findUnreadableFields(question: ObjectQuestion): Promise<Set<string>> {
-    return this.findDeniedFields({ ...question, fieldPermission: 'canRead' });
+    return this.findObjectFieldMetadataIds({
+      ...question,
+      fieldList: 'unreadableFields',
+    });
   }
 
   findUneditableFields(question: ObjectQuestion): Promise<Set<string>> {
-    return this.findDeniedFields({ ...question, fieldPermission: 'canUpdate' });
+    return this.findObjectFieldMetadataIds({
+      ...question,
+      fieldList: 'uneditableFields',
+    });
   }
 
   async filterRoleIdsWithoutReadAccess({
@@ -415,6 +426,70 @@ export class RecordPermissionsService {
     });
   }
 
+  async findRlsRuleUnreadableFieldsByRole({
+    principals,
+    objectMetadataId,
+  }: ObjectQuestion): Promise<
+    { roleId: string; fieldMetadataIds: string[] }[]
+  > {
+    if (!isDefined(principals)) {
+      return [];
+    }
+
+    return findRlsRuleFieldsByRole({
+      principals,
+      metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
+        { principals },
+      ),
+      objectMetadataId,
+      fieldList: 'unreadableFields',
+    });
+  }
+
+  async buildRlsRuleSqlConditionOrThrow({
+    principals,
+    objectMetadataId,
+    roleId,
+    tableAlias,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    roleId: string;
+    tableAlias: string;
+  }): Promise<SqlCondition> {
+    const metadataMaps =
+      await this.permissionsMetadataMapsService.loadForPrincipals({
+        principals,
+      });
+    const flatObjectMetadata = this.findFlatObjectMetadata({
+      metadataMaps,
+      objectMetadataId,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
+        PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
+    // An RLS rule whose filter compiles to nothing matches every record
+    return (
+      renderRowLevelPermissionFilterToSql({
+        recordFilter:
+          resolveRowLevelPermissionRecordFilterForRole({
+            principals,
+            metadataMaps,
+            flatObjectMetadata,
+            roleId,
+          }) ?? {},
+        tableAlias,
+        objectMetadata: flatObjectMetadata,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+      }) ?? { sql: 'TRUE', parameters: {} }
+    );
+  }
+
   private async findCallerAccessGroupCompactIds(
     objectAccessRequest: PermissionsObjectAccessRequest,
   ): Promise<number[] | undefined> {
@@ -488,6 +563,14 @@ export class RecordPermissionsService {
       return;
     }
 
+    this.assertUpdatedColumnsAreEditableOrThrow({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      updates,
+      formatRecords,
+    });
+
     const context = this.buildWriteRowAccessEvaluationContext({
       workspaceId: principals.workspaceId,
       flatObjectMetadata,
@@ -532,6 +615,58 @@ export class RecordPermissionsService {
         'Updated record does not satisfy row-level security constraints of your current role',
         PermissionsExceptionCode.RLS_VALIDATION_FAILED,
       );
+    }
+  }
+
+  private assertUpdatedColumnsAreEditableOrThrow({
+    principals,
+    metadataMaps,
+    flatObjectMetadata,
+    updates,
+    formatRecords,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    metadataMaps: PermissionsMetadataMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    updates: {
+      rawRecordBefore: ObjectRecord;
+      setColumns: Record<string, unknown>;
+    }[];
+    formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
+  }): void {
+    const columnNameToFieldMetadataId = getColumnNameToFieldMetadataIdMap(
+      flatObjectMetadata,
+      metadataMaps.flatFieldMetadataMaps,
+    );
+
+    const rlsRuleFilterByRoleId = new Map<
+      string,
+      RecordGqlOperationFilter | null
+    >();
+
+    for (const { rawRecordBefore, setColumns } of updates) {
+      const uneditableFieldMetadataIds = composeRecordFieldMetadataIds({
+        principals,
+        metadataMaps,
+        flatObjectMetadata,
+        fieldList: 'uneditableFields',
+        objectFieldMetadataIds: [],
+        records: formatRecords([rawRecordBefore]),
+        rlsRuleFilterByRoleId,
+      });
+
+      if (
+        Object.keys(setColumns).some((columnName) =>
+          uneditableFieldMetadataIds.has(
+            columnNameToFieldMetadataId[columnName],
+          ),
+        )
+      ) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
     }
   }
 
@@ -703,12 +838,12 @@ export class RecordPermissionsService {
     });
   }
 
-  private async findDeniedFields({
+  private async findObjectFieldMetadataIds({
     principals,
     objectMetadataId,
-    fieldPermission,
+    fieldList,
   }: ObjectQuestion & {
-    fieldPermission: keyof RestrictedFieldPermissions;
+    fieldList: 'unreadableFields' | 'uneditableFields';
   }): Promise<Set<string>> {
     if (!isDefined(principals)) {
       return new Set();
@@ -738,15 +873,7 @@ export class RecordPermissionsService {
       return new Set(flatObjectMetadata.fieldIds);
     }
 
-    return new Set(
-      Object.entries(objectRecordsPermissions.restrictedFields)
-        .filter(
-          ([, restrictedField]) =>
-            restrictedField.canRead === false ||
-            restrictedField[fieldPermission] === false,
-        )
-        .map(([fieldMetadataId]) => fieldMetadataId),
-    );
+    return new Set(objectRecordsPermissions[fieldList]);
   }
 
   private async findObjectAccessRequest({
