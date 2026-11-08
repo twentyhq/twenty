@@ -1,12 +1,21 @@
 import { t } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 import {
   BarChartLayout,
   WidgetConfigurationType,
-  type WidgetConfiguration,
 } from '~/generated-metadata/graphql';
 
+type TitledWidgetConfigurationType =
+  | WidgetConfigurationType.AGGREGATE_CHART
+  | WidgetConfigurationType.PIE_CHART
+  | WidgetConfigurationType.BAR_CHART
+  | WidgetConfigurationType.LINE_CHART
+  | WidgetConfigurationType.IFRAME
+  | WidgetConfigurationType.STANDALONE_RICH_TEXT;
+
 export const getWidgetTitle = (
-  configuration: Pick<WidgetConfiguration, 'configurationType'> & {
+  configuration: {
+    configurationType: TitledWidgetConfigurationType;
     layout?: BarChartLayout;
   },
   index: number,
@@ -28,20 +37,7 @@ export const getWidgetTitle = (
       return `${t`Iframe`} ${index + 1}`;
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
       return `${t`Rich Text`} ${index + 1}`;
-    case WidgetConfigurationType.FIELD:
-    case WidgetConfigurationType.FIELDS:
-    case WidgetConfigurationType.CALENDAR:
-    case WidgetConfigurationType.EMAILS:
-    case WidgetConfigurationType.TASKS:
-    case WidgetConfigurationType.NOTES:
-    case WidgetConfigurationType.FILES:
-    case WidgetConfigurationType.WORKFLOW:
-    case WidgetConfigurationType.WORKFLOW_VERSION:
-    case WidgetConfigurationType.WORKFLOW_RUN:
-    case WidgetConfigurationType.VIEW:
-    case WidgetConfigurationType.TIMELINE:
-    case WidgetConfigurationType.FIELD_RICH_TEXT:
     default:
-      throw new Error("Didn't expect to get here.");
+      assertUnreachable(configuration.configurationType);
   }
 };
