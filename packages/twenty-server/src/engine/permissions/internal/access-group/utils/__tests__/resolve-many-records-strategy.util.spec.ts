@@ -26,7 +26,7 @@ const allRecords: ObjectRecordsPermissions = {
   restrictedFields: {},
 };
 
-const withRule: ObjectRecordsPermissions = {
+const withRlsRule: ObjectRecordsPermissions = {
   ...allRecords,
   canReadAllRecords: false,
   rowLevelRecordsPermissions: {
@@ -79,10 +79,10 @@ const buildRequest = ({
 });
 
 describe('resolveManyRecordsStrategy', () => {
-  it('should use access groups when the main role has a rule on the object', () => {
+  it('should use access groups when the main role has an RLS rule on the object', () => {
     expect(
       resolveManyRecordsStrategy(
-        buildRequest({ objectRecordsPermissions: withRule }),
+        buildRequest({ objectRecordsPermissions: withRlsRule }),
       ),
     ).toBe('accessGroups');
   });
@@ -93,12 +93,12 @@ describe('resolveManyRecordsStrategy', () => {
   ])('should stay degraded when %s', (_, overrides) => {
     expect(
       resolveManyRecordsStrategy(
-        buildRequest({ objectRecordsPermissions: withRule, ...overrides }),
+        buildRequest({ objectRecordsPermissions: withRlsRule, ...overrides }),
       ),
     ).toBe('degradedCondition');
   });
 
-  it('should use the plain condition when no role has a rule on the object', () => {
+  it('should use the plain condition when no role has an RLS rule on the object', () => {
     expect(
       resolveManyRecordsStrategy(
         buildRequest({ objectRecordsPermissions: allRecords }),
@@ -106,8 +106,8 @@ describe('resolveManyRecordsStrategy', () => {
     ).toBe('plainCondition');
   });
 
-  it('should stay degraded when an application role also has a rule on the object', () => {
-    const request = buildRequest({ objectRecordsPermissions: withRule });
+  it('should stay degraded when an application role also has an RLS rule on the object', () => {
+    const request = buildRequest({ objectRecordsPermissions: withRlsRule });
 
     expect(
       resolveManyRecordsStrategy({
@@ -126,7 +126,7 @@ describe('resolveManyRecordsStrategy', () => {
             ...request.metadataMaps.rolesPermissions,
             'application-role-id': {
               ...NO_ROLE_RECORDS_PERMISSIONS,
-              objects: { [flatObjectMetadata.id]: withRule },
+              objects: { [flatObjectMetadata.id]: withRlsRule },
             },
           },
         },

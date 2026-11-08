@@ -7,14 +7,14 @@ import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/ac
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 
-// Groups only cover the main role, so a rule on a limiting or application role stays degraded
+// Groups only cover the main role, so an RLS rule on a limiting or application role stays degraded
 export const resolveManyRecordsStrategy = ({
   principals,
   metadataMaps,
   flatObjectMetadata,
   operationType,
 }: PermissionsObjectAccessRequest): ManyRecordsStrategy => {
-  const roleIdsWithRule = getPermissionsPrincipalsRoleIds(principals).filter(
+  const roleIdsWithRlsRule = getPermissionsPrincipalsRoleIds(principals).filter(
     (roleId) =>
       isDefined(
         metadataMaps.rolesPermissions[roleId]?.objects[flatObjectMetadata.id]
@@ -22,7 +22,7 @@ export const resolveManyRecordsStrategy = ({
       ),
   );
 
-  if (roleIdsWithRule.length === 0) {
+  if (roleIdsWithRlsRule.length === 0) {
     return 'plainCondition';
   }
 
@@ -36,8 +36,8 @@ export const resolveManyRecordsStrategy = ({
   }
 
   if (
-    roleIdsWithRule.length > 1 ||
-    roleIdsWithRule[0] !== principals.mainPrincipal.roleId
+    roleIdsWithRlsRule.length > 1 ||
+    roleIdsWithRlsRule[0] !== principals.mainPrincipal.roleId
   ) {
     return 'degradedCondition';
   }
