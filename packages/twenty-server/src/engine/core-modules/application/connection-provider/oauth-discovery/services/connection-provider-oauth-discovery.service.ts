@@ -23,8 +23,13 @@ import {
 } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
 import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
 import { OAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/oauth-discovery-client-provider';
+import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { type ConnectionProviderOAuthGrant } from 'src/engine/core-modules/application/connection-provider/types/connection-provider-oauth-grant.type';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
-import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
+import {
+  assertOAuthDiscoveryProvider,
+  type OAuthDiscoveryConnectionProvider,
+} from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { parseAccessTokenExpiresAt } from 'src/engine/core-modules/application/connection-provider/utils/parse-access-token-expires-at.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
@@ -41,7 +46,7 @@ type ProviderContext = {
 // Runs the MCP authorization flow for a protected resource: RFC 9728 discovery,
 // a Client ID Metadata Document or dynamic registration, PKCE and resource indicators.
 @Injectable()
-export class ConnectionProviderOAuthDiscoveryService {
+export class ConnectionProviderOAuthDiscoveryService implements ConnectionProviderOAuthGrant {
   private readonly logger = new Logger(
     ConnectionProviderOAuthDiscoveryService.name,
   );
@@ -55,9 +60,25 @@ export class ConnectionProviderOAuthDiscoveryService {
   async prepareAuthorization({
     provider,
     workspaceId,
-    canReuseConcurrentRegistration = true,
+  }: {
+    provider: ConnectionProviderEntity;
+    workspaceId: string;
+  }): Promise<{ authorizationUrl: URL; codeVerifier: string }> {
+    assertOAuthDiscoveryProvider(provider);
+
+    return this.prepareDiscoveredAuthorization({
+      provider,
+      workspaceId,
+      canReuseConcurrentRegistration: true,
+    });
+  }
+
+  private async prepareDiscoveredAuthorization({
+    provider,
+    workspaceId,
+    canReuseConcurrentRegistration,
   }: ProviderContext & {
-    canReuseConcurrentRegistration?: boolean;
+    canReuseConcurrentRegistration: boolean;
   }): Promise<{
     authorizationUrl: URL;
     codeVerifier: string;
@@ -120,7 +141,7 @@ export class ConnectionProviderOAuthDiscoveryService {
       !(await this.oauthClientService.insertClientIfAbsent(clientToSave))
     ) {
       // Another member's first sign-in registered a client meanwhile: use it, so one client issues every token
-      return this.prepareAuthorization({
+      return this.prepareDiscoveredAuthorization({
         provider,
         workspaceId,
         canReuseConcurrentRegistration: false,
@@ -178,10 +199,21 @@ export class ConnectionProviderOAuthDiscoveryService {
     workspaceId,
     code,
     codeVerifier,
-  }: ProviderContext & {
+  }: {
+    provider: ConnectionProviderEntity;
+    workspaceId: string;
     code: string;
-    codeVerifier: string;
+    codeVerifier: string | null;
   }): Promise<TokenExchangeResponse> {
+    assertOAuthDiscoveryProvider(provider);
+
+    if (!isDefined(codeVerifier)) {
+      throw new ConnectionProviderException(
+        'OAuth discovery state has no PKCE verifier',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
+    }
+
     const storedClient = await this.findStoredClientOrThrow({
       provider,
       workspaceId,
@@ -224,9 +256,13 @@ export class ConnectionProviderOAuthDiscoveryService {
     provider,
     workspaceId,
     refreshToken,
-  }: ProviderContext & {
+  }: {
+    provider: ConnectionProviderEntity;
+    workspaceId: string;
     refreshToken: PlaintextString;
   }): Promise<TokenExchangeResponse> {
+    assertOAuthDiscoveryProvider(provider);
+
     const storedClient = await this.findStoredClientOrThrow({
       provider,
       workspaceId,

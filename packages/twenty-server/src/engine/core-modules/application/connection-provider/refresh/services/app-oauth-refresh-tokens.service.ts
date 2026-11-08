@@ -9,15 +9,12 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
+import { ConnectionProviderOAuthGrantService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-grant.service';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
-import { ConnectionProviderOAuthDiscoveryService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery.service';
-import { assertOAuthDiscoveryProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
-import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
-import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-refresh-token-for-token.util';
 import { OAuthTokenEndpointError } from 'src/engine/core-modules/application/connection-provider/utils/post-oauth-token-request.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
-import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   ConnectedAccountRefreshAccessTokenException,
@@ -25,14 +22,19 @@ import {
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { type ConnectedAccountPlaintextTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
+// A provider that is not set up for refresh is not the account's fault; anything else means sign in again
+const PROVIDER_SETUP_EXCEPTION_CODES: ConnectionProviderExceptionCode[] = [
+  ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED,
+  ConnectionProviderExceptionCode.INVALID_REQUEST,
+];
+
 @Injectable()
 export class AppOAuthRefreshAccessTokenService {
   private readonly logger = new Logger(AppOAuthRefreshAccessTokenService.name);
 
   constructor(
     private readonly connectionProviderService: ConnectionProviderService,
-    private readonly oauthDiscoveryService: ConnectionProviderOAuthDiscoveryService,
-    private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly oauthGrantService: ConnectionProviderOAuthGrantService,
   ) {}
 
   async refreshTokens(
@@ -52,14 +54,13 @@ export class AppOAuthRefreshAccessTokenService {
     });
 
     try {
-      const tokenResponse =
-        provider.type === 'oauth-discovery'
-          ? await this.refreshOAuthDiscoveryTokens({
-              provider,
-              workspaceId: connectedAccount.workspaceId,
-              refreshToken,
-            })
-          : await this.refreshOAuthTokens({ provider, refreshToken });
+      const tokenResponse = await this.oauthGrantService
+        .getOrThrow(provider)
+        .refreshTokens({
+          provider,
+          workspaceId: connectedAccount.workspaceId,
+          refreshToken,
+        });
 
       return {
         accessToken: tokenResponse.accessToken,
@@ -75,6 +76,15 @@ export class AppOAuthRefreshAccessTokenService {
         throw error;
       }
 
+      if (error instanceof ConnectionProviderException) {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          error.message,
+          PROVIDER_SETUP_EXCEPTION_CODES.includes(error.code)
+            ? ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED
+            : ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+        );
+      }
+
       this.logger.warn(
         `App OAuth refresh failed for connected account ${connectedAccount.id}: ${(error as Error).message}`,
       );
@@ -85,57 +95,6 @@ export class AppOAuthRefreshAccessTokenService {
           ? ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR
           : ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
       );
-    }
-  }
-
-  private async refreshOAuthTokens({
-    provider,
-    refreshToken,
-  }: {
-    provider: ConnectionProviderEntity;
-    refreshToken: PlaintextString;
-  }) {
-    const { clientId, clientSecret } =
-      await this.resolveClientCredentials(provider);
-
-    assertOAuthProvider(provider);
-
-    return exchangeRefreshTokenForToken({
-      fetchFn: this.secureHttpClientService.createSsrfSafeFetch(),
-      tokenEndpoint: provider.oauthConfig.tokenEndpoint,
-      clientId,
-      clientSecret,
-      refreshToken,
-      contentType: provider.oauthConfig.tokenRequestContentType,
-    });
-  }
-
-  private async refreshOAuthDiscoveryTokens({
-    provider,
-    workspaceId,
-    refreshToken,
-  }: {
-    provider: ConnectionProviderEntity;
-    workspaceId: string;
-    refreshToken: PlaintextString;
-  }) {
-    assertOAuthDiscoveryProvider(provider);
-
-    try {
-      return await this.oauthDiscoveryService.refreshTokens({
-        provider,
-        workspaceId,
-        refreshToken,
-      });
-    } catch (error) {
-      if (error instanceof ConnectionProviderException) {
-        throw new ConnectedAccountRefreshAccessTokenException(
-          error.message,
-          ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
-        );
-      }
-
-      throw error;
     }
   }
 
@@ -169,16 +128,6 @@ export class AppOAuthRefreshAccessTokenService {
         id: connectionProviderId,
         workspaceId,
       });
-    } catch (error) {
-      throw this.toProviderNotSupportedError(error);
-    }
-  }
-
-  private async resolveClientCredentials(provider: ConnectionProviderEntity) {
-    try {
-      return await this.connectionProviderService.getClientCredentials(
-        provider,
-      );
     } catch (error) {
       throw this.toProviderNotSupportedError(error);
     }

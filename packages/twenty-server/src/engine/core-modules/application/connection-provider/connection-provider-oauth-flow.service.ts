@@ -1,25 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
-
-import { isDefined } from 'twenty-shared/utils';
+import { Injectable } from '@nestjs/common';
 
 import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
 import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
-import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
-import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
-import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { ConnectionProviderOAuthGrantService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-grant.service';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
-import { ConnectionProviderOAuthDiscoveryService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery.service';
 import { type ConnectionAuthorizationArgs } from 'src/engine/core-modules/application/connection-provider/types/connection-authorization-args.type';
-import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
-import { assertOAuthDiscoveryProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
-import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
-import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
-import { computePkceChallenge } from 'src/engine/core-modules/application/connection-provider/utils/compute-pkce-challenge.util';
-import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
-import { generatePkceVerifier } from 'src/engine/core-modules/application/connection-provider/utils/generate-pkce-verifier.util';
-import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const STATE_JWT_EXPIRES_IN = '10m';
 
@@ -37,16 +23,12 @@ type CallbackResult = {
 
 @Injectable()
 export class ConnectionProviderOAuthFlowService {
-  private readonly logger = new Logger(ConnectionProviderOAuthFlowService.name);
-
   constructor(
     private readonly oauthProviderService: ConnectionProviderService,
     private readonly authorizationStateService: ConnectionProviderAuthorizationStateService,
     private readonly connectedAccountService: ConnectionProviderConnectedAccountService,
-    private readonly secureHttpClientService: SecureHttpClientService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
-    private readonly oauthDiscoveryService: ConnectionProviderOAuthDiscoveryService,
+    private readonly oauthGrantService: ConnectionProviderOAuthGrantService,
   ) {}
 
   async startAuthorizationFlow(
@@ -54,69 +36,7 @@ export class ConnectionProviderOAuthFlowService {
   ): Promise<{ authorizationUrl: string }> {
     const { connectionProvider, workspaceId, userWorkspaceId } =
       authorizationArgs;
-
-    if (connectionProvider.type === 'oauth-discovery') {
-      return this.startOAuthDiscoveryAuthorizationFlow(authorizationArgs);
-    }
-
-    assertOAuthProvider(connectionProvider);
-
-    await this.connectedAccountService.assertCallerCanConnectOrThrow({
-      connectionProviderId: connectionProvider.id,
-      workspaceId,
-      userWorkspaceId,
-      scope: connectionProvider.scope,
-      reconnectingConnectedAccountId:
-        authorizationArgs.reconnectingConnectedAccountId,
-    });
-
-    const { clientId } =
-      await this.oauthProviderService.getClientCredentials(connectionProvider);
-
-    const { authorizationEndpoint, scopes, authorizationParams, usePkce } =
-      connectionProvider.oauthConfig;
-
-    const codeVerifier = usePkce ? generatePkceVerifier() : null;
-
-    const state = await this.authorizationStateService.sign({
-      ...authorizationArgs,
-      codeVerifier,
-      expiresIn: STATE_JWT_EXPIRES_IN,
-    });
-
-    const callbackUrl = buildAppOAuthCallbackUrl(this.getServerUrl());
-
-    const authorizationUrl = new URL(authorizationEndpoint);
-
-    authorizationUrl.searchParams.set('client_id', clientId);
-    authorizationUrl.searchParams.set('redirect_uri', callbackUrl);
-    authorizationUrl.searchParams.set('response_type', 'code');
-    authorizationUrl.searchParams.set('scope', scopes.join(' '));
-    authorizationUrl.searchParams.set('state', state);
-
-    if (codeVerifier) {
-      authorizationUrl.searchParams.set(
-        'code_challenge',
-        computePkceChallenge(codeVerifier),
-      );
-      authorizationUrl.searchParams.set('code_challenge_method', 'S256');
-    }
-
-    for (const [key, value] of Object.entries(authorizationParams ?? {})) {
-      authorizationUrl.searchParams.set(key, value);
-    }
-
-    return { authorizationUrl: authorizationUrl.toString() };
-  }
-
-  // Discovery picks the endpoints, the client and the PKCE verifier; the state stays ours.
-  private async startOAuthDiscoveryAuthorizationFlow(
-    authorizationArgs: ConnectionAuthorizationArgs,
-  ): Promise<{ authorizationUrl: string }> {
-    const { connectionProvider, workspaceId, userWorkspaceId } =
-      authorizationArgs;
-
-    assertOAuthDiscoveryProvider(connectionProvider);
+    const oauthGrant = this.oauthGrantService.getOrThrow(connectionProvider);
 
     await this.connectedAccountService.assertCallerCanConnectOrThrow({
       connectionProviderId: connectionProvider.id,
@@ -128,7 +48,7 @@ export class ConnectionProviderOAuthFlowService {
     });
 
     const { authorizationUrl, codeVerifier } =
-      await this.oauthDiscoveryService.prepareAuthorization({
+      await oauthGrant.prepareAuthorization({
         provider: connectionProvider,
         workspaceId,
       });
@@ -165,12 +85,14 @@ export class ConnectionProviderOAuthFlowService {
         statePayload.reconnectingConnectedAccountId,
     });
 
-    const tokenResponse = await this.exchangeCodeForTokens({
-      provider,
-      workspaceId: statePayload.workspaceId,
-      code: callbackArgs.code,
-      codeVerifier: statePayload.codeVerifier,
-    });
+    const tokenResponse = await this.oauthGrantService
+      .getOrThrow(provider)
+      .exchangeCode({
+        provider,
+        workspaceId: statePayload.workspaceId,
+        code: callbackArgs.code,
+        codeVerifier: statePayload.codeVerifier,
+      });
 
     const identifiedAccount =
       await this.connectionProviderLifecycleHookService.runIdentifyAccount({
@@ -216,66 +138,5 @@ export class ConnectionProviderOAuthFlowService {
       applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
-  }
-
-  private async exchangeCodeForTokens({
-    provider,
-    workspaceId,
-    code,
-    codeVerifier,
-  }: {
-    provider: ConnectionProviderEntity;
-    workspaceId: string;
-    code: string;
-    codeVerifier: string | null;
-  }): Promise<TokenExchangeResponse> {
-    if (provider.type === 'oauth-discovery') {
-      assertOAuthDiscoveryProvider(provider);
-
-      if (!isDefined(codeVerifier)) {
-        throw new ConnectionProviderException(
-          'OAuth discovery state has no PKCE verifier',
-          ConnectionProviderExceptionCode.INVALID_STATE,
-        );
-      }
-
-      return this.oauthDiscoveryService.exchangeCode({
-        provider,
-        workspaceId,
-        code,
-        codeVerifier,
-      });
-    }
-
-    assertOAuthProvider(provider);
-
-    const { clientId, clientSecret } =
-      await this.oauthProviderService.getClientCredentials(provider);
-
-    try {
-      return await exchangeCodeForToken({
-        fetchFn: this.secureHttpClientService.createSsrfSafeFetch(),
-        tokenEndpoint: provider.oauthConfig.tokenEndpoint,
-        clientId,
-        clientSecret,
-        code,
-        redirectUri: buildAppOAuthCallbackUrl(this.getServerUrl()),
-        codeVerifier,
-        contentType: provider.oauthConfig.tokenRequestContentType,
-      });
-    } catch (error) {
-      this.logger.error(
-        `OAuth token exchange failed for provider ${provider.id}: ${(error as Error).message}`,
-      );
-
-      throw new ConnectionProviderException(
-        (error as Error).message,
-        ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED,
-      );
-    }
-  }
-
-  private getServerUrl(): string {
-    return this.twentyConfigService.get('SERVER_URL');
   }
 }
