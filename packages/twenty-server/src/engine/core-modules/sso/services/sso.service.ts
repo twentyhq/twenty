@@ -278,7 +278,7 @@ export class SsoService {
     if (!identityProvider) {
       throw new SsoException(
         'Identity Provider not found',
-        SsoExceptionCode.USER_NOT_FOUND,
+        SsoExceptionCode.IDENTITY_PROVIDER_NOT_FOUND,
       );
     }
 
