@@ -185,7 +185,7 @@ export class ObjectRecordEventPublisher {
     }[] = [];
 
     const readableEvents =
-      await this.recordEventPermissionsService.findReadableEvents({
+      await this.recordEventPermissionsService.filterReadableEvents({
         authContext: permissionsAuthContext,
         eventBatch: workspaceEventBatch,
       });

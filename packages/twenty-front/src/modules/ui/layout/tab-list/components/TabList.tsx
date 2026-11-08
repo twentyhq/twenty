@@ -130,7 +130,9 @@ export const TabList = ({
   const dropdownId = `tab-overflow-${componentInstanceId}`;
 
   const isActiveTabHidden = useMemo(() => {
-    if (!hasHiddenTabs) return false;
+    if (!hasHiddenTabs) {
+      return false;
+    }
     return hiddenTabs.some((tab) => tab.id === activeTabId);
   }, [hasHiddenTabs, hiddenTabs, activeTabId]);
 

@@ -13,7 +13,7 @@ import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/ut
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/internal/combine/utils/resolve-event-record-snapshots.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
-import { RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
+import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
@@ -37,30 +37,11 @@ export class RecordEventPermissionsService {
 
   constructor(
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
-    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
+    private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly principalPermissionsService: PrincipalPermissionsService,
   ) {}
 
-  async findReadableEventRecordIds({
-    authContext,
-    eventBatch,
-  }: {
-    authContext: PermissionsAuthContext;
-    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
-  }): Promise<Set<string>> {
-    const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
-        authContext,
-      });
-
-    return isDefined(principals)
-      ? this.findEventBatchAccessLoaders(
-          eventBatch,
-        ).findReadableRecordIdsInBatch(principals)
-      : new Set<string>();
-  }
-
-  async findReadableEvents<TEvent extends ObjectRecordEvent>({
+  async filterReadableEvents<TEvent extends ObjectRecordEvent>({
     authContext,
     eventBatch,
     events = eventBatch.events,
@@ -70,7 +51,7 @@ export class RecordEventPermissionsService {
     events?: TEvent[];
   }): Promise<TEvent[]> {
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       });
 
@@ -142,7 +123,7 @@ export class RecordEventPermissionsService {
       );
 
       if (missingRecordIds.length > 0) {
-        const groupedRecordShares = this.recordPermissionReadOrmService
+        const groupedRecordShares = this.recordPermissionReadRepository
           .findRecordShares({
             workspaceId,
             objectMetadataId,
@@ -183,7 +164,7 @@ export class RecordEventPermissionsService {
     const findPrivateRecordStates = () =>
       (privateRecordStates ??= loadMetadataMaps().then(
         ({ flatFieldMetadataMaps }) =>
-          this.recordPermissionReadOrmService.findPrivateRecordStates({
+          this.recordPermissionReadRepository.findPrivateRecordStates({
             workspaceId,
             flatObjectMetadata: objectMetadata,
             flatFieldMetadataMaps,
@@ -200,7 +181,7 @@ export class RecordEventPermissionsService {
         principals,
         metadataMaps: await loadMetadataMaps(),
         flatObjectMetadata: objectMetadata,
-        operationType: 'select',
+        operationType: 'read',
         records: resolveEventRecordSnapshots(events),
         context: {
           shouldIgnoreSoftDeleteDefaultFilter: true,

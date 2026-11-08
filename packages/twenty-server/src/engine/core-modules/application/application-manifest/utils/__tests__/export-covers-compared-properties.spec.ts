@@ -343,6 +343,9 @@ const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManife
     position: 0,
   };
 
+const CREATE_PERMISSION_DERIVED_ON_IMPORT =
+  'Not in the manifest yet: importing derives it from the update permission';
+
 const PREDICATE_GROUP_OPERATIONS_GAP =
   'not in app manifests until the engine reads predicate group operations';
 
@@ -734,7 +737,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
     ),
     renamedProperties: {},
     workspaceLocalProperties: [],
-    knownGaps: {},
+    knownGaps: {
+      canCreateAllObjectRecords: CREATE_PERMISSION_DERIVED_ON_IMPORT,
+    },
   },
   {
     metadataName: 'objectPermission',
@@ -751,7 +756,10 @@ const EXPORTED_KINDS: ExportedKind[] = [
       objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
     },
     workspaceLocalProperties: [],
-    knownGaps: NESTED_ROLE_CHILD_GAPS,
+    knownGaps: {
+      ...NESTED_ROLE_CHILD_GAPS,
+      canCreateObjectRecords: CREATE_PERMISSION_DERIVED_ON_IMPORT,
+    },
   },
   {
     metadataName: 'fieldPermission',
@@ -816,6 +824,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     knownGaps: {
       ...ROW_LEVEL_PERMISSION_KIND_GAPS,
       canReadRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+      canCreateRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canUpdateRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canSoftDeleteRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canDestroyRecords: PREDICATE_GROUP_OPERATIONS_GAP,

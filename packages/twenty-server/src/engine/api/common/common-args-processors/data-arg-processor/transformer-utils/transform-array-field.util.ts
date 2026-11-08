@@ -4,7 +4,9 @@ import { isNullEquivalentArrayFieldValue } from 'src/engine/record-filter/utils/
 export const transformArrayField = (
   value: string | string[] | null,
 ): string[] | null => {
-  if (isString(value)) return [value];
+  if (isString(value)) {
+    return [value];
+  }
 
   return isNullEquivalentArrayFieldValue(value) ? null : value;
 };

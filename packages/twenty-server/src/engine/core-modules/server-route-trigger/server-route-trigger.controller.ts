@@ -17,6 +17,7 @@ import { SERVER_ROUTE_LEGACY_IDENTIFIER_DEPRECATION_HEADER_VALUE } from 'src/eng
 import { ServerRouteTriggerRestApiExceptionFilter } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger-rest-api-exception-filter';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.service';
+import { MessageQueueRestApiExceptionFilter } from 'src/engine/core-modules/message-queue/filters/message-queue-rest-api-exception.filter';
 import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -25,6 +26,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 @UseFilters(
   ServerRouteTriggerRestApiExceptionFilter,
+  MessageQueueRestApiExceptionFilter,
   UsageLimitRestApiExceptionFilter,
   BillingRestApiExceptionFilter,
 )

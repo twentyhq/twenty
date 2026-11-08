@@ -1058,16 +1058,6 @@ msgstr "Fils de discussion IA détenus par le membre de l'espace de travail"
 msgid "AI component builder is disabled."
 msgstr "Le générateur de composants d'IA est désactivé."
 
-#. js-lingui-id: 1G2GHA
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not available until the upgrade has completed."
-msgstr "La politique de données d'IA n'est pas disponible tant que la mise à niveau n'est pas terminée."
-
-#. js-lingui-id: gt0M4i
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "AI data policy is not enabled for this workspace."
-msgstr "La politique de données d'IA n'est pas activée pour cet espace de travail."
-
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
@@ -1826,11 +1816,6 @@ msgstr "Échec de l'authentification, veuillez vous reconnecter."
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "L'authentification n'est pas activée avec ce fournisseur."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "L'authentification est requise pour accéder à cette fonctionnalité. Veuillez vous connecter et réessayer."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -5093,6 +5078,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Enrichir"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "Saisissez un nom comprenant entre 1 et {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caractères ainsi que des options d’apparence prises en charge pour l’assistant."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -6661,6 +6651,7 @@ msgid "In progress"
 msgstr "En cours"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "La boîte de réception n'est pas activée pour cet espace de travail."
@@ -9481,6 +9472,11 @@ msgstr "Aucun destinataire valide spécifié"
 msgid "No verified sending domain matches this from address."
 msgstr "Aucun domaine d’envoi vérifié ne correspond à cette adresse d’expéditeur."
 
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "Aucune des personnes que vous avez choisies ne peut répondre dans cette discussion. Ajoutez {AGENT_CHAT_ASSISTANT_NAME} ou quelqu’un qui peut répondre."
+
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9749,6 +9745,7 @@ msgid "Object label is too short"
 msgstr "L'étiquette de l'objet est trop courte"
 
 #. js-lingui-id: gB0eae
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Object metadata ID"
@@ -9874,6 +9871,12 @@ msgstr "Objet à supprimer non trouvé"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
 msgstr "Objet à mettre à jour non trouvé"
+
+#. js-lingui-id: hTpmKy
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Object whose records can belong to the group"
+msgstr ""
 
 #. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -10994,6 +10997,16 @@ msgstr "ID du principal"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Type de principal"
+
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "Les paramètres de confidentialité ne sont pas disponibles tant que la mise à niveau n'est pas terminée."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "Les paramètres de confidentialité ne sont pas activés pour cet espace de travail."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -12684,10 +12697,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Liens courts"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "Connectez-vous en tant que membre de l’espace de travail ou utilisez un jeton d’application pour modifier cette conversation."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "Connectez-vous en tant que membre de l’espace de travail ou utilisez un jeton d’application pour effectuer cette requête."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12791,7 +12804,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Certaines des permissions que vous avez sélectionnées ne sont pas valides. Veuillez réessayer avec des paramètres de permission valides."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Certaines adhésions à l'espace de travail n'ont pas pu être trouvées. Ils peuvent ne plus avoir accès à cet espace de travail."
 
@@ -13619,11 +13632,6 @@ msgstr "L’agent que cette étape doit exécuter est introuvable."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "L'agent que vous recherchez n'a pas pu être trouvé. Il a peut-être été supprimé ou vous n'y avez peut-être pas accès."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "La clé API n'a pas un rôle valide assigné. Veuillez vérifier la configuration de votre clé API."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13634,11 +13642,6 @@ msgstr "Le manifeste de l'application indique une exigence de version du serveur
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "Le canal source de l'application ne correspond pas au type attendu."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/setting-permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "L’application n’a pas de rôle valide attribué. Veuillez vérifier la configuration de votre application."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -13661,6 +13664,11 @@ msgstr "Les dépendances de production de l'application sont trop volumineuses p
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Les autorisations demandées par l'application ont changé. Examinez-les à nouveau avant d'approuver."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Le profil de l’assistant ne peut pas être mis à jour avant l’activation de l’espace de travail."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14824,6 +14832,11 @@ msgstr "Cet index n'existe pas ou a déjà été supprimé."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Cette instance n'a pas signalé d'identifiant de serveur. Définissez SERVER_ID sur cette instance, puis réessayez."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "Cette tâche est trop volumineuse pour être mise en file d'attente."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -15567,6 +15580,11 @@ msgstr "Trop de candidats administrateurs trouvés."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Trop de participants : {attendeeCount}. Le maximum autorisé est {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "Trop de tâches sont en attente. Veuillez réessayer plus tard."
 
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
@@ -17982,7 +18000,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Vous ne pouvez pas générer de code de récupération pour vous-même. Réinitialisez plutôt l'authentification à deux facteurs depuis votre profil."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Vous ne pouvez pas changer votre propre rôle. Veuillez demander à un autre administrateur de mettre à jour votre rôle."
 
@@ -18003,7 +18021,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Vous ne pouvez pas supprimer l’accès aux paramètres de votre propre rôle. Demandez à un autre administrateur d’effectuer cette modification."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Vous ne pouvez pas retirer le rôle d'administrateur du dernier administrateur. Veuillez d'abord assigner un autre administrateur."
 
@@ -18124,6 +18142,11 @@ msgstr "Vous n'avez pas l'autorisation d'effectuer cette action."
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "Vous n'avez pas l'autorisation d'effectuer cette action de workflow."
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Vous n'avez pas la permission de mettre à jour le profil de l'assistant. Veuillez contacter votre administrateur de l'espace de travail."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18250,7 +18273,7 @@ msgstr "Votre rôle ne peut pas supprimer certains de ces enregistrements, ils n
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Votre rôle dans cet espace de travail n'a pas pu être trouvé. Veuillez contacter votre administrateur de l'espace de travail."
 

@@ -30,7 +30,9 @@ export const MultiSelectDisplay = ({
     ? options?.filter((option) => values.includes(option.value))
     : [];
 
-  if (!isDefined(selectedOptions)) return null;
+  if (!isDefined(selectedOptions)) {
+    return null;
+  }
 
   return (
     <StyledContainer className={className}>

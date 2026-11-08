@@ -54,7 +54,9 @@ export const buildRelationSelectionFromDepth = ({
   currentDepthLevelIsAJunctionTable?: boolean;
   recurseIntoJunctionTableRelations?: boolean;
 }): CommonSelectedFields => {
-  if (!isDefined(depth) || depth === 0) return {};
+  if (!isDefined(depth) || depth === 0) {
+    return {};
+  }
 
   const relationsSelectFields: CommonSelectedFields = {};
 
@@ -110,7 +112,9 @@ export const buildRelationSelectionFromDepth = ({
       onlyUseLabelIdentifierFieldsInRelations,
     });
 
-    if (Object.keys(relationFieldSelectFields).length === 0) continue;
+    if (Object.keys(relationFieldSelectFields).length === 0) {
+      continue;
+    }
 
     const flatFieldIsJoinColumn = getIsFlatFieldAJoinColumn({ flatField });
 

@@ -100,7 +100,9 @@ export const useResizeTableHeader = () => {
 
   const handleResizeHandlerMove = useCallback<PointerEventListener>(
     ({ x }) => {
-      if (!initialPointerPositionX) return;
+      if (!initialPointerPositionX) {
+        return;
+      }
 
       throwIfNotDefined(recordField, 'recordField');
 
@@ -179,7 +181,9 @@ export const useResizeTableHeader = () => {
   const handleResizeHandlerEnd = useCallback(async () => {
     throwIfNotDefined(recordField, 'recordField');
 
-    if (!resizedFieldMetadataId) return;
+    if (!resizedFieldMetadataId) {
+      return;
+    }
 
     const currentResizeFieldOffset = store.get(resizeFieldOffset);
 

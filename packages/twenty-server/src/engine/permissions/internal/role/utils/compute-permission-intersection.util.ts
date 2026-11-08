@@ -77,6 +77,9 @@ const intersectObjectRecordsPermissions = (
     );
 
   const intersectedObjectRecordsPermissions: ObjectRecordsPermissions = {
+    canCreateAllRecords: isGrantedToAllRecordsByEveryRole(
+      ({ canCreateAllRecords }) => canCreateAllRecords,
+    ),
     canReadAllRecords: isGrantedToAllRecordsByEveryRole(
       ({ canReadAllRecords }) => canReadAllRecords,
     ),
@@ -106,10 +109,11 @@ const intersectObjectRecordsPermissions = (
   return {
     ...intersectedObjectRecordsPermissions,
     rowLevelRecordsPermissions: {
-      canReadRecords: isReachingSomeRecordsForEveryRole('select'),
+      canCreateRecords: isReachingSomeRecordsForEveryRole('create'),
+      canReadRecords: isReachingSomeRecordsForEveryRole('read'),
       canUpdateRecords: isReachingSomeRecordsForEveryRole('update'),
-      canSoftDeleteRecords: isReachingSomeRecordsForEveryRole('soft-delete'),
-      canDestroyRecords: isReachingSomeRecordsForEveryRole('delete'),
+      canSoftDeleteRecords: isReachingSomeRecordsForEveryRole('softDelete'),
+      canDestroyRecords: isReachingSomeRecordsForEveryRole('destroy'),
       predicates: intersectRowLevelPermissionPredicates(
         objectRecordsPermissionsPerRole.map(
           (objectRecordsPermissions) =>
