@@ -257,7 +257,7 @@ const buildDesiredGrantUniversalFlatEntityMaps = ({
           requestedFlatRole.canDestroyAllObjectRecords,
         isEditable: false,
         canBeAssignedToUsers: false,
-        canBeAssignedToAgents: true,
+        canBeAssignedToAgents: false,
         canBeAssignedToApiKeys: false,
         canBeAssignedToApplications: true,
         roleTargetUniversalIdentifiers: [],

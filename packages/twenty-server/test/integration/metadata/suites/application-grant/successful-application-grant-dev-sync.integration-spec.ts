@@ -166,7 +166,7 @@ describe('Application grant on dev sync', () => {
       isEditable: false,
       canBeAssignedToUsers: false,
       canBeAssignedToApiKeys: false,
-      canBeAssignedToAgents: true,
+      canBeAssignedToAgents: false,
       canBeAssignedToApplications: true,
     });
     expect(grant?.role.id).not.toBe(requestedRoleId);
