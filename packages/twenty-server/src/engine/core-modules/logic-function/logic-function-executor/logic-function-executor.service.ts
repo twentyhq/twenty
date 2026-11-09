@@ -10,7 +10,7 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
-  DEFAULT_PUBLIC_API_URL_NAME,
+  DEFAULT_INTERNAL_API_URL_NAME,
   DEFAULT_SERVER_ROUTES_URL_NAME,
 } from 'twenty-shared/application-runtime';
 import {
@@ -593,11 +593,10 @@ export class LogicFunctionExecutorService {
       ...serverVariables,
       ...workspaceVariables,
       ...userVariables,
-      [DEFAULT_API_URL_NAME]: isNonEmptyString(internalServerUrl)
-        ? internalServerUrl
-        : serverUrl,
-      // Links handed to browsers and third parties can't use the internal URL.
-      [DEFAULT_PUBLIC_API_URL_NAME]: serverUrl,
+      [DEFAULT_API_URL_NAME]: serverUrl,
+      ...(isNonEmptyString(internalServerUrl)
+        ? { [DEFAULT_INTERNAL_API_URL_NAME]: internalServerUrl }
+        : {}),
       // Falls back to the application so cron schedules and install hooks work with nobody triggering.
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
         delegatedAccessToken ?? applicationAccessToken

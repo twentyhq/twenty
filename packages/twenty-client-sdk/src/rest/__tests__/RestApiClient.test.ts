@@ -52,11 +52,11 @@ describe('RestApiClient', () => {
     expect(requestInit.method).toBe('GET');
   });
 
-  it('should call the api url rather than the public one', async () => {
+  it('should call the internal api url when the runtime provides one', async () => {
     vi.stubGlobal('process', {
       env: {
-        TWENTY_API_URL: 'http://twenty-server:3000',
-        TWENTY_PUBLIC_API_URL: 'https://api.twenty.test',
+        TWENTY_API_URL: 'https://api.twenty.test',
+        TWENTY_INTERNAL_API_URL: 'http://twenty-server:3000',
         TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
       },
     });
@@ -238,11 +238,11 @@ describe('RestApiClient', () => {
       expect(url).toBe('https://api.twenty.test/s/my-app/my-route');
     });
 
-    it('should fall back to the api url /s route rather than the public one', async () => {
+    it('should fall back to the internal api url /s route when one is provided', async () => {
       vi.stubGlobal('process', {
         env: {
-          TWENTY_API_URL: 'http://twenty-server:3000',
-          TWENTY_PUBLIC_API_URL: 'https://api.twenty.test',
+          TWENTY_API_URL: 'https://api.twenty.test',
+          TWENTY_INTERNAL_API_URL: 'http://twenty-server:3000',
           TWENTY_FUNCTIONS_URL: '',
           TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
         },
@@ -363,11 +363,11 @@ describe('RestApiClient', () => {
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
-    it('should resolve urls on the public api url when one is provided', () => {
+    it('should keep resolved urls on the public api url when an internal api url is provided', () => {
       (globalThis as Record<string, unknown>).process = {
         env: {
-          TWENTY_API_URL: 'http://twenty-server:3000',
-          TWENTY_PUBLIC_API_URL: 'https://api.twenty.test',
+          TWENTY_API_URL: 'https://api.twenty.test',
+          TWENTY_INTERNAL_API_URL: 'http://twenty-server:3000',
           TWENTY_APP_ACCESS_TOKEN: 'app-access-token',
         },
       };
