@@ -34,6 +34,9 @@ const StyledActiveStep = styled.div`
 
 const StyledStepsTrack = styled.div`
   bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: absolute;
   right: calc(100% + ${themeCssVariables.spacing[10]});
   top: 0;
@@ -48,6 +51,7 @@ const StyledSteps = styled.nav`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: auto;
   position: sticky;
   top: ${themeCssVariables.spacing[10]};
 `;

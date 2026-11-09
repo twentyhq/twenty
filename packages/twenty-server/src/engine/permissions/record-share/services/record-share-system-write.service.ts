@@ -16,8 +16,8 @@ import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-work
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PrivateRecordWriteService } from 'src/engine/permissions/internal/private-record/services/private-record-write.service';
-import { RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
-import { type RuleRecordSharesScope } from 'src/engine/permissions/internal/record-permission-orm/utils/build-find-rule-record-shares-query.util';
+import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { type RuleRecordSharesScope } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-rule-record-shares-query.util';
 import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { diffRuleRecordShares } from 'src/engine/permissions/internal/record-share/utils/diff-rule-record-shares.util';
 import { type RuleRecordShareGrant } from 'src/engine/permissions/record-share/types/rule-record-share-grant.type';
@@ -32,14 +32,14 @@ export class RecordShareSystemWriteService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly privateRecordWriteService: PrivateRecordWriteService,
-    private readonly recordPermissionReadOrmService: RecordPermissionReadOrmService,
+    private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
   ) {}
 
   setRecordsPrivacy(
-    args: Parameters<PrivateRecordWriteService['setPrivate']>[0],
+    args: Parameters<PrivateRecordWriteService['setPrivateOrThrow']>[0],
   ): Promise<void> {
-    return this.privateRecordWriteService.setPrivate(args);
+    return this.privateRecordWriteService.setPrivateOrThrow(args);
   }
 
   // Every path removing a member from an active workspace must call this, or only all-records roles can manage their records
@@ -103,7 +103,7 @@ export class RecordShareSystemWriteService {
     const { obsoleteRecordShareIds, missingGrants } = diffRuleRecordShares({
       ruleGrants,
       existingRuleRecordShares:
-        await this.recordPermissionReadOrmService.findRuleRecordShares({
+        await this.recordPermissionReadRepository.findRuleRecordShares({
           workspaceId,
           objectMetadataId,
           scope,

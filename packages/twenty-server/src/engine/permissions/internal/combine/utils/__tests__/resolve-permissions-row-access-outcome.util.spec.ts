@@ -25,11 +25,13 @@ const flatObjectMetadata = {
 };
 
 const readOnlyPermissions: ObjectRecordsPermissions = {
+  canCreateAllRecords: false,
   canReadAllRecords: true,
   canUpdateAllRecords: false,
   canSoftDeleteAllRecords: false,
   canDestroyAllRecords: false,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const readOnlyPrincipals: PermissionsPrincipalsWithRolesContext = {

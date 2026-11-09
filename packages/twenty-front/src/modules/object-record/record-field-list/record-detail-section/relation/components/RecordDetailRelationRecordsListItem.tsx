@@ -165,7 +165,9 @@ export const RecordDetailRelationRecordsListItem = ({
       };
 
   const handleDetach = () => {
-    if (!relationFieldMetadataItem?.name) return;
+    if (!relationFieldMetadataItem?.name) {
+      return;
+    }
 
     if (isToOneObject) {
       onSubmit?.({ newValue: null });

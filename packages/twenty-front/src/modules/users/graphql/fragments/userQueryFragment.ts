@@ -41,12 +41,16 @@ export const USER_QUERY_FRAGMENT = gql`
       isImpersonating
       objectRecordsPermissions {
         objectMetadataId
+        canCreateAllRecords
         canReadAllRecords
         canUpdateAllRecords
         canSoftDeleteAllRecords
         canDestroyAllRecords
+        unreadableFields
+        uneditableFields
         restrictedFields
         rowLevelRecordsPermissions {
+          canCreateRecords
           canReadRecords
           canUpdateRecords
           canSoftDeleteRecords

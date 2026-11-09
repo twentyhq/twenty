@@ -9,6 +9,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { graphql, HttpResponse } from 'msw';
 import { fn } from 'storybook/test';
+import { getAiChatAssistantProfileSchema } from 'twenty-shared/ai';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
@@ -32,10 +33,12 @@ type SettingsAiIntegrationStoryOptions = {
 export const createSettingsAiIntegrationStoryFixture = () => {
   const saveInstructions = fn();
   const saveBehavior = fn();
+  const saveAssistantProfile = fn();
   const loadSystemPrompts = fn();
-  let pendingBehaviorSave: Promise<void> | undefined;
-  let releaseBehaviorSave: (() => void) | undefined;
+  let pausedSave: Promise<void> | undefined;
+  let releasePausedSave: (() => void) | undefined;
   let shouldFailNextBehaviorSave = false;
+  let shouldFailNextAssistantSave = false;
   let resetGeneration = 0;
   let permissionFlags: PermissionFlagType[] = [];
   let workspace: CurrentWorkspace = {
@@ -45,12 +48,14 @@ export const createSettingsAiIntegrationStoryFixture = () => {
 
   const reset = async (options: SettingsAiIntegrationStoryOptions) => {
     resetGeneration += 1;
-    resumeBehaviorSave();
+    resumeSave();
     await mockedApolloClient.clearStore();
     saveInstructions.mockClear();
     saveBehavior.mockClear();
+    saveAssistantProfile.mockClear();
     loadSystemPrompts.mockClear();
     shouldFailNextBehaviorSave = false;
+    shouldFailNextAssistantSave = false;
     permissionFlags = options.permissionFlags;
     workspace = {
       ...mockCurrentWorkspace,
@@ -81,20 +86,24 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     shouldFailNextBehaviorSave = true;
   };
 
-  const pauseBehaviorSave = () => {
-    if (isDefined(pendingBehaviorSave)) {
+  const failNextAssistantSave = () => {
+    shouldFailNextAssistantSave = true;
+  };
+
+  const pauseSave = () => {
+    if (isDefined(pausedSave)) {
       return;
     }
 
-    pendingBehaviorSave = new Promise<void>((resolve) => {
-      releaseBehaviorSave = resolve;
+    pausedSave = new Promise<void>((resolve) => {
+      releasePausedSave = resolve;
     });
   };
 
-  const resumeBehaviorSave = () => {
-    releaseBehaviorSave?.();
-    pendingBehaviorSave = undefined;
-    releaseBehaviorSave = undefined;
+  const resumeSave = () => {
+    releasePausedSave?.();
+    pausedSave = undefined;
+    releasePausedSave = undefined;
   };
 
   const reloadWorkspace = async () => {
@@ -163,13 +172,26 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           isDefined(variables.input.aiChatInboxAssistantMode);
         const hasInstructionsUpdate =
           'aiAdditionalInstructions' in variables.input;
-        const pendingSave = hasBehaviorUpdate ? pendingBehaviorSave : undefined;
+        const hasAssistantProfileUpdate = isDefined(
+          variables.input.aiChatAssistantProfile,
+        );
+        const pendingSave =
+          hasBehaviorUpdate || hasAssistantProfileUpdate
+            ? pausedSave
+            : undefined;
         const shouldRejectBehaviorSave =
           hasBehaviorUpdate && shouldFailNextBehaviorSave;
+        const shouldRejectAssistantSave =
+          hasAssistantProfileUpdate && shouldFailNextAssistantSave;
 
         if (hasBehaviorUpdate) {
           saveBehavior(variables.input);
           shouldFailNextBehaviorSave = false;
+        }
+
+        if (hasAssistantProfileUpdate) {
+          saveAssistantProfile(variables.input);
+          shouldFailNextAssistantSave = false;
         }
 
         if (isDefined(pendingSave)) {
@@ -194,11 +216,23 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           });
         }
 
+        if (shouldRejectAssistantSave) {
+          return HttpResponse.json({
+            errors: [{ message: 'Assistant settings could not be saved' }],
+          });
+        }
+
         workspace = {
           ...workspace,
           aiAdditionalInstructions: hasInstructionsUpdate
             ? (variables.input.aiAdditionalInstructions ?? null)
             : workspace.aiAdditionalInstructions,
+          aiChatAssistantProfile: {
+            ...workspace.aiChatAssistantProfile,
+            ...getAiChatAssistantProfileSchema()
+              .partial()
+              .parse(variables.input.aiChatAssistantProfile ?? {}),
+          },
           aiChatDirectMessageAssistantMode:
             variables.input.aiChatDirectMessageAssistantMode ??
             workspace.aiChatDirectMessageAssistantMode,
@@ -249,10 +283,12 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     handlers,
     saveInstructions,
     saveBehavior,
+    saveAssistantProfile,
     loadSystemPrompts,
     failNextBehaviorSave,
-    pauseBehaviorSave,
-    resumeBehaviorSave,
+    failNextAssistantSave,
+    pauseSave,
+    resumeSave,
     reloadWorkspace,
   };
 };

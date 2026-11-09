@@ -14,13 +14,17 @@ export const fromCreateFieldPermissionInputToUniversalFlatFieldPermission = ({
   flatRoleMaps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
+  flatRowLevelPermissionPredicateGroupMaps,
 }: {
   fieldPermissionInput: FieldPermissionInput;
   roleId: string;
   flatApplication: FlatApplication;
 } & Pick<
   AllFlatEntityMaps,
-  'flatRoleMaps' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+  | 'flatRoleMaps'
+  | 'flatObjectMetadataMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatRowLevelPermissionPredicateGroupMaps'
 >): UniversalFlatFieldPermission & { id: string } => {
   const now = new Date().toISOString();
 
@@ -28,17 +32,21 @@ export const fromCreateFieldPermissionInputToUniversalFlatFieldPermission = ({
     roleUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     fieldMetadataUniversalIdentifier,
+    rowLevelPermissionPredicateGroupUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'fieldPermission',
     foreignKeyValues: {
       roleId,
       objectMetadataId: fieldPermissionInput.objectMetadataId,
       fieldMetadataId: fieldPermissionInput.fieldMetadataId,
+      rowLevelPermissionPredicateGroupId:
+        fieldPermissionInput.rowLevelPermissionPredicateGroupId ?? null,
     },
     flatEntityMaps: {
       flatRoleMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
     },
   });
 
@@ -48,11 +56,13 @@ export const fromCreateFieldPermissionInputToUniversalFlatFieldPermission = ({
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       roleUniversalIdentifier,
       fieldUniversalIdentifier: fieldMetadataUniversalIdentifier,
+      rowLevelPermissionPredicateGroupUniversalIdentifier,
     }),
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     roleUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     fieldMetadataUniversalIdentifier,
+    rowLevelPermissionPredicateGroupUniversalIdentifier,
     canReadFieldValue: fieldPermissionInput.canReadFieldValue ?? undefined,
     canUpdateFieldValue: fieldPermissionInput.canUpdateFieldValue ?? undefined,
     createdAt: now,

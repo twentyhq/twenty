@@ -9,11 +9,13 @@ export const getAgentChatThreadSubtitleContent = ({
   draftPreviewText,
   workspaceMembers,
   currentWorkspaceMemberId,
+  assistantDisplayName,
 }: {
   thread: AgentChatThreadRecord;
   draftPreviewText: string | null | undefined;
-  workspaceMembers: PartialWorkspaceMember[];
+  workspaceMembers: Pick<PartialWorkspaceMember, 'id' | 'name' | 'userEmail'>[];
   currentWorkspaceMemberId: string | undefined;
+  assistantDisplayName: string;
 }) => {
   const isAwaitingAnswer =
     !isDefined(thread.deletedAt) && isDefined(thread.pendingQuestionMessageId);
@@ -24,6 +26,7 @@ export const getAgentChatThreadSubtitleContent = ({
         thread,
         workspaceMembers,
         currentWorkspaceMemberId,
+        assistantDisplayName,
       });
 
   return {

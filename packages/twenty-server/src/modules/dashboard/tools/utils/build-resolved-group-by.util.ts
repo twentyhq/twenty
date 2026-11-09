@@ -32,7 +32,9 @@ export const buildResolvedGroupBy = ({
 }) => {
   const field = findActiveFlatFieldMetadataById(fieldId, flatFieldMetadataMaps);
 
-  if (!isDefined(field)) return null;
+  if (!isDefined(field)) {
+    return null;
+  }
 
   const resolved: ResolvedGroupBy = {
     fieldName: field.name,

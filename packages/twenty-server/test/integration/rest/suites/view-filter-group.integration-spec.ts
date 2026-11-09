@@ -91,7 +91,9 @@ describe('View Filter Group REST API', () => {
   });
 
   afterEach(async () => {
-    if (!testViewFilterGroupId) return;
+    if (!testViewFilterGroupId) {
+      return;
+    }
 
     await deleteTestViewFilterGroupWithRestApi(testViewFilterGroupId);
     testViewFilterGroupId = undefined;

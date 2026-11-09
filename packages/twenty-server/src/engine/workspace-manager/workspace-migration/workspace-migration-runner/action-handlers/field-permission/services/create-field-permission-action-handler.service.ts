@@ -24,12 +24,16 @@ export class CreateFieldPermissionActionHandlerService extends WorkspaceMigratio
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateFieldPermissionAction>): Promise<FlatCreateFieldPermissionAction> {
-    const { roleId, objectMetadataId, fieldMetadataId } =
-      resolveUniversalRelationIdentifiersToIds({
-        flatEntityMaps: allFlatEntityMaps,
-        metadataName: action.metadataName,
-        universalForeignKeyValues: action.flatEntity,
-      });
+    const {
+      roleId,
+      objectMetadataId,
+      fieldMetadataId,
+      rowLevelPermissionPredicateGroupId,
+    } = resolveUniversalRelationIdentifiersToIds({
+      flatEntityMaps: allFlatEntityMaps,
+      metadataName: action.metadataName,
+      universalForeignKeyValues: action.flatEntity,
+    });
 
     return {
       ...action,
@@ -38,6 +42,7 @@ export class CreateFieldPermissionActionHandlerService extends WorkspaceMigratio
         roleId,
         objectMetadataId,
         fieldMetadataId,
+        rowLevelPermissionPredicateGroupId,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

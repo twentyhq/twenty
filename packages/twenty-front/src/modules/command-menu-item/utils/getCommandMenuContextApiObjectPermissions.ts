@@ -13,6 +13,10 @@ export const getCommandMenuContextApiObjectPermissions = ({
   objectRecordsPermissions: ObjectRecordsPermissions;
 }): CommandMenuContextApi['objectPermissions'] => ({
   objectMetadataId,
+  canCreateObjectRecords: canReachSomeRecords({
+    objectRecordsPermissions,
+    operationType: 'create',
+  }),
   canReadObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
     operationType: 'read',
@@ -29,7 +33,8 @@ export const getCommandMenuContextApiObjectPermissions = ({
     objectRecordsPermissions,
     operationType: 'destroy',
   }),
-  restrictedFields: objectRecordsPermissions.restrictedFields,
+  unreadableFields: objectRecordsPermissions.unreadableFields,
+  uneditableFields: objectRecordsPermissions.uneditableFields,
   rowLevelPermissionPredicates:
     objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
   rowLevelPermissionPredicateGroups:

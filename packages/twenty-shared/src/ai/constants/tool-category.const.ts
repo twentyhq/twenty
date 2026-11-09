@@ -11,4 +11,5 @@ export enum ToolCategory {
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
   ROLE = 'ROLE',
   AGENT = 'AGENT',
+  MCP = 'MCP',
 }

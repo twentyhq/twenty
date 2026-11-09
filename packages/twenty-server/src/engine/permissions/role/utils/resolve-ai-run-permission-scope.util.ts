@@ -44,6 +44,9 @@ const narrowRecordsPermissionsToExplicitDenies = ({
     }
 
     objects[objectPermission.objectMetadataId] = {
+      canCreateAllRecords:
+        grantedObjectRecordsPermissions.canCreateAllRecords &&
+        objectPermission.canUpdateObjectRecords !== false,
       canReadAllRecords:
         grantedObjectRecordsPermissions.canReadAllRecords &&
         objectPermission.canReadObjectRecords !== false,
@@ -56,7 +59,8 @@ const narrowRecordsPermissionsToExplicitDenies = ({
       canDestroyAllRecords:
         grantedObjectRecordsPermissions.canDestroyAllRecords &&
         objectPermission.canDestroyObjectRecords !== false,
-      restrictedFields: grantedObjectRecordsPermissions.restrictedFields,
+      unreadableFields: grantedObjectRecordsPermissions.unreadableFields,
+      uneditableFields: grantedObjectRecordsPermissions.uneditableFields,
       rowLevelRecordsPermissions:
         grantedObjectRecordsPermissions.rowLevelRecordsPermissions,
     };
@@ -123,6 +127,7 @@ export const resolveAiRunPermissionScope = ({
       objectMetadataId: findObjectMetadataIdOrThrow(
         objectPermission.objectUniversalIdentifier,
       ),
+      canCreateObjectRecords: objectPermission.canUpdateObjectRecords,
       canReadObjectRecords: objectPermission.canReadObjectRecords,
       canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
       canSoftDeleteObjectRecords: objectPermission.canSoftDeleteObjectRecords,
@@ -136,6 +141,7 @@ export const resolveAiRunPermissionScope = ({
 
   const flagGrantedRecordsPermissions = computeRoleRecordsPermissions({
     roleDefinition: {
+      canCreateAllObjectRecords: scope.canUpdateAllObjectRecords ?? false,
       canReadAllObjectRecords: scope.canReadAllObjectRecords ?? false,
       canUpdateAllObjectRecords: scope.canUpdateAllObjectRecords ?? false,
       canSoftDeleteAllObjectRecords:
@@ -173,6 +179,7 @@ export const resolveAiRunPermissionScope = ({
             {
               objectMetadataId,
               fieldMetadataId: flatFieldMetadata.id,
+              rowLevelPermissionPredicateGroupId: null,
               canReadFieldValue: fieldPermission.canReadFieldValue,
               canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
             },
