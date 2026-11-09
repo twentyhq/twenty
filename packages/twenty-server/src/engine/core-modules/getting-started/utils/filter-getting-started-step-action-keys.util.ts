@@ -11,13 +11,13 @@ export const filterGettingStartedStepActionKeys = ({
   permissionFlags,
   hasSendingMailbox,
   hasFeaturedApp,
-  isBookCallOffered,
+  hasCalendarBookingPage,
 }: {
   stepActionKeys: GettingStartedStepActionKey[];
   permissionFlags: Partial<Record<PermissionFlagType, boolean>>;
   hasSendingMailbox: boolean;
   hasFeaturedApp: boolean;
-  isBookCallOffered: boolean;
+  hasCalendarBookingPage: boolean;
 }): GettingStartedStepActionKey[] =>
   stepActionKeys.filter((stepActionKey) => {
     const gettingStartedWorkflow = GETTING_STARTED_WORKFLOWS[stepActionKey];
@@ -25,7 +25,7 @@ export const filterGettingStartedStepActionKeys = ({
     return (
       (hasFeaturedApp ||
         stepActionKey !== GettingStartedStepActionKey.INSTALL_APP) &&
-      (isBookCallOffered ||
+      (hasCalendarBookingPage ||
         stepActionKey !== GettingStartedStepActionKey.BOOK_CALL) &&
       GETTING_STARTED_STEP_PERMISSION_FLAGS[stepActionKey].every(
         (permissionFlag) => permissionFlags[permissionFlag] === true,

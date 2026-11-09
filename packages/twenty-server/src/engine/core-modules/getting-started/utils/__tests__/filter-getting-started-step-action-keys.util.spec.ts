@@ -27,7 +27,6 @@ describe('filterGettingStartedStepActionKeys', () => {
       profile: 'SMALL_TEAM' as const,
       expected: [
         GettingStartedStepActionKey.CONNECT_MAILBOX,
-        GettingStartedStepActionKey.BOOK_CALL,
         GettingStartedStepActionKey.IMPORT_DATA,
         GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
         GettingStartedStepActionKey.FOLLOW_UP_DEALS,
@@ -57,7 +56,7 @@ describe('filterGettingStartedStepActionKeys', () => {
           permissionFlags: ALL_PERMISSION_FLAGS,
           hasSendingMailbox: true,
           hasFeaturedApp: true,
-          isBookCallOffered: true,
+          hasCalendarBookingPage: true,
         }),
       ).toEqual(expected);
     },
@@ -72,7 +71,7 @@ describe('filterGettingStartedStepActionKeys', () => {
       },
       hasSendingMailbox: true,
       hasFeaturedApp: true,
-      isBookCallOffered: true,
+      hasCalendarBookingPage: true,
     });
 
     expect(stepActionKeys).not.toContain(
@@ -93,7 +92,7 @@ describe('filterGettingStartedStepActionKeys', () => {
         },
         hasSendingMailbox: true,
         hasFeaturedApp: true,
-        isBookCallOffered: true,
+        hasCalendarBookingPage: true,
       }),
     ).toEqual([
       GettingStartedStepActionKey.CONNECT_MAILBOX,
@@ -111,7 +110,7 @@ describe('filterGettingStartedStepActionKeys', () => {
         permissionFlags: ALL_PERMISSION_FLAGS,
         hasSendingMailbox: false,
         hasFeaturedApp: true,
-        isBookCallOffered: true,
+        hasCalendarBookingPage: true,
       }),
     ).not.toContain(GettingStartedStepActionKey.HANDOVER_DEALS);
   });
@@ -123,19 +122,19 @@ describe('filterGettingStartedStepActionKeys', () => {
         permissionFlags: ALL_PERMISSION_FLAGS,
         hasSendingMailbox: true,
         hasFeaturedApp: false,
-        isBookCallOffered: true,
+        hasCalendarBookingPage: true,
       }),
     ).not.toContain(GettingStartedStepActionKey.INSTALL_APP);
   });
 
-  it('should leave out the book call step when it is not offered', () => {
+  it('should leave out the book call step without a calendar booking page', () => {
     expect(
       filterGettingStartedStepActionKeys({
         stepActionKeys: GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE.TEAM,
         permissionFlags: ALL_PERMISSION_FLAGS,
         hasSendingMailbox: true,
         hasFeaturedApp: true,
-        isBookCallOffered: false,
+        hasCalendarBookingPage: false,
       }),
     ).not.toContain(GettingStartedStepActionKey.BOOK_CALL);
   });
@@ -150,7 +149,7 @@ describe('filterGettingStartedStepActionKeys', () => {
         },
         hasSendingMailbox: true,
         hasFeaturedApp: true,
-        isBookCallOffered: true,
+        hasCalendarBookingPage: true,
       }),
     ).not.toContain(GettingStartedStepActionKey.BOOK_CALL);
   });
