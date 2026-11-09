@@ -699,6 +699,11 @@ msgstr "{currentCreditAmountDisplay} kredita "
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, one {besplatan kredit} few {besplatna kredita} other {besplatnih kredita}}"
 
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} i {dayOfWeekDescription}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -4386,7 +4391,7 @@ msgid "Assistant avatar"
 msgstr "Avatar pomoćnika"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Ime pomoćnika"
 
@@ -6222,10 +6227,10 @@ msgstr "Izaberite šta se dešava kada kliknete na adresu e-pošte"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Izaberite čemu Twenty može da pristupi kako bi vam pružio podršku i unapredio proizvod."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Izaberite kada {AGENT_CHAT_ASSISTANT_NAME} učestvuje u razgovorima u vašem radnom prostoru"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Odaberite kada {assistantName} učestvuje u razgovorima u vašem radnom prostoru"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -11302,7 +11307,7 @@ msgid "Enter a JSON value"
 msgstr "Unesite JSON vrednost"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Unesite naziv od 1 do {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} znakova u jednom redu. Uglaste zagrade moraju biti uparene i ne mogu biti ugnježdene."
 
@@ -12774,6 +12779,11 @@ msgstr "Nije uspelo opozivanje ključa za potpisivanje. Pokušajte ponovo kasnij
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Nije uspelo opozivanje koda za oporavak."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "Čuvanje podešavanja asistenta nije uspelo. Pokušajte ponovo."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -18704,10 +18714,10 @@ msgstr "Nikada"
 msgid "Never expires"
 msgstr "Nikada ne ističe"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Nikada drži {AGENT_CHAT_ASSISTANT_NAME} van razgovora. Samo kada je pomenut traži od {AGENT_CHAT_ASSISTANT_NAME} da odgovori kada je označen. Automatski omogućava {AGENT_CHAT_ASSISTANT_NAME} da odluči kada će odgovoriti. Na razgovore samo između vas i {AGENT_CHAT_ASSISTANT_NAME} se uvek odgovara."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Nikad drži {assistantName} van razgovora. Samo kada je pomenut traži od {assistantName} da odgovori kada je označen. Automatski omogućava {assistantName} da odluči kada da odgovori. Na razgovore samo sa vama i {assistantName} se uvek odgovara."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20589,6 +20599,16 @@ msgstr "ol"
 msgid "Omit zero values"
 msgstr "Izostavi nulte vrednosti"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "na {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "u {remainingDays} i {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20736,20 +20756,13 @@ msgstr "Samo članovi koji mogu da upravljaju aplikacijama mogu da odobre pristu
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "samo na {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "samo na {firstDay} i {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "samo na {remainingDays} i {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "samo na {remainingDays} i {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

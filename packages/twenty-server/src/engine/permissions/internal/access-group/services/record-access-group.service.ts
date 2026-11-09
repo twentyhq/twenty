@@ -2,21 +2,21 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
+import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
-import { buildRecordAccessGroupConditionOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-condition-or-throw.util';
+import { buildRecordAccessGroupConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-conditions.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
-import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
-import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const RECOMPUTE_BATCH_SIZE = 1_000;
@@ -30,40 +30,137 @@ export class RecordAccessGroupService {
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
   ) {}
 
-  async recomputeRecordAccessGroupIds({
+  async recomputeRecordAccessGroupIdsOfAllObjectRecords({
     workspaceId,
     objectMetadataId,
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
-    const metadataMaps = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatRowLevelPermissionPredicateGroupMaps',
-        'rolesPermissions',
-      ],
-    );
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: objectMetadataId,
-      flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-    });
+    const metadataMaps = await this.findMetadataMaps(workspaceId);
 
     if (
-      !isDefined(flatObjectMetadata) ||
-      isPermissionStorageObject(flatObjectMetadata) ||
       !isObjectUsingRecordAccessGroups({
         rolesPermissions: metadataMaps.rolesPermissions,
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
         objectMetadataId,
       })
     ) {
       return;
     }
 
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+    });
+
+    let recordIds = await this.recordAccessGroupRepository.findRecordIds({
+      workspaceId,
+      flatObjectMetadata,
+      afterRecordId: null,
+      limit: RECOMPUTE_BATCH_SIZE,
+    });
+
+    while (isNonEmptyArray(recordIds)) {
+      await this.recomputeRecordAccessGroupIdsOfRecords({
+        workspaceId,
+        objectMetadataId,
+        recordIds,
+      });
+
+      recordIds = await this.recordAccessGroupRepository.findRecordIds({
+        workspaceId,
+        flatObjectMetadata,
+        afterRecordId: recordIds[recordIds.length - 1],
+        limit: RECOMPUTE_BATCH_SIZE,
+      });
+    }
+  }
+
+  async recomputeRecordAccessGroupIdsOfRecords({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    if (recordIds.length === 0) {
+      return;
+    }
+
+    const metadataMaps = await this.findMetadataMaps(workspaceId);
+
+    if (
+      !isObjectUsingRecordAccessGroups({
+        rolesPermissions: metadataMaps.rolesPermissions,
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+        objectMetadataId,
+      })
+    ) {
+      return;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+    });
+
+    await this.recordAccessGroupRepository.updateRecordAccessGroupIds({
+      workspaceId,
+      flatObjectMetadata,
+      recordAccessGroupConditions: buildRecordAccessGroupConditions({
+        flatObjectMetadata,
+        metadataMaps,
+        accessGroups: await this.findObjectAccessGroups({
+          workspaceId,
+          objectMetadataId,
+          transactionScope,
+        }),
+      }),
+      recordIds,
+      transactionScope,
+    });
+  }
+
+  async isObjectUsingRecordAccessGroups({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<boolean> {
+    const { rolesPermissions, flatObjectMetadataMaps } =
+      await this.findMetadataMaps(workspaceId);
+
+    return isObjectUsingRecordAccessGroups({
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      objectMetadataId,
+    });
+  }
+
+  private findObjectAccessGroups({
+    workspaceId,
+    objectMetadataId,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<AccessGroup[]> {
+    if (isDefined(transactionScope)) {
+      return this.accessGroupRepository.findObjectAccessGroups({
+        workspaceId,
+        objectMetadataId,
+        transactionScope,
+      });
+    }
+
     // The sync queues this job before writing, so groups are read once its writes are done
-    const accessGroups = await this.cacheLockService.withLock(
+    return this.cacheLockService.withLock(
       () =>
         this.accessGroupRepository.findObjectAccessGroups({
           workspaceId,
@@ -72,29 +169,15 @@ export class RecordAccessGroupService {
       buildAccessGroupSyncLockKey(workspaceId),
       ACCESS_GROUP_SYNC_LOCK_OPTIONS,
     );
-    const recordAccessGroupConditions = accessGroups.map((accessGroup) => ({
-      compactId: accessGroup.compactId,
-      condition: buildRecordAccessGroupConditionOrThrow({
-        accessGroup,
-        flatObjectMetadata,
-        tableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
-        metadataMaps,
-      }),
-    }));
+  }
 
-    let afterRecordId: string | null = null;
-
-    do {
-      afterRecordId =
-        await this.recordAccessGroupRepository.recomputeRecordAccessGroupIdsBatch(
-          {
-            workspaceId,
-            flatObjectMetadata,
-            recordAccessGroupConditions,
-            afterRecordId,
-            batchSize: RECOMPUTE_BATCH_SIZE,
-          },
-        );
-    } while (isDefined(afterRecordId));
+  private findMetadataMaps(workspaceId: string) {
+    return this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
+      'rolesPermissions',
+    ]);
   }
 }

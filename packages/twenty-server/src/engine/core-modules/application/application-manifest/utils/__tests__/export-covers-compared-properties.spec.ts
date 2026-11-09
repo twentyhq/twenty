@@ -777,7 +777,11 @@ const EXPORTED_KINDS: ExportedKind[] = [
       fieldMetadataUniversalIdentifier: 'fieldUniversalIdentifier',
     },
     workspaceLocalProperties: [],
-    knownGaps: NESTED_ROLE_CHILD_GAPS,
+    knownGaps: {
+      ...NESTED_ROLE_CHILD_GAPS,
+      rowLevelPermissionPredicateGroupUniversalIdentifier:
+        'manifests do not declare field permissions on a row level permission rule yet',
+    },
   },
   {
     metadataName: 'rolePermissionFlag',

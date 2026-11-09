@@ -12,6 +12,7 @@ import {
   getFilterOperandsForFilterableFieldType,
   getFilterTypeFromFieldType,
   isDefined,
+  mapRLSOperandToRecordFilterOperand,
   type RecordFilter,
   type RecordFilterGroup,
 } from 'twenty-shared/utils';
@@ -196,7 +197,7 @@ export const buildRecordFilterForRole = ({
       | CompositeFieldSubFieldName
       | undefined;
 
-    const operand = predicate.operand as unknown as RecordFilter['operand'];
+    const operand = mapRLSOperandToRecordFilterOperand(predicate.operand);
 
     const allowedOperands = getFilterOperandsForFilterableFieldType({
       filterType: getFilterTypeFromFieldType(fieldMetadata.type),

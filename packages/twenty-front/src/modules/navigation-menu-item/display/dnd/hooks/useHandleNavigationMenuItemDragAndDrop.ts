@@ -199,12 +199,11 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    const insertBeforeIndex =
-      result.insertBeforeItemId != null
-        ? destinationList.findIndex(
-            (item) => item.id === result.insertBeforeItemId,
-          )
-        : -1;
+    const insertBeforeIndex = isDefined(result.insertBeforeItemId)
+      ? destinationList.findIndex(
+          (item) => item.id === result.insertBeforeItemId,
+        )
+      : -1;
 
     await computeAndApplyReorder(
       draggableId,

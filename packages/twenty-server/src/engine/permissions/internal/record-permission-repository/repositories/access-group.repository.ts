@@ -9,6 +9,7 @@ import {
   type AccessGroupWithoutCompactId,
 } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 
 const INSERT_BATCH_SIZE = 500;
@@ -39,12 +40,15 @@ export class AccessGroupRepository {
   async findObjectAccessGroups({
     workspaceId,
     objectMetadataId,
+    transactionScope,
   }: {
     workspaceId: string;
     objectMetadataId: string;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<AccessGroup[]> {
     return this.recordPermissionQueryService.execute<AccessGroup>({
       workspaceId,
+      transactionScope,
       query: {
         sql: `SELECT "compactId", "groupHash", "roleId", "objectMetadataId", "rowLevelPermissionPredicateGroupId", "memberFieldValues"
           FROM ${buildAccessGroupTableExpression(workspaceId)}

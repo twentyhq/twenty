@@ -491,7 +491,7 @@ export class TimelineMessagingService {
         ...new Set(
           threadChannelRows
             .map((row) => row.messageChannelId)
-            .filter((id): id is string => id !== null && id !== undefined),
+            .filter((id): id is string => isDefined(id)),
         ),
       ];
 

@@ -15,6 +15,8 @@ export class RecomputeRecordAccessGroupIdsJob {
 
   @Process(RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME)
   async handle(jobData: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
-    await this.recordAccessGroupService.recomputeRecordAccessGroupIds(jobData);
+    await this.recordAccessGroupService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
+      jobData,
+    );
   }
 }

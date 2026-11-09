@@ -1,4 +1,3 @@
-import { type RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 import { type RowLevelPermissionPredicate } from './RowLevelPermissionPredicate';
 import { type RowLevelPermissionPredicateGroup } from './RowLevelPermissionPredicateGroup';
 
@@ -8,7 +7,8 @@ export type ObjectPermissions = {
   canUpdateObjectRecords: boolean;
   canSoftDeleteObjectRecords: boolean;
   canDestroyObjectRecords: boolean;
-  restrictedFields: RestrictedFieldsPermissions;
+  unreadableFields: string[];
+  uneditableFields: string[];
   rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
   rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];
 };

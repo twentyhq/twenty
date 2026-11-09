@@ -1648,6 +1648,7 @@ export interface FieldPermission {
     id: Scalars['UUID']
     objectMetadataId: Scalars['UUID']
     roleId: Scalars['UUID']
+    rowLevelPermissionPredicateGroupId?: Scalars['UUID']
     __typename: 'FieldPermission'
 }
 
@@ -2788,9 +2789,12 @@ export interface ObjectPermission {
     canSoftDeleteObjectRecords?: Scalars['Boolean']
     canUpdateObjectRecords?: Scalars['Boolean']
     objectMetadataId: Scalars['UUID']
+    /** @deprecated Use unreadableFields and uneditableFields */
     restrictedFields?: Scalars['JSON']
     rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroup[]
     rowLevelPermissionPredicates?: RowLevelPermissionPredicate[]
+    uneditableFields?: Scalars['UUID'][]
+    unreadableFields?: Scalars['UUID'][]
     __typename: 'ObjectPermission'
 }
 
@@ -2835,8 +2839,11 @@ export interface ObjectRecordsPermissions {
     canSoftDeleteAllRecords: Scalars['Boolean']
     canUpdateAllRecords: Scalars['Boolean']
     objectMetadataId: Scalars['UUID']
+    /** @deprecated Use unreadableFields and uneditableFields */
     restrictedFields: Scalars['JSON']
     rowLevelRecordsPermissions?: RowLevelRecordsPermissions
+    uneditableFields: Scalars['UUID'][]
+    unreadableFields: Scalars['UUID'][]
     __typename: 'ObjectRecordsPermissions'
 }
 
@@ -3403,6 +3410,7 @@ export interface Role {
     label: Scalars['String']
     objectPermissions?: ObjectPermission[]
     permissionFlags?: RolePermissionFlag[]
+    rowLevelPermissionFieldPermissions?: FieldPermission[]
     rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroup[]
     rowLevelPermissionPredicates?: RowLevelPermissionPredicate[]
     universalIdentifier?: Scalars['UUID']
@@ -3464,6 +3472,8 @@ export interface RowLevelRecordsPermissions {
     canUpdateRecords: Scalars['Boolean']
     predicateGroups: RowLevelPermissionPredicateGroup[]
     predicates: RowLevelPermissionPredicate[]
+    uneditableFields?: Scalars['UUID'][]
+    unreadableFields?: Scalars['UUID'][]
     __typename: 'RowLevelRecordsPermissions'
 }
 
@@ -6316,11 +6326,12 @@ export interface FieldPermissionGenqlSelection{
     id?: boolean | number
     objectMetadataId?: boolean | number
     roleId?: boolean | number
+    rowLevelPermissionPredicateGroupId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
-export interface FieldPermissionInput {canReadFieldValue?: (Scalars['Boolean'] | null),canUpdateFieldValue?: (Scalars['Boolean'] | null),fieldMetadataId: Scalars['UUID'],objectMetadataId: Scalars['UUID']}
+export interface FieldPermissionInput {canReadFieldValue?: (Scalars['Boolean'] | null),canUpdateFieldValue?: (Scalars['Boolean'] | null),fieldMetadataId: Scalars['UUID'],objectMetadataId: Scalars['UUID'],rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null)}
 
 export interface FieldRichTextConfigurationGenqlSelection{
     configurationType?: boolean | number
@@ -7520,9 +7531,12 @@ export interface ObjectPermissionGenqlSelection{
     canSoftDeleteObjectRecords?: boolean | number
     canUpdateObjectRecords?: boolean | number
     objectMetadataId?: boolean | number
+    /** @deprecated Use unreadableFields and uneditableFields */
     restrictedFields?: boolean | number
     rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     rowLevelPermissionPredicates?: RowLevelPermissionPredicateGenqlSelection
+    uneditableFields?: boolean | number
+    unreadableFields?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7570,8 +7584,11 @@ export interface ObjectRecordsPermissionsGenqlSelection{
     canSoftDeleteAllRecords?: boolean | number
     canUpdateAllRecords?: boolean | number
     objectMetadataId?: boolean | number
+    /** @deprecated Use unreadableFields and uneditableFields */
     restrictedFields?: boolean | number
     rowLevelRecordsPermissions?: RowLevelRecordsPermissionsGenqlSelection
+    uneditableFields?: boolean | number
+    unreadableFields?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8186,6 +8203,7 @@ export interface RoleGenqlSelection{
     label?: boolean | number
     objectPermissions?: ObjectPermissionGenqlSelection
     permissionFlags?: RolePermissionFlagGenqlSelection
+    rowLevelPermissionFieldPermissions?: FieldPermissionGenqlSelection
     rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     rowLevelPermissionPredicates?: RowLevelPermissionPredicateGenqlSelection
     universalIdentifier?: boolean | number
@@ -8252,6 +8270,8 @@ export interface RowLevelRecordsPermissionsGenqlSelection{
     canUpdateRecords?: boolean | number
     predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     predicates?: RowLevelPermissionPredicateGenqlSelection
+    uneditableFields?: boolean | number
+    unreadableFields?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

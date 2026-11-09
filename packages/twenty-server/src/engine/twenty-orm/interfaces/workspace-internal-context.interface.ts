@@ -29,9 +29,13 @@ export interface WorkspaceInternalContext {
     RecordPermissionsService,
     | 'isReadDisabled'
     | 'assertCanRunOperationOrThrow'
-    | 'buildRecordsAccessCondition'
+    | 'buildManyRecordsAccessCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
+    | 'recomputeRecordAccessGroupIdsOfRecords'
+    | 'isRecomputingRecordAccessGroupIdsOnWrite'
+    | 'findRlsRuleUnreadableFieldsByRole'
+    | 'buildRlsRuleSqlConditionOrThrow'
   >;
   recordStock: Pick<
     WorkspaceRecordStockService,
