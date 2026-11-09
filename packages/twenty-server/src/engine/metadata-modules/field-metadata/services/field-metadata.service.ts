@@ -22,6 +22,7 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
+import { computeFlatPageLayoutWidgetsUnboundFromDeletedFields } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/compute-flat-page-layout-widgets-unbound-from-deleted-fields.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
@@ -165,6 +166,15 @@ export class FieldMetadataService {
           deletedFieldIds.has(widget.configuration.fieldMetadataId),
       );
 
+    const flatPageLayoutWidgetsToUpdate =
+      computeFlatPageLayoutWidgetsUnboundFromDeletedFields({
+        flatPageLayoutWidgets: Object.values(
+          existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
+        ).filter(isDefined),
+        deletedFieldIds,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -179,12 +189,13 @@ export class FieldMetadataService {
               flatEntityToDelete: flatIndexesToDelete,
               flatEntityToUpdate: flatIndexesToUpdate,
             },
-            ...(flatPageLayoutWidgetsToDelete.length > 0
+            ...(flatPageLayoutWidgetsToDelete.length > 0 ||
+            flatPageLayoutWidgetsToUpdate.length > 0
               ? {
                   pageLayoutWidget: {
                     flatEntityToCreate: [],
                     flatEntityToDelete: flatPageLayoutWidgetsToDelete,
-                    flatEntityToUpdate: [],
+                    flatEntityToUpdate: flatPageLayoutWidgetsToUpdate,
                   },
                 }
               : {}),
