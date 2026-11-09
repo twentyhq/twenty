@@ -1,11 +1,14 @@
 import { Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   JOB_MEMORY_INFO_CACHE_MS,
   JOB_MEMORY_RECONCILE_BATCH_SIZE,
   JOB_MEMORY_RECONCILE_SUSPECTS_TTL_SECONDS,
+  JOB_MEMORY_TOP_GROUP_KEYS_CACHE_MS,
+  JOB_MEMORY_TOP_GROUP_KEYS_REPORTED,
 } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
 import { JOB_MEMORY_RECONCILE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-reconcile-script.constant';
@@ -47,6 +50,11 @@ export type JobMemoryAdmission = {
 export type JobMemoryReconciliation = {
   releasedCount: number;
   releasedBytes: number;
+};
+
+export type GroupKeyMemoryUsage = {
+  groupKey: string;
+  usedBytes: number;
 };
 
 export type ChargedJob = {
@@ -311,6 +319,68 @@ export class JobMemoryLimiter {
     }
 
     return reconciliation;
+  }
+
+  async getTopGroupKeyMemoryUsages(
+    queueName: MessageQueue,
+  ): Promise<GroupKeyMemoryUsage[]> {
+    if (!this.isEnabled()) {
+      return [];
+    }
+
+    const client = await this.options.getClient(queueName);
+    const cacheKey = `${this.options.keyPrefix}:jobmem:top`;
+    const cachedUsages = await client.runCommand('get', [cacheKey]);
+
+    if (isDefined(cachedUsages)) {
+      return JSON.parse(String(cachedUsages)) as GroupKeyMemoryUsage[];
+    }
+
+    const usedKeyPrefix = `${this.options.keyPrefix}:jobmem:used:`;
+    const usedKeys = new Set<string>();
+
+    for await (const usedKey of scanRedisKeys({
+      client,
+      pattern: `${usedKeyPrefix}*`,
+    })) {
+      usedKeys.add(usedKey);
+    }
+
+    const usages: GroupKeyMemoryUsage[] = [];
+
+    for (const usedKeysBatch of chunk(
+      [...usedKeys],
+      JOB_MEMORY_RECONCILE_BATCH_SIZE,
+    )) {
+      const values = (await client.runCommand('mget', usedKeysBatch)) as (
+        | string
+        | null
+      )[];
+
+      usedKeysBatch.forEach((usedKey, index) => {
+        const usedBytes = Number(values[index]);
+
+        if (usedBytes > 0) {
+          usages.push({
+            groupKey: usedKey.slice(usedKeyPrefix.length),
+            usedBytes,
+          });
+        }
+      });
+    }
+
+    const topUsages = usages
+      .sort((first, second) => second.usedBytes - first.usedBytes)
+      .slice(0, JOB_MEMORY_TOP_GROUP_KEYS_REPORTED);
+
+    await client.runCommand('set', [
+      cacheKey,
+      JSON.stringify(topUsages),
+      'PX',
+      JOB_MEMORY_TOP_GROUP_KEYS_CACHE_MS,
+    ]);
+
+    return topUsages;
   }
 
   async getUsedRatio(queueName: MessageQueue): Promise<number | undefined> {

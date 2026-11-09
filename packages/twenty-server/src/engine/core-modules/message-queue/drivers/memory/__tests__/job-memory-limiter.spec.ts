@@ -406,6 +406,63 @@ describe('JobMemoryLimiter', () => {
     expect(await limiter.getUsedRatio(QUEUE)).toBe(0.5);
   });
 
+  describe('getTopGroupKeyMemoryUsages', () => {
+    it('lists charged group keys by used bytes, largest first', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      await redis.set(usedKeyOf(WORKSPACE_1), 300);
+      await redis.set(usedKeyOf(WORKSPACE_2), 900);
+      await redis.set(usedKeyOf(APPLICATION), 500);
+
+      expect(await limiter.getTopGroupKeyMemoryUsages(QUEUE)).toEqual([
+        { groupKey: WORKSPACE_2, usedBytes: 900 },
+        { groupKey: APPLICATION, usedBytes: 500 },
+        { groupKey: WORKSPACE_1, usedBytes: 300 },
+      ]);
+    });
+
+    it('keeps only the 20 largest group keys', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      for (let index = 1; index <= 25; index++) {
+        await redis.set(usedKeyOf(`workspace:ws-${index}`), index);
+      }
+
+      const usages = await limiter.getTopGroupKeyMemoryUsages(QUEUE);
+
+      expect(usages).toHaveLength(20);
+      expect(usages[0]).toEqual({ groupKey: 'workspace:ws-25', usedBytes: 25 });
+      expect(usages[19]).toEqual({ groupKey: 'workspace:ws-6', usedBytes: 6 });
+    });
+
+    it('serves the cached top group keys until the cache expires', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      await redis.set(usedKeyOf(WORKSPACE_1), 300);
+      await limiter.getTopGroupKeyMemoryUsages(QUEUE);
+      await redis.set(usedKeyOf(WORKSPACE_2), 900);
+
+      expect(await limiter.getTopGroupKeyMemoryUsages(QUEUE)).toEqual([
+        { groupKey: WORKSPACE_1, usedBytes: 300 },
+      ]);
+
+      await redis.del(`${KEY_PREFIX}:jobmem:top`);
+
+      expect(await limiter.getTopGroupKeyMemoryUsages(QUEUE)).toEqual([
+        { groupKey: WORKSPACE_2, usedBytes: 900 },
+        { groupKey: WORKSPACE_1, usedBytes: 300 },
+      ]);
+    });
+
+    it('reports nothing when memory fairness is disabled', async () => {
+      const { redis, limiter } = await createLimiter({ isEnabled: false });
+
+      await redis.set(usedKeyOf(WORKSPACE_1), 300);
+
+      expect(await limiter.getTopGroupKeyMemoryUsages(QUEUE)).toEqual([]);
+    });
+  });
+
   describe('reconcile', () => {
     const jobKeyOf = (jobId: string) => `${KEY_PREFIX}:${QUEUE}:${jobId}`;
 
