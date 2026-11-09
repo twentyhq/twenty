@@ -251,6 +251,7 @@ describe('gettingStarted (e2e)', () => {
     it('saves the assigned list on the first read and keeps it when the company enrichment lands later', async () => {
       const teamStepActionKeys = [
         'CONNECT_MAILBOX',
+        'BOOK_CALL',
         'IMPORT_DATA',
         'CUSTOMIZE_DATA_MODEL',
         'INVITE_TEAM',
