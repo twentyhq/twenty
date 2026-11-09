@@ -97,6 +97,44 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
     );
   });
 
+  it('should derive the field lists from persisted restrictedFields', () => {
+    const store = createStore();
+
+    store.set(
+      currentUserWorkspaceState.atom,
+      buildCurrentUserWorkspace([
+        {
+          objectMetadataId: 'company-object-metadata-id',
+          canCreateAllRecords: false,
+          canReadAllRecords: true,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
+          restrictedFields: {
+            'unreadable-field-metadata-id': { canRead: false, canUpdate: null },
+            'uneditable-field-metadata-id': { canRead: null, canUpdate: false },
+            'unrestricted-field-metadata-id': {
+              canRead: true,
+              canUpdate: true,
+            },
+          },
+        } as unknown as CurrentUserWorkspace['objectRecordsPermissions'][number],
+      ]),
+    );
+
+    expect(
+      store.get(objectPermissionsByObjectMetadataIdSelector.atom)[
+        'company-object-metadata-id'
+      ],
+    ).toMatchObject({
+      unreadableFields: ['unreadable-field-metadata-id'],
+      uneditableFields: [
+        'unreadable-field-metadata-id',
+        'uneditable-field-metadata-id',
+      ],
+    });
+  });
+
   it('should index the permissions of the current user by object metadata id', () => {
     const store = createStore();
 

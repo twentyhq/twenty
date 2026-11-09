@@ -8,6 +8,11 @@ export type CurrentUserWorkspace = Pick<
 > & {
   objectRecordsPermissions: (ObjectRecordsPermissions & {
     objectMetadataId: string;
+    // This value is persisted, so it can be read by a bundle older or newer than the one that wrote it
+    restrictedFields?: Record<
+      string,
+      { canRead?: boolean | null; canUpdate?: boolean | null }
+    >;
   })[];
 };
 
