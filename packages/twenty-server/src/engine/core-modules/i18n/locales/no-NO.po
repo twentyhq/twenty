@@ -2005,7 +2005,7 @@ msgstr "Brødtekst må være et objekt for widgeten \"{widgetTitle}\""
 #. js-lingui-id: MgiiPI
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
-msgstr ""
+msgstr "Bestill en 15-minutters samtale, så hjelper vi deg med å få arbeidsområdet ditt klart for produksjon."
 
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
@@ -2456,7 +2456,7 @@ msgstr "Samtaleopptak"
 #. js-lingui-id: eaM0Ir
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Call requested"
-msgstr ""
+msgstr "Samtale forespurt"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6174,7 +6174,7 @@ msgstr "frontComponentId må ikke angis når engineComponentKey er TRIGGER_WORKF
 #. js-lingui-id: 7Z3KH2
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
-msgstr ""
+msgstr "Forespørselen til frontend-komponentbyggeren overskrider grensen på 6 MiB. Reduser appavhengighetene eller størrelsen på den genererte SDK-en."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9032,7 +9032,7 @@ msgstr "Tilkoblingsleverandøren for meldingsleverandøren kan ikke endres etter
 #. js-lingui-id: HRnauu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
-msgstr ""
+msgstr "Meldingsleverandørens samtalestil \"{conversationStyle}\" støttes ikke"
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -13350,7 +13350,7 @@ msgstr "Tilpass arbeidsområdet ditt"
 #. js-lingui-id: gNSS33
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Talk to our team"
-msgstr ""
+msgstr "Snakk med teamet vårt"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13709,6 +13709,11 @@ msgstr "Applikasjonens forespurte tillatelser er endret. Gå gjennom dem på nyt
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
 msgstr "Assistentprofilen kan ikke oppdateres før arbeidsområdet er aktivert."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr ""
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14930,7 +14935,7 @@ msgstr "Denne meldingskanalen kan ikke sende meldinger."
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "This messaging provider's conversation style is not supported."
-msgstr ""
+msgstr "Denne meldingsleverandørens samtalestil støttes ikke."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
@@ -15318,7 +15323,7 @@ msgstr "Dette arbeidsområdet har nådd lagringsgrensen."
 #. js-lingui-id: fqOt5p
 #: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
 msgid "This workspace has used all its seats. Contact your workspace admin to add more."
-msgstr ""
+msgstr "Dette arbeidsområdet har brukt opp alle setene sine. Kontakt arbeidsområdets administrator for å legge til flere."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -15626,6 +15631,11 @@ msgstr "For mange administratorkandidater funnet."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "For mange deltakere: {attendeeCount}. Maksimalt tillatt antall er {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr ""
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
@@ -17068,7 +17078,7 @@ msgstr "Vi opplevde et problem med å koble til e-postkontoen din. Vennligst sje
 #. js-lingui-id: tP7Xh1
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "We'll confirm the time by email."
-msgstr ""
+msgstr "Vi bekrefter tidspunktet på e-post."
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

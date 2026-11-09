@@ -2005,7 +2005,7 @@ msgstr "El cuerpo debe ser un objeto para el widget \"{widgetTitle}\""
 #. js-lingui-id: MgiiPI
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
-msgstr ""
+msgstr "Reserva una llamada de 15 minutos y te ayudaremos a dejar tu espacio de trabajo listo para producción."
 
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
@@ -2456,7 +2456,7 @@ msgstr "Grabaciones de llamadas"
 #. js-lingui-id: eaM0Ir
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Call requested"
-msgstr ""
+msgstr "Solicitud de llamada"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6174,7 +6174,7 @@ msgstr "frontComponentId no debe establecerse cuando engineComponentKey es TRIGG
 #. js-lingui-id: 7Z3KH2
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
-msgstr ""
+msgstr "La solicitud del generador de componentes de frontend supera el límite de 6 MiB. Reduzca las dependencias de la aplicación o el tamaño del SDK generado."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9032,7 +9032,7 @@ msgstr "No se puede cambiar el proveedor de conexión del proveedor de mensajer�
 #. js-lingui-id: HRnauu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
-msgstr ""
+msgstr "No se admite el estilo de conversación \"{conversationStyle}\" del proveedor de mensajería"
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -13350,7 +13350,7 @@ msgstr "Personaliza tu espacio de trabajo"
 #. js-lingui-id: gNSS33
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Talk to our team"
-msgstr ""
+msgstr "Habla con nuestro equipo"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13709,6 +13709,11 @@ msgstr "Los permisos solicitados por la aplicación han cambiado. Revísalos de 
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
 msgstr "El perfil del asistente no se puede actualizar antes de que el espacio de trabajo se active."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr ""
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14930,7 +14935,7 @@ msgstr "Este canal de mensajes no puede enviar mensajes."
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "This messaging provider's conversation style is not supported."
-msgstr ""
+msgstr "No se admite el estilo de conversación de este proveedor de mensajería."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
@@ -15318,7 +15323,7 @@ msgstr "Este espacio de trabajo ha alcanzado su límite de almacenamiento."
 #. js-lingui-id: fqOt5p
 #: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
 msgid "This workspace has used all its seats. Contact your workspace admin to add more."
-msgstr ""
+msgstr "Este espacio de trabajo ha utilizado todos sus puestos. Ponte en contacto con el administrador de tu espacio de trabajo para añadir más."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -15626,6 +15631,11 @@ msgstr "Se encontraron demasiados candidatos a administrador."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Demasiados asistentes: {attendeeCount}. El máximo permitido es {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr ""
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
@@ -17068,7 +17078,7 @@ msgstr "Encontramos un problema al conectar con su cuenta de correo electrónico
 #. js-lingui-id: tP7Xh1
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "We'll confirm the time by email."
-msgstr ""
+msgstr "Confirmaremos la hora por correo electrónico."
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
