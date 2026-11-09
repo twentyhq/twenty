@@ -97,9 +97,9 @@ export const TwoFactorAuthenticationBackupCodesSection = ({
             variant="outline"
             onClick={() => openDialog(GENERATE_BACKUP_CODES_DIALOG_ID)}
           >
-            {remainingBackupCodeCount === 0
-              ? t`Generate backup codes`
-              : t`Generate new codes`}
+            {isDefined(remainingBackupCodeCount) && remainingBackupCodeCount > 0
+              ? t`Generate new codes`
+              : t`Generate backup codes`}
           </Button>
           {isDefined(remainingBackupCodeCount) && (
             <Status
