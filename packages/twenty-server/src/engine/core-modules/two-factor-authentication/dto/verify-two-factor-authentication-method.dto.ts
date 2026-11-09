@@ -6,5 +6,5 @@ export class VerifyTwoFactorAuthenticationMethodDTO {
   success: boolean;
 
   @Field(() => [String], { nullable: true })
-  backupCodes?: string[] | null;
+  backupCodes: string[] | null;
 }
