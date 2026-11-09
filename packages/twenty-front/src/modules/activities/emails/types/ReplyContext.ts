@@ -10,8 +10,8 @@ export type ReplyContextReady = {
   subject: string;
   inReplyTo: string;
   connectedAccountId: string;
-  connectedAccountHandle: string | null;
   connectedAccountProvider: ConnectedAccountProvider;
+  messageChannelHandle: string | null;
 };
 
 export type ReplyContext = ReplyContextLoading | ReplyContextReady;

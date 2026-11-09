@@ -16,7 +16,7 @@ export const getAppReplyTarget = ({
     !isDefined(replyContext) ||
     replyContext.loading ||
     replyContext.connectedAccountProvider !== ConnectedAccountProvider.APP ||
-    !isDefined(replyContext.connectedAccountHandle) ||
+    !isDefined(replyContext.messageChannelHandle) ||
     !isDefined(messageChannelId)
   ) {
     return null;
@@ -24,7 +24,7 @@ export const getAppReplyTarget = ({
 
   return {
     connectedAccountId: replyContext.connectedAccountId,
-    handle: replyContext.connectedAccountHandle,
+    handle: replyContext.messageChannelHandle,
     messageChannelId,
     messageThreadId,
   };
