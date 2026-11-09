@@ -55,8 +55,12 @@ export class HttpTool implements Tool {
         undefined,
         {
           workspaceId: context.workspaceId,
+          source: context.outboundRequestSource ?? 'workflow-http',
           userId: context.userId,
-          source: 'workflow-http',
+          userWorkspaceId: context.userWorkspaceId,
+          workspaceMemberId: context.workspaceMemberId,
+          workflowRunId: context.workflowRunId,
+          workflowStepId: context.workflowStepId,
         },
       );
       const response = await axiosClient(axiosConfig);
