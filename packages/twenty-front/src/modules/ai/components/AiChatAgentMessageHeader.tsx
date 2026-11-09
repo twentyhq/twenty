@@ -32,10 +32,8 @@ export const AiChatAgentMessageHeader = ({
   const isAgentUnavailable =
     isGraphqlErrorOfType(error, 'NOT_FOUND') ||
     isGraphqlErrorOfType(error, 'FORBIDDEN');
-  const unexpectedError =
-    hasAiPermission && !isAgentUnavailable ? error : undefined;
-  const agent = hasAiPermission ? data?.findOneAgent : undefined;
-  const agentName = agent?.label ?? t`Agent`;
+  const unexpectedError = isAgentUnavailable ? undefined : error;
+  const agentName = data?.findOneAgent.label ?? t`Agent`;
 
   return (
     <>

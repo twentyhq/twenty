@@ -39,13 +39,8 @@ export const AiChatMessageAuthorHeader = ({
   const applicationId = metadata?.senderApplicationId;
   const senderId = metadata?.senderWorkspaceMemberId;
   const agentId = metadata?.agentId;
-  const isBuiltInAssistant =
-    metadata?.isBuiltInAssistant &&
-    !isDefined(applicationId) &&
-    !isDefined(senderId) &&
-    !isDefined(agentId);
 
-  if (isBuiltInAssistant) {
+  if (metadata?.isBuiltInAssistant === true) {
     return (
       <ChatMessageHeader
         avatar={<AiChatAssistantAvatar />}
