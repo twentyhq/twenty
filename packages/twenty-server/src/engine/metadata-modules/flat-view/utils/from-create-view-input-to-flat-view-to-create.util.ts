@@ -82,6 +82,8 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     icon: createViewInput.icon,
     isCompact: createViewInput.isCompact ?? false,
     shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
+    shouldDisplayGroupsAsTabs:
+      createViewInput.shouldDisplayGroupsAsTabs ?? false,
     kanbanColumnWidth: createViewInput.kanbanColumnWidth ?? null,
     groupLoadLimit:
       createViewInput.groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,

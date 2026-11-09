@@ -20,7 +20,7 @@ import { getEffectiveMessageChannelVisibility } from 'src/engine/core-modules/me
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -47,7 +47,7 @@ export class TimelineMessagingService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileUrlService: FileUrlService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
   public async getAndCountMessageThreads(
@@ -434,7 +434,7 @@ export class TimelineMessagingService {
     workspaceId: string;
   }): Promise<TimelineThreadChannelDTO | null> {
     const recordsPermissions =
-      await this.recordPermissionsService.findRecordsActions({
+      await this.recordPermissionsReadService.findRecordsActions({
         authContext: getWorkspaceAuthContext(),
         objectNameSingular: 'messageThread',
         recordIds: [messageThreadId],
