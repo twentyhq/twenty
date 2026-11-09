@@ -1,35 +1,29 @@
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
+import { type DashboardFilterWidgetConfiguration } from '@/page-layout/types/DashboardFilterWidgetConfiguration';
+import { isDashboardFilterDataWidgetConfiguration } from '@/page-layout/utils/isDashboardFilterDataWidgetConfiguration';
 import { getDashboardFilterCandidateFieldMetadataIds } from 'twenty-shared/utils';
 
 export const getDashboardFilterWidgetCandidateFieldMetadataIds = ({
   configuration,
   viewFilterFieldMetadataIds,
 }: {
-  configuration: PageLayoutWidget['configuration'];
+  configuration: DashboardFilterWidgetConfiguration;
   viewFilterFieldMetadataIds: string[];
 }): ReturnType<typeof getDashboardFilterCandidateFieldMetadataIds> => {
-  if (isWidgetConfigurationOfType(configuration, 'RecordTableConfiguration')) {
+  if (configuration.__typename === 'RecordTableConfiguration') {
     return {
       groupByFieldMetadataIds: [],
       widgetFilterFieldMetadataIds: viewFilterFieldMetadataIds,
     };
   }
 
-  if (!isWidgetConfigurationOfTypeGraph(configuration)) {
+  if (!isDashboardFilterDataWidgetConfiguration(configuration)) {
     return { groupByFieldMetadataIds: [], widgetFilterFieldMetadataIds: [] };
   }
 
   return getDashboardFilterCandidateFieldMetadataIds({
     primaryAxisGroupByFieldMetadataId:
-      'primaryAxisGroupByFieldMetadataId' in configuration
-        ? configuration.primaryAxisGroupByFieldMetadataId
-        : undefined,
-    groupByFieldMetadataId:
-      'groupByFieldMetadataId' in configuration
-        ? configuration.groupByFieldMetadataId
-        : undefined,
+      configuration.primaryAxisGroupByFieldMetadataId,
+    groupByFieldMetadataId: configuration.groupByFieldMetadataId,
     filter: configuration.filter,
   });
 };

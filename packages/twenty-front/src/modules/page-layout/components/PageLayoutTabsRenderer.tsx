@@ -10,6 +10,7 @@ import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
 import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useDashboardFilters } from '@/page-layout/hooks/useDashboardFilters';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAddTabStrategy';
 import { usePageLayoutRenderableTabs } from '@/page-layout/hooks/usePageLayoutRenderableTabs';
@@ -27,9 +28,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useIsMobile } from 'twenty-ui/utilities';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -157,9 +156,7 @@ export const PageLayoutTabsRenderer = () => {
 
   const isMobile = useIsMobile();
 
-  const isDashboardFiltersEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
-  );
+  const dashboardFilters = useDashboardFilters();
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
@@ -224,10 +221,7 @@ export const PageLayoutTabsRenderer = () => {
   const behaveAsLinks =
     workspaceSurface.type === 'main' && !isPageLayoutInEditMode;
   const hasTabPanels = shouldRenderTabList && !behaveAsLinks;
-  const shouldRenderDashboardFilterBar =
-    isDashboardFiltersEnabled &&
-    isPageLayoutInEditMode &&
-    currentPageLayout.type === PageLayoutType.DASHBOARD;
+  const shouldRenderDashboardFilterBar = isDefined(dashboardFilters);
 
   const tabList = shouldRenderTabList && (
     <PageLayoutTabList

@@ -1,6 +1,5 @@
 import { getDashboardFilterWidgetCandidateFieldMetadataIds } from '@/page-layout/utils/getDashboardFilterWidgetCandidateFieldMetadataIds';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 import {
   TEST_AGGREGATE_CHART_CONFIGURATION,
   TEST_BAR_CHART_CONFIGURATION,
@@ -63,11 +62,7 @@ describe('getDashboardFilterWidgetCandidateFieldMetadataIds', () => {
   it('should use the view filters of a record table', () => {
     expect(
       getDashboardFilterWidgetCandidateFieldMetadataIds({
-        configuration: {
-          __typename: 'RecordTableConfiguration',
-          configurationType: WidgetConfigurationType.RECORD_TABLE,
-          viewId: 'view-1',
-        },
+        configuration: { __typename: 'RecordTableConfiguration' },
         viewFilterFieldMetadataIds: [TEST_FIELD_METADATA_ID_3],
       }),
     ).toEqual({
