@@ -13,6 +13,7 @@ type DropdownContentProps = Pick<
   | 'alignOffset'
   | 'anchor'
   | 'collisionPadding'
+  | 'container'
   | 'width'
   | 'onKeyDown'
   | 'onClick'
@@ -30,6 +31,7 @@ export const DropdownContent = ({
   alignOffset,
   anchor,
   collisionPadding,
+  container,
   width,
   onKeyDown,
   onClick,
@@ -50,6 +52,7 @@ export const DropdownContent = ({
       alignOffset={alignOffset}
       anchor={anchor}
       collisionPadding={collisionPadding}
+      container={container}
       width={width}
       onKeyDown={onKeyDown}
       onClick={onClick}

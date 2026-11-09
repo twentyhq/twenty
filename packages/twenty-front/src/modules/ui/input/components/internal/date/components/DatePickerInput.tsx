@@ -91,7 +91,7 @@ export const DatePickerInput = ({
     ? (parsePlainDateToDateInputString(internalDate) ?? undefined)
     : undefined;
 
-  const { ref, setValue, value } = useIMask<HTMLInputElement>(
+  const { ref, maskRef, setValue, value } = useIMask<HTMLInputElement>(
     {
       mask: Date,
       pattern,
@@ -135,6 +135,8 @@ export const DatePickerInput = ({
         ref={ref}
         value={value}
         onChange={() => {}} // Prevent React warning
+        // IMask aligns the caret on click, which an open picker's click-outside listener can swallow
+        onMouseUp={() => maskRef.current?.alignCursorFriendly()}
       />
     </StyledInputContainer>
   );

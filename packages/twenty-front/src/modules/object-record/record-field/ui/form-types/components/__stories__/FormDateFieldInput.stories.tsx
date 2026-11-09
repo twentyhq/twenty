@@ -109,3 +109,48 @@ export const WithVariable: Story = {
     expect(args.onChange).toHaveBeenCalledWith(`{{${MOCKED_STEP_ID}.name}}`);
   },
 };
+
+export const TypesIntoASecondDateFieldWhileThePickerIsOpen: Story = {
+  args: {
+    defaultValue: undefined,
+    onChange: fn(),
+  },
+  render: (args) => (
+    <>
+      <FormDateFieldInput
+        label="From"
+        defaultValue={args.defaultValue}
+        onChange={fn()}
+      />
+      <FormDateFieldInput
+        label="To"
+        defaultValue={args.defaultValue}
+        onChange={args.onChange}
+      />
+    </>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const [fromInput, toInput] = await canvas.findAllByRole<HTMLInputElement>(
+      'textbox',
+      { name: 'Date' },
+    );
+
+    const user = userEvent.setup();
+
+    // A browser puts the caret where the click lands, after the input got focus
+    const clickAfterText = async (input: HTMLInputElement) => {
+      await user.pointer({ keys: '[MouseLeft>]', target: input });
+      input.setSelectionRange(input.value.length, input.value.length);
+      await user.pointer({ keys: '[/MouseLeft]', target: input });
+    };
+
+    await clickAfterText(fromInput);
+    await user.keyboard('01152026');
+    await clickAfterText(toInput);
+    await user.keyboard('01202026');
+
+    await waitFor(() => expect(toInput).toHaveValue('01/20/2026'));
+    expect(args.onChange).toHaveBeenLastCalledWith('2026-01-20');
+  },
+};

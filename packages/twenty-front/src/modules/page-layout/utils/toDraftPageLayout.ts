@@ -10,4 +10,5 @@ export const toDraftPageLayout = (pageLayout: PageLayout): DraftPageLayout => ({
   defaultTabToFocusOnMobileAndSidePanelId:
     pageLayout.defaultTabToFocusOnMobileAndSidePanelId,
   isFirstTabPinned: pageLayout.isFirstTabPinned,
+  filters: pageLayout.filters,
 });

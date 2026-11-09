@@ -2,6 +2,7 @@ import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { type SelectCallToActionButton } from '@/ui/input/types/SelectCallToActionButton';
 import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
+import { type DropdownContentProps } from 'twenty-ui/components/navigation';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 export type SelectProps<TValue extends SelectValue> = {
   className?: string;
@@ -24,6 +25,7 @@ export type SelectProps<TValue extends SelectValue> = {
   pinnedOption?: SelectOption<TValue>;
   callToActionButton?: SelectCallToActionButton;
   dropdownSideOffset?: number;
+  dropdownPortalContainer?: DropdownContentProps['container'];
   hasRightElement?: boolean;
   showContextualTextInControl?: boolean;
   showIconInControl?: boolean;

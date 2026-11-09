@@ -9,6 +9,7 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { materializeDashboardDateRangeFilterInDraft } from '@/page-layout/utils/materializeDashboardDateRangeFilterInDraft';
 import { sanitizeChartFiltersInPageLayoutDraft } from '@/page-layout/utils/sanitizeChartFiltersInPageLayoutDraft';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -59,7 +60,8 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
     const pageLayoutDraft = store.get(pageLayoutDraftCallbackState);
 
     const sanitizedPageLayoutDraft = sanitizeChartFiltersInPageLayoutDraft({
-      pageLayoutDraft,
+      pageLayoutDraft:
+        materializeDashboardDateRangeFilterInDraft(pageLayoutDraft),
       fieldMetadataItemsByObjectMetadataId: new Map(
         objectMetadataItems.map((objectMetadataItem) => [
           objectMetadataItem.id,

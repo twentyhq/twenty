@@ -11,6 +11,7 @@ import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
+import { type DropdownContentProps } from 'twenty-ui/components/navigation';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
@@ -38,6 +39,7 @@ type DatePickerHeaderProps = {
   prevMonthButtonDisabled: boolean;
   nextMonthButtonDisabled: boolean;
   hideInput?: boolean;
+  portalContainer?: DropdownContentProps['container'];
 };
 
 export const DatePickerHeader = ({
@@ -52,6 +54,7 @@ export const DatePickerHeader = ({
   prevMonthButtonDisabled,
   nextMonthButtonDisabled,
   hideInput = false,
+  portalContainer,
 }: DatePickerHeaderProps) => {
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -75,6 +78,7 @@ export const DatePickerHeader = ({
           onChange={onChangeMonth}
           value={displayedMonth?.month}
           fullWidth
+          dropdownPortalContainer={portalContainer}
         />
         <Select
           dropdownId={yearSelectDropdownId}
@@ -82,6 +86,7 @@ export const DatePickerHeader = ({
           value={displayedMonth?.year}
           options={DATE_PICKER_YEAR_SELECT_OPTIONS}
           fullWidth
+          dropdownPortalContainer={portalContainer}
         />
         <LightIconButton
           onClick={onSubtractMonth}
