@@ -38,6 +38,7 @@ const buildRequest = ({
 
 const buildProfile = (
   email: string = VALID_EMAIL,
+  notOnOrAfter = '2099-01-01T00:00:00.000Z',
 ): Parameters<SamlAuthStrategy['validate']>[1] => ({
   email,
   nameID: email,
@@ -51,9 +52,7 @@ const buildProfile = (
         {
           SubjectConfirmation: [
             {
-              SubjectConfirmationData: [
-                { $: { NotOnOrAfter: '2099-01-01T00:00:00.000Z' } },
-              ],
+              SubjectConfirmationData: [{ $: { NotOnOrAfter: notOnOrAfter } }],
             },
           ],
         },
@@ -65,8 +64,11 @@ const buildProfile = (
 
 describe('SamlAuthStrategy.validate', () => {
   let strategy: SamlAuthStrategy;
+  let consumeSamlAssertionOrThrow: jest.Mock;
 
   beforeEach(async () => {
+    consumeSamlAssertionOrThrow = jest.fn();
+
     const module = await Test.createTestingModule({
       providers: [
         SamlAuthStrategy,
@@ -77,7 +79,7 @@ describe('SamlAuthStrategy.validate', () => {
             isSamlIdentityProvider: jest.fn(),
             buildIssuerURL: jest.fn(),
             buildCallbackUrl: jest.fn(),
-            consumeSamlAssertionOrThrow: jest.fn(),
+            consumeSamlAssertionOrThrow,
           },
         },
       ],
@@ -224,5 +226,21 @@ describe('SamlAuthStrategy.validate', () => {
     expect(done).toHaveBeenCalledTimes(1);
     expect(done.mock.calls[0][0]).toBeInstanceOf(Error);
     expect(done.mock.calls[0][0].message).toBe('Profile must be provided');
+  });
+
+  it('rejects an assertion whose SubjectConfirmationData NotOnOrAfter has passed', async () => {
+    const request = buildRequest({ paramsIdpId: IDP_A });
+    const done = jest.fn();
+
+    await strategy.validate(
+      request,
+      buildProfile(VALID_EMAIL, '2000-01-01T00:00:00.000Z'),
+      done,
+    );
+
+    expect(done).toHaveBeenCalledTimes(1);
+    expect(done.mock.calls[0][0]).toBeInstanceOf(Error);
+    expect(done.mock.calls[0][0].message).toBe('SAML assertion has expired');
+    expect(consumeSamlAssertionOrThrow).not.toHaveBeenCalled();
   });
 });

@@ -186,11 +186,18 @@ export class SamlAuthStrategy extends PassportStrategy(
           ),
       );
 
+      const validUntil = new Date(Math.max(...notOnOrAfterTimestamps));
+
+      // node-saml only checks this NotOnOrAfter while validating InResponseTo, which stays off
+      if (Date.now() >= validUntil.getTime()) {
+        return done(new Error('SAML assertion has expired'));
+      }
+
       // The SAML profile requires rejecting a reused assertion until its NotOnOrAfter
       await this.ssoService.consumeSamlAssertionOrThrow({
         identityProviderId: request.params.identityProviderId,
         assertionId: assertion.data.Assertion.$.ID,
-        validUntil: new Date(Math.max(...notOnOrAfterTimestamps)),
+        validUntil,
       });
 
       done(null, {
