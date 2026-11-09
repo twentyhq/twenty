@@ -18,8 +18,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export interface CursorData {
-  // oxlint-disable-next-line typescript/no-explicit-any
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export const decodeCursor = <T = CursorData>(cursor: string): T => {

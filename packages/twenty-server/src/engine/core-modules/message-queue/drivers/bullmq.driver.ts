@@ -67,6 +67,10 @@ import { computeJobQueueWaitMs } from 'src/engine/core-modules/message-queue/uti
 import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import {
+  buildGroupKeyMemoryObservations,
+  type GroupKeyMemoryObservation,
+} from 'src/engine/core-modules/message-queue/utils/build-group-key-memory-observations.util';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -101,6 +105,7 @@ export class BullMQDriver
   private readonly fairQueueScheduler: FairQueueScheduler;
   private readonly jobSizeLimiter: JobSizeLimiter;
   private readonly jobMemoryLimiter: JobMemoryLimiter;
+  private reportedMemoryGroupKeys = new Set<string>();
 
   constructor(
     private options: BullMQDriverOptions,
@@ -162,6 +167,16 @@ export class BullMQDriver
       },
       callback: () => this.collectQueueMemoryUsedRatio(),
     });
+
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_queue_memory_group_used_bytes',
+      options: {
+        description:
+          'Redis memory charged to the job-queue group keys (workspaces, applications) using the most',
+        unit: 'By',
+      },
+      callback: () => this.collectTopGroupKeyMemoryUsages(),
+    });
   }
 
   // charges of every queue share one Redis, so any registered queue's client can reconcile them all
@@ -187,6 +202,29 @@ export class BullMQDriver
     const usedRatio = await this.jobMemoryLimiter.getUsedRatio(queueName);
 
     return isDefined(usedRatio) ? [{ value: usedRatio, attributes: {} }] : [];
+  }
+
+  private async collectTopGroupKeyMemoryUsages(): Promise<
+    GroupKeyMemoryObservation[]
+  > {
+    const [queueName] = Object.keys(this.queueMap) as MessageQueue[];
+
+    if (!isDefined(queueName)) {
+      return [];
+    }
+
+    const usages =
+      await this.jobMemoryLimiter.getTopGroupKeyMemoryUsages(queueName);
+    const observations = buildGroupKeyMemoryObservations({
+      usages,
+      previouslyReportedGroupKeys: this.reportedMemoryGroupKeys,
+    });
+
+    this.reportedMemoryGroupKeys = new Set(
+      usages.map(({ groupKey }) => groupKey),
+    );
+
+    return observations;
   }
 
   private async collectJobCountsByQueue(

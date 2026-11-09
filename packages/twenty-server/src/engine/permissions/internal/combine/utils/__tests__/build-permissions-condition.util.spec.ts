@@ -19,14 +19,14 @@ import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { buildPermissionsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-condition.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
-import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 
 jest.mock(
   'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util',
 );
 jest.mock(
-  'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util',
+  'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util',
 );
 
 const APPLICATION_ID = 'application-id';
@@ -195,7 +195,7 @@ describe('buildPermissionsCondition', () => {
         parameters: { restricted: 'restricted' },
       }),
     );
-    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(null);
+    (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(null);
   });
 
   it('keeps records of an object that disables reading to its owning application', () => {
@@ -380,9 +380,7 @@ describe('buildPermissionsCondition', () => {
     });
 
     it('lets a named grant bypass the row filter of the role', () => {
-      (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-        NOTE_FILTER,
-      );
+      (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
       const policy = buildForCompany(readEverything);
 
       if (policy.kind !== 'gated') {
@@ -435,9 +433,7 @@ describe('buildPermissionsCondition', () => {
   });
 
   it('holds private shares to the role filter without sharing beyond the role', () => {
-    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-      NOTE_FILTER,
-    );
+    (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
     const sql = gatedSql({
       principals: readEverything,
       flatObjectMetadata: person,
@@ -449,9 +445,7 @@ describe('buildPermissionsCondition', () => {
   });
 
   it('checks the role rule through the caller access groups when given', () => {
-    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-      NOTE_FILTER,
-    );
+    (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
     const policy = buildConditionOutcome({
       principals: readEverything,
       metadataMaps,
@@ -472,9 +466,7 @@ describe('buildPermissionsCondition', () => {
   });
 
   it('keeps the role rule when the object is not listed through access groups', () => {
-    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-      NOTE_FILTER,
-    );
+    (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
 
     expect(
       gatedSql({ principals: readEverything, flatObjectMetadata: person }),
@@ -519,9 +511,7 @@ describe('buildPermissionsCondition', () => {
     });
 
     it('preserves the member-bound row filter when sharing cannot reach beyond the role', () => {
-      (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-        NOTE_FILTER,
-      );
+      (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
       const policy = buildConditionOutcome({
         ...prospectiveShareArguments,
         operationType: 'softDelete',

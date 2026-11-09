@@ -17,6 +17,7 @@ import {
 } from 'twenty-shared/utils';
 import { In, Not } from 'typeorm';
 
+import { isBuiltInAssistantMessage } from 'src/engine/metadata-modules/ai/ai-history/utils/is-built-in-assistant-message.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -306,31 +307,33 @@ export class AgentChatService {
       }),
       this.turnRepository.find(workspaceId, { where: { threadId } }),
     ]);
-    // the opener is stamped on the turn, so a run resumed in a new turn after a pause is still theirs
-    const turnIdsOpenedByOtherMembers = new Set(
-      turns
-        .filter(({ createdBy }) =>
-          isAgentTurnOpenedByOtherMember({
-            createdBy,
-            workspaceMemberId,
-            applicationId,
-          }),
-        )
-        .map(({ id }) => id),
-    );
+    const turnsById = new Map(turns.map((turn) => [turn.id, turn]));
 
     // their message and attachments are theirs to show; only the reply ran under their permissions
     return messages.map((message) => {
+      const turn = isDefined(message.turnId)
+        ? turnsById.get(message.turnId)
+        : undefined;
+      const messageWithAuthor = {
+        ...message,
+        isBuiltInAssistant: isBuiltInAssistantMessage({ message, turn }),
+      };
+
+      // the opener is stamped on the turn, so a run resumed in a new turn after a pause is still theirs
       if (
-        !isDefined(message.turnId) ||
-        !turnIdsOpenedByOtherMembers.has(message.turnId) ||
-        message.role === AgentMessageRole.USER
+        !isDefined(turn) ||
+        message.role === AgentMessageRole.USER ||
+        !isAgentTurnOpenedByOtherMember({
+          createdBy: turn.createdBy,
+          workspaceMemberId,
+          applicationId,
+        })
       ) {
-        return message;
+        return messageWithAuthor;
       }
 
       return {
-        ...message,
+        ...messageWithAuthor,
         parts: filterPartsOfTurnActedByOthers(message.parts ?? []),
       };
     });

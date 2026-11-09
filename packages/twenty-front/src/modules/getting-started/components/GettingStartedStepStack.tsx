@@ -26,19 +26,39 @@ import {
   type GettingStartedStepDefinition,
 } from '~/generated-metadata/graphql';
 
+const StyledStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+`;
+
 const StyledActiveStep = styled.div`
   border-radius: ${themeCssVariables.border.radius.lg};
   box-shadow: ${themeCssVariables.boxShadow.strong};
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   position: relative;
 `;
 
+const StyledActiveStepCardBase = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+`;
+
+const StyledActiveStepCard = motion.create(StyledActiveStepCardBase);
+
 const StyledStepsTrack = styled.div`
   bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: absolute;
   right: calc(100% + ${themeCssVariables.spacing[10]});
   top: 0;
 
-  @container getting-started-scroll (max-width: ${GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH}px) {
+  @container getting-started-page (max-width: ${GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH}px) {
     display: none;
   }
 `;
@@ -48,8 +68,7 @@ const StyledSteps = styled.nav`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  position: sticky;
-  top: ${themeCssVariables.spacing[10]};
+  margin-bottom: auto;
 `;
 
 const StyledTicks = styled.div`
@@ -102,6 +121,7 @@ const StyledStackedStepBase = styled.button<{ depth: number }>`
   color: ${({ depth }) => GETTING_STARTED_STACKED_STEP_COLOR_BY_DEPTH[depth]};
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
   font: inherit;
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[11]};
@@ -179,7 +199,7 @@ export const GettingStartedStepStack = ({
     .reverse();
 
   return (
-    <div>
+    <StyledStack>
       <AnimatePresence initial={false} mode="popLayout">
         {stackedSteps.map(({ depth, stepDefinition }) => {
           const { actionKey, icon, iconColor, title, doneTitle } =
@@ -266,7 +286,7 @@ export const GettingStartedStepStack = ({
           </StyledSteps>
         </StyledStepsTrack>
         <AnimatePresence initial={false} mode="wait">
-          <motion.div
+          <StyledActiveStepCard
             key={selectedStepActionKey}
             initial={{ opacity: 0, y: -cardOffset }}
             animate={{ opacity: 1, y: 0 }}
@@ -290,9 +310,9 @@ export const GettingStartedStepStack = ({
                 gettingStartedJustCompletedStep === selectedStepActionKey
               }
             />
-          </motion.div>
+          </StyledActiveStepCard>
         </AnimatePresence>
       </StyledActiveStep>
-    </div>
+    </StyledStack>
   );
 };

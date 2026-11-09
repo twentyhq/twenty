@@ -104,15 +104,18 @@ export class ApplicationDevelopmentService {
     universalIdentifier,
     workspaceId,
     shouldIncludeDependencies,
+    shouldIncludeSourceFiles,
   }: {
     universalIdentifier: string;
     workspaceId: string;
     shouldIncludeDependencies?: boolean;
+    shouldIncludeSourceFiles?: boolean;
   }): Promise<ApplicationExport> {
     return this.applicationManifestExportService.exportApplication({
       workspaceId,
       applicationUniversalIdentifier: universalIdentifier,
       shouldIncludeDependencies,
+      shouldIncludeSourceFiles,
     });
   }
 

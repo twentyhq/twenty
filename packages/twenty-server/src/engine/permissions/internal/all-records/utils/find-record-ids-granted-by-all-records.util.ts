@@ -15,12 +15,7 @@ export const findRecordIdsGrantedByAllRecords = async ({
 }: PermissionsRowAccessEvaluationRequest): Promise<string[]> => {
   if (
     !isRolePermittingOperation(request) ||
-    isDefined(
-      resolvePermissionsRowLevelPermissionFilter({
-        ...request,
-        tableAlias: request.flatObjectMetadata.nameSingular,
-      }),
-    )
+    isDefined(resolvePermissionsRowLevelPermissionFilter(request))
   ) {
     return [];
   }
