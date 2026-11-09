@@ -7,9 +7,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-// The active tab also changes without a click, e.g. when its group empties and
-// "Hide empty groups" falls back to All; the last tab is kept in state because
-// that switch remounts the table body and this effect with it
+// Also catches the click-less fallback to All, which remounts the body, hence the atom over a ref
 export const RecordGroupTabsSelectionResetEffect = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 

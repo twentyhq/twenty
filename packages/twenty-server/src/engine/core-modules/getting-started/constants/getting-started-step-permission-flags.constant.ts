@@ -21,6 +21,7 @@ export const GETTING_STARTED_STEP_PERMISSION_FLAGS: Record<
   [GettingStartedStepActionKey.INVITE_TEAM]: [
     PermissionFlagType.WORKSPACE_MEMBERS,
   ],
+  [GettingStartedStepActionKey.BOOK_CALL]: [PermissionFlagType.WORKSPACE],
   [GettingStartedStepActionKey.HANDOVER_DEALS]: [PermissionFlagType.WORKFLOWS],
   [GettingStartedStepActionKey.FOLLOW_UP_DEALS]: [
     PermissionFlagType.WORKFLOWS,

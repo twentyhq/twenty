@@ -142,10 +142,12 @@ export interface AgentMessage {
     agentId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     id: Scalars['UUID']
+    isBuiltInAssistant: Scalars['Boolean']
     parts: AgentMessagePart[]
     processedAt?: Scalars['DateTime']
     reactions: AgentMessageReactionSummary[]
     role: Scalars['String']
+    senderApplicationId?: Scalars['UUID']
     senderUserWorkspaceId?: Scalars['UUID']
     senderWorkspaceMemberId?: Scalars['UUID']
     status: Scalars['String']
@@ -1825,7 +1827,7 @@ export interface GettingStartedProgress {
     __typename: 'GettingStartedProgress'
 }
 
-export type GettingStartedStepActionKey = 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MODEL' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
+export type GettingStartedStepActionKey = 'BOOK_CALL' | 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MODEL' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
 
 export interface GettingStartedStepDefinition {
     actionKey: GettingStartedStepActionKey
@@ -4605,10 +4607,12 @@ export interface AgentMessageGenqlSelection{
     agentId?: boolean | number
     createdAt?: boolean | number
     id?: boolean | number
+    isBuiltInAssistant?: boolean | number
     parts?: AgentMessagePartGenqlSelection
     processedAt?: boolean | number
     reactions?: AgentMessageReactionSummaryGenqlSelection
     role?: boolean | number
+    senderApplicationId?: boolean | number
     senderUserWorkspaceId?: boolean | number
     senderWorkspaceMemberId?: boolean | number
     status?: boolean | number
@@ -13055,6 +13059,7 @@ export const enumFileFolder = {
 }
 
 export const enumGettingStartedStepActionKey = {
+   BOOK_CALL: 'BOOK_CALL' as const,
    CONNECT_MAILBOX: 'CONNECT_MAILBOX' as const,
    CUSTOMIZE_DATA_MODEL: 'CUSTOMIZE_DATA_MODEL' as const,
    FOLLOW_UP_DEALS: 'FOLLOW_UP_DEALS' as const,

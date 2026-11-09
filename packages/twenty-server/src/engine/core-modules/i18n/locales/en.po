@@ -1997,6 +1997,11 @@ msgstr "Body must be an object"
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Body must be an object for widget \"{widgetTitle}\""
 
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr "Book a 15-minute call and we'll help you get your workspace production-ready."
+
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
@@ -2442,6 +2447,11 @@ msgstr "Call Recordings"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Call Recordings"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr "Call requested"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6154,6 +6164,11 @@ msgstr "frontComponentId must not be set for engine component key {engineCompone
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
+
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13320,6 +13335,11 @@ msgstr "Tab not found for widget duplication."
 msgid "Tailor your workspace"
 msgstr "Tailor your workspace"
 
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr "Talk to our team"
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
@@ -15278,6 +15298,11 @@ msgstr "This workspace has reached its record limit."
 msgid "This workspace has reached its storage limit."
 msgstr "This workspace has reached its storage limit."
 
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr "This workspace has used all its seats. Contact your workspace admin to add more."
+
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
@@ -17022,6 +17047,11 @@ msgstr "We couldn't log in to your email account. Please check your email addres
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "We encountered an issue connecting to your email account. Please check your settings and try again."
+
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr "We'll confirm the time by email."
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
