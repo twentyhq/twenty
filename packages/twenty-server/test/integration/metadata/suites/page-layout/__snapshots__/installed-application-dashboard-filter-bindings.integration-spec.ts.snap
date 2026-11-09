@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Installed application dashboard filter bindings should reject a workspace save that changes the bindings 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "This dashboard was installed by an application, so the dashboard filters its widgets follow cannot be changed.",
+  },
+  "message": "Dashboard filter bindings of page layout widget "<widgetId>" are defined by the application that installed it and cannot be changed",
+  "name": "UserInputError",
+}
+`;

@@ -30,6 +30,7 @@ export const pageLayoutGraphqlApiExceptionHandler = (error: Error) => {
         throw new NotFoundError(error.message);
       case PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA:
       case PageLayoutExceptionCode.TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION:
+      case PageLayoutExceptionCode.DASHBOARD_FILTER_BINDINGS_NOT_EDITABLE:
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });

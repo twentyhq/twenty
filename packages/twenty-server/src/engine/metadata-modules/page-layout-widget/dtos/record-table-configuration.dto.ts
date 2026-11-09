@@ -14,6 +14,8 @@ import {
   type SerializedRelation,
 } from 'twenty-shared/types';
 
+import { DashboardFilterBindingsField } from 'src/engine/metadata-modules/page-layout-widget/decorators/dashboard-filter-bindings-field.decorator';
+import { type DashboardFilterBindingDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/dashboard-filter-binding.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 @ObjectType('RecordTableConfiguration')
@@ -38,4 +40,7 @@ export class RecordTableConfigurationDTO implements RecordTableConfiguration {
   @IsOptional()
   @IsBoolean()
   isUIEditable?: boolean;
+
+  @DashboardFilterBindingsField()
+  dashboardFilterBindings?: DashboardFilterBindingDTO[] | null;
 }

@@ -37,6 +37,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { getPageLayoutFiltersToSave } from 'src/engine/metadata-modules/page-layout/utils/get-page-layout-filters-to-save.util';
+import { getPageLayoutWidgetConfigurationToSaveOrThrow } from 'src/engine/metadata-modules/page-layout/utils/get-page-layout-widget-configuration-to-save-or-throw.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
@@ -74,6 +75,7 @@ export class PageLayoutUpdateService {
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
+      flatFieldMetadataMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -82,6 +84,7 @@ export class PageLayoutUpdateService {
             'flatPageLayoutMaps',
             'flatPageLayoutTabMaps',
             'flatPageLayoutWidgetMaps',
+            'flatFieldMetadataMaps',
           ],
         },
       );
@@ -110,13 +113,31 @@ export class PageLayoutUpdateService {
         { workspaceId },
       );
 
-    const { tabs, ...updateData } = input;
+    const { tabs: tabsInput, ...updateData } = input;
 
     const filters = getPageLayoutFiltersToSave({
       existingFilters: existingPageLayout.filters,
       pageLayoutType: updateData.type,
       filtersInput: updateData.filters,
     });
+
+    const tabs = tabsInput.map((tabInput) => ({
+      ...tabInput,
+      widgets: tabInput.widgets.map((widgetInput) => ({
+        ...widgetInput,
+        configuration: getPageLayoutWidgetConfigurationToSaveOrThrow({
+          existingWidget: findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: widgetInput.id,
+            flatEntityMaps: flatPageLayoutWidgetMaps,
+          }),
+          configuration: widgetInput.configuration,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+          workspaceCustomApplicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        }),
+      })),
+    }));
 
     const flatPageLayoutToUpdate: FlatPageLayout = {
       ...existingPageLayout,
@@ -142,7 +163,6 @@ export class PageLayoutUpdateService {
 
     const {
       flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
       flatFrontComponentMaps,
       flatViewFieldGroupMaps,
       flatViewMaps,
@@ -152,7 +172,6 @@ export class PageLayoutUpdateService {
           workspaceId,
           flatMapsKeys: [
             'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
             'flatFrontComponentMaps',
             'flatViewFieldGroupMaps',
             'flatViewMaps',

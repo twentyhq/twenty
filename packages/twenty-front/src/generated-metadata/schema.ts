@@ -265,6 +265,7 @@ export type AggregateChartConfiguration = {
   aggregateFieldMetadataId: Scalars['UUID']['output'];
   aggregateOperation: AggregateOperations;
   configurationType: WidgetConfigurationType;
+  dashboardFilterBindings?: Maybe<Array<DashboardFilterBinding>>;
   description?: Maybe<Scalars['String']['output']>;
   displayDataLabel?: Maybe<Scalars['Boolean']['output']>;
   filter?: Maybe<Scalars['JSON']['output']>;
@@ -968,6 +969,7 @@ export type BarChartConfiguration = {
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']['output']>;
   configurationType: WidgetConfigurationType;
+  dashboardFilterBindings?: Maybe<Array<DashboardFilterBinding>>;
   description?: Maybe<Scalars['String']['output']>;
   displayDataLabel?: Maybe<Scalars['Boolean']['output']>;
   displayLegend?: Maybe<Scalars['Boolean']['output']>;
@@ -2064,6 +2066,12 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type DashboardFilterBinding = {
+  __typename?: 'DashboardFilterBinding';
+  fieldMetadataId?: Maybe<Scalars['UUID']['output']>;
+  pageLayoutFilterId: Scalars['UUID']['output'];
+};
+
 /** Database Event Action */
 export enum DatabaseEventAction {
   CREATED = 'CREATED',
@@ -3082,6 +3090,7 @@ export type LineChartConfiguration = {
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']['output']>;
   configurationType: WidgetConfigurationType;
+  dashboardFilterBindings?: Maybe<Array<DashboardFilterBinding>>;
   description?: Maybe<Scalars['String']['output']>;
   displayDataLabel?: Maybe<Scalars['Boolean']['output']>;
   displayLegend?: Maybe<Scalars['Boolean']['output']>;
@@ -5894,6 +5903,7 @@ export type PieChartConfiguration = {
   aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']['output']>;
   configurationType: WidgetConfigurationType;
+  dashboardFilterBindings?: Maybe<Array<DashboardFilterBinding>>;
   dateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   description?: Maybe<Scalars['String']['output']>;
   displayDataLabel?: Maybe<Scalars['Boolean']['output']>;
@@ -6823,6 +6833,7 @@ export type RecordSharingRoleDto = {
 export type RecordTableConfiguration = {
   __typename?: 'RecordTableConfiguration';
   configurationType: WidgetConfigurationType;
+  dashboardFilterBindings?: Maybe<Array<DashboardFilterBinding>>;
   isUIEditable?: Maybe<Scalars['Boolean']['output']>;
   recordLimit?: Maybe<Scalars['Int']['output']>;
   viewId?: Maybe<Scalars['String']['output']>;

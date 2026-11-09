@@ -9,6 +9,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -24,6 +25,33 @@ const TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER =
 const AGGREGATE_FIELD_ID = '11111111-3333-4333-8333-000000000003';
 const AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-000000000003';
+const PAGE_LAYOUT_FILTER_ID = '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e01';
+const NOT_APPLIED_PAGE_LAYOUT_FILTER_ID =
+  '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e02';
+const UNIVERSAL_DASHBOARD_FILTER_BINDINGS = [
+  {
+    pageLayoutFilterId: PAGE_LAYOUT_FILTER_ID,
+    fieldMetadataUniversalIdentifier: AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+  {
+    pageLayoutFilterId: NOT_APPLIED_PAGE_LAYOUT_FILTER_ID,
+    fieldMetadataUniversalIdentifier: null,
+  },
+];
+const BOUND_UNIVERSAL_CONFIGURATIONS: FlatPageLayoutWidget['universalConfiguration'][] =
+  [
+    {
+      configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+      aggregateFieldMetadataUniversalIdentifier:
+        AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+      aggregateOperation: AggregateOperations.SUM,
+      dashboardFilterBindings: UNIVERSAL_DASHBOARD_FILTER_BINDINGS,
+    },
+    {
+      configurationType: WidgetConfigurationType.RECORD_TABLE,
+      dashboardFilterBindings: UNIVERSAL_DASHBOARD_FILTER_BINDINGS,
+    },
+  ];
 
 const buildFlatFieldMetadataMaps = (
   flatFieldMetadatas: FlatFieldMetadata[],
@@ -173,4 +201,30 @@ describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => 
       },
     ]);
   });
+
+  it.each(BOUND_UNIVERSAL_CONFIGURATIONS)(
+    'should resolve the dashboard filter bindings of a $configurationType back to field metadata ids',
+    (universalConfiguration) => {
+      expect(
+        fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
+          universalConfiguration,
+          flatFieldMetadataMaps,
+          flatFrontComponentMaps: createEmptyFlatEntityMaps(),
+          flatViewMaps: createEmptyFlatEntityMaps(),
+          flatViewFieldGroupMaps: createEmptyFlatEntityMaps(),
+        }),
+      ).toMatchObject({
+        dashboardFilterBindings: [
+          {
+            pageLayoutFilterId: PAGE_LAYOUT_FILTER_ID,
+            fieldMetadataId: AGGREGATE_FIELD_ID,
+          },
+          {
+            pageLayoutFilterId: NOT_APPLIED_PAGE_LAYOUT_FILTER_ID,
+            fieldMetadataId: null,
+          },
+        ],
+      });
+    },
+  );
 });

@@ -3,6 +3,7 @@ import { type ObjectRecordGroupByDateGranularity } from '../ObjectRecordGroupByD
 import { type SerializedRelation } from '../SerializedRelation';
 
 import { type ChartFilter } from './ChartFilter';
+import { type DashboardFilterBinding } from './DashboardFilterBinding';
 import { type RatioAggregateConfig } from './RatioAggregateConfig';
 
 type BaseChartConfiguration = {
@@ -12,6 +13,7 @@ type BaseChartConfiguration = {
   description?: string;
   color?: string;
   filter?: ChartFilter;
+  dashboardFilterBindings?: DashboardFilterBinding[] | null;
   timezone?: string;
   firstDayOfTheWeek?: number;
 };
@@ -95,6 +97,7 @@ export type RecordTableConfiguration = {
   viewId?: SerializedRelation | null;
   recordLimit?: number;
   isUIEditable?: boolean;
+  dashboardFilterBindings?: DashboardFilterBinding[] | null;
 };
 
 export type FieldConfiguration = {

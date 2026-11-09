@@ -25,6 +25,8 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { DashboardFilterBindingsField } from 'src/engine/metadata-modules/page-layout-widget/decorators/dashboard-filter-bindings-field.decorator';
+import { type DashboardFilterBindingDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/dashboard-filter-binding.dto';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
@@ -166,6 +168,9 @@ export class LineChartConfigurationDTO implements LineChartConfiguration {
   @IsObject()
   @IsOptional()
   filter?: ChartFilter;
+
+  @DashboardFilterBindingsField()
+  dashboardFilterBindings?: DashboardFilterBindingDTO[] | null;
 
   @Field(() => Boolean, {
     nullable: true,

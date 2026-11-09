@@ -19,6 +19,8 @@ const AGGREGATE_FIELD_ID = '11111111-3333-4333-8333-000000000003';
 const AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-000000000003';
 const DELETED_FIELD_ID = '11111111-9999-4999-8999-000000000009';
+const PAGE_LAYOUT_FILTER_ID = '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e01';
+const OTHER_PAGE_LAYOUT_FILTER_ID = '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e02';
 
 const fieldMetadataUniversalIdentifierById = {
   [RELATION_FIELD_ID]: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
@@ -146,6 +148,113 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
       }),
     ).toMatchObject({
       isUIEditable: false,
+    });
+  });
+
+  it('should convert the field ids of chart dashboard filter bindings to universal identifiers', () => {
+    expect(
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataId: AGGREGATE_FIELD_ID,
+          aggregateOperation: AggregateOperations.SUM,
+          dashboardFilterBindings: [
+            {
+              pageLayoutFilterId: PAGE_LAYOUT_FILTER_ID,
+              fieldMetadataId: RELATION_FIELD_ID,
+            },
+            {
+              pageLayoutFilterId: OTHER_PAGE_LAYOUT_FILTER_ID,
+              fieldMetadataId: null,
+            },
+          ],
+        },
+        fieldMetadataUniversalIdentifierById,
+      }),
+    ).toMatchObject({
+      dashboardFilterBindings: [
+        {
+          pageLayoutFilterId: PAGE_LAYOUT_FILTER_ID,
+          fieldMetadataUniversalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        },
+        {
+          pageLayoutFilterId: OTHER_PAGE_LAYOUT_FILTER_ID,
+          fieldMetadataUniversalIdentifier: null,
+        },
+      ],
+    });
+  });
+
+  it('should throw on a dashboard filter binding to a missing field when asked to', () => {
+    expect(() =>
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.RECORD_TABLE,
+          dashboardFilterBindings: [
+            {
+              pageLayoutFilterId: PAGE_LAYOUT_FILTER_ID,
+              fieldMetadataId: DELETED_FIELD_ID,
+            },
+          ],
+        },
+        fieldMetadataUniversalIdentifierById,
+        shouldThrowOnMissingIdentifier: true,
+      }),
+    ).toThrow(DELETED_FIELD_ID);
+  });
+
+  it('should drop a dashboard filter binding to a missing field, so the widget falls back to automatic', () => {
+    expect(
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.RECORD_TABLE,
+          dashboardFilterBindings: [
+            {
+              pageLayoutFilterId: PAGE_LAYOUT_FILTER_ID,
+              fieldMetadataId: DELETED_FIELD_ID,
+            },
+            {
+              pageLayoutFilterId: OTHER_PAGE_LAYOUT_FILTER_ID,
+              fieldMetadataId: null,
+            },
+          ],
+        },
+        fieldMetadataUniversalIdentifierById,
+      }),
+    ).toMatchObject({
+      dashboardFilterBindings: [
+        {
+          pageLayoutFilterId: OTHER_PAGE_LAYOUT_FILTER_ID,
+          fieldMetadataUniversalIdentifier: null,
+        },
+      ],
+    });
+  });
+
+  it('should convert the field ids of record table dashboard filter bindings to universal identifiers', () => {
+    expect(
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.RECORD_TABLE,
+          dashboardFilterBindings: [
+            {
+              pageLayoutFilterId: PAGE_LAYOUT_FILTER_ID,
+              fieldMetadataId: AGGREGATE_FIELD_ID,
+            },
+          ],
+        },
+        fieldMetadataUniversalIdentifierById,
+      }),
+    ).toEqual({
+      configurationType: WidgetConfigurationType.RECORD_TABLE,
+      viewUniversalIdentifier: null,
+      dashboardFilterBindings: [
+        {
+          pageLayoutFilterId: PAGE_LAYOUT_FILTER_ID,
+          fieldMetadataUniversalIdentifier:
+            AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+        },
+      ],
     });
   });
 });

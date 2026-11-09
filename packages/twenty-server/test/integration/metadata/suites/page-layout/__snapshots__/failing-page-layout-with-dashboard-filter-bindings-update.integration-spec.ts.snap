@@ -1,0 +1,374 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard filter bindings update should fail when a binding excludes the widget from a filter other than the built-in Date range filter 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Widget "Companies" is bound to dashboard filter "5b2e7c4d-1a3f-4e6b-8c9d-0e1f2a3b4c03", which does not exist on its dashboard",
+              "userFriendlyMessage": "A widget is bound to a dashboard filter that does not exist",
+              "value": "5b2e7c4d-1a3f-4e6b-8c9d-0e1f2a3b4c03",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A widget is bound to a dashboard filter that does not exist",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when a binding has no filter id 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout data.",
+  },
+  "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected string, received undefined
+  → at [0].pageLayoutFilterId",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when a binding points at a field of another object than the widget's 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Widget "Companies" binds dashboard filter "20202020-7a1e-4b6f-9c3d-0d2f6e8a1b01" to field "createdAt", which does not belong to the widget's object",
+              "userFriendlyMessage": "A dashboard filter is bound to a field of another object",
+              "value": "11e31107-be74-53e5-ba99-e536c6b73ee6",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A dashboard filter is bound to a field of another object",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when a binding points at a field that does not exist 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout data.",
+  },
+  "message": "Dashboard filter "20202020-7a1e-4b6f-9c3d-0d2f6e8a1b01" is bound to field "5b2e7c4d-1a3f-4e6b-8c9d-0e1f2a3b4c99", which does not exist",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when a binding points at a filter other than the built-in Date range filter 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Widget "Companies" is bound to dashboard filter "5b2e7c4d-1a3f-4e6b-8c9d-0e1f2a3b4c03", which does not exist on its dashboard",
+              "userFriendlyMessage": "A widget is bound to a dashboard filter that does not exist",
+              "value": "5b2e7c4d-1a3f-4e6b-8c9d-0e1f2a3b4c03",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A widget is bound to a dashboard filter that does not exist",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when a dashboard whose widget binds the Date range stops being a dashboard 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Widget "Companies" has dashboard filter bindings but is not on a dashboard",
+              "userFriendlyMessage": "Only widgets on a dashboard can be bound to dashboard filters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Only widgets on a dashboard can be bound to dashboard filters",
+  },
+  "message": "Multiple validation errors occurred while updating page layout",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when a date filter is bound to a text field 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Widget "Companies" binds dashboard filter "Date range" of type DATE to field "name", which is not compatible",
+              "userFriendlyMessage": "This field cannot be bound to this dashboard filter",
+              "value": "20202020-4d99-4e2e-a84c-4a27837b1ece",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This field cannot be bound to this dashboard filter",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when a date filter is bound to the soft-delete field 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Widget "Companies" binds dashboard filter "Date range" of type DATE to field "deletedAt", which is not compatible",
+              "userFriendlyMessage": "This field cannot be bound to this dashboard filter",
+              "value": "790e467a-a3fa-545f-bfd2-8b91c3d84480",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This field cannot be bound to this dashboard filter",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when a widget binds the same filter twice 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Widget "Companies" is bound to dashboard filter "20202020-7a1e-4b6f-9c3d-0d2f6e8a1b01" more than once",
+              "userFriendlyMessage": "A widget can be bound to a dashboard filter only once",
+              "value": "20202020-7a1e-4b6f-9c3d-0d2f6e8a1b01",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A widget can be bound to a dashboard filter only once",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when the bindings are a list binding 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout data.",
+  },
+  "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected object, received array
+  → at [0]",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when the bindings are a null binding 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout data.",
+  },
+  "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected object, received null
+  → at [0]",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when the bindings are a number binding 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout data.",
+  },
+  "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected object, received number
+  → at [0]",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when the bindings are a string 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout data.",
+  },
+  "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected array, received string",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when the bindings are not a list 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout data.",
+  },
+  "message": "Dashboard filter bindings are malformed: ✖ Invalid input: expected array, received object",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Dashboard filter bindings update should fail when the widget is not on a dashboard 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Widget "Companies" has dashboard filter bindings but is not on a dashboard",
+              "userFriendlyMessage": "Only widgets on a dashboard can be bound to dashboard filters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Only widgets on a dashboard can be bound to dashboard filters",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
