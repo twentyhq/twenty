@@ -48,6 +48,10 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
+import { executeHttpEgressRequestInProcess } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/execute-http-egress-request-in-process.util';
+import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 export { type LocalDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-driver.type';
 
@@ -56,9 +60,11 @@ export class LocalDriver implements LogicFunctionDriver {
   private readonly layerManager: LocalLayerManagerService;
   private readonly childProcessRunner: LocalChildProcessRunnerService;
   private readonly prebuiltBundle: LocalPrebuiltBundleService;
+  private readonly secureHttpClientService: SecureHttpClientService;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
+    this.secureHttpClientService = options.secureHttpClientService;
     this.layerManager = new LocalLayerManagerService(
       options.cacheLockService,
       options.logicFunctionResourceService,
@@ -363,5 +369,12 @@ export class LocalDriver implements LogicFunctionDriver {
     } finally {
       await temporaryDirManager.clean();
     }
+  }
+
+  async executeHttpRequest(request: HttpEgressRequest): Promise<ToolOutput> {
+    return executeHttpEgressRequestInProcess({
+      request,
+      secureHttpClientService: this.secureHttpClientService,
+    });
   }
 }

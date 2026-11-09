@@ -8,6 +8,7 @@ import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/
 import { type LogicFunctionTranspileParams } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export type LambdaDriverExecutorPayload = {
@@ -45,6 +46,7 @@ export type LambdaDriverOptions = LambdaConnectionOptions & {
   cacheStorageService: CacheStorageService;
   workspaceCacheService: WorkspaceCacheService;
   coreEntityCacheService: CoreEntityCacheService;
+  secureHttpClientService: SecureHttpClientService;
 };
 
 export type LambdaConnectionOptions = LambdaClientConfig & {

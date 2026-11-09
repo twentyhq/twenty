@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 jest.mock(
@@ -17,7 +18,30 @@ jest.mock(
   () => ({ getFrontComponentBuilderName: async () => 'workspace-builder' }),
 );
 
+jest.mock(
+  'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-handler-bundle.util',
+  () => ({ buildHttpEgressHandlerBundle: async () => 'exports.handler = 1;' }),
+);
+
 jest.useRealTimers();
+
+const HTTP_EGRESS_REQUEST = {
+  input: { url: 'https://api.example.com/items', method: 'GET' as const },
+  limits: { timeoutMs: 30_000, maxPayloadSizeBytes: 10 * 1024 * 1024 },
+  context: {
+    workspaceId: 'workspace-id',
+    source: 'workflow-http-test' as const,
+    userId: 'user-id',
+  },
+};
+
+const HTTP_EGRESS_RESPONSE = {
+  toolOutput: { success: true, message: 'ok', result: { ok: true } },
+  outcomeDetails: { outcome: 'success', status: 200, durationMs: 12 },
+};
+
+const buildInvokePayload = (body: string) =>
+  Object.assign(Buffer.from(body), { transformToString: () => body });
 
 const REQUEST = {
   targetRuntime: 'browser' as const,
@@ -39,6 +63,9 @@ describe('LambdaDriver', () => {
   let functionNames: unknown[];
   let driver: LambdaDriver;
   let client: Lambda;
+  let secureHttpClientService: { recordRemoteRequestOutcome: jest.Mock };
+  let egressInvokeOutput: { Payload?: unknown; FunctionError?: string };
+  let egressInvokeError: Error | undefined;
 
   beforeEach(() => {
     state = 'Inactive';
@@ -46,6 +73,11 @@ describe('LambdaDriver', () => {
     commands = [];
     payloads = [];
     functionNames = [];
+    secureHttpClientService = { recordRemoteRequestOutcome: jest.fn() };
+    egressInvokeOutput = {
+      Payload: buildInvokePayload(JSON.stringify(HTTP_EGRESS_RESPONSE)),
+    };
+    egressInvokeError = undefined;
     client = new Lambda({ region: 'eu-west-1' });
     let isLocked = false;
     const cacheStorageService = jest.createMockFromModule<
@@ -92,6 +124,17 @@ describe('LambdaDriver', () => {
             const payload = JSON.parse(String(input.Payload));
             payloads.push(payload);
             functionNames.push(input.FunctionName);
+
+            if (isDefined(payload.context)) {
+              if (isDefined(egressInvokeError)) {
+                throw egressInvokeError;
+              }
+
+              return {
+                response: {},
+                output: { ...egressInvokeOutput, $metadata: {} },
+              };
+            }
             const response = JSON.stringify(
               payload.sourceCode
                 ? { builtCode: 'export const handler = () => 1;' }
@@ -152,6 +195,8 @@ describe('LambdaDriver', () => {
       ).ApplicationDependencyFilesService.prototype,
       cacheStorageService,
       cacheLockService: new CacheLockService(cacheStorageService),
+      secureHttpClientService:
+        secureHttpClientService as unknown as SecureHttpClientService,
     });
   });
 
@@ -252,5 +297,80 @@ describe('LambdaDriver', () => {
     await expect(driver.buildDependencies(REQUEST)).rejects.toThrow();
     expect(commands).not.toContain('UpdateFunctionConfigurationCommand');
     expect(payloads).toHaveLength(0);
+  });
+  describe('executeHttpRequest', () => {
+    beforeEach(() => {
+      state = 'Active';
+    });
+
+    it('runs the request in the egress Lambda and logs its outcome', async () => {
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toEqual(HTTP_EGRESS_RESPONSE.toolOutput);
+      expect(String(functionNames[0])).toMatch(/^twenty-http-egress/);
+      expect(payloads[0]).toEqual({
+        ...HTTP_EGRESS_REQUEST,
+        limits: { timeoutMs: 30_000, maxPayloadSizeBytes: 4 * 1024 * 1024 },
+      });
+      expect(
+        secureHttpClientService.recordRemoteRequestOutcome,
+      ).toHaveBeenCalledWith({
+        method: 'GET',
+        url: 'https://api.example.com/items',
+        context: HTTP_EGRESS_REQUEST.context,
+        outcomeDetails: HTTP_EGRESS_RESPONSE.outcomeDetails,
+      });
+    });
+
+    it('reports an unavailable egress without retrying the invoke', async () => {
+      egressInvokeError = new Error('Service unavailable');
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toMatchObject({
+        success: false,
+        error:
+          'Outbound HTTP requests are temporarily unavailable. Try again later.',
+      });
+      expect(
+        commands.filter((command) => command === 'InvokeCommand'),
+      ).toHaveLength(1);
+      expect(
+        secureHttpClientService.recordRemoteRequestOutcome,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          outcomeDetails: expect.objectContaining({
+            outcome: 'other-error',
+            errorCode: 'EGRESS_UNAVAILABLE',
+          }),
+        }),
+      );
+    });
+
+    it('reports a Lambda timeout as a request timeout', async () => {
+      egressInvokeOutput = {
+        FunctionError: 'Unhandled',
+        Payload: buildInvokePayload(
+          JSON.stringify({
+            errorType: 'Sandbox.Timedout',
+            errorMessage: 'Task timed out after 35.00 seconds',
+          }),
+        ),
+      };
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toMatchObject({
+        success: false,
+        error: 'Request timed out after 30s',
+      });
+      expect(
+        secureHttpClientService.recordRemoteRequestOutcome,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          outcomeDetails: expect.objectContaining({ outcome: 'timeout' }),
+        }),
+      );
+    });
   });
 });

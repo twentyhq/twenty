@@ -7,6 +7,8 @@ import {
   type BrowserDependenciesBuildParams,
   type BrowserDependenciesBuildResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
+import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import {
   type LogicFunctionExecutionMode,
@@ -81,6 +83,7 @@ export interface LogicFunctionDriver {
   getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null>;
+  executeHttpRequest(request: HttpEgressRequest): Promise<ToolOutput>;
 }
 
 export enum LogicFunctionDriverType {

@@ -42,6 +42,7 @@ import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-log
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { consumeLogicFunctionExecutionToken } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/consume-logic-function-execution-token.util';
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
@@ -410,12 +411,11 @@ export class LogicFunctionExecutorService {
 
   private async throttleExecution(workspaceId: string) {
     try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `${workspaceId}-logic-function-execution`,
-        1,
-        this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT'),
-        this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_TTL'),
-      );
+      await consumeLogicFunctionExecutionToken({
+        throttlerService: this.throttlerService,
+        twentyConfigService: this.twentyConfigService,
+        workspaceId,
+      });
     } catch (error) {
       if (
         !(error instanceof ThrottlerException) ||

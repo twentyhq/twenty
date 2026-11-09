@@ -15,6 +15,7 @@ import {
   type LambdaDriverOptions,
   LambdaExecutionPhase,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { HTTP_EGRESS_UNAVAILABLE_ERROR_CODE } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-unavailable-response.util';
 import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 import {
@@ -35,6 +36,9 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
 import { getWorkflowCodeStepLogicFunctionId } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/get-workflow-code-step-logic-function-id.util';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -61,14 +65,17 @@ export class LambdaDriver implements LogicFunctionDriver {
   private readonly layerManager: LambdaLayerManagerService;
   private readonly executorManager: LambdaExecutorManagerService;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
+  private readonly secureHttpClientService: SecureHttpClientService;
 
   constructor(options: LambdaDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
+    this.secureHttpClientService = options.secureHttpClientService;
     this.awsClient = new LambdaAwsClientService(options);
     this.toolFunctions = new LambdaToolFunctionsService(
       options,
       this.awsClient,
       options.cacheLockService,
+      new LambdaAwsClientService(options, 1),
     );
     this.layerManager = new LambdaLayerManagerService(
       options,
@@ -310,5 +317,25 @@ export class LambdaDriver implements LogicFunctionDriver {
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR,
       );
     }
+  }
+
+  async executeHttpRequest(request: HttpEgressRequest): Promise<ToolOutput> {
+    const { toolOutput, outcomeDetails } =
+      await this.toolFunctions.executeHttpRequest(request);
+
+    this.secureHttpClientService.recordRemoteRequestOutcome({
+      method: request.input.method,
+      url: request.input.url,
+      context: request.context,
+      outcomeDetails,
+    });
+
+    if (outcomeDetails.errorCode === HTTP_EGRESS_UNAVAILABLE_ERROR_CODE) {
+      this.logger.error(
+        `HTTP egress Lambda unavailable for workspace ${request.context.workspaceId}: ${outcomeDetails.reason}`,
+      );
+    }
+
+    return toolOutput;
   }
 }

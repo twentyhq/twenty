@@ -56,3 +56,14 @@ export const BUILDER_HANDLER_PATH = resolve(
     'engine/core-modules/logic-function/logic-function-drivers/constants/builder/index.mjs',
   ),
 );
+
+export const HTTP_EGRESS_FUNCTION_NAME_PREFIX = 'twenty-http-egress';
+export const HTTP_EGRESS_LAMBDA_MEMORY_MB = 256;
+export const HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS = 35;
+export const HTTP_EGRESS_LAMBDA_EPHEMERAL_STORAGE_MB = 512;
+// The account is shared with logic functions; this keeps either from starving the other.
+export const HTTP_EGRESS_LAMBDA_RESERVED_CONCURRENCY = 100;
+// Synchronous invokes cap payloads at 6 MB each way, before JSON escaping.
+export const HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES = 4 * 1024 * 1024;
+export const HTTP_EGRESS_LAMBDA_MAX_RESULT_BYTES = 5_500_000;
+export const HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS = 10_000;

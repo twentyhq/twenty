@@ -1,10 +1,13 @@
 import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import {
+  type Architecture,
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
   InvokeCommand,
+  type InvokeCommandOutput,
   LogType,
   PublishLayerVersionCommand,
+  PutFunctionConcurrencyCommand,
   UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { msg } from '@lingui/core/macro';
@@ -25,6 +28,13 @@ import {
   BUILDER_LAMBDA_MEMORY_MB,
   BUILDER_LAMBDA_TIMEOUT_SECONDS,
   COMMON_LAYER_NAME_PREFIX,
+  HTTP_EGRESS_FUNCTION_NAME_PREFIX,
+  HTTP_EGRESS_LAMBDA_EPHEMERAL_STORAGE_MB,
+  HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
+  HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES,
+  HTTP_EGRESS_LAMBDA_MEMORY_MB,
+  HTTP_EGRESS_LAMBDA_RESERVED_CONCURRENCY,
+  HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
   YARN_INSTALL_FUNCTION_NAME_PREFIX,
   YARN_INSTALL_HANDLER_PATH,
@@ -39,6 +49,8 @@ import {
   type YarnInstallLambdaPayload,
   type YarnInstallLambdaResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { buildHttpEgressHandlerBundle } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-handler-bundle.util';
+import { buildHttpEgressUnavailableResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-unavailable-response.util';
 import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
 import {
@@ -57,6 +69,8 @@ import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-funct
 import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
+import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
 import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
@@ -76,6 +90,7 @@ export class LambdaToolFunctionsService {
   private commonLayerName: string | undefined;
   private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
+  private httpEgressHandlerCode: Promise<string> | undefined;
 
   constructor(
     private readonly options: Pick<
@@ -84,6 +99,8 @@ export class LambdaToolFunctionsService {
     >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly cacheLockService: CacheLockService,
+    // Retrying an invoke that may already have run would send a user's request twice.
+    private readonly httpEgressAwsClient: LambdaAwsClientService,
   ) {}
 
   async transpile(
@@ -233,6 +250,103 @@ export class LambdaToolFunctionsService {
     return JSON.parse(result.Payload.transformToString());
   }
 
+  async executeHttpRequest(
+    request: HttpEgressRequest,
+  ): Promise<HttpEgressResponse> {
+    const startedAt = Date.now();
+    const lambdaRequest: HttpEgressRequest = {
+      ...request,
+      limits: {
+        ...request.limits,
+        maxPayloadSizeBytes: Math.min(
+          request.limits.maxPayloadSizeBytes,
+          HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES,
+        ),
+      },
+    };
+
+    let functionName: string | undefined;
+    let result: InvokeCommandOutput;
+
+    try {
+      functionName = await this.ensureHttpEgressLambdaIsActive();
+      const lambdaClient = await this.httpEgressAwsClient.getLambdaClient();
+
+      result = await lambdaClient.send(
+        new InvokeCommand({
+          FunctionName: functionName,
+          Payload: JSON.stringify(lambdaRequest),
+        }),
+        {
+          abortSignal: AbortSignal.timeout(
+            request.limits.timeoutMs + HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
+          ),
+        },
+      );
+    } catch (error) {
+      if (isDefined(functionName)) {
+        await this.awsClient.clearFunctionCache(functionName);
+      }
+
+      return buildHttpEgressUnavailableResponse({
+        request,
+        startedAt,
+        isTimeout: error instanceof Error && error.name === 'TimeoutError',
+        reason: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    const payload = result.Payload?.transformToString();
+
+    if (isDefined(result.FunctionError) || !isNonEmptyString(payload)) {
+      return buildHttpEgressUnavailableResponse({
+        request,
+        startedAt,
+        isTimeout: payload?.includes('Task timed out') ?? false,
+        reason: payload ?? result.FunctionError,
+      });
+    }
+
+    return JSON.parse(payload) as HttpEgressResponse;
+  }
+
+  private async ensureHttpEgressLambdaIsActive(): Promise<string> {
+    this.httpEgressHandlerCode ??= buildHttpEgressHandlerBundle().catch(
+      (error) => {
+        this.httpEgressHandlerCode = undefined;
+
+        throw error;
+      },
+    );
+
+    const handlerCode = await this.httpEgressHandlerCode;
+    const functionName = computeHashedLambdaResourceName({
+      resourceNamePrefix: HTTP_EGRESS_FUNCTION_NAME_PREFIX,
+      namespace: this.options.resourceNamespace,
+      contents: [
+        handlerCode,
+        String(HTTP_EGRESS_LAMBDA_MEMORY_MB),
+        String(HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS),
+        String(HTTP_EGRESS_LAMBDA_RESERVED_CONCURRENCY),
+      ],
+    });
+
+    await this.ensureBuildToolLambdaIsActive({
+      functionName,
+      memoryMb: HTTP_EGRESS_LAMBDA_MEMORY_MB,
+      timeoutSeconds: HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS,
+      copyFiles: async (directory) => {
+        await fs.writeFile(join(directory, 'index.js'), handlerCode);
+      },
+      withCommonLayer: false,
+      architecture: 'arm64',
+      ephemeralStorageMb: HTTP_EGRESS_LAMBDA_EPHEMERAL_STORAGE_MB,
+      reservedConcurrency: HTTP_EGRESS_LAMBDA_RESERVED_CONCURRENCY,
+    });
+
+    return functionName;
+  }
+
   async runYarnInstallCreateLayer(
     params: Omit<YarnInstallLambdaPayload, 'action'>,
   ): Promise<YarnInstallLambdaResult> {
@@ -333,11 +447,19 @@ export class LambdaToolFunctionsService {
     memoryMb,
     timeoutSeconds,
     copyFiles,
+    withCommonLayer = true,
+    architecture,
+    ephemeralStorageMb = LAMBDA_EPHEMERAL_STORAGE_MB,
+    reservedConcurrency,
   }: {
     functionName: string;
     memoryMb: number;
     timeoutSeconds: number;
     copyFiles: (directory: string) => Promise<void>;
+    withCommonLayer?: boolean;
+    architecture?: Architecture;
+    ephemeralStorageMb?: number;
+    reservedConcurrency?: number;
   }): Promise<void> {
     const existingFunction = await this.awsClient.getFunction(functionName);
 
@@ -367,7 +489,9 @@ export class LambdaToolFunctionsService {
           return;
         }
 
-        const commonLayerArn = await this.ensureCommonLayerExists();
+        const layers = withCommonLayer
+          ? [await this.ensureCommonLayerExists()]
+          : [];
         const temporaryDirManager = new TemporaryDirManager();
         const { sourceTemporaryDir, lambdaZipPath } =
           await temporaryDirManager.init();
@@ -380,17 +504,27 @@ export class LambdaToolFunctionsService {
           const params: CreateFunctionCommandInput = {
             Code: { ZipFile: await fs.readFile(lambdaZipPath) },
             FunctionName: functionName,
-            Layers: [commonLayerArn],
+            Layers: layers,
             Handler: 'index.handler',
             Role: this.options.lambdaRole,
             Tags: this.options.resourceTags,
             Runtime: LogicFunctionRuntime.NODE22,
             Timeout: timeoutSeconds,
             MemorySize: memoryMb,
-            EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
+            EphemeralStorage: { Size: ephemeralStorageMb },
+            ...(isDefined(architecture) && { Architectures: [architecture] }),
           };
 
           await lambdaClient.send(new CreateFunctionCommand(params));
+
+          if (isDefined(reservedConcurrency)) {
+            await lambdaClient.send(
+              new PutFunctionConcurrencyCommand({
+                FunctionName: functionName,
+                ReservedConcurrentExecutions: reservedConcurrency,
+              }),
+            );
+          }
         } finally {
           await temporaryDirManager.clean();
         }
