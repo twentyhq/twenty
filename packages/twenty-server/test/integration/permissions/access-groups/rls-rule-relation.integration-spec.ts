@@ -274,15 +274,12 @@ describe('RLS rules through a relation (integration)', () => {
     personObjectMetadataId = await findObjectMetadataId('person');
     companyObjectMetadataId = await findObjectMetadataId('company');
 
-    // Own fixtures: earlier suites in the same shard can delete the seeded people and companies
-    company = { id: v4(), name: 'RLS relation company', employees: null };
-    otherCompany = { id: v4() };
-    person = { id: v4(), jobTitle: '', companyId: company.id };
-
-    await global.testDataSource.query(
-      `INSERT INTO ${COMPANY_TABLE} ("id", "name") VALUES ($1, $2), ($3, $4)`,
-      [company.id, company.name, otherCompany.id, 'RLS relation other company'],
+    [company, otherCompany] = await global.testDataSource.query(
+      `SELECT "id", "name", "employees" FROM ${COMPANY_TABLE} WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 2`,
     );
+
+    // Earlier specs in the shard can delete the seeded people
+    person = { id: v4(), jobTitle: '', companyId: company.id };
     await global.testDataSource.query(
       `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle", "companyId") VALUES ($1, $2, $3)`,
       [person.id, person.jobTitle, person.companyId],
@@ -328,20 +325,16 @@ describe('RLS rules through a relation (integration)', () => {
   afterAll(async () => {
     await setFeatureFlags(false);
     await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
+      [person.id],
+    );
+    await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
     );
     await global.testDataSource.query(
       `UPDATE ${COMPANY_TABLE} SET "_accessGroupIds" = NULL`,
     );
     await global.testDataSource.query(`DELETE FROM ${SCHEMA}."accessGroup"`);
-    await global.testDataSource.query(
-      `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
-      [person.id],
-    );
-    await global.testDataSource.query(
-      `DELETE FROM ${COMPANY_TABLE} WHERE "id" = ANY($1)`,
-      [[company.id, otherCompany.id]],
-    );
   });
 
   it('should follow a many to one relation and its related record changes', async () => {

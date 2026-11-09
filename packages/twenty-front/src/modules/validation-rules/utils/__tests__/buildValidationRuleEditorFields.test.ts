@@ -68,6 +68,24 @@ describe('buildValidationRuleEditorFields', () => {
     ).toBe(true);
   });
 
+  it('should offer the previous value of own fields and their subfields', () => {
+    expect(paths).toEqual(
+      expect.arrayContaining([
+        'previous.stage',
+        'previous.amount.amountMicros',
+      ]),
+    );
+    expect(
+      editorFields.find(({ path }) => path === 'previous.amount.amountMicros'),
+    ).toMatchObject({ parentLabel: 'Previous › Amount' });
+  });
+
+  it('should not offer previous values read through a relation', () => {
+    expect(paths.some((path) => path.startsWith('previous.company'))).toBe(
+      false,
+    );
+  });
+
   describe('when icons are empty', () => {
     const company = getMockObjectMetadataItemOrThrow('company');
 
