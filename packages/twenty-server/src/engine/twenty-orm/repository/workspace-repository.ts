@@ -1796,10 +1796,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<void> {
     await this.applyRowLevelPermissionPredicates(queryBuilder);
     await this.validateQueryIsPermitted(queryBuilder);
-    await this.nullifyUnreadableFieldsWithRlsRuleSqlCondition(queryBuilder);
+    await this.nullifyRlsRuleUnreadableFields(queryBuilder);
   }
 
-  private async nullifyUnreadableFieldsWithRlsRuleSqlCondition(
+  private async nullifyRlsRuleUnreadableFields(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
     if (this.options.shouldBypassPermissionChecks) {
@@ -1822,16 +1822,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
-      const unreadableFieldsWithRlsRuleSqlCondition =
-        await this.options.internalContext.recordPermissions.findUnreadableFieldsWithRlsRuleSqlConditionOrThrow(
-          {
-            principals: this.resolvePermissionsPrincipalsOrThrow(),
-            objectMetadataId: tableShape.objectMetadataId,
-            tableAlias: alias,
-          },
+      const principals = this.resolvePermissionsPrincipalsOrThrow();
+      const rlsRuleUnreadableFieldsByRole =
+        await this.options.internalContext.recordPermissions.findRlsRuleUnreadableFieldsByRole(
+          { principals, objectMetadataId: tableShape.objectMetadataId },
         );
 
-      if (!isNonEmptyArray(unreadableFieldsWithRlsRuleSqlCondition)) {
+      if (!isNonEmptyArray(rlsRuleUnreadableFieldsByRole)) {
         continue;
       }
 
@@ -1845,9 +1842,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
 
       for (const {
+        roleId,
         fieldMetadataIds,
-        rlsRuleSqlCondition,
-      } of unreadableFieldsWithRlsRuleSqlCondition) {
+      } of rlsRuleUnreadableFieldsByRole) {
         queryBuilder.nullifyColumnsWhen({
           alias,
           columnNames: columnEntries
@@ -1855,7 +1852,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               fieldMetadataIds.includes(fieldMetadataId),
             )
             .map(([columnName]) => columnName),
-          condition: rlsRuleSqlCondition,
+          condition:
+            await this.options.internalContext.recordPermissions.buildRlsRuleSqlConditionOrThrow(
+              {
+                principals,
+                objectMetadataId: tableShape.objectMetadataId,
+                roleId,
+                tableAlias: alias,
+              },
+            ),
         });
       }
     }

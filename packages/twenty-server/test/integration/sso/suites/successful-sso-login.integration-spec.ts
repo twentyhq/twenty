@@ -1,6 +1,7 @@
 import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
+import { setWorkspaceActivationStatus } from 'test/integration/graphql/utils/set-workspace-activation-status.util';
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { findMyConnectedAccounts } from 'test/integration/metadata/suites/connected-account/utils/find-my-connected-accounts.util';
 import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
@@ -31,14 +32,13 @@ const deleteOidcConnectedAccounts = async (token: string) => {
   }
 };
 
-// activationStatus has no update API, so the suspension is set directly
 const setOtherWorkspaceActivationStatus = (
   activationStatus: WorkspaceActivationStatus,
 ) =>
-  globalThis.testDataSource.query(
-    `UPDATE core."workspace" SET "activationStatus" = $1 WHERE "id" = $2`,
-    [activationStatus, SEED_YCOMBINATOR_WORKSPACE_ID],
-  );
+  setWorkspaceActivationStatus({
+    workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+    activationStatus,
+  });
 
 const signInThroughVerifyUrl = async (verifyUrl: URL) => {
   expect(verifyUrl.searchParams.get('errorMessage')).toBeNull();

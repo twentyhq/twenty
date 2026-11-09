@@ -8,11 +8,17 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { filterReadableEvents } from 'src/engine/permissions/internal/combine/utils/filter-readable-events.util';
-import { type UnreadableFieldsWithRlsRuleFilter } from 'src/engine/permissions/internal/masking/types/unreadable-fields-with-rls-rule-filter.type';
+import { resolveRowLevelPermissionRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter-for-role.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
+jest.mock(
+  'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter-for-role.util',
+);
+
 const OBJECT_METADATA_ID = 'invoice-object-id';
+const ROLE_ID = 'role-id';
 
 const invoice = getFlatObjectMetadataMock({
   id: OBJECT_METADATA_ID,
@@ -52,7 +58,8 @@ const READ_ACCESS: ObjectRecordsPermissions = {
   canUpdateAllRecords: false,
   canSoftDeleteAllRecords: false,
   canDestroyAllRecords: false,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const buildUpdateEvent = ({
@@ -79,28 +86,63 @@ const buildUpdateEvent = ({
 const filter = ({
   events,
   recordsPermissions,
-  unreadableFieldsWithRlsRuleFilter = [],
+  rlsRuleUnreadableFields,
 }: {
   events: ObjectRecordUpdateEvent[];
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
-  unreadableFieldsWithRlsRuleFilter?: UnreadableFieldsWithRlsRuleFilter[];
+  rlsRuleUnreadableFields?: string[];
 }) =>
   filterReadableEvents({
     events,
     readableRecordIds: new Set(['record-1', 'record-2']),
+    principals: {
+      workspaceId: 'workspace-id',
+      mainPrincipal: {
+        type: 'workspaceMember',
+        roleId: ROLE_ID,
+        workspaceMemberId: 'member-id',
+      },
+      applicationPrincipal: { type: 'customApplication' },
+    },
     objectMetadata: invoice,
     recordsPermissions,
-    unreadableFieldsWithRlsRuleFilter,
-    metadataMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+    metadataMaps: {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
+      flatApplicationMaps: { byId: {} },
+      featureFlagsMap: {},
+      rolesPermissions: {
+        [ROLE_ID]: {
+          ...NO_ROLE_RECORDS_PERMISSIONS,
+          objects: {
+            [OBJECT_METADATA_ID]: {
+              ...READ_ACCESS,
+              rowLevelRecordsPermissions: {
+                canCreateRecords: false,
+                canReadRecords: true,
+                canUpdateRecords: false,
+                canSoftDeleteRecords: false,
+                canDestroyRecords: false,
+                predicates: [],
+                predicateGroups: [],
+                unreadableFields: rlsRuleUnreadableFields,
+                uneditableFields: rlsRuleUnreadableFields,
+              },
+            },
+          },
+        },
+      },
+    },
   });
 
 const SECRET_HIDDEN: Pick<RoleRecordsPermissions, 'objects'> = {
   objects: {
     [OBJECT_METADATA_ID]: {
       ...READ_ACCESS,
-      restrictedFields: {
-        'secret-field-id': { canRead: false, canUpdate: false },
-      },
+      unreadableFields: ['secret-field-id'],
+      uneditableFields: ['secret-field-id'],
     },
   },
 };
@@ -145,6 +187,10 @@ describe('filterReadableEvents', () => {
   });
 
   it('should omit a field unreadable on an RLS rule the record matches', () => {
+    jest
+      .mocked(resolveRowLevelPermissionRecordFilterForRole)
+      .mockReturnValue({ name: { eq: 'New' } });
+
     const [event] = filter({
       events: [
         buildUpdateEvent({
@@ -153,19 +199,45 @@ describe('filterReadableEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      unreadableFieldsWithRlsRuleFilter: [
-        {
-          rlsRuleFilter: { name: { eq: 'New' } },
-          fieldMetadataIds: ['secret-field-id'],
-        },
-      ],
+      rlsRuleUnreadableFields: ['secret-field-id'],
     });
 
     expect(event.properties.after).toEqual({ id: 'record-1', name: 'New' });
     expect(event.properties.updatedFields).toEqual(['name']);
   });
 
+  it('should add up object level and RLS rule unreadable fields', () => {
+    jest
+      .mocked(resolveRowLevelPermissionRecordFilterForRole)
+      .mockReturnValue({ name: { eq: 'New' } });
+
+    const [event] = filter({
+      events: [
+        buildUpdateEvent({
+          recordId: 'record-1',
+          updatedFields: ['name', 'secret'],
+        }),
+      ],
+      recordsPermissions: {
+        objects: {
+          [OBJECT_METADATA_ID]: {
+            ...READ_ACCESS,
+            unreadableFields: ['name-field-id'],
+            uneditableFields: ['name-field-id'],
+          },
+        },
+      },
+      rlsRuleUnreadableFields: ['secret-field-id'],
+    });
+
+    expect(event).toBeUndefined();
+  });
+
   it('should keep a field unreadable on an RLS rule the record does not match', () => {
+    jest
+      .mocked(resolveRowLevelPermissionRecordFilterForRole)
+      .mockReturnValue({ name: { eq: 'Another' } });
+
     const [event] = filter({
       events: [
         buildUpdateEvent({
@@ -174,12 +246,7 @@ describe('filterReadableEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      unreadableFieldsWithRlsRuleFilter: [
-        {
-          rlsRuleFilter: { name: { eq: 'Another' } },
-          fieldMetadataIds: ['secret-field-id'],
-        },
-      ],
+      rlsRuleUnreadableFields: ['secret-field-id'],
     });
 
     expect(event.properties.updatedFields).toEqual(['name', 'secret']);

@@ -64,6 +64,8 @@ const renderSettingsPrivacy = ({
   aiDataPolicy = null,
   pinnedModelIdByTier,
   updateWorkspaceError,
+  onUpdateWorkspace,
+  updateWorkspaceDelay = 50,
 }: {
   isMultiWorkspaceEnabled: boolean;
   aiModels: ClientAiModelConfig[];
@@ -74,6 +76,8 @@ const renderSettingsPrivacy = ({
   } | null;
   pinnedModelIdByTier?: Partial<Record<AiModelTier, string>>;
   updateWorkspaceError?: Error;
+  onUpdateWorkspace?: (variables: Record<string, unknown>) => void;
+  updateWorkspaceDelay?: number;
 }) => {
   const store = createStore();
 
@@ -117,9 +121,25 @@ const renderSettingsPrivacy = ({
             },
           },
           {
-            request: { query: UpdateWorkspaceDocument, variables: () => true },
+            request: {
+              query: UpdateWorkspaceDocument,
+              variables: (variables: Record<string, unknown>) => {
+                onUpdateWorkspace?.(variables);
+
+                return true;
+              },
+            },
+            maxUsageCount: 2,
             error: updateWorkspaceError,
-            delay: 50,
+            result: {
+              data: {
+                updateWorkspace: {
+                  ...mockCurrentWorkspace,
+                  __typename: 'Workspace',
+                },
+              },
+            },
+            delay: updateWorkspaceDelay,
           },
         ]}
       >
@@ -216,7 +236,7 @@ describe('SettingsPrivacy', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('disables the controls during a save and restores the value when it fails', async () => {
+  it('keeps the controls enabled during a save and restores the value when it fails', async () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: true,
       aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
@@ -235,13 +255,48 @@ describe('SettingsPrivacy', () => {
     await userEvent.click(zeroDataRetentionSwitch);
 
     expect(zeroDataRetentionSwitch).toBeChecked();
-    expect(zeroDataRetentionSwitch).toHaveAttribute('aria-disabled', 'true');
-
-    await waitFor(() => expect(zeroDataRetentionSwitch).not.toBeChecked());
-
     expect(zeroDataRetentionSwitch).not.toHaveAttribute(
       'aria-disabled',
       'true',
     );
+
+    await waitFor(() => expect(zeroDataRetentionSwitch).not.toBeChecked());
+  });
+
+  it('holds a change made during a save until that save lands', async () => {
+    const onUpdateWorkspace = jest.fn();
+
+    renderSettingsPrivacy({
+      isMultiWorkspaceEnabled: true,
+      aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
+      aiDataPolicy: {
+        requiredDataResidencyRegion: null,
+        isZeroDataRetentionRequired: false,
+        isProductImprovementDataSharingEnabled: true,
+      },
+      onUpdateWorkspace,
+      updateWorkspaceDelay: 500,
+    });
+
+    await userEvent.click(
+      screen.getByRole('switch', { name: 'Zero data retention' }),
+    );
+    await userEvent.click(
+      screen.getByRole('switch', { name: 'Help improve Twenty' }),
+    );
+
+    expect(onUpdateWorkspace).toHaveBeenCalledTimes(1);
+
+    await waitFor(() => expect(onUpdateWorkspace).toHaveBeenCalledTimes(2));
+
+    expect(onUpdateWorkspace).toHaveBeenLastCalledWith({
+      input: {
+        aiDataPolicy: {
+          requiredDataResidencyRegion: null,
+          isZeroDataRetentionRequired: true,
+          isProductImprovementDataSharingEnabled: false,
+        },
+      },
+    });
   });
 });

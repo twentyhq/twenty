@@ -43,7 +43,7 @@ export const SettingsPrivacyAiDataProcessing = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const workspaceAiModels = useAtomStateValue(workspaceAiModelsSelector);
-  const { updateWorkspaceAiDataPolicyField, isAiDataPolicySaving } =
+  const { updateWorkspaceAiDataPolicyField } =
     useUpdateWorkspaceAiDataPolicyField();
 
   const aiDataPolicy = getWorkspaceAiDataPolicy(currentWorkspace);
@@ -100,7 +100,6 @@ export const SettingsPrivacyAiDataProcessing = () => {
                   }
                   options={dataResidencyRegionOptions}
                   selectSizeVariant="small"
-                  disabled={isAiDataPolicySaving}
                 />
               </SettingsOptionCardContentSelect>
             )}
@@ -110,7 +109,6 @@ export const SettingsPrivacyAiDataProcessing = () => {
                 title={t`Zero data retention`}
                 description={t`Only use providers that keep no copy of your prompts and responses`}
                 checked={aiDataPolicy.isZeroDataRetentionRequired}
-                disabled={isAiDataPolicySaving}
                 onChange={(checked) =>
                   updateWorkspaceAiDataPolicyField({
                     field: 'isZeroDataRetentionRequired',

@@ -21,7 +21,8 @@ export const objectPermissionsByObjectMetadataIdSelector =
             canSoftDeleteAllRecords:
               objectRecordsPermissions.canSoftDeleteAllRecords,
             canDestroyAllRecords: objectRecordsPermissions.canDestroyAllRecords,
-            restrictedFields: objectRecordsPermissions.restrictedFields,
+            unreadableFields: objectRecordsPermissions.unreadableFields,
+            uneditableFields: objectRecordsPermissions.uneditableFields,
             rowLevelRecordsPermissions:
               objectRecordsPermissions.rowLevelRecordsPermissions,
           },

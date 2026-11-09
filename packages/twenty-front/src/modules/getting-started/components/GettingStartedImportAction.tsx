@@ -1,6 +1,7 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
+import { GettingStartedImportPreview } from '@/getting-started/components/step-preview/GettingStartedImportPreview';
 import { GETTING_STARTED_IMPORT_PROMPT } from '@/getting-started/constants/GettingStartedImportPrompt';
 import { SPREADSHEET_EXPORT_GUIDES } from '@/getting-started/constants/SpreadsheetExportGuides';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
@@ -133,6 +134,7 @@ export const GettingStartedImportAction = () => {
 
   return (
     <StyledColumn>
+      <GettingStartedImportPreview />
       <StyledDropZone
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...getRootProps({

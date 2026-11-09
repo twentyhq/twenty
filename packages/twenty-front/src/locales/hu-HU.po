@@ -839,11 +839,6 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} telepítés} other {{1} telepítés}}"
 
-#. js-lingui-id: XcDI87
-#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
-msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
-msgstr "{invitationCount, plural, one {# meghívó elküldve} other {# meghívó elküldve}}"
-
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
@@ -2683,6 +2678,11 @@ msgstr "Adja hozzá első munkafolyamatát"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Hozzáadva {beautifiedCreatedAt}"
 
+#. js-lingui-id: WHJA3l
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
+msgstr "<0>Megújítási dátum</0> hozzáadva a következőhöz: <1>{companiesLabel}</1>"
+
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -2881,6 +2881,7 @@ msgid "agent"
 msgstr "ügynök"
 
 #. js-lingui-id: iEQQyu
+#: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -3035,6 +3036,11 @@ msgstr "MI-adatkezelés"
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "AI is paused"
 msgstr "Az MI szünetel"
+
+#. js-lingui-id: u9aqca
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "AI matches your columns to fields, even renamed ones."
+msgstr "Az AI a mezőkhöz rendeli az oszlopait, még az átnevezetteket is."
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3540,6 +3546,7 @@ msgid "Amber"
 msgstr "Borostyán"
 
 #. js-lingui-id: hehnjM
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -3634,6 +3641,11 @@ msgstr "Belső hiba történt a változtatások alkalmazása során. Kérjük, l
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "An internal error occurred while validating your changes. Please contact support."
 msgstr "Belső hiba történt a változtatások ellenőrzése során. Kérjük, lépjen kapcsolatba a támogatással."
+
+#. js-lingui-id: 2SfoVo
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "An Invoices object linked to Subscriptions and Companies."
+msgstr "Az Előfizetésekhez és Vállalatokhoz kapcsolt Számlák objektum."
 
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -6227,10 +6239,10 @@ msgstr "Válassza ki, mi történjen, amikor egy e-mail-címre kattint!"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Válassza ki, mihez férhet hozzá a Twenty, hogy támogathassa Önt és fejleszthesse a terméket."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Válassza ki, hogy {AGENT_CHAT_ASSISTANT_NAME} mikor vegyen részt a munkaterületén zajló beszélgetésekben"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Válaszd ki, hogy {assistantName} mikor vegyen részt a munkaterületed beszélgetéseiben"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6562,6 +6574,11 @@ msgstr "Oldalsó panel bezárása"
 msgid "Close video"
 msgstr "Videó bezárása"
 
+#. js-lingui-id: fYGMGN
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Closes in 6 days"
+msgstr "6 nap múlva zárul"
+
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cloud"
@@ -6842,10 +6859,16 @@ msgid "Compact view"
 msgstr "Kompakt nézet"
 
 #. js-lingui-id: s2QZS6
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/onboarding/components/import-contacts/OnboardingImportPreviewCompanies.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Companies"
 msgstr "Cégek"
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Company"
+msgstr "Cég"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -7424,6 +7447,11 @@ msgstr "Folytatás iterációs hiba esetén"
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Continue setup"
 msgstr "Beállítás folytatása"
+
+#. js-lingui-id: byc7Ak
+#: src/modules/getting-started/components/GettingStartedChatThreadDoneButton.tsx
+msgid "Continue thread"
+msgstr "Szál folytatása"
 
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -8301,6 +8329,11 @@ msgstr "{objectLabel} létrehozva"
 msgid "Created by"
 msgstr "Létrehozta"
 
+#. js-lingui-id: AruIkC
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created object <0>{subscriptionsLabel}</0>"
+msgstr "Létrehozott objektum: <0>{subscriptionsLabel}</0>"
+
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -8311,6 +8344,11 @@ msgstr "Létrehozva ekkor: {0}"
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Created or updated"
 msgstr "Létrehozva vagy frissítve"
+
+#. js-lingui-id: nyr6nA
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created view <0>Renewals this quarter</0>"
+msgstr "Létrehozott nézet: <0>Megújítások ebben a negyedévben</0>"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -10365,6 +10403,11 @@ msgstr "E-mail piszkozat"
 msgid "Drafted"
 msgstr "Piszkozatba mentve"
 
+#. js-lingui-id: 5t1yRu
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafted <0>4 follow-up emails</0>"
+msgstr "Piszkozatként elkészített <0>4 utánkövető e-mailt</0>"
+
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafted email"
@@ -10374,6 +10417,11 @@ msgstr "E-mail piszkozat elkészült"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafting email"
 msgstr "E-mail piszkozat készítése"
+
+#. js-lingui-id: BnOv+M
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafts only. You review and send."
+msgstr "Csak piszkozatok. Ön ellenőrzi és küldi el őket."
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -11000,6 +11048,7 @@ msgid "emails"
 msgstr "e-mailek"
 
 #. js-lingui-id: BXEcos
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
@@ -11988,6 +12037,11 @@ msgstr "Minden kódsor nyilvános, így Ön is ellenőrizheti"
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "every minute"
 msgstr "minden percben"
+
+#. js-lingui-id: pjZ9WF
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Every Monday"
+msgstr "Minden hétfőn"
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13671,6 +13725,11 @@ msgstr "Továbbítási cím a vágólapra másolva"
 msgid "Found {objectLabel}"
 msgstr "{objectLabel} megtalálva"
 
+#. js-lingui-id: laQ+m7
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Found <0>4 deals</0> closing in the next 30 days"
+msgstr "<0>4 ügyletet</0> találtunk, amelyek a következő 30 napban zárulnak"
+
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Found connected accounts"
@@ -14120,6 +14179,11 @@ msgstr "\"Ugrás a piszkozatokhoz\""
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 msgid "Go to Settings"
 msgstr "Ugrás a beállításokhoz"
+
+#. js-lingui-id: WeeG8G
+#: src/modules/getting-started/components/GettingStartedWorkflowDoneButton.tsx
+msgid "Go to workflow"
+msgstr "Ugrás a munkafolyamathoz"
 
 #. js-lingui-id: FYlHHU
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -15771,6 +15835,11 @@ msgstr "Meghívás Linken Keresztül"
 #: src/modules/onboarding/hooks/useInviteTeam.ts
 msgid "Invite link sent to email addresses"
 msgstr "Meghívó link elküldve az email címekre"
+
+#. js-lingui-id: aNtX0/
+#: src/modules/getting-started/components/GettingStartedInviteDoneButton.tsx
+msgid "Invite more"
+msgstr "Továbbiak meghívása"
 
 #. js-lingui-id: x1m5RZ
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -18523,6 +18592,7 @@ msgstr "N/A"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
@@ -18714,10 +18784,10 @@ msgstr "Soha"
 msgid "Never expires"
 msgstr "Sosem jár le"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "A Soha távol tartja {AGENT_CHAT_ASSISTANT_NAME} asszisztenst. A Csak említéskor arra kéri {AGENT_CHAT_ASSISTANT_NAME} asszisztenst, hogy címkézéskor válaszoljon. Az Automatikus lehetővé teszi, hogy {AGENT_CHAT_ASSISTANT_NAME} döntse el, mikor válaszoljon. Azokban a csevegésekben, amelyekben csak Ön és {AGENT_CHAT_ASSISTANT_NAME} vesz részt, mindig érkezik válasz."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "A Soha kizárja {assistantName}-t. A Csak említéskor arra kéri {assistantName}-t, hogy válaszoljon, amikor megjelölik. Az Automatikus lehetővé teszi, hogy {assistantName} döntse el, mikor válaszoljon. Azokban a csevegésekben, amelyekben csak te és {assistantName} vesztek részt, mindig érkezik válasz."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20240,6 +20310,11 @@ msgstr "Ezen az erőfeszítési szinten még nem történt mérés, ezért ezek 
 msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Ezen az erőfeszítési szinten még nincs mérés. Az alapmodell értékét jelenítjük meg."
 
+#. js-lingui-id: PBxg/E
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Not now"
+msgstr "Most nem"
+
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
 msgid "Not open to you"
@@ -21048,6 +21123,11 @@ msgstr "műveletek"
 msgid "Operations"
 msgstr "Műveletek"
 
+#. js-lingui-id: 4MyDFl
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Opportunities"
+msgstr "Lehetőségek"
+
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
 msgid "Opt out of tracking"
@@ -21674,6 +21754,13 @@ msgstr "Függőben"
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Függőben lévő kérések"
+
+#. js-lingui-id: 1wdjme
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "People"
+msgstr "Emberek"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -22766,6 +22853,11 @@ msgstr "E-mailek olvasása"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Olvassa el a rendszerutasításokat"
+
+#. js-lingui-id: l668+W
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Read the last emails and meetings for each"
+msgstr "Olvassa el mindegyik legutóbbi e-mailjeit és találkozóit"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -27389,6 +27481,11 @@ msgstr "Az előfizetés át lesz váltva {planLabel} csomagra ekkor: {0}."
 msgid "Subscription will be switched to monthly billing the {0}."
 msgstr "Az előfizetés ekkor vált havi számlázásra: {0}."
 
+#. js-lingui-id: P6F38F
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Subscriptions"
+msgstr "Előfizetések"
+
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Subsection heading"
@@ -27953,6 +28050,11 @@ msgstr "Ez körülbelül {formattedNewlyEarnedAiActions} AI-műveletnek felel me
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "Az a cím, amelyről a munkaterület e-maileket fog küldeni és fogadni (pl. support@mycompany.com). A kimenő küldéshez szükséges, hogy a tartomány ellenőrizve legyen a Kimenő tartományok között."
+
+#. js-lingui-id: PKwDg+
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "The agent asks before creating anything."
+msgstr "Az ügynök mindent létrehozás előtt rákérdez."
 
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -29271,6 +29373,11 @@ msgstr "Feladatok összesen"
 msgid "Track AI consumption across your workspace."
 msgstr "Kövesse nyomon az AI-fogyasztást a munkaterületén."
 
+#. js-lingui-id: LpPRBt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Track invoices too?"
+msgstr "Kövesse nyomon a számlákat is?"
+
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Track link clicks"
@@ -29595,6 +29702,7 @@ msgid "Twenty adds the people you email and meet, and keeps them up to date with
 msgstr "A Twenty hozzáadja azokat az embereket, akikkel e-mailt vált és találkozik, és manuális adatbevitel nélkül naprakészen tartja őket."
 
 #. js-lingui-id: JnaRPe
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
 msgstr "Twenty mezők"
@@ -31599,6 +31707,11 @@ msgstr "Ezeken a mezőkön keresztül illesztünk. Ha egy {0} már létezik, azt
 msgid "We notify you within 72 hours, as set out in the DPA"
 msgstr "A DPA-ban foglaltaknak megfelelően 72 órán belül értesítjük Önt"
 
+#. js-lingui-id: InKpMt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "We sell subscriptions to design teams."
+msgstr "Előfizetéseket értékesítünk tervezőcsapatoknak."
+
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
@@ -32485,6 +32598,7 @@ msgid "yes"
 msgstr "igen"
 
 #. js-lingui-id: l75CjT
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx

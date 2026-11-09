@@ -3854,9 +3854,11 @@ type ObjectPermission {
   canSoftDeleteObjectRecords: Boolean
   canUpdateObjectRecords: Boolean
   objectMetadataId: UUID!
-  restrictedFields: JSON
+  restrictedFields: JSON @deprecated(reason: "Use unreadableFields and uneditableFields")
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
+  uneditableFields: [UUID!]
+  unreadableFields: [UUID!]
 }
 
 input ObjectPermissionInput {
@@ -3915,8 +3917,10 @@ type ObjectRecordsPermissions {
   canSoftDeleteAllRecords: Boolean!
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
-  restrictedFields: JSON!
+  restrictedFields: JSON! @deprecated(reason: "Use unreadableFields and uneditableFields")
   rowLevelRecordsPermissions: RowLevelRecordsPermissions
+  uneditableFields: [UUID!]!
+  unreadableFields: [UUID!]!
 }
 
 """Onboarding status"""
@@ -4267,7 +4271,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
-  exportApplication(shouldIncludeDependencies: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
+  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(
     """The id of the record to find."""
     id: UUID!
@@ -4566,6 +4570,7 @@ type Role {
   label: String!
   objectPermissions: [ObjectPermission!]
   permissionFlags: [RolePermissionFlag!]
+  rowLevelPermissionFieldPermissions: [FieldPermission!]
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
   universalIdentifier: UUID
@@ -4667,6 +4672,8 @@ type RowLevelRecordsPermissions {
   canUpdateRecords: Boolean!
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
   predicates: [RowLevelPermissionPredicate!]!
+  uneditableFields: [UUID!]
+  unreadableFields: [UUID!]
 }
 
 input RunAgentInput {
