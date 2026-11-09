@@ -9028,6 +9028,11 @@ msgstr "Az üzenetkezelési szolgáltató kapcsolatszolgáltatója nem módosít
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "Az üzenetkezelési szolgáltató kapcsolatszolgáltatója a létrehozás után nem módosítható: adjon meg egy új üzenetkezelési szolgáltatót új universalIdentifier azonosítóval"
 
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr ""
+
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
@@ -14919,6 +14924,11 @@ msgstr "Ez a tag nem állította be a kétfaktoros hitelesítést, ezért nincs 
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
 msgstr "Ez az üzenetcsatorna nem tud üzeneteket küldeni."
+
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr ""
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
