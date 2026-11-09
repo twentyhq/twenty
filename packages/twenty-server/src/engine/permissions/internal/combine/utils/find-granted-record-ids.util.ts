@@ -25,17 +25,20 @@ export const findGrantedRecordIds = async (
     return new Set(records.map((record) => record.id));
   }
 
+  const rowLevelPermissionMatchingRecordIds =
+    await findRowLevelPermissionMatchingRecordIds(request);
   const roleGrantedRecordIds = new Set([
     ...(await findRecordIdsGrantedByAllRecords(request)),
-    ...(await findRecordIdsGrantedByRls(request)),
+    ...(await findRecordIdsGrantedByRls({
+      ...request,
+      matchingRecordIds: rowLevelPermissionMatchingRecordIds,
+    })),
   ]);
-  const rowLevelPermissionMatchingRecordIds =
-    areRecordGrantsHeldToRowLevelPermissions(request)
-      ? findRowLevelPermissionMatchingRecordIds(request)
+  const recordGrantCandidateIds =
+    areRecordGrantsHeldToRowLevelPermissions(request) &&
+    isDefined(rowLevelPermissionMatchingRecordIds)
+      ? new Set(rowLevelPermissionMatchingRecordIds)
       : undefined;
-  const recordGrantCandidateIds = isDefined(rowLevelPermissionMatchingRecordIds)
-    ? new Set(rowLevelPermissionMatchingRecordIds)
-    : undefined;
   const remainingRecords = records.filter(
     (record) =>
       !roleGrantedRecordIds.has(record.id) &&

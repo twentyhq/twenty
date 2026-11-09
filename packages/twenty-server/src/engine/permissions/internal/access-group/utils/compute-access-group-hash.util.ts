@@ -18,10 +18,12 @@ const buildPredicateGroupContent = ({
   parentPredicateGroupId,
   predicates,
   predicateGroups,
+  isRelationHopEnabled,
 }: {
   parentPredicateGroupId: string | null;
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
+  isRelationHopEnabled: boolean;
 }): { predicates: string[]; predicateGroups: string[] } => ({
   predicates: sortByContent(
     predicates
@@ -31,6 +33,9 @@ const buildPredicateGroupContent = ({
           parentPredicateGroupId,
       )
       .map((predicate) => [
+        ...(isDefined(predicate.relationFieldMetadataId)
+          ? [predicate.relationFieldMetadataId, isRelationHopEnabled]
+          : []),
         predicate.fieldMetadataId,
         predicate.subFieldName,
         predicate.operand,
@@ -52,6 +57,7 @@ const buildPredicateGroupContent = ({
           parentPredicateGroupId: predicateGroup.id,
           predicates,
           predicateGroups,
+          isRelationHopEnabled,
         }),
       ]),
   ),
@@ -63,12 +69,14 @@ export const computeAccessGroupHash = ({
   rowLevelRecordsPermissions,
   rowLevelPermissionPredicateGroupId,
   memberFieldValues,
+  isRelationHopEnabled,
 }: {
   roleId: string;
   objectMetadataId: string;
   rowLevelRecordsPermissions: RowLevelRecordsPermissions | null | undefined;
   rowLevelPermissionPredicateGroupId: string | null;
   memberFieldValues: RowLevelPermissionMemberFieldValues | null;
+  isRelationHopEnabled: boolean;
 }): string =>
   createHash('sha256')
     .update(
@@ -80,6 +88,7 @@ export const computeAccessGroupHash = ({
               parentPredicateGroupId: null,
               predicates: rowLevelRecordsPermissions.predicates,
               predicateGroups: rowLevelRecordsPermissions.predicateGroups,
+              isRelationHopEnabled,
             })
           : null,
         rowLevelPermissionPredicateGroupId,

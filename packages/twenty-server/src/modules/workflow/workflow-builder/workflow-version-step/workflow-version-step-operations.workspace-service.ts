@@ -29,11 +29,6 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import {
-  LogicFunctionException,
-  LogicFunctionExceptionCode,
-} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -47,13 +42,11 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   type WorkflowAction,
-  type WorkflowCodeAction,
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -80,8 +73,6 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 export class WorkflowVersionStepOperationsWorkspaceService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
-    private readonly codeStepBuildService: CodeStepBuildService,
     @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -92,45 +83,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService,
   ) {}
-
-  async runWorkflowVersionStepDeletionSideEffects({
-    step,
-    workspaceId,
-  }: {
-    step: WorkflowAction;
-    workspaceId: string;
-  }) {
-    switch (step.type) {
-      case WorkflowActionType.CODE: {
-        const { code, logicFunctionId } = step.settings.input;
-
-        if (
-          isDefined(code) ||
-          !isNonEmptyString(logicFunctionId) ||
-          !isValidUuid(logicFunctionId)
-        ) {
-          break;
-        }
-
-        await this.logicFunctionFromSourceService
-          .deleteOneWithSource({
-            id: logicFunctionId,
-            workspaceId,
-          })
-          .catch((error) => {
-            if (
-              error instanceof LogicFunctionException &&
-              error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
-            ) {
-              return;
-            }
-
-            throw error;
-          });
-        break;
-      }
-    }
-  }
 
   private async findFirstActiveObjectMetadata(workspaceId: string) {
     return this.objectMetadataRepository.findOne(workspaceId, {
@@ -875,18 +827,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
     switch (step.type) {
-      case WorkflowActionType.CODE: {
-        return {
-          ...step,
-          id: v4(),
-          nextStepIds: [],
-          position: duplicatedStepPosition,
-          settings: await this.copyLegacyCodeStepLogicFunction({
-            settings: step.settings,
-            workspaceId,
-          }),
-        };
-      }
       case WorkflowActionType.ITERATOR: {
         return {
           ...step,
@@ -1009,54 +949,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       elseEmptyNode,
       ifFilterGroupId,
       branches,
-    };
-  }
-
-  async createDraftStep({
-    step,
-    workspaceId,
-  }: {
-    step: WorkflowAction;
-    workspaceId: string;
-  }): Promise<WorkflowAction> {
-    switch (step.type) {
-      case WorkflowActionType.CODE: {
-        return {
-          ...step,
-          settings: await this.copyLegacyCodeStepLogicFunction({
-            settings: step.settings,
-            workspaceId,
-          }),
-        };
-      }
-      default: {
-        return step;
-      }
-    }
-  }
-
-  private async copyLegacyCodeStepLogicFunction({
-    settings,
-    workspaceId,
-  }: {
-    settings: WorkflowCodeAction['settings'];
-    workspaceId: string;
-  }): Promise<WorkflowCodeAction['settings']> {
-    const { code, logicFunctionId } = settings.input;
-
-    if (isDefined(code) || !isNonEmptyString(logicFunctionId)) {
-      return settings;
-    }
-
-    const newLogicFunction =
-      await this.codeStepBuildService.duplicateCodeStepLogicFunction({
-        existingLogicFunctionId: logicFunctionId,
-        workspaceId,
-      });
-
-    return {
-      ...settings,
-      input: { ...settings.input, logicFunctionId: newLogicFunction.id },
     };
   }
 }

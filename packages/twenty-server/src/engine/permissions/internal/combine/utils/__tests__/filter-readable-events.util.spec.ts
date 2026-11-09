@@ -10,11 +10,11 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { filterReadableEvents } from 'src/engine/permissions/internal/combine/utils/filter-readable-events.util';
-import { resolveRowLevelPermissionRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter-for-role.util';
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 jest.mock(
-  'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter-for-role.util',
+  'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util',
 );
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
@@ -106,6 +106,7 @@ const filter = ({
     },
     objectMetadata: invoice,
     recordsPermissions,
+    rlsRuleFilterByRoleId: new Map(),
     metadataMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -188,7 +189,7 @@ describe('filterReadableEvents', () => {
 
   it('should omit a field unreadable on an RLS rule the record matches', () => {
     jest
-      .mocked(resolveRowLevelPermissionRecordFilterForRole)
+      .mocked(resolveRlsRuleRecordFilter)
       .mockReturnValue({ name: { eq: 'New' } });
 
     const [event] = filter({
@@ -208,7 +209,7 @@ describe('filterReadableEvents', () => {
 
   it('should add up object level and RLS rule unreadable fields', () => {
     jest
-      .mocked(resolveRowLevelPermissionRecordFilterForRole)
+      .mocked(resolveRlsRuleRecordFilter)
       .mockReturnValue({ name: { eq: 'New' } });
 
     const [event] = filter({
@@ -235,7 +236,7 @@ describe('filterReadableEvents', () => {
 
   it('should keep a field unreadable on an RLS rule the record does not match', () => {
     jest
-      .mocked(resolveRowLevelPermissionRecordFilterForRole)
+      .mocked(resolveRlsRuleRecordFilter)
       .mockReturnValue({ name: { eq: 'Another' } });
 
     const [event] = filter({

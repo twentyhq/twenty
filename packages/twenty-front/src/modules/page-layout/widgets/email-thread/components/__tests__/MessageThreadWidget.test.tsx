@@ -60,7 +60,12 @@ const mockThread = ({ threadLoading = false } = {}) =>
 
 const mockChannel = (type: MessageChannelType) =>
   mockUseMessageThreadChannel.mockReturnValue({
-    messageThreadChannel: { type, provider: 'app', applicationId: null },
+    messageThreadChannel: {
+      type,
+      provider: 'app',
+      applicationId: null,
+      conversationStyle: type === MessageChannelType.APP ? 'chat' : 'email',
+    },
     messageThreadChannelLoading: false,
   });
 

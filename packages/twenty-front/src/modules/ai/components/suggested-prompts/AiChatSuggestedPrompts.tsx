@@ -2,13 +2,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { LightButton } from 'twenty-ui/components/input';
-import { AssistantAvatar } from 'twenty-ui/components/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
+import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
-import { AGENT_CHAT_ASSISTANT_COLOR } from '@/ai/constants/AgentChatAssistantColor';
 import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { type SuggestedPrompt } from '@/ai/types/SuggestedPrompt';
@@ -84,9 +83,7 @@ export const AiChatSuggestedPrompts = ({
 
   return (
     <StyledContainer isCentered={isCentered}>
-      {isCentered && (
-        <AssistantAvatar color={AGENT_CHAT_ASSISTANT_COLOR} size={40} />
-      )}
+      {isCentered && <AiChatAssistantAvatar size={40} />}
       <StyledTitle isCentered={isCentered}>
         {isCentered ? t`How can I help you?` : t`What can I help you with?`}
       </StyledTitle>
