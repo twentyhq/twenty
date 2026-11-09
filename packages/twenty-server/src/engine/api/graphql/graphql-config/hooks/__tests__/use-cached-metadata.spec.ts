@@ -281,6 +281,52 @@ describe('useCachedMetadata', () => {
     expect(cacheSetter).not.toHaveBeenCalled();
   });
 
+  it('never stores a response that consumed an undeclared dependency', async () => {
+    const cacheSetter = jest.fn();
+    const plugin = createPlugin({ cacheSetter });
+
+    await runRequest({
+      plugin,
+      request: createRequest(),
+      execute: () => {
+        const workspacePins = getActiveWorkspaceCachePins('workspace-id');
+
+        workspacePins?.set('flatViewMaps', {
+          data: {} as never,
+          hash: 'view-generation-1',
+        });
+        workspacePins?.set('flatViewFieldMaps', {
+          data: {} as never,
+          hash: 'undeclared-generation',
+        });
+      },
+    });
+
+    expect(cacheSetter).not.toHaveBeenCalled();
+  });
+
+  it('opens no pin scope for operations outside the response cache', async () => {
+    const plugin = createPlugin();
+    let hasPinScopeDuringExecution = true;
+
+    await runRequest({
+      plugin,
+      request: createRequest({
+        body: {
+          operationName: 'DeleteView',
+          query: 'mutation DeleteView { deleteView(id: "view-id") }',
+        },
+      }),
+      execute: () => {
+        hasPinScopeDuringExecution = isDefined(
+          getActiveWorkspaceCachePins('workspace-id'),
+        );
+      },
+    });
+
+    expect(hasPinScopeDuringExecution).toBe(false);
+  });
+
   it('shares cache entries across users for workspace-scoped operations', async () => {
     const cacheGetter = jest.fn().mockResolvedValue(undefined);
     const plugin = createPlugin({ cacheGetter, scope: 'workspace' });

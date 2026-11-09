@@ -42,18 +42,18 @@ type RequestCacheEntry = {
   sourceHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
 };
 
-const doPinnedHashesMatchSourceHashes = ({
-  pinnedHashes,
-  sourceHashes,
+const areConsumedHashesDeclaredAndMatching = ({
+  consumedHashes,
+  declaredHashes,
 }: {
-  pinnedHashes: Partial<Record<string, string>>;
-  sourceHashes: Partial<Record<string, string>>;
+  consumedHashes: Partial<Record<string, string>>;
+  declaredHashes: Partial<Record<string, string>>;
 }): boolean =>
-  Object.entries(sourceHashes).every(([cacheKeyName, sourceHash]) => {
-    const pinnedHash = pinnedHashes[cacheKeyName];
-
-    return !isDefined(pinnedHash) || pinnedHash === sourceHash;
-  });
+  Object.entries(consumedHashes).every(
+    ([cacheKeyName, consumedHash]) =>
+      isDefined(declaredHashes[cacheKeyName]) &&
+      declaredHashes[cacheKeyName] === consumedHash,
+  );
 
 export type CacheMetadataPluginConfig = {
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -300,7 +300,7 @@ export function useCachedMetadata(
     onExecute: ({ args, executeFn, setExecuteFn }) => {
       const request = args.contextValue.req;
 
-      if (!isDefined(request)) {
+      if (!isDefined(request) || !requestCacheEntries.has(request)) {
         return;
       }
 
@@ -340,9 +340,9 @@ export function useCachedMetadata(
         : {};
 
       if (
-        !doPinnedHashesMatchSourceHashes({
-          pinnedHashes,
-          sourceHashes: requestCacheEntry.sourceHashes,
+        !areConsumedHashesDeclaredAndMatching({
+          consumedHashes: pinnedHashes,
+          declaredHashes: requestCacheEntry.sourceHashes,
         })
       ) {
         return;
