@@ -1,6 +1,9 @@
+import { convertImageBlobToPngBlob } from '@/command-menu-item/record/single-record/utils/convertImageBlobToPngBlob';
+import { isDefined } from 'twenty-shared/utils';
+
+// react-pdf only decodes PNG and JPEG.
 const PDF_SUPPORTED_IMAGE_TYPES = ['image/png', 'image/jpeg'];
 
-// An image the PDF cannot draw is left out instead of failing the whole export.
 export const fetchPdfImageObjectUrl = async (
   url: string,
 ): Promise<string | undefined> => {
@@ -11,11 +14,15 @@ export const fetchPdfImageObjectUrl = async (
       return undefined;
     }
 
-    const blob = await response.blob();
+    const imageBlob = await response.blob();
 
-    return PDF_SUPPORTED_IMAGE_TYPES.includes(blob.type)
-      ? URL.createObjectURL(blob)
-      : undefined;
+    if (PDF_SUPPORTED_IMAGE_TYPES.includes(imageBlob.type)) {
+      return URL.createObjectURL(imageBlob);
+    }
+
+    const pngBlob = await convertImageBlobToPngBlob(imageBlob);
+
+    return isDefined(pngBlob) ? URL.createObjectURL(pngBlob) : undefined;
   } catch {
     return undefined;
   }
