@@ -699,6 +699,11 @@ msgstr "{currentCreditAmountDisplay} kredita "
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, one {besplatan kredit} few {besplatna kredita} other {besplatnih kredita}}"
 
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} i {dayOfWeekDescription}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -1724,6 +1729,11 @@ msgstr "O vašoj aplikaciji"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Prihvaćeni i potpisani DPA sporazumi za ovaj radni prostor, sa njihovom verzijom šablona i datumom."
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Grupe pristupa"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3980,6 +3990,11 @@ msgstr "Odnosi se na"
 msgid "Apply"
 msgstr "Primeni"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Primeni privatne zapise na objekte koji podrazumevano nisu privatni. Uvek je uključeno za radne prostore u kojima je podešeno deljenje zapisa. Isključivanjem ove opcije zapisi označeni kao privatni na tim objektima ponovo postaju vidljivi."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4376,7 +4391,7 @@ msgid "Assistant avatar"
 msgstr "Avatar pomoćnika"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Ime pomoćnika"
 
@@ -6212,10 +6227,10 @@ msgstr "Izaberite šta se dešava kada kliknete na adresu e-pošte"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Izaberite čemu Twenty može da pristupi kako bi vam pružio podršku i unapredio proizvod."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Izaberite kada {AGENT_CHAT_ASSISTANT_NAME} učestvuje u razgovorima u vašem radnom prostoru"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Odaberite kada {assistantName} učestvuje u razgovorima u vašem radnom prostoru"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6904,6 +6919,11 @@ msgstr "Pregled komponente sa primerom podataka"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Sastavi imejl"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Izračunajte grupe pristupa koje će liste zapisa koristiti za dozvole na nivou redova. Omogućite nakon što se završi nadogradnja radnog prostora."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -11287,7 +11307,7 @@ msgid "Enter a JSON value"
 msgstr "Unesite JSON vrednost"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Unesite naziv od 1 do {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} znakova u jednom redu. Uglaste zagrade moraju biti uparene i ne mogu biti ugnježdene."
 
@@ -12759,6 +12779,11 @@ msgstr "Nije uspelo opozivanje ključa za potpisivanje. Pokušajte ponovo kasnij
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Nije uspelo opozivanje koda za oporavak."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "Čuvanje podešavanja asistenta nije uspelo. Pokušajte ponovo."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -18689,10 +18714,10 @@ msgstr "Nikada"
 msgid "Never expires"
 msgstr "Nikada ne ističe"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Nikada drži {AGENT_CHAT_ASSISTANT_NAME} van razgovora. Samo kada je pomenut traži od {AGENT_CHAT_ASSISTANT_NAME} da odgovori kada je označen. Automatski omogućava {AGENT_CHAT_ASSISTANT_NAME} da odluči kada će odgovoriti. Na razgovore samo između vas i {AGENT_CHAT_ASSISTANT_NAME} se uvek odgovara."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Nikad drži {assistantName} van razgovora. Samo kada je pomenut traži od {assistantName} da odgovori kada je označen. Automatski omogućava {assistantName} da odluči kada da odgovori. Na razgovore samo sa vama i {assistantName} se uvek odgovara."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20574,6 +20599,16 @@ msgstr "ol"
 msgid "Omit zero values"
 msgstr "Izostavi nulte vrednosti"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "na {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "u {remainingDays} i {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20721,20 +20756,13 @@ msgstr "Samo članovi koji mogu da upravljaju aplikacijama mogu da odobre pristu
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "samo na {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "samo na {firstDay} i {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "samo na {remainingDays} i {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "samo na {remainingDays} i {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22346,6 +22374,11 @@ msgstr "Politika privatnosti"
 msgid "Private"
 msgstr "Privatno"
 
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Privatni zapisi"
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -23691,11 +23724,6 @@ msgstr "Replit linkovi za instalaciju zahtevaju HTTPS MCP URL."
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Odgovori"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Odgovori..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

@@ -97,7 +97,8 @@ const fullAccess: ObjectRecordsPermissions = {
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
@@ -143,7 +144,7 @@ const buildContext = (): RowAccessEvaluationContext => ({
 
 const findGranted = ({
   principals,
-  featureFlagKeys = [],
+  featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED],
   context = buildContext(),
 }: {
   principals: PermissionsPrincipalsWithRolesContext;

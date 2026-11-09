@@ -84,8 +84,9 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
   }
 
   private generateField(fieldMetadata: FlatFieldMetadata) {
-    if (isCompositeFieldMetadataType(fieldMetadata.type))
+    if (isCompositeFieldMetadataType(fieldMetadata.type)) {
       return this.generateCompositeFieldGroupByInputType(fieldMetadata);
+    }
 
     let type: GraphQLInputType | GraphQLUnionType;
 

@@ -64,6 +64,14 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Message attachments`,
     description: msg`Store and show files attached to messages. Enabled after the workspace upgrade completes.`,
   },
+  [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
+    label: msg`Private records`,
+    description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,
+  },
+  [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
+    label: msg`Access groups`,
+    description: msg`Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes.`,
+  },
   [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: {
     label: msg`AI data policy and Privacy tab`,
     description: msg`Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes.`,

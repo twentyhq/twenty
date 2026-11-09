@@ -54,7 +54,9 @@ export const setColumn = (
           data
             ?.flatMap((row) => {
               const value = row[oldColumn.index];
-              if (!isDefined(value)) return [];
+              if (!isDefined(value)) {
+                return [];
+              }
               return spreadsheetImportParseMultiSelectOptionsOrThrow(value);
             })
             .filter((entry) => typeof entry === 'string'),

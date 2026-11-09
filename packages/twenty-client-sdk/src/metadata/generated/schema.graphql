@@ -2382,6 +2382,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ACCESS_GROUPS_ENABLED
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
@@ -2393,6 +2394,7 @@ enum FeatureFlagKey {
   IS_GETTING_STARTED_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
+  IS_PRIVATE_RECORDS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
@@ -2512,6 +2514,7 @@ type FieldPermission {
   id: UUID!
   objectMetadataId: UUID!
   roleId: UUID!
+  rowLevelPermissionPredicateGroupId: UUID
 }
 
 input FieldPermissionInput {
@@ -2519,6 +2522,7 @@ input FieldPermissionInput {
   canUpdateFieldValue: Boolean
   fieldMetadataId: UUID!
   objectMetadataId: UUID!
+  rowLevelPermissionPredicateGroupId: UUID
 }
 
 type FieldRichTextConfiguration {
@@ -3851,9 +3855,11 @@ type ObjectPermission {
   canSoftDeleteObjectRecords: Boolean
   canUpdateObjectRecords: Boolean
   objectMetadataId: UUID!
-  restrictedFields: JSON
+  restrictedFields: JSON @deprecated(reason: "Use unreadableFields and uneditableFields")
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
+  uneditableFields: [UUID!]
+  unreadableFields: [UUID!]
 }
 
 input ObjectPermissionInput {
@@ -3912,8 +3918,10 @@ type ObjectRecordsPermissions {
   canSoftDeleteAllRecords: Boolean!
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
-  restrictedFields: JSON!
+  restrictedFields: JSON! @deprecated(reason: "Use unreadableFields and uneditableFields")
   rowLevelRecordsPermissions: RowLevelRecordsPermissions
+  uneditableFields: [UUID!]!
+  unreadableFields: [UUID!]!
 }
 
 """Onboarding status"""
@@ -4563,6 +4571,7 @@ type Role {
   label: String!
   objectPermissions: [ObjectPermission!]
   permissionFlags: [RolePermissionFlag!]
+  rowLevelPermissionFieldPermissions: [FieldPermission!]
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
   universalIdentifier: UUID
@@ -4664,6 +4673,8 @@ type RowLevelRecordsPermissions {
   canUpdateRecords: Boolean!
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
   predicates: [RowLevelPermissionPredicate!]!
+  uneditableFields: [UUID!]
+  unreadableFields: [UUID!]
 }
 
 input RunAgentInput {

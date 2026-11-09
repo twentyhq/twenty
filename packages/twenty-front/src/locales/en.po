@@ -694,6 +694,11 @@ msgstr "{currentCreditAmountDisplay} credits "
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, one {free credit} other {free credits}}"
 
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} and {dayOfWeekDescription}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -1719,6 +1724,11 @@ msgstr "About your app"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Accepted and signed DPAs for this workspace, with their template version and date."
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Access groups"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3975,6 +3985,11 @@ msgstr "Applies to"
 msgid "Apply"
 msgstr "Apply"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4371,7 +4386,7 @@ msgid "Assistant avatar"
 msgstr "Assistant avatar"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Assistant name"
 
@@ -6207,10 +6222,10 @@ msgstr "Choose what happens when you click an email"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Choose what Twenty can access to support you and improve the product."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Choose when {assistantName} participates in conversations across your workspace"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6899,6 +6914,11 @@ msgstr "Component preview with sample data"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Compose email"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -11282,7 +11302,7 @@ msgid "Enter a JSON value"
 msgstr "Enter a JSON value"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 
@@ -12754,6 +12774,11 @@ msgstr "Failed to revoke signing key. Please try again later."
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Failed to revoke the recovery code."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "Failed to save assistant settings. Try again."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -18684,10 +18709,10 @@ msgstr "Never"
 msgid "Never expires"
 msgstr "Never expires"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20569,6 +20594,16 @@ msgstr "ol"
 msgid "Omit zero values"
 msgstr "Omit zero values"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "on {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "on {remainingDays} and {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20716,20 +20751,13 @@ msgstr "Only members who can manage apps can grant access. Ask your workspace ad
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "only on {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "only on {firstDay} and {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "only on {remainingDays} and {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "only on {remainingDays} and {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22341,6 +22369,11 @@ msgstr "Privacy Policy"
 msgid "Private"
 msgstr "Private"
 
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Private records"
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -23686,11 +23719,6 @@ msgstr "Replit install links require an HTTPS MCP URL."
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Reply"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Reply..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

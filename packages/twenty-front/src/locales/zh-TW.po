@@ -699,6 +699,11 @@ msgstr "{currentCreditAmountDisplay} 積分 "
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, other {免費點數}}"
 
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} 和 {dayOfWeekDescription}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -1724,6 +1729,11 @@ msgstr "關於您的應用程式"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "此工作區已接受並簽署的 DPA，以及其範本版本與日期。"
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "存取群組"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3980,6 +3990,11 @@ msgstr "適用於"
 msgid "Apply"
 msgstr "套用"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "在預設並非私有的物件上套用私有記錄。對於已設定記錄共用的工作區，此功能一律啟用。關閉此功能會讓這些物件上設為私有的記錄再次顯示。"
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4376,7 +4391,7 @@ msgid "Assistant avatar"
 msgstr "助理頭像"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "助理名稱"
 
@@ -6212,10 +6227,10 @@ msgstr "選擇按一下電子郵件地址時的動作"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "選擇允許 Twenty 存取哪些內容，以便為您提供支援並改善產品。"
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "選擇 {AGENT_CHAT_ASSISTANT_NAME} 何時參與您工作區中的對話"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "選擇 {assistantName} 何時參與整個工作區的對話"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6904,6 +6919,11 @@ msgstr "含範例資料的元件預覽"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "撰寫電子郵件"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "計算記錄清單將用於資料列層級權限的存取群組。在工作區升級完成後啟用。"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -11287,7 +11307,7 @@ msgid "Enter a JSON value"
 msgstr "輸入 JSON 值"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "請在單行中輸入長度介於 1 到 {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} 個字元之間的名稱。方括號必須成對，且不可巢狀使用。"
 
@@ -12759,6 +12779,11 @@ msgstr "無法撤銷簽署金鑰。請稍後再試。"
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "撤銷復原碼失敗。"
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "儲存助理設定失敗。請再試一次。"
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -18689,10 +18714,10 @@ msgstr "從不"
 msgid "Never expires"
 msgstr "永不過期"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "「永不」會讓 {AGENT_CHAT_ASSISTANT_NAME} 不參與對話。「僅在被提及時」會在標註 {AGENT_CHAT_ASSISTANT_NAME} 時要求其回覆。「自動」會讓 {AGENT_CHAT_ASSISTANT_NAME} 決定何時回覆。只有您和 {AGENT_CHAT_ASSISTANT_NAME} 的聊天一律會收到回覆。"
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "「從不」會讓 {assistantName} 不參與。「僅在提及時」會在標註 {assistantName} 時要求其回覆。「自動」讓 {assistantName} 決定何時回覆。只有您和 {assistantName} 的聊天室一律會收到回覆。"
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20574,6 +20599,16 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "省略零值"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "在 {dayName} 上"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "在 {remainingDays} 和 {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20721,20 +20756,13 @@ msgstr "只有可管理應用程式的成員才能授予存取權。請洽詢您
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "僅在 {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "僅在 {firstDay} 和 {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "僅在 {remainingDays} 和 {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "僅在 {remainingDays} 和 {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22346,6 +22374,11 @@ msgstr "隱私政策"
 msgid "Private"
 msgstr "私有"
 
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "私有記錄"
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -23691,11 +23724,6 @@ msgstr "Replit 安裝連結需要 HTTPS MCP URL。"
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "回覆"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "回覆..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

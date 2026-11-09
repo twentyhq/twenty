@@ -20,8 +20,18 @@ import {
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+
+const StyledChatThreadBody = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
+`;
 
 type ChatThreadWidgetContentProps = {
   messageThreadId: string;
@@ -81,42 +91,48 @@ export const ChatThreadWidgetContent = ({
   return (
     <StyledWidgetContentContainer>
       <WidgetRelationsHeader />
-      {isDisconnected &&
-        isDefined(connectionProvider) &&
-        isDefined(connectedAccount.applicationId) && (
-          <ChatThreadDisconnectedBanner
-            applicationId={connectedAccount.applicationId}
-            connectionProviderName={connectionProvider.name}
-            channelName={connectionProvider.displayName}
-            connectedAccountId={connectedAccount.id}
-            canReconnect={canReconnect}
+      <StyledChatThreadBody>
+        {isDisconnected &&
+          isDefined(connectionProvider) &&
+          isDefined(connectedAccount.applicationId) && (
+            <ChatThreadDisconnectedBanner
+              applicationId={connectedAccount.applicationId}
+              connectionProviderName={connectionProvider.name}
+              channelName={connectionProvider.displayName}
+              connectedAccountId={connectedAccount.id}
+              canReconnect={canReconnect}
+            />
+          )}
+        <StyledWidgetScrollContainer
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+        >
+          <ChatThreadMessages messages={messages} />
+          <CustomResolverFetchMoreLoader
+            loading={loading}
+            onLastRowVisible={onFetchMoreMessages}
           />
-        )}
-      <StyledWidgetScrollContainer
-        ref={scrollContainerRef}
-        onScroll={handleScroll}
-      >
-        <ChatThreadMessages messages={messages} />
-        <CustomResolverFetchMoreLoader
-          loading={loading}
-          onLastRowVisible={onFetchMoreMessages}
-        />
-      </StyledWidgetScrollContainer>
-      {hasSendPermission && canChannelSend && isDefined(connectionProvider) && (
-        <ChatThreadComposer
-          key={messageThreadId}
-          messageThreadId={messageThreadId}
-          messageChannelId={messageChannel.id}
-          channelName={connectionProvider.displayName}
-          recipientName={
-            isDefined(firstCounterpart)
-              ? getDisplayNameFromParticipant({ participant: firstCounterpart })
-              : null
-          }
-          isDisconnected={isDisconnected}
-          onMessageSent={onMessageSent}
-        />
-      )}
+        </StyledWidgetScrollContainer>
+        {hasSendPermission &&
+          canChannelSend &&
+          isDefined(connectionProvider) && (
+            <ChatThreadComposer
+              key={messageThreadId}
+              messageThreadId={messageThreadId}
+              messageChannelId={messageChannel.id}
+              channelName={connectionProvider.displayName}
+              recipientName={
+                isDefined(firstCounterpart)
+                  ? getDisplayNameFromParticipant({
+                      participant: firstCounterpart,
+                    })
+                  : null
+              }
+              isDisconnected={isDisconnected}
+              onMessageSent={onMessageSent}
+            />
+          )}
+      </StyledChatThreadBody>
     </StyledWidgetContentContainer>
   );
 };

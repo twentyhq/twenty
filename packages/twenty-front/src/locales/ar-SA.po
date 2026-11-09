@@ -699,6 +699,11 @@ msgstr "{currentCreditAmountDisplay} رصيد "
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, zero {أرصدة مجانية} one {رصيد مجاني} two {رصيدان مجانيان} few {أرصدة مجانية} many {رصيد مجاني} other {رصيد مجاني}}"
 
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} و {dayOfWeekDescription}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -1724,6 +1729,11 @@ msgstr "حول تطبيقك"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "اتفاقيات معالجة البيانات (DPA) المقبولة والموقَّعة لمساحة العمل هذه، مع إصدار القالب وتاريخه."
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "مجموعات الوصول"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3980,6 +3990,11 @@ msgstr "ينطبق على"
 msgid "Apply"
 msgstr "تطبيق"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "تطبيق السجلات الخاصة على الكائنات التي لا تكون خاصة افتراضياً. يكون مفعّلاً دائماً لمساحات العمل التي ضبطت مشاركة السجلات. يؤدي إيقاف هذا إلى جعل السجلات المضبوطة كخاصة على تلك الكائنات مرئية مجدداً."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4376,7 +4391,7 @@ msgid "Assistant avatar"
 msgstr "الصورة الرمزية للمساعد"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "اسم المساعد"
 
@@ -6212,10 +6227,10 @@ msgstr "اختر ما يحدث عند النقر على عنوان بريد إل
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "اختر ما يمكن لـ Twenty الوصول إليه لدعمك وتحسين المنتج."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "اختر متى يشارك {AGENT_CHAT_ASSISTANT_NAME} في المحادثات عبر مساحة العمل الخاصة بك"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "اختر متى يشارك {assistantName} في المحادثات عبر مساحة العمل الخاصة بك"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6904,6 +6919,11 @@ msgstr "معاينة المكوّن باستخدام بيانات نموذجية
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "إنشاء بريد إلكتروني"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "احسب مجموعات الوصول التي ستستخدمها قوائم السجلات لأذونات على مستوى الصف. فعّلها بعد اكتمال ترقية مساحة العمل."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -11287,7 +11307,7 @@ msgid "Enter a JSON value"
 msgstr "أدخل قيمة JSON"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "أدخل اسمًا يتراوح طوله بين 1 و{AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} حرفًا في سطر واحد. يجب أن تكون الأقواس المربعة متطابقة ولا يمكن تداخلها."
 
@@ -12759,6 +12779,11 @@ msgstr "فشل إبطال مفتاح التوقيع. يرجى المحاولة �
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "فشل إلغاء رمز الاسترداد."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "تعذر حفظ إعدادات المساعد. حاول مرة أخرى."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -18689,10 +18714,10 @@ msgstr "أبدا"
 msgid "Never expires"
 msgstr "لا تنتهي صلاحيتها أبدًا"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "يُبقي وضع «أبدًا» {AGENT_CHAT_ASSISTANT_NAME} خارج المحادثات. يطلب وضع «عند الإشارة فقط» من {AGENT_CHAT_ASSISTANT_NAME} الرد عند الإشارة إليه. يتيح وضع «تلقائي» لـ {AGENT_CHAT_ASSISTANT_NAME} تحديد وقت الرد. تحصل المحادثات التي تضمك أنت و{AGENT_CHAT_ASSISTANT_NAME} فقط على ردود دائمًا."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "لا يشارك «أبدًا» {assistantName}. يطلب خيار «عند الإشارة فقط» من {assistantName} الرد عند الإشارة إليه. يتيح «تلقائي» لـ {assistantName} تحديد وقت الرد. تتلقى الدردشات التي تضمك أنت و{assistantName} فقط ردودًا دائمًا."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20574,6 +20599,16 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "تجاهل القيم الصفرية"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "على {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "في {remainingDays} و {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20721,20 +20756,13 @@ msgstr "يمكن للأعضاء الذين يستطيعون إدارة التط�
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "فقط في {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "فقط في {firstDay} و {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "فقط في {remainingDays} و {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "فقط في {remainingDays} و {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22346,6 +22374,11 @@ msgstr "سياسة الخصوصية"
 msgid "Private"
 msgstr "خاص"
 
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "السجلات الخاصة"
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -23691,11 +23724,6 @@ msgstr "تتطلّب روابط تثبيت Replit عنوان MCP URL عبر HTTP
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "الرد"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "الرد..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

@@ -33,7 +33,8 @@ export const getCommandMenuContextApiObjectPermissions = ({
     objectRecordsPermissions,
     operationType: 'destroy',
   }),
-  restrictedFields: objectRecordsPermissions.restrictedFields,
+  unreadableFields: objectRecordsPermissions.unreadableFields,
+  uneditableFields: objectRecordsPermissions.uneditableFields,
   rowLevelPermissionPredicates:
     objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
   rowLevelPermissionPredicateGroups:

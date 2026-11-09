@@ -28,7 +28,8 @@ describe('getCommandMenuContextApiObjectPermissions', () => {
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
           canDestroyAllRecords: false,
-          restrictedFields: {},
+          unreadableFields: [],
+          uneditableFields: [],
           rowLevelRecordsPermissions: {
             canCreateRecords: false,
             canReadRecords: true,
@@ -47,7 +48,8 @@ describe('getCommandMenuContextApiObjectPermissions', () => {
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
-      restrictedFields: {},
+      unreadableFields: [],
+      uneditableFields: [],
       rowLevelPermissionPredicates: [ROW_LEVEL_PERMISSION_PREDICATE],
       rowLevelPermissionPredicateGroups: [],
     });

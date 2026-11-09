@@ -2519,6 +2519,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_ACCESS_GROUPS_ENABLED = 'IS_ACCESS_GROUPS_ENABLED',
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED = 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED',
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
@@ -2530,6 +2531,7 @@ export enum FeatureFlagKey {
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
+  IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
@@ -2653,6 +2655,7 @@ export type FieldPermission = {
   id: Scalars['UUID']['output'];
   objectMetadataId: Scalars['UUID']['output'];
   roleId: Scalars['UUID']['output'];
+  rowLevelPermissionPredicateGroupId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type FieldPermissionInput = {
@@ -2660,6 +2663,7 @@ export type FieldPermissionInput = {
   canUpdateFieldValue?: InputMaybe<Scalars['Boolean']['input']>;
   fieldMetadataId: Scalars['UUID']['input'];
   objectMetadataId: Scalars['UUID']['input'];
+  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type FieldRichTextConfiguration = {
@@ -5595,9 +5599,12 @@ export type ObjectPermission = {
   canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']['output']>;
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']['output']>;
   objectMetadataId: Scalars['UUID']['output'];
+  /** @deprecated Use unreadableFields and uneditableFields */
   restrictedFields?: Maybe<Scalars['JSON']['output']>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
+  uneditableFields?: Maybe<Array<Scalars['UUID']['output']>>;
+  unreadableFields?: Maybe<Array<Scalars['UUID']['output']>>;
 };
 
 export type ObjectPermissionInput = {
@@ -5659,8 +5666,11 @@ export type ObjectRecordsPermissions = {
   canSoftDeleteAllRecords: Scalars['Boolean']['output'];
   canUpdateAllRecords: Scalars['Boolean']['output'];
   objectMetadataId: Scalars['UUID']['output'];
+  /** @deprecated Use unreadableFields and uneditableFields */
   restrictedFields: Scalars['JSON']['output'];
   rowLevelRecordsPermissions?: Maybe<RowLevelRecordsPermissions>;
+  uneditableFields: Array<Scalars['UUID']['output']>;
+  unreadableFields: Array<Scalars['UUID']['output']>;
 };
 
 /** Onboarding status */
@@ -6879,6 +6889,7 @@ export type Role = {
   label: Scalars['String']['output'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<RolePermissionFlag>>;
+  rowLevelPermissionFieldPermissions?: Maybe<Array<FieldPermission>>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
   universalIdentifier?: Maybe<Scalars['UUID']['output']>;
@@ -6985,6 +6996,8 @@ export type RowLevelRecordsPermissions = {
   canUpdateRecords: Scalars['Boolean']['output'];
   predicateGroups: Array<RowLevelPermissionPredicateGroup>;
   predicates: Array<RowLevelPermissionPredicate>;
+  uneditableFields?: Maybe<Array<Scalars['UUID']['output']>>;
+  unreadableFields?: Maybe<Array<Scalars['UUID']['output']>>;
 };
 
 export type RunAgentInput = {

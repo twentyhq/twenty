@@ -699,6 +699,11 @@ msgstr "{currentCreditAmountDisplay} クレジット "
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, other {無料クレジット}}"
 
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} と {dayOfWeekDescription}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -1724,6 +1729,11 @@ msgstr "アプリについて"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "このワークスペースで受諾および署名済みの DPA と、そのテンプレートバージョンおよび日付です。"
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "アクセスグループ"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3980,6 +3990,11 @@ msgstr "適用先"
 msgid "Apply"
 msgstr "適用"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "デフォルトで非公開ではないオブジェクトに非公開レコードを適用します。レコード共有を設定しているワークスペースでは常に有効です。これをオフにすると、それらのオブジェクトで非公開に設定されたレコードが再び表示されるようになります。"
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4376,7 +4391,7 @@ msgid "Assistant avatar"
 msgstr "アシスタントのアバター"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "アシスタント名"
 
@@ -6212,10 +6227,10 @@ msgstr "メールアドレスをクリックしたときの動作を選択して
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "サポートと製品改善のためにTwentyがアクセスできる内容を選択します。"
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "{AGENT_CHAT_ASSISTANT_NAME} がワークスペース全体の会話に参加するタイミングを選択"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "{assistantName} がワークスペース全体の会話に参加するタイミングを選択してください"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6904,6 +6919,11 @@ msgstr "サンプルデータを使用したコンポーネントのプレビュ
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "メールを作成"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "レコード一覧で行レベルの権限に使用するアクセスグループを計算します。ワークスペースのアップグレード完了後に有効にしてください。"
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -11287,7 +11307,7 @@ msgid "Enter a JSON value"
 msgstr "JSON 値を入力"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "1行に1文字以上{AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH}文字以下の名前を入力してください。角括弧は対にする必要があり、入れ子にはできません。"
 
@@ -12759,6 +12779,11 @@ msgstr "署名キーの失効に失敗しました。後でもう一度お試し
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "リカバリーコードの取り消しに失敗しました。"
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "アシスタント設定の保存に失敗しました。もう一度お試しください。"
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -18689,10 +18714,10 @@ msgstr "なし"
 msgid "Never expires"
 msgstr "期限が切れることはありません"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "「なし」では {AGENT_CHAT_ASSISTANT_NAME} は参加しません。「メンション時のみ」では、タグ付けされたときに {AGENT_CHAT_ASSISTANT_NAME} に返信を求めます。「自動」では、{AGENT_CHAT_ASSISTANT_NAME} が返信するタイミングを決定します。あなたと {AGENT_CHAT_ASSISTANT_NAME} だけのチャットには常に返信があります。"
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "「なし」では {assistantName} は会話に参加しません。「メンションされたときのみ」では、タグ付けされた場合に {assistantName} に返信を依頼します。「自動」では、{assistantName} が返信するタイミングを決定します。あなたと {assistantName} だけのチャットには常に返信があります。"
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20574,6 +20599,16 @@ msgstr "ol"
 msgid "Omit zero values"
 msgstr "ゼロ値を省略する"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "{dayName} 用"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "{remainingDays} と {lastDay} に"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20721,20 +20756,13 @@ msgstr "アクセスを許可できるのはアプリを管理できるメンバ
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "{dayName} のみ"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "{firstDay} と {secondDay} のみ"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "{remainingDays} と {0} のみ"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "{remainingDays} と {lastDay} のみ"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22346,6 +22374,11 @@ msgstr "プライバシーポリシー"
 msgid "Private"
 msgstr "非公開"
 
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "非公開レコード"
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -23691,11 +23724,6 @@ msgstr "Replit のインストールリンクには HTTPS の MCP URL が必要�
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "返信"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "返信..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

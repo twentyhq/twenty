@@ -8,6 +8,7 @@ export * from './computeRecordGqlOperationFilter';
 export * from './isEmptinessOperand';
 export * from './isRecordFilterOperandExpectingValue';
 export * from './isRecordFilterValueValid';
+export * from './mapRLSOperandToRecordFilterOperand';
 export * from './turnAnyFieldFilterIntoRecordGqlFilter';
 export * from './turnRecordFilterGroupIntoGqlOperationFilter';
 export * from './turnRecordFilterIntoGqlOperationFilter';

@@ -9,4 +9,6 @@ export type RowLevelRecordsPermissions = {
   canDestroyRecords: boolean;
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
+  unreadableFields?: string[];
+  uneditableFields?: string[];
 };
