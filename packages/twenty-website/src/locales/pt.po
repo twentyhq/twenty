@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-30 16:14\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -646,6 +646,16 @@ msgstr ""
 msgid "3 product lines"
 msgstr "3 linhas de produto"
 
+#. js-lingui-id: P9cEa2
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
+msgid "30 days"
+msgstr "30 dias"
+
+#. js-lingui-id: /wTvaM
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
+msgstr "30 dias após o clique. Se o visitante criar seu espaço de trabalho dentro desse período e posteriormente se tornar um cliente pagante do Cloud Organization ou Enterprise, a comissão será sua. Se ele clicar no link de outro parceiro antes de criar seu espaço de trabalho, esse parceiro receberá o crédito. Depois que o espaço de trabalho for criado, o crédito será definitivo."
+
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "30 minutes, no commitment"
@@ -686,16 +696,6 @@ msgstr "5x mais uso pessoal de IA"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "6 workflows"
 msgstr "6 fluxos de trabalho"
-
-#. js-lingui-id: kTcFUK
-#: src/sections/affiliate-program/affiliate-program-terms.data.ts
-msgid "60 days"
-msgstr "60 dias"
-
-#. js-lingui-id: 13iqbE
-#: src/sections/faq/affiliate-program-faq.data.ts
-msgid "60 days after the click. If the visitor starts a Cloud Organization or Enterprise plan within that time, the commission is yours. If they later click another partner's link, that partner gets the credit."
-msgstr "60 dias após o clique. Se o visitante iniciar um plano Cloud Organization ou Enterprise dentro desse período, a comissão é sua. Se posteriormente ele clicar no link de outro parceiro, esse parceiro receberá o crédito."
 
 #. js-lingui-id: fHxYPM
 #: src/case-studies/case-study-catalog.ts
@@ -1127,6 +1127,16 @@ msgstr "Consultoria e descoberta"
 #: src/sections/affiliate-program/AffiliateApply.tsx
 msgid "Affiliate program application"
 msgstr "Inscrição no programa de afiliados."
+
+#. js-lingui-id: WsWBAA
+#: src/app/[locale]/(site)/affiliate-partners/terms/page.tsx
+msgid "Affiliate Program Terms"
+msgstr "Termos do Programa de Afiliados"
+
+#. js-lingui-id: KwiXVB
+#: src/platform/routing/static-website-routes.ts
+msgid "Affiliate Program Terms | Twenty"
+msgstr "Termos do Programa de Afiliados | Twenty"
 
 #. js-lingui-id: QjSFuI
 #: src/partner-application/data/partner-country-options.ts
@@ -4695,7 +4705,6 @@ msgstr "HTML em e-mails de fluxos de trabalho"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
-#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -4714,10 +4723,10 @@ msgstr "O HubSpot bloqueia objetos personalizados atrás do seu nível Enterpris
 msgid "Hungary 🇭🇺"
 msgstr "Hungria 🇭🇺"
 
-#. js-lingui-id: Del3a/
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "I agree to the affiliate program terms sent with my referral link"
-msgstr "Concordo com os termos do programa de afiliados enviados com meu link de indicação"
+#. js-lingui-id: DEIqgR
+#: src/affiliate-application/AffiliateApplicationForm.tsx
+msgid "I agree to the <0>Affiliate Program Terms</0>"
+msgstr "Concordo com os <0>Termos do Programa de Afiliados</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4739,6 +4748,11 @@ msgstr "ICP"
 #: src/partner-application/partner-application-copy.ts
 msgid "Identity"
 msgstr "Identidade"
+
+#. js-lingui-id: 9JU/6K
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "Se este for o primeiro espaço de trabalho Twenty e ainda não houver nenhum código de parceiro definido nele, a pessoa poderá inserir o seu na página /settings/partner do espaço de trabalho durante o período de teste gratuito. Em até 30 dias após o primeiro pagamento, ela também poderá nos pedir para adicioná-lo. Depois que um código é salvo em um espaço de trabalho, ele não pode ser alterado."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -5546,11 +5560,6 @@ msgstr "Madagascar 🇲🇬"
 msgid "Main channel (URL)"
 msgstr "Canal principal (URL)"
 
-#. js-lingui-id: KpUYnU
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "Main channel must be a full URL starting with https://"
-msgstr "O canal principal deve ser uma URL completa que comece com https://"
-
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Maintenance mode"
@@ -6092,6 +6101,7 @@ msgstr "Nenhum app está disponível agora. Volte a verificar em breve."
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "No matching country."
 msgstr "Nenhum país correspondente."
 
@@ -6310,11 +6320,6 @@ msgstr "Onboarding"
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "Onboarding · Documentação · Gestão de mudança · Suporte L1/L2 · Serviços gerenciados"
 
-#. js-lingui-id: pbmZ7R
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "Onboarding Packs"
-msgstr "Pacotes de onboarding"
-
 #. js-lingui-id: 37OSdM
 #: src/case-studies/case-study-stories.ts
 msgid "One *API* to rule them all"
@@ -6412,10 +6417,10 @@ msgstr "*Ativação* da organização"
 msgid "Organization Activation | Twenty"
 msgstr "Ativação da organização | Twenty"
 
-#. js-lingui-id: 7gCIfx
+#. js-lingui-id: gedycB
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "Organization and Enterprise plans on Twenty Cloud. Self-hosted Organization is coming soon. Pro plans and AI credits are not included."
-msgstr "Planos Organization e Enterprise no Twenty Cloud. O Organization auto-hospedado estará disponível em breve. Os planos Pro e os créditos de IA não estão incluídos."
+msgid "Organization and Enterprise plans on Twenty Cloud. Pro plans and AI credits are not included."
+msgstr "Planos Organization e Enterprise no Twenty Cloud. Os planos Pro e os créditos de IA não estão incluídos."
 
 #. js-lingui-id: 3Yz0mq
 #: src/sections/compare/compare-data.ts
@@ -6727,6 +6732,11 @@ msgstr "Conclua todos os campos obrigatórios antes de continuar."
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter a valid email address."
 msgstr "Insira um endereço de e-mail válido."
+
+#. js-lingui-id: 8srGrM
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
+msgstr "Insira o link para o seu canal principal, por exemplo youtube.com/@yourname."
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7610,6 +7620,7 @@ msgstr "Triagem"
 
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Search a country…"
 msgstr "Pesquisar um país…"
 
@@ -7731,6 +7742,7 @@ msgstr "Selecione registros com Cmd e Shift"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Select your country"
 msgstr "Selecione seu país"
 
@@ -7953,10 +7965,10 @@ msgstr "Itens da barra lateral"
 msgid "Sierra Leone 🇸🇱"
 msgstr "Serra Leoa 🇸🇱"
 
-#. js-lingui-id: mA6cL1
+#. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
-msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
-msgstr "Cadastre-se no Cloud em menos de um minuto e comece seu teste de 30 dias. Para rollouts maiores, nossos Pacotes de Onboarding de 4 horas ou parceiros certificados colocam você em produção em 1–2 semanas."
+msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
+msgstr "Cadastre-se no Cloud em menos de um minuto e inicie seu teste de 30 dias. Para rollouts maiores, nossa equipe pode ajudar você ao longo do processo. Entre em contato para discutir suas necessidades."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -8829,6 +8841,11 @@ msgstr "A história por trás do Twenty"
 #: src/platform/routing/static-website-routes.ts
 msgid "The terms governing your use of Twenty and its open source CRM services."
 msgstr "Os termos que regem seu uso da Twenty e de seus serviços de CRM open source."
+
+#. js-lingui-id: GbDTo3
+#: src/platform/routing/static-website-routes.ts
+msgid "The terms of the Twenty Affiliate Program: qualified referrals, commissions, payouts and how you may promote Twenty."
+msgstr "Os termos do Programa de Afiliados da Twenty: indicações qualificadas, comissões, pagamentos e como você pode promover a Twenty."
 
 #. js-lingui-id: xCAT8U
 #: src/platform/releases/ReleaseNotes.tsx
@@ -9751,6 +9768,11 @@ msgstr "O que envolve a certificação?"
 msgid "What does Twenty cost?"
 msgstr "Quanto custa o Twenty?"
 
+#. js-lingui-id: XqkgE8
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "What if a customer signs up without my link?"
+msgstr "E se um cliente se inscrever sem o meu link?"
+
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts
 msgid "What is coming in April 2026 is what he has been waiting for: AI-assisted workflow creation, describing what he needs and iterating from there instead of building complex logic from scratch. For a founder who runs the CRM himself, that changes what is realistically possible."
@@ -10100,9 +10122,6 @@ msgstr "Iêmen 🇾🇪"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Yes"
 msgstr "Sim"
@@ -10296,6 +10315,11 @@ msgstr "Seu workspace é respaldado por um repositório git, então você pode c
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
 msgstr "YouTube, newsletters, LinkedIn, TikTok: qualquer pessoa que aborde ferramentas de GTM."
+
+#. js-lingui-id: Lkub4e
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "youtube.com/@yourname"
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAdminVersionDisplayProps = {
   version: string | undefined | null;
@@ -26,6 +26,7 @@ export const SettingsAdminVersionDisplay = ({
   loading,
   noVersionMessage,
 }: SettingsAdminVersionDisplayProps) => {
+  const { t } = useLingui();
   if (loading) {
     return <StyledSpan>{t`Loading...`}</StyledSpan>;
   }

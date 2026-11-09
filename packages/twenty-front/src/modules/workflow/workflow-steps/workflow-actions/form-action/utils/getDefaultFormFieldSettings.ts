@@ -1,4 +1,7 @@
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -34,7 +37,7 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
         label: doNotTranslate('Record'),
         placeholder: doNotTranslate(`Select a Company`),
         settings: {
-          objectName: CoreObjectNameSingular.Company,
+          objectName: StandardObjectNameSingular.Company,
         },
       };
     case FieldMetadataType.SELECT:

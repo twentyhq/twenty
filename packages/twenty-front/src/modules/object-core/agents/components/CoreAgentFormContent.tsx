@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { IconCancel, IconDeviceFloppy, IconTrash } from 'twenty-ui/icon';
@@ -45,6 +45,7 @@ type CoreAgentFormContentProps = {
 };
 
 export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
+  const { t } = useLingui();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );

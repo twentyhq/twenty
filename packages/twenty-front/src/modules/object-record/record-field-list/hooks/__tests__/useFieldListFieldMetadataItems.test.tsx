@@ -5,7 +5,10 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { renderHook } from '@testing-library/react';
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 jest.mock('@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem');
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
@@ -37,7 +40,7 @@ describe('useFieldListFieldMetadataItems', () => {
     });
   });
 
-  it.each([CoreObjectNameSingular.Note, CoreObjectNameSingular.Task])(
+  it.each([StandardObjectNameSingular.Note, StandardObjectNameSingular.Task])(
     'includes the %s body in field lists',
     (objectNameSingular) => {
       const { result } = renderHook(() =>

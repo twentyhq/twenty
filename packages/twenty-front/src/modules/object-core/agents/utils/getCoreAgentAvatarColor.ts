@@ -1,6 +1,11 @@
-import { AGENT_AVATAR_COLORS, type AgentAvatarColor } from 'twenty-shared/ai';
+import {
+  AI_CHAT_ASSISTANT_AVATAR_COLORS,
+  type AiChatAssistantAvatarColor,
+} from 'twenty-shared/ai';
 
-export const getCoreAgentAvatarColor = (agentId: string): AgentAvatarColor => {
+export const getCoreAgentAvatarColor = (
+  agentId: string,
+): AiChatAssistantAvatarColor => {
   const hash = agentId
     .split('')
     .reduce(
@@ -10,5 +15,7 @@ export const getCoreAgentAvatarColor = (agentId: string): AgentAvatarColor => {
       0,
     );
 
-  return AGENT_AVATAR_COLORS[Math.abs(hash) % AGENT_AVATAR_COLORS.length];
+  return AI_CHAT_ASSISTANT_AVATAR_COLORS[
+    Math.abs(hash) % AI_CHAT_ASSISTANT_AVATAR_COLORS.length
+  ];
 };

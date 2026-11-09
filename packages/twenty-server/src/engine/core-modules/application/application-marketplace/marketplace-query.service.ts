@@ -9,11 +9,13 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { doesApplicationBillCredits } from 'src/engine/core-modules/application/utils/does-application-bill-credits.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
+import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -178,7 +180,13 @@ export class MarketplaceQueryService {
       requestedCapabilities: toApplicationCapabilities(
         manifest?.application?.requestedCapabilities,
       ),
+      requestedIframeMediaPermissions: toRequestedIframeMediaPermissionsOrThrow(
+        manifest?.application?.requestedIframeMediaPermissions,
+      ),
       billsCredits: doesApplicationBillCredits(manifest?.application?.billing),
+      content: isDefined(manifest)
+        ? buildApplicationContentFromManifest(manifest)
+        : undefined,
       manifest: registration.manifest ?? undefined,
     };
   }

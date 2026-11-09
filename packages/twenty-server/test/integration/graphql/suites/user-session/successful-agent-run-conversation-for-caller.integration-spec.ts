@@ -1,4 +1,5 @@
 import { type StepResult, type ToolSet } from 'ai';
+import { buildToolCallStepResult } from 'test/utils/mock-agent-run-turns.util';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import {
@@ -30,24 +31,12 @@ const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 // history keeps a turn's tool calls only for the member who sent it
 const TOOL_CALL_STEPS = [
-  {
-    content: [
-      {
-        type: 'tool-call',
-        toolCallId: 'probe-call',
-        toolName: 'probe',
-        input: {},
-      },
-      {
-        type: 'tool-result',
-        toolCallId: 'probe-call',
-        toolName: 'probe',
-        input: {},
-        output: { isProbed: true },
-      },
-    ],
-  },
-] as unknown as StepResult<ToolSet>[];
+  buildToolCallStepResult({
+    toolCallId: 'probe-call',
+    toolName: 'probe',
+    output: { isProbed: true },
+  }),
+];
 
 type GlobalTestContext = {
   agentUniversalIdentifier: string;

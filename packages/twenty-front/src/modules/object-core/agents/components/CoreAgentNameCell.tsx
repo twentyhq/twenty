@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
@@ -28,7 +28,6 @@ type CoreAgentNameCellProps = {
 
 export const CoreAgentNameCell = ({ agent }: CoreAgentNameCellProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
 
   return (
     <StyledContainer>
@@ -37,7 +36,7 @@ export const CoreAgentNameCell = ({ agent }: CoreAgentNameCellProps) => {
           agentId={agent.id}
           avatarColor={agent.avatarColor}
           avatarShape={agent.avatarShape}
-          size={theme.icon.size.md}
+          size={16}
         />
       </StyledIconContainer>
       <OverflowingTextWithTooltip

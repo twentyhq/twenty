@@ -31,9 +31,11 @@ describe('extractOrderByFieldNames', () => {
   });
 
   it('should ignore nested values that are not directions', () => {
-    const orderBy = [
-      { name: { firstName: 'AscNullsFirst', meta: 'Unknown' } },
-    ] as unknown as RecordGqlOperationOrderBy;
+    const orderBy: RecordGqlOperationOrderBy = [
+      {
+        name: { firstName: 'AscNullsFirst', meta: { source: 'AscNullsFirst' } },
+      },
+    ];
 
     expect(extractOrderByFieldNames(orderBy)).toEqual({
       id: true,

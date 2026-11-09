@@ -104,11 +104,13 @@ Afișează proeminent valori cheie unice.
 
 Încorporați instrumente externe și conținut extern direct în tabloul de bord.
 
-Pentru telefoane încorporate sau instrumente video, un membru cu permisiunea de a gestiona securitatea poate configura **Settings → General → Security → Embedded website media access**. Adăugați originea HTTPS exactă a site-ului web, cum ar fi `https://workspace.aircall.io`, și activați **Microphone**, **Camera** sau ambele. Căile și metacaracterele nu sunt acceptate. Aprobați numai site-uri web în care aveți încredere.
+Pentru widgeturile iframe adăugate în spațiul de lucru, un membru cu permisiunea de a gestiona securitatea poate configura **Setări → General → Securitate → Acces la conținut media de pe site-uri web încorporate**. Adăugați originea HTTPS exactă a site-ului web, cum ar fi `https://workspace.aircall.io`, și activați **Microphone**, **Camera** sau ambele. Căile și metacaracterele nu sunt acceptate. Aprobați numai site-uri web în care aveți încredere.
 
-Reîncărcați filele Twenty deschise după modificarea acestor permisiuni. Reîncărcarea încheie apelurile și înregistrările active. Fiecare membru selectează apoi **Activați microfonul**, **Activați camera**, sau **Activați microfonul și camera** în încorporare și aprobă permisiunea browserului atunci când i se solicită.
+Încorporările media furnizate de o aplicație instalată utilizează o aprobare separată: aplicația declară site-ul web în [`requestedIframeMediaPermissions`](/ro/developers/extend/apps/config/application#embedded-website-media-access), iar un membru care poate gestiona aplicațiile îl aprobă în timpul instalării. Aceste acordări se aplică propriilor componente frontale și widgeturi iframe ale aplicației. Aprobările de securitate ale spațiului de lucru și acordările altor aplicații nu se aplică widgeturilor definite de aplicație.
 
-Indicatorul din antet afișează **Acces media activat** cât timp o încorporare are acces, inclusiv atunci când este ascunsă. Aceasta nu înseamnă că site-ul web înregistrează în prezent: Twenty nu poate inspecta activitatea microfonului sau a camerei dintr-un alt site web. Selectați indicatorul și alegeți **Dezactivați** pentru a descărca încorporarea și a o reîncărca cu accesul la media blocat. Reactivarea accesului necesită un alt clic.
+Reîncărcați filele Twenty deschise după modificarea acestor permisiuni. Reîncărcarea încheie apelurile și înregistrările active. De fiecare dată când un membru selectează **Activare microfon**, **Activare cameră** sau **Activare microfon și cameră** într-o încorporare, o confirmare nativă a browserului afișează widgetul sau aplicația proprietară, originea site-ului web și accesul solicitat la microfon sau cameră. După confirmare, aprobă permisiunea media a browserului când ți se solicită. Această confirmare se aplică atât widgeturilor din spațiul de lucru, cât și încorporărilor furnizate de aplicație.
+
+Indicatorul din antet afișează **Acces media activat** cât timp o încorporare are acces, inclusiv atunci când este ascunsă. Aceasta nu înseamnă că site-ul web înregistrează în prezent: Twenty nu poate inspecta activitatea microfonului sau a camerei dintr-un alt site web. Selectați indicatorul și alegeți **Dezactivați** pentru a descărca încorporarea și a o reîncărca cu accesul la media blocat. Selectează din nou **Activare** pentru a restabili accesul.
 
 <Frame>
 <img src="/images/user-guide/dashboard/dashboard-widget-table.png" alt="Grafic tabele" />
@@ -186,4 +188,4 @@ Adăugați text formatat și conținut direct în tabloul de bord.
 2. Deschideți **Opțiuni**
 3. Faceți clic pe **Duplicare widget**
 
-<PageBanner illustration="dashboards" />
+<PageBanner illustration="card-page-widgets" />

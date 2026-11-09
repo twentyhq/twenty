@@ -1,11 +1,15 @@
-import { AiAgentAvatar } from '@/ai/components/AiAgentAvatar';
+import {
+  AssistantAvatar,
+  type AssistantAvatarSize,
+} from 'twenty-ui/components/data-display';
+
 import { getCoreAgentAvatar } from '@/object-core/agents/utils/getCoreAgentAvatar';
 
 type CoreAgentIconProps = {
   agentId?: string;
   avatarColor?: string | null;
   avatarShape?: string | null;
-  size: number;
+  size: AssistantAvatarSize;
 };
 
 export const CoreAgentIcon = ({
@@ -20,5 +24,5 @@ export const CoreAgentIcon = ({
     avatarShape,
   });
 
-  return <AiAgentAvatar color={color} shape={shape} size={size} />;
+  return <AssistantAvatar color={color} shape={shape} size={size} />;
 };

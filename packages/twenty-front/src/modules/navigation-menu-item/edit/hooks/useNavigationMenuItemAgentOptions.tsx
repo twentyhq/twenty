@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/client/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { useTheme } from 'twenty-ui/theme';
 
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
@@ -21,8 +20,6 @@ export const useNavigationMenuItemAgentOptions = ({
   currentItems,
   addItem,
 }: UseNavigationMenuItemAgentOptionsParams) => {
-  const theme = useTheme();
-
   const { data: agentsData, loading: agentOptionsLoading } = useQuery(
     FindManyAgentsDocument,
     { skip },
@@ -48,7 +45,7 @@ export const useNavigationMenuItemAgentOptions = ({
             agentId={agent.id}
             avatarColor={agent.avatarColor}
             avatarShape={agent.avatarShape}
-            size={theme.icon.size.md}
+            size={16}
           />
         ),
         isAlreadyInSidebar,

@@ -35,8 +35,9 @@ Paths below are relative to `packages/twenty-server/src/` unless stated otherwis
 - Tokens are issued in `engine/core-modules/auth/token/services/` (access, refresh, login, transient, file, file
   upload, API key, application access/refresh) and verified in `engine/core-modules/jwt/`. The auth context identifies
   one of four principals: user, API key, application (with or without a user), or system.
-- Guards in `engine/guards/`. `AuthPrincipalGuard` on each resolver/controller lists the principal kinds it admits.
-  `SettingsPermissionGuard(flag)` checks a permission flag on the caller's role. `ApplicationTargetGuard` confines an
+- Guards in `engine/guards/`. `AccessPolicyGuard(policy)` on each resolver/controller, on the class or on each method,
+  checks one access policy: the principal kinds it admits, the permission flags the caller's role needs and any
+  workspace feature flags. `@DefineTool` tools carry the same policy objects. `ApplicationTargetGuard` confines an
   application token to its own application. `AdminPanelGuard` and the impersonation guards gate instance-admin
   actions. `PublicEndpointGuard`, `NoPermissionGuard` and `CustomPermissionGuard` are labels that always allow: the
   real check is in the handler.

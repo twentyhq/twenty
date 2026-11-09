@@ -10,10 +10,22 @@ import {
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterEach,
+  assert,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { generateMessageId } from 'twenty-shared/i18n';
 
+import { buildAndValidateManifest } from '@/app/manifest/build-and-validate-manifest';
+import { buildApplication } from '@/app/bundles/build-application';
+import { manifestUpdateChecksums } from '@/app/manifest/manifest-update-checksums';
+import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
 import { collectSourceFingerprints } from '@/app/pull/collect-source-fingerprints';
 import { pullApplication } from '@/app/pull/pull-application';
 import { writePullBase } from '@/app/pull/write-pull-base';
@@ -26,6 +38,8 @@ import { type ToolingResult as BuildResult } from '@/app/types/tooling-result.ty
 import * as fileUtilities from '@/app/fs-utils';
 import { type AppExportCoverageEntry } from '@/app/types/app-export.type';
 import * as sourceScanner from '@/app/source/scan-project-source-files';
+import { extractManifestFromFile } from '@/app/source/extract-manifest-from-file';
+import { printString } from '@/app/pull/print-typescript-value';
 
 const APPLICATION_IDENTIFIER = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const OBJECT_IDENTIFIER = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
@@ -122,6 +136,51 @@ const createExport = ({
   files: [],
 });
 
+const CODE_STEP_SOURCE = `export const main = async (params: { name: string }) => {
+  return { greeting: \`Hello \${params.name}\` };
+};
+`;
+
+type TestWorkflowStep = {
+  universalIdentifier?: string;
+  name: string;
+  type: 'CODE' | 'EMPTY';
+  input: Record<string, unknown>;
+};
+
+const createWorkflowExport = ({
+  universalIdentifier = WORKFLOW_STEP_IDENTIFIER,
+  ...step
+}: TestWorkflowStep) => {
+  const exported = createExport();
+
+  return {
+    ...exported,
+    manifest: {
+      ...exported.manifest,
+      workflows: [
+        {
+          universalIdentifier: WORKFLOW_IDENTIFIER,
+          name: 'Greet new pets',
+          version: {
+            trigger: {
+              universalIdentifier: WORKFLOW_TRIGGER_IDENTIFIER,
+              type: 'MANUAL',
+              nextStepIds: [universalIdentifier],
+            },
+            steps: [{ universalIdentifier, nextStepIds: [], ...step }],
+          },
+        },
+      ],
+    },
+  };
+};
+
+const createCodeStep = (code = CODE_STEP_SOURCE) => ({
+  type: 'CODE' as const,
+  input: { code, logicFunctionInput: { name: '{{trigger.name}}' } },
+});
+
 const sha256 = (content: string) =>
   createHash('sha256').update(content).digest('hex');
 
@@ -171,6 +230,13 @@ describe('programmatic application pull', { timeout: 30_000 }, () => {
       sourceFingerprints: await collectSourceFingerprints(appPath),
       signal: new AbortController().signal,
     });
+  const dropSourceFingerprints = async () => {
+    const { sourceFingerprints: _sourceFingerprints, ...base } = JSON.parse(
+      await read(BASE_PATH),
+    );
+
+    await writeFile(join(appPath, BASE_PATH), JSON.stringify(base));
+  };
   const addStandaloneField = async () => {
     await mkdir(join(appPath, 'src/fields'), { recursive: true });
     await writeFile(
@@ -202,11 +268,253 @@ export default defineField({
       join(appPath, 'node_modules/twenty-sdk'),
       'dir',
     );
+    await symlink(
+      resolve('../../node_modules/react'),
+      join(appPath, 'node_modules/react'),
+      'dir',
+    );
+    await symlink(
+      resolve('../../node_modules/react-dom'),
+      join(appPath, 'node_modules/react-dom'),
+      'dir',
+    );
     await writeFile(join(appPath, 'package.json'), '{"name":"pull-fixture"}\n');
   });
   afterEach(async () => {
     vi.restoreAllMocks();
     await rm(appPath, { recursive: true, force: true });
+  });
+
+  const componentIdentifier = 'fefefefe-fefe-4efe-8efe-fefefefefefe';
+  const componentPath = 'src/front-components/hello.front-component.tsx';
+  const createComponentExport = ({
+    label = 'Hello',
+    checksum = label,
+  }: { label?: string; checksum?: string } = {}) => {
+    const exported = createExport({ includeObject: false });
+    const content = `import { defineFrontComponent } from 'twenty-sdk/define';
+const Hello = () => <div>${label}</div>;
+export default defineFrontComponent({ universalIdentifier: '${componentIdentifier}', name: 'Hello', component: Hello });
+`;
+    return {
+      ...exported,
+      manifest: {
+        ...exported.manifest,
+        frontComponents: [
+          {
+            universalIdentifier: componentIdentifier,
+            name: 'Hello',
+            componentName: 'Hello',
+            sourceComponentPath: componentPath,
+            builtComponentPath: componentPath.replace('.tsx', '.mjs'),
+            builtComponentChecksum: checksum,
+          },
+        ],
+      },
+      files: [{ folder: 'source', path: componentPath, content }],
+      coverage: [
+        {
+          metadataName: 'frontComponent',
+          universalIdentifier: componentIdentifier,
+          status: 'EXPORTED',
+          reason: null,
+        },
+      ],
+    };
+  };
+
+  it('restores original frontend TSX and preserves local edits when the remote source is unchanged', async () => {
+    const exported = createComponentExport();
+    expect(requireSuccess(await pull(exported)).writes).toContainEqual(
+      expect.objectContaining({
+        kind: 'frontComponent',
+        relativePath: componentPath,
+      }),
+    );
+    expect(await read(componentPath)).toBe(exported.files[0].content);
+    const localContent = exported.files[0].content.replace(
+      '<div>Hello</div>',
+      '<div>Local edit</div>',
+    );
+    await writeFile(join(appPath, componentPath), localContent);
+    expect(requireSuccess(await pull(exported)).writes).toEqual([]);
+    expect(await read(componentPath)).toBe(localContent);
+    const remote = createComponentExport({ label: 'Remote edit' });
+    const data = requireSuccess(await pull(remote));
+    expect(await read(componentPath)).toBe(remote.files[0].content);
+    expect(data.overwrittenLocalChanges).toContainEqual({
+      universalIdentifier: componentIdentifier,
+      relativePath: componentPath,
+    });
+  });
+
+  it('restores component source without requiring its imported local files', async () => {
+    const exported = createComponentExport();
+    exported.files[0].content = exported.files[0].content.replace(
+      'const Hello = () => <div>Hello</div>;',
+      "import { Hello } from './helper';",
+    );
+    requireSuccess(await pull(exported));
+    expect(await read(componentPath)).toBe(exported.files[0].content);
+    await expect(read('src/front-components/helper.tsx')).rejects.toMatchObject(
+      {
+        code: 'ENOENT',
+      },
+    );
+  });
+
+  it('builds a pulled component and includes the edited source and bundle in the apply artifacts', async () => {
+    const exported = createComponentExport();
+    requireSuccess(await pull(exported));
+    await writeFile(
+      join(appPath, 'tsconfig.json'),
+      JSON.stringify({ compilerOptions: { jsx: 'react-jsx' } }),
+    );
+    await writeFile(join(appPath, 'yarn.lock'), EMPTY_YARN_LOCK_CONTENT);
+    const build = async () => {
+      const result = await buildAndValidateManifest(appPath);
+      assert(result.success, JSON.stringify(result));
+      const { builtFileInfos } = await buildApplication({
+        appPath,
+        manifest: result.manifest,
+        filePaths: result.filePaths,
+      });
+      return {
+        manifest: manifestUpdateChecksums({
+          manifest: result.manifest,
+          builtFileInfos,
+        }),
+        builtFileInfos,
+      };
+    };
+    const first = await build();
+    expect(first.manifest.frontComponents[0]).toMatchObject({
+      universalIdentifier: componentIdentifier,
+      sourceComponentPath: componentPath,
+      componentName: 'Hello',
+    });
+    expect([...first.builtFileInfos.values()]).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fileFolder: 'source',
+          sourcePath: componentPath,
+        }),
+        expect.objectContaining({
+          fileFolder: 'built-front-component',
+          builtPath: '.twenty/output/' + componentPath.replace('.tsx', '.mjs'),
+        }),
+      ]),
+    );
+    await writeFile(
+      join(appPath, componentPath),
+      exported.files[0].content.replace(
+        '<div>Hello</div>',
+        '<div>Edited after pull</div>',
+      ),
+    );
+    const second = await build();
+    expect(second.manifest.frontComponents[0].builtComponentChecksum).not.toBe(
+      first.manifest.frontComponents[0].builtComponentChecksum,
+    );
+  });
+
+  it('pulls source-only changes even when the compiled checksum is unchanged', async () => {
+    const exported = createComponentExport();
+    requireSuccess(await pull(exported));
+    const updated = createComponentExport();
+    updated.files[0].content += '// Maintainer note\n';
+    requireSuccess(await pull(updated));
+    expect(await read(componentPath)).toBe(updated.files[0].content);
+  });
+
+  it('pulls source-only changes and reports local edits with Windows paths and an apply baseline', async () => {
+    const exported = createComponentExport();
+    requireSuccess(await pull(exported));
+    const base = JSON.parse(await read(BASE_PATH));
+    await writeFile(
+      join(appPath, BASE_PATH),
+      JSON.stringify({ ...base, remoteSourceFingerprints: undefined }),
+    );
+    await writeFile(
+      join(appPath, componentPath),
+      exported.files[0].content + '// Local edit\n',
+    );
+    const scan = sourceScanner.scanProjectSourceFiles;
+    vi.spyOn(sourceScanner, 'scanProjectSourceFiles').mockImplementation(
+      async (...options) =>
+        (await scan(...options)).map((file) => ({
+          ...file,
+          relativePath: file.relativePath.split('/').join('\\'),
+        })),
+    );
+    const updated = createComponentExport();
+    updated.files[0].content += '// Remote edit\n';
+    const result = requireSuccess(await pull(updated));
+    expect(await read(componentPath)).toBe(updated.files[0].content);
+    expect(result.overwrittenLocalChanges).toContainEqual({
+      universalIdentifier: componentIdentifier,
+      relativePath: componentPath,
+    });
+  });
+
+  it('does not reuse stale fingerprints when a component moves back to an earlier remote path', async () => {
+    const original = createComponentExport();
+    requireSuccess(await pull(original));
+    const moved = createComponentExport({ label: 'Moved' });
+    const movedPath = 'src/front-components/moved.tsx';
+    moved.manifest.frontComponents[0].sourceComponentPath = movedPath;
+    moved.files[0].path = movedPath;
+    requireSuccess(await pull(moved));
+    expect(await read(componentPath)).toBe(moved.files[0].content);
+    expect(
+      Object.keys(JSON.parse(await read(BASE_PATH)).remoteSourceFingerprints),
+    ).toEqual([movedPath]);
+    requireSuccess(await pull(original));
+    expect(await read(componentPath)).toBe(original.files[0].content);
+    expect(
+      Object.keys(JSON.parse(await read(BASE_PATH)).remoteSourceFingerprints),
+    ).toEqual([componentPath]);
+  });
+
+  it('keeps an unsupported component, then removes its local file only after confirmed remote deletion', async () => {
+    requireSuccess(await pull(createComponentExport()));
+    const unsupported = createExport({
+      includeObject: false,
+      coverage: [
+        {
+          metadataName: 'frontComponent',
+          universalIdentifier: componentIdentifier,
+          status: 'UNSUPPORTED',
+          reason: 'source file is missing',
+        },
+      ],
+    });
+    expect(requireSuccess(await pull(unsupported)).deletions).toEqual([]);
+    expect(await read(componentPath)).toContain('defineFrontComponent');
+    expect(
+      Object.keys(JSON.parse(await read(BASE_PATH)).remoteSourceFingerprints),
+    ).toEqual([componentPath]);
+    expect(
+      requireSuccess(await pull(createExport({ includeObject: false })))
+        .deletions,
+    ).toContainEqual({
+      universalIdentifier: componentIdentifier,
+      relativePath: componentPath,
+    });
+  });
+
+  it('fails atomically when a frontend source destination belongs to another local file', async () => {
+    await mkdir(join(appPath, 'src/front-components'), { recursive: true });
+    await writeFile(
+      join(appPath, componentPath),
+      'export const localWork = true;',
+    );
+    const result = await pull(createComponentExport());
+    expect(result.success).toBe(false);
+    expect(await read(componentPath)).toBe('export const localWork = true;');
+    expect(await fileUtilities.pathExists(join(appPath, BASE_PATH))).toBe(
+      false,
+    );
   });
 
   it('writes source and a normalized target-bound base, without returning source contents', async () => {
@@ -813,6 +1121,256 @@ export default defineField({
       { universalIdentifier: WORKFLOW_IDENTIFIER, relativePath: workflowPath },
     ]);
     await expect(read(workflowPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('writes the source of a code step next to its workflow, which reads it back', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const codeStepPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+    const source = CODE_STEP_SOURCE;
+    const withCodeStep = createWorkflowExport({
+      name: 'Format name',
+      ...createCodeStep(),
+    });
+
+    const created = requireSuccess(await pull(withCodeStep));
+    expect(created.writes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ relativePath: workflowPath }),
+        expect.objectContaining({
+          relativePath: codeStepPath,
+          universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+          isRegeneration: false,
+        }),
+      ]),
+    );
+    expect(await read(codeStepPath)).toBe(source);
+
+    const extracted = await extractManifestFromFile({
+      appPath,
+      filePath: join(appPath, workflowPath),
+    });
+    expect(extracted.errors).toEqual([]);
+    expect(extracted.config).toEqual(withCodeStep.manifest.workflows[0]);
+
+    expect(requireSuccess(await pull(withCodeStep)).writes).toEqual([]);
+
+    const renamedPath = 'src/workflows/greet-new-pets/shout-name.code.ts';
+    const renamed = requireSuccess(
+      await pull(
+        createWorkflowExport({ name: 'Shout name', ...createCodeStep() }),
+      ),
+    );
+    expect(renamed.writes).toEqual([
+      expect.objectContaining({ relativePath: workflowPath }),
+      expect.objectContaining({ relativePath: renamedPath }),
+    ]);
+    expect(renamed.deletions).toEqual([
+      {
+        universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+        relativePath: codeStepPath,
+      },
+    ]);
+    expect(await read(renamedPath)).toBe(source);
+
+    const unsupported = requireSuccess(
+      await pull(
+        createExport({
+          coverage: [
+            {
+              metadataName: 'workflow',
+              universalIdentifier: WORKFLOW_IDENTIFIER,
+              status: 'UNSUPPORTED',
+              reason: 'code step not yet migrated to inline source',
+            },
+          ],
+        }),
+      ),
+    );
+    expect(unsupported.deletions).toEqual([]);
+    expect(await read(renamedPath)).toBe(source);
+
+    const replaced = requireSuccess(
+      await pull(
+        createWorkflowExport({
+          universalIdentifier: OTHER_IDENTIFIER,
+          name: 'Wait',
+          type: 'EMPTY',
+          input: {},
+        }),
+      ),
+    );
+    expect(replaced.deletions).toEqual([
+      {
+        universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+        relativePath: renamedPath,
+      },
+    ]);
+    await expect(read(codeStepPath)).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(read(renamedPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('reports locally edited code step files without fingerprints and never writes over unrelated files', async () => {
+    const unrelatedPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+    const codeStepPath = `src/workflows/greet-new-pets/${WORKFLOW_STEP_IDENTIFIER.slice(0, 8)}-format-name.code.ts`;
+    const unrelated = 'export const unrelated = true;\n';
+
+    await mkdir(join(appPath, 'src/workflows/greet-new-pets'), {
+      recursive: true,
+    });
+    await writeFile(join(appPath, unrelatedPath), unrelated);
+
+    requireSuccess(
+      await pull(
+        createWorkflowExport({ name: 'Format name', ...createCodeStep() }),
+      ),
+    );
+    expect(await read(codeStepPath)).toBe(CODE_STEP_SOURCE);
+    expect(await read(unrelatedPath)).toBe(unrelated);
+
+    await dropSourceFingerprints();
+    await writeFile(
+      join(appPath, codeStepPath),
+      CODE_STEP_SOURCE.replace('Hello', 'Hi'),
+    );
+
+    const remoteSource = CODE_STEP_SOURCE.replace('Hello', 'Welcome');
+    const changed = requireSuccess(
+      await pull(
+        createWorkflowExport({
+          name: 'Format name',
+          ...createCodeStep(remoteSource),
+        }),
+      ),
+    );
+
+    expect(changed.writes).toContainEqual(
+      expect.objectContaining({
+        relativePath: codeStepPath,
+        isRegeneration: true,
+      }),
+    );
+    expect(changed.deletions).toEqual([]);
+    expect(changed.overwrittenLocalChanges).toEqual([
+      {
+        universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+        relativePath: codeStepPath,
+      },
+    ]);
+    expect(await read(codeStepPath)).toBe(remoteSource);
+    expect(await read(unrelatedPath)).toBe(unrelated);
+  });
+
+  it('reports a workflow file pointing at a renamed code step file as edited', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const codeStepPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+    const renamedPath = 'src/workflows/greet-new-pets/renamed.code.ts';
+
+    requireSuccess(
+      await pull(
+        createWorkflowExport({ name: 'Format name', ...createCodeStep() }),
+      ),
+    );
+    await writeFile(
+      join(appPath, workflowPath),
+      (await read(workflowPath)).replace(
+        "'format-name.code.ts'",
+        "'renamed.code.ts'",
+      ),
+    );
+    await writeFile(join(appPath, renamedPath), CODE_STEP_SOURCE);
+    await rm(join(appPath, codeStepPath));
+    await dropSourceFingerprints();
+
+    const changed = requireSuccess(
+      await pull(
+        createWorkflowExport({
+          name: 'Format name',
+          ...createCodeStep(CODE_STEP_SOURCE.replace('Hello', 'Welcome')),
+        }),
+      ),
+    );
+
+    expect(changed.overwrittenLocalChanges).toEqual([
+      { universalIdentifier: WORKFLOW_IDENTIFIER, relativePath: workflowPath },
+    ]);
+  });
+
+  it('removes the code step file of a step that no longer reads it locally', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const codeStepPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+
+    requireSuccess(
+      await pull(
+        createWorkflowExport({ name: 'Format name', ...createCodeStep() }),
+      ),
+    );
+    await writeFile(
+      join(appPath, workflowPath),
+      (await read(workflowPath)).replace(
+        "readFileSync(join(__dirname, 'greet-new-pets', 'format-name.code.ts'), 'utf8')",
+        printString('export const main = async () => ({});'),
+      ),
+    );
+
+    const replaced = requireSuccess(
+      await pull(
+        createWorkflowExport({
+          universalIdentifier: OTHER_IDENTIFIER,
+          name: 'Wait',
+          type: 'EMPTY',
+          input: {},
+        }),
+      ),
+    );
+
+    expect(replaced.deletions).toContainEqual({
+      universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+      relativePath: codeStepPath,
+    });
+    await expect(read(codeStepPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('does not report a workflow file holding its code step source inline as edited', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const codeStepFolder = 'src/workflows/greet-new-pets';
+
+    requireSuccess(
+      await pull(
+        createWorkflowExport({ name: 'Format name', ...createCodeStep() }),
+      ),
+    );
+    await writeFile(
+      join(appPath, workflowPath),
+      (await read(workflowPath))
+        .replace(
+          "import { readFileSync } from 'node:fs';\nimport { join } from 'node:path';\n",
+          '',
+        )
+        .replace(
+          "readFileSync(join(__dirname, 'greet-new-pets', 'format-name.code.ts'), 'utf8')",
+          printString(CODE_STEP_SOURCE),
+        ),
+    );
+    await rm(join(appPath, codeStepFolder), { recursive: true });
+
+    await dropSourceFingerprints();
+
+    const changed = requireSuccess(
+      await pull(
+        createWorkflowExport({
+          name: 'Format name',
+          ...createCodeStep(CODE_STEP_SOURCE.replace('Hello', 'Welcome')),
+        }),
+      ),
+    );
+
+    expect(changed.writes).toContainEqual(
+      expect.objectContaining({
+        relativePath: workflowPath,
+        isRegeneration: true,
+      }),
+    );
+    expect(changed.overwrittenLocalChanges).toEqual([]);
   });
 
   it('writes agents and skills, keeps them while unchanged or unsupported and removes confirmed remote deletions', async () => {

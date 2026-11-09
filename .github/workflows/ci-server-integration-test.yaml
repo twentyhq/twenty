@@ -11,6 +11,16 @@ on:
     outputs:
       timings-run-id:
         value: ${{ jobs.server-integration-test-timings.outputs.run-id }}
+    # Okta SSO test tenant used by packages/twenty-server/test/integration/sso
+    secrets:
+      OKTA_SSO_TEST_CLIENT_SECRET:
+        required: false
+      OKTA_SSO_TEST_PASSWORD:
+        required: false
+      OKTA_SSO_TEST_NON_MEMBER_PASSWORD:
+        required: false
+      OKTA_SSO_TEST_NEWCOMER_PASSWORD:
+        required: false
 
 permissions:
   contents: read
@@ -48,7 +58,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
     services:
       postgres:
         image: postgres:18
@@ -84,8 +94,22 @@ jobs:
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
-      SHARD_COUNTER: 16
+      SHARD_COUNTER: 24
       INTEGRATION_TEST_DB_RESET_STATUS_FILE: ${{ github.workspace }}/.cache/integration-db-reset-status
+      SSO_TEST_OIDC_ISSUER: ${{ vars.OKTA_SSO_TEST_ISSUER }}
+      SSO_TEST_OIDC_CLIENT_ID: ${{ vars.OKTA_SSO_TEST_CLIENT_ID }}
+      SSO_TEST_USERNAME: ${{ vars.OKTA_SSO_TEST_USERNAME }}
+      SSO_TEST_OIDC_CLIENT_SECRET: ${{ secrets.OKTA_SSO_TEST_CLIENT_SECRET }}
+      SSO_TEST_SAML_IDENTITY_PROVIDER_ID: ${{ vars.OKTA_SSO_TEST_SAML_IDENTITY_PROVIDER_ID }}
+      SSO_TEST_SAML_SSO_URL: ${{ vars.OKTA_SSO_TEST_SAML_SSO_URL }}
+      SSO_TEST_SAML_ISSUER: ${{ vars.OKTA_SSO_TEST_SAML_ISSUER }}
+      SSO_TEST_SAML_CERTIFICATE: ${{ vars.OKTA_SSO_TEST_SAML_CERTIFICATE }}
+      SSO_TEST_PASSWORD: ${{ secrets.OKTA_SSO_TEST_PASSWORD }}
+      SSO_TEST_NON_MEMBER_USERNAME: ${{ vars.OKTA_SSO_TEST_NON_MEMBER_USERNAME }}
+      SSO_TEST_NON_MEMBER_PASSWORD: ${{ secrets.OKTA_SSO_TEST_NON_MEMBER_PASSWORD }}
+      SSO_TEST_NEWCOMER_USERNAME: ${{ vars.OKTA_SSO_TEST_NEWCOMER_USERNAME }}
+      SSO_TEST_NEWCOMER_PASSWORD: ${{ secrets.OKTA_SSO_TEST_NEWCOMER_PASSWORD }}
+      IS_FORK_PULL_REQUEST: ${{ github.event.pull_request.head.repo.fork == true }}
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1

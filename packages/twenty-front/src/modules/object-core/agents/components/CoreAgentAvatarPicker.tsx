@@ -1,13 +1,18 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { AGENT_AVATAR_COLORS, AGENT_AVATAR_SHAPES } from 'twenty-shared/ai';
+import {
+  AI_CHAT_ASSISTANT_AVATAR_COLORS,
+  AI_CHAT_ASSISTANT_AVATAR_SHAPES,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  AssistantAvatar,
+  type AssistantAvatarSize,
+} from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { useTheme } from 'twenty-ui/theme';
 
-import { AiAgentAvatar } from '@/ai/components/AiAgentAvatar';
-import { CORE_AGENT_AVATAR_SHAPE_LABELS } from '@/object-core/agents/constants/CoreAgentAvatarShapeLabels';
+import { AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS } from '@/ai/constants/AiChatAssistantAvatarShapeLabels';
 import { useUpdateCoreAgentAvatar } from '@/object-core/agents/hooks/useUpdateCoreAgentAvatar';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentAvatar } from '@/object-core/agents/utils/getCoreAgentAvatar';
@@ -31,7 +36,7 @@ const StyledPopupContent = styled.div`
 type CoreAgentAvatarPickerProps = {
   agent: CoreAgent;
   isReadOnly: boolean;
-  size: number;
+  size: AssistantAvatarSize;
 };
 
 export const CoreAgentAvatarPicker = ({
@@ -40,7 +45,6 @@ export const CoreAgentAvatarPicker = ({
   size,
 }: CoreAgentAvatarPickerProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const colorLabels = useColorLabels();
   const { updateCoreAgentAvatar } = useUpdateCoreAgentAvatar(agent);
 
@@ -52,11 +56,11 @@ export const CoreAgentAvatarPicker = ({
   const dropdownId = `core-agent-avatar-picker-${agent.id}`;
 
   if (isReadOnly) {
-    return <AiAgentAvatar color={color} shape={shape} size={size} />;
+    return <AssistantAvatar color={color} shape={shape} size={size} />;
   }
 
   const handleShapeChange = (value: string | null) => {
-    const avatarShape = AGENT_AVATAR_SHAPES.find(
+    const avatarShape = AI_CHAT_ASSISTANT_AVATAR_SHAPES.find(
       (agentAvatarShape) => agentAvatarShape === value,
     );
 
@@ -68,7 +72,7 @@ export const CoreAgentAvatarPicker = ({
   };
 
   const handleColorChange = (value: string | null) => {
-    const avatarColor = AGENT_AVATAR_COLORS.find(
+    const avatarColor = AI_CHAT_ASSISTANT_AVATAR_COLORS.find(
       (agentAvatarColor) => agentAvatarColor === value,
     );
 
@@ -84,7 +88,7 @@ export const CoreAgentAvatarPicker = ({
       <Dropdown.Trigger
         render={
           <StyledAvatarButton type="button" aria-label={t`Change avatar`}>
-            <AiAgentAvatar color={color} shape={shape} size={size} />
+            <AssistantAvatar color={color} shape={shape} size={size} />
           </StyledAvatarButton>
         }
       />
@@ -101,9 +105,9 @@ export const CoreAgentAvatarPicker = ({
             onValueChange={handleShapeChange}
           >
             <Dropdown.Section columns={5}>
-              {AGENT_AVATAR_SHAPES.map((avatarShape) => {
+              {AI_CHAT_ASSISTANT_AVATAR_SHAPES.map((avatarShape) => {
                 const shapeLabel = t(
-                  CORE_AGENT_AVATAR_SHAPE_LABELS[avatarShape],
+                  AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS[avatarShape],
                 );
 
                 return (
@@ -116,10 +120,10 @@ export const CoreAgentAvatarPicker = ({
                     nativeButton
                     render={
                       <LightIconButton size="md" aria-label={shapeLabel}>
-                        <AiAgentAvatar
+                        <AssistantAvatar
                           color={color}
                           shape={avatarShape}
-                          size={theme.icon.size.md}
+                          size={16}
                         />
                       </LightIconButton>
                     }
@@ -136,7 +140,7 @@ export const CoreAgentAvatarPicker = ({
             onValueChange={handleColorChange}
           >
             <Dropdown.Section columns={5}>
-              {AGENT_AVATAR_COLORS.map((avatarColor) => (
+              {AI_CHAT_ASSISTANT_AVATAR_COLORS.map((avatarColor) => (
                 <Dropdown.OptionItem
                   key={avatarColor}
                   aria-label={colorLabels[avatarColor]}
@@ -149,10 +153,10 @@ export const CoreAgentAvatarPicker = ({
                       size="md"
                       aria-label={colorLabels[avatarColor]}
                     >
-                      <AiAgentAvatar
+                      <AssistantAvatar
                         color={avatarColor}
                         shape={shape}
-                        size={theme.icon.size.md}
+                        size={16}
                       />
                     </LightIconButton>
                   }

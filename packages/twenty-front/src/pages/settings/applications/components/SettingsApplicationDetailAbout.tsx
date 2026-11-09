@@ -4,12 +4,13 @@ import {
   SettingsApplicationAboutSidebar,
 } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
 import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
+import { type ApplicationContentLink } from '@/settings/applications/types/ApplicationContentLink';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationDetailAboutProps = {
   applicationId?: string | null;
@@ -25,6 +26,7 @@ type SettingsApplicationDetailAboutProps = {
   installCount?: number;
   category?: string;
   developerLinks?: DeveloperLinks;
+  contentLink?: ApplicationContentLink;
   onShare?: () => void;
 };
 
@@ -140,8 +142,10 @@ export const SettingsApplicationDetailAbout = ({
   installCount,
   category,
   developerLinks,
+  contentLink,
   onShare,
 }: SettingsApplicationDetailAboutProps) => {
+  const { t } = useLingui();
   const hasScreenshots = isDefined(screenshots) && screenshots.length > 0;
 
   const descriptionSummary = getApplicationDescriptionSummary(description);
@@ -182,6 +186,7 @@ export const SettingsApplicationDetailAbout = ({
           pricingDescription={pricingDescription}
           billsCredits={billsCredits}
           developerLinks={developerLinks}
+          contentLink={contentLink}
         />
       </StyledSidebarColumn>
 

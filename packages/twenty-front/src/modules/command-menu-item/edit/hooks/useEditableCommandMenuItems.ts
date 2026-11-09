@@ -1,5 +1,6 @@
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
+import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/utils/doesCommandMenuItemMatchCoreObjectName';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { doesCommandMenuItemMatchObjectContext } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectContext';
@@ -27,6 +28,11 @@ export const useEditableCommandMenuItems = () => {
       )
       .filter(
         doesCommandMenuItemMatchObjectContext(currentObjectMetadataItemId),
+      )
+      .filter(
+        doesCommandMenuItemMatchCoreObjectName(
+          commandMenuContextApi.coreObjectName,
+        ),
       )
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))

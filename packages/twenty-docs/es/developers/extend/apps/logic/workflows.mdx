@@ -101,7 +101,7 @@ Un flujo de trabajo de webhook escucha en `https://\<your-twenty-domain>/webhook
 
 ## Pasos
 
-Los flujos de trabajo de la aplicación admiten estos tipos de pasos: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT`, `SEND_CHAT_MESSAGE` y `EMPTY`.
+Los workflows de aplicaciones admiten estos tipos de pasos: `LOGIC_FUNCTION`, `CODE`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT`, `SEND_CHAT_MESSAGE` y `EMPTY`.
 
 Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-actions), con identificadores universales en lugar de nombres:
 
@@ -109,7 +109,20 @@ Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/us
 * Los filtros y las ordenaciones apuntan a campos con `fieldMetadataUniversalIdentifier`.
 * Los operandos de filtro toman valores de `ViewFilterOperand`, exportados por `twenty-sdk/define`. Los operadores de grupo de filtros toman valores de cadena como `'AND'` u `'OR'`.
 * Los campos de formulario de tipo `RECORD` nombran su objeto con `settings.objectUniversalIdentifier`. Los campos de tipo `SELECT` y `MULTI_SELECT` ofrecen las opciones de un campo existente del mismo tipo, denominado con `settings.selectedFieldUniversalIdentifier`.
-* Para ejecutar tu propio código, usa un paso `LOGIC_FUNCTION`. El paso Code del constructor no está disponible.
+* Un paso `CODE` contiene su código fuente de TypeScript en `input.code`: un módulo que exporta una función `main`, que recibe `input.logicFunctionInput`. Para compartir código entre workflows, usa un paso `LOGIC_FUNCTION` en su lugar.
+
+  `twenty app pull` escribe el código fuente de cada paso de código en su propio archivo, junto al workflow, y el workflow lo lee cuando se compila la aplicación:
+
+  ```ts src/workflows/greet-new-pets.workflow.ts
+  import { readFileSync } from 'node:fs';
+  import { join } from 'node:path';
+
+  // in the step
+  input: {
+    code: readFileSync(join(__dirname, 'greet-new-pets', 'format-name.code.ts'), 'utf8'),
+    logicFunctionInput: { name: '{{trigger.properties.after.name}}' },
+  },
+  ```
 * Los pasos de `AI_AGENT` son de dos tipos, que no se pueden mezclar:
 
   * Un paso Generate no tiene agente. Incluye sus propias `instructions`, `modelId`, `modelConfiguration` y `scope`, y se ejecuta una vez: sin conversación, sin intervención humana, sin espera.
@@ -136,8 +149,8 @@ Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/us
 
 La aplicación personalizada del espacio de trabajo posee los flujos de trabajo creados en el generador de flujos de trabajo, y el código es tan autoritativo para ellos como el generador:
 
-* `twenty app pull` escribe cada uno desde su versión activa, la que el generador publicó por última vez. Se informa sobre un flujo de trabajo cuya versión activa utiliza configuraciones que un archivo `defineWorkflow()` no puede expresar, como un paso de código, y se deja en su lugar.
-* Un flujo de trabajo extraído conserva lo que almacenó el constructor: un desencadenador sin `universalIdentifier`, el nombre del desencadenador en el constructor, una `position` de `null` para un nodo que el constructor nunca colocó y un `outputSchema` que difiere del calculado. Estos campos requieren twenty-sdk 2.53.0 o posterior, aplicado a un servidor con la versión 2.53.0 o posterior: las versiones anteriores los rechazan como claves desconocidas.
+* `twenty app pull` escribe cada uno desde su versión activa, la que el generador publicó por última vez. Un workflow cuya versión activa usa configuraciones que un archivo `defineWorkflow()` no puede expresar, como un filtro de registros en un campo de un registro relacionado, se indica y se deja tal cual. También se deja tal cual un paso de código creado antes de que los pasos almacenaran su código fuente, hasta que se edite una vez en el constructor o se actualice.
+* Un flujo de trabajo extraído conserva lo que almacenó el constructor: un desencadenador sin `universalIdentifier`, el nombre del desencadenador en el constructor, una `position` de `null` para un nodo que el constructor nunca colocó y un `outputSchema` que difiere del calculado. Estos campos requieren twenty-sdk 2.53.0 o posterior, aplicado a un servidor con la versión 2.53.0 o posterior: las versiones anteriores los rechazan como claves desconocidas. Los pasos de código requieren twenty-sdk 2.56.0 o posterior y deben aplicarse a un servidor con la versión 2.56.0 o posterior: las versiones anteriores los rechazan como un tipo de paso no compatible.
 * `twenty app apply` publica como el generador. Un flujo de trabajo cuya definición coincide con su versión activa se deja sin cambios. De lo contrario, la versión activa se archiva y la definición se convierte en una nueva versión activa, por lo que las ejecuciones anteriores conservan la versión que ejecutaron.
 * Los usuarios siguen editando estos flujos de trabajo en el constructor, y la siguiente extracción recupera sus cambios.
 

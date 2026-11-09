@@ -11,6 +11,7 @@ import { SettingsApplicationInstallPermissionValidationModal } from '@/marketpla
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
+import { useMarketplaceApplicationContentLink } from '@/settings/applications/hooks/useMarketplaceApplicationContentLink';
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -18,7 +19,6 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -39,8 +39,10 @@ import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/consta
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/constants/StandardApplicationIllustrations';
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsAvailableApplicationDetails = () => {
+  const { t } = useLingui();
   const { availableApplicationId = '' } = useParams<{
     availableApplicationId: string;
   }>();
@@ -89,6 +91,10 @@ export const SettingsAvailableApplicationDetails = () => {
   });
 
   const application = applicationData?.findOneApplication;
+
+  const contentLink = useMarketplaceApplicationContentLink(
+    isUuidFormat(availableApplicationId) ? availableApplicationId : undefined,
+  );
 
   const detail = detailData?.findMarketplaceAppDetail;
 
@@ -209,6 +215,7 @@ export const SettingsAvailableApplicationDetails = () => {
           issueReportUrl: detail.issueReportUrl ?? undefined,
           sourcePackageUrl,
         }}
+        contentLink={contentLink}
         onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
       />
     );
@@ -271,6 +278,9 @@ export const SettingsAvailableApplicationDetails = () => {
         defaultRole={defaultRole}
         appObjects={detail?.objects ?? undefined}
         requestedCapabilities={detail?.requestedCapabilities}
+        requestedIframeMediaPermissions={
+          detail?.requestedIframeMediaPermissions
+        }
         billsCredits={detail?.billsCredits}
         isListed={detail?.isListed}
         onAuthorize={install}

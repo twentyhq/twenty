@@ -7,9 +7,9 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Rularea CLI-ului
 
-CLI-ul `twenty` se conectează la spațiile de lucru Twenty din terminalul dvs. Folosiți-l pentru a inspecta metadatele, a citi înregistrări, a trimite solicitări API și a crea, sincroniza și depana aplicații. Necesită **Node.js 24.5+ sau 26.5+**.
+CLI-ul `twenty` se conectează la spațiile de lucru Twenty din terminalul dvs. Folosiți-l pentru a inspecta metadatele, a citi înregistrări, a trimite solicitări API și a crea, sincroniza și depana aplicații. CLI-ul însuși necesită **Node.js 24.5+**. Dezvoltarea aplicațiilor necesită, de asemenea, o versiune Node acceptată de SDK-ul instalat; consultați [Pornire rapidă](/ro/developers/extend/apps/getting-started/quick-start#before-you-start).
 
-Rulați orice comandă prin `npx`, fără a instala nimic:
+Rulați orice comandă prin `npx`, fără o instalare globală:
 
 ```bash filename="Terminal"
 npx twenty@latest --version
@@ -22,7 +22,7 @@ npm install -g twenty
 twenty --version
 ```
 
-Exemplele de mai jos folosesc `twenty`. Prefixați-le cu `npx twenty@latest` dacă nu l-ați instalat la nivel global. Rulați `twenty commands` pentru lista completă de comenzi și `twenty \<command> --help` pentru opțiunile unei comenzi.
+Exemplele de mai jos folosesc `twenty`. Înlocuiți `twenty` cu `npx twenty@latest` dacă nu l-ați instalat global. Rulați `twenty commands` pentru lista completă de comenzi și `twenty \<command> --help` pentru opțiunile unei comenzi.
 
 | Comandă         | Ce face                                                                                |
 | --------------- | -------------------------------------------------------------------------------------- |
@@ -65,6 +65,14 @@ printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acm
 
 De asemenea, puteți seta `TWENTY_API_URL` și `TWENTY_API_KEY` pentru o singură rulare fără a salva nimic. Conexiunile salvate se află în `~/.twenty/config.json`.
 
+Comenzile selectează un spațiu de lucru în această ordine:
+
+1. Un `--remote \<name>` explicit, care suprascrie variabilele de mediu țintă.
+2. `TWENTY_REMOTE` sau perechea `TWENTY_API_URL` și `TWENTY_API_KEY`. Nu combinați aceste două metode.
+3. Remote-ul implicit salvat.
+
+`auth login --name \<name>` salvează o conexiune, dar păstrează un remote implicit existent. Adăugați `--use` sau rulați `twenty remote use \<name>` pentru a schimba remote-ul implicit.
+
 ## Explorarea datelor
 
 ```bash filename="Terminal"
@@ -104,18 +112,18 @@ npx twenty@latest app dev
 
 Alte comenzi pentru aplicații:
 
-| Comandă                       | Ce face                                                                 |
-| ----------------------------- | ----------------------------------------------------------------------- |
-| `app add`                     | Generează structura unui obiect, câmp, funcții logice sau alte entități |
-| `app build` / `app typecheck` | Compilați sau verificați tipurile aplicației local                      |
-| `app plan`                    | Previzualizați modificările de metadate pe care le-ar face o aplicare   |
-| `app apply`                   | Compilați, încărcați și sincronizați aplicația                          |
-| `app generate-client`         | Regenerați clientul API tipizat fără sincronizare                       |
-| `app pull`                    | Restaurează metadatele, traducerile și dependențele stocate             |
-| `app translations extract`    | Extrage șirurile traducibile în cataloagele din `locales/`              |
-| `app publish`                 | Publicați aplicația pe npm sau într-un registru privat Twenty           |
-| `app install`                 | Instalați în spațiul de lucru un pachet de aplicație deja înregistrat   |
-| `app uninstall`               | Eliminați aplicația și tot ce îi aparține din spațiul de lucru          |
+| Comandă                       | Ce face                                                                          |
+| ----------------------------- | -------------------------------------------------------------------------------- |
+| `app add`                     | Generează structura unui obiect, câmp, funcții logice sau alte entități          |
+| `app build` / `app typecheck` | Compilați sau verificați tipurile aplicației local                               |
+| `app plan`                    | Previzualizați modificările de metadate pe care le-ar face o aplicare            |
+| `app apply`                   | Compilați, încărcați și sincronizați aplicația                                   |
+| `app generate-client`         | Regenerați clientul API tipizat fără sincronizare                                |
+| `app pull`                    | Restaurează metadatele, traducerile, dependențele și sursa componentei acceptate |
+| `app translations extract`    | Extrage șirurile traducibile în cataloagele din `locales/`                       |
+| `app publish`                 | Publicați aplicația pe npm sau într-un registru privat Twenty                    |
+| `app install`                 | Instalați în spațiul de lucru un pachet de aplicație deja înregistrat            |
+| `app uninstall`               | Eliminați aplicația și tot ce îi aparține din spațiul de lucru                   |
 
 Definițiile care lipsesc din sursă sunt șterse implicit din spațiul de lucru. Transmiteți `--no-prune` pentru a le păstra. Aplicația Personalizată pentru spațiul de lucru le păstrează dacă nu transmiteți `--prune`. Ștergerea obiectelor sau a câmpurilor șterge și datele acestora, deci necesită confirmare. Consultați [Sincronizare și recuperare](/ro/developers/extend/apps/operations/sync-and-recovery) pentru detalii.
 

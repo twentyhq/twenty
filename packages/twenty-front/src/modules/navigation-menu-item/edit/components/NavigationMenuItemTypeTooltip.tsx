@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconAddressBook,
+  IconCompass,
   IconBox,
   IconFolder,
   IconHash,
@@ -50,7 +51,11 @@ export const NavigationMenuItemTypeTooltip = ({
       label: t`Workflow`,
       icon: <IconSettingsAutomation size={iconSize} />,
     },
-    AGENT: { label: t`Agent`, icon: <CoreAgentIcon size={iconSize} /> },
+    AGENT: { label: t`Agent`, icon: <CoreAgentIcon size={14} /> },
+    NATIVE_PAGE: {
+      label: t`Native page`,
+      icon: <IconCompass size={iconSize} />,
+    },
   };
 
   const { label, icon } = labelsByType[type];

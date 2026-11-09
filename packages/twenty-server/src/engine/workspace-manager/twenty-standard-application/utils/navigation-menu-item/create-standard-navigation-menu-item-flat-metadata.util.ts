@@ -83,6 +83,7 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     agentUniversalIdentifier: null,
     name: null,
     link: null,
+    nativePageKey: null,
     icon: null,
     color:
       STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[navigationMenuItemName] ??

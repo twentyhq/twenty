@@ -19,13 +19,28 @@ import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usa
 import { UploadProfilePicturePermissionGuard } from 'src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AuthPrincipalGuard({
+const WORKSPACE_LOGO_UPLOAD_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+};
+
+const PROFILE_PICTURE_UPLOAD_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -35,8 +50,10 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
     apiKey: true,
     oauthClient: true,
     application: true,
-  }),
-)
+  },
+  requiredPermissionFlags: [],
+};
+
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
@@ -55,20 +72,7 @@ export class FileCorePictureResolver {
     deprecationReason:
       'Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_LOGO_UPLOAD_ACCESS_POLICY))
   async uploadWorkspaceLogo(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -90,7 +94,10 @@ export class FileCorePictureResolver {
     deprecationReason:
       'Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.',
   })
-  @UseGuards(UploadProfilePicturePermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(PROFILE_PICTURE_UPLOAD_ACCESS_POLICY),
+    UploadProfilePicturePermissionGuard,
+  )
   async uploadWorkspaceMemberProfilePicture(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -111,20 +118,7 @@ export class FileCorePictureResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
+  @UseGuards(AccessPolicyGuard(WORKSPACE_LOGO_UPLOAD_ACCESS_POLICY))
   async completeWorkspaceLogoUpload(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'fileId', type: () => String })
@@ -137,7 +131,10 @@ export class FileCorePictureResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(UploadProfilePicturePermissionGuard)
+  @UseGuards(
+    AccessPolicyGuard(PROFILE_PICTURE_UPLOAD_ACCESS_POLICY),
+    UploadProfilePicturePermissionGuard,
+  )
   async completeWorkspaceMemberProfilePictureUpload(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'fileId', type: () => String })

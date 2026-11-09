@@ -4,7 +4,12 @@ import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
 import { getIconTileColorShades } from 'twenty-ui/components/data-display';
-import { IconLink, IconPerspective, IconWorld } from 'twenty-ui/icon';
+import {
+  IconCompass,
+  IconLink,
+  IconPerspective,
+  IconWorld,
+} from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -16,6 +21,7 @@ import { NavigationMenuItemAgentIcon } from '@/navigation-menu-item/display/auto
 import { NavigationMenuItemWorkflowIcon } from '@/navigation-menu-item/display/automation/components/NavigationMenuItemWorkflowIcon';
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
+import { getNativePageNavigationMenuItemConfig } from '@/navigation-menu-item/display/native-page/utils/getNativePageNavigationMenuItemConfig';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
@@ -117,6 +123,22 @@ export const NavigationMenuItemIcon = ({
   if (navigationMenuItem.type === NavigationMenuItemType.AGENT) {
     return (
       <NavigationMenuItemAgentIcon navigationMenuItem={navigationMenuItem} />
+    );
+  }
+
+  if (navigationMenuItem.type === NavigationMenuItemType.NATIVE_PAGE) {
+    const nativePageConfig =
+      getNativePageNavigationMenuItemConfig(navigationMenuItem);
+
+    return (
+      <ColoredIcon
+        Icon={
+          isDefined(navigationMenuItem.icon)
+            ? getIcon(navigationMenuItem.icon)
+            : (nativePageConfig?.Icon ?? IconCompass)
+        }
+        color={getNavigationMenuItemColor(navigationMenuItem)}
+      />
     );
   }
 

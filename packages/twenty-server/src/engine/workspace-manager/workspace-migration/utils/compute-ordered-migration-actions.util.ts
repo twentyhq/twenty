@@ -10,12 +10,15 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.update,
 
     ...aggregatedOrchestratorActionsReport.index.delete,
+    ...aggregatedOrchestratorActionsReport.fieldMetadataOption.delete,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.delete,
     ...aggregatedOrchestratorActionsReport.objectMetadata.delete,
     ...aggregatedOrchestratorActionsReport.objectMetadata.create,
     ...aggregatedOrchestratorActionsReport.objectMetadata.update,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.create,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.update,
+    ...aggregatedOrchestratorActionsReport.fieldMetadataOption.create,
+    ...aggregatedOrchestratorActionsReport.fieldMetadataOption.update,
     ...aggregatedOrchestratorActionsReport.index.create,
     ...aggregatedOrchestratorActionsReport.index.update.flat(),
 

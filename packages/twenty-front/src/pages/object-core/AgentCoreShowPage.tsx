@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,6 +13,7 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { logError } from '~/utils/logError';
 
 export const AgentCoreShowPage = () => {
+  const { t } = useLingui();
   const { agentId = '' } = useParams<{ agentId: string }>();
 
   const { data, loading, error, refetch } = useQuery(FindOneAgentDocument, {

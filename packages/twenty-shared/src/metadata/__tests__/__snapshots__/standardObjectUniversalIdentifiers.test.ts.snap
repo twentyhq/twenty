@@ -22,6 +22,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "memberFieldValues": {
         "universalIdentifier": "a0d519f8-cc6b-4bb5-b107-89213d683705",
       },
+      "objectMetadataId": {
+        "universalIdentifier": "a1e1a495-ed2e-4e8d-8814-6ef0d1e484d0",
+      },
       "position": {
         "universalIdentifier": "0e58d739-4e5d-53b2-b472-1f747198202e",
       },
@@ -44,6 +47,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "indexes": {
       "groupHashUniqueIndex": {
         "universalIdentifier": "dcb0d254-43ae-442e-9223-8ac052eddb28",
+      },
+      "objectMetadataIdIndex": {
+        "universalIdentifier": "60e48c2a-a3db-4f11-b25b-49c7e8a385bc",
       },
       "roleIdIndex": {
         "universalIdentifier": "933f2eee-0856-46fd-b144-ffd4bad7e9c8",
@@ -586,6 +592,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "targetDashboard": {
         "universalIdentifier": "3af87717-6757-5d61-940e-3016cff35cdc",
       },
+      "targetMessage": {
+        "universalIdentifier": "4d1a84b6-ba6c-5f18-baf6-084aae64eccd",
+      },
       "targetNote": {
         "universalIdentifier": "a627557c-db37-53be-8a59-9aa2d45cd7ee",
       },
@@ -617,6 +626,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "dashboardIdIndex": {
         "universalIdentifier": "c10eba2d-ff1a-4eab-9285-50481c12a003",
+      },
+      "messageIdIndex": {
+        "universalIdentifier": "83c77988-2dc4-4575-bac5-f0f50c05568e",
       },
       "noteIdIndex": {
         "universalIdentifier": "9d31ea73-13b6-4e06-84ee-c66c72bf7787",
@@ -1701,6 +1713,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "message": {
     "fields": {
+      "attachments": {
+        "universalIdentifier": "cd2ccd87-c134-5aba-a8e7-937a4a1ca2d6",
+      },
       "createdAt": {
         "universalIdentifier": "74d0ddc0-4dbe-5c29-8d4a-2e512c1e66ab",
       },

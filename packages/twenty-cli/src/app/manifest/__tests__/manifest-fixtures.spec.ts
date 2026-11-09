@@ -26,6 +26,11 @@ import {
   vi,
 } from 'vitest';
 
+import {
+  parseSingleJsonLine,
+  runCliForTest,
+} from '@/__tests__/utils/run-cli-for-test';
+import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
 import { buildTestAppWorker } from '@/app/__tests__/utils/build-test-app-worker';
 import { buildAndValidateManifest } from '@/app/manifest/build-and-validate-manifest';
 import { buildManifest } from '@/app/manifest/manifest-build';
@@ -222,6 +227,45 @@ describe('CLI manifest fixtures and worker transport', () => {
     await rm(root, { recursive: true, force: true });
   });
 
+  it.each(['plan', 'apply'])(
+    'stops %s before contacting the workspace when component imports are missing',
+    async (command) => {
+      const appPath = await copyFixture('minimal-app');
+      await writeFile(
+        join(appPath, 'missing-import.tsx'),
+        `import { defineFrontComponent } from 'twenty-sdk/define';
+import { Hello } from './missing-helper';
+export default defineFrontComponent({
+  universalIdentifier: 'fefefefe-fefe-4efe-8efe-fefefefefefe',
+  component: Hello,
+});`,
+      );
+      const server = await startTestServer((_request, response) =>
+        sendJson(response, 500, { message: 'Unexpected workspace request' }),
+      );
+      vi.stubEnv('TWENTY_API_URL', server.url);
+      vi.stubEnv('TWENTY_API_KEY', 'missing-import-test-key');
+      vi.stubEnv('TWENTY_REMOTE', '');
+      try {
+        const result = await runCliForTest([
+          'app',
+          command,
+          '--path',
+          appPath,
+          '--json',
+          '--no-input',
+        ]);
+        expect(result.exitCode).not.toBe(0);
+        expect(parseSingleJsonLine(result.stdout).error.message).toContain(
+          'Could not resolve "./missing-helper"',
+        );
+        expect(server.requests).toHaveLength(0);
+      } finally {
+        await server.close();
+      }
+    },
+  );
+
   it('covers every repository fixture', async () => {
     expect(
       (await readdir(FIXTURES_DIRECTORY, { withFileTypes: true }))
@@ -388,7 +432,7 @@ export default defineWorkflow({
       expect(result.filePaths.workflows).toEqual(['my.workflow.ts']);
     }
 
-    await writeWorkflow('CODE');
+    await writeWorkflow('TRANSLATE');
     const invalidResult = await compareManifest(appPath);
 
     expect(invalidResult.success).toBe(false);

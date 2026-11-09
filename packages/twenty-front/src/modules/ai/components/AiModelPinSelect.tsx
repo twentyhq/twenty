@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ComponentProps } from 'react';
 import { isAiModelEffort, parseAiModelVariantId } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,7 +32,7 @@ type AiModelPinSelectProps = {
   onChange: (modelId: string | null) => void;
   aiModels: PinnableAiModel[];
   emptyOptionLabel?: string;
-  automaticOptions?: SelectOption[];
+  automaticOptions?: SelectOption<string>[];
   label?: string;
   description?: string;
   disabled?: boolean;
@@ -54,29 +55,28 @@ export const AiModelPinSelect = ({
 }: AiModelPinSelectProps) => {
   const { t } = useLingui();
 
-  const isAutomaticOptionValue = (value: string | null) =>
-    automaticOptions.some((option) => option.value === value);
-  const isAutomaticOptionSelected = isAutomaticOptionValue(modelId);
-
+  const automaticOption = automaticOptions.find(
+    (option) => option.value === modelId,
+  );
+  const pinnedModelId = isDefined(automaticOption) ? undefined : modelId;
   const { modelId: baseModelId, effort } = parseAiModelVariantId(
-    isAutomaticOptionSelected ? '' : (modelId ?? ''),
+    pinnedModelId ?? '',
   );
   const baseModel = aiModels.find((model) => model.modelId === baseModelId);
-  const selectedModelOptionValue =
-    isAutomaticOptionSelected || !isDefined(modelId)
-      ? (modelId ?? AUTOMATIC_MODEL_PIN)
-      : baseModelId;
   const efforts = (baseModel?.efforts ?? []).filter(isAiModelEffort);
+  const selectedModelValue =
+    automaticOption?.value ??
+    (isNonEmptyString(baseModelId) ? baseModelId : AUTOMATIC_MODEL_PIN);
 
   const handleModelChange = (value: string) => {
-    if (value === AUTOMATIC_MODEL_PIN) {
-      onChange(null);
+    if (automaticOptions.some((option) => option.value === value)) {
+      onChange(value);
 
       return;
     }
 
-    if (isAutomaticOptionValue(value)) {
-      onChange(value);
+    if (value === AUTOMATIC_MODEL_PIN) {
+      onChange(null);
 
       return;
     }
@@ -100,10 +100,12 @@ export const AiModelPinSelect = ({
         dropdownId={dropdownId}
         label={label}
         description={description}
-        value={selectedModelOptionValue}
+        value={selectedModelValue}
         onChange={handleModelChange}
         showIconInControl={isDefined(modelId)}
+        showContextualTextInControl
         options={[
+          ...automaticOptions,
           ...(isDefined(emptyOptionLabel)
             ? [
                 {
@@ -113,8 +115,10 @@ export const AiModelPinSelect = ({
                 },
               ]
             : []),
-          ...automaticOptions,
-          ...getAiModelPinOptions({ aiModels, keepModelId: baseModelId }),
+          ...getAiModelPinOptions({
+            aiModels,
+            keepModelId: isDefined(pinnedModelId) ? baseModelId : undefined,
+          }),
         ]}
         withSearchInput
         disabled={disabled}

@@ -1,7 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useTheme } from 'twenty-ui/theme';
 
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 import { getSelectedRecordsCountLabel } from '@/command-menu-item/utils/getSelectedRecordsCountLabel';
@@ -12,7 +11,6 @@ import { useSelectedCoreAgentIds } from '@/object-core/agents/hooks/useSelectedC
 
 export const useCoreAgentSectionContexts = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const isCoreAgentsIndexPage = useIsCoreAgentsIndexPage();
   const currentCoreAgent = useCurrentCoreAgent();
   const selectedCoreAgentIds = useSelectedCoreAgentIds();
@@ -21,7 +19,7 @@ export const useCoreAgentSectionContexts = () => {
     | CommandMenuItemSectionContext
     | undefined = isCoreAgentsIndexPage
     ? {
-        icon: <CoreAgentIcon size={theme.icon.size.md} />,
+        icon: <CoreAgentIcon size={16} />,
         label: t`Agents`,
       }
     : undefined;
@@ -36,7 +34,7 @@ export const useCoreAgentSectionContexts = () => {
             agentId={currentCoreAgent.id}
             avatarColor={currentCoreAgent.avatarColor}
             avatarShape={currentCoreAgent.avatarShape}
-            size={theme.icon.size.md}
+            size={16}
           />
         ),
         label: isNonEmptyString(currentCoreAgent.label)

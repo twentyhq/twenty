@@ -24,7 +24,7 @@ export const DeleteCoreWorkflowsCommand = () => {
       return;
     }
     closeSidePanelMenu();
-    navigate(AppPath.WorkflowCoreIndexPage);
+    navigate(AppPath.WorkflowIndexPage);
   };
 
   const { title, subtitle, confirmButtonText } =

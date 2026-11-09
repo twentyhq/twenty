@@ -1,7 +1,7 @@
 import { isBoolean, isNonEmptyString } from '@sniptt/guards';
 import {
-  AGENT_AVATAR_COLORS,
-  AGENT_AVATAR_SHAPES,
+  AI_CHAT_ASSISTANT_AVATAR_COLORS,
+  AI_CHAT_ASSISTANT_AVATAR_SHAPES,
   type ModelConfiguration,
 } from 'twenty-shared/ai';
 import {
@@ -56,19 +56,19 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
 
   if (
     isDefined(config.avatarColor) &&
-    !AGENT_AVATAR_COLORS.includes(config.avatarColor)
+    !AI_CHAT_ASSISTANT_AVATAR_COLORS.includes(config.avatarColor)
   ) {
     errors.push(
-      `Agent '${config.name}' avatarColor must be one of: ${AGENT_AVATAR_COLORS.join(', ')}`,
+      `Agent '${config.name}' avatarColor must be one of: ${AI_CHAT_ASSISTANT_AVATAR_COLORS.join(', ')}`,
     );
   }
 
   if (
     isDefined(config.avatarShape) &&
-    !AGENT_AVATAR_SHAPES.includes(config.avatarShape)
+    !AI_CHAT_ASSISTANT_AVATAR_SHAPES.includes(config.avatarShape)
   ) {
     errors.push(
-      `Agent '${config.name}' avatarShape must be one of: ${AGENT_AVATAR_SHAPES.join(', ')}`,
+      `Agent '${config.name}' avatarShape must be one of: ${AI_CHAT_ASSISTANT_AVATAR_SHAPES.join(', ')}`,
     );
   }
 

@@ -1,4 +1,3 @@
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
@@ -22,10 +21,6 @@ export const getObjectNavigationMenuItemComputedLink = ({
   );
   if (!isDefined(objectMetadataItem)) {
     return '';
-  }
-
-  if (objectMetadataItem.namePlural === CoreObjectNamePlural.Workflow) {
-    return getAppPath(AppPath.WorkflowCoreIndexPage);
   }
 
   const { firstSelectableViewId, indexViewId } = computeObjectViewTargetIds({

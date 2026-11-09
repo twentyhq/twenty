@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-30 16:14\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -646,6 +646,16 @@ msgstr ""
 msgid "3 product lines"
 msgstr "3 produktové řady"
 
+#. js-lingui-id: P9cEa2
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
+msgid "30 days"
+msgstr "30 dní"
+
+#. js-lingui-id: /wTvaM
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
+msgstr "30 dní po kliknutí. Pokud návštěvník během této doby vytvoří svůj workspace a později se stane platícím zákazníkem Cloud Organization nebo Enterprise, provize je vaše. Pokud před vytvořením svého workspace klikne na odkaz jiného partnera, zásluhu získá tento partner. Jakmile je workspace vytvořen, zásluha je konečná."
+
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "30 minutes, no commitment"
@@ -686,16 +696,6 @@ msgstr "5× více osobního využití AI"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "6 workflows"
 msgstr "6 workflow"
-
-#. js-lingui-id: kTcFUK
-#: src/sections/affiliate-program/affiliate-program-terms.data.ts
-msgid "60 days"
-msgstr "60 dní"
-
-#. js-lingui-id: 13iqbE
-#: src/sections/faq/affiliate-program-faq.data.ts
-msgid "60 days after the click. If the visitor starts a Cloud Organization or Enterprise plan within that time, the commission is yours. If they later click another partner's link, that partner gets the credit."
-msgstr "60 dní po kliknutí. Pokud návštěvník během této doby začne využívat tarif Cloud Organization nebo Enterprise, provize náleží vám. Pokud později klikne na odkaz jiného partnera, zásluhu získá tento partner."
 
 #. js-lingui-id: fHxYPM
 #: src/case-studies/case-study-catalog.ts
@@ -1127,6 +1127,16 @@ msgstr "Poradenství & discovery"
 #: src/sections/affiliate-program/AffiliateApply.tsx
 msgid "Affiliate program application"
 msgstr "Přihláška do partnerského programu"
+
+#. js-lingui-id: WsWBAA
+#: src/app/[locale]/(site)/affiliate-partners/terms/page.tsx
+msgid "Affiliate Program Terms"
+msgstr "Podmínky partnerského programu"
+
+#. js-lingui-id: KwiXVB
+#: src/platform/routing/static-website-routes.ts
+msgid "Affiliate Program Terms | Twenty"
+msgstr "Podmínky partnerského programu | Twenty"
 
 #. js-lingui-id: QjSFuI
 #: src/partner-application/data/partner-country-options.ts
@@ -4695,7 +4705,6 @@ msgstr "HTML v e-mailech pracovních postupů"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
-#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -4714,10 +4723,10 @@ msgstr "HubSpot uzamyká vlastní objekty za Enterprise tarifem za 150 $/místo.
 msgid "Hungary 🇭🇺"
 msgstr "Hungary 🇭🇺"
 
-#. js-lingui-id: Del3a/
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "I agree to the affiliate program terms sent with my referral link"
-msgstr "Souhlasím s podmínkami partnerského programu zaslanými spolu s mým doporučovacím odkazem"
+#. js-lingui-id: DEIqgR
+#: src/affiliate-application/AffiliateApplicationForm.tsx
+msgid "I agree to the <0>Affiliate Program Terms</0>"
+msgstr "Souhlasím s <0>podmínkami partnerského programu</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4739,6 +4748,11 @@ msgstr "ICP"
 #: src/partner-application/partner-application-copy.ts
 msgid "Identity"
 msgstr "Identita"
+
+#. js-lingui-id: 9JU/6K
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "Pokud je to jejich první pracovní prostor Twenty a ještě na něm není nastaven žádný partnerský kód, mohou během bezplatného zkušebního období zadat váš kód na stránce /settings/partner svého pracovního prostoru. Do 30 dnů od první platby nás také mohou požádat, abychom ho přidali. Jakmile je kód uložen v pracovním prostoru, nelze ho změnit."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -5546,11 +5560,6 @@ msgstr "Madagascar 🇲🇬"
 msgid "Main channel (URL)"
 msgstr "Hlavní kanál (URL)"
 
-#. js-lingui-id: KpUYnU
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "Main channel must be a full URL starting with https://"
-msgstr "Hlavní kanál musí být úplná adresa URL začínající na https://"
-
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Maintenance mode"
@@ -6092,6 +6101,7 @@ msgstr "Momentálně nejsou k dispozici žádné aplikace. Zkuste to znovu brzy.
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "No matching country."
 msgstr "Žádná odpovídající země."
 
@@ -6310,11 +6320,6 @@ msgstr "Onboarding"
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "Onboarding · dokumentace · řízení změny · L1/L2 podpora · managed services"
 
-#. js-lingui-id: pbmZ7R
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "Onboarding Packs"
-msgstr "Onboarding balíčky"
-
 #. js-lingui-id: 37OSdM
 #: src/case-studies/case-study-stories.ts
 msgid "One *API* to rule them all"
@@ -6412,10 +6417,10 @@ msgstr "*Aktivace* organizace"
 msgid "Organization Activation | Twenty"
 msgstr "Aktivace organizace | Twenty"
 
-#. js-lingui-id: 7gCIfx
+#. js-lingui-id: gedycB
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "Organization and Enterprise plans on Twenty Cloud. Self-hosted Organization is coming soon. Pro plans and AI credits are not included."
-msgstr "Tarify Organization a Enterprise v Twenty Cloud. Organization s vlastním hostingem již brzy. Tarify Pro a kredity AI nejsou zahrnuty."
+msgid "Organization and Enterprise plans on Twenty Cloud. Pro plans and AI credits are not included."
+msgstr "Tarify Organization a Enterprise v Twenty Cloud. Tarif Pro a kredity AI nejsou zahrnuty."
 
 #. js-lingui-id: 3Yz0mq
 #: src/sections/compare/compare-data.ts
@@ -6727,6 +6732,11 @@ msgstr "Před pokračováním prosím vyplňte všechna povinná pole."
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter a valid email address."
 msgstr "Zadejte prosím platnou e-mailovou adresu."
+
+#. js-lingui-id: 8srGrM
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
+msgstr "Zadejte prosím odkaz na svůj hlavní kanál, například youtube.com/@yourname."
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7610,6 +7620,7 @@ msgstr "Screening"
 
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Search a country…"
 msgstr "Hledejte zemi…"
 
@@ -7731,6 +7742,7 @@ msgstr "Vyberte záznamy pomocí Cmd a Shift"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Select your country"
 msgstr "Vyberte svou zemi"
 
@@ -7953,10 +7965,10 @@ msgstr "Položky postranního panelu"
 msgid "Sierra Leone 🇸🇱"
 msgstr "Sierra Leone 🇸🇱"
 
-#. js-lingui-id: mA6cL1
+#. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
-msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
-msgstr "Zaregistrujte se do Cloudu za méně než minutu a spusťte svou 30denní zkušební verzi. U větších rolloutů vás naše 4hodinové onboarding balíčky nebo certifikovaní partneři dostanou do produkce za 1–2 týdny."
+msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
+msgstr "Zaregistrujte se do Cloudu za méně než minutu a spusťte svou 30denní zkušební verzi. U větších rolloutů vás náš tým může podpořit na každém kroku. Ozvěte se nám a probereme, co potřebujete."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -8829,6 +8841,11 @@ msgstr "Příběh za Twenty"
 #: src/platform/routing/static-website-routes.ts
 msgid "The terms governing your use of Twenty and its open source CRM services."
 msgstr "Podmínky, které upravují vaše používání Twenty a jeho open source CRM služeb."
+
+#. js-lingui-id: GbDTo3
+#: src/platform/routing/static-website-routes.ts
+msgid "The terms of the Twenty Affiliate Program: qualified referrals, commissions, payouts and how you may promote Twenty."
+msgstr "Podmínky partnerského programu Twenty: kvalifikovaná doporučení, provize, výplaty a způsob, jakým můžete propagovat Twenty."
 
 #. js-lingui-id: xCAT8U
 #: src/platform/releases/ReleaseNotes.tsx
@@ -9741,6 +9758,11 @@ msgstr "Co certifikace obnáší?"
 msgid "What does Twenty cost?"
 msgstr "Kolik Twenty stojí?"
 
+#. js-lingui-id: XqkgE8
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "What if a customer signs up without my link?"
+msgstr "Co když se zákazník zaregistruje bez mého odkazu?"
+
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts
 msgid "What is coming in April 2026 is what he has been waiting for: AI-assisted workflow creation, describing what he needs and iterating from there instead of building complex logic from scratch. For a founder who runs the CRM himself, that changes what is realistically possible."
@@ -10090,9 +10112,6 @@ msgstr "Yemen 🇾🇪"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Yes"
 msgstr "Ano"
@@ -10286,6 +10305,11 @@ msgstr "Váš workspace je podpořen git repozitářem, takže můžete branchov
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
 msgstr "YouTube, newslettery, LinkedIn, TikTok: kdokoli, kdo se věnuje nástrojům GTM."
+
+#. js-lingui-id: Lkub4e
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "youtube.com/@yourname"
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DetailsRow } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -130,7 +131,10 @@ export const AiChatThreadDetailsDropdown = ({
     });
   };
 
-  if (!isAiChatInboxEnabled) {
+  if (
+    !isAiChatInboxEnabled ||
+    thread?.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+  ) {
     return null;
   }
 
@@ -252,7 +256,9 @@ export const AiChatThreadDetailsDropdown = ({
             >
               {isDefined(assignee) ? (
                 <RecordChip
-                  objectNameSingular={CoreObjectNameSingular.WorkspaceMember}
+                  objectNameSingular={
+                    StandardObjectNameSingular.WorkspaceMember
+                  }
                   record={{ ...assignee, __typename: 'WorkspaceMember' }}
                 />
               ) : (

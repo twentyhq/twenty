@@ -11,10 +11,14 @@ export { IconAddressBook } from './components/IconAddressBook';
 export { IconBrandAnthropic } from './components/IconBrandAnthropic';
 export { IconBrandGemini } from './components/IconBrandGemini';
 export { IconBrandGroq } from './components/IconBrandGroq';
+export { IconBrandHubspot } from './components/IconBrandHubspot';
 export { IconBrandMistral } from './components/IconBrandMistral';
+export { IconBrandPipedrive } from './components/IconBrandPipedrive';
+export { IconBrandSalesforce } from './components/IconBrandSalesforce';
 export { IconBrandTypesafeAi } from './components/IconBrandTypesafeAi';
 export { IconBrandXai } from './components/IconBrandXai';
 export { IconChartBarHorizontal } from './components/IconChartBarHorizontal';
+export { IconEuStars } from './components/IconEuStars';
 export { IconGmail } from './components/IconGmail';
 export { IconGoogle } from './components/IconGoogle';
 export { IconGoogleCalendar } from './components/IconGoogleCalendar';
@@ -123,6 +127,7 @@ export {
   IconCalendarTime,
   IconCalendarWeek,
   IconCalendarX,
+  IconCamera,
   IconCancel,
   IconCaretLeft,
   IconCaretRight,
@@ -152,6 +157,7 @@ export {
   IconClockHour8,
   IconClockPlay,
   IconClockShare,
+  IconCloud,
   IconCode,
   IconCodeCircle,
   IconCoins,
@@ -345,6 +351,7 @@ export {
   IconMailCog,
   IconMailX,
   IconMap,
+  IconMapPin,
   IconMathMax,
   IconMathMin,
   IconMathXy,
@@ -415,6 +422,7 @@ export {
   IconRocket,
   IconRotate,
   IconRotate2,
+  IconRosetteDiscountCheck,
   IconRowInsertBottom,
   IconRowInsertTop,
   IconSearch,
@@ -429,6 +437,7 @@ export {
   IconShare2,
   IconShield,
   IconShoppingBag,
+  IconSignature,
   IconSitemap,
   IconSlash,
   IconSortAscending,

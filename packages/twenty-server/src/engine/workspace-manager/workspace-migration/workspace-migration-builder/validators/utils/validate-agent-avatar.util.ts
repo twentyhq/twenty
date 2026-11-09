@@ -1,5 +1,8 @@
 import { msg, t } from '@lingui/core/macro';
-import { AGENT_AVATAR_COLORS, AGENT_AVATAR_SHAPES } from 'twenty-shared/ai';
+import {
+  AI_CHAT_ASSISTANT_AVATAR_COLORS,
+  AI_CHAT_ASSISTANT_AVATAR_SHAPES,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -16,9 +19,9 @@ export const validateAgentAvatar = ({
 
   if (
     isDefined(avatarColor) &&
-    !AGENT_AVATAR_COLORS.some((color) => color === avatarColor)
+    !AI_CHAT_ASSISTANT_AVATAR_COLORS.some((color) => color === avatarColor)
   ) {
-    const allowedColors = AGENT_AVATAR_COLORS.join(', ');
+    const allowedColors = AI_CHAT_ASSISTANT_AVATAR_COLORS.join(', ');
 
     errors.push({
       code: AiExceptionCode.INVALID_AGENT_INPUT,
@@ -29,9 +32,9 @@ export const validateAgentAvatar = ({
 
   if (
     isDefined(avatarShape) &&
-    !AGENT_AVATAR_SHAPES.some((shape) => shape === avatarShape)
+    !AI_CHAT_ASSISTANT_AVATAR_SHAPES.some((shape) => shape === avatarShape)
   ) {
-    const allowedShapes = AGENT_AVATAR_SHAPES.join(', ');
+    const allowedShapes = AI_CHAT_ASSISTANT_AVATAR_SHAPES.join(', ');
 
     errors.push({
       code: AiExceptionCode.INVALID_AGENT_INPUT,

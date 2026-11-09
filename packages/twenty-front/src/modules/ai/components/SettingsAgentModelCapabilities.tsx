@@ -1,6 +1,6 @@
 import { useAgentModelCapabilities } from '@/ai/hooks/useAgentModelCapabilities';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { type ModelConfiguration } from 'twenty-shared/ai';
 import { Section } from 'twenty-ui/components/layout';
 import { SettingsRow } from 'twenty-ui/components/settings';
@@ -18,6 +18,7 @@ export const SettingsAgentModelCapabilities = ({
   onConfigurationChange,
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
+  const { t } = useLingui();
   const { capabilities, toggleCapability } = useAgentModelCapabilities({
     selectedModelId,
     modelConfiguration,

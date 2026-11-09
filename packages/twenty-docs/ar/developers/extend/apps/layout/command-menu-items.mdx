@@ -34,6 +34,7 @@ export default defineCommandMenuItem({
 | `isPinned`                              | لا    | عند كونها `true`، يعرض الأمر كزر إجراء سريع في الزاوية العلوية اليمنى من الصفحة                                                                                                                                                           |
 | `availabilityType`                      | لا    | يتحكّم في مكان ظهور الأمر: `'GLOBAL'` (متاح دائمًا)، و`'GLOBAL_OBJECT_CONTEXT'` (فقط في الصفحات ذات سياق الكائن — صفحات الفهرس والسجل)، و`'RECORD_SELECTION'` (فقط عند تحديد سجلات)، أو `'FALLBACK'` (يُعرَض عند عدم تطابق أي أوامر أخرى) |
 | `availabilityObjectUniversalIdentifier` | لا    | تقييد الأمر بصفحات نوع كائن معيّن (مثل سجلات Company فقط)                                                                                                                                                                                 |
+| `availabilityCoreObjectName`            | لا    | قيّد الأمر بصفحات كائن أساسي مضمّن بدلًا من كائن مساحة عمل. يتم دعم `'workflow'` فقط (قائمة Workflows وصفحة سير عمل). لا يمكن دمجه مع `availabilityObjectUniversalIdentifier`                                                             |
 | `conditionalAvailabilityExpression`     | لا    | تعبير منطقي يتحكّم ديناميكيًا في الظهور (انظر أدناه)                                                                                                                                                                                      |
 | `conditionalPinnedExpression`           | لا    | تعبير منطقي يضيّق `isPinned`: يظهر الأمر كزر إجراء سريع فقط ما دام متحققًا، ويبقى في قائمة الأوامر بخلاف ذلك. نفس الصياغة والمتغيرات المستخدمة في `conditionalAvailabilityExpression`                                                     |
 
@@ -85,20 +86,22 @@ export default defineCommandMenuItem({
 
 تُمثّل هذه المتغيّرات الحالة الحالية للصفحة:
 
-| المتغيّر                       | النوع     | الوصف                                                           |
-| ------------------------------ | --------- | --------------------------------------------------------------- |
-| `pageType`                     | `string`  | نوع الصفحة الحالي (مثل `'RecordIndexPage'` و`'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | ما إذا كان المكوّن معروضًا في لوحة جانبية                       |
-| `numberOfSelectedRecords`      | `number`  | عدد السجلات المحدّدة حاليًا                                     |
-| `isSelectAll`                  | `boolean` | ما إذا كان "تحديد الكل" مفعّلًا                                 |
-| `selectedRecords`              | `array`   | كائنات السجلات المحدّدة                                         |
-| `favoriteRecordIds`            | `array`   | معرّفات السجلات المفضّلة                                        |
-| `objectPermissions`            | `object`  | الأذونات الخاصة بنوع الكائن الحالي                              |
-| `targetObjectReadPermissions`  | `object`  | أذونات القراءة للكائن الهدف                                     |
-| `targetObjectWritePermissions` | `object`  | أذونات الكتابة للكائن الهدف                                     |
-| `featureFlags`                 | `object`  | أعلام الميزات المفعَّلة                                         |
-| `objectMetadataItem`           | `object`  | بيانات التعريف لنوع الكائن الحالي                               |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | ما إذا كان العرض الحالي يحتوي على مرشّح حذف منطقي               |
+| المتغيّر                       | النوع            | الوصف                                                                          |
+| ------------------------------ | ---------------- | ------------------------------------------------------------------------------ |
+| `pageType`                     | `string`         | نوع الصفحة الحالي (مثل `'RecordIndexPage'` و`'RecordShowPage'`)                |
+| `isInSidePanel`                | `boolean`        | ما إذا كان المكوّن معروضًا في لوحة جانبية                                      |
+| `numberOfSelectedRecords`      | `number`         | عدد السجلات المحدّدة حاليًا                                                    |
+| `isSelectAll`                  | `boolean`        | ما إذا كان "تحديد الكل" مفعّلًا                                                |
+| `selectedRecords`              | `array`          | كائنات السجلات المحدّدة                                                        |
+| `favoriteRecordIds`            | `array`          | معرّفات السجلات المفضّلة                                                       |
+| `objectPermissions`            | `object`         | الأذونات الخاصة بنوع الكائن الحالي                                             |
+| `targetObjectReadPermissions`  | `object`         | أذونات القراءة للكائن الهدف                                                    |
+| `targetObjectWritePermissions` | `object`         | أذونات الكتابة للكائن الهدف                                                    |
+| `featureFlags`                 | `object`         | أعلام الميزات المفعَّلة                                                        |
+| `objectMetadataItem`           | `object`         | بيانات التعريف لنوع الكائن الحالي                                              |
+| `coreObjectName`               | `string \| null` | الكائن الأساسي للصفحة الحالية (`'workflow'` في صفحات Workflows)، وإلا `null`   |
+| `currentView`                  | `object \| null` | العرض الظاهر في صفحة فهرس، على هيئة `{ id, universalIdentifier }`، وإلا `null` |
+| `hasAnySoftDeleteFilterOnView` | `boolean`        | ما إذا كان العرض الحالي يحتوي على مرشّح حذف منطقي                              |
 
 ### المُشغِّلات
 

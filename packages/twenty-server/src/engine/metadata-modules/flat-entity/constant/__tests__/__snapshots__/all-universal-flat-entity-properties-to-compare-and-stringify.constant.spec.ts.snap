@@ -69,6 +69,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "conditionalAvailabilityExpression",
       "conditionalPinnedExpression",
       "availabilityObjectMetadataUniversalIdentifier",
+      "availabilityCoreObjectName",
       "navigationTargetObjectMetadataUniversalIdentifier",
       "engineComponentKey",
       "payload",
@@ -127,11 +128,25 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "disabledFieldPermissionActions",
     ],
   },
+  "fieldMetadataOption": {
+    "propertiesToCompare": [
+      "value",
+      "label",
+      "color",
+      "position",
+      "isActive",
+      "overrides",
+    ],
+    "propertiesToStringify": [
+      "overrides",
+    ],
+  },
   "fieldPermission": {
     "propertiesToCompare": [
       "roleUniversalIdentifier",
       "objectMetadataUniversalIdentifier",
       "fieldMetadataUniversalIdentifier",
+      "rowLevelPermissionPredicateGroupUniversalIdentifier",
       "canReadFieldValue",
       "canUpdateFieldValue",
     ],
@@ -201,7 +216,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "connectionProviderUniversalIdentifier",
       "isActive",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "tools",
+    ],
   },
   "messagingProvider": {
     "propertiesToCompare": [
@@ -219,6 +236,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "folderUniversalIdentifier",
       "name",
       "link",
+      "nativePageKey",
       "icon",
       "color",
     ],
@@ -255,6 +273,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "roleUniversalIdentifier",
       "objectMetadataUniversalIdentifier",
       "canReadObjectRecords",
+      "canCreateObjectRecords",
       "canUpdateObjectRecords",
       "canSoftDeleteObjectRecords",
       "canDestroyObjectRecords",
@@ -337,6 +356,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "canAccessAllTools",
       "canAccessAllAgentChatChannels",
       "canReadAllObjectRecords",
+      "canCreateAllObjectRecords",
       "canUpdateAllObjectRecords",
       "canSoftDeleteAllObjectRecords",
       "canDestroyAllObjectRecords",
@@ -384,6 +404,11 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToCompare": [
       "logicalOperator",
       "positionInRowLevelPermissionPredicateGroup",
+      "canReadRecords",
+      "canCreateRecords",
+      "canUpdateRecords",
+      "canSoftDeleteRecords",
+      "canDestroyRecords",
       "parentRowLevelPermissionPredicateGroupUniversalIdentifier",
       "deletedAt",
     ],

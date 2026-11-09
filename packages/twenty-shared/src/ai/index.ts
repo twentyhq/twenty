@@ -7,13 +7,13 @@
  *                              |___/
  */
 
-export type { AgentAvatarColor } from './constants/agent-avatar-color.const';
-export { AGENT_AVATAR_COLORS } from './constants/agent-avatar-color.const';
-export type { AgentAvatarShape } from './constants/agent-avatar-shape.const';
-export { AGENT_AVATAR_SHAPES } from './constants/agent-avatar-shape.const';
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
+export { AI_CHAT_ASSISTANT_AVATAR_COLORS } from './constants/ai-chat-assistant-avatar-colors.const';
+export { AI_CHAT_ASSISTANT_AVATAR_FACES } from './constants/ai-chat-assistant-avatar-faces.const';
+export { AI_CHAT_ASSISTANT_AVATAR_SHAPES } from './constants/ai-chat-assistant-avatar-shapes.const';
+export { AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH } from './constants/ai-chat-assistant-display-name-max-length.const';
 export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
 export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
 export { AI_MODEL_EFFORT_LABELS } from './constants/ai-model-effort-labels.const';
@@ -30,12 +30,18 @@ export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conv
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
+export { CHAT_REFERENCE_BODY_PATTERN } from './constants/chat-reference-body-pattern.const';
+export { CHAT_REFERENCE_UUID_REGEX } from './constants/chat-reference-uuid-regex.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
+export { DATA_RESIDENCIES_BY_REGION } from './constants/data-residencies-by-region.const';
+export type { DataResidencyRegion } from './constants/data-residency-regions.const';
+export { DATA_RESIDENCY_REGIONS } from './constants/data-residency-regions.const';
 export type { DataResidency } from './constants/data-residency.const';
-export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
+export { DATA_RESIDENCIES } from './constants/data-residency.const';
 export type { DatabaseCrudOperation } from './constants/database-crud-operation.const';
 export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.const';
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
+export { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from './constants/default-ai-chat-assistant-profile.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
@@ -48,9 +54,12 @@ export { PUBLISH_FRONT_COMPONENT_TOOL_NAME } from './constants/publish-front-com
 export { REACT_TO_MESSAGE_TOOL_NAME } from './constants/react-to-message-tool-name.const';
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
+export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
+export { getAiChatAssistantProfileSchema } from './schemas/get-ai-chat-assistant-profile-schema';
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
+export { AgentChatThreadConversationType } from './types/AgentChatThreadConversationType';
 export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';
 export type {
   AgentResponseFormatType,
@@ -64,6 +73,11 @@ export type {
 } from './types/AgentResponseSchema';
 export type { AgentRunSummary } from './types/AgentRunSummary';
 export type { AgentRunToolCallLog } from './types/AgentRunToolCallLog';
+export type { AiChatAssistantAvatarColor } from './types/AiChatAssistantAvatarColor';
+export type { AiChatAssistantAvatarFace } from './types/AiChatAssistantAvatarFace';
+export type { AiChatAssistantAvatarShape } from './types/AiChatAssistantAvatarShape';
+export type { AiChatAssistantProfile } from './types/AiChatAssistantProfile';
+export type { AiDataPolicy } from './types/AiDataPolicy';
 export type {
   AiRunScope,
   AiRunScopeObjectPermission,
@@ -123,13 +137,18 @@ export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-entries.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
+export { isAgentChatAssistantReference } from './utils/is-agent-chat-assistant-reference.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
+export { isAiContentRecordingAllowed } from './utils/is-ai-content-recording-allowed.util';
+export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
+export { isAiModelCompliantWithDataPolicy } from './utils/is-ai-model-compliant-with-data-policy.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';
 export { isAiModelTier } from './utils/is-ai-model-tier.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
 export { isCompleteWorkspaceSetupToolPart } from './utils/is-complete-workspace-setup-tool-part.util';
+export { isDataResidencyRegion } from './utils/is-data-residency-region.util';
 export { isDataResidency } from './utils/is-data-residency.util';
 export { isFrontComponentProposedToolCall } from './utils/is-front-component-proposed-tool-call.util';
 export { isNoReplyToolPart } from './utils/is-no-reply-tool-part.util';
@@ -138,8 +157,10 @@ export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-mess
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
 export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
+export { isValidChatReferenceLabel } from './utils/is-valid-chat-reference-label.util';
 export type { AgentMessagePartRow } from './utils/map-agent-message-part-to-ui-message-part.util';
 export { mapAgentMessagePartToUIMessagePart } from './utils/map-agent-message-part-to-ui-message-part.util';
 export type { AgentMessageRow } from './utils/map-agent-messages-to-ui-messages.util';
 export { mapAgentMessagesToUIMessages } from './utils/map-agent-messages-to-ui-messages.util';
+export { parseAgentChatAssistantReferenceBody } from './utils/parse-agent-chat-assistant-reference-body.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';

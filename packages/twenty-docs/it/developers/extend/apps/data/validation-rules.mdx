@@ -1,0 +1,88 @@
+---
+title: Regole di convalida
+description: Definisci le condizioni che un record deve soddisfare prima di poter essere salvato.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Una regola di convalida è una condizione applicata a un record. Quando risulta falsa, Twenty rifiuta il record e mostra il messaggio della regola.
+
+Per configurare le regole in Impostazioni, consulta la [guida utente delle regole di validazione](/it/user-guide/data-model/capabilities/validation-rules).
+
+<Note>
+  Le regole di convalida vengono applicate solo negli spazi di lavoro in cui la funzionalità è disponibile.
+</Note>
+
+Definisci una regola con `defineValidationRule` da `twenty-sdk/define`:
+
+```ts filename="src/validation-rules/invoice-has-amount.ts"
+import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';
+
+import { INVOICE_UNIVERSAL_IDENTIFIER } from '../objects/invoice.object';
+
+const { and, field, gt, isNonEmptyString } = ruleExpression;
+
+export default defineValidationRule({
+  universalIdentifier: '8d3f2c6e-1b7a-4f0e-9c52-6a1e0d4b7f31',
+  objectUniversalIdentifier: INVOICE_UNIVERSAL_IDENTIFIER,
+  name: 'Invoice has an amount',
+  expression: and(gt(field('amount'), 0), isNonEmptyString(field('reference'))),
+  message: 'An invoice needs an amount and a reference',
+});
+```
+
+Puoi anche crearne una struttura con la CLI:
+
+```bash
+twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
+```
+
+| Proprietà                       | Obbligatorio | Descrizione                                                                                      |
+| ------------------------------- | ------------ | ------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`           | Sì           | Identificatore stabile della regola                                                              |
+| `objectUniversalIdentifier`     | Sì           | L'oggetto a cui si applica la regola. Può essere un oggetto della tua app o un oggetto standard. |
+| `name`                          | Sì           | Nome visualizzato nelle impostazioni                                                             |
+| `espressione`                   | Sì           | Un `ruleExpression` o una stringa                                                                |
+| `messaggio`                     | Sì           | Messaggio visualizzato quando la regola non viene soddisfatta                                    |
+| `errorFieldUniversalIdentifier` | No           | Campo a cui è associato il messaggio. Deve appartenere all'oggetto della regola.                 |
+| `description`                   | No           | Descrizione più lunga                                                                            |
+| `icon`                          | No           | Nome dell'icona                                                                                  |
+
+## Scrittura di espressioni
+
+`ruleExpression` fornisce:
+
+* `field('name')` legge un campo e `field('company.employees')` legge un campo tramite una relazione molti-a-uno.
+* `now` è la data e l'ora correnti.
+* `and`, `or` e `not` combinano le condizioni.
+* `eq`, `notEq`, `gt`, `gte`, `lt` e `lte` confrontano i valori.
+* `add`, `subtract`, `multiply` e `divide` calcolano i valori.
+* `isIn(field('stage'), ['NEW', 'WON'])` confronta un valore con un elenco.
+* Funzioni come `isNonEmptyString` e `isDefined`.
+
+Il builder produce una stringa semplice, che è ciò che [`twenty app pull`](/it/developers/extend/apps/operations/cli) riscrive. Puoi scrivere direttamente quella stringa:
+
+```ts
+expression: 'amount > 0 and isNonEmptyString(reference)',
+```
+
+Le stringhe usano `and`, `or`, `not`, `==`, `!=`, `\<`, `\<=`, `>`, `>=`, `+`, `-`, `*`, `/` e `in [...]`, non `&&` o `||`. Il testo va racchiuso tra virgolette singole o doppie.
+
+Una regola può leggere i campi che dichiari e i [campi di sistema](/it/developers/extend/apps/data/system-fields) forniti da Twenty, come `createdAt`. La CLI verifica le espressioni rispetto agli oggetti della tua app. Su un oggetto esterno alla tua app, verifica solo la sintassi e il server verifica i campi al momento della sincronizzazione.
+
+## Campi che diventano non disponibili
+
+| Situazione                                                                                                | Risultato                                                                                         |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| La tua app rimuove un campo letto dalla sua regola                                                        | La sincronizzazione non riesce e restituisce un errore che indica la regola e il campo            |
+| Un'area di lavoro disattiva un campo esterno alla tua app                                                 | La sincronizzazione riesce e la regola rimane disattivata                                         |
+| Un'area di lavoro elimina un campo esterno alla tua app e l'espressione della tua regola rimane invariata | La sincronizzazione riesce e la regola rimane disattivata                                         |
+| Un'area di lavoro rinomina un campo esterno alla tua app                                                  | La sincronizzazione riesce e mantiene la regola con il nuovo nome, che `twenty app pull` riscrive |
+| Una regola nuova o modificata indica un campo che non esiste                                              | La sincronizzazione non riesce                                                                    |
+| Un'area di lavoro elimina il campo di errore della regola                                                 | La sincronizzazione riesce e la regola non è più associata a quel campo                           |
+
+Una sincronizzazione mantiene `isActive` di una regola esistente, quindi una regola disattivata da un amministratore dell'area di lavoro rimane disattivata. Solo le nuove regole iniziano attive.
+
+<PageBanner illustration="card-page-validation-rules" />

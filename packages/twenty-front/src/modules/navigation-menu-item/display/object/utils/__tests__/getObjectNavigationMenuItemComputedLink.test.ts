@@ -11,10 +11,6 @@ const mockObjectMetadataItems: Pick<
     id: 'metadata-1',
     namePlural: 'people',
   },
-  {
-    id: 'metadata-workflows',
-    namePlural: 'workflows',
-  },
 ];
 
 const mockViews: Pick<
@@ -74,16 +70,6 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
     });
 
     expect(result).toBe('/objects/people');
-  });
-
-  it('should link workflows to their own index page', () => {
-    const result = getObjectNavigationMenuItemComputedLink({
-      item: { targetObjectMetadataId: 'metadata-workflows' },
-      objectMetadataItems: mockObjectMetadataItems,
-      views: mockViews,
-    });
-
-    expect(result).toBe('/workflows');
   });
 
   it('should return an empty string when the target object metadata is not found', () => {

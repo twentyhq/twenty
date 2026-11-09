@@ -16,9 +16,7 @@ export const getAutomationNavigationMenuItemComputedLink = (
   }
 
   if (item.type === NavigationMenuItemType.AGENT) {
-    return isDefined(item.agentId)
-      ? getCoreAgentLink(item.agentId)
-      : getAppPath(AppPath.AgentIndexPage);
+    return isDefined(item.agentId) ? getCoreAgentLink(item.agentId) : '';
   }
 
   return '';

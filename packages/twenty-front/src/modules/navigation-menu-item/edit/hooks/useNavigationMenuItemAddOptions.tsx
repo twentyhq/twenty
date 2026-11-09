@@ -1,11 +1,12 @@
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType, NATIVE_PAGE_KEYS } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TintedIconTile } from 'twenty-ui/components/data-display';
 import {
   IconBox,
+  IconCompass,
   IconFolder,
   IconLink,
   IconPerspective,
@@ -20,24 +21,27 @@ import {
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
-import { AUTOMATION_OBJECT_NAMES_SINGULAR } from '@/navigation-menu-item/common/constants/AutomationObjectNamesSingular';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
-import { isAutomationObjectNameSingular } from '@/navigation-menu-item/common/utils/isAutomationObjectNameSingular';
+import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
+import { NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs';
+import { hasNativePagePermission } from '@/navigation-menu-item/display/native-page/utils/hasNativePagePermission';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemAutomationOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions';
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
 import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/utils/getAvailableObjectMetadataForNewSidebarItem';
-import { getObjectNavigationMenuItemOption } from '@/navigation-menu-item/edit/utils/getObjectNavigationMenuItemOption';
 import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/utils/isViewDisplayableInNavigationMenu';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewKey } from '@/views/types/ViewKey';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -78,6 +82,7 @@ export const useNavigationMenuItemAddOptions = ({
   });
 
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -111,24 +116,11 @@ export const useNavigationMenuItemAddOptions = ({
         .map((view) => view.objectMetadataId),
     ),
   });
-  const allAvailableObjectMetadataItems = [
-    ...availableObjectMetadataItems,
-    ...availableSystemObjectMetadataItems,
-  ];
-  const automationObjectMetadataItems =
-    AUTOMATION_OBJECT_NAMES_SINGULAR.flatMap((nameSingular) =>
-      allAvailableObjectMetadataItems.filter(
-        (objectMetadataItem) =>
-          objectMetadataItem.nameSingular === nameSingular,
-      ),
-    );
   const { hasAutomationAccess, automationItemGroups, automationLoading } =
     useNavigationMenuItemAutomationOptions({
       search,
       skip: step !== 'automation' && !isSearchingAllItems,
       currentItems,
-      automationObjectMetadataItems,
-      objectMetadataIdsAlreadyAdded,
       addItem,
     });
 
@@ -226,7 +218,53 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('page'),
           hasSubMenu: true,
         },
+        {
+          id: 'nativePage',
+          label: t`Native page`,
+          icon: (
+            <TintedIconTile icon={<IconCompass size={theme.icon.size.md} />} />
+          ),
+          onClick: () => navigateToStep('nativePage'),
+          hasSubMenu: true,
+        },
       ];
+    }
+    if (targetStep === 'nativePage') {
+      const nativePageKeysAlreadyAdded = new Set(
+        currentItems.map((item) => item.nativePageKey),
+      );
+
+      return NATIVE_PAGE_KEYS.filter((nativePageKey) =>
+        hasNativePagePermission({
+          item: { nativePageKey },
+          permissionFlagMap,
+        }),
+      ).map((nativePageKey) => {
+        const { label, Icon } =
+          NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS[nativePageKey];
+        const isAlreadyInSidebar =
+          nativePageKeysAlreadyAdded.has(nativePageKey);
+
+        return {
+          id: nativePageKey,
+          label: t(label),
+          icon: (
+            <ColoredIcon
+              Icon={Icon}
+              color={getNavigationMenuItemColor({
+                type: NavigationMenuItemType.NATIVE_PAGE,
+              })}
+            />
+          ),
+          isDisabled: isAlreadyInSidebar,
+          isAlreadyInSidebar,
+          onClick: () =>
+            addItem({
+              type: NavigationMenuItemType.NATIVE_PAGE,
+              nativePageKey,
+            }),
+        };
+      });
     }
     if (
       targetStep === 'object' ||
@@ -234,9 +272,10 @@ export const useNavigationMenuItemAddOptions = ({
     ) {
       const objects =
         targetStep === 'object'
-          ? allAvailableObjectMetadataItems.filter(
-              (object) => !isAutomationObjectNameSingular(object.nameSingular),
-            )
+          ? [
+              ...availableObjectMetadataItems,
+              ...availableSystemObjectMetadataItems,
+            ]
           : [
               ...objectMetadataItemsWithViews,
               ...availableSystemObjectMetadataItemsForView,
@@ -248,23 +287,35 @@ export const useNavigationMenuItemAddOptions = ({
             Number(objectMetadataIdsAlreadyAdded.has(secondObject.id)),
         );
       }
-      return objects.map((object) => {
-        const objectOption = getObjectNavigationMenuItemOption({
-          objectMetadataItem: object,
-          isAlreadyInSidebar:
-            targetStep === 'object' &&
-            objectMetadataIdsAlreadyAdded.has(object.id),
-          addItem,
-        });
-
-        return targetStep === 'view'
-          ? {
-              ...objectOption,
-              hasSubMenu: true,
-              onClick: () => selectObject(object.id),
-            }
-          : objectOption;
-      });
+      return objects.map((object) => ({
+        id: object.id,
+        label: object.labelPlural,
+        searchableValues: [
+          object.labelPlural,
+          object.labelSingular,
+          object.namePlural,
+          object.nameSingular,
+        ],
+        icon: <ObjectMetadataIcon objectMetadataItem={object} />,
+        isAlreadyInSidebar:
+          targetStep === 'object' &&
+          objectMetadataIdsAlreadyAdded.has(object.id),
+        isDisabled:
+          targetStep === 'object' &&
+          objectMetadataIdsAlreadyAdded.has(object.id),
+        hasSubMenu: targetStep === 'view',
+        onClick: () => {
+          if (targetStep === 'view') {
+            selectObject(object.id);
+          } else {
+            addItem({
+              type: NavigationMenuItemType.OBJECT,
+              targetObjectMetadataId: object.id,
+              color: getObjectColorWithFallback(object),
+            });
+          }
+        },
+      }));
     }
     if (targetStep === 'view') {
       const objectIdsWithViews = new Set(

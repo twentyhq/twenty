@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
+import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -33,24 +35,25 @@ import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-i
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [],
   }),
-  NoPermissionGuard,
 )
 @MetadataResolver(() => ApplicationDTO)
 @UseFilters(ApplicationExceptionFilter)
@@ -60,6 +63,7 @@ export class ApplicationResolver {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationStopService: ApplicationStopService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationContentService: ApplicationContentService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -305,6 +309,36 @@ export class ApplicationResolver {
     return context.loaders.objectMetadataByApplicationIdLoader.load({
       workspaceId,
       applicationId: application.id,
+    });
+  }
+
+  @ResolveField(() => ApplicationContentDTO, { nullable: true })
+  async content(
+    @Parent()
+    application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,
+    @AuthWorkspace()
+    {
+      id: workspaceId,
+      workspaceCustomApplicationId,
+    }: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
+  ): Promise<ApplicationContentDTO | null> {
+    if (
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
+      })
+    ) {
+      return null;
+    }
+
+    return this.applicationContentService.getInstalledApplicationContent({
+      workspaceId,
+      applicationId: application.id,
+      applicationRegistrationId: application.applicationRegistrationId,
     });
   }
 

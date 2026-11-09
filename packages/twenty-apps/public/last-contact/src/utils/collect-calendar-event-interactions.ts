@@ -28,7 +28,7 @@ export type CalendarEventInteractions = {
 };
 
 export const collectCalendarEventInteractions = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   calendarEventIds: string[],
 ): Promise<CalendarEventInteractions> => {
   const participantsByCalendarEventId = new Map<

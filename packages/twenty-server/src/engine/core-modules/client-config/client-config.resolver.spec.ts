@@ -5,6 +5,7 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { ClientConfigResolver } from './client-config.resolver';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 
 describe('ClientConfigResolver', () => {
   let resolver: ClientConfigResolver;
@@ -29,6 +30,7 @@ describe('ClientConfigResolver', () => {
             isMaintenanceModeBannerDismissed: jest.fn(),
           },
         },
+        { provide: AccessPolicyService, useValue: {} },
       ],
     }).compile();
 

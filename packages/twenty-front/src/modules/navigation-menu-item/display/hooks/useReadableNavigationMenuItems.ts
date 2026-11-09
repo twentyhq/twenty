@@ -30,10 +30,10 @@ export const useReadableNavigationMenuItems = ({
   const isItemReadable = (item: NavigationMenuItem) =>
     isNavigationMenuItemReadable({
       item,
+      permissionFlagMap,
       objectMetadataItems,
       views,
       objectPermissionsByObjectMetadataId,
-      permissionFlagMap,
     });
 
   const filteredFolderChildrenById = new Map<string, NavigationMenuItem[]>();

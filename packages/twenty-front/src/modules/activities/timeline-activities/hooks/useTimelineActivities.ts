@@ -11,7 +11,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import {
-  CoreObjectNameSingular,
+  StandardObjectNameSingular,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -32,7 +32,7 @@ export const useTimelineActivities = (
 
   const { objectMetadataItem: timelineActivityMetadata } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
+      objectNameSingular: StandardObjectNameSingular.TimelineActivity,
     });
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
@@ -65,7 +65,7 @@ export const useTimelineActivities = (
     refetch,
   } = useFindManyRecords<TimelineActivity>({
     skip: !hasTimelineActivityField,
-    objectNameSingular: CoreObjectNameSingular.TimelineActivity,
+    objectNameSingular: StandardObjectNameSingular.TimelineActivity,
     filter,
     orderBy: [
       {
@@ -78,7 +78,7 @@ export const useTimelineActivities = (
 
   const operationSignature = useMemo(
     () => ({
-      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
+      objectNameSingular: StandardObjectNameSingular.TimelineActivity,
       variables: {
         filter,
       },

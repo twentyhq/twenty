@@ -32,6 +32,7 @@ type Assertions = [
       | 'mainGroupByFieldMetadataViews'
       | 'viewSorts'
       | 'searchFieldMetadatas'
+      | 'fieldMetadataOptions'
     >
   >,
 
@@ -47,6 +48,7 @@ type Assertions = [
       | 'mainGroupByFieldMetadataViews'
       | 'viewSorts'
       | 'searchFieldMetadatas'
+      | 'fieldMetadataOptions'
     >
   >,
 ];

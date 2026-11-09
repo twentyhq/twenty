@@ -1,5 +1,5 @@
 import { type AgentTrigger } from 'twenty-shared/application';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 
@@ -22,9 +22,9 @@ export const getCoreAgentDefaultTriggerObjectNameSingular = ({
     existingObjectNameSingular ??
     objectNameSingulars.find(
       (objectNameSingular) =>
-        objectNameSingular === CoreObjectNameSingular.Person,
+        objectNameSingular === StandardObjectNameSingular.Person,
     ) ??
     objectNameSingulars.at(0) ??
-    CoreObjectNameSingular.Person
+    StandardObjectNameSingular.Person
   );
 };

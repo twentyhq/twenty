@@ -5,7 +5,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getAutomationNavigationMenuItemLabel } from '@/navigation-menu-item/display/automation/utils/getAutomationNavigationMenuItemLabel';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { GetCoreWorkflowDocument } from '~/generated/graphql';
@@ -54,9 +53,8 @@ export const useAutomationNavigationMenuItemTarget = (
     if (item.type === NavigationMenuItemType.AGENT) {
       return (
         !hasAiPermission ||
-        (isDefined(agentId) &&
-          (isDefined(agentQuery.error) ||
-            (!agentQuery.loading && !isDefined(agent))))
+        isDefined(agentQuery.error) ||
+        (!agentQuery.loading && !isDefined(agent))
       );
     }
 
@@ -72,7 +70,7 @@ export const useAutomationNavigationMenuItemTarget = (
       return agent.label;
     }
 
-    return getAutomationNavigationMenuItemLabel(item);
+    return item.name ?? '';
   };
 
   return {

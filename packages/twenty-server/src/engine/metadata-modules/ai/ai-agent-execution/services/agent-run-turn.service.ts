@@ -55,7 +55,6 @@ import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { type AgentTurnUsageStep } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { type AgentTurnStreamSource } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -167,8 +166,15 @@ export class AgentRunTurnService {
       (persona.modelConfiguration?.webSearch?.enabled ?? false) ||
       (persona.modelConfiguration?.twitterSearch?.enabled ?? false);
 
+    if (!isDefined(workspace)) {
+      throw new AiException(
+        `Workspace ${workspaceId} not found`,
+        AiExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
     const turn = await this.agentTurnService.start({
-      workspace: workspace ?? undefined,
+      workspace,
       modelId: persona.modelId,
       toolset: {
         registryAccess,
@@ -313,6 +319,7 @@ export class AgentRunTurnService {
         }),
         ...buildAiTelemetry({
           functionId: 'agent-structured-output',
+          isContentRecordingAllowed: turn.isContentRecordingAllowed,
           workspaceId,
           userWorkspaceId,
           agentId: persona.agentId ?? undefined,
@@ -321,12 +328,7 @@ export class AgentRunTurnService {
 
       void this.aiBillingService.calculateAndBillUsage({
         modelId: registeredModel.modelId,
-        billingInput: {
-          usage: structuredResult.usage,
-          cacheCreationTokens: extractCacheCreationTokensFromSteps(
-            structuredResult.steps,
-          ),
-        },
+        billingInput: { usage: structuredResult.usage },
         workspaceId,
         operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
         spenders,
@@ -354,7 +356,7 @@ export class AgentRunTurnService {
     return {
       result,
       usage,
-      cacheCreationTokens: extractCacheCreationTokensFromSteps(steps),
+      cacheCreationTokens: usage.inputTokenDetails?.cacheWriteTokens ?? 0,
       nativeWebSearchCallCount,
       stopReason,
       // out of credits fails the execution even if it asked something, so it is never left waiting for an answer

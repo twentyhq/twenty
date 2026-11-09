@@ -7,9 +7,9 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Running the CLI
 
-The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. It needs **Node.js 24.5+ or 26.5+**.
+The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. The CLI itself requires **Node.js 24.5+**. App development also needs a Node version supported by the installed SDK, see [Quick Start](/developers/extend/apps/getting-started/quick-start#before-you-start).
 
-Run any command through `npx`, without installing anything:
+Run any command through `npx`, without a global installation:
 
 ```bash filename="Terminal"
 npx twenty@latest --version
@@ -22,7 +22,7 @@ npm install -g twenty
 twenty --version
 ```
 
-The examples below use `twenty`. Prefix them with `npx twenty@latest` if you did not install it globally. Run `twenty commands` for the full command list and `twenty <command> --help` for the options of one command.
+The examples below use `twenty`. Replace `twenty` with `npx twenty@latest` if you did not install it globally. Run `twenty commands` for the full command list and `twenty <command> --help` for the options of one command.
 
 | Command    | What it does                                                |
 | ---------- | ----------------------------------------------------------- |
@@ -64,6 +64,14 @@ printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acm
 ```
 
 You can also set `TWENTY_API_URL` and `TWENTY_API_KEY` for a single run without saving anything. Saved connections live in `~/.twenty/config.json`.
+
+Commands select a workspace in this order:
+
+1. An explicit `--remote <name>`, which overrides the target environment variables.
+2. `TWENTY_REMOTE`, or the pair `TWENTY_API_URL` and `TWENTY_API_KEY`. Do not combine these two methods.
+3. The saved default remote.
+
+`auth login --name <name>` saves a connection but keeps an existing default. Add `--use`, or run `twenty remote use <name>`, to change the default.
 
 ## Exploring your data
 
@@ -111,7 +119,7 @@ Other app commands:
 | `app plan`                    | Preview the metadata changes an apply would make           |
 | `app apply`                   | Build, upload and sync the app                             |
 | `app generate-client`         | Regenerate the typed API client without syncing            |
-| `app pull`                    | Restore metadata, translations and stored dependencies    |
+| `app pull`                    | Restore metadata, translations, dependencies and supported component source    |
 | `app translations extract`    | Extract translatable strings into `locales/` catalogs      |
 | `app publish`                 | Publish the app to npm or to a private Twenty registry     |
 | `app install`                 | Install an already registered app package in the workspace |

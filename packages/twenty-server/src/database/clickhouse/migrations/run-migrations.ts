@@ -17,7 +17,9 @@ config({
 const clickHouseUrl = () => {
   const url = process.env.CLICKHOUSE_URL;
 
-  if (url) return url;
+  if (url) {
+    return url;
+  }
 
   throw new Error(
     'CLICKHOUSE_URL environment variable is not set. Please set it to the ClickHouse URL.',

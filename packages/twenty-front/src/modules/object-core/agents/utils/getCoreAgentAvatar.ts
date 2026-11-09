@@ -1,8 +1,8 @@
 import {
-  AGENT_AVATAR_COLORS,
-  AGENT_AVATAR_SHAPES,
-  type AgentAvatarColor,
-  type AgentAvatarShape,
+  AI_CHAT_ASSISTANT_AVATAR_COLORS,
+  AI_CHAT_ASSISTANT_AVATAR_SHAPES,
+  type AiChatAssistantAvatarColor,
+  type AiChatAssistantAvatarShape,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,9 +16,14 @@ export const getCoreAgentAvatar = ({
   agentId?: string;
   avatarColor?: string | null;
   avatarShape?: string | null;
-}): { color: AgentAvatarColor; shape: AgentAvatarShape } => ({
+}): {
+  color: AiChatAssistantAvatarColor;
+  shape: AiChatAssistantAvatarShape;
+} => ({
   color:
-    AGENT_AVATAR_COLORS.find((color) => color === avatarColor) ??
+    AI_CHAT_ASSISTANT_AVATAR_COLORS.find((color) => color === avatarColor) ??
     (isDefined(agentId) ? getCoreAgentAvatarColor(agentId) : 'blue'),
-  shape: AGENT_AVATAR_SHAPES.find((shape) => shape === avatarShape) ?? 'circle',
+  shape:
+    AI_CHAT_ASSISTANT_AVATAR_SHAPES.find((shape) => shape === avatarShape) ??
+    'circle',
 });

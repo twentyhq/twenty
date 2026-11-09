@@ -28,8 +28,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       | FlatFieldMetadata<FieldMetadataType.RELATION>
       | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
     fieldKey: string,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    fieldValue: any,
+    fieldValue: unknown,
     accumulator: GraphqlQuerySelectedFieldsResult,
     isFromOneToManyRelation?: boolean,
   ): void {

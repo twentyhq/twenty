@@ -14,6 +14,7 @@ const buildFlatNavigationMenuItem = (
     universalIdentifier: VALID_UUID,
     name: null,
     link: null,
+    nativePageKey: null,
     icon: null,
     color: null,
     position: 0,
@@ -76,9 +77,21 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       ],
     },
     {
+      type: NavigationMenuItemType.NATIVE_PAGE,
+      expectedMessages: [
+        'A valid nativePageKey is required for NATIVE_PAGE type',
+      ],
+    },
+    {
       type: NavigationMenuItemType.WORKFLOW,
       expectedMessages: [
         'A valid workflowUniversalIdentifier is required for WORKFLOW type',
+      ],
+    },
+    {
+      type: NavigationMenuItemType.AGENT,
+      expectedMessages: [
+        'A valid agentUniversalIdentifier is required for AGENT type',
       ],
     },
   ])(
@@ -125,16 +138,16 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
     },
     {
+      type: NavigationMenuItemType.NATIVE_PAGE,
+      overrides: { nativePageKey: 'workflows' as const },
+    },
+    {
       type: NavigationMenuItemType.WORKFLOW,
       overrides: { workflowUniversalIdentifier: VALID_UUID },
     },
     {
       type: NavigationMenuItemType.AGENT,
       overrides: { agentUniversalIdentifier: VALID_UUID },
-    },
-    {
-      type: NavigationMenuItemType.AGENT,
-      overrides: { agentUniversalIdentifier: null },
     },
   ])(
     'should not report any error when $type type properties are valid',
@@ -149,6 +162,20 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       expect(errors).toEqual([]);
     },
   );
+
+  it('should report an error when the native page key is unknown', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.NATIVE_PAGE,
+        nativePageKey:
+          'settings' as UniversalFlatNavigationMenuItem['nativePageKey'],
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A valid nativePageKey is required for NATIVE_PAGE type',
+    ]);
+  });
 
   it('should return an error when type is unknown', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
@@ -201,19 +228,6 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
 
     expect(errors.map(({ message }) => message)).toEqual([
       'A valid viewUniversalIdentifier is required for VIEW type',
-    ]);
-  });
-
-  it('should report an error when an AGENT item points at an invalid agent universal identifier', () => {
-    const errors = validateNavigationMenuItemTypeRequiredProperties({
-      flatNavigationMenuItem: buildFlatNavigationMenuItem({
-        type: NavigationMenuItemType.AGENT,
-        agentUniversalIdentifier: 'not-a-uuid',
-      }),
-    });
-
-    expect(errors.map(({ message }) => message)).toEqual([
-      'agentUniversalIdentifier must be a valid UUID for AGENT type',
     ]);
   });
 });

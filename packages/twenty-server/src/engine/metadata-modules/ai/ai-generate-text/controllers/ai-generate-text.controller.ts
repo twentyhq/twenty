@@ -1,10 +1,18 @@
-import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Header,
+  Post,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 
 import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { AI_GENERATE_TEXT_DEPRECATION_HEADER_VALUE } from 'src/engine/metadata-modules/ai/ai-generate-text/constants/ai-generate-text-deprecation-header-value.constant';
 import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -13,8 +21,6 @@ import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import {
   AiException,
   AiExceptionCode,
@@ -24,26 +30,31 @@ import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(`${ApiPath.Rest}/ai`)
 @UseGuards(
   JwtAuthGuard,
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [PermissionFlagType.AI],
   }),
 )
 @UseFilters(
@@ -58,10 +69,12 @@ export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
+  // deprecated: use the `generate` GraphQL mutation, or ai.generate in a logic function
   @Post('generate-text')
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI))
+  @Header('Deprecation', AI_GENERATE_TEXT_DEPRECATION_HEADER_VALUE)
   async handleGenerateText(
     @Body() body: GenerateTextInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -85,13 +98,25 @@ export class AiGenerateTextController {
     });
 
     const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
+    const aiDataPolicy =
+      await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+        workspace,
+      );
 
-    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
+    const isContentRecordingAllowed =
+      await this.workspaceAiDataPolicyService.isContentRecordingAllowed(
+        workspace,
+      );
+
+    this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+      modelId: resolvedModelId,
+      aiDataPolicy,
+    });
 
     const registeredModel =
       await this.aiModelRegistryService.resolveModelForAgent(
         { modelId: resolvedModelId },
-        workspace,
+        { ...workspace, effectiveAiDataPolicy: aiDataPolicy },
       );
 
     let result: Awaited<ReturnType<typeof generateText>> | undefined;
@@ -105,6 +130,7 @@ export class AiGenerateTextController {
           prompt: body.userPrompt,
           ...buildAiTelemetry({
             functionId: 'ai-generate-text',
+            isContentRecordingAllowed,
             workspaceId: workspace.id,
             userWorkspaceId,
           }),
@@ -122,11 +148,7 @@ export class AiGenerateTextController {
       if (result) {
         void this.aiBillingService.calculateAndBillUsage({
           modelId: registeredModel.modelId,
-          billingInput: {
-            usage: result.usage,
-            cacheCreationTokens:
-              result.usage.inputTokenDetails?.cacheWriteTokens ?? 0,
-          },
+          billingInput: { usage: result.usage },
           workspaceId: workspace.id,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           spenders: usageSpenders,

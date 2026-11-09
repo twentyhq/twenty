@@ -1,3 +1,5 @@
+import { PageLayoutType } from 'twenty-shared/types';
+import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import {
   Lambda,
   type State,
@@ -176,6 +178,24 @@ describe('LambdaDriver', () => {
       expect(functionNames[1]).toBe('workspace-builder');
     },
   );
+
+  it('rejects oversized browser requests before provisioning or invoking Lambda', async () => {
+    await expect(
+      driver.transpile({
+        targetRuntime: 'browser',
+        workspaceId: 'workspace',
+        typeReferences: 'x'.repeat(FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES),
+        manifest: { checksum: 'a'.repeat(64), exports: {} },
+        input: {
+          componentId: 'component',
+          name: 'Component',
+          pageLayoutType: PageLayoutType.DASHBOARD,
+          source: 'export const Component = () => <div />;',
+        },
+      }),
+    ).rejects.toThrow('request exceeds the 6 MiB limit');
+    expect(commands).toEqual([]);
+  });
 
   it('reactivates an idle builder before sending the build exactly once', async () => {
     await expect(driver.buildDependencies(REQUEST)).resolves.toEqual(RESULT);

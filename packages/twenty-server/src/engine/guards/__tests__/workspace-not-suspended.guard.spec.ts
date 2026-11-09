@@ -1,7 +1,7 @@
-import { type ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { buildExecutionContextMock } from 'test/utils/build-execution-context-mock.util';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import {
@@ -42,12 +42,10 @@ const buildContext = ({
     getInfo: () => ({ operation: { operation } }),
   } as any);
 
-  const context = {
-    getType: () => type,
-    getHandler: () => jest.fn(),
-    getClass: () => jest.fn(),
-    switchToHttp: () => ({ getRequest: () => ({ workspace }) }),
-  } as unknown as ExecutionContext;
+  const context = buildExecutionContextMock({
+    type,
+    request: { workspace },
+  });
 
   return { guard: new WorkspaceNotSuspendedGuard(reflector), context };
 };

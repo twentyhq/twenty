@@ -1,7 +1,5 @@
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { useTheme } from 'twenty-ui/theme';
 
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
@@ -33,11 +31,12 @@ import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMeta
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 const getCoreAgentItemLink = (agent: CoreAgent) => getCoreAgentLink(agent.id);
 
 export const AgentCoreIndexPage = () => {
-  const theme = useTheme();
+  const { t } = useLingui();
 
   const tableId =
     useWorkspaceSurfaceScopedComponentInstanceId(CORE_AGENTS_TABLE_ID);
@@ -72,7 +71,7 @@ export const AgentCoreIndexPage = () => {
   return (
     <CoreObjectIndexPageLayout
       labelPlural={t`Agents`}
-      icon={<CoreAgentIcon size={theme.icon.size.md} />}
+      icon={<CoreAgentIcon size={16} />}
       numberOfSelectedRecords={selectedRowCount}
       actionButton={
         <>

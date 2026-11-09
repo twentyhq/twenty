@@ -1,5 +1,5 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
@@ -53,6 +53,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
       if (
         rowSource.type === NavigationMenuItemType.LINK ||
         rowSource.type === NavigationMenuItemType.PAGE_LAYOUT ||
+        rowSource.type === NavigationMenuItemType.NATIVE_PAGE ||
         isAutomationNavigationMenuItemType(rowSource.type)
       ) {
         acc.push(rowSource);
@@ -75,10 +76,13 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
       }
 
       if (
-        getObjectPermissionsForObject(
-          objectPermissionsByObjectMetadataId,
-          objectMetadataItem.id,
-        ).canReadObjectRecords
+        canReachSomeRecords({
+          objectRecordsPermissions: getObjectPermissionsForObject(
+            objectPermissionsByObjectMetadataId,
+            objectMetadataItem.id,
+          ),
+          operationType: 'read',
+        })
       ) {
         acc.push(rowSource);
       }

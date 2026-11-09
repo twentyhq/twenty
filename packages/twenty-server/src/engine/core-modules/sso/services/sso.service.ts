@@ -8,7 +8,7 @@ import { custom, Issuer } from 'openid-client';
 import { isDefined } from 'twenty-shared/utils';
 import { QueryFailedError, Repository } from 'typeorm';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import {
   WorkspaceSsoIdentityProviderEntity,
@@ -112,12 +112,12 @@ export class SsoService {
       };
     } catch (err) {
       if (err instanceof SsoException) {
-        return err;
+        throw err;
       }
 
       this.exceptionHandlerService.captureExceptions([err]);
 
-      return new SsoException(
+      throw new SsoException(
         'Unknown SSO configuration error',
         SsoExceptionCode.UNKNOWN_SSO_CONFIGURATION_ERROR,
       );
@@ -278,7 +278,7 @@ export class SsoService {
     if (!identityProvider) {
       throw new SsoException(
         'Identity Provider not found',
-        SsoExceptionCode.USER_NOT_FOUND,
+        SsoExceptionCode.IDENTITY_PROVIDER_NOT_FOUND,
       );
     }
 

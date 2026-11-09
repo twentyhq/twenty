@@ -1,25 +1,40 @@
 import { getAiModelPinOptions } from '@/ai/utils/getAiModelPinOptions';
 
-const aiModels = [
-  { modelId: 'openai/luna', label: 'GPT-6 Luna' },
-  { modelId: 'openai/sol', label: 'GPT-6.1 Sol' },
-];
-
 describe('getAiModelPinOptions', () => {
-  it('lists only available models when nothing is pinned', () => {
-    expect(
-      getAiModelPinOptions({ aiModels, keepModelId: '' }).map(
-        (option) => option.label,
-      ),
-    ).toEqual(['GPT-6 Luna', 'GPT-6.1 Sol']);
+  it('keeps the current deprecated model and excludes other deprecated models and effort variants', () => {
+    const options = getAiModelPinOptions({
+      aiModels: [
+        { modelId: 'story/current', label: 'Current', isDeprecated: true },
+        { modelId: 'story/older', label: 'Older', isDeprecated: true },
+        { modelId: 'story/available', label: 'Available' },
+        {
+          modelId: 'story/available@high',
+          label: 'Available High',
+          effort: 'high',
+        },
+      ],
+      keepModelId: 'story/current',
+    });
+
+    expect(options.map(({ value }) => value)).toEqual([
+      'story/available',
+      'story/current',
+    ]);
+    expect(options.find(({ value }) => value === 'story/current')?.label).toBe(
+      'Current (deprecated)',
+    );
   });
 
-  it('keeps a pinned model that is no longer available', () => {
-    expect(
-      getAiModelPinOptions({ aiModels, keepModelId: 'openai/retired' }),
-    ).toContainEqual({
-      value: 'openai/retired',
-      label: 'openai/retired (unavailable)',
+  it('preserves a missing current model as an unavailable choice', () => {
+    const options = getAiModelPinOptions({
+      aiModels: [{ modelId: 'story/available', label: 'Available' }],
+      keepModelId: 'story/retired',
+    });
+
+    expect(options).toContainEqual({
+      value: 'story/retired',
+      label: 'story/retired (unavailable)',
+      disabled: true,
     });
   });
 });

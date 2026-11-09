@@ -3,6 +3,7 @@ import { type ManifestEntityKey } from '@/app/source/extract-define-entity';
 
 export const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   application: 'application',
+  frontComponent: 'frontComponents',
   object: 'objects',
   field: 'fields',
   index: 'indexes',
@@ -17,5 +18,6 @@ export const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   workflow: 'workflows',
   skill: 'skills',
   agent: 'agents',
+  validationRule: 'validationRules',
   relatedRecordPath: 'relatedRecordPaths',
 };

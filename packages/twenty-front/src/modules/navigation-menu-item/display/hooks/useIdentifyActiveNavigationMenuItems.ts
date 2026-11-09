@@ -11,6 +11,7 @@ import { getAutomationNavigationMenuItemComputedLink } from '@/navigation-menu-i
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { isLinkNavigationMenuItemActive } from '@/navigation-menu-item/display/link/utils/isLinkNavigationMenuItemActive';
+import { isNativePageNavigationMenuItemActive } from '@/navigation-menu-item/display/native-page/utils/isNativePageNavigationMenuItemActive';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -104,7 +105,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         }
       }
 
-      const matchingLinkOrAutomationNavigationMenuItemIds = navigationMenuItems
+      const matchingPathNavigationMenuItemIds = navigationMenuItems
         .filter(
           (item) =>
             (item.type === NavigationMenuItemType.LINK &&
@@ -117,6 +118,28 @@ export const useIdentifyActiveNavigationMenuItems = (): {
                 currentPath),
         )
         .map((item) => item.id);
+
+      const matchingNativePageNavigationMenuItemIds = navigationMenuItems
+        .filter(
+          (item) =>
+            item.type === NavigationMenuItemType.NATIVE_PAGE &&
+            isNativePageNavigationMenuItemActive({
+              item,
+              pathname: currentPath,
+            }),
+        )
+        .map((item) => item.id);
+
+      // Native pages don't reset the context store's view id, so a view match would win on them.
+      if (matchingNativePageNavigationMenuItemIds.length > 0) {
+        return {
+          activeNavigationMenuItemIds: [
+            ...matchingNativePageNavigationMenuItemIds,
+            ...matchingPathNavigationMenuItemIds,
+          ],
+          objectMetadataIdForOpenedSection: null,
+        };
+      }
 
       if (isOnRecordShowPage) {
         const matchingRecordNavigationMenuItemIds = navigationMenuItems
@@ -150,7 +173,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
 
         const activeNavigationMenuItemIds = [
           ...matchingRecordNavigationMenuItemIds,
-          ...matchingLinkOrAutomationNavigationMenuItemIds,
+          ...matchingPathNavigationMenuItemIds,
           ...matchingObjectNavigationMenuItemIds,
         ];
 
@@ -179,10 +202,9 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         };
       }
 
-      if (matchingLinkOrAutomationNavigationMenuItemIds.length > 0) {
+      if (matchingPathNavigationMenuItemIds.length > 0) {
         return {
-          activeNavigationMenuItemIds:
-            matchingLinkOrAutomationNavigationMenuItemIds,
+          activeNavigationMenuItemIds: matchingPathNavigationMenuItemIds,
           objectMetadataIdForOpenedSection: null,
         };
       }
@@ -191,13 +213,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         .filter(
           (item) =>
             item.type === NavigationMenuItemType.OBJECT &&
-            (item.targetObjectMetadataId === currentObjectMetadataItem?.id ||
-              getNavigationMenuItemComputedLink({
-                item,
-                objectMetadataItems,
-                views,
-                lastVisitedViewPerObjectMetadataItem,
-              }) === currentPathWithSearch),
+            item.targetObjectMetadataId === currentObjectMetadataItem?.id,
         )
         .map((item) => item.id);
 

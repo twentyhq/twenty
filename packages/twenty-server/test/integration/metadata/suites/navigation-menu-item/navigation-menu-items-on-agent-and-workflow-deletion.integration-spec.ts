@@ -121,7 +121,7 @@ describe('Navigation menu items on agent and workflow deletion', () => {
     return deletedNavigationMenuItemIds;
   };
 
-  it('should remove an AGENT navigation menu item and publish its deletion once its agent is deleted, keeping the Agents page item', async () => {
+  it('should remove an AGENT navigation menu item and publish its deletion once its agent is deleted', async () => {
     const {
       data: { createOneAgent: agent },
     } = await createOneAgent({
@@ -144,15 +144,7 @@ describe('Navigation menu items on agent and workflow deletion', () => {
       gqlFields: 'id',
     });
 
-    const {
-      data: { createNavigationMenuItem: agentsPageItem },
-    } = await createNavigationMenuItem({
-      expectToFail: false,
-      input: { type: NavigationMenuItemType.AGENT },
-      gqlFields: 'id',
-    });
-
-    navigationMenuItemIdsToCleanUp = [agentItem.id, agentsPageItem.id];
+    navigationMenuItemIdsToCleanUp = [agentItem.id];
 
     const publishedDeletionIds =
       await listNavigationMenuItemDeletionsPublishedDuring(() =>
@@ -169,8 +161,8 @@ describe('Navigation menu items on agent and workflow deletion', () => {
       ),
       publishedDeletionIds,
     }).toEqual({
-      apiItemIds: [agentsPageItem.id],
-      databaseRowIds: [agentsPageItem.id],
+      apiItemIds: [],
+      databaseRowIds: [],
       publishedDeletionIds: [agentItem.id],
     });
   });

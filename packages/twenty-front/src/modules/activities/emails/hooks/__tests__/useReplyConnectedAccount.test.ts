@@ -1,4 +1,3 @@
-import { useQuery } from '@apollo/client/react';
 import { renderHook } from '@testing-library/react';
 
 import { useReplyConnectedAccount } from '@/activities/emails/hooks/useReplyConnectedAccount';
@@ -8,11 +7,11 @@ import {
 } from '~/generated-metadata/graphql';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-const mockUseQuery = useQuery as unknown as jest.Mock;
+const mockUseQuery = jest.fn();
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
-  useQuery: jest.fn(),
+  useQuery: (query: unknown) => mockUseQuery(query),
 }));
 
 const stubQueries = (
@@ -63,7 +62,7 @@ describe('useReplyConnectedAccount', () => {
       useReplyConnectedAccount('channel-imap'),
     );
 
-    expect(result.current).toEqual({
+    expect(result.current).toMatchObject({
       connectedAccountId: 'account-imap',
       connectedAccountHandle: 'imap@example.com',
       connectedAccountProvider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,

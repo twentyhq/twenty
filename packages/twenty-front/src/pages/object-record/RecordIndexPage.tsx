@@ -1,7 +1,6 @@
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
@@ -11,9 +10,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isUndefined } from '@sniptt/guards';
-import { Navigate, useParams } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import { useParams } from 'react-router-dom';
 
 export const RecordIndexPage = () => {
   const workspaceSurface = useWorkspaceSurface();
@@ -32,10 +29,6 @@ export const RecordIndexPage = () => {
   const routeObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
-
-  if (objectNamePlural === CoreObjectNamePlural.Workflow) {
-    return <Navigate replace to={getAppPath(AppPath.WorkflowCoreIndexPage)} />;
-  }
 
   if (
     workspaceSurface.type === 'side-panel' &&

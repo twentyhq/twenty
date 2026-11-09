@@ -7,7 +7,12 @@ import {
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 
 export const computeDashboardIdentifierMaps = async (
-  deps: Pick<DashboardToolDependencies, 'flatEntityMapsCacheService'>,
+  deps: {
+    flatEntityMapsCacheService: Pick<
+      DashboardToolDependencies['flatEntityMapsCacheService'],
+      'getOrRecomputeManyOrAllFlatEntityMaps'
+    >;
+  },
   context: DashboardToolContext,
 ): Promise<DashboardIdentifierMaps> => {
   const { flatObjectMetadataMaps, flatFieldMetadataMaps } =

@@ -12,10 +12,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 import {
-  AGENT_AVATAR_COLORS,
-  AGENT_AVATAR_SHAPES,
-  type AgentAvatarColor,
-  type AgentAvatarShape,
+  AI_CHAT_ASSISTANT_AVATAR_COLORS,
+  AI_CHAT_ASSISTANT_AVATAR_SHAPES,
+  type AiChatAssistantAvatarColor,
+  type AiChatAssistantAvatarShape,
 } from 'twenty-shared/ai';
 import { type AgentTrigger } from 'twenty-shared/application';
 import GraphQLJSON from 'graphql-type-json';
@@ -44,15 +44,15 @@ export class CreateAgentInput {
   @Field({ nullable: true })
   icon?: string;
 
-  @IsIn(AGENT_AVATAR_COLORS)
+  @IsIn(AI_CHAT_ASSISTANT_AVATAR_COLORS)
   @IsOptional()
   @Field(() => String, { nullable: true })
-  avatarColor?: AgentAvatarColor | null;
+  avatarColor?: AiChatAssistantAvatarColor | null;
 
-  @IsIn(AGENT_AVATAR_SHAPES)
+  @IsIn(AI_CHAT_ASSISTANT_AVATAR_SHAPES)
   @IsOptional()
   @Field(() => String, { nullable: true })
-  avatarShape?: AgentAvatarShape | null;
+  avatarShape?: AiChatAssistantAvatarShape | null;
 
   @IsString()
   @IsOptional()

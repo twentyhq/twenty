@@ -4,6 +4,7 @@ import {
   TEAMS_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER,
   TEAMS_TENANT_RELEASE_UNIVERSAL_IDENTIFIER,
 } from 'src/features/chat/constants/universal-identifiers';
+import { TEAMS_OAUTH_CONFIG } from 'src/features/transcripts/constants/teams-oauth-config';
 import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
 import { TEAMS_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 
@@ -12,31 +13,12 @@ export default defineConnectionProvider({
   name: TEAMS_PROVIDER_NAME,
   displayName: 'Microsoft Teams',
   type: 'oauth',
+  scope: 'WORKSPACE',
   onConnectLogicFunction: {
     universalIdentifier: TEAMS_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER,
   },
   onDisconnectLogicFunction: {
     universalIdentifier: TEAMS_TENANT_RELEASE_UNIVERSAL_IDENTIFIER,
   },
-  oauth: {
-    authorizationEndpoint:
-      'https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize',
-    tokenEndpoint:
-      'https://login.microsoftonline.com/organizations/oauth2/v2.0/token',
-    scopes: [
-      'openid',
-      'profile',
-      'email',
-      'offline_access',
-      'https://graph.microsoft.com/User.Read',
-      'https://graph.microsoft.com/Calendars.ReadBasic',
-      'https://graph.microsoft.com/OnlineMeetings.Read',
-      'https://graph.microsoft.com/OnlineMeetingTranscript.Read.All',
-    ],
-    clientIdVariable: 'MICROSOFT_CLIENT_ID',
-    clientSecretVariable: 'MICROSOFT_CLIENT_SECRET',
-    authorizationParams: { prompt: 'select_account' },
-    tokenRequestContentType: 'form-urlencoded',
-    usePkce: true,
-  },
+  oauth: TEAMS_OAUTH_CONFIG,
 });

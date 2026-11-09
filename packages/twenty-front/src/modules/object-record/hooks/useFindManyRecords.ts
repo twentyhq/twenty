@@ -1,7 +1,7 @@
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -88,7 +88,10 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = objectPermissions.canReadObjectRecords;
+  const hasReadPermission = canReachSomeRecords({
+    objectRecordsPermissions: objectPermissions,
+    operationType: 'read',
+  });
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {

@@ -25,7 +25,7 @@ import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -111,7 +111,7 @@ export const useCalendarEventComposer = ({
       // Fallback for records the junction can't target: the query is skipped but needs a resolvable object.
       objectNameSingular:
         contextObjectMetadataItem?.nameSingular ??
-        CoreObjectNameSingular.Person,
+        StandardObjectNameSingular.Person,
       objectRecordId: initialValues?.contextRecord.recordId,
       skip: !isDefined(contextObjectMetadataItem),
     });

@@ -7,9 +7,9 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Ejecutar la CLI
 
-La CLI `twenty` se conecta a espacios de trabajo de Twenty desde tu terminal. Úsala para inspeccionar metadatos, leer registros, enviar solicitudes de API y crear, sincronizar y depurar aplicaciones. Necesita **Node.js 24.5+ o 26.5+**.
+La CLI `twenty` se conecta a espacios de trabajo de Twenty desde tu terminal. Úsala para inspeccionar metadatos, leer registros, enviar solicitudes de API y crear, sincronizar y depurar aplicaciones. La propia CLI requiere **Node.js 24.5+**. El desarrollo de aplicaciones también necesita una versión de Node compatible con el SDK instalado; consulta [Inicio rápido](/es/developers/extend/apps/getting-started/quick-start#before-you-start).
 
-Ejecuta cualquier comando mediante `npx`, sin instalar nada:
+Ejecuta cualquier comando mediante `npx`, sin una instalación global:
 
 ```bash filename="Terminal"
 npx twenty@latest --version
@@ -22,7 +22,7 @@ npm install -g twenty
 twenty --version
 ```
 
-Los ejemplos siguientes usan `twenty`. Anteponles `npx twenty@latest` si no la instalaste globalmente. Ejecuta `twenty commands` para ver la lista completa de comandos y `twenty \<command> --help` para ver las opciones de un comando.
+Los ejemplos siguientes usan `twenty`. Sustituye `twenty` por `npx twenty@latest` si no lo instalaste globalmente. Ejecuta `twenty commands` para ver la lista completa de comandos y `twenty \<command> --help` para ver las opciones de un comando.
 
 | Comando         | Qué hace                                                                                        |
 | --------------- | ----------------------------------------------------------------------------------------------- |
@@ -65,6 +65,14 @@ printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acm
 
 También puedes configurar `TWENTY_API_URL` y `TWENTY_API_KEY` para una sola ejecución sin guardar nada. Las conexiones guardadas se almacenan en `~/.twenty/config.json`.
 
+Los comandos seleccionan un espacio de trabajo en este orden:
+
+1. Un `--remote \<name>` explícito, que anula las variables de entorno de destino.
+2. `TWENTY_REMOTE`, o el par `TWENTY_API_URL` y `TWENTY_API_KEY`. No combines estos dos métodos.
+3. El remoto predeterminado guardado.
+
+`auth login --name \<name>` guarda una conexión, pero mantiene un valor predeterminado existente. Añade `--use`, o ejecuta `twenty remote use \<name>`, para cambiar el valor predeterminado.
+
 ## Explorar tus datos
 
 ```bash filename="Terminal"
@@ -104,18 +112,18 @@ npx twenty@latest app dev
 
 Otros comandos de la aplicación:
 
-| Comando                       | Qué hace                                                                         |
-| ----------------------------- | -------------------------------------------------------------------------------- |
-| `app add`                     | Genera la estructura de un objeto, campo, función de lógica u otra entidad       |
-| `app build` / `app typecheck` | Compila o verifica los tipos de la aplicación localmente                         |
-| `app plan`                    | Obtén una vista previa de los cambios de metadatos que realizaría una aplicación |
-| `app apply`                   | Compila, carga y sincroniza la aplicación                                        |
-| `app generate-client`         | Regenera el cliente de API tipado sin sincronizar                                |
-| `app pull`                    | Restaurar metadatos, traducciones y dependencias almacenadas                     |
-| `app translations extract`    | Extraer cadenas traducibles en catálogos de `locales/`                           |
-| `app publish`                 | Publica la aplicación en npm o en un registro privado de Twenty                  |
-| `app install`                 | Instala un paquete de aplicación ya registrado en el espacio de trabajo          |
-| `app uninstall`               | Elimina la aplicación y todo lo que posee del espacio de trabajo                 |
+| Comando                       | Qué hace                                                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| `app add`                     | Genera la estructura de un objeto, campo, función de lógica u otra entidad                        |
+| `app build` / `app typecheck` | Compila o verifica los tipos de la aplicación localmente                                          |
+| `app plan`                    | Obtén una vista previa de los cambios de metadatos que realizaría una aplicación                  |
+| `app apply`                   | Compila, carga y sincroniza la aplicación                                                         |
+| `app generate-client`         | Regenera el cliente de API tipado sin sincronizar                                                 |
+| `app pull`                    | Restaura los metadatos, las traducciones, las dependencias y la fuente de componentes compatibles |
+| `app translations extract`    | Extraer cadenas traducibles en catálogos de `locales/`                                            |
+| `app publish`                 | Publica la aplicación en npm o en un registro privado de Twenty                                   |
+| `app install`                 | Instala un paquete de aplicación ya registrado en el espacio de trabajo                           |
+| `app uninstall`               | Elimina la aplicación y todo lo que posee del espacio de trabajo                                  |
 
 Las definiciones que faltan en tu código fuente se eliminan del espacio de trabajo de forma predeterminada. Pasa `--no-prune` para conservarlos. La aplicación personalizada del espacio de trabajo los conserva a menos que pases `--prune`. Eliminar objetos o campos también elimina sus datos, por lo que requiere confirmación. Consulta [Sincronización y recuperación](/es/developers/extend/apps/operations/sync-and-recovery) para obtener más detalles.
 

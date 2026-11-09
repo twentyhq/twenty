@@ -7,6 +7,7 @@ import {
 import {
   isDefined,
   isSafeInternalPath,
+  isNativePageKey,
   isValidUrl,
   isValidUuid,
 } from 'twenty-shared/utils';
@@ -54,6 +55,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
     agentChatChannelUniversalIdentifier,
+    nativePageKey,
     workflowUniversalIdentifier,
     agentUniversalIdentifier,
   } = flatNavigationMenuItem;
@@ -130,6 +132,16 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
         userFriendlyMessage: msg`A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type`,
       });
     }
+    case NavigationMenuItemType.NATIVE_PAGE: {
+      return isNativePageKey(nativePageKey)
+        ? []
+        : [
+            buildInvalidInputError(
+              t`A valid nativePageKey is required for NATIVE_PAGE type`,
+              msg`A valid nativePageKey is required for NATIVE_PAGE type`,
+            ),
+          ];
+    }
     case NavigationMenuItemType.WORKFLOW: {
       return validateUuidProperty({
         value: workflowUniversalIdentifier,
@@ -138,13 +150,11 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       });
     }
     case NavigationMenuItemType.AGENT: {
-      return isDefined(agentUniversalIdentifier)
-        ? validateUuidProperty({
-            value: agentUniversalIdentifier,
-            message: t`agentUniversalIdentifier must be a valid UUID for AGENT type`,
-            userFriendlyMessage: msg`agentUniversalIdentifier must be a valid UUID for AGENT type`,
-          })
-        : [];
+      return validateUuidProperty({
+        value: agentUniversalIdentifier,
+        message: t`A valid agentUniversalIdentifier is required for AGENT type`,
+        userFriendlyMessage: msg`A valid agentUniversalIdentifier is required for AGENT type`,
+      });
     }
     default: {
       // oxlint-disable-next-line unused-imports/no-unused-vars

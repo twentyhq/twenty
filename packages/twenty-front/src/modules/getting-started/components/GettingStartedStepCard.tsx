@@ -1,5 +1,7 @@
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
+import { GettingStartedStepDoneButton } from '@/getting-started/components/GettingStartedStepDoneButton';
+import { GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneActions';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneDescriptions';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,7 +18,7 @@ const StyledCard = styled.section<{ isCompleted: boolean }>`
   border: 1px solid
     ${({ isCompleted }) =>
       isCompleted
-        ? themeCssVariables.color.green5
+        ? themeCssVariables.color.green7
         : themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.lg};
   box-sizing: border-box;
@@ -34,12 +36,12 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
   align-items: flex-start;
   background: ${({ isCompleted }) =>
     isCompleted
-      ? themeCssVariables.color.green2
+      ? themeCssVariables.tag.background.green
       : themeCssVariables.background.secondary};
   border-bottom: 1px solid
     ${({ isCompleted }) =>
       isCompleted
-        ? themeCssVariables.color.green3
+        ? themeCssVariables.color.green6
         : themeCssVariables.border.color.light};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -53,6 +55,11 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+  }
+
+  &:last-child {
+    border-bottom: 0;
+    padding-bottom: ${themeCssVariables.spacing[4]};
   }
 `;
 
@@ -83,6 +90,14 @@ const StyledDoneIcon = styled.span`
       stroke-dashoffset: 0;
     }
   }
+`;
+
+const StyledHeadingContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
 `;
 
 const StyledTitle = styled.div`
@@ -120,6 +135,12 @@ export const GettingStartedStepCard = ({
   const DoneDescription = isCompleted
     ? GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS[stepDefinition.actionKey]
     : undefined;
+  const description = isCompleted
+    ? stepDefinition.doneDescription
+    : stepDefinition.description;
+  const DoneAction = isCompleted
+    ? GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS[stepDefinition.actionKey]
+    : undefined;
 
   return (
     <StyledCard
@@ -141,26 +162,38 @@ export const GettingStartedStepCard = ({
             }
           />
         )}
-        <StyledTitle>
-          <Heading size="lg">
-            <GettingStartedRollingText
-              text={
-                isCompleted ? stepDefinition.doneTitle : stepDefinition.title
-              }
-            />
-          </Heading>
-          <StyledDescription>
-            {isDefined(DoneDescription) ? (
-              <DoneDescription description={stepDefinition.description} />
-            ) : (
-              stepDefinition.description
-            )}
-          </StyledDescription>
-        </StyledTitle>
+        <StyledHeadingContent>
+          <StyledTitle>
+            <Heading size="lg">
+              <GettingStartedRollingText
+                text={
+                  isCompleted ? stepDefinition.doneTitle : stepDefinition.title
+                }
+              />
+            </Heading>
+            <StyledDescription>
+              {isDefined(DoneDescription) ? (
+                <DoneDescription description={description} />
+              ) : (
+                description
+              )}
+            </StyledDescription>
+          </StyledTitle>
+          {isCompleted && (
+            <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
+          )}
+        </StyledHeadingContent>
       </StyledHeading>
-      <StyledBody>
-        <GettingStartedStepAction stepDefinition={stepDefinition} />
-      </StyledBody>
+      {!isCompleted && (
+        <StyledBody>
+          <GettingStartedStepAction stepDefinition={stepDefinition} />
+        </StyledBody>
+      )}
+      {isDefined(DoneAction) && (
+        <StyledBody>
+          <DoneAction />
+        </StyledBody>
+      )}
     </StyledCard>
   );
 };

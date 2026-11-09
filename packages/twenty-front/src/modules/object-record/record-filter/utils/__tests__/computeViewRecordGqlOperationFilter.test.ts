@@ -1,7 +1,7 @@
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import {
+  RecordFilterOperand,
   ViewFilterOperand,
   type RecordFilterValueDependencies,
 } from 'twenty-shared/types';

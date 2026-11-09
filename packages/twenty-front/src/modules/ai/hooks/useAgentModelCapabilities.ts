@@ -1,5 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ModelConfiguration } from 'twenty-shared/ai';
+import {
+  type ModelConfiguration,
+  parseAiModelVariantId,
+} from 'twenty-shared/ai';
 import { IconBrandX, IconWorld } from 'twenty-ui/icon';
 
 import { useResolvedAiModel } from '@/ai/hooks/useResolvedAiModel';
@@ -16,7 +19,8 @@ export const useAgentModelCapabilities = ({
   disabled?: boolean;
 }) => {
   const { t } = useLingui();
-  const selectedModel = useResolvedAiModel(selectedModelId);
+  const { modelId: baseModelId } = parseAiModelVariantId(selectedModelId);
+  const selectedModel = useResolvedAiModel(baseModelId);
   const nativeCapabilities = selectedModel?.nativeCapabilities;
 
   const capabilities = [
@@ -26,7 +30,7 @@ export const useAgentModelCapabilities = ({
             key: 'webSearch' as const,
             label: t`Web Search`,
             Icon: IconWorld,
-            enabled: modelConfiguration.webSearch?.enabled || false,
+            enabled: modelConfiguration.webSearch?.enabled ?? false,
           },
         ]
       : []),
@@ -36,7 +40,7 @@ export const useAgentModelCapabilities = ({
             key: 'twitterSearch' as const,
             label: t`Twitter/X Search`,
             Icon: IconBrandX,
-            enabled: modelConfiguration.twitterSearch?.enabled || false,
+            enabled: modelConfiguration.twitterSearch?.enabled ?? false,
           },
         ]
       : []),
@@ -56,8 +60,8 @@ export const useAgentModelCapabilities = ({
     onConfigurationChange({
       ...modelConfiguration,
       [capability]: {
+        ...modelConfiguration[capability],
         enabled,
-        configuration: modelConfiguration[capability]?.configuration || {},
       },
     });
   };

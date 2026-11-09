@@ -63,7 +63,6 @@ describe('buildCreateNavigationMenuItemInput', () => {
       NavigationMenuItemType.AGENT,
       { agentId: 'agent-id', name: 'Helper' },
     ],
-    ['the agents page', NavigationMenuItemType.AGENT, {}],
   ])('saves %s', (_, type, target) => {
     const input = buildCreateNavigationMenuItemInput(
       {

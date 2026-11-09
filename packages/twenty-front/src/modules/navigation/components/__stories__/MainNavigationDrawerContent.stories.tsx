@@ -52,7 +52,7 @@ const AiNavigationContent = () => {
     initialStore.set(isNavigationDrawerExpandedState.atom, true);
     initialStore.set(currentUserWorkspaceState.atom, {
       permissionFlags: [PermissionFlagType.AI],
-      objectsPermissions: [],
+      objectRecordsPermissions: [],
       isImpersonating: false,
       twoFactorAuthenticationMethodSummary: null,
     });

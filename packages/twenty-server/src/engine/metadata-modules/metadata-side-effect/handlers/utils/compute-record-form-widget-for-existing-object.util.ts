@@ -1,10 +1,10 @@
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-system-form-field-page-layout-widget.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 type RecordFormWidgetFlatFieldMetadata = Pick<
@@ -27,10 +27,29 @@ export const computeRecordFormWidgetForExistingObject = ({
     'universalIdentifier'
   >[];
   recordFormPageLayoutTabUniversalIdentifier: string;
-} & Pick<
-  AllFlatEntityMaps,
-  'flatPageLayoutTabMaps' | 'flatPageLayoutWidgetMaps'
->): UniversalFlatPageLayoutWidget | undefined => {
+  flatPageLayoutTabMaps: {
+    byUniversalIdentifier: Partial<
+      Record<
+        string,
+        Pick<
+          UniversalFlatPageLayoutTab,
+          'isSystemSideEffect' | 'deletedAt' | 'widgetUniversalIdentifiers'
+        >
+      >
+    >;
+  };
+  flatPageLayoutWidgetMaps: {
+    byUniversalIdentifier: Partial<
+      Record<
+        string,
+        Pick<
+          UniversalFlatPageLayoutWidget,
+          'deletedAt' | 'universalConfiguration' | 'position'
+        >
+      >
+    >;
+  };
+}): UniversalFlatPageLayoutWidget | undefined => {
   const recordFormFlatPageLayoutTab =
     flatPageLayoutTabMaps.byUniversalIdentifier[
       recordFormPageLayoutTabUniversalIdentifier
@@ -38,7 +57,7 @@ export const computeRecordFormWidgetForExistingObject = ({
 
   if (
     !isDefined(recordFormFlatPageLayoutTab) ||
-    recordFormFlatPageLayoutTab.isSystemSideEffect !== true ||
+    !recordFormFlatPageLayoutTab.isSystemSideEffect ||
     isDefined(recordFormFlatPageLayoutTab.deletedAt)
   ) {
     return undefined;

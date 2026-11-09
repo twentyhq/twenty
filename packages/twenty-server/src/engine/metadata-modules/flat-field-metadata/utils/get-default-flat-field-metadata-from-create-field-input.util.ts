@@ -85,5 +85,6 @@ export const getDefaultFlatFieldMetadata = ({
     universalSettings: settings ?? null,
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    fieldMetadataOptionUniversalIdentifiers: [],
   } as const satisfies UniversalFlatFieldMetadata;
 };

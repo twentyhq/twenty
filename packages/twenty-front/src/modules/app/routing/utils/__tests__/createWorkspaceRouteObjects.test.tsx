@@ -42,7 +42,8 @@ describe('workspace route objects', () => {
     );
 
     expect(panelRoutes.map(({ path }) => path)).toEqual([
-      AppPath.WorkflowCoreIndexPage,
+      AppPath.WorkflowIndexPage,
+      '/objects/workflows',
       AppPath.WorkflowCoreShowPage,
       AppPath.RecordIndexPage,
       AppPath.RecordShowPage,
@@ -161,5 +162,12 @@ describe('workspace route objects', () => {
         '/workflow/core-workflow-id',
       ),
     ).toBe(true);
+  });
+
+  it('routes the legacy workflows index to a redirect, not the record index', () => {
+    const [match] =
+      matchRoutes(createWorkspaceRouteObjects({}), '/objects/workflows') ?? [];
+
+    expect(match?.route.path).toBe('/objects/workflows');
   });
 });

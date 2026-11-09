@@ -37,6 +37,7 @@ type FrontComponentRendererProps = {
   toolCall?: FrontComponentToolCall;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
+  shouldPreventPageZoom?: boolean;
 };
 
 type ResolvedFrontComponent = NonNullable<
@@ -53,6 +54,7 @@ type FrontComponentRendererContentProps = {
   toolCall?: FrontComponentToolCall;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
+  shouldPreventPageZoom?: boolean;
 };
 
 export const FrontComponentRenderer = ({
@@ -65,6 +67,7 @@ export const FrontComponentRenderer = ({
   toolCall,
   loadingFallback,
   unavailableFallback,
+  shouldPreventPageZoom,
 }: FrontComponentRendererProps) => {
   const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
     variables: { id: frontComponentId },
@@ -95,6 +98,7 @@ export const FrontComponentRenderer = ({
           toolCall={toolCall}
           loadingFallback={loadingFallback}
           unavailableFallback={unavailableFallback}
+          shouldPreventPageZoom={shouldPreventPageZoom}
         />
       )}
     </>
@@ -111,6 +115,7 @@ const FrontComponentRendererContent = ({
   toolCall,
   loadingFallback,
   unavailableFallback,
+  shouldPreventPageZoom,
 }: FrontComponentRendererContentProps) => {
   const colorScheme = useThemeColorScheme();
   const { enqueueToast } = useToast();
@@ -249,7 +254,14 @@ const FrontComponentRendererContent = ({
         !isReadyToRender &&
         loadingFallback}
       {isReadyToRender && (
-        <FrontComponentRendererProvider frontComponentId={frontComponentId}>
+        <FrontComponentRendererProvider
+          frontComponentId={frontComponentId}
+          applicationId={applicationId}
+          applicationName={resolvedApplicationName}
+          applicationGrantedIframeMediaPermissions={
+            frontComponent.applicationGrantedIframeMediaPermissions ?? []
+          }
+        >
           <SharedFrontComponentRenderer
             colorScheme={colorScheme}
             componentUrl={componentUrl}
@@ -269,6 +281,7 @@ const FrontComponentRendererContent = ({
             storageNamespace={storageNamespace}
             onError={handleError}
             loadingFallback={loadingFallback}
+            shouldPreventPageZoom={shouldPreventPageZoom}
           />
         </FrontComponentRendererProvider>
       )}

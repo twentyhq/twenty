@@ -1,4 +1,3 @@
-import { useTheme } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { useAutomationNavigationMenuItemTarget } from '@/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget';
@@ -11,7 +10,6 @@ type NavigationMenuItemAgentIconProps = {
 export const NavigationMenuItemAgentIcon = ({
   navigationMenuItem,
 }: NavigationMenuItemAgentIconProps) => {
-  const theme = useTheme();
   const { agent } = useAutomationNavigationMenuItemTarget(navigationMenuItem);
 
   return (
@@ -19,7 +17,7 @@ export const NavigationMenuItemAgentIcon = ({
       agentId={navigationMenuItem.agentId ?? undefined}
       avatarColor={agent?.avatarColor}
       avatarShape={agent?.avatarShape}
-      size={theme.icon.size.md}
+      size={16}
     />
   );
 };

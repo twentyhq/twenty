@@ -7,9 +7,9 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Esecuzione della CLI
 
-La CLI `twenty` si connette agli spazi di lavoro Twenty dal tuo terminale. Usala per ispezionare i metadati, leggere i record, inviare richieste API e creare, sincronizzare ed eseguire il debug delle app. Richiede **Node.js 24.5+ o 26.5+**.
+La CLI `twenty` si connette agli spazi di lavoro Twenty dal tuo terminale. Usala per ispezionare i metadati, leggere i record, inviare richieste API e creare, sincronizzare ed eseguire il debug delle app. La CLI stessa richiede **Node.js 24.5+**. Lo sviluppo di app richiede anche una versione di Node supportata dall'SDK installato; consulta [Avvio rapido](/it/developers/extend/apps/getting-started/quick-start#before-you-start).
 
-Esegui qualsiasi comando tramite `npx`, senza installare nulla:
+Esegui qualsiasi comando tramite `npx`, senza un'installazione globale:
 
 ```bash filename="Terminal"
 npx twenty@latest --version
@@ -22,7 +22,7 @@ npm install -g twenty
 twenty --version
 ```
 
-Gli esempi seguenti usano `twenty`. Aggiungi il prefisso `npx twenty@latest` se non l'hai installata globalmente. Esegui `twenty commands` per l'elenco completo dei comandi e `twenty \<command> --help` per le opzioni di un comando.
+Gli esempi seguenti usano `twenty`. Sostituisci `twenty` con `npx twenty@latest` se non lo hai installato globalmente. Esegui `twenty commands` per l'elenco completo dei comandi e `twenty \<command> --help` per le opzioni di un comando.
 
 | Comando          | Cosa fa                                                                                 |
 | ---------------- | --------------------------------------------------------------------------------------- |
@@ -64,6 +64,14 @@ printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acm
 ```
 
 Puoi anche impostare `TWENTY_API_URL` e `TWENTY_API_KEY` per una singola esecuzione senza salvare nulla. Le connessioni salvate si trovano in `~/.twenty/config.json`.
+
+I comandi selezionano un workspace in questo ordine:
+
+1. Un elemento esplicito `--remote \<name>`, che sovrascrive le variabili di ambiente di destinazione.
+2. `TWENTY_REMOTE`, oppure la coppia `TWENTY_API_URL` e `TWENTY_API_KEY`. Non combinare questi due metodi.
+3. Il remote predefinito salvato.
+
+`auth login --name \<name>` salva una connessione ma mantiene un valore predefinito esistente. Aggiungi `--use` oppure esegui `twenty remote use \<name>` per modificare il valore predefinito.
 
 ## Esplorazione dei dati
 
@@ -111,7 +119,7 @@ Altri comandi dell'app:
 | `app plan`                    | Visualizza in anteprima le modifiche ai metadati che un'applicazione apporterebbe |
 | `app apply`                   | Compila, carica e sincronizza l'app                                               |
 | `app generate-client`         | Rigenera il client API tipizzato senza sincronizzare                              |
-| `app pull`                    | Ripristina i metadati, le traduzioni e le dipendenze archiviate                   |
+| `app pull`                    | Ripristina metadati, traduzioni, dipendenze e sorgente del componente supportato  |
 | `app translations extract`    | Estrai le stringhe traducibili nei cataloghi in `locales/`                        |
 | `app publish`                 | Pubblica l'app su npm o in un registro privato Twenty                             |
 | `app install`                 | Installa nello spazio di lavoro un pacchetto dell'app già registrato              |

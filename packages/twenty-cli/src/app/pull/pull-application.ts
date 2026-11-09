@@ -1,3 +1,5 @@
+import { FileFolder } from 'twenty-shared/types';
+import { planFrontComponentWrites } from '@/app/pull/plan-front-component-writes';
 import { join } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -5,6 +7,7 @@ import { getToolingErrorContext } from '@/app/get-tooling-error-context';
 import { assertPullPaths } from '@/app/pull/assert-pull-paths';
 import { collectIdentifiers } from '@/app/pull/collect-identifiers';
 import { getOverwrittenLocalChanges } from '@/app/pull/get-overwritten-local-changes';
+import { findLocalCodeStepFiles } from '@/app/pull/find-local-code-step-files';
 import { prepareAppPull } from '@/app/pull/prepare-app-pull';
 import { preparePullEntities } from '@/app/pull/prepare-pull-entities';
 import { preserveNestedPullEntities } from '@/app/pull/preserve-nested-pull-entities';
@@ -66,12 +69,18 @@ export const pullApplication = async (
     const workspaceUniversalIdentifiers = new Set(
       applicationExport.coverage.map((entry) => entry.universalIdentifier),
     );
+    const localCodeStepFilesByWorkflowPath = await findLocalCodeStepFiles({
+      appPath,
+      scannedFiles,
+      baseEntities,
+    });
     const plan = planPullWrites({
       entities,
       baseEntities,
       scannedFiles,
       workspaceUniversalIdentifiers,
       unreconciledUniversalIdentifiers: unreconciledBaseIdentifiers,
+      localCodeStepFilesByWorkflowPath,
     });
     const protectedIdentifiers = new Set<string>();
 
@@ -95,25 +104,51 @@ export const pullApplication = async (
       baseEntities,
       protectedIdentifiers,
       writes: plan.writes,
-      deletions: plan.deletions.filter(
-        (deletion) =>
-          !protectedIdentifiers.has(deletion.universalIdentifier.toLowerCase()),
-      ),
+      deletions: [
+        ...plan.deletions.filter(
+          (deletion) =>
+            !protectedIdentifiers.has(
+              deletion.universalIdentifier.toLowerCase(),
+            ),
+        ),
+        ...plan.codeStepFileDeletions,
+      ],
       scannedFiles,
     });
     const dependencyPlan = await planDependencyWrites({
       appPath,
-      files: applicationExport.files,
+      files: applicationExport.files.filter(
+        (file) => file.folder === FileFolder.Dependencies,
+      ),
       sourceFingerprints: base.sourceFingerprints,
       dependencyFingerprints: base.dependencyFingerprints,
+    });
+    const frontComponentPlan = await planFrontComponentWrites({
+      appPath,
+      manifest,
+      baseManifest,
+      files: applicationExport.files,
+      scannedFiles,
+      protectedIdentifiers,
+      remoteSourceFingerprints: base.remoteSourceFingerprints,
+      sourceFingerprints: base.sourceFingerprints,
+      reservedPaths: new Set(
+        [
+          ...safePlan.writes,
+          ...translationPlan.writes,
+          ...dependencyPlan.writes,
+        ].map((write) => write.relativePath.toLowerCase()),
+      ),
     });
     const writes = [
       ...safePlan.writes,
       ...translationPlan.writes,
       ...dependencyPlan.writes,
+      ...frontComponentPlan.writes,
     ];
     const deletions = [
       ...safePlan.deletions,
+      ...frontComponentPlan.deletions,
       ...translationPlan.deletions.filter(
         (deletion) =>
           isDefined(baseManifest?.translations) &&
@@ -133,6 +168,7 @@ export const pullApplication = async (
         protectedIdentifiers,
       }),
       unreconciledUniversalIdentifiers: [...unreconciledUniversalIdentifiers],
+      remoteSourceFingerprints: frontComponentPlan.fingerprints,
       dependencyFingerprints: {
         ...base.dependencyFingerprints,
         ...dependencyPlan.fingerprints,
@@ -141,6 +177,7 @@ export const pullApplication = async (
         sourceFingerprints: {
           ...base.sourceFingerprints,
           ...dependencyPlan.unchangedSourceFingerprints,
+          ...frontComponentPlan.unchangedSourceFingerprints,
         },
         writes,
         deletions,
@@ -163,6 +200,7 @@ export const pullApplication = async (
       deletions,
       frontComponentSourcePaths,
       baseEntities,
+      localCodeStepFilesByWorkflowPath,
       sourceFingerprints: base.sourceFingerprints,
     });
     const entityLabelByUniversalIdentifier =
@@ -190,7 +228,10 @@ export const pullApplication = async (
         ),
         deletions,
         overwrittenLocalChanges,
-        unchangedCount: plan.unchanged.length + dependencyPlan.unchangedCount,
+        unchangedCount:
+          plan.unchanged.length +
+          dependencyPlan.unchangedCount +
+          frontComponentPlan.unchangedCount,
         localOnlyRelativePaths: plan.localOnlyRelativePaths,
         unreadableRelativePaths: scannedFiles
           .filter((file) => !file.isReadable)

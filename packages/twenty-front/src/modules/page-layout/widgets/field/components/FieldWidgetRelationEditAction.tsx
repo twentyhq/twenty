@@ -19,12 +19,12 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconPencil, IconPlus } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components/input';
 import { RelationType } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type FieldWidgetRelationEditActionProps = {
   fieldDefinition:
@@ -42,6 +42,7 @@ export const FieldWidgetRelationEditAction = ({
   fieldDefinition,
   recordId,
 }: FieldWidgetRelationEditActionProps) => {
+  const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
     (item) =>

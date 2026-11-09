@@ -4,9 +4,9 @@ import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks
 import { useFieldWidgetRelationSeeAllHref } from '@/page-layout/widgets/field/hooks/useFieldWidgetRelationSeeAllHref';
 import { WidgetCardHeaderActionLink } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionLink';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type WidgetActionFieldSeeAllProps = {
   widget: PageLayoutWidget;
@@ -15,6 +15,7 @@ type WidgetActionFieldSeeAllProps = {
 export const WidgetActionFieldSeeAll = ({
   widget,
 }: WidgetActionFieldSeeAllProps) => {
+  const { t } = useLingui();
   const targetRecord = useTargetRecord();
 
   const { fieldDefinition } = useFieldWidgetFieldDefinition(widget);

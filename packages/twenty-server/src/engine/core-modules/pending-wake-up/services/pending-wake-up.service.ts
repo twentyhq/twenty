@@ -169,6 +169,24 @@ export class PendingWakeUpService {
     });
   }
 
+  async updatePayload({
+    workspaceId,
+    wakeUpId,
+    payload,
+  }: {
+    workspaceId: string;
+    wakeUpId: string;
+    payload: object;
+  }): Promise<boolean> {
+    const { affected } = await this.pendingWakeUpRepository.update(
+      workspaceId,
+      { id: wakeUpId },
+      { payload },
+    );
+
+    return (affected ?? 0) > 0;
+  }
+
   async findOldest({
     workspaceId,
     owner: { type, id },

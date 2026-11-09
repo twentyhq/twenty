@@ -92,50 +92,45 @@ export const ObjectFilterDropdownFilterInput = ({
         <ObjectFilterDropdownDateTimeInput />
       </>
     );
-  } else {
-    return (
-      <>
-        <ObjectFilterDropdownInnerSelectOperandDropdown />
-        <DropdownMenuSeparator />
-        {TEXT_FILTER_TYPES.includes(filterType) && (
-          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
-        )}
-        {NUMBER_FILTER_TYPES.includes(filterType) && (
-          <ObjectFilterDropdownNumberInput
-            filterDropdownId={filterDropdownId}
-          />
-        )}
-        {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
-        {filterType === 'RELATION' && (
-          <>
-            <ObjectFilterDropdownSearchInput />
-            <DropdownMenuSeparator />
-            <ObjectFilterDropdownRecordSelect
-              recordFilterId={recordFilterId}
-              dropdownId={filterDropdownId}
-            />
-          </>
-        )}
-        {filterType === 'ACTOR' && (
-          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
-        )}
-        {filterType === 'ADDRESS' && (
-          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
-        )}
-        {filterType === 'CURRENCY' && (
-          <ObjectFilterDropdownNumberInput
-            filterDropdownId={filterDropdownId}
-          />
-        )}
-        {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
-          <>
-            <ObjectFilterDropdownSearchInput />
-            <DropdownMenuSeparator />
-            <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
-          </>
-        )}
-        {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
-      </>
-    );
   }
+  return (
+    <>
+      <ObjectFilterDropdownInnerSelectOperandDropdown />
+      <DropdownMenuSeparator />
+      {TEXT_FILTER_TYPES.includes(filterType) && (
+        <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
+      )}
+      {NUMBER_FILTER_TYPES.includes(filterType) && (
+        <ObjectFilterDropdownNumberInput filterDropdownId={filterDropdownId} />
+      )}
+      {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
+      {filterType === 'RELATION' && (
+        <>
+          <ObjectFilterDropdownSearchInput />
+          <DropdownMenuSeparator />
+          <ObjectFilterDropdownRecordSelect
+            recordFilterId={recordFilterId}
+            dropdownId={filterDropdownId}
+          />
+        </>
+      )}
+      {filterType === 'ACTOR' && (
+        <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
+      )}
+      {filterType === 'ADDRESS' && (
+        <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
+      )}
+      {filterType === 'CURRENCY' && (
+        <ObjectFilterDropdownNumberInput filterDropdownId={filterDropdownId} />
+      )}
+      {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
+        <>
+          <ObjectFilterDropdownSearchInput />
+          <DropdownMenuSeparator />
+          <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
+        </>
+      )}
+      {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
+    </>
+  );
 };

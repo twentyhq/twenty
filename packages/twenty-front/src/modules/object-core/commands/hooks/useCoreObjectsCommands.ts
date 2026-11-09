@@ -1,9 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import {
-  ContextStorePageType,
-  CoreObjectNameSingular,
-} from 'twenty-shared/types';
+import { ContextStorePageType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -51,8 +48,7 @@ export const useCoreObjectsCommands = () => {
 
   const isOnCoreWorkflowsIndex =
     commandMenuContextApi.pageType === ContextStorePageType.Index &&
-    commandMenuContextApi.objectMetadataItem.nameSingular ===
-      CoreObjectNameSingular.Workflow;
+    commandMenuContextApi.coreObjectName === 'workflow';
 
   const matchesSidePanelSearch = (label: string) =>
     isMatchingSidePanelSearch({ label, sidePanelSearch });

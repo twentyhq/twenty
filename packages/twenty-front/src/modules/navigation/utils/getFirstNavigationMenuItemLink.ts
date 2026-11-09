@@ -7,7 +7,7 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { type View } from '@/views/types/View';
 import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type GetFirstNavigationMenuItemLinkArgs = {
@@ -29,6 +29,7 @@ export const getFirstNavigationMenuItemLink = ({
     if (
       item.type === NavigationMenuItemType.FOLDER ||
       item.type === NavigationMenuItemType.LINK ||
+      item.type === NavigationMenuItemType.NATIVE_PAGE ||
       isAutomationNavigationMenuItemType(item.type)
     ) {
       continue;
@@ -44,10 +45,13 @@ export const getFirstNavigationMenuItemLink = ({
       if (
         !isDefined(objectMetadataItem) ||
         objectMetadataItem.isSystem ||
-        !getObjectPermissionsForObject(
-          objectPermissionsByObjectMetadataId,
-          objectMetadataItem.id,
-        ).canReadObjectRecords
+        !canReachSomeRecords({
+          objectRecordsPermissions: getObjectPermissionsForObject(
+            objectPermissionsByObjectMetadataId,
+            objectMetadataItem.id,
+          ),
+          operationType: 'read',
+        })
       ) {
         continue;
       }
