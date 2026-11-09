@@ -1,4 +1,4 @@
-import { Lexer, Tokenizer, type Token, type Tokens } from 'marked';
+import { Lexer, type Token, type Tokens } from 'marked';
 import {
   RICH_TEXT_MAX_HEADING_LEVEL,
   type RichTextDocument,
@@ -9,29 +9,22 @@ import {
 
 import {
   convertMarkdownInlineTokens,
-  isHtmlLineBreakToken,
   isImageToken,
   splitAroundImages,
 } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-inline-tokens.util';
-
-// A line starting with `<br>` would otherwise open an html block and swallow
-// the markdown after it as raw text
-class LineBreakAwareTokenizer extends Tokenizer {
-  html(source: string) {
-    return /^ {0,3}<br\s*\/?>/i.test(source) ? undefined : super.html(source);
-  }
-}
 
 type ListNodeType =
   | typeof TIPTAP_NODE_TYPES.BULLET_LIST
   | typeof TIPTAP_NODE_TYPES.ORDERED_LIST
   | typeof TIPTAP_NODE_TYPES.TASK_LIST;
 
+const SPACES_AND_TABS_ONLY_PATTERN = /^[ \t]*$/;
+
 const isBlankContent = (content: TipTapNode[]) =>
   content.every(
     (node) =>
       node.type === TIPTAP_NODE_TYPES.HARD_BREAK ||
-      (node.text ?? '').trim() === '',
+      SPACES_AND_TABS_ONLY_PATTERN.test(node.text ?? ''),
   );
 
 const isListToken = (token: Token): token is Tokens.List =>
@@ -62,8 +55,6 @@ const convertParagraph = (tokens: Token[]): TipTapNode[] => {
 
     if (!isBlankContent(content)) {
       nodes.push(createParagraphNode(content));
-    } else if (pendingTokens.some(isHtmlLineBreakToken)) {
-      nodes.push(createParagraphNode([]));
     }
 
     pendingTokens = [];
@@ -203,23 +194,10 @@ const convertBlockquote = (tokens: Token[]): TipTapNode => {
   };
 };
 
-// Inverse of tipTapDocumentToMarkdown, which ends every paragraph, empty ones
-// included, with a blank line
-const convertBlankLinesBetweenBlocks = (space: Token): TipTapNode[] => {
-  const lineBreakCount = space.raw.split('\n').length - 1;
-
-  return Array.from({ length: Math.floor((lineBreakCount - 1) / 2) }, () =>
-    createParagraphNode([]),
-  );
-};
-
 const convertBlockTokens = (tokens: Token[]): TipTapNode[] =>
-  tokens.flatMap((token, index): TipTapNode[] => {
+  tokens.flatMap((token): TipTapNode[] => {
     switch (token.type) {
       case 'space':
-        return index > 0 && index < tokens.length - 1
-          ? convertBlankLinesBetweenBlocks(token)
-          : [];
       case 'def':
         return [];
       case 'heading':
@@ -264,9 +242,7 @@ const convertBlockTokens = (tokens: Token[]): TipTapNode[] =>
 export const convertMarkdownToRichTextDocument = (
   markdown: string,
 ): RichTextDocument => {
-  const content = convertBlockTokens(new Lexer({ gfm: true, tokenizer: new LineBreakAwareTokenizer() }).lex(
-      markdown,
-    ));
+  const content = convertBlockTokens(new Lexer({ gfm: true }).lex(markdown));
 
   return {
     type: TIPTAP_NODE_TYPES.DOCUMENT,

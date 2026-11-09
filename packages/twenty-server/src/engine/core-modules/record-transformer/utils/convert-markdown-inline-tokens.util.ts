@@ -27,13 +27,10 @@ const STYLE_BY_TOKEN_TYPE: Record<string, InlineStyle> = {
   del: TIPTAP_MARK_TYPES.STRIKE,
 };
 
+const HTML_LINE_BREAK_TAG_PATTERN = /^<br\s*\/?>$/i;
+
 export const getChildTokens = (token: Token): Token[] =>
   'tokens' in token && Array.isArray(token.tokens) ? token.tokens : [];
-
-const HTML_LINE_BREAK_PATTERN = /^<br\s*\/?>$/i;
-
-export const isHtmlLineBreakToken = (token: Token): boolean =>
-  token.type === 'html' && HTML_LINE_BREAK_PATTERN.test(token.raw.trim());
 
 export const isImageToken = (token: Token): token is Tokens.Image =>
   token.type === 'image' && isStorableRichTextUrl(token.href);
@@ -85,7 +82,7 @@ const collectInlineRuns = ({
   href?: string;
   runs: InlineRun[];
 }): void => {
-  tokens.forEach((token, index) => {
+  for (const token of tokens) {
     const style = STYLE_BY_TOKEN_TYPE[token.type];
 
     if (isDefined(style)) {
@@ -95,31 +92,21 @@ const collectInlineRuns = ({
         href,
         runs,
       });
-
-      return;
+      continue;
     }
 
     switch (token.type) {
-      case 'text': {
+      case 'text':
         if (isNonEmptyArray(token.tokens)) {
           collectInlineRuns({ tokens: token.tokens, styles, href, runs });
-          break;
+        } else {
+          runs.push({
+            text: token.text.replace(/&nbsp;/g, '\u00A0'),
+            styles,
+            href,
+          });
         }
-
-        const previousToken = tokens[index - 1];
-        const isAfterHtmlLineBreak =
-          isDefined(previousToken) && isHtmlLineBreakToken(previousToken);
-
-        // The source newline after `<br>` is formatting, not a second break
-        runs.push({
-          text: isAfterHtmlLineBreak
-            ? token.text.replace(/^\n/, '')
-            : token.text,
-          styles,
-          href,
-        });
         break;
-      }
       case 'escape':
         runs.push({ text: token.text, styles, href });
         break;
@@ -128,6 +115,13 @@ const collectInlineRuns = ({
         break;
       case 'br':
         runs.push({ text: '\n', styles, href });
+        break;
+      case 'html':
+        runs.push({
+          text: HTML_LINE_BREAK_TAG_PATTERN.test(token.raw) ? '\n' : token.raw,
+          styles,
+          href,
+        });
         break;
       case 'link':
         collectInlineRuns({
@@ -147,13 +141,9 @@ const collectInlineRuns = ({
       case 'checkbox':
         break;
       default:
-        runs.push({
-          text: isHtmlLineBreakToken(token) ? '\n' : token.raw,
-          styles,
-          href,
-        });
+        runs.push({ text: token.raw, styles, href });
     }
-  });
+  }
 };
 
 const isSameRunFormat = (firstRun: InlineRun, secondRun: InlineRun) =>
