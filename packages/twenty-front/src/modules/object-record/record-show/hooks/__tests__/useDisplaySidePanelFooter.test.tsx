@@ -27,13 +27,7 @@ const mockChannel = (
 ) =>
   mockUseMessageThreadChannel.mockReturnValue({
     messageThreadChannel:
-      type === null
-        ? null
-        : {
-            type,
-            conversationStyle:
-              type === MessageChannelType.APP ? 'chat' : 'email',
-          },
+      type === null ? null : { type, conversationStyle: null },
     messageThreadChannelLoading,
   });
 
