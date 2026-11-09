@@ -98,6 +98,26 @@ describe('filterGettingStartedStepActionKeys', () => {
     ]);
   });
 
+  it('should leave out the steps that set up a workflow without the workflows permission', () => {
+    expect(
+      filterGettingStartedStepActionKeys({
+        stepActionKeys: GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE.TEAM,
+        permissionFlags: {
+          ...ALL_PERMISSION_FLAGS,
+          [PermissionFlagType.WORKFLOWS]: false,
+        },
+        hasSendingMailbox: true,
+        hasFeaturedApp: true,
+      }),
+    ).toEqual([
+      GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.IMPORT_DATA,
+      GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
+      GettingStartedStepActionKey.INVITE_TEAM,
+      GettingStartedStepActionKey.INSTALL_APP,
+    ]);
+  });
+
   it('should leave out the handover step without a mailbox that can send', () => {
     expect(
       filterGettingStartedStepActionKeys({

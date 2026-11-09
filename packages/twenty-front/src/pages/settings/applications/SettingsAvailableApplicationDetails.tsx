@@ -11,6 +11,7 @@ import { SettingsApplicationInstallPermissionValidationModal } from '@/marketpla
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
+import { useMarketplaceApplicationContentLink } from '@/settings/applications/hooks/useMarketplaceApplicationContentLink';
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -90,6 +91,10 @@ export const SettingsAvailableApplicationDetails = () => {
   });
 
   const application = applicationData?.findOneApplication;
+
+  const contentLink = useMarketplaceApplicationContentLink(
+    isUuidFormat(availableApplicationId) ? availableApplicationId : undefined,
+  );
 
   const detail = detailData?.findMarketplaceAppDetail;
 
@@ -210,6 +215,7 @@ export const SettingsAvailableApplicationDetails = () => {
           issueReportUrl: detail.issueReportUrl ?? undefined,
           sourcePackageUrl,
         }}
+        contentLink={contentLink}
         onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
       />
     );

@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
@@ -23,6 +24,7 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly billingWorkspaceCreditAllowanceService: BillingWorkspaceCreditAllowanceService,
   ) {
     super();
   }
@@ -39,10 +41,14 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       return NO_BILLING_SUBSCRIPTION;
     }
 
-    const [unexpiredGrants, billingCustomer] = await Promise.all([
-      this.billingCreditGrantService.findUnexpiredGrants(workspaceId),
-      this.billingSubscriptionService.getBillingCustomer(workspaceId),
-    ]);
+    const [unexpiredGrants, billingCustomer, workspaceCreditAllowances] =
+      await Promise.all([
+        this.billingCreditGrantService.findUnexpiredGrants(workspaceId),
+        this.billingSubscriptionService.getBillingCustomer(workspaceId),
+        this.billingWorkspaceCreditAllowanceService.findUnexpiredWorkspaceCreditAllowances(
+          workspaceId,
+        ),
+      ]);
 
     return {
       id: subscription.id,
@@ -61,8 +67,8 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       trialStart: subscription.trialStart,
       trialEnd: subscription.trialEnd,
       collectionMethod: subscription.collectionMethod,
-      planAllowanceMicro:
-        this.billingUsageService.findResourceUsageCap(subscription),
+      ...this.billingUsageService.getPlanAllowance(subscription),
+      workspaceCreditAllowances,
       planKey:
         subscription.billingSubscriptionItems.find(
           isBaseProductSubscriptionItem,
