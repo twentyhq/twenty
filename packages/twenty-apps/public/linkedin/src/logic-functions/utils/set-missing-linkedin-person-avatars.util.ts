@@ -1,10 +1,10 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 import { LINKEDIN_AVATAR_DOWNLOAD_TIMEOUT_MILLISECONDS } from 'src/constants/linkedin-avatar-download-timeout-milliseconds.constant';
 import { LINKEDIN_AVATAR_MAX_SIZE_BYTES } from 'src/constants/linkedin-avatar-max-size-bytes.constant';
+import { PERSON_AVATAR_FILE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/person-avatar-file-field-universal-identifier.constant';
 
 type PersonAvatarRecord = {
   id: string;
@@ -118,8 +118,7 @@ const setPersonAvatar = async ({
     fileBuffer: content,
     filename,
     fieldMetadataUniversalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.avatarFile
-        .universalIdentifier,
+      PERSON_AVATAR_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   });
 
   const { updatePeople } = await new CoreApiClient({

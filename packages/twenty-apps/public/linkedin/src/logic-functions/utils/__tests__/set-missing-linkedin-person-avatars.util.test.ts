@@ -106,7 +106,11 @@ describe('setMissingLinkedinPersonAvatars', () => {
 
     expect(mocks.fetch).toHaveBeenCalledWith(PICTURE_URL, expect.anything());
     expect(mocks.uploadFile).toHaveBeenCalledWith(
-      expect.objectContaining({ filename: 'linkedin-avatar.jpg' }),
+      expect.objectContaining({
+        filename: 'linkedin-avatar.jpg',
+        fieldMetadataUniversalIdentifier:
+          '20202020-a7c9-4e3d-8f1b-2d5a6b7c8e9f',
+      }),
     );
     expect(getUpdateArgs().data).toEqual({
       avatarFile: [{ fileId: 'file-id', label: 'linkedin-avatar.jpg' }],
