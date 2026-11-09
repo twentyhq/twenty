@@ -1,6 +1,7 @@
 import { Injectable, Logger, type OnModuleDestroy } from '@nestjs/common';
 
 import type { Redis } from 'ioredis';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
@@ -23,7 +24,7 @@ export class AgentChatCancelSubscriberService implements OnModuleDestroy {
       this.subscriber.on('message', (channel: string) => {
         const callbacks = this.callbacksByChannel.get(channel);
 
-        if (!callbacks) {
+        if (!isDefined(callbacks)) {
           return;
         }
 

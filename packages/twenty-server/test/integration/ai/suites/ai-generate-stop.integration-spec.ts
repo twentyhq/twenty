@@ -38,14 +38,23 @@ type GenerateBody = {
   errors?: { extensions: { code: string } }[];
 };
 
-const stopGenerate = (runId: string, token: string) =>
-  makeMetadataApiRequest(stopGenerateQueryFactory({ runId }), token);
+const stopGenerate = ({
+  runId,
+  token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+}: {
+  runId: string;
+  token?: string;
+}) => makeMetadataApiRequest(stopGenerateQueryFactory({ runId }), token);
 
-const generate = (
-  runId: string,
-  token: string,
-  input: Partial<GenerateTestInput> = {},
-) =>
+const generate = ({
+  runId,
+  token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  input = {},
+}: {
+  runId: string;
+  token?: string;
+  input?: Partial<GenerateTestInput>;
+}) =>
   makeMetadataApiRequest(
     generateQueryFactory({ input: INPUT, runId, ...input }),
     token,
@@ -58,8 +67,7 @@ const JSON_RESPONSE_FORMAT: GenerateTestInput['responseFormat'] = {
   schema: { type: 'object', properties: { fit: { type: 'boolean' } } },
 };
 
-// answers the scripted calls, then answers the next ones only once they are aborted, as a provider's request
-// would, so a run stays open until it is stopped
+// later calls answer only once aborted, as a provider request would, so a run stays open until stopped
 const mockModelThatWaitsForAbort = (
   scriptedAnswers: ScriptedModelResponse[] = [],
 ) => {
@@ -113,14 +121,11 @@ describe('stopGenerate (integration)', () => {
     try {
       await waitForOrThrow(() => stream.events.length > 0);
 
-      const generation = generate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+      const generation = generate({ runId });
 
       await waitForOrThrow(() => model.getWaitingCallCount() > 0);
 
-      const stopResponse = await stopGenerate(
-        runId,
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      );
+      const stopResponse = await stopGenerate({ runId });
 
       expect(stopResponse.body.errors).toBeUndefined();
       expect(stopResponse.body.data.stopGenerate).toBe(true);
@@ -139,9 +144,9 @@ describe('stopGenerate (integration)', () => {
     const runId = randomUUID();
     mockModelThatWaitsForAbort();
 
-    await stopGenerate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+    await stopGenerate({ runId });
 
-    expectStopped(await generate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN), runId);
+    expectStopped(await generate({ runId }), runId);
   });
 
   it('leaves a run alone when another member names its run id, without telling them it exists', async () => {
@@ -149,15 +154,15 @@ describe('stopGenerate (integration)', () => {
 
     mockScriptedAiModel(() => answerWith('Acme looks like a fit'));
 
-    const stopResponse = await stopGenerate(
+    const stopResponse = await stopGenerate({
       runId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(stopResponse.body.errors).toBeUndefined();
     expect(stopResponse.body.data.stopGenerate).toBe(true);
 
-    const generateBody = await generate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+    const generateBody = await generate({ runId });
 
     expect(generateBody.data.generate).toMatchObject({
       success: true,
@@ -169,12 +174,13 @@ describe('stopGenerate (integration)', () => {
   it('stops a JSON run while the model is answering', async () => {
     const runId = randomUUID();
     const model = mockModelThatWaitsForAbort();
-    const generation = generate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN, {
-      responseFormat: JSON_RESPONSE_FORMAT,
+    const generation = generate({
+      runId,
+      input: { responseFormat: JSON_RESPONSE_FORMAT },
     });
 
     await waitForOrThrow(() => model.getWaitingCallCount() > 0);
-    await stopGenerate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+    await stopGenerate({ runId });
 
     expectStopped(await generation, runId);
   });
@@ -182,13 +188,16 @@ describe('stopGenerate (integration)', () => {
   it('stops a JSON run with tools during the request for its structured output', async () => {
     const runId = randomUUID();
     const model = mockModelThatWaitsForAbort([answerWith('Acme is a fit')]);
-    const generation = generate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN, {
-      responseFormat: JSON_RESPONSE_FORMAT,
-      scope: { canReadAllObjectRecords: true },
+    const generation = generate({
+      runId,
+      input: {
+        responseFormat: JSON_RESPONSE_FORMAT,
+        scope: { canReadAllObjectRecords: true },
+      },
     });
 
     await waitForOrThrow(() => model.getWaitingCallCount() > 0);
-    await stopGenerate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+    await stopGenerate({ runId });
 
     expectStopped(await generation, runId);
   });
@@ -196,9 +205,7 @@ describe('stopGenerate (integration)', () => {
   it('can still stop a run when a duplicate request with its run id is refused', async () => {
     const runId = randomUUID();
     const model = mockModelThatWaitsForAbort();
-    const generations = [1, 2].map(() =>
-      generate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN),
-    );
+    const generations = [1, 2].map(() => generate({ runId }));
     const settled: GenerateBody[] = [];
 
     for (const generation of generations) {
@@ -210,14 +217,17 @@ describe('stopGenerate (integration)', () => {
     );
     expect(settled[0].errors?.[0].extensions.code).toBe('BAD_USER_INPUT');
 
-    await stopGenerate(runId, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+    await stopGenerate({ runId });
     await waitForOrThrow(() => settled.length === 2);
 
     expectStopped(settled[1], runId);
   });
 
   it('refuses an API key, which no member or application owns', async () => {
-    const response = await stopGenerate(randomUUID(), API_KEY_ACCESS_TOKEN);
+    const response = await stopGenerate({
+      runId: randomUUID(),
+      token: API_KEY_ACCESS_TOKEN,
+    });
 
     expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
   });
