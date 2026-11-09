@@ -3872,6 +3872,7 @@ export type Mutation = {
   startChannelSync: ChannelSyncSuccess;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
+  stopGenerate: Scalars['Boolean']['output'];
   stopImpersonation: StopImpersonation;
   switchBillingPlan: BillingUpdate;
   switchSubscriptionInterval: BillingUpdate;
@@ -5057,6 +5058,11 @@ export type MutationStartWorkspaceSetupChatArgs = {
 
 export type MutationStopAgentChatStreamArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationStopGenerateArgs = {
+  input: StopGenerateInput;
 };
 
 
@@ -7382,6 +7388,10 @@ export type StartWorkspaceSetupChatResult = {
   __typename?: 'StartWorkspaceSetupChatResult';
   outcome: WorkspaceSetupChatOutcome;
   thread?: Maybe<AgentChatThread>;
+};
+
+export type StopGenerateInput = {
+  runId: Scalars['UUID']['input'];
 };
 
 export type StopImpersonation = {

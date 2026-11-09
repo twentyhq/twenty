@@ -3676,6 +3676,7 @@ type Mutation {
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
+  stopGenerate(input: StopGenerateInput!): Boolean!
   stopImpersonation: StopImpersonation!
   switchBillingPlan(plan: BillingPlanKey): BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
@@ -5028,6 +5029,10 @@ type StandaloneRichTextConfiguration {
 type StartWorkspaceSetupChatResult {
   outcome: WorkspaceSetupChatOutcome!
   thread: AgentChatThread
+}
+
+input StopGenerateInput {
+  runId: UUID!
 }
 
 type StopImpersonation {
