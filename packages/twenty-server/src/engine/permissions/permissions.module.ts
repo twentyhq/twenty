@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+
+import { MetadataReadPermissionsService } from 'src/engine/permissions/metadata-permissions/services/metadata-read-permissions.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AccessGroupReadModule } from 'src/engine/permissions/internal/access-group/access-group-read.module';
@@ -31,6 +33,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     SettingPermissionsService,
     PermissionsMetadataMapsService,
     PrincipalPermissionsReadService,
+    MetadataReadPermissionsService,
     RecordAccessGroupWriteService,
     RecordEventPermissionsReadService,
     RecordPermissionsReadService,
@@ -43,6 +46,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   exports: [
     PrincipalPermissionsReadService,
+    MetadataReadPermissionsService,
     RecordAccessGroupWriteService,
     RecordEventPermissionsReadService,
     RecordPermissionsReadService,

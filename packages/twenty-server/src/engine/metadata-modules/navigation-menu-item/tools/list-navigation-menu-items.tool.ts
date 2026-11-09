@@ -56,14 +56,13 @@ export class ListNavigationMenuItemsTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId },
   }: ToolExecuteArgs<
     typeof listNavigationMenuItemsInputSchema
   >): Promise<ToolOutput> {
     try {
       const items = await this.navigationMenuItemService.findAll({
         workspaceId,
-        userWorkspaceId,
         scope: input.scope,
         folderId: input.folderId,
         type: input.type,

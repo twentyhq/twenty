@@ -142,8 +142,6 @@ export class ViewResolver {
   @AllowSuspendedWorkspace()
   async getViews(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
     @Args('viewTypes', { type: () => [ViewType], nullable: true })
@@ -153,16 +151,11 @@ export class ViewResolver {
       return this.viewService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
-        userWorkspaceId,
         viewTypes,
       );
     }
 
-    return this.viewService.findByWorkspaceId(
-      workspace.id,
-      userWorkspaceId,
-      viewTypes,
-    );
+    return this.viewService.findByWorkspaceId(workspace.id, viewTypes);
   }
 
   @Query(() => ViewDTO, { nullable: true })

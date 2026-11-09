@@ -1,3 +1,5 @@
+import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { createViewQueryFactory } from 'test/integration/metadata/suites/view/utils/create-view-query-factory.util';
 import { destroyViewQueryFactory } from 'test/integration/metadata/suites/view/utils/destroy-view-query-factory.util';
@@ -95,5 +97,21 @@ describe('view visibility permission (integration)', () => {
     expect(await readViewVisibility(unlistedViewId)).toBe(
       ViewVisibility.UNLISTED,
     );
+  });
+
+  it('rejects grouping records with a private view owned by another member', async () => {
+    const response = await makeGraphqlApiRequest(
+      groupByOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        groupBy: [{ name: true }],
+        viewId: unlistedViewId,
+      }),
+    );
+
+    expect(response.body.errors?.[0]?.message).toBe(
+      `View with id ${unlistedViewId} not found`,
+    );
+    expect(response.body.data?.companiesGroupBy).toBeFalsy();
   });
 });

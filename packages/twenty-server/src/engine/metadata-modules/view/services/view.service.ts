@@ -1,8 +1,10 @@
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { Injectable } from '@nestjs/common';
 
 import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataReadPermissionsService } from 'src/engine/permissions/metadata-permissions/services/metadata-read-permissions.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -30,7 +32,6 @@ import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/up
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
-import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -40,6 +41,7 @@ import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-mo
 @Injectable()
 export class ViewService {
   constructor(
+    private readonly metadataReadPermissionsService: MetadataReadPermissionsService,
     @InjectWorkspaceScopedRepository(ViewEntity)
     private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -323,15 +325,41 @@ export class ViewService {
     });
   }
 
+  async getViewChildReadPredicate(workspaceId: string) {
+    const { flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+    const canReadView =
+      await this.metadataReadPermissionsService.getViewReadPredicate({
+        workspaceId,
+        authContext: workspaceAuthContextStorage.getStore(),
+      });
+
+    return (child: { workspaceId: string; viewId: string }): boolean => {
+      const view = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: child.viewId,
+        flatEntityMaps: flatViewMaps,
+      });
+
+      return (
+        child.workspaceId === workspaceId &&
+        isDefined(view) &&
+        canReadView(view)
+      );
+    };
+  }
+
   private async getFilteredFlatViews({
     workspaceId,
     objectMetadataId,
-    userWorkspaceId,
     viewTypes,
   }: {
     workspaceId: string;
     objectMetadataId?: string;
-    userWorkspaceId?: string;
     viewTypes?: ViewType[];
   }): Promise<FlatView[]> {
     const { flatViewMaps } =
@@ -341,6 +369,12 @@ export class ViewService {
           flatMapsKeys: ['flatViewMaps'],
         },
       );
+
+    const canReadView =
+      await this.metadataReadPermissionsService.getViewReadPredicate({
+        workspaceId,
+        authContext: workspaceAuthContextStorage.getStore(),
+      });
 
     return Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -355,20 +389,16 @@ export class ViewService {
           viewTypes.length === 0 ||
           viewTypes.includes(flatView.type),
       )
-      .filter((flatView) =>
-        isViewAvailableToUser({ flatView, userWorkspaceId }),
-      )
+      .filter(canReadView)
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
 
   async findByWorkspaceId(
     workspaceId: string,
-    userWorkspaceId?: string,
     viewTypes?: ViewType[],
   ): Promise<ViewDTO[]> {
     const flatViews = await this.getFilteredFlatViews({
       workspaceId,
-      userWorkspaceId,
       viewTypes,
     });
 
@@ -378,13 +408,11 @@ export class ViewService {
   async findByObjectMetadataId(
     workspaceId: string,
     objectMetadataId: string,
-    userWorkspaceId?: string,
     viewTypes?: ViewType[],
   ): Promise<ViewDTO[]> {
     const flatViews = await this.getFilteredFlatViews({
       workspaceId,
       objectMetadataId,
-      userWorkspaceId,
       viewTypes,
     });
 
@@ -405,14 +433,41 @@ export class ViewService {
       flatEntityMaps: flatViewMaps,
     });
 
-    if (!isDefined(flatView) || flatView.deletedAt !== null) {
+    const canReadView =
+      await this.metadataReadPermissionsService.getViewReadPredicate({
+        workspaceId,
+        authContext: workspaceAuthContextStorage.getStore(),
+      });
+
+    if (!isDefined(flatView) || !canReadView(flatView)) {
       return null;
     }
 
     return fromFlatViewToViewDto(flatView);
   }
 
-  async findManyWithRelationsFromCache(
+  async findByIdForPermissionCheck(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewDTO | null> {
+    const { flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    return isDefined(flatView) && flatView.deletedAt === null
+      ? fromFlatViewToViewDto(flatView)
+      : null;
+  }
+
+  private async findManyWithRelationsFromCache(
     flatViews: FlatView[],
     workspaceId: string,
   ): Promise<ViewDTO[]> {
@@ -489,12 +544,10 @@ export class ViewService {
 
   async findByWorkspaceIdWithRelations(
     workspaceId: string,
-    userWorkspaceId?: string,
     viewTypes?: ViewType[],
   ): Promise<ViewDTO[]> {
     const flatViews = await this.getFilteredFlatViews({
       workspaceId,
-      userWorkspaceId,
       viewTypes,
     });
 
@@ -504,18 +557,15 @@ export class ViewService {
   async findManyWithRelationsPaginated({
     workspaceId,
     objectMetadataId,
-    userWorkspaceId,
     pagination,
   }: {
     workspaceId: string;
     objectMetadataId?: string;
-    userWorkspaceId?: string;
     pagination: MetadataCursorPagination;
   }): Promise<MetadataCursorPage<ViewDTO> & { totalCount: number }> {
     const flatViews = await this.getFilteredFlatViews({
       workspaceId,
       objectMetadataId,
-      userWorkspaceId,
     });
     const page = paginateMetadataOrderedItems({
       items: flatViews,
@@ -532,13 +582,11 @@ export class ViewService {
   async findByObjectMetadataIdWithRelations(
     workspaceId: string,
     objectMetadataId: string,
-    userWorkspaceId?: string,
     viewTypes?: ViewType[],
   ): Promise<ViewDTO[]> {
     const flatViews = await this.getFilteredFlatViews({
       workspaceId,
       objectMetadataId,
-      userWorkspaceId,
       viewTypes,
     });
 
@@ -562,7 +610,13 @@ export class ViewService {
       flatEntityMaps: flatViewMaps,
     });
 
-    if (!isDefined(flatView) || flatView.deletedAt !== null) {
+    const canReadView =
+      await this.metadataReadPermissionsService.getViewReadPredicate({
+        workspaceId,
+        authContext: workspaceAuthContextStorage.getStore(),
+      });
+
+    if (!isDefined(flatView) || !canReadView(flatView)) {
       return null;
     }
 

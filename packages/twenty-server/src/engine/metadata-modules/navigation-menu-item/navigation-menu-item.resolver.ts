@@ -79,12 +79,9 @@ export class NavigationMenuItemResolver {
   @AllowSuspendedWorkspace()
   async navigationMenuItems(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
     return await this.navigationMenuItemService.findAll({
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 

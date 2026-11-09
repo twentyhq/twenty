@@ -95,7 +95,7 @@ export class ViewAccessService {
     viewId: string;
     accessContext: ViewAccessContext;
   }): Promise<ViewDTO> {
-    const view = await this.viewService.findById(
+    const view = await this.viewService.findByIdForPermissionCheck(
       viewId,
       accessContext.workspaceId,
     );

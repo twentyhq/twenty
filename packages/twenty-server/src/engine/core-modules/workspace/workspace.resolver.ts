@@ -497,12 +497,8 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => [ViewDTO])
-  async views(
-    @Parent() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewDTO[]> {
-    return this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
+  async views(@Parent() workspace: WorkspaceEntity): Promise<ViewDTO[]> {
+    return this.viewService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => PublicWorkspaceDataDTO)

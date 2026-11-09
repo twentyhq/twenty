@@ -1,3 +1,7 @@
+import {
+  ViewException,
+  ViewExceptionCode,
+} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -213,6 +217,14 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     workspaceId: string;
   }): Promise<ObjectRecordFilter> {
     assertIsDefinedOrThrow(args.viewId);
+    const view = await this.viewService.findById(args.viewId, workspaceId);
+
+    if (!isDefined(view) || view.objectMetadataId !== flatObjectMetadata.id) {
+      throw new ViewException(
+        `View with id ${args.viewId} not found`,
+        ViewExceptionCode.VIEW_NOT_FOUND,
+      );
+    }
 
     const viewFilters = await this.viewFilterService.findByViewId(
       workspaceId,
@@ -288,19 +300,10 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
     });
 
-    const viewFromFilter = viewFilters[0]?.view;
-    let viewAnyFieldFilterValue = viewFromFilter?.anyFieldFilterValue;
-
-    if (!isDefined(viewFromFilter)) {
-      const view = await this.viewService.findById(args.viewId, workspaceId);
-
-      viewAnyFieldFilterValue = view?.anyFieldFilterValue ?? null;
-    }
-
     const { recordGqlOperationFilter: anyFieldFilter } =
       turnAnyFieldFilterIntoRecordGqlFilter({
         fields,
-        filterValue: viewAnyFieldFilterValue ?? '',
+        filterValue: view.anyFieldFilterValue ?? '',
       });
 
     appliedFilters = combineFilters([
