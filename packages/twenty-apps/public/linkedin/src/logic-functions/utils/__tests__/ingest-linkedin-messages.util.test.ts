@@ -269,7 +269,7 @@ describe('ingestLinkedinMessages', () => {
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
   });
 
-  it('passes the profile picture of matched and created people to set as avatar', async () => {
+  it('sets the profile picture of matched and created people after ingesting messages', async () => {
     const priyaWithPicture = {
       ...PRIYA,
       public_picture_url: 'https://media.licdn.com/priya.jpg',
@@ -282,12 +282,18 @@ describe('ingestLinkedinMessages', () => {
 
     expect(
       mocks.setMissingLinkedinPersonAvatars,
-    ).toHaveBeenCalledExactlyOnceWith([
-      {
-        personId: 'created-id',
-        pictureUrl: 'https://media.licdn.com/priya.jpg',
-      },
-    ]);
+    ).toHaveBeenCalledExactlyOnceWith({
+      avatars: [
+        {
+          personId: 'created-id',
+          pictureUrl: 'https://media.licdn.com/priya.jpg',
+        },
+      ],
+      deadlineAtMs: DEADLINE_AT_MS,
+    });
+    expect(mocks.ingestMessages.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.setMissingLinkedinPersonAvatars.mock.invocationCallOrder[0],
+    );
   });
 
   it('names the conversation after the other person', async () => {

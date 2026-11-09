@@ -207,19 +207,6 @@ export const ingestLinkedinMessages = async ({
     createdPersonCount,
   } = resolvedPersons;
 
-  await setMissingLinkedinPersonAvatars(
-    resolvedCounterparts.flatMap((counterpart) => {
-      const personId = personIdByHandle.get(
-        buildLinkedinProfileHandle(counterpart),
-      );
-
-      return isDefined(personId) &&
-        isNonEmptyString(counterpart.public_picture_url)
-        ? [{ personId, pictureUrl: counterpart.public_picture_url }]
-        : [];
-    }),
-  );
-
   const subject = buildLinkedinChatSubject(chat);
   const ingestMessagesInput = ingestableMessages
     .map((message) =>
@@ -275,6 +262,20 @@ export const ingestLinkedinMessages = async ({
         `[linkedin] message ${messageExternalId}: imported ${type} attachment (${mimeType}, ${content.byteLength}B), not stored yet`,
       );
     },
+  });
+
+  await setMissingLinkedinPersonAvatars({
+    avatars: resolvedCounterparts.flatMap((counterpart) => {
+      const personId = personIdByHandle.get(
+        buildLinkedinProfileHandle(counterpart),
+      );
+
+      return isDefined(personId) &&
+        isNonEmptyString(counterpart.public_picture_url)
+        ? [{ personId, pictureUrl: counterpart.public_picture_url }]
+        : [];
+    }),
+    deadlineAtMs: attachmentDeadlineAtMs,
   });
 
   return {

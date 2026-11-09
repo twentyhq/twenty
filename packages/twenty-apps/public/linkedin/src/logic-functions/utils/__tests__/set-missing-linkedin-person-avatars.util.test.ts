@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { LINKEDIN_AVATAR_MAX_SIZE_BYTES } from 'src/constants/linkedin-avatar-max-size-bytes.constant';
+
 const mocks = vi.hoisted(() => ({
   query: vi.fn(),
   mutation: vi.fn(),
@@ -25,6 +27,13 @@ const { setMissingLinkedinPersonAvatars } =
 
 const PICTURE_URL = 'https://media.licdn.com/priya.jpg';
 
+const PRIYA_AVATAR = { personId: 'priya-id', pictureUrl: PICTURE_URL };
+
+const setAvatars = (
+  avatars = [PRIYA_AVATAR],
+  deadlineAtMs = Date.now() + 60_000,
+) => setMissingLinkedinPersonAvatars({ avatars, deadlineAtMs });
+
 const mockPeople = (
   people: { id: string; avatarFile: { fileId: string }[] | null }[],
 ) =>
@@ -32,16 +41,48 @@ const mockPeople = (
     people: { edges: people.map((node) => ({ node })) },
   });
 
+const buildStream = (chunks: Uint8Array[]) => {
+  const cancel = vi.fn();
+  let index = 0;
+
+  return {
+    cancel,
+    stream: new ReadableStream<Uint8Array>({
+      pull: (controller) => {
+        if (index < chunks.length) {
+          controller.enqueue(chunks[index]);
+          index += 1;
+        } else {
+          controller.close();
+        }
+      },
+      cancel,
+    }),
+  };
+};
+
 const mockPictureResponse = ({
   ok = true,
   contentType = 'image/jpeg',
-}: { ok?: boolean; contentType?: string } = {}) =>
+  chunks = [new Uint8Array([255, 216, 255])],
+}: {
+  ok?: boolean;
+  contentType?: string;
+  chunks?: Uint8Array[];
+} = {}) => {
+  const { stream, cancel } = buildStream(chunks);
+
   mocks.fetch.mockResolvedValue({
     ok,
     status: ok ? 200 : 403,
     headers: new Headers({ 'content-type': contentType }),
-    arrayBuffer: async () => new Uint8Array([255, 216, 255]).buffer,
+    body: stream,
   });
+
+  return cancel;
+};
+
+const getUpdateArgs = () => mocks.mutation.mock.calls[0][0].updatePeople.__args;
 
 describe('setMissingLinkedinPersonAvatars', () => {
   beforeEach(() => {
@@ -50,7 +91,7 @@ describe('setMissingLinkedinPersonAvatars', () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     mocks.uploadFile.mockResolvedValue({ id: 'file-id' });
-    mocks.mutation.mockResolvedValue({ updatePerson: { id: 'priya-id' } });
+    mocks.mutation.mockResolvedValue({ updatePeople: [{ id: 'priya-id' }] });
   });
 
   afterEach(() => {
@@ -61,28 +102,38 @@ describe('setMissingLinkedinPersonAvatars', () => {
     mockPeople([{ id: 'priya-id', avatarFile: [] }]);
     mockPictureResponse();
 
-    await setMissingLinkedinPersonAvatars([
-      { personId: 'priya-id', pictureUrl: PICTURE_URL },
-    ]);
+    await setAvatars();
 
     expect(mocks.fetch).toHaveBeenCalledWith(PICTURE_URL, expect.anything());
     expect(mocks.uploadFile).toHaveBeenCalledWith(
       expect.objectContaining({ filename: 'linkedin-avatar.jpg' }),
     );
-    expect(mocks.mutation.mock.calls[0][0].updatePerson.__args).toEqual({
-      id: 'priya-id',
-      data: {
-        avatarFile: [{ fileId: 'file-id', label: 'linkedin-avatar.jpg' }],
-      },
+    expect(getUpdateArgs().data).toEqual({
+      avatarFile: [{ fileId: 'file-id', label: 'linkedin-avatar.jpg' }],
+    });
+  });
+
+  it('only writes the avatar if the person still has none', async () => {
+    mockPeople([{ id: 'priya-id', avatarFile: [] }]);
+    mockPictureResponse();
+    mocks.mutation.mockResolvedValue({ updatePeople: [] });
+
+    await expect(setAvatars()).resolves.toBeUndefined();
+
+    expect(getUpdateArgs().filter).toEqual({
+      and: [
+        { id: { eq: 'priya-id' } },
+        {
+          or: [{ avatarFile: { is: 'NULL' } }, { avatarFile: { like: '[]' } }],
+        },
+      ],
     });
   });
 
   it('keeps the avatar a person already has', async () => {
     mockPeople([{ id: 'priya-id', avatarFile: [{ fileId: 'existing' }] }]);
 
-    await setMissingLinkedinPersonAvatars([
-      { personId: 'priya-id', pictureUrl: PICTURE_URL },
-    ]);
+    await setAvatars();
 
     expect(mocks.fetch).not.toHaveBeenCalled();
     expect(mocks.mutation).not.toHaveBeenCalled();
@@ -92,23 +143,32 @@ describe('setMissingLinkedinPersonAvatars', () => {
     mockPeople([{ id: 'priya-id', avatarFile: null }]);
     mockPictureResponse();
 
-    await setMissingLinkedinPersonAvatars([
-      { personId: 'priya-id', pictureUrl: PICTURE_URL },
-      { personId: 'priya-id', pictureUrl: PICTURE_URL },
-    ]);
+    await setAvatars([PRIYA_AVATAR, PRIYA_AVATAR]);
 
     expect(mocks.mutation).toHaveBeenCalledOnce();
+  });
+
+  it('stops reading a picture as soon as it exceeds the size limit', async () => {
+    mockPeople([{ id: 'priya-id', avatarFile: [] }]);
+    const cancel = mockPictureResponse({
+      chunks: [
+        new Uint8Array(LINKEDIN_AVATAR_MAX_SIZE_BYTES),
+        new Uint8Array(1),
+        new Uint8Array(1),
+      ],
+    });
+
+    await expect(setAvatars()).resolves.toBeUndefined();
+
+    expect(cancel).toHaveBeenCalled();
+    expect(mocks.uploadFile).not.toHaveBeenCalled();
   });
 
   it('does not fail the sync when the picture cannot be downloaded', async () => {
     mockPeople([{ id: 'priya-id', avatarFile: [] }]);
     mockPictureResponse({ ok: false });
 
-    await expect(
-      setMissingLinkedinPersonAvatars([
-        { personId: 'priya-id', pictureUrl: PICTURE_URL },
-      ]),
-    ).resolves.toBeUndefined();
+    await expect(setAvatars()).resolves.toBeUndefined();
     expect(mocks.uploadFile).not.toHaveBeenCalled();
   });
 
@@ -116,15 +176,20 @@ describe('setMissingLinkedinPersonAvatars', () => {
     mockPeople([{ id: 'priya-id', avatarFile: [] }]);
     mockPictureResponse({ contentType: 'text/html' });
 
-    await setMissingLinkedinPersonAvatars([
-      { personId: 'priya-id', pictureUrl: PICTURE_URL },
-    ]);
+    await setAvatars();
 
     expect(mocks.uploadFile).not.toHaveBeenCalled();
   });
 
+  it('does nothing once the job deadline has passed', async () => {
+    await setAvatars([PRIYA_AVATAR], Date.now() - 1);
+
+    expect(mocks.query).not.toHaveBeenCalled();
+    expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+
   it('queries nothing when there is no picture to set', async () => {
-    await setMissingLinkedinPersonAvatars([]);
+    await setAvatars([]);
 
     expect(mocks.query).not.toHaveBeenCalled();
   });

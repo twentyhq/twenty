@@ -16,6 +16,10 @@ type LinkedinPersonAvatar = {
   pictureUrl: string;
 };
 
+const PERSON_WITHOUT_AVATAR_FILTER = {
+  or: [{ avatarFile: { is: 'NULL' as const } }, { avatarFile: { like: '[]' } }],
+};
+
 const findPersonIdsWithoutAvatar = async (
   personIds: string[],
 ): Promise<Set<string>> => {
@@ -37,39 +41,75 @@ const findPersonIdsWithoutAvatar = async (
   );
 };
 
-const downloadLinkedinPicture = async (
-  pictureUrl: string,
-): Promise<{ content: Buffer; mimeType: string }> => {
+const readBoundedBody = async (
+  body: ReadableStream<Uint8Array>,
+): Promise<Buffer> => {
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let sizeBytes = 0;
+  let readResult = await reader.read();
+
+  while (!readResult.done) {
+    sizeBytes += readResult.value.byteLength;
+
+    if (sizeBytes > LINKEDIN_AVATAR_MAX_SIZE_BYTES) {
+      await reader.cancel();
+
+      throw new Error(
+        `picture is larger than ${LINKEDIN_AVATAR_MAX_SIZE_BYTES} bytes`,
+      );
+    }
+
+    chunks.push(readResult.value);
+    readResult = await reader.read();
+  }
+
+  return Buffer.concat(chunks);
+};
+
+const downloadLinkedinPicture = async ({
+  pictureUrl,
+  deadlineAtMs,
+}: {
+  pictureUrl: string;
+  deadlineAtMs: number;
+}): Promise<{ content: Buffer; mimeType: string }> => {
   const response = await fetch(pictureUrl, {
-    signal: AbortSignal.timeout(LINKEDIN_AVATAR_DOWNLOAD_TIMEOUT_MILLISECONDS),
+    signal: AbortSignal.timeout(
+      Math.max(
+        Math.min(
+          LINKEDIN_AVATAR_DOWNLOAD_TIMEOUT_MILLISECONDS,
+          deadlineAtMs - Date.now(),
+        ),
+        1,
+      ),
+    ),
   });
 
-  if (!response.ok) {
+  if (!response.ok || response.body === null) {
     throw new Error(`download failed with status ${response.status}`);
   }
 
   const mimeType = response.headers.get('content-type')?.split(';')[0] ?? '';
 
   if (!mimeType.startsWith('image/')) {
+    await response.body.cancel();
+
     throw new Error(`unexpected content type ${mimeType}`);
   }
 
-  const content = Buffer.from(await response.arrayBuffer());
-
-  if (content.byteLength > LINKEDIN_AVATAR_MAX_SIZE_BYTES) {
-    throw new Error(
-      `picture is larger than ${LINKEDIN_AVATAR_MAX_SIZE_BYTES} bytes`,
-    );
-  }
-
-  return { content, mimeType };
+  return { content: await readBoundedBody(response.body), mimeType };
 };
 
 const setPersonAvatar = async ({
   personId,
   pictureUrl,
-}: LinkedinPersonAvatar): Promise<void> => {
-  const { content, mimeType } = await downloadLinkedinPicture(pictureUrl);
+  deadlineAtMs,
+}: LinkedinPersonAvatar & { deadlineAtMs: number }): Promise<void> => {
+  const { content, mimeType } = await downloadLinkedinPicture({
+    pictureUrl,
+    deadlineAtMs,
+  });
   const filename = `linkedin-avatar.${mimeType.replace('image/', '').replace('jpeg', 'jpg')}`;
 
   const uploadedFile = await new MetadataApiClient({
@@ -82,23 +122,39 @@ const setPersonAvatar = async ({
         .universalIdentifier,
   });
 
-  await new CoreApiClient({ runAs: 'application' }).mutation({
-    updatePerson: {
+  const { updatePeople } = await new CoreApiClient({
+    runAs: 'application',
+  }).mutation({
+    updatePeople: {
       __args: {
-        id: personId,
+        filter: {
+          and: [{ id: { eq: personId } }, PERSON_WITHOUT_AVATAR_FILTER],
+        },
         data: { avatarFile: [{ fileId: uploadedFile.id, label: filename }] },
       },
       id: true,
     },
   });
 
+  if ((updatePeople ?? []).length === 0) {
+    console.log(
+      `[linkedin] person ${personId} got an avatar during the sync, LinkedIn picture not set`,
+    );
+
+    return;
+  }
+
   console.log(`[linkedin] set the LinkedIn avatar of person ${personId}`);
 };
 
-export const setMissingLinkedinPersonAvatars = async (
-  avatars: LinkedinPersonAvatar[],
-): Promise<void> => {
-  if (avatars.length === 0) {
+export const setMissingLinkedinPersonAvatars = async ({
+  avatars,
+  deadlineAtMs,
+}: {
+  avatars: LinkedinPersonAvatar[];
+  deadlineAtMs: number;
+}): Promise<void> => {
+  if (avatars.length === 0 || Date.now() >= deadlineAtMs) {
     return;
   }
 
@@ -112,10 +168,18 @@ export const setMissingLinkedinPersonAvatars = async (
         continue;
       }
 
+      if (Date.now() >= deadlineAtMs) {
+        console.warn(
+          '[linkedin] avatar import reached the job deadline, remaining avatars skipped',
+        );
+
+        return;
+      }
+
       personIdsWithoutAvatar.delete(avatar.personId);
 
       try {
-        await setPersonAvatar(avatar);
+        await setPersonAvatar({ ...avatar, deadlineAtMs });
       } catch (error) {
         console.warn(
           `[linkedin] could not set the avatar of person ${avatar.personId}: ${error instanceof Error ? error.message : String(error)}`,
