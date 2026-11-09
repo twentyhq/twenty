@@ -115,6 +115,14 @@ export const importLinkedinMessageAttachments = async ({
       continue;
     }
 
+    if (Date.now() >= deadlineAtMs) {
+      console.warn(
+        `[linkedin] chat ${message.chat_id}: attachment import reached the job deadline, files of message ${message.id} not attached`,
+      );
+
+      return importedCount;
+    }
+
     try {
       await onMessageAttachments({
         messageExternalId: message.id,
