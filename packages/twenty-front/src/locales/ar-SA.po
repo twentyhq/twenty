@@ -839,11 +839,6 @@ msgstr "{importContactsCallRecordingHours, plural, zero {{formattedImportContact
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, zero {{0} عملية تثبيت} one {{0} عملية تثبيت} two {{0} عمليتا تثبيت} few {{0} عمليات تثبيت} many {{0} عملية تثبيت} other {{1} عملية تثبيت}}"
 
-#. js-lingui-id: XcDI87
-#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
-msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
-msgstr "{invitationCount, plural, zero {لم يتم إرسال أي دعوات} one {تم إرسال دعوة واحدة} two {تم إرسال دعوتين} few {تم إرسال # دعوات} many {تم إرسال # دعوة} other {تم إرسال # دعوة}}"
-
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
@@ -7452,6 +7447,11 @@ msgstr "الاستمرار عند فشل التكرار"
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Continue setup"
 msgstr "متابعة الإعداد"
+
+#. js-lingui-id: byc7Ak
+#: src/modules/getting-started/components/GettingStartedChatThreadDoneButton.tsx
+msgid "Continue thread"
+msgstr ""
 
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -14180,6 +14180,11 @@ msgstr "اذهب إلى المسودة"
 msgid "Go to Settings"
 msgstr "انتقل إلى الإعدادات"
 
+#. js-lingui-id: WeeG8G
+#: src/modules/getting-started/components/GettingStartedWorkflowDoneButton.tsx
+msgid "Go to workflow"
+msgstr ""
+
 #. js-lingui-id: FYlHHU
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Gold"
@@ -15830,6 +15835,11 @@ msgstr "دعوة عبر الرابط"
 #: src/modules/onboarding/hooks/useInviteTeam.ts
 msgid "Invite link sent to email addresses"
 msgstr "تم إرسال رابط الدعوة إلى عناوين البريد الإلكتروني"
+
+#. js-lingui-id: aNtX0/
+#: src/modules/getting-started/components/GettingStartedInviteDoneButton.tsx
+msgid "Invite more"
+msgstr ""
 
 #. js-lingui-id: x1m5RZ
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx

@@ -839,11 +839,6 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} yükleme} other {{1} yükleme}}"
 
-#. js-lingui-id: XcDI87
-#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
-msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
-msgstr "{invitationCount, plural, one {# davet gönderildi} other {# davet gönderildi}}"
-
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
@@ -7452,6 +7447,11 @@ msgstr "Yineleme başarısız olduğunda devam et"
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Continue setup"
 msgstr "Kuruluma devam et"
+
+#. js-lingui-id: byc7Ak
+#: src/modules/getting-started/components/GettingStartedChatThreadDoneButton.tsx
+msgid "Continue thread"
+msgstr ""
 
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -14180,6 +14180,11 @@ msgstr "Taslağa Git"
 msgid "Go to Settings"
 msgstr "Ayarlar'a Git"
 
+#. js-lingui-id: WeeG8G
+#: src/modules/getting-started/components/GettingStartedWorkflowDoneButton.tsx
+msgid "Go to workflow"
+msgstr ""
+
 #. js-lingui-id: FYlHHU
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Gold"
@@ -15830,6 +15835,11 @@ msgstr "Link ile Davet Et"
 #: src/modules/onboarding/hooks/useInviteTeam.ts
 msgid "Invite link sent to email addresses"
 msgstr "Davet linki e-posta adreslerine gönderildi"
+
+#. js-lingui-id: aNtX0/
+#: src/modules/getting-started/components/GettingStartedInviteDoneButton.tsx
+msgid "Invite more"
+msgstr ""
 
 #. js-lingui-id: x1m5RZ
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx

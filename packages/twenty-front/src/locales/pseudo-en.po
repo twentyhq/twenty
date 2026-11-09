@@ -834,11 +834,6 @@ msgstr ""
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr ""
 
-#. js-lingui-id: XcDI87
-#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
-msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
-msgstr ""
-
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
@@ -7446,6 +7441,11 @@ msgstr ""
 #. js-lingui-id: uxdS61
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Continue setup"
+msgstr ""
+
+#. js-lingui-id: byc7Ak
+#: src/modules/getting-started/components/GettingStartedChatThreadDoneButton.tsx
+msgid "Continue thread"
 msgstr ""
 
 #. js-lingui-id: RvVi9c
@@ -14139,6 +14139,11 @@ msgstr ""
 msgid "Go to Settings"
 msgstr ""
 
+#. js-lingui-id: WeeG8G
+#: src/modules/getting-started/components/GettingStartedWorkflowDoneButton.tsx
+msgid "Go to workflow"
+msgstr ""
+
 #. js-lingui-id: FYlHHU
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Gold"
@@ -15788,6 +15793,11 @@ msgstr ""
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/onboarding/hooks/useInviteTeam.ts
 msgid "Invite link sent to email addresses"
+msgstr ""
+
+#. js-lingui-id: aNtX0/
+#: src/modules/getting-started/components/GettingStartedInviteDoneButton.tsx
+msgid "Invite more"
 msgstr ""
 
 #. js-lingui-id: x1m5RZ
