@@ -20,11 +20,15 @@ export class IsX509CertificateConstraint implements ValidatorConstraintInterface
     }
 
     try {
-      const der = Buffer.from(getCertificateBase64Body(value), 'base64');
+      const base64Body = getCertificateBase64Body(value);
 
-      const cert = new crypto.X509Certificate(der);
+      const cert = new crypto.X509Certificate(
+        Buffer.from(base64Body, 'base64'),
+      );
 
-      return cert instanceof crypto.X509Certificate;
+      // Buffer.from stops at the first padding and X509Certificate ignores trailing bytes,
+      // so only a round trip rejects a chain, an appended key or trailing data
+      return cert.raw.toString('base64') === base64Body;
     } catch {
       return false;
     }
