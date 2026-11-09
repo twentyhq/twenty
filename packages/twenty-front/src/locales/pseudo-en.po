@@ -111,6 +111,11 @@ msgstr ""
 msgid "\"{path}\" is not a value"
 msgstr ""
 
+#. js-lingui-id: ZIIOJj
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
+msgstr ""
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -22519,6 +22524,7 @@ msgstr ""
 #: src/modules/ui/input/components/internal/date/components/DatePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation.tsx
+#: src/modules/validation-rules/utils/buildValidationRuleEditorFields.ts
 msgid "Previous"
 msgstr ""
 
@@ -28602,6 +28608,11 @@ msgstr ""
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
+msgstr ""
+
+#. js-lingui-id: S3wM+7
+#: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
+msgid "The value a field had before the update. Empty when the record is created."
 msgstr ""
 
 #. js-lingui-id: uWikAA

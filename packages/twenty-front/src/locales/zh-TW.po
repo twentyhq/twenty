@@ -116,6 +116,11 @@ msgstr "「{path}」超出一層關聯"
 msgid "\"{path}\" is not a value"
 msgstr "「{path}」不是值"
 
+#. js-lingui-id: ZIIOJj
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
+msgstr ""
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -22560,6 +22565,7 @@ msgstr "收件人在退訂時所看到的頁面預覽"
 #: src/modules/ui/input/components/internal/date/components/DatePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation.tsx
+#: src/modules/validation-rules/utils/buildValidationRuleEditorFields.ts
 msgid "Previous"
 msgstr "上一頁"
 
@@ -28644,6 +28650,11 @@ msgstr "正在準備逐字稿…"
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
 msgstr "此限制所適用的使用量。"
+
+#. js-lingui-id: S3wM+7
+#: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
+msgid "The value a field had before the update. Empty when the record is created."
+msgstr ""
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

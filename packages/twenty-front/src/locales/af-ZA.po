@@ -116,6 +116,11 @@ msgstr "\"{path}\" gaan meer as een verhouding diep"
 msgid "\"{path}\" is not a value"
 msgstr "\"{path}\" is nie 'n waarde nie"
 
+#. js-lingui-id: ZIIOJj
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
+msgstr ""
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -22560,6 +22565,7 @@ msgstr "Voorskou van die bladsy wat ontvangers sien wanneer hulle afteken"
 #: src/modules/ui/input/components/internal/date/components/DatePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation.tsx
+#: src/modules/validation-rules/utils/buildValidationRuleEditorFields.ts
 msgid "Previous"
 msgstr "Vorige"
 
@@ -28644,6 +28650,11 @@ msgstr "Die transkripsie word voorberei…"
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
 msgstr "Die gebruik waarop hierdie limiet van toepassing is."
+
+#. js-lingui-id: S3wM+7
+#: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
+msgid "The value a field had before the update. Empty when the record is created."
+msgstr ""
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

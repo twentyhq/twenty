@@ -116,6 +116,11 @@ msgstr "\"{path}\" بیش از یک رابطه عمیق می‌رود"
 msgid "\"{path}\" is not a value"
 msgstr "\"{path}\" یک مقدار نیست"
 
+#. js-lingui-id: ZIIOJj
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
+msgstr ""
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -22560,6 +22565,7 @@ msgstr "پیش‌نمایش صفحه‌ای که گیرندگان هنگام ل�
 #: src/modules/ui/input/components/internal/date/components/DatePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation.tsx
+#: src/modules/validation-rules/utils/buildValidationRuleEditorFields.ts
 msgid "Previous"
 msgstr "قبلی"
 
@@ -28644,6 +28650,11 @@ msgstr "متن پیاده‌سازی‌شده در حال آماده‌سازی 
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
 msgstr "کاربردی که این محدودیت برای آن اعمال می‌شود."
+
+#. js-lingui-id: S3wM+7
+#: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
+msgid "The value a field had before the update. Empty when the record is created."
+msgstr ""
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
