@@ -15,7 +15,6 @@ import { EnablePrivateRecordsForSharingWorkspacesCommand } from 'src/database/co
 import { AddAccessGroupObjectMetadataIdCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794067568000-add-access-group-object-metadata-id.command';
 import { RefreshOutlookDraftsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794061333000-refresh-outlook-drafts.command';
 import { ReplaceWithdrawnCurrencyCodeCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794064503000-replace-withdrawn-currency-code.command';
-import { DropCodeStepLogicFunctionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794233649332-drop-code-step-logic-functions.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -40,7 +39,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DropUndeclaredKeysFromCreateAndUpsertRecordsCommand,
     EnablePrivateRecordsForSharingWorkspacesCommand,
     MoveFindRecordsSortsToRecordSortsCommand,
-    DropCodeStepLogicFunctionsCommand,
     ReadCreatePermissionInCommandMenuItemsCommand,
     RecomputeRolesPermissionsWithCreateKeysCommand,
     RecomputeRolesPermissionsWithFieldListsCommand,

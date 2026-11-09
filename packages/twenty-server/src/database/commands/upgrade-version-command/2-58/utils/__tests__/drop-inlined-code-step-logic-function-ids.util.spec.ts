@@ -1,6 +1,6 @@
 import { UNRECOVERABLE_CODE_STEP_SOURCE } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
 import { type StoredWorkflowStep } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
-import { dropInlinedCodeStepLogicFunctionIds } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-inlined-code-step-logic-function-ids.util';
+import { dropInlinedCodeStepLogicFunctionIds } from 'src/database/commands/upgrade-version-command/2-58/utils/drop-inlined-code-step-logic-function-ids.util';
 
 const SOURCE = 'export const main = async () => ({ done: true });';
 

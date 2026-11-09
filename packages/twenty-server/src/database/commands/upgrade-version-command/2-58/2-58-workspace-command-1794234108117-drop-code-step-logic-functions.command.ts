@@ -11,7 +11,7 @@ import {
   type StoredJsonbRow,
 } from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { type StoredWorkflowStep } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
-import { dropInlinedCodeStepLogicFunctionIds } from 'src/database/commands/upgrade-version-command/2-57/utils/drop-inlined-code-step-logic-function-ids.util';
+import { dropInlinedCodeStepLogicFunctionIds } from 'src/database/commands/upgrade-version-command/2-58/utils/drop-inlined-code-step-logic-function-ids.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -44,9 +44,9 @@ type StepLogicFunctionReference = {
 };
 
 // contract of upgrade:2-56:inline-code-step-sources, which copied each legacy CODE step's source into the step
-@RegisteredWorkspaceCommand('2.57.0', 1794233649332)
+@RegisteredWorkspaceCommand('2.58.0', 1794234108117)
 @Command({
-  name: 'upgrade:2-57:drop-code-step-logic-functions',
+  name: 'upgrade:2-58:drop-code-step-logic-functions',
   description:
     'Drop the logic function reference of workflow CODE steps that carry their code, then delete the functions nothing references anymore',
 })
