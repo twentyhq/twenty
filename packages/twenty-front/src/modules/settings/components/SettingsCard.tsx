@@ -75,12 +75,10 @@ const StyledDescription = styled.span<{ disabled?: boolean }>`
   padding-left: ${themeCssVariables.spacing[7]};
 `;
 
-const StyledIllustratedCardContent = styled(Card.Content)`
+const StyledIllustratedLayout = styled.span`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
-    ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
 `;
 
 const StyledIllustratedText = styled.span`
@@ -164,19 +162,21 @@ export const SettingsCard = ({
     return (
       <StyledCardWrapper disabled={disabled} className={className}>
         <Card.Root fullWidth>
-          <StyledIllustratedCardContent render={getContentOwner()}>
-            <SettingsCardIllustration color={illustrationColor}>
-              {Icon}
-            </SettingsCardIllustration>
-            <StyledIllustratedText>
-              <StyledHeader>{titleAndActions}</StyledHeader>
-              {isNonEmptyString(description) && (
-                <StyledIllustratedDescription disabled={disabled}>
-                  {description}
-                </StyledIllustratedDescription>
-              )}
-            </StyledIllustratedText>
-          </StyledIllustratedCardContent>
+          <Card.Content render={getContentOwner()}>
+            <StyledIllustratedLayout>
+              <SettingsCardIllustration color={illustrationColor}>
+                {Icon}
+              </SettingsCardIllustration>
+              <StyledIllustratedText>
+                <StyledHeader>{titleAndActions}</StyledHeader>
+                {isNonEmptyString(description) && (
+                  <StyledIllustratedDescription disabled={disabled}>
+                    {description}
+                  </StyledIllustratedDescription>
+                )}
+              </StyledIllustratedText>
+            </StyledIllustratedLayout>
+          </Card.Content>
         </Card.Root>
       </StyledCardWrapper>
     );
