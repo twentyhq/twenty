@@ -5,6 +5,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataReadPermissionsService } from 'src/engine/permissions/metadata-permissions/services/metadata-read-permissions.service';
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
@@ -190,6 +191,7 @@ export type ApplicationTranslationCatalogLoaderPayload = {
 @Injectable()
 export class DataloaderService {
   constructor(
+    private readonly metadataReadPermissionsService: MetadataReadPermissionsService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
@@ -691,6 +693,10 @@ export class DataloaderService {
       ReturnType<typeof fromFlatViewFieldGroupToViewFieldGroupDto>[]
     >(async (dataLoaderParams: ViewFieldGroupsByViewIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
+      const canReadView =
+        await this.metadataReadPermissionsService.getViewReadPredicate(
+          workspaceId,
+        );
 
       const { flatViewMaps, flatViewFieldGroupMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -706,7 +712,7 @@ export class DataloaderService {
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (!isDefined(flatView) || !canReadView(flatView)) {
           return [];
         }
 
@@ -734,12 +740,20 @@ export class DataloaderService {
       ReturnType<typeof fromFlatViewFieldToViewFieldDto>[]
     >(async (dataLoaderParams: ViewFieldsByViewFieldGroupIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
+      const canReadView =
+        await this.metadataReadPermissionsService.getViewReadPredicate(
+          workspaceId,
+        );
 
-      const { flatViewFieldGroupMaps, flatViewFieldMaps } =
+      const { flatViewMaps, flatViewFieldGroupMaps, flatViewFieldMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatViewFieldGroupMaps', 'flatViewFieldMaps'],
+            flatMapsKeys: [
+              'flatViewMaps',
+              'flatViewFieldGroupMaps',
+              'flatViewFieldMaps',
+            ],
           },
         );
 
@@ -760,6 +774,15 @@ export class DataloaderService {
             property: 'isActive',
           })
         ) {
+          continue;
+        }
+
+        const fieldView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatViewField.viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(fieldView) || !canReadView(fieldView)) {
           continue;
         }
 
@@ -792,7 +815,14 @@ export class DataloaderService {
           return [];
         }
 
-        return viewFieldsByResolvedGroupId.get(viewFieldGroupId) ?? [];
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatViewFieldGroup.viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        return isDefined(flatView) && canReadView(flatView)
+          ? (viewFieldsByResolvedGroupId.get(viewFieldGroupId) ?? [])
+          : [];
       });
     });
   }
@@ -803,6 +833,10 @@ export class DataloaderService {
       ReturnType<typeof fromFlatViewFieldToViewFieldDto>[]
     >(async (dataLoaderParams: ViewFieldsByViewIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
+      const canReadView =
+        await this.metadataReadPermissionsService.getViewReadPredicate(
+          workspaceId,
+        );
 
       const { flatViewMaps, flatViewFieldMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -818,7 +852,7 @@ export class DataloaderService {
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (!isDefined(flatView) || !canReadView(flatView)) {
           return [];
         }
 
@@ -846,6 +880,10 @@ export class DataloaderService {
       ReturnType<typeof fromFlatViewFilterToViewFilterDto>[]
     >(async (dataLoaderParams: ViewFiltersByViewIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
+      const canReadView =
+        await this.metadataReadPermissionsService.getViewReadPredicate(
+          workspaceId,
+        );
 
       const { flatViewMaps, flatViewFilterMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -861,7 +899,7 @@ export class DataloaderService {
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (!isDefined(flatView) || !canReadView(flatView)) {
           return [];
         }
 
@@ -881,6 +919,10 @@ export class DataloaderService {
       ReturnType<typeof fromFlatViewSortToViewSortDto>[]
     >(async (dataLoaderParams: ViewSortsByViewIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
+      const canReadView =
+        await this.metadataReadPermissionsService.getViewReadPredicate(
+          workspaceId,
+        );
 
       const { flatViewMaps, flatViewSortMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -896,7 +938,7 @@ export class DataloaderService {
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (!isDefined(flatView) || !canReadView(flatView)) {
           return [];
         }
 
@@ -916,6 +958,10 @@ export class DataloaderService {
       ReturnType<typeof fromFlatViewGroupToViewGroupDto>[]
     >(async (dataLoaderParams: ViewGroupsByViewIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
+      const canReadView =
+        await this.metadataReadPermissionsService.getViewReadPredicate(
+          workspaceId,
+        );
 
       const { flatViewMaps, flatViewGroupMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -931,7 +977,7 @@ export class DataloaderService {
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (!isDefined(flatView) || !canReadView(flatView)) {
           return [];
         }
 
@@ -951,6 +997,10 @@ export class DataloaderService {
       ReturnType<typeof fromFlatViewFilterGroupToViewFilterGroupDto>[]
     >(async (dataLoaderParams: ViewFilterGroupsByViewIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
+      const canReadView =
+        await this.metadataReadPermissionsService.getViewReadPredicate(
+          workspaceId,
+        );
 
       const { flatViewMaps, flatViewFilterGroupMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -966,7 +1016,7 @@ export class DataloaderService {
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (!isDefined(flatView) || !canReadView(flatView)) {
           return [];
         }
 

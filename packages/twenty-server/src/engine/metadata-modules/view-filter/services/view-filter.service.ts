@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -28,6 +29,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class ViewFilterService {
   constructor(
+    private readonly viewService: ViewService,
     @InjectWorkspaceScopedRepository(ViewFilterEntity)
     private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -265,13 +267,17 @@ export class ViewFilterService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find(workspaceId, {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
+    const children = await this.viewFilterRepository.find(workspaceId, {
       where: {
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view', 'viewFilterGroup'],
     });
+
+    return children.filter(canReadViewChild);
   }
 
   async findManyPaginated({
@@ -283,6 +289,9 @@ export class ViewFilterService {
     viewId?: string;
     pagination: MetadataCursorPagination;
   }): Promise<MetadataCursorPage<ViewFilterDTO> & { totalCount: number }> {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
     const { flatViewFilterMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -294,6 +303,7 @@ export class ViewFilterService {
       flatViewFilterMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
+      .filter(canReadViewChild)
       .filter(
         (flatViewFilter) =>
           flatViewFilter.workspaceId === workspaceId &&
@@ -322,28 +332,36 @@ export class ViewFilterService {
     workspaceId: string,
     viewId: string,
   ): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find(workspaceId, {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
+    const children = await this.viewFilterRepository.find(workspaceId, {
       where: {
         viewId,
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view', 'viewFilterGroup'],
     });
+
+    return children.filter(canReadViewChild);
   }
 
   async findById(
     id: string,
     workspaceId: string,
   ): Promise<ViewFilterEntity | null> {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
     const viewFilter = await this.viewFilterRepository.findOne(workspaceId, {
       where: {
         id,
         deletedAt: IsNull(),
       },
-      relations: ['workspace', 'view', 'viewFilterGroup'],
     });
 
-    return viewFilter || null;
+    return isDefined(viewFilter) && canReadViewChild(viewFilter)
+      ? viewFilter
+      : null;
   }
 }

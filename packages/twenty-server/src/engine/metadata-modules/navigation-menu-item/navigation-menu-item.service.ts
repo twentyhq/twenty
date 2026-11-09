@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataReadPermissionsService } from 'src/engine/permissions/metadata-permissions/services/metadata-read-permissions.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -34,6 +35,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class NavigationMenuItemService {
   constructor(
+    private readonly metadataReadPermissionsService: MetadataReadPermissionsService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -43,14 +45,12 @@ export class NavigationMenuItemService {
 
   async findAll({
     workspaceId,
-    userWorkspaceId,
     scope = 'all',
     folderId,
     type,
     limit,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
     scope?: 'all' | 'workspace' | 'user';
     folderId?: string;
     type?: NavigationMenuItemType;
@@ -64,6 +64,11 @@ export class NavigationMenuItemService {
         },
       );
 
+    const canReadNavigationMenuItem =
+      await this.metadataReadPermissionsService.getNavigationMenuItemReadPredicate(
+        workspaceId,
+      );
+
     const filtered = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,
     )
@@ -74,18 +79,17 @@ export class NavigationMenuItemService {
 
         const itemIsUserScoped = isDefined(item.userWorkspaceId);
 
-        // Default scope returns workspace items + the caller's own user items.
         if (scope === 'all') {
-          return !itemIsUserScoped || item.userWorkspaceId === userWorkspaceId;
+          return true;
         }
 
         if (scope === 'workspace') {
           return !itemIsUserScoped;
         }
 
-        // scope === 'user'
-        return itemIsUserScoped && item.userWorkspaceId === userWorkspaceId;
+        return itemIsUserScoped;
       })
+      .filter(canReadNavigationMenuItem)
       .filter((item) => !isDefined(folderId) || item.folderId === folderId)
       .filter((item) => !isDefined(type) || item.type === type)
       .sort((a, b) => a.position - b.position);
@@ -115,7 +119,15 @@ export class NavigationMenuItemService {
       flatEntityMaps: flatNavigationMenuItemMaps,
     });
 
-    if (!isDefined(flatNavigationMenuItem)) {
+    const canReadNavigationMenuItem =
+      await this.metadataReadPermissionsService.getNavigationMenuItemReadPredicate(
+        workspaceId,
+      );
+
+    if (
+      !isDefined(flatNavigationMenuItem) ||
+      !canReadNavigationMenuItem(flatNavigationMenuItem)
+    ) {
       return null;
     }
 

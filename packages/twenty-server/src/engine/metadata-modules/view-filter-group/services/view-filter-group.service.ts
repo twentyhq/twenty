@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -24,6 +26,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class ViewFilterGroupService {
   constructor(
+    private readonly viewService: ViewService,
     @InjectWorkspaceScopedRepository(ViewFilterGroupEntity)
     private readonly viewFilterGroupRepository: WorkspaceScopedRepository<ViewFilterGroupEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -260,45 +263,44 @@ export class ViewFilterGroupService {
   async findByWorkspaceId(
     workspaceId: string,
   ): Promise<ViewFilterGroupEntity[]> {
-    return this.viewFilterGroupRepository.find(workspaceId, {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
+    const children = await this.viewFilterGroupRepository.find(workspaceId, {
       where: {
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: [
-        'workspace',
-        'view',
-        'viewFilters',
-        'parentViewFilterGroup',
-        'childViewFilterGroups',
-      ],
     });
+
+    return children.filter(canReadViewChild);
   }
 
   async findByViewId(
     workspaceId: string,
     viewId: string,
   ): Promise<ViewFilterGroupEntity[]> {
-    return this.viewFilterGroupRepository.find(workspaceId, {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
+    const children = await this.viewFilterGroupRepository.find(workspaceId, {
       where: {
         viewId,
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: [
-        'workspace',
-        'view',
-        'viewFilters',
-        'parentViewFilterGroup',
-        'childViewFilterGroups',
-      ],
     });
+
+    return children.filter(canReadViewChild);
   }
 
   async findById(
     id: string,
     workspaceId: string,
   ): Promise<ViewFilterGroupEntity | null> {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
     const viewFilterGroup = await this.viewFilterGroupRepository.findOne(
       workspaceId,
       {
@@ -306,16 +308,11 @@ export class ViewFilterGroupService {
           id,
           deletedAt: IsNull(),
         },
-        relations: [
-          'workspace',
-          'view',
-          'viewFilters',
-          'parentViewFilterGroup',
-          'childViewFilterGroups',
-        ],
       },
     );
 
-    return viewFilterGroup || null;
+    return isDefined(viewFilterGroup) && canReadViewChild(viewFilterGroup)
+      ? viewFilterGroup
+      : null;
   }
 }

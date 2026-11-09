@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -26,6 +27,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class ViewFieldService {
   constructor(
+    private readonly viewService: ViewService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -285,6 +287,9 @@ export class ViewFieldService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFieldDTO[]> {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
     const { flatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -295,6 +300,7 @@ export class ViewFieldService {
 
     return Object.values(flatViewFieldMaps.byUniversalIdentifier)
       .filter(isDefined)
+      .filter(canReadViewChild)
       .filter((field) => !isDefined(field.deletedAt))
       .map(fromFlatViewFieldToViewFieldDto)
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
@@ -304,6 +310,9 @@ export class ViewFieldService {
     workspaceId: string,
     viewId: string,
   ): Promise<ViewFieldDTO[]> {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
     const { flatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -314,6 +323,7 @@ export class ViewFieldService {
 
     return Object.values(flatViewFieldMaps.byUniversalIdentifier)
       .filter(isDefined)
+      .filter(canReadViewChild)
       .filter((field) => field.viewId === viewId && !isDefined(field.deletedAt))
       .map(fromFlatViewFieldToViewFieldDto)
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
@@ -323,6 +333,9 @@ export class ViewFieldService {
     id: string,
     workspaceId: string,
   ): Promise<ViewFieldDTO | null> {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
     const { flatViewFieldMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -336,7 +349,11 @@ export class ViewFieldService {
       flatEntityMaps: flatViewFieldMaps,
     });
 
-    if (!isDefined(flatViewField) || isDefined(flatViewField.deletedAt)) {
+    if (
+      !isDefined(flatViewField) ||
+      isDefined(flatViewField.deletedAt) ||
+      !canReadViewChild(flatViewField)
+    ) {
       return null;
     }
 

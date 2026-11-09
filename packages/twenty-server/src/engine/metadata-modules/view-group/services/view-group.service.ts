@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -31,6 +32,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class ViewGroupService {
   constructor(
+    private readonly viewService: ViewService,
     @InjectWorkspaceScopedRepository(ViewGroupEntity)
     private readonly viewGroupRepository: WorkspaceScopedRepository<ViewGroupEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -321,41 +323,53 @@ export class ViewGroupService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {
-    return this.viewGroupRepository.find(workspaceId, {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
+    const children = await this.viewGroupRepository.find(workspaceId, {
       where: {
         deletedAt: IsNull(),
       },
       order: { position: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view'],
     });
+
+    return children.filter(canReadViewChild);
   }
 
   async findByViewId(
     workspaceId: string,
     viewId: string,
   ): Promise<ViewGroupEntity[]> {
-    return this.viewGroupRepository.find(workspaceId, {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
+    const children = await this.viewGroupRepository.find(workspaceId, {
       where: {
         viewId,
         deletedAt: IsNull(),
       },
       order: { position: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view'],
     });
+
+    return children.filter(canReadViewChild);
   }
 
   async findById(
     id: string,
     workspaceId: string,
   ): Promise<ViewGroupEntity | null> {
+    const canReadViewChild =
+      await this.viewService.getViewChildReadPredicate(workspaceId);
+
     const viewGroup = await this.viewGroupRepository.findOne(workspaceId, {
       where: {
         id,
         deletedAt: IsNull(),
       },
-      relations: ['workspace', 'view'],
     });
 
-    return viewGroup || null;
+    return isDefined(viewGroup) && canReadViewChild(viewGroup)
+      ? viewGroup
+      : null;
   }
 }

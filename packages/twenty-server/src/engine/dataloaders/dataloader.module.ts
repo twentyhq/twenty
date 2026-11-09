@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -13,6 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    PermissionsModule,
     ApplicationTranslationCatalogModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationRegistrationModule,
