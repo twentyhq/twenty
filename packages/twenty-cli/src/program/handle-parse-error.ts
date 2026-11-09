@@ -2,7 +2,9 @@ import { type CommanderError } from 'commander';
 import { isNonEmptyString } from '@sniptt/guards';
 import { capitalize, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { getCommandName } from '@/catalog/get-command-name';
 import { readBooleanOption } from '@/catalog/read-command-values';
+import { AUTH_LOGIN_COMMAND_DEFINITION } from '@/commands/auth/login/auth-login.command-definition';
 import { API_KEY_STDIN_HINT } from '@/commands/auth/login/constants/api-key-stdin-hint.constant';
 import { VERSION_COMMAND_DEFINITION } from '@/commands/version/version.command-definition';
 import { CliError } from '@/output/cli-error';
@@ -98,7 +100,7 @@ export const handleParseError = async ({
 
   if (
     commanderError.code === 'commander.excessArguments' &&
-    commandName === 'auth login' &&
+    commandName === getCommandName(AUTH_LOGIN_COMMAND_DEFINITION) &&
     readBooleanOption(options, 'withToken')
   ) {
     output.fail(
