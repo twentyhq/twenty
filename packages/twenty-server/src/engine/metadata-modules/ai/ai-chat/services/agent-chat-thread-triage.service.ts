@@ -49,11 +49,13 @@ export class AgentChatThreadTriageService {
     threadIds,
     action,
     snoozedUntil,
+    isArchivedOnlyIfFollowing,
     ...memberArgs
   }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
     threadIds: string[];
     action: AgentChatInboxAction;
     snoozedUntil: Date | null;
+    isArchivedOnlyIfFollowing?: boolean;
   }): Promise<AgentChatThreadParticipantDTO[]> {
     const change = buildAgentChatThreadTriageChange({ action, snoozedUntil });
     const assignedChannelThreads = isDefined(change)
@@ -66,6 +68,7 @@ export class AgentChatThreadTriageService {
         threadIds,
         action,
         snoozedUntil,
+        isArchivedOnlyIfFollowing,
       });
     }
 
@@ -90,6 +93,7 @@ export class AgentChatThreadTriageService {
       action,
       snoozedUntil,
       writeThread: channelCopyWrite.write,
+      isArchivedOnlyIfFollowing,
     });
 
     await this.emitChannelCopiesUpdated({
@@ -124,23 +128,13 @@ export class AgentChatThreadTriageService {
     }
 
     for (const workspaceMemberId of uniqueWorkspaceMemberIds) {
-      // ARCHIVE subscribes; a member not following has nothing in their inbox
-      if (
-        !(await this.participantService.isFollowing({
-          workspaceId,
-          workspaceMemberId,
-          threadId,
-        }))
-      ) {
-        continue;
-      }
-
       await this.updateInboxState({
         workspaceId,
         workspaceMemberId,
         threadIds: [threadId],
         action: AgentChatInboxAction.ARCHIVE,
         snoozedUntil: null,
+        isArchivedOnlyIfFollowing: true,
       });
     }
   }
@@ -149,10 +143,12 @@ export class AgentChatThreadTriageService {
     change,
     authContext,
     threadId,
+    isCallerInboxKept = false,
   }: {
     authContext: AgentInboxCallerAuthContext;
     threadId: string;
     change: AgentChatThreadTriageChange;
+    isCallerInboxKept?: boolean;
   }): Promise<void> {
     const workspaceId = authContext.workspace.id;
     const workspaceMemberId = isUserAuthContext(authContext)
@@ -185,6 +181,7 @@ export class AgentChatThreadTriageService {
     });
 
     if (
+      !isCallerInboxKept &&
       isDefined(workspaceMemberId) &&
       (await this.participantService.isFollowing({
         workspaceId,

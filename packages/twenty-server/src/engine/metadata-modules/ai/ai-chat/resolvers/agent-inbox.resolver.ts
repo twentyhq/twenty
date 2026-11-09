@@ -82,6 +82,7 @@ export class AgentInboxResolver {
         threadId: input.threadId,
         change: { action: AgentChatInboxAction.ARCHIVE },
         authContext,
+        isCallerInboxKept: true,
       });
 
       return true;
