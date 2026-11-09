@@ -34,8 +34,9 @@ export const useSubscribeToMessageThreadMessages = ({
   const queryId = useWorkspaceSurfaceScopedComponentInstanceId(
     `message-thread-messages-${messageThreadId}`,
   );
+  // Listeners are matched by query id only, so a new filter needs a new id
   const attachmentsQueryId = useWorkspaceSurfaceScopedComponentInstanceId(
-    `message-thread-attachments-${messageThreadId}`,
+    `message-thread-attachments-${messageThreadId}-${loadedMessageCount}-${loadedMessageIds.at(-1) ?? ''}`,
   );
 
   const operationSignature = useMemo(
