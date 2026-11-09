@@ -363,7 +363,7 @@ describe('RestApiClient', () => {
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
-    it('should keep resolved urls on the public api url when an internal api url is provided', () => {
+    it('should resolve urls on the internal api url when one is provided', () => {
       (globalThis as Record<string, unknown>).process = {
         env: {
           TWENTY_API_URL: 'https://api.twenty.test',
@@ -375,10 +375,10 @@ describe('RestApiClient', () => {
       const client = new RestApiClient({ fetch: vi.fn() });
 
       expect(client.resolveUrl('/s/documents/view')).toBe(
-        'https://api.twenty.test/s/documents/view',
+        'http://twenty-server:3000/s/documents/view',
       );
       expect(client.resolveUrl('/rest/companies')).toBe(
-        'https://api.twenty.test/rest/companies',
+        'http://twenty-server:3000/rest/companies',
       );
     });
   });

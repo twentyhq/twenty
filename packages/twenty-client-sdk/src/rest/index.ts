@@ -53,8 +53,6 @@ export class RestApiClientError extends Error {
 
 type ProcessEnvironment = Record<string, string | undefined>;
 
-type ApiUrlVisibility = 'public' | 'internal';
-
 const getProcessEnvironment = (): ProcessEnvironment => {
   const processObject = (
     globalThis as { process?: { env?: ProcessEnvironment } }
@@ -133,8 +131,7 @@ export class RestApiClient {
     path: string,
     requestOptions?: Pick<RestApiRequestOptions, 'query'>,
   ): string {
-    // Links are handed to browsers and third parties, which can't reach the internal URL.
-    const target = this.resolveTarget({ path, visibility: 'public' });
+    const target = this.resolveTarget(path);
 
     return buildRequestUrl(target.baseUrl, target.path, requestOptions?.query);
   }
@@ -167,13 +164,9 @@ export class RestApiClient {
     return this.execute<TResponse>('DELETE', path, undefined, options);
   }
 
-  private resolveBaseUrl(visibility: ApiUrlVisibility): string {
-    const processEnvironment = getProcessEnvironment();
+  private resolveBaseUrl(): string {
     const baseUrl =
-      this.baseUrl ??
-      (visibility === 'internal'
-        ? resolveApiUrlFromEnvironment(processEnvironment)
-        : processEnvironment[DEFAULT_API_URL_NAME]);
+      this.baseUrl ?? resolveApiUrlFromEnvironment(getProcessEnvironment());
 
     if (!isDefined(baseUrl) || baseUrl.trim().length === 0) {
       throw new RestApiClientError(
@@ -195,22 +188,14 @@ export class RestApiClient {
     return functionsBaseUrl.trim().replace(/\/+$/, '');
   }
 
-  private resolveTarget({
-    path,
-    visibility,
-  }: {
-    path: string;
-    visibility: ApiUrlVisibility;
-  }): { baseUrl: string; path: string } {
+  private resolveTarget(path: string): { baseUrl: string; path: string } {
     if (isDefined(this.baseUrl) || !isAppRoutePath(path)) {
-      return { baseUrl: this.resolveBaseUrl(visibility), path };
+      return { baseUrl: this.resolveBaseUrl(), path };
     }
 
     // TWENTY_FUNCTIONS_URL is a complete base URL (isolated domains serve at the root, self-host bakes /s in).
     return {
-      baseUrl:
-        this.resolveFunctionsBaseUrl() ??
-        `${this.resolveBaseUrl(visibility)}/s`,
+      baseUrl: this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`,
       path: stripAppRoutePrefix(path),
     };
   }
@@ -372,7 +357,7 @@ export class RestApiClient {
     body: unknown,
     requestOptions?: RestApiRequestOptions,
   ): Promise<TResponse> {
-    const target = this.resolveTarget({ path, visibility: 'internal' });
+    const target = this.resolveTarget(path);
     const url = buildRequestUrl(
       target.baseUrl,
       target.path,
