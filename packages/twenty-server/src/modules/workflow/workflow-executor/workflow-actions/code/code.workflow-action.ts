@@ -8,6 +8,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import {
@@ -31,6 +32,7 @@ export class CodeWorkflowAction implements WorkflowAction {
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly logicFunctionFromSourceHelperService: LogicFunctionFromSourceHelperService,
+    private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly codeStepRunnerService: CodeStepRunnerService,
@@ -121,6 +123,7 @@ export class CodeWorkflowAction implements WorkflowAction {
     });
   }
 
+  // runs started before upgrade:2-56:inline-code-step-sources
   private async executeLegacyLogicFunction({
     logicFunctionId,
     workspaceId,
@@ -157,6 +160,13 @@ export class CodeWorkflowAction implements WorkflowAction {
         targetLabel: `Logic function "${flatLogicFunction.name}"`,
       },
     );
+
+    if (!flatLogicFunction.isBuildUpToDate) {
+      await this.logicFunctionFromSourceService.buildOneFromSource({
+        id: logicFunctionId,
+        workspaceId,
+      });
+    }
 
     return this.logicFunctionExecutorService.execute({
       logicFunctionId,

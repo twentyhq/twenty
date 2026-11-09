@@ -118,6 +118,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
         eventEmitterService: { emitDatabaseBatchEvent },
         recordPermissions: {} as never,
+        recordAccessGroupWrite: {
+          isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
+          isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
+          findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
+          recomputeAfterWrite: jest.fn().mockResolvedValue([]),
+        },
+        recordAccessGroupQueue: { queueRecompute: jest.fn() },
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),
