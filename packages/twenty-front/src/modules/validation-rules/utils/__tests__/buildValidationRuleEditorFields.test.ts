@@ -71,17 +71,17 @@ describe('buildValidationRuleEditorFields', () => {
   it('should offer the previous value of own fields and their subfields', () => {
     expect(paths).toEqual(
       expect.arrayContaining([
-        'previous.stage',
-        'previous.amount.amountMicros',
+        '$previous.stage',
+        '$previous.amount.amountMicros',
       ]),
     );
     expect(
-      editorFields.find(({ path }) => path === 'previous.amount.amountMicros'),
+      editorFields.find(({ path }) => path === '$previous.amount.amountMicros'),
     ).toMatchObject({ parentLabel: 'Previous › Amount' });
   });
 
   it('should not offer previous values read through a relation', () => {
-    expect(paths.some((path) => path.startsWith('previous.company'))).toBe(
+    expect(paths.some((path) => path.startsWith('$previous.company'))).toBe(
       false,
     );
   });

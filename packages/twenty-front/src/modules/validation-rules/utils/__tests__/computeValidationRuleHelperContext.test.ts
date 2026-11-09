@@ -59,27 +59,27 @@ describe('computeValidationRuleHelperContext', () => {
     ]);
   });
 
-  it('should offer previous among the keywords', () => {
-    expect(compute('prev').names).toContain('previous');
+  it('should offer $previous among the keywords', () => {
+    expect(compute('prev').names).toContain('$previous');
   });
 
   it('should offer own fields after previous and replace the whole path', () => {
-    const { replaceFromOffset, names } = compute('stage != previous.sta');
+    const { replaceFromOffset, names } = compute('stage != $previous.sta');
 
     expect(replaceFromOffset).toBe('stage != '.length);
-    expect(names).toEqual(['previous.stage']);
+    expect(names).toEqual(['$previous.stage']);
   });
 
   it('should hide system fields after previous until something is typed', () => {
-    expect(compute('previous.').names).toContain('previous.amount');
-    expect(compute('previous.').names).not.toContain('previous.createdAt');
-    expect(compute('previous.crea').names).toContain('previous.createdAt');
+    expect(compute('$previous.').names).toContain('$previous.amount');
+    expect(compute('$previous.').names).not.toContain('$previous.createdAt');
+    expect(compute('$previous.crea').names).toContain('$previous.createdAt');
   });
 
   it('should offer composite subfields of a previous value', () => {
-    expect(compute('previous.amount.').names).toEqual([
-      'previous.amount.amountMicros',
-      'previous.amount.currencyCode',
+    expect(compute('$previous.amount.').names).toEqual([
+      '$previous.amount.amountMicros',
+      '$previous.amount.currencyCode',
     ]);
   });
 

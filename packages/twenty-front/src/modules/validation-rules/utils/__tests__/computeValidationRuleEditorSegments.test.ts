@@ -5,7 +5,7 @@ const FIELD_PATHS = [
   'stage',
   'company',
   'company.employees',
-  'previous.stage',
+  '$previous.stage',
 ];
 
 const compute = ({
@@ -38,10 +38,10 @@ describe('computeValidationRuleEditorSegments', () => {
   });
 
   it('should turn a previous value path into one field segment', () => {
-    expect(compute({ expression: 'stage != previous.stage' })).toEqual([
+    expect(compute({ expression: 'stage != $previous.stage' })).toEqual([
       { type: 'field', path: 'stage' },
       { type: 'text', text: ' != ' },
-      { type: 'field', path: 'previous.stage' },
+      { type: 'field', path: '$previous.stage' },
     ]);
   });
 

@@ -136,7 +136,7 @@ describe('computeRecordValidationRuleViolations with previous values', () => {
   const NO_SKIPPED_STAGE_RULE = {
     id: 'rule-no-skipped-stage',
     expression:
-      'stage == previous.stage or isEmpty(previous.stage) or (previous.stage == "NEW" and stage == "MEETING") or (previous.stage == "MEETING" and stage == "WON")',
+      'stage == $previous.stage or isEmpty($previous.stage) or ($previous.stage == "NEW" and stage == "MEETING") or ($previous.stage == "MEETING" and stage == "WON")',
     message: 'Move one stage at a time',
     errorFieldMetadataId: 'stage-field-metadata-id',
   };

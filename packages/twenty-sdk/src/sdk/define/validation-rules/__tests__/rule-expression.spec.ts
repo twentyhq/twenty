@@ -133,7 +133,7 @@ describe('ruleExpression', () => {
     );
     expect(gt(field('closeDate'), now).source).toBe('closeDate > now');
     expect(notEq(previous('stage'), 'WON').source).toBe(
-      'previous.stage != "WON"',
+      '$previous.stage != "WON"',
     );
   });
 

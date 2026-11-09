@@ -305,7 +305,7 @@ describe('evaluateValidationRuleExpression', () => {
 });
 
 const A_TO_B_TO_C =
-  'stage == previous.stage or (isEmpty(previous.stage) and stage == "A") or (previous.stage == "A" and stage == "B") or (previous.stage == "B" and stage == "C")';
+  'stage == $previous.stage or (isEmpty($previous.stage) and stage == "A") or ($previous.stage == "A" and stage == "B") or ($previous.stage == "B" and stage == "C")';
 
 describe('evaluateValidationRuleExpression with previous values', () => {
   const evaluateTransition = ({
@@ -371,7 +371,7 @@ describe('evaluateValidationRuleExpression with previous values', () => {
     ) =>
       evaluateValidationRuleExpression({
         expression:
-          'isEmpty(previous.isQualified) or previous.isQualified == isQualified',
+          'isEmpty($previous.isQualified) or $previous.isQualified == isQualified',
         record: { isQualified: true },
         previousRecord,
         fields: FIELDS,
@@ -389,7 +389,7 @@ describe('evaluateValidationRuleExpression with previous values', () => {
   it('should read a previous composite subfield as empty without a stored record', () => {
     expect(
       evaluateValidationRuleExpression({
-        expression: 'previous.amount.amountMicros != amount.amountMicros',
+        expression: '$previous.amount.amountMicros != amount.amountMicros',
         record: { amount: { amountMicros: 500, currencyCode: 'USD' } },
         fields: FIELDS,
         now: NOW,
@@ -397,10 +397,30 @@ describe('evaluateValidationRuleExpression with previous values', () => {
     ).toEqual({ status: 'passed' });
   });
 
+  it('should tell a field named previous from its previous value', () => {
+    const evaluateFieldNamedPrevious = (previousValue: string) =>
+      evaluateValidationRuleExpression({
+        expression: 'previous == $previous.previous',
+        record: { previous: 'A' },
+        previousRecord: { previous: previousValue },
+        fields: [
+          {
+            name: 'previous',
+            type: FieldMetadataType.TEXT,
+            universalIdentifier: 'opportunity-previous',
+          },
+        ],
+        now: NOW,
+      });
+
+    expect(evaluateFieldNamedPrevious('A')).toEqual({ status: 'passed' });
+    expect(evaluateFieldNamedPrevious('B')).toEqual({ status: 'failed' });
+  });
+
   it('should compare a composite subfield with its previous value', () => {
     expect(
       evaluateValidationRuleExpression({
-        expression: 'amount.amountMicros >= previous.amount.amountMicros',
+        expression: 'amount.amountMicros >= $previous.amount.amountMicros',
         record: { amount: { amountMicros: 500, currencyCode: 'USD' } },
         previousRecord: { amount: { amountMicros: 1000, currencyCode: 'USD' } },
         fields: FIELDS,

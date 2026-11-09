@@ -32,7 +32,7 @@ export const VALIDATION_RULE_KEYWORDS: ValidationRuleSyntaxDefinition[] = [
   },
   {
     name: VALIDATION_RULE_PREVIOUS_VARIABLE_NAME,
-    signature: doNotTranslate('previous.field'),
+    signature: doNotTranslate('$previous.field'),
     description: msg`The value a field had before the update. Empty when the record is created.`,
     insertText: `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.`,
   },

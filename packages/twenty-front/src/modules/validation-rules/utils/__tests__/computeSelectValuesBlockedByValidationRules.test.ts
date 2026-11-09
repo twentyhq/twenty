@@ -116,7 +116,7 @@ describe('computeSelectValuesBlockedByValidationRules', () => {
     const nextStageRule = buildRule({
       id: 'next-stage',
       expression:
-        'stage == previous.stage or (previous.stage == "MET" and stage in ["FOLLOW_UP", "LOST"]) or (previous.stage == "FOLLOW_UP" and stage in ["WON", "LOST"])',
+        'stage == $previous.stage or ($previous.stage == "MET" and stage in ["FOLLOW_UP", "LOST"]) or ($previous.stage == "FOLLOW_UP" and stage in ["WON", "LOST"])',
     });
 
     expect(
@@ -133,7 +133,7 @@ describe('computeSelectValuesBlockedByValidationRules', () => {
   it('leaves a transition rule to the server when the stored stage is not loaded', () => {
     const nextStageRule = buildRule({
       id: 'next-stage',
-      expression: 'stage == previous.stage or previous.stage != "WON"',
+      expression: 'stage == $previous.stage or $previous.stage != "WON"',
     });
 
     expect(
