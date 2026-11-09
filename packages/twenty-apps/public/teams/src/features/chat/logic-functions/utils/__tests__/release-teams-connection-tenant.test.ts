@@ -4,12 +4,12 @@ import { buildTeamsConnectedAccountTenantKvKey } from 'src/features/chat/logic-f
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { releaseTeamsConnectionTenant } from 'src/features/chat/logic-functions/utils/release-teams-connection-tenant';
 
-const { kvStore, unreadableKvKeys, kvDeleteMock, listConnectionsMock } =
+const { kvStore, unreadableKvKeys, kvDeleteMock, listTeamsConnectionsMock } =
   vi.hoisted(() => ({
     kvStore: new Map<string, string | null>(),
     unreadableKvKeys: new Set<string>(),
     kvDeleteMock: vi.fn(),
-    listConnectionsMock: vi.fn(),
+    listTeamsConnectionsMock: vi.fn(),
   }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -30,8 +30,12 @@ vi.mock('twenty-sdk/logic-function', () => ({
       return kvStore.delete(key);
     },
   },
-  listConnections: listConnectionsMock,
 }));
+
+vi.mock(
+  'src/features/transcripts/logic-functions/utils/list-teams-connections',
+  () => ({ listTeamsConnections: listTeamsConnectionsMock }),
+);
 
 const TENANT_ID = 'tenant-id';
 
@@ -42,7 +46,7 @@ describe('releaseTeamsConnectionTenant', () => {
     unreadableKvKeys.clear();
     kvStore.set(buildTeamsConnectedAccountTenantKvKey('leaving'), TENANT_ID);
     kvStore.set(buildTeamsTenantKvKey(TENANT_ID), null);
-    listConnectionsMock.mockResolvedValue([{ id: 'leaving' }]);
+    listTeamsConnectionsMock.mockResolvedValue([{ id: 'leaving' }]);
   });
 
   it('should release the tenant claim and forget the connection', async () => {
@@ -63,7 +67,7 @@ describe('releaseTeamsConnectionTenant', () => {
 
   it('should keep the tenant claimed while another connection in the workspace still holds it', async () => {
     kvStore.set(buildTeamsConnectedAccountTenantKvKey('staying'), TENANT_ID);
-    listConnectionsMock.mockResolvedValue([
+    listTeamsConnectionsMock.mockResolvedValue([
       { id: 'leaving' },
       { id: 'staying' },
     ]);
@@ -83,7 +87,7 @@ describe('releaseTeamsConnectionTenant', () => {
       buildTeamsConnectedAccountTenantKvKey('also-leaving'),
       TENANT_ID,
     );
-    listConnectionsMock.mockResolvedValue([
+    listTeamsConnectionsMock.mockResolvedValue([
       { id: 'leaving' },
       { id: 'also-leaving' },
     ]);
@@ -103,7 +107,7 @@ describe('releaseTeamsConnectionTenant', () => {
   });
 
   it('should keep the connection tenant for a retry when listing connections fails', async () => {
-    listConnectionsMock.mockRejectedValue(new Error('refresh failed'));
+    listTeamsConnectionsMock.mockRejectedValue(new Error('refresh failed'));
 
     await expect(
       releaseTeamsConnectionTenant({ connectedAccountId: 'leaving' }),
@@ -113,7 +117,7 @@ describe('releaseTeamsConnectionTenant', () => {
 
   it('should keep the connection tenant for a retry when reading other connections fails', async () => {
     unreadableKvKeys.add(buildTeamsConnectedAccountTenantKvKey('staying'));
-    listConnectionsMock.mockResolvedValue([
+    listTeamsConnectionsMock.mockResolvedValue([
       { id: 'leaving' },
       { id: 'staying' },
     ]);
@@ -129,7 +133,7 @@ describe('releaseTeamsConnectionTenant', () => {
 
   it('should claim the tenant again when a connection takes it while it is being released', async () => {
     kvStore.set(buildTeamsConnectedAccountTenantKvKey('joining'), TENANT_ID);
-    listConnectionsMock
+    listTeamsConnectionsMock
       .mockResolvedValueOnce([{ id: 'leaving' }])
       .mockResolvedValueOnce([{ id: 'leaving' }, { id: 'joining' }]);
 

@@ -16,8 +16,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { RoleAssignmentValidationModule } from 'src/engine/permissions/role-assignment/role-assignment-validation.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
+import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/role-assignment.module';
 
 @Module({
   imports: [
@@ -27,11 +26,10 @@ import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role
       UserEntity,
       RoleTargetEntity,
     ]),
-    RoleAssignmentValidationModule,
     ApprovedAccessDomainModule,
     WorkspaceInvitationModule,
     WorkspaceDomainsModule,
-    UserRoleModule,
+    RoleAssignmentModule,
     FileModule,
     TokenModule,
     OnboardingModule,

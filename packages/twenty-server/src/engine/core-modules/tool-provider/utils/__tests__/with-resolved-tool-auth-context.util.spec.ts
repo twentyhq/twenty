@@ -93,7 +93,7 @@ describe('withResolvedToolAuthContext', () => {
       workspaceMemberId,
       user: { id: userId },
       workspaceMember: { id: workspaceMemberId },
-    } as unknown as WorkspaceAuthContext;
+    } as WorkspaceAuthContext;
 
     let storeDuringDispatch: WorkspaceAuthContext | undefined;
 

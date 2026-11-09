@@ -1,13 +1,13 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
 import { type WorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermission';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
+import { useLingui } from '@lingui/react/macro';
 
 const CRUD_PERMISSION_ORDER = CRUD_PERMISSIONS.reduce<
   Record<SettingsRoleObjectPermissionKey, number>
@@ -32,6 +32,7 @@ export const WorkflowAiAgentPermissionList = ({
   onDeletePermission,
   searchQuery,
 }: WorkflowAiAgentPermissionListProps) => {
+  const { t } = useLingui();
   const { activeObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
 

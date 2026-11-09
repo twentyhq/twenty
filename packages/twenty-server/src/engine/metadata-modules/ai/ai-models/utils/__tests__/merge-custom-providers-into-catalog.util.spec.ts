@@ -4,6 +4,8 @@ import {
   mergeCustomProvidersIntoCatalog,
 } from 'src/engine/metadata-modules/ai/ai-models/utils/merge-custom-providers-into-catalog.util';
 
+const MEASURED_AT = '2026-09-01T00:00:00.000Z';
+
 const catalog: AiProvidersConfig = {
   openai: {
     npm: '@ai-sdk/openai',
@@ -14,7 +16,7 @@ const catalog: AiProvidersConfig = {
         name: 'gpt-5.6-luna',
         label: 'GPT-5.6 Luna',
         efforts: ['low', 'medium', 'high'],
-        benchmark: { intelligenceIndex: 37.5 },
+        benchmark: { intelligenceIndex: 37.5, measuredAt: MEASURED_AT },
         inputCostPerMillionTokens: 0.2,
         outputCostPerMillionTokens: 1.2,
       },
@@ -26,7 +28,7 @@ const catalog: AiProvidersConfig = {
       },
     ],
   },
-} as unknown as AiProvidersConfig;
+};
 
 describe('mergeCustomProvidersIntoCatalog', () => {
   it('keeps catalog efforts and benchmarks on a custom model the catalog knows', () => {
@@ -46,7 +48,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
             },
           ],
         },
-      } as unknown as AiProvidersConfig,
+      },
     });
 
     expect(merged.openai.label).toBe('OpenAI (gateway)');
@@ -63,7 +65,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
   });
 
   it('completes a custom reading with the catalog readings it does not set', () => {
-    const catalogWithReadings = {
+    const catalogWithReadings: AiProvidersConfig = {
       openai: {
         ...catalog.openai,
         models: [
@@ -71,15 +73,19 @@ describe('mergeCustomProvidersIntoCatalog', () => {
             name: 'gpt-5.6-luna',
             label: 'GPT-5.6 Luna',
             efforts: ['low', 'high'],
-            benchmark: { intelligenceIndex: 37.5, outputTokensPerSecond: 120 },
+            benchmark: {
+              intelligenceIndex: 37.5,
+              outputTokensPerSecond: 120,
+              measuredAt: MEASURED_AT,
+            },
             benchmarkByEffort: {
-              low: { intelligenceIndex: 21.8 },
-              high: { intelligenceIndex: 32.9 },
+              low: { intelligenceIndex: 21.8, measuredAt: MEASURED_AT },
+              high: { intelligenceIndex: 32.9, measuredAt: MEASURED_AT },
             },
           },
         ],
       },
-    } as unknown as AiProvidersConfig;
+    };
 
     const merged = mergeCustomProvidersIntoCatalog({
       catalog: catalogWithReadings,
@@ -90,12 +96,14 @@ describe('mergeCustomProvidersIntoCatalog', () => {
             {
               name: 'gpt-5.6-luna',
               label: 'GPT-5.6 Luna',
-              benchmark: { costPerTask: 0.1 },
-              benchmarkByEffort: { high: { intelligenceIndex: 33 } },
+              benchmark: { costPerTask: 0.1, measuredAt: MEASURED_AT },
+              benchmarkByEffort: {
+                high: { intelligenceIndex: 33, measuredAt: MEASURED_AT },
+              },
             },
           ],
         },
-      } as unknown as AiProvidersConfig,
+      },
     });
 
     expect(merged.openai.models?.[0]).toMatchObject({
@@ -122,7 +130,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
           apiKey: 'sk-custom',
           models: [{ name: 'gpt-7', label: 'GPT-7' }],
         },
-      } as unknown as AiProvidersConfig,
+      },
     });
 
     expect(merged.openai.models).toEqual([{ name: 'gpt-7', label: 'GPT-7' }]);
@@ -145,7 +153,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
             { name: 'eu.mistral.pixtral-large', label: 'Pixtral' },
           ],
         },
-      } as unknown as AiProvidersConfig,
+      },
     });
 
     expect(merged['amazon-bedrock'].models?.[0]).toEqual({
@@ -154,7 +162,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
       inputCostPerMillionTokens: 0.25,
       outputCostPerMillionTokens: 1.5,
       efforts: ['low', 'medium', 'high'],
-      benchmark: { intelligenceIndex: 37.5 },
+      benchmark: { intelligenceIndex: 37.5, measuredAt: MEASURED_AT },
       benchmarkByEffort: undefined,
     });
     expect(merged['amazon-bedrock'].models?.[1]).toEqual({
@@ -168,19 +176,23 @@ describe('mergeCustomProvidersIntoCatalog', () => {
   });
 
   it('matches a dotted model name to itself before stripping route segments', () => {
-    const catalogWithDottedName = {
+    const catalogWithDottedName: AiProvidersConfig = {
       openai: {
         ...catalog.openai,
         models: [
           {
             name: 'gpt-4.1',
             label: 'GPT-4.1',
-            benchmark: { intelligenceIndex: 12.7 },
+            benchmark: { intelligenceIndex: 12.7, measuredAt: MEASURED_AT },
           },
-          { name: '1', label: 'One', benchmark: { intelligenceIndex: 1 } },
+          {
+            name: '1',
+            label: 'One',
+            benchmark: { intelligenceIndex: 1, measuredAt: MEASURED_AT },
+          },
         ],
       },
-    } as unknown as AiProvidersConfig;
+    };
 
     const merged = mergeCustomProvidersIntoCatalog({
       catalog: catalogWithDottedName,
@@ -190,11 +202,12 @@ describe('mergeCustomProvidersIntoCatalog', () => {
           label: 'Azure',
           models: [{ name: 'gpt-4.1', label: 'GPT-4.1 on Azure' }],
         },
-      } as unknown as AiProvidersConfig,
+      },
     });
 
     expect(merged['azure-foundry'].models?.[0]?.benchmark).toEqual({
       intelligenceIndex: 12.7,
+      measuredAt: MEASURED_AT,
     });
   });
 });

@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-03 14:14\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -651,10 +651,10 @@ msgstr "3 ürün hattı"
 msgid "30 days"
 msgstr "30 gün"
 
-#. js-lingui-id: f8kF3P
+#. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit."
-msgstr "Tıklamadan sonraki 30 gün. Ziyaretçi bu süre içinde çalışma alanını oluşturur ve daha sonra ücretli bir Cloud Organization veya Enterprise müşterisi olursa komisyon sizin olur. Çalışma alanını oluşturmadan önce başka bir iş ortağının bağlantısına tıklarsa krediyi o iş ortağı alır."
+msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
+msgstr "Tıklamadan 30 gün sonra. Ziyaretçi bu süre içinde çalışma alanını oluşturur ve daha sonra ücretli bir Cloud Organization veya Enterprise müşterisi olursa komisyon sizin olur. Çalışma alanını oluşturmadan önce başka bir iş ortağının bağlantısına tıklarsa krediyi o iş ortağı alır. Çalışma alanı oluşturulduktan sonra kredi kesindir."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4705,7 +4705,6 @@ msgstr "İş akışı e-postalarında HTML"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
-#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -4724,10 +4723,10 @@ msgstr "HubSpot, özel nesneleri koltuk başına 150 $’lık Enterprise kademes
 msgid "Hungary 🇭🇺"
 msgstr "Macaristan 🇭🇺"
 
-#. js-lingui-id: L6C8J0
+#. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
-msgid "I agree to the <0>affiliate program terms</0>"
-msgstr "<0>iştirak programı koşullarını</0> kabul ediyorum"
+msgid "I agree to the <0>Affiliate Program Terms</0>"
+msgstr "<0>Satış Ortaklığı Programı Koşulları</0>'nı kabul ediyorum"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4749,6 +4748,11 @@ msgstr "ICP"
 #: src/partner-application/partner-application-copy.ts
 msgid "Identity"
 msgstr "Kimlik"
+
+#. js-lingui-id: 9JU/6K
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "Bu onların ilk Twenty çalışma alanıysa ve henüz üzerinde bir iş ortağı kodu ayarlanmamışsa, ücretsiz deneme süreleri boyunca çalışma alanlarının /settings/partner sayfasından sizinkini girebilirler. İlk ödemeden sonraki 30 gün içinde, eklememizi de isteyebilirler. Bir kod çalışma alanına kaydedildikten sonra değiştirilemez."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -5556,11 +5560,6 @@ msgstr "Madagaskar 🇲🇬"
 msgid "Main channel (URL)"
 msgstr "Ana kanal (URL)"
 
-#. js-lingui-id: KpUYnU
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "Main channel must be a full URL starting with https://"
-msgstr "Ana kanal, https:// ile başlayan tam bir URL olmalıdır"
-
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Maintenance mode"
@@ -6102,6 +6101,7 @@ msgstr "Şu anda hiçbir uygulama mevcut değil. Yakında tekrar kontrol edin."
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "No matching country."
 msgstr "Eşleşen ülke yok."
 
@@ -6319,11 +6319,6 @@ msgstr "İlk Kullanım"
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "Onboarding · Dokümantasyon · Değişim yönetimi · L1/L2 desteği · Yönetilen hizmetler"
-
-#. js-lingui-id: pbmZ7R
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "Onboarding Packs"
-msgstr "Uyum Paketleri"
 
 #. js-lingui-id: 37OSdM
 #: src/case-studies/case-study-stories.ts
@@ -6737,6 +6732,11 @@ msgstr "Lütfen devam etmeden önce tüm zorunlu alanları doldurun."
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter a valid email address."
 msgstr "Lütfen geçerli bir e-posta adresi girin."
+
+#. js-lingui-id: 8srGrM
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
+msgstr "Lütfen ana kanalınızın bağlantısını girin, örneğin youtube.com/@yourname."
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7620,6 +7620,7 @@ msgstr "Ön Eleme"
 
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Search a country…"
 msgstr "Bir ülke arayın…"
 
@@ -7741,6 +7742,7 @@ msgstr "Kayıtları Cmd ve Shift ile seçin"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Select your country"
 msgstr "Ülkenizi seçin"
 
@@ -7963,10 +7965,10 @@ msgstr "Kenar çubuğu öğeleri"
 msgid "Sierra Leone 🇸🇱"
 msgstr "Sierra Leone 🇸🇱"
 
-#. js-lingui-id: mA6cL1
+#. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
-msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
-msgstr "Bir dakikadan kısa sürede Cloud'a kaydolun ve 30 günlük denemenizi başlatın. Daha büyük kurulumlar için, 4 saatlik Uyumlulaştırma Paketlerimiz veya sertifikalı iş ortaklarımız sizi 1–2 hafta içinde canlıya geçirir."
+msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
+msgstr "Bir dakikadan kısa sürede Cloud'a kaydolun ve 30 günlük deneme sürümünüzü başlatın. Daha büyük ölçekli dağıtımlar için ekibimiz süreç boyunca size destek olabilir. İhtiyaçlarınızı görüşmek için bize ulaşın."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -9756,6 +9758,11 @@ msgstr "Sertifikasyon neleri içerir?"
 msgid "What does Twenty cost?"
 msgstr "Twenty'nin maliyeti nedir?"
 
+#. js-lingui-id: XqkgE8
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "What if a customer signs up without my link?"
+msgstr "Ya bir müşteri bağlantım olmadan kaydolursa?"
+
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts
 msgid "What is coming in April 2026 is what he has been waiting for: AI-assisted workflow creation, describing what he needs and iterating from there instead of building complex logic from scratch. For a founder who runs the CRM himself, that changes what is realistically possible."
@@ -10105,9 +10112,6 @@ msgstr "Yemen 🇾🇪"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Yes"
 msgstr "Evet"
@@ -10301,6 +10305,11 @@ msgstr "Çalışma alanınız bir git deposuyla desteklenir; böylece dallar olu
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
 msgstr "YouTube, bültenler, LinkedIn, TikTok: GTM araçlarını ele alan herkes."
+
+#. js-lingui-id: Lkub4e
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "youtube.com/@yourname"
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

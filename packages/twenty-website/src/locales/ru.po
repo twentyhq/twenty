@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-03 14:14\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -651,10 +651,10 @@ msgstr "3 товарные линейки"
 msgid "30 days"
 msgstr "30 дней"
 
-#. js-lingui-id: f8kF3P
+#. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit."
-msgstr "30 дней после перехода по ссылке. Если посетитель создаст своё рабочее пространство в течение этого времени, а затем станет платным клиентом Cloud Organization или Enterprise, комиссия будет вашей. Если до создания рабочего пространства он перейдёт по ссылке другого партнёра, вознаграждение получит этот партнёр."
+msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
+msgstr "30 дней после перехода по ссылке. Если посетитель создаст своё рабочее пространство в течение этого времени, а затем станет платным клиентом Cloud Organization или Enterprise, комиссия будет вашей. Если до создания рабочего пространства он перейдёт по ссылке другого партнёра, вознаграждение получит этот партнёр. После создания рабочего пространства вознаграждение закрепляется окончательно."
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -4705,7 +4705,6 @@ msgstr "HTML в электронных письмах рабочих проце�
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
-#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -4724,10 +4723,10 @@ msgstr "HubSpot ограничивает доступ к пользовател�
 msgid "Hungary 🇭🇺"
 msgstr "Венгрия 🇭🇺"
 
-#. js-lingui-id: L6C8J0
+#. js-lingui-id: DEIqgR
 #: src/affiliate-application/AffiliateApplicationForm.tsx
-msgid "I agree to the <0>affiliate program terms</0>"
-msgstr "Я соглашаюсь с <0>условиями партнёрской программы</0>"
+msgid "I agree to the <0>Affiliate Program Terms</0>"
+msgstr "Я соглашаюсь с <0>Условиями партнёрской программы</0>"
 
 #. js-lingui-id: GghmRz
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -4749,6 +4748,11 @@ msgstr "ICP"
 #: src/partner-application/partner-application-copy.ts
 msgid "Identity"
 msgstr "Идентификация"
+
+#. js-lingui-id: 9JU/6K
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "Если это их первое рабочее пространство Twenty и для него еще не задан код партнера, они могут ввести ваш на странице /settings/partner своего рабочего пространства в течение бесплатного пробного периода. В течение 30 дней после первого платежа они также могут попросить нас добавить его. После сохранения кода для рабочего пространства его нельзя изменить."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
@@ -5556,11 +5560,6 @@ msgstr "Мадагаскар 🇲🇬"
 msgid "Main channel (URL)"
 msgstr "Основной канал (URL)"
 
-#. js-lingui-id: KpUYnU
-#: src/affiliate-application/affiliate-application-copy.ts
-msgid "Main channel must be a full URL starting with https://"
-msgstr "Основной канал должен быть полным URL, начинающимся с https://"
-
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Maintenance mode"
@@ -6102,6 +6101,7 @@ msgstr "Сейчас приложения недоступны. Заглянит
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "No matching country."
 msgstr "Нет подходящей страны."
 
@@ -6319,11 +6319,6 @@ msgstr "Онбординг"
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "Онбординг · Документация · Управление изменениями · Поддержка L1/L2 · Управляемые сервисы"
-
-#. js-lingui-id: pbmZ7R
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "Onboarding Packs"
-msgstr "Пакеты онбординга"
 
 #. js-lingui-id: 37OSdM
 #: src/case-studies/case-study-stories.ts
@@ -6737,6 +6732,11 @@ msgstr "Пожалуйста, заполните все обязательные
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "Please enter a valid email address."
 msgstr "Введите корректный адрес электронной почты."
+
+#. js-lingui-id: 8srGrM
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter the link to your main channel, for example youtube.com/@yourname."
+msgstr "Введите ссылку на ваш основной канал, например youtube.com/@yourname."
 
 #. js-lingui-id: O3Iqcx
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -7620,6 +7620,7 @@ msgstr "Отбор"
 
 #. js-lingui-id: vk6sVR
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Search a country…"
 msgstr "Найдите страну…"
 
@@ -7741,6 +7742,7 @@ msgstr "Выбирайте записи с помощью Cmd и Shift"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Select your country"
 msgstr "Выберите вашу страну"
 
@@ -7963,10 +7965,10 @@ msgstr "Элементы боковой панели"
 msgid "Sierra Leone 🇸🇱"
 msgstr "Сьерра-Леоне 🇸🇱"
 
-#. js-lingui-id: mA6cL1
+#. js-lingui-id: Ro/Zi4
 #: src/sections/faq/faq.data.ts
-msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
-msgstr "Зарегистрируйтесь в Cloud меньше чем за минуту и начните 30‑дневный пробный период. Для крупных развёртываний наши четырёхчасовые Onboarding Packs или сертифицированные партнёры запустят вас за 1–2 недели."
+msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our team can support you along the way. Reach out to discuss what you need."
+msgstr "Зарегистрируйтесь в Cloud менее чем за минуту и начните 30-дневный пробный период. Для более масштабных развёртываний наша команда может поддержать вас на каждом этапе. Свяжитесь с нами, чтобы обсудить ваши потребности."
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
@@ -9766,6 +9768,11 @@ msgstr "Что включает сертификация?"
 msgid "What does Twenty cost?"
 msgstr "Сколько стоит Twenty?"
 
+#. js-lingui-id: XqkgE8
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "What if a customer signs up without my link?"
+msgstr "Что, если клиент зарегистрируется без моей ссылки?"
+
 #. js-lingui-id: WVQaGB
 #: src/case-studies/case-study-stories.ts
 msgid "What is coming in April 2026 is what he has been waiting for: AI-assisted workflow creation, describing what he needs and iterating from there instead of building complex logic from scratch. For a founder who runs the CRM himself, that changes what is realistically possible."
@@ -10115,9 +10122,6 @@ msgstr "Йемен 🇾🇪"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Yes"
 msgstr "Да"
@@ -10311,6 +10315,11 @@ msgstr "Ваше рабочее пространство поддерживае�
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
 msgstr "YouTube, рассылки, LinkedIn, TikTok: для всех, кто рассказывает об инструментах GTM."
+
+#. js-lingui-id: Lkub4e
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "youtube.com/@yourname"
+msgstr "youtube.com/@yourname"
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

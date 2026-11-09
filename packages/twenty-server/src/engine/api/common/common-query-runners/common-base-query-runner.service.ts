@@ -1,11 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import {
-  FieldMetadataType,
-  type ObjectRecord,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -24,7 +20,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-entry.util';
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
@@ -75,6 +71,8 @@ import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
 @Injectable()
 export abstract class CommonBaseQueryRunnerService<
@@ -117,6 +115,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly metricsService: MetricsService;
   @Inject()
   protected readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService;
+  @Inject()
+  protected readonly recordPermissionsService: RecordPermissionsService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -288,8 +288,8 @@ export abstract class CommonBaseQueryRunnerService<
           select: addTimelineActivityObjectColumnsToSelect({
             select: processedArgs.selectedFieldsResult.select,
             flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-            objectsPermissions:
-              extendedQueryRunnerContext.repository.objectRecordsPermissions,
+            recordReadRestrictions:
+              extendedQueryRunnerContext.recordReadRestrictions,
             flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
             flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
           }),
@@ -309,8 +309,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
       transactionScope: queryRunnerContext.transactionScope,
-      objectsPermissions:
-        extendedQueryRunnerContext.repository.objectRecordsPermissions,
+      recordReadRestrictions: extendedQueryRunnerContext.recordReadRestrictions,
     });
   }
 
@@ -322,7 +321,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     transactionScope,
-    objectsPermissions,
+    recordReadRestrictions,
   }: {
     results: Output;
     operationName: CommonQueryNames;
@@ -331,7 +330,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
-    objectsPermissions: ObjectsPermissions;
+    recordReadRestrictions: RecordReadRestrictions;
   }): Promise<Output> {
     const resultWithGetters = await this.processQueryResult(
       results,
@@ -347,7 +346,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext,
-      objectsPermissions,
+      recordReadRestrictions,
     });
 
     const executePostQueryHooks = () =>
@@ -386,6 +385,8 @@ export abstract class CommonBaseQueryRunnerService<
       authContext: context.authContext,
       repository,
       featureFlagsMap: context.featureFlagsMap,
+      permissionsPrincipals: context.permissionsPrincipals,
+      recordReadRestrictions: context.recordReadRestrictions,
     };
   }
 
@@ -458,7 +459,7 @@ export abstract class CommonBaseQueryRunnerService<
         : data;
 
     const { selectQueryBuilder, rowLevelPermissionsApplied } =
-      buildMutationQueryBuilder({
+      await buildMutationQueryBuilder({
         repository: writeRepository,
         alias,
         filter,

@@ -160,6 +160,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    fieldMetadataOptionUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
   };

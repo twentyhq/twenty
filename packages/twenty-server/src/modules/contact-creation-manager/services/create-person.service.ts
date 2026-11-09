@@ -16,7 +16,9 @@ export class CreatePersonService {
     peopleToCreate: Partial<PersonWorkspaceEntity>[],
     workspaceId: string,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
-    if (peopleToCreate.length === 0) return [];
+    if (peopleToCreate.length === 0) {
+      return [];
+    }
 
     const authContext = buildSystemAuthContext(workspaceId);
 

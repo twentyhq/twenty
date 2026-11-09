@@ -38,6 +38,13 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "viewFilter",
   "view",
   "searchFieldMetadata",
+  "fieldMetadataOption",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for fieldMetadataOption 1`] = `
+[
+  "fieldMetadata",
 ]
 `;
 
@@ -46,6 +53,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "role",
   "objectMetadata",
   "fieldMetadata",
+  "rowLevelPermissionPredicateGroup",
 ]
 `;
 

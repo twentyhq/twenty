@@ -1,8 +1,7 @@
-import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
-import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { FlatRolePermissionFlagValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = 'scheduling-app';
@@ -10,34 +9,60 @@ const ROLE_UNIVERSAL_IDENTIFIER = 'scheduling-app-default-role';
 const UNKNOWN_PERMISSION_FLAG_UNIVERSAL_IDENTIFIER =
   '20202020-0000-0000-0000-0000000000d4';
 
-const buildCreationArgs = (permissionFlagUniversalIdentifier: string) =>
-  ({
-    flatEntityToValidate: {
-      universalIdentifier: 'role-permission-flag',
-      roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
-      permissionFlagUniversalIdentifier,
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+const FLAT_ROLE: UniversalFlatRole = {
+  universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  isEditable: true,
+  label: 'Scheduling app',
+  description: null,
+  icon: null,
+  canUpdateAllSettings: false,
+  canAccessAllTools: false,
+  canAccessAllAgentChatChannels: false,
+  canReadAllObjectRecords: false,
+  canCreateAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToApiKeys: false,
+  canBeAssignedToApplications: true,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+  fieldPermissionUniversalIdentifiers: [],
+  objectPermissionUniversalIdentifiers: [],
+  roleTargetUniversalIdentifiers: [],
+  agentChatChannelRoleUniversalIdentifiers: [],
+  rolePermissionFlagUniversalIdentifiers: [],
+  rowLevelPermissionPredicateUniversalIdentifiers: [],
+  rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
+};
+
+const buildCreationArgs = (permissionFlagUniversalIdentifier: string) => ({
+  flatEntityToValidate: {
+    universalIdentifier: 'role-permission-flag',
+    roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
+    permissionFlagUniversalIdentifier,
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-01T00:00:00.000Z',
+  },
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+    flatPermissionFlagMaps: { byUniversalIdentifier: {} },
+    flatRolePermissionFlagMaps: { byUniversalIdentifier: {} },
+    flatRoleMaps: {
+      byUniversalIdentifier: { [ROLE_UNIVERSAL_IDENTIFIER]: FLAT_ROLE },
     },
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatPermissionFlagMaps: { byUniversalIdentifier: {} },
-      flatRolePermissionFlagMaps: { byUniversalIdentifier: {} },
-      flatRoleMaps: {
-        byUniversalIdentifier: {
-          [ROLE_UNIVERSAL_IDENTIFIER]: {
-            universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
-            applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-            isEditable: true,
-          },
-        },
-      },
-    },
-    buildOptions: {
-      isSystemBuild: false,
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    },
-  }) as unknown as UniversalFlatEntityValidationArgs<
-    typeof ALL_METADATA_NAME.rolePermissionFlag
-  >;
+  },
+  buildOptions: {
+    isSystemBuild: false,
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    workspaceCustomApplicationUniversalIdentifier:
+      APPLICATION_UNIVERSAL_IDENTIFIER,
+    flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+  },
+});
 
 describe('FlatRolePermissionFlagValidatorService', () => {
   const validator = new FlatRolePermissionFlagValidatorService();

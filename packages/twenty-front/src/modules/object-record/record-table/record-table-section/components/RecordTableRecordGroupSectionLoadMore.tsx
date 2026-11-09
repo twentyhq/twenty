@@ -4,10 +4,11 @@ import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-r
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { t } from '@lingui/core/macro';
 import { IconArrowDown } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 export const RecordTableRecordGroupSectionLoadMore = () => {
+  const { t } = useLingui();
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
   const currentRecordGroupId = useCurrentRecordGroupId();

@@ -26,7 +26,6 @@ import { WORKFLOW_EMAIL_BODY_EDITOR_PROFILE } from '@/workflow/workflow-steps/wo
 import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import {
@@ -46,6 +45,7 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useLingui } from '@lingui/react/macro';
 
 type WorkflowEditActionEmailBaseProps = {
   action: WorkflowEmailAction;
@@ -63,6 +63,7 @@ export const WorkflowEditActionEmailBase = ({
   action,
   actionOptions,
 }: WorkflowEditActionEmailBaseProps) => {
+  const { t } = useLingui();
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const hasConnectedAccountsPermission = useHasPermissionFlag(
     PermissionFlagType.CONNECTED_ACCOUNTS,
@@ -94,9 +95,9 @@ export const WorkflowEditActionEmailBase = ({
     const inputRecipients = action.settings.input.recipients;
 
     return {
-      cc: Boolean(inputRecipients?.cc),
-      bcc: Boolean(inputRecipients?.bcc),
-      inReplyTo: Boolean(action.settings.input.inReplyTo),
+      cc: isNonEmptyString(inputRecipients?.cc),
+      bcc: isNonEmptyString(inputRecipients?.bcc),
+      inReplyTo: isNonEmptyString(action.settings.input.inReplyTo),
     };
   });
 

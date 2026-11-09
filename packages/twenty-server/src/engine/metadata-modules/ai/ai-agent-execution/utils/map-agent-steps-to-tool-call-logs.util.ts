@@ -67,7 +67,7 @@ const truncateUnknownForLog = (value: unknown, maxBytes: number): unknown => {
 };
 
 export const mapAgentStepsToToolCallLogs = (
-  steps: StepResult<ToolSet>[],
+  steps: Pick<StepResult<ToolSet>, 'content'>[],
 ): AgentRunToolCallLog[] => {
   const ordered: AgentRunToolCallLog[] = [];
   const openByCallId = new Map<string, AgentRunToolCallLog>();

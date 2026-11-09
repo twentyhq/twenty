@@ -69,7 +69,8 @@ const GET_ROLES_QUERY = `
         canUpdateObjectRecords
         canSoftDeleteObjectRecords
         canDestroyObjectRecords
-        restrictedFields
+        unreadableFields
+        uneditableFields
         rowLevelPermissionPredicates {
           __typename
           id

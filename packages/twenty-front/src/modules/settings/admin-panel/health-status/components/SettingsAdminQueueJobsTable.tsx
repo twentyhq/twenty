@@ -15,7 +15,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
@@ -27,6 +27,7 @@ import {
   GetQueueJobsDocument,
 } from '~/generated-admin/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAdminQueueJobsTableProps = {
   queueName: string;
@@ -77,6 +78,7 @@ export const SettingsAdminQueueJobsTable = ({
   queueName,
   onRetentionConfigLoaded,
 }: SettingsAdminQueueJobsTableProps) => {
+  const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
   const [page, setPage] = useState(0);
   const [stateFilter, setStateFilter] = useState<JobState>(JobState.COMPLETED);
@@ -200,13 +202,17 @@ export const SettingsAdminQueueJobsTable = ({
   };
 
   const formatTimestampRelative = (timestamp?: number | null) => {
-    if (!timestamp) return '-';
+    if (!timestamp) {
+      return '-';
+    }
 
     return beautifyPastDateRelativeToNow(timestamp);
   };
 
   const formatTimestampFull = (timestamp?: number | null) => {
-    if (!timestamp) return '';
+    if (!timestamp) {
+      return '';
+    }
 
     return new Date(timestamp).toLocaleString();
   };

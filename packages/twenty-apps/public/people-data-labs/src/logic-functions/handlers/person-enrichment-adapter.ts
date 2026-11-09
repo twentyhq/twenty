@@ -1,3 +1,5 @@
+import { PDL_PERSON_REQUIRED_FIELD_OPTIONS } from 'src/constants/pdl-person-required-field-options';
+import { PDL_PERSON_REQUIRED_FIELDS_ENV_VAR_NAME } from 'src/constants/pdl-person-required-fields-env-var-name';
 import { PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-person-min-likelihood-env-var-name';
 import { PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-person-weak-identifier-min-likelihood-env-var-name';
 import { PERSON_MATCH_PRICE_DOLLARS } from 'src/constants/person-match-price-dollars';
@@ -24,6 +26,8 @@ export const personEnrichmentAdapter: BatchEnrichmentAdapter<
   minLikelihoodEnvVarName: PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME,
   weakIdentifierMinLikelihoodEnvVarName:
     PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
+  requiredFieldsEnvVarName: PDL_PERSON_REQUIRED_FIELDS_ENV_VAR_NAME,
+  requiredFieldOptions: PDL_PERSON_REQUIRED_FIELD_OPTIONS,
   readRecords: readPeople,
   getNodeId: (node) => node.id,
   extractParams: extractPersonMatchParams,

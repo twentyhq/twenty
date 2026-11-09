@@ -15,7 +15,6 @@ import {
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -27,6 +26,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
+import { useLingui } from '@lingui/react/macro';
 
 type UseWebhookFormProps = {
   webhookId?: string;
@@ -42,6 +42,7 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
 };
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
+  const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
 
@@ -78,7 +79,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   useEffect(() => {
     if (webhookData) {
       const webhook = webhookData.webhook;
-      if (!webhook) return;
+      if (!webhook) {
+        return;
+      }
 
       const baseOperations = webhook?.operations?.length
         ? parseOperationsFromStrings(webhook.operations)

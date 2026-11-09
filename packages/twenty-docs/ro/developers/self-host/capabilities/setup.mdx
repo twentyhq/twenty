@@ -274,6 +274,22 @@ yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
 
+## Limite de memorie pentru coada de joburi
+
+Redis-ul cozii rulează cu `noeviction`: odată ce este plin, fiecare punere în coadă eșuează pentru fiecare spațiu de lucru. Pentru a împiedica un spațiu de lucru sau o aplicație să o umple, fiecare poate utiliza o cotă din memoria pe care celelalte o lasă liberă, iar dimensiunea fiecărui job este limitată.
+
+| Variabilă                                                    | Implicit  | Ce face                                                                                 |
+| ------------------------------------------------------------ | --------- | --------------------------------------------------------------------------------------- |
+| `IS_REDIS_MEMORY_FAIRNESS_ENABLED`                           | `fals`    | Respinge joburile care depășesc limita de dimensiune sau cota lor.                      |
+| `JOB_QUEUE_MAX_JOB_SIZE_BYTES`                               | `5242880` | Cel mai mare job serializat acceptat.                                                   |
+| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID`                     | `0.3`     | Cota din memoria liberă pe care o poate deține un spațiu de lucru.                      |
+| `JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER` | `0.4`     | Cota din memoria liberă pe care o poate deține o aplicație, în toate spațiile de lucru. |
+| `JOB_QUEUE_MEMORY_RESERVE`                                   | `0.1`     | Cota din `maxmemory` care nu este alocată niciodată joburilor.                          |
+
+Limita cotei necesită ca `maxmemory` să fie setat pentru Redis-ul cozii. Refuzurile sunt înregistrate în jurnal și numărate în `job_memory_limit_refused_total` după coadă, numele jobului și motiv, iar `twenty_queue_memory_used_ratio` urmărește utilizarea memoriei. Dacă furnizorul dvs. reține o parte din `maxmemory` (de exemplu, `reserved-memory-percent` din ElastiCache), includeți-o în `JOB_QUEUE_MEMORY_RESERVE`, cu excepția cazului în care `maxmemory` o exclude deja.
+
+O sarcină este facturată până când se finalizează sau eșuează definitiv, iar taxele nu expiră. O sarcină eliminată dintr-o coadă în afara lucrătorului (ștergere din panoul de administrare, curățarea cozii) își păstrează taxa până când rulezi `yarn command:prod job-memory:reconcile`. Comanda eliberează taxa asociată fiecărei sarcini care a dispărut sau s-a finalizat, verificând de două ori la câteva secunde distanță (`--grace-seconds`, implicit 10), astfel încât o sarcină care este pusă în coadă să nu fie eliberată din greșeală.
+
 ## Conexiuni de ieșire către gazde interne
 
 În mod implicit, Twenty refuză conexiunile de ieșire către adrese IP private/interne (protecție SSRF). Aceasta acoperă acțiunile fluxurilor de lucru HTTP, webhookurile, furnizorii de identitate SSO și conexiunile IMAP/SMTP/CalDAV. Dacă furnizorul de identitate, serverul de e-mail sau serverul de calendar rulează într-o rețea privată, enumerați numele de gazdă sau literalul IP al acestuia:
@@ -475,7 +491,10 @@ LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
 LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
 LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
 LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET=your-layer-bucket
 ```
+
+Driverul Lambda încarcă stratul de dependențe al fiecărei aplicații în `LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET`, un bucket pe care îl dețineți în aceeași regiune cu funcțiile dvs. Când nu este setat, driverul utilizează bucket-ul de stocare (`STORAGE_S3_NAME`). Dacă niciuna nu este setată, funcțiile logice eșuează cu o eroare de configurare.
 
 **Pentru a dezactiva funcțiile logice:**
 

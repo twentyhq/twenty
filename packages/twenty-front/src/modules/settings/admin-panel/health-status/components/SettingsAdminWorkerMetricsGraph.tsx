@@ -4,7 +4,6 @@ import { SettingsAdminWorkerMetricsTooltip } from '@/settings/admin-panel/health
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -12,6 +11,7 @@ import {
   GetQueueMetricsDocument,
   QueueMetricsTimeRange,
 } from '~/generated-admin/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledGraphContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -46,6 +46,7 @@ export const SettingsAdminWorkerMetricsGraph = ({
   queueName,
   timeRange,
 }: SettingsAdminWorkerMetricsGraphProps) => {
+  const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
   const theme = useTheme();
 
@@ -69,7 +70,9 @@ export const SettingsAdminWorkerMetricsGraph = ({
   };
 
   const getMaxYValue = () => {
-    if (!hasData) return 2;
+    if (!hasData) {
+      return 2;
+    }
 
     let maxValue = 0;
     metricsData.forEach((series) => {

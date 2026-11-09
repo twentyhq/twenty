@@ -28,9 +28,11 @@ type ProbedFlatEntity = {
 export const canManifestExpressFlatEntity = ({
   metadataName,
   flatEntity,
+  parentFlatRole,
 }: {
   metadataName: AllMetadataName;
   flatEntity: ProbedFlatEntity;
+  parentFlatRole?: ProbedFlatEntity;
 }): boolean => {
   if (METADATA_NAMES_WITHOUT_MANIFEST_REPRESENTATION.includes(metadataName)) {
     return false;
@@ -45,6 +47,17 @@ export const canManifestExpressFlatEntity = ({
   }
 
   if (metadataName === 'role' && flatEntity.isEditable === false) {
+    return false;
+  }
+
+  // What a role holds is only in a manifest if the role itself is
+  if (
+    isDefined(parentFlatRole) &&
+    !canManifestExpressFlatEntity({
+      metadataName: 'role',
+      flatEntity: parentFlatRole,
+    })
+  ) {
     return false;
   }
 

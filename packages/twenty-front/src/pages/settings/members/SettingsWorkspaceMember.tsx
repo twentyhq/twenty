@@ -13,8 +13,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
-import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
+import { StandardObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconInfoCircle, IconLock } from 'twenty-ui/icon';
@@ -34,6 +33,7 @@ import {
   ImpersonateDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const SETTINGS_WORKSPACE_MEMBER_TABS = {
   COMPONENT_INSTANCE_ID: 'settings-workspace-member-tabs',
@@ -46,6 +46,7 @@ const SETTINGS_WORKSPACE_MEMBER_TABS = {
 const DELETE_MEMBER_MODAL_ID = 'workspace-member-delete-modal';
 
 export const SettingsWorkspaceMember = () => {
+  const { t } = useLingui();
   const { workspaceMemberId = '' } = useParams();
   const navigateSettings = useNavigateSettings();
   const { enqueueToast } = useToast();
@@ -67,7 +68,7 @@ export const SettingsWorkspaceMember = () => {
   } = useWorkspaceMemberRoles(workspaceMemberId);
 
   const { record: member, loading } = useFindOneRecord<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
     objectRecordId: workspaceMemberId,
     recordGqlFields: {
       id: true,
@@ -101,7 +102,7 @@ export const SettingsWorkspaceMember = () => {
       }
       try {
         await updateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+          objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
           idToUpdate: member.id,
           updateOneRecordInput: {
             name: { firstName, lastName },
@@ -121,7 +122,9 @@ export const SettingsWorkspaceMember = () => {
   );
 
   const handleDeleteMember = async () => {
-    if (!member?.id) return;
+    if (!member?.id) {
+      return;
+    }
     try {
       await deleteUserFromWorkspace({
         variables: { workspaceMemberIdToDelete: member.id },

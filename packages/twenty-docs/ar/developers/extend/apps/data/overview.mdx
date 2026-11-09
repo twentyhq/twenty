@@ -46,6 +46,10 @@ import { CardTitle } from "/snippets/card-title.mdx"
     <CardTitle>النشاط من النوع</CardTitle>
     حدد أحداث المراجعة التلقائية وأحداث التطبيق الصريحة لجداول زمنية للتسجيل.
   </Card>
+  <Card href="/ar/developers/extend/apps/data/validation-rules" img="/images/user-guide/halftone/card-page-validation-rules.svg">
+    <CardTitle>قواعد التحقق</CardTitle>
+    `defineValidationRule` — أعلن الشروط التي يجب أن يستوفيها السجل قبل أن يمكن حفظه.
+  </Card>
 </CardGroup>
 
 ## الكيانات بنظرة سريعة
@@ -58,8 +62,9 @@ import { CardTitle } from "/snippets/card-title.mdx"
 | **الفهرس**                 | فهرس قاعدة بيانات لتسريع استعلام متكرر على أحد الكائنات لديك                                            | `defineIndex()`                         |
 | **نوع نشاط الجدول الزمني** | حدث تدقيق تلقائي أو حدث مجال صريح يظهر في المخططات الزمنية للسجلات                                      | `defineTimelineActivityType()`          |
 | **مسار السجل المرتبط**     | سلسلة تضم ما يصل إلى ثلاث علاقات يمتد عبرها الوصول إلى سجل ليشمل سجلاته المرتبطة                        | `defineRelatedRecordPath()`             |
+| **قاعدة التحقق**           | شرط يجب أن يستوفيه السجل قبل أن يمكن حفظه                                                               | `defineValidationRule()`                |
 
-تكتشف واجهة سطر الأوامر هذه العناصر عبر تحليل AST أثناء وقت البناء، لذا تنظيم الملفات يعود إليك — القاعدة المتّبعة هي `src/objects/` و `src/fields/` و `src/indexes/` و `src/timeline-activity-types/` و `src/related-record-paths/`. معرّفات UUID ثابتة من نوع `universalIdentifier` تربط كل شيء معًا عبر عمليات النشر.
+تكتشف واجهة سطر الأوامر هذه العناصر عبر تحليل AST أثناء وقت البناء، لذا فإن تنظيم الملفات يعود إليك — القاعدة المتّبعة هي `src/objects/` و `src/validation-rules/` و `src/fields/` و `src/indexes/` و `src/timeline-activity-types/` و `src/related-record-paths/`. معرّفات UUID ثابتة من نوع `universalIdentifier` تربط كل شيء معًا عبر عمليات النشر.
 
 ## الفهارس (اختياري)
 

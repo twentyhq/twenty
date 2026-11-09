@@ -6,7 +6,6 @@ import {
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';
-import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const AUTH_CONTEXT = {
@@ -140,18 +139,10 @@ describe('get_dashboard tool', () => {
       },
     };
 
-    const tool = createGetDashboardTool(
-      deps as unknown as Pick<
-        PageLayoutToolDependencies,
-        | 'pageLayoutService'
-        | 'workspaceOrmManager'
-        | 'flatEntityMapsCacheService'
-      >,
-      {
-        workspaceId: WORKSPACE_ID,
-        authContext: AUTH_CONTEXT,
-      },
-    );
+    const tool = createGetDashboardTool(deps, {
+      workspaceId: WORKSPACE_ID,
+      authContext: AUTH_CONTEXT,
+    });
 
     const result = await tool.execute({ dashboardId: dashboard.id });
 

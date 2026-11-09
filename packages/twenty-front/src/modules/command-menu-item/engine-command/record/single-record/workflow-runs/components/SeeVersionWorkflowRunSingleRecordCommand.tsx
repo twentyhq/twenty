@@ -1,6 +1,6 @@
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
@@ -21,7 +21,7 @@ export const SeeVersionWorkflowRunSingleRecordCommand = () => {
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordShowPage}
       params={{
-        objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+        objectNameSingular: StandardObjectNameSingular.WorkflowVersion,
         objectRecordId: selectedRecord.workflowVersion.id,
       }}
     />

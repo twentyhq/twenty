@@ -14,11 +14,13 @@ const buildContext = (
   numberOfSelectedRecords: 0,
   objectPermissions: {
     objectMetadataId: '',
+    canCreateObjectRecords: true,
     canReadObjectRecords: true,
     canUpdateObjectRecords: true,
     canSoftDeleteObjectRecords: true,
     canDestroyObjectRecords: false,
-    restrictedFields: {},
+    unreadableFields: [],
+    uneditableFields: [],
     rowLevelPermissionPredicates: [],
     rowLevelPermissionPredicateGroups: [],
   },
@@ -31,10 +33,61 @@ const buildContext = (
   canAccessFullAdminPanel: false,
   objectMetadataItem: {},
   objectMetadataLabel: '',
+  coreObjectName: null,
+  currentView: null,
   ...overrides,
 });
 
 describe('evaluateConditionalAvailabilityExpression', () => {
+  describe('coreObjectName', () => {
+    it('should expose the current core object to expressions', () => {
+      const expression = 'coreObjectName == "workflow"';
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          expression,
+          buildContext({ coreObjectName: 'workflow' }),
+        ),
+      ).toBe(true);
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, buildContext()),
+      ).toBe(false);
+    });
+  });
+
+  describe('currentView', () => {
+    const expression =
+      "currentView.universalIdentifier == '20202020-0000-4000-8000-000000000001'";
+
+    it('should match the view on screen', () => {
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          expression,
+          buildContext({
+            currentView: {
+              id: 'view-id',
+              universalIdentifier: '20202020-0000-4000-8000-000000000001',
+            },
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it('should not match another view or no view', () => {
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          expression,
+          buildContext({
+            currentView: { id: 'view-id', universalIdentifier: null },
+          }),
+        ),
+      ).toBe(false);
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, buildContext()),
+      ).toBe(false);
+    });
+  });
+
   describe('arrayLength for favoriteRecordIds', () => {
     it('should evaluate arrayLength(favoriteRecordIds) < numberOfSelectedRecords when some selected are not favorites', () => {
       const expression =
@@ -348,11 +401,13 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         hasAnySoftDeleteFilterOnView: false,
         objectPermissions: {
           objectMetadataId: '',
+          canCreateObjectRecords: true,
           canReadObjectRecords: true,
           canUpdateObjectRecords: true,
           canSoftDeleteObjectRecords: true,
           canDestroyObjectRecords: false,
-          restrictedFields: {},
+          unreadableFields: [],
+          uneditableFields: [],
           rowLevelPermissionPredicates: [],
           rowLevelPermissionPredicateGroups: [],
         },

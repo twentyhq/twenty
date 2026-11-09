@@ -1,0 +1,90 @@
+---
+title: الصورة الرمزية للمساعد
+description: شخصية مساعد ذات شكل وتعبير ولون وحجم ورسوم متحركة أثناء الخمول قابلة للتهيئة.
+---
+
+import { PageBanner } from '/snippets/page-banner.mdx';
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AssistantAvatarReference from '/snippets/ui/generated/components/data-display/assistant-avatar.mdx';
+
+## نظرة عامة
+
+اعرض شخصية مساعد باستخدام شكل الجسم والوجه ولون لوحة الألوان والحجم. يعرض المكوّن القيم المقدّمة؛ ويتولى تطبيقك الاختيار والحفظ.
+
+<StoryEmbed storyId="ui-components-data-display-assistantavatar--display" title="شخصية المساعد بجانب اسمها" height={100} />
+
+## استخدام
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const AssistantLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <AssistantAvatar shape="circle" face="default" color="blue" size={24} />
+    <Text>Workspace assistant</Text>
+  </Text>
+);
+```
+
+## الخيارات المرئية
+
+اختر الأشكال بشكل مستقل عن التعابير والألوان.
+
+| خاصية        | القيم                                                                                      | الإعداد الافتراضي   |
+| ------------ | ------------------------------------------------------------------------------------------ | ------------------- |
+| `shape`      | `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem`, `hexagon` | `circle`            |
+| `face`       | `default`, `happy`, `wink`, `surprised`, `sleepy`, `love`                                  | `الإعداد الافتراضي` |
+| `اللون`      | `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `gray`   | `أزرق`              |
+| `الحجم`      | `14`, `16`, `20`, `24`, `40` بكسل                                                          | `24`                |
+| `isAnimated` | `true`, `false`                                                                            | `خاطئ`              |
+
+يستخدم الجسم والوجه رموز النسق الخاصة بلوحة الألوان المحددة ويتبعان النسق الفاتح أو الداكن المحيط. عيّن `size` لشخصية مربعة. تستهدف السمات والأحداث الأصلية و`className` و`style` و`ref` عنصر span الخارجي؛ وتتجاوز الأنماط الصريحة أبعاده وإعدادات لوحة الألوان الافتراضية.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const CustomAssistant = () => (
+  <AssistantAvatar
+    shape="cloud"
+    face="happy"
+    color="sky"
+    size={40}
+    aria-label="Workspace assistant"
+  />
+);
+```
+
+## الرسوم المتحركة في وضع السكون
+
+عيّن `isAnimated` لتشغيل حلقة السكون للتعبير المحدد. يرمش Default ويلقي نظرات جانبية، ويرفع Happy عينيه، ويغلق Wink عينًا واحدة، ويوسّع Surprised عينيه، ويُظهر Sleepy علامة نوم عائمة، وتنبض عينا Love على شكل قلب. يبقى الجسم ثابتًا.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const AnimatedAssistant = () => (
+  <AssistantAvatar face="happy" isAnimated aria-label="Workspace assistant" />
+);
+```
+
+<StoryEmbed storyId="ui-components-data-display-assistantavatar--idle-faces" title="الرسوم المتحركة في وضع السكون لكل تعبير" height={180} />
+
+الرسوم المتحركة معطلة افتراضيًا. عيّن `isAnimated={false}` لعرض التعبير الثابت، بما في ذلك الغمزة الظاهرة. عندما يفضّل المتصفح تقليل الحركة، يعرض المكوّن التعبير الثابت حتى عند تمكين `isAnimated`. ينطبق التفضيل أيضًا إذا تغيّر أثناء عرض الشخصية.
+
+يتحكم التطبيق في مفتاح تبديل الرسوم المتحركة. تتحكم هذه الخاصية في العرض في وضع السكون ولا تمثل الاستماع أو التحدث أو التفكير أو أي نشاط آخر للمساعد.
+
+## إمكانية الوصول
+
+تكون الشخصية زخرفية عندما لا يكون لها اسم متاح، كما في مثال الاستخدام المسمى. بالنسبة إلى شخصية مستقلة، وفّر `aria-label` أو `aria-labelledby`؛ وعندها يكشف الجذر عن دور الصورة. يبقى الجسم والوجه مخفيين عن التقنية المساعدة كي يُعلن عن الشخصية مرة واحدة.
+
+عيّن `aria-hidden` صراحةً عندما تحتاج إلى تجاوز الإعداد الافتراضي المستند إلى الاسم، مثل إخفاء شخصية مسماة بجانب نص مرئي مكافئ.
+
+ضع الشخصية داخل زر أو رابط مسمى عندما ترافق إجراءً ما. يتولى التطبيق عنصر التحكم وتسميته وسلوكه.
+
+## الإزاحة
+
+<AssistantAvatarReference />
+
+<PageBanner illustration="page-cover-assistant-avatar" />

@@ -11,7 +11,6 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
@@ -25,10 +24,12 @@ import { useDebouncedCallback } from 'use-debounce';
 import { GetToolInputSchemaDocument } from '~/generated-metadata/graphql';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import { SettingsToolParameterTable } from '@/settings/ai/components/SettingsToolParameterTable';
+import { useLingui } from '@lingui/react/macro';
 
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
 
 export const SettingsToolDetail = () => {
+  const { t } = useLingui();
   const { toolIdentifier } = useParams();
   const navigate = useNavigate();
   const { enqueueToast } = useToast();
@@ -101,7 +102,9 @@ export const SettingsToolDetail = () => {
     : undefined;
 
   const debouncedSaveName = useDebouncedCallback(async (value: string) => {
-    if (!isCustomTool || !isDefined(logicFunction)) return;
+    if (!isCustomTool || !isDefined(logicFunction)) {
+      return;
+    }
 
     const result = await updateLogicFunction({
       input: {
@@ -122,7 +125,9 @@ export const SettingsToolDetail = () => {
 
   const debouncedSaveDescription = useDebouncedCallback(
     async (value: string) => {
-      if (!isCustomTool || !isDefined(logicFunction)) return;
+      if (!isCustomTool || !isDefined(logicFunction)) {
+        return;
+      }
 
       const result = await updateLogicFunction({
         input: {
@@ -144,7 +149,9 @@ export const SettingsToolDetail = () => {
   };
 
   const handleDelete = async () => {
-    if (!isCustomTool || !isDefined(logicFunction)) return;
+    if (!isCustomTool || !isDefined(logicFunction)) {
+      return;
+    }
 
     setIsDeleting(true);
 

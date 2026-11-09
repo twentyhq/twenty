@@ -13,10 +13,10 @@ export const getGettingStartedStepSelection = ({
   nextStep: GettingStartedStepActionKey;
   stepAfterSkip: GettingStartedStepActionKey;
 } => {
-  const currentStep =
-    stepActionKeys.find(
-      (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
-    ) ?? stepActionKeys[0];
+  const firstRemainingStep = stepActionKeys.find(
+    (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
+  );
+  const currentStep = firstRemainingStep ?? stepActionKeys[0];
   const displayedStep = selectedStepActionKey ?? currentStep;
   const displayedStepIndex = stepActionKeys.indexOf(displayedStep);
   const nextStep =
@@ -26,12 +26,14 @@ export const getGettingStartedStepSelection = ({
     ].find(
       (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
     ) ?? displayedStep;
+  const isDisplayedStepCompleted =
+    completedStepActionKeys.includes(displayedStep);
 
   return {
     selectedStepActionKey: displayedStep,
     nextStep,
-    stepAfterSkip: completedStepActionKeys.includes(displayedStep)
-      ? currentStep
+    stepAfterSkip: isDisplayedStepCompleted
+      ? (firstRemainingStep ?? nextStep)
       : nextStep,
   };
 };

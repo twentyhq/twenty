@@ -225,6 +225,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     fieldMetadata: {
       foreignKey: 'fieldMetadataId',
     },
+    rowLevelPermissionPredicateGroup: {
+      foreignKey: 'rowLevelPermissionPredicateGroupId',
+    },
   },
   pageLayout: {
     workspace: null,
@@ -357,6 +360,13 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     tsVectorFieldMetadata: {
       foreignKey: 'tsVectorFieldMetadataId',
+    },
+  },
+  fieldMetadataOption: {
+    workspace: null,
+    application: null,
+    fieldMetadata: {
+      foreignKey: 'fieldMetadataId',
     },
   },
   relatedRecordPath: {

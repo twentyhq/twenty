@@ -1,6 +1,7 @@
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { useMessageThreadChannel } from '@/activities/emails/hooks/useMessageThreadChannel';
+import { useSubscribeToMessageThreadMessages } from '@/activities/emails/hooks/useSubscribeToMessageThreadMessages';
 import { isChatTimelineThreadChannel } from '@/activities/emails/utils/isChatTimelineThreadChannel';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
@@ -13,8 +14,8 @@ import {
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
 
 type MessageThreadWidgetProps = {
   widget: PageLayoutWidget;
@@ -23,6 +24,7 @@ type MessageThreadWidgetProps = {
 export const MessageThreadWidget = ({
   widget: _widget,
 }: MessageThreadWidgetProps) => {
+  const { t } = useLingui();
   const targetRecord = useTargetRecord();
 
   const {
@@ -33,6 +35,12 @@ export const MessageThreadWidget = ({
     threadLoading,
     lastMessageChannelId,
   } = useEmailThread(targetRecord.id);
+
+  useSubscribeToMessageThreadMessages({
+    messageThreadId: targetRecord.id,
+    loadedMessageCount: messages.length,
+    refetchMessages,
+  });
 
   const { messageThreadChannel, messageThreadChannelLoading } =
     useMessageThreadChannel(targetRecord.id);

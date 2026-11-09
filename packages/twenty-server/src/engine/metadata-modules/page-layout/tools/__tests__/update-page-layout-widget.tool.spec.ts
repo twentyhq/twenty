@@ -6,7 +6,6 @@ import {
 } from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 import { createUpdatePageLayoutWidgetTool } from 'src/engine/metadata-modules/page-layout/tools/update-page-layout-widget.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
@@ -47,6 +46,8 @@ const flatFieldMetadataMaps = {
 };
 
 const buildDeps = () => ({
+  pageLayoutTabService: { findByIdOrThrow: jest.fn() },
+  pageLayoutService: { findByIdOrThrow: jest.fn() },
   pageLayoutWidgetService: {
     findByIdOrThrow: jest
       .fn()
@@ -74,16 +75,7 @@ const buildDeps = () => ({
 });
 
 const createTool = (deps: ReturnType<typeof buildDeps>) =>
-  createUpdatePageLayoutWidgetTool(
-    deps as unknown as Pick<
-      PageLayoutToolDependencies,
-      | 'pageLayoutWidgetService'
-      | 'flatEntityMapsCacheService'
-      | 'pageLayoutTabService'
-      | 'pageLayoutService'
-    >,
-    { workspaceId: WORKSPACE_ID },
-  );
+  createUpdatePageLayoutWidgetTool(deps, { workspaceId: WORKSPACE_ID });
 
 describe('update_page_layout_widget tool', () => {
   it('resolves filter field names using the existing widget object when the object is not changed', async () => {

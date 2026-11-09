@@ -10,9 +10,15 @@ export const detectDateFormat = (): keyof typeof DateFormat => {
       .filter((part) => ['year', 'month', 'day'].includes(part.type))
       .map((part) => part.type);
 
-    if (partOrder[0] === 'month') return 'MONTH_FIRST';
-    if (partOrder[0] === 'day') return 'DAY_FIRST';
-    if (partOrder[0] === 'year') return 'YEAR_FIRST';
+    if (partOrder[0] === 'month') {
+      return 'MONTH_FIRST';
+    }
+    if (partOrder[0] === 'day') {
+      return 'DAY_FIRST';
+    }
+    if (partOrder[0] === 'year') {
+      return 'YEAR_FIRST';
+    }
 
     return 'MONTH_FIRST';
   } catch {

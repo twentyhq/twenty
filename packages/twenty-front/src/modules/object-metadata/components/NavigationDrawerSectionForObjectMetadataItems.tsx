@@ -1,5 +1,5 @@
 import { NavigationDrawerItemForObjectMetadataItem } from '@/navigation-menu-item/display/object/components/NavigationDrawerItemForObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -9,18 +9,18 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 const ORDERED_FIRST_STANDARD_OBJECTS: string[] = [
-  CoreObjectNameSingular.Person,
-  CoreObjectNameSingular.Company,
-  CoreObjectNameSingular.Opportunity,
-  CoreObjectNameSingular.Task,
-  CoreObjectNameSingular.Note,
+  StandardObjectNameSingular.Person,
+  StandardObjectNameSingular.Company,
+  StandardObjectNameSingular.Opportunity,
+  StandardObjectNameSingular.Task,
+  StandardObjectNameSingular.Note,
 ];
 
 const ORDERED_LAST_STANDARD_OBJECTS: string[] = [
-  CoreObjectNameSingular.Dashboard,
+  StandardObjectNameSingular.Dashboard,
 ];
 
 type NavigationDrawerSectionForObjectMetadataItemsProps = {
@@ -101,12 +101,14 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   ];
 
   const objectMetadataItemsForNavigationItemsWithReadPermission =
-    objectMetadataItemsForNavigationItems.filter(
-      (objectMetadataItem) =>
-        getObjectPermissionsForObject(
+    objectMetadataItemsForNavigationItems.filter((objectMetadataItem) =>
+      canReachSomeRecords({
+        objectRecordsPermissions: getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
-        ).canReadObjectRecords,
+        ),
+        operationType: 'read',
+      }),
     );
 
   return (

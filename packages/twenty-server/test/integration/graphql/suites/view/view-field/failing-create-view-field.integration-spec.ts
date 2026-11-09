@@ -27,7 +27,7 @@ const normalizeErrorMessage = (error: any) => {
 
 describe('View Field Resolver - Failing Create Operation', () => {
   let testSetup: ViewFieldTestSetup;
-  let createdFlatViewFieldIds: string[] = [];
+  const createdFlatViewFieldIds: string[] = [];
 
   beforeAll(async () => {
     testSetup = await setupViewFieldTest();

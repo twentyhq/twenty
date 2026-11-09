@@ -54,8 +54,35 @@ const createCompleteDashboardSchema = z.object({
     .describe('Widgets to add'),
 });
 
+type CreateCompleteDashboardToolDeps = {
+  pageLayoutService: Pick<
+    PageLayoutToolDependencies['pageLayoutService'],
+    'create' | 'destroy' | 'findByIdOrThrow'
+  >;
+  pageLayoutTabService: Pick<
+    PageLayoutToolDependencies['pageLayoutTabService'],
+    'create' | 'findByIdOrThrow'
+  >;
+  pageLayoutWidgetService: Pick<
+    PageLayoutToolDependencies['pageLayoutWidgetService'],
+    'create'
+  >;
+  flatEntityMapsCacheService: Pick<
+    PageLayoutToolDependencies['flatEntityMapsCacheService'],
+    'getOrRecomputeManyOrAllFlatEntityMaps'
+  >;
+  workspaceOrmManager: Pick<
+    PageLayoutToolDependencies['workspaceOrmManager'],
+    'executeInWorkspaceContext' | 'getRepository'
+  >;
+  recordPositionService: Pick<
+    PageLayoutToolDependencies['recordPositionService'],
+    'buildRecordPosition'
+  >;
+};
+
 export const createCreateCompleteDashboardTool = (
-  deps: PageLayoutToolDependencies,
+  deps: CreateCompleteDashboardToolDeps,
   context: PageLayoutToolContextWithPermissions,
 ) => ({
   name: 'create_complete_dashboard' as const,
@@ -239,7 +266,7 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
 });
 
 type CreateDashboardRecordParams = {
-  deps: PageLayoutToolDependencies;
+  deps: CreateCompleteDashboardToolDeps;
   context: PageLayoutToolContextWithPermissions;
   title: string;
   pageLayoutId: string;

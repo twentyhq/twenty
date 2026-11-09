@@ -3,7 +3,7 @@ import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 
 import { Max, MaxLength } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -24,9 +24,24 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const TIMELINE_MESSAGING_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [],
+};
 
 @ArgsType()
 class GetTimelineThreadsFromObjectRecordArgs {
@@ -102,20 +117,6 @@ class GetTimelineThreadsFromOpportunityIdArgs {
   pageSize: number;
 }
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: false,
-    oauthClient: false,
-    application: false,
-  }),
-  CustomPermissionGuard,
-)
 @CoreResolver(() => TimelineThreadsWithTotalDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class TimelineMessagingResolver {
@@ -126,6 +127,10 @@ export class TimelineMessagingResolver {
   ) {}
 
   @Query(() => TimelineThreadsWithTotalDTO)
+  @UseGuards(
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
+    CustomPermissionGuard,
+  )
   async getTimelineThreadsFromObjectRecord(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -148,6 +153,10 @@ export class TimelineMessagingResolver {
   }
 
   @Query(() => TimelineThreadChannelDTO, { nullable: true })
+  @UseGuards(
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
+    CustomPermissionGuard,
+  )
   async getMessageThreadChannel(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -161,6 +170,10 @@ export class TimelineMessagingResolver {
   }
 
   @Query(() => TimelineThreadSearchResultDTO)
+  @UseGuards(
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
+    CustomPermissionGuard,
+  )
   async searchTimelineThreads(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -179,6 +192,10 @@ export class TimelineMessagingResolver {
   @Query(() => TimelineThreadsWithTotalDTO, {
     deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
   })
+  @UseGuards(
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
+    CustomPermissionGuard,
+  )
   async getTimelineThreadsFromPersonId(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -186,7 +203,7 @@ export class TimelineMessagingResolver {
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Person,
+      objectNameSingular: StandardObjectNameSingular.Person,
       recordId: personId,
       workspaceId: workspace.id,
       page,
@@ -197,6 +214,10 @@ export class TimelineMessagingResolver {
   @Query(() => TimelineThreadsWithTotalDTO, {
     deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
   })
+  @UseGuards(
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
+    CustomPermissionGuard,
+  )
   async getTimelineThreadsFromCompanyId(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -204,7 +225,7 @@ export class TimelineMessagingResolver {
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Company,
+      objectNameSingular: StandardObjectNameSingular.Company,
       recordId: companyId,
       workspaceId: workspace.id,
       page,
@@ -215,6 +236,10 @@ export class TimelineMessagingResolver {
   @Query(() => TimelineThreadsWithTotalDTO, {
     deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
   })
+  @UseGuards(
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
+    CustomPermissionGuard,
+  )
   async getTimelineThreadsFromOpportunityId(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -223,7 +248,7 @@ export class TimelineMessagingResolver {
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      objectNameSingular: StandardObjectNameSingular.Opportunity,
       recordId: opportunityId,
       workspaceId: workspace.id,
       page,
@@ -231,7 +256,23 @@ export class TimelineMessagingResolver {
     });
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [PermissionFlagType.CONNECTED_ACCOUNTS],
+    }),
+    CustomPermissionGuard,
+  )
   @Mutation(() => Boolean)
   async dismissReconnectAccountBanner(
     @AuthUser() user: AuthContextUser,

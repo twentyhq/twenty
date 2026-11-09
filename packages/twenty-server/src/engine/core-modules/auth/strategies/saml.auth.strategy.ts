@@ -121,7 +121,9 @@ export class SamlAuthStrategy extends PassportStrategy(
     });
   }
 
-  private extractWorkspaceInviteHash(req: Request): string | undefined {
+  private extractWorkspaceInviteHash(
+    req: Pick<Request, 'body'>,
+  ): string | undefined {
     const result = RELAY_STATE_BODY_SCHEMA.safeParse(req.body);
 
     return result.success
@@ -129,7 +131,11 @@ export class SamlAuthStrategy extends PassportStrategy(
       : undefined;
   }
 
-  validate: VerifyWithRequest = async (request, profile, done) => {
+  validate = async (
+    request: Pick<Request, 'params' | 'body'>,
+    profile: Parameters<VerifyWithRequest>[1],
+    done: Parameters<VerifyWithRequest>[2],
+  ): Promise<void> => {
     try {
       if (!profile) {
         return done(new Error('Profile must be provided'));

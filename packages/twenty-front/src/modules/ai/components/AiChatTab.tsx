@@ -9,7 +9,10 @@ import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOp
 import { AgentChatThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
 import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
+import { AiChatNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadRecipientBar';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -30,6 +33,10 @@ export const AiChatTab = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isDirectMessage = useAtomFamilySelectorValue(
+    agentChatThreadIsDirectMessageFamilySelector,
+    currentAiChatThread,
+  );
 
   const { uploadFiles } = useAiChatFileUpload();
 
@@ -52,7 +59,7 @@ export const AiChatTab = () => {
   return (
     <StyledContainer
       isDraggingFile={isDraggingFile}
-      onDragEnter={() => setIsDraggingFile(true)}
+      onDragEnter={() => !isDirectMessage && setIsDraggingFile(true)}
       onDragLeave={handleDragLeave}
       onDragOver={(event) => event.preventDefault()}
       onDrop={handleDrop}
@@ -69,6 +76,7 @@ export const AiChatTab = () => {
       )}
       {!isDraggingFile && (
         <>
+          <AiChatNewThreadRecipientBar />
           <AiChatTabMessageList />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={currentAiChatThread} />

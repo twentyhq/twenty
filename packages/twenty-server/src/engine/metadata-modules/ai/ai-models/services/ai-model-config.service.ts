@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { type ProviderOptions } from '@ai-sdk/provider-utils';
 import { type ToolSet } from 'ai';
+import { isAiDataPolicyActive, type AiDataPolicy } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   AI_SDK_ANTHROPIC,
   AI_SDK_OPENAI,
   AI_SDK_XAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import {
   AiModelRegistryService,
   RegisteredAiModel,
@@ -39,16 +40,25 @@ export class AiModelConfigService {
     });
   }
 
-  getNativeModelTools(
-    model: RegisteredAiModel,
-    options: NativeModelToolOptions = {},
-  ): ToolSet {
+  getNativeModelTools({
+    model,
+    aiDataPolicy,
+    options = {},
+  }: {
+    model: Pick<RegisteredAiModel, 'sdkPackage' | 'providerName'>;
+    aiDataPolicy: AiDataPolicy;
+    options?: NativeModelToolOptions;
+  }): ToolSet {
     const tools: Record<string, unknown> = {};
 
     const nativeTools = getNativeModelToolsForSdkPackage(model.sdkPackage);
     const providerName = model.providerName;
 
-    if (!isDefined(nativeTools) || !isDefined(providerName)) {
+    if (
+      isAiDataPolicyActive(aiDataPolicy) ||
+      !isDefined(nativeTools) ||
+      !isDefined(providerName)
+    ) {
       return tools as ToolSet;
     }
 

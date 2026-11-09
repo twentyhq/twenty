@@ -1,4 +1,4 @@
-import { type TextStreamPart, type ToolSet } from 'ai';
+import { type StepResult, type TextStreamPart, type ToolSet } from 'ai';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
@@ -28,8 +28,76 @@ export const buildAgentExecutionResult = (
     stopReason: null,
     modelId: 'test-model',
     steps: [],
+    totalCostInDollars: 0,
+    creditsUsedMicro: 0,
     ...overrides,
   }) as AgentExecutionResult;
+
+export const buildToolCallStepResult = ({
+  toolCallId,
+  toolName,
+  output,
+}: {
+  toolCallId: string;
+  toolName: string;
+  output: unknown;
+}): StepResult<ToolSet> => {
+  const toolCall = {
+    type: 'tool-call' as const,
+    toolCallId,
+    toolName,
+    input: {},
+  };
+  const toolResult = {
+    type: 'tool-result' as const,
+    toolCallId,
+    toolName,
+    input: {},
+    output,
+  };
+
+  return {
+    callId: 'call-id',
+    stepNumber: 0,
+    model: { provider: 'test', modelId: 'test-model' },
+    toolsContext: {},
+    runtimeContext: {},
+    content: [toolCall, toolResult],
+    text: '',
+    reasoning: [],
+    reasoningText: undefined,
+    files: [],
+    sources: [],
+    toolCalls: [toolCall],
+    staticToolCalls: [toolCall],
+    dynamicToolCalls: [],
+    toolResults: [toolResult],
+    staticToolResults: [toolResult],
+    dynamicToolResults: [],
+    finishReason: 'tool-calls',
+    rawFinishReason: undefined,
+    usage: EMPTY_USAGE,
+    performance: {
+      effectiveOutputTokensPerSecond: 0,
+      outputTokensPerSecond: undefined,
+      inputTokensPerSecond: undefined,
+      effectiveTotalTokensPerSecond: 0,
+      stepTimeMs: 0,
+      responseTimeMs: 0,
+      toolExecutionMs: {},
+      timeToFirstOutputMs: undefined,
+    },
+    warnings: undefined,
+    request: {},
+    response: {
+      id: 'response-id',
+      timestamp: new Date(0),
+      modelId: 'test-model',
+      messages: [],
+    },
+    providerMetadata: undefined,
+  };
+};
 
 // a run that called a wait tool, by default a short duration
 export const buildWaitingAgentExecutionResult = ({
@@ -51,20 +119,8 @@ export const buildWaitingAgentExecutionResult = ({
   return buildAgentExecutionResult({
     isPaused: true,
     steps: [
-      {
-        content: [
-          { type: 'tool-call', toolCallId: 'wait-1', toolName, input: {} },
-          {
-            type: 'tool-result',
-            toolCallId: 'wait-1',
-            toolName,
-            input: {},
-            output,
-          },
-        ],
-        toolResults: [{ toolCallId: 'wait-1', toolName, output }],
-      },
-    ] as unknown as AgentExecutionResult['steps'],
+      buildToolCallStepResult({ toolCallId: 'wait-1', toolName, output }),
+    ],
   });
 };
 

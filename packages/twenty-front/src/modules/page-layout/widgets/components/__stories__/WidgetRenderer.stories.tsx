@@ -14,7 +14,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { PageLayoutWidgetViewportContext } from '@/page-layout/contexts/PageLayoutWidgetViewportContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
@@ -58,7 +58,7 @@ import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMet
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
-  CoreObjectNameSingular.Company,
+  StandardObjectNameSingular.Company,
 );
 const idField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyObjectMetadataItem,
@@ -2038,16 +2038,16 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       jotaiStore.set(currentUserWorkspaceState.atom, {
         permissionFlags: [],
         twoFactorAuthenticationMethodSummary: null,
-        objectsPermissions: [
+        objectRecordsPermissions: [
           {
             objectMetadataId: companyObjectMetadataItem.id,
-            canReadObjectRecords: false,
-            canUpdateObjectRecords: false,
-            canSoftDeleteObjectRecords: false,
-            canDestroyObjectRecords: false,
-            restrictedFields: {},
-            rowLevelPermissionPredicates: [],
-            rowLevelPermissionPredicateGroups: [],
+            canCreateAllRecords: false,
+            canReadAllRecords: false,
+            canUpdateAllRecords: false,
+            canSoftDeleteAllRecords: false,
+            canDestroyAllRecords: false,
+            unreadableFields: [],
+            uneditableFields: [],
           },
         ],
       });
@@ -2055,16 +2055,16 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       jotaiStore.set(currentUserWorkspaceState.atom, {
         permissionFlags: [],
         twoFactorAuthenticationMethodSummary: null,
-        objectsPermissions: [
+        objectRecordsPermissions: [
           {
             objectMetadataId: companyObjectMetadataItem.id,
-            canReadObjectRecords: true,
-            canUpdateObjectRecords: true,
-            canSoftDeleteObjectRecords: true,
-            canDestroyObjectRecords: true,
-            restrictedFields: {},
-            rowLevelPermissionPredicates: [],
-            rowLevelPermissionPredicateGroups: [],
+            canCreateAllRecords: true,
+            canReadAllRecords: true,
+            canUpdateAllRecords: true,
+            canSoftDeleteAllRecords: true,
+            canDestroyAllRecords: true,
+            unreadableFields: [],
+            uneditableFields: [],
           },
         ],
       });

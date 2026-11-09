@@ -25,7 +25,6 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,6 +42,7 @@ import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
+import { useLingui } from '@lingui/react/macro';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),
@@ -128,6 +128,7 @@ export const SettingsDataModelFieldSelectForm = ({
   fieldType,
   disabled = false,
 }: SettingsDataModelFieldSelectFormProps) => {
+  const { t } = useLingui();
   const { initialDefaultValue, initialOptions } =
     useSelectSettingsFormInitialValues({
       fieldMetadataId: existingFieldMetadataId,
@@ -179,7 +180,9 @@ export const SettingsDataModelFieldSelectForm = ({
     result: DraggableListDropResult,
     onChange: (options: FieldMetadataItemOption[]) => void,
   ) => {
-    if (!result.destination) return;
+    if (!result.destination) {
+      return;
+    }
 
     const nextOptions = moveArrayItem(values, {
       fromIndex: result.source.index,
@@ -200,7 +203,9 @@ export const SettingsDataModelFieldSelectForm = ({
   const handleSetOptionAsDefault = (
     optionValue: FieldMetadataItemOption['value'],
   ) => {
-    if (isOptionDefaultValue(optionValue)) return;
+    if (isOptionDefaultValue(optionValue)) {
+      return;
+    }
 
     if (fieldType === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', applySimpleQuotesToString(optionValue), {
@@ -229,7 +234,9 @@ export const SettingsDataModelFieldSelectForm = ({
   const handleRemoveOptionAsDefault = (
     optionValue: FieldMetadataItemOption['value'],
   ) => {
-    if (!isOptionDefaultValue(optionValue)) return;
+    if (!isOptionDefaultValue(optionValue)) {
+      return;
+    }
 
     if (fieldType === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', null, { shouldDirty: true });

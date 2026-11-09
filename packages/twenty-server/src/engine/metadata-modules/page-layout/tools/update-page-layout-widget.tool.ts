@@ -48,13 +48,24 @@ const updatePageLayoutWidgetSchema = z.object({
 });
 
 export const createUpdatePageLayoutWidgetTool = (
-  deps: Pick<
-    PageLayoutToolDependencies,
-    | 'pageLayoutWidgetService'
-    | 'flatEntityMapsCacheService'
-    | 'pageLayoutTabService'
-    | 'pageLayoutService'
-  >,
+  deps: {
+    pageLayoutWidgetService: Pick<
+      PageLayoutToolDependencies['pageLayoutWidgetService'],
+      'findByIdOrThrow' | 'update'
+    >;
+    flatEntityMapsCacheService: Pick<
+      PageLayoutToolDependencies['flatEntityMapsCacheService'],
+      'getOrRecomputeManyOrAllFlatEntityMaps'
+    >;
+    pageLayoutTabService: Pick<
+      PageLayoutToolDependencies['pageLayoutTabService'],
+      'findByIdOrThrow'
+    >;
+    pageLayoutService: Pick<
+      PageLayoutToolDependencies['pageLayoutService'],
+      'findByIdOrThrow'
+    >;
+  },
   context: PageLayoutToolContext,
 ) => ({
   name: 'update_page_layout_widget' as const,

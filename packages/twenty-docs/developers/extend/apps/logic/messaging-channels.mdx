@@ -107,7 +107,7 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ### What the server does for you
 
-**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
+**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, apart from [attachments](#attaching-files) on a message that had none, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
 
 **Threading.** Messages sharing a `threadExternalId` land in one Message Thread, which then appears on the Person, Company and Opportunity records of its participants.
 
@@ -128,6 +128,33 @@ for (const page of chunk(allHistoricalMessages, 100)) {
 ```
 
 A batch is all-or-nothing, and repeating one `externalId` inside a single batch is rejected — de-duplicate before you send. A message body is capped at 256KB.
+
+### Attaching files
+
+Images, videos, voice notes and other files go in a message's `attachments`. Upload each file first with `uploadMessageAttachment`, which needs the `UPLOAD_FILE` permission flag on your app's role, then pass what it returns:
+
+```ts
+import {
+  ingestMessages,
+  uploadMessageAttachment,
+} from 'twenty-sdk/logic-function';
+
+const photo = await uploadMessageAttachment({
+  filename: 'photo.jpg',
+  content: await downloadFromProvider(event.attachmentId),
+});
+
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [{ ...message, attachments: [photo] }],
+});
+```
+
+Each file is stored as an attachment record on the message. The file name's extension decides how the conversation shows the file: images show inline, videos and audio get a player, anything else is a file chip. A message holds at most 20 attachments.
+
+Attachments are stored only while the message has none, so a redelivery never replaces them. Each ingested message reports `hasAttachments`: ingest the text first, then download and upload files only for messages that come back without any, and ingest those messages again with their `attachments`. A file you upload but never attach is not cleaned up, so don't upload for a message that already has attachments.
+
+Attachments follow the channel's `visibility` like the body: unless the conversation is fully shared, other members get an empty list.
 
 ### Linking participants to People
 

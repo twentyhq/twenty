@@ -22,11 +22,11 @@ import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentV
 import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -35,6 +35,7 @@ const StyledContainer = styled.div`
 `;
 
 export const UpdateViewButtonGroup = () => {
+  const { t } = useLingui();
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
   const { canPersistChanges } = useCanPersistViewChanges();
 
@@ -79,7 +80,9 @@ export const UpdateViewButtonGroup = () => {
   };
 
   const handleUpdateViewClick = async () => {
-    if (!canPersistChanges) return;
+    if (!canPersistChanges) {
+      return;
+    }
     await saveCurrentViewFilterAndSorts();
   };
 

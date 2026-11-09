@@ -5,7 +5,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { type DocumentNode } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { type ReactNode, useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useDebounce } from 'use-debounce';
@@ -66,7 +66,7 @@ export const LinkActivitiesDropdownContent = <
   const { data, loading } = useQuery<TSearchData>(searchQuery, {
     client: apolloCoreClient,
     variables: {
-      objectNameSingular: CoreObjectNameSingular.Company,
+      objectNameSingular: StandardObjectNameSingular.Company,
       recordId: relatedCompany.id,
       searchInput: debouncedSearch,
     },

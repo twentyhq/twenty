@@ -20,7 +20,11 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
     private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
-  use(request: Request, response: Response, next: NextFunction): void {
+  use(
+    request: Request,
+    response: Pick<Response, 'status'>,
+    next: NextFunction,
+  ): void {
     if (SAFE_METHODS.has(request.method)) {
       return next();
     }

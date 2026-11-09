@@ -5,25 +5,26 @@ import { type WorkerMutationObserver } from '@/polyfills/dom/types/WorkerMutatio
 import { type WorkerMutationObserverCallback } from '@/polyfills/dom/types/WorkerMutationObserverCallback';
 import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationRecord';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
+import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 type WorkerMutationObserverConstructor = new (
-  callback: WorkerMutationObserverCallback,
+  callback: WorkerMutationObserverCallback | number,
 ) => WorkerMutationObserver;
 
 const createSandbox = (installHooks?: (hooks: Partial<Hooks>) => void) => {
   const polyfillWindow = new Window();
   const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
-  installHooks?.(
-    (polyfillWindow as unknown as Record<symbol, Partial<Hooks>>)[HOOKS],
-  );
+  installHooks?.(polyfillWindow[HOOKS]);
 
   installMutationObserver({ globalScope });
+  const document = toDomWindow(polyfillWindow).document;
 
   return {
     globalScope,
-    polyfillWindow: polyfillWindow as unknown as Record<string, unknown>,
-    document: polyfillWindow.document as unknown as Document,
+    polyfillWindow: toGlobalScopeRecord(polyfillWindow),
+    document,
     MutationObserver:
       globalScope.MutationObserver as WorkerMutationObserverConstructor,
   };
@@ -645,10 +646,7 @@ describe('installMutationObserver', () => {
   it('rejects a callback that is not a function', () => {
     const { MutationObserver } = createSandbox();
 
-    expect(
-      () =>
-        new MutationObserver(123 as unknown as WorkerMutationObserverCallback),
-    ).toThrow(TypeError);
+    expect(() => new MutationObserver(123)).toThrow(TypeError);
   });
 
   it('logs a throwing callback that no error listener handled', async () => {

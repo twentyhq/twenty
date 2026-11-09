@@ -6,7 +6,7 @@ import {
 } from '@/workflow/workflow-steps/workflow-actions/utils/buildUpdatedRecordActionFormData';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-const relationToOneFieldDefinition = {
+const relationToOneFieldDefinition: FieldDefinition<FieldMetadata> = {
   fieldMetadataId: 'field-metadata-id',
   label: 'Company',
   type: FieldMetadataType.RELATION,
@@ -18,9 +18,9 @@ const relationToOneFieldDefinition = {
     relationObjectMetadataNameSingular: 'company',
     relationObjectMetadataNamePlural: 'companies',
   },
-} as unknown as FieldDefinition<FieldMetadata>;
+};
 
-const textFieldDefinition = {
+const textFieldDefinition: FieldDefinition<FieldMetadata> = {
   fieldMetadataId: 'field-metadata-id',
   label: 'City',
   type: FieldMetadataType.TEXT,
@@ -29,7 +29,7 @@ const textFieldDefinition = {
     fieldName: 'city',
     objectMetadataNameSingular: 'person',
   },
-} as unknown as FieldDefinition<FieldMetadata>;
+};
 
 const formData: RecordActionFormData = {
   objectName: 'person',

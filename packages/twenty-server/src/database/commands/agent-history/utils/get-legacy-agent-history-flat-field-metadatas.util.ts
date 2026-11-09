@@ -118,6 +118,8 @@ export const getLegacyAgentHistoryFlatFieldMetadatas = ({
       viewSortUniversalIdentifiers: [],
       searchFieldMetadataIds: [],
       searchFieldMetadataUniversalIdentifiers: [],
+      fieldMetadataOptionIds: [],
+      fieldMetadataOptionUniversalIdentifiers: [],
       universalSettings: null,
     };
   });

@@ -1,12 +1,12 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getDatePickerWeekStartOrThrow } from '@/ui/input/components/internal/date/utils/getDatePickerWeekStartOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { DatePicker, type DatePickerProps } from 'twenty-ui/components/input';
+import { useLingui } from '@lingui/react/macro';
 
 type DatePickerCalendarProps = {
   value: string | null;
@@ -35,6 +35,7 @@ export const DatePickerCalendar = ({
   renderHeader,
   loadingFallback,
 }: DatePickerCalendarProps) => {
+  const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentToday = today ?? Temporal.Now.plainDateISO().toString();
   const referenceDate = highlightedRange?.start ?? value ?? currentToday;

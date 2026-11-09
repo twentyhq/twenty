@@ -8,4 +8,5 @@ export type WorkflowExecutionContext = {
   initiator: ActorMetadata;
   authContext: WorkspaceAuthContext;
   application: FlatApplication;
+  workflowId: string | undefined;
 };
