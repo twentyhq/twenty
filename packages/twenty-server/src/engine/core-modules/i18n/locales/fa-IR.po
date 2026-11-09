@@ -219,11 +219,6 @@ msgstr "یک معامله برنده می شود"
 msgid "A DNS manager error occurred."
 msgstr "خطایی در مدیر DNS رخ داد."
 
-#. js-lingui-id: Hjj8vT
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "A duplicate entry was detected."
-msgstr "یک ورودی تکراری شناسایی شد."
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -400,7 +395,7 @@ msgid "A required field is missing."
 msgstr "یک فیلد الزامی وجود ندارد."
 
 #. js-lingui-id: /ffPWJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "یک فیلد الزامی وجود ندارد. لطفاً همه مقادیر الزامی را وارد کرده و دوباره تلاش کنید."
 
@@ -1173,7 +1168,7 @@ msgid "An error occurred with two-factor authentication data."
 msgstr "خطایی در داده‌های احراز هویت دومرحله‌ای رخ داد."
 
 #. js-lingui-id: XyOToQ
-#: src/engine/api/common/common-query-runners/errors/standard-error-message.constant.ts
+#: src/engine/constants/standard-error-message.constant.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service.ts
@@ -1821,11 +1816,6 @@ msgstr "احراز هویت ناموفق بود، لطفاً دوباره وار
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "احراز هویت با این ارائه‌دهنده فعال نیست."
-
-#. js-lingui-id: Tsx+z2
-#: src/engine/permissions/permissions.service.ts
-msgid "Authentication is required to access this feature. Please sign in and try again."
-msgstr "برای دسترسی به این قابلیت، احراز هویت لازم است. لطفاً وارد شوید و دوباره تلاش کنید."
 
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
@@ -2966,7 +2956,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "یک نوع فعالیت خط زمانی موجود را برای بازنویسی انتخاب کنید"
 
 #. js-lingui-id: +eCqA7
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "یک شخص یا یک نقش را برای اشتراک گذاری انتخاب کنید."
 
@@ -3025,6 +3015,11 @@ msgstr "توکن ادعا"
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
 msgstr "ثبت مالکیت در این سرور پیکربندی نشده است. از یک مدیر بخواهید برنامه GitHub OAuth را پیکربندی کند."
+
+#. js-lingui-id: FuoMjJ
+#: src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service.ts
+msgid "Classify is not available with this workspace's privacy settings."
+msgstr "طبقه‌بندی با تنظیمات حریم خصوصی این فضای کاری در دسترس نیست."
 
 #. js-lingui-id: IOYrP8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3353,7 +3348,7 @@ msgstr "اتصال برای {connectFieldName} در {objectMetadataNameSingular}
 #. js-lingui-id: oduBE8
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Connect your email and calendar to see your entire network instantly. Takes only 30 seconds."
-msgstr ""
+msgstr "ایمیل و تقویم خود را متصل کنید تا فوراً تمام شبکه خود را ببینید. فقط ۳۰ ثانیه طول می‌کشد."
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3829,7 +3824,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "فراداده فیلد ایجاد شد، اما فراداده شیء والد یافت نشد."
 
 #. js-lingui-id: tpPGe6
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "ایجاد یک رکورد از شیء خصوصی به آرگومان shareWith نیاز دارد"
 
@@ -4067,7 +4062,7 @@ msgstr "داشبوردها"
 #. js-lingui-id: lJDD6I
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Data imported"
-msgstr ""
+msgstr "داده‌ها وارد شدند"
 
 #. js-lingui-id: ZU8Dmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4082,6 +4077,7 @@ msgid "Data Model"
 msgstr "مدل داده"
 
 #. js-lingui-id: Bv/LBb
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
 msgstr "ساختار داده نامعتبر است."
@@ -4183,7 +4179,7 @@ msgstr "معامله"
 #. js-lingui-id: jlACtx
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Deal follow-ups on track"
-msgstr ""
+msgstr "پیگیری‌های معامله در مسیر درست"
 
 #. js-lingui-id: /66Lr4
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4729,8 +4725,8 @@ msgid "Duplicate Workflow"
 msgstr "تکرار گردش کار"
 
 #. js-lingui-id: BXtAxc
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Duplicated option {field}"
 msgstr "گزینه تکراری {field}"
 
@@ -4746,14 +4742,14 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "هر فیلد مسیر رکورد مرتبط باید به شیء‌ای تعلق داشته باشد که از طریق رابطه قبلی به آن رسیده‌اید"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "هر ورودی shareWith باید دقیقاً یکی از workspaceMemberId، roleId یا everyone را هدف قرار دهد"
 
 #. js-lingui-id: +mARCF
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Each week, every deal about to close gets a follow-up draft."
-msgstr ""
+msgstr "هر هفته، برای هر معامله‌ای که در آستانه بسته‌شدن است، یک پیش‌نویس پیگیری ایجاد می‌شود."
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5081,6 +5077,11 @@ msgstr "در صف قرار گرفته"
 msgctxt "skill.label"
 msgid "Enrich"
 msgstr "غنی‌سازی"
+
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "نامی بین ۱ تا {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} نویسه و گزینه‌های پشتیبانی‌شده برای ظاهر دستیار وارد کنید."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5935,7 +5936,7 @@ msgstr "فایل‌ها"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Files attached to the message"
-msgstr ""
+msgstr "فایل‌های پیوست‌شده به پیام"
 
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
@@ -6446,7 +6447,7 @@ msgstr "handlerName باید یک شناسه معتبر JavaScript یا مسیر
 #. js-lingui-id: xeZiA6
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Handover ready"
-msgstr ""
+msgstr "آماده برای تحویل"
 
 #. js-lingui-id: wtkOku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -6636,7 +6637,7 @@ msgstr "درون‌ریزی {objectLabelPlural}"
 #. js-lingui-id: vXTVX9
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your contacts"
-msgstr ""
+msgstr "مخاطبان خود را وارد کنید"
 
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
@@ -6650,6 +6651,7 @@ msgid "In progress"
 msgstr "در حال انجام"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "صندوق ورودی برای این فضای کاری فعال نیست."
@@ -6775,8 +6777,8 @@ msgid "Internal name of the campaign"
 msgstr "نام داخلی کمپین"
 
 #. js-lingui-id: Lztd7b
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "سطح دسترسی نامعتبر است."
 
@@ -7043,7 +7045,7 @@ msgid "Invalid filter parameter."
 msgstr "پارامتر فیلتر نامعتبر است."
 
 #. js-lingui-id: 8KxLoh
-#: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
+#: src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util.ts
 msgid "Invalid filter value"
 msgstr "مقدار فیلتر نامعتبر است"
 
@@ -7155,9 +7157,9 @@ msgid "Invalid input for application registration."
 msgstr "ورودی ثبت برنامه نامعتبر است."
 
 #. js-lingui-id: t7SpQO
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "Invalid input provided."
 msgstr "ورودی ارائه‌شده نامعتبر است."
 
@@ -7494,8 +7496,8 @@ msgstr "قالب URL نامعتبر است."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "قالب UUID نامعتبر است."
 
@@ -7748,7 +7750,7 @@ msgstr "تیم خود را دعوت کنید"
 #. js-lingui-id: z9L5cr
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invites are out. Bring in more people anytime."
-msgstr ""
+msgstr "دعوت‌نامه‌ها ارسال شدند. هر زمان خواستید افراد بیشتری اضافه کنید."
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -7999,14 +8001,14 @@ msgid "Label is required."
 msgstr "برچسب الزامی است."
 
 #. js-lingui-id: 4EGmy6
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Label must not be empty"
 msgstr "برچسب نباید خالی باشد"
 
 #. js-lingui-id: k731jp
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Label must not contain a comma"
 msgstr "برچسب نباید شامل ویرگول باشد"
 
@@ -8389,7 +8391,7 @@ msgstr "خصوصی کردن گردش کار"
 #. js-lingui-id: 0NPa8y
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Manage your apps in settings."
-msgstr ""
+msgstr "برنامه‌های خود را در تنظیمات مدیریت کنید."
 
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -9339,6 +9341,11 @@ msgstr "راه‌اندازی فضای کاری جدید غیرفعال است"
 msgid "No"
 msgstr "خیر"
 
+#. js-lingui-id: gl3oHj
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "No AI model meets this workspace's privacy settings."
+msgstr "هیچ مدل هوش مصنوعی‌ای با تنظیمات حریم خصوصی این فضای کاری مطابقت ندارد."
+
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
@@ -9464,6 +9471,11 @@ msgstr "هیچ گیرنده معتبری مشخص نشده است"
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "No verified sending domain matches this from address."
 msgstr "هیچ دامنه ارسال تأییدشده‌ای با این نشانی فرستنده مطابقت ندارد."
+
+#. js-lingui-id: l+hUq9
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
+msgstr "هیچ‌یک از افرادی که انتخاب کرده‌اید نمی‌توانند در این چت پاسخ دهند. {AGENT_CHAT_ASSISTANT_NAME} یا شخصی را که می‌تواند پاسخ دهد اضافه کنید."
 
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9733,6 +9745,7 @@ msgid "Object label is too short"
 msgstr "برچسب شیء بیش از حد کوتاه است"
 
 #. js-lingui-id: gB0eae
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Object metadata ID"
@@ -9859,6 +9872,12 @@ msgstr "شیء برای حذف یافت نشد."
 msgid "Object to update not found"
 msgstr "شیء برای به‌روزرسانی یافت نشد."
 
+#. js-lingui-id: hTpmKy
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Object whose records can belong to the group"
+msgstr "شیئی که رکوردهای آن می‌توانند به گروه تعلق داشته باشند"
+
 #. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -9878,7 +9897,7 @@ msgstr "هنگام ایجاد یک نما، ObjectMetadataId الزامی است
 #. js-lingui-id: rmu9zf
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Objects, fields and views adapt to the way your team works."
-msgstr ""
+msgstr "اشیا، فیلدها و نماها با شیوه کار تیم شما سازگار می‌شوند."
 
 #. js-lingui-id: dzQfDY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -10151,48 +10170,54 @@ msgid "Option \"{optionLabel}\" has an unsupported color"
 msgstr "گزینه \"{optionLabel}\" رنگ پشتیبانی‌نشده‌ای دارد"
 
 #. js-lingui-id: 2mFkfl
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is invalid"
 msgstr "شناسه گزینه نامعتبر است"
 
 #. js-lingui-id: MniXaX
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "شناسه گزینه الزامی است"
 
+#. js-lingui-id: ove8Z3
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
+msgid "Option id must be a lowercase UUID of version 4 or later"
+msgstr "شناسه گزینه باید یک UUID نسخه ۴ یا بالاتر با حروف کوچک باشد"
+
 #. js-lingui-id: //eyK1
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "برچسب گزینه \"{sanitizedLabel}\" کمتر از 1 نویسه است"
 
 #. js-lingui-id: mTFS0z
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label exceeds 63 characters"
 msgstr "برچسب گزینه از 63 نویسه بیشتر است"
 
 #. js-lingui-id: h8lHqX
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label format not supported"
 msgstr "قالب برچسب گزینه پشتیبانی نمی‌شود."
 
 #. js-lingui-id: +E9N4m
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label is required"
 msgstr "برچسب گزینه الزامی است"
 
 #. js-lingui-id: dFudyC
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label must be a string of at least one character"
 msgstr "برچسب گزینه باید رشته‌ای با حداقل یک نویسه باشد."
 
 #. js-lingui-id: nQqNzE
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "مقدار گزینه \"{sanitizedValue}\" کمتر از 1 نویسه است"
 
@@ -10203,29 +10228,29 @@ msgid "Option value \"{value}\" already exists on this field"
 msgstr "مقدار گزینهٔ \"{value}\" از قبل در این فیلد وجود دارد"
 
 #. js-lingui-id: 5m/1Hh
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value exceeds 63 characters"
 msgstr "مقدار گزینه از 63 نویسه بیشتر است"
 
 #. js-lingui-id: zEGChV
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value format not supported"
 msgstr "قالب مقدار گزینه پشتیبانی نمی‌شود."
 
 #. js-lingui-id: /wsRPd
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value is required"
 msgstr "مقدار گزینه الزامی است"
 
 #. js-lingui-id: Kub9t0
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value must be a string of at least one character"
 msgstr "مقدار گزینه باید رشته‌ای با حداقل یک نویسه باشد."
 
 #. js-lingui-id: EabrTR
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Options are required for enum fields"
 msgstr "گزینه‌ها برای فیلدهای شمارشی الزامی هستند."
 
@@ -10979,6 +11004,16 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "نوع اصلی"
 
+#. js-lingui-id: gSSOI6
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not available until the upgrade has completed."
+msgstr "تنظیمات حریم خصوصی تا زمان تکمیل ارتقا در دسترس نیستند."
+
+#. js-lingui-id: xIeg8k
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "Privacy settings are not enabled for this workspace."
+msgstr "تنظیمات حریم خصوصی برای این فضای کاری فعال نیستند."
+
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11117,11 +11152,6 @@ msgstr "اجرای پرس‌وجو ناموفق بود."
 msgid "Query failed."
 msgstr "پرس‌وجو ناموفق بود."
 
-#. js-lingui-id: 6H9kMC
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-msgid "Query timed out. Please try again."
-msgstr "زمان پرس‌وجو به پایان رسید. لطفاً دوباره تلاش کنید."
-
 #. js-lingui-id: Rq/hlW
 #: src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util.ts
 msgctxt "commandMenuItem.label"
@@ -11252,7 +11282,7 @@ msgid "Record an agent chat thread is attached to"
 msgstr "رکوردی که رشته گفت‌وگوی عامل به آن پیوست شده است"
 
 #. js-lingui-id: EESfI5
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Record does not satisfy security constraints."
 msgstr "رکورد الزامات امنیتی را برآورده نمی‌کند."
 
@@ -11261,6 +11291,11 @@ msgstr "رکورد الزامات امنیتی را برآورده نمی‌کن
 msgctxt "fieldMetadata.label"
 msgid "Record ID"
 msgstr "شناسه رکورد"
+
+#. js-lingui-id: kC4rhG
+#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+msgid "Record not found"
+msgstr "رکورد یافت نشد"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -11645,6 +11680,11 @@ msgstr "درخواست‌شده"
 msgid "Requested file range cannot be served."
 msgstr "محدوده فایل درخواست‌شده قابل ارائه نیست."
 
+#. js-lingui-id: WIwnbY
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "Required fields and relations cannot be restricted on a row level permission rule."
+msgstr "فیلدها و روابط الزامی را نمی‌توان در یک قانون مجوز سطح ردیف محدود کرد."
+
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11793,6 +11833,11 @@ msgstr "نقش \"{roleLabel}\" نمی‌تواند به کلیدهای API اخ�
 msgid "Role \"{roleLabel}\" cannot be assigned to applications"
 msgstr "نمی‌توان نقش \"{roleLabel}\" را به برنامه‌ها اختصاص داد"
 
+#. js-lingui-id: xIGy+v
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to this agent"
+msgstr "نقش \"{roleLabel}\" نمی‌تواند به این عامل اختصاص داده شود"
+
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11810,6 +11855,11 @@ msgstr "نقش «{roleLabel}» نمی‌تواند به وب‌هوک‌ها ا�
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "نقش \"{roleLabel}\" قابل تخصیص نیست: نقش‌های سفارشی به طرح سازمان نیاز دارند"
 
+#. js-lingui-id: 3heof5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
+msgid "Role \"{roleLabel}\" must be owned by the application to be assigned to its agents"
+msgstr "برای اختصاص نقش \"{roleLabel}\" به عامل‌های برنامه، این نقش باید متعلق به برنامه باشد"
+
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
@@ -11825,19 +11875,6 @@ msgstr "نقش را نمی‌توان به این موجودیت اختصاص د
 msgctxt "fieldMetadata.label"
 msgid "Role ID"
 msgstr "شناسه نقش"
-
-#. js-lingui-id: k2/sGI
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-msgid "Role is not editable"
-msgstr "نقش قابل ویرایش نیست"
 
 #. js-lingui-id: zeffu9
 #: src/engine/permissions/permissions.exception.ts
@@ -12647,17 +12684,17 @@ msgid "Shared record"
 msgstr "رکورد اشتراک‌گذاری‌شده"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith نام نقشی را مشخص می‌کند که به این فضای کاری تعلق ندارد"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith نام عضوی از فضای کاری را مشخص می‌کند که به این فضای کاری تعلق ندارد"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/internal/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith یک اصلی را بیش از یک بار مشخص می‌کند"
 
@@ -12673,10 +12710,10 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "پیوندهای کوتاه"
 
-#. js-lingui-id: XcRf2D
-#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
-msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr "برای تغییر این گفتگو، به‌عنوان عضو فضای کاری وارد شوید یا از یک توکن برنامه استفاده کنید."
+#. js-lingui-id: kIPldv
+#: src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util.ts
+msgid "Sign in as a workspace member or use an application token to make this request."
+msgstr "برای ارسال این درخواست، به‌عنوان عضو فضای کاری وارد شوید یا از یک توکن برنامه استفاده کنید."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12780,7 +12817,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "برخی از مجوزهایی که انتخاب کرده‌اید معتبر نیستند. لطفاً با تنظیمات مجوز معتبر دوباره تلاش کنید."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "برخی از عضویت‌های فضای کاری یافت نشدند. ممکن است دیگر به این فضای کاری دسترسی نداشته باشند."
 
@@ -13608,11 +13645,6 @@ msgstr "عامل مورد نظر برای اجرای این مرحله پیدا 
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "عاملی که به دنبال آن هستید یافت نشد. ممکن است حذف شده باشد یا به آن دسترسی نداشته باشید."
 
-#. js-lingui-id: eC8p5b
-#: src/engine/permissions/permissions.service.ts
-msgid "The API key does not have a valid role assigned. Please check your API key configuration."
-msgstr "هیچ نقش معتبری به کلید API اختصاص داده نشده است. لطفاً پیکربندی کلید API خود را بررسی کنید."
-
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13623,11 +13655,6 @@ msgstr "مانیفست برنامه یک الزام نسخه سرور نامعت
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
 msgstr "کانال منبع برنامه با نوع مورد انتظار مطابقت ندارد."
-
-#. js-lingui-id: IU78DA
-#: src/engine/permissions/permissions.service.ts
-msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr "نقش معتبری به برنامه اختصاص داده نشده است. لطفاً پیکربندی برنامه خود را بررسی کنید."
 
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
@@ -13650,6 +13677,11 @@ msgstr "وابستگی‌های تولید برنامه برای نصب بیش �
 #: src/engine/core-modules/application/application-install/application-iframe-media-permission.service.ts
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "مجوزهای درخواستی برنامه تغییر کرده‌اند. پیش از تأیید، دوباره آن‌ها را بررسی کنید."
+
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "پیش از فعال‌سازی فضای کاری، نمایه دستیار قابل به‌روزرسانی نیست."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14177,6 +14209,11 @@ msgstr "عضو دوم در جفت پیام مستقیم ثابت"
 msgid "The selected model has been disabled by the administrator."
 msgstr "مدل انتخاب‌شده توسط مدیر غیرفعال شده است."
 
+#. js-lingui-id: equ0KI
+#: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
+msgid "The selected model is not allowed by this workspace's privacy settings."
+msgstr "مدل انتخاب‌شده طبق تنظیمات حریم خصوصی این فضای کاری مجاز نیست."
+
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
 msgid "The selected role does not exist."
@@ -14383,12 +14420,12 @@ msgid "The workspace member who last updated the record"
 msgstr "عضو فضای کاری که آخرین‌بار رکورد را به‌روزرسانی کرد"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "نقش آن‌ها نمی‌تواند به این رکوردها دسترسی داشته باشد و این شیء فقط با نقش‌هایی به اشتراک گذاشته می‌شود که می‌توانند دسترسی داشته باشند."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "نقش آن‌ها نمی‌تواند این رکورد را ببیند و این شیء فقط با افرادی به اشتراک گذاشته می‌شود که می‌توانند آن را ببینند."
 
@@ -14808,6 +14845,11 @@ msgstr "این ایندکس وجود ندارد یا قبلاً حذف شده ا
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "این نمونه شناسه سرور را گزارش نکرد. SERVER_ID را در این نمونه تنظیم کنید، سپس دوباره تلاش کنید."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "این کار برای قرار گرفتن در صف بسیار بزرگ است."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -14933,7 +14975,7 @@ msgid "This operation is not supported."
 msgstr "این عملیات پشتیبانی نمی‌شود."
 
 #. js-lingui-id: fxy039
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "این عملیات به رکوردی ارجاع می‌دهد که وجود ندارد یا به‌دلیل روابط موجود قابل تغییر نیست."
 
@@ -14984,12 +15026,12 @@ msgid "This public domain is already registered."
 msgstr "این دامنه عمومی از قبل ثبت شده است."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "این رکورد از قبل وجود دارد. لطفاً داده‌های خود را بررسی کرده و دوباره تلاش کنید."
 
 #. js-lingui-id: BQ4MUY
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "این رکورد قابل حذف نیست، زیرا همچنان توسط رکوردهای دیگر ارجاع داده می‌شود."
 
@@ -15065,18 +15107,14 @@ msgid "This role cannot be edited."
 msgstr "این نقش قابل ویرایش نیست."
 
 #. js-lingui-id: KoDdqN
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "این نقش قابل تغییر نیست، زیرا یک نقش سیستمی است. فقط نقش‌های سفارشی قابل ویرایش هستند."
+
+#. js-lingui-id: ujHiJC
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "This row level permission rule does not belong to this role and object."
+msgstr "این قانون مجوز سطح ردیف به این نقش و شیء تعلق ندارد."
 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -15552,6 +15590,11 @@ msgstr "تعداد زیادی نامزد مدیر یافت شد."
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "تعداد شرکت‌کنندگان بیش از حد است: {attendeeCount}. حداکثر مجاز {MAX_EMAIL_RECIPIENTS} است."
 
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "تعداد زیادی کار در انتظار هستند. لطفاً بعداً دوباره تلاش کنید."
+
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."
@@ -15772,7 +15815,7 @@ msgstr "نوبت"
 #. js-lingui-id: 57tP4r
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Turn it on and won deals move to delivery on their own."
-msgstr ""
+msgstr "آن را روشن کنید تا معامله‌های برنده‌شده خودبه‌خود به تحویل منتقل شوند."
 
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -16327,7 +16370,6 @@ msgstr "کاربر عضو فضای کاری نیست."
 
 #. js-lingui-id: siJgSI
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/user/user.exception.ts
 msgid "User not found."
 msgstr "کاربر یافت نشد."
@@ -16467,8 +16509,8 @@ msgid "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand
 msgstr "مقدار «{stringifiedValue}» برای عملوند «{operand}» به هیچ رکوردی منتهی نمی‌شود؛ رکورد فعلی برای گزاره مجوز در سطح ردیف در دسترس نیست"
 
 #. js-lingui-id: UBPzFQ
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "مقدار باید با حروف بزرگ باشد و از snake_case پیروی کند \"{sanitizedValue}\""
 
@@ -16911,8 +16953,8 @@ msgid "Watched fields only apply to \"updated\" database event triggers"
 msgstr "فیلدهای تحت‌نظر فقط برای محرک‌های رویداد پایگاه داده «updated» اعمال می‌شوند"
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
+#: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "ما با مشکلی موقت در پایگاه داده خود مواجه هستیم. لطفاً بعداً دوباره تلاش کنید."
 
@@ -17624,7 +17666,7 @@ msgstr "فضای کاری وجود ندارد."
 #. js-lingui-id: fPWuXm
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Workspace fit to your process"
-msgstr ""
+msgstr "فضای کاری متناسب با فرایند شما"
 
 #. js-lingui-id: oLh4c+
 #: src/engine/permissions/permissions.exception.ts
@@ -17966,7 +18008,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "نمی‌توانید برای خودتان یک کد بازیابی ایجاد کنید. در عوض، احراز هویت دومرحله‌ای را از نمایه خود بازنشانی کنید."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "نمی‌توانید نقش خودتان را تغییر دهید. لطفاً از مدیر دیگری بخواهید نقش شما را به‌روزرسانی کند."
 
@@ -17987,7 +18029,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "نمی‌توانید دسترسی تنظیمات را از نقش خودتان حذف کنید. از مدیر دیگری بخواهید این تغییر را انجام دهد."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "نمی‌توانید نقش مدیر را از آخرین مدیر حذف کنید. ابتدا مدیر دیگری اختصاص دهید."
 
@@ -18109,6 +18151,11 @@ msgstr "شما اجازه انجام این اقدام را ندارید."
 msgid "You do not have permission to perform this workflow action."
 msgstr "شما اجازه انجام این اقدام گردش کار را ندارید."
 
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "شما اجازه به‌روزرسانی نمایه دستیار را ندارید. لطفاً با مدیر فضای کاری خود تماس بگیرید."
+
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
@@ -18225,7 +18272,7 @@ msgstr "اعتبارهای خریداری‌شده شما افزوده نشدن�
 #. js-lingui-id: V6omJV
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Your records are in, organized around how you work."
-msgstr ""
+msgstr "رکوردهای شما وارد شده‌اند و بر اساس شیوه کار شما سازمان‌دهی شده‌اند."
 
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -18233,8 +18280,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "نقش شما نمی‌تواند برخی از این رکوردها را حذف کند، بنابراین نمی‌توان آن‌ها را ادغام کرد."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/permissions.service.ts
-#: src/engine/permissions/role-assignment/user-role.service.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "نقش شما در این فضای کاری یافت نشد. لطفاً با مدیر فضای کاری خود تماس بگیرید."
 

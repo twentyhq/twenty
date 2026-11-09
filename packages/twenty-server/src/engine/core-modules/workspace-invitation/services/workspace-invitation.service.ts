@@ -44,7 +44,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -55,7 +55,7 @@ export class WorkspaceInvitationService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
@@ -308,9 +308,10 @@ export class WorkspaceInvitationService {
     }
 
     if (isDefined(roleId)) {
-      await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-        { roleId, workspaceId: workspace.id },
-      );
+      await this.roleAssignmentWriteService.assertRoleAssignableToUsersOrThrow({
+        roleId,
+        workspaceId: workspace.id,
+      });
     }
 
     const isOnboardingInviteReward =

@@ -40,7 +40,7 @@ export class DashboardToolProvider implements ToolProvider {
 
     return this.settingPermissionsService.hasPermissionFlag({
       authContext: context.authContext,
-      setting: PermissionFlagType.LAYOUTS,
+      permissionFlag: PermissionFlagType.LAYOUTS,
     });
   }
 

@@ -1,5 +1,7 @@
 export const humanizeSubFieldLabel = (value: string) => {
-  if (!value) return '';
+  if (!value) {
+    return '';
+  }
 
   const withSpaces = value
     .replace(/[_-]+/g, ' ')

@@ -98,7 +98,9 @@ describe('View Field REST API', () => {
   });
 
   afterEach(async () => {
-    if (!testViewFieldId) return;
+    if (!testViewFieldId) {
+      return;
+    }
 
     await destroyOneViewField({
       expectToFail: false,

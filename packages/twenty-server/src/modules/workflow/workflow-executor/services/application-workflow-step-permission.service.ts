@@ -32,12 +32,10 @@ export class ApplicationWorkflowStepPermissionService {
     }
 
     const applicationHasPermissionFlag =
-      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId: undefined,
+      await this.settingPermissionsService.applicationHasPermissionFlag({
         workspaceId,
-        setting: permissionFlag,
         applicationId: runApplicationId,
-        agentId: undefined,
+        permissionFlag,
       });
 
     if (applicationHasPermissionFlag) {

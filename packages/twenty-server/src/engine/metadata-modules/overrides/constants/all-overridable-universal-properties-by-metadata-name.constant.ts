@@ -21,7 +21,7 @@ export const ALL_OVERRIDABLE_UNIVERSAL_PROPERTIES_BY_METADATA_NAME: Record<
         metadataName
       ] as Record<string, OverridablePropertyConfiguration>,
     ).flatMap(([property, { isOverridable, universalProperty }]) =>
-      isOverridable === true ? [universalProperty ?? property] : [],
+      isOverridable ? [universalProperty ?? property] : [],
     ),
   ]),
 ) as unknown as Record<AllMetadataName, readonly string[]>;

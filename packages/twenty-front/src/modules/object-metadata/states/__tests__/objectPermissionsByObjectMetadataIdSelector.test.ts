@@ -16,13 +16,13 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 const COMPANY_OBJECT_RECORDS_PERMISSIONS: CurrentUserWorkspace['objectRecordsPermissions'][number] =
   {
     objectMetadataId: 'company-object-metadata-id',
+    canCreateAllRecords: false,
     canReadAllRecords: true,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
-    restrictedFields: {
-      'company-name-field-metadata-id': { canRead: true, canUpdate: false },
-    },
+    unreadableFields: [],
+    uneditableFields: ['company-name-field-metadata-id'],
   };
 
 const PERSON_ROW_LEVEL_PERMISSION_PREDICATE: RowLevelPermissionPredicate = {
@@ -55,12 +55,15 @@ const PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP: RowLevelPermissionPredicateGr
 const PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS: CurrentUserWorkspace['objectRecordsPermissions'][number] =
   {
     objectMetadataId: 'person-object-metadata-id',
+    canCreateAllRecords: false,
     canReadAllRecords: false,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
-    restrictedFields: {},
+    unreadableFields: [],
+    uneditableFields: [],
     rowLevelRecordsPermissions: {
+      canCreateRecords: true,
       canReadRecords: true,
       canUpdateRecords: true,
       canSoftDeleteRecords: false,
@@ -105,16 +108,13 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
     expect(store.get(objectPermissionsByObjectMetadataIdSelector.atom)).toEqual(
       {
         'company-object-metadata-id': {
+          canCreateAllRecords: false,
           canReadAllRecords: true,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
           canDestroyAllRecords: false,
-          restrictedFields: {
-            'company-name-field-metadata-id': {
-              canRead: true,
-              canUpdate: false,
-            },
-          },
+          unreadableFields: [],
+          uneditableFields: ['company-name-field-metadata-id'],
         },
       },
     );
@@ -135,11 +135,13 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
         'person-object-metadata-id'
       ],
     ).toEqual({
+      canCreateAllRecords: false,
       canReadAllRecords: false,
       canUpdateAllRecords: false,
       canSoftDeleteAllRecords: false,
       canDestroyAllRecords: false,
-      restrictedFields: {},
+      unreadableFields: [],
+      uneditableFields: [],
       rowLevelRecordsPermissions:
         PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS.rowLevelRecordsPermissions,
     });

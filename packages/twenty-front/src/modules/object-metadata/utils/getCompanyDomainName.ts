@@ -8,7 +8,6 @@ export const getCompanyDomainName = (company: Company) => {
   }
   if (typeof company.domainName === 'string') {
     return company.domainName;
-  } else {
-    return company.domainName.primaryLinkUrl;
   }
+  return company.domainName.primaryLinkUrl;
 };

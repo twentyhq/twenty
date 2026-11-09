@@ -9,10 +9,11 @@ import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { workspaceAiModelsSelector } from '@/ai/states/workspaceAiModelsSelector';
 import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { getSettingsAiModelsSectionVisibility } from '@/settings/ai/utils/getSettingsAiModelsSectionVisibility';
+import { SettingsPrivacyAiDataPolicyCard } from '@/settings/privacy/components/SettingsPrivacyAiDataPolicyCard';
 import { NestedSettingsRow } from '@/settings/components/SettingsOptions/NestedSettingsRow';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
@@ -46,7 +47,7 @@ export const SettingsAiModelsTab = () => {
     canReadSystemPrompts,
   });
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const aiModels = useAtomStateValue(aiModelsState);
+  const workspaceAiModels = useAtomStateValue(workspaceAiModelsSelector);
   const tiers = useAiModelTiers();
   const { chatTier, agentTier } = useWorkspaceAiModelTiers();
   const {
@@ -131,7 +132,7 @@ export const SettingsAiModelsTab = () => {
                       onChange={(modelId) =>
                         handlePinnedModelChange(tier.tier, modelId)
                       }
-                      aiModels={aiModels}
+                      aiModels={workspaceAiModels}
                       emptyOptionLabel={t`Automatic`}
                       selectSizeVariant="small"
                       dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
@@ -144,6 +145,7 @@ export const SettingsAiModelsTab = () => {
         </Card.Root>
       </Section.Root>
 
+      <SettingsPrivacyAiDataPolicyCard />
       <SettingsAiModelTiersPreview />
       {isWorkspaceInstructionsSectionVisible && (
         <SettingsAiWorkspaceInstructionsSection />

@@ -5,7 +5,7 @@ import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 import {
   TwentyOrmException,
@@ -26,7 +26,7 @@ import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-build
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-referenced-column-names.util';
-import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
+import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import {
   RESERVED_PARAMETER_NAMES,
   buildCountStatement,
@@ -46,9 +46,11 @@ import {
   type JoinClause,
   type OrderByClause,
   type SelectClause,
+  type ColumnNullifyConditions,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
+import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -65,7 +67,7 @@ const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
 export type QueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
-  recordsPermissions: RoleRecordsPermissions;
+  recordReadRestrictions: RecordReadRestrictions;
   featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
@@ -79,7 +81,7 @@ export type QueryBuilderContext = {
 export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
-  readonly recordsPermissions: RoleRecordsPermissions;
+  readonly recordReadRestrictions: RecordReadRestrictions;
   readonly featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 
   private readonly context: QueryBuilderContext;
@@ -100,11 +102,13 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private includeDeleted = false;
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
+  private readonly aliasesWithColumnNullifyApplied = new Set<string>();
+  private readonly columnNullifyConditions: ColumnNullifyConditions = {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
     this.tableShape = context.tableShape;
-    this.recordsPermissions = context.recordsPermissions;
+    this.recordReadRestrictions = context.recordReadRestrictions;
     this.featureFlagsMap = context.featureFlagsMap ?? {};
     this.context = context;
   }
@@ -581,7 +585,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   getQueryAndParameters(): [string, unknown[]] {
     const { sql, parameters } = this.buildSelectStatement();
-    const compiled = compileNamedParameters(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return [compiled.text, compiled.values];
   }
@@ -690,10 +694,43 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     const sql = buildCountStatement(
       this.toSelectStatementState({ allowPlainToManyJoins: true }),
     );
-    const compiled = compileNamedParameters(sql, this.parameters);
+    const compiled = compileTwentyOrmStatement({
+      sql,
+      parameters: this.parameters,
+    });
     const rows = await this.context.executor.execute(compiled);
 
     return Number(rows[0]?.count ?? 0);
+  }
+
+  markColumnNullifyApplied(alias: string): boolean {
+    if (this.aliasesWithColumnNullifyApplied.has(alias)) {
+      return false;
+    }
+
+    this.aliasesWithColumnNullifyApplied.add(alias);
+
+    return true;
+  }
+
+  nullifyColumnsWhen({
+    alias,
+    columnNames,
+    condition,
+  }: {
+    alias: string;
+    columnNames: string[];
+    condition: SqlCondition;
+  }): this {
+    const columnNullifyConditionsOfAlias = (this.columnNullifyConditions[
+      alias
+    ] ??= {});
+
+    for (const columnName of columnNames) {
+      (columnNullifyConditionsOfAlias[columnName] ??= []).push(condition.sql);
+    }
+
+    return this.setParameters(condition.parameters);
   }
 
   addJoinCondition(alias: string, condition: string): this {
@@ -1220,7 +1257,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     await this.context.onBeforeExecute(this);
 
     const { sql, parameters } = this.buildSelectStatement(options);
-    const compiled = compileNamedParameters(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return this.context.executor.execute({
       ...compiled,
@@ -1276,6 +1313,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
+      columnNullifyConditions: this.columnNullifyConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,

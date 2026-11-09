@@ -555,20 +555,11 @@ export class ToolCallAnswerService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const requestAuthContext = workspaceAuthContextStorage.getStore();
-    const requestUserAuthContext =
-      isDefined(requestAuthContext) && isUserAuthContext(requestAuthContext)
-        ? requestAuthContext
-        : undefined;
-
-    const hasPermission =
-      await this.settingPermissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
-        workspaceId,
-        setting,
-        applicationId: requestUserAuthContext?.application?.id,
-        agentId: requestUserAuthContext?.agentId,
-      });
+    const hasPermission = await this.hasPermissionFlag({
+      setting,
+      userWorkspaceId,
+      workspaceId,
+    });
 
     if (!hasPermission) {
       throw new AiException(
@@ -576,6 +567,34 @@ export class ToolCallAnswerService {
         AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
       );
     }
+  }
+
+  private async hasPermissionFlag({
+    setting,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    setting: PermissionFlagType;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const requestAuthContext = workspaceAuthContextStorage.getStore();
+
+    if (
+      isDefined(requestAuthContext) &&
+      isUserAuthContext(requestAuthContext)
+    ) {
+      return this.settingPermissionsService.hasPermissionFlag({
+        authContext: requestAuthContext,
+        permissionFlag: setting,
+      });
+    }
+
+    return this.settingPermissionsService.userWorkspaceHasPermissionFlag({
+      workspaceId,
+      userWorkspaceId,
+      permissionFlag: setting,
+    });
   }
 
   private async publishToolCallResolved({

@@ -10,6 +10,7 @@ export const canReachAllRecords = ({
   objectRecordsPermissions:
     | Pick<
         ObjectRecordsPermissions,
+        | 'canCreateAllRecords'
         | 'canReadAllRecords'
         | 'canUpdateAllRecords'
         | 'canSoftDeleteAllRecords'
@@ -23,15 +24,15 @@ export const canReachAllRecords = ({
   }
 
   switch (operationType) {
-    case 'select':
+    case 'read':
       return objectRecordsPermissions.canReadAllRecords;
-    case 'insert':
+    case 'create':
+      return objectRecordsPermissions.canCreateAllRecords;
     case 'update':
       return objectRecordsPermissions.canUpdateAllRecords;
-    case 'delete':
+    case 'destroy':
       return objectRecordsPermissions.canDestroyAllRecords;
-    case 'restore':
-    case 'soft-delete':
+    case 'softDelete':
       return objectRecordsPermissions.canSoftDeleteAllRecords;
     default:
       return assertUnreachable(operationType);

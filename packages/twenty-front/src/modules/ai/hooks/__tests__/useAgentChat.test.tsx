@@ -5,7 +5,11 @@ import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
+import {
+  AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+  AGENT_CHAT_ASSISTANT_NAME,
+  AgentChatThreadConversationType,
+} from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -21,20 +25,24 @@ import { type AgentChatNewThreadRecipients } from '@/ai/types/AgentChatNewThread
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { serializeMentionTagAsAdvancedTextEditorDocument } from '@/mention/utils/serializeMentionTagAsAdvancedTextEditorDocument';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   FeatureFlagKey,
+  PermissionFlagType,
   SendChatMessageDocument,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
   mockCurrentWorkspace,
+  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -50,6 +58,7 @@ jest.mock('@/ai/hooks/useAttachChatThreadToRecord', () => ({
 
 const DRAFTS_STORAGE_KEY = 'ai/agentChatDraftsByThreadIdState';
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
+const DIRECT_MESSAGE_THREAD_ID = '20202020-0000-4000-8000-0000000000df';
 const CHANNEL_ID = '20202020-0000-4000-8000-0000000000cc';
 const RECIPIENT_ID = '20202020-0000-4000-8000-0000000000bb';
 const FORMER_MEMBER_ID = '20202020-0000-4000-8000-0000000000ee';
@@ -106,6 +115,7 @@ const renderAgentChat = ({
   sendChatMessageOutcomes,
   hasAiModels = true,
   isAiChatInboxEnabled = false,
+  isDirectMessage = false,
   newThreadChannelId = null,
   newThreadRecipients = AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
   currentThreadId = null,
@@ -115,6 +125,7 @@ const renderAgentChat = ({
   sendChatMessageOutcomes: ('sent' | 'failed')[];
   hasAiModels?: boolean;
   isAiChatInboxEnabled?: boolean;
+  isDirectMessage?: boolean;
   newThreadChannelId?: string | null;
   newThreadRecipients?: AgentChatNewThreadRecipients;
   currentThreadId?: string | null;
@@ -129,6 +140,10 @@ const renderAgentChat = ({
         hasAiModels ? [{ modelId: 'model', label: 'Model' }] : [],
       );
       store.set(newAiChatThreadIdState.atom, THREAD_ID);
+      store.set(currentUserWorkspaceState.atom, {
+        ...mockedUserData.currentUserWorkspace,
+        permissionFlags: [PermissionFlagType.AI],
+      });
       store.set(currentAiChatThreadState.atom, currentThreadId);
       store.set(
         agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
@@ -138,6 +153,14 @@ const renderAgentChat = ({
       store.set(currentWorkspaceMembersState.atom, [
         { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
       ]);
+      if (isDirectMessage) {
+        store.set(currentAiChatThreadState.atom, DIRECT_MESSAGE_THREAD_ID);
+        store.set(recordStoreFamilyState.atomFamily(DIRECT_MESSAGE_THREAD_ID), {
+          id: DIRECT_MESSAGE_THREAD_ID,
+          __typename: 'AgentChatThread',
+          conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+        });
+      }
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
         featureFlags: [
@@ -379,6 +402,36 @@ describe('useAgentChat', () => {
     expect(sentShouldAssistantReply).toHaveBeenCalledTimes(1);
     expect(sentShouldAssistantReply).toHaveBeenCalledWith(false);
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
+  });
+
+  it('requests an assistant reply for an Ada mention in a direct message', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [DIRECT_MESSAGE_THREAD_ID]:
+          serializeMentionTagAsAdvancedTextEditorDocument({
+            recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+            objectNameSingular:
+              AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+            label: AGENT_CHAT_ASSISTANT_NAME,
+            shouldAddAsParticipant: false,
+          }),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      isAiChatInboxEnabled: true,
+      isDirectMessage: true,
+    });
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledTimes(1);
+    expect(sentMessageVariables).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: DIRECT_MESSAGE_THREAD_ID,
+        isAssistantMentioned: true,
+        shouldAssistantReply: true,
+      }),
+    );
+    expect(attachChatThreadToRecord).not.toHaveBeenCalled();
   });
 
   it('does not send without AI outside the inbox', async () => {

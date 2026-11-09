@@ -22,6 +22,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "memberFieldValues": {
         "universalIdentifier": "a0d519f8-cc6b-4bb5-b107-89213d683705",
       },
+      "objectMetadataId": {
+        "universalIdentifier": "a1e1a495-ed2e-4e8d-8814-6ef0d1e484d0",
+      },
       "position": {
         "universalIdentifier": "0e58d739-4e5d-53b2-b472-1f747198202e",
       },
@@ -44,6 +47,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "indexes": {
       "groupHashUniqueIndex": {
         "universalIdentifier": "dcb0d254-43ae-442e-9223-8ac052eddb28",
+      },
+      "objectMetadataIdIndex": {
+        "universalIdentifier": "60e48c2a-a3db-4f11-b25b-49c7e8a385bc",
       },
       "roleIdIndex": {
         "universalIdentifier": "933f2eee-0856-46fd-b144-ffd4bad7e9c8",

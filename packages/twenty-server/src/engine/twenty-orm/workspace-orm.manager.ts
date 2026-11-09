@@ -22,7 +22,7 @@ import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/wor
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
@@ -103,6 +103,18 @@ export class WorkspaceOrmManager {
     return withWorkspaceContext(context, fn);
   }
 
+  async executeTransactionInWorkspaceContext<TResult>(
+    work: (transactionScope: WorkspaceTransactionScope) => Promise<TResult>,
+    authContext?: WorkspaceAuthContext,
+    options?: ExecuteInWorkspaceContextOptions,
+  ): Promise<TResult> {
+    return this.executeInWorkspaceContext(
+      () => this.runInWorkspaceTransaction(work),
+      authContext,
+      options,
+    );
+  }
+
   private async loadWorkspaceContext(
     authContext: WorkspaceAuthContext,
   ): Promise<ORMWorkspaceContext> {
@@ -126,14 +138,14 @@ export class WorkspaceOrmManager {
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
     const permissionsPrincipals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
         authContext,
       });
-    const recordsPermissions = isDefined(permissionsPrincipals)
-      ? await this.recordPermissionsService.findPrincipalsRecordsPermissions({
+    const recordReadRestrictions = isDefined(permissionsPrincipals)
+      ? await this.recordPermissionsService.findRecordReadRestrictions({
           principals: permissionsPrincipals,
         })
-      : NO_ROLE_RECORDS_PERMISSIONS;
+      : NO_RECORD_READ_RESTRICTIONS;
 
     const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
       billingEntitlements,
@@ -157,7 +169,7 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       permissionsPrincipals,
-      recordsPermissions,
+      recordReadRestrictions,
     };
   }
 
@@ -192,7 +204,7 @@ export class WorkspaceOrmManager {
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
       permissionsPrincipals: undefined,
-      recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     };
   }
 }

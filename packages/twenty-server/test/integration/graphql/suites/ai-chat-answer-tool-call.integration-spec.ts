@@ -209,7 +209,7 @@ describe('Answering a chat tool call', () => {
         .spyOn(aiModelRegistryService, 'getAvailableModels')
         .mockReturnValue([{ modelId: 'test-model' }] as never),
       jest
-        .spyOn(aiModelRegistryService, 'validateModelAvailability')
+        .spyOn(aiModelRegistryService, 'validateModelAvailabilityOrThrow')
         .mockReturnValue(undefined as never),
     );
     enqueueStream = jest
