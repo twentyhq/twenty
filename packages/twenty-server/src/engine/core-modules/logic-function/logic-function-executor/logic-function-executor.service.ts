@@ -558,13 +558,11 @@ export class LogicFunctionExecutorService {
         : null,
     ]);
 
-    const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
-    const serverInternalUrl = this.twentyConfigService.get(
-      'SERVER_INTERNAL_URL',
+    const serverUrl =
+      cleanServerUrl(this.twentyConfigService.get('SERVER_URL')) ?? '';
+    const internalServerUrl = cleanServerUrl(
+      this.twentyConfigService.get('SERVER_INTERNAL_URL'),
     );
-    const apiUrl = isNonEmptyString(serverInternalUrl)
-      ? cleanServerUrl(serverInternalUrl)
-      : baseUrl;
     const functionsBaseUrl = await this.buildFunctionsBaseUrl({
       workspaceId,
       flatApplication,
@@ -595,9 +593,11 @@ export class LogicFunctionExecutorService {
       ...serverVariables,
       ...workspaceVariables,
       ...userVariables,
-      [DEFAULT_API_URL_NAME]: apiUrl ?? '',
+      [DEFAULT_API_URL_NAME]: isNonEmptyString(internalServerUrl)
+        ? internalServerUrl
+        : serverUrl,
       // Links handed to browsers and third parties can't use the internal URL.
-      [DEFAULT_PUBLIC_API_URL_NAME]: baseUrl ?? '',
+      [DEFAULT_PUBLIC_API_URL_NAME]: serverUrl,
       // Falls back to the application so cron schedules and install hooks work with nobody triggering.
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
         delegatedAccessToken ?? applicationAccessToken
@@ -608,7 +608,7 @@ export class LogicFunctionExecutorService {
       [DEFAULT_SERVER_ROUTES_URL_NAME]: isDefined(
         flatApplication.applicationRegistrationId,
       )
-        ? `${baseUrl ?? ''}/${SERVER_ROUTE_PATH}/${flatApplication.applicationRegistrationId}`
+        ? `${serverUrl}/${SERVER_ROUTE_PATH}/${flatApplication.applicationRegistrationId}`
         : '',
       APPLICATION_ID: flatApplication.id,
     };
