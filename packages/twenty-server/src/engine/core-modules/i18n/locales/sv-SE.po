@@ -13719,7 +13719,7 @@ msgstr "Assistentprofilen kan inte uppdateras förrän arbetsytan har aktiverats
 #. js-lingui-id: VqGyEL
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The attachments are too large to send in one email."
-msgstr ""
+msgstr "Bilagorna är för stora för att skickas i ett enda e-postmeddelande."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -15641,7 +15641,7 @@ msgstr "För många deltagare: {attendeeCount}. Högsta tillåtna antal är {MAX
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Too many files are being opened. Please try again in a minute."
-msgstr ""
+msgstr "För många filer öppnas. Försök igen om en minut."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts

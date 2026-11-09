@@ -13713,7 +13713,7 @@ msgstr "El perfil de l'assistent no es pot actualitzar abans que l'espai de treb
 #. js-lingui-id: VqGyEL
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The attachments are too large to send in one email."
-msgstr ""
+msgstr "Els fitxers adjunts són massa grans per enviar-los en un sol correu electrònic."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -15635,7 +15635,7 @@ msgstr "Hi ha massa assistents: {attendeeCount}. El màxim permès és {MAX_EMAI
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Too many files are being opened. Please try again in a minute."
-msgstr ""
+msgstr "S'estan obrint massa fitxers. Torneu-ho a provar d'aquí a un minut."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts

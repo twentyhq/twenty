@@ -13713,7 +13713,7 @@ msgstr "Профіль асистента не можна оновити, док
 #. js-lingui-id: VqGyEL
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The attachments are too large to send in one email."
-msgstr ""
+msgstr "Вкладення завеликі, щоб надіслати їх в одному електронному листі."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -15635,7 +15635,7 @@ msgstr "Забагато учасників: {attendeeCount}. Максималь
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Too many files are being opened. Please try again in a minute."
-msgstr ""
+msgstr "Відкрито забагато файлів. Спробуйте ще раз за хвилину."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts

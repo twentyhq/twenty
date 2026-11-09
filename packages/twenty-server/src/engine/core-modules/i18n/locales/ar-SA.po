@@ -13713,7 +13713,7 @@ msgstr "لا يمكن تحديث ملف تعريف المساعد قبل تنش�
 #. js-lingui-id: VqGyEL
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The attachments are too large to send in one email."
-msgstr ""
+msgstr "المرفقات كبيرة جدًا بحيث يتعذر إرسالها في رسالة بريد إلكتروني واحدة."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -15635,7 +15635,7 @@ msgstr "عدد الحاضرين كبير جدًا: {attendeeCount}. الحد ا�
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Too many files are being opened. Please try again in a minute."
-msgstr ""
+msgstr "يتم فتح عدد كبير جدًا من الملفات. يُرجى المحاولة مرة أخرى بعد دقيقة واحدة."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts

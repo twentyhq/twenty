@@ -13713,7 +13713,7 @@ msgstr "Le profil de l’assistant ne peut pas être mis à jour avant l’activ
 #. js-lingui-id: VqGyEL
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The attachments are too large to send in one email."
-msgstr ""
+msgstr "Les pièces jointes sont trop volumineuses pour être envoyées dans un seul e-mail."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -15635,7 +15635,7 @@ msgstr "Trop de participants : {attendeeCount}. Le maximum autorisé est {MAX_EM
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Too many files are being opened. Please try again in a minute."
-msgstr ""
+msgstr "Trop de fichiers sont ouverts. Veuillez réessayer dans une minute."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts

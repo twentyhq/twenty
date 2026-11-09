@@ -13713,7 +13713,7 @@ msgstr "工作区激活之前无法更新助手资料。"
 #. js-lingui-id: VqGyEL
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The attachments are too large to send in one email."
-msgstr ""
+msgstr "附件过大，无法在一封电子邮件中发送。"
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -15635,7 +15635,7 @@ msgstr "参会者过多：{attendeeCount}。允许的最大数量为 {MAX_EMAIL_
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Too many files are being opened. Please try again in a minute."
-msgstr ""
+msgstr "打开的文件过多。请稍后一分钟再试。"
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts

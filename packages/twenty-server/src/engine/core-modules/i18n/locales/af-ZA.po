@@ -13713,7 +13713,7 @@ msgstr "Die assistentprofiel kan nie bygewerk word voordat die werksruimte geakt
 #. js-lingui-id: VqGyEL
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The attachments are too large to send in one email."
-msgstr ""
+msgstr "Die aanhegsels is te groot om in een e-pos te stuur."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -15635,7 +15635,7 @@ msgstr "Te veel deelnemers: {attendeeCount}. Die maksimum toegelaat is {MAX_EMAI
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Too many files are being opened. Please try again in a minute."
-msgstr ""
+msgstr "Te veel lêers word oopgemaak. Probeer asseblief oor 'n minuut weer."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts

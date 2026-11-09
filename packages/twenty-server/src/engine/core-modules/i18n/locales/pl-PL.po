@@ -13713,7 +13713,7 @@ msgstr "Profil asystenta nie może zostać zaktualizowany, dopóki obszar robocz
 #. js-lingui-id: VqGyEL
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The attachments are too large to send in one email."
-msgstr ""
+msgstr "Załączniki są zbyt duże, aby wysłać je w jednej wiadomości e-mail."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -15635,7 +15635,7 @@ msgstr "Zbyt wielu uczestników: {attendeeCount}. Maksymalna dozwolona liczba to
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Too many files are being opened. Please try again in a minute."
-msgstr ""
+msgstr "Otwieranych jest zbyt wiele plików. Spróbuj ponownie za minutę."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts

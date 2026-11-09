@@ -13713,7 +13713,7 @@ msgstr "Avustajaprofiilia ei voi päivittää ennen kuin työtila on aktivoitu."
 #. js-lingui-id: VqGyEL
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "The attachments are too large to send in one email."
-msgstr ""
+msgstr "Liitteet ovat liian suuria lähetettäväksi yhdessä sähköpostiviestissä."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -15635,7 +15635,7 @@ msgstr "Liian monta osallistujaa: {attendeeCount}. Suurin sallittu määrä on {
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Too many files are being opened. Please try again in a minute."
-msgstr ""
+msgstr "Liian monta tiedostoa avataan. Yritä uudelleen minuutin kuluttua."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
