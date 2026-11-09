@@ -281,6 +281,19 @@ describe('convertMarkdownToRichTextDocument', () => {
     expect(convert('\\&nbsp;')).toEqual([paragraph(text('&nbsp;'))]);
   });
 
+  it('should decode valid html entities in text', () => {
+    expect(convert('AT&T &amp; &#35; &notreal; &amp')).toEqual([
+      paragraph(text('AT&T & # &notreal; &amp')),
+    ]);
+  });
+
+  it('should keep html entities literal in code and raw html', () => {
+    expect(convert('`&amp;`\n\n<div>&amp;</div>')).toEqual([
+      paragraph(text('&amp;', [{ type: 'code' }])),
+      paragraph(text('<div>&amp;</div>')),
+    ]);
+  });
+
   it('should return a single empty paragraph for empty markdown', () => {
     expect(convert('')).toEqual([{ type: 'paragraph' }]);
   });

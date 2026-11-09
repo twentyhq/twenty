@@ -233,7 +233,12 @@ const convertBlockTokens = (tokens: Token[]): TipTapNode[] =>
         return isTableToken(token) ? [convertTable(token)] : [];
       default:
         return convertParagraph([
-          { type: 'text', raw: token.raw, text: token.raw.trimEnd() },
+          {
+            type: 'text',
+            raw: token.raw,
+            text: token.raw.trimEnd(),
+            escaped: true,
+          },
         ]);
     }
   });

@@ -1,3 +1,4 @@
+import { decodeHTMLStrict } from 'entities';
 import { type Token, type Tokens } from 'marked';
 import {
   convertTextToTipTapNodes,
@@ -101,7 +102,7 @@ const collectInlineRuns = ({
           collectInlineRuns({ tokens: token.tokens, styles, href, runs });
         } else {
           runs.push({
-            text: token.text.replace(/&nbsp;/g, '\u00A0'),
+            text: token.escaped ? token.text : decodeHTMLStrict(token.text),
             styles,
             href,
           });
