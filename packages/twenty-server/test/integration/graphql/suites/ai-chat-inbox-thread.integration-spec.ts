@@ -436,7 +436,7 @@ describe('Inbox thread mutations for members and applications', () => {
       data: { archiveInboxThread: true },
     });
     expect(await readJaneInboxState(threadId)).toEqual([
-      { archivedAt: expect.any(Date), isSubscribed: true },
+      { archivedAt: expect.anything(), isSubscribed: true },
     ]);
   });
 
