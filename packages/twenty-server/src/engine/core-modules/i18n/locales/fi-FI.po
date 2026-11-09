@@ -6160,6 +6160,11 @@ msgstr "frontComponentId:tä ei saa määrittää, kun engineComponentKey on {en
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "frontComponentId:tä ei saa määrittää, kun engineComponentKey on TRIGGER_WORKFLOW_VERSION"
 
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr ""
+
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
