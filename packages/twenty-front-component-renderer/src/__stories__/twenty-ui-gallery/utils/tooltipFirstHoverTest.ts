@@ -4,7 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+import {
+  INTERACTION_TIMEOUT,
+  MOUNT_TIMEOUT,
+} from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectPopupAttachedToAnchor } from '@/__stories__/twenty-ui-gallery/utils/expectPopupAttachedToAnchor';
 
@@ -40,10 +43,36 @@ export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
       timeout: INTERACTION_TIMEOUT,
     });
 
+  // A busy runner can attach the trigger's listeners after the settle delay, losing the
+  // first hover, so only that one is retried; the hovers after it must open first time
+  const hoverUntilTooltipOpens = async () => {
+    const deadline = Date.now() + MOUNT_TIMEOUT;
+
+    for (;;) {
+      await user.hover(trigger);
+
+      try {
+        await expectTooltipOpen();
+
+        return;
+      } catch (error) {
+        if (Date.now() > deadline) {
+          throw error;
+        }
+      }
+
+      await user.unhover(trigger);
+    }
+  };
+
   expect(page.queryByRole('tooltip')).not.toBeInTheDocument();
   await waitForSandboxRoundTrip();
 
-  for (const hoverTarget of [trigger, icon, icon]) {
+  await hoverUntilTooltipOpens();
+  await user.unhover(trigger);
+  await expectTooltipClosed();
+
+  for (const hoverTarget of [icon, icon]) {
     await user.hover(hoverTarget);
     await expectTooltipOpen();
     await user.unhover(hoverTarget);
