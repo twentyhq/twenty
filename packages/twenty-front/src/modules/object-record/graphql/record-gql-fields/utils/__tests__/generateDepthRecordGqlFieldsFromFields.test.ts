@@ -41,22 +41,17 @@ describe('generateDepthRecordGqlFieldsFromFields', () => {
       fieldName: 'taskTargets',
     });
     const taskTargetMetadata = getMockObjectMetadataItemOrThrow('taskTarget');
-    const companyTargetRestrictedFields = Object.fromEntries(
-      (
-        getMockFieldMetadataItemOrThrow({
-          objectMetadataItem: taskTargetMetadata,
-          fieldName: 'target',
-        }).morphRelations ?? []
+    const companyTargetUnreadableFields = (
+      getMockFieldMetadataItemOrThrow({
+        objectMetadataItem: taskTargetMetadata,
+        fieldName: 'target',
+      }).morphRelations ?? []
+    )
+      .filter(
+        ({ targetObjectMetadata }) =>
+          targetObjectMetadata.nameSingular === 'company',
       )
-        .filter(
-          ({ targetObjectMetadata }) =>
-            targetObjectMetadata.nameSingular === 'company',
-        )
-        .map(({ sourceFieldMetadata }) => [
-          sourceFieldMetadata.id,
-          { canRead: false, canUpdate: false },
-        ]),
-    );
+      .map(({ sourceFieldMetadata }) => sourceFieldMetadata.id);
 
     const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
       (objectMetadataItem) =>
@@ -66,7 +61,8 @@ describe('generateDepthRecordGqlFieldsFromFields', () => {
               ...getPermittedFields({
                 fields: objectMetadataItem.fields,
                 objectPermissions: {
-                  restrictedFields: companyTargetRestrictedFields,
+                  unreadableFields: companyTargetUnreadableFields,
+                  uneditableFields: [],
                 },
               }),
             }

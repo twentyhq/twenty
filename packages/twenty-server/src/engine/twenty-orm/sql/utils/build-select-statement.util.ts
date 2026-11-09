@@ -65,6 +65,8 @@ export type OrderByClause = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
+export type ColumnNullifyConditions = Record<string, Record<string, string[]>>;
+
 export type SelectStatementState = {
   alias: string;
   tableShape: WorkspaceTableShape;
@@ -72,6 +74,7 @@ export type SelectStatementState = {
   explicitSelection?: string[];
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
+  columnNullifyConditions: ColumnNullifyConditions;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -87,6 +90,33 @@ export type SelectStatementState = {
 
 export const quoteColumn = (alias: string, columnName: string): string =>
   `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
+
+const PLAIN_COLUMN_EXPRESSION = /^"?(\w+)"?\."?(\w+)"?$/;
+
+const renderProjectedColumn = ({
+  state,
+  alias,
+  columnName,
+}: {
+  state: Pick<
+    SelectStatementState,
+    'columnNullifyConditions' | 'groupByExpressions'
+  >;
+  alias: string;
+  columnName: string;
+}): string => {
+  const quotedColumn = quoteColumn(alias, columnName);
+  const nullifyConditions = state.columnNullifyConditions[alias]?.[columnName];
+
+  // A grouped query projects no plain column, and a CASE on one wouldn't be grouped
+  if (!isDefined(nullifyConditions) || state.groupByExpressions.length > 0) {
+    return quotedColumn;
+  }
+
+  return `CASE WHEN ${nullifyConditions
+    .map((nullifyCondition) => `(${nullifyCondition})`)
+    .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
+};
 
 export const normaliseColumnExpression = (
   expression: string,
@@ -243,7 +273,7 @@ export const buildProjection = (
 
   const expressions = mainAliasColumnNames.map(
     (columnName) =>
-      `${quoteColumn(state.alias, columnName)} AS ${escapeIdentifier(
+      `${renderProjectedColumn({ state, alias: state.alias, columnName })} AS ${escapeIdentifier(
         buildColumnResultAlias(state.alias, columnName),
       )}`,
   );
@@ -260,7 +290,11 @@ export const buildProjection = (
 
     projectedMainColumnNames.add(columnSelection.columnName);
     expressions.push(
-      `${quoteColumn(state.alias, columnSelection.columnName)} AS ${escapeIdentifier(
+      `${renderProjectedColumn({
+        state,
+        alias: state.alias,
+        columnName: columnSelection.columnName,
+      })} AS ${escapeIdentifier(
         buildColumnResultAlias(state.alias, columnSelection.columnName),
       )}`,
     );
@@ -268,22 +302,27 @@ export const buildProjection = (
 
   for (const joinedProjection of collectJoinedColumnProjections(state)) {
     expressions.push(
-      `${quoteColumn(
-        joinedProjection.joinAlias,
-        joinedProjection.columnName,
-      )} AS ${escapeIdentifier(joinedProjection.resultAlias)}`,
+      `${renderProjectedColumn({
+        state,
+        alias: joinedProjection.joinAlias,
+        columnName: joinedProjection.columnName,
+      })} AS ${escapeIdentifier(joinedProjection.resultAlias)}`,
     );
   }
 
   const aliases = collectStatementAliases(state);
 
   for (const extraSelect of state.extraSelectClauses) {
-    expressions.push(
-      `${quoteQualifiedAliasReferences(
-        extraSelect.expression,
-        aliases,
-      )} AS ${escapeIdentifier(extraSelect.alias)}`,
-    );
+    const plainColumn = extraSelect.expression.match(PLAIN_COLUMN_EXPRESSION);
+    const expression = isDefined(plainColumn)
+      ? renderProjectedColumn({
+          state,
+          alias: plainColumn[1],
+          columnName: plainColumn[2],
+        })
+      : quoteQualifiedAliasReferences(extraSelect.expression, aliases);
+
+    expressions.push(`${expression} AS ${escapeIdentifier(extraSelect.alias)}`);
   }
 
   return { expressions, mainAliasColumnNames };

@@ -1,4 +1,4 @@
-import { type GraphQLType } from 'graphql';
+import { type GraphQLList, type GraphQLType } from 'graphql';
 
 import { wrapTypeInGraphQLList } from 'src/engine/api/graphql/workspace-schema-builder/utils/wrap-type-in-graphql-list.util';
 
@@ -13,13 +13,9 @@ export const applyTypeOptionsForUpdateInput = <
 >(
   typeRef: T,
   options: UpdateInputTypeOptions,
-): T => {
+): T | GraphQLList<T> => {
   if (options.isArray) {
-    return wrapTypeInGraphQLList(
-      typeRef,
-      options.arrayDepth ?? 1,
-      true,
-    ) as unknown as T;
+    return wrapTypeInGraphQLList(typeRef, options.arrayDepth ?? 1, true);
   }
 
   return typeRef;

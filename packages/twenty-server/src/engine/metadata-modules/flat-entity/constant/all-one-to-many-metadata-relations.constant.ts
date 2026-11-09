@@ -91,6 +91,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'searchFieldMetadataUniversalIdentifiers',
     },
+    fieldMetadataOptions: {
+      metadataName: 'fieldMetadataOption',
+      flatEntityForeignKeyAggregator: 'fieldMetadataOptionIds',
+      universalFlatEntityForeignKeyAggregator:
+        'fieldMetadataOptionUniversalIdentifiers',
+    },
   },
   objectMetadata: {
     fields: {

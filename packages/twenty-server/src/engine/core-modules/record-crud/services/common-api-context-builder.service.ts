@@ -90,17 +90,17 @@ export class CommonApiContextBuilderService {
     }
 
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipalsOrThrow({
-        authContext,
-      });
-
-    const unreadableFieldMetadataIds =
-      await this.recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow(
+      await this.principalPermissionsService.resolvePermissionsPrincipalsOrThrow(
         {
-          principals,
-          objectMetadataId: flatObjectMetadata.id,
+          authContext,
         },
       );
+
+    const unreadableFieldMetadataIds =
+      await this.recordPermissionsService.findUnreadableFields({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     const selectedFields = buildFieldSelection({
       unreadableFieldMetadataIds,

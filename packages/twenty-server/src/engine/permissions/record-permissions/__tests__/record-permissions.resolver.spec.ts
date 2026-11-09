@@ -16,7 +16,7 @@ const buildResolver = () => {
     universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   };
   const permissionsService = {
-    findRecordsPermissions: jest
+    findRecordsActions: jest
       .fn()
       .mockResolvedValue(new Map([['record', readable]])),
   };
@@ -75,8 +75,8 @@ describe('Generic record permissions query', () => {
         permissions: readable,
       },
     ]);
-    expect(permissionsService.findRecordsPermissions).toHaveBeenCalledTimes(2);
-    expect(permissionsService.findRecordsPermissions).toHaveBeenCalledWith({
+    expect(permissionsService.findRecordsActions).toHaveBeenCalledTimes(2);
+    expect(permissionsService.findRecordsActions).toHaveBeenCalledWith({
       authContext: {
         type: 'user',
         workspace: { id: 'workspace' },
@@ -91,7 +91,7 @@ describe('Generic record permissions query', () => {
     const { query, permissionsService } = buildResolver();
     const target = { objectMetadataId: 'foreign', recordId: 'record' };
     expect(await query([target])).toEqual([{ ...target, permissions: denied }]);
-    expect(permissionsService.findRecordsPermissions).not.toHaveBeenCalled();
+    expect(permissionsService.findRecordsActions).not.toHaveBeenCalled();
   });
 
   it('rejects oversized batches before reading metadata', async () => {

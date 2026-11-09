@@ -3,9 +3,26 @@ import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { type ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { buildDeprecatedRestrictedFields } from 'src/engine/metadata-modules/role/utils/build-deprecated-restricted-fields.util';
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
 import { type ObjectRecordsPermissionsDTO } from 'src/engine/permissions/dtos/object-records-permissions.dto';
+
+// Cached role permissions keep their old shape until the upgrade recomputes them
+const buildFieldLists = ({
+  unreadableFields,
+  uneditableFields,
+}: Pick<ObjectRecordsPermissions, 'unreadableFields' | 'uneditableFields'>) => {
+  const fieldLists = {
+    unreadableFields: unreadableFields ?? [],
+    uneditableFields: uneditableFields ?? [],
+  };
+
+  return {
+    ...fieldLists,
+    restrictedFields: buildDeprecatedRestrictedFields(fieldLists),
+  };
+};
 
 const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
   objectMetadataId,
@@ -17,7 +34,7 @@ const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
   objectMetadataId,
   canReadObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
-    operationType: 'select',
+    operationType: 'read',
   }),
   canUpdateObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
@@ -25,13 +42,13 @@ const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
   }),
   canSoftDeleteObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
-    operationType: 'soft-delete',
+    operationType: 'softDelete',
   }),
   canDestroyObjectRecords: canReachSomeRecords({
     objectRecordsPermissions,
-    operationType: 'delete',
+    operationType: 'destroy',
   }),
-  restrictedFields: objectRecordsPermissions.restrictedFields,
+  ...buildFieldLists(objectRecordsPermissions),
   rowLevelPermissionPredicates:
     objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
   rowLevelPermissionPredicateGroups:
@@ -54,11 +71,12 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
 
     objectRecordsPermissions.push({
       objectMetadataId,
+      canCreateAllRecords: permissions.canCreateAllRecords,
       canReadAllRecords: permissions.canReadAllRecords,
       canUpdateAllRecords: permissions.canUpdateAllRecords,
       canSoftDeleteAllRecords: permissions.canSoftDeleteAllRecords,
       canDestroyAllRecords: permissions.canDestroyAllRecords,
-      restrictedFields: permissions.restrictedFields,
+      ...buildFieldLists(permissions),
       rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
     });
     legacyObjectPermissions.push(

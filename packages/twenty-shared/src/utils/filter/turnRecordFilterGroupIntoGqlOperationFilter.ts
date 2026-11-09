@@ -3,7 +3,7 @@ import {
   RecordFilterGroupLogicalOperator,
   type RecordFilterValueDependencies,
   type RecordGqlOperationFilter,
-  type ViewFilterOperand,
+  type RecordFilterOperand,
 } from '@/types';
 
 import { isDefined } from '@/utils';
@@ -18,7 +18,7 @@ export type RecordFilter = {
   value: string;
   recordFilterGroupId?: string | null;
   positionInRecordFilterGroup?: number | null;
-  operand: ViewFilterOperand;
+  operand: RecordFilterOperand;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
   relationTargetFieldMetadataId?: string | null | undefined;
 };

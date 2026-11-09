@@ -1,4 +1,4 @@
-import { type RecordRepositoryPermissionsService } from 'src/engine/permissions/record-repository-permissions.service';
+import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type DataSource } from 'typeorm';
 import { type FeatureFlagKey } from 'twenty-shared/types';
@@ -25,14 +25,17 @@ export interface WorkspaceInternalContext {
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;
   permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
   recordReadRestrictions: RecordReadRestrictions;
-  recordRepositoryPermissions: Pick<
-    RecordRepositoryPermissionsService,
-    | 'isOperationDisabled'
-    | 'assertObjectOperationAccessibleOrThrow'
-    | 'assertColumnsReadableAndUpdatableOrThrow'
-    | 'buildRecordsAccessCondition'
+  recordPermissions: Pick<
+    RecordPermissionsService,
+    | 'isReadDisabled'
+    | 'assertCanRunOperationOrThrow'
+    | 'buildManyRecordsAccessCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
+    | 'recomputeRecordAccessGroupIdsOfRecords'
+    | 'isRecomputingRecordAccessGroupIdsOnWrite'
+    | 'findRlsRuleUnreadableFieldsByRole'
+    | 'buildRlsRuleSqlConditionOrThrow'
   >;
   recordStock: Pick<
     WorkspaceRecordStockService,

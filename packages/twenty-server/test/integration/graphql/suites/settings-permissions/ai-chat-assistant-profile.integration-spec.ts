@@ -1,3 +1,4 @@
+import { assistantSystemPromptPreviewQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/assistant-system-prompt-preview-query-factory.util';
 import { resetWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/reset-workspace-assistant-profile-query-factory.util';
 import { updateWorkspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/update-workspace-assistant-profile-query-factory.util';
 import { workspaceAssistantProfileQueryFactory } from 'test/integration/graphql/suites/settings-permissions/utils/workspace-assistant-profile-query-factory.util';
@@ -132,6 +133,31 @@ describe('workspace assistant profile settings', () => {
       expect(errors).toBeUndefined();
     } finally {
       await setInboxEnabled(isInboxInitiallyEnabled);
+    }
+  });
+
+  it('previews the configured name only while Inbox is enabled', async () => {
+    const expectPreviewName = async (displayName: string) => {
+      const response = await makeMetadataApiRequest(
+        assistantSystemPromptPreviewQueryFactory(),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.getAiSystemPromptPreview.sections,
+      ).toContainEqual({
+        title: 'Assistant Identity',
+        content: expect.stringContaining(JSON.stringify(displayName)),
+      });
+    };
+
+    await expectPreviewName(CUSTOM_ASSISTANT_PROFILE.displayName);
+
+    try {
+      await setInboxEnabled(false);
+      await expectPreviewName(DEFAULT_AI_CHAT_ASSISTANT_PROFILE.displayName);
+    } finally {
+      await setInboxEnabled(true);
     }
   });
 

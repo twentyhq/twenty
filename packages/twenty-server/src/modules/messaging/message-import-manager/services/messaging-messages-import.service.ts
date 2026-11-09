@@ -207,6 +207,7 @@ export class MessagingMessagesImportService {
                 messageChannel,
                 connectedAccount,
                 workspaceId,
+                folderLinkUpdate: 'replace',
               },
             );
           }
