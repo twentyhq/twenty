@@ -6,7 +6,6 @@ import { ChatThreadMessageAttachment } from '@/activities/emails/components/Chat
 import { ChatThreadMessageSenderHeader } from '@/activities/emails/components/ChatThreadMessageSenderHeader';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGroup';
-import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
@@ -110,19 +109,16 @@ export const ChatThreadMessageGroup = ({
                 ))}
               </StyledFilesContainer>
             )}
-            <StyledChatMessageFooter isRightAligned={isOutgoing}>
-              {!hasHeader && isNonEmptyString(message.receivedAt) && (
-                <ChatMessageTimestamp createdAt={message.receivedAt} />
-              )}
-              {hasText && (
+            {hasText && (
+              <StyledChatMessageFooter isRightAligned={isOutgoing}>
                 <StyledChatMessageActions
                   className="message-actions"
                   isRightAligned={isOutgoing}
                 >
                   <LightCopyIconButton copyText={message.text} />
                 </StyledChatMessageActions>
-              )}
-            </StyledChatMessageFooter>
+              </StyledChatMessageFooter>
+            )}
           </StyledChatMessageRow>
         );
       })}
