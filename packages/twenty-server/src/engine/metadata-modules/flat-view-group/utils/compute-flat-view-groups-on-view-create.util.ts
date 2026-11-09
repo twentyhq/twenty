@@ -53,7 +53,10 @@ export const computeFlatViewGroupsOnViewCreate = ({
     ...flatViewGroupsFromOptions,
   ];
 
-  if (mainGroupByFieldMetadata.isNullable === true) {
+  if (
+    isDefined(mainGroupByFieldMetadata.isNullable) &&
+    mainGroupByFieldMetadata.isNullable
+  ) {
     const emptyGroupId = v4();
     const emptyGroupPosition = flatViewGroupsFromOptions.length;
 
