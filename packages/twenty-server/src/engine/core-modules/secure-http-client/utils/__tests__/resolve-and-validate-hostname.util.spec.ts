@@ -64,6 +64,17 @@ describe('resolveAndValidateHostname', () => {
     );
   });
 
+  it('should throw an SsrfBlockedException carrying the resolved IP', async () => {
+    mockDnsLookup.mockResolvedValue({ address: '10.0.0.1', family: 4 });
+
+    await expect(
+      resolveAndValidateHostname('evil.example.com', [], mockDnsLookup),
+    ).rejects.toMatchObject({
+      code: 'ERR_SSRF_BLOCKED',
+      address: '10.0.0.1',
+    });
+  });
+
   it('should return the resolved public IP', async () => {
     mockDnsLookup.mockResolvedValue({ address: '93.184.216.34', family: 4 });
 

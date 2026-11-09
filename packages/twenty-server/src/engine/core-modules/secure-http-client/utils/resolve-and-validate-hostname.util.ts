@@ -1,5 +1,6 @@
 import * as dns from 'dns/promises';
 
+import { SsrfBlockedException } from 'src/engine/core-modules/secure-http-client/exceptions/ssrf-blocked.exception';
 import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils/get-is-blocked-ip.util';
 
 export const resolveAndValidateHostname = async (
@@ -23,8 +24,9 @@ export const resolveAndValidateHostname = async (
   const { address: resolvedIp } = await dnsLookup(hostname);
 
   if (isBlockedIp(resolvedIp)) {
-    throw new Error(
+    throw new SsrfBlockedException(
       `Connection to internal IP address ${resolvedIp} is not allowed.`,
+      resolvedIp,
     );
   }
 

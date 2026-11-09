@@ -2360,6 +2360,87 @@ export class ConfigVariables {
   WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum "Test request" calls from the workflow HTTP Request editor per user per HTTP_EGRESS_THROTTLE_TTL.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  HTTP_EGRESS_TEST_USER_THROTTLE_LIMIT = 60;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum "Test request" calls from the workflow HTTP Request editor per workspace per HTTP_EGRESS_THROTTLE_TTL.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  HTTP_EGRESS_TEST_WORKSPACE_THROTTLE_LIMIT = 200;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum AI agent HTTP tool requests per user per HTTP_EGRESS_THROTTLE_TTL.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  HTTP_EGRESS_AGENT_USER_THROTTLE_LIMIT = 300;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum workflow HTTP Request step and AI agent HTTP tool requests per workspace per HTTP_EGRESS_THROTTLE_TTL.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  HTTP_EGRESS_WORKSPACE_THROTTLE_LIMIT = 5000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum user-controlled HTTP requests per trialing workspace per HTTP_EGRESS_THROTTLE_TTL, all sources combined. Only applies when billing is enabled.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  HTTP_EGRESS_TRIAL_WORKSPACE_THROTTLE_LIMIT = 200;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Window in milliseconds for the HTTP_EGRESS_*_THROTTLE_LIMIT variables.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  HTTP_EGRESS_THROTTLE_TTL = 3_600_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum user-controlled HTTP requests in flight at once per workspace.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  HTTP_EGRESS_WORKSPACE_MAX_CONCURRENCY = 10;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Requests blocked by the SSRF guard within 24 hours after which a workspace cannot make user-controlled HTTP requests for 24 hours.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  HTTP_EGRESS_BLOCKED_REQUESTS_BEFORE_SUSPENSION = 20;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Enforce HTTP egress limits on workflow HTTP Request steps and the AI agent HTTP tool. When false they are only logged; "Test request" limits are always enforced.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  HTTP_EGRESS_ENFORCE_STEP_LIMITS = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,
     description: 'Driver for captcha integration',
     type: ConfigVariableType.ENUM,

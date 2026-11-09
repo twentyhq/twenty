@@ -78,6 +78,26 @@ describe('HttpRequestWorkflowAction', () => {
     );
   });
 
+  it('identifies the request as a workflow step of its run', async () => {
+    await action.execute({
+      currentStepId: 'step-1',
+      steps: [
+        buildHttpRequestStep({
+          url: 'https://api.example.com/users',
+          method: 'GET',
+        }),
+      ],
+      context: {},
+      runInfo: { workspaceId: 'workspace-1', workflowRunId: 'run-1' },
+    });
+
+    expect(mockHttpTool.execute).toHaveBeenCalledWith(expect.anything(), {
+      workspaceId: 'workspace-1',
+      workflowRunId: 'run-1',
+      outboundRequestSource: 'workflow-http',
+    });
+  });
+
   it('persists an HTTP_REQUEST step log', async () => {
     await action.execute({
       currentStepId: 'step-1',

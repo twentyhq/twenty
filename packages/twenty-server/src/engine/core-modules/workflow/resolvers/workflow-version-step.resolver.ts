@@ -198,6 +198,9 @@ export class WorkflowVersionStepResolver {
   @UseGuards(AccessPolicyGuard(WORKFLOW_VERSION_STEP_ACCESS_POLICY))
   async testHttpRequest(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('input')
     { url, method, headers, body }: TestHttpRequestInput,
   ): Promise<TestHttpRequestDTO> {
@@ -208,7 +211,12 @@ export class WorkflowVersionStepResolver {
         headers,
         body,
       },
-      { workspaceId: workspace.id },
+      {
+        workspaceId: workspace.id,
+        userId: user?.id,
+        userWorkspaceId,
+        outboundRequestSource: 'workflow-http-test',
+      },
     );
   }
 

@@ -6,6 +6,7 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { HttpEgressModule } from 'src/engine/core-modules/http-egress/http-egress.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool';
@@ -37,6 +38,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationModule,
     FeatureFlagModule,
     FileModule,
+    HttpEgressModule,
     TokenModule,
     RecordShareModule,
     SecureHttpClientModule,

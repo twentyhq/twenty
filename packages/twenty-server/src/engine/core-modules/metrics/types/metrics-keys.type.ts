@@ -55,6 +55,7 @@ export enum MetricsKeys {
   CronJobDeletedWorkspace = 'cron-job/deleted-workspace',
   JobWebhookCallCompleted = 'job/webhook-call-completed',
   JobWebhookCallThrottled = 'job/webhook-call-throttled',
+  HttpEgressRequest = 'http-egress/request',
   SignUpSuccess = 'sign-up/success',
   CommonApiQueryRateLimited = 'common-api-query/rate-limited',
   CommonApiApplicationQueryRateLimited = 'common-api-query/application-rate-limited',

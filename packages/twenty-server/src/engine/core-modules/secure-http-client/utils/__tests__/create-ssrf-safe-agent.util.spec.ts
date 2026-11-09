@@ -2,6 +2,7 @@ import * as http from 'http';
 import * as https from 'https';
 import { Socket } from 'net';
 
+import { SsrfBlockedException } from 'src/engine/core-modules/secure-http-client/exceptions/ssrf-blocked.exception';
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 
 const createMockSocket = (): Socket => {
@@ -344,6 +345,35 @@ describe('createSsrfSafeAgent', () => {
       mockSocket.emit('lookup', null, '2001:4860:4860::8888', 6, 'example.com');
 
       expect(mockSocket.destroy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('blocked error', () => {
+    it('should throw an SsrfBlockedException carrying the IP literal', () => {
+      const agent = createSsrfSafeAgent('http');
+
+      expect.assertions(3);
+
+      try {
+        agent.createConnection({ host: '10.0.0.1' } as any, jest.fn() as any);
+      } catch (error) {
+        expect(error).toBeInstanceOf(SsrfBlockedException);
+        expect((error as SsrfBlockedException).code).toBe('ERR_SSRF_BLOCKED');
+        expect((error as SsrfBlockedException).address).toBe('10.0.0.1');
+      }
+    });
+
+    it('should destroy the socket with an SsrfBlockedException carrying the resolved address', () => {
+      const agent = createSsrfSafeAgent('http');
+
+      agent.createConnection({ host: 'evil.com' } as any, jest.fn() as any);
+
+      mockSocket.emit('lookup', null, '169.254.169.254', 4, 'evil.com');
+
+      const [destroyError] = (mockSocket.destroy as jest.Mock).mock.calls[0];
+
+      expect(destroyError).toBeInstanceOf(SsrfBlockedException);
+      expect(destroyError.address).toBe('169.254.169.254');
     });
   });
 });
