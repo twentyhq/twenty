@@ -4,6 +4,7 @@ import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-gr
 import { isAllRecordGroupsTabActiveComponentSelector } from '@/object-record/record-group/states/selectors/isAllRecordGroupsTabActiveComponentSelector';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { computeVisibleRecordGroupsFilter } from '@/object-record/record-group/utils/computeVisibleRecordGroupsFilter';
+import { isAllRecordGroupsTabFilteredByVisibleGroups } from '@/object-record/record-group/utils/isAllRecordGroupsTabFilteredByVisibleGroups';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -32,7 +33,13 @@ export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
   );
 
   const recordGroupFilter = useMemo((): RecordGqlOperationFilter => {
-    if (isAllRecordGroupsTabActive && hiddenRecordGroupIds.length > 0) {
+    if (
+      isAllRecordGroupsTabActive &&
+      isAllRecordGroupsTabFilteredByVisibleGroups({
+        hiddenRecordGroupIds,
+        recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
+      })
+    ) {
       return computeVisibleRecordGroupsFilter({
         recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
         recordGroupDefinitions,
@@ -71,7 +78,7 @@ export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
   }, [
     currentRecordGroupDefinition,
     fields,
-    hiddenRecordGroupIds.length,
+    hiddenRecordGroupIds,
     isAllRecordGroupsTabActive,
     recordGroupDefinitions,
     recordIndexGroupFieldMetadataItem,

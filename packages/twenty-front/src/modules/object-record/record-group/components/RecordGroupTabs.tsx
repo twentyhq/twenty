@@ -1,6 +1,7 @@
 import { RecordGroupAllTab } from '@/object-record/record-group/components/RecordGroupAllTab';
 import { RecordGroupTab } from '@/object-record/record-group/components/RecordGroupTab';
 import { RecordGroupTabsRecordCountsEffect } from '@/object-record/record-group/components/RecordGroupTabsRecordCountsEffect';
+import { RecordGroupTabsSelectionResetEffect } from '@/object-record/record-group/components/RecordGroupTabsSelectionResetEffect';
 import { RecordGroupTabsPortalContext } from '@/object-record/record-group/states/context/RecordGroupTabsPortalContext';
 import { isAllRecordGroupsTabActiveComponentSelector } from '@/object-record/record-group/states/selectors/isAllRecordGroupsTabActiveComponentSelector';
 import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
@@ -106,6 +107,7 @@ export const RecordGroupTabs = ({
           ))}
         </Tabs.List>
       </StyledTabsScrollContainer>
+      <RecordGroupTabsSelectionResetEffect />
       {recordIndexShouldHideEmptyRecordGroups &&
         isDefined(recordIndexGroupFieldMetadataItem) && (
           <RecordGroupTabsRecordCountsEffect
