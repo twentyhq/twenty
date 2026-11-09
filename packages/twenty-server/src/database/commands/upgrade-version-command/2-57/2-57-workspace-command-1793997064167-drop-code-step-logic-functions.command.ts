@@ -236,6 +236,10 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
     const workspaceCustomApplicationId =
       await this.findWorkspaceCustomApplicationId({ dataSource, workspaceId });
 
+    if (!isDefined(workspaceCustomApplicationId)) {
+      return [];
+    }
+
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
@@ -359,8 +363,11 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
         workspaceId,
       });
 
+    // the references are dropped right after, so skipping silently would strand these functions
     if (!isDefined(workspaceCustomFlatApplication)) {
-      return 0;
+      throw new Error(
+        `Workspace ${workspaceId}: custom application not found, cannot delete code step functions`,
+      );
     }
 
     // the migration runner also deletes the functions' files and executors
