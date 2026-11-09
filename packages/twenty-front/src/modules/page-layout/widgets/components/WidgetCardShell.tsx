@@ -1,11 +1,14 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useWidgetDashboardFilter } from '@/page-layout/hooks/useWidgetDashboardFilter';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { getWidgetDashboardFilterHeaderContent } from '@/page-layout/utils/getWidgetDashboardFilterHeaderContent';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
 import { PageLayoutWidgetStatusDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetStatusDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
+import { WidgetDashboardFilterHeaderItems } from '@/page-layout/widgets/components/WidgetDashboardFilterHeaderItems';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
@@ -18,6 +21,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 import {
@@ -66,8 +70,20 @@ export const WidgetCardShell = ({
   const { t } = useLingui();
   const theme = useTheme();
   const { layoutMode, presentation } = usePageLayoutContentContext();
-  const { isInvalid: isDashboardFilterInvalid } = useWidgetDashboardFilter();
+  const { isInvalid: isDashboardFilterInvalid, indicators } =
+    useWidgetDashboardFilter();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const dashboardFilterHeaderContent = getWidgetDashboardFilterHeaderContent({
+    indicators,
+    isPageLayoutInEditMode,
+  });
+  const hasDashboardFilterHeaderItems =
+    hasAccess &&
+    (isPageLayoutInEditMode || !isDashboardFilterInvalid) &&
+    (isNonEmptyArray(dashboardFilterHeaderContent.fieldLabels) ||
+      isNonEmptyArray(dashboardFilterHeaderContent.pills) ||
+      isDefined(dashboardFilterHeaderContent.hoverIndicatorText));
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
   const isFixedHeightIframe =
@@ -112,6 +128,17 @@ export const WidgetCardShell = ({
             isResizing={isResizing}
             title={widget.title}
             onRemove={onRemove}
+            shouldMeasureHeaderPills={
+              isNonEmptyArray(dashboardFilterHeaderContent.fieldLabels) ||
+              isNonEmptyArray(dashboardFilterHeaderContent.pills)
+            }
+            headerPills={
+              hasDashboardFilterHeaderItems ? (
+                <WidgetDashboardFilterHeaderItems
+                  content={dashboardFilterHeaderContent}
+                />
+              ) : undefined
+            }
             forbiddenDisplay={
               !hasAccess && (
                 <PageLayoutWidgetForbiddenDisplay

@@ -122,6 +122,23 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     expect(result).toContain(TEST_FIELD_METADATA_ID_1);
   });
 
+  it('should not count the field of a ratio', () => {
+    const widget = createMockWidget({
+      configuration: {
+        ...TEST_AGGREGATE_CHART_CONFIGURATION,
+        ratioAggregateConfig: {
+          fieldMetadataId: TEST_FIELD_METADATA_ID_3,
+          optionValue: 'WON',
+        },
+      },
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
+    });
+
+    expect(extractFieldMetadataIdsFromWidget(widget)).toEqual([
+      TEST_FIELD_METADATA_ID_1,
+    ]);
+  });
+
   it('should not include undefined optional fields', () => {
     const widget = createMockWidget({
       configuration: {

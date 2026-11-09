@@ -5,6 +5,7 @@ import { type DashboardFilterWidgetField } from '@/page-layout/types/DashboardFi
 import { type WidgetDashboardFilter } from '@/page-layout/types/WidgetDashboardFilter';
 import { getDashboardFilterWidgetCandidateFieldMetadataIds } from '@/page-layout/utils/getDashboardFilterWidgetCandidateFieldMetadataIds';
 import { getWidgetDashboardFilterBindings } from '@/page-layout/utils/getWidgetDashboardFilterBindings';
+import { getWidgetDashboardFilterIndicators } from '@/page-layout/utils/getWidgetDashboardFilterIndicators';
 import { isDashboardFilterDataWidgetConfiguration } from '@/page-layout/utils/isDashboardFilterDataWidgetConfiguration';
 import { type RecordFilterValueDependencies } from 'twenty-shared/types';
 import {
@@ -15,7 +16,7 @@ import {
 } from 'twenty-shared/utils';
 
 export const computeDashboardFilterForWidget = ({
-  dashboardFilters: { values, timeZone, firstDayOfTheWeek },
+  dashboardFilters,
   configuration,
   fields,
   viewFilterFieldMetadataIds,
@@ -23,27 +24,48 @@ export const computeDashboardFilterForWidget = ({
 }: {
   dashboardFilters: Pick<
     DashboardFilters,
-    'values' | 'timeZone' | 'firstDayOfTheWeek'
+    'pageLayoutFilters' | 'values' | 'timeZone' | 'firstDayOfTheWeek'
   >;
   configuration: DashboardFilterWidgetConfiguration;
   fields: Omit<DashboardFilterWidgetField, 'icon' | 'isActive'>[];
   viewFilterFieldMetadataIds: string[];
   filterValueDependencies: RecordFilterValueDependencies;
 }): WidgetDashboardFilter => {
-  if (
-    !isNonEmptyArray(values) ||
-    !isDashboardFilterDataWidgetConfiguration(configuration)
-  ) {
+  const { values, timeZone, firstDayOfTheWeek } = dashboardFilters;
+
+  if (!isDashboardFilterDataWidgetConfiguration(configuration)) {
     return NO_WIDGET_DASHBOARD_FILTER;
+  }
+
+  const bindings = getWidgetDashboardFilterBindings(configuration);
+  const candidateFieldMetadataIds =
+    getDashboardFilterWidgetCandidateFieldMetadataIds({
+      configuration,
+      viewFilterFieldMetadataIds,
+    });
+
+  // Until the object's fields load, every filter would read as an unavailable field
+  const getIndicators = (
+    appliedFields: WidgetDashboardFilter['appliedFields'],
+  ) =>
+    isNonEmptyArray(fields)
+      ? getWidgetDashboardFilterIndicators({
+          dashboardFilters,
+          bindings,
+          candidateFieldMetadataIds,
+          appliedFields,
+          fields,
+        })
+      : [];
+
+  if (!isNonEmptyArray(values)) {
+    return { ...NO_WIDGET_DASHBOARD_FILTER, indicators: getIndicators([]) };
   }
 
   try {
     const dashboardFilter = buildDashboardFilterForWidget({
-      bindings: getWidgetDashboardFilterBindings(configuration),
-      ...getDashboardFilterWidgetCandidateFieldMetadataIds({
-        configuration,
-        viewFilterFieldMetadataIds,
-      }),
+      bindings,
+      ...candidateFieldMetadataIds,
       fields,
       values,
       timeZone,
@@ -59,6 +81,7 @@ export const computeDashboardFilterForWidget = ({
         recordFilters: dashboardFilter.recordFilters,
         recordFilterGroups: [],
       }),
+      indicators: getIndicators(dashboardFilter.appliedFields),
     };
   } catch (error) {
     if (!(error instanceof InvalidDashboardFilterError)) {
@@ -66,6 +89,10 @@ export const computeDashboardFilterForWidget = ({
     }
 
     // A value that cannot be resolved must never render as an unfiltered widget
-    return { ...NO_WIDGET_DASHBOARD_FILTER, isInvalid: true };
+    return {
+      ...NO_WIDGET_DASHBOARD_FILTER,
+      isInvalid: true,
+      indicators: getIndicators([]),
+    };
   }
 };

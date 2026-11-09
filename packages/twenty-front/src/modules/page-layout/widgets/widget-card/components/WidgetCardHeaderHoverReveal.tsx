@@ -11,15 +11,22 @@ const StyledHoverReveal = styled.div<{ isVisible: boolean }>`
   opacity: ${({ isVisible }) => (isVisible ? '1' : '0')};
   pointer-events: ${({ isVisible }) => (isVisible ? 'auto' : 'none')};
   transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
+
+  &:focus-within {
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 type WidgetCardHeaderHoverRevealProps = {
   children: ReactNode;
+  isAlwaysVisible?: boolean;
 };
 
 // Touch devices have no hover, so the content stays visible on mobile.
 export const WidgetCardHeaderHoverReveal = ({
   children,
+  isAlwaysVisible,
 }: WidgetCardHeaderHoverRevealProps) => {
   const widgetComponentInstanceId = useComponentInstanceStateContext(
     WidgetComponentInstanceContext,
@@ -32,7 +39,9 @@ export const WidgetCardHeaderHoverReveal = ({
   );
 
   return (
-    <StyledHoverReveal isVisible={isMobile || widgetCardHovered}>
+    <StyledHoverReveal
+      isVisible={(isAlwaysVisible ?? isMobile) || widgetCardHovered}
+    >
       {children}
     </StyledHoverReveal>
   );

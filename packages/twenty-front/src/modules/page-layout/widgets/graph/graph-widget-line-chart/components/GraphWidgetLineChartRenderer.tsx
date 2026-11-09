@@ -1,4 +1,5 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useWidgetDashboardFilter } from '@/page-layout/hooks/useWidgetDashboardFilter';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
@@ -55,6 +56,8 @@ export const GraphWidgetLineChartRenderer = () => {
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration,
   });
+
+  const { recordFilters: dashboardRecordFilters } = useWidgetDashboardFilter();
 
   const navigate = useNavigate();
   const configuration = widget.configuration;
@@ -122,6 +125,7 @@ export const GraphWidgetLineChartRenderer = () => {
       viewId: indexViewId,
       timezone: userTimezone,
       firstDayOfTheWeek: userFirstDayOfTheWeek,
+      dashboardRecordFilters,
     });
 
     const url = getAppPath(
