@@ -23,9 +23,12 @@ import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/se
 import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
+import { computeRolloverClosingAllowances } from 'src/engine/core-modules/billing/utils/compute-rollover-closing-allowances.util';
 import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
+import { findActiveWorkspaceCreditAllowanceMicro } from 'src/engine/core-modules/billing/utils/find-active-workspace-credit-allowance-micro.util';
 import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
 import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -48,6 +51,7 @@ export class BillingWebhookInvoiceService {
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
     private readonly billingCreditOneTimeTopUpService: BillingCreditOneTimeTopUpService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly billingWorkspaceCreditAllowanceService: BillingWorkspaceCreditAllowanceService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
     private readonly eventLogEmitterService: EventLogEmitterService,
@@ -129,22 +133,6 @@ export class BillingWebhookInvoiceService {
       subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
     });
 
-    const params =
-      await this.resourceCreditService.getResourceCreditRolloverParameters({
-        workspaceId: subscription.workspaceId,
-        subscriptionId: subscription.id,
-        boundary,
-      });
-
-    // Skipping the transition forfeits the unspent part of every grant of this workspace
-    if (!isDefined(params)) {
-      this.logger.error(
-        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} gives no workspace credits from a credit pack or seats`,
-      );
-
-      return;
-    }
-
     // Only needed while subscriptions predating previousPeriodStart transition for the first time
     const ledgerPeriodStart =
       await this.billingCreditGrantService.findPeriodStartBefore({
@@ -155,6 +143,7 @@ export class BillingWebhookInvoiceService {
     const {
       closingPeriodStart,
       closingPeriodEnd,
+      closingPeriodInterval,
       nextPeriodStart,
       isFirstPeriodAfterTrial,
     } = deriveBillingPeriodTransition({
@@ -167,21 +156,51 @@ export class BillingWebhookInvoiceService {
       ledgerPeriodStart,
     });
 
-    // Trial credits carry into the first paid period; the trial allowance comes from config, not the price
-    const closingAllowanceMicro = isFirstPeriodAfterTrial
-      ? this.billingUsageService.getTrialResourceUsageCap(subscription)
-      : params.workspaceCreditsForPackMicro;
+    const [resourceCreditRolloverParameters, workspaceCreditAllowances] =
+      await Promise.all([
+        this.resourceCreditService.getResourceCreditRolloverParameters({
+          workspaceId: subscription.workspaceId,
+          subscriptionId: subscription.id,
+          boundary,
+          interval: closingPeriodInterval,
+        }),
+        this.billingWorkspaceCreditAllowanceService.findAllWorkspaceCreditAllowances(
+          subscription.workspaceId,
+        ),
+      ]);
+
+    const workspaceCreditAllowanceMicro =
+      findActiveWorkspaceCreditAllowanceMicro({
+        workspaceCreditAllowances,
+        nowMs: closingPeriodEnd.getTime() - 1,
+        interval: closingPeriodInterval,
+        isTrialing: isFirstPeriodAfterTrial,
+      });
+
+    const closingAllowances = computeRolloverClosingAllowances({
+      planWorkspaceCredits: resourceCreditRolloverParameters,
+      trialAllowanceMicro:
+        this.billingUsageService.getTrialResourceUsageCap(subscription),
+      isFirstPeriodAfterTrial,
+      workspaceCreditAllowanceMicro,
+    });
+
+    if (!isDefined(closingAllowances)) {
+      this.logger.error(
+        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} gives no workspace credits from a credit pack, seats or a workspace credit allowance`,
+      );
+
+      return;
+    }
 
     await this.billingCreditRolloverService.processRolloverOnPeriodTransition({
       workspaceId: subscription.workspaceId,
       closingPeriodStart,
       closingPeriodEnd,
-      closingAllowanceMicro,
-      closingSeatAllowanceMicro: isFirstPeriodAfterTrial
-        ? 0
-        : params.workspaceCreditsForSeatsMicro,
+      ...closingAllowances,
       nextPeriodStart,
-      nextAllowanceMicro: params.workspaceCreditsForPackMicro,
+      nextAllowanceMicro:
+        resourceCreditRolloverParameters?.workspaceCreditsForPackMicro ?? 0,
     });
   }
 
