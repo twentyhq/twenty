@@ -232,8 +232,11 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   },
+  conversationStyle: 'chat',
 });
 ```
+
+`conversationStyle` sets how Twenty lays out the provider's conversations: `'chat'` shows message bubbles grouped by sender, like a messaging app, and `'email'` shows the email thread layout. Without it, app channels keep the chat layout. Requires `"engines": { "twenty": ">=2.58.0" }`.
 
 Bind a channel to it when you create the channel, or later with `updateMessageChannel` (passing `null` unbinds it):
 

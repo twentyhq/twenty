@@ -86,6 +86,7 @@ export type SelectStatementState = {
   allowPlainToManyJoins: boolean;
   limitValue?: number;
   offsetValue?: number;
+  isLockedForUpdate?: boolean;
 };
 
 export const quoteColumn = (alias: string, columnName: string): string =>
@@ -610,6 +611,9 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
     buildOrderByClause(state),
     isDefined(state.limitValue) ? `LIMIT :${LIMIT_PARAMETER_NAME}` : '',
     isDefined(state.offsetValue) ? `OFFSET :${OFFSET_PARAMETER_NAME}` : '',
+    state.isLockedForUpdate
+      ? `FOR UPDATE OF ${escapeIdentifier(state.alias)}`
+      : '',
   ]
     .filter((part) => part.length > 0)
     .join(' ');
