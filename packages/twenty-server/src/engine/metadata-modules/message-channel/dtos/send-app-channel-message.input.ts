@@ -55,7 +55,6 @@ export class SendAppChannelMessageInput {
   @IsUUID()
   messageThreadId: string;
 
-  // exactly one of text and email
   @Field({ nullable: true })
   @IsOptional()
   @IsString()

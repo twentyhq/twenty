@@ -1,6 +1,6 @@
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 
-import { getEmailRecipientsError } from 'src/engine/core-modules/tool/tools/email-tool/utils/get-email-recipients-error.util';
+import { getEmailRecipientsError } from 'src/engine/core-modules/email/utils/get-email-recipients-error.util';
 
 describe('getEmailRecipientsError', () => {
   it('should accept valid recipients', () => {

@@ -1,4 +1,4 @@
-import { type ReplyContext } from '@/activities/emails/types/ReplyContext';
+import { type ReplyContextReady } from '@/activities/emails/types/ReplyContext';
 import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,7 +8,16 @@ export const getAppReplyTarget = ({
   messageChannelId,
   messageThreadId,
 }: {
-  replyContext: ReplyContext | null;
+  replyContext:
+    | { loading: true }
+    | Pick<
+        ReplyContextReady,
+        | 'loading'
+        | 'connectedAccountId'
+        | 'connectedAccountProvider'
+        | 'messageChannelHandle'
+      >
+    | null;
   messageChannelId: string | null;
   messageThreadId: string;
 }): AppReplyTarget | null => {
