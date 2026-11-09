@@ -18,8 +18,6 @@ import {
   type PageLayoutToolDependencies,
 } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-configuration-input.type';
-import { assertFrontComponentWidgetAvailableOnPageLayoutOrThrow } from 'src/engine/metadata-modules/page-layout/tools/utils/assert-front-component-widget-available-on-page-layout-or-throw.util';
-import { computePageLayoutIdentifierMaps } from 'src/engine/metadata-modules/page-layout/tools/utils/compute-page-layout-identifier-maps.util';
 import {
   getObjectMetadataId,
   resolveConfigurationFieldNamesToIds,
@@ -49,21 +47,10 @@ const updatePageLayoutWidgetSchema = z.object({
 
 export const createUpdatePageLayoutWidgetTool = (
   deps: {
+    pageLayoutToolService: PageLayoutToolDependencies['pageLayoutToolService'];
     pageLayoutWidgetService: Pick<
       PageLayoutToolDependencies['pageLayoutWidgetService'],
       'findByIdOrThrow' | 'update'
-    >;
-    flatEntityMapsCacheService: Pick<
-      PageLayoutToolDependencies['flatEntityMapsCacheService'],
-      'getOrRecomputeManyOrAllFlatEntityMaps'
-    >;
-    pageLayoutTabService: Pick<
-      PageLayoutToolDependencies['pageLayoutTabService'],
-      'findByIdOrThrow'
-    >;
-    pageLayoutService: Pick<
-      PageLayoutToolDependencies['pageLayoutService'],
-      'findByIdOrThrow'
     >;
   },
   context: PageLayoutToolContext,
@@ -106,20 +93,21 @@ Only provide fields you want to change - others remain unchanged.`,
             id: widgetId,
             workspaceId: context.workspaceId,
           });
-        await assertFrontComponentWidgetAvailableOnPageLayoutOrThrow({
-          configuration,
-          pageLayoutTabId: existingWidget.pageLayoutTabId,
-          position: parameters.position,
-          deps,
-          context,
-        });
+        await deps.pageLayoutToolService.assertFrontComponentWidgetAvailableOnPageLayoutOrThrow(
+          {
+            configuration,
+            pageLayoutTabId: existingWidget.pageLayoutTabId,
+            position: parameters.position,
+            context,
+          },
+        );
       }
 
       if (shouldResolveIdentifiers) {
-        const identifierMaps = await computePageLayoutIdentifierMaps(
-          deps,
-          context,
-        );
+        const identifierMaps =
+          await deps.pageLayoutToolService.computePageLayoutIdentifierMaps(
+            context,
+          );
 
         resolvedObjectMetadataId = getObjectMetadataId({
           objectMetadataId: rest.objectMetadataId,

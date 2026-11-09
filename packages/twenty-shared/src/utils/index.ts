@@ -233,6 +233,8 @@ export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { isNativePageKey } from './navigation/isNativePageKey';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
+export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
+export { sortWidgetsWithViewportFillingLast } from './pageLayout/sortWidgetsWithViewportFillingLast';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';

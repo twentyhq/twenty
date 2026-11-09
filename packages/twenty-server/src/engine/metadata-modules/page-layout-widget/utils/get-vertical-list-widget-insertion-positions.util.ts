@@ -1,9 +1,8 @@
 import {
   PageLayoutTabLayoutMode,
-  PageLayoutWidgetVerticalListHeightBehavior,
   type PageLayoutWidgetVerticalListPosition,
 } from 'twenty-shared/types';
-import { getPageLayoutWidgetHeightBehavior } from 'twenty-shared/utils';
+import { reindexWidgetsToVerticalListPositions } from 'twenty-shared/utils';
 
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 
@@ -27,17 +26,7 @@ export const getVerticalListWidgetInsertionPositions = ({
     .sort((first, second) => first.position.index - second.position.index);
 
   orderedWidgets.splice(widgetToCreate.position.index, 0, widgetToCreate);
-  const fillsViewport = (widget: PositionedWidget) =>
-    getPageLayoutWidgetHeightBehavior({
-      widgetType: widget.type,
-      heightBehavior: widget.position.heightBehavior,
-    }) === PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT;
-
-  return [
-    ...orderedWidgets.filter((widget) => !fillsViewport(widget)),
-    ...orderedWidgets.filter(fillsViewport),
-  ].map(({ id, position }, index) => ({
-    id,
-    position: { ...position, index },
-  }));
+  return reindexWidgetsToVerticalListPositions(orderedWidgets).map(
+    ({ id, position }) => ({ id, position }),
+  );
 };

@@ -5,6 +5,12 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
+import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
+import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
+import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
+import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import {
   type FrontComponentManifest,
   type FrontComponentWidgetAvailabilityManifest,
@@ -12,9 +18,15 @@ import {
   type SettingsMenuItemManifest,
 } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { PageLayoutType } from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
+
+import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -56,6 +68,7 @@ const buildManifest = ({
 const findFrontComponent = async () => {
   const { data } = await findFrontComponents({
     gqlFields: `
+      id
       universalIdentifier
       isHeadless
       widgetAvailability {
@@ -267,4 +280,232 @@ describe('Manifest sync - front component widgetAvailability', () => {
       }),
     );
   }, 60000);
+
+  describe('AI page-layout tools', () => {
+    let pageLayoutId: string;
+    let pageLayoutTabId: string;
+    let companyObjectMetadataId: string;
+    const context = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      userId: USER_DATA_SEED_IDS.JANE,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+    };
+    const executeTool = async ({
+      name,
+      arguments: toolArguments,
+    }: {
+      name: string;
+      arguments: Record<string, unknown>;
+    }) =>
+      getAppProviderByClassName<ToolRegistryService>(
+        'ToolRegistryService',
+      ).resolveAndExecute(name, toolArguments, {
+        ...context,
+        authContext: await resolveWorkspaceMemberAuthContext({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        }),
+      });
+
+    beforeEach(async () => {
+      companyObjectMetadataId = await findCompanyObjectMetadataId();
+      const { data: layoutData } = await createOnePageLayout({
+        input: {
+          name: 'Placement test',
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: companyObjectMetadataId,
+        },
+      });
+      pageLayoutId = layoutData.createPageLayout.id;
+      const { data: tabData } = await createOnePageLayoutTab({
+        input: {
+          pageLayoutId,
+          title: 'Overview',
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        },
+      });
+      pageLayoutTabId = tabData.createPageLayoutTab.id;
+    });
+
+    afterEach(async () => {
+      await destroyOnePageLayout({ input: { id: pageLayoutId } });
+    });
+
+    it.each(['company', 'companies'])(
+      'finds the record layout using %s',
+      async (objectName) => {
+        expect(
+          await executeTool({
+            name: 'list_record_page_layouts',
+            arguments: { objectName },
+          }),
+        ).toMatchObject({
+          success: true,
+          result: {
+            layouts: expect.arrayContaining([
+              expect.objectContaining({
+                id: pageLayoutId,
+                objectMetadataId: companyObjectMetadataId,
+                tabs: expect.arrayContaining([
+                  expect.objectContaining({
+                    id: pageLayoutTabId,
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                  }),
+                ]),
+              }),
+            ]),
+          },
+        });
+      },
+    );
+
+    it('rejects an unknown object instead of listing every layout', async () => {
+      expect(
+        await executeTool({
+          name: 'list_record_page_layouts',
+          arguments: { objectName: 'unknown-placement-object' },
+        }),
+      ).toMatchObject({
+        success: false,
+        error: 'Object "unknown-placement-object" not found',
+      });
+    });
+
+    it('persists an inserted component and renumbers existing siblings', async () => {
+      await syncApplication({
+        manifest: buildManifest({
+          widgetAvailability: {
+            pageLayoutType: PageLayoutType.RECORD_PAGE,
+            objectUniversalIdentifiers: [
+              STANDARD_OBJECTS.company.universalIdentifier,
+            ],
+          },
+        }),
+        expectToFail: false,
+      });
+      const frontComponent = await findFrontComponent();
+      for (const title of ['First', 'Inserted']) {
+        expect(
+          await executeTool({
+            name: 'place_front_component',
+            arguments: {
+              frontComponentId: frontComponent?.id,
+              pageLayoutTabId,
+              title,
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                index: 0,
+              },
+            },
+          }),
+        ).toMatchObject({ success: true });
+      }
+      const { data } = await findPageLayoutWidgets({
+        input: { pageLayoutTabId },
+      });
+      expect(data.getPageLayoutWidgets).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            title: 'Inserted',
+            position: expect.objectContaining({ index: 0 }),
+          }),
+          expect.objectContaining({
+            title: 'First',
+            position: expect.objectContaining({ index: 1 }),
+          }),
+        ]),
+      );
+      expect(data.getPageLayoutWidgets).toHaveLength(2);
+    });
+
+    it.each([
+      { name: 'headless', options: { isHeadless: true } },
+      { name: 'unlisted', options: {} },
+      {
+        name: 'wrong surface',
+        options: {
+          widgetAvailability: {
+            pageLayoutType: PageLayoutType.DASHBOARD as const,
+          },
+        },
+      },
+      {
+        name: 'wrong object',
+        options: {
+          widgetAvailability: {
+            pageLayoutType: PageLayoutType.RECORD_PAGE as const,
+            objectUniversalIdentifiers: [
+              STANDARD_OBJECTS.person.universalIdentifier,
+            ],
+          },
+        },
+      },
+    ])(
+      'rejects a $name component without creating a widget',
+      async ({ options }) => {
+        await syncApplication({
+          manifest: buildManifest(options),
+          expectToFail: false,
+        });
+        const frontComponent = await findFrontComponent();
+        expect(
+          await executeTool({
+            name: 'place_front_component',
+            arguments: {
+              frontComponentId: frontComponent?.id,
+              pageLayoutTabId,
+              title: 'Rejected',
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                index: 0,
+              },
+            },
+          }),
+        ).toMatchObject({
+          success: false,
+          error: expect.stringContaining('not available on this page layout'),
+        });
+        const { data } = await findPageLayoutWidgets({
+          input: { pageLayoutTabId },
+        });
+        expect(data.getPageLayoutWidgets).toHaveLength(0);
+      },
+    );
+
+    it('rejects grid coordinates on a vertical-list tab', async () => {
+      await syncApplication({
+        manifest: buildManifest({
+          widgetAvailability: { pageLayoutType: PageLayoutType.RECORD_PAGE },
+        }),
+        expectToFail: false,
+      });
+      const frontComponent = await findFrontComponent();
+      expect(
+        await executeTool({
+          name: 'place_front_component',
+          arguments: {
+            frontComponentId: frontComponent?.id,
+            pageLayoutTabId,
+            title: 'Rejected',
+            position: {
+              layoutMode: PageLayoutTabLayoutMode.GRID,
+              row: 0,
+              column: 0,
+              rowSpan: 4,
+              columnSpan: 6,
+            },
+          },
+        }),
+      ).toMatchObject({
+        success: false,
+        error: expect.stringContaining(
+          'Choose an active tab and a widget position matching its layout mode',
+        ),
+      });
+      const { data } = await findPageLayoutWidgets({
+        input: { pageLayoutTabId },
+      });
+      expect(data.getPageLayoutWidgets).toHaveLength(0);
+    });
+  });
 });

@@ -14,37 +14,6 @@ const OPPORTUNITY_OBJECT_ID = '20202020-dddd-4d02-bf25-6aeccf7ea419';
 const AMOUNT_FIELD_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
 const STAGE_FIELD_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
 
-const flatObjectMetadataMaps = {
-  byUniversalIdentifier: {
-    'object-opportunity': {
-      id: OPPORTUNITY_OBJECT_ID,
-      nameSingular: 'opportunity',
-      namePlural: 'opportunities',
-    },
-  },
-};
-
-const flatFieldMetadataMaps = {
-  byUniversalIdentifier: {
-    'field-amount': {
-      id: AMOUNT_FIELD_ID,
-      name: 'amount',
-      label: 'Amount',
-      objectMetadataId: OPPORTUNITY_OBJECT_ID,
-      isActive: true,
-      type: 'CURRENCY',
-    },
-    'field-stage': {
-      id: STAGE_FIELD_ID,
-      name: 'stage',
-      label: 'Stage',
-      objectMetadataId: OPPORTUNITY_OBJECT_ID,
-      isActive: true,
-      type: 'SELECT',
-    },
-  },
-};
-
 const buildDeps = () => ({
   pageLayoutTabService: { findByIdOrThrow: jest.fn() },
   pageLayoutService: { findByIdOrThrow: jest.fn() },
@@ -66,10 +35,17 @@ const buildDeps = () => ({
       configuration: updateData.configuration,
     })),
   },
-  flatEntityMapsCacheService: {
-    getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+  pageLayoutToolService: {
+    assertFrontComponentWidgetAvailableOnPageLayoutOrThrow: jest.fn(),
+    computePageLayoutIdentifierMaps: jest.fn().mockResolvedValue({
+      objectIdByName: {
+        opportunity: OPPORTUNITY_OBJECT_ID,
+        opportunities: OPPORTUNITY_OBJECT_ID,
+      },
+      fieldIdByObjectIdAndName: new Map([
+        [`${OPPORTUNITY_OBJECT_ID}:amount`, AMOUNT_FIELD_ID],
+        [`${OPPORTUNITY_OBJECT_ID}:stage`, STAGE_FIELD_ID],
+      ]),
     }),
   },
 });
@@ -170,7 +146,7 @@ describe('update_page_layout_widget tool', () => {
 
     expect(result.success).toBe(true);
     expect(
-      deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
+      deps.pageLayoutToolService.computePageLayoutIdentifierMaps,
     ).not.toHaveBeenCalled();
     expect(deps.pageLayoutWidgetService.findByIdOrThrow).not.toHaveBeenCalled();
 

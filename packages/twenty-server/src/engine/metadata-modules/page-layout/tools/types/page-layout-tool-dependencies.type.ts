@@ -1,3 +1,4 @@
+import type { PageLayoutToolService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service';
 import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -9,6 +10,11 @@ import type { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/me
 import type { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 export type PageLayoutToolDependencies = {
+  pageLayoutToolService: Pick<
+    PageLayoutToolService,
+    | 'computePageLayoutIdentifierMaps'
+    | 'assertFrontComponentWidgetAvailableOnPageLayoutOrThrow'
+  >;
   pageLayoutService: PageLayoutService;
   pageLayoutTabService: PageLayoutTabService;
   pageLayoutWidgetService: PageLayoutWidgetService;

@@ -17,14 +17,14 @@ export const createPlaceFrontComponentTool = ({
   deps,
   context,
 }: {
-  deps: Parameters<typeof createAddPageLayoutWidgetTool>[0];
+  deps: Parameters<typeof createAddPageLayoutWidgetTool>[0]['deps'];
   context: PageLayoutToolContext;
 }) => ({
   name: 'place_front_component' as const,
   description: `Place an existing saved frontend component in a page-layout tab (dashboard or record page) when the user requests it. Use list_front_components to find the component and get_dashboard or list_record_page_layouts to inspect the target tabs and positions. Match the tab's layoutMode: GRID uses row/column/spans, VERTICAL_LIST uses index. Record-page placement changes the shared layout for that object, not only the currently open record. This creates a widget; it does not change component code or publication.`,
   inputSchema: placeFrontComponentSchema,
   execute: async (parameters: z.infer<typeof placeFrontComponentSchema>) =>
-    createAddPageLayoutWidgetTool(deps, context).execute({
+    createAddPageLayoutWidgetTool({ deps, context }).execute({
       pageLayoutTabId: parameters.pageLayoutTabId,
       title: parameters.title,
       position: parameters.position,

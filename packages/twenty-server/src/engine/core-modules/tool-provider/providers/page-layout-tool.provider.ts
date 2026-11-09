@@ -12,6 +12,7 @@ import { PAGE_LAYOUT_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-pro
 import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -30,7 +31,7 @@ export class PageLayoutToolProvider implements ToolProvider {
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
-    if (!this.pageLayoutToolService) {
+    if (!isDefined(this.pageLayoutToolService)) {
       return false;
     }
 
@@ -46,7 +47,7 @@ export class PageLayoutToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const toolSet = await this.buildToolSet(context);
 
-    if (!toolSet) {
+    if (!isDefined(toolSet)) {
       return [];
     }
 
@@ -63,10 +64,8 @@ export class PageLayoutToolProvider implements ToolProvider {
   ): Promise<ToolOutput> {
     const toolSet = await this.buildToolSet(context);
 
-    if (!toolSet) {
-      throw new Error(
-        `Page layout tool service is not available (tool: ${toolName})`,
-      );
+    if (!isDefined(toolSet)) {
+      return buildToolNotAvailableOutput(toolName);
     }
 
     return executeToolFromToolSet(
@@ -80,7 +79,10 @@ export class PageLayoutToolProvider implements ToolProvider {
   private async buildToolSet(
     context: ToolProviderContext,
   ): Promise<ToolSet | null> {
-    if (!this.pageLayoutToolService || !isDefined(context.authContext)) {
+    if (
+      !isDefined(this.pageLayoutToolService) ||
+      !isDefined(context.authContext)
+    ) {
       return null;
     }
 

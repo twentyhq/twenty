@@ -15,8 +15,6 @@ import {
   type PageLayoutToolDependencies,
 } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-configuration-input.type';
-import { assertFrontComponentWidgetAvailableOnPageLayoutOrThrow } from 'src/engine/metadata-modules/page-layout/tools/utils/assert-front-component-widget-available-on-page-layout-or-throw.util';
-import { computePageLayoutIdentifierMaps } from 'src/engine/metadata-modules/page-layout/tools/utils/compute-page-layout-identifier-maps.util';
 import { resolveWidgetFieldNamesToIds } from 'src/engine/metadata-modules/page-layout/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
 
 const addPageLayoutWidgetSchema = z.object({
@@ -44,27 +42,19 @@ const addPageLayoutWidgetSchema = z.object({
   configuration: widgetConfigurationSchema,
 });
 
-export const createAddPageLayoutWidgetTool = (
+export const createAddPageLayoutWidgetTool = ({
+  deps,
+  context,
+}: {
   deps: {
+    pageLayoutToolService: PageLayoutToolDependencies['pageLayoutToolService'];
     pageLayoutWidgetService: Pick<
       PageLayoutToolDependencies['pageLayoutWidgetService'],
       'create'
     >;
-    flatEntityMapsCacheService: Pick<
-      PageLayoutToolDependencies['flatEntityMapsCacheService'],
-      'getOrRecomputeManyOrAllFlatEntityMaps'
-    >;
-    pageLayoutTabService: Pick<
-      PageLayoutToolDependencies['pageLayoutTabService'],
-      'findByIdOrThrow'
-    >;
-    pageLayoutService: Pick<
-      PageLayoutToolDependencies['pageLayoutService'],
-      'findByIdOrThrow'
-    >;
-  },
-  context: PageLayoutToolContext,
-) => ({
+  };
+  context: PageLayoutToolContext;
+}) => ({
   name: 'add_page_layout_widget' as const,
   description: `Add a widget to an existing page-layout tab (dashboard or record page).
 
@@ -89,18 +79,19 @@ See create_complete_dashboard for full configuration examples.`,
     configuration?: WidgetConfigurationInput;
   }) => {
     try {
-      await assertFrontComponentWidgetAvailableOnPageLayoutOrThrow({
-        configuration: parameters.configuration,
-        pageLayoutTabId: parameters.pageLayoutTabId,
-        position: parameters.position,
-        deps,
-        context,
-      });
-
-      const identifierMaps = await computePageLayoutIdentifierMaps(
-        deps,
-        context,
+      await deps.pageLayoutToolService.assertFrontComponentWidgetAvailableOnPageLayoutOrThrow(
+        {
+          configuration: parameters.configuration,
+          pageLayoutTabId: parameters.pageLayoutTabId,
+          position: parameters.position,
+          context,
+        },
       );
+
+      const identifierMaps =
+        await deps.pageLayoutToolService.computePageLayoutIdentifierMaps(
+          context,
+        );
       const widgetWithMetadataIds = resolveWidgetFieldNamesToIds(
         parameters,
         identifierMaps,

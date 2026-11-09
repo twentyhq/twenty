@@ -9,10 +9,18 @@ const deletePageLayoutWidgetSchema = z.object({
   widgetId: z.string().uuid().describe('The UUID of the widget to delete'),
 });
 
-export const createDeletePageLayoutWidgetTool = (
-  deps: Pick<PageLayoutToolDependencies, 'pageLayoutWidgetService'>,
-  context: PageLayoutToolContext,
-) => ({
+export const createDeletePageLayoutWidgetTool = ({
+  deps,
+  context,
+}: {
+  deps: {
+    pageLayoutWidgetService: Pick<
+      PageLayoutToolDependencies['pageLayoutWidgetService'],
+      'findByIdOrThrow' | 'destroy'
+    >;
+  };
+  context: PageLayoutToolContext;
+}) => ({
   name: 'delete_page_layout_widget' as const,
   description: `Delete a widget from a page layout (dashboard or record page). Use get_dashboard or list_record_page_layouts first to find the widgetId. Record-page changes affect the shared layout for that object, not only the currently open record.`,
   inputSchema: deletePageLayoutWidgetSchema,

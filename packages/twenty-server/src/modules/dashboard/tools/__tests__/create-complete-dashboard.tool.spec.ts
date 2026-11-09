@@ -24,8 +24,9 @@ const buildDeps = ({ insert }: { insert: jest.Mock }) => {
         create: jest.fn().mockResolvedValue({ id: 'tab-id' }),
       },
       pageLayoutWidgetService: { create: jest.fn() },
-      flatEntityMapsCacheService: {
-        getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
+      pageLayoutToolService: {
+        computePageLayoutIdentifierMaps: jest.fn(),
+        assertFrontComponentWidgetAvailableOnPageLayoutOrThrow: jest.fn(),
       },
       recordPositionService: {
         buildRecordPosition: jest.fn().mockResolvedValue(1),

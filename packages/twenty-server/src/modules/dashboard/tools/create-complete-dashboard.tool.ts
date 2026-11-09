@@ -17,8 +17,6 @@ import {
   type PageLayoutToolDependencies,
 } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-configuration-input.type';
-import { assertFrontComponentWidgetAvailableOnPageLayoutOrThrow } from 'src/engine/metadata-modules/page-layout/tools/utils/assert-front-component-widget-available-on-page-layout-or-throw.util';
-import { computePageLayoutIdentifierMaps } from 'src/engine/metadata-modules/page-layout/tools/utils/compute-page-layout-identifier-maps.util';
 import { resolveWidgetFieldNamesToIds } from 'src/engine/metadata-modules/page-layout/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
 
 const widgetSchema = z.object({
@@ -55,21 +53,18 @@ const createCompleteDashboardSchema = z.object({
 });
 
 type CreateCompleteDashboardToolDeps = {
+  pageLayoutToolService: PageLayoutToolDependencies['pageLayoutToolService'];
   pageLayoutService: Pick<
     PageLayoutToolDependencies['pageLayoutService'],
-    'create' | 'destroy' | 'findByIdOrThrow'
+    'create' | 'destroy'
   >;
   pageLayoutTabService: Pick<
     PageLayoutToolDependencies['pageLayoutTabService'],
-    'create' | 'findByIdOrThrow'
+    'create'
   >;
   pageLayoutWidgetService: Pick<
     PageLayoutToolDependencies['pageLayoutWidgetService'],
     'create'
-  >;
-  flatEntityMapsCacheService: Pick<
-    PageLayoutToolDependencies['flatEntityMapsCacheService'],
-    'getOrRecomputeManyOrAllFlatEntityMaps'
   >;
   workspaceOrmManager: Pick<
     PageLayoutToolDependencies['workspaceOrmManager'],
@@ -155,7 +150,9 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
       const widgets = parameters.widgets ?? [];
       const identifierMaps =
         widgets.length > 0
-          ? await computePageLayoutIdentifierMaps(deps, context)
+          ? await deps.pageLayoutToolService.computePageLayoutIdentifierMaps(
+              context,
+            )
           : null;
       const pageLayout = await deps.pageLayoutService.create({
         createPageLayoutInput: {
@@ -179,13 +176,14 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
 
       for (const widget of widgets) {
         try {
-          await assertFrontComponentWidgetAvailableOnPageLayoutOrThrow({
-            configuration: widget.configuration,
-            pageLayoutTabId: pageLayoutTab.id,
-            position: widget.position,
-            deps,
-            context,
-          });
+          await deps.pageLayoutToolService.assertFrontComponentWidgetAvailableOnPageLayoutOrThrow(
+            {
+              configuration: widget.configuration,
+              pageLayoutTabId: pageLayoutTab.id,
+              position: widget.position,
+              context,
+            },
+          );
 
           const widgetWithMetadataIds = identifierMaps
             ? resolveWidgetFieldNamesToIds(widget, identifierMaps)
