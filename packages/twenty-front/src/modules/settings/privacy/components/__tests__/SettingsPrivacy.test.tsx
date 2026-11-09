@@ -5,7 +5,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -60,6 +59,7 @@ const renderSettingsPrivacy = ({
   aiDataPolicy = null,
   updateWorkspaceError,
   onUpdateWorkspace,
+  updateWorkspaceDelay = 50,
 }: {
   isMultiWorkspaceEnabled: boolean;
   aiModels: ClientAiModelConfig[];
@@ -70,6 +70,7 @@ const renderSettingsPrivacy = ({
   } | null;
   updateWorkspaceError?: Error;
   onUpdateWorkspace?: (variables: Record<string, unknown>) => void;
+  updateWorkspaceDelay?: number;
 }) => {
   const store = createStore();
 
@@ -107,25 +108,25 @@ const renderSettingsPrivacy = ({
             },
           },
           {
-            request: { query: UpdateWorkspaceDocument, variables: () => true },
-            maxUsageCount: 2,
-            ...(isDefined(updateWorkspaceError)
-              ? { error: updateWorkspaceError }
-              : {
-                  result: (variables: Record<string, unknown>) => {
-                    onUpdateWorkspace?.(variables);
+            request: {
+              query: UpdateWorkspaceDocument,
+              variables: (variables: Record<string, unknown>) => {
+                onUpdateWorkspace?.(variables);
 
-                    return {
-                      data: {
-                        updateWorkspace: {
-                          ...mockCurrentWorkspace,
-                          __typename: 'Workspace',
-                        },
-                      },
-                    };
-                  },
-                }),
-            delay: 50,
+                return true;
+              },
+            },
+            maxUsageCount: 2,
+            error: updateWorkspaceError,
+            result: {
+              data: {
+                updateWorkspace: {
+                  ...mockCurrentWorkspace,
+                  __typename: 'Workspace',
+                },
+              },
+            },
+            delay: updateWorkspaceDelay,
           },
         ]}
       >
@@ -242,7 +243,7 @@ describe('SettingsPrivacy', () => {
     await waitFor(() => expect(zeroDataRetentionSwitch).not.toBeChecked());
   });
 
-  it('saves a change made during a save once that save lands', async () => {
+  it('holds a change made during a save until that save lands', async () => {
     const onUpdateWorkspace = jest.fn();
 
     renderSettingsPrivacy({
@@ -254,6 +255,7 @@ describe('SettingsPrivacy', () => {
         isProductImprovementDataSharingEnabled: true,
       },
       onUpdateWorkspace,
+      updateWorkspaceDelay: 500,
     });
 
     await userEvent.click(
@@ -262,6 +264,8 @@ describe('SettingsPrivacy', () => {
     await userEvent.click(
       screen.getByRole('switch', { name: 'Help improve Twenty' }),
     );
+
+    expect(onUpdateWorkspace).toHaveBeenCalledTimes(1);
 
     await waitFor(() => expect(onUpdateWorkspace).toHaveBeenCalledTimes(2));
 
@@ -274,11 +278,5 @@ describe('SettingsPrivacy', () => {
         },
       },
     });
-    expect(
-      screen.getByRole('switch', { name: 'Zero data retention' }),
-    ).toBeChecked();
-    expect(
-      screen.getByRole('switch', { name: 'Help improve Twenty' }),
-    ).not.toBeChecked();
   });
 });

@@ -1,13 +1,13 @@
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { type AiDataPolicy } from 'twenty-shared/ai';
-import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { isAiDataPolicySavingState } from '@/settings/privacy/states/isAiDataPolicySavingState';
+import { pendingAiDataPolicyState } from '@/settings/privacy/states/pendingAiDataPolicyState';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateWorkspaceAiDataPolicyField = () => {
@@ -15,13 +15,44 @@ export const useUpdateWorkspaceAiDataPolicyField = () => {
   const store = useStore();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
-  const getStoredAiDataPolicy = () =>
-    getWorkspaceAiDataPolicy(store.get(currentWorkspaceState.atom));
-
   const setStoredAiDataPolicy = (aiDataPolicy: AiDataPolicy) =>
     store.set(currentWorkspaceState.atom, (workspace) =>
       isDefined(workspace) ? { ...workspace, aiDataPolicy } : workspace,
     );
+
+  const saveAiDataPolicy = async ({
+    aiDataPolicy,
+    lastSavedAiDataPolicy,
+  }: {
+    aiDataPolicy: AiDataPolicy;
+    lastSavedAiDataPolicy: AiDataPolicy;
+  }): Promise<void> => {
+    try {
+      await updateWorkspace({ variables: { input: { aiDataPolicy } } });
+    } catch (error) {
+      store.set(pendingAiDataPolicyState.atom, null);
+      setStoredAiDataPolicy(lastSavedAiDataPolicy);
+      enqueueToast(getToastOptionsFromError({ error }));
+
+      return;
+    }
+
+    const pendingAiDataPolicy = store.get(pendingAiDataPolicyState.atom);
+
+    if (
+      !isDefined(pendingAiDataPolicy) ||
+      pendingAiDataPolicy === aiDataPolicy
+    ) {
+      store.set(pendingAiDataPolicyState.atom, null);
+
+      return;
+    }
+
+    await saveAiDataPolicy({
+      aiDataPolicy: pendingAiDataPolicy,
+      lastSavedAiDataPolicy: aiDataPolicy,
+    });
+  };
 
   const updateWorkspaceAiDataPolicyField = async <
     TField extends keyof AiDataPolicy,
@@ -32,39 +63,24 @@ export const useUpdateWorkspaceAiDataPolicyField = () => {
     field: TField;
     value: AiDataPolicy[TField];
   }) => {
-    let lastSavedAiDataPolicy = getStoredAiDataPolicy();
+    const storedAiDataPolicy = getWorkspaceAiDataPolicy(
+      store.get(currentWorkspaceState.atom),
+    );
+    const pendingAiDataPolicy = store.get(pendingAiDataPolicyState.atom);
+    const aiDataPolicy = {
+      ...(pendingAiDataPolicy ?? storedAiDataPolicy),
+      [field]: value,
+    };
 
-    setStoredAiDataPolicy({ ...lastSavedAiDataPolicy, [field]: value });
+    store.set(pendingAiDataPolicyState.atom, aiDataPolicy);
+    setStoredAiDataPolicy(aiDataPolicy);
 
-    // an update replaces the whole policy, so only one runs at a time and it resends whatever changed meanwhile
-    if (store.get(isAiDataPolicySavingState.atom)) {
-      return;
-    }
-
-    store.set(isAiDataPolicySavingState.atom, true);
-
-    let saveError: unknown;
-    let sentAiDataPolicy: AiDataPolicy;
-
-    do {
-      sentAiDataPolicy = getStoredAiDataPolicy();
-
-      try {
-        await updateWorkspace({
-          variables: { input: { aiDataPolicy: sentAiDataPolicy } },
-        });
-        lastSavedAiDataPolicy = sentAiDataPolicy;
-        saveError = undefined;
-      } catch (error) {
-        saveError = error;
-      }
-    } while (!fastDeepEqual(getStoredAiDataPolicy(), sentAiDataPolicy));
-
-    store.set(isAiDataPolicySavingState.atom, false);
-
-    if (isDefined(saveError)) {
-      setStoredAiDataPolicy(lastSavedAiDataPolicy);
-      enqueueToast(getToastOptionsFromError({ error: saveError }));
+    // an update replaces the whole policy, so a save in flight sends this one when it lands
+    if (!isDefined(pendingAiDataPolicy)) {
+      await saveAiDataPolicy({
+        aiDataPolicy,
+        lastSavedAiDataPolicy: storedAiDataPolicy,
+      });
     }
   };
 
