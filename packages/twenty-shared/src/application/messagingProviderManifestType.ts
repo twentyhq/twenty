@@ -6,6 +6,6 @@ export type MessagingProviderManifest = SyncableEntityOptions & {
   displayName: string;
   connectionProvider: SyncableEntityOptions;
   sendMessageLogicFunction?: SyncableEntityOptions;
-  // How Twenty lays out its conversations; defaults to 'email'
+  // How Twenty lays out its conversations; without it, app channels read as chat
   conversationStyle?: MessagingProviderConversationStyle;
 };

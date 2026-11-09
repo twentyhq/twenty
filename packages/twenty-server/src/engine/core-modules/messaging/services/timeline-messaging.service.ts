@@ -463,7 +463,7 @@ export class TimelineMessagingService {
   }: {
     workspaceId: string;
     messagingProviderUniversalIdentifiers: string[];
-  }): Promise<Map<string, MessagingProviderConversationStyle>> {
+  }): Promise<Map<string, MessagingProviderConversationStyle | null>> {
     if (messagingProviderUniversalIdentifiers.length === 0) {
       return new Map();
     }
@@ -603,7 +603,7 @@ export class TimelineMessagingService {
                     ? conversationStyleByMessagingProviderUniversalIdentifier.get(
                         channel.messagingProviderUniversalIdentifier,
                       )
-                    : undefined) ?? 'email',
+                    : undefined) ?? null,
               },
             ],
           ];

@@ -41,8 +41,8 @@ export class MessagingProviderEntity
   @Column({ nullable: true, type: 'uuid' })
   sendMessageLogicFunctionUniversalIdentifier: string | null;
 
-  @Column({ nullable: false, type: 'varchar', default: 'email' })
-  conversationStyle: MessagingProviderConversationStyle;
+  @Column({ nullable: true, type: 'varchar' })
+  conversationStyle: MessagingProviderConversationStyle | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -10,14 +10,14 @@ const MESSAGING_PROVIDER_MANIFEST = {
 };
 
 describe('fromMessagingProviderManifestToUniversalFlatMessagingProvider', () => {
-  it('lays out conversations as email when the app declares no style', () => {
+  it('stores no conversation style when the app declares none', () => {
     expect(
       fromMessagingProviderManifestToUniversalFlatMessagingProvider({
         messagingProviderManifest: MESSAGING_PROVIDER_MANIFEST,
         applicationUniversalIdentifier: 'application-universal-identifier',
         now: '2026-11-09T00:00:00.000Z',
       }).conversationStyle,
-    ).toBe('email');
+    ).toBeNull();
   });
 
   it('keeps the conversation style the app declares', () => {

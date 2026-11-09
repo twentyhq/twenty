@@ -1,16 +1,35 @@
 import { isChatTimelineThreadChannel } from '@/activities/emails/utils/isChatTimelineThreadChannel';
+import { MessageChannelType } from '~/generated/graphql';
 
 describe('isChatTimelineThreadChannel', () => {
-  it('lays out a channel whose provider declares chat as a chat', () => {
-    expect(isChatTimelineThreadChannel({ conversationStyle: 'chat' })).toBe(
-      true,
-    );
+  it('follows the style the messaging provider declares', () => {
+    expect(
+      isChatTimelineThreadChannel({
+        type: MessageChannelType.APP,
+        conversationStyle: 'email',
+      }),
+    ).toBe(false);
+    expect(
+      isChatTimelineThreadChannel({
+        type: MessageChannelType.APP,
+        conversationStyle: 'chat',
+      }),
+    ).toBe(true);
   });
 
-  it('lays out a channel whose provider declares email, or none, as email', () => {
-    expect(isChatTimelineThreadChannel({ conversationStyle: 'email' })).toBe(
-      false,
-    );
+  it('lays out app channels as chat when no style is declared', () => {
+    expect(
+      isChatTimelineThreadChannel({
+        type: MessageChannelType.APP,
+        conversationStyle: null,
+      }),
+    ).toBe(true);
+    expect(
+      isChatTimelineThreadChannel({
+        type: MessageChannelType.EMAIL,
+        conversationStyle: null,
+      }),
+    ).toBe(false);
   });
 
   it('lays out a thread with no known channel as email', () => {

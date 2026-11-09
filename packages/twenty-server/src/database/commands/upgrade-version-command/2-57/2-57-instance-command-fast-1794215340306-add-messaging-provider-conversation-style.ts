@@ -6,7 +6,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.57.0', 1794215340306)
 export class AddMessagingProviderConversationStyleFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE "core"."messagingProvider" ADD "conversationStyle" character varying NOT NULL DEFAULT \'email\'');
+    await queryRunner.query('ALTER TABLE "core"."messagingProvider" ADD "conversationStyle" character varying');
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

@@ -881,7 +881,7 @@ describe('app message channels API (e2e)', () => {
               type: MessageChannelType.APP,
               provider: ConnectedAccountProvider.APP,
               applicationId: owningApplicationDbId,
-              conversationStyle: 'email',
+              conversationStyle: null,
             },
           },
         ]);
@@ -897,7 +897,7 @@ describe('app message channels API (e2e)', () => {
             type: MessageChannelType.APP,
             provider: ConnectedAccountProvider.APP,
             applicationId: owningApplicationDbId,
-            conversationStyle: 'email',
+            conversationStyle: null,
           },
         );
       } finally {
