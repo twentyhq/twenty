@@ -17,7 +17,6 @@ import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/inte
 
 const RELATION_TARGET_TABLE_ALIAS = 'relationTarget';
 
-// In memory matching can't follow a relation, so each relation becomes a filter on the record's own column
 export const resolveRelationsInRecordFilter = async ({
   recordFilter,
   flatObjectMetadata,

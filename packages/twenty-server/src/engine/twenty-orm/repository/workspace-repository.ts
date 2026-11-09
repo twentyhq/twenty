@@ -1526,7 +1526,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    // The before-image only feeds events, scoped-write checks, files field diffs and related record recomputes
     const canSkipBeforeImage =
       this.options.shouldBypassPermissionChecks &&
       this.options.shouldSkipEventEmission &&

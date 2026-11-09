@@ -1,3 +1,4 @@
+import { type DocumentNode } from 'graphql';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
@@ -31,6 +32,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
 const COMPANY_TABLE = `${SCHEMA}."company"`;
+const RULE_VALUE = 'Relation match';
 
 describe('RLS rules through a relation (integration)', () => {
   let originalMemberRoleId: string;
@@ -38,34 +40,40 @@ describe('RLS rules through a relation (integration)', () => {
   let personObjectMetadataId: string;
   let companyObjectMetadataId: string;
   let person: { id: string; jobTitle: string; companyId: string };
-  let company: { id: string; name: string };
-  let otherCompany: { id: string; name: string };
+  let company: { id: string; name: string; employees: number | null };
+  let otherCompany: { id: string };
+  let temporaryPersonIds: string[] = [];
 
-  const findFieldMetadataId = async ({
-    objectMetadataId,
-    name,
+  const findMetadataId = async ({
+    table,
+    where,
+    values,
   }: {
-    objectMetadataId: string;
-    name: string;
+    table: string;
+    where: string;
+    values: string[];
   }): Promise<string> => {
     const [{ id }] = await global.testDataSource.query(
-      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = $2`,
-      [objectMetadataId, name],
+      `SELECT "id" FROM core."${table}" WHERE ${where}`,
+      values,
     );
 
     return id;
   };
 
-  const findObjectMetadataId = async (
-    nameSingular: string,
-  ): Promise<string> => {
-    const [{ id }] = await global.testDataSource.query(
-      `SELECT "id" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = $2`,
-      [SEED_APPLE_WORKSPACE_ID, nameSingular],
-    );
+  const findFieldMetadataId = (objectMetadataId: string, name: string) =>
+    findMetadataId({
+      table: 'fieldMetadata',
+      where: `"objectMetadataId" = $1 AND "name" = $2`,
+      values: [objectMetadataId, name],
+    });
 
-    return id;
-  };
+  const findObjectMetadataId = (nameSingular: string) =>
+    findMetadataId({
+      table: 'objectMetadata',
+      where: `"workspaceId" = $1 AND "nameSingular" = $2`,
+      values: [SEED_APPLE_WORKSPACE_ID, nameSingular],
+    });
 
   const assignRuleThroughRelation = async ({
     objectMetadataId,
@@ -90,6 +98,9 @@ describe('RLS rules through a relation (integration)', () => {
       },
     });
     const roleId = data.createOneRole.id;
+    const ruleId = v4();
+
+    roleIds.push(roleId);
 
     await global.testDataSource.query(
       `UPDATE core."role" SET "canCreateAllObjectRecords" = TRUE WHERE "id" = $1`,
@@ -98,10 +109,6 @@ describe('RLS rules through a relation (integration)', () => {
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['rolesPermissions']);
-    const ruleId = v4();
-
-    roleIds.push(roleId);
-
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
@@ -145,6 +152,59 @@ describe('RLS rules through a relation (integration)', () => {
     });
   };
 
+  const assignPersonRuleThroughCompanyName = async () => {
+    await global.testDataSource.query(
+      `UPDATE ${COMPANY_TABLE} SET "name" = '${RULE_VALUE}' WHERE "id" = $1`,
+      [company.id],
+    );
+    await assignRuleThroughRelation({
+      objectMetadataId: personObjectMetadataId,
+      relationFieldMetadataId: await findFieldMetadataId(
+        personObjectMetadataId,
+        'company',
+      ),
+      fieldMetadataId: await findFieldMetadataId(
+        companyObjectMetadataId,
+        'name',
+      ),
+      value: RULE_VALUE,
+    });
+  };
+
+  const assignCompanyRuleThroughPeopleJobTitle = async () => {
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "jobTitle" = '${RULE_VALUE}' WHERE "id" = $1`,
+      [person.id],
+    );
+    await assignRuleThroughRelation({
+      objectMetadataId: companyObjectMetadataId,
+      relationFieldMetadataId: await findFieldMetadataId(
+        companyObjectMetadataId,
+        'people',
+      ),
+      fieldMetadataId: await findFieldMetadataId(
+        personObjectMetadataId,
+        'jobTitle',
+      ),
+      value: RULE_VALUE,
+    });
+  };
+
+  const insertPeople = async ({
+    personIds,
+    companyId,
+  }: {
+    personIds: string[];
+    companyId: string;
+  }) => {
+    temporaryPersonIds.push(...personIds);
+
+    await global.testDataSource.query(
+      `INSERT INTO ${PERSON_TABLE} ("id", "companyId") SELECT UNNEST($1::uuid[]), $2`,
+      [personIds, companyId],
+    );
+  };
+
   const findIdsAsMember = async ({
     singular,
     plural,
@@ -171,26 +231,43 @@ describe('RLS rules through a relation (integration)', () => {
     );
   };
 
-  const updateAsAdmin = async ({
-    singular,
-    recordId,
-    data,
-  }: {
-    singular: string;
-    recordId: string;
-    data: Record<string, unknown>;
+  const findPeopleAsMember = (ids: string[]) =>
+    findIdsAsMember({ singular: 'person', plural: 'people', ids });
+
+  const findCompaniesAsMember = () =>
+    findIdsAsMember({
+      singular: 'company',
+      plural: 'companies',
+      ids: [company.id, otherCompany.id],
+    });
+
+  const runAsAdminAndWaitForJobs = async (operation: {
+    query: DocumentNode;
+    variables: Record<string, unknown>;
   }) => {
-    const response = await makeGraphqlApiRequest(
+    const response = await makeGraphqlApiRequest(operation);
+
+    expect(response.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
+  };
+
+  const updateCompanyAsAdmin = (data: Record<string, unknown>) =>
+    runAsAdminAndWaitForJobs(
       updateOneOperationFactory({
-        objectMetadataSingularName: singular,
+        objectMetadataSingularName: 'company',
         gqlFields: 'id',
-        recordId,
+        recordId: company.id,
         data,
       }),
     );
 
-    expect(response.body.errors).toBeUndefined();
-    await waitForAllJobsToFinish();
+  const setFeatureFlags = async (value: boolean) => {
+    for (const featureFlag of [
+      FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+    ]) {
+      await updateFeatureFlag({ featureFlag, value, expectToFail: false });
+    }
   };
 
   beforeAll(async () => {
@@ -201,26 +278,17 @@ describe('RLS rules through a relation (integration)', () => {
       `SELECT "id", "jobTitle", "companyId" FROM ${PERSON_TABLE} WHERE "deletedAt" IS NULL AND "companyId" IS NOT NULL ORDER BY "id" LIMIT 1`,
     );
     [company] = await global.testDataSource.query(
-      `SELECT "id", "name" FROM ${COMPANY_TABLE} WHERE "id" = $1`,
+      `SELECT "id", "name", "employees" FROM ${COMPANY_TABLE} WHERE "id" = $1`,
       [person.companyId],
     );
     [otherCompany] = await global.testDataSource.query(
-      `SELECT "id", "name" FROM ${COMPANY_TABLE} WHERE "deletedAt" IS NULL AND "id" <> $1 ORDER BY "id" LIMIT 1`,
+      `SELECT "id" FROM ${COMPANY_TABLE} WHERE "deletedAt" IS NULL AND "id" <> $1 ORDER BY "id" LIMIT 1`,
       [person.companyId],
     );
 
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
 
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
+    await setFeatureFlags(true);
   });
 
   afterEach(async () => {
@@ -239,26 +307,24 @@ describe('RLS rules through a relation (integration)', () => {
     roleIds = [];
 
     await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
+      [temporaryPersonIds],
+    );
+
+    temporaryPersonIds = [];
+
+    await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "jobTitle" = $1, "companyId" = $2 WHERE "id" = $3`,
       [person.jobTitle, person.companyId, person.id],
     );
     await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "name" = $1 WHERE "id" = $2`,
-      [company.name, company.id],
+      `UPDATE ${COMPANY_TABLE} SET "name" = $1, "employees" = $2 WHERE "id" = $3`,
+      [company.name, company.employees, company.id],
     );
   });
 
   afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
+    await setFeatureFlags(false);
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
     );
@@ -269,74 +335,35 @@ describe('RLS rules through a relation (integration)', () => {
   });
 
   it('should follow a many to one relation and its related record changes', async () => {
-    await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "name" = 'Relation match' WHERE "id" = $1`,
-      [company.id],
-    );
-    await assignRuleThroughRelation({
-      objectMetadataId: personObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: personObjectMetadataId,
-        name: 'company',
-      }),
-      fieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: companyObjectMetadataId,
-        name: 'name',
-      }),
-      value: 'Relation match',
-    });
+    await assignPersonRuleThroughCompanyName();
 
-    const findPerson = () =>
-      findIdsAsMember({
-        singular: 'person',
-        plural: 'people',
-        ids: [person.id],
-      });
+    expect(await findPeopleAsMember([person.id])).toEqual([person.id]);
 
-    expect(await findPerson()).toEqual([person.id]);
+    await updateCompanyAsAdmin({ name: 'No longer matching' });
 
-    await updateAsAdmin({
-      singular: 'company',
-      recordId: company.id,
-      data: { name: 'No longer matching' },
-    });
-
-    expect(await findPerson()).toEqual([]);
+    expect(await findPeopleAsMember([person.id])).toEqual([]);
   });
 
   it('should check creates and updates through the relation', async () => {
-    await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "name" = 'Relation match' WHERE "id" = $1`,
-      [company.id],
-    );
-    await assignRuleThroughRelation({
-      objectMetadataId: personObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: personObjectMetadataId,
-        name: 'company',
-      }),
-      fieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: companyObjectMetadataId,
-        name: 'name',
-      }),
-      value: 'Relation match',
-    });
+    await assignPersonRuleThroughCompanyName();
 
-    const createPerson = (companyId: string) =>
-      makeGraphqlApiRequest(
+    const createPerson = (companyId: string) => {
+      const id = v4();
+
+      temporaryPersonIds.push(id);
+
+      return makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: 'id',
-          data: { id: v4(), companyId },
+          data: { id, companyId },
         }),
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
+    };
 
-    const accepted = await createPerson(company.id);
-    const rejected = await createPerson(otherCompany.id);
-
-    expect(accepted.body.errors).toBeUndefined();
-    expect(rejected.body.errors).toBeDefined();
+    expect((await createPerson(company.id)).body.errors).toBeUndefined();
+    expect((await createPerson(otherCompany.id)).body.errors).toBeDefined();
 
     const movedAway = await makeGraphqlApiRequest(
       updateOneOperationFactory({
@@ -349,125 +376,61 @@ describe('RLS rules through a relation (integration)', () => {
     );
 
     expect(movedAway.body.errors).toBeDefined();
-
-    await global.testDataSource.query(
-      `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
-      [accepted.body.data.createPerson.id],
-    );
   });
 
   it('should follow a one to many relation and a related record moving away', async () => {
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'Relation title' WHERE "id" = $1`,
-      [person.id],
+    await assignCompanyRuleThroughPeopleJobTitle();
+
+    expect(await findCompaniesAsMember()).toEqual([company.id]);
+
+    await runAsAdminAndWaitForJobs(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id',
+        recordId: person.id,
+        data: { companyId: otherCompany.id },
+      }),
     );
-    await assignRuleThroughRelation({
-      objectMetadataId: companyObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: companyObjectMetadataId,
-        name: 'people',
-      }),
-      fieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: personObjectMetadataId,
-        name: 'jobTitle',
-      }),
-      value: 'Relation title',
-    });
 
-    const findCompanies = () =>
-      findIdsAsMember({
-        singular: 'company',
-        plural: 'companies',
-        ids: [company.id, otherCompany.id],
-      });
-
-    expect(await findCompanies()).toEqual([company.id]);
-
-    await updateAsAdmin({
-      singular: 'person',
-      recordId: person.id,
-      data: { companyId: otherCompany.id },
-    });
-
-    expect(await findCompanies()).toEqual([otherCompany.id]);
+    expect(await findCompaniesAsMember()).toEqual([otherCompany.id]);
   });
 
   it('should update the related record a system write moves away from', async () => {
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'Relation title' WHERE "id" = $1`,
-      [person.id],
-    );
-    await assignRuleThroughRelation({
-      objectMetadataId: companyObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: companyObjectMetadataId,
-        name: 'people',
-      }),
-      fieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: personObjectMetadataId,
-        name: 'jobTitle',
-      }),
-      value: 'Relation title',
-    });
+    await assignCompanyRuleThroughPeopleJobTitle();
 
     const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
     );
 
     await workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository =
-        workspaceOrmManager.getRepositoryWithoutPermissionChecks('person', {
+      await workspaceOrmManager
+        .getRepositoryWithoutPermissionChecks('person', {
           shouldSkipEventEmission: true,
-        });
-
-      await personRepository.update(person.id, { companyId: otherCompany.id });
+        })
+        .update(person.id, { companyId: otherCompany.id });
     }, buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID));
     await waitForAllJobsToFinish();
 
-    expect(
-      await findIdsAsMember({
-        singular: 'company',
-        plural: 'companies',
-        ids: [company.id, otherCompany.id],
-      }),
-    ).toEqual([otherCompany.id]);
+    expect(await findCompaniesAsMember()).toEqual([otherCompany.id]);
   });
 
   it('should update related records when their related record is destroyed', async () => {
     const companyToDestroyId = v4();
-    const personOfCompanyId = v4();
+    const personId = v4();
 
     await global.testDataSource.query(
-      `INSERT INTO ${COMPANY_TABLE} ("id", "name") VALUES ($1, 'Relation destroy')`,
+      `INSERT INTO ${COMPANY_TABLE} ("id", "name") VALUES ($1, '${RULE_VALUE}')`,
       [companyToDestroyId],
     );
-    await global.testDataSource.query(
-      `INSERT INTO ${PERSON_TABLE} ("id", "companyId") VALUES ($1, $2)`,
-      [personOfCompanyId, companyToDestroyId],
-    );
-    await assignRuleThroughRelation({
-      objectMetadataId: personObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: personObjectMetadataId,
-        name: 'company',
-      }),
-      fieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: companyObjectMetadataId,
-        name: 'name',
-      }),
-      value: 'Relation destroy',
+    await insertPeople({
+      personIds: [personId],
+      companyId: companyToDestroyId,
     });
+    await assignPersonRuleThroughCompanyName();
 
-    const findPerson = () =>
-      findIdsAsMember({
-        singular: 'person',
-        plural: 'people',
-        ids: [personOfCompanyId],
-      });
+    expect(await findPeopleAsMember([personId])).toEqual([personId]);
 
-    expect(await findPerson()).toEqual([personOfCompanyId]);
-
-    const response = await makeGraphqlApiRequest(
+    await runAsAdminAndWaitForJobs(
       destroyOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: 'id',
@@ -475,21 +438,10 @@ describe('RLS rules through a relation (integration)', () => {
       }),
     );
 
-    expect(response.body.errors).toBeUndefined();
-    await waitForAllJobsToFinish();
-    expect(await findPerson()).toEqual([]);
-
-    await global.testDataSource.query(
-      `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
-      [personOfCompanyId],
-    );
+    expect(await findPeopleAsMember([personId])).toEqual([]);
   });
 
   it('should only update related records when a compared field is written', async () => {
-    const [{ employees }] = await global.testDataSource.query(
-      `SELECT "employees" FROM ${COMPANY_TABLE} WHERE "id" = $1`,
-      [company.id],
-    );
     const findPersonAccessGroupIds = async (): Promise<number[] | null> => {
       const [{ _accessGroupIds }] = await global.testDataSource.query(
         `SELECT "_accessGroupIds" FROM ${PERSON_TABLE} WHERE "id" = $1`,
@@ -499,74 +451,28 @@ describe('RLS rules through a relation (integration)', () => {
       return _accessGroupIds;
     };
 
-    await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "name" = 'Relation match' WHERE "id" = $1`,
-      [company.id],
-    );
-    await assignRuleThroughRelation({
-      objectMetadataId: personObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: personObjectMetadataId,
-        name: 'company',
-      }),
-      fieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: companyObjectMetadataId,
-        name: 'name',
-      }),
-      value: 'Relation match',
-    });
+    await assignPersonRuleThroughCompanyName();
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL WHERE "id" = $1`,
       [person.id],
     );
 
-    await updateAsAdmin({
-      singular: 'company',
-      recordId: company.id,
-      data: { employees: (employees ?? 0) + 1 },
-    });
+    await updateCompanyAsAdmin({ employees: (company.employees ?? 0) + 1 });
 
     expect(await findPersonAccessGroupIds()).toBeNull();
 
-    await updateAsAdmin({
-      singular: 'company',
-      recordId: company.id,
-      data: { name: 'Relation match again' },
-    });
+    await updateCompanyAsAdmin({ name: `${RULE_VALUE} again` });
 
     expect(await findPersonAccessGroupIds()).not.toBeNull();
-
-    await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "employees" = $1 WHERE "id" = $2`,
-      [employees, company.id],
-    );
   });
 
   it('should recompute through a job when a write covers many records', async () => {
     const personIds = Array.from({ length: 101 }, () => v4());
 
-    await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "name" = 'Relation match' WHERE "id" = $1`,
-      [company.id],
-    );
-    await global.testDataSource.query(
-      `INSERT INTO ${PERSON_TABLE} ("id", "companyId") SELECT UNNEST($1::uuid[]), $2`,
-      [personIds, otherCompany.id],
-    );
-    await assignRuleThroughRelation({
-      objectMetadataId: personObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: personObjectMetadataId,
-        name: 'company',
-      }),
-      fieldMetadataId: await findFieldMetadataId({
-        objectMetadataId: companyObjectMetadataId,
-        name: 'name',
-      }),
-      value: 'Relation match',
-    });
+    await insertPeople({ personIds, companyId: otherCompany.id });
+    await assignPersonRuleThroughCompanyName();
 
-    const response = await makeGraphqlApiRequest(
+    await runAsAdminAndWaitForJobs(
       updateManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -576,19 +482,11 @@ describe('RLS rules through a relation (integration)', () => {
       }),
     );
 
-    expect(response.body.errors).toBeUndefined();
-    await waitForAllJobsToFinish();
-
     const [{ count }] = await global.testDataSource.query(
       `SELECT COUNT(*) FROM ${PERSON_TABLE} WHERE "id" = ANY($1) AND CARDINALITY("_accessGroupIds") > 0`,
       [personIds],
     );
 
     expect(Number(count)).toBe(personIds.length);
-
-    await global.testDataSource.query(
-      `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
-      [personIds],
-    );
   });
 });

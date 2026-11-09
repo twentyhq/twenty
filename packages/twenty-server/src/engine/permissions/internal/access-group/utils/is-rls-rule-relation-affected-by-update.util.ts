@@ -5,7 +5,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-// updatedAt is written by every update, and a rule through a relation skips soft deleted records
 export const isRlsRuleRelationAffectedByUpdate = ({
   relationFieldMetadata,
   comparedFieldMetadataIds,

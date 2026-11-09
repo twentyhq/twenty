@@ -101,7 +101,6 @@ export class WorkspaceDataSource {
           ),
       },
       recordAccessGroupQueue: {
-        // A job queued before the commit could read the records as they were
         queueRecompute: async (args) => {
           afterCommit(() =>
             this.internalContext.recordAccessGroupQueue.queueRecompute(args),

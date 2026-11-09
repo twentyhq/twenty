@@ -52,7 +52,6 @@ export class RecordAccessGroupWriteService {
     );
   }
 
-  // A hard delete can null the join columns pointing at these records
   async findRelatedRecordsBeforeDelete({
     featureFlagsMap,
     workspaceId,
@@ -79,7 +78,6 @@ export class RecordAccessGroupWriteService {
       : [];
   }
 
-  // Returns the records to queue, so the caller can queue them after its commit
   async recomputeAfterWrite({
     featureFlagsMap,
     workspaceId,

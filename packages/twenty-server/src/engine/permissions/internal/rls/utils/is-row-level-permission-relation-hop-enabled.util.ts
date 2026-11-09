@@ -2,7 +2,6 @@
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-// Querying through a relation relies on access groups, so a rule through one needs both flags
 export const isRowLevelPermissionRelationHopEnabled = (
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>,
 ): boolean =>
