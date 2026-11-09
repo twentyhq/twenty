@@ -74,6 +74,11 @@ export class CreateViewInput {
   shouldHideEmptyGroups?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true, defaultValue: false })
+  shouldDisplayGroupsAsTabs?: boolean;
+
+  @IsOptional()
   @IsInt()
   @Min(KANBAN_COLUMN_MIN_WIDTH)
   @Max(KANBAN_COLUMN_MAX_WIDTH)
