@@ -27,6 +27,7 @@ export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
 export { ASK_QUESTION_TOOL_NAME } from './constants/ask-question-tool-name.const';
 export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
 export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conversation-to-record-tool-name.const';
+export { ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME } from './constants/attach-conversation-to-records-tool-name.const';
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
