@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { DashboardFilterAppliesToList } from '@/side-panel/pages/page-layout/components/dashboard/DashboardFilterAppliesToList';
 import { PageLayoutFilterValueInput } from '@/page-layout/components/PageLayoutFilterValueInput';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -123,6 +124,10 @@ export const DashboardFilterSettingsCard = ({
             onChange={(defaultValue) =>
               updatePageLayoutFilter({ defaultValue })
             }
+          />
+          <DashboardFilterAppliesToList
+            pageLayoutId={pageLayoutId}
+            pageLayoutFilter={pageLayoutFilter}
           />
         </StyledCardBody>
       </Card.Content>

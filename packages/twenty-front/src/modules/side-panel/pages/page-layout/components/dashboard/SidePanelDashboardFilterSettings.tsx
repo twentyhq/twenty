@@ -64,7 +64,7 @@ export const SidePanelDashboardFilterSettings = () => {
   return (
     <StyledContainer>
       <StyledDescription>
-        {t`A date filter applies to every data widget, on the date it groups by, else the date it filters on, else its creation date.`}
+        {t`A date filter applies to every data widget, on the date it groups by, else the date it filters on, else its creation date. Change that per widget below.`}
       </StyledDescription>
       {(pageLayoutFilters ?? []).map((pageLayoutFilter) => (
         <DashboardFilterSettingsCard

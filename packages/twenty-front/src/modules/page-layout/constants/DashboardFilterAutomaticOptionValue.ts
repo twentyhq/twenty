@@ -1,0 +1,1 @@
+export const DASHBOARD_FILTER_AUTOMATIC_OPTION_VALUE = 'automatic';

@@ -5,6 +5,7 @@ import {
   makeDraft,
   makeTab,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelDashboardFilterSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardFilterSettings';
 import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -16,14 +17,77 @@ import {
   PageLayoutType,
   ViewFilterOperand,
 } from '~/generated-metadata/graphql';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import {
+  TEST_AGGREGATE_CHART_CONFIGURATION,
   TEST_BAR_CHART_CONFIGURATION,
   createTestWidget,
 } from '~/testing/mock-data/widget-configurations';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const PAGE_LAYOUT_ID = 'dashboard-filter-settings-story';
-const THIRD_PARTY_APPLICATION_ID = 'acme-application';
+const THIRD_PARTY_APPLICATION_ID = 'acme-sync-application';
+
+const opportunity = getMockObjectMetadataItemOrThrow('opportunity');
+const company = getMockObjectMetadataItemOrThrow('company');
+const closeDate = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: opportunity,
+  fieldName: 'closeDate',
+});
+const companyCreatedAt = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: company,
+  fieldName: 'createdAt',
+});
+
+const REVENUE_WIDGET = createTestWidget({
+  id: 'revenue-widget',
+  title: 'Revenue by close date',
+  objectMetadataId: opportunity.id,
+  configuration: {
+    ...TEST_BAR_CHART_CONFIGURATION,
+    primaryAxisGroupByFieldMetadataId: closeDate.id,
+  },
+});
+
+const COMPANY_COUNT_WIDGET = createTestWidget({
+  id: 'company-count-widget',
+  title: 'Companies',
+  objectMetadataId: company.id,
+  configuration: TEST_AGGREGATE_CHART_CONFIGURATION,
+});
+
+const pageLayoutDraftState = pageLayoutDraftComponentState.atomFamily({
+  instanceId: PAGE_LAYOUT_ID,
+});
+
+const getWidgetBindings = (widgetId: string) => {
+  const widget = jotaiStore
+    .get(pageLayoutDraftState)
+    .tabs.flatMap((tab) => tab.widgets)
+    .find(({ id }) => id === widgetId);
+
+  return widget && 'dashboardFilterBindings' in widget.configuration
+    ? widget.configuration.dashboardFilterBindings
+    : undefined;
+};
+
+const setPersistedWidgets = (widgets: PageLayoutWidget[]) =>
+  jotaiStore.set(
+    pageLayoutPersistedComponentState.atomFamily({
+      instanceId: PAGE_LAYOUT_ID,
+    }),
+    {
+      ...jotaiStore.get(pageLayoutDraftState),
+      applicationId: '',
+      universalIdentifier: PAGE_LAYOUT_ID,
+      isSystemSideEffect: false,
+      createdAt: '2026-08-01T00:00:00.000Z',
+      updatedAt: '2026-08-01T00:00:00.000Z',
+      tabs: [makeTab('Overview', widgets)],
+    },
+  );
 
 const meta: Meta<typeof SidePanelDashboardFilterSettings> = {
   title: 'Modules/SidePanel/PageLayout/SidePanelDashboardFilterSettings',
@@ -43,13 +107,17 @@ const meta: Meta<typeof SidePanelDashboardFilterSettings> = {
       </PageLayoutSidePanelTargetContext.Provider>
     ),
     ComponentDecorator,
+    ObjectMetadataItemsDecorator,
   ],
   parameters: { container: { width: 400 } },
   beforeEach: () => {
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({ instanceId: PAGE_LAYOUT_ID }),
       {
-        ...makeDraft([makeTab('tab-1', [])]),
+        ...makeDraft([
+          makeTab('Overview', [REVENUE_WIDGET]),
+          makeTab('Accounts', [COMPANY_COUNT_WIDGET], 1),
+        ]),
         id: PAGE_LAYOUT_ID,
         type: PageLayoutType.DASHBOARD,
         filters: [
@@ -70,6 +138,7 @@ const meta: Meta<typeof SidePanelDashboardFilterSettings> = {
         ],
       },
     );
+    setPersistedWidgets([]);
   },
 };
 
@@ -121,59 +190,98 @@ export const SwitchToNoDefault: Story = {
   },
 };
 
-export const RemoveBlockedByAppWidget: Story = {
+export const AppliesToEveryWidget: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(await canvas.findByText('Applies to')).toBeVisible();
+    expect(canvas.getByText('Revenue by close date in Overview')).toBeVisible();
+    expect(canvas.getByText('Companies in Accounts')).toBeVisible();
+    expect(canvas.getByText(`Automatic (${closeDate.label})`)).toBeVisible();
+
+    await userEvent.click(
+      canvas.getByText(`Automatic (${companyCreatedAt.label})`),
+    );
+    await userEvent.click(await body.findByText('Not applied'));
+
+    expect(await canvas.findByText('Not applied')).toBeVisible();
+    await waitFor(() =>
+      expect(getWidgetBindings(COMPANY_COUNT_WIDGET.id)).toEqual([
+        { pageLayoutFilterId: 'period-filter', fieldMetadataId: null },
+      ]),
+    );
+
+    expect(getWidgetBindings(REVENUE_WIDGET.id)).toBeUndefined();
+  },
+};
+
+export const AppWidgetIsReadOnly: Story = {
   beforeEach: () => {
+    const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
+
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
       installedApplications: [
         ...mockCurrentWorkspace.installedApplications,
         {
-          ...mockCurrentWorkspace.installedApplications[0],
           id: THIRD_PARTY_APPLICATION_ID,
-          universalIdentifier: 'acme',
+          name: 'Acme Sync',
+          universalIdentifier: THIRD_PARTY_APPLICATION_ID,
+          logoUrl: null,
+          createdAt: '2024-01-01T00:00:00.000Z',
         },
       ],
     });
-    jotaiStore.set(
-      pageLayoutPersistedComponentState.atomFamily({
-        instanceId: PAGE_LAYOUT_ID,
-      }),
-      {
-        ...makeDraft([
-          makeTab('tab-1', [
-            createTestWidget({
-              applicationId: THIRD_PARTY_APPLICATION_ID,
-              configuration: {
-                ...TEST_BAR_CHART_CONFIGURATION,
-                dashboardFilterBindings: [
-                  {
-                    pageLayoutFilterId: 'period-filter',
-                    fieldMetadataId: null,
-                  },
-                ],
-              },
-            }),
-          ]),
-        ]),
-        id: PAGE_LAYOUT_ID,
-        type: PageLayoutType.DASHBOARD,
-        applicationId: '',
-        universalIdentifier: PAGE_LAYOUT_ID,
-        isSystemSideEffect: false,
-        createdAt: '2026-08-01T00:00:00.000Z',
-        updatedAt: '2026-08-01T00:00:00.000Z',
-      },
+    setPersistedWidgets([
+      { ...REVENUE_WIDGET, applicationId: THIRD_PARTY_APPLICATION_ID },
+    ]);
+
+    return () => jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await canvas.findByText(`Automatic (${closeDate.label})`),
     );
 
-    return () => {
-      jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
-      jotaiStore.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_ID,
-        }),
-        undefined,
-      );
-    };
+    expect(body.queryByText('Not applied')).not.toBeInTheDocument();
+  },
+};
+
+export const RemoveBlockedByAppWidget: Story = {
+  beforeEach: () => {
+    const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
+
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      installedApplications: [
+        ...mockCurrentWorkspace.installedApplications,
+        {
+          id: THIRD_PARTY_APPLICATION_ID,
+          name: 'Acme Sync',
+          universalIdentifier: THIRD_PARTY_APPLICATION_ID,
+          logoUrl: null,
+          createdAt: '2024-01-01T00:00:00.000Z',
+        },
+      ],
+    });
+    setPersistedWidgets([
+      {
+        ...REVENUE_WIDGET,
+        applicationId: THIRD_PARTY_APPLICATION_ID,
+        configuration: {
+          ...TEST_BAR_CHART_CONFIGURATION,
+          dashboardFilterBindings: [
+            { pageLayoutFilterId: 'period-filter', fieldMetadataId: null },
+          ],
+        },
+      },
+    ]);
+
+    return () => jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
