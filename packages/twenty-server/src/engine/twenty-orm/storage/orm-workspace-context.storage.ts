@@ -1,23 +1,16 @@
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { AsyncLocalStorage } from 'async_hooks';
 
-import {
-  type ObjectsPermissionsByRoleId,
-  type FeatureFlagKey,
-} from 'twenty-shared/types';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
-import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule-maps.type';
-import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
-import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
-import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 
 export type ORMWorkspaceContext = {
   authContext: WorkspaceAuthContext;
@@ -27,14 +20,8 @@ export type ORMWorkspaceContext = {
   objectIdByNameSingular: Record<string, string>;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   billingEntitlements: BillingEntitlements;
-  permissionsPerRoleId: ObjectsPermissionsByRoleId;
-  userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  apiKeyRoleMap: Record<string, string>;
-  flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
-  flatApplicationMaps: FlatApplicationCacheMaps;
-  flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
-  flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
-  flatWorkspaceMemberMaps?: FlatWorkspaceMemberMaps;
+  permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
+  recordReadRestrictions: RecordReadRestrictions;
   flatValidationRuleMaps?: FlatValidationRuleMaps;
 };
 

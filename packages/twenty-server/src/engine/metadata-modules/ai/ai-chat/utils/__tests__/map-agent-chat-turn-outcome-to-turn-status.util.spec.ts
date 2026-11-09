@@ -1,3 +1,4 @@
+import { AgentChatTurnCancellationReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-turn-cancellation-reason.enum';
 import { mapAgentChatTurnOutcomeToTurnStatus } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-agent-chat-turn-outcome-to-turn-status.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
@@ -24,7 +25,7 @@ describe('mapAgentChatTurnOutcomeToTurnStatus', () => {
     expect(
       mapAgentChatTurnOutcomeToTurnStatus({
         kind: 'cancelled',
-        reason: 'user_cancelled',
+        reason: AgentChatTurnCancellationReason.USER_CANCELLED,
       }),
     ).toEqual({ status: AgentTurnStatus.CANCELLED, error: null });
   });

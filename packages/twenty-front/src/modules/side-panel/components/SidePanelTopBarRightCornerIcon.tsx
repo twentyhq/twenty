@@ -5,18 +5,19 @@ import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelS
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconEdit } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledIconButtonContainer = styled.div`
   color: ${themeCssVariables.font.color.secondary};
 `;
 
 export const SidePanelTopBarRightCornerIcon = () => {
+  const { t } = useLingui();
   const isMobile = useIsMobile();
   const sidePanelPage = useAtomStateValue(sidePanelPageInfoSelector).page;
   const { switchToNewChat } = useSwitchToNewAiChat();

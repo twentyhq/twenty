@@ -18,9 +18,8 @@ import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
@@ -31,7 +30,7 @@ export class CallWebhookJobsJob {
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly recordEventPermissionsService: RecordEventPermissionsService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
   ) {}
 
@@ -69,13 +68,15 @@ export class CallWebhookJobsJob {
       return;
     }
 
-    const eventRecordAccessGate =
-      this.recordAccessPolicyService.buildEventRecordAccessGate({
-        ...workspaceEventBatch,
-        objectMetadata: flatObjectMetadata,
-      });
+    const eventBatch = {
+      ...workspaceEventBatch,
+      objectMetadata: flatObjectMetadata,
+    };
     const webhookEvents: CallWebhookJobData[] = [];
-    const admittedRecordIdsByRoleId = new Map<string, Promise<Set<string>>>();
+    const readableEventsByRoleId = new Map<
+      string,
+      Promise<ObjectRecordEvent[]>
+    >();
 
     for (const webhook of webhooks) {
       const webhookRoleId = findFlatRoleTargetFromForeignKey({
@@ -92,23 +93,26 @@ export class CallWebhookJobsJob {
         continue;
       }
 
-      const admittedRecordIds =
-        admittedRecordIdsByRoleId.get(webhookRoleId) ??
-        eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildPermissionsPrincipal({
-            workspaceId: workspaceEventBatch.workspaceId,
-            roleId: webhookRoleId,
-            applicationId: undefined,
-          }),
-        );
+      const readableEvents =
+        readableEventsByRoleId.get(webhookRoleId) ??
+        this.recordEventPermissionsService.filterReadableEvents({
+          authContext: {
+            type: 'webhook',
+            workspace: { id: workspaceEventBatch.workspaceId },
+            webhook,
+          },
+          eventBatch,
+        });
 
-      admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);
+      readableEventsByRoleId.set(webhookRoleId, readableEvents);
 
       webhookEvents.push(
         ...transformEventBatchToWebhookEvents({
-          workspaceEventBatch,
+          workspaceEventBatch: {
+            ...workspaceEventBatch,
+            events: await readableEvents,
+          },
           webhooks: [webhook],
-          admittedRecordIds: await admittedRecordIds,
         }),
       );
     }

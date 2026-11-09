@@ -7,7 +7,7 @@ export const findCompanyIdByFilter = async ({
   filter,
   requireUnique = false,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query'>;
   filter: Record<string, unknown>;
   requireUnique?: boolean;
 }): Promise<string | undefined> => {

@@ -15,6 +15,7 @@ const FLAT_FIELD_PERMISSION_ROWS_REQUIREMENT = {
   role: ['id', 'universalIdentifier'],
   objectMetadata: ['id', 'universalIdentifier'],
   fieldMetadata: ['id', 'universalIdentifier'],
+  rowLevelPermissionPredicateGroup: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -33,6 +34,7 @@ export class WorkspaceFlatFieldPermissionMapCacheService extends MetadataFlatEnt
       role: roles,
       objectMetadata: objectMetadatas,
       fieldMetadata: fieldMetadatas,
+      rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -43,6 +45,8 @@ export class WorkspaceFlatFieldPermissionMapCacheService extends MetadataFlatEnt
       createIdToUniversalIdentifierMap(objectMetadatas);
     const fieldMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(fieldMetadatas);
+    const rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(rowLevelPermissionPredicateGroups);
 
     const flatFieldPermissionMaps = createEmptyFlatEntityMaps();
 
@@ -54,6 +58,7 @@ export class WorkspaceFlatFieldPermissionMapCacheService extends MetadataFlatEnt
           roleIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
           fieldMetadataIdToUniversalIdentifierMap,
+          rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

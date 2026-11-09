@@ -11,7 +11,7 @@ type MediaGlobals = {
   MediaStream: new (streamOrTracks?: unknown) => MediaStreamLike;
   MediaStreamTrack: new () => unknown;
   MediaRecorder: (new (
-    stream: MediaStreamLike,
+    stream: unknown,
     options?: { mimeType?: string },
   ) => MediaRecorderLike) & { isTypeSupported: (mimeType: string) => boolean };
 };
@@ -80,7 +80,7 @@ const installOnFreshScope = (transport: MediaSessionHostFunctions) => {
   const globalScope: Record<string, unknown> = {};
   installMediaCapturePolyfills({ globalScope, bridge });
 
-  return { bridge, mediaGlobals: globalScope as unknown as MediaGlobals };
+  return { bridge, mediaGlobals: globalScope as MediaGlobals };
 };
 
 const createMediaRecorder = async () => {
@@ -320,10 +320,7 @@ describe('installMediaCapturePolyfills', () => {
     const { mediaGlobals } = installOnFreshScope(createTransportStub());
 
     expect(
-      () =>
-        new mediaGlobals.MediaRecorder({
-          id: 'not-a-stream',
-        } as unknown as MediaStreamLike),
+      () => new mediaGlobals.MediaRecorder({ id: 'not-a-stream' }),
     ).toThrow(TypeError);
 
     const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({

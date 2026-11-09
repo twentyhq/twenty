@@ -20,26 +20,26 @@ describe('commandMenuTargetObjectPermissionsSelector', () => {
     store.set(currentUserWorkspaceState.atom, {
       permissionFlags: [],
       twoFactorAuthenticationMethodSummary: [],
-      objectsPermissions: [
+      objectRecordsPermissions: [
         {
           objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
-          restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
+          canCreateAllRecords: false,
+          canReadAllRecords: true,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
+          unreadableFields: [],
+          uneditableFields: [],
         },
         {
           objectMetadataId: getMockObjectMetadataItemOrThrow('opportunity').id,
-          canReadObjectRecords: false,
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
-          restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
+          canCreateAllRecords: false,
+          canReadAllRecords: false,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
+          unreadableFields: [],
+          uneditableFields: [],
         },
       ],
       isImpersonating: false,
@@ -61,7 +61,7 @@ describe('commandMenuTargetObjectPermissionsSelector', () => {
     store.set(currentUserWorkspaceState.atom, {
       permissionFlags: [],
       twoFactorAuthenticationMethodSummary: [],
-      objectsPermissions: [],
+      objectRecordsPermissions: [],
       isImpersonating: false,
     });
 

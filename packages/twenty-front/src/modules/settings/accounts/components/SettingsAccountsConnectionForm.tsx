@@ -189,7 +189,7 @@ export const SettingsAccountsConnectionForm = ({
                     label={t`IMAP Port`}
                     type="number"
                     placeholder="993"
-                    value={field?.value ? field.value : 993}
+                    value={field.value || ''}
                     onChange={(value) =>
                       field.onChange(handlePortChange(value))
                     }
@@ -286,7 +286,7 @@ export const SettingsAccountsConnectionForm = ({
                     label={t`SMTP Port`}
                     type="number"
                     placeholder="587"
-                    value={field?.value ? field.value : 587}
+                    value={field.value || ''}
                     onChange={(value) =>
                       field.onChange(handlePortChange(value))
                     }

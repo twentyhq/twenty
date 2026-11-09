@@ -1,14 +1,15 @@
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
   FieldMetadataType,
-  type ObjectPermissions,
-  type ObjectsPermissions,
+  type ObjectRecordsPermissions,
 } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { omitRestrictedFieldsFromTimelineActivityEvent } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity-event.util';
 import { omitRestrictedFieldsFromTimelineActivity } from 'src/modules/timeline/utils/omit-restricted-fields-from-timeline-activity.util';
 
@@ -67,26 +68,27 @@ const flatFieldMetadataMaps = [
     createEmptyFlatEntityMaps(),
   );
 
-const buildObjectPermissions = (
-  overrides: Partial<ObjectPermissions>,
-): ObjectPermissions => ({
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: true,
-  canSoftDeleteObjectRecords: true,
-  canDestroyObjectRecords: true,
-  restrictedFields: {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
+const buildObjectRecordsPermissions = (
+  overrides: Partial<ObjectRecordsPermissions>,
+): ObjectRecordsPermissions => ({
+  canCreateAllRecords: true,
+  canReadAllRecords: true,
+  canUpdateAllRecords: true,
+  canSoftDeleteAllRecords: true,
+  canDestroyAllRecords: true,
+  unreadableFields: [],
+  uneditableFields: [],
   ...overrides,
 });
 
-const PERSON_JOB_TITLE_DENIED = {
-  [PERSON_OBJECT.id]: buildObjectPermissions({
-    restrictedFields: {
-      'person-job-title-field-id': { canRead: false, canUpdate: false },
-    },
-  }),
-  [NOTE_OBJECT.id]: buildObjectPermissions({}),
+const PERSON_JOB_TITLE_DENIED: Pick<RoleRecordsPermissions, 'objects'> = {
+  objects: {
+    [PERSON_OBJECT.id]: buildObjectRecordsPermissions({
+      unreadableFields: ['person-job-title-field-id'],
+      uneditableFields: ['person-job-title-field-id'],
+    }),
+    [NOTE_OBJECT.id]: buildObjectRecordsPermissions({}),
+  },
 };
 
 const DIFF = {
@@ -105,15 +107,15 @@ type TimelineActivityFixture = {
 
 const omitRestrictedFields = ({
   timelineActivity,
-  objectsPermissions = PERSON_JOB_TITLE_DENIED,
+  recordsPermissions = PERSON_JOB_TITLE_DENIED,
 }: {
   timelineActivity: TimelineActivityFixture;
-  objectsPermissions?: ObjectsPermissions;
+  recordsPermissions?: Pick<RoleRecordsPermissions, 'objects'>;
 }) =>
   omitRestrictedFieldsFromTimelineActivity({
     properties: timelineActivity.properties,
     timelineActivity,
-    objectsPermissions,
+    recordReadRestrictions: buildRecordReadRestrictions({ recordsPermissions }),
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
@@ -151,11 +153,13 @@ describe('omitRestrictedFieldsFromTimelineActivity', () => {
           targetPersonId: 'person-id',
           properties: DIFF,
         },
-        objectsPermissions: {
-          ...PERSON_JOB_TITLE_DENIED,
-          [NOTE_OBJECT.id]: buildObjectPermissions({
-            canReadObjectRecords: false,
-          }),
+        recordsPermissions: {
+          objects: {
+            ...PERSON_JOB_TITLE_DENIED.objects,
+            [NOTE_OBJECT.id]: buildObjectRecordsPermissions({
+              canReadAllRecords: false,
+            }),
+          },
         },
       }),
     ).toEqual({ diff: {} });
@@ -210,7 +214,9 @@ describe('omitRestrictedFieldsFromTimelineActivityEvent', () => {
     expect(
       omitRestrictedFieldsFromTimelineActivityEvent({
         event,
-        objectsPermissions: PERSON_JOB_TITLE_DENIED,
+        recordReadRestrictions: buildRecordReadRestrictions({
+          recordsPermissions: PERSON_JOB_TITLE_DENIED,
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }).properties,

@@ -1,7 +1,4 @@
-import {
-  type FeatureFlagKey,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { type CompactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/compact-flat-field-metadata-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -21,10 +18,11 @@ import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-targ
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export type AdditionalCacheDataMaps = {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
-  rolesPermissions: ObjectsPermissionsByRoleId;
+  rolesPermissions: Record<string, RoleRecordsPermissions>;
   apiKeyMap: Record<string, FlatApiKey>;
   flatApplicationMaps: FlatApplicationCacheMaps;
   flatFieldMetadataMapsOrm: FlatEntityMaps<OrmFlatFieldMetadata>;

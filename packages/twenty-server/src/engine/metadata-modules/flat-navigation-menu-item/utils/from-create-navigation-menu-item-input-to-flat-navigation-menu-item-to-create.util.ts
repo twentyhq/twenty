@@ -98,6 +98,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       agentChatChannelUniversalIdentifier,
       name: createNavigationMenuItemInput.name ?? null,
       link: createNavigationMenuItemInput.link ?? null,
+      nativePageKey: createNavigationMenuItemInput.nativePageKey ?? null,
       icon: createNavigationMenuItemInput.icon ?? null,
       color: createNavigationMenuItemInput.color ?? null,
       position,

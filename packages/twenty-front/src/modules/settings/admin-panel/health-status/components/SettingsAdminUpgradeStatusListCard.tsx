@@ -1,6 +1,5 @@
 import { SettingsAdminUpgradeStatusRightContainer } from '@/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusRightContainer';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -10,6 +9,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { type GetInstanceAndAllWorkspacesUpgradeStatusQuery } from '~/generated-admin/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type InstanceAndAllWorkspacesUpgradeStatus =
   GetInstanceAndAllWorkspacesUpgradeStatusQuery['getInstanceAndAllWorkspacesUpgradeStatus'];
@@ -51,6 +51,7 @@ type SettingsAdminUpgradeStatusListCardProps = {
 export const SettingsAdminUpgradeStatusListCard = ({
   upgradeStatus,
 }: SettingsAdminUpgradeStatusListCardProps) => {
+  const { t } = useLingui();
   const sharedRowProps = {
     inferredVersion: upgradeStatus.instanceUpgradeStatus.inferredVersion,
     instanceHealth: upgradeStatus.instanceUpgradeStatus.health,

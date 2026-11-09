@@ -100,7 +100,6 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
       objectName: workflowActionInput.objectName,
       objectRecord: filteredObjectRecord,
       authContext: executionContext.authContext,
-      rolePermissionConfig: executionContext.rolePermissionConfig,
     });
 
     if (!toolOutput.success) {

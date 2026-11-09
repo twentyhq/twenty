@@ -14,13 +14,13 @@ import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
   recordFilterGroup: RecordFilterGroup;
@@ -29,6 +29,7 @@ type AdvancedFilterAddFilterRuleSelectProps = {
 export const AdvancedFilterAddFilterRuleSelect = ({
   recordFilterGroup,
 }: AdvancedFilterAddFilterRuleSelectProps) => {
+  const { t } = useLingui();
   const dropdownId = getAdvancedFilterAddFilterRuleSelectDropdownId(
     recordFilterGroup.id,
   );

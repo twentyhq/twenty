@@ -22,6 +22,7 @@ export const fromRoleManifestToUniversalFlatRole = ({
     canAccessAllAgentChatChannels:
       roleManifest.canAccessAllAgentChatChannels ?? false,
     canReadAllObjectRecords: roleManifest.canReadAllObjectRecords ?? false,
+    canCreateAllObjectRecords: roleManifest.canUpdateAllObjectRecords ?? false,
     canUpdateAllObjectRecords: roleManifest.canUpdateAllObjectRecords ?? false,
     canSoftDeleteAllObjectRecords:
       roleManifest.canSoftDeleteAllObjectRecords ?? false,
@@ -31,6 +32,7 @@ export const fromRoleManifestToUniversalFlatRole = ({
     canBeAssignedToUsers: roleManifest.canBeAssignedToUsers ?? true,
     canBeAssignedToAgents: roleManifest.canBeAssignedToAgents ?? true,
     canBeAssignedToApiKeys: roleManifest.canBeAssignedToApiKeys ?? true,
+    canBeAssignedToApplications: false,
     roleTargetUniversalIdentifiers: [],
     objectPermissionUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],

@@ -12,24 +12,25 @@ import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
   }),
-  SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,

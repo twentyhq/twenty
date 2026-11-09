@@ -8,6 +8,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { CronModule } from 'src/engine/core-modules/cron/cron.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
@@ -23,6 +24,7 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
     WorkflowCoreModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
     CronModule,
+    PermissionsModule,
     RecordShareModule,
     WorkflowCommonModule,
     WorkspaceCacheModule,

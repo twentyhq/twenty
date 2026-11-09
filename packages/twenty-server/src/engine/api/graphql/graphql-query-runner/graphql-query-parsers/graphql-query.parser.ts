@@ -122,12 +122,12 @@ export class GraphqlQueryParser {
     objectNameSingular: string,
     isForwardPagination = true,
   ): Record<string, OrderByClause> {
-    const parseResult = this.orderFieldParser.parse(
-      orderBy as ObjectRecordOrderBy,
+    const parseResult = this.orderFieldParser.parse({
+      orderBy: orderBy as ObjectRecordOrderBy,
       objectNameSingular,
       isForwardPagination,
-      queryBuilder.objectRecordsPermissions,
-    );
+      recordReadRestrictions: queryBuilder.recordReadRestrictions,
+    });
 
     for (const joinInfo of parseResult.relationJoins) {
       addRelationJoinAliasToQueryBuilder({
@@ -175,11 +175,11 @@ export class GraphqlQueryParser {
     objectNameSingular: string,
     isForwardPagination = true,
   ): { orderByRawSQL: string; relationJoins: RelationJoinInfo[] } {
-    const parseResult = this.orderFieldParser.parse(
+    const parseResult = this.orderFieldParser.parse({
       orderBy,
       objectNameSingular,
       isForwardPagination,
-    );
+    });
 
     const orderByRawSQLClauseArray = Object.entries(parseResult.orderBy).map(
       ([orderByField, orderByCondition]) => {

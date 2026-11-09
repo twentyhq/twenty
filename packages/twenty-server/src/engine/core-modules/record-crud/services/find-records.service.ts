@@ -11,7 +11,11 @@ import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-q
 import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import { buildRelationSelectionFromDepth } from 'src/engine/api/common/common-select-fields/utils/build-relation-selection-from-depth.util';
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
-import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import {
+  type CommonApiContext,
+  CommonApiContextBuilderService,
+} from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { type FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
 import { buildEffectiveSelectedFields } from 'src/engine/core-modules/record-crud/utils/build-effective-selected-fields.util';
@@ -39,7 +43,6 @@ export class FindRecordsService {
       limit,
       offset = 0,
       authContext,
-      rolePermissionConfig,
       select,
       shouldBuildEffectiveSelectFields,
     } = params;
@@ -59,12 +62,10 @@ export class FindRecordsService {
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectsPermissions,
-        principal,
+        unreadableFieldMetadataIds,
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
-        rolePermissionConfig,
       });
 
       const { effectiveSelectedFields, warnings } =
@@ -78,23 +79,14 @@ export class FindRecordsService {
               flatFieldMetadataMaps,
               flatObjectMetadataMaps,
               selectedFields: allSelectableFields,
-              objectsPermissions,
-              selectableRelationFields: buildRelationSelectionFromDepth({
-                flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-                  flatEntityIds: flatObjectMetadata.fieldIds,
-                  flatEntityMaps: flatFieldMetadataMaps,
+              unreadableFieldMetadataIds,
+              selectableRelationFields:
+                await this.buildSelectableRelationFields({
+                  authContext,
+                  flatObjectMetadata,
+                  flatObjectMetadataMaps,
+                  flatFieldMetadataMaps,
                 }),
-                flatObjectMetadataMaps,
-                flatFieldMetadataMaps,
-                flatObjectMetadata,
-                objectsPermissions,
-                readableObjectMetadataIds:
-                  await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds(
-                    { principal, objectsPermissions, flatObjectMetadataMaps },
-                  ),
-                depth: 1,
-                onlyUseLabelIdentifierFieldsInRelations: true,
-              }),
             })
           : { effectiveSelectedFields: allSelectableFields, warnings: [] };
 
@@ -150,5 +142,39 @@ export class FindRecordsService {
           error instanceof Error ? error.message : 'Failed to find records',
       };
     }
+  }
+
+  private async buildSelectableRelationFields({
+    authContext,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: Pick<
+    CommonApiContext,
+    'flatObjectMetadata' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+  > &
+    Pick<FindRecordsParams, 'authContext'>): Promise<CommonSelectedFields> {
+    const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
+      await this.commonSelectFieldsBuilder.findObjectSelectionMetadataIdsOrThrow(
+        {
+          authContext,
+          objectMetadataId: flatObjectMetadata.id,
+          flatObjectMetadataMaps,
+          shouldIncludeRelationTargets: true,
+        },
+      );
+
+    return buildRelationSelectionFromDepth({
+      flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.fieldIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      unreadableFieldMetadataIds,
+      readableObjectMetadataIds,
+      depth: 1,
+      onlyUseLabelIdentifierFieldsInRelations: true,
+    });
   }
 }

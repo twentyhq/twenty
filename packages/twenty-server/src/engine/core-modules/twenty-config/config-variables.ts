@@ -841,7 +841,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
-    description: 'S3 bucket for uploading Lambda layer zip files',
+    description:
+      'S3 bucket for uploading Lambda layer zip files. Required with the Lambda driver unless STORAGE_S3_NAME is set.',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
@@ -899,6 +900,15 @@ export class ConfigVariables {
     (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.E_2_B,
   )
   E2B_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'E2B template for code interpreter sandboxes; build one with the libraries the PDF and Office skills need using scripts/build-code-interpreter-e2b-template.ts (default: code-interpreter-v1)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  E2B_TEMPLATE: string = 'code-interpreter-v1';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
@@ -1620,11 +1630,54 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Order the jobs of each queue by tenant virtual clocks (workspace and application group keys) so that a burst from one tenant does not delay the others. Off: jobs of a queue are processed in FIFO order.',
+      'Refuse jobs that would take more than their fair share of the job queue Redis memory',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_WORKER_FAIRNESS_ENABLED = false;
+  IS_REDIS_MEMORY_FAIRNESS_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Maximum size in bytes of a single job (serialized data and options) when Redis memory fairness is enabled',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 5_242_880;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Share of the free job queue memory a single workspace may use. Any value below 1 keeps Redis below capacity',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  @Max(1)
+  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.3;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Share of the free job queue memory a single application, across all workspaces, may use. Any value below 1 keeps Redis below capacity',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  @Max(1)
+  JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER = 0.4;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Share of Redis maxmemory never given to job queue tenants (allocator error, non-job keys, Redis reserved memory)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  @Max(1)
+  JOB_QUEUE_MEMORY_RESERVE = 0.1;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

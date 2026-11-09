@@ -55,6 +55,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
     case 'agentChatChannel':
     case 'agentChatChannelRole':
     case 'settingsMenuItem':
+    case 'fieldMetadataOption':
     case 'relatedRecordPath':
     case 'validationRule':
     case 'searchFieldMetadata': {

@@ -57,6 +57,11 @@ export const fromCreateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
       parentRowLevelPermissionPredicateGroupUniversalIdentifier,
       positionInRowLevelPermissionPredicateGroup:
         input.positionInRowLevelPermissionPredicateGroup ?? null,
+      canReadRecords: input.canReadRecords ?? false,
+      canCreateRecords: input.canUpdateRecords ?? false,
+      canUpdateRecords: input.canUpdateRecords ?? false,
+      canSoftDeleteRecords: input.canSoftDeleteRecords ?? false,
+      canDestroyRecords: input.canDestroyRecords ?? false,
       childRowLevelPermissionPredicateGroupIds: [],
       childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
       rowLevelPermissionPredicateIds: [],

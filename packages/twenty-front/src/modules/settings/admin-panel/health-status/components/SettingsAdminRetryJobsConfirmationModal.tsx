@@ -1,5 +1,6 @@
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAdminRetryJobsConfirmationModalProps = {
   modalInstanceId: string;
@@ -14,6 +15,7 @@ export const SettingsAdminRetryJobsConfirmationModal = ({
   onConfirm,
   onClose,
 }: SettingsAdminRetryJobsConfirmationModalProps) => {
+  const { t } = useLingui();
   const title = plural(jobCount, {
     one: `Retry ${jobCount} Job`,
     other: `Retry ${jobCount} Jobs`,

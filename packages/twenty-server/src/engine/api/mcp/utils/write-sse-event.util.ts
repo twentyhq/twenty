@@ -1,7 +1,7 @@
 import { type Response } from 'express';
 
 export const writeSseEvent = (
-  response: Response,
+  response: Pick<Response, 'headersSent' | 'setHeader' | 'write'>,
   data: Record<string, unknown>,
 ): void => {
   // Ensure non-HTML content type so user data serialized as JSON cannot trigger XSS

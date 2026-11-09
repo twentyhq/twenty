@@ -18,7 +18,7 @@ const findOrCreateUncachedCompany = async ({
   personData,
   companyMatchKeys,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   personData: PdlPersonData;
   companyMatchKeys: CompanyMatchKeys;
 }): Promise<string | undefined> => {
@@ -75,7 +75,7 @@ export const findOrCreateCurrentCompany = async ({
   personData,
   companyIdByMatchKeyCache,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   personData: PdlPersonData;
   companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
 }): Promise<string | undefined> => {

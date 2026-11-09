@@ -18,6 +18,7 @@ import {
   type RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 
@@ -36,11 +37,16 @@ type AgentTurnInput = Omit<
   | 'tools'
   | 'offeredPausingToolNames'
   | 'providerOptions'
+  | 'telemetry'
 > & {
-  workspace?: WorkspaceEntity;
+  workspace: WorkspaceEntity;
+  telemetry: Omit<AgentStepLoopInput['telemetry'], 'isContentRecordingAllowed'>;
   modelId: string;
   // the model's own native tools when nativeToolOptions is absent
-  toolset: Omit<AgentToolsetInput, 'registeredModel' | 'nativeToolOptions'> & {
+  toolset: Omit<
+    AgentToolsetInput,
+    'registeredModel' | 'nativeToolOptions' | 'aiDataPolicy'
+  > & {
     nativeToolOptions?: NativeModelToolOptions;
   };
   buildContext: (turn: {
@@ -53,6 +59,7 @@ type AgentTurnInput = Omit<
 };
 
 export type AgentTurn = AgentStepLoop & {
+  isContentRecordingAllowed: boolean;
   registeredModel: RegisteredAiModel;
   modelConfig: AiModelConfig;
   toolset: AgentToolset;
@@ -67,6 +74,7 @@ export class AgentTurnService {
     private readonly aiModelConfigService: AiModelConfigService,
     private readonly agentToolsetService: AgentToolsetService,
     private readonly agentStepLoopService: AgentStepLoopService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
   async start({
@@ -76,13 +84,26 @@ export class AgentTurnService {
     buildContext,
     promptCacheKey,
     shouldIncludeReasoningSummary = false,
+    telemetry,
     ...loopInput
   }: AgentTurnInput): Promise<AgentTurn> {
-    this.aiModelRegistryService.validateModelAvailability(modelId);
+    const aiDataPolicy =
+      await this.workspaceAiDataPolicyService.getEffectiveAiDataPolicy(
+        workspace,
+      );
+    const isContentRecordingAllowed =
+      await this.workspaceAiDataPolicyService.isContentRecordingAllowed(
+        workspace,
+      );
+
+    this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+      modelId,
+      aiDataPolicy,
+    });
 
     const registeredModel = this.aiModelRegistryService.resolveModelForAgent(
       { modelId },
-      workspace,
+      { ...workspace, effectiveAiDataPolicy: aiDataPolicy },
     );
     const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
       registeredModel.modelId,
@@ -94,6 +115,7 @@ export class AgentTurnService {
     const toolset = await this.agentToolsetService.build({
       ...toolsetInput,
       registeredModel,
+      aiDataPolicy,
       nativeToolOptions: toolsetInput.nativeToolOptions ?? {
         webSearch: nativeCapabilities?.webSearch === true,
         twitterSearch: nativeCapabilities?.twitterSearch === true,
@@ -112,6 +134,7 @@ export class AgentTurnService {
 
     const stepLoop = this.agentStepLoopService.start({
       ...loopInput,
+      telemetry: { ...telemetry, isContentRecordingAllowed },
       registeredModel,
       modelConfig,
       systemPrompt,
@@ -129,6 +152,12 @@ export class AgentTurnService {
       }),
     });
 
-    return { ...stepLoop, registeredModel, modelConfig, toolset };
+    return {
+      ...stepLoop,
+      isContentRecordingAllowed,
+      registeredModel,
+      modelConfig,
+      toolset,
+    };
   }
 }

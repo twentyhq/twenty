@@ -105,10 +105,10 @@ export const TAB_PROPS = {
   },
   emails: {
     title: i18nLabel(
-      msg({ message: `Emails`, context: 'pageLayoutTab.title' }),
+      msg({ message: `Messages`, context: 'pageLayoutTab.title' }),
     ),
     position: 60,
-    icon: 'IconMail',
+    icon: 'IconMessage',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   conversations: {
@@ -116,7 +116,7 @@ export const TAB_PROPS = {
       msg({ message: `Conversations`, context: 'pageLayoutTab.title' }),
     ),
     position: 65,
-    icon: 'IconMessage',
+    icon: 'IconInbox',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   chat: {
@@ -205,7 +205,7 @@ export const WIDGET_PROPS = {
   },
   emails: {
     title: i18nLabel(
-      msg({ message: `Emails`, context: 'pageLayoutWidget.title' }),
+      msg({ message: `Messages`, context: 'pageLayoutWidget.title' }),
     ),
     type: WidgetType.EMAILS,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,

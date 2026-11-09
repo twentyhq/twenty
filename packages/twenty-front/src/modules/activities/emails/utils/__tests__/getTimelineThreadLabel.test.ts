@@ -1,5 +1,8 @@
 import { getTimelineThreadLabel } from '@/activities/emails/utils/getTimelineThreadLabel';
-import { MessageChannelVisibility } from '~/generated/graphql';
+import {
+  MessageChannelType,
+  MessageChannelVisibility,
+} from '~/generated/graphql';
 
 describe('getTimelineThreadLabel', () => {
   it('should return the subject when it is shared', () => {
@@ -27,5 +30,19 @@ describe('getTimelineThreadLabel', () => {
         visibility: MessageChannelVisibility.SHARE_EVERYTHING,
       }),
     ).toBe('Email thread');
+  });
+
+  it('should use a conversation label for app chats, even with a subject', () => {
+    expect(
+      getTimelineThreadLabel({
+        subject: 'Intro call',
+        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+        channel: {
+          type: MessageChannelType.APP,
+          provider: 'app',
+          applicationId: null,
+        },
+      }),
+    ).toBe('Conversation');
   });
 });

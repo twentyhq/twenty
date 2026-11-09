@@ -334,6 +334,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'webhookUniversalIdentifier',
     },
+    targetApplication: null,
     workspace: null,
     application: null,
   },
@@ -400,6 +401,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       inverseOneToManyProperty: 'fieldPermissions',
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
+    },
+    rowLevelPermissionPredicateGroup: {
+      metadataName: 'rowLevelPermissionPredicateGroup',
+      foreignKey: 'rowLevelPermissionPredicateGroupId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey:
+        'rowLevelPermissionPredicateGroupUniversalIdentifier',
     },
   },
   pageLayout: {
@@ -628,6 +637,17 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       inverseOneToManyProperty: null,
       isNullable: false,
       universalForeignKey: 'tsVectorFieldMetadataUniversalIdentifier',
+    },
+  },
+  fieldMetadataOption: {
+    workspace: null,
+    application: null,
+    fieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'fieldMetadataId',
+      inverseOneToManyProperty: 'fieldMetadataOptions',
+      isNullable: false,
+      universalForeignKey: 'fieldMetadataUniversalIdentifier',
     },
   },
   relatedRecordPath: {

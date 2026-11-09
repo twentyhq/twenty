@@ -1,7 +1,5 @@
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import {
   type MessageChannelContactAutoCreationPolicy,
   MessageChannelType,
@@ -19,6 +17,7 @@ import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/compo
 import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { type MessageChannelVisibility } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 type SettingsAppPreferencesMessageChannelDetailsProps = {
   messageChannel: Pick<
@@ -51,6 +50,7 @@ const StyledDetailsContainer = styled.div`
 export const SettingsAppPreferencesMessageChannelDetails = ({
   messageChannel,
 }: SettingsAppPreferencesMessageChannelDetailsProps) => {
+  const { t } = useLingui();
   const [updateMessageChannel] = useMutation(UPDATE_MESSAGE_CHANNEL);
 
   const updateChannel = (update: MessageChannelUpdateInput) => {

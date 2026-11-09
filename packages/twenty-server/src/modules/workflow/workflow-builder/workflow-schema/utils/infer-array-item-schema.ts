@@ -44,10 +44,18 @@ export const inferArrayItemSchema = ({
   }
 
   const getValueType = (value: unknown): LeafType => {
-    if (isString(value)) return 'string';
-    if (isNumber(value)) return 'number';
-    if (isBoolean(value)) return 'boolean';
-    if (isArray(value)) return 'array';
+    if (isString(value)) {
+      return 'string';
+    }
+    if (isNumber(value)) {
+      return 'number';
+    }
+    if (isBoolean(value)) {
+      return 'boolean';
+    }
+    if (isArray(value)) {
+      return 'array';
+    }
 
     return 'unknown';
   };

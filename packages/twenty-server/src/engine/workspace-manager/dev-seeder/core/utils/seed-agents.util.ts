@@ -13,6 +13,10 @@ import {
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
+type SeedAgentsQueryRunner = {
+  manager: Pick<QueryRunner['manager'], 'createQueryBuilder'>;
+};
+
 const agentChatThreadTableName = 'agentChatThread';
 const agentTurnTableName = 'agentTurn';
 const agentMessageTableName = 'agentMessage';
@@ -42,7 +46,7 @@ export const AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS = {
 };
 
 type SeedChatThreadsArgs = {
-  queryRunner: QueryRunner;
+  queryRunner: SeedAgentsQueryRunner;
   schemaName: string;
   workspaceId: string;
 };
@@ -138,7 +142,7 @@ const seedChatThreads = async ({
 };
 
 type SeedChatMessagesArgs = {
-  queryRunner: QueryRunner;
+  queryRunner: SeedAgentsQueryRunner;
   schemaName: string;
   workspaceId: string;
   threadId: string;
@@ -398,7 +402,7 @@ const seedChatMessages = async ({
 };
 
 type SeedAgentsArgs = {
-  queryRunner: QueryRunner;
+  queryRunner: SeedAgentsQueryRunner;
   schemaName: string;
   workspaceId: string;
   chatReferenceIds: ChatReferenceIds;

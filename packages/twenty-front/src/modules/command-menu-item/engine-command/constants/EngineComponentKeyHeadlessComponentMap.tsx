@@ -58,7 +58,7 @@ import { SeeRunsWorkflowSingleRecordCommand } from '@/command-menu-item/engine-c
 import { SeeVersionsWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/SeeVersionsWorkflowSingleRecordCommand';
 import { TestWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/TestWorkflowSingleRecordCommand';
 import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/TidyUpWorkflowSingleRecordCommand';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
 import { IconMessage, IconSearch, IconSparkles } from 'twenty-ui/icon';
@@ -155,26 +155,26 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.GO_TO_PEOPLE]: (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.Person }}
+      params={{ objectNamePlural: StandardObjectNamePlural.Person }}
     />
   ),
   [EngineComponentKey.GO_TO_COMPANIES]: (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.Company }}
+      params={{ objectNamePlural: StandardObjectNamePlural.Company }}
     />
   ),
   [EngineComponentKey.GO_TO_DASHBOARDS]: (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.Dashboard }}
+      params={{ objectNamePlural: StandardObjectNamePlural.Dashboard }}
     />
   ),
   [EngineComponentKey.GO_TO_OPPORTUNITIES]: (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}
       params={{
-        objectNamePlural: CoreObjectNamePlural.Opportunity,
+        objectNamePlural: StandardObjectNamePlural.Opportunity,
       }}
     />
   ),
@@ -189,25 +189,22 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.GO_TO_TASKS]: (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.Task }}
+      params={{ objectNamePlural: StandardObjectNamePlural.Task }}
     />
   ),
   [EngineComponentKey.GO_TO_NOTES]: (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.Note }}
+      params={{ objectNamePlural: StandardObjectNamePlural.Note }}
     />
   ),
   [EngineComponentKey.GO_TO_WORKFLOWS]: (
-    <HeadlessNavigateEngineCommand
-      to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.Workflow }}
-    />
+    <HeadlessNavigateEngineCommand to={AppPath.WorkflowIndexPage} />
   ),
   [EngineComponentKey.GO_TO_RUNS]: (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}
-      params={{ objectNamePlural: CoreObjectNamePlural.WorkflowRun }}
+      params={{ objectNamePlural: StandardObjectNamePlural.WorkflowRun }}
     />
   ),
   [EngineComponentKey.SEARCH_RECORDS]: (

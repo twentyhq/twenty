@@ -133,7 +133,7 @@ Notițe:
 
 ## Verificarea înainte de a cheltui
 
-Un spațiu de lucru poate rămâne fără credite. Când se întâmplă acest lucru, funcția ta este refuzată înainte ca codul tău să pornească, iar activitatea proprie a platformei se oprește și ea: `runAgent` returnează o eroare în loc să ruleze, iar celelalte puncte de intrare AI refuză direct. `sendInboxMessage` nu rulează niciun model și nu adaugă niciun cost AI propriu, deși apelul de funcție care o invocă este facturat ca oricare altul; răspunsul unui membru este facturat ca orice tur de chat. Hookurile de dezinstalare și deconectare reprezintă excepția și rulează întotdeauna, astfel încât o aplicație să poată fi eliminată în continuare în mod curat. O execuție care reușește să treacă poate totuși eșua târziu, la un apel al platformei pe care nu l-a scris, dacă spațiul de lucru rămâne fără credite în timpul rulării.
+Un spațiu de lucru poate rămâne fără credite. Când se întâmplă acest lucru, funcția ta este refuzată înainte ca codul tău să pornească, iar activitatea proprie a platformei se oprește și ea: `runAgent` returnează o eroare în loc să ruleze, iar celelalte puncte de intrare AI refuză direct. `sendInboxMessage` nu rulează niciun model și nu adaugă niciun cost AI propriu, deși apelul de funcție care o invocă este facturat ca oricare altul; răspunsul unui membru este facturat ca orice tur de chat. Hookurile de dezinstalare și deconectare reprezintă excepția și rulează întotdeauna, astfel încât o aplicație să poată fi eliminată în continuare în mod curat. O execuție care se termină poate totuși să eșueze târziu, pe un apel pe platformă nu a scris, dacă spațiul de lucru se termină la mijloc; `ai. enerate` apoi rezolvă cu `succes: false` şi motivul din `error`.
 
 Întrebați mai întâi:
 

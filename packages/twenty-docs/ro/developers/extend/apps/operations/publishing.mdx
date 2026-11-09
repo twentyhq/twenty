@@ -61,10 +61,10 @@ twenty auth login --url https://your-twenty-server.com --name production
 Construiește și încarcă aplicația ta pe server într-un singur pas:
 
 ```bash filename="Terminal"
-twenty app publish --private
-# To deploy to a specific remote:
-# twenty app publish --private --remote production
+twenty app publish --private --remote production
 ```
+
+`--remote production` explicit selectează conexiunea salvată mai sus, chiar dacă o altă conexiune la distanță este implicită. Salvarea unei conexiuni la distanță cu nume nu schimbă o conexiune implicită existentă.
 
 ### Partajarea unei aplicații implementate
 
@@ -83,7 +83,7 @@ Când actualizezi o aplicație tarball deja implementată, serverul solicită ca
 Pentru a lansa o actualizare:
 
 1. Incrementează câmpul `version` din `package.json` (de ex. `1.2.3` → `1.2.4`, `1.3.0` sau `2.0.0`)
-2. Rulează `twenty app publish --private` (sau `twenty app publish --private --remote production`)
+2. Rulează `twenty app publish --private --remote production`
 3. Spațiile de lucru care au aplicația instalată și au activat actualizarea automată pentru aceasta (în fila General a aplicației) sunt actualizate automat în fundal; celelalte vor vedea actualizarea disponibilă în setările lor
 
 <Note>
@@ -388,11 +388,13 @@ Mergi la pagina **Setări > Aplicații** din Twenty, unde pot fi parcurse și in
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-Poți instala aplicații și din linia de comandă:
+Din directorul aplicației, instalează versiunea sa publicată în spațiul de lucru țintă:
 
 ```bash filename="Terminal"
-twenty app install
+twenty app install --remote production
 ```
+
+Folosește numele conexiunii la distanță pentru spațiul de lucru în care dorești să instalezi aplicația. Pentru a instala fără un proiect local, transmite `--universal-identifier \<id>`.
 
 <Note>
 Serverul impune versionarea semver la instalare, reflectând regulile de la deploy:
@@ -400,7 +402,7 @@ Serverul impune versionarea semver la instalare, reflectând regulile de la depl
 * Instalarea aceleiași versiuni care este deja instalată în spațiul tău de lucru este respinsă cu o eroare `APP_ALREADY_INSTALLED`.
 * Instalarea unei versiuni mai mici decât cea instalată în prezent este respinsă cu o eroare `CANNOT_DOWNGRADE_APPLICATION`.
 
-Pentru a instala o versiune mai nouă, implementeaz-o sau public-o mai întâi, apoi rulează din nou `twenty app install`.
+Pentru a instala o versiune mai nouă, fă mai întâi deploy sau public-o, apoi rulează din nou `twenty app install --remote production`.
 
 </Note>
 

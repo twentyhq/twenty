@@ -32,10 +32,7 @@ export const withQueueOrderTestContext = async (
       },
       {
         provide: TwentyConfigService,
-        useValue: {
-          get: (key: string) =>
-            key === 'IS_WORKER_FAIRNESS_ENABLED' ? false : undefined,
-        },
+        useValue: { get: () => undefined },
       },
       { provide: EventEmitter2, useValue: new EventEmitter2() },
       {

@@ -11,12 +11,12 @@ import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integratio
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export const updateOneFieldMetadata = async ({
+export const updateOneFieldMetadata = async <TField = FieldMetadataEntity>({
   input,
   gqlFields,
   expectToFail,
 }: PerformMetadataQueryParams<UpdateOneFieldFactoryInput>): CommonResponseBody<{
-  updateOneField: FieldMetadataEntity;
+  updateOneField: TField;
 }> => {
   const graphqlOperation = updateOneFieldMetadataQueryFactory({
     input,

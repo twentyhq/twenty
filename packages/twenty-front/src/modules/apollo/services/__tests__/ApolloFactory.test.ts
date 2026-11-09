@@ -1,6 +1,7 @@
 import { gql, InMemoryCache } from '@apollo/client';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
+import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 
 import { ApolloFactory, type Options } from '@/apollo/services/ApolloFactory';
@@ -9,6 +10,7 @@ import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
 import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
+  AiChatAssistantMode,
   AiModelTier,
   WorkspaceActivationStatus,
   WorkspaceDiscoverability,
@@ -92,6 +94,9 @@ const mockWorkspace = {
   trashRetentionDays: 14,
   eventLogRetentionDays: 365 * 3,
   aiChatModelTier: AiModelTier.fast,
+  aiChatAssistantProfile: DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
+  aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+  aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},

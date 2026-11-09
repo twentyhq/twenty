@@ -16,6 +16,9 @@ export class FieldPermissionDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   roleId: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  rowLevelPermissionPredicateGroupId?: string | null;
+
   @Field(() => Boolean, { nullable: true })
   canReadFieldValue?: boolean | null;
 

@@ -9,7 +9,10 @@ import {
 import { useState } from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
+import {
+  StandardObjectNameSingular,
+  SidePanelPages,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMessage, IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -36,6 +39,7 @@ import { WorkspaceSurfaceHeaderPortalContext } from '@/ui/layout/contexts/Worksp
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -364,7 +368,7 @@ const meta = {
     jotaiStore.set(agentChatThreadParticipantsState.atom, {});
 
     const noteMetadata = getMockObjectMetadataItemOrThrow(
-      CoreObjectNameSingular.Note,
+      StandardObjectNameSingular.Note,
     );
     const chatFields = noteMetadata.fields.filter((field) =>
       ['id', 'title', 'createdAt', 'updatedAt', 'deletedAt'].includes(
@@ -374,7 +378,7 @@ const meta = {
     const chatMetadata: EnrichedObjectMetadataItem = {
       ...noteMetadata,
       id: CHAT_OBJECT_ID,
-      nameSingular: CoreObjectNameSingular.AgentChatThread,
+      nameSingular: StandardObjectNameSingular.AgentChatThread,
       namePlural: 'agentChatThreads',
       labelSingular: 'Chat',
       labelPlural: 'Chats',
@@ -387,10 +391,13 @@ const meta = {
 
     setTestObjectMetadataItemsInMetadataStore(jotaiStore, [chatMetadata]);
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
-    jotaiStore.set(
-      currentUserWorkspaceState.atom,
-      mockedUserData.currentUserWorkspace,
-    );
+    jotaiStore.set(currentUserWorkspaceState.atom, {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [
+        ...(mockedUserData.currentUserWorkspace.permissionFlags ?? []),
+        PermissionFlagType.AI,
+      ],
+    });
     jotaiStore.set(
       currentWorkspaceMemberState.atom,
       getRecordFromRecordNode<WorkspaceMember>({

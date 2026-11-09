@@ -37,7 +37,7 @@ const buildData = ({
 });
 
 const collectOpportunitiesByPointOfContactId = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   personIds: string[],
 ): Promise<Map<string, RelatedLastContact[]>> => {
   const opportunitiesByPersonId = new Map<string, RelatedLastContact[]>();
@@ -93,7 +93,7 @@ const collectOpportunitiesByPointOfContactId = async (
 };
 
 const resolveOpportunitiesByPersonId = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   stateByPersonId: Map<string, PersonLastContactState>,
   personIds: string[],
 ): Promise<Map<string, RelatedLastContact[]>> => {
@@ -134,7 +134,7 @@ const resolveOpportunitiesByPersonId = async (
 // people, so their last contact mirrors the most recent contact of any person
 // connected to them.
 export const updateRelatedLastContactForPeople = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   contactByPersonId: Map<string, RelatedInteraction>,
   stateByPersonId: Map<string, PersonLastContactState>,
 ): Promise<void> => {

@@ -19,27 +19,28 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
   }),
-  SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 export class ApplicationExportResolver {
   constructor(

@@ -3,7 +3,6 @@ import { useQuery } from '@apollo/client/react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import {
   canConnectedAccountPerformEmailOperation,
   getSendableEmailHandles,
@@ -37,6 +36,7 @@ import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledFieldsContainer = styled.div`
   display: flex;
@@ -83,6 +83,7 @@ export const EmailComposerFields = ({
   contextRecord,
   onAttachFiles,
 }: EmailComposerFieldsProps) => {
+  const { t } = useLingui();
   const ccInputRef = useRef<HTMLInputElement>(null);
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{

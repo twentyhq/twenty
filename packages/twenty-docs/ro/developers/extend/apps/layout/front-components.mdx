@@ -133,6 +133,7 @@ export default defineSettingsMenuItem({
   title: 'Sync',
   icon: 'IconRefresh',
   position: 1,
+  slug: 'sync',
 });
 ```
 
@@ -144,16 +145,25 @@ Declarați câte aveți nevoie. Propriul element **Generale** al Twenty — actu
 
 ### Câmpuri
 
-| Câmp                                | Descriere                                                                            |
-| ----------------------------------- | ------------------------------------------------------------------------------------ |
-| `universalIdentifier`               | Un UUID pe care îl generați o singură dată și îl dețineți, stabil între sincronizări |
-| `frontComponentUniversalIdentifier` | `universalIdentifier` al componentei front-end pe care o afișează acest element      |
-| `titlu`                             | Eticheta elementului. `General` este rezervat și compilarea eșuează                  |
-| `icon` *(opțional)*                 | Numele pictogramei, rezolvat pe client; un nume necunoscut revine la unul implicit   |
-| `position` *(opțional)*             | Ordinea de sortare, crescătoare. Implicit este `0`                                   |
-| `scope` *(opțional)*                | `WORKSPACE` (implicit) sau `USER`                                                    |
+| Câmp                                | Descriere                                                                                  |
+| ----------------------------------- | ------------------------------------------------------------------------------------------ |
+| `universalIdentifier`               | Un UUID pe care îl generați o singură dată și îl dețineți, stabil între sincronizări       |
+| `frontComponentUniversalIdentifier` | `universalIdentifier` al componentei front-end pe care o afișează acest element            |
+| `titlu`                             | Eticheta elementului. `General` este rezervat și compilarea eșuează                        |
+| `icon` *(opțional)*                 | Numele pictogramei, rezolvat pe client; un nume necunoscut revine la unul implicit         |
+| `position` *(opțional)*             | Ordinea de sortare, crescătoare. Implicit este `0`                                         |
+| `scope` *(opțional)*                | `WORKSPACE` (implicit) sau `USER`                                                          |
+| `slug` *(opțional)*                 | ID-ul filei în URL-ul paginii, de ex. `#sync`. Consultați [URL-uri ale filelor](#tab-urls) |
 
 `position` este un număr zecimal, astfel încât un element poate fi plasat între două elemente existente fără renumerotare. Elementele sunt sortate după `position` în ordine crescătoare, iar egalitățile sunt departajate după `universalIdentifier`, astfel încât ordinea este aceeași în fiecare spațiu de lucru. Două elemente ale aceleiași aplicații nu pot avea aceeași poziție în același domeniu — sincronizarea refuză acest lucru, în loc să lase ordinea instalării să decidă care este afișat primul.
+
+### URL-uri ale filelor
+
+Fila fiecărui element este identificată printr-un hash în URL-ul paginii, astfel încât să puteți crea direct un link către aceasta, de exemplu `/settings/applications/\<applicationId>#sync` sau `/settings/app-preferences/\<applicationId>#sync`. Setați `slug` pentru a alege acel hash; fără acesta, fila este identificată prin `universalIdentifier` al elementului. Adăugarea ulterioară a unui slug păstrează funcționale linkurile care folosesc `universalIdentifier`: acestea deschid aceeași filă.
+
+Un slug este în format kebab-case cu litere mici (litere, cifre și cratime simple, precum `sync` sau `sync-settings`) și are cel mult 64 de caractere. `general` și `variables` sunt rezervate pentru filele integrate, un slug în format UUID este respins deoarece ar putea masca linkul altei file, iar două elemente ale aceleiași aplicații nu pot partaja un slug, nici chiar în scopuri diferite. Atât buildul, cât și sincronizarea resping un slug care încalcă aceste reguli.
+
+După ce un membru conectează sau reconectează un cont în **Setări > Preferințe aplicație**, acesta ajunge la prima filă de element `USER` a aplicației, în ordinea `position`, sau la **Generale** atunci când aplicația nu declară niciun astfel de element.
 
 ### Domeniul spațiului de lucru și al utilizatorului
 
@@ -1195,10 +1205,31 @@ Un punct portocaliu în antetul spațiului de lucru indică o captură activă. 
 
 `getUserMedia()` și `MediaRecorder` rulează prin polyfill-uri sandbox, astfel încât codul standard de înregistrare și `MediaRecorder.isTypeSupported()` funcționează nemodificate după aprobare. Obiectele detaliate de constrângeri sunt acceptate, dar nu sunt transmise mai departe. Gazda realizează captura folosind valorile sale implicite pentru tipurile solicitate. Aplicații diferite pot realiza capturi simultan, iar oprirea unei aplicații afectează doar propriile sesiuni. Fiecare componentă front acceptă câte o captură în așteptare sau activă la un moment dat. Stochează un `Blob` înregistrat cu funcția gazdă `uploadFile`.
 
+### Site-uri web încorporate cu acces la conținut media
+
+Pentru a încorpora un instrument de telefonie sau video, declarați originea HTTPS a acestuia în [`requestedIframeMediaPermissions`](/ro/developers/extend/apps/config/application#embedded-website-media-access) din aplicația dvs., cu accesul la microfon și cameră configurat separat. Instalarea aplicației acordă spațiului de lucru acces pentru aceste site-uri web. Actualizările aplicațiilor publicate păstrează permisiunile existente și nu acordă automat acces suplimentar la conținut media. Aplicațiile de dezvoltare sincronizate local primesc automat site-urile web declarate în manifestul lor. Un membru care poate gestiona aplicații poate aproba solicitări noi din fila **General** a aplicației instalate, în **Acces media pentru site-uri web încorporate** > **Revizuiește accesul media**. Această aprobare utilizează o confirmare nativă a browserului care afișează aplicația, originile site-urilor web și accesul solicitat la microfon sau cameră. Twenty citește site-urile web autorizate când se încarcă o filă, deci reîncărcați filele Twenty deschise după instalare sau aprobare.
+
+Solicitați funcțiile corespunzătoare în iframe:
+
+```tsx
+<iframe
+  title="Aircall phone"
+  src="https://workspace.aircall.io?integration=generic"
+  allow="microphone"
+  width={376}
+  height={666}
+/>
+```
+
+Pentru video, utilizați `allow="microphone; camera"` și declarați ambele pentru origine. Twenty deleagă doar accesul media acordat aplicației dvs. pentru acea origine. Membrii trebuie să selecteze controlul **Activează** al elementului încorporat și să aprobe o confirmare nativă a browserului care afișează aplicația, originea site-ului web și accesul solicitat la microfon sau cameră înainte ca acesta să primească acces la conținut media. Permisiunile browserului și ale sistemului de operare se aplică în continuare. `srcDoc` și elementele încorporate la originea proprie a Twenty nu pot primi această delegare. Widgeturile de aspect de pagină `IFRAME` definite de aplicație utilizează originile autorizate ale aplicației proprietare și același flux de confirmare.
+
+Elementele încorporate activate apar în același indicator din antet ca și capturarea nativă, cu **Acces la microfon activat** sau **Acces la cameră activat**, în loc să indice că înregistrarea este activă. Indicatorul rămâne vizibil cât timp accesul este activat, chiar dacă elementul încorporat este ascuns. **Dezactivează** descarcă iframe-ul și îl reîncarcă cu accesul media blocat. Capturarea aplicației prin `getUserMedia()` continuă să raporteze capturarea efectivă și păstrează propriul control **Oprește**.
+
+Conținutul iframe rămâne izolat într-un sandbox. Elementele externe încorporate cu conținut media aprobate își păstrează propria origine după ce membrul activează accesul, permițând site-ului web să își utilizeze sesiunea și să solicite permisiuni media în browser. Alte iframe-uri ale componentelor front-end păstrează o origine sandbox opacă.
+
 ### Alte lacune
 
 * **Payload-uri drag-and-drop.** Evenimentele de tip drag sunt declanșate, dar `event.dataTransfer` este `undefined`.
 * **Built-in-uri Node.** `fs`, `path` și `node:crypto` eșuează la build, așa că mută acea logică într-o [logic function](/ro/developers/extend/apps/logic/logic-functions). Web Crypto înlocuiește `node:crypto`, iar `fetch`, `TextEncoder` și `URL` sunt de asemenea disponibile, vedeți [domeniul global](#global-scope) — dar nimic nu înlocuiește `fs`: sandboxul nu are sistem de fișiere.
-* **`iframe`** este întotdeauna re-sandboxat fără `allow-same-origin`, astfel încât o încorporare care se bazează pe propria sesiune se afișează ca delogat. Nu are nici `onLoad`.
 
 <PageBanner illustration="card-page-front-components" />

@@ -37,26 +37,27 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @Controller(ApiPath.Mcp)
 @UseGuards(
   McpAuthGuard,
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
+  AccessPolicyGuard({
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: { withUser: true, withoutUser: true, withAgent: true },
     },
-    apiKey: true,
-    oauthClient: true,
-    application: { withUser: true, withoutUser: true, withAgent: true },
+    requiredPermissionFlags: [],
   }),
   WorkspaceNotSuspendedGuard,
-  NoPermissionGuard,
 )
 @UseFilters(RestApiExceptionFilter, AuthRestApiExceptionFilter)
 export class McpCoreController {
@@ -105,7 +106,7 @@ export class McpCoreController {
       apiKey,
       application,
       agentId: request.agentId,
-      isDirectMode: mode === 'direct',
+      isDirectMode: mode !== 'meta',
     };
 
     // JSON-RPC notifications (no id) expect no response body regardless of Accept

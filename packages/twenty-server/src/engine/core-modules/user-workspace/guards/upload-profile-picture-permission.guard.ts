@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { buildWorkspaceAuthContextFromRequest } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context-from-request.util';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -15,11 +16,13 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 export class UploadProfilePicturePermissionGuard implements CanActivate {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly settingPermissionsService: SettingPermissionsService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
@@ -35,12 +38,7 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
       );
     }
 
-    const workspaceId = request.workspace.id;
-    const userWorkspaceId = request.userWorkspaceId;
     const workspaceActivationStatus = request.workspace.activationStatus;
-    const apiKeyId = request.apiKey?.id;
-    const applicationId = request.application?.id;
-    const agentId = request.agentId;
 
     if (
       [
@@ -51,14 +49,12 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
       return true;
     }
 
+    const authContext = buildWorkspaceAuthContextFromRequest(request);
+
     const hasWorkspaceMembersPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
-        workspaceId,
-        setting: PermissionFlagType.WORKSPACE_MEMBERS,
-        apiKeyId,
-        applicationId,
-        agentId,
+      await this.settingPermissionsService.hasPermissionFlag({
+        authContext: authContext,
+        permissionFlag: PermissionFlagType.WORKSPACE_MEMBERS,
       });
 
     if (hasWorkspaceMembersPermission) {
@@ -66,13 +62,9 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
     }
 
     const hasProfileInformationPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
-        workspaceId,
-        setting: PermissionFlagType.PROFILE_INFORMATION,
-        apiKeyId,
-        applicationId,
-        agentId,
+      await this.settingPermissionsService.hasPermissionFlag({
+        authContext: authContext,
+        permissionFlag: PermissionFlagType.PROFILE_INFORMATION,
       });
 
     if (hasProfileInformationPermission) {
