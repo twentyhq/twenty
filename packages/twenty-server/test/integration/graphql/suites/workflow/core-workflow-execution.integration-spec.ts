@@ -60,7 +60,7 @@ import { type CoreWorkflowVersionWriteService } from 'src/engine/core-modules/wo
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 
-import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { type WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { type ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
@@ -2298,9 +2298,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   it('rejects a draft edited while activation is being prepared', async () => {
     const fixture = await createFixture();
     await markFixtureVersionAsDraft(fixture);
-    const codeBuild = getAppProviderByClassName<CodeStepBuildService>(
-      'CodeStepBuildService',
-    );
+    const workflowCommon =
+      getAppProviderByClassName<WorkflowCommonWorkspaceService>(
+        'WorkflowCommonWorkspaceService',
+      );
+    const getFlatEntityMaps =
+      workflowCommon.getFlatEntityMaps.bind(workflowCommon);
     let notifyPreparing: () => void = () => {};
     let releasePreparation: () => void = () => {};
     const preparing = new Promise<void>((resolve) => {
@@ -2309,11 +2312,13 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const prepared = new Promise<void>((resolve) => {
       releasePreparation = resolve;
     });
-    const buildSpy = jest
-      .spyOn(codeBuild, 'switchCodeStepLogicFunctionsToPrebuilt')
-      .mockImplementationOnce(async () => {
+    const preparationSpy = jest
+      .spyOn(workflowCommon, 'getFlatEntityMaps')
+      .mockImplementationOnce(async (...args) => {
         notifyPreparing();
         await prepared;
+
+        return getFlatEntityMaps(...args);
       });
     const activation = workflowGraphqlRequest(
       'mutation Activate($id: UUID!) { activateCoreWorkflowVersion(coreWorkflowVersionId: $id) }',
@@ -2333,7 +2338,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(edit.body.errors).toBeUndefined();
     } finally {
       releasePreparation();
-      buildSpy.mockRestore();
+      preparationSpy.mockRestore();
     }
     expect(JSON.stringify((await activation).body.errors)).toContain('changed');
     const [core] = await global.testDataSource.query(
