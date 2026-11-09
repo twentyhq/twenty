@@ -135,8 +135,8 @@ describe('SSO login should fail', () => {
         input: {
           id: samlIdentityProviderId,
           name: 'SAML identity provider',
-          issuer: testIdentityProvider.issuer,
-          ssoURL: `${testIdentityProvider.issuer}/sso`,
+          issuer: testIdentityProvider.oidc.issuer,
+          ssoURL: `${testIdentityProvider.oidc.issuer}/sso`,
           certificate: SAML_IDENTITY_PROVIDER_CERTIFICATE,
         },
       });

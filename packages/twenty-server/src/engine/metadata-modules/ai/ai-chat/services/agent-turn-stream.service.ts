@@ -21,7 +21,10 @@ import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentTurn } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
-import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
+import {
+  addStepToAgentTurnUsage,
+  type AgentTurnUsageStep,
+} from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -749,16 +752,7 @@ export class AgentTurnStreamService {
     modelConfig,
     usage,
   }: {
-    part: {
-      type: string;
-      usage?: {
-        inputTokens?: number;
-        outputTokens?: number;
-        inputTokenDetails?: { cacheReadTokens?: number };
-        outputTokenDetails?: { reasoningTokens?: number };
-      };
-      providerMetadata?: Record<string, Record<string, unknown> | undefined>;
-    };
+    part: { type: string } & AgentTurnUsageStep;
     modelConfig: AiModelConfig;
     usage: AgentTurnStreamUsage;
   }) {
