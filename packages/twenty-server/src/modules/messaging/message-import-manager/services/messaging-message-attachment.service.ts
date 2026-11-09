@@ -24,6 +24,7 @@ import {
   type MessageAttachmentMetadata,
 } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { filterImportableMessageAttachments } from 'src/modules/messaging/message-import-manager/utils/filter-importable-message-attachments.util';
+import { resolveMessageAttachmentMimeType } from 'src/modules/messaging/message-import-manager/utils/resolve-message-attachment-mime-type.util';
 
 const ATTACHMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.attachment.fields.file.universalIdentifier;
@@ -152,10 +153,14 @@ export class MessagingMessageAttachmentService {
       .flatMap(
         ({ messageId, messageChannelMessageAssociationId, attachments }) =>
           filterImportableMessageAttachments(attachments).map(
-            ({ externalId, filename, size }) => ({
+            ({ externalId, filename, size, contentType }) => ({
               messageId,
               filename,
               size,
+              mimeType: resolveMessageAttachmentMimeType({
+                contentType,
+                filename,
+              }),
               remoteOrigin: {
                 originType: FILE_REMOTE_ORIGIN_TYPE.MESSAGE,
                 originId: messageChannelMessageAssociationId,

@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { lookup } from 'mrmime';
 import { type Readable } from 'stream';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,7 +18,7 @@ export class FileRemoteContentService {
     file,
     workspaceId,
   }: {
-    file: Pick<FileEntity, 'id' | 'path' | 'remoteOrigin'>;
+    file: Pick<FileEntity, 'id' | 'mimeType' | 'remoteOrigin'>;
     workspaceId: string;
   }): Promise<{ stream: Readable; mimeType: string } | null> {
     if (!isDefined(file.remoteOrigin)) {
@@ -43,7 +42,7 @@ export class FileRemoteContentService {
 
     return {
       stream,
-      mimeType: lookup(file.path) ?? 'application/octet-stream',
+      mimeType: file.mimeType,
     };
   }
 }

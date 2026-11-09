@@ -123,7 +123,7 @@ export class FilesFieldService {
   }: {
     workspaceId: string;
     fieldMetadataUniversalIdentifier: string;
-    files: (Pick<FileEntity, 'size'> & {
+    files: (Pick<FileEntity, 'size' | 'mimeType'> & {
       filename: string;
       remoteOrigin: FileRemoteOrigin;
     })[];
@@ -149,18 +149,21 @@ export class FilesFieldService {
       toDelete: false,
     };
 
-    const remoteFiles = files.map(({ filename, size, remoteOrigin }) => {
-      const id = v4();
+    const remoteFiles = files.map(
+      ({ filename, size, mimeType, remoteOrigin }) => {
+        const id = v4();
 
-      return {
-        id,
-        label: filename,
-        resourcePath: `${fieldMetadata.universalIdentifier}/${id}.${buildRemoteFileExtension(filename)}`,
-        size,
-        settings,
-        remoteOrigin,
-      };
-    });
+        return {
+          id,
+          label: filename,
+          resourcePath: `${fieldMetadata.universalIdentifier}/${id}.${buildRemoteFileExtension(filename)}`,
+          size,
+          mimeType,
+          settings,
+          remoteOrigin,
+        };
+      },
+    );
 
     await this.fileStorageService.createRemoteFiles({
       workspaceId,

@@ -669,12 +669,15 @@ export class FileStorageService {
     files,
   }: Omit<ResourceIdentifier, 'resourcePath'> & {
     applicationId: string;
-    files: (Pick<FileEntity, 'id' | 'size' | 'settings' | 'remoteOrigin'> & {
+    files: (Pick<
+      FileEntity,
+      'id' | 'size' | 'mimeType' | 'settings' | 'remoteOrigin'
+    > & {
       resourcePath: string;
     })[];
   }): Promise<void> {
     const rows = files.map(
-      ({ id, resourcePath, size, settings, remoteOrigin }) => {
+      ({ id, resourcePath, size, mimeType, settings, remoteOrigin }) => {
         const { filePath } = this.validateAndBuildFileStoragePathOrThrow({
           workspaceId,
           applicationUniversalIdentifier,
@@ -686,6 +689,7 @@ export class FileStorageService {
           id,
           path: filePath,
           size,
+          mimeType,
           settings,
           remoteOrigin,
           workspaceId,
