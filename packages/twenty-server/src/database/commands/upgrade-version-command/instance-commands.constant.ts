@@ -292,7 +292,7 @@ import { MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand } from 's
 import { AddAiDataPolicyToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-slow-1793907961109-add-ai-data-policy-to-workspace';
 import { AddCanCreatePermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793995650464-add-can-create-permissions';
 import { AddRlsRuleFieldPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1794155686000-add-rls-rule-field-permissions';
-import { AddViewShouldDisplayGroupsAsTabsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1794215625496-add-view-should-display-groups-as-tabs';
+import { AddViewShouldDisplayGroupsAsTabsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794222774219-add-view-should-display-groups-as-tabs';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
