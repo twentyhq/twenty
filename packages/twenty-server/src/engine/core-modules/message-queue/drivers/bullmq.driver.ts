@@ -162,6 +162,18 @@ export class BullMQDriver
       },
       callback: () => this.collectQueueMemoryUsedRatio(),
     });
+
+    // only the top group keys, so workspace ids do not blow up label cardinality
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_queue_memory_group_used_bytes',
+      options: {
+        description:
+          'Redis memory charged to the job-queue group keys (workspaces, applications) using the most',
+        unit: 'By',
+      },
+      callback: () => this.collectTopGroupKeyMemoryUsages(),
+      cacheValue: true,
+    });
   }
 
   // charges of every queue share one Redis, so any registered queue's client can reconcile them all
@@ -187,6 +199,30 @@ export class BullMQDriver
     const usedRatio = await this.jobMemoryLimiter.getUsedRatio(queueName);
 
     return isDefined(usedRatio) ? [{ value: usedRatio, attributes: {} }] : [];
+  }
+
+  private async collectTopGroupKeyMemoryUsages(): Promise<
+    Array<{
+      value: number;
+      attributes: { group_key: string; group_type: string };
+    }>
+  > {
+    const [queueName] = Object.keys(this.queueMap) as MessageQueue[];
+
+    if (!isDefined(queueName)) {
+      return [];
+    }
+
+    const usages =
+      await this.jobMemoryLimiter.getTopGroupKeyMemoryUsages(queueName);
+
+    return usages.map(({ groupKey, usedBytes }) => ({
+      value: usedBytes,
+      attributes: {
+        group_key: groupKey,
+        group_type: groupKey.slice(0, groupKey.indexOf(':')),
+      },
+    }));
   }
 
   private async collectJobCountsByQueue(
