@@ -232,8 +232,11 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   },
+  conversationStyle: 'chat',
 });
 ```
+
+يضبط `conversationStyle` كيفية عرض Twenty لمحادثات المزوّد: يعرض `'chat'` فقاعات الرسائل مجمّعة حسب المرسل، كما في تطبيق مراسلة، ويعرض `'email'` تخطيط سلسلة رسائل البريد الإلكتروني. من دونه، تحتفظ قنوات التطبيق بتخطيط الدردشة. يتطلب `"engines": { "twenty": ">=2.58.0" }`.
 
 اربط قناة به عند إنشاء القناة، أو لاحقًا باستخدام `updateMessageChannel` (تمرير `null` يلغي ربطها):
 
