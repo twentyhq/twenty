@@ -2,6 +2,7 @@
    PDF documents are rendered outside the app and cannot read theme variables */
 import { PDF_FONT_FAMILIES } from '@/command-menu-item/record/single-record/constants/PdfFontFamilies';
 import { RICH_TEXT_PDF_COLORS } from '@/command-menu-item/record/single-record/constants/RichTextPdfColors';
+import { fetchPdfImageBlob } from '@/command-menu-item/record/single-record/utils/fetchPdfImageBlob';
 import {
   Document,
   Image,
@@ -208,150 +209,139 @@ const renderInline = (node: TipTapNode, key: number): ReactNode => {
 const renderInlineContent = (node: TipTapNode) =>
   (node.content ?? []).map(renderInline);
 
-// Images are fetched before rendering because react-pdf cannot send CORS
-// requests on its own.
-const createBlockRenderer = (imageSources: Map<string, string>) => {
-  const renderListItems = (list: TipTapNode, key: number) => {
-    const start = isNumber(list.attrs?.start) ? list.attrs.start : 1;
+const renderListItems = (list: TipTapNode, key: number) => {
+  const start = isNumber(list.attrs?.start) ? list.attrs.start : 1;
 
-    return (
-      <View key={key} style={styles.block}>
-        {(list.content ?? []).map((item, index) => {
-          const marker =
-            list.type === TIPTAP_NODE_TYPES.ORDERED_LIST
-              ? `${start + index}.`
-              : list.type === TIPTAP_NODE_TYPES.TASK_LIST
-                ? item.attrs?.checked === true
-                  ? '[x]'
-                  : '[ ]'
-                : '•';
+  return (
+    <View key={key} style={styles.block}>
+      {(list.content ?? []).map((item, index) => {
+        const marker =
+          list.type === TIPTAP_NODE_TYPES.ORDERED_LIST
+            ? `${start + index}.`
+            : list.type === TIPTAP_NODE_TYPES.TASK_LIST
+              ? item.attrs?.checked === true
+                ? '[x]'
+                : '[ ]'
+              : '•';
 
-          return (
-            <View key={index} style={styles.listItem}>
-              <Text style={styles.listMarker}>{marker}</Text>
-              <View style={styles.listContent}>
-                {(item.content ?? []).map(renderBlock)}
-              </View>
+        return (
+          <View key={index} style={styles.listItem}>
+            <Text style={styles.listMarker}>{marker}</Text>
+            <View style={styles.listContent}>
+              {(item.content ?? []).map(renderBlock)}
             </View>
-          );
-        })}
-      </View>
-    );
-  };
-
-  const renderBlock = (node: TipTapNode, key: number): ReactNode => {
-    switch (node.type) {
-      case TIPTAP_NODE_TYPES.PARAGRAPH:
-        return (
-          <Text key={key} style={styles.block}>
-            {renderInlineContent(node)}
-          </Text>
-        );
-      case TIPTAP_NODE_TYPES.HEADING: {
-        const level = isNumber(node.attrs?.level) ? node.attrs.level : 1;
-
-        return (
-          <Text
-            key={key}
-            style={[
-              styles.block,
-              {
-                fontFamily: PDF_FONT_FAMILIES.BOLD,
-                fontSize: HEADING_FONT_SIZES[level - 1] ?? 11,
-              },
-            ]}
-          >
-            {renderInlineContent(node)}
-          </Text>
-        );
-      }
-      case TIPTAP_NODE_TYPES.BULLET_LIST:
-      case TIPTAP_NODE_TYPES.ORDERED_LIST:
-      case TIPTAP_NODE_TYPES.TASK_LIST:
-        return renderListItems(node, key);
-      case TIPTAP_NODE_TYPES.BLOCKQUOTE:
-        return (
-          <View key={key} style={styles.blockquote}>
-            {(node.content ?? []).map(renderBlock)}
           </View>
         );
-      case TIPTAP_NODE_TYPES.CODE_BLOCK:
-        return (
-          <Text key={key} style={styles.codeBlock}>
-            {(node.content ?? []).map((child) => child.text ?? '').join('')}
-          </Text>
-        );
-      case TIPTAP_NODE_TYPES.TABLE:
-        return (
-          <View key={key} style={styles.table}>
-            {(node.content ?? []).map((row, rowIndex) => (
-              <View key={rowIndex} style={styles.tableRow}>
-                {(row.content ?? []).map((cell, cellIndex) => (
-                  <View
-                    key={cellIndex}
-                    style={
-                      cell.type === TIPTAP_NODE_TYPES.TABLE_HEADER
-                        ? [styles.tableCell, styles.tableHeader]
-                        : styles.tableCell
-                    }
-                  >
-                    {(cell.content ?? []).map(renderBlock)}
-                  </View>
-                ))}
-              </View>
-            ))}
-          </View>
-        );
-      case TIPTAP_NODE_TYPES.IMAGE: {
-        const src = isNonEmptyString(node.attrs?.src) ? node.attrs.src : '';
-        const imageSource = imageSources.get(src);
+      })}
+    </View>
+  );
+};
 
-        return isDefined(imageSource) ? (
-          <Image key={key} src={imageSource} style={styles.image} />
-        ) : null;
-      }
-      case TIPTAP_NODE_TYPES.FILE: {
-        const url = getSafeUrl(
-          isNonEmptyString(node.attrs?.url) ? node.attrs.url : undefined,
-        );
-        const name = isNonEmptyString(node.attrs?.name) ? node.attrs.name : '';
+const renderBlock = (node: TipTapNode, key: number): ReactNode => {
+  switch (node.type) {
+    case TIPTAP_NODE_TYPES.PARAGRAPH:
+      return (
+        <Text key={key} style={styles.block}>
+          {renderInlineContent(node)}
+        </Text>
+      );
+    case TIPTAP_NODE_TYPES.HEADING: {
+      const level = isNumber(node.attrs?.level) ? node.attrs.level : 1;
 
-        return isDefined(url) ? (
-          <Link key={key} src={url} style={[styles.block, styles.link]}>
-            {name || url}
-          </Link>
-        ) : (
-          <Text key={key} style={styles.block}>
-            {name}
-          </Text>
-        );
-      }
-      case TIPTAP_NODE_TYPES.DIVIDER:
-        return <View key={key} style={styles.divider} />;
-      default:
-        return (node.content ?? []).map(renderBlock);
+      return (
+        <Text
+          key={key}
+          style={[
+            styles.block,
+            {
+              fontFamily: PDF_FONT_FAMILIES.BOLD,
+              fontSize: HEADING_FONT_SIZES[level - 1] ?? 11,
+            },
+          ]}
+        >
+          {renderInlineContent(node)}
+        </Text>
+      );
     }
-  };
+    case TIPTAP_NODE_TYPES.BULLET_LIST:
+    case TIPTAP_NODE_TYPES.ORDERED_LIST:
+    case TIPTAP_NODE_TYPES.TASK_LIST:
+      return renderListItems(node, key);
+    case TIPTAP_NODE_TYPES.BLOCKQUOTE:
+      return (
+        <View key={key} style={styles.blockquote}>
+          {(node.content ?? []).map(renderBlock)}
+        </View>
+      );
+    case TIPTAP_NODE_TYPES.CODE_BLOCK:
+      return (
+        <Text key={key} style={styles.codeBlock}>
+          {(node.content ?? []).map((child) => child.text ?? '').join('')}
+        </Text>
+      );
+    case TIPTAP_NODE_TYPES.TABLE:
+      return (
+        <View key={key} style={styles.table}>
+          {(node.content ?? []).map((row, rowIndex) => (
+            <View key={rowIndex} style={styles.tableRow}>
+              {(row.content ?? []).map((cell, cellIndex) => (
+                <View
+                  key={cellIndex}
+                  style={
+                    cell.type === TIPTAP_NODE_TYPES.TABLE_HEADER
+                      ? [styles.tableCell, styles.tableHeader]
+                      : styles.tableCell
+                  }
+                >
+                  {(cell.content ?? []).map(renderBlock)}
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
+      );
+    case TIPTAP_NODE_TYPES.IMAGE: {
+      const src = node.attrs?.src;
 
-  return renderBlock;
+      return isNonEmptyString(src) ? (
+        <Image
+          key={key}
+          src={() => fetchPdfImageBlob(src)}
+          style={styles.image}
+        />
+      ) : null;
+    }
+    case TIPTAP_NODE_TYPES.FILE: {
+      const url = getSafeUrl(
+        isNonEmptyString(node.attrs?.url) ? node.attrs.url : undefined,
+      );
+      const name = isNonEmptyString(node.attrs?.name) ? node.attrs.name : '';
+
+      return isDefined(url) ? (
+        <Link key={key} src={url} style={[styles.block, styles.link]}>
+          {name || url}
+        </Link>
+      ) : (
+        <Text key={key} style={styles.block}>
+          {name}
+        </Text>
+      );
+    }
+    case TIPTAP_NODE_TYPES.DIVIDER:
+      return <View key={key} style={styles.divider} />;
+    default:
+      return (node.content ?? []).map(renderBlock);
+  }
 };
 
 type TipTapPdfDocumentProps = {
   document: TipTapDocument;
-  resolvedImageSources: Map<string, string>;
 };
 
-export const TipTapPdfDocument = ({
-  document,
-  resolvedImageSources,
-}: TipTapPdfDocumentProps) => {
-  const renderBlock = createBlockRenderer(resolvedImageSources);
-
-  return (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        {(document.content ?? []).map(renderBlock)}
-      </Page>
-    </Document>
-  );
-};
+export const TipTapPdfDocument = ({ document }: TipTapPdfDocumentProps) => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      {(document.content ?? []).map(renderBlock)}
+    </Page>
+  </Document>
+);
