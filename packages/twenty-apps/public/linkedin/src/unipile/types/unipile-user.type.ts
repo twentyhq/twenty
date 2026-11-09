@@ -3,6 +3,7 @@ export type UnipileUser = {
   display_name: string;
   public_identifier?: string;
   profile_url?: string;
+  public_picture_url?: string;
   first_name?: string;
   last_name?: string;
 };
