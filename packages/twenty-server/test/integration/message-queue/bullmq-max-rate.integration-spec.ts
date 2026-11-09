@@ -219,11 +219,13 @@ describe('BullMQDriver maxRate (integration)', () => {
 
     await allStarted;
 
-    expect(startedAtByLabel.H3).toBeGreaterThanOrEqual(
+    const firstStartedAt = Math.min(startedAtByLabel.H1, startedAtByLabel.H2);
+
+    expect(startedAtByLabel.H3 - firstStartedAt).toBeGreaterThanOrEqual(
       INTERVAL_MS - TOLERANCE_MS,
     );
-    expect(startedAtByLabel.H4).toBeGreaterThanOrEqual(
-      2 * INTERVAL_MS - TOLERANCE_MS,
+    expect(startedAtByLabel.H4 - startedAtByLabel.H3).toBeGreaterThanOrEqual(
+      INTERVAL_MS - TOLERANCE_MS,
     );
   }, 15_000);
 });
