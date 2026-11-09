@@ -22,6 +22,7 @@ import { MAX_TRIAL_WORKSPACES_PER_USER } from 'src/engine/core-modules/billing/c
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
@@ -29,6 +30,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { buildBillingTrialLimitLockKey } from 'src/engine/core-modules/billing/utils/build-billing-trial-limit-lock-key.util';
+import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -48,6 +50,7 @@ export class BillingPortalWorkspaceService {
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingSeatService: BillingSeatService,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
@@ -423,8 +426,12 @@ export class BillingPortalWorkspaceService {
     }
     const successUrl = frontBaseUrl.toString();
 
-    const quantity = await this.userWorkspaceRepository.countBy({
-      workspaceId: workspace.id,
+    const quantity = computeBilledSeats({
+      memberCount: await this.userWorkspaceRepository.countBy({
+        workspaceId: workspace.id,
+      }),
+      seatArrangements:
+        await this.billingSeatService.findActiveSeatArrangements(workspace.id),
     });
 
     const customer = await this.billingCustomerRepository.findOne(
