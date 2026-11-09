@@ -42,4 +42,12 @@ export const getSsoTestIdentityProvider = () => ({
       SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.nonMemberPassword,
     ),
   },
+  newcomer: {
+    username: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.newcomerUsername,
+    ),
+    password: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.newcomerPassword,
+    ),
+  },
 });

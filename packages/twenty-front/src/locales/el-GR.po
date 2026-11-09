@@ -2683,6 +2683,11 @@ msgstr "Προσθέστε την πρώτη σας ροή εργασίας"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Προστέθηκε {beautifiedCreatedAt}"
 
+#. js-lingui-id: WHJA3l
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
+msgstr "Προστέθηκε <0>Ημερομηνία ανανέωσης</0> σε <1>{companiesLabel}</1>"
+
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -2881,6 +2886,7 @@ msgid "agent"
 msgstr "πράκτορας"
 
 #. js-lingui-id: iEQQyu
+#: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -3035,6 +3041,11 @@ msgstr "Επεξεργασία δεδομένων AI"
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "AI is paused"
 msgstr "Η AI βρίσκεται σε παύση"
+
+#. js-lingui-id: u9aqca
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "AI matches your columns to fields, even renamed ones."
+msgstr "Η ΤΝ αντιστοιχίζει τις στήλες σας με πεδία, ακόμη και αν έχουν μετονομαστεί."
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3540,6 +3551,7 @@ msgid "Amber"
 msgstr "Κεχριμπαρί"
 
 #. js-lingui-id: hehnjM
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -3634,6 +3646,11 @@ msgstr "Παρουσιάστηκε εσωτερικό σφάλμα κατά τη
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "An internal error occurred while validating your changes. Please contact support."
 msgstr "Παρουσιάστηκε εσωτερικό σφάλμα κατά την επικύρωση των αλλαγών σας. Επικοινωνήστε με την υποστήριξη."
+
+#. js-lingui-id: 2SfoVo
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "An Invoices object linked to Subscriptions and Companies."
+msgstr "Ένα αντικείμενο Τιμολόγια συνδεδεμένο με Συνδρομές και Εταιρείες."
 
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -6562,6 +6579,11 @@ msgstr "Κλείσιμο πλευρικού πάνελ"
 msgid "Close video"
 msgstr "Κλείσιμο βίντεο"
 
+#. js-lingui-id: fYGMGN
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Closes in 6 days"
+msgstr "Κλείνει σε 6 ημέρες"
+
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cloud"
@@ -6842,10 +6864,16 @@ msgid "Compact view"
 msgstr "Συμπαγής Προβολή"
 
 #. js-lingui-id: s2QZS6
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/onboarding/components/import-contacts/OnboardingImportPreviewCompanies.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Companies"
 msgstr "Εταιρείες"
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Company"
+msgstr "Εταιρεία"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -8301,6 +8329,11 @@ msgstr "Δημιουργήθηκε {objectLabel}"
 msgid "Created by"
 msgstr "Δημιουργήθηκε από"
 
+#. js-lingui-id: AruIkC
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created object <0>{subscriptionsLabel}</0>"
+msgstr "Δημιουργήθηκε αντικείμενο <0>{subscriptionsLabel}</0>"
+
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -8311,6 +8344,11 @@ msgstr "Δημιουργήθηκε στις {0}"
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Created or updated"
 msgstr "Δημιουργήθηκε ή ενημερώθηκε"
+
+#. js-lingui-id: nyr6nA
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created view <0>Renewals this quarter</0>"
+msgstr "Δημιουργήθηκε προβολή <0>Ανανεώσεις αυτό το τρίμηνο</0>"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -10365,6 +10403,11 @@ msgstr "Πρόχειρο email"
 msgid "Drafted"
 msgstr "Δημιουργήθηκε πρόχειρο"
 
+#. js-lingui-id: 5t1yRu
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafted <0>4 follow-up emails</0>"
+msgstr "Συντάχθηκαν <0>4 email παρακολούθησης</0>"
+
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafted email"
@@ -10374,6 +10417,11 @@ msgstr "Πρόχειρο email"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafting email"
 msgstr "Γίνεται σύνταξη email"
+
+#. js-lingui-id: BnOv+M
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafts only. You review and send."
+msgstr "Μόνο πρόχειρα. Εσείς ελέγχετε και στέλνετε."
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -11000,6 +11048,7 @@ msgid "emails"
 msgstr "ηλεκτρονικά ταχυδρομεία"
 
 #. js-lingui-id: BXEcos
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
@@ -11988,6 +12037,11 @@ msgstr "Κάθε γραμμή κώδικα είναι δημόσια, ώστε �
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "every minute"
 msgstr "κάθε λεπτό"
+
+#. js-lingui-id: pjZ9WF
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Every Monday"
+msgstr "Κάθε Δευτέρα"
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13670,6 +13724,11 @@ msgstr "Η διεύθυνση προώθησης αντιγράφηκε στο �
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Found {objectLabel}"
 msgstr "Βρέθηκε {objectLabel}"
+
+#. js-lingui-id: laQ+m7
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Found <0>4 deals</0> closing in the next 30 days"
+msgstr "Βρέθηκαν <0>4 συμφωνίες</0> που κλείνουν τις επόμενες 30 ημέρες"
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -18523,6 +18582,7 @@ msgstr "N/A"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
@@ -20240,6 +20300,11 @@ msgstr "Δεν έχει μετρηθεί ακόμη σε αυτό το επίπ�
 msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Δεν έχει μετρηθεί ακόμη σε αυτό το επίπεδο προσπάθειας. Εμφανίζεται η μέτρηση του βασικού μοντέλου."
 
+#. js-lingui-id: PBxg/E
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Not now"
+msgstr "Όχι τώρα"
+
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
 msgid "Not open to you"
@@ -21048,6 +21113,11 @@ msgstr "λειτουργίες"
 msgid "Operations"
 msgstr "Λειτουργίες"
 
+#. js-lingui-id: 4MyDFl
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Opportunities"
+msgstr "Ευκαιρίες"
+
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
 msgid "Opt out of tracking"
@@ -21674,6 +21744,13 @@ msgstr "Εκκρεμεί"
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Αιτήματα σε εκκρεμότητα"
+
+#. js-lingui-id: 1wdjme
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "People"
+msgstr "Άνθρωποι"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -22766,6 +22843,11 @@ msgstr "Ανάγνωση email"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Διαβάστε τις προτροπές του συστήματος"
+
+#. js-lingui-id: l668+W
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Read the last emails and meetings for each"
+msgstr "Διαβάστε τα τελευταία email και τις συναντήσεις για καθεμία"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -27389,6 +27471,11 @@ msgstr "Η συνδρομή θα αλλάξει στο πλάνο {planLabel} σ
 msgid "Subscription will be switched to monthly billing the {0}."
 msgstr "Η συνδρομή θα αλλάξει σε μηνιαία χρέωση στις {0}."
 
+#. js-lingui-id: P6F38F
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Subscriptions"
+msgstr "Συνδρομές"
+
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Subsection heading"
@@ -27953,6 +28040,11 @@ msgstr "Αυτό αντιστοιχεί σε περίπου {formattedNewlyEarne
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "Η διεύθυνση από την οποία ο χώρος εργασίας σας θα στέλνει και θα λαμβάνει email (π.χ. support@mycompany.com). Η εξερχόμενη αποστολή απαιτεί την επιβεβαίωση του τομέα στους Εξερχόμενους Τομείς."
+
+#. js-lingui-id: PKwDg+
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "The agent asks before creating anything."
+msgstr "Ο πράκτορας ρωτά πριν δημιουργήσει οτιδήποτε."
 
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -29273,6 +29365,11 @@ msgstr "Σύνολο εργασιών"
 msgid "Track AI consumption across your workspace."
 msgstr "Παρακολουθήστε την κατανάλωση AI σε ολόκληρο τον χώρο εργασίας σας."
 
+#. js-lingui-id: LpPRBt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Track invoices too?"
+msgstr "Να παρακολουθούνται και τα τιμολόγια;"
+
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Track link clicks"
@@ -29597,6 +29694,7 @@ msgid "Twenty adds the people you email and meet, and keeps them up to date with
 msgstr "Το Twenty προσθέτει τα άτομα στα οποία στέλνετε email και συναντάτε και διατηρεί τα στοιχεία τους ενημερωμένα χωρίς μη αυτόματη εισαγωγή δεδομένων."
 
 #. js-lingui-id: JnaRPe
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
 msgstr "Πεδία Twenty"
@@ -31601,6 +31699,11 @@ msgstr "Ταιριάζουμε σε αυτά τα πεδία. Αν υπάρχε�
 msgid "We notify you within 72 hours, as set out in the DPA"
 msgstr "Σας ειδοποιούμε εντός 72 ωρών, όπως ορίζεται στη DPA"
 
+#. js-lingui-id: InKpMt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "We sell subscriptions to design teams."
+msgstr "Πουλάμε συνδρομές σε ομάδες σχεδιασμού."
+
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
@@ -32487,6 +32590,7 @@ msgid "yes"
 msgstr "ναι"
 
 #. js-lingui-id: l75CjT
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx

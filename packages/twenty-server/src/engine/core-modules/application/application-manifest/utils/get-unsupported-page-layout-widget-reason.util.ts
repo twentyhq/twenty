@@ -24,7 +24,6 @@ const NULLABLE_REFERENCE_KEYS = new Set([
 ]);
 
 const NOT_EXPORTED_YET_METADATA_NAMES: ReferencedMetadataName[] = [
-  'frontComponent',
   'commandMenuItem',
 ];
 
@@ -80,12 +79,14 @@ const getUnresolvableConfigurationKeyReason = ({
   universalIdentifier,
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
+  exportedFrontComponentUniversalIdentifiers,
 }: {
   key: string;
   metadataName: ReferencedMetadataName;
   universalIdentifier: unknown;
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
+  exportedFrontComponentUniversalIdentifiers: ReadonlySet<string>;
 }): string | undefined => {
   const label = MANIFEST_ENTITY_REGISTRY[metadataName].entityKind;
 
@@ -100,7 +101,11 @@ const getUnresolvableConfigurationKeyReason = ({
   }
 
   if (
-    NOT_EXPORTED_YET_METADATA_NAMES.includes(metadataName) &&
+    (NOT_EXPORTED_YET_METADATA_NAMES.includes(metadataName) ||
+      (metadataName === 'frontComponent' &&
+        !exportedFrontComponentUniversalIdentifiers.has(
+          universalIdentifier,
+        ))) &&
     isDefined(
       getFlatEntityMaps({
         metadataName,
@@ -123,10 +128,12 @@ const findUnresolvableReferenceReason = ({
   value,
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
+  exportedFrontComponentUniversalIdentifiers,
 }: {
   value: unknown;
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
+  exportedFrontComponentUniversalIdentifiers: ReadonlySet<string>;
 }): string | undefined => {
   if (!isDefined(value) || typeof value !== 'object') {
     return undefined;
@@ -140,6 +147,7 @@ const findUnresolvableReferenceReason = ({
         value: child,
         applicationAllFlatEntityMaps,
         allFlatEntityMaps,
+        exportedFrontComponentUniversalIdentifiers,
       });
 
       if (isDefined(nestedReason)) {
@@ -160,6 +168,7 @@ const findUnresolvableReferenceReason = ({
         universalIdentifier,
         applicationAllFlatEntityMaps,
         allFlatEntityMaps,
+        exportedFrontComponentUniversalIdentifiers,
       });
 
       if (isDefined(reason)) {
@@ -176,12 +185,14 @@ export const getUnsupportedPageLayoutWidgetReason = ({
   flatPageLayoutTab,
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
+  exportedFrontComponentUniversalIdentifiers,
   exportedObjectUniversalIdentifiers,
 }: {
   flatPageLayoutWidget: FlatPageLayoutWidget;
   flatPageLayoutTab: FlatPageLayoutTab;
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
+  exportedFrontComponentUniversalIdentifiers: ReadonlySet<string>;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
 }): string | undefined => {
   if (flatPageLayoutWidget.type === WidgetType.VIEW) {
@@ -220,5 +231,6 @@ export const getUnsupportedPageLayoutWidgetReason = ({
     value: flatPageLayoutWidget.universalConfiguration,
     applicationAllFlatEntityMaps,
     allFlatEntityMaps,
+    exportedFrontComponentUniversalIdentifiers,
   });
 };

@@ -6,4 +6,6 @@ export const SSO_TEST_ENVIRONMENT_VARIABLE_NAMES = {
   memberPassword: 'SSO_TEST_PASSWORD',
   nonMemberUsername: 'SSO_TEST_NON_MEMBER_USERNAME',
   nonMemberPassword: 'SSO_TEST_NON_MEMBER_PASSWORD',
+  newcomerUsername: 'SSO_TEST_NEWCOMER_USERNAME',
+  newcomerPassword: 'SSO_TEST_NEWCOMER_PASSWORD',
 } as const;

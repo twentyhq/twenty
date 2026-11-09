@@ -1,4 +1,8 @@
 import { isArray, isString } from '@sniptt/guards';
+import {
+  isRestorableFrontComponentSourcePath,
+  type FrontComponentManifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
@@ -13,7 +17,13 @@ const isPackageJsonObject = (content: string): boolean => {
   }
 };
 
-export const parsePullDependencyFiles = (value: unknown): AppExportFile[] => {
+export const parsePullFiles = ({
+  value,
+  frontComponents = [],
+}: {
+  value: unknown;
+  frontComponents?: Pick<FrontComponentManifest, 'sourceComponentPath'>[];
+}): AppExportFile[] => {
   if (!isArray(value)) {
     throw new CliError({
       code: 'INVALID_RESPONSE',
@@ -37,14 +47,21 @@ export const parsePullDependencyFiles = (value: unknown): AppExportFile[] => {
       });
     }
 
+    const isFrontComponentSource =
+      file.folder === FileFolder.Source &&
+      frontComponents.some(
+        (component) => component.sourceComponentPath === file.path,
+      ) &&
+      isRestorableFrontComponentSourcePath(file.path);
     if (
-      file.folder !== FileFolder.Dependencies ||
-      !['package.json', 'yarn.lock'].includes(file.path)
+      !isFrontComponentSource &&
+      (file.folder !== FileFolder.Dependencies ||
+        !['package.json', 'yarn.lock'].includes(file.path))
     ) {
       throw new CliError({
         code: 'TOOLING_UNSUPPORTED',
         message:
-          'This CLI can only pull package.json and yarn.lock from the dependencies folder. No local files were changed.',
+          'This CLI can only pull dependency files and declared front component sources. No local files were changed.',
       });
     }
 
