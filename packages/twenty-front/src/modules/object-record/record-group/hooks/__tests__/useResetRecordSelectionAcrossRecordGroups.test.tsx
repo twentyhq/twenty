@@ -19,7 +19,13 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-const setRecordIdsInGroup = (familyKey: string, recordIds: string[]) =>
+const setRecordIdsInGroup = ({
+  familyKey,
+  recordIds,
+}: {
+  familyKey: string;
+  recordIds: string[];
+}) =>
   jotaiStore.set(
     recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
       instanceId,
@@ -46,9 +52,12 @@ describe('useResetRecordSelectionAcrossRecordGroups', () => {
       'group-todo',
       'group-done',
     ]);
-    setRecordIdsInGroup('group-todo', ['record-1']);
-    setRecordIdsInGroup('group-done', ['record-2']);
-    setRecordIdsInGroup(NO_RECORD_GROUP_FAMILY_KEY, ['record-3']);
+    setRecordIdsInGroup({ familyKey: 'group-todo', recordIds: ['record-1'] });
+    setRecordIdsInGroup({ familyKey: 'group-done', recordIds: ['record-2'] });
+    setRecordIdsInGroup({
+      familyKey: NO_RECORD_GROUP_FAMILY_KEY,
+      recordIds: ['record-3'],
+    });
 
     for (const recordId of ['record-1', 'record-2', 'record-3']) {
       jotaiStore.set(
