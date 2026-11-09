@@ -73,7 +73,6 @@ const findFieldMetadataOrThrow = ({
   return fieldMetadata;
 };
 
-// null when the member does not carry a value that fits the target field
 const resolveMemberBoundPredicateValue = ({
   predicate,
   targetFieldMetadata,
@@ -140,14 +139,16 @@ const putFirstPredicateRootGroupFirst = ({
     );
   }
 
-  return isDefined(rootPredicateGroup)
-    ? [
-        rootPredicateGroup,
-        ...predicateGroups.filter(
-          (predicateGroup) => predicateGroup !== rootPredicateGroup,
-        ),
-      ]
-    : predicateGroups;
+  if (!isDefined(rootPredicateGroup)) {
+    return predicateGroups;
+  }
+
+  return [
+    rootPredicateGroup,
+    ...predicateGroups.filter(
+      (predicateGroup) => predicateGroup !== rootPredicateGroup,
+    ),
+  ];
 };
 
 export const buildRecordFilterForRole = ({
