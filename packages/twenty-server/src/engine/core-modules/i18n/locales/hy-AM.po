@@ -2005,7 +2005,7 @@ msgstr "\"{widgetTitle}\" վիջեթի հիմնական մասը պետք է օ�
 #. js-lingui-id: MgiiPI
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
-msgstr ""
+msgstr "Ամրագրեք 15-րոպեանոց զանգ, և մենք կօգնենք ձեզ ձեր աշխատանքային տարածքը պատրաստել գործնական օգտագործման համար։"
 
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
@@ -2456,7 +2456,7 @@ msgstr "Զանգերի ձայնագրություններ"
 #. js-lingui-id: eaM0Ir
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Call requested"
-msgstr ""
+msgstr "Զանգը պահանջվել է"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6174,7 +6174,7 @@ msgstr "`frontComponentId` չպետք է սահմանված լինի, երբ `en
 #. js-lingui-id: 7Z3KH2
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
-msgstr ""
+msgstr "Frontend component builder-ի հարցումը գերազանցում է 6 MiB սահմանաչափը։ Նվազեցրեք հավելվածի կախվածությունները կամ գեներացված SDK-ի չափը։"
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9032,7 +9032,7 @@ msgstr "Ստեղծումից հետո հաղորդագրությունների �
 #. js-lingui-id: HRnauu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
-msgstr ""
+msgstr "Հաղորդագրությունների մատակարարի conversationStyle \"{conversationStyle}\"-ը չի աջակցվում"
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -13350,7 +13350,7 @@ msgstr "Հարմարեցրեք ձեր աշխատանքային տարածքը"
 #. js-lingui-id: gNSS33
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Talk to our team"
-msgstr ""
+msgstr "Խոսեք մեր թիմի հետ"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13709,6 +13709,11 @@ msgstr "Հավելվածի պահանջված թույլտվություններ
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
 msgstr "Օգնականի պրոֆիլը հնարավոր չէ թարմացնել աշխատատարածքը ակտիվացնելուց առաջ։"
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr "Կցորդները չափազանց մեծ են մեկ էլ. նամակով ուղարկելու համար."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14930,7 +14935,7 @@ msgstr "Հաղորդագրությունների այս ալիքը չի կարո
 #. js-lingui-id: Rt42MP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "This messaging provider's conversation style is not supported."
-msgstr ""
+msgstr "Այս հաղորդագրությունների մատակարարի զրույցի ոճը չի աջակցվում։"
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
@@ -15318,7 +15323,7 @@ msgstr "Այս աշխատանքային տարածքը հասել է իր պահ
 #. js-lingui-id: fqOt5p
 #: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
 msgid "This workspace has used all its seats. Contact your workspace admin to add more."
-msgstr ""
+msgstr "Այս աշխատանքային տարածքն օգտագործել է իր բոլոր տեղերը։ Կապվեք ձեր աշխատանքային տարածքի ադմինիստրատորի հետ՝ ավելին ավելացնելու համար։"
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -15626,6 +15631,11 @@ msgstr "Գտնվել են չափազանց շատ ադմինիստրատորի �
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Չափազանց շատ մասնակիցներ՝ {attendeeCount}։ Առավելագույն թույլատրելի քանակը {MAX_EMAIL_RECIPIENTS} է։"
+
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr "Չափազանց շատ ֆայլեր են բացվում։ Խնդրում ենք մեկ րոպեից կրկին փորձել."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
@@ -17068,7 +17078,7 @@ msgstr "Էլ․ փոստի հաշվին միանալու ընթացքում խն
 #. js-lingui-id: tP7Xh1
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "We'll confirm the time by email."
-msgstr ""
+msgstr "Մենք կհաստատենք ժամը էլ. փոստով։"
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
