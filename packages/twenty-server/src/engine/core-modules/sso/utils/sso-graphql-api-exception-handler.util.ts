@@ -23,6 +23,7 @@ export const ssoGraphqlApiExceptionHandler = (exception: SsoException) => {
     case SsoExceptionCode.INVALID_IDP_TYPE:
       throw new UserInputError(exception);
     case SsoExceptionCode.SSO_DISABLE:
+    case SsoExceptionCode.SAML_ASSERTION_ALREADY_USED:
       throw new ForbiddenError(exception);
     case SsoExceptionCode.UNKNOWN_SSO_CONFIGURATION_ERROR:
       throw exception;

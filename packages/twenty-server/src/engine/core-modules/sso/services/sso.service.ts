@@ -15,10 +15,6 @@ import {
   IdentityProviderType,
   OidcResponseType,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -212,9 +208,9 @@ export class SsoService {
     );
 
     if (!isFirstUse) {
-      throw new AuthException(
+      throw new SsoException(
         'SAML assertion has already been used',
-        AuthExceptionCode.OAUTH_ACCESS_DENIED,
+        SsoExceptionCode.SAML_ASSERTION_ALREADY_USED,
       );
     }
   }
