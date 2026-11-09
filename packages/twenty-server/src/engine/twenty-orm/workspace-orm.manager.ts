@@ -1,10 +1,10 @@
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
@@ -22,9 +22,9 @@ import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/wor
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
-import { hasWorkspaceMemberBoundPredicates } from 'src/engine/permissions/rls/utils/has-workspace-member-bound-predicates.util';
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
 type OrmRepositoryOptions = WorkspaceRepositoryOptions & {
   useReplica?: boolean;
@@ -37,6 +37,8 @@ export class WorkspaceOrmManager {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
@@ -101,6 +103,18 @@ export class WorkspaceOrmManager {
     return withWorkspaceContext(context, fn);
   }
 
+  async executeTransactionInWorkspaceContext<TResult>(
+    work: (transactionScope: WorkspaceTransactionScope) => Promise<TResult>,
+    authContext?: WorkspaceAuthContext,
+    options?: ExecuteInWorkspaceContextOptions,
+  ): Promise<TResult> {
+    return this.executeInWorkspaceContext(
+      () => this.runInWorkspaceTransaction(work),
+      authContext,
+      options,
+    );
+  }
+
   private async loadWorkspaceContext(
     authContext: WorkspaceAuthContext,
   ): Promise<ORMWorkspaceContext> {
@@ -112,35 +126,26 @@ export class WorkspaceOrmManager {
       flatIndexMaps,
       featureFlagsMap,
       billingEntitlements,
-      rolesPermissions: permissionsPerRoleId,
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-      flatApplicationMaps,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
       'flatIndexMaps',
       'featureFlagsMap',
       'billingEntitlements',
-      'rolesPermissions',
-      'userWorkspaceRoleMap',
-      'apiKeyRoleMap',
-      'flatRoleTargetByAgentIdMaps',
-      'flatApplicationMaps',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
-    const flatWorkspaceMemberMaps = await this.loadFlatWorkspaceMemberMaps({
-      authContext,
-      flatRowLevelPermissionPredicateMaps,
-    });
+    const permissionsPrincipals =
+      await this.principalPermissionsService.resolvePermissionsPrincipals({
+        authContext,
+      });
+    const recordReadRestrictions = isDefined(permissionsPrincipals)
+      ? await this.recordPermissionsService.findRecordReadRestrictions({
+          principals: permissionsPrincipals,
+        })
+      : NO_RECORD_READ_RESTRICTIONS;
 
     const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
       billingEntitlements,
@@ -159,43 +164,13 @@ export class WorkspaceOrmManager {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       flatIndexMaps,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatWorkspaceMemberMaps,
       flatValidationRuleMaps,
       objectIdByNameSingular,
       featureFlagsMap,
       billingEntitlements,
-      permissionsPerRoleId,
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-      flatApplicationMaps,
+      permissionsPrincipals,
+      recordReadRestrictions,
     };
-  }
-
-  // Member principals resolve their role through these maps; row-level predicates read them too
-  private async loadFlatWorkspaceMemberMaps({
-    authContext,
-    flatRowLevelPermissionPredicateMaps,
-  }: {
-    authContext: WorkspaceAuthContext;
-    flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
-  }): Promise<FlatWorkspaceMemberMaps | undefined> {
-    if (
-      !isUserAuthContext(authContext) &&
-      !hasWorkspaceMemberBoundPredicates(flatRowLevelPermissionPredicateMaps)
-    ) {
-      return undefined;
-    }
-
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(
-        authContext.workspace.id,
-        ['flatWorkspaceMemberMaps'],
-      );
-
-    return flatWorkspaceMemberMaps;
   }
 
   private async loadLiteWorkspaceContext(
@@ -225,24 +200,11 @@ export class WorkspaceOrmManager {
         universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
-      flatRowLevelPermissionPredicateMaps: {
-        byUniversalIdentifier: {},
-        universalIdentifierById: {},
-        universalIdentifiersByApplicationId: {},
-      },
-      flatRowLevelPermissionPredicateGroupMaps: {
-        byUniversalIdentifier: {},
-        universalIdentifierById: {},
-        universalIdentifiersByApplicationId: {},
-      },
       objectIdByNameSingular,
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
-      permissionsPerRoleId: {},
-      userWorkspaceRoleMap: {},
-      apiKeyRoleMap: {},
-      flatRoleTargetByAgentIdMaps: {},
-      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+      permissionsPrincipals: undefined,
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     };
   }
 }

@@ -9,7 +9,7 @@ const StyledThreadMessage = styled.div<{ hideBottomBorder?: boolean }>`
       : `1px solid ${themeCssVariables.border.color.light}`};
   display: flex;
   flex-direction: column;
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[0]};
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledHeader = styled.div<{ isClickable?: boolean }>`

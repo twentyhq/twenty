@@ -3,13 +3,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type EntityManager } from 'typeorm';
+import { type EntityManager, In } from 'typeorm';
 
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
+import { type BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
 import { findOverlappingBillingArrangement } from 'src/engine/core-modules/billing/utils/find-overlapping-billing-arrangement.util';
 import { getBillingArrangementValidationErrors } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-validation-errors.util';
@@ -22,6 +23,18 @@ export class BillingArrangementService {
     @InjectWorkspaceScopedRepository(BillingArrangementEntity)
     private readonly billingArrangementRepository: WorkspaceScopedRepository<BillingArrangementEntity>,
   ) {}
+
+  async findArrangementsByTypes({
+    workspaceId,
+    types,
+  }: {
+    workspaceId: string;
+    types: BillingArrangementType[];
+  }): Promise<BillingArrangementEntity[]> {
+    return await this.billingArrangementRepository.find(workspaceId, {
+      where: { type: In(types) },
+    });
+  }
 
   async insertArrangement({
     workspaceId,

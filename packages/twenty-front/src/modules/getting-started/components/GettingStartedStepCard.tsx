@@ -1,5 +1,7 @@
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
+import { GettingStartedStepDoneButton } from '@/getting-started/components/GettingStartedStepDoneButton';
+import { GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneActions';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneDescriptions';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -54,6 +56,11 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
+
+  &:last-child {
+    border-bottom: 0;
+    padding-bottom: ${themeCssVariables.spacing[4]};
+  }
 `;
 
 const StyledDoneIcon = styled.span`
@@ -83,6 +90,14 @@ const StyledDoneIcon = styled.span`
       stroke-dashoffset: 0;
     }
   }
+`;
+
+const StyledHeadingContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
 `;
 
 const StyledTitle = styled.div`
@@ -123,6 +138,9 @@ export const GettingStartedStepCard = ({
   const description = isCompleted
     ? stepDefinition.doneDescription
     : stepDefinition.description;
+  const DoneAction = isCompleted
+    ? GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS[stepDefinition.actionKey]
+    : undefined;
 
   return (
     <StyledCard
@@ -144,29 +162,38 @@ export const GettingStartedStepCard = ({
             }
           />
         )}
-        <StyledTitle>
-          <Heading size="lg">
-            <GettingStartedRollingText
-              text={
-                isCompleted ? stepDefinition.doneTitle : stepDefinition.title
-              }
-            />
-          </Heading>
-          <StyledDescription>
-            {isDefined(DoneDescription) ? (
-              <DoneDescription description={description} />
-            ) : (
-              description
-            )}
-          </StyledDescription>
-        </StyledTitle>
+        <StyledHeadingContent>
+          <StyledTitle>
+            <Heading size="lg">
+              <GettingStartedRollingText
+                text={
+                  isCompleted ? stepDefinition.doneTitle : stepDefinition.title
+                }
+              />
+            </Heading>
+            <StyledDescription>
+              {isDefined(DoneDescription) ? (
+                <DoneDescription description={description} />
+              ) : (
+                description
+              )}
+            </StyledDescription>
+          </StyledTitle>
+          {isCompleted && (
+            <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
+          )}
+        </StyledHeadingContent>
       </StyledHeading>
-      <StyledBody>
-        <GettingStartedStepAction
-          stepDefinition={stepDefinition}
-          isCompleted={isCompleted}
-        />
-      </StyledBody>
+      {!isCompleted && (
+        <StyledBody>
+          <GettingStartedStepAction stepDefinition={stepDefinition} />
+        </StyledBody>
+      )}
+      {isDefined(DoneAction) && (
+        <StyledBody>
+          <DoneAction />
+        </StyledBody>
+      )}
     </StyledCard>
   );
 };

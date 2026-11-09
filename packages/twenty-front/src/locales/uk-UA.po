@@ -351,7 +351,7 @@ msgstr "{0, plural, one {Ваше запрошення ще не надісла�
 #. placeholder {1}: t(SETTINGS_AI_ASSISTANT_COLOR_LABELS[preset.avatarColor])
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "{0} · {1}"
-msgstr ""
+msgstr "{0} · {1}"
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -584,7 +584,7 @@ msgstr "{appDisplayName} хоче:"
 #. js-lingui-id: y+Uv96
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "{appLabel} installed"
-msgstr ""
+msgstr "{appLabel} установлено"
 
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
@@ -698,6 +698,11 @@ msgstr "{currentCreditAmountDisplay} кредитів "
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, one {безкоштовний кредит} few {безкоштовні кредити} many {безкоштовних кредитів} other {безкоштовного кредиту}}"
+
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} та {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -833,11 +838,6 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} встановлення} few {{1} встановлення} many {{1} встановлень} other {{1} встановлення}}"
-
-#. js-lingui-id: XcDI87
-#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
-msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
-msgstr ""
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -1026,16 +1026,6 @@ msgstr "Ще {remainingCount}"
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {Після цього більше немає чернеток} one {Після цього ще # чернетка} few {Після цього ще # чернетки} many {Після цього ще # чернеток} other {Після цього ще # чернетки}}"
-
-#. js-lingui-id: mqfjQO
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr "{remainingStepCount, plural, one {Завершіть # крок до {formattedTrialEnd}} few {Завершіть # кроки до {formattedTrialEnd}} many {Завершіть # кроків до {formattedTrialEnd}} other {Завершіть # кроку до {formattedTrialEnd}}}"
-
-#. js-lingui-id: yICp8R
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr "{remainingStepCount, plural, one {Завершіть # крок} few {Завершіть # кроки} many {Завершіть # кроків} other {Завершіть # кроків}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1576,11 +1566,6 @@ msgstr "Помилка 500 - {duration} мс"
 msgid "90 days"
 msgstr "90 днів"
 
-#. js-lingui-id: 81nnG3
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "A CSV or Excel export from any tool"
-msgstr "Експорт CSV або Excel з будь-якого інструменту"
-
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "A display name for this provider"
@@ -1739,6 +1724,11 @@ msgstr "Про ваш застосунок"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Прийняті та підписані DPA для цього робочого простору з їхньою версією шаблону та датою."
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Групи доступу"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2688,6 +2678,11 @@ msgstr "Додайте свій перший робочий процес"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Додано {beautifiedCreatedAt}"
 
+#. js-lingui-id: WHJA3l
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
+msgstr "Додано <0>дату поновлення</0> до <1>{companiesLabel}</1>"
+
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -2886,6 +2881,7 @@ msgid "agent"
 msgstr "агент"
 
 #. js-lingui-id: iEQQyu
+#: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -2932,6 +2928,11 @@ msgstr "Веб-пошук агента"
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Agents"
 msgstr "Агенти"
+
+#. js-lingui-id: D2ijkj
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Agents that will fail"
+msgstr "Агенти, які зазнають невдачі"
 
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
@@ -3021,10 +3022,35 @@ msgstr "Кредити ШІ"
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Кредити ШІ буде поновлено через {0, plural, one {# день} few {# дні} many {# днів} other {# дня}}."
 
+#. js-lingui-id: MuT/nD
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "AI data policy and Privacy tab"
+msgstr "Політика даних ШІ та вкладка «Конфіденційність»"
+
+#. js-lingui-id: WQyHss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI data processing"
+msgstr "Обробка даних ШІ"
+
+#. js-lingui-id: zNuqPE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI is paused"
+msgstr "ШІ призупинено"
+
+#. js-lingui-id: u9aqca
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "AI matches your columns to fields, even renamed ones."
+msgstr "ШІ зіставляє ваші стовпці з полями, навіть перейменованими."
+
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
 msgstr "Налаштування ШІ"
+
+#. js-lingui-id: JDoLSS
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "AI shapes your workspace around your data."
+msgstr "ШІ налаштовує ваше робоче середовище відповідно до ваших даних."
 
 #. js-lingui-id: X5Mx4I
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -3336,11 +3362,6 @@ msgstr "Усі налаштування"
 msgid "All Sources"
 msgstr "Усі джерела"
 
-#. js-lingui-id: wiGHxh
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "All steps done"
-msgstr "Усі кроки виконано"
-
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
@@ -3525,6 +3546,7 @@ msgid "Amber"
 msgstr "Бурштиновий"
 
 #. js-lingui-id: hehnjM
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -3620,6 +3642,11 @@ msgstr "Виникла внутрішня помилка під час заст�
 msgid "An internal error occurred while validating your changes. Please contact support."
 msgstr "Виникла внутрішня помилка під час перевірки ваших змін. Будь ласка, зв'яжіться з підтримкою."
 
+#. js-lingui-id: 2SfoVo
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "An Invoices object linked to Subscriptions and Companies."
+msgstr "Об’єкт Рахунки, пов’язаний із Підписками та Компаніями."
+
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "An object with this name already exists"
@@ -3652,7 +3679,7 @@ msgstr "і ще {hiddenCount}"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Animate"
-msgstr ""
+msgstr "Анімувати"
 
 #. js-lingui-id: U/L8gq
 #: src/modules/settings/billing/hooks/useBillingWording.ts
@@ -3975,6 +4002,11 @@ msgstr "Застосовується до"
 msgid "Apply"
 msgstr "Застосувати"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Застосовувати приватні записи до об’єктів, які за замовчуванням не є приватними. Завжди ввімкнено для робочих просторів, у яких налаштовано спільний доступ до записів. Вимкнення цієї функції знову зробить видимими записи, позначені як приватні, на цих об’єктах."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4065,7 +4097,7 @@ msgstr "Арабська"
 #. js-lingui-id: DzER9P
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Arch"
-msgstr ""
+msgstr "Арка"
 
 #. js-lingui-id: i19Zro
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -4254,6 +4286,11 @@ msgstr "Запитати AI"
 msgid "Ask an admin to raise the limit."
 msgstr "Попросіть адміністратора збільшити ліміт."
 
+#. js-lingui-id: fy+eXl
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Ask an admin with security access to change this"
+msgstr "Попросіть адміністратора з доступом до безпеки змінити це"
+
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "Ask for human input"
@@ -4363,12 +4400,12 @@ msgstr "Асистент"
 #. js-lingui-id: FwlE5m
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Assistant avatar"
-msgstr ""
+msgstr "Аватар асистента"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
-msgstr ""
+msgstr "Ім’я асистента"
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4518,6 +4555,11 @@ msgstr "Журнали аудиту"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Audit Logs"
 msgstr "Журнали аудиту"
+
+#. js-lingui-id: 7tMFh/
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Audited controls and the agreements that cover your data."
+msgstr "Перевірені засоби контролю та угоди, що охоплюють ваші дані."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -4735,15 +4777,10 @@ msgstr "Назад до {text}"
 msgid "Back to content"
 msgstr "Повернутися до вмісту"
 
-#. js-lingui-id: +cSNzs
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "Back to current step"
-msgstr "Повернутися до поточного кроку"
-
 #. js-lingui-id: K35/lm
 #: src/pages/settings/ai/components/SettingsAiAssistantAvatarMenuPage.tsx
 msgid "Back to customization"
-msgstr ""
+msgstr "Повернутися до налаштування"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -5060,6 +5097,11 @@ msgstr "Не доставлено або надійшла скарга"
 msgid "Bracket access is not supported, use dot access instead"
 msgstr "Доступ через квадратні дужки не підтримується, натомість використовуйте доступ через крапку"
 
+#. js-lingui-id: Mh79rW
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Breach notification"
+msgstr "Сповіщення про порушення"
+
 #. js-lingui-id: iu7tUI
 #: src/modules/ui/navigation/bread-crumb/components/Breadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
@@ -5104,11 +5146,6 @@ msgstr "Коричневий"
 msgid "Browse partners"
 msgstr "Переглянути партнерів"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "Переглядайте зміни записів, події безпеки, журнали застосунку тощо"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -5138,6 +5175,11 @@ msgstr "Контрольна сума збирання"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Створюйте зв’язки «багато-до-багатьох»"
+
+#. js-lingui-id: yDcuP6
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Built to meet EU data protection rules"
+msgstr "Створено відповідно до правил захисту даних ЄС"
 
 #. js-lingui-id: +7fBMP
 #: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
@@ -5811,6 +5853,11 @@ msgstr "Змінити тему на світлу"
 msgid "Change theme to system"
 msgstr "Змінити тему на системну"
 
+#. js-lingui-id: 3Hphdi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Change where AI providers process requests and what they keep"
+msgstr "Змініть, де постачальники ШІ обробляють запити та що вони зберігають"
+
 #. js-lingui-id: a5zD9f
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -5940,6 +5987,11 @@ msgstr "Контрольний список"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Перевірити останні запуски"
+
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Під час створення записів перевіряйте дозвіл на створення окремо, а не дозвіл на оновлення."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -6182,10 +6234,15 @@ msgstr "Виберіть, що станеться під час натискан
 msgid "Choose what happens when you click an email"
 msgstr "Виберіть, що станеться під час натискання на електронну адресу"
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: XDg9PA
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Choose what Twenty can access to support you and improve the product."
+msgstr "Виберіть, до чого Twenty може отримувати доступ, щоб підтримувати вас і вдосконалювати продукт."
+
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Виберіть, коли {AGENT_CHAT_ASSISTANT_NAME} бере участь у розмовах у вашому робочому просторі"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Виберіть, коли {assistantName} бере участь у розмовах у вашому робочому просторі"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6230,7 +6287,7 @@ msgstr "Виберіть параметри для застосунків, ус�
 #. js-lingui-id: 7xMmki
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Circle"
-msgstr ""
+msgstr "Коло"
 
 #. js-lingui-id: h2kp0z
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -6517,10 +6574,15 @@ msgstr "Закрити бічну панель"
 msgid "Close video"
 msgstr "Закрити відео"
 
+#. js-lingui-id: fYGMGN
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Closes in 6 days"
+msgstr "Закривається через 6 днів"
+
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cloud"
-msgstr ""
+msgstr "Хмара"
 
 #. js-lingui-id: gZoap8
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -6530,7 +6592,7 @@ msgstr "Cloudflare може очікувати ім'я відносно зони
 #. js-lingui-id: ExH3eu
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Clover"
-msgstr ""
+msgstr "Конюшина"
 
 #. js-lingui-id: 1Lxtdt
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -6797,10 +6859,16 @@ msgid "Compact view"
 msgstr "Компактний вигляд"
 
 #. js-lingui-id: s2QZS6
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/onboarding/components/import-contacts/OnboardingImportPreviewCompanies.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Companies"
 msgstr "Компанії"
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Company"
+msgstr "Компанія"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -6850,6 +6918,11 @@ msgstr "Завершені завдання зберігаються протя�
 msgid "Complexity"
 msgstr "Складність"
 
+#. js-lingui-id: psC+XF
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Compliance"
+msgstr "Відповідність вимогам"
+
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
@@ -6869,6 +6942,11 @@ msgstr "Попередній перегляд компонента зі зраз
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Створити електронний лист"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Обчислює групи доступу, які списки записів використовуватимуть для дозволів на рівні рядків. Увімкніть після завершення оновлення робочого простору."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -7370,6 +7448,11 @@ msgstr "Продовжувати у разі помилки ітерації"
 msgid "Continue setup"
 msgstr "Продовжити налаштування"
 
+#. js-lingui-id: byc7Ak
+#: src/modules/getting-started/components/GettingStartedChatThreadDoneButton.tsx
+msgid "Continue thread"
+msgstr "Продовжити ланцюжок"
+
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue with Email"
@@ -7469,7 +7552,7 @@ msgstr "Cook"
 #. js-lingui-id: SB9yVb
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cookie"
-msgstr ""
+msgstr "Печиво"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -8142,6 +8225,11 @@ msgstr "Створити запис"
 msgid "Create Record"
 msgstr "Створити запис"
 
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Дозвіл на створення записів"
+
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -8241,6 +8329,11 @@ msgstr "Створено {objectLabel}"
 msgid "Created by"
 msgstr "Створено"
 
+#. js-lingui-id: AruIkC
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created object <0>{subscriptionsLabel}</0>"
+msgstr "Створено об’єкт <0>{subscriptionsLabel}</0>"
+
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -8251,6 +8344,11 @@ msgstr "Створено {0}"
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Created or updated"
 msgstr "Створено або оновлено"
+
+#. js-lingui-id: nyr6nA
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created view <0>Renewals this quarter</0>"
+msgstr "Створено подання <0>Поновлення цього кварталу</0>"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -8772,7 +8870,7 @@ msgstr "Налаштувати"
 #. js-lingui-id: 9p/HFu
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 msgid "Customize assistant"
-msgstr ""
+msgstr "Налаштувати асистента"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -8850,6 +8948,11 @@ msgstr "Щодня"
 msgid "Daily AI Usage"
 msgstr "Щоденне використання ШІ"
 
+#. js-lingui-id: /dr6KQ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Daily backups"
+msgstr "Щоденні резервні копії"
+
 #. js-lingui-id: KXQkvT
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -8914,6 +9017,11 @@ msgstr "Дані та відображення"
 msgid "Data export"
 msgstr "Експорт даних"
 
+#. js-lingui-id: a4sORy
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Data is encrypted in transit and at rest, with keys rotated regularly"
+msgstr "Дані шифруються під час передавання та зберігання, а ключі регулярно оновлюються"
+
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data labels"
@@ -8951,7 +9059,13 @@ msgstr "Модель даних - Налаштування"
 msgid "Data on display"
 msgstr "Дані на екрані"
 
+#. js-lingui-id: oBChYi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Data processing"
+msgstr "Обробка даних"
+
 #. js-lingui-id: /qrjU8
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -10209,6 +10323,7 @@ msgid "Downgrade to monthly"
 msgstr "Перейти на помісячну оплату"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
@@ -10288,6 +10403,11 @@ msgstr "Чернетка листа"
 msgid "Drafted"
 msgstr "Створено чернетку"
 
+#. js-lingui-id: 5t1yRu
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafted <0>4 follow-up emails</0>"
+msgstr "Створено чернетки <0>4 листів для подальшого контакту</0>"
+
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafted email"
@@ -10297,6 +10417,11 @@ msgstr "Чернетка електронного листа"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafting email"
 msgstr "Створення чернетки електронного листа"
+
+#. js-lingui-id: BnOv+M
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafts only. You review and send."
+msgstr "Лише чернетки. Ви переглядаєте та надсилаєте."
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -10317,6 +10442,16 @@ msgstr "Перетягніть поля сюди"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
 msgstr "Перетягніть файл сюди..."
+
+#. js-lingui-id: 3DHZvz
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop to start your import"
+msgstr "Перетягніть, щоб почати імпорт"
+
+#. js-lingui-id: kIz73Z
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop your CSV or Excel from any tool"
+msgstr "Перетягніть CSV або Excel з будь-якого інструменту"
 
 #. js-lingui-id: euc6Ns
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
@@ -10444,6 +10579,11 @@ msgstr "Кожен учасник отримує ліміт ШІ, який ви�
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
 msgstr "Кожний сегмент відображає"
+
+#. js-lingui-id: Iz+rDD
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Each workspace has its own database schema"
+msgstr "Кожен робочий простір має власну схему бази даних"
 
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
@@ -10908,6 +11048,7 @@ msgid "emails"
 msgstr "електронні листи"
 
 #. js-lingui-id: BXEcos
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
@@ -11087,6 +11228,16 @@ msgstr "Увімкнути мікрофон і камеру"
 msgid "Enable model-specific features"
 msgstr "Увімкнути функції, специфічні для моделі"
 
+#. js-lingui-id: sqO0Ni
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted daily snapshots, kept 30 days"
+msgstr "Зашифровані щоденні знімки, що зберігаються 30 днів"
+
+#. js-lingui-id: qILKh1
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted everywhere"
+msgstr "Шифрування всюди"
+
 #. js-lingui-id: Iy8Gze
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Encryption key rotation"
@@ -11204,10 +11355,10 @@ msgstr "Введіть об’єкт JSON"
 msgid "Enter a JSON value"
 msgstr "Введіть значення JSON"
 
-#. js-lingui-id: 0mwDxe
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
-msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters."
-msgstr ""
+#. js-lingui-id: 8Yr1fg
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
+msgstr "Введіть ім’я від 1 до {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} символів в одному рядку. Квадратні дужки мають бути парними та не можуть бути вкладеними."
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -11752,6 +11903,21 @@ msgstr "Встановіть ендпоінти вебхука для отрим
 msgid "Estimate a probability"
 msgstr "Оцінити ймовірність"
 
+#. js-lingui-id: MzEfu4
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "EU only"
+msgstr "Лише ЄС"
+
+#. js-lingui-id: 84VCrZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, standard retention"
+msgstr "Лише ЄС, стандартне зберігання"
+
+#. js-lingui-id: e8+f0R
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, zero data retention"
+msgstr "Лише ЄС, без зберігання даних"
+
 #. js-lingui-id: nVlfR5
 #: src/modules/ai/constants/DataResidencyConfig.ts
 msgid "European Union"
@@ -11860,6 +12026,11 @@ msgstr "кожного дня"
 msgid "every hour"
 msgstr "кожну годину"
 
+#. js-lingui-id: loBt0P
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Every line of code is public, so you can audit it yourself"
+msgstr "Кожен рядок коду є публічним, тож ви можете самостійно його перевірити"
+
 #. js-lingui-id: a9EHxw
 #: src/utils/cron-to-human/describeCronExpression.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -11867,10 +12038,20 @@ msgstr "кожну годину"
 msgid "every minute"
 msgstr "кожну хвилину"
 
+#. js-lingui-id: pjZ9WF
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Every Monday"
+msgstr "Щопонеділка"
+
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
 msgstr "Усі об’єкти цього робочого простору як CSV-файли в одному ZIP-архіві, що зберігається 1 день. Працює для призупинених робочих просторів."
+
+#. js-lingui-id: h3QLIe
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Every provider that handles your data"
+msgstr "Кожен постачальник, який обробляє ваші дані"
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -12204,11 +12385,6 @@ msgstr "Експорт ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Експорт ({percentageValue}%)"
 
-#. js-lingui-id: YkvQVd
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Export a CSV from"
-msgstr "Експортуйте CSV із"
-
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -12294,7 +12470,7 @@ msgstr "Надзвичайно розумний"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Face"
-msgstr ""
+msgstr "Обличчя"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -12657,6 +12833,11 @@ msgstr "Не вдалося відкликати ключ підпису. Буд
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Не вдалося відкликати код відновлення."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "Не вдалося зберегти налаштування асистента. Спробуйте ще раз."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -13402,7 +13583,7 @@ msgstr "Потік"
 #. js-lingui-id: abEdHK
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Flower"
-msgstr ""
+msgstr "Квітка"
 
 #. js-lingui-id: kNqMMd
 #: src/modules/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder.ts
@@ -13519,6 +13700,7 @@ msgid "Formats"
 msgstr "Формати"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
 msgstr "Колишній учасник"
@@ -13542,6 +13724,11 @@ msgstr "Адресу пересилання скопійовано в буфер
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Found {objectLabel}"
 msgstr "Знайдено {objectLabel}"
+
+#. js-lingui-id: laQ+m7
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Found <0>4 deals</0> closing in the next 30 days"
+msgstr "Знайдено <0>4 угоди</0>, що закриваються протягом наступних 30 днів"
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -13761,10 +13948,15 @@ msgstr "Функції"
 msgid "Functions - Settings"
 msgstr "Функції - Налаштування"
 
+#. js-lingui-id: arkG3W
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "GDPR"
+msgstr "GDPR"
+
 #. js-lingui-id: WFxtuG
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Gem"
-msgstr ""
+msgstr "Самоцвіт"
 
 #. js-lingui-id: e4FdDl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13817,6 +14009,11 @@ msgstr "Згенерувати код відновлення 2FA"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate a recovery code"
 msgstr "Згенерувати код відновлення"
+
+#. js-lingui-id: h9wFH2
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Generate a signed copy in one click"
+msgstr "Створіть підписану копію одним клацанням"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -13911,6 +14108,11 @@ msgstr "Кроки початку роботи"
 msgid "GIN (full-text search and JSONB)"
 msgstr "GIN (повнотекстовий пошук і JSONB)"
 
+#. js-lingui-id: RkXlPZ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "GitHub"
+msgstr "GitHub"
+
 #. js-lingui-id: BhYbva
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "GitHub authorization failed or was denied. Please connect your GitHub account again."
@@ -13977,6 +14179,11 @@ msgstr "Перейти до чернеток"
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 msgid "Go to Settings"
 msgstr "Перейти до налаштувань"
+
+#. js-lingui-id: WeeG8G
+#: src/modules/getting-started/components/GettingStartedWorkflowDoneButton.tsx
+msgid "Go to workflow"
+msgstr "Перейти до робочого процесу"
 
 #. js-lingui-id: FYlHHU
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -14217,7 +14424,12 @@ msgstr "Ідентифікатор"
 #. js-lingui-id: halrRh
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Happy"
-msgstr ""
+msgstr "Радісне"
+
+#. js-lingui-id: WsF7cD
+#: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
+msgid "Has attachments"
+msgstr "Має вкладення"
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -14376,10 +14588,15 @@ msgstr "привіт, світе"
 msgid "Help center"
 msgstr "Довідковий центр"
 
+#. js-lingui-id: GY8MUv
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Help improve Twenty"
+msgstr "Допоможіть покращити Twenty"
+
 #. js-lingui-id: tIb8bD
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Hexagon"
-msgstr ""
+msgstr "Шестикутник"
 
 #. js-lingui-id: D+zLDD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -14533,6 +14750,11 @@ msgstr "Горизонтальна розділювальна лінія"
 msgid "Host your workspace's customizations and overrides."
 msgstr "Містить налаштування та перевизначення вашої робочої області."
 
+#. js-lingui-id: fFtUGj
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Hosting"
+msgstr "Хостинг"
+
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 #: src/modules/workflow/workflow-trigger/constants/CronTriggerIntervalOptions.ts
@@ -14568,6 +14790,11 @@ msgstr "Як це правило відображається в налашту�
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll appear to teammates and agents."
 msgstr "Як ви виглядатимете для членів команди та агентів."
+
+#. js-lingui-id: iGMucd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "How your data is protected"
+msgstr "Як захищено ваші дані"
 
 #. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -14961,10 +15188,10 @@ msgstr "Імпортуйте лише вибрані папки/мітки"
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Імпортуйте або додайте конфігурацію MCP у налаштуваннях JetBrains."
 
-#. js-lingui-id: e2aT+Z
+#. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
-msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
-msgstr "Імпортуйте вкладені файли до Twenty. Визначте, які записи вони містять, а потім створіть їх і пов’яжіть між собою."
+msgid "Import the attached files into Twenty. Work out which records they contain and shape the workspace around them: reuse the objects and fields that fit, add the ones that are missing, then create the records and link them together."
+msgstr "Імпортуйте прикріплені файли до Twenty. Визначте, які записи вони містять, і налаштуйте робоче середовище відповідно до них: повторно використовуйте об’єкти й поля, які підходять, додайте відсутні, а потім створіть записи та пов’яжіть їх між собою."
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -15096,6 +15323,11 @@ msgstr "Збільшити до ${priceDisplay}"
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Increase value"
 msgstr "Збільшити значення"
+
+#. js-lingui-id: dW+3Q4
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Independently audited security controls"
+msgstr "Незалежно перевірені засоби контролю безпеки"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15604,6 +15836,11 @@ msgstr "Запросити за посиланням"
 msgid "Invite link sent to email addresses"
 msgstr "Посилання для запрошення надіслано на електронні адреси"
 
+#. js-lingui-id: aNtX0/
+#: src/modules/getting-started/components/GettingStartedInviteDoneButton.tsx
+msgid "Invite more"
+msgstr "Запросити ще"
+
 #. js-lingui-id: x1m5RZ
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Invite user"
@@ -15729,6 +15966,11 @@ msgstr "Є відносним"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
 msgstr "Сьогодні{timeZoneAbbreviationSuffix}"
+
+#. js-lingui-id: YbqWR4
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Isolated workspace"
+msgstr "Ізольований робочий простір"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -16257,12 +16499,6 @@ msgstr "Останній вхід"
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Last update"
 msgstr "Останнє оновлення"
-
-#. js-lingui-id: LYb3OD
-#: src/modules/getting-started/components/GettingStartedChatThreadDoneCard.tsx
-#: src/modules/getting-started/components/GettingStartedWorkflowDoneCard.tsx
-msgid "Last update: {lastUpdate}"
-msgstr ""
 
 #. js-lingui-id: C3yOz3
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -17035,11 +17271,6 @@ msgstr "Заблокувати діаграму"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Зареєструйте нову угоду (компанія, сума, етап, очікуване закриття). Подробиці: "
 
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "Консоль журналів"
-
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -17183,7 +17414,7 @@ msgstr "Загубили застосунок для автентифікаці�
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Love"
-msgstr ""
+msgstr "Закохане"
 
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17772,6 +18003,11 @@ msgstr "Повідомлення"
 msgid "Message {recipientName}"
 msgstr "Повідомлення {recipientName}"
 
+#. js-lingui-id: 6H0up8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Message attachments"
+msgstr "Вкладення повідомлень"
+
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -18019,6 +18255,11 @@ msgstr "Модель, що використовується, коли ви сп�
 msgid "Models"
 msgstr "Моделі"
 
+#. js-lingui-id: o4Xn+q
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Models above are limited to the providers your privacy settings allow."
+msgstr "Доступні вище моделі обмежені постачальниками, яких дозволяють ваші налаштування конфіденційності."
+
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Models for this provider. Toggle to enable or disable."
@@ -18132,6 +18373,7 @@ msgid "More advanced fields for advanced projects"
 msgstr "Більше розширених полів для розширених проєктів"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -18350,6 +18592,7 @@ msgstr "Н/Д"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
@@ -18498,6 +18741,11 @@ msgstr "пункт навігаційного меню"
 msgid "Navigation modes"
 msgstr "Режими навігації"
 
+#. js-lingui-id: hUbvfC
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Need an export? Get one from"
+msgstr "Потрібен експорт? Отримайте його з"
+
 #. js-lingui-id: IbVc4A
 #: src/modules/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions.ts
 msgid "Needs a Date field"
@@ -18536,10 +18784,10 @@ msgstr "Ніколи"
 msgid "Never expires"
 msgstr "Ніколи не закінчується"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Ніколи не допускає {AGENT_CHAT_ASSISTANT_NAME} до розмов. Лише за згадуванням просить {AGENT_CHAT_ASSISTANT_NAME} відповісти, коли його позначено. Автоматично дозволяє {AGENT_CHAT_ASSISTANT_NAME} вирішувати, коли відповідати. У чатах лише з вами та {AGENT_CHAT_ASSISTANT_NAME} відповіді надсилаються завжди."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Ніколи не залучає {assistantName}. Лише за згадуванням просить {assistantName} відповідати, коли його позначено. Автоматично дозволяє {assistantName} вирішувати, коли відповідати. У чатах лише з вами та {assistantName} відповіді надходять завжди."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -18610,7 +18858,7 @@ msgstr "Новий канал"
 #: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
-#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
+#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Новий чат"
 
@@ -18877,6 +19125,11 @@ msgstr "Наступний запит"
 msgid "Next screenshot"
 msgstr "Наступний знімок екрана"
 
+#. js-lingui-id: e3GOIZ
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Next step"
+msgstr "Наступний крок"
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -18992,12 +19245,22 @@ msgstr "Жоден агент не відповідає вашому запит�
 msgid "No AI consumption recorded for this user."
 msgstr "Для цього користувача не зафіксовано споживання ШІ."
 
+#. js-lingui-id: m/JoOZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "No AI model on this workspace meets these settings."
+msgstr "Жодна модель ШІ в цьому робочому просторі не відповідає цим налаштуванням."
+
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Для цього екземпляра не налаштовано постачальника ШІ."
+
+#. js-lingui-id: lBnUyA
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No AI provider trains on your data, and neither does Twenty"
+msgstr "Жоден постачальник ШІ не навчається на ваших даних, як і Twenty"
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -19747,6 +20010,11 @@ msgstr "Жодного інструмента не було викликано"
 msgid "No topic"
 msgstr "Без теми"
 
+#. js-lingui-id: lNEINd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No training on your data"
+msgstr "Без навчання на ваших даних"
+
 #. js-lingui-id: 3Y/oDZ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -20041,6 +20309,11 @@ msgstr "Ще не виміряно за такого рівня зусиль, т
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Для цього рівня міркувань ще немає вимірювань. Показано дані базової моделі."
+
+#. js-lingui-id: PBxg/E
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Not now"
+msgstr "Не зараз"
 
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
@@ -20401,6 +20674,16 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "Пропускати нульові значення"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "для {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "у {remainingDays} та {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20548,20 +20831,13 @@ msgstr "Лише учасники, які можуть керувати заст
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "тільки у {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "тільки у {firstDay} та {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "тільки в {remainingDays} та {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "тільки в {remainingDays} та {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20582,6 +20858,11 @@ msgstr "Лише автор цього запису, люди з повним д
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
 msgid "Only the subject is shared"
 msgstr "Спільною є лише тема"
+
+#. js-lingui-id: 41eae/
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Only use providers that keep no copy of your prompts and responses"
+msgstr "Використовуйте лише постачальників, які не зберігають копій ваших запитів і відповідей"
 
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
@@ -20619,7 +20900,7 @@ msgstr "Відкрити"
 #. placeholder {0}: account.handle
 #: src/modules/getting-started/components/GettingStartedConnectedAccountSettingsButton.tsx
 msgid "Open {0} settings"
-msgstr ""
+msgstr "Відкрити налаштування {0}"
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -20720,11 +21001,6 @@ msgstr "Відкрити на бічній панелі"
 msgid "Open link"
 msgstr "Відкрити посилання"
 
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "Відкрити консоль журналів"
-
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
@@ -20789,6 +21065,11 @@ msgstr "Відкрити налаштування"
 msgid "Open side panel"
 msgstr "Відкрити бічну панель"
 
+#. js-lingui-id: v+Wp++
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Open source"
+msgstr "Відкритий вихідний код"
+
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Open Twenty's official ChatGPT integration for your workspace."
@@ -20841,6 +21122,11 @@ msgstr "операції"
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Operations"
 msgstr "Операції"
+
+#. js-lingui-id: 4MyDFl
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Opportunities"
+msgstr "Можливості"
 
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
@@ -21328,7 +21614,7 @@ msgstr "Партнер"
 #. js-lingui-id: gHz5zY
 #: src/utils/title-utils.ts
 msgid "Partner - Settings"
-msgstr ""
+msgstr "Партнер — Налаштування"
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -21343,7 +21629,7 @@ msgstr "Код партнера застосовано"
 #. js-lingui-id: 0w8/Qw
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner codes can only be added during the free trial."
-msgstr ""
+msgstr "Коди партнерів можна додавати лише протягом безкоштовного пробного періоду."
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -21468,6 +21754,13 @@ msgstr "В очікуванні"
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Запити в черзі"
+
+#. js-lingui-id: 1wdjme
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "People"
+msgstr "Особи"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -21673,7 +21966,7 @@ msgstr "Виберіть час надсилання в майбутньому."
 #. js-lingui-id: Lu0MSt
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Pick a starting point, then make it yours"
-msgstr ""
+msgstr "Виберіть початковий варіант, а потім налаштуйте його під себе"
 
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -21726,7 +22019,7 @@ msgstr "Кругова діаграма"
 #. js-lingui-id: qoLYkj
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Pill"
-msgstr ""
+msgstr "Капсула"
 
 #. js-lingui-id: qVkGWK
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
@@ -21751,6 +22044,11 @@ msgstr "Рожевий"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Pinned"
 msgstr "Закріплено"
+
+#. js-lingui-id: ylGwx6
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Pinned models not in use"
+msgstr "Закріплені моделі, що не використовуються"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -21990,6 +22288,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "Запобігти призначенню одного й того ж значення різним записам"
 
 #. js-lingui-id: rdUucN
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -22072,6 +22371,11 @@ msgstr "Попередній запит"
 msgid "Previous screenshot"
 msgstr "Попередній знімок екрана"
 
+#. js-lingui-id: VbggDE
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Previous step"
+msgstr "Попередній крок"
+
 #. js-lingui-id: rLvhNs
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
@@ -22139,6 +22443,11 @@ msgstr "Пріоритетна підтримка"
 msgid "Priority: {0}"
 msgstr "Пріоритет: {0}"
 
+#. js-lingui-id: rjGI/Q
+#: src/pages/settings/general/SettingsGeneral.tsx
+msgid "Privacy"
+msgstr "Конфіденційність"
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -22151,6 +22460,11 @@ msgstr "Політика конфіденційності"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Приватний"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Приватні записи"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22177,6 +22491,11 @@ msgstr "Обробка"
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Processing Recording"
 msgstr "Обробка запису"
+
+#. js-lingui-id: kLAZG6
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Processing region"
+msgstr "Регіон обробки"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -22534,6 +22853,11 @@ msgstr "Читати електронні листи"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Прочитати системні інструкції"
+
+#. js-lingui-id: l668+W
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Read the last emails and meetings for each"
+msgstr "Прочитайте останні листи та зустрічі для кожної"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -23493,11 +23817,6 @@ msgstr "Посилання для встановлення Replit вимагаю
 msgid "Reply"
 msgstr "Відповісти"
 
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Відповісти..."
-
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Report an issue"
@@ -23613,7 +23932,7 @@ msgstr "Скинути макет сторінки запису"
 #. js-lingui-id: Oi+lSL
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Reset to Ada"
-msgstr ""
+msgstr "Скинути до Ada"
 
 #. js-lingui-id: L+rMC9
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -24304,7 +24623,7 @@ msgstr "Збережено в застосунку Workspace"
 #. js-lingui-id: LRlHXj
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Saving assistant settings..."
-msgstr ""
+msgstr "Збереження налаштувань асистента..."
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -24917,6 +25236,11 @@ msgstr "Секція"
 #: src/pages/settings/security/SettingsSecuritySsoIdentifyProvider.tsx
 msgid "Security"
 msgstr "Безпека"
+
+#. js-lingui-id: OpFwR0
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Security you can verify"
+msgstr "Безпека, яку можна перевірити"
 
 #. js-lingui-id: i0zibG
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -25836,12 +26160,12 @@ msgstr "Сьомий"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Shape"
-msgstr ""
+msgstr "Форма"
 
 #. js-lingui-id: KBYPKo
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 msgid "Shape, color, face"
-msgstr ""
+msgstr "Форма, колір, обличчя"
 
 #. js-lingui-id: Z8lGw6
 #: src/modules/ai/components/AiChatThreadShareButton.tsx
@@ -25855,6 +26179,11 @@ msgstr "Поділитися"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Share calendar events across channels"
 msgstr "Поширювати події календаря між каналами"
+
+#. js-lingui-id: S1jlER
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Share session replays and AI conversations to help us improve Twenty"
+msgstr "Діліться повторами сеансів і розмовами зі ШІ, щоб допомогти нам покращити Twenty"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -25911,6 +26240,11 @@ msgstr "Надання спільного доступу до запису"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Sharing settings could not be loaded."
 msgstr "Не вдалося завантажити налаштування спільного доступу."
+
+#. js-lingui-id: K8Q+iX
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Sharing with Twenty"
+msgstr "Спільне використання з Twenty"
 
 #. js-lingui-id: PGetcZ
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -26048,6 +26382,11 @@ msgstr "Показати лише рядки з помилками"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
 msgstr "Показувати сторінку «Початок роботи» та картку бічної панелі й відкривати її на цільовій сторінці під час пробного періоду."
+
+#. js-lingui-id: fTPKt5
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
+msgstr "Показувати вкладку «Конфіденційність» і застосовувати її політику даних ШІ та налаштування спільного використання даних. Вимкнення цього параметра скасовує всі збережені політики. Увімкніть після завершення оновлення екземпляра."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -26257,7 +26596,6 @@ msgstr "Навички"
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Пропустити"
@@ -26293,7 +26631,7 @@ msgstr "Небесний"
 #. js-lingui-id: u9Z+qJ
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Sleepy"
-msgstr ""
+msgstr "Сонне"
 
 #. js-lingui-id: Z6Nf0i
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -26406,6 +26744,16 @@ msgstr "Відкладено"
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Відкладено до {eventTime}"
+
+#. js-lingui-id: 01L/Si
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "SOC 2"
+msgstr "SOC 2"
+
+#. js-lingui-id: LBv08V
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "SOC 2 audited controls, encryption in transit and at rest, and code anyone can review."
+msgstr "Перевірені засоби контролю SOC 2, шифрування під час передавання та зберігання, а також код, який може переглянути будь-хто."
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -26627,11 +26975,6 @@ msgstr "Розділити кілька значень"
 #: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Розділений перегляд"
-
-#. js-lingui-id: jAoGz1
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Spreadsheet"
-msgstr "Електронна таблиця"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26892,6 +27235,11 @@ msgstr "Сховище"
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Зберігати зустріч, синхронізовану кількома календарями одного постачальника, один раз, а не окремо для кожного календаря."
 
+#. js-lingui-id: YbaJNn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
+msgstr "Зберігайте та показуйте файли, вкладені в повідомлення. Увімкнеться після завершення оновлення робочого простору."
+
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -27065,6 +27413,11 @@ msgstr "Тема, тіло та вкладення будуть поділені
 msgid "Submit"
 msgstr "Відправити"
 
+#. js-lingui-id: amVqRj
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Subprocessors"
+msgstr "Субпідрядники з обробки даних"
+
 #. js-lingui-id: EDl9kS
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
 msgid "Subscribe"
@@ -27127,6 +27480,11 @@ msgstr "Підписку буде переключено на план {planLabe
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
 msgid "Subscription will be switched to monthly billing the {0}."
 msgstr "Передплату буде переключено на щомісячну оплату {0}."
+
+#. js-lingui-id: P6F38F
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Subscriptions"
+msgstr "Підписки"
 
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -27251,7 +27609,7 @@ msgstr "Підтримує міркування"
 #. js-lingui-id: e0Wwlk
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Surprised"
-msgstr ""
+msgstr "Здивоване"
 
 #. js-lingui-id: LbFYgh
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
@@ -27693,6 +28051,11 @@ msgstr "Це приблизно {formattedNewlyEarnedAiActions} дій ШІ. Т�
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "Адреса, з якої ваш робочий простір надсилатиме та отримуватиме електронні листи (наприклад, support@mycompany.com). Надсилання вихідної пошти вимагає, щоб домен було підтверджено в Outbound Domains."
 
+#. js-lingui-id: PKwDg+
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "The agent asks before creating anything."
+msgstr "Агент запитує перед тим, як щось створити."
+
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 msgid "The agent sets the instructions, model and permissions."
@@ -27935,6 +28298,11 @@ msgstr "Не вдалося визначити конфігурацію зв’�
 msgid "The role attached to this webhook."
 msgstr "Роль, пов’язана з цим вебхуком."
 
+#. js-lingui-id: OBY7M0
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "The safeguards behind every Twenty Cloud workspace."
+msgstr "Заходи захисту для кожного робочого простору Twenty Cloud."
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -28052,6 +28420,16 @@ msgstr "З цим записом не пов’язана жодна актив�
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "Сталася помилка під час оновлення пароля."
+
+#. js-lingui-id: hOYgrt
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These agents use a model your settings exclude, so they fail when they run: {agentLabels}"
+msgstr "Ці агенти використовують модель, яку виключають ваші налаштування, тому під час запуску вони завершуються з помилкою: {agentLabels}"
+
+#. js-lingui-id: ZSRi5U
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These tiers fall back to an allowed model: {pinnedTierLabels}"
+msgstr "Ці рівні використовують дозволену модель як резервну: {pinnedTierLabels}"
 
 #. js-lingui-id: 5Ml5Nr
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -28997,6 +29375,11 @@ msgstr "Усього завдань"
 msgid "Track AI consumption across your workspace."
 msgstr "Відстежуйте споживання ШІ у своєму робочому просторі."
 
+#. js-lingui-id: LpPRBt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Track invoices too?"
+msgstr "Також відстежувати рахунки?"
+
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Track link clicks"
@@ -29242,6 +29625,11 @@ msgctxt "Field type"
 msgid "True/False"
 msgstr "Так/Ні"
 
+#. js-lingui-id: tdZpCd
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Trust Center"
+msgstr "Центр довіри"
+
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
@@ -29316,6 +29704,7 @@ msgid "Twenty adds the people you email and meet, and keeps them up to date with
 msgstr "Twenty додає людей, яким ви пишете та з якими зустрічаєтеся, і підтримує дані про них актуальними без ручного введення."
 
 #. js-lingui-id: JnaRPe
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
 msgstr "Поля Twenty"
@@ -29324,6 +29713,11 @@ msgstr "Поля Twenty"
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Twenty fills each level with the best model that meets your requirements"
 msgstr "Twenty заповнює кожен рівень найкращою моделлю, яка відповідає вашим вимогам"
+
+#. js-lingui-id: 0mWZoP
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more."
+msgstr "Twenty не має власної моделі ШІ. Виберіть, які постачальники можуть обробляти ваші запити. Суворіші налаштування залишають менше моделей, а деякі коштують дорожче."
 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -30305,7 +30699,6 @@ msgid "Upload a file or an image"
 msgstr "Завантажити файл або зображення"
 
 #. js-lingui-id: 2IXDgU
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -30345,6 +30738,11 @@ msgstr "Завантажити зображення профілю"
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Завантажте XML файл з інформацією вашого з'єднання"
+
+#. js-lingui-id: /w70rp
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Upload your CRM export"
+msgstr "Завантажте свій експорт CRM"
 
 #. js-lingui-id: XzIB4l
 #: src/modules/apollo/services/ApolloFactory.ts
@@ -31306,6 +31704,16 @@ msgstr "Ми зіткнулися з проблемою під час вериф
 msgid "We match on these fields. If a {0} already exists, we update it. Otherwise, we create a new one."
 msgstr "Ми зіставляємо ці поля. Якщо {0} вже існує, ми його оновлюємо. Інакше, створюємо новий."
 
+#. js-lingui-id: AXVG2Y
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "We notify you within 72 hours, as set out in the DPA"
+msgstr "Ми повідомимо вас протягом 72 годин, як зазначено в DPA"
+
+#. js-lingui-id: InKpMt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "We sell subscriptions to design teams."
+msgstr "Ми продаємо підписки командам дизайнерів."
+
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
@@ -31606,6 +32014,11 @@ msgstr "Коли завершиться ваш пробний період, з �
 msgid "Where"
 msgstr "Де"
 
+#. js-lingui-id: I7dUhW
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Where AI providers process your requests"
+msgstr "Де постачальники ШІ обробляють ваші запити"
+
 #. js-lingui-id: AY1Gaf
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Where records of this object open"
@@ -31672,7 +32085,7 @@ msgstr "Windsurf / Cascade"
 #. js-lingui-id: Z4dSVG
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Wink"
-msgstr ""
+msgstr "Підморгування"
 
 #. js-lingui-id: /Fq7wz
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
@@ -32018,12 +32431,32 @@ msgstr "Для перегляду робочого простору необхі
 msgid "Workspaces"
 msgstr "Робочі простори"
 
+#. js-lingui-id: yehD4Z
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Workspaces run on AWS in Frankfurt, Germany"
+msgstr "Робочі простори працюють на AWS у Франкфурті, Німеччина"
+
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "Workspaces status"
 msgstr "Статус робочих просторів"
+
+#. js-lingui-id: C+gilE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Worldwide"
+msgstr "По всьому світу"
+
+#. js-lingui-id: oR3/ss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, standard retention"
+msgstr "По всьому світу, стандартне зберігання"
+
+#. js-lingui-id: iTAMb7
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, zero data retention"
+msgstr "По всьому світу, без зберігання даних"
 
 #. js-lingui-id: BmWHak
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -32070,6 +32503,11 @@ msgstr "Напишіть опис для цього агента"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
 msgstr "Напишіть повідомлення"
+
+#. js-lingui-id: PxYBOj
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Write a message..."
+msgstr "Напишіть повідомлення..."
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32162,6 +32600,7 @@ msgid "yes"
 msgstr "так"
 
 #. js-lingui-id: l75CjT
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -32573,6 +33012,11 @@ msgstr "Ваш робочий простір буде вимкнено"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Zed"
 msgstr "Zed"
+
+#. js-lingui-id: 2sLNC3
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Zero data retention"
+msgstr "Без зберігання даних"
 
 #. js-lingui-id: AWOSPo
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx

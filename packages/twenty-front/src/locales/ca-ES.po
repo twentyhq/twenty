@@ -351,7 +351,7 @@ msgstr "{0, plural, one {La teva invitació encara no s'ha enviat} other {Les te
 #. placeholder {1}: t(SETTINGS_AI_ASSISTANT_COLOR_LABELS[preset.avatarColor])
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "{0} · {1}"
-msgstr ""
+msgstr "{0} · {1}"
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -584,7 +584,7 @@ msgstr "{appDisplayName} voldria:"
 #. js-lingui-id: y+Uv96
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "{appLabel} installed"
-msgstr ""
+msgstr "{appLabel} instal·lat"
 
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
@@ -698,6 +698,11 @@ msgstr "{currentCreditAmountDisplay} crèdits "
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, one {crèdit gratuït} other {crèdits gratuïts}}"
+
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} i {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -833,11 +838,6 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} instal·lació} other {{1} instal·lacions}}"
-
-#. js-lingui-id: XcDI87
-#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
-msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
-msgstr ""
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -1026,16 +1026,6 @@ msgstr "{remainingCount} més"
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {No hi ha més esborranys després d'aquest} one {# esborrany més després d'aquest} other {# esborranys més després d'aquest}}"
-
-#. js-lingui-id: mqfjQO
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr "{remainingStepCount, plural, one {Completa # pas abans del {formattedTrialEnd}} other {Completa # passos abans del {formattedTrialEnd}}}"
-
-#. js-lingui-id: yICp8R
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr "{remainingStepCount, plural, one {Finalitza # pas} other {Finalitza # passos}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1576,11 +1566,6 @@ msgstr "500 Error - {duration}ms"
 msgid "90 days"
 msgstr "90 dies"
 
-#. js-lingui-id: 81nnG3
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "A CSV or Excel export from any tool"
-msgstr "Una exportació CSV o Excel des de qualsevol eina"
-
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "A display name for this provider"
@@ -1739,6 +1724,11 @@ msgstr "Quant a la teva aplicació"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Acords de tractament de dades acceptats i signats per a aquest espai de treball, amb la seva versió de plantilla i data."
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Grups d'accés"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2688,6 +2678,11 @@ msgstr "Afegeix el teu primer flux de treball"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Afegit {beautifiedCreatedAt}"
 
+#. js-lingui-id: WHJA3l
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
+msgstr "S'ha afegit <0>Data de renovació</0> a <1>{companiesLabel}</1>"
+
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -2886,6 +2881,7 @@ msgid "agent"
 msgstr "agent"
 
 #. js-lingui-id: iEQQyu
+#: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -2932,6 +2928,11 @@ msgstr "Cerca web de l'agent"
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Agents"
 msgstr "Agents"
+
+#. js-lingui-id: D2ijkj
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Agents that will fail"
+msgstr "Agents que fallaran"
 
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
@@ -3021,10 +3022,35 @@ msgstr "Crèdits d'IA"
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Els crèdits d'IA es renoven d'aquí a {0, plural, one {# dia} other {# dies}}."
 
+#. js-lingui-id: MuT/nD
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "AI data policy and Privacy tab"
+msgstr "Política de dades d'IA i pestanya de privadesa"
+
+#. js-lingui-id: WQyHss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI data processing"
+msgstr "Processament de dades d'IA"
+
+#. js-lingui-id: zNuqPE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI is paused"
+msgstr "La IA està en pausa"
+
+#. js-lingui-id: u9aqca
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "AI matches your columns to fields, even renamed ones."
+msgstr "La IA associa les vostres columnes als camps, fins i tot si s'han canviat de nom."
+
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
 msgstr "Configuració de la IA"
+
+#. js-lingui-id: JDoLSS
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "AI shapes your workspace around your data."
+msgstr "La IA adapta el teu espai de treball a les teves dades."
 
 #. js-lingui-id: X5Mx4I
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -3336,11 +3362,6 @@ msgstr "Tota la configuració"
 msgid "All Sources"
 msgstr "Totes les fonts"
 
-#. js-lingui-id: wiGHxh
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "All steps done"
-msgstr "Tots els passos completats"
-
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
@@ -3525,6 +3546,7 @@ msgid "Amber"
 msgstr "Ambre"
 
 #. js-lingui-id: hehnjM
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -3620,6 +3642,11 @@ msgstr "S'ha produït un error intern en aplicar els vostres canvis. Contacteu a
 msgid "An internal error occurred while validating your changes. Please contact support."
 msgstr "S'ha produït un error intern en validar els vostres canvis. Contacteu amb el servei d'assistència."
 
+#. js-lingui-id: 2SfoVo
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "An Invoices object linked to Subscriptions and Companies."
+msgstr "Un objecte de factures vinculat a Subscripcions i Empreses."
+
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "An object with this name already exists"
@@ -3652,7 +3679,7 @@ msgstr "i {hiddenCount} més"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Animate"
-msgstr ""
+msgstr "Anima"
 
 #. js-lingui-id: U/L8gq
 #: src/modules/settings/billing/hooks/useBillingWording.ts
@@ -3975,6 +4002,11 @@ msgstr "S'aplica a"
 msgid "Apply"
 msgstr "Aplica"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Aplica registres privats als objectes que no són privats de manera predeterminada. Sempre està activat per als espais de treball que han configurat la compartició de registres. En desactivar-ho, els registres configurats com a privats en aquests objectes tornen a ser visibles."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4065,7 +4097,7 @@ msgstr "Àrab"
 #. js-lingui-id: DzER9P
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Arch"
-msgstr ""
+msgstr "Arc"
 
 #. js-lingui-id: i19Zro
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -4254,6 +4286,11 @@ msgstr "Pregunta a l'IA"
 msgid "Ask an admin to raise the limit."
 msgstr "Demaneu a un administrador que augmenti el límit."
 
+#. js-lingui-id: fy+eXl
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Ask an admin with security access to change this"
+msgstr "Demaneu a un administrador amb accés de seguretat que canviï això"
+
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "Ask for human input"
@@ -4363,12 +4400,12 @@ msgstr "Assistent"
 #. js-lingui-id: FwlE5m
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Assistant avatar"
-msgstr ""
+msgstr "Avatar de l'assistent"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
-msgstr ""
+msgstr "Nom de l'assistent"
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4518,6 +4555,11 @@ msgstr "Registres d'auditoria"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Audit Logs"
 msgstr "Registres d'Auditoria"
+
+#. js-lingui-id: 7tMFh/
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Audited controls and the agreements that cover your data."
+msgstr "Controls auditats i els acords que cobreixen les vostres dades."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -4735,15 +4777,10 @@ msgstr "Torna a {text}"
 msgid "Back to content"
 msgstr "Tornar al contingut"
 
-#. js-lingui-id: +cSNzs
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "Back to current step"
-msgstr "Torna al pas actual"
-
 #. js-lingui-id: K35/lm
 #: src/pages/settings/ai/components/SettingsAiAssistantAvatarMenuPage.tsx
 msgid "Back to customization"
-msgstr ""
+msgstr "Torna a la personalització"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -5060,6 +5097,11 @@ msgstr "Rebotats o amb queixa"
 msgid "Bracket access is not supported, use dot access instead"
 msgstr "No s'admet l'accés amb claudàtors; fes servir l'accés amb punt"
 
+#. js-lingui-id: Mh79rW
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Breach notification"
+msgstr "Notificació de bretxa de seguretat"
+
 #. js-lingui-id: iu7tUI
 #: src/modules/ui/navigation/bread-crumb/components/Breadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
@@ -5104,11 +5146,6 @@ msgstr "Marró"
 msgid "Browse partners"
 msgstr "Explora els socis"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "Consulta els canvis als registres, els esdeveniments de seguretat, els registres de l'aplicació i molt més"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -5138,6 +5175,11 @@ msgstr "Suma de verificació de la compilació"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Crea relacions de molts a molts"
+
+#. js-lingui-id: yDcuP6
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Built to meet EU data protection rules"
+msgstr "Dissenyat per complir les normes de protecció de dades de la UE"
 
 #. js-lingui-id: +7fBMP
 #: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
@@ -5811,6 +5853,11 @@ msgstr "Canvia el tema a clar"
 msgid "Change theme to system"
 msgstr "Canvia el tema al del sistema"
 
+#. js-lingui-id: 3Hphdi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Change where AI providers process requests and what they keep"
+msgstr "Canvieu on els proveïdors d'IA processen les sol·licituds i què conserven"
+
 #. js-lingui-id: a5zD9f
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -5940,6 +5987,11 @@ msgstr "Llista de verificació"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Comprova les execucions recents"
+
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Comproveu el permís de creació per separat en crear registres, en lloc del permís d'actualització."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -6182,10 +6234,15 @@ msgstr "Trieu què passa quan feu clic a un número de telèfon"
 msgid "Choose what happens when you click an email"
 msgstr "Trieu què passa quan feu clic a una adreça de correu electrònic"
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: XDg9PA
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Choose what Twenty can access to support you and improve the product."
+msgstr "Trieu a què pot accedir Twenty per donar-vos suport i millorar el producte."
+
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Tria quan {AGENT_CHAT_ASSISTANT_NAME} participa en converses de tot el teu espai de treball"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Trieu quan {assistantName} participa en les converses de tot el vostre espai de treball"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6230,7 +6287,7 @@ msgstr "Trieu les vostres preferències per a les aplicacions instal·lades al v
 #. js-lingui-id: 7xMmki
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Circle"
-msgstr ""
+msgstr "Cercle"
 
 #. js-lingui-id: h2kp0z
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -6517,10 +6574,15 @@ msgstr "Tanca el panell lateral"
 msgid "Close video"
 msgstr "Tanca el vídeo"
 
+#. js-lingui-id: fYGMGN
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Closes in 6 days"
+msgstr "Es tanca d'aquí a 6 dies"
+
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cloud"
-msgstr ""
+msgstr "Núvol"
 
 #. js-lingui-id: gZoap8
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -6530,7 +6592,7 @@ msgstr "Cloudflare pot esperar un nom relatiu a la zona en lloc del nom d'amfitr
 #. js-lingui-id: ExH3eu
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Clover"
-msgstr ""
+msgstr "Trèvol"
 
 #. js-lingui-id: 1Lxtdt
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -6797,10 +6859,16 @@ msgid "Compact view"
 msgstr "Vista compacta"
 
 #. js-lingui-id: s2QZS6
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/onboarding/components/import-contacts/OnboardingImportPreviewCompanies.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Companies"
 msgstr "Empreses"
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Company"
+msgstr "Empresa"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -6850,6 +6918,11 @@ msgstr "Feines completades guardades per {completedDuration}, feines fallades gu
 msgid "Complexity"
 msgstr "Complexitat"
 
+#. js-lingui-id: psC+XF
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Compliance"
+msgstr "Compliment"
+
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
@@ -6869,6 +6942,11 @@ msgstr "Previsualització del component amb dades de mostra"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Redacta correu electrònic"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Calcula els grups d'accés que utilitzaran els llistats de registres per als permisos de nivell de fila. Activa-ho després que s'hagi completat l'actualització de l'espai de treball."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -7370,6 +7448,11 @@ msgstr "Continuar si falla la iteració"
 msgid "Continue setup"
 msgstr "Continua la configuració"
 
+#. js-lingui-id: byc7Ak
+#: src/modules/getting-started/components/GettingStartedChatThreadDoneButton.tsx
+msgid "Continue thread"
+msgstr "Continua el fil"
+
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue with Email"
@@ -7469,7 +7552,7 @@ msgstr "Cook"
 #. js-lingui-id: SB9yVb
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cookie"
-msgstr ""
+msgstr "Galeta"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -8142,6 +8225,11 @@ msgstr "Crear un registre"
 msgid "Create Record"
 msgstr "Crea un registre"
 
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Permís per crear registres"
+
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -8241,6 +8329,11 @@ msgstr "S'ha creat {objectLabel}"
 msgid "Created by"
 msgstr "Creat per"
 
+#. js-lingui-id: AruIkC
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created object <0>{subscriptionsLabel}</0>"
+msgstr "S'ha creat l'objecte <0>{subscriptionsLabel}</0>"
+
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -8251,6 +8344,11 @@ msgstr "Creada el {0}"
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Created or updated"
 msgstr "Creat o actualitzat"
+
+#. js-lingui-id: nyr6nA
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created view <0>Renewals this quarter</0>"
+msgstr "S'ha creat la vista <0>Renovacions aquest trimestre</0>"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -8772,7 +8870,7 @@ msgstr "Personalitza"
 #. js-lingui-id: 9p/HFu
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 msgid "Customize assistant"
-msgstr ""
+msgstr "Personalitza l'assistent"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -8850,6 +8948,11 @@ msgstr "Diari"
 msgid "Daily AI Usage"
 msgstr "Ús diari de la IA"
 
+#. js-lingui-id: /dr6KQ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Daily backups"
+msgstr "Còpies de seguretat diàries"
+
 #. js-lingui-id: KXQkvT
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -8914,6 +9017,11 @@ msgstr "Dades i visualització"
 msgid "Data export"
 msgstr "Exportació de dades"
 
+#. js-lingui-id: a4sORy
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Data is encrypted in transit and at rest, with keys rotated regularly"
+msgstr "Les dades es xifren en trànsit i en repòs, amb claus que es roten regularment"
+
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data labels"
@@ -8951,7 +9059,13 @@ msgstr "Model de dades - Configuració"
 msgid "Data on display"
 msgstr "Dades a mostrar"
 
+#. js-lingui-id: oBChYi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Data processing"
+msgstr "Processament de dades"
+
 #. js-lingui-id: /qrjU8
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -10209,6 +10323,7 @@ msgid "Downgrade to monthly"
 msgstr "Canvia a facturació mensual"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
@@ -10288,6 +10403,11 @@ msgstr "Esborrany de correu electrònic"
 msgid "Drafted"
 msgstr "En esborrany"
 
+#. js-lingui-id: 5t1yRu
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafted <0>4 follow-up emails</0>"
+msgstr "S'han redactat <0>4 correus electrònics de seguiment</0>"
+
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafted email"
@@ -10297,6 +10417,11 @@ msgstr "Esborrany de correu electrònic"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafting email"
 msgstr "Redactant correu electrònic"
+
+#. js-lingui-id: BnOv+M
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafts only. You review and send."
+msgstr "Només esborranys. Reviseu-los i envieu-los."
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -10317,6 +10442,16 @@ msgstr "Deixa els camps aquí"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
 msgstr "Deixa el fitxer aquí..."
+
+#. js-lingui-id: 3DHZvz
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop to start your import"
+msgstr "Deixa anar per iniciar la importació"
+
+#. js-lingui-id: kIz73Z
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop your CSV or Excel from any tool"
+msgstr "Deixa anar el teu CSV o Excel des de qualsevol eina"
 
 #. js-lingui-id: euc6Ns
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
@@ -10444,6 +10579,11 @@ msgstr "Cada membre rep una assignació d'IA, que s'utilitza abans que els crèd
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
 msgstr "Cada llesca representa"
+
+#. js-lingui-id: Iz+rDD
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Each workspace has its own database schema"
+msgstr "Cada espai de treball té el seu propi esquema de base de dades"
 
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
@@ -10908,6 +11048,7 @@ msgid "emails"
 msgstr "correus electrònics"
 
 #. js-lingui-id: BXEcos
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
@@ -11087,6 +11228,16 @@ msgstr "Activa el micròfon i la càmera"
 msgid "Enable model-specific features"
 msgstr "Activar funcionalitats específiques del model"
 
+#. js-lingui-id: sqO0Ni
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted daily snapshots, kept 30 days"
+msgstr "Instantànies diàries xifrades, conservades durant 30 dies"
+
+#. js-lingui-id: qILKh1
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted everywhere"
+msgstr "Xifrat a tot arreu"
+
 #. js-lingui-id: Iy8Gze
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Encryption key rotation"
@@ -11204,10 +11355,10 @@ msgstr "Introdueix un objecte JSON"
 msgid "Enter a JSON value"
 msgstr "Introdueix un valor JSON"
 
-#. js-lingui-id: 0mwDxe
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
-msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters."
-msgstr ""
+#. js-lingui-id: 8Yr1fg
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
+msgstr "Introduïu un nom d'entre 1 i {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caràcters en una sola línia. Els claudàtors han d'estar aparellats i no es poden imbricar."
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -11752,6 +11903,21 @@ msgstr "Estableix els endpoints de webhook per a les notificacions sobre esdeven
 msgid "Estimate a probability"
 msgstr "Estima una probabilitat"
 
+#. js-lingui-id: MzEfu4
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "EU only"
+msgstr "Només UE"
+
+#. js-lingui-id: 84VCrZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, standard retention"
+msgstr "Només UE, retenció estàndard"
+
+#. js-lingui-id: e8+f0R
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, zero data retention"
+msgstr "Només UE, retenció de dades zero"
+
 #. js-lingui-id: nVlfR5
 #: src/modules/ai/constants/DataResidencyConfig.ts
 msgid "European Union"
@@ -11860,6 +12026,11 @@ msgstr "cada dia"
 msgid "every hour"
 msgstr "cada hora"
 
+#. js-lingui-id: loBt0P
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Every line of code is public, so you can audit it yourself"
+msgstr "Cada línia de codi és pública, de manera que la podeu auditar vosaltres mateixos"
+
 #. js-lingui-id: a9EHxw
 #: src/utils/cron-to-human/describeCronExpression.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -11867,10 +12038,20 @@ msgstr "cada hora"
 msgid "every minute"
 msgstr "cada minut"
 
+#. js-lingui-id: pjZ9WF
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Every Monday"
+msgstr "Cada dilluns"
+
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
 msgstr "Tots els objectes d'aquest espai de treball com a fitxers CSV en un únic fitxer zip, conservat durant 1 dia. Funciona per als espais de treball suspesos."
+
+#. js-lingui-id: h3QLIe
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Every provider that handles your data"
+msgstr "Tots els proveïdors que gestionen les vostres dades"
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -12204,11 +12385,6 @@ msgstr "Exporta ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Exporta ({percentageValue}%)"
 
-#. js-lingui-id: YkvQVd
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Export a CSV from"
-msgstr "Exporta un CSV des de"
-
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -12294,7 +12470,7 @@ msgstr "Extra intel·ligent"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Face"
-msgstr ""
+msgstr "Cara"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -12657,6 +12833,11 @@ msgstr "No s’ha pogut revocar la clau de signatura. Torneu-ho a provar més ta
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "No s'ha pogut revocar el codi de recuperació."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "No s'han pogut desar els paràmetres de l'assistent. Torneu-ho a provar."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -13402,7 +13583,7 @@ msgstr "Flux"
 #. js-lingui-id: abEdHK
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Flower"
-msgstr ""
+msgstr "Flor"
 
 #. js-lingui-id: kNqMMd
 #: src/modules/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder.ts
@@ -13519,6 +13700,7 @@ msgid "Formats"
 msgstr "Formats"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
 msgstr "Antic membre"
@@ -13542,6 +13724,11 @@ msgstr "Adreça de reenviament copiada al porta-retalls"
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Found {objectLabel}"
 msgstr "S'ha trobat {objectLabel}"
+
+#. js-lingui-id: laQ+m7
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Found <0>4 deals</0> closing in the next 30 days"
+msgstr "S'han trobat <0>4 oportunitats</0> que es tanquen en els propers 30 dies"
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -13761,10 +13948,15 @@ msgstr "Funcions"
 msgid "Functions - Settings"
 msgstr "Funcions - Configuració"
 
+#. js-lingui-id: arkG3W
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "GDPR"
+msgstr "RGPD"
+
 #. js-lingui-id: WFxtuG
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Gem"
-msgstr ""
+msgstr "Gema"
 
 #. js-lingui-id: e4FdDl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13817,6 +14009,11 @@ msgstr "Genera un codi de recuperació de 2FA"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate a recovery code"
 msgstr "Genera un codi de recuperació"
+
+#. js-lingui-id: h9wFH2
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Generate a signed copy in one click"
+msgstr "Genereu una còpia signada amb un clic"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -13911,6 +14108,11 @@ msgstr "Passos per començar"
 msgid "GIN (full-text search and JSONB)"
 msgstr "GIN (cerca de text complet i JSONB)"
 
+#. js-lingui-id: RkXlPZ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "GitHub"
+msgstr "GitHub"
+
 #. js-lingui-id: BhYbva
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "GitHub authorization failed or was denied. Please connect your GitHub account again."
@@ -13977,6 +14179,11 @@ msgstr "Anar a l'esborrany"
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 msgid "Go to Settings"
 msgstr "Anar a Configuració"
+
+#. js-lingui-id: WeeG8G
+#: src/modules/getting-started/components/GettingStartedWorkflowDoneButton.tsx
+msgid "Go to workflow"
+msgstr "Anar al flux de treball"
 
 #. js-lingui-id: FYlHHU
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -14217,7 +14424,12 @@ msgstr "Identificador"
 #. js-lingui-id: halrRh
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Happy"
-msgstr ""
+msgstr "Feliç"
+
+#. js-lingui-id: WsF7cD
+#: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
+msgid "Has attachments"
+msgstr "Té adjunts"
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -14376,10 +14588,15 @@ msgstr "hola, món"
 msgid "Help center"
 msgstr "Centre d'ajuda"
 
+#. js-lingui-id: GY8MUv
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Help improve Twenty"
+msgstr "Ajudeu a millorar Twenty"
+
 #. js-lingui-id: tIb8bD
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Hexagon"
-msgstr ""
+msgstr "Hexàgon"
 
 #. js-lingui-id: D+zLDD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -14533,6 +14750,11 @@ msgstr "Línia de separació horitzontal"
 msgid "Host your workspace's customizations and overrides."
 msgstr "Allotja les personalitzacions i les substitucions del vostre espai de treball."
 
+#. js-lingui-id: fFtUGj
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Hosting"
+msgstr "Allotjament"
+
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 #: src/modules/workflow/workflow-trigger/constants/CronTriggerIntervalOptions.ts
@@ -14568,6 +14790,11 @@ msgstr "Com apareix aquesta regla a la configuració."
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll appear to teammates and agents."
 msgstr "Com apareixeràs als companys d'equip i als agents."
+
+#. js-lingui-id: iGMucd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "How your data is protected"
+msgstr "Com es protegeixen les vostres dades"
 
 #. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -14961,10 +15188,10 @@ msgstr "Importa només les carpetes/etiquetes seleccionades"
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Importa o afegeix la configuració MCP des de la configuració de JetBrains."
 
-#. js-lingui-id: e2aT+Z
+#. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
-msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
-msgstr "Importa els fitxers adjunts a Twenty. Determina quins registres contenen i, després, crea'ls i vincula'ls."
+msgid "Import the attached files into Twenty. Work out which records they contain and shape the workspace around them: reuse the objects and fields that fit, add the ones that are missing, then create the records and link them together."
+msgstr "Importa els fitxers adjunts a Twenty. Determina quins registres contenen i adapta l'espai de treball a aquests: reutilitza els objectes i els camps adequats, afegeix els que faltin i, a continuació, crea els registres i enllaça'ls."
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -15096,6 +15323,11 @@ msgstr "Augmenta a ${priceDisplay}"
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Increase value"
 msgstr "Augmenta el valor"
+
+#. js-lingui-id: dW+3Q4
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Independently audited security controls"
+msgstr "Controls de seguretat auditats de manera independent"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15604,6 +15836,11 @@ msgstr "Convidar amb Enllaç"
 msgid "Invite link sent to email addresses"
 msgstr "Enllaç d'invitació enviat a les adreces de correu electrònic"
 
+#. js-lingui-id: aNtX0/
+#: src/modules/getting-started/components/GettingStartedInviteDoneButton.tsx
+msgid "Invite more"
+msgstr "Convida'n més"
+
 #. js-lingui-id: x1m5RZ
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Invite user"
@@ -15729,6 +15966,11 @@ msgstr "És relatiu"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
 msgstr "És avui{timeZoneAbbreviationSuffix}"
+
+#. js-lingui-id: YbqWR4
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Isolated workspace"
+msgstr "Espai de treball aïllat"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -16257,12 +16499,6 @@ msgstr "Últim inici de sessió"
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Last update"
 msgstr "Darrera actualització"
-
-#. js-lingui-id: LYb3OD
-#: src/modules/getting-started/components/GettingStartedChatThreadDoneCard.tsx
-#: src/modules/getting-started/components/GettingStartedWorkflowDoneCard.tsx
-msgid "Last update: {lastUpdate}"
-msgstr ""
 
 #. js-lingui-id: C3yOz3
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -17035,11 +17271,6 @@ msgstr "Bloqueja el diagrama"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Registra una nova oportunitat (empresa, import, etapa, tancament previst). Detalls: "
 
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "Consola de registres"
-
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -17183,7 +17414,7 @@ msgstr "Has perdut l'autenticador? Utilitza un codi de recuperació"
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Love"
-msgstr ""
+msgstr "Amor"
 
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17772,6 +18003,11 @@ msgstr "Missatge"
 msgid "Message {recipientName}"
 msgstr "Envia un missatge a {recipientName}"
 
+#. js-lingui-id: 6H0up8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Message attachments"
+msgstr "Fitxers adjunts dels missatges"
+
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -18019,6 +18255,11 @@ msgstr "Model que s'utilitza quan xategeu amb Twenty"
 msgid "Models"
 msgstr "Models"
 
+#. js-lingui-id: o4Xn+q
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Models above are limited to the providers your privacy settings allow."
+msgstr "Els models anteriors estan limitats als proveïdors que permet la vostra configuració de privadesa."
+
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Models for this provider. Toggle to enable or disable."
@@ -18132,6 +18373,7 @@ msgid "More advanced fields for advanced projects"
 msgstr "Més camps avançats per a projectes avançats"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -18350,6 +18592,7 @@ msgstr "N/A"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
@@ -18498,6 +18741,11 @@ msgstr "element del menú de navegació"
 msgid "Navigation modes"
 msgstr "Modes de navegació"
 
+#. js-lingui-id: hUbvfC
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Need an export? Get one from"
+msgstr "Necessiteu una exportació? Obteniu-ne una de"
+
 #. js-lingui-id: IbVc4A
 #: src/modules/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions.ts
 msgid "Needs a Date field"
@@ -18536,10 +18784,10 @@ msgstr "Mai"
 msgid "Never expires"
 msgstr "Mai caduca"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Mai manté {AGENT_CHAT_ASSISTANT_NAME} fora. Només quan se'l menciona demana a {AGENT_CHAT_ASSISTANT_NAME} que respongui quan se'l etiqueta. Automàtic permet que {AGENT_CHAT_ASSISTANT_NAME} decideixi quan respondre. Els xats només amb tu i {AGENT_CHAT_ASSISTANT_NAME} sempre reben respostes."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Mai manté {assistantName} fora. Només quan se'l menciona demana a {assistantName} que respongui quan se'l etiqueta. Automàtic permet que {assistantName} decideixi quan respondre. Els xats només amb vós i {assistantName} sempre reben respostes."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -18610,7 +18858,7 @@ msgstr "Canal nou"
 #: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
-#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
+#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Nou xat"
 
@@ -18877,6 +19125,11 @@ msgstr "Sol·licitud següent"
 msgid "Next screenshot"
 msgstr "Captura de pantalla següent"
 
+#. js-lingui-id: e3GOIZ
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Next step"
+msgstr "Pas següent"
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -18992,12 +19245,22 @@ msgstr "Cap agent concorda amb la teva cerca"
 msgid "No AI consumption recorded for this user."
 msgstr "No s'ha registrat cap consum d'IA per a aquest usuari."
 
+#. js-lingui-id: m/JoOZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "No AI model on this workspace meets these settings."
+msgstr "Cap model d'IA d'aquest espai de treball compleix aquesta configuració."
+
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "No hi ha cap proveïdor d'IA configurat en aquesta instància."
+
+#. js-lingui-id: lBnUyA
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No AI provider trains on your data, and neither does Twenty"
+msgstr "Cap proveïdor d'IA entrena amb les vostres dades, i Twenty tampoc"
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -19747,6 +20010,11 @@ msgstr "No s’ha cridat cap eina"
 msgid "No topic"
 msgstr "Sense tema"
 
+#. js-lingui-id: lNEINd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No training on your data"
+msgstr "Sense entrenament amb les vostres dades"
+
 #. js-lingui-id: 3Y/oDZ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -20041,6 +20309,11 @@ msgstr "Encara no s'ha mesurat amb aquest esforç, de manera que aquestes són l
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Encara no s'ha mesurat amb aquest esforç. Es mostra la lectura del model base."
+
+#. js-lingui-id: PBxg/E
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Not now"
+msgstr "Ara no"
 
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
@@ -20401,6 +20674,16 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "Ometre valors zero"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "en {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "els {remainingDays} i {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20548,20 +20831,13 @@ msgstr "Només els membres que poden gestionar aplicacions poden concedir accés
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "només el {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "només el {firstDay} i {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "només els {remainingDays} i {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "només els {remainingDays} i l'últim dia del mes"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20582,6 +20858,11 @@ msgstr "Només el creador d'aquest registre, les persones amb accés complet i e
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
 msgid "Only the subject is shared"
 msgstr "Només es comparteix l'assumpte"
+
+#. js-lingui-id: 41eae/
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Only use providers that keep no copy of your prompts and responses"
+msgstr "Utilitzeu només proveïdors que no conservin cap còpia de les vostres indicacions ni respostes"
 
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
@@ -20619,7 +20900,7 @@ msgstr "Obrir"
 #. placeholder {0}: account.handle
 #: src/modules/getting-started/components/GettingStartedConnectedAccountSettingsButton.tsx
 msgid "Open {0} settings"
-msgstr ""
+msgstr "Obre la configuració de {0}"
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -20720,11 +21001,6 @@ msgstr "Obre al panell lateral"
 msgid "Open link"
 msgstr "Obrir l’enllaç"
 
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "Obre la consola de registres"
-
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
@@ -20789,6 +21065,11 @@ msgstr "Obre la configuració"
 msgid "Open side panel"
 msgstr "Obre el panell lateral"
 
+#. js-lingui-id: v+Wp++
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Open source"
+msgstr "Codi obert"
+
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Open Twenty's official ChatGPT integration for your workspace."
@@ -20841,6 +21122,11 @@ msgstr "operacions"
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Operations"
 msgstr "Operacions"
+
+#. js-lingui-id: 4MyDFl
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Opportunities"
+msgstr "Oportunitats"
 
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
@@ -21328,7 +21614,7 @@ msgstr "Soci"
 #. js-lingui-id: gHz5zY
 #: src/utils/title-utils.ts
 msgid "Partner - Settings"
-msgstr ""
+msgstr "Soci - Configuració"
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -21343,7 +21629,7 @@ msgstr "Codi de soci aplicat"
 #. js-lingui-id: 0w8/Qw
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner codes can only be added during the free trial."
-msgstr ""
+msgstr "Els codis de soci només es poden afegir durant el període de prova gratuït."
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -21468,6 +21754,13 @@ msgstr "Pendent"
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Sol·licituds pendents"
+
+#. js-lingui-id: 1wdjme
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "People"
+msgstr "Persones"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -21673,7 +21966,7 @@ msgstr "Tria una hora d'enviament futura."
 #. js-lingui-id: Lu0MSt
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Pick a starting point, then make it yours"
-msgstr ""
+msgstr "Tria un punt de partida i fes-lo teu"
 
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -21726,7 +22019,7 @@ msgstr "Gràfic circular"
 #. js-lingui-id: qoLYkj
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Pill"
-msgstr ""
+msgstr "Pastilla"
 
 #. js-lingui-id: qVkGWK
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
@@ -21751,6 +22044,11 @@ msgstr "Rosa"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Pinned"
 msgstr "Fixat"
+
+#. js-lingui-id: ylGwx6
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Pinned models not in use"
+msgstr "Models fixats que no s'utilitzen"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -21990,6 +22288,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "Evitar assignar el mateix valor a diferents registres"
 
 #. js-lingui-id: rdUucN
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -22072,6 +22371,11 @@ msgstr "Sol·licitud anterior"
 msgid "Previous screenshot"
 msgstr "Captura de pantalla anterior"
 
+#. js-lingui-id: VbggDE
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Previous step"
+msgstr "Pas anterior"
+
 #. js-lingui-id: rLvhNs
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
@@ -22139,6 +22443,11 @@ msgstr "Suport prioritari"
 msgid "Priority: {0}"
 msgstr "Prioritat: {0}"
 
+#. js-lingui-id: rjGI/Q
+#: src/pages/settings/general/SettingsGeneral.tsx
+msgid "Privacy"
+msgstr "Privadesa"
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -22151,6 +22460,11 @@ msgstr "Política de Privacitat"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Privada"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Registres privats"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22177,6 +22491,11 @@ msgstr "Processant"
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Processing Recording"
 msgstr "S'està processant la gravació"
+
+#. js-lingui-id: kLAZG6
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Processing region"
+msgstr "Regió de processament"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -22534,6 +22853,11 @@ msgstr "Llegeix els correus electrònics"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Llegeix les indicacions del sistema"
+
+#. js-lingui-id: l668+W
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Read the last emails and meetings for each"
+msgstr "Llegiu els darrers correus electrònics i reunions de cadascun"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -23493,11 +23817,6 @@ msgstr "Els enllaços d'instal·lació de Replit requereixen una URL MCP HTTPS."
 msgid "Reply"
 msgstr "Respon"
 
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Respon..."
-
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Report an issue"
@@ -23613,7 +23932,7 @@ msgstr "Restableix el disseny de la pàgina de registre"
 #. js-lingui-id: Oi+lSL
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Reset to Ada"
-msgstr ""
+msgstr "Reinicia a Ada"
 
 #. js-lingui-id: L+rMC9
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -24304,7 +24623,7 @@ msgstr "S'ha desat a l'aplicació Workspace"
 #. js-lingui-id: LRlHXj
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Saving assistant settings..."
-msgstr ""
+msgstr "S'estan desant els paràmetres de l'assistent..."
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -24917,6 +25236,11 @@ msgstr "Secció"
 #: src/pages/settings/security/SettingsSecuritySsoIdentifyProvider.tsx
 msgid "Security"
 msgstr "Seguretat"
+
+#. js-lingui-id: OpFwR0
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Security you can verify"
+msgstr "Seguretat que podeu verificar"
 
 #. js-lingui-id: i0zibG
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -25836,12 +26160,12 @@ msgstr "Setè"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Shape"
-msgstr ""
+msgstr "Forma"
 
 #. js-lingui-id: KBYPKo
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 msgid "Shape, color, face"
-msgstr ""
+msgstr "Forma, color, cara"
 
 #. js-lingui-id: Z8lGw6
 #: src/modules/ai/components/AiChatThreadShareButton.tsx
@@ -25855,6 +26179,11 @@ msgstr "Compartir"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Share calendar events across channels"
 msgstr "Comparteix esdeveniments de calendari entre canals"
+
+#. js-lingui-id: S1jlER
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Share session replays and AI conversations to help us improve Twenty"
+msgstr "Compartiu repeticions de sessions i converses d'IA per ajudar-nos a millorar Twenty"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -25911,6 +26240,11 @@ msgstr "S'està compartint el registre"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Sharing settings could not be loaded."
 msgstr "No s'han pogut carregar els paràmetres de compartició."
+
+#. js-lingui-id: K8Q+iX
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Sharing with Twenty"
+msgstr "Compartir amb Twenty"
 
 #. js-lingui-id: PGetcZ
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -26048,6 +26382,11 @@ msgstr "Mostra només les files amb errors"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
 msgstr "Mostra la pàgina de Primers passos i la targeta de la barra lateral, i obre-la en accedir durant el període de prova."
+
+#. js-lingui-id: fTPKt5
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
+msgstr "Mostra la pestanya Privadesa i aplica la seva política de dades d'IA i la configuració per compartir dades. Desactivar aquesta opció elimina qualsevol política desada. Activeu-la després que s'hagi completat l'actualització de la instància."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -26257,7 +26596,6 @@ msgstr "Habilitats"
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Omitir"
@@ -26293,7 +26631,7 @@ msgstr "Cel"
 #. js-lingui-id: u9Z+qJ
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Sleepy"
-msgstr ""
+msgstr "Somnolent"
 
 #. js-lingui-id: Z6Nf0i
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -26406,6 +26744,16 @@ msgstr "Posposat"
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Posposat fins a {eventTime}"
+
+#. js-lingui-id: 01L/Si
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "SOC 2"
+msgstr "SOC 2"
+
+#. js-lingui-id: LBv08V
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "SOC 2 audited controls, encryption in transit and at rest, and code anyone can review."
+msgstr "Controls auditats SOC 2, xifrat en trànsit i en repòs, i codi que qualsevol persona pot revisar."
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -26627,11 +26975,6 @@ msgstr "Separa diversos valors"
 #: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Vista dividida"
-
-#. js-lingui-id: jAoGz1
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Spreadsheet"
-msgstr "Full de càlcul"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26892,6 +27235,11 @@ msgstr "Emmagatzematge"
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Desa una reunió sincronitzada per diversos calendaris del mateix proveïdor una sola vegada, en lloc d'una vegada per calendari."
 
+#. js-lingui-id: YbaJNn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
+msgstr "Emmagatzema i mostra els fitxers adjunts als missatges. S'habilita quan es completa l'actualització de l'espai de treball."
+
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -27065,6 +27413,11 @@ msgstr "Assignatura, cos i adjunts seran compartits amb el teu equip."
 msgid "Submit"
 msgstr "Enviar"
 
+#. js-lingui-id: amVqRj
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Subprocessors"
+msgstr "Subprocessadors"
+
 #. js-lingui-id: EDl9kS
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
 msgid "Subscribe"
@@ -27127,6 +27480,11 @@ msgstr "La subscripció es canviarà al pla {planLabel} el {0}."
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
 msgid "Subscription will be switched to monthly billing the {0}."
 msgstr "La subscripció es canviarà a facturació mensual el {0}."
+
+#. js-lingui-id: P6F38F
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Subscriptions"
+msgstr "Subscripcions"
 
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -27251,7 +27609,7 @@ msgstr "Admet raonament"
 #. js-lingui-id: e0Wwlk
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Surprised"
-msgstr ""
+msgstr "Sorprès"
 
 #. js-lingui-id: LbFYgh
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
@@ -27693,6 +28051,11 @@ msgstr "Això equival a unes {formattedNewlyEarnedAiActions} accions d'IA. Els c
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "L’adreça des de la qual l’espai de treball enviarà i rebrà correu electrònic (per exemple, support@mycompany.com). L’enviament de sortida requereix que el domini estigui verificat a Outbound Domains."
 
+#. js-lingui-id: PKwDg+
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "The agent asks before creating anything."
+msgstr "L'agent pregunta abans de crear res."
+
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 msgid "The agent sets the instructions, model and permissions."
@@ -27935,6 +28298,11 @@ msgstr "No s'ha pogut resoldre la configuració de la relació."
 msgid "The role attached to this webhook."
 msgstr "El rol associat a aquest webhook."
 
+#. js-lingui-id: OBY7M0
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "The safeguards behind every Twenty Cloud workspace."
+msgstr "Les salvaguardes de cada espai de treball de Twenty Cloud."
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -28052,6 +28420,16 @@ msgstr "No hi ha cap activitat associada amb aquest registre."
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "S'ha produït un error en actualitzar la contrasenya."
+
+#. js-lingui-id: hOYgrt
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These agents use a model your settings exclude, so they fail when they run: {agentLabels}"
+msgstr "Aquests agents utilitzen un model que la vostra configuració exclou, de manera que fallen quan s'executen: {agentLabels}"
+
+#. js-lingui-id: ZSRi5U
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These tiers fall back to an allowed model: {pinnedTierLabels}"
+msgstr "Aquests nivells tornen a un model permès: {pinnedTierLabels}"
 
 #. js-lingui-id: 5Ml5Nr
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -28995,6 +29373,11 @@ msgstr "Feines totals"
 msgid "Track AI consumption across your workspace."
 msgstr "Fes el seguiment del consum d'IA al teu espai de treball."
 
+#. js-lingui-id: LpPRBt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Track invoices too?"
+msgstr "Voleu fer també un seguiment de les factures?"
+
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Track link clicks"
@@ -29240,6 +29623,11 @@ msgctxt "Field type"
 msgid "True/False"
 msgstr "Cert/Fals"
 
+#. js-lingui-id: tdZpCd
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Trust Center"
+msgstr "Centre de confiança"
+
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
@@ -29314,6 +29702,7 @@ msgid "Twenty adds the people you email and meet, and keeps them up to date with
 msgstr "Twenty afegeix les persones a qui envieu correus electrònics i amb qui us reuniu, i les manté actualitzades sense introduir dades manualment."
 
 #. js-lingui-id: JnaRPe
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
 msgstr "Camps de Twenty"
@@ -29322,6 +29711,11 @@ msgstr "Camps de Twenty"
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Twenty fills each level with the best model that meets your requirements"
 msgstr "Twenty omple cada nivell amb el millor model que compleix els teus requisits"
+
+#. js-lingui-id: 0mWZoP
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more."
+msgstr "Twenty no té cap model d'IA propi. Trieu quins proveïdors poden processar les vostres sol·licituds. Una configuració més estricta deixa menys models, i alguns costen més."
 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -30303,7 +30697,6 @@ msgid "Upload a file or an image"
 msgstr "Puja un fitxer o una imatge"
 
 #. js-lingui-id: 2IXDgU
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -30343,6 +30736,11 @@ msgstr "Carrega la foto de perfil"
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Carrega el fitxer XML amb la teva informació de connexió"
+
+#. js-lingui-id: /w70rp
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Upload your CRM export"
+msgstr "Pengeu la vostra exportació de CRM"
 
 #. js-lingui-id: XzIB4l
 #: src/modules/apollo/services/ApolloFactory.ts
@@ -31304,6 +31702,16 @@ msgstr "Hem trobat un problema en verificar"
 msgid "We match on these fields. If a {0} already exists, we update it. Otherwise, we create a new one."
 msgstr "Fem coincidir aquests camps. Si ja existeix un {0}, l'actualitzem. Altrament, en creem un de nou."
 
+#. js-lingui-id: AXVG2Y
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "We notify you within 72 hours, as set out in the DPA"
+msgstr "Us notifiquem en un termini de 72 hores, tal com estableix el DPA"
+
+#. js-lingui-id: InKpMt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "We sell subscriptions to design teams."
+msgstr "Venem subscripcions a equips de disseny."
+
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
@@ -31604,6 +32012,11 @@ msgstr "Quan finalitzi el període de prova, se us cobrarà {priceLabel}."
 msgid "Where"
 msgstr "On"
 
+#. js-lingui-id: I7dUhW
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Where AI providers process your requests"
+msgstr "On els proveïdors d'IA processen les vostres sol·licituds"
+
 #. js-lingui-id: AY1Gaf
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Where records of this object open"
@@ -31670,7 +32083,7 @@ msgstr "Windsurf / Cascade"
 #. js-lingui-id: Z4dSVG
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Wink"
-msgstr ""
+msgstr "Picada d'ullet"
 
 #. js-lingui-id: /Fq7wz
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
@@ -32016,12 +32429,32 @@ msgstr "Les vistes d'espai de treball requereixen permís per gestionar vistes"
 msgid "Workspaces"
 msgstr "Espais de treball"
 
+#. js-lingui-id: yehD4Z
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Workspaces run on AWS in Frankfurt, Germany"
+msgstr "Els espais de treball s'executen a AWS a Frankfurt, Alemanya"
+
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "Workspaces status"
 msgstr "Estat dels espais de treball"
+
+#. js-lingui-id: C+gilE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Worldwide"
+msgstr "A tot el món"
+
+#. js-lingui-id: oR3/ss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, standard retention"
+msgstr "A tot el món, retenció estàndard"
+
+#. js-lingui-id: iTAMb7
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, zero data retention"
+msgstr "A tot el món, retenció de dades zero"
 
 #. js-lingui-id: BmWHak
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -32068,6 +32501,11 @@ msgstr "Escriu una descripció per a aquest agent"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
 msgstr "Escriu un missatge"
+
+#. js-lingui-id: PxYBOj
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Write a message..."
+msgstr "Escriu un missatge..."
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32160,6 +32598,7 @@ msgid "yes"
 msgstr "sí"
 
 #. js-lingui-id: l75CjT
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -32571,6 +33010,11 @@ msgstr "El vostre espai de treball serà desactivat"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Zed"
 msgstr "Zed"
+
+#. js-lingui-id: 2sLNC3
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Zero data retention"
+msgstr "Retenció de dades zero"
 
 #. js-lingui-id: AWOSPo
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx

@@ -91,7 +91,9 @@ export const SettingsAccountsMessageFoldersCard = () => {
   );
 
   const handleToggleAllFolders = async () => {
-    if (messageFolderIds.length === 0) return;
+    if (messageFolderIds.length === 0) {
+      return;
+    }
 
     try {
       await updateMessageFoldersSyncStatus({

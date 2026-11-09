@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
@@ -16,8 +17,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { RoleAssignmentValidationModule } from 'src/engine/permissions/role-assignment/role-assignment-validation.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
+import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/role-assignment.module';
 
 @Module({
   imports: [
@@ -27,14 +27,14 @@ import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role
       UserEntity,
       RoleTargetEntity,
     ]),
-    RoleAssignmentValidationModule,
     ApprovedAccessDomainModule,
     WorkspaceInvitationModule,
     WorkspaceDomainsModule,
-    UserRoleModule,
+    RoleAssignmentModule,
     FileModule,
     TokenModule,
     OnboardingModule,
+    BillingModule,
     CoreEntityCacheModule,
   ],
   exports: [UserWorkspaceService, UserWorkspaceAuthContextService],

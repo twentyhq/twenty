@@ -166,11 +166,13 @@ export const getCallRecordingWidgetStoryDecorator =
       objectRecordsPermissions: [
         {
           objectMetadataId: CALL_RECORDING_OBJECT_METADATA_ID,
+          canCreateAllRecords: true,
           canReadAllRecords: !isDefined(context.args.restriction),
           canUpdateAllRecords: true,
           canSoftDeleteAllRecords: true,
           canDestroyAllRecords: true,
-          restrictedFields: {},
+          unreadableFields: [],
+          uneditableFields: [],
         },
       ],
     });

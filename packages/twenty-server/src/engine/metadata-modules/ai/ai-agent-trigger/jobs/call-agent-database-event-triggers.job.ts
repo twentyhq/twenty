@@ -11,7 +11,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
 import { AGENT_TRIGGER_RUN_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-run-limits.const';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
@@ -30,7 +30,7 @@ export class CallAgentDatabaseEventTriggersJob {
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordEventPermissionsService: RecordEventPermissionsService,
     private readonly agentTriggerThrottlerService: AgentTriggerThrottlerService,
   ) {}
 
@@ -71,19 +71,20 @@ export class CallAgentDatabaseEventTriggersJob {
         application,
         agentId: flatAgent.id,
       };
-      const readableEvents = await this.permissionsService.findReadableEvents({
-        authContext: agentAuthContext,
-        eventBatch: workspaceEventBatch,
-        // Masking can drop the actor fields, so the agent's own writes are skipped first
-        events: workspaceEventBatch.events.filter(
-          (event) =>
-            !isDatabaseEventCausedByAgent({
-              event,
-              eventName,
-              agentId: flatAgent.id,
-            }),
-        ),
-      });
+      const readableEvents =
+        await this.recordEventPermissionsService.filterReadableEvents({
+          authContext: agentAuthContext,
+          eventBatch: workspaceEventBatch,
+          // Masking can drop the actor fields, so the agent's own writes are skipped first
+          events: workspaceEventBatch.events.filter(
+            (event) =>
+              !isDatabaseEventCausedByAgent({
+                event,
+                eventName,
+                agentId: flatAgent.id,
+              }),
+          ),
+        });
 
       const eventsToRunOn = filterEventsByUpdatedFields({
         events: readableEvents,

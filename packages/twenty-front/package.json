@@ -112,7 +112,7 @@
     "lodash.camelcase": "^4.3.0",
     "lodash.groupby": "^4.6.0",
     "lodash.isempty": "^4.4.0",
-    "lodash.omit": "^4.5.0",
+    "lodash.omit": "^4.18.0",
     "lodash.uniqby": "^4.7.0",
     "marked": "^17.0.1",
     "microdiff": "^1.3.2",

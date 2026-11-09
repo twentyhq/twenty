@@ -17,7 +17,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 
 export type CommonApiContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
@@ -32,7 +33,8 @@ export type CommonApiContext = {
 export class CommonApiContextBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly permissionsService: PermissionsService,
+    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
 
   async build({
@@ -88,12 +90,14 @@ export class CommonApiContextBuilderService {
     }
 
     const principals =
-      await this.permissionsService.buildPermissionsPrincipalsOrThrow({
-        authContext,
-      });
+      await this.principalPermissionsService.resolvePermissionsPrincipalsOrThrow(
+        {
+          authContext,
+        },
+      );
 
     const unreadableFieldMetadataIds =
-      await this.permissionsService.findUnreadableFieldMetadataIdsOrThrow({
+      await this.recordPermissionsService.findUnreadableFields({
         principals,
         objectMetadataId: flatObjectMetadata.id,
       });

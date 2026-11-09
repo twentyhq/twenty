@@ -15,12 +15,14 @@ export const objectPermissionsByObjectMetadataIdSelector =
         allObjectRecordsPermissions.map((objectRecordsPermissions) => [
           objectRecordsPermissions.objectMetadataId,
           {
+            canCreateAllRecords: objectRecordsPermissions.canCreateAllRecords,
             canReadAllRecords: objectRecordsPermissions.canReadAllRecords,
             canUpdateAllRecords: objectRecordsPermissions.canUpdateAllRecords,
             canSoftDeleteAllRecords:
               objectRecordsPermissions.canSoftDeleteAllRecords,
             canDestroyAllRecords: objectRecordsPermissions.canDestroyAllRecords,
-            restrictedFields: objectRecordsPermissions.restrictedFields,
+            unreadableFields: objectRecordsPermissions.unreadableFields,
+            uneditableFields: objectRecordsPermissions.uneditableFields,
             rowLevelRecordsPermissions:
               objectRecordsPermissions.rowLevelRecordsPermissions,
           },

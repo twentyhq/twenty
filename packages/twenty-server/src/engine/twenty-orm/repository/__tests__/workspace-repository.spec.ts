@@ -9,6 +9,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -106,10 +107,19 @@ const buildRepository = ({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps: createEmptyFlatEntityMaps(),
-      flatRoleTargetByAgentIdMaps: {},
-      recordPermissionReadOrm: {
-        findRecordShares: jest.fn().mockResolvedValue([]),
-        findPrivateRecordStates: jest.fn().mockResolvedValue(new Map()),
+      permissionsPrincipals: undefined,
+      recordPermissions: {
+        isReadDisabled: jest.fn().mockResolvedValue(false),
+        assertCanRunOperationOrThrow: jest.fn(),
+        buildManyRecordsAccessCondition: jest.fn().mockResolvedValue(true),
+        assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
+        assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
+        recomputeRecordAccessGroupIdsOfRecords: jest.fn(),
+        findRlsRuleUnreadableFieldsByRole: jest.fn().mockResolvedValue([]),
+        buildRlsRuleSqlConditionOrThrow: jest.fn(),
+        isRecomputingRecordAccessGroupIdsOnWrite: jest
+          .fn()
+          .mockReturnValue(false),
       },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
@@ -119,28 +129,7 @@ const buildRepository = ({
       objectIdByNameSingular: { delivery: OBJECT_METADATA_ID },
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
       coreDataSource: new DataSource({ type: 'postgres' }),
-      userWorkspaceRoleMap: {},
-      apiKeyRoleMap: { [API_KEY_ID]: ROLE_ID },
-      rolesPermissions: {
-        [ROLE_ID]: {
-          canReadAllRecords: true,
-          canUpdateAllRecords: true,
-          canSoftDeleteAllRecords: true,
-          canDestroyAllRecords: true,
-          objects: {
-            [OBJECT_METADATA_ID]: {
-              canReadAllRecords: true,
-              canUpdateAllRecords: true,
-              canSoftDeleteAllRecords: true,
-              canDestroyAllRecords: true,
-              restrictedFields: {},
-            },
-          },
-        },
-      },
-      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
     },
     authContext: {
       type: 'apiKey',

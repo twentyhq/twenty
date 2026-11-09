@@ -273,7 +273,9 @@ export class CreateCompanyAndPersonService {
         },
       );
 
-      if (!isDefined(existingPersonOnAdditionalEmails)) continue;
+      if (!isDefined(existingPersonOnAdditionalEmails)) {
+        continue;
+      }
 
       shouldCreateOrRestorePeopleByHandleMap.set(contact.handle.toLowerCase(), {
         existingPerson: existingPersonOnAdditionalEmails,
@@ -311,8 +313,12 @@ export class CreateCompanyAndPersonService {
             ? getDomainNameFromHandle(contact.handle)
             : undefined;
 
-          if (!isDefined(companyDomainName) || !isWorkDomain(companyDomainName))
+          if (
+            !isDefined(companyDomainName) ||
+            !isWorkDomain(companyDomainName)
+          ) {
             return undefined;
+          }
 
           return {
             domainName: companyDomainName,
@@ -485,8 +491,9 @@ export class CreateCompanyAndPersonService {
         handle.toLowerCase(),
       )?.existingPerson;
 
-      if (!isDefined(existingPerson) || isNull(existingPerson.deletedAt))
+      if (!isDefined(existingPerson) || isNull(existingPerson.deletedAt)) {
         continue;
+      }
 
       const companyId = companiesMap[getDomainNameFromHandle(handle)];
 

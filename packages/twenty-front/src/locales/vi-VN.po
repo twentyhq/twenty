@@ -351,7 +351,7 @@ msgstr "{0, plural, other {# lời mời của bạn chưa được gửi}}"
 #. placeholder {1}: t(SETTINGS_AI_ASSISTANT_COLOR_LABELS[preset.avatarColor])
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "{0} · {1}"
-msgstr ""
+msgstr "{0} · {1}"
 
 #. js-lingui-id: 6lE3tD
 #. placeholder {0}: formatNumber(counts.hardSuppressed)
@@ -584,7 +584,7 @@ msgstr "{appDisplayName} muốn:"
 #. js-lingui-id: y+Uv96
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "{appLabel} installed"
-msgstr ""
+msgstr "Đã cài đặt {appLabel}"
 
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
@@ -698,6 +698,11 @@ msgstr "{currentCreditAmountDisplay} tín dụng "
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, other {tín dụng miễn phí}}"
+
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} và {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -833,11 +838,6 @@ msgstr "{importContactsCallRecordingHours, plural, other {{formattedImportContac
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, other {{0} lượt cài đặt}}"
-
-#. js-lingui-id: XcDI87
-#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
-msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
-msgstr ""
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -1026,16 +1026,6 @@ msgstr "còn {remainingCount} mục"
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {Không còn bản nháp nào sau bản này} other {Còn # bản nháp sau bản này}}"
-
-#. js-lingui-id: mqfjQO
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr "{remainingStepCount, plural, other {Hoàn thành # bước trước {formattedTrialEnd}}}"
-
-#. js-lingui-id: yICp8R
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr "{remainingStepCount, plural, other {Hoàn tất # bước}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1576,11 +1566,6 @@ msgstr "Lỗi 500 - {duration}ms"
 msgid "90 days"
 msgstr "90 ngày"
 
-#. js-lingui-id: 81nnG3
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "A CSV or Excel export from any tool"
-msgstr "Tệp xuất CSV hoặc Excel từ bất kỳ công cụ nào"
-
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "A display name for this provider"
@@ -1739,6 +1724,11 @@ msgstr "Thông tin về ứng dụng của bạn"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Các DPA đã được chấp nhận và ký cho không gian làm việc này, kèm phiên bản và ngày của mẫu."
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Nhóm truy cập"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2688,6 +2678,11 @@ msgstr "Thêm quy trình làm việc đầu tiên của bạn"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Đã thêm vào {beautifiedCreatedAt}"
 
+#. js-lingui-id: WHJA3l
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
+msgstr "Đã thêm <0>Ngày gia hạn</0> vào <1>{companiesLabel}</1>"
+
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -2886,6 +2881,7 @@ msgid "agent"
 msgstr "tác nhân"
 
 #. js-lingui-id: iEQQyu
+#: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -2932,6 +2928,11 @@ msgstr "Tìm kiếm web của trợ lý"
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Agents"
 msgstr "Đại lý"
+
+#. js-lingui-id: D2ijkj
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Agents that will fail"
+msgstr "Các tác nhân sẽ gặp lỗi"
 
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
@@ -3021,10 +3022,35 @@ msgstr "Tín dụng AI"
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Tín dụng AI sẽ được gia hạn sau {0, plural, other {# ngày}}."
 
+#. js-lingui-id: MuT/nD
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "AI data policy and Privacy tab"
+msgstr "Chính sách dữ liệu AI và thẻ Quyền riêng tư"
+
+#. js-lingui-id: WQyHss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI data processing"
+msgstr "Xử lý dữ liệu AI"
+
+#. js-lingui-id: zNuqPE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "AI is paused"
+msgstr "AI đã tạm dừng"
+
+#. js-lingui-id: u9aqca
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "AI matches your columns to fields, even renamed ones."
+msgstr "AI ghép các cột của bạn với các trường, kể cả những cột đã đổi tên."
+
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
 msgstr "Cài đặt AI"
+
+#. js-lingui-id: JDoLSS
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "AI shapes your workspace around your data."
+msgstr "AI định hình không gian làm việc của bạn dựa trên dữ liệu của bạn."
 
 #. js-lingui-id: X5Mx4I
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -3336,11 +3362,6 @@ msgstr "Tất cả cài đặt"
 msgid "All Sources"
 msgstr "Tất cả nguồn"
 
-#. js-lingui-id: wiGHxh
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "All steps done"
-msgstr "Đã hoàn tất tất cả các bước"
-
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
@@ -3525,6 +3546,7 @@ msgid "Amber"
 msgstr "Hổ phách"
 
 #. js-lingui-id: hehnjM
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -3620,6 +3642,11 @@ msgstr "Đã xảy ra lỗi nội bộ khi áp dụng các thay đổi của b�
 msgid "An internal error occurred while validating your changes. Please contact support."
 msgstr "Đã xảy ra lỗi nội bộ khi xác nhận các thay đổi của bạn. Vui lòng liên hệ bộ phận hỗ trợ."
 
+#. js-lingui-id: 2SfoVo
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "An Invoices object linked to Subscriptions and Companies."
+msgstr "Một đối tượng Hóa đơn được liên kết với Gói đăng ký và Công ty."
+
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "An object with this name already exists"
@@ -3652,7 +3679,7 @@ msgstr "và {hiddenCount} mục khác"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Animate"
-msgstr ""
+msgstr "Hoạt ảnh"
 
 #. js-lingui-id: U/L8gq
 #: src/modules/settings/billing/hooks/useBillingWording.ts
@@ -3975,6 +4002,11 @@ msgstr "Áp dụng cho"
 msgid "Apply"
 msgstr "Áp dụng"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Áp dụng bản ghi riêng tư cho các đối tượng không ở chế độ riêng tư theo mặc định. Luôn bật cho các không gian làm việc đã thiết lập chia sẻ bản ghi. Việc tắt tùy chọn này sẽ khiến các bản ghi được đặt là riêng tư trên những đối tượng đó hiển thị trở lại."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4065,7 +4097,7 @@ msgstr "Tiếng Ả Rập"
 #. js-lingui-id: DzER9P
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Arch"
-msgstr ""
+msgstr "Vòm"
 
 #. js-lingui-id: i19Zro
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -4254,6 +4286,11 @@ msgstr "Yêu cầu AI"
 msgid "Ask an admin to raise the limit."
 msgstr "Yêu cầu quản trị viên tăng giới hạn."
 
+#. js-lingui-id: fy+eXl
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Ask an admin with security access to change this"
+msgstr "Yêu cầu quản trị viên có quyền truy cập bảo mật thay đổi mục này"
+
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "Ask for human input"
@@ -4363,12 +4400,12 @@ msgstr "Trợ lý"
 #. js-lingui-id: FwlE5m
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Assistant avatar"
-msgstr ""
+msgstr "Ảnh đại diện trợ lý"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
-msgstr ""
+msgstr "Tên trợ lý"
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4518,6 +4555,11 @@ msgstr "Nhật ký kiểm toán"
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Audit Logs"
 msgstr "Nhật ký kiểm toán"
+
+#. js-lingui-id: 7tMFh/
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Audited controls and the agreements that cover your data."
+msgstr "Các biện pháp kiểm soát đã được kiểm toán và các thỏa thuận bảo vệ dữ liệu của bạn."
 
 #. js-lingui-id: 6TRVUO
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -4735,15 +4777,10 @@ msgstr "Quay lại {text}"
 msgid "Back to content"
 msgstr "Quay lại nội dung"
 
-#. js-lingui-id: +cSNzs
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
-msgid "Back to current step"
-msgstr "Quay lại bước hiện tại"
-
 #. js-lingui-id: K35/lm
 #: src/pages/settings/ai/components/SettingsAiAssistantAvatarMenuPage.tsx
 msgid "Back to customization"
-msgstr ""
+msgstr "Quay lại tùy chỉnh"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -5060,6 +5097,11 @@ msgstr "Bị trả lại hoặc khiếu nại"
 msgid "Bracket access is not supported, use dot access instead"
 msgstr "Không hỗ trợ truy cập bằng dấu ngoặc vuông, hãy dùng truy cập bằng dấu chấm thay thế"
 
+#. js-lingui-id: Mh79rW
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Breach notification"
+msgstr "Thông báo vi phạm"
+
 #. js-lingui-id: iu7tUI
 #: src/modules/ui/navigation/bread-crumb/components/Breadcrumb.tsx
 #: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
@@ -5104,11 +5146,6 @@ msgstr "Nâu"
 msgid "Browse partners"
 msgstr "Duyệt đối tác"
 
-#. js-lingui-id: 8nmCIQ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Browse record changes, security events, app logs and more"
-msgstr "Duyệt các thay đổi bản ghi, sự kiện bảo mật, nhật ký ứng dụng và hơn thế nữa"
-
 #. js-lingui-id: GliY5Z
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Browse the marketplace"
@@ -5138,6 +5175,11 @@ msgstr "Mã kiểm tra bản dựng"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Thiết lập quan hệ nhiều-nhiều"
+
+#. js-lingui-id: yDcuP6
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Built to meet EU data protection rules"
+msgstr "Được xây dựng để đáp ứng các quy định bảo vệ dữ liệu của EU"
 
 #. js-lingui-id: +7fBMP
 #: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
@@ -5811,6 +5853,11 @@ msgstr "Chuyển chủ đề sang sáng"
 msgid "Change theme to system"
 msgstr "Chuyển chủ đề sang hệ thống"
 
+#. js-lingui-id: 3Hphdi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Change where AI providers process requests and what they keep"
+msgstr "Thay đổi nơi các nhà cung cấp AI xử lý yêu cầu và dữ liệu họ lưu giữ"
+
 #. js-lingui-id: a5zD9f
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -5940,6 +5987,11 @@ msgstr "Danh sách kiểm tra"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Kiểm tra các lần chạy gần đây"
+
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Khi tạo bản ghi, chỉ kiểm tra quyền tạo thay vì quyền cập nhật."
 
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -6182,10 +6234,15 @@ msgstr "Chọn điều gì sẽ xảy ra khi bạn nhấp vào một số điệ
 msgid "Choose what happens when you click an email"
 msgstr "Chọn điều gì sẽ xảy ra khi bạn nhấp vào một địa chỉ email"
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: XDg9PA
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Choose what Twenty can access to support you and improve the product."
+msgstr "Chọn những gì Twenty có thể truy cập để hỗ trợ bạn và cải thiện sản phẩm."
+
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Chọn thời điểm {AGENT_CHAT_ASSISTANT_NAME} tham gia các cuộc trò chuyện trong không gian làm việc của bạn"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Chọn thời điểm {assistantName} tham gia các cuộc trò chuyện trong toàn bộ không gian làm việc của bạn"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6230,7 +6287,7 @@ msgstr "Chọn tùy chọn của bạn cho các ứng dụng do quản trị vi�
 #. js-lingui-id: 7xMmki
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Circle"
-msgstr ""
+msgstr "Hình tròn"
 
 #. js-lingui-id: h2kp0z
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -6517,10 +6574,15 @@ msgstr "Đóng ngăn bên"
 msgid "Close video"
 msgstr "Đóng video"
 
+#. js-lingui-id: fYGMGN
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Closes in 6 days"
+msgstr "Đóng sau 6 ngày"
+
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cloud"
-msgstr ""
+msgstr "Đám mây"
 
 #. js-lingui-id: gZoap8
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -6530,7 +6592,7 @@ msgstr "Cloudflare có thể yêu cầu tên tương đối với zone thay vì 
 #. js-lingui-id: ExH3eu
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Clover"
-msgstr ""
+msgstr "Cỏ bốn lá"
 
 #. js-lingui-id: 1Lxtdt
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -6797,10 +6859,16 @@ msgid "Compact view"
 msgstr "Chế độ xem gọn"
 
 #. js-lingui-id: s2QZS6
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/onboarding/components/import-contacts/OnboardingImportPreviewCompanies.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Companies"
 msgstr "Các công ty"
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Company"
+msgstr "Doanh nghiệp"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -6850,6 +6918,11 @@ msgstr "Công việc hoàn thành được giữ lại trong {completedDuration}
 msgid "Complexity"
 msgstr "Độ phức tạp"
 
+#. js-lingui-id: psC+XF
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Compliance"
+msgstr "Tuân thủ"
+
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
@@ -6869,6 +6942,11 @@ msgstr "Bản xem trước thành phần với dữ liệu mẫu"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Soạn email"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Tính toán các nhóm truy cập mà danh sách bản ghi sẽ sử dụng cho quyền ở cấp hàng. Bật sau khi quá trình nâng cấp không gian làm việc hoàn tất."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -7370,6 +7448,11 @@ msgstr "Tiếp tục khi lần lặp bị lỗi"
 msgid "Continue setup"
 msgstr "Tiếp tục thiết lập"
 
+#. js-lingui-id: byc7Ak
+#: src/modules/getting-started/components/GettingStartedChatThreadDoneButton.tsx
+msgid "Continue thread"
+msgstr "Tiếp tục chuỗi"
+
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue with Email"
@@ -7469,7 +7552,7 @@ msgstr "Cook"
 #. js-lingui-id: SB9yVb
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cookie"
-msgstr ""
+msgstr "Bánh quy"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -8142,6 +8225,11 @@ msgstr "Tạo Bản ghi"
 msgid "Create Record"
 msgstr "Tạo Bản ghi"
 
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Quyền tạo bản ghi"
+
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -8241,6 +8329,11 @@ msgstr "Đã tạo {objectLabel}"
 msgid "Created by"
 msgstr "Người tạo"
 
+#. js-lingui-id: AruIkC
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created object <0>{subscriptionsLabel}</0>"
+msgstr "Đã tạo đối tượng <0>{subscriptionsLabel}</0>"
+
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -8251,6 +8344,11 @@ msgstr "Được tạo vào {0}"
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Created or updated"
 msgstr "Đã tạo hoặc cập nhật"
+
+#. js-lingui-id: nyr6nA
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created view <0>Renewals this quarter</0>"
+msgstr "Đã tạo chế độ xem <0>Gia hạn trong quý này</0>"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -8772,7 +8870,7 @@ msgstr "Tùy chỉnh"
 #. js-lingui-id: 9p/HFu
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 msgid "Customize assistant"
-msgstr ""
+msgstr "Tùy chỉnh trợ lý"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -8850,6 +8948,11 @@ msgstr "Hàng ngày"
 msgid "Daily AI Usage"
 msgstr "Mức sử dụng AI hằng ngày"
 
+#. js-lingui-id: /dr6KQ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Daily backups"
+msgstr "Sao lưu hằng ngày"
+
 #. js-lingui-id: KXQkvT
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -8914,6 +9017,11 @@ msgstr "Dữ liệu và hiển thị"
 msgid "Data export"
 msgstr "Xuất dữ liệu"
 
+#. js-lingui-id: a4sORy
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Data is encrypted in transit and at rest, with keys rotated regularly"
+msgstr "Dữ liệu được mã hóa khi truyền và khi lưu trữ, với khóa được luân chuyển thường xuyên"
+
 #. js-lingui-id: xpZXLn
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data labels"
@@ -8951,7 +9059,13 @@ msgstr "Cài đặt - Mô hình dữ liệu"
 msgid "Data on display"
 msgstr "Dữ liệu hiển thị"
 
+#. js-lingui-id: oBChYi
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Data processing"
+msgstr "Xử lý dữ liệu"
+
 #. js-lingui-id: /qrjU8
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -10209,6 +10323,7 @@ msgid "Downgrade to monthly"
 msgstr "Giảm cấp xuống trả hàng tháng"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
@@ -10288,6 +10403,11 @@ msgstr "Email nháp"
 msgid "Drafted"
 msgstr "Đã tạo bản nháp"
 
+#. js-lingui-id: 5t1yRu
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafted <0>4 follow-up emails</0>"
+msgstr "Đã soạn <0>4 email theo dõi</0>"
+
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafted email"
@@ -10297,6 +10417,11 @@ msgstr "Email nháp đã được soạn"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafting email"
 msgstr "Đang soạn email nháp"
+
+#. js-lingui-id: BnOv+M
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafts only. You review and send."
+msgstr "Chỉ là bản nháp. Bạn xem lại và gửi."
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -10317,6 +10442,16 @@ msgstr "Thả các trường vào đây"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
 msgstr "Thả tệp vào đây..."
+
+#. js-lingui-id: 3DHZvz
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop to start your import"
+msgstr "Thả để bắt đầu nhập"
+
+#. js-lingui-id: kIz73Z
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Drop your CSV or Excel from any tool"
+msgstr "Thả tệp CSV hoặc Excel của bạn từ bất kỳ công cụ nào"
 
 #. js-lingui-id: euc6Ns
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
@@ -10444,6 +10579,11 @@ msgstr "Mỗi thành viên nhận được một hạn mức AI, được dùng 
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
 msgstr "Mỗi phần đại diện cho"
+
+#. js-lingui-id: Iz+rDD
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Each workspace has its own database schema"
+msgstr "Mỗi không gian làm việc có lược đồ cơ sở dữ liệu riêng"
 
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
@@ -10908,6 +11048,7 @@ msgid "emails"
 msgstr "emails"
 
 #. js-lingui-id: BXEcos
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
@@ -11087,6 +11228,16 @@ msgstr "Bật micrô và camera"
 msgid "Enable model-specific features"
 msgstr "Kích hoạt các tính năng cụ thể của mô hình"
 
+#. js-lingui-id: sqO0Ni
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted daily snapshots, kept 30 days"
+msgstr "Bản sao nhanh hằng ngày được mã hóa, lưu giữ trong 30 ngày"
+
+#. js-lingui-id: qILKh1
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Encrypted everywhere"
+msgstr "Được mã hóa ở mọi nơi"
+
 #. js-lingui-id: Iy8Gze
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Encryption key rotation"
@@ -11204,10 +11355,10 @@ msgstr "Nhập một đối tượng JSON"
 msgid "Enter a JSON value"
 msgstr "Nhập một giá trị JSON"
 
-#. js-lingui-id: 0mwDxe
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
-msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters."
-msgstr ""
+#. js-lingui-id: 8Yr1fg
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
+msgstr "Nhập tên từ 1 đến {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} ký tự trên một dòng. Dấu ngoặc vuông phải có cặp và không được lồng nhau."
 
 #. js-lingui-id: peBb6B
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -11752,6 +11903,21 @@ msgstr "Thiết lập điểm cuối Webhooks để nhận thông báo về các
 msgid "Estimate a probability"
 msgstr "Ước tính xác suất"
 
+#. js-lingui-id: MzEfu4
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "EU only"
+msgstr "Chỉ EU"
+
+#. js-lingui-id: 84VCrZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, standard retention"
+msgstr "Chỉ EU, thời gian lưu giữ tiêu chuẩn"
+
+#. js-lingui-id: e8+f0R
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "EU only, zero data retention"
+msgstr "Chỉ EU, không lưu giữ dữ liệu"
+
 #. js-lingui-id: nVlfR5
 #: src/modules/ai/constants/DataResidencyConfig.ts
 msgid "European Union"
@@ -11860,6 +12026,11 @@ msgstr "mỗi ngày"
 msgid "every hour"
 msgstr "mỗi giờ"
 
+#. js-lingui-id: loBt0P
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Every line of code is public, so you can audit it yourself"
+msgstr "Mọi dòng mã đều công khai, để bạn có thể tự kiểm toán"
+
 #. js-lingui-id: a9EHxw
 #: src/utils/cron-to-human/describeCronExpression.ts
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
@@ -11867,10 +12038,20 @@ msgstr "mỗi giờ"
 msgid "every minute"
 msgstr "mỗi phút"
 
+#. js-lingui-id: pjZ9WF
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Every Monday"
+msgstr "Mỗi thứ Hai"
+
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
 msgstr "Mọi đối tượng của không gian làm việc này dưới dạng các tệp CSV trong một tệp zip, được lưu trong 1 ngày. Hoạt động với các không gian làm việc bị tạm ngưng."
+
+#. js-lingui-id: h3QLIe
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Every provider that handles your data"
+msgstr "Mọi nhà cung cấp xử lý dữ liệu của bạn"
 
 #. js-lingui-id: SpXUci
 #: src/modules/applications/utils/getStandardApplicationReadme.ts
@@ -12204,11 +12385,6 @@ msgstr "Xuất ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Xuất ({percentageValue}%)"
 
-#. js-lingui-id: YkvQVd
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Export a CSV from"
-msgstr "Xuất tệp CSV từ"
-
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -12294,7 +12470,7 @@ msgstr "Cực thông minh"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Face"
-msgstr ""
+msgstr "Khuôn mặt"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -12657,6 +12833,11 @@ msgstr "Không thể thu hồi khóa ký. Vui lòng thử lại sau."
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Thu hồi mã khôi phục thất bại."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "Không thể lưu cài đặt trợ lý. Hãy thử lại."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -13402,7 +13583,7 @@ msgstr "Dòng chảy"
 #. js-lingui-id: abEdHK
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Flower"
-msgstr ""
+msgstr "Hoa"
 
 #. js-lingui-id: kNqMMd
 #: src/modules/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder.ts
@@ -13519,6 +13700,7 @@ msgid "Formats"
 msgstr "Định dạng"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
 msgstr "Thành viên cũ"
@@ -13542,6 +13724,11 @@ msgstr "Đã sao chép địa chỉ chuyển tiếp vào bảng tạm"
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Found {objectLabel}"
 msgstr "Đã tìm thấy {objectLabel}"
+
+#. js-lingui-id: laQ+m7
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Found <0>4 deals</0> closing in the next 30 days"
+msgstr "Đã tìm thấy <0>4 giao dịch</0> sẽ chốt trong 30 ngày tới"
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -13761,10 +13948,15 @@ msgstr "Chức năng"
 msgid "Functions - Settings"
 msgstr "Cài đặt - Chức năng"
 
+#. js-lingui-id: arkG3W
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "GDPR"
+msgstr "GDPR"
+
 #. js-lingui-id: WFxtuG
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Gem"
-msgstr ""
+msgstr "Đá quý"
 
 #. js-lingui-id: e4FdDl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13817,6 +14009,11 @@ msgstr "Tạo mã khôi phục 2FA"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate a recovery code"
 msgstr "Tạo mã khôi phục"
+
+#. js-lingui-id: h9wFH2
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Generate a signed copy in one click"
+msgstr "Tạo bản sao đã ký chỉ với một cú nhấp"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -13911,6 +14108,11 @@ msgstr "Các bước Bắt đầu"
 msgid "GIN (full-text search and JSONB)"
 msgstr "GIN (tìm kiếm toàn văn và JSONB)"
 
+#. js-lingui-id: RkXlPZ
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "GitHub"
+msgstr "GitHub"
+
 #. js-lingui-id: BhYbva
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "GitHub authorization failed or was denied. Please connect your GitHub account again."
@@ -13977,6 +14179,11 @@ msgstr "Đi tới Bản nháp"
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 msgid "Go to Settings"
 msgstr "Đi tới cài đặt"
+
+#. js-lingui-id: WeeG8G
+#: src/modules/getting-started/components/GettingStartedWorkflowDoneButton.tsx
+msgid "Go to workflow"
+msgstr "Đi đến quy trình công việc"
 
 #. js-lingui-id: FYlHHU
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -14217,7 +14424,12 @@ msgstr "Định danh"
 #. js-lingui-id: halrRh
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Happy"
-msgstr ""
+msgstr "Vui vẻ"
+
+#. js-lingui-id: WsF7cD
+#: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
+msgid "Has attachments"
+msgstr "Có tệp đính kèm"
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -14376,10 +14588,15 @@ msgstr "xin chào, thế giới"
 msgid "Help center"
 msgstr "Trung tâm trợ giúp"
 
+#. js-lingui-id: GY8MUv
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Help improve Twenty"
+msgstr "Giúp cải thiện Twenty"
+
 #. js-lingui-id: tIb8bD
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Hexagon"
-msgstr ""
+msgstr "Hình lục giác"
 
 #. js-lingui-id: D+zLDD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -14533,6 +14750,11 @@ msgstr "Đường phân cách ngang"
 msgid "Host your workspace's customizations and overrides."
 msgstr "Lưu trữ các tùy chỉnh và ghi đè của không gian làm việc của bạn."
 
+#. js-lingui-id: fFtUGj
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Hosting"
+msgstr "Lưu trữ"
+
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 #: src/modules/workflow/workflow-trigger/constants/CronTriggerIntervalOptions.ts
@@ -14568,6 +14790,11 @@ msgstr "Cách quy tắc này xuất hiện trong phần cài đặt."
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll appear to teammates and agents."
 msgstr "Cách bạn sẽ xuất hiện với đồng đội và tác nhân."
+
+#. js-lingui-id: iGMucd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "How your data is protected"
+msgstr "Cách dữ liệu của bạn được bảo vệ"
 
 #. js-lingui-id: k7iMla
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -14961,10 +15188,10 @@ msgstr "Chỉ nhập các thư mục/nhãn đã chọn"
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Nhập hoặc thêm cấu hình MCP từ phần cài đặt JetBrains."
 
-#. js-lingui-id: e2aT+Z
+#. js-lingui-id: LHHO6e
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
-msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
-msgstr "Nhập các tệp đính kèm vào Twenty. Xác định xem chúng chứa những bản ghi nào, sau đó tạo và liên kết các bản ghi đó với nhau."
+msgid "Import the attached files into Twenty. Work out which records they contain and shape the workspace around them: reuse the objects and fields that fit, add the ones that are missing, then create the records and link them together."
+msgstr "Nhập các tệp đính kèm vào Twenty. Xác định xem chúng chứa những bản ghi nào và định hình không gian làm việc dựa trên chúng: sử dụng lại các đối tượng và trường phù hợp, thêm những đối tượng và trường còn thiếu, sau đó tạo các bản ghi và liên kết chúng với nhau."
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -15096,6 +15323,11 @@ msgstr "Tăng lên ${priceDisplay}"
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Increase value"
 msgstr "Tăng giá trị"
+
+#. js-lingui-id: dW+3Q4
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Independently audited security controls"
+msgstr "Các biện pháp kiểm soát bảo mật được kiểm toán độc lập"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -15604,6 +15836,11 @@ msgstr "Mời qua Đường Dẫn"
 msgid "Invite link sent to email addresses"
 msgstr "Đã gửi đường dẫn mời tới địa chỉ email"
 
+#. js-lingui-id: aNtX0/
+#: src/modules/getting-started/components/GettingStartedInviteDoneButton.tsx
+msgid "Invite more"
+msgstr "Mời thêm"
+
 #. js-lingui-id: x1m5RZ
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Invite user"
@@ -15729,6 +15966,11 @@ msgstr "Là tương đối"
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is today{timeZoneAbbreviationSuffix}"
 msgstr "Hôm nay{timeZoneAbbreviationSuffix}"
+
+#. js-lingui-id: YbqWR4
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Isolated workspace"
+msgstr "Không gian làm việc cô lập"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -16257,12 +16499,6 @@ msgstr "Lần đăng nhập gần đây nhất"
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Last update"
 msgstr "Cập nhật cuối cùng"
-
-#. js-lingui-id: LYb3OD
-#: src/modules/getting-started/components/GettingStartedChatThreadDoneCard.tsx
-#: src/modules/getting-started/components/GettingStartedWorkflowDoneCard.tsx
-msgid "Last update: {lastUpdate}"
-msgstr ""
 
 #. js-lingui-id: C3yOz3
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -17035,11 +17271,6 @@ msgstr "Khóa sơ đồ"
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Ghi nhận một thương vụ mới (công ty, số tiền, giai đoạn, ngày dự kiến chốt). Chi tiết: "
 
-#. js-lingui-id: qLzdcJ
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Log console"
-msgstr "Bảng điều khiển nhật ký"
-
 #. js-lingui-id: RV6CK8
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 msgid "Log copied as JSON"
@@ -17183,7 +17414,7 @@ msgstr "Mất ứng dụng xác thực? Hãy dùng mã khôi phục"
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Love"
-msgstr ""
+msgstr "Yêu thích"
 
 #. js-lingui-id: nTWWCZ
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17772,6 +18003,11 @@ msgstr "Thông điệp"
 msgid "Message {recipientName}"
 msgstr "Nhắn tin cho {recipientName}"
 
+#. js-lingui-id: 6H0up8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Message attachments"
+msgstr "Tệp đính kèm tin nhắn"
+
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -18019,6 +18255,11 @@ msgstr "Mô hình được sử dụng khi bạn trò chuyện với Twenty"
 msgid "Models"
 msgstr "Mô hình"
 
+#. js-lingui-id: o4Xn+q
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Models above are limited to the providers your privacy settings allow."
+msgstr "Các mô hình ở trên bị giới hạn ở những nhà cung cấp mà cài đặt quyền riêng tư của bạn cho phép."
+
 #. js-lingui-id: tNFUgB
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Models for this provider. Toggle to enable or disable."
@@ -18132,6 +18373,7 @@ msgid "More advanced fields for advanced projects"
 msgstr "Nhiều trường nâng cao hơn cho các dự án nâng cao"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -18350,6 +18592,7 @@ msgstr "N/A"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
@@ -18498,6 +18741,11 @@ msgstr "mục menu điều hướng"
 msgid "Navigation modes"
 msgstr "Chế độ điều hướng"
 
+#. js-lingui-id: hUbvfC
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Need an export? Get one from"
+msgstr "Cần xuất dữ liệu? Lấy một bản từ"
+
 #. js-lingui-id: IbVc4A
 #: src/modules/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions.ts
 msgid "Needs a Date field"
@@ -18536,10 +18784,10 @@ msgstr "Không bao giờ"
 msgid "Never expires"
 msgstr "Không bao giờ hết hạn"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Không bao giờ sẽ không cho {AGENT_CHAT_ASSISTANT_NAME} tham gia. Chỉ khi được nhắc đến sẽ yêu cầu {AGENT_CHAT_ASSISTANT_NAME} trả lời khi được gắn thẻ. Tự động cho phép {AGENT_CHAT_ASSISTANT_NAME} quyết định thời điểm trả lời. Các cuộc trò chuyện chỉ có bạn và {AGENT_CHAT_ASSISTANT_NAME} sẽ luôn nhận được phản hồi."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Không bao giờ sẽ không để {assistantName} tham gia. Chỉ khi được nhắc đến sẽ yêu cầu {assistantName} trả lời khi được gắn thẻ. Tự động cho phép {assistantName} quyết định thời điểm trả lời. Các cuộc trò chuyện chỉ có bạn và {assistantName} luôn nhận được phản hồi."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -18610,7 +18858,7 @@ msgstr "Kênh mới"
 #: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
-#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
+#: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Trò chuyện mới"
 
@@ -18877,6 +19125,11 @@ msgstr "Yêu cầu tiếp theo"
 msgid "Next screenshot"
 msgstr "Ảnh chụp màn hình tiếp theo"
 
+#. js-lingui-id: e3GOIZ
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Next step"
+msgstr "Bước tiếp theo"
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -18992,12 +19245,22 @@ msgstr "Không có tác nhân nào nào phù hợp với tìm kiếm của bạn
 msgid "No AI consumption recorded for this user."
 msgstr "Không có ghi nhận mức tiêu thụ AI cho người dùng này."
 
+#. js-lingui-id: m/JoOZ
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "No AI model on this workspace meets these settings."
+msgstr "Không có mô hình AI nào trong không gian làm việc này đáp ứng các cài đặt này."
+
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Không có nhà cung cấp AI nào được cấu hình trên phiên bản này."
+
+#. js-lingui-id: lBnUyA
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No AI provider trains on your data, and neither does Twenty"
+msgstr "Không nhà cung cấp AI nào huấn luyện trên dữ liệu của bạn, Twenty cũng không"
 
 #. js-lingui-id: 42kV9p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -19747,6 +20010,11 @@ msgstr "Không có công cụ nào được gọi"
 msgid "No topic"
 msgstr "Không có chủ đề"
 
+#. js-lingui-id: lNEINd
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "No training on your data"
+msgstr "Không huấn luyện trên dữ liệu của bạn"
+
 #. js-lingui-id: 3Y/oDZ
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -20041,6 +20309,11 @@ msgstr "Chưa được đo ở mức nỗ lực này, vì vậy đây là các c
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Chưa được đo ở mức nỗ lực này. Đang hiển thị chỉ số của mô hình cơ sở."
+
+#. js-lingui-id: PBxg/E
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Not now"
+msgstr "Không phải bây giờ"
 
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
@@ -20401,6 +20674,16 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "Bỏ qua giá trị bằng 0"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "trên {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "vào {remainingDays} và {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20548,20 +20831,13 @@ msgstr "Chỉ thành viên có thể quản lý ứng dụng mới có thể c�
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "chỉ vào {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "chỉ vào {firstDay} và {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "chỉ vào {remainingDays} và {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "chỉ vào {remainingDays} và {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20582,6 +20858,11 @@ msgstr "Chỉ người tạo bản ghi này, những người có toàn quyền 
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
 msgid "Only the subject is shared"
 msgstr "Chỉ chủ đề được chia sẻ"
+
+#. js-lingui-id: 41eae/
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Only use providers that keep no copy of your prompts and responses"
+msgstr "Chỉ sử dụng các nhà cung cấp không lưu bản sao nào của lời nhắc và phản hồi của bạn"
 
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
@@ -20619,7 +20900,7 @@ msgstr "Mở"
 #. placeholder {0}: account.handle
 #: src/modules/getting-started/components/GettingStartedConnectedAccountSettingsButton.tsx
 msgid "Open {0} settings"
-msgstr ""
+msgstr "Mở cài đặt {0}"
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -20720,11 +21001,6 @@ msgstr "Mở trong ngăn bên"
 msgid "Open link"
 msgstr "Mở liên kết"
 
-#. js-lingui-id: MQAnOH
-#: src/modules/settings/event-logs/components/SettingsOpenLogConsoleCard.tsx
-msgid "Open log console"
-msgstr "Mở bảng điều khiển nhật ký"
-
 #. js-lingui-id: uNObrK
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Open logs console"
@@ -20789,6 +21065,11 @@ msgstr "Mở cài đặt"
 msgid "Open side panel"
 msgstr "Mở ngăn bên"
 
+#. js-lingui-id: v+Wp++
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Open source"
+msgstr "Mã nguồn mở"
+
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Open Twenty's official ChatGPT integration for your workspace."
@@ -20841,6 +21122,11 @@ msgstr "các thao tác"
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Operations"
 msgstr "Các thao tác"
+
+#. js-lingui-id: 4MyDFl
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Opportunities"
+msgstr "Cơ hội"
 
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
@@ -21328,7 +21614,7 @@ msgstr "Đối tác"
 #. js-lingui-id: gHz5zY
 #: src/utils/title-utils.ts
 msgid "Partner - Settings"
-msgstr ""
+msgstr "Cài đặt - Đối tác"
 
 #. js-lingui-id: Bv0t+0
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -21343,7 +21629,7 @@ msgstr "Đã áp dụng mã đối tác"
 #. js-lingui-id: 0w8/Qw
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "Partner codes can only be added during the free trial."
-msgstr ""
+msgstr "Chỉ có thể thêm mã đối tác trong thời gian dùng thử miễn phí."
 
 #. js-lingui-id: mPkInZ
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -21468,6 +21754,13 @@ msgstr "Đang chờ xử lý"
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Yêu cầu đang chờ"
+
+#. js-lingui-id: 1wdjme
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "People"
+msgstr "Người"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -21673,7 +21966,7 @@ msgstr "Chọn thời gian gửi trong tương lai."
 #. js-lingui-id: Lu0MSt
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Pick a starting point, then make it yours"
-msgstr ""
+msgstr "Chọn một điểm khởi đầu, rồi biến nó thành của riêng bạn"
 
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -21726,7 +22019,7 @@ msgstr "Biểu đồ hình tròn"
 #. js-lingui-id: qoLYkj
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Pill"
-msgstr ""
+msgstr "Viên thuốc"
 
 #. js-lingui-id: qVkGWK
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
@@ -21751,6 +22044,11 @@ msgstr "Hồng"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Pinned"
 msgstr "Đã ghim"
+
+#. js-lingui-id: ylGwx6
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "Pinned models not in use"
+msgstr "Các mô hình được ghim không được sử dụng"
 
 #. js-lingui-id: OFY07S
 #: src/modules/page-layout/components/PageLayoutRecordIdentifierBar.tsx
@@ -21990,6 +22288,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "Ngăn không gán cùng một giá trị cho các bản ghi khác nhau"
 
 #. js-lingui-id: rdUucN
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -22072,6 +22371,11 @@ msgstr "Yêu cầu trước"
 msgid "Previous screenshot"
 msgstr "Ảnh chụp màn hình trước"
 
+#. js-lingui-id: VbggDE
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Previous step"
+msgstr "Bước trước"
+
 #. js-lingui-id: rLvhNs
 #: src/modules/ai/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
@@ -22139,6 +22443,11 @@ msgstr "Hỗ trợ ưu tiên"
 msgid "Priority: {0}"
 msgstr "Ưu tiên: {0}"
 
+#. js-lingui-id: rjGI/Q
+#: src/pages/settings/general/SettingsGeneral.tsx
+msgid "Privacy"
+msgstr "Quyền riêng tư"
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -22151,6 +22460,11 @@ msgstr "Chính sách Bảo mật"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Riêng tư"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Bản ghi riêng tư"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22177,6 +22491,11 @@ msgstr "Đang xử lý"
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Processing Recording"
 msgstr "Đang xử lý bản ghi cuộc gọi"
+
+#. js-lingui-id: kLAZG6
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Processing region"
+msgstr "Khu vực xử lý"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -22534,6 +22853,11 @@ msgstr "Đọc email"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Đọc các lời nhắc hệ thống"
+
+#. js-lingui-id: l668+W
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Read the last emails and meetings for each"
+msgstr "Đọc các email và cuộc họp gần đây nhất của từng mục"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -23493,11 +23817,6 @@ msgstr "Liên kết cài đặt Replit yêu cầu một MCP URL dạng HTTPS."
 msgid "Reply"
 msgstr "Trả lời"
 
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Trả lời..."
-
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Report an issue"
@@ -23613,7 +23932,7 @@ msgstr "Đặt lại bố cục trang bản ghi"
 #. js-lingui-id: Oi+lSL
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Reset to Ada"
-msgstr ""
+msgstr "Đặt lại thành Ada"
 
 #. js-lingui-id: L+rMC9
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -24304,7 +24623,7 @@ msgstr "Đã lưu vào ứng dụng Workspace"
 #. js-lingui-id: LRlHXj
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "Saving assistant settings..."
-msgstr ""
+msgstr "Đang lưu cài đặt trợ lý..."
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -24917,6 +25236,11 @@ msgstr "Phần"
 #: src/pages/settings/security/SettingsSecuritySsoIdentifyProvider.tsx
 msgid "Security"
 msgstr "Bảo mật"
+
+#. js-lingui-id: OpFwR0
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Security you can verify"
+msgstr "Bảo mật mà bạn có thể xác minh"
 
 #. js-lingui-id: i0zibG
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -25836,12 +26160,12 @@ msgstr "Thứ bảy"
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Shape"
-msgstr ""
+msgstr "Hình dạng"
 
 #. js-lingui-id: KBYPKo
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomize.tsx
 msgid "Shape, color, face"
-msgstr ""
+msgstr "Hình dạng, màu sắc, khuôn mặt"
 
 #. js-lingui-id: Z8lGw6
 #: src/modules/ai/components/AiChatThreadShareButton.tsx
@@ -25855,6 +26179,11 @@ msgstr "Chia sẻ"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Share calendar events across channels"
 msgstr "Chia sẻ sự kiện lịch trên các kênh"
+
+#. js-lingui-id: S1jlER
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Share session replays and AI conversations to help us improve Twenty"
+msgstr "Chia sẻ bản phát lại phiên và cuộc trò chuyện AI để giúp chúng tôi cải thiện Twenty"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -25911,6 +26240,11 @@ msgstr "Đang chia sẻ bản ghi"
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "Sharing settings could not be loaded."
 msgstr "Không thể tải cài đặt chia sẻ."
+
+#. js-lingui-id: K8Q+iX
+#: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
+msgid "Sharing with Twenty"
+msgstr "Chia sẻ với Twenty"
 
 #. js-lingui-id: PGetcZ
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
@@ -26048,6 +26382,11 @@ msgstr "Chỉ hiển thị các hàng có lỗi"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
 msgstr "Hiển thị trang Bắt đầu và thẻ thanh bên, đồng thời mở trang này khi vào trang đích trong thời gian dùng thử."
+
+#. js-lingui-id: fTPKt5
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
+msgstr "Hiển thị thẻ Quyền riêng tư và áp dụng chính sách dữ liệu AI cũng như cài đặt chia sẻ dữ liệu của thẻ này. Tắt tùy chọn này sẽ gỡ bỏ mọi chính sách đã lưu. Hãy bật sau khi nâng cấp phiên bản triển khai hoàn tất."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -26257,7 +26596,6 @@ msgstr "Kỹ năng"
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
-#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Bỏ qua"
@@ -26293,7 +26631,7 @@ msgstr "Xanh trời"
 #. js-lingui-id: u9Z+qJ
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Sleepy"
-msgstr ""
+msgstr "Buồn ngủ"
 
 #. js-lingui-id: Z6Nf0i
 #: src/modules/advanced-text-editor/constants/RichTextBlockSlashCommands.ts
@@ -26406,6 +26744,16 @@ msgstr "Đã tạm ẩn"
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Đã tạm ẩn đến {eventTime}"
+
+#. js-lingui-id: 01L/Si
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "SOC 2"
+msgstr "SOC 2"
+
+#. js-lingui-id: LBv08V
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "SOC 2 audited controls, encryption in transit and at rest, and code anyone can review."
+msgstr "Các biện pháp kiểm soát được kiểm toán theo SOC 2, mã hóa khi truyền và khi lưu trữ, cùng mã mà bất kỳ ai cũng có thể xem xét."
 
 #. js-lingui-id: zfjcH5
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -26627,11 +26975,6 @@ msgstr "Tách nhiều giá trị"
 #: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Chế độ xem chia đôi"
-
-#. js-lingui-id: jAoGz1
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
-msgid "Spreadsheet"
-msgstr "Bảng tính"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26892,6 +27235,11 @@ msgstr "Lưu trữ"
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Chỉ lưu một lần cuộc họp được đồng bộ hóa bởi nhiều lịch của cùng một nhà cung cấp, thay vì một lần cho mỗi lịch."
 
+#. js-lingui-id: YbaJNn
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
+msgstr "Lưu trữ và hiển thị các tệp được đính kèm vào tin nhắn. Được bật sau khi hoàn tất nâng cấp không gian làm việc."
+
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -27065,6 +27413,11 @@ msgstr "Chủ đề, nội dung và tệp đính kèm sẽ được chia sẻ v�
 msgid "Submit"
 msgstr "Gửi"
 
+#. js-lingui-id: amVqRj
+#: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
+msgid "Subprocessors"
+msgstr "Nhà thầu phụ xử lý dữ liệu"
+
 #. js-lingui-id: EDl9kS
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
 msgid "Subscribe"
@@ -27127,6 +27480,11 @@ msgstr "Gói đăng ký sẽ được chuyển sang gói {planLabel} vào {0}."
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
 msgid "Subscription will be switched to monthly billing the {0}."
 msgstr "Gói đăng ký sẽ chuyển sang thanh toán hàng tháng vào {0}."
+
+#. js-lingui-id: P6F38F
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Subscriptions"
+msgstr "Gói đăng ký"
 
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -27251,7 +27609,7 @@ msgstr "Hỗ trợ suy luận"
 #. js-lingui-id: e0Wwlk
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Surprised"
-msgstr ""
+msgstr "Ngạc nhiên"
 
 #. js-lingui-id: LbFYgh
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
@@ -27693,6 +28051,11 @@ msgstr "Tương đương khoảng {formattedNewlyEarnedAiActions} thao tác AI. 
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "Địa chỉ mà workspace của bạn sẽ sử dụng để gửi và nhận email (ví dụ: support@mycompany.com). Việc gửi thư đi yêu cầu tên miền phải được xác minh trong Outbound Domains."
 
+#. js-lingui-id: PKwDg+
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "The agent asks before creating anything."
+msgstr "Tác nhân sẽ hỏi trước khi tạo bất kỳ thứ gì."
+
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 msgid "The agent sets the instructions, model and permissions."
@@ -27935,6 +28298,11 @@ msgstr "Không thể phân giải cấu hình quan hệ."
 msgid "The role attached to this webhook."
 msgstr "Vai trò được gắn với webhook này."
 
+#. js-lingui-id: OBY7M0
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "The safeguards behind every Twenty Cloud workspace."
+msgstr "Các biện pháp bảo vệ cho mọi không gian làm việc Twenty Cloud."
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -28052,6 +28420,16 @@ msgstr "Không có hoạt động nào liên kết với bản ghi này."
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "Đã có lỗi xảy ra trong quá trình cập nhật mật khẩu."
+
+#. js-lingui-id: hOYgrt
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These agents use a model your settings exclude, so they fail when they run: {agentLabels}"
+msgstr "Các tác nhân này sử dụng một mô hình bị cài đặt của bạn loại trừ, nên chúng sẽ thất bại khi chạy: {agentLabels}"
+
+#. js-lingui-id: ZSRi5U
+#: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
+msgid "These tiers fall back to an allowed model: {pinnedTierLabels}"
+msgstr "Các cấp này chuyển sang dùng một mô hình được phép: {pinnedTierLabels}"
 
 #. js-lingui-id: 5Ml5Nr
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -28995,6 +29373,11 @@ msgstr "Tổng số công việc"
 msgid "Track AI consumption across your workspace."
 msgstr "Theo dõi mức tiêu thụ AI trong không gian làm việc của bạn."
 
+#. js-lingui-id: LpPRBt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Track invoices too?"
+msgstr "Cũng theo dõi hóa đơn?"
+
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Track link clicks"
@@ -29240,6 +29623,11 @@ msgctxt "Field type"
 msgid "True/False"
 msgstr "Đúng/Sai"
 
+#. js-lingui-id: tdZpCd
+#: src/modules/settings/privacy/components/SettingsPrivacyHero.tsx
+msgid "Trust Center"
+msgstr "Trung tâm tin cậy"
+
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
@@ -29314,6 +29702,7 @@ msgid "Twenty adds the people you email and meet, and keeps them up to date with
 msgstr "Twenty thêm những người bạn gửi email và gặp gỡ, đồng thời tự động cập nhật họ mà không cần nhập dữ liệu thủ công."
 
 #. js-lingui-id: JnaRPe
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
 msgstr "Các trường của Twenty"
@@ -29322,6 +29711,11 @@ msgstr "Các trường của Twenty"
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Twenty fills each level with the best model that meets your requirements"
 msgstr "Twenty điền vào mỗi cấp mô hình tốt nhất đáp ứng yêu cầu của bạn"
+
+#. js-lingui-id: 0mWZoP
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more."
+msgstr "Twenty không có mô hình AI riêng. Hãy chọn những nhà cung cấp có thể xử lý yêu cầu của bạn. Cài đặt nghiêm ngặt hơn sẽ để lại ít mô hình hơn, và một số có chi phí cao hơn."
 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -30303,7 +30697,6 @@ msgid "Upload a file or an image"
 msgstr "Tải lên tệp hoặc hình ảnh"
 
 #. js-lingui-id: 2IXDgU
-#: src/modules/getting-started/components/GettingStartedImportAction.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -30343,6 +30736,11 @@ msgstr "Tải ảnh hồ sơ lên"
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Tải lên tập tin XML với thông tin kết nối của bạn"
+
+#. js-lingui-id: /w70rp
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Upload your CRM export"
+msgstr "Tải lên bản xuất CRM của bạn"
 
 #. js-lingui-id: XzIB4l
 #: src/modules/apollo/services/ApolloFactory.ts
@@ -31304,6 +31702,16 @@ msgstr "Chúng tôi gặp vấn đề khi xác minh"
 msgid "We match on these fields. If a {0} already exists, we update it. Otherwise, we create a new one."
 msgstr "Chúng tôi so khớp trên các trường này. Nếu một {0} đã tồn tại, chúng tôi cập nhật nó. Ngược lại, chúng tôi tạo một cái mới."
 
+#. js-lingui-id: AXVG2Y
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "We notify you within 72 hours, as set out in the DPA"
+msgstr "Chúng tôi thông báo cho bạn trong vòng 72 giờ, theo quy định trong DPA"
+
+#. js-lingui-id: InKpMt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "We sell subscriptions to design teams."
+msgstr "Chúng tôi bán gói đăng ký cho các nhóm thiết kế."
+
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
@@ -31604,6 +32012,11 @@ msgstr "Khi thời gian dùng thử của bạn kết thúc, bạn sẽ bị tí
 msgid "Where"
 msgstr "Điều kiện"
 
+#. js-lingui-id: I7dUhW
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Where AI providers process your requests"
+msgstr "Nơi các nhà cung cấp AI xử lý yêu cầu của bạn"
+
 #. js-lingui-id: AY1Gaf
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Where records of this object open"
@@ -31670,7 +32083,7 @@ msgstr "Windsurf / Cascade"
 #. js-lingui-id: Z4dSVG
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Wink"
-msgstr ""
+msgstr "Nháy mắt"
 
 #. js-lingui-id: /Fq7wz
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
@@ -32016,12 +32429,32 @@ msgstr "Chế độ xem không gian làm việc yêu cầu quyền quản lý ch
 msgid "Workspaces"
 msgstr "Không gian làm việc"
 
+#. js-lingui-id: yehD4Z
+#: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
+msgid "Workspaces run on AWS in Frankfurt, Germany"
+msgstr "Các không gian làm việc chạy trên AWS tại Frankfurt, Đức"
+
 #. js-lingui-id: 33fb3H
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "Workspaces status"
 msgstr "Trạng thái các không gian làm việc"
+
+#. js-lingui-id: C+gilE
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Worldwide"
+msgstr "Toàn cầu"
+
+#. js-lingui-id: oR3/ss
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, standard retention"
+msgstr "Toàn cầu, thời gian lưu giữ tiêu chuẩn"
+
+#. js-lingui-id: iTAMb7
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataPolicyCard.tsx
+msgid "Worldwide, zero data retention"
+msgstr "Toàn cầu, không lưu giữ dữ liệu"
 
 #. js-lingui-id: BmWHak
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -32068,6 +32501,11 @@ msgstr "Viết mô tả cho tác nhân này"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Write a message"
 msgstr "Viết tin nhắn"
+
+#. js-lingui-id: PxYBOj
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Write a message..."
+msgstr "Viết tin nhắn..."
 
 #. js-lingui-id: RLDVWD
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -32160,6 +32598,7 @@ msgid "yes"
 msgstr "có"
 
 #. js-lingui-id: l75CjT
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -32571,6 +33010,11 @@ msgstr "Không gian làm việc của bạn sẽ bị vô hiệu hóa"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Zed"
 msgstr "Zed"
+
+#. js-lingui-id: 2sLNC3
+#: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
+msgid "Zero data retention"
+msgstr "Không lưu giữ dữ liệu"
 
 #. js-lingui-id: AWOSPo
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx

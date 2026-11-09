@@ -513,16 +513,16 @@ export class AgentChatThreadParticipantService {
   >): Promise<AgentChatOpenThreadsSummaryDTO> {
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
-    const authContext = await this.sharingService.getAuthContext({
+    const authContext = await this.sharingService.getAuthContextOrThrow({
       workspaceId,
       workspaceMemberId,
     });
 
     const [summary] = await this.workspaceOrmManager
-      .executeInWorkspaceContext(() => {
+      .executeInWorkspaceContext(async () => {
         const repository =
           this.workspaceOrmManager.getRepository('agentChatThread');
-        const readableThreads = repository
+        const readableThreads = await repository
           .createQueryBuilder('thread')
           .select([])
           .addSelect('"thread"."id"', 'id')

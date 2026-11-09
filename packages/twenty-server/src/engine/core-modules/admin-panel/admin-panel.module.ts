@@ -53,7 +53,6 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceDataExportModule } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
@@ -88,7 +87,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EnterpriseModule,
     TwoFactorAuthenticationModule,
     WorkspaceDataExportModule,
-    UserRoleModule,
   ],
   providers: [
     AdminPanelResolver,

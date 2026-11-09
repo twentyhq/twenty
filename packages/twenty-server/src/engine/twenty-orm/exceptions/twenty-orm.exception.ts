@@ -2,11 +2,13 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
+  DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE,
   INVALID_INPUT_USER_FRIENDLY_MESSAGE,
+  QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
   TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
-} from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
+} from 'src/engine/workspace-query-executor/constants/postgres-error-messages.constants';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum TwentyOrmExceptionCode {
@@ -29,7 +31,6 @@ export enum TwentyOrmExceptionCode {
   TOO_MANY_RECORDS_TO_UPDATE = 'TOO_MANY_RECORDS_TO_UPDATE',
   INVALID_INPUT = 'INVALID_INPUT',
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
-  RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
   MISSING_PARAMETER = 'MISSING_PARAMETER',
   INVALID_PARAMETER = 'INVALID_PARAMETER',
@@ -72,17 +73,15 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
     case TwentyOrmExceptionCode.METHOD_NOT_ALLOWED:
       return msg`This operation is not allowed.`;
     case TwentyOrmExceptionCode.QUERY_READ_TIMEOUT:
-      return msg`Query timed out. Please try again.`;
+      return QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
       return TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED:
-      return msg`A duplicate entry was detected.`;
+      return DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
       return msg`Too many records to update at once.`;
     case TwentyOrmExceptionCode.INVALID_INPUT:
       return INVALID_INPUT_USER_FRIENDLY_MESSAGE;
-    case TwentyOrmExceptionCode.RLS_VALIDATION_FAILED:
-      return msg`Record does not satisfy security constraints.`;
     case TwentyOrmExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE:
       return msg`No role found for user.`;
     case TwentyOrmExceptionCode.ENUM_TYPE_NAME_NOT_FOUND:

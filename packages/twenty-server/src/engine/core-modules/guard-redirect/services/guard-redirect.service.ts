@@ -71,8 +71,9 @@ export class GuardRedirectService {
     if (
       err instanceof AuthException &&
       err.code !== AuthExceptionCode.INTERNAL_SERVER_ERROR
-    )
+    ) {
       return;
+    }
 
     this.exceptionHandlerService.captureExceptions([err], {
       workspace: {

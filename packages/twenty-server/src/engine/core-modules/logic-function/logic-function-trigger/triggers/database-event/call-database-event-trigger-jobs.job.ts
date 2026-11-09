@@ -10,11 +10,13 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildApplicationJobMemoryLimitLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-memory-limit-log-entry.util';
 import { buildApplicationJobThrottledLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-throttled-log-entry.util';
 import { buildLogicFunctionTriggerJobIds } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/build-logic-function-trigger-job-ids';
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
@@ -23,7 +25,7 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -37,7 +39,7 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordEventPermissionsService: RecordEventPermissionsService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
@@ -90,14 +92,15 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      const readableEvents = await this.permissionsService.findReadableEvents({
-        authContext: {
-          type: 'application',
-          workspace: { id: workspaceEventBatch.workspaceId },
-          application,
-        },
-        eventBatch: workspaceEventBatch,
-      });
+      const readableEvents =
+        await this.recordEventPermissionsService.filterReadableEvents({
+          authContext: {
+            type: 'application',
+            workspace: { id: workspaceEventBatch.workspaceId },
+            application,
+          },
+          eventBatch: workspaceEventBatch,
+        });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,
         workspaceEventBatch: {
@@ -141,23 +144,42 @@ export class CallDatabaseEventTriggerJobsJob {
         logicFunctionPayloads,
       });
 
-      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
-        LogicFunctionTriggerJob.name,
-        logicFunctionPayloads.map((logicFunctionPayload, index) => ({
-          data: {
-            ...logicFunctionPayload,
+      try {
+        await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
+          LogicFunctionTriggerJob.name,
+          logicFunctionPayloads.map((logicFunctionPayload, index) => ({
+            data: {
+              ...logicFunctionPayload,
+              applicationUniversalIdentifier: application.universalIdentifier,
+            },
+            jobId: logicFunctionTriggerJobIds[index],
+            workspaceId: workspaceEventBatch.workspaceId,
             applicationUniversalIdentifier: application.universalIdentifier,
+          })),
+          {
+            retryLimit: 3,
+            backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+            doNotCheckDuplicatesBasedOnPrefix: true,
           },
-          jobId: logicFunctionTriggerJobIds[index],
-          workspaceId: workspaceEventBatch.workspaceId,
-          applicationUniversalIdentifier: application.universalIdentifier,
-        })),
-        {
-          retryLimit: 3,
-          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-          doNotCheckDuplicatesBasedOnPrefix: true,
-        },
-      );
+        );
+      } catch (error) {
+        if (!(error instanceof MessageQueueException)) {
+          throw error;
+        }
+
+        this.logger.warn(
+          `Enqueue refused for application ${applicationId} in workspace ${workspaceEventBatch.workspaceId}: skipping ${logicFunctionPayloads.length} logic function trigger(s): ${error.message}`,
+        );
+
+        this.applicationRepeatedEventRecorderService.record({
+          entry: buildApplicationJobMemoryLimitLogEntry({
+            workspaceId: workspaceEventBatch.workspaceId,
+            application,
+            exception: error,
+          }),
+          occurrenceCount: logicFunctionPayloads.length,
+        });
+      }
     }
   }
 }

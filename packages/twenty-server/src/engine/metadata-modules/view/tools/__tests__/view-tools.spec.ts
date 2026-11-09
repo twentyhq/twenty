@@ -30,9 +30,9 @@ import { GetViewsTool } from 'src/engine/metadata-modules/view/tools/get-views.t
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 import { UpdateViewTool } from 'src/engine/metadata-modules/view/tools/update-view.tool';
 import { UpsertCompleteViewTool } from 'src/engine/metadata-modules/view/tools/upsert-complete-view.tool';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { ViewAccessService } from 'src/engine/permissions/view/services/view-access.service';
-import { ViewEntityLookupService } from 'src/engine/permissions/view/services/view-entity-lookup.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
+import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
+import { ViewEntityLookupService } from 'src/engine/metadata-modules/view/services/view-entity-lookup.service';
 
 describe('View tools', () => {
   let testingModule: TestingModule;
@@ -41,7 +41,7 @@ describe('View tools', () => {
   let viewFieldService: jest.Mocked<ViewFieldService>;
   let viewSortService: jest.Mocked<ViewSortService>;
   let viewQueryParamsService: jest.Mocked<ViewQueryParamsService>;
-  let permissionsService: jest.Mocked<PermissionsService>;
+  let settingPermissionsService: jest.Mocked<SettingPermissionsService>;
 
   const mockWorkspaceId = 'workspace-id';
   const mockUserWorkspaceId = 'user-workspace-id';
@@ -146,7 +146,7 @@ describe('View tools', () => {
         ViewEntityLookupService,
         ViewToolIdentifierService,
         {
-          provide: PermissionsService,
+          provide: SettingPermissionsService,
           useValue: { hasPermissionFlag: jest.fn().mockResolvedValue(true) },
         },
         {
@@ -217,7 +217,7 @@ describe('View tools', () => {
     viewFieldService = module.get(ViewFieldService);
     viewSortService = module.get(ViewSortService);
     viewQueryParamsService = module.get(ViewQueryParamsService);
-    permissionsService = module.get(PermissionsService);
+    settingPermissionsService = module.get(SettingPermissionsService);
   });
 
   // Parses like the registry does, so schema defaults reach execute
@@ -627,7 +627,7 @@ describe('View tools', () => {
       });
 
       it('should reject creating a workspace view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
         const tools = buildViewTools({
           workspaceId: mockWorkspaceId,
@@ -642,16 +642,20 @@ describe('View tools', () => {
         ).rejects.toThrow(
           'You do not have permission to create workspace-level views',
         );
-        expect(permissionsService.hasPermissionFlag).toHaveBeenCalledTimes(1);
-        expect(permissionsService.hasPermissionFlag).toHaveBeenCalledWith({
+        expect(
+          settingPermissionsService.hasPermissionFlag,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          settingPermissionsService.hasPermissionFlag,
+        ).toHaveBeenCalledWith({
           authContext: expect.objectContaining({ type: 'user' }),
-          setting: PermissionFlagType.VIEWS,
+          permissionFlag: PermissionFlagType.VIEWS,
         });
         expect(viewService.createOne).not.toHaveBeenCalled();
       });
 
       it('should create an unlisted view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
         viewService.createOne.mockResolvedValue({
           id: 'new-view-id',
           name: 'My View',
@@ -752,7 +756,7 @@ describe('View tools', () => {
       });
 
       it('should reject updating a workspace view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
         viewService.findById.mockResolvedValue(mockView as any);
 
         const tools = buildViewTools({
@@ -770,7 +774,7 @@ describe('View tools', () => {
       });
 
       it('should allow updating own unlisted view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
         const existingView = {
           ...mockView,
@@ -824,7 +828,7 @@ describe('View tools', () => {
       });
 
       it('should reject updating another users unlisted view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
         const existingView = {
           ...mockView,
@@ -1099,7 +1103,7 @@ describe('View tools', () => {
       });
 
       it('should reject creating a workspace view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
         const tools = buildViewTools({
           workspaceId: mockWorkspaceId,
@@ -1120,7 +1124,7 @@ describe('View tools', () => {
       });
 
       it('should reject updating another users unlisted view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
         const existingView = {
           ...mockView,
@@ -1179,7 +1183,7 @@ describe('View tools', () => {
       });
 
       it('should reject deleting a workspace view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
         viewService.findById.mockResolvedValue(mockView as any);
 
         const tools = buildViewTools({
@@ -1196,7 +1200,7 @@ describe('View tools', () => {
       });
 
       it('should reject deleting another users unlisted view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
         const existingView = {
           ...mockView,
@@ -1259,7 +1263,7 @@ describe('View tools', () => {
       });
 
       it('should reject updating a sort on another users unlisted view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
         viewService.findById.mockResolvedValue({
           ...mockView,
@@ -1282,7 +1286,7 @@ describe('View tools', () => {
       });
 
       it('should reject updating a sort on a workspace view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
         viewService.findById.mockResolvedValue(mockView as any);
 
         const tools = buildViewTools({
@@ -1300,7 +1304,7 @@ describe('View tools', () => {
       });
 
       it('should add no sort when one of the views is another users unlisted view without the Views permission', async () => {
-        permissionsService.hasPermissionFlag.mockResolvedValue(false);
+        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
         viewService.findById.mockImplementation(async (viewId) =>
           viewId === mockViewId

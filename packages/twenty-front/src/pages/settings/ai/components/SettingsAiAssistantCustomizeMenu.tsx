@@ -1,10 +1,6 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId } from 'react';
 import {
-  AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH,
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
-  getAiChatAssistantProfileSchema,
   type AiChatAssistantProfile,
 } from 'twenty-shared/ai';
 import { AssistantAvatar } from 'twenty-ui/components/data-display';
@@ -15,10 +11,9 @@ import {
   IconMoodSmile,
   IconPlayerPlay,
 } from 'twenty-ui/icon';
-import { Input, Switch } from 'twenty-ui/primitives/input';
+import { Switch } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { SettingsAiAssistantNameInput } from '~/pages/settings/ai/components/SettingsAiAssistantNameInput';
 import { SettingsAiAssistantAvatarMenuPage } from '~/pages/settings/ai/components/SettingsAiAssistantAvatarMenuPage';
 import { SETTINGS_AI_ASSISTANT_COLOR_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantColorLabels';
 import { SETTINGS_AI_ASSISTANT_FACE_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantFaceLabels';
@@ -26,23 +21,9 @@ import { SETTINGS_AI_ASSISTANT_SHAPE_LABELS } from '~/pages/settings/ai/constant
 
 type SettingsAiAssistantCustomizeMenuProps = {
   value: AiChatAssistantProfile;
-  onChange: (value: AiChatAssistantProfile) => void;
+  onChange: (value: Partial<AiChatAssistantProfile>) => void;
   disabled: boolean;
 };
-
-const ASSISTANT_PROFILE_SCHEMA = getAiChatAssistantProfileSchema();
-
-const StyledNameRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledNameError = styled.div`
-  color: ${themeCssVariables.font.color.danger};
-  padding: ${themeCssVariables.spacing[1]};
-`;
 
 export const SettingsAiAssistantCustomizeMenu = ({
   value,
@@ -50,55 +31,22 @@ export const SettingsAiAssistantCustomizeMenu = ({
   disabled,
 }: SettingsAiAssistantCustomizeMenuProps) => {
   const { t } = useLingui();
-  const nameErrorId = useId();
-  const parsedProfile = ASSISTANT_PROFILE_SCHEMA.safeParse(value);
-  const isNameInvalid = !parsedProfile.success;
 
   return (
     <>
       <Dropdown.Page id="root">
         <Dropdown.Section>
-          <StyledNameRow>
-            <AssistantAvatar
-              shape={value.avatarShape}
-              color={value.avatarColor}
-              face={value.avatarFace}
-              size={20}
-            />
-            <Input
-              aria-label={t`Assistant name`}
-              aria-invalid={isNameInvalid}
-              aria-describedby={isNameInvalid ? nameErrorId : undefined}
-              size="sm"
-              value={value.displayName}
-              disabled={disabled}
-              maxLength={AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH}
-              onValueChange={(displayName) =>
-                onChange({ ...value, displayName })
-              }
-              onBlur={() => {
-                if (
-                  parsedProfile.success &&
-                  parsedProfile.data.displayName !== value.displayName
-                ) {
-                  onChange(parsedProfile.data);
-                }
-              }}
-            />
-          </StyledNameRow>
-          {isNameInvalid && (
-            <StyledNameError id={nameErrorId} role="alert">
-              <Text size="sm">
-                {t`Enter a name between 1 and ${AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters.`}
-              </Text>
-            </StyledNameError>
-          )}
+          <SettingsAiAssistantNameInput
+            key={value.displayName}
+            value={value}
+            onChange={onChange}
+            disabled={disabled}
+          />
         </Dropdown.Section>
         <Dropdown.Separator />
         <Dropdown.Section>
           <Dropdown.ActionItem
             page="avatarShape"
-            disabled={disabled}
             startIcon={
               <AssistantAvatar
                 shape={value.avatarShape}
@@ -116,7 +64,6 @@ export const SettingsAiAssistantCustomizeMenu = ({
           </Dropdown.ActionItem>
           <Dropdown.ActionItem
             page="avatarColor"
-            disabled={disabled}
             startIcon={<IconColorSwatch />}
             description={t(
               SETTINGS_AI_ASSISTANT_COLOR_LABELS[value.avatarColor],
@@ -127,7 +74,6 @@ export const SettingsAiAssistantCustomizeMenu = ({
           </Dropdown.ActionItem>
           <Dropdown.ActionItem
             page="avatarFace"
-            disabled={disabled}
             startIcon={<IconMoodSmile />}
             description={t(SETTINGS_AI_ASSISTANT_FACE_LABELS[value.avatarFace])}
             descriptionPlacement="end"
@@ -145,7 +91,7 @@ export const SettingsAiAssistantCustomizeMenu = ({
                 size="sm"
                 checked={value.isAvatarAnimated}
                 onCheckedChange={(isAvatarAnimated) =>
-                  onChange({ ...value, isAvatarAnimated })
+                  onChange({ isAvatarAnimated })
                 }
                 disabled={disabled}
               />

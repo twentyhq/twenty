@@ -10,10 +10,6 @@ import { In } from 'typeorm';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  COMPANY_ENRICHMENT_ATTEMPT_KEY,
-  type CompanyEnrichmentAttemptKeyValueTypeMap,
-} from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
-import {
   COMPANY_ENRICHMENT_KEY,
   type CompanyEnrichmentKeyValueTypeMap,
 } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-key-value.type';
@@ -32,21 +28,15 @@ import {
 import { type GettingStartedProgress } from 'src/engine/core-modules/getting-started/types/getting-started-progress.type';
 import { filterGettingStartedStepActionKeys } from 'src/engine/core-modules/getting-started/utils/filter-getting-started-step-action-keys.util';
 import { getGettingStartedProfile } from 'src/engine/core-modules/getting-started/utils/get-getting-started-profile.util';
-import { isCompanyEnrichmentFinal } from 'src/engine/core-modules/getting-started/utils/is-company-enrichment-final.util';
 import { isGettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/utils/is-getting-started-step-action-key.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-type WorkspaceEnrichmentKeyValueTypeMap = CompanyEnrichmentKeyValueTypeMap &
-  CompanyEnrichmentAttemptKeyValueTypeMap;
-
-type CompanyEnrichmentAttempt =
-  CompanyEnrichmentAttemptKeyValueTypeMap[typeof COMPANY_ENRICHMENT_ATTEMPT_KEY];
 
 type GettingStartedScope = {
   userId: string;
@@ -60,9 +50,10 @@ export class GettingStartedService {
   constructor(
     private readonly userVarsService: UserVarsService<GettingStartedKeyValueTypeMap>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
-    private readonly keyValuePairService: KeyValuePairService<WorkspaceEnrichmentKeyValueTypeMap>,
+    private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentKeyValueTypeMap>,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
@@ -78,11 +69,10 @@ export class GettingStartedService {
       { permissionFlags },
       ownSendingMailbox,
       [companyEnrichmentKeyValuePair],
-      [companyEnrichmentAttemptKeyValuePair],
       featuredApps,
     ] = await Promise.all([
       this.userVarsService.getAll({ userId, workspaceId }),
-      this.permissionsService.getUserWorkspacePermissions({
+      this.settingPermissionsService.getUserWorkspacePermissions({
         userWorkspaceId,
         workspaceId,
       }),
@@ -92,12 +82,6 @@ export class GettingStartedService {
         workspaceId,
         type: KeyValuePairType.CONFIG_VARIABLE,
         key: COMPANY_ENRICHMENT_KEY,
-      }),
-      this.keyValuePairService.get<typeof COMPANY_ENRICHMENT_ATTEMPT_KEY>({
-        userId: null,
-        workspaceId,
-        type: KeyValuePairType.CONFIG_VARIABLE,
-        key: COMPANY_ENRICHMENT_ATTEMPT_KEY,
       }),
       this.marketplaceQueryService.findManyMarketplaceApps({
         universalIdentifiers: [...GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS],
@@ -115,8 +99,6 @@ export class GettingStartedService {
         GETTING_STARTED_STEP_ACTION_KEYS_USER_VARIABLE_KEY,
       ),
       companyEnrichment,
-      companyEnrichmentAttempt:
-        companyEnrichmentAttemptKeyValuePair?.value ?? null,
     });
 
     const stepActionKeys = filterGettingStartedStepActionKeys({
@@ -124,6 +106,9 @@ export class GettingStartedService {
       permissionFlags,
       hasSendingMailbox: isDefined(ownSendingMailbox),
       hasFeaturedApp: isNonEmptyArray(featuredApps),
+      hasCalendarBookingPage: isNonEmptyString(
+        this.twentyConfigService.get('CALENDAR_BOOKING_PAGE_ID'),
+      ),
     });
 
     const getSavedCompletion = (stepActionKey: GettingStartedStepActionKey) =>
@@ -279,14 +264,12 @@ export class GettingStartedService {
     workspaceId,
     savedStepActionKeys,
     companyEnrichment,
-    companyEnrichmentAttempt,
   }: {
     userId: string;
     userEmail: string;
     workspaceId: string;
     savedStepActionKeys: string[] | undefined;
     companyEnrichment: WorkspaceCompanyEnrichment | null;
-    companyEnrichmentAttempt: CompanyEnrichmentAttempt | null;
   }): Promise<GettingStartedStepActionKey[]> {
     if (isDefined(savedStepActionKeys)) {
       return savedStepActionKeys.filter(isGettingStartedStepActionKey);
@@ -295,17 +278,12 @@ export class GettingStartedService {
     const profile = getGettingStartedProfile({ userEmail, companyEnrichment });
     const stepActionKeys = GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE[profile];
 
-    if (
-      profile === 'PERSONAL' ||
-      isCompanyEnrichmentFinal({ companyEnrichment, companyEnrichmentAttempt })
-    ) {
-      await this.userVarsService.setIfNotExists({
-        userId,
-        workspaceId,
-        key: GETTING_STARTED_STEP_ACTION_KEYS_USER_VARIABLE_KEY,
-        value: stepActionKeys,
-      });
-    }
+    await this.userVarsService.setIfNotExists({
+      userId,
+      workspaceId,
+      key: GETTING_STARTED_STEP_ACTION_KEYS_USER_VARIABLE_KEY,
+      value: stepActionKeys,
+    });
 
     return stepActionKeys;
   }

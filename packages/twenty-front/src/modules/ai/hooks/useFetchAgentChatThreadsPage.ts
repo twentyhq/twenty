@@ -5,21 +5,30 @@ import {
   StandardObjectNameSingular,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  canReachSomeRecords,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AGENT_CHAT_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
 import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 export const useFetchAgentChatThreadsPage = () => {
@@ -35,6 +44,17 @@ export const useFetchAgentChatThreadsPage = () => {
       lastCursor: string | null;
       threadIdFilter?: RecordGqlOperationFilter;
     }) => {
+      const hasAiPermission = store.get(permissionFlagMapSelector.atom)[
+        PermissionFlagType.AI
+      ];
+      const isWorkspaceSuspended =
+        store.get(currentWorkspaceState.atom)?.activationStatus ===
+        WorkspaceActivationStatus.SUSPENDED;
+
+      if (!hasAiPermission || isWorkspaceSuspended) {
+        return undefined;
+      }
+
       const chatObjectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
           objectName: StandardObjectNameSingular.AgentChatThread,
@@ -44,8 +64,20 @@ export const useFetchAgentChatThreadsPage = () => {
 
       if (
         !isDefined(chatObjectMetadataItem) ||
-        chatObjectMetadataItem.readableFields.length === 0
+        !isNonEmptyArray(chatObjectMetadataItem.readableFields)
       ) {
+        return undefined;
+      }
+
+      const hasReadPermission = canReachSomeRecords({
+        objectRecordsPermissions: getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          chatObjectMetadataItem.id,
+        ),
+        operationType: 'read',
+      });
+
+      if (!hasReadPermission) {
         return undefined;
       }
 

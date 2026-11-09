@@ -30,7 +30,10 @@ export type {
 } from './CallRecordingTranscript';
 export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
 export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
-export type { CommandMenuContextApi } from './CommandMenuContextApi';
+export type {
+  CommandMenuCurrentView,
+  CommandMenuContextApi,
+} from './CommandMenuContextApi';
 export type { CommandMenuCoreObjectName } from './CommandMenuCoreObjectName';
 export { COMMAND_MENU_CORE_OBJECT_NAMES } from './CommandMenuCoreObjectName';
 export { CommandMenuItemAvailabilityType } from './CommandMenuItemAvailabilityType';
@@ -264,6 +267,7 @@ export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOptio
 export type { QueryCursorDirection } from './QueryCursorDirection';
 export type { RecordExportColumn } from './RecordExportColumn';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
+export { RecordFilterOperand } from './RecordFilterOperand';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
 export type { RecordGqlFields } from './RecordGqlFields';
 export type {
@@ -314,8 +318,6 @@ export { RelationOnDeleteAction } from './RelationOnDeleteAction';
 export { RelationType } from './RelationType';
 export type { RelationUpdatePayload } from './RelationUpdatePayload';
 export type { RemoveSuffix } from './RemoveSuffix';
-export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
-export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 export type { RowLevelPermissionPredicate } from './RowLevelPermissionPredicate';
 export type { RowLevelPermissionPredicateGroup } from './RowLevelPermissionPredicateGroup';
 export { RowLevelPermissionPredicateGroupLogicalOperator } from './RowLevelPermissionPredicateGroupLogicalOperator';
