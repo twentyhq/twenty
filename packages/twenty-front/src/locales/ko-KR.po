@@ -2927,6 +2927,7 @@ msgid "agent"
 msgstr "에이전트"
 
 #. js-lingui-id: iEQQyu
+#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -4442,7 +4443,6 @@ msgid "Assignment"
 msgstr "할당"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
 msgstr "어시스턴트"
@@ -30405,7 +30405,7 @@ msgstr "알 수 없는 구문 분석 오류"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 msgid "Unknown sender"
 msgstr "알 수 없는 보낸 사람"
 

@@ -360,6 +360,7 @@ const build = (
   workspaceMember?: RowLevelPermissionWorkspaceMember,
 ) =>
   buildRowLevelPermissionRecordFilter({
+    isRelationHopEnabled: false,
     flatRowLevelPermissionPredicateMaps,
     flatRowLevelPermissionPredicateGroupMaps,
     flatFieldMetadataMaps,
@@ -523,6 +524,7 @@ describe('buildRecordFilterForRole with access group member values', () => {
     memberFieldValues: Record<string, string | string[] | null>;
   }) =>
     buildRecordFilterForRole({
+      isRelationHopEnabled: false,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,

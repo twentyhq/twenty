@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.58.0', 1794222774219)
+@RegisteredInstanceCommand('2.58.0', 1794238559013)
 export class AddViewShouldDisplayGroupsAsTabsFastInstanceCommand
   implements FastInstanceCommand
 {
