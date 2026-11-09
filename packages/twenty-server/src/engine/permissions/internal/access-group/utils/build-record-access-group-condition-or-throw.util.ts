@@ -6,6 +6,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type RecordAccessGroupConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-condition-metadata-maps.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
+import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 
@@ -26,6 +27,9 @@ export const buildRecordAccessGroupConditionOrThrow = ({
     objectMetadata: flatObjectMetadata,
     roleId: accessGroup.roleId,
     memberFieldValues: accessGroup.memberFieldValues ?? undefined,
+    isRelationHopEnabled: isRowLevelPermissionRelationHopEnabled(
+      metadataMaps.featureFlagsMap,
+    ),
   });
 
   if (!isDefined(recordFilter)) {
@@ -37,5 +41,6 @@ export const buildRecordAccessGroupConditionOrThrow = ({
     tableAlias,
     objectMetadata: flatObjectMetadata,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
   });
 };
