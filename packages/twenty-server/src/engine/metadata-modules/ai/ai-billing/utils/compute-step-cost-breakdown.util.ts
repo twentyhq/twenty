@@ -7,15 +7,12 @@ import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models
 
 export const computeStepCostBreakdown = (
   model: AiModelCostConfig,
-  {
-    usage,
-    cacheCreationTokens = 0,
-  }: { usage?: BillingTokenUsage; cacheCreationTokens?: number },
+  usage: BillingTokenUsage | undefined,
 ): CostBreakdown =>
   computeCostBreakdown(model, {
     inputTokens: usage?.inputTokens,
     outputTokens: usage?.outputTokens,
     reasoningTokens: usage?.outputTokenDetails?.reasoningTokens,
     cachedInputTokens: usage?.inputTokenDetails?.cacheReadTokens,
-    cacheCreationTokens,
+    cacheCreationTokens: usage?.inputTokenDetails?.cacheWriteTokens,
   });
