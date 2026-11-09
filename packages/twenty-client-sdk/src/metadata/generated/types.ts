@@ -459,6 +459,9 @@ export default {
             "id": [
                 550
             ],
+            "isBuiltInAssistant": [
+                4
+            ],
             "parts": [
                 22
             ],
@@ -470,6 +473,9 @@ export default {
             ],
             "role": [
                 1
+            ],
+            "senderApplicationId": [
+                548
             ],
             "senderUserWorkspaceId": [
                 550

@@ -144,10 +144,12 @@ export interface AgentMessage {
     agentId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     id: Scalars['UUID']
+    isBuiltInAssistant: Scalars['Boolean']
     parts: AgentMessagePart[]
     processedAt?: Scalars['DateTime']
     reactions: AgentMessageReactionSummary[]
     role: Scalars['String']
+    senderApplicationId?: Scalars['UUID']
     senderUserWorkspaceId?: Scalars['UUID']
     senderWorkspaceMemberId?: Scalars['UUID']
     status: Scalars['String']
@@ -4610,10 +4612,12 @@ export interface AgentMessageGenqlSelection{
     agentId?: boolean | number
     createdAt?: boolean | number
     id?: boolean | number
+    isBuiltInAssistant?: boolean | number
     parts?: AgentMessagePartGenqlSelection
     processedAt?: boolean | number
     reactions?: AgentMessageReactionSummaryGenqlSelection
     role?: boolean | number
+    senderApplicationId?: boolean | number
     senderUserWorkspaceId?: boolean | number
     senderWorkspaceMemberId?: boolean | number
     status?: boolean | number

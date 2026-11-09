@@ -61,6 +61,7 @@ const streamTurnWithoutClaim = ({
     claim: null,
     streamChannelId,
     turnId: 'turn-id',
+    agentId: null,
     startTurn: () => Promise.reject(turnError),
     completeTurn: jest.fn(),
     isBackgroundRun: true,
@@ -88,6 +89,7 @@ const streamPartsWithoutClaim = ({
     claim: null,
     streamChannelId,
     turnId: 'turn-id',
+    agentId: null,
     startTurn: async () => ({
       source: {
         modelConfig: {
@@ -308,6 +310,7 @@ describe('AgentTurnStreamService streamTurn of a claimed turn', () => {
           streamId: 'stream-id',
         },
         turnId: 'turn-id',
+        agentId: null,
         startTurn: async () => ({
           source: {
             modelConfig: { contextWindowTokens: 1000 } as never,
@@ -346,6 +349,7 @@ describe('AgentTurnStreamService streamTurn of a run without a conversation', ()
       workspaceId: 'workspace-id',
       claim: null,
       turnId: 'turn-id',
+      agentId: null,
       startTurn: async () => ({
         source: {
           modelConfig: { contextWindowTokens: 1000 } as never,

@@ -183,6 +183,7 @@ describe('Chat message attachments with real storage', () => {
     await getAppProviderByClassName<AgentConversationWriterService>(
       'AgentConversationWriterService',
     ).upsertAssistantMessage({
+      agentId: null,
       id: assistantMessageId,
       threadId,
       turnId: userMessage.turnId,
