@@ -21,6 +21,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationBackupCodeService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service';
+import { TwoFactorAuthenticationEmailService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service';
 import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { TwoFactorAuthenticationExceptionCode } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
@@ -133,6 +134,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TwoFactorAuthenticationRecoveryService,
+        TwoFactorAuthenticationEmailService,
         {
           provide: getWorkspaceScopedRepositoryToken(
             TwoFactorAuthenticationMethodEntity,
@@ -172,6 +174,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           useValue: {
             consumeBackupCode: jest.fn().mockResolvedValue(false),
             revokeBackupCodes: jest.fn(),
+            getRemainingBackupCodeCount: jest.fn().mockResolvedValue(9),
           },
         },
         {

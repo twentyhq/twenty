@@ -1,16 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import ms from 'ms';
-import {
-  TwoFactorAuthenticationBackupCodeUsedEmail,
-  TwoFactorAuthenticationRecoveryCodeIssuedEmail,
-  TwoFactorAuthenticationResetEmail,
-  renderEmail,
-} from 'twenty-emails';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -31,8 +23,6 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { acquireUserAuthenticationLock } from 'src/engine/core-modules/auth/utils/acquire-user-authentication-lock.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -44,6 +34,7 @@ import {
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationBackupCodeService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service';
+import { TwoFactorAuthenticationEmailService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import {
   TwoFactorAuthenticationException,
@@ -76,10 +67,6 @@ type RecoveryCodeActor = Pick<
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class TwoFactorAuthenticationRecoveryService {
-  private readonly logger = new Logger(
-    TwoFactorAuthenticationRecoveryService.name,
-  );
-
   constructor(
     @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
@@ -90,8 +77,7 @@ export class TwoFactorAuthenticationRecoveryService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userSessionService: UserSessionService,
     private readonly throttlerService: ThrottlerService,
-    private readonly emailService: EmailService,
-    private readonly i18nService: I18nService,
+    private readonly twoFactorAuthenticationEmailService: TwoFactorAuthenticationEmailService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -198,9 +184,10 @@ export class TwoFactorAuthenticationRecoveryService {
       throw error;
     }
 
-    await this.sendRecoveryCodeIssuedEmail({
+    await this.twoFactorAuthenticationEmailService.sendRecoveryCodeIssuedEmail({
+      userId: targetUserId,
+      workspaceId: targetWorkspaceId,
       actor,
-      targetUserWorkspace,
       expiresAt,
     });
 
@@ -352,9 +339,9 @@ export class TwoFactorAuthenticationRecoveryService {
     }
 
     if (!redemption.isTwoFactorAuthenticationReset) {
-      await this.sendBackupCodeUsedEmail({
-        userWorkspace,
-        workspaceDisplayName: workspace.displayName,
+      await this.twoFactorAuthenticationEmailService.sendBackupCodeUsedEmail({
+        userId,
+        workspaceId: workspace.id,
       });
 
       return redemption;
@@ -366,10 +353,9 @@ export class TwoFactorAuthenticationRecoveryService {
       reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
     });
 
-    await this.sendTwoFactorAuthenticationResetEmail({
-      userWorkspace,
-      workspaceDisplayName: workspace.displayName,
-    });
+    await this.twoFactorAuthenticationEmailService.sendTwoFactorAuthenticationResetEmail(
+      { userId, workspaceId: workspace.id },
+    );
 
     return redemption;
   }
@@ -604,116 +590,6 @@ export class TwoFactorAuthenticationRecoveryService {
         {
           userFriendlyMessage: msg`Only a server administrator can manage recovery codes for this member.`,
         },
-      );
-    }
-  }
-
-  private async sendRecoveryCodeIssuedEmail({
-    actor,
-    targetUserWorkspace,
-    expiresAt,
-  }: {
-    actor: RecoveryCodeActor;
-    targetUserWorkspace: UserWorkspaceEntity;
-    expiresAt: Date;
-  }): Promise<void> {
-    const locale = targetUserWorkspace.locale ?? SOURCE_LOCALE;
-
-    await this.sendSecurityEmail({
-      to: targetUserWorkspace.user.email,
-      locale,
-      subject: msg`A two-factor authentication recovery code was generated for you`,
-      buildEmailTemplate: async () =>
-        TwoFactorAuthenticationRecoveryCodeIssuedEmail({
-          actorName:
-            `${actor.firstName} ${actor.lastName}`.trim() || actor.email,
-          workspaceDisplayName: targetUserWorkspace.workspace.displayName ?? '',
-          expiresAt,
-          locale,
-        }),
-    });
-  }
-
-  private async sendTwoFactorAuthenticationResetEmail({
-    userWorkspace,
-    workspaceDisplayName,
-  }: {
-    userWorkspace: UserWorkspaceEntity;
-    workspaceDisplayName: WorkspaceEntity['displayName'];
-  }): Promise<void> {
-    const locale = userWorkspace.locale ?? SOURCE_LOCALE;
-
-    await this.sendSecurityEmail({
-      to: userWorkspace.user.email,
-      locale,
-      subject: msg`Your two-factor authentication was reset`,
-      buildEmailTemplate: async () =>
-        TwoFactorAuthenticationResetEmail({
-          workspaceDisplayName: workspaceDisplayName ?? '',
-          locale,
-        }),
-    });
-  }
-
-  private async sendBackupCodeUsedEmail({
-    userWorkspace,
-    workspaceDisplayName,
-  }: {
-    userWorkspace: Pick<
-      UserWorkspaceEntity,
-      'userId' | 'workspaceId' | 'locale' | 'user'
-    >;
-    workspaceDisplayName: WorkspaceEntity['displayName'];
-  }): Promise<void> {
-    const locale = userWorkspace.locale ?? SOURCE_LOCALE;
-
-    await this.sendSecurityEmail({
-      to: userWorkspace.user.email,
-      locale,
-      subject: msg`A backup code was used to sign in to your account`,
-      buildEmailTemplate: async () =>
-        TwoFactorAuthenticationBackupCodeUsedEmail({
-          workspaceDisplayName: workspaceDisplayName ?? '',
-          remainingBackupCodeCount:
-            await this.twoFactorAuthenticationBackupCodeService.getRemainingBackupCodeCount(
-              {
-                userId: userWorkspace.userId,
-                workspaceId: userWorkspace.workspaceId,
-              },
-            ),
-          locale,
-        }),
-    });
-  }
-
-  private async sendSecurityEmail({
-    to,
-    locale,
-    subject,
-    buildEmailTemplate,
-  }: {
-    to: string;
-    locale: UserWorkspaceEntity['locale'];
-    subject: MessageDescriptor;
-    buildEmailTemplate: () => Promise<Parameters<typeof renderEmail>[0]>;
-  }): Promise<void> {
-    try {
-      const emailTemplate = await buildEmailTemplate();
-      const html = await renderEmail(emailTemplate, { pretty: true });
-      const text = await renderEmail(emailTemplate, { plainText: true });
-      const i18n = this.i18nService.getI18nInstance(locale);
-
-      await this.emailService.send({
-        from: `${this.twentyConfigService.get('EMAIL_FROM_NAME')} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
-        to,
-        subject: i18n._(subject),
-        text,
-        html,
-      });
-    } catch (error) {
-      this.logger.error(
-        'Failed to send a two-factor authentication recovery email',
-        error,
       );
     }
   }
