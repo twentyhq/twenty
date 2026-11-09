@@ -115,6 +115,8 @@ describe('BullMQDriver maxRate (integration)', () => {
   });
 
   it('keeps one budget per key across successive enqueues', async () => {
+    const firstEnqueuedAt = Date.now();
+
     await enqueueBulk({
       labels: ['H1', 'H2'],
       workspaceId: 'A',
@@ -126,9 +128,12 @@ describe('BullMQDriver maxRate (integration)', () => {
       applicationUniversalIdentifier: 'H',
     });
 
+    const elapsedMs = Date.now() - firstEnqueuedAt;
     const delayByLabel = await readDelayByLabel();
 
-    expect(delayByLabel.H3).toBeGreaterThan(INTERVAL_MS - TOLERANCE_MS);
+    expect(delayByLabel.H3).toBeGreaterThan(
+      INTERVAL_MS - elapsedMs - TOLERANCE_MS,
+    );
     expect(delayByLabel.H3).toBeLessThanOrEqual(INTERVAL_MS);
   });
 
@@ -165,6 +170,8 @@ describe('BullMQDriver maxRate (integration)', () => {
   });
 
   it('does not charge the budget again for a job id that is already queued', async () => {
+    const firstEnqueuedAt = Date.now();
+
     await enqueueBulk({
       labels: ['H1', 'H2'],
       jobIds: ['job-1', 'job-2'],
@@ -184,9 +191,12 @@ describe('BullMQDriver maxRate (integration)', () => {
       applicationUniversalIdentifier: 'H',
     });
 
+    const elapsedMs = Date.now() - firstEnqueuedAt;
     const delayByLabel = await readDelayByLabel();
 
-    expect(delayByLabel.F1).toBeGreaterThan(INTERVAL_MS - TOLERANCE_MS);
+    expect(delayByLabel.F1).toBeGreaterThan(
+      INTERVAL_MS - elapsedMs - TOLERANCE_MS,
+    );
     expect(delayByLabel.F1).toBeLessThanOrEqual(INTERVAL_MS);
   });
 
