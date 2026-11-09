@@ -66,16 +66,18 @@ const insertConnectedAccount = async ({
   provider,
   userWorkspaceId,
   scope = 'USER',
+  scopes = null,
 }: {
   id: string;
-  provider: 'app' | 'oidc' | 'saml' | 'email_group';
+  provider: 'app' | 'oidc' | 'saml' | 'email_group' | 'google';
   userWorkspaceId: string;
   scope?: 'USER' | 'WORKSPACE';
+  scopes?: string[] | null;
 }) => {
   await global.testDataSource.query(
     `INSERT INTO core."connectedAccount"
-       (id, handle, provider, "userWorkspaceId", "workspaceId", scope, "createdAt", "updatedAt")
-     VALUES ($1, $2, $3, $4, $5, $6, '1970-01-01T00:00:00Z', now())`,
+       (id, handle, provider, "userWorkspaceId", "workspaceId", scope, scopes, "createdAt", "updatedAt")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, '1970-01-01T00:00:00Z', now())`,
     [
       id,
       `${provider}@example.com`,
@@ -83,6 +85,7 @@ const insertConnectedAccount = async ({
       userWorkspaceId,
       WORKSPACE_ID,
       scope,
+      scopes,
     ],
   );
 };
@@ -323,6 +326,36 @@ describe('EmailComposerService connected account resolution (integration)', () =
         );
       } finally {
         await deleteConnectedAccount(appConnectedAccountId);
+      }
+    });
+
+    it('skips an older Google account stored by an SSO sign-in', async () => {
+      const googleSsoConnectedAccountId =
+        '20202020-0000-4000-8000-0000000000a4';
+
+      await insertConnectedAccount({
+        id: googleSsoConnectedAccountId,
+        provider: 'google',
+        userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+        scopes: ['email', 'profile'],
+      });
+
+      try {
+        const result = await service.composeEmail({
+          parameters: baseParams,
+          context: {
+            workspaceId: WORKSPACE_ID,
+            userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+          },
+          operation: EmailOperation.SEND,
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.success && result.data.connectedAccount.id).toBe(
+          PHIL_CONNECTED_ACCOUNT_ID,
+        );
+      } finally {
+        await deleteConnectedAccount(googleSsoConnectedAccountId);
       }
     });
 

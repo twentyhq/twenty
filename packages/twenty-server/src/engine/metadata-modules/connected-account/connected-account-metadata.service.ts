@@ -7,6 +7,7 @@ import { In, IsNull, Repository } from 'typeorm';
 import {
   ConnectedAccountProvider,
   EmailOperation,
+  MessageChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import {
@@ -85,6 +86,7 @@ export class ConnectedAccountMetadataService {
         scope: true,
         userWorkspaceId: true,
         connectionParameters: true,
+        scopes: true,
       },
     });
 
@@ -319,6 +321,36 @@ export class ConnectedAccountMetadataService {
       },
       order: { createdAt: 'ASC', id: 'ASC' },
     });
+  }
+
+  // SSO sign-in also stores a connected account, but without any channel.
+  async hasOwnMailOrCalendarAccount({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<boolean> {
+    const ownActiveConnectedAccount = {
+      workspaceId,
+      userWorkspaceId,
+      archivedAt: IsNull(),
+    };
+
+    const [hasEmailChannel, hasCalendarChannel] = await Promise.all([
+      this.messageChannelRepository.exists({
+        where: {
+          workspaceId,
+          type: MessageChannelType.EMAIL,
+          connectedAccount: ownActiveConnectedAccount,
+        },
+      }),
+      this.calendarChannelRepository.exists({
+        where: { workspaceId, connectedAccount: ownActiveConnectedAccount },
+      }),
+    ]);
+
+    return hasEmailChannel || hasCalendarChannel;
   }
 
   async getUserConnectedAccountIds({

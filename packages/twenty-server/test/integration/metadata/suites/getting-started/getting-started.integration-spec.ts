@@ -235,6 +235,60 @@ describe('gettingStarted (e2e)', () => {
         );
       }
     });
+
+    it('treats an account from an SSO sign-in as no mailbox', async () => {
+      const activeAccounts: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `SELECT "id" FROM core."connectedAccount" WHERE "userWorkspaceId" = $1 AND "archivedAt" IS NULL`,
+          [USER_WORKSPACE_DATA_SEED_IDS.JANE],
+        );
+      const activeAccountIds = activeAccounts.map(({ id }) => id);
+
+      await globalThis.testDataSource.query(
+        `UPDATE core."connectedAccount" SET "archivedAt" = NOW() WHERE "id" = ANY($1)`,
+        [activeAccountIds],
+      );
+
+      const [ssoAccount]: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `INSERT INTO core."connectedAccount" ("workspaceId", "userWorkspaceId", "handle", "provider", "scopes", "lastSignedInAt") VALUES ($1, $2, 'jane.sso@apple.dev', 'google', $3, NOW()) RETURNING "id"`,
+          [
+            SEED_APPLE_WORKSPACE_ID,
+            USER_WORKSPACE_DATA_SEED_IDS.JANE,
+            ['email', 'profile'],
+          ],
+        );
+
+      await globalThis.testDataSource.query(
+        `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND "userId" = $2 AND "key" = 'GETTING_STARTED_COMPLETED_CONNECT_MAILBOX'`,
+        [SEED_APPLE_WORKSPACE_ID, USER_DATA_SEED_IDS.JANE],
+      );
+
+      try {
+        const response = await makeMetadataApiRequest({
+          query: GETTING_STARTED_PROGRESS_QUERY,
+        });
+
+        expect(response.body.errors).toBeUndefined();
+
+        const { steps, completedStepActionKeys } =
+          response.body.data.gettingStartedProgress;
+
+        expect(completedStepActionKeys).not.toContain('CONNECT_MAILBOX');
+        expect(steps).not.toContainEqual(
+          expect.objectContaining({ actionKey: 'HANDOVER_DEALS' }),
+        );
+      } finally {
+        await globalThis.testDataSource.query(
+          `DELETE FROM core."connectedAccount" WHERE "id" = $1`,
+          [ssoAccount.id],
+        );
+        await globalThis.testDataSource.query(
+          `UPDATE core."connectedAccount" SET "archivedAt" = NULL WHERE "id" = ANY($1)`,
+          [activeAccountIds],
+        );
+      }
+    });
   });
 
   describe('assigned step action keys', () => {
