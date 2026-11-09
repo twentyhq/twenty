@@ -114,6 +114,28 @@ describe('useTextVariableEditor', () => {
       expect(content(editor)).toBe('hi');
     });
 
+    it('should submit the enclosing form in non-multiline mode only', () => {
+      const form = document.createElement('form');
+      const submitButton = document.createElement('button');
+      const onSubmit = jest.fn((event: Event) => event.preventDefault());
+      submitButton.type = 'submit';
+      form.addEventListener('submit', onSubmit);
+      document.body.appendChild(form);
+
+      const singleLineEditor = use({ defaultValue: 'hi' });
+      form.append(singleLineEditor.view.dom, submitButton);
+      pressEnter(singleLineEditor);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+      teardown?.();
+
+      const multilineEditor = use({ multiline: true, defaultValue: 'hi' });
+      form.replaceChildren(multilineEditor.view.dom, submitButton);
+      pressEnter(multilineEditor);
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+
+      form.remove();
+    });
+
     it('should not intercept Shift+Enter', () => {
       const editor = use({ multiline: true });
       expect(pressEnter(editor, true)).toBe(false);

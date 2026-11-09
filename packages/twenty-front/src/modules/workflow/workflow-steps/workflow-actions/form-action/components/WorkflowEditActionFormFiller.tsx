@@ -14,7 +14,7 @@ import { WorkflowFormStepSubmitButton } from '@/workflow/workflow-steps/workflow
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getFormInstructionsContext } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getFormInstructionsContext';
 import { resolveFormInstructions } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/resolveFormInstructions';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
@@ -27,6 +27,10 @@ export type WorkflowEditActionFormFillerProps = {
 };
 
 type FormData = WorkflowFormActionField[];
+
+const StyledForm = styled.form`
+  display: contents;
+`;
 
 const StyledInstructions = styled.div`
   color: ${themeCssVariables.font.color.secondary};
@@ -58,6 +62,7 @@ export const WorkflowEditActionFormFiller = ({
   const { goBackFromSidePanel } = useSidePanelHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);
+  const formId = useId();
 
   const canSubmit = !actionOptions.readonly && !isDefined(error);
 
@@ -107,15 +112,17 @@ export const WorkflowEditActionFormFiller = ({
     <>
       <WorkflowRunSSESubscribeEffect workflowRunId={workflowRunId} />
       <WorkflowStepBody>
-        {isDefined(instructions) && (
-          <StyledInstructions>{instructions}</StyledInstructions>
-        )}
-        <WorkflowFormFields
-          fields={formData}
-          readonly={actionOptions.readonly}
-          onChange={onFieldUpdate}
-          onError={setError}
-        />
+        <StyledForm id={formId} onSubmit={(event) => event.preventDefault()}>
+          {isDefined(instructions) && (
+            <StyledInstructions>{instructions}</StyledInstructions>
+          )}
+          <WorkflowFormFields
+            fields={formData}
+            readonly={actionOptions.readonly}
+            onChange={onFieldUpdate}
+            onError={setError}
+          />
+        </StyledForm>
       </WorkflowStepBody>
       {!actionOptions.readonly && (
         <SidePanelFooter
@@ -125,6 +132,7 @@ export const WorkflowEditActionFormFiller = ({
               workflowRunId={workflowRunId}
               stepId={action.id}
               disabled={!canSubmit}
+              formId={formId}
               getResponse={getResponse}
               onSubmitted={goBackFromSidePanel}
             />,

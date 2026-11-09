@@ -13,6 +13,10 @@ import { WorkflowFormFields } from '@/workflow/workflow-steps/workflow-actions/f
 
 const AI_CHAT_FORM_FIELD_MIN_WIDTH_PX = 240;
 
+const StyledForm = styled.form`
+  display: contents;
+`;
+
 const StyledHeader = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
@@ -90,48 +94,55 @@ export const AiChatFormCardContent = ({
   const fieldCount = fields.length;
 
   return (
-    <StyledAiChatAskCard isPadded>
-      <StyledHeader>
-        <IconForms size={16} />
-        {title ?? t`Form`}
-      </StyledHeader>
-      <StyledFields>
-        <WorkflowFormFields
-          fields={
-            isDefined(defaultValues)
-              ? fields.map((field) => ({
-                  ...field,
-                  value: defaultValues[field.name],
-                }))
-              : fields
-          }
-          readonly={isSubmitting}
-          onChange={(fieldName, value) => onFieldChange({ fieldName, value })}
-          onError={onError}
-        />
-      </StyledFields>
-      <StyledActions>
-        {prefilledCount > 0 && (
-          <StyledPrefillFeedback>
-            {t`${prefilledCount} of ${fieldCount} fields prefilled`}
-          </StyledPrefillFeedback>
-        )}
-        {isDefined(onSkip) && (
-          <Button size="sm" disabled={isSubmitting} onClick={onSkip}>
-            {t`Skip`}
+    <StyledForm
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit();
+      }}
+    >
+      <StyledAiChatAskCard isPadded>
+        <StyledHeader>
+          <IconForms size={16} />
+          {title ?? t`Form`}
+        </StyledHeader>
+        <StyledFields>
+          <WorkflowFormFields
+            fields={
+              isDefined(defaultValues)
+                ? fields.map((field) => ({
+                    ...field,
+                    value: defaultValues[field.name],
+                  }))
+                : fields
+            }
+            readonly={isSubmitting}
+            onChange={(fieldName, value) => onFieldChange({ fieldName, value })}
+            onError={onError}
+          />
+        </StyledFields>
+        <StyledActions>
+          {prefilledCount > 0 && (
+            <StyledPrefillFeedback>
+              {t`${prefilledCount} of ${fieldCount} fields prefilled`}
+            </StyledPrefillFeedback>
+          )}
+          {isDefined(onSkip) && (
+            <Button size="sm" disabled={isSubmitting} onClick={onSkip}>
+              {t`Skip`}
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="solid"
+            color="accent"
+            disabled={isSubmitting || isSubmitDisabled}
+            loading={isSubmitting}
+            type="submit"
+          >
+            {t`Submit`}
           </Button>
-        )}
-        <Button
-          size="sm"
-          variant="solid"
-          color="accent"
-          disabled={isSubmitting || isSubmitDisabled}
-          loading={isSubmitting}
-          onClick={onSubmit}
-        >
-          {t`Submit`}
-        </Button>
-      </StyledActions>
-    </StyledAiChatAskCard>
+        </StyledActions>
+      </StyledAiChatAskCard>
+    </StyledForm>
   );
 };

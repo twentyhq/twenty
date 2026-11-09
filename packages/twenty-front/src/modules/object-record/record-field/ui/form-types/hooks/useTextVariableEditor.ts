@@ -1,5 +1,6 @@
 import { TemplateVariableWithFallbackTag } from '@/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackTag';
 import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
+import { triggerImplicitFormSubmission } from '@/object-record/record-field/ui/form-types/utils/triggerImplicitFormSubmission';
 import { WorkflowVariableTag } from '@/workflow/workflow-variables/extensions/WorkflowVariableTag';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
@@ -95,6 +96,8 @@ export const useTextVariableEditor = ({
             );
 
             view.dispatch(transaction);
+          } else {
+            triggerImplicitFormSubmission(view.dom);
           }
 
           return true;

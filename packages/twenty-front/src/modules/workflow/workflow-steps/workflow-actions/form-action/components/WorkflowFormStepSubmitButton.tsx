@@ -9,6 +9,7 @@ type WorkflowFormStepSubmitButtonProps = {
   workflowRunId: string;
   stepId: string;
   disabled: boolean;
+  formId?: string;
   getResponse: () => Promise<Record<string, unknown>>;
   onSubmitted: () => void;
 };
@@ -17,6 +18,7 @@ export const WorkflowFormStepSubmitButton = ({
   workflowRunId,
   stepId,
   disabled,
+  formId,
   getResponse,
   onSubmitted,
 }: WorkflowFormStepSubmitButtonProps) => {
@@ -52,6 +54,7 @@ export const WorkflowFormStepSubmitButton = ({
       title={t`Submit`}
       onClick={() => void handleSubmit()}
       disabled={disabled || isSubmitting}
+      form={formId}
     />
   );
 };
