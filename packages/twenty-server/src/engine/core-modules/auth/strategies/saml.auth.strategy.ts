@@ -40,6 +40,31 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
     .pipe(WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA),
 });
 
+const SAML_ASSERTION_SCHEMA = z.object({
+  Assertion: z.object({
+    $: z.object({ ID: z.string().min(1) }),
+    Subject: z
+      .array(
+        z.object({
+          SubjectConfirmation: z
+            .array(
+              z.object({
+                SubjectConfirmationData: z
+                  .array(
+                    z.object({
+                      $: z.object({ NotOnOrAfter: z.coerce.date() }),
+                    }),
+                  )
+                  .min(1),
+              }),
+            )
+            .min(1),
+        }),
+      )
+      .min(1),
+  }),
+});
+
 export type SamlRequest = Omit<
   Request,
   'user' | 'workspace' | 'workspaceMetadataVersion'
@@ -145,6 +170,28 @@ export class SamlAuthStrategy extends PassportStrategy(
       if (!isEmail(email)) {
         return done(new Error('Invalid email'));
       }
+
+      const assertion = SAML_ASSERTION_SCHEMA.safeParse(
+        profile.getAssertion?.(),
+      );
+
+      if (!assertion.success) {
+        return done(new Error('SAML assertion has no ID or NotOnOrAfter'));
+      }
+
+      const notOnOrAfterTimestamps = assertion.data.Assertion.Subject.flatMap(
+        ({ SubjectConfirmation }) =>
+          SubjectConfirmation.flatMap(({ SubjectConfirmationData }) =>
+            SubjectConfirmationData.map(({ $ }) => $.NotOnOrAfter.getTime()),
+          ),
+      );
+
+      // The SAML profile requires rejecting a reused assertion until its NotOnOrAfter
+      await this.ssoService.consumeSamlAssertionOrThrow({
+        identityProviderId: request.params.identityProviderId,
+        assertionId: assertion.data.Assertion.$.ID,
+        validUntil: new Date(Math.max(...notOnOrAfterTimestamps)),
+      });
 
       done(null, {
         identityProviderId: request.params.identityProviderId,

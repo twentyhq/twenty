@@ -15,10 +15,18 @@ import {
   IdentityProviderType,
   OidcResponseType,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { CONSUMED_SAML_ASSERTION_CACHE_KEY_PREFIX } from 'src/engine/core-modules/sso/constants/consumed-saml-assertion-cache-key-prefix.constant';
 import {
   SsoException,
   SsoExceptionCode,
@@ -48,6 +56,8 @@ export class SsoService {
     private readonly billingService: BillingService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly secureHttpClientService: SecureHttpClientService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineAuthSession)
+    private readonly cacheStorage: CacheStorageService,
   ) {
     Issuer[custom.http_options] = this.oidcHttpOptions;
   }
@@ -183,6 +193,30 @@ export class SsoService {
       where: { id: identityProviderId },
       relations: { workspace: true },
     })) as (SsoConfiguration & WorkspaceSsoIdentityProviderEntity) | null;
+  }
+
+  async consumeSamlAssertionOrThrow({
+    identityProviderId,
+    assertionId,
+    validUntil,
+  }: {
+    identityProviderId: string;
+    assertionId: string;
+    validUntil: Date;
+  }): Promise<void> {
+    const isFirstUse = await this.cacheStorage.setIfAbsent(
+      `${CONSUMED_SAML_ASSERTION_CACHE_KEY_PREFIX}:${identityProviderId}:${assertionId}`,
+      true,
+      // A non-positive ttl would keep the key forever
+      Math.max(validUntil.getTime() - Date.now(), 1),
+    );
+
+    if (!isFirstUse) {
+      throw new AuthException(
+        'SAML assertion has already been used',
+        AuthExceptionCode.OAUTH_ACCESS_DENIED,
+      );
+    }
   }
 
   buildCallbackUrl(

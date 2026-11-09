@@ -44,7 +44,22 @@ const buildProfile = (
   nameIDFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
   issuer: 'irrelevant',
   getAssertionXml: () => '',
-  getAssertion: () => ({}),
+  getAssertion: () => ({
+    Assertion: {
+      $: { ID: 'assertion-id' },
+      Subject: [
+        {
+          SubjectConfirmation: [
+            {
+              SubjectConfirmationData: [
+                { $: { NotOnOrAfter: '2099-01-01T00:00:00.000Z' } },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  }),
   getSamlResponseXml: () => '',
 });
 
@@ -62,6 +77,7 @@ describe('SamlAuthStrategy.validate', () => {
             isSamlIdentityProvider: jest.fn(),
             buildIssuerURL: jest.fn(),
             buildCallbackUrl: jest.fn(),
+            consumeSamlAssertionOrThrow: jest.fn(),
           },
         },
       ],
