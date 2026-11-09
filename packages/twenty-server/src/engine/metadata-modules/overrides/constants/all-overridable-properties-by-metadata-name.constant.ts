@@ -2,7 +2,6 @@ import {
   ALL_METADATA_NAME,
   type AllMetadataName,
 } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME,
@@ -16,7 +15,7 @@ const computeOverridableProperties = <T extends AllMetadataName>(
     ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME[metadataName];
 
   return (Object.entries(config) as [string, { isOverridable?: boolean }][])
-    .filter(([_, conf]) => isDefined(conf.isOverridable) && conf.isOverridable)
+    .filter(([_, conf]) => conf.isOverridable)
     .map(([property]) => property as MetadataEntityOverridablePropertyName<T>);
 };
 

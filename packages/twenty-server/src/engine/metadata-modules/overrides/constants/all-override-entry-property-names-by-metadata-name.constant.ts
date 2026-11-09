@@ -2,7 +2,6 @@ import {
   ALL_METADATA_NAME,
   type AllMetadataName,
 } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
@@ -24,7 +23,7 @@ export const ALL_OVERRIDE_ENTRY_PROPERTY_NAMES_BY_METADATA_NAME: Record<
           metadataName
         ] as Record<string, OverridablePropertyConfiguration>,
       ).flatMap(([property, { isOverridable, universalProperty }]) =>
-        isDefined(isOverridable) && isOverridable
+        isOverridable
           ? [property, ...(universalProperty ? [universalProperty] : [])]
           : [],
       ),

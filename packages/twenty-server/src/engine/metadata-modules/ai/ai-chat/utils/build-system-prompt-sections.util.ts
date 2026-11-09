@@ -101,5 +101,5 @@ export const buildSystemPromptSections = ({
     },
   ];
 
-  return sections.filter((section) => typeof section !== 'boolean');
+  return sections.filter((section) => section !== false);
 };

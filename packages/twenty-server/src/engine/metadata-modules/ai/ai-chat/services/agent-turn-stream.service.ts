@@ -320,9 +320,7 @@ export class AgentTurnStreamService {
       turnId,
       result: {
         ...streamed,
-        isAborted:
-          streamed.isAborted ||
-          (isDefined(completion.isAborted) && completion.isAborted),
+        isAborted: streamed.isAborted || (completion.isAborted ?? false),
         usage: completion.usage ?? streamed.usage,
       },
       modelId: completion.modelId,
