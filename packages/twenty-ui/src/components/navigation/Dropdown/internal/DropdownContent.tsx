@@ -26,6 +26,7 @@ export const DropdownContent = ({
   alignOffset,
   anchor,
   collisionPadding,
+  collisionAvoidance,
   container,
   keepMounted,
   width = 200,
@@ -79,6 +80,7 @@ export const DropdownContent = ({
           alignOffset={alignOffset}
           anchor={anchor}
           collisionPadding={collisionPadding}
+          collisionAvoidance={collisionAvoidance}
         >
           <Popover.Popup
             {...props}

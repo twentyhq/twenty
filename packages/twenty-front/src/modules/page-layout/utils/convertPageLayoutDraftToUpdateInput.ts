@@ -2,7 +2,9 @@ import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { convertPageLayoutFiltersToInput } from '@/page-layout/utils/convertPageLayoutFiltersToInput';
 import { getWidgetGridPosition } from '@/page-layout/utils/getWidgetGridPosition';
+import { isUndefined } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
@@ -57,6 +59,9 @@ export const convertPageLayoutDraftToUpdateInput = (
     type: pageLayoutDraft.type,
     objectMetadataId: pageLayoutDraft.objectMetadataId ?? null,
     isFirstTabPinned: pageLayoutDraft.isFirstTabPinned,
+    ...(isUndefined(pageLayoutDraft.filters)
+      ? {}
+      : { filters: convertPageLayoutFiltersToInput(pageLayoutDraft.filters) }),
     tabs: pageLayoutDraft.tabs
       .filter((tab) => tab.isActive)
       .map((tab) => {

@@ -65,6 +65,7 @@ const identifierBarTrackCssClass = css`
 const StyledContainer = styled.div<{
   isInIdentifierBar: boolean;
   centerTabs: boolean;
+  hasBottomBorder: boolean;
 }>`
   ${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE}: ${({ isInIdentifierBar }) =>
     isInIdentifierBar
@@ -87,8 +88,8 @@ const StyledContainer = styled.div<{
     background-color: ${themeCssVariables.border.color.light};
     bottom: 0;
     content: '';
-    display: ${({ isInIdentifierBar }) =>
-      isInIdentifierBar ? 'none' : 'block'};
+    display: ${({ isInIdentifierBar, hasBottomBorder }) =>
+      isInIdentifierBar || !hasBottomBorder ? 'none' : 'block'};
     height: 1px;
     left: 0;
     position: absolute;
@@ -111,6 +112,7 @@ const StyledAddButton = styled.div`
 type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
   tabs: PageLayoutTab[];
   presentation?: 'standalone' | 'identifier-bar';
+  hasBottomBorder?: boolean;
   isReorderEnabled: boolean;
   addTabStrategy?: PageLayoutAddTabStrategy;
   behaveAsLinks: boolean;
@@ -124,6 +126,7 @@ export const PageLayoutTabList = ({
   behaveAsLinks,
   className,
   presentation = 'standalone',
+  hasBottomBorder = true,
   centerTabs = false,
   componentInstanceId,
   onChangeTab,
@@ -416,6 +419,7 @@ export const PageLayoutTabList = ({
           className={className}
           isInIdentifierBar={isInIdentifierBar}
           centerTabs={centerTabs}
+          hasBottomBorder={hasBottomBorder}
         >
           <PageLayoutTabListVisibleTabs
             aria-label={ariaLabel}

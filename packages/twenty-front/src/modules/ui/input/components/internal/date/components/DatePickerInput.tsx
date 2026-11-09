@@ -56,6 +56,7 @@ type DatePickerInputProps = {
   date: string | null;
   readonly?: boolean;
   variant?: FormFieldInputVariant;
+  'aria-label'?: string;
 };
 
 export const DatePickerInput = ({
@@ -63,6 +64,7 @@ export const DatePickerInput = ({
   onChange,
   readonly = false,
   variant = 'default',
+  'aria-label': ariaLabel,
 }: DatePickerInputProps) => {
   const { t } = useLingui();
   const { dateFormat } = useDateTimeFormat();
@@ -130,7 +132,7 @@ export const DatePickerInput = ({
       <StyledInput
         $variant={variant}
         type="text"
-        aria-label={t`Date`}
+        aria-label={ariaLabel ?? t`Date`}
         disabled={readonly}
         ref={ref}
         value={value}

@@ -7,6 +7,10 @@ export const transformPageLayout = (
 ): PageLayout => {
   return {
     ...pageLayout,
+    filters: pageLayout.filters?.map(({ defaultValue, ...filter }) => ({
+      ...filter,
+      defaultValue: defaultValue ?? null,
+    })),
     tabs: (pageLayout.tabs ?? [])
       .toSorted((a, b) => a.position - b.position)
       .map((tab): PageLayoutTab => {
