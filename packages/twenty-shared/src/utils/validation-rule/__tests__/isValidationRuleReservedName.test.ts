@@ -9,9 +9,16 @@ const isReservedMember = (name: string) =>
 describe('isValidationRuleReservedName', () => {
   it('should reserve now, functions, operators and constants as a root name', () => {
     expect(
-      ['now', 'isDefined', 'includes', 'not', 'and', 'or', 'in', 'true'].every(
-        isReservedRoot,
-      ),
+      [
+        'now',
+        'isDefined',
+        'includes',
+        'not',
+        'and',
+        'or',
+        'in',
+        'true',
+      ].every(isReservedRoot),
     ).toBe(true);
   });
 
