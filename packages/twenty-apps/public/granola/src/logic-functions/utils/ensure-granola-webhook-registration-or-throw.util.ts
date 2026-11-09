@@ -24,8 +24,7 @@ import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util'
 export const ensureGranolaWebhookRegistrationOrThrow =
   async (): Promise<GranolaWebhookRegistration> => {
     const apiKey = process.env[GRANOLA_API_KEY_ENV_VAR_NAME]?.trim();
-    const apiUrl =
-      process.env.TWENTY_PUBLIC_API_URL || process.env.TWENTY_API_URL;
+    const apiUrl = process.env.TWENTY_API_URL;
     if (!isNonEmptyString(apiKey) || !isNonEmptyString(apiUrl)) {
       throw new Error('Granola API key and Twenty server URL are required.');
     }

@@ -56,8 +56,7 @@ export const registerTeamsTranscriptSubscription = async ({
     return { transcriptSubscriptionId: null };
   }
 
-  const apiUrl =
-    process.env.TWENTY_PUBLIC_API_URL || process.env.TWENTY_API_URL;
+  const apiUrl = process.env.TWENTY_API_URL;
 
   if (!isNonEmptyString(apiUrl)) {
     throw new Error(
