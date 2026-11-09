@@ -116,6 +116,23 @@ export class WorkspaceMigrationRunnerService {
     );
   }
 
+  private async invalidateCacheWithOneRetry(
+    invalidateCacheArgs: Parameters<
+      WorkspaceMigrationRunnerService['invalidateCache']
+    >[0],
+  ): Promise<void> {
+    try {
+      await this.invalidateCache(invalidateCacheArgs);
+    } catch (cacheError) {
+      this.logger.warn(
+        `Cache invalidation failed after committed transaction, retrying once: ${cacheError}`,
+        'Runner',
+      );
+
+      await this.invalidateCache(invalidateCacheArgs);
+    }
+  }
+
   private recordRunPhaseMetric({
     phase,
     status,
@@ -553,7 +570,7 @@ export class WorkspaceMigrationRunnerService {
     const postCommitInvalidateStart = performance.now();
 
     try {
-      await this.invalidateCache({
+      await this.invalidateCacheWithOneRetry({
         allFlatEntityMapsKeys: flatEntityMapsKeysToInvalidate,
         workspaceId,
         hasSchemaMetadataChanged,

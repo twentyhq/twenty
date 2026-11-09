@@ -59,7 +59,7 @@ export type CacheMetadataPluginConfig = {
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheGetter: (key: string) => any;
   // oxlint-disable-next-line typescript/no-explicit-any
-  cacheSetter: (key: string, value: any) => void;
+  cacheSetter: (key: string, value: any) => Promise<void>;
   operationsToCache: Record<string, CachedOperationConfig>;
   dependencyHashesGetter: (
     workspaceId: string,
@@ -363,7 +363,7 @@ export function useCachedMetadata(
           return;
         }
 
-        config.cacheSetter(cacheKey, responseBody);
+        await config.cacheSetter(cacheKey, responseBody);
       }
     },
   };

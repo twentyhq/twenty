@@ -29,6 +29,7 @@ import {
   WorkspaceCacheOptions,
 } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WORKSPACE_DERIVED_CACHE_KEY } from 'src/engine/workspace-cache/decorators/workspace-derived-cache.decorator';
+import { METADATA_VISIBILITY_CACHE_KEY_NAMES } from 'src/engine/workspace-cache/constants/metadata-visibility-cache-key-names.constant';
 import {
   WorkspaceCacheException,
   WorkspaceCacheExceptionCode,
@@ -92,6 +93,7 @@ type CacheEntriesResult = {
 type KeyToRecompute = {
   keyName: WorkspaceCacheKeyName;
   expectedHash?: string;
+  shouldStartNewGeneration?: boolean;
 };
 
 type RecomputedCacheEntriesResult = CacheEntriesResult & {
@@ -582,7 +584,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       entries: invalidatedKeys.map(({ keyName, expectedHash }) => ({
         key: `${this.buildCacheKey(workspaceId, keyName)}:hash`,
         value: expectedHash,
-        ttl: this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000,
+        ttl: this.getStorageTtlMs(keyName),
       })),
       keysToDelete: cacheKeyNames.map(
         (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:data`,
@@ -605,6 +607,21 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         this.localCache.delete(localKey);
       }
     }
+  }
+
+  private getStorageTtlMs(keyName: WorkspaceCacheKeyName): number {
+    const storageTtlSeconds = this.twentyConfigService.get('CACHE_STORAGE_TTL');
+
+    if (!METADATA_VISIBILITY_CACHE_KEY_NAMES.has(keyName)) {
+      return storageTtlSeconds * 1000;
+    }
+
+    return (
+      Math.min(
+        storageTtlSeconds,
+        this.twentyConfigService.get('METADATA_VISIBILITY_CACHE_MAX_AGE'),
+      ) * 1000
+    );
   }
 
   private assertValidCacheParameters(
@@ -735,7 +752,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             `Failed to expand cached ${keyName} for workspace ${workspaceId}, recomputing`,
             error,
           );
-          missingInRedis.push({ keyName, expectedHash: hash });
+          missingInRedis.push({
+            keyName,
+            expectedHash: hash,
+            shouldStartNewGeneration:
+              METADATA_VISIBILITY_CACHE_KEY_NAMES.has(keyName),
+          });
           continue;
         }
 
@@ -743,7 +765,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         redisEntries.hashes[keyName] = hash;
         this.setInLocalCache(workspaceId, keyName, data, hash);
       } else {
-        missingInRedis.push({ keyName, expectedHash: hash });
+        missingInRedis.push({
+          keyName,
+          expectedHash: hash,
+          shouldStartNewGeneration:
+            METADATA_VISIBILITY_CACHE_KEY_NAMES.has(keyName),
+        });
       }
     }
 
@@ -779,7 +806,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
 
     const computePromises = keysToRecompute.map(async (keyToRecompute) => {
-      const { keyName, expectedHash } = keyToRecompute;
+      const { keyName, expectedHash, shouldStartNewGeneration } =
+        keyToRecompute;
       const provider = this.getProviderOrThrow(keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
       const computeStartedAt = performance.now();
@@ -806,7 +834,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           keyName,
           data,
           expectedHash,
-          hashToPublish: expectedHash ?? crypto.randomUUID(),
+          hashToPublish:
+            shouldStartNewGeneration === true || !isDefined(expectedHash)
+              ? crypto.randomUUID()
+              : expectedHash,
         };
       } finally {
         this.cacheMetricsService.recordRecompute(
@@ -838,8 +869,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     if (computed.length > 0) {
       const redisWriteStartedAt = performance.now();
-      const cacheTtlMs =
-        this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000;
       const publishArgumentsByEntry = computed.map(
         ({ keyName, data, expectedHash, hashToPublish }) => {
           const serializedExpectedHash = isDefined(expectedHash)
@@ -853,6 +882,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
               );
 
           return [
+            String(this.getStorageTtlMs(keyName)),
             serializedExpectedHash,
             serializedHashToPublish,
             serializedData,
@@ -868,7 +898,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             workspaceId,
             computed.map(({ keyName }) => keyName),
           ),
-          args: [String(cacheTtlMs), ...publishArgumentsByEntry.flat()],
+          args: publishArgumentsByEntry.flat(),
         });
       } finally {
         this.cacheMetricsService.recordRedisWrite(

@@ -1556,6 +1556,24 @@ export class ConfigVariables {
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Maximum age in seconds of a cached metadata generation that controls visibility, never renewed by reads',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  METADATA_VISIBILITY_CACHE_MAX_AGE: number = 3600;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Time-to-live in seconds of a cached metadata GraphQL response, set when stored and never renewed',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  METADATA_RESPONSE_CACHE_TTL: number = 3600;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description: 'Redis connection URL used for cache and queues by default',

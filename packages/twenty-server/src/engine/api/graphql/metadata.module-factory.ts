@@ -57,7 +57,12 @@ export const metadataModuleFactory = async (
       }),
       useCachedMetadata({
         cacheGetter: cacheStorageService.get.bind(cacheStorageService),
-        cacheSetter: cacheStorageService.set.bind(cacheStorageService),
+        cacheSetter: (cacheKey, responseBody) =>
+          cacheStorageService.set(
+            cacheKey,
+            responseBody,
+            twentyConfigService.get('METADATA_RESPONSE_CACHE_TTL') * 1000,
+          ),
         operationsToCache: METADATA_GRAPHQL_OPERATIONS_TO_CACHE,
         dependencyHashesGetter:
           workspaceCacheService.getOrRecomputeDependencyHashes.bind(
