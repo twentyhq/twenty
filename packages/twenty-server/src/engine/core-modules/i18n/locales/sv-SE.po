@@ -2002,6 +2002,11 @@ msgstr "Brödtext måste vara ett objekt"
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Brödtext måste vara ett objekt för widgeten \"{widgetTitle}\""
 
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr ""
+
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
@@ -2447,6 +2452,11 @@ msgstr "Samtalsinspelningar"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Samtalsinspelningar"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr ""
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6160,6 +6170,11 @@ msgstr "frontComponentId får inte anges för engineComponentKey {engineComponen
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "frontComponentId får inte anges när engineComponentKey är TRIGGER_WORKFLOW_VERSION"
 
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr ""
+
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9012,6 +9027,11 @@ msgstr "Meddelandeleverantörens anslutningsleverantör kan inte ändras"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "Meddelandeleverantörens anslutningsleverantör kan inte ändras efter skapandet: deklarera en ny meddelandeleverantör med ett nytt universalIdentifier"
+
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr ""
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -13331,6 +13351,11 @@ msgstr "Flik hittades inte för duplicering av widget."
 msgid "Tailor your workspace"
 msgstr "Anpassa din arbetsyta"
 
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr ""
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
@@ -14906,6 +14931,11 @@ msgstr "Denna medlem har inte konfigurerat tvåfaktorsautentisering, så det fin
 msgid "This message channel cannot send messages."
 msgstr "Denna meddelandekanal kan inte skicka meddelanden."
 
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr ""
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -15288,6 +15318,11 @@ msgstr "Den här arbetsytan har nått sin postgräns."
 #: src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util.ts
 msgid "This workspace has reached its storage limit."
 msgstr "Den här arbetsytan har nått sin lagringsgräns."
+
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr ""
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -17033,6 +17068,11 @@ msgstr "Vi kunde inte logga in på ditt e-postkonto. Vänligen kontrollera din e
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Vi stötte på ett problem med att ansluta till ditt e-postkonto. Vänligen kontrollera dina inställningar och försök igen."
+
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr ""
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

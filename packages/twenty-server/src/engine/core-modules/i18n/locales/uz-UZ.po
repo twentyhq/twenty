@@ -2002,6 +2002,11 @@ msgstr "Matn tanasi (body) obyekt bo‘lishi kerak."
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "\"{widgetTitle}\" vidjeti uchun matn tanasi (body) obyekt bo‘lishi kerak."
 
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr ""
+
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
@@ -2447,6 +2452,11 @@ msgstr "Qo‘ng‘iroq yozuvlari"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Qo‘ng‘iroq yozuvlari"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr ""
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6160,6 +6170,11 @@ msgstr "Dvigatel komponenti kaliti {engineComponentKey} bo‘lganda frontCompone
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "engineComponentKey TRIGGER_WORKFLOW_VERSION bo‘lganda frontComponentId o‘rnatilmasligi kerak"
 
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr ""
+
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9012,6 +9027,11 @@ msgstr "Xabar almashish provayderining ulanish provayderini o‘zgartirib bo‘l
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "Xabar almashish provayderining ulanish provayderini yaratilgandan keyin o‘zgartirib bo‘lmaydi: yangi universalIdentifier bilan yangi xabar almashish provayderini e’lon qiling"
+
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr ""
 
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -13325,6 +13345,11 @@ msgstr "Vidjetni nusxalash uchun ichki oyna (tab) topilmadi."
 msgid "Tailor your workspace"
 msgstr "Ish maydoningizni moslashtiring"
 
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr ""
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
@@ -14900,6 +14925,11 @@ msgstr "Bu a’zo ikki faktorli autentifikatsiyani sozlamagan, shuning uchun tik
 msgid "This message channel cannot send messages."
 msgstr "Bu xabar kanali xabar yubora olmaydi."
 
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr ""
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -15282,6 +15312,11 @@ msgstr "Bu ish maydoni yozuvlar limitiga yetdi."
 #: src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util.ts
 msgid "This workspace has reached its storage limit."
 msgstr "Bu ish maydoni saqlash limitiga yetdi."
+
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr ""
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -17027,6 +17062,11 @@ msgstr "Elektron pochta hisobingizga tizimga kira olmadik. Iltimos, elektron poc
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Elektron pochta hisobingizga ulanishda muammo yuz berdi. Iltimos, sozlamalaringizni tekshirib, qayta urinib ko‘ring."
+
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr ""
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

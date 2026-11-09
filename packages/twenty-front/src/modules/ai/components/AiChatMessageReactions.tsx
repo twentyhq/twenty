@@ -5,7 +5,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { ReactionButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
+import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { useToggleAgentChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
 import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
@@ -28,6 +28,7 @@ export const AiChatMessageReactions = ({
   messageId,
 }: AiChatMessageReactionsProps) => {
   const { t } = useLingui();
+  const { displayName: assistantName } = useAiChatAssistantProfile();
   const agentChatMessageReactions = useAtomFamilyStateValue(
     agentChatMessageReactionsFamilyState,
     { messageId },
@@ -65,7 +66,7 @@ export const AiChatMessageReactions = ({
                   }),
                 ]
               : []),
-            ...(hasAssistantReacted ? [AGENT_CHAT_ASSISTANT_NAME] : []),
+            ...(hasAssistantReacted ? [assistantName] : []),
           ];
           const reactorNames = reactorNameList.join(', ');
           const isSelected =

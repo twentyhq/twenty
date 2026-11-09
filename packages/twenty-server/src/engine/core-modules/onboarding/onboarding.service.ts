@@ -947,6 +947,15 @@ export class OnboardingService {
       return false;
     }
 
+    if (
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
+        workspaceId,
+      )
+    ) {
+      return false;
+    }
+
     try {
       return await this.dataSource.transaction(async (entityManager) => {
         const { queryRunner } = entityManager;
