@@ -90,7 +90,12 @@ export class FairQueueScheduler {
       }),
       staticPriority === URGENT_FAIR_PRIORITY
         ? undefined
-        : this.computePacedDelays({ queueName, scopes, maxRates }),
+        : this.computePacedDelays({
+            queueName,
+            scopes,
+            maxRates,
+            callerDelayMs,
+          }),
     ]);
 
     return fairJobOptions.map((jobOptions, jobIndex) => {
@@ -110,10 +115,12 @@ export class FairQueueScheduler {
     queueName,
     scopes,
     maxRates,
+    callerDelayMs,
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
     maxRates: (QueueJobMaxRate | undefined)[] | undefined;
+    callerDelayMs: number;
   }): Promise<number[] | undefined> {
     if (!isDefined(maxRates) || !this.options.isGroupMaxRateEnabled()) {
       return undefined;
@@ -149,6 +156,7 @@ export class FairQueueScheduler {
 
     const delaysByRequest = await this.groupRatePacer.computeDelays({
       queueName,
+      notBeforeDelayMs: callerDelayMs,
       requests: requests.map(({ slotKey, maxRate, jobIndexes }) => ({
         maxRates: [
           {

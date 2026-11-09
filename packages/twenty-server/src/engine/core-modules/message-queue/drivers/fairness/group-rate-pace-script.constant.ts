@@ -2,6 +2,7 @@ export const GROUP_RATE_PACE_SCRIPT = `
 local time = redis.call('TIME')
 local nowMs = tonumber(time[1]) * 1000.0 + math.floor(tonumber(time[2]) / 1000)
 local distinctKeyCount = tonumber(ARGV[1])
+local notBeforeMs = nowMs + tonumber(ARGV[2 * distinctKeyCount + 2])
 local slots = {}
 local intervals = {}
 local tolerances = {}
@@ -12,15 +13,15 @@ for i = 1, distinctKeyCount do
 
   local slot = tonumber(redis.call('GET', KEYS[i]) or '0') or 0
 
-  if slot < nowMs then
-    slot = nowMs
+  if slot < notBeforeMs then
+    slot = notBeforeMs
   end
 
   slots[i] = slot
 end
 
-local requestCount = tonumber(ARGV[2 * distinctKeyCount + 2])
-local position = 2 * distinctKeyCount + 3
+local requestCount = tonumber(ARGV[2 * distinctKeyCount + 3])
+local position = 2 * distinctKeyCount + 4
 local earliestDueTimes = { string.format('%.0f', nowMs) }
 local earliestDueTimeCount = 1
 

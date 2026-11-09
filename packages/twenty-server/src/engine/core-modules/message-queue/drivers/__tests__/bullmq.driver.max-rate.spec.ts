@@ -70,7 +70,7 @@ describe('BullMQDriver maxRate', () => {
     ).toEqual([500, 500, 500]);
   });
 
-  it('keeps the longer of the caller delay and the paced delay', async () => {
+  it('starts pacing at the caller delay, so the burst is never exceeded once the jobs are due', async () => {
     const harness = await createFairnessHarness({
       isGroupMaxRateEnabled: true,
     });
@@ -85,7 +85,7 @@ describe('BullMQDriver maxRate', () => {
     });
 
     expect(labels.map((label) => harness.readDelay({ label }))).toEqual([
-      700, 700, 700, 1_000,
+      700, 700, 1_200, 1_700,
     ]);
   });
 

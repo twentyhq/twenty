@@ -39,9 +39,11 @@ export class GroupRatePacer {
   async computeDelays({
     queueName,
     requests,
+    notBeforeDelayMs = 0,
   }: {
     queueName: MessageQueue;
     requests: GroupRatePaceRequest[];
+    notBeforeDelayMs?: number;
   }): Promise<number[][] | undefined> {
     const pacedKeysByRequest = requests.map(({ maxRates }) =>
       maxRates.flatMap(({ groupKey, maxRate }): PacedGroupKey[] => {
@@ -90,6 +92,7 @@ export class GroupRatePacer {
             intervalMs,
             toleranceMs,
           ]),
+          notBeforeDelayMs,
           requests.length,
           ...requests.flatMap(({ jobCount }, requestIndex) => [
             jobCount,
