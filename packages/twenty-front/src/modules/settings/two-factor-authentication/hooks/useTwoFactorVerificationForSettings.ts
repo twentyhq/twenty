@@ -49,13 +49,9 @@ export const useTwoFactorVerificationForSettings = ({
 
     if (isNonEmptyArray(backupCodes)) {
       onBackupCodesIssued(backupCodes);
-      await loadCurrentUser();
-      return;
     }
 
     await loadCurrentUser();
-
-    navigate(SettingsPath.ProfilePage);
   };
 
   const handleSave = async (values: OTPFormValues) => {
