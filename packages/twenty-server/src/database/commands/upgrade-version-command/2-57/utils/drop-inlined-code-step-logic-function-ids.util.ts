@@ -1,4 +1,4 @@
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UNRECOVERABLE_CODE_STEP_SOURCE } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-code-step-sources.util';
@@ -42,7 +42,8 @@ export const dropInlinedCodeStepLogicFunctionIds = ({
     const { logicFunctionId, ...inputWithoutLogicFunctionId } = input;
     const reference = { stepId: step.id, logicFunctionId };
 
-    if (isNonEmptyString(input.code)) {
+    // the executor runs any string code inline, an empty one included
+    if (isString(input.code)) {
       if (retainedLogicFunctionIds.has(logicFunctionId)) {
         return step;
       }

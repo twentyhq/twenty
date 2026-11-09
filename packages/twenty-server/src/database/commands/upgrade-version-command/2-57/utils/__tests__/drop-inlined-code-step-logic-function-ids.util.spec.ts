@@ -19,10 +19,13 @@ const buildStep = ({
   settings: { input, outputSchema: {} },
 });
 
-const drop = (
-  steps: StoredWorkflowStep[],
-  retainedLogicFunctionIds: ReadonlySet<string> = new Set(),
-) =>
+const drop = ({
+  steps,
+  retainedLogicFunctionIds = new Set(),
+}: {
+  steps: StoredWorkflowStep[];
+  retainedLogicFunctionIds?: ReadonlySet<string>;
+}) =>
   dropInlinedCodeStepLogicFunctionIds({
     steps,
     existingLogicFunctionIds: new Set(['logic-function-id']),
@@ -36,64 +39,68 @@ const NO_REFERENCES = {
 };
 
 describe('dropInlinedCodeStepLogicFunctionIds', () => {
-  it('drops the logic function of a code step that has its code', () => {
-    expect(
-      drop([
-        buildStep({
-          input: {
-            code: SOURCE,
-            logicFunctionId: 'logic-function-id',
-            logicFunctionInput: { a: '{{trigger.a}}' },
-          },
-        }),
-      ]),
-    ).toEqual({
-      ...NO_REFERENCES,
-      steps: [
-        buildStep({
-          input: { code: SOURCE, logicFunctionInput: { a: '{{trigger.a}}' } },
-        }),
-      ],
-      droppedReferences: [
-        { stepId: 'step-id', logicFunctionId: 'logic-function-id' },
-      ],
-    });
-  });
-
-  it('keeps the logic function of a code step with code when the function is retained', () => {
-    const step = buildStep({
-      input: { code: SOURCE, logicFunctionId: 'logic-function-id' },
-    });
-
-    expect(drop([step], new Set(['logic-function-id']))).toEqual({
-      ...NO_REFERENCES,
-      steps: [step],
-    });
-  });
-
   it.each([
-    ['no code', {}],
-    ['an empty code', { code: '' }],
+    ['its code', SOURCE],
+    ['an empty code, which the executor still runs inline', ''],
   ])(
-    'keeps the existing logic function of a code step with %s',
-    (_description, codeInput) => {
-      const step = buildStep({
-        input: { ...codeInput, logicFunctionId: 'logic-function-id' },
-      });
-
-      expect(drop([step])).toEqual({
+    'drops the logic function of a code step that has %s',
+    (_description, code) => {
+      expect(
+        drop({
+          steps: [
+            buildStep({
+              input: {
+                code,
+                logicFunctionId: 'logic-function-id',
+                logicFunctionInput: { a: '{{trigger.a}}' },
+              },
+            }),
+          ],
+        }),
+      ).toEqual({
         ...NO_REFERENCES,
-        steps: [step],
-        codelessReferences: [
+        steps: [
+          buildStep({
+            input: { code, logicFunctionInput: { a: '{{trigger.a}}' } },
+          }),
+        ],
+        droppedReferences: [
           { stepId: 'step-id', logicFunctionId: 'logic-function-id' },
         ],
       });
     },
   );
 
+  it('keeps the logic function of a code step with code when the function is retained', () => {
+    const step = buildStep({
+      input: { code: SOURCE, logicFunctionId: 'logic-function-id' },
+    });
+
+    expect(
+      drop({
+        steps: [step],
+        retainedLogicFunctionIds: new Set(['logic-function-id']),
+      }),
+    ).toEqual({ ...NO_REFERENCES, steps: [step] });
+  });
+
+  it('keeps the existing logic function of a code step without code', () => {
+    const step = buildStep({ input: { logicFunctionId: 'logic-function-id' } });
+
+    expect(drop({ steps: [step] })).toEqual({
+      ...NO_REFERENCES,
+      steps: [step],
+      codelessReferences: [
+        { stepId: 'step-id', logicFunctionId: 'logic-function-id' },
+      ],
+    });
+  });
+
   it('writes code that throws into a code step without code whose function is gone', () => {
     expect(
-      drop([buildStep({ input: { logicFunctionId: 'deleted-function-id' } })]),
+      drop({
+        steps: [buildStep({ input: { logicFunctionId: 'deleted-function-id' } })],
+      }),
     ).toEqual({
       ...NO_REFERENCES,
       steps: [buildStep({ input: { code: UNRECOVERABLE_CODE_STEP_SOURCE } })],
@@ -114,6 +121,6 @@ describe('dropInlinedCodeStepLogicFunctionIds', () => {
       { id: 'no-settings-step-id', type: 'CODE' },
     ];
 
-    expect(drop(steps)).toEqual({ ...NO_REFERENCES, steps });
+    expect(drop({ steps })).toEqual({ ...NO_REFERENCES, steps });
   });
 });

@@ -307,8 +307,7 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
         `SELECT DISTINCT
            step->'settings'->'input'->>'logicFunctionId' AS "logicFunctionId",
            (step->>'type' = 'CODE'
-             AND jsonb_typeof(step->'settings'->'input'->'code') = 'string'
-             AND step->'settings'->'input'->>'code' <> '') AS "isInlinedCodeStep"
+             AND jsonb_typeof(step->'settings'->'input'->'code') = 'string') AS "isInlinedCodeStep"
          FROM ${tableName}
          CROSS JOIN LATERAL jsonb_array_elements(
            CASE WHEN jsonb_typeof(${stepsExpression}) = 'array' THEN ${stepsExpression} ELSE '[]'::jsonb END
