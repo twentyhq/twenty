@@ -1,14 +1,12 @@
-import {
-  getLogoUrlFromDomainName,
-  isValidDomain,
-  normalizeDomain,
-} from 'twenty-shared/utils';
 import { IconWorld } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { getOriginFaviconUrl } from '@/settings/security/utils/getOriginFaviconUrl';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type SettingsSecurityOriginTableCellProps = {
   origin: string;
@@ -18,10 +16,14 @@ export const SettingsSecurityOriginTableCell = ({
   origin,
 }: SettingsSecurityOriginTableCellProps) => {
   const theme = useTheme();
+  const allowRequestsToTwentyIcons = useAtomStateValue(
+    allowRequestsToTwentyIconsState,
+  );
 
-  const faviconUrl = isValidDomain(origin)
-    ? getLogoUrlFromDomainName(normalizeDomain(origin))
-    : undefined;
+  const faviconUrl = getOriginFaviconUrl({
+    origin,
+    allowRequestsToTwentyIcons,
+  });
 
   return (
     <TableCell
