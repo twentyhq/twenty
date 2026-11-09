@@ -33,6 +33,7 @@ export const MessageThreadWidget = ({
     fetchMoreMessages,
     refetchMessages,
     threadLoading,
+    isFetchingMoreMessages,
     lastMessageChannelId,
   } = useEmailThread(targetRecord.id);
 
@@ -85,7 +86,7 @@ export const MessageThreadWidget = ({
       <ChatThreadWidgetContent
         messageThreadId={thread.id}
         messages={messages}
-        loading={threadLoading}
+        loading={isFetchingMoreMessages}
         onFetchMoreMessages={fetchMoreMessages}
         messageChannelId={lastMessageChannelId}
         onMessageSent={refetchMessages}
