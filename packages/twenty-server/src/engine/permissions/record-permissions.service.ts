@@ -20,7 +20,7 @@ import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/f
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
+import { AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
 import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
@@ -92,7 +92,7 @@ export class RecordPermissionsService {
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly accessGroupService: AccessGroupService,
+    private readonly accessGroupReadService: AccessGroupReadService,
   ) {}
 
   async findRecordsActions({
@@ -450,7 +450,7 @@ export class RecordPermissionsService {
       return undefined;
     }
 
-    return this.accessGroupService.findCallerCompactIds({
+    return this.accessGroupReadService.findCallerCompactIds({
       principals: objectAccessRequest.principals,
       objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
       operationType: objectAccessRequest.operationType,

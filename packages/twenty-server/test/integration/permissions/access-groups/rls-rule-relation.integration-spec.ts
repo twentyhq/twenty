@@ -20,8 +20,8 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
-import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
+import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
+import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -141,11 +141,11 @@ describe('RLS rules through a relation (integration)', () => {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
     });
-    await getAppProviderByClassName<AccessGroupService>(
-      'AccessGroupService',
+    await getAppProviderByClassName<AccessGroupSyncService>(
+      'AccessGroupSyncService',
     ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
-    await getAppProviderByClassName<RecordAccessGroupService>(
-      'RecordAccessGroupService',
+    await getAppProviderByClassName<RecordAccessGroupComputationService>(
+      'RecordAccessGroupComputationService',
     ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
