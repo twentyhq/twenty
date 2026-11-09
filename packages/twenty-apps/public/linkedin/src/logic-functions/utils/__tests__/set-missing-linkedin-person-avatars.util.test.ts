@@ -5,7 +5,7 @@ import { LINKEDIN_AVATAR_MAX_SIZE_BYTES } from 'src/constants/linkedin-avatar-ma
 const mocks = vi.hoisted(() => ({
   query: vi.fn(),
   mutation: vi.fn(),
-  uploadFile: vi.fn(),
+  metadataMutation: vi.fn(),
   fetch: vi.fn(),
 }));
 
@@ -18,7 +18,7 @@ vi.mock('twenty-client-sdk/core', () => ({
 
 vi.mock('twenty-client-sdk/metadata', () => ({
   MetadataApiClient: class {
-    uploadFile = mocks.uploadFile;
+    mutation = mocks.metadataMutation;
   },
 }));
 
@@ -26,6 +26,8 @@ const { setMissingLinkedinPersonAvatars } =
   await import('src/logic-functions/utils/set-missing-linkedin-person-avatars.util');
 
 const PICTURE_URL = 'https://media.licdn.com/priya.jpg';
+
+const UPLOAD_URL = 'https://storage.twenty.com/pending-file-id';
 
 const PRIYA_AVATAR = { personId: 'priya-id', pictureUrl: PICTURE_URL };
 
@@ -72,12 +74,16 @@ const mockPictureResponse = ({
 } = {}) => {
   const { stream, cancel } = buildStream(chunks);
 
-  mocks.fetch.mockResolvedValue({
-    ok,
-    status: ok ? 200 : 403,
-    headers: new Headers({ 'content-type': contentType }),
-    body: stream,
-  });
+  mocks.fetch.mockImplementation(async (_url: string, init?: RequestInit) =>
+    init?.method === 'PUT'
+      ? { ok: true, status: 200 }
+      : {
+          ok,
+          status: ok ? 200 : 403,
+          headers: new Headers({ 'content-type': contentType }),
+          body: stream,
+        },
+  );
 
   return cancel;
 };
@@ -90,7 +96,17 @@ describe('setMissingLinkedinPersonAvatars', () => {
     vi.stubGlobal('fetch', mocks.fetch);
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    mocks.uploadFile.mockResolvedValue({ id: 'file-id' });
+    mocks.metadataMutation.mockImplementation(async (input) =>
+      'createFileUpload' in input
+        ? {
+            createFileUpload: {
+              fileId: 'pending-file-id',
+              uploadUrl: UPLOAD_URL,
+              contentType: 'image/jpeg',
+            },
+          }
+        : { completeFileUpload: { id: 'file-id' } },
+    );
     mocks.mutation.mockResolvedValue({ updatePeople: [{ id: 'priya-id' }] });
   });
 
@@ -105,13 +121,21 @@ describe('setMissingLinkedinPersonAvatars', () => {
     await setAvatars();
 
     expect(mocks.fetch).toHaveBeenCalledWith(PICTURE_URL, expect.anything());
-    expect(mocks.uploadFile).toHaveBeenCalledWith(
-      expect.objectContaining({
-        filename: 'linkedin-avatar.jpg',
-        fieldMetadataUniversalIdentifier:
-          '20202020-a7c9-4e3d-8f1b-2d5a6b7c8e9f',
-      }),
+    expect(
+      mocks.metadataMutation.mock.calls[0][0].createFileUpload.__args,
+    ).toEqual({
+      filename: 'linkedin-avatar.jpg',
+      size: 3,
+      fileFolder: 'FilesField',
+      fieldMetadataUniversalIdentifier: '20202020-a7c9-4e3d-8f1b-2d5a6b7c8e9f',
+    });
+    expect(mocks.fetch).toHaveBeenCalledWith(
+      UPLOAD_URL,
+      expect.objectContaining({ method: 'PUT' }),
     );
+    expect(
+      mocks.metadataMutation.mock.calls[1][0].completeFileUpload.__args,
+    ).toEqual({ fileId: 'pending-file-id' });
     expect(getUpdateArgs().data).toEqual({
       avatarFile: [{ fileId: 'file-id', label: 'linkedin-avatar.jpg' }],
     });
@@ -165,7 +189,7 @@ describe('setMissingLinkedinPersonAvatars', () => {
     await expect(setAvatars()).resolves.toBeUndefined();
 
     expect(cancel).toHaveBeenCalled();
-    expect(mocks.uploadFile).not.toHaveBeenCalled();
+    expect(mocks.metadataMutation).not.toHaveBeenCalled();
   });
 
   it('does not fail the sync when the picture cannot be downloaded', async () => {
@@ -173,7 +197,7 @@ describe('setMissingLinkedinPersonAvatars', () => {
     mockPictureResponse({ ok: false });
 
     await expect(setAvatars()).resolves.toBeUndefined();
-    expect(mocks.uploadFile).not.toHaveBeenCalled();
+    expect(mocks.metadataMutation).not.toHaveBeenCalled();
   });
 
   it('ignores a response that is not an image', async () => {
@@ -182,7 +206,7 @@ describe('setMissingLinkedinPersonAvatars', () => {
 
     await setAvatars();
 
-    expect(mocks.uploadFile).not.toHaveBeenCalled();
+    expect(mocks.metadataMutation).not.toHaveBeenCalled();
   });
 
   it('does nothing once the job deadline has passed', async () => {

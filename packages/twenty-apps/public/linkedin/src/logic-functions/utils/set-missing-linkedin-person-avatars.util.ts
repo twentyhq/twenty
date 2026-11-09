@@ -101,6 +101,52 @@ const downloadLinkedinPicture = async ({
   return { content: await readBoundedBody(response.body), mimeType };
 };
 
+// Calls the upload mutations directly: the runtime client injected by the
+// server may not expose the same uploadFile helper signature as the build SDK.
+const uploadAvatarFile = async ({
+  content,
+  filename,
+}: {
+  content: Buffer;
+  filename: string;
+}): Promise<string> => {
+  const metadataClient = new MetadataApiClient({ runAs: 'application' });
+
+  const { createFileUpload } = await metadataClient.mutation({
+    createFileUpload: {
+      __args: {
+        filename,
+        size: content.byteLength,
+        fileFolder: 'FilesField',
+        fieldMetadataUniversalIdentifier:
+          PERSON_AVATAR_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+      },
+      fileId: true,
+      uploadUrl: true,
+      contentType: true,
+    },
+  });
+
+  const uploadResponse = await fetch(createFileUpload.uploadUrl, {
+    method: 'PUT',
+    headers: { 'Content-Type': createFileUpload.contentType },
+    body: new Uint8Array(content),
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error(`upload failed with status ${uploadResponse.status}`);
+  }
+
+  const { completeFileUpload } = await metadataClient.mutation({
+    completeFileUpload: {
+      __args: { fileId: createFileUpload.fileId },
+      id: true,
+    },
+  });
+
+  return completeFileUpload.id;
+};
+
 const setPersonAvatar = async ({
   personId,
   pictureUrl,
@@ -112,14 +158,7 @@ const setPersonAvatar = async ({
   });
   const filename = `linkedin-avatar.${mimeType.replace('image/', '').replace('jpeg', 'jpg')}`;
 
-  const uploadedFile = await new MetadataApiClient({
-    runAs: 'application',
-  }).uploadFile({
-    fileBuffer: content,
-    filename,
-    fieldMetadataUniversalIdentifier:
-      PERSON_AVATAR_FILE_FIELD_UNIVERSAL_IDENTIFIER,
-  });
+  const fileId = await uploadAvatarFile({ content, filename });
 
   const { updatePeople } = await new CoreApiClient({
     runAs: 'application',
@@ -129,7 +168,7 @@ const setPersonAvatar = async ({
         filter: {
           and: [{ id: { eq: personId } }, PERSON_WITHOUT_AVATAR_FILTER],
         },
-        data: { avatarFile: [{ fileId: uploadedFile.id, label: filename }] },
+        data: { avatarFile: [{ fileId, label: filename }] },
       },
       id: true,
     },
