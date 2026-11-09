@@ -15,10 +15,14 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { ArchiveInboxThreadInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/archive-inbox-thread.input';
 import { SendInboxMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-inbox-message-result.dto';
 import { SendInboxMessageInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-inbox-message.input';
+import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
+import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
 import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
+import { getAgentInboxCallerAuthContextOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -41,6 +45,8 @@ export class AgentInboxResolver {
   constructor(
     private readonly agentInboxService: AgentInboxService,
     private readonly agentInboxProposalService: AgentInboxProposalService,
+    private readonly inboxAccessService: AgentInboxAccessService,
+    private readonly triageService: AgentChatThreadTriageService,
   ) {}
 
   @Mutation(() => SendInboxMessageResultDTO)
@@ -60,5 +66,27 @@ export class AgentInboxResolver {
           input: proposeToolCallInput,
         }),
     });
+  }
+
+  // Lets an application clear the threads it wrote once their work is done
+  // elsewhere, for instance an email it proposed that was sent from Gmail
+  @Mutation(() => Boolean)
+  async archiveInboxThread(
+    @Args('input') input: ArchiveInboxThreadInputDTO,
+  ): Promise<boolean> {
+    const authContext = getAgentInboxCallerAuthContextOrThrow();
+
+    await this.inboxAccessService.assertThreadIsWritableOrThrow({
+      authContext,
+      threadId: input.threadId,
+    });
+
+    await this.triageService.archiveForMembers({
+      workspaceId: authContext.workspace.id,
+      threadId: input.threadId,
+      workspaceMemberIds: input.workspaceMemberIds,
+    });
+
+    return true;
   }
 }
