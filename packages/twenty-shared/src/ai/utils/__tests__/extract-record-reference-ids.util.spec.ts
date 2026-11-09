@@ -67,4 +67,22 @@ describe('extractRecordReferenceIds', () => {
       }),
     ).toEqual([unversionedId]);
   });
+
+  it('reads a reference that follows an extra opening bracket', () => {
+    expect(
+      extractRecordReferenceIds({
+        text: `[[[record:workspaceMember:${JONY_ID}:Jony]]`,
+        objectNameSingular: 'workspaceMember',
+      }),
+    ).toEqual([JONY_ID]);
+  });
+
+  it('reads text full of unclosed brackets in linear time', () => {
+    expect(
+      extractRecordReferenceIds({
+        text: '[[9'.repeat(100_000),
+        objectNameSingular: 'workspaceMember',
+      }),
+    ).toEqual([]);
+  });
 });
