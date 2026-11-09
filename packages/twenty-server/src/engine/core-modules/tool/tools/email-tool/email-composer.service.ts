@@ -25,6 +25,7 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
 import { sanitizeOutboundEmailSubject } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
 import { EMAIL_ATTACHMENT_FILE_FOLDERS } from 'src/engine/core-modules/tool/tools/email-tool/constants/email-attachment-file-folders.const';
+import { MAX_EMAIL_ATTACHMENTS_BYTES } from 'src/engine/core-modules/tool/tools/email-tool/constants/max-email-attachments-bytes.const';
 import {
   EmailToolException,
   EmailToolExceptionCode,
@@ -42,6 +43,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message.type';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 type ParentThreadContext = {
@@ -242,6 +244,22 @@ export class EmailComposerService {
     }
   }
 
+  private assertAttachmentsSizeWithinLimit(
+    fileEntities: Pick<FileEntity, 'size'>[],
+  ): void {
+    const totalBytes = fileEntities.reduce(
+      (sum, fileEntity) => sum + fileEntity.size,
+      0,
+    );
+
+    if (totalBytes > MAX_EMAIL_ATTACHMENTS_BYTES) {
+      throw new EmailToolException(
+        `Attachments are ${totalBytes} bytes. Maximum allowed is ${MAX_EMAIL_ATTACHMENTS_BYTES} bytes.`,
+        EmailToolExceptionCode.ATTACHMENTS_TOO_LARGE,
+      );
+    }
+  }
+
   private async getAttachments(
     files: Array<EmailAttachment>,
     workspaceId: string,
@@ -275,11 +293,13 @@ export class EmailComposerService {
       );
     }
 
+    this.assertAttachmentsSizeWithinLimit(
+      files.flatMap(({ id }) => fileEntityMap.get(id) ?? []),
+    );
+
     const attachments: MessageAttachment[] = [];
 
     for (const fileMetadata of files) {
-      const fileEntity = fileEntityMap.get(fileMetadata.id);
-
       const fileStream = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
@@ -293,12 +313,24 @@ export class EmailComposerService {
         );
       }
 
-      const buffer = await streamToBuffer(fileStream.stream);
+      const buffer = await streamToBuffer(
+        fileStream.stream,
+        MAX_EMAIL_ATTACHMENTS_BYTES,
+      ).catch((error) => {
+        if (error instanceof StreamSizeExceededError) {
+          throw new EmailToolException(
+            error.message,
+            EmailToolExceptionCode.ATTACHMENTS_TOO_LARGE,
+          );
+        }
+
+        throw error;
+      });
 
       attachments.push({
         filename: fileMetadata.name,
         content: buffer,
-        contentType: fileEntity?.mimeType ?? 'application/octet-stream',
+        contentType: fileStream.mimeType,
       });
     }
 

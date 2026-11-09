@@ -1,7 +1,10 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -17,7 +20,7 @@ const PLATFORM_OWNED_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.accessGroup.universalIdentifier,
   STANDARD_OBJECTS.recordShare.universalIdentifier,
   STANDARD_OBJECTS.shortLink.universalIdentifier,
-  STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
   STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
   STANDARD_OBJECTS.agentMessage.universalIdentifier,
   STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
