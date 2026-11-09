@@ -3,20 +3,20 @@ import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool
 
 describe('HttpTool', () => {
   const buildHttpTool = () => {
-    const getHttpClient = jest.fn().mockReturnValue(
-      jest.fn().mockResolvedValue({
-        data: { ok: true },
-        status: 200,
-        statusText: 'OK',
-        headers: {},
-      }),
-    );
+    const httpClient = jest.fn().mockResolvedValue({
+      data: { ok: true },
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+    });
+    const getHttpClient = jest.fn().mockReturnValue(httpClient);
 
     return {
       httpTool: new HttpTool({
         getHttpClient,
       } as unknown as SecureHttpClientService),
       getHttpClient,
+      httpClient,
     };
   };
 
@@ -59,5 +59,50 @@ describe('HttpTool', () => {
       undefined,
       expect.objectContaining({ source: 'workflow-http' }),
     );
+  });
+
+  it.each([
+    ['a non-HTTP URL', { url: 'ftp://example.com/file', method: 'GET' }],
+    ['an invalid URL', { url: 'not a url', method: 'GET' }],
+    [
+      'an unsupported method',
+      { url: 'https://api.example.com', method: 'TRACE' },
+    ],
+    [
+      'a non-string header value',
+      {
+        url: 'https://api.example.com',
+        method: 'GET',
+        headers: { 'X-Object': { nested: true } },
+      },
+    ],
+  ])('rejects %s without sending the request', async (_label, parameters) => {
+    const { httpTool, httpClient } = buildHttpTool();
+
+    const output = await httpTool.execute(parameters, {
+      workspaceId: 'workspace-id',
+    });
+
+    expect(output).toMatchObject({
+      success: false,
+      message: 'Invalid arguments for http_request',
+    });
+    expect(httpClient).not.toHaveBeenCalled();
+  });
+
+  it('sends a number header value resolved from a workflow variable as a string', async () => {
+    const { httpTool, httpClient } = buildHttpTool();
+
+    const output = await httpTool.execute(
+      {
+        url: 'https://api.example.com',
+        method: 'GET',
+        headers: { 'X-Count': 3 },
+      },
+      { workspaceId: 'workspace-id' },
+    );
+
+    expect(output.success).toBe(true);
+    expect(httpClient.mock.calls[0][0].headers.get('X-Count')).toBe('3');
   });
 });
