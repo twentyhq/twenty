@@ -1,0 +1,1 @@
+export const DASHBOARD_FILTER_DEFAULT_OPTION_VALUE = 'default';

@@ -24,6 +24,8 @@ import { RecordTableCalendarFieldDropdownContent } from '@/side-panel/pages/page
 import { RecordTableCalendarLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent';
 import { RecordTableLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
+import { WidgetDashboardFilterBindingsSection } from '@/side-panel/pages/page-layout/components/dashboard/WidgetDashboardFilterBindingsSection';
+import { useDashboardFiltersForWidgetBindings } from '@/side-panel/pages/page-layout/hooks/useDashboardFiltersForWidgetBindings';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -79,6 +81,11 @@ export const SidePanelDashboardRecordTableSettings = () => {
   );
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
+  const { dashboardFilterBindingItemIds } =
+    useDashboardFiltersForWidgetBindings({
+      pageLayoutId,
+      objectMetadataId: widgetInEditMode?.objectMetadataId,
+    });
 
   const configuration = widgetInEditMode?.configuration;
   const isRecordTableConfiguration =
@@ -227,6 +234,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
             : []),
         ]
       : []),
+    ...dashboardFilterBindingItemIds,
   ];
 
   const handleFilterClick = () => {
@@ -521,6 +529,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                 </>
               )}
             </SidePanelGroup>
+            <WidgetDashboardFilterBindingsSection widget={widgetInEditMode} />
           </SidePanelList>
         </StyledSettingsContainer>
         <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
