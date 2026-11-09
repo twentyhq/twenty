@@ -177,12 +177,15 @@ export class AgentStepLoopService {
     let stepStartedAt = startedAt;
     let isUsageRecorded = false;
     let isFirstTokenRecorded = !recordsTurnMetrics;
-    const { model: modelWithFileDelivery, prepareFileParts } =
-      this.agentFilePartService.createFileDelivery({
-        model: registeredModel.model,
-        modelConfig,
-        workspaceId: billing.workspaceId,
-      });
+    const {
+      model: modelWithFileDelivery,
+      prepareFileParts,
+      downloadFiles,
+    } = this.agentFilePartService.createFileDelivery({
+      model: registeredModel.model,
+      modelConfig,
+      workspaceId: billing.workspaceId,
+    });
 
     const notifyUserCreditsCrossing = async (debit: StepDebitResult) => {
       if (
@@ -278,6 +281,7 @@ export class AgentStepLoopService {
         (await (shouldStopAfterStep?.(step) ?? false)),
       ...buildAiTelemetry(telemetry),
       providerOptions,
+      experimental_download: downloadFiles,
       // keys are sorted and the last message carries the cache point, so the prompt prefix stays cacheable
       prepareStep: async ({ messages: stepMessages }) => {
         await beforeStep?.();

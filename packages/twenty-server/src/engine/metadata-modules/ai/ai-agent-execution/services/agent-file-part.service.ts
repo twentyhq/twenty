@@ -8,9 +8,10 @@ import {
   type LanguageModelV4Prompt,
   type LanguageModelV4TextPart,
 } from '@ai-sdk/provider';
-import { isUrlSupported, validateDownloadUrl } from '@ai-sdk/provider-utils';
+import { validateDownloadUrl } from '@ai-sdk/provider-utils';
 import { isArray, isNonEmptyString, isString } from '@sniptt/guards';
 import {
+  type Experimental_DownloadFunction as DownloadFunction,
   type FilePart,
   type LanguageModel,
   type LanguageModelMiddleware,
@@ -41,20 +42,21 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 type AgentFileDelivery = {
   model: LanguageModel;
   prepareFileParts: (messages: ModelMessage[]) => Promise<ModelMessage[]>;
+  downloadFiles?: DownloadFunction;
 };
 
 type AgentRunFiles = {
   workspaceId: string;
-  supportedUrls:
-    | PromiseLike<Record<string, RegExp[]>>
-    | Record<string, RegExp[]>;
   canSendSignedUrls: boolean;
   areFilesRejected: boolean;
   nativeMimeTypes: Set<string>;
   limits: ModelFileLimits;
   filesByUrl: Map<string, Promise<FileEntity | null>>;
   bytesByFileId: Map<string, Promise<Buffer | null>>;
+  unreadableFileUrls: Set<string>;
 };
+
+type FilePartReplacement = LanguageModelV4FilePart | LanguageModelV4TextPart;
 
 type FileBudget = {
   remainingSizeBytes: number;
@@ -86,29 +88,38 @@ export class AgentFilePartService {
 
     const runFiles: AgentRunFiles = {
       workspaceId,
-      supportedUrls: model.supportedUrls,
       canSendSignedUrls: this.canSendSignedUrls(),
       areFilesRejected: false,
       nativeMimeTypes: getNativeMimeTypesForModalities(modelConfig.modalities),
       limits: getModelFileLimits(modelConfig.sdkPackage),
       filesByUrl: new Map(),
       bytesByFileId: new Map(),
+      unreadableFileUrls: new Set(),
     };
 
     return {
       model: wrapLanguageModel({
         model: model as LanguageModelV4,
-        middleware: this.buildRejectedFileFallback(runFiles),
+        middleware: this.buildFileFallback(runFiles),
       }),
       prepareFileParts: (messages) => this.prepareFileParts(messages, runFiles),
+      downloadFiles: (requestedFiles) =>
+        this.downloadFiles(requestedFiles, runFiles),
     };
   }
 
-  private buildRejectedFileFallback(
-    runFiles: AgentRunFiles,
-  ): LanguageModelMiddleware {
+  private buildFileFallback(runFiles: AgentRunFiles): LanguageModelMiddleware {
     return {
       specificationVersion: 'v4',
+      transformParams: async ({ params }) => ({
+        ...params,
+        prompt: await this.replaceFileParts(params.prompt, (part) =>
+          part.data.type === 'url' &&
+          runFiles.unreadableFileUrls.has(part.data.url.toString())
+            ? this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable)
+            : part,
+        ),
+      }),
       wrapStream: async ({ doStream, params, model }) => {
         try {
           return await doStream();
@@ -140,9 +151,16 @@ export class AgentFilePartService {
     );
     runFiles.canSendSignedUrls = false;
 
-    const promptWithBytes = await this.replaceFileUrlsWithBytes(
+    const promptWithBytes = await this.replaceFileParts(
       params.prompt,
-      runFiles,
+      (part) =>
+        part.data.type === 'url'
+          ? this.replaceFileUrlWithBytes(
+              part,
+              part.data.url.toString(),
+              runFiles,
+            )
+          : part,
     );
 
     try {
@@ -161,7 +179,7 @@ export class AgentFilePartService {
     }
   }
 
-  private retryFilesAsPlaceholders(
+  private async retryFilesAsPlaceholders(
     fileRejection: APICallError,
     params: LanguageModelV4CallOptions,
     model: LanguageModelV4,
@@ -174,50 +192,33 @@ export class AgentFilePartService {
 
     return model.doStream({
       ...params,
-      prompt: this.replaceFilesWithPlaceholders(params.prompt),
+      prompt: await this.replaceFileParts(params.prompt, (part) =>
+        this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.rejected),
+      ),
     });
   }
 
-  private replaceFilesWithPlaceholders(
+  private replaceFileParts(
     prompt: LanguageModelV4Prompt,
-  ): LanguageModelV4Prompt {
-    return prompt.map((message) =>
-      message.role !== 'user'
-        ? message
-        : {
-            ...message,
-            content: message.content.map((part) =>
-              part.type === 'file'
-                ? this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.rejected)
-                : part,
-            ),
-          },
-    );
-  }
-
-  private replaceFileUrlsWithBytes(
-    prompt: LanguageModelV4Prompt,
-    runFiles: AgentRunFiles,
+    replaceFilePart: (
+      part: LanguageModelV4FilePart,
+    ) => FilePartReplacement | Promise<FilePartReplacement>,
   ): Promise<LanguageModelV4Prompt> {
     return Promise.all(
-      prompt.map(async (message) =>
-        message.role !== 'user'
-          ? message
-          : {
-              ...message,
-              content: await Promise.all(
-                message.content.map((part) =>
-                  part.type === 'file' && part.data.type === 'url'
-                    ? this.replaceFileUrlWithBytes(
-                        part,
-                        part.data.url.toString(),
-                        runFiles,
-                      )
-                    : part,
-                ),
-              ),
-            },
-      ),
+      prompt.map(async (message) => {
+        if (message.role !== 'user') {
+          return message;
+        }
+
+        return {
+          ...message,
+          content: await Promise.all(
+            message.content.map((part) =>
+              part.type === 'file' ? replaceFilePart(part) : part,
+            ),
+          ),
+        };
+      }),
     );
   }
 
@@ -342,25 +343,41 @@ export class AgentFilePartService {
     budget.remainingFileCount -= 1;
 
     if (
-      runFiles.canSendSignedUrls &&
-      isUrlSupported({
-        url,
-        mediaType,
-        supportedUrls: await runFiles.supportedUrls,
-      })
+      !runFiles.canSendSignedUrls &&
+      runFiles.limits.mimeTypesRequiringUrl.has(mediaType)
     ) {
-      return { ...part, mediaType };
-    }
-
-    if (runFiles.limits.mimeTypesRequiringUrl.has(mediaType)) {
       return this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable);
     }
 
-    const bytes = await this.loadFileBytes(file, runFiles);
+    return { ...part, mediaType };
+  }
 
-    return isDefined(bytes)
-      ? { ...part, mediaType, data: bytes }
-      : this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable);
+  private downloadFiles(
+    requestedFiles: Parameters<DownloadFunction>[0],
+    runFiles: AgentRunFiles,
+  ) {
+    return Promise.all(
+      requestedFiles.map(({ url, isUrlSupportedByModel }) =>
+        runFiles.canSendSignedUrls && isUrlSupportedByModel
+          ? null
+          : this.downloadFile(url.toString(), runFiles),
+      ),
+    );
+  }
+
+  private async downloadFile(url: string, runFiles: AgentRunFiles) {
+    const file = await this.loadFile(url, runFiles);
+    const bytes = isDefined(file)
+      ? await this.loadFileBytes(file, runFiles)
+      : null;
+
+    if (isDefined(bytes)) {
+      return { data: bytes, mediaType: undefined };
+    }
+
+    runFiles.unreadableFileUrls.add(url);
+
+    return null;
   }
 
   private buildPlaceholder(
