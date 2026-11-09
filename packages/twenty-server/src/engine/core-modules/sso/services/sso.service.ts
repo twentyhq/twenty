@@ -191,7 +191,7 @@ export class SsoService {
     })) as (SsoConfiguration & WorkspaceSsoIdentityProviderEntity) | null;
   }
 
-  async consumeSamlAssertionOrThrow({
+  async consumeSamlAssertion({
     identityProviderId,
     assertionId,
     validUntil,
@@ -199,19 +199,12 @@ export class SsoService {
     identityProviderId: string;
     assertionId: string;
     validUntil: Date;
-  }): Promise<void> {
-    const isFirstUse = await this.cacheStorage.setIfAbsent(
+  }): Promise<boolean> {
+    return this.cacheStorage.setIfAbsent(
       `${CONSUMED_SAML_ASSERTION_CACHE_KEY_PREFIX}:${identityProviderId}:${assertionId}`,
       true,
       Math.max(validUntil.getTime() - Date.now(), 1),
     );
-
-    if (!isFirstUse) {
-      throw new SsoException(
-        'SAML assertion has already been used',
-        SsoExceptionCode.SAML_ASSERTION_ALREADY_USED,
-      );
-    }
   }
 
   buildCallbackUrl(

@@ -2,6 +2,7 @@
 
 import { Test } from '@nestjs/testing';
 
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 
 import { SamlAuthStrategy } from './saml.auth.strategy';
@@ -64,10 +65,10 @@ const buildProfile = (
 
 describe('SamlAuthStrategy.validate', () => {
   let strategy: SamlAuthStrategy;
-  let consumeSamlAssertionOrThrow: jest.Mock;
+  let consumeSamlAssertion: jest.Mock;
 
   beforeEach(async () => {
-    consumeSamlAssertionOrThrow = jest.fn();
+    consumeSamlAssertion = jest.fn().mockResolvedValue(true);
 
     const module = await Test.createTestingModule({
       providers: [
@@ -79,7 +80,7 @@ describe('SamlAuthStrategy.validate', () => {
             isSamlIdentityProvider: jest.fn(),
             buildIssuerURL: jest.fn(),
             buildCallbackUrl: jest.fn(),
-            consumeSamlAssertionOrThrow,
+            consumeSamlAssertion,
           },
         },
       ],
@@ -120,8 +121,8 @@ describe('SamlAuthStrategy.validate', () => {
       workspaceInviteHash: undefined,
       email: VALID_EMAIL,
     });
-    expect(consumeSamlAssertionOrThrow).toHaveBeenCalledTimes(1);
-    expect(consumeSamlAssertionOrThrow).toHaveBeenCalledWith({
+    expect(consumeSamlAssertion).toHaveBeenCalledTimes(1);
+    expect(consumeSamlAssertion).toHaveBeenCalledWith({
       identityProviderId: IDP_A,
       assertionId: 'assertion-id',
       validUntil: new Date('2099-01-01T00:00:00.000Z'),
@@ -245,8 +246,8 @@ describe('SamlAuthStrategy.validate', () => {
     );
 
     expect(done).toHaveBeenCalledTimes(1);
-    expect(done.mock.calls[0][0]).toBeInstanceOf(Error);
+    expect(done.mock.calls[0][0]).toBeInstanceOf(AuthException);
     expect(done.mock.calls[0][0].message).toBe('SAML assertion has expired');
-    expect(consumeSamlAssertionOrThrow).not.toHaveBeenCalled();
+    expect(consumeSamlAssertion).not.toHaveBeenCalled();
   });
 });

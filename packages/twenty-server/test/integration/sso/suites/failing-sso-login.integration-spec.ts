@@ -479,8 +479,7 @@ describe('SSO login should fail', () => {
       expectSsoErrorRedirect({
         redirectUrl: await completeSamlLogin(samlResponse),
         workspaceSubdomain: APPLE_SUBDOMAIN,
-        errorMessage:
-          'Authentication error: SAML assertion has already been used',
+        errorMessage: 'SAML assertion has already been used',
       });
     });
 

@@ -15,6 +15,10 @@ import { isEmail } from 'class-validator';
 import { type Request } from 'express';
 import { z } from 'zod';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { getCertificateBase64Body } from 'src/engine/core-modules/sso/utils/get-certificate-base64-body.util';
 
@@ -176,7 +180,12 @@ export class SamlAuthStrategy extends PassportStrategy(
       );
 
       if (!assertion.success) {
-        return done(new Error('SAML assertion has no ID or NotOnOrAfter'));
+        return done(
+          new AuthException(
+            'SAML assertion has no ID or NotOnOrAfter',
+            AuthExceptionCode.SSO_AUTH_FAILED,
+          ),
+        );
       }
 
       const notOnOrAfterTimestamps = assertion.data.Assertion.Subject.flatMap(
@@ -189,14 +198,28 @@ export class SamlAuthStrategy extends PassportStrategy(
       const validUntil = new Date(Math.max(...notOnOrAfterTimestamps));
 
       if (Date.now() >= validUntil.getTime()) {
-        return done(new Error('SAML assertion has expired'));
+        return done(
+          new AuthException(
+            'SAML assertion has expired',
+            AuthExceptionCode.SSO_AUTH_FAILED,
+          ),
+        );
       }
 
-      await this.ssoService.consumeSamlAssertionOrThrow({
+      const isFirstUse = await this.ssoService.consumeSamlAssertion({
         identityProviderId: request.params.identityProviderId,
         assertionId: assertion.data.Assertion.$.ID,
         validUntil,
       });
+
+      if (!isFirstUse) {
+        return done(
+          new AuthException(
+            'SAML assertion has already been used',
+            AuthExceptionCode.SSO_AUTH_FAILED,
+          ),
+        );
+      }
 
       done(null, {
         identityProviderId: request.params.identityProviderId,

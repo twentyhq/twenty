@@ -13,7 +13,6 @@ export enum SsoExceptionCode {
   INVALID_IDP_TYPE = 'INVALID_IDP_TYPE',
   UNKNOWN_SSO_CONFIGURATION_ERROR = 'UNKNOWN_SSO_CONFIGURATION_ERROR',
   SSO_DISABLE = 'SSO_DISABLE',
-  SAML_ASSERTION_ALREADY_USED = 'SAML_ASSERTION_ALREADY_USED',
 }
 
 const getSsoExceptionUserFriendlyMessage = (code: SsoExceptionCode) => {
@@ -30,8 +29,6 @@ const getSsoExceptionUserFriendlyMessage = (code: SsoExceptionCode) => {
       return msg`SSO configuration error.`;
     case SsoExceptionCode.SSO_DISABLE:
       return msg`SSO is disabled.`;
-    case SsoExceptionCode.SAML_ASSERTION_ALREADY_USED:
-      return msg`This sign-in has already been used. Please sign in again.`;
     default:
       assertUnreachable(code);
   }
