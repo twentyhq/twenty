@@ -101,8 +101,7 @@ export class AgentChatThreadTriageService {
     return participants;
   }
 
-  // Archives the thread for each member as if they had archived it themselves,
-  // checking every member first so a refusal archives it for nobody
+  // Every member is checked before any write, so a refusal archives for nobody
   async archiveForMembers({
     workspaceId,
     threadId,

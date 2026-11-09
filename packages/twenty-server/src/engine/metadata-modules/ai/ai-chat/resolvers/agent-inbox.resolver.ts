@@ -68,8 +68,6 @@ export class AgentInboxResolver {
     });
   }
 
-  // Lets an application clear the threads it wrote once their work is done
-  // elsewhere, for instance an email it proposed that was sent from Gmail
   @Mutation(() => Boolean)
   async archiveInboxThread(
     @Args('input') input: ArchiveInboxThreadInputDTO,
