@@ -15288,6 +15288,11 @@ msgstr "این فضای کاری به حد مجاز رکوردهای خود رس
 msgid "This workspace has reached its storage limit."
 msgstr "این فضای کاری به حد مجاز فضای ذخیره‌سازی خود رسیده است."
 
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr ""
+
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
