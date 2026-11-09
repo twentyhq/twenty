@@ -203,7 +203,6 @@ export const SettingsValidationRulePreview = ({
     ? evaluateValidationRuleExpression({
         expression,
         record,
-        // Previewed as an update that changes nothing, so previous values equal current ones
         previousRecord: record,
         fields,
         now: new Date().toISOString(),

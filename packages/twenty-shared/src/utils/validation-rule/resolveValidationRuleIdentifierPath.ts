@@ -65,7 +65,6 @@ const buildNotAValueError = (
   errorParams: { path },
 });
 
-// Bound as "previous.<field>" so field renames and deletions follow the path
 const resolvePreviousValuePath = ({
   path,
   memberSegments,

@@ -100,7 +100,6 @@ export const useCompleteRecordUpdate = ({
           objectMetadataItems,
         });
 
-        // A caller that already shows the new value in the store passes the record as it was
         const storedRecord =
           recordBeforeUpdate ??
           store.get(recordStoreFamilyState.atomFamily(recordId)) ??
@@ -124,7 +123,6 @@ export const useCompleteRecordUpdate = ({
             const previousValueFieldPath =
               getValidationRulePreviousValueFieldPath(fieldPath);
 
-            // A previous value is read from the stored record alone, before the update
             if (isDefined(previousValueFieldPath)) {
               return isRecordFieldValueLoaded({
                 record,

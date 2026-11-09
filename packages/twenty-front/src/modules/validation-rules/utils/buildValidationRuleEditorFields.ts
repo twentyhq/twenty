@@ -193,7 +193,6 @@ export const buildValidationRuleEditorFields = ({
     objectMetadataItems,
   });
 
-  // The compiler rejects previous values read through a relation
   const previousValueFields = currentValueFields
     .filter((field) => !field.readsRelatedRecord)
     .map(buildPreviousValueEditorField);
