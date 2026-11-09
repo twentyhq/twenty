@@ -1,4 +1,4 @@
-import { TipTapPdfDocument } from '@/command-menu-item/record/single-record/components/TipTapPdfDocument';
+import { TipTapPdfDocument } from '@/advanced-text-editor/components/TipTapPdfDocument';
 import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 import { type TipTapDocument } from 'twenty-shared/utils';

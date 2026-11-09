@@ -1,4 +1,4 @@
-import { convertImageBlobToPngBlob } from '@/command-menu-item/record/single-record/utils/convertImageBlobToPngBlob';
+import { convertImageBlobToPngBlob } from '@/advanced-text-editor/utils/convertImageBlobToPngBlob';
 
 const IMAGE_OBJECT_URL = 'blob:source-image';
 

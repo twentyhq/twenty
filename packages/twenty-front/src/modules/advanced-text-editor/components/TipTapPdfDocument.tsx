@@ -1,8 +1,8 @@
 /* oxlint-disable twenty/no-hardcoded-colors --
    PDF documents are rendered outside the app and cannot read theme variables */
-import { PDF_FONT_FAMILIES } from '@/command-menu-item/record/single-record/constants/PdfFontFamilies';
-import { RICH_TEXT_PDF_COLORS } from '@/command-menu-item/record/single-record/constants/RichTextPdfColors';
-import { fetchPdfImageBlob } from '@/command-menu-item/record/single-record/utils/fetchPdfImageBlob';
+import { PDF_FONT_FAMILIES } from '@/advanced-text-editor/constants/PdfFontFamilies';
+import { RICH_TEXT_PDF_COLORS } from '@/advanced-text-editor/constants/RichTextPdfColors';
+import { fetchPdfImageBlob } from '@/advanced-text-editor/utils/fetchPdfImageBlob';
 import {
   Document,
   Image,

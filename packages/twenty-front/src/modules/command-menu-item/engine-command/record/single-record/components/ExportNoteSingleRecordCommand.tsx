@@ -31,7 +31,7 @@ export const ExportNoteSingleRecordCommand = () => {
       : undefined) ?? { type: TIPTAP_NODE_TYPES.DOCUMENT };
 
     const { exportTipTapDocumentToPdf } =
-      await import('@/command-menu-item/record/single-record/utils/exportTipTapDocumentToPdf');
+      await import('@/advanced-text-editor/utils/exportTipTapDocumentToPdf');
 
     await exportTipTapDocumentToPdf({ document, filename });
   };

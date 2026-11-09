@@ -1,4 +1,4 @@
-import { convertImageBlobToPngBlob } from '@/command-menu-item/record/single-record/utils/convertImageBlobToPngBlob';
+import { convertImageBlobToPngBlob } from '@/advanced-text-editor/utils/convertImageBlobToPngBlob';
 
 // react-pdf only decodes PNG and JPEG.
 const PDF_SUPPORTED_IMAGE_TYPES = ['image/png', 'image/jpeg'];

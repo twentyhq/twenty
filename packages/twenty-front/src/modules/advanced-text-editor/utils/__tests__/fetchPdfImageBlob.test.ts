@@ -1,9 +1,7 @@
-import { convertImageBlobToPngBlob } from '@/command-menu-item/record/single-record/utils/convertImageBlobToPngBlob';
-import { fetchPdfImageBlob } from '@/command-menu-item/record/single-record/utils/fetchPdfImageBlob';
+import { convertImageBlobToPngBlob } from '@/advanced-text-editor/utils/convertImageBlobToPngBlob';
+import { fetchPdfImageBlob } from '@/advanced-text-editor/utils/fetchPdfImageBlob';
 
-jest.mock(
-  '@/command-menu-item/record/single-record/utils/convertImageBlobToPngBlob',
-);
+jest.mock('@/advanced-text-editor/utils/convertImageBlobToPngBlob');
 
 const convertImageBlobToPngBlobMock = jest.mocked(convertImageBlobToPngBlob);
 
