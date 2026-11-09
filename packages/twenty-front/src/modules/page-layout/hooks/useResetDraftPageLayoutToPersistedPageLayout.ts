@@ -12,6 +12,7 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
+import { resetChartFiltersSettingsInitialization } from '@/side-panel/pages/page-layout/utils/resetChartFiltersSettingsInitialization';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -111,6 +112,12 @@ export const useResetDraftPageLayoutToPersistedPageLayout = ({
         store.set(activeTabId, pageLayoutPersisted.tabs[0].id);
       }
 
+      resetChartFiltersSettingsInitialization({
+        store,
+        widgets: store
+          .get(pageLayoutDraftState)
+          .tabs.flatMap((tab) => tab.widgets),
+      });
       store.set(pageLayoutDraftState, toDraftPageLayout(pageLayoutPersisted));
 
       const tabLayouts = convertPageLayoutToTabLayouts(pageLayoutPersisted);

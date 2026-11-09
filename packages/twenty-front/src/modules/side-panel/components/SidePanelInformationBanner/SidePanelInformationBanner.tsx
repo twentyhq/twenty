@@ -28,6 +28,16 @@ const styles = {
       width: 16px;
     }
   `,
+  content: css`
+    & {
+      align-items: flex-start;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      gap: var(--t-spacing-1);
+      min-width: 0;
+    }
+  `,
   message: css`
     & {
       color: var(--t-color-blue);
@@ -50,6 +60,7 @@ export const SidePanelInformationBanner = ({
   className,
   variant = 'default',
   tooltipMessage,
+  action,
 }: SidePanelInformationBannerProps) => {
   return (
     <Tooltip
@@ -66,7 +77,10 @@ export const SidePanelInformationBanner = ({
             <IconAlertTriangle size={16} />
           )}
         </div>
-        <p className={styles.message}>{message}</p>
+        <div className={styles.content}>
+          <p className={styles.message}>{message}</p>
+          {action}
+        </div>
       </div>
     </Tooltip>
   );

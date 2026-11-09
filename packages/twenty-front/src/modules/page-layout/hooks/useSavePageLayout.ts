@@ -9,6 +9,7 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { dropDashboardFilterOverridesToMissingFields } from '@/page-layout/utils/dropDashboardFilterOverridesToMissingFields';
 import { sanitizeChartFiltersInPageLayoutDraft } from '@/page-layout/utils/sanitizeChartFiltersInPageLayoutDraft';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -58,14 +59,22 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
 
     const pageLayoutDraft = store.get(pageLayoutDraftCallbackState);
 
+    const fieldMetadataItemsByObjectMetadataId = new Map(
+      objectMetadataItems.map((objectMetadataItem) => [
+        objectMetadataItem.id,
+        objectMetadataItem.fields,
+      ]),
+    );
+
+    const pageLayoutDraftWithKnownFields =
+      dropDashboardFilterOverridesToMissingFields({
+        pageLayoutDraft,
+        fieldMetadataItemsByObjectMetadataId,
+      });
+
     const sanitizedPageLayoutDraft = sanitizeChartFiltersInPageLayoutDraft({
-      pageLayoutDraft,
-      fieldMetadataItemsByObjectMetadataId: new Map(
-        objectMetadataItems.map((objectMetadataItem) => [
-          objectMetadataItem.id,
-          objectMetadataItem.fields,
-        ]),
-      ),
+      pageLayoutDraft: pageLayoutDraftWithKnownFields,
+      fieldMetadataItemsByObjectMetadataId,
     });
 
     const updateInput = convertPageLayoutDraftToUpdateInput(

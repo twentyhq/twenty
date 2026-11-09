@@ -1,4 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { LightButton } from 'twenty-ui/components/input';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   ComponentDecorator,
@@ -33,5 +35,29 @@ export const LongMessage: Story = {
   args: {
     message:
       'The chart has exceeded the maximum number of 200 bars. Please consider adding filters to reduce the number of data points displayed.',
+  },
+};
+
+const handleAction = fn();
+
+export const WithAction: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    variant: 'warning',
+    message: 'This widget also filters on Close date.',
+    action: <LightButton onClick={handleAction}>Fix it</LightButton>,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('This widget also filters on Close date.'),
+    ).toBeVisible();
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Fix it' }),
+    );
+
+    expect(handleAction).toHaveBeenCalledTimes(1);
   },
 };
