@@ -99,6 +99,7 @@ export const MessageThreadWidget = ({
       lastMessage={lastMessage}
       loading={threadLoading}
       onFetchMoreMessages={fetchMoreMessages}
+      messageChannelId={lastMessageChannelId}
     />
   );
 };
