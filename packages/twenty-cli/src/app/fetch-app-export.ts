@@ -14,7 +14,13 @@ const NOT_EXPORTABLE_SUB_CODES = new Set([
   'STANDARD_APPLICATION_NOT_EXPORTABLE',
 ]);
 
-const isExportUnsupportedError = (error: unknown): error is CliError => {
+const isExportValidationError = ({
+  error,
+  messagePrefix,
+}: {
+  error: unknown;
+  messagePrefix: string;
+}): boolean => {
   if (!(error instanceof CliError) || error.code !== 'GRAPHQL_ERROR') {
     return false;
   }
@@ -33,9 +39,7 @@ const isExportUnsupportedError = (error: unknown): error is CliError => {
       (isNull(entry.code) && error.details?.status === 400)) &&
     isNull(entry.path) &&
     isString(entry.message) &&
-    entry.message.startsWith(
-      'Cannot query field "exportApplication" on type "Query".',
-    )
+    entry.message.startsWith(messagePrefix)
   );
 };
 
@@ -64,18 +68,22 @@ export const fetchAppExport = async ({
   target,
   signal,
   shouldIncludeDependencies = false,
+  shouldIncludeSourceFiles = false,
 }: {
   universalIdentifier: string;
   target: ResolvedTarget;
   signal: AbortSignal;
   shouldIncludeDependencies?: boolean;
+  shouldIncludeSourceFiles?: boolean;
 }): Promise<AppExport> => {
-  const data = await createMetadataClient({ target, signal })
-    .query({
+  const client = createMetadataClient({ target, signal });
+  const query = (shouldQuerySourceFiles: boolean) =>
+    client.query({
       __name: 'ExportApplication',
       exportApplication: {
         __args: {
           universalIdentifier,
+          ...(shouldQuerySourceFiles ? { shouldIncludeSourceFiles: true } : {}),
           ...(shouldIncludeDependencies
             ? { shouldIncludeDependencies: true }
             : {}),
@@ -94,35 +102,57 @@ export const fetchAppExport = async ({
         },
         files: { folder: true, path: true, content: true },
       },
-    })
-    .catch((error: unknown) => {
-      if (isApplicationNotFoundError({ error, field: 'exportApplication' })) {
-        throw createAppNotInstalledError({
-          universalIdentifier,
-          apiUrl: target.apiUrl,
-        });
-      }
-
-      if (isExportUnsupportedError(error)) {
-        throw new CliError({
-          code: 'APP_EXPORT_UNSUPPORTED',
-          message: 'This server does not support application export.',
-        });
-      }
-
-      if (isNotExportableError(error)) {
-        throw new CliError({
-          code: 'APP_NOT_EXPORTABLE',
-          message: error.message,
-          hint: 'Only apps developed locally can be pulled: not the standard app, and not apps installed from a package.',
-          details: { universalIdentifier },
-        });
-      }
-
-      throw error;
     });
-  return parseAppExport({
-    value: data?.exportApplication,
-    universalIdentifier,
-  });
+  try {
+    const data = await query(shouldIncludeSourceFiles).catch(
+      (error: unknown) => {
+        if (
+          shouldIncludeSourceFiles &&
+          isExportValidationError({
+            error,
+            messagePrefix:
+              'Unknown argument "shouldIncludeSourceFiles" on field "Query.exportApplication".',
+          })
+        ) {
+          return query(false);
+        }
+        throw error;
+      },
+    );
+    return parseAppExport({
+      value: data?.exportApplication,
+      universalIdentifier,
+    });
+  } catch (error) {
+    if (isApplicationNotFoundError({ error, field: 'exportApplication' })) {
+      throw createAppNotInstalledError({
+        universalIdentifier,
+        apiUrl: target.apiUrl,
+      });
+    }
+
+    if (
+      isExportValidationError({
+        error,
+        messagePrefix:
+          'Cannot query field "exportApplication" on type "Query".',
+      })
+    ) {
+      throw new CliError({
+        code: 'APP_EXPORT_UNSUPPORTED',
+        message: 'This server does not support application export.',
+      });
+    }
+
+    if (isNotExportableError(error)) {
+      throw new CliError({
+        code: 'APP_NOT_EXPORTABLE',
+        message: error.message,
+        hint: 'Only apps developed locally can be pulled: not the standard app, and not apps installed from a package.',
+        details: { universalIdentifier },
+      });
+    }
+
+    throw error;
+  }
 };
