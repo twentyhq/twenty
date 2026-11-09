@@ -3246,6 +3246,7 @@ msgstr "Alignment"
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-group/components/RecordGroupTabChip.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -10203,6 +10204,12 @@ msgstr "Dismiss"
 msgid "Dismiss AI setup prompt"
 msgstr "Dismiss AI setup prompt"
 
+#. js-lingui-id: Xm/s+u
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+msgid "Display"
+msgstr "Display"
+
 #. js-lingui-id: Ldgs6e
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 msgid "Display \"More fields\" button"
@@ -14479,6 +14486,11 @@ msgstr "Group name"
 msgid "Group sorting"
 msgstr "Group sorting"
 
+#. js-lingui-id: 7kO0HM
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Group tabs"
+msgstr "Group tabs"
+
 #. js-lingui-id: Qt5Mu7
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Grouped {objectLabel}"
@@ -14493,6 +14505,11 @@ msgstr "Grouped by error code and function"
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Grouping {objectLabel}"
 msgstr "Grouping {objectLabel}"
+
+#. js-lingui-id: zhrjek
+#: src/modules/object-record/record-group/components/RecordGroupTabs.tsx
+msgid "Groups"
+msgstr "Groups"
 
 #. js-lingui-id: R4r4XO
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -16887,6 +16904,11 @@ msgstr "Let {host} use your microphone and camera"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
 msgid "Let each member decide for themselves"
 msgstr "Let each member decide for themselves"
+
+#. js-lingui-id: 3qTz94
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes."
+msgstr "Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes."
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -25507,6 +25529,12 @@ msgstr "section"
 msgid "Section"
 msgstr "Section"
 
+#. js-lingui-id: R4OWFD
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+msgid "Sections"
+msgstr "Sections"
+
 #. js-lingui-id: a3LDKx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -28151,6 +28179,8 @@ msgid "Table, Kanban, Calendar"
 msgstr "Table, Kanban, Calendar"
 
 #. js-lingui-id: 38Or+7
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Tabs"
 msgstr "Tabs"
