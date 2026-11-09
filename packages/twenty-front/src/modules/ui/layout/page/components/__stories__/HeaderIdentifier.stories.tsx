@@ -3,8 +3,11 @@ import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
+import { AvatarGroup } from 'twenty-ui/components/data-display';
 import { IconChartBar } from 'twenty-ui/icon';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -93,6 +96,49 @@ export const LongTitle: Story = {
       }),
     ).toBeVisible();
     expect(canvas.getByText('Chart')).toBeVisible();
+  },
+};
+
+const PARTICIPANTS = [
+  { name: 'Thomas des Francs', src: AVATAR_URL_MOCK },
+  { name: 'Sundar Pichai' },
+  { name: 'Satya Nadella' },
+  { name: 'Tim Cook' },
+  { name: 'Jensen Huang' },
+];
+
+export const ParticipantAvatars: Story = {
+  args: {
+    icon: (
+      <AvatarGroup
+        maxVisible={3}
+        overlapOffset={themeCssVariables.spacing[1]}
+        overflowShape="circle"
+        avatars={PARTICIPANTS.map(({ name, src }) => (
+          <Avatar
+            key={name}
+            src={src}
+            colorSeed={name}
+            name={name}
+            size="md"
+            shape="circle"
+            ring
+          />
+        ))}
+      />
+    ),
+    title: PARTICIPANTS.map(({ name }) => name).join(', '),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('heading', {
+        name: PARTICIPANTS.map(({ name }) => name).join(', '),
+        level: 3,
+      }),
+    ).toBeVisible();
+    expect(canvas.getByText('+2')).toBeVisible();
   },
 };
 
