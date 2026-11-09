@@ -159,8 +159,7 @@ export const useEmailThread = (threadId: string | null) => {
       viewerMessageChannelIds.has(messageChannelId),
     ) ?? lastMessageAssociations[0];
 
-  // Keeps the reply channel while a new last message re-queries its association,
-  // otherwise the chat composer unmounts on every send
+  // Otherwise the chat composer unmounts while a new message's association loads
   const [previousLastMessageAssociation, setPreviousLastMessageAssociation] =
     useState<{
       threadId: string | null;
