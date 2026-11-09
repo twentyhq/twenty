@@ -1,6 +1,5 @@
 import {
   type ObjectRecordsPermissions,
-  type RestrictedFieldsPermissions,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -24,17 +23,20 @@ const ALL_GRANTED: AllRecordsGrants = {
 };
 
 const buildAllRecordsPermissions = ({
-  restrictedFields = {},
+  unreadableFields = [],
+  uneditableFields = [],
   ...grants
-}: AllRecordsGrants & {
-  restrictedFields?: RestrictedFieldsPermissions;
-}): ObjectRecordsPermissions => ({
+}: AllRecordsGrants &
+  Partial<
+    Pick<ObjectRecordsPermissions, 'unreadableFields' | 'uneditableFields'>
+  >): ObjectRecordsPermissions => ({
   canCreateAllRecords: grants.canUpdate,
   canReadAllRecords: grants.canRead,
   canUpdateAllRecords: grants.canUpdate,
   canSoftDeleteAllRecords: grants.canSoftDelete,
   canDestroyAllRecords: grants.canDestroy,
-  restrictedFields,
+  unreadableFields,
+  uneditableFields,
 });
 
 const buildRoleRecordsPermissions = (
@@ -230,33 +232,31 @@ describe('computePermissionIntersection', () => {
     });
   });
 
-  describe('restricted fields', () => {
-    it('should compute intersection for restricted fields', () => {
+  describe('unreadable and uneditable fields', () => {
+    it('should add up the field lists of every role', () => {
       const result = computePermissionIntersection([
         buildRoleRecordsPermissions({
           [objectMetadataId1]: buildAllRecordsPermissions({
             ...ALL_GRANTED,
-            restrictedFields: {
-              email: { canRead: null, canUpdate: false },
-              salary: { canRead: false, canUpdate: null },
-            },
+            unreadableFields: ['salary'],
+            uneditableFields: ['email', 'salary'],
           }),
         }),
         buildRoleRecordsPermissions({
           [objectMetadataId1]: buildAllRecordsPermissions({
             ...ALL_GRANTED,
-            restrictedFields: {
-              email: { canRead: null, canUpdate: null },
-              salary: { canRead: null, canUpdate: false },
-            },
+            unreadableFields: [],
+            uneditableFields: ['salary'],
           }),
         }),
       ]);
 
-      expect(result.objects[objectMetadataId1]?.restrictedFields).toEqual({
-        email: { canRead: null, canUpdate: false },
-        salary: { canRead: false, canUpdate: false },
-      });
+      expect(result.objects[objectMetadataId1]?.unreadableFields).toEqual([
+        'salary',
+      ]);
+      expect(
+        new Set(result.objects[objectMetadataId1]?.uneditableFields),
+      ).toEqual(new Set(['email', 'salary']));
     });
 
     it('should handle fields that only exist in some roles', () => {
@@ -264,25 +264,22 @@ describe('computePermissionIntersection', () => {
         buildRoleRecordsPermissions({
           [objectMetadataId1]: buildAllRecordsPermissions({
             ...ALL_GRANTED,
-            restrictedFields: {
-              email: { canRead: false, canUpdate: false },
-            },
+            unreadableFields: ['email'],
+            uneditableFields: ['email'],
           }),
         }),
         buildRoleRecordsPermissions({
           [objectMetadataId1]: buildAllRecordsPermissions({
             ...ALL_GRANTED,
-            restrictedFields: {
-              salary: { canRead: false, canUpdate: false },
-            },
+            unreadableFields: ['salary'],
+            uneditableFields: ['salary'],
           }),
         }),
       ]);
 
-      expect(result.objects[objectMetadataId1]?.restrictedFields).toEqual({
-        email: { canRead: false, canUpdate: false },
-        salary: { canRead: false, canUpdate: false },
-      });
+      expect(
+        new Set(result.objects[objectMetadataId1]?.unreadableFields),
+      ).toEqual(new Set(['email', 'salary']));
     });
   });
 

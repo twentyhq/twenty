@@ -30,7 +30,7 @@ import {
   AI_SDK_OPENAI_COMPATIBLE,
   AI_SDK_TYPESAFE_AI,
   AI_SDK_XAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-gemini-tool-result-refs.middleware';
 import { type AiEvaluationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';

@@ -5,7 +5,7 @@ import {
   type ObjectRecord,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray, isDefined } from 'twenty-shared/utils';
 import {
   DeleteResult,
   In,
@@ -30,6 +30,7 @@ import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
+import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
@@ -718,7 +719,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       : this.options.runInNewTransaction(work);
   }
 
-  private runWithValidationRules<TResult>({
+  private async runWithValidationRules<TResult>({
     write,
     inputRecordIds,
   }: {
@@ -735,7 +736,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (validationRules.length === 0) {
-      return write(this);
+      return (await this.options.internalContext.recordPermissions.isRecomputingRecordAccessGroupIdsOnWrite(
+        {
+          featureFlagsMap: this.options.internalContext.featureFlagsMap,
+          workspaceId: this.options.internalContext.workspaceId,
+          objectMetadataId: this.options.flatObjectMetadata.id,
+        },
+      ))
+        ? this.runAtomically((repository) => write(repository))
+        : write(this);
     }
 
     return this.runAtomically((repository) =>
@@ -1044,6 +1053,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
+    await this.recomputeRecordAccessGroupIdsOfRecords(insertedIds);
+
     await this.emitCreateEvents(insertedIds);
 
     return {
@@ -1222,6 +1233,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     await validateWrittenRecords?.(generatedMaps);
+
+    await this.recomputeRecordAccessGroupIdsOfRecords(
+      generatedMaps.map((record) => record.id).filter(isNonEmptyString),
+    );
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1597,6 +1612,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await validateWrittenRecords?.(mutationResult.generatedMaps);
 
+    if (kind === 'update') {
+      await this.recomputeRecordAccessGroupIdsOfRecords(
+        mutationResult.generatedMaps
+          .map((record) => record.id)
+          .filter(isNonEmptyString),
+      );
+    }
+
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
@@ -1706,6 +1729,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
+  private async recomputeRecordAccessGroupIdsOfRecords(
+    recordIds: string[],
+  ): Promise<void> {
+    await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRecords(
+      {
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        workspaceId: this.options.internalContext.workspaceId,
+        objectMetadataId: this.options.flatObjectMetadata.id,
+        recordIds,
+        transactionScope: this.buildRecordPermissionTransactionScope(),
+      },
+    );
+  }
+
   private buildRecordPermissionTransactionScope(): RecordPermissionTransactionScope {
     return {
       workspaceId: this.options.internalContext.workspaceId,
@@ -1759,6 +1796,74 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<void> {
     await this.applyRowLevelPermissionPredicates(queryBuilder);
     await this.validateQueryIsPermitted(queryBuilder);
+    await this.nullifyRlsRuleUnreadableFields(queryBuilder);
+  }
+
+  private async nullifyRlsRuleUnreadableFields(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ): Promise<void> {
+    if (this.options.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    const aliases = [
+      { alias: queryBuilder.alias, tableShape: this.options.tableShape },
+      ...queryBuilder.getJoinAliases().map(({ name }) => ({
+        alias: name,
+        tableShape: queryBuilder.getJoinedTableShape(name),
+      })),
+    ];
+
+    for (const { alias, tableShape } of aliases) {
+      if (
+        !isDefined(tableShape) ||
+        !queryBuilder.markColumnNullifyApplied(alias)
+      ) {
+        continue;
+      }
+
+      const principals = this.resolvePermissionsPrincipalsOrThrow();
+      const rlsRuleUnreadableFieldsByRole =
+        await this.options.internalContext.recordPermissions.findRlsRuleUnreadableFieldsByRole(
+          { principals, objectMetadataId: tableShape.objectMetadataId },
+        );
+
+      if (!isNonEmptyArray(rlsRuleUnreadableFieldsByRole)) {
+        continue;
+      }
+
+      const columnEntries = Object.entries(
+        getColumnNameToFieldMetadataIdMap(
+          this.options.flatObjectMetadataByObjectMetadataId(
+            tableShape.objectMetadataId,
+          ),
+          this.options.internalContext.flatFieldMetadataMaps,
+        ),
+      );
+
+      for (const {
+        roleId,
+        fieldMetadataIds,
+      } of rlsRuleUnreadableFieldsByRole) {
+        queryBuilder.nullifyColumnsWhen({
+          alias,
+          columnNames: columnEntries
+            .filter(([, fieldMetadataId]) =>
+              fieldMetadataIds.includes(fieldMetadataId),
+            )
+            .map(([columnName]) => columnName),
+          condition:
+            await this.options.internalContext.recordPermissions.buildRlsRuleSqlConditionOrThrow(
+              {
+                principals,
+                objectMetadataId: tableShape.objectMetadataId,
+                roleId,
+                tableAlias: alias,
+              },
+            ),
+        });
+      }
+    }
   }
 
   private async validateQueryIsPermitted(
@@ -1899,7 +2004,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    return this.options.internalContext.recordPermissions.buildRecordsAccessCondition(
+    return this.options.internalContext.recordPermissions.buildManyRecordsAccessCondition(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         objectMetadataId: flatObjectMetadata.id,

@@ -83,15 +83,15 @@ export const computeCursorArgFilter = ({
       return [];
     }
 
-    const andConditions = [
+    const andConditions: ObjectRecordFilter[] = [
       ...equalityConditions.slice(0, index),
       mainCondition,
-    ] as ObjectRecordFilter[];
+    ];
 
     if (andConditions.length === 1) {
       return [andConditions[0]];
     }
 
-    return [{ and: andConditions } as unknown as ObjectRecordFilter];
+    return [{ and: andConditions }];
   });
 };
