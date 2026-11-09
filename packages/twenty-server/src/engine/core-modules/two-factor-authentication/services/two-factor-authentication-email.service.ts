@@ -166,7 +166,7 @@ export class TwoFactorAuthenticationEmailService {
       });
     } catch (error) {
       this.logger.error(
-        'Failed to send a two-factor authentication security email',
+        `Failed to send a two-factor authentication security email to user ${userId} in workspace ${workspaceId}`,
         error,
       );
     }
