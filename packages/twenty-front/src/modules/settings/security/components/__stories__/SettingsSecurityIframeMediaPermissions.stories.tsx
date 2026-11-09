@@ -96,9 +96,9 @@ export const ConfiguresMediaPermissions: StoryObj<typeof meta> = {
     await userEvent.type(originInput, ORIGIN);
     await userEvent.click(addButton);
 
-    const accessSelect = await canvas.findByRole('button', {
-      name: 'Microphone and camera',
-    });
+    const accessSelect = within(
+      await canvas.findByRole('group', { name: `Media access for ${ORIGIN}` }),
+    ).getByRole('button', { name: 'Microphone and camera' });
     await expect(saveRequest).toHaveBeenLastCalledWith({
       origin: ORIGIN,
       microphone: true,

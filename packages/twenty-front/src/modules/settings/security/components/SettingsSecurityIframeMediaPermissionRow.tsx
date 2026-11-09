@@ -42,7 +42,7 @@ export const SettingsSecurityIframeMediaPermissionRow = ({
       gridAutoColumns={IFRAME_MEDIA_PERMISSIONS_TABLE_GRID_AUTO_COLUMNS}
     >
       <SettingsSecurityOriginTableCell origin={origin} />
-      <TableCell>
+      <TableCell role="group" aria-label={t`Media access for ${origin}`}>
         <Select<IframeMediaAccess>
           dropdownId={`iframe-media-permission-access-${origin}`}
           value={getIframeMediaAccess(permission)}
