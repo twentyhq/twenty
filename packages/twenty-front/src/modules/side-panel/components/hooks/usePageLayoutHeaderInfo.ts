@@ -4,7 +4,6 @@ import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportF
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,6 +18,7 @@ import {
 } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
 
 type PageLayoutHeaderInfo = {
   headerIcon: IconComponent | undefined;
@@ -79,6 +79,7 @@ export const usePageLayoutHeaderInfo = ({
   openTabId,
   editedTitle,
 }: UsePageLayoutHeaderInfoParams): PageLayoutHeaderInfo | null => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const iconColor = theme.font.color.tertiary;

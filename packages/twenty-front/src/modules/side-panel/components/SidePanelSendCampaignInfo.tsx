@@ -1,4 +1,4 @@
-import { plural, t } from '@lingui/core/macro';
+import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
@@ -8,6 +8,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { sendCampaignCampaignIdComponentState } from '@/side-panel/pages/send-campaign/states/sendCampaignCampaignIdComponentState';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useLingui } from '@lingui/react/macro';
 
 type SidePanelSendCampaignInfoProps = {
   sidePanelPageInstanceId: string;
@@ -16,6 +17,7 @@ type SidePanelSendCampaignInfoProps = {
 export const SidePanelSendCampaignInfo = ({
   sidePanelPageInstanceId,
 }: SidePanelSendCampaignInfoProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
 

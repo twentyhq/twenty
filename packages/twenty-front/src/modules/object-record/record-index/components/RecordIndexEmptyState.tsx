@@ -12,11 +12,12 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconFilterOff, IconPlus, IconSettings } from 'twenty-ui/icon';
-import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
+import { canReachSomeRecords } from 'twenty-shared/utils';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type RecordIndexEmptyStateProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
-  objectPermissions: ObjectPermissionsWithObjectMetadataId;
+  objectPermissions: ObjectRecordsPermissions;
   isSoftDeleteFilterActive: boolean;
   onRemoveSoftDeleteFilter?: () => void;
   onGoToSettings?: () => void;
@@ -66,7 +67,12 @@ export const RecordIndexEmptyState = ({
       }
     : undefined;
 
-  if (!objectPermissions.canUpdateObjectRecords) {
+  if (
+    !canReachSomeRecords({
+      objectRecordsPermissions: objectPermissions,
+      operationType: 'create',
+    })
+  ) {
     return (
       <RecordIndexEmptyStateDisplay
         animatedPlaceholderType="noRecord"

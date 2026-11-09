@@ -3,6 +3,7 @@ import { isAgentChatTurnEndEvent } from '@/ai/utils/is-agent-chat-turn-end-event
 
 const TURN_END_EVENTS: AgentChatSubscriptionEvent[] = [
   { type: 'message-persisted', messageId: 'message-id', turnId: 'turn-id' },
+  { type: 'stream-ended' },
   { type: 'run-finished', turnId: 'turn-id' },
   { type: 'credits-exhausted' },
   { type: 'stream-error', code: 'STREAM_ERROR', message: 'Failed' },

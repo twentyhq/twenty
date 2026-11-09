@@ -43,6 +43,7 @@ const buildCommandMenuItem = ({
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   conditionalAvailabilityExpression,
   conditionalPinnedExpression: null,
+  availabilityCoreObjectName: null,
   availabilityObjectMetadataId: null,
   availabilityObjectMetadataUniversalIdentifier: null,
   navigationTargetObjectMetadataId: null,
@@ -145,14 +146,12 @@ describe('buildMessageCampaignFlagRemovalUpdates', () => {
         STANDARD_COMMAND_MENU_ITEMS.duplicateMessageCampaign
           .universalIdentifier,
         `numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and ${FLAG}`,
-        STANDARD_COMMAND_MENU_ITEMS.duplicateMessageCampaign
-          .conditionalAvailabilityExpression,
+        'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
       ],
       [
         STANDARD_COMMAND_MENU_ITEMS.duplicateMessageList.universalIdentifier,
         `${FLAG} and numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords`,
-        STANDARD_COMMAND_MENU_ITEMS.duplicateMessageList
-          .conditionalAvailabilityExpression,
+        'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords',
       ],
       [
         STANDARD_COMMAND_MENU_ITEMS.addViewToMessageList.universalIdentifier,

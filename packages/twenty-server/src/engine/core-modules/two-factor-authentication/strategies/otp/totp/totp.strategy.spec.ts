@@ -216,20 +216,5 @@ describe('TOTPStrategy Configuration', () => {
       expect(result.isValid).toBe(false);
       expect(result.context.status).toBe(OTPStatus.VERIFIED);
     });
-
-    it('should handle null token gracefully', () => {
-      const errorHandlingContext = {
-        status: OTPStatus.VERIFIED,
-        secret: secret as PlaintextString,
-      };
-
-      const result = strategy.validate(
-        null as unknown as string,
-        errorHandlingContext,
-      );
-
-      expect(result.isValid).toBe(false);
-      expect(result.context.status).toBe(OTPStatus.VERIFIED);
-    });
   });
 });

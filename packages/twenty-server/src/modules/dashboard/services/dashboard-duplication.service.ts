@@ -4,7 +4,6 @@ import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import {
@@ -12,15 +11,10 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import {
-  getWorkspaceContext,
-  type ORMWorkspaceContext,
-} from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
-import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import {
   DashboardException,
@@ -53,6 +47,7 @@ export class DashboardDuplicationService {
     private readonly pageLayoutService: PageLayoutService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
+    private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
 
   async duplicateDashboard(
@@ -63,8 +58,6 @@ export class DashboardDuplicationService {
     const workspaceId = workspace.id;
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceContext = getWorkspaceContext();
-
       const dashboardRepository =
         this.workspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
           'dashboard',
@@ -95,10 +88,22 @@ export class DashboardDuplicationService {
         );
       }
 
+      const { permissionsPrincipals, objectIdByNameSingular } =
+        getWorkspaceContext();
+
       // The layout copy lives outside the dashboard insert, so refuse before creating it
-      this.assertCanCreateDashboardOrThrow({
-        workspaceContext,
-      });
+      if (
+        !(await this.recordPermissionsService.canRoleAccessSomeRecords({
+          operationType: 'create',
+          principals: permissionsPrincipals,
+          objectMetadataId: objectIdByNameSingular.dashboard,
+        }))
+      ) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
 
       try {
         const newPageLayout = await this.pageLayoutDuplicationService.duplicate(
@@ -133,44 +138,6 @@ export class DashboardDuplicationService {
         throw error;
       }
     }, authContext);
-  }
-
-  private assertCanCreateDashboardOrThrow({
-    workspaceContext,
-  }: {
-    workspaceContext: ORMWorkspaceContext;
-  }): void {
-    const { objectRecordsPermissions, shouldBypassPermissionChecks } =
-      resolveObjectRecordsPermissions({
-        authContext: workspaceContext.authContext,
-        roleMaps: buildPermissionsPrincipalRoleMaps(workspaceContext),
-        objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
-        flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
-      });
-
-    if (shouldBypassPermissionChecks) {
-      return;
-    }
-
-    const dashboardObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: workspaceContext.objectIdByNameSingular.dashboard,
-      flatEntityMaps: workspaceContext.flatObjectMetadataMaps,
-    });
-
-    if (
-      !isDefined(dashboardObjectMetadata) ||
-      !isObjectOperationPermitted({
-        objectMetadata: dashboardObjectMetadata,
-        operationType: 'insert',
-        objectsPermissions: objectRecordsPermissions,
-      })
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
   }
 
   // The layout lives in the core schema, outside the insert, so a refused or failed insert must remove it

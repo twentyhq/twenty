@@ -35,5 +35,8 @@ export const fromUpdateRoleInputToFlatRoleToUpdateOrThrow = ({
   return {
     ...existingFlatRole,
     ...updateRoleInput.update,
+    canCreateAllObjectRecords:
+      updateRoleInput.update.canUpdateAllObjectRecords ??
+      existingFlatRole.canCreateAllObjectRecords,
   };
 };

@@ -46,6 +46,10 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
     <CardTitle>Timeline Activity Types</CardTitle>
     Define automatic audit events and explicit app events for record timelines.
   </Card>
+  <Card href="/developers/extend/apps/data/validation-rules" img="/images/user-guide/halftone/card-page-validation-rules.svg">
+    <CardTitle>Validation Rules</CardTitle>
+    `defineValidationRule` — declare the conditions a record must meet before it can be saved.
+  </Card>
 </CardGroup>
 
 ## Entities at a glance
@@ -58,8 +62,9 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
 | **Index** | A database index to speed up a recurring query on one of your objects | `defineIndex()` |
 | **Timeline activity type** | An automatic audit event or explicit domain event shown in record timelines | `defineTimelineActivityType()` |
 | **Related record path** | A chain of up to three relations along which access to a record extends to its related records | `defineRelatedRecordPath()` |
+| **Validation rule** | A condition a record must meet before it can be saved | `defineValidationRule()` |
 
-The CLI detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/`, and `src/related-record-paths/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+The CLI detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/validation-rules/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/`, and `src/related-record-paths/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
 
 ## Indexes (optional)
 

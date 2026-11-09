@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { useDisplaySidePanelFooter } from '@/object-record/record-show/hooks/useDisplaySidePanelFooter';
 import { MessageChannelType } from '~/generated/graphql';
@@ -18,7 +18,7 @@ jest.mock('@/activities/emails/hooks/useMessageThreadChannel', () => ({
 
 const MESSAGE_THREAD = {
   id: 'thread-id',
-  targetObjectNameSingular: CoreObjectNameSingular.MessageThread,
+  targetObjectNameSingular: StandardObjectNameSingular.MessageThread,
 };
 
 const mockChannel = (
@@ -42,7 +42,7 @@ describe('useDisplaySidePanelFooter', () => {
     const { result } = renderHook(() =>
       useDisplaySidePanelFooter({
         id: 'company-id',
-        targetObjectNameSingular: CoreObjectNameSingular.Company,
+        targetObjectNameSingular: StandardObjectNameSingular.Company,
       }),
     );
 
@@ -53,7 +53,7 @@ describe('useDisplaySidePanelFooter', () => {
     const { result } = renderHook(() =>
       useDisplaySidePanelFooter({
         id: 'company-id',
-        targetObjectNameSingular: CoreObjectNameSingular.Company,
+        targetObjectNameSingular: StandardObjectNameSingular.Company,
       }),
     );
 

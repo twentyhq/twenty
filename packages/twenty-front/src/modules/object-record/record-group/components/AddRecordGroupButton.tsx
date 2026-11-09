@@ -7,11 +7,11 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
+import { useLingui } from '@lingui/react/macro';
 
 type AddRecordGroupButtonProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -24,6 +24,7 @@ export const AddRecordGroupButton = ({
   dropdownId,
   dropdownOffset,
 }: AddRecordGroupButtonProps) => {
+  const { t } = useLingui();
   const { currentView } = useGetCurrentViewOnly();
   const { addRecordGroup } = useAddRecordGroup();
   const { closeDropdown } = useCloseDropdown();

@@ -5,7 +5,7 @@ import { fetchCalendarEventsByFilter } from 'src/logic-functions/data/fetch-cale
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
 export const fetchCalendarEventsByIds = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   calendarEventIds: string[],
 ): Promise<CalendarEventRecord[]> => {
   const uniqueCalendarEventIds = getUniqueSortedIds(calendarEventIds);

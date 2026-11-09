@@ -17,14 +17,14 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AuthPrincipalGuard({
+const APPROVED_ACCESS_DOMAIN_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -33,10 +33,11 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     },
     apiKey: true,
     oauthClient: true,
-    application: true,
-  }),
-  SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
-)
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+};
+
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   ApprovedAccessDomainExceptionFilter,
@@ -51,19 +52,7 @@ export class ApprovedAccessDomainResolver {
   ) {}
 
   @Mutation(() => ApprovedAccessDomainDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(APPROVED_ACCESS_DOMAIN_WRITE_ACCESS_POLICY))
   async createApprovedAccessDomain(
     @Args('input') { domain, email }: CreateApprovedAccessDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -94,19 +83,7 @@ export class ApprovedAccessDomainResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(APPROVED_ACCESS_DOMAIN_WRITE_ACCESS_POLICY))
   async deleteApprovedAccessDomain(
     @Args('input') { id }: DeleteApprovedAccessDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -120,19 +97,7 @@ export class ApprovedAccessDomainResolver {
   }
 
   @Mutation(() => ApprovedAccessDomainDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
+  @UseGuards(AccessPolicyGuard(APPROVED_ACCESS_DOMAIN_WRITE_ACCESS_POLICY))
   async validateApprovedAccessDomain(
     @Args('input')
     {
@@ -147,6 +112,22 @@ export class ApprovedAccessDomainResolver {
   }
 
   @Query(() => [ApprovedAccessDomainDTO])
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+    }),
+  )
   async getApprovedAccessDomains(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<Array<ApprovedAccessDomainDTO>> {

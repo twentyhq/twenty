@@ -1,11 +1,12 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RepairAttachmentTimelineActivityTypesCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787561579075-repair-attachment-timeline-activity-types.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '00000000-0000-4000-8000-000000000001';
 const STANDARD_APPLICATION_ID = '00000000-0000-4000-8000-000000000002';
@@ -36,7 +37,7 @@ const buildTargetField = ({
   universalIdentifier,
 });
 
-const buildCommand = ({
+const buildCommand = async ({
   attachmentTargetFields = {
     [PREFERRED_TARGET_RELATION_FIELD_UNIVERSAL_IDENTIFIER]: buildTargetField({
       universalIdentifier: PREFERRED_TARGET_RELATION_FIELD_UNIVERSAL_IDENTIFIER,
@@ -52,37 +53,50 @@ const buildCommand = ({
   const validateBuildAndRunWorkspaceMigration = jest
     .fn()
     .mockResolvedValue(migrationResult);
-  const command = new RepairAttachmentTimelineActivityTypesCommand(
-    {} as WorkspaceIteratorService,
-    {
-      findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-        .fn()
-        .mockResolvedValue({
-          twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
-        }),
-    } as unknown as ApplicationService,
-    {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatFieldMetadataMaps: {
-          byUniversalIdentifier: attachmentTargetFields,
+  const module = await Test.createTestingModule({
+    providers: [
+      RepairAttachmentTimelineActivityTypesCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+      {
+        provide: ApplicationService,
+        useValue: {
+          findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+            .fn()
+            .mockResolvedValue({
+              twentyStandardFlatApplication: { id: STANDARD_APPLICATION_ID },
+            }),
         },
-        flatObjectMetadataMaps: {
-          byUniversalIdentifier: {
-            [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {},
-            [STANDARD_OBJECTS.attachment.universalIdentifier]: {
-              id: ATTACHMENT_OBJECT_ID,
+      },
+      {
+        provide: WorkspaceCacheService,
+        useValue: {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatFieldMetadataMaps: {
+              byUniversalIdentifier: attachmentTargetFields,
             },
-          },
+            flatObjectMetadataMaps: {
+              byUniversalIdentifier: {
+                [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {},
+                [STANDARD_OBJECTS.attachment.universalIdentifier]: {
+                  id: ATTACHMENT_OBJECT_ID,
+                },
+              },
+            },
+            flatTimelineActivityTypeMaps: {
+              byUniversalIdentifier: flatTimelineActivityTypes,
+            },
+          }),
         },
-        flatTimelineActivityTypeMaps: {
-          byUniversalIdentifier: flatTimelineActivityTypes,
+      },
+      {
+        provide: WorkspaceMigrationValidateBuildAndRunService,
+        useValue: {
+          validateBuildAndRunWorkspaceMigration,
         },
-      }),
-    } as unknown as WorkspaceCacheService,
-    {
-      validateBuildAndRunWorkspaceMigration,
-    } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-  );
+      },
+    ],
+  }).compile();
+  const command = module.get(RepairAttachmentTimelineActivityTypesCommand);
 
   return { command, validateBuildAndRunWorkspaceMigration };
 };
@@ -100,7 +114,8 @@ const runCommand = (
 
 describe('RepairAttachmentTimelineActivityTypesCommand', () => {
   it('creates both missing definitions through the preferred target field', async () => {
-    const { command, validateBuildAndRunWorkspaceMigration } = buildCommand({});
+    const { command, validateBuildAndRunWorkspaceMigration } =
+      await buildCommand({});
 
     await runCommand(command);
 
@@ -128,16 +143,17 @@ describe('RepairAttachmentTimelineActivityTypesCommand', () => {
   it('uses a deterministic custom morph member when no standard member exists', async () => {
     const firstCustomTarget = '10000000-0000-4000-8000-000000000001';
     const secondCustomTarget = '20000000-0000-4000-8000-000000000002';
-    const { command, validateBuildAndRunWorkspaceMigration } = buildCommand({
-      attachmentTargetFields: {
-        [secondCustomTarget]: buildTargetField({
-          universalIdentifier: secondCustomTarget,
-        }),
-        [firstCustomTarget]: buildTargetField({
-          universalIdentifier: firstCustomTarget,
-        }),
-      },
-    });
+    const { command, validateBuildAndRunWorkspaceMigration } =
+      await buildCommand({
+        attachmentTargetFields: {
+          [secondCustomTarget]: buildTargetField({
+            universalIdentifier: secondCustomTarget,
+          }),
+          [firstCustomTarget]: buildTargetField({
+            universalIdentifier: firstCustomTarget,
+          }),
+        },
+      });
 
     await runCommand(command);
 
@@ -157,11 +173,12 @@ describe('RepairAttachmentTimelineActivityTypesCommand', () => {
   });
 
   it('only creates missing definitions and preserves muted definitions', async () => {
-    const { command, validateBuildAndRunWorkspaceMigration } = buildCommand({
-      flatTimelineActivityTypes: {
-        [LINKED_TYPE_UNIVERSAL_IDENTIFIER]: { isActive: false },
-      },
-    });
+    const { command, validateBuildAndRunWorkspaceMigration } =
+      await buildCommand({
+        flatTimelineActivityTypes: {
+          [LINKED_TYPE_UNIVERSAL_IDENTIFIER]: { isActive: false },
+        },
+      });
 
     await runCommand(command);
 
@@ -181,16 +198,17 @@ describe('RepairAttachmentTimelineActivityTypesCommand', () => {
   it('skips invalid attachment morph members', async () => {
     const invalidFieldUniversalIdentifier =
       '30000000-0000-4000-8000-000000000003';
-    const { command, validateBuildAndRunWorkspaceMigration } = buildCommand({
-      attachmentTargetFields: {
-        [invalidFieldUniversalIdentifier]: {
-          ...buildTargetField({
-            universalIdentifier: invalidFieldUniversalIdentifier,
-          }),
-          relationTargetFieldMetadataId: null,
+    const { command, validateBuildAndRunWorkspaceMigration } =
+      await buildCommand({
+        attachmentTargetFields: {
+          [invalidFieldUniversalIdentifier]: {
+            ...buildTargetField({
+              universalIdentifier: invalidFieldUniversalIdentifier,
+            }),
+            relationTargetFieldMetadataId: null,
+          },
         },
-      },
-    });
+      });
 
     await runCommand(command);
 
@@ -198,7 +216,8 @@ describe('RepairAttachmentTimelineActivityTypesCommand', () => {
   });
 
   it('does not mutate metadata during a dry run', async () => {
-    const { command, validateBuildAndRunWorkspaceMigration } = buildCommand({});
+    const { command, validateBuildAndRunWorkspaceMigration } =
+      await buildCommand({});
 
     await runCommand(command, true);
 
@@ -206,7 +225,7 @@ describe('RepairAttachmentTimelineActivityTypesCommand', () => {
   });
 
   it('fails when the repair migration is rejected', async () => {
-    const { command } = buildCommand({
+    const { command } = await buildCommand({
       migrationResult: { status: 'fail' },
     });
 

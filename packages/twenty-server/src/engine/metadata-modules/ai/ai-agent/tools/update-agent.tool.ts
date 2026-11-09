@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -9,11 +8,13 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { AGENT_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-write-access-policy.constant';
 import { agentTriggersSchema } from 'src/engine/metadata-modules/ai/ai-agent/tools/schemas/agent-trigger.schema';
 import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/manageable-agent.service';
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
 import { toAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-triggers.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 
 const updateAgentInputSchema = z.object({
   id: z.uuid().describe('Id of the agent to update'),
@@ -37,8 +38,10 @@ const updateAgentInputSchema = z.object({
 @DefineTool({
   name: 'update_agent',
   category: ToolCategory.AGENT,
-  requiredPermissionFlags: [PermissionFlagType.AI_SETTINGS],
-  requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  accessPolicy: {
+    ...AGENT_WRITE_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
   description: `Update an AI agent. Only the fields you pass are changed.
 
 To pause an agent without deleting it, set isActive to false on its triggers. Confirm changes to the role or triggers with the user first.`,
@@ -50,6 +53,7 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly manageableAgentService: ManageableAgentService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {
     super();
   }
@@ -64,7 +68,15 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     });
 
     if (isDefined(parameters.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability(parameters.modelId);
+      const aiDataPolicy =
+        await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+          context.workspaceId,
+        );
+
+      this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+        modelId: parameters.modelId,
+        aiDataPolicy,
+      });
     }
 
     const agent = await this.agentService.updateOneAgent({

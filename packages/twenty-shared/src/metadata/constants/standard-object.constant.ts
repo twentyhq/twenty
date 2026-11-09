@@ -39,6 +39,9 @@ export const STANDARD_OBJECTS = {
       agentChatThreadIdIndex: {
         universalIdentifier: '69857371-6ff9-48fa-a9de-db4f71593431',
       },
+      messageIdIndex: {
+        universalIdentifier: '83c77988-2dc4-4575-bac5-f0f50c05568e',
+      },
     },
     views: {
       allAttachments: buildStandardObjectIndexView({
@@ -1040,6 +1043,9 @@ export const STANDARD_OBJECTS = {
       },
       groupHashUniqueIndex: {
         universalIdentifier: 'dcb0d254-43ae-442e-9223-8ac052eddb28',
+      },
+      objectMetadataIdIndex: {
+        universalIdentifier: '60e48c2a-a3db-4f11-b25b-49c7e8a385bc',
       },
     },
     views: {},

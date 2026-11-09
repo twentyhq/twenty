@@ -9,7 +9,7 @@ import { asRecord } from 'src/logic-functions/utils/asRecord';
 import { getRecordingParticipants } from 'src/logic-functions/flows/utils/getRecordingParticipants';
 
 export const getDesktopCompanionAgenda = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   userWorkspaceId: string,
 ) => {
   const metadata = await new RestApiClient({ runAs: 'user' }).post<{

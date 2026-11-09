@@ -11,7 +11,7 @@ import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
 describe('CommandMenuItem creation should succeed', () => {
-  let createdCommandMenuItemId: string;
+  let createdCommandMenuItemId: string | undefined;
   let createdFrontComponentId: string | undefined;
   let cleanupBuiltFile: (() => void) | undefined;
   let companyObjectMetadataId: string;
@@ -62,7 +62,7 @@ describe('CommandMenuItem creation should succeed', () => {
         expectToFail: false,
         input: { id: createdCommandMenuItemId },
       });
-      createdCommandMenuItemId = undefined as unknown as string;
+      createdCommandMenuItemId = undefined;
     }
     if (createdFrontComponentId) {
       await deleteFrontComponent({

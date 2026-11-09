@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getPositionNumberIcon } from '@/object-record/record-merge/utils/getPositionNumberIcon';
 import { getPositionWordLabel } from '@/object-record/record-merge/utils/getPositionWordLabel';
 import { Select } from '@/ui/input/components/Select';
+import { useLingui } from '@lingui/react/macro';
 
 const MISSING_PRIORITY_RECORD_INDEX = -1;
 
@@ -29,6 +29,7 @@ export const MergePrioritySettings = ({
   dropdownId,
   disabled = false,
 }: MergePrioritySettingsProps) => {
+  const { t } = useLingui();
   const priorityOptions = Array.from(
     { length: selectedRecordCount },
     (_, index) => {

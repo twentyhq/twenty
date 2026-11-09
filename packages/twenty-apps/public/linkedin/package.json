@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/linkedin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "LinkedIn messages in Twenty: each member connects their LinkedIn account through Unipile and their conversations land on People timelines.",
   "license": "MIT",
   "engines": {

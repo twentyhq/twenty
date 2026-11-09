@@ -7,7 +7,8 @@ import {
 } from 'twenty-shared/ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -59,12 +60,16 @@ export class AgentRunConversationService {
         return false;
       }
     } else {
-      await this.conversationWriterService.runInTransaction(
+      await this.conversationWriterService.runInTransaction({
         workspaceId,
-        // two runs starting one keyed conversation can both find it missing
-        (scope) =>
-          scope.upsert('agentChatThread', { id: threadId, title }, ['id']),
-      );
+        threadId,
+        work: (scope) =>
+          scope.upsert({
+            name: 'agentChatThread',
+            values: { id: threadId, title },
+            conflictPaths: ['id'],
+          }),
+      });
     }
 
     return this.streamRecoveryService.tryClaimStream({
@@ -85,6 +90,8 @@ export class AgentRunConversationService {
     senderApplicationId,
     createdBy,
     messages,
+    queuedMessageIds,
+    requiresQueuedMessages = isDefined(queuedMessageIds),
   }: {
     workspaceId: string;
     threadId: string;
@@ -94,14 +101,21 @@ export class AgentRunConversationService {
     senderApplicationId: string | null;
     createdBy: ActorMetadata;
     messages: RunAgentMessage[];
+    queuedMessageIds?: string[];
+    requiresQueuedMessages?: boolean;
   }): Promise<{
     turnId: string;
     promptMessageIds: string[];
     hasTakenQueuedMessages: boolean;
-  }> {
-    return this.conversationWriterService.runInTransaction(
+  } | null> {
+    if (requiresQueuedMessages && !isNonEmptyArray(queuedMessageIds)) {
+      return null;
+    }
+
+    return this.conversationWriterService.runInTransaction({
       workspaceId,
-      async (scope) => {
+      threadId,
+      work: async (scope) => {
         const turnId = await this.conversationWriterService.insertTurn({
           workspaceId,
           threadId,
@@ -112,15 +126,27 @@ export class AgentRunConversationService {
           scope,
         });
 
-        const takenMessageCount = await scope.update(
-          'agentMessage',
-          { threadId, status: AgentMessageStatus.QUEUED },
-          {
+        const takenMessageCount = await scope.update({
+          name: 'agentMessage',
+          where: {
+            threadId,
+            status: AgentMessageStatus.QUEUED,
+            ...(isDefined(queuedMessageIds)
+              ? { id: In(queuedMessageIds) }
+              : {}),
+          },
+          values: {
             status: AgentMessageStatus.SENT,
             turnId,
             processedAt: new Date().toISOString(),
           },
-        );
+        });
+
+        if (requiresQueuedMessages && takenMessageCount === 0) {
+          await scope.delete({ name: 'agentTurn', where: { id: turnId } });
+
+          return null;
+        }
 
         const promptMessageIds: string[] = [];
 
@@ -154,7 +180,7 @@ export class AgentRunConversationService {
           hasTakenQueuedMessages: takenMessageCount > 0,
         };
       },
-    );
+    });
   }
 
   private buildMessageParts(message: RunAgentMessage): ExtendedUIMessagePart[] {

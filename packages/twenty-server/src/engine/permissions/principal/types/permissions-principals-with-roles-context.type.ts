@@ -1,15 +1,15 @@
 /* @license Enterprise */
 
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
+import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
 import {
   type PermissionsAgentPrincipal,
   type PermissionsApiKeyPrincipal,
   type PermissionsApplicationIdPrincipal,
   type PermissionsCustomApplicationPrincipal,
-  type PermissionsDeprecatedRoleOnlyPrincipal,
+  type PermissionsRolePrincipal,
   type PermissionsWebhookPrincipal,
   type PermissionsWorkspaceMemberPrincipal,
-} from 'src/engine/permissions/principal/types/permissions-principal.type';
+} from 'src/engine/permissions/internal/principal/types/permissions-principal.type';
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
@@ -19,16 +19,14 @@ export type PermissionsMainPrincipalWithRole =
   | WithRoleId<PermissionsAgentPrincipal>
   | WithRoleId<PermissionsWebhookPrincipal>
   | WithRoleId<PermissionsApplicationIdPrincipal>
-  | PermissionsDeprecatedRoleOnlyPrincipal;
+  | PermissionsRolePrincipal;
 
 export type PermissionsLimitingPrincipalWithRole =
-  | WithRoleId<PermissionsAgentPrincipal>
-  | PermissionsDeprecatedRoleOnlyPrincipal;
+  WithRoleId<PermissionsAgentPrincipal>;
 
 export type PermissionsApplicationPrincipalWithRole =
   | WithRoleId<PermissionsApplicationIdPrincipal>
-  | PermissionsCustomApplicationPrincipal
-  | PermissionsDeprecatedRoleOnlyPrincipal;
+  | PermissionsCustomApplicationPrincipal;
 
 export type PermissionsPrincipalsWithRolesContext = {
   workspaceId: string;
@@ -36,5 +34,5 @@ export type PermissionsPrincipalsWithRolesContext = {
   limitingPrincipal?: PermissionsLimitingPrincipalWithRole;
   applicationPrincipal: PermissionsApplicationPrincipalWithRole;
   // narrows what the roles allow, and leaves no reach beyond them
-  scope?: PermissionScope;
+  aiRunScope?: AiRunPermissionScope;
 };

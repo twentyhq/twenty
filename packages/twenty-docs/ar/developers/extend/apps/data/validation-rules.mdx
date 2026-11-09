@@ -1,0 +1,88 @@
+---
+title: قواعد التحقق
+description: حدّد الشروط التي يجب أن يفي بها السجل قبل أن يمكن حفظه.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
+قاعدة التحقق هي شرط على سجل. عندما تُقيَّم إلى خطأ، يرفض Twenty السجل ويعرض رسالة القاعدة.
+
+لتكوين القواعد في الإعدادات، راجع [دليل مستخدم قواعد التحقق](/ar/user-guide/data-model/capabilities/validation-rules).
+
+<Note>
+  لا تُفرض قواعد التحقق إلا في مساحات العمل التي تتوفر فيها الميزة.
+</Note>
+
+عرّف قاعدة باستخدام `defineValidationRule` من `twenty-sdk/define`:
+
+```ts filename="src/validation-rules/invoice-has-amount.ts"
+import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';
+
+import { INVOICE_UNIVERSAL_IDENTIFIER } from '../objects/invoice.object';
+
+const { and, field, gt, isNonEmptyString } = ruleExpression;
+
+export default defineValidationRule({
+  universalIdentifier: '8d3f2c6e-1b7a-4f0e-9c52-6a1e0d4b7f31',
+  objectUniversalIdentifier: INVOICE_UNIVERSAL_IDENTIFIER,
+  name: 'Invoice has an amount',
+  expression: and(gt(field('amount'), 0), isNonEmptyString(field('reference'))),
+  message: 'An invoice needs an amount and a reference',
+});
+```
+
+يمكنك أيضًا إنشاء قالب أولي باستخدام واجهة سطر الأوامر:
+
+```bash
+twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
+```
+
+| الخاصية                         | مطلوب | الوصف                                                                            |
+| ------------------------------- | ----- | -------------------------------------------------------------------------------- |
+| `universalIdentifier`           | نعم   | المعرّف الثابت للقاعدة                                                           |
+| `objectUniversalIdentifier`     | نعم   | الكائن الذي تنطبق عليه القاعدة. يمكن أن يكون كائنًا من تطبيقك أو كائنًا قياسيًا. |
+| `name`                          | نعم   | الاسم المعروض في الإعدادات                                                       |
+| `expression`                    | نعم   | `ruleExpression` أو سلسلة نصية                                                   |
+| `رسالة`                         | نعم   | الرسالة المعروضة عند فشل القاعدة                                                 |
+| `errorFieldUniversalIdentifier` | لا    | الحقل الذي تُرفق به الرسالة. يجب أن ينتمي إلى كائن القاعدة.                      |
+| `description`                   | لا    | وصف أطول                                                                         |
+| `icon`                          | لا    | اسم الأيقونة                                                                     |
+
+## كتابة التعبيرات
+
+يوفر `ruleExpression` ما يلي:
+
+* تقرأ `field('name')` حقلاً، وتقرأ `field('company.employees')` حقلاً عبر علاقة متعدد إلى واحد.
+* `now` هو التاريخ والوقت الحاليان.
+* تجمع `and` و`or` و`not` الشروط.
+* تقارن `eq` و`notEq` و`gt` و`gte` و`lt` و`lte` القيم.
+* تحسب `add` و`subtract` و`multiply` و`divide` القيم.
+* تتحقق `isIn(field('stage'), ['NEW', 'WON'])` من قيمة مقابل قائمة.
+* دوال مثل `isNonEmptyString` و`isDefined`.
+
+ينتج المُنشئ سلسلة نصية عادية، وهي ما يكتبه [`twenty app pull`](/ar/developers/extend/apps/operations/cli) مجددًا. يمكنك كتابة تلك السلسلة النصية مباشرةً:
+
+```ts
+expression: 'amount > 0 and isNonEmptyString(reference)',
+```
+
+تستخدم السلاسل النصية `and` و`or` و`not` و`==` و`!=` و`\<` و`\<=` و`>` و`>=` و`+` و`-` و`*` و`/` و`in [...]`، وليس `&&` أو `||`. يوضع النص بين علامتي اقتباس مفردتين أو مزدوجتين.
+
+يمكن للقاعدة قراءة الحقول التي تعلنها، و[حقول النظام](/ar/developers/extend/apps/data/system-fields) التي يوفرها Twenty، مثل `createdAt`. تتحقق واجهة سطر الأوامر CLI من التعبيرات مقارنةً بكائنات تطبيقك نفسها. بالنسبة إلى كائن خارج تطبيقك، لا تتحقق إلا من البنية النحوية، ويتحقق الخادم من الحقول وقت المزامنة.
+
+## الحقول التي تصبح غير متاحة
+
+| الحالة                                                         | النتيجة                                                                           |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| يزيل تطبيقك حقلاً تقرؤه قاعدته                                 | تفشل المزامنة مع ظهور خطأ يذكر القاعدة والحقل                                     |
+| تعطّل مساحة عمل حقلاً خارج تطبيقك                              | تنجح المزامنة وتبقى القاعدة غير مفعلة                                             |
+| تحذف مساحة عمل حقلاً خارج تطبيقك، ويبقى تعبير قاعدتك دون تغيير | تنجح المزامنة وتبقى القاعدة غير مفعلة                                             |
+| تعيد مساحة عمل تسمية حقل خارج تطبيقك                           | تنجح المزامنة وتحتفظ بالقاعدة بالاسم الجديد، والذي يكتبه `twenty app pull` مجددًا |
+| تسمي قاعدة جديدة أو معدلة حقلاً غير موجود                      | تفشل المزامنة                                                                     |
+| تحذف مساحة عمل حقل خطأ القاعدة                                 | تنجح المزامنة ولا تعود القاعدة مرتبطة بذلك الحقل                                  |
+
+تحتفظ المزامنة بـ `isActive` الخاص بقاعدة موجودة، لذا تظل القاعدة التي عطّلها مسؤول مساحة العمل غير مفعلة. القواعد الجديدة فقط تبدأ مفعلة.
+
+<PageBanner illustration="card-page-validation-rules" />

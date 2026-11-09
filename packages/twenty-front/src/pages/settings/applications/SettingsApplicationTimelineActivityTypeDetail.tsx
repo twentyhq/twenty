@@ -5,7 +5,6 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -13,8 +12,10 @@ import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { useApplicationTimelineActivityTypes } from '~/pages/settings/applications/hooks/useApplicationTimelineActivityTypes';
 import { SettingsApplicationTimelineActivityTypeSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab';
 import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
+import { useLingui } from '@lingui/react/macro';
 
 export const SettingsApplicationTimelineActivityTypeDetail = () => {
+  const { t } = useLingui();
   const { applicationId = '', timelineActivityTypeId = '' } = useParams<{
     applicationId: string;
     timelineActivityTypeId: string;

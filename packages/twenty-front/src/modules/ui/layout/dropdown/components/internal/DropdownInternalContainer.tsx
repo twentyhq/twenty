@@ -93,7 +93,9 @@ export const DropdownInternalContainer = ({
     refs: [floatingUiRefs.floating, floatingUiRefs.domReference],
     listenerId: dropdownId,
     callback: (event) => {
-      if (activeDropdownFocusId !== dropdownId) return;
+      if (activeDropdownFocusId !== dropdownId) {
+        return;
+      }
 
       if (isDropdownOpen) {
         event.stopImmediatePropagation();
@@ -110,7 +112,9 @@ export const DropdownInternalContainer = ({
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
     callback: () => {
-      if (activeDropdownFocusId !== dropdownId) return;
+      if (activeDropdownFocusId !== dropdownId) {
+        return;
+      }
 
       if (isDropdownOpen) {
         closeDropdown(dropdownId);

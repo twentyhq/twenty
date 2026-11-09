@@ -8,7 +8,10 @@ import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/S
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { BlocklistScope, CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  BlocklistScope,
+  StandardObjectNameSingular,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
@@ -24,7 +27,7 @@ export const SettingsAccountsBlocklistSection = () => {
     currentWorkspace?.isInternalMessagesImportEnabled ?? false;
 
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
-    objectNameSingular: CoreObjectNameSingular.Blocklist,
+    objectNameSingular: StandardObjectNameSingular.Blocklist,
     filter: {
       workspaceMemberId: {
         in: [currentWorkspaceMemberId],
@@ -35,11 +38,11 @@ export const SettingsAccountsBlocklistSection = () => {
 
   const { createManyRecords: createBlocklistItems } =
     useCreateManyRecords<BlocklistItem>({
-      objectNameSingular: CoreObjectNameSingular.Blocklist,
+      objectNameSingular: StandardObjectNameSingular.Blocklist,
     });
 
   const { deleteOneRecord: deleteBlocklistItem } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Blocklist,
+    objectNameSingular: StandardObjectNameSingular.Blocklist,
   });
 
   const handleBlockedEmailRemove = (id: string) => {
@@ -47,7 +50,9 @@ export const SettingsAccountsBlocklistSection = () => {
   };
 
   const updateBlockedEmailList = (handles: string[]) => {
-    if (!isDefined(currentWorkspaceMember)) return;
+    if (!isDefined(currentWorkspaceMember)) {
+      return;
+    }
     createBlocklistItems({
       recordsToCreate: [...new Set(handles)].map((handle) => {
         return {

@@ -1,6 +1,5 @@
 import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -38,6 +37,7 @@ import { getCoreAgentInitialFormValues } from '@/object-core/agents/utils/getCor
 import { isCoreAgentRoleDirty } from '@/object-core/agents/utils/isCoreAgentRoleDirty';
 import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
 import { getIsMetadataItemCustom } from '@/object-metadata/utils/getIsMetadataItemCustom';
+import { useLingui } from '@lingui/react/macro';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -52,6 +52,7 @@ type CoreAgentFormContentProps = {
 };
 
 export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);

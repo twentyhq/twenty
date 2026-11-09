@@ -2,7 +2,6 @@ import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { InlineBanner } from 'twenty-ui/components/feedback';
@@ -14,6 +13,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAiBehaviorModeSelect } from '~/pages/settings/ai/components/SettingsAiBehaviorModeSelect';
 import { type AiChatAssistantMode } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
 
 const BEHAVIOR_SELECT_CONTROL_WIDTH = 180;
 
@@ -25,6 +25,7 @@ type SettingsAiBehaviorSectionProps = {
   isLoading?: boolean;
   disabled?: boolean;
   errorMessage?: string;
+  assistantName?: string;
 };
 
 const StyledBehaviorMessages = styled.div`
@@ -42,7 +43,9 @@ export const SettingsAiBehaviorSection = ({
   isLoading = false,
   disabled = false,
   errorMessage,
+  assistantName = AGENT_CHAT_ASSISTANT_NAME,
 }: SettingsAiBehaviorSectionProps) => {
+  const { t } = useLingui();
   const sectionId = useId();
   const directMessagesLabelId = `${sectionId}-direct-messages`;
   const inboxLabelId = `${sectionId}-inbox`;
@@ -57,7 +60,7 @@ export const SettingsAiBehaviorSection = ({
     <Section.Root>
       <Section.Header
         title={t`Behavior`}
-        description={t`Choose when ${AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace`}
+        description={t`Choose when ${assistantName} participates in conversations across your workspace`}
       />
       <Card.Root
         backgroundColor={themeCssVariables.background.secondary}
@@ -97,7 +100,7 @@ export const SettingsAiBehaviorSection = ({
       </Card.Root>
       <StyledBehaviorMessages>
         <Text id={helperId} size="sm" color="tertiary">
-          {t`Never keeps ${AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks ${AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets ${AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and ${AGENT_CHAT_ASSISTANT_NAME} always get replies.`}
+          {t`Never keeps ${assistantName} out. Only when mentioned asks ${assistantName} to reply when tagged. Auto lets ${assistantName} decide when to reply. Chats with only you and ${assistantName} always get replies.`}
         </Text>
         {isLoading && (
           <Text aria-hidden size="sm" color="tertiary">

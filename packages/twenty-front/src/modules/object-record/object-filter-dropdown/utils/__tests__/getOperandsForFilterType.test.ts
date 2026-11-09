@@ -1,8 +1,10 @@
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type FieldType } from '@/settings/data-model/types/FieldType';
-import { type FilterableFieldType } from 'twenty-shared/types';
+import {
+  RecordFilterOperand,
+  type FilterableFieldType,
+} from 'twenty-shared/types';
 
 describe('getOperandsForFilterType', () => {
   const emptyOperands = [
@@ -51,8 +53,14 @@ describe('getOperandsForFilterType', () => {
 
   const relationOperand = [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT];
 
+  const textOperands = [
+    ...containsOperands,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
+  ];
+
   const testCases = [
-    ['TEXT', [...containsOperands, ...emptyOperands]],
+    ['TEXT', [...textOperands, ...emptyOperands]],
     ['FULL_NAME', [...containsOperands, ...emptyOperands]],
     ['ADDRESS', [...containsOperands, ...emptyOperands]],
     ['LINKS', [...containsOperands, ...emptyOperands]],

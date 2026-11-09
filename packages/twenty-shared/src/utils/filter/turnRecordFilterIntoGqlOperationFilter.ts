@@ -4,7 +4,7 @@ import { Temporal } from 'temporal-polyfill';
 import {
   FieldActorSource,
   FieldMetadataType,
-  ViewFilterOperand as RecordFilterOperand,
+  RecordFilterOperand,
   type ActorFilter,
   type AddressFilter,
   type ArrayFilter,
@@ -283,6 +283,25 @@ const buildDirectFieldGqlOperationFilter = ({
                 ilike: `%${recordFilter.value}%`,
               } as StringFilter,
             },
+          };
+        case RecordFilterOperand.IS:
+          return {
+            [fieldMetadataItem.name]: {
+              eq: recordFilter.value,
+            } as StringFilter,
+          };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            or: [
+              {
+                [fieldMetadataItem.name]: {
+                  neq: recordFilter.value,
+                } as StringFilter,
+              },
+              {
+                [fieldMetadataItem.name]: { is: 'NULL' } as StringFilter,
+              },
+            ],
           };
         default:
           throw new CustomError(

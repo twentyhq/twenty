@@ -109,12 +109,8 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
       const folderItem = createStandardNavigationMenuItemFolderItemFlatMetadata(
         {
-          universalIdentifier: folderItemDefinition.universalIdentifier,
-          viewUniversalIdentifier: folderItemDefinition.viewUniversalIdentifier,
+          ...folderItemDefinition,
           folderId,
-          folderUniversalIdentifier:
-            folderItemDefinition.folderUniversalIdentifier,
-          position: folderItemDefinition.position,
           navigationMenuItemId: v4(),
           workspaceId,
           twentyStandardApplicationId,

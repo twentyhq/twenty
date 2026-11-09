@@ -15,7 +15,7 @@ import {
 //
 // Examples: activateWorkspace (onboarding), user profile updates
 //
-// WARNING: Use sparingly! Most mutations should use SettingsPermissionGuard
+// WARNING: Use sparingly! Most mutations should require a permission flag in their AccessPolicyGuard
 // If you're unsure, use CustomPermissionGuard and implement checks in the method
 @Injectable()
 export class NoPermissionGuard implements CanActivate {

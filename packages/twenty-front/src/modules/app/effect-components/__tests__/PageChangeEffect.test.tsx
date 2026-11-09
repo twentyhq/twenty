@@ -121,6 +121,33 @@ describe('PageChangeEffect', () => {
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
   });
 
+  it.each(['/workflows', '/agents'])(
+    'should give %s global hotkeys back when coming from settings',
+    async (corePagePath) => {
+      renderPageChangeEffect();
+
+      act(() => navigateMainPage?.('/settings/profile'));
+      await waitFor(() => {
+        expect(
+          jotaiStore.get(currentGlobalHotkeysConfigSelector.atom)
+            .enableGlobalHotkeysConflictingWithKeyboard,
+        ).toBe(false);
+      });
+
+      act(() => navigateMainPage?.(corePagePath));
+
+      await waitFor(() => {
+        expect(jotaiStore.get(focusStackState.atom).at(-1)?.focusId).toBe(
+          PageFocusId.RecordIndex,
+        );
+      });
+      expect(
+        jotaiStore.get(currentGlobalHotkeysConfigSelector.atom)
+          .enableGlobalHotkeysConflictingWithKeyboard,
+      ).toBe(true);
+    },
+  );
+
   it('should let the inbox use global hotkeys when coming from settings', async () => {
     renderPageChangeEffect();
 

@@ -13,7 +13,6 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import {
   Navigate,
@@ -66,10 +65,12 @@ import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicati
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 import { getMissingRequiredApplicationVariables } from '@/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { getSettingsMenuItemDisplayTitle } from '~/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle';
+import { useLingui } from '@lingui/react/macro';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
 export const SettingsApplicationDetails = () => {
+  const { t } = useLingui();
   const { applicationId = '' } = useParams<{ applicationId: string }>();
   const { getIcon } = useIcons();
   const builtInAccountApp = useInstalledBuiltInAccountApp(applicationId);

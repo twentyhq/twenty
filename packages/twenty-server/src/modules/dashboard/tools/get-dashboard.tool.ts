@@ -18,10 +18,20 @@ const getDashboardSchema = z.object({
 });
 
 export const createGetDashboardTool = (
-  deps: Pick<
-    DashboardToolDependencies,
-    'pageLayoutService' | 'workspaceOrmManager' | 'flatEntityMapsCacheService'
-  >,
+  deps: {
+    pageLayoutService: Pick<
+      DashboardToolDependencies['pageLayoutService'],
+      'findByIdOrThrow'
+    >;
+    workspaceOrmManager: Pick<
+      DashboardToolDependencies['workspaceOrmManager'],
+      'executeInWorkspaceContext' | 'getRepository'
+    >;
+    flatEntityMapsCacheService: Pick<
+      DashboardToolDependencies['flatEntityMapsCacheService'],
+      'getOrRecomputeManyOrAllFlatEntityMaps'
+    >;
+  },
   context: DashboardToolContextWithPermissions,
 ) => ({
   name: 'get_dashboard' as const,

@@ -33,6 +33,15 @@ export const fromUpdateRowLevelPermissionPredicateGroupInputToFlatRowLevelPermis
       parentRowLevelPermissionPredicateGroupUniversalIdentifier,
       positionInRowLevelPermissionPredicateGroup:
         input.positionInRowLevelPermissionPredicateGroup ?? null,
+      canReadRecords: input.canReadRecords ?? existingGroup.canReadRecords,
+      canCreateRecords:
+        input.canUpdateRecords ?? existingGroup.canCreateRecords,
+      canUpdateRecords:
+        input.canUpdateRecords ?? existingGroup.canUpdateRecords,
+      canSoftDeleteRecords:
+        input.canSoftDeleteRecords ?? existingGroup.canSoftDeleteRecords,
+      canDestroyRecords:
+        input.canDestroyRecords ?? existingGroup.canDestroyRecords,
       updatedAt: new Date().toISOString(),
     };
   };

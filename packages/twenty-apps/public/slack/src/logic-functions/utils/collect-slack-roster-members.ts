@@ -22,7 +22,7 @@ export const collectSlackRosterMembers = async ({
   maxPages = DEFAULT_MAX_PAGES,
   rateLimitRetryBudgetMs = SLACK_RATE_LIMIT_RETRY_BUDGET_MS,
 }: {
-  slackClient: WebClient;
+  slackClient: { users: Pick<WebClient['users'], 'list'> };
   shouldCollectMember?: (member: LinkableSlackRosterMember) => boolean;
   maxMembers?: number;
   maxPages?: number;

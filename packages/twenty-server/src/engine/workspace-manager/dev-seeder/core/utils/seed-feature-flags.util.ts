@@ -8,11 +8,15 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: true,
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: true,
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: true,
-  [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true,
   [FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED]: true,
   [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: false,
   [FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED]: false,
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: true,
+  [FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED]: true,
+  [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: true,
+  [FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED]: false,
+  [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: false,
+  [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: false,
 };
 
 type SeedFeatureFlagsArgs = {

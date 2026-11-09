@@ -12,15 +12,10 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AgentChatChannelDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel.dto';
 import { AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
 import { AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
@@ -35,13 +30,31 @@ import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AgentChatChannelThreadsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-threads.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { getAgentInboxCallerAuthContextOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-caller-auth-context-or-throw.util';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AuthPrincipalGuard({
+const AGENT_CHAT_CHANNEL_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: true },
+  },
+  requiredPermissionFlags: [PermissionFlagType.AI],
+};
+
+const AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
     userSession: {
       standard: true,
       impersonated: true,
@@ -51,9 +64,13 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
     application: { withUser: true, withoutUser: false },
-  }),
-  SettingsPermissionGuard(PermissionFlagType.AI),
-)
+  },
+  requiredPermissionFlags: [
+    PermissionFlagType.AI,
+    PermissionFlagType.AI_SETTINGS,
+  ],
+};
+
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AiGraphqlApiExceptionInterceptor,
@@ -66,7 +83,7 @@ export class AgentChatChannelResolver {
     private readonly threadService: AgentChatThreadService,
     private readonly triageService: AgentChatThreadTriageService,
     private readonly channelThreadsService: AgentChatChannelThreadsService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -80,6 +97,7 @@ export class AgentChatChannelResolver {
   }
 
   @Query(() => AgentChatChannelThreadIdsDTO)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_ACCESS_POLICY))
   async agentChatChannelThreadIds(
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
     @Args('status', {
@@ -99,8 +117,6 @@ export class AgentChatChannelResolver {
     filter: AgentChatChannelThreadFilter | null,
     @Args('first', { type: () => Int, nullable: true }) first: number | null,
     @Args('after', { type: () => String, nullable: true }) after: string | null,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatChannelThreadIdsDTO> {
     return this.channelThreadsService.findThreadIds({
       channelId,
@@ -109,48 +125,36 @@ export class AgentChatChannelResolver {
       filter,
       first,
       after,
-      workspaceMemberId,
-      workspaceId,
+      authContext: getAgentInboxCallerAuthContextOrThrow(),
     });
   }
 
   @Query(() => [AgentChatChannelSummaryDTO])
-  async agentChatChannelSummaries(
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatChannelSummaryDTO[]> {
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_ACCESS_POLICY))
+  async agentChatChannelSummaries(): Promise<AgentChatChannelSummaryDTO[]> {
     return this.channelThreadsService.findSummaries({
-      workspaceMemberId,
-      workspaceId,
+      authContext: getAgentInboxCallerAuthContextOrThrow(),
     });
   }
 
   @Query(() => [AgentChatChannelDTO])
-  async agentChatChannels(
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthApplication({ allowUndefined: true })
-    callingApplication: FlatApplication | undefined,
-  ): Promise<AgentChatChannelDTO[]> {
-    const canManageChannels =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        workspaceId,
-        userWorkspaceId,
-        setting: PermissionFlagType.AI_SETTINGS,
-        applicationId: callingApplication?.id,
-        agentId: undefined,
-      });
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_ACCESS_POLICY))
+  async agentChatChannels(): Promise<AgentChatChannelDTO[]> {
+    const authContext = getAgentInboxCallerAuthContextOrThrow();
 
     return this.channelService.findChannels({
-      workspaceId,
-      workspaceMemberId,
-      canManageChannels,
+      authContext,
+      canManageChannels: await this.settingPermissionsService.hasPermissionFlag(
+        {
+          authContext,
+          permissionFlag: PermissionFlagType.AI_SETTINGS,
+        },
+      ),
     });
   }
 
   @Query(() => [AgentChatChannelRoleDTO])
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY))
   async agentChatChannelRoles(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatChannelRoleDTO[]> {
@@ -158,7 +162,7 @@ export class AgentChatChannelResolver {
   }
 
   @Mutation(() => AgentChatChannelDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY))
   async createAgentChatChannel(
     @Args('input', { type: () => CreateAgentChatChannelInput })
     input: CreateAgentChatChannelInput,
@@ -174,7 +178,7 @@ export class AgentChatChannelResolver {
   }
 
   @Mutation(() => AgentChatChannelDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY))
   async updateAgentChatChannel(
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
     @Args('input', { type: () => UpdateAgentChatChannelInput })
@@ -195,7 +199,7 @@ export class AgentChatChannelResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_SETTINGS_ACCESS_POLICY))
   async deleteAgentChatChannel(
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
     @Args('destinationChannelId', {
@@ -217,67 +221,59 @@ export class AgentChatChannelResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_ACCESS_POLICY))
   async moveAgentChatThreadToChannel(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @Args('channelId', { type: () => UUIDScalarType, nullable: true })
     channelId: string | null,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     await this.threadService.moveToChannel({
       threadId,
       channelId: channelId ?? null,
-      workspaceMemberId,
-      workspaceId,
+      authContext: getAgentInboxCallerAuthContextOrThrow(),
     });
 
     return true;
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_ACCESS_POLICY))
   async markAgentChatThreadAsDoneInChannel(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     await this.triageService.applyToChannelCopy({
       threadId,
       change: { action: AgentChatInboxAction.ARCHIVE },
-      workspaceMemberId,
-      workspaceId,
+      authContext: getAgentInboxCallerAuthContextOrThrow(),
     });
 
     return true;
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_ACCESS_POLICY))
   async snoozeAgentChatThreadInChannel(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @Args('snoozedUntil', { type: () => Date }) snoozedUntil: Date,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     await this.triageService.applyToChannelCopy({
       threadId,
       change: { action: AgentChatInboxAction.SNOOZE, snoozedUntil },
-      workspaceMemberId,
-      workspaceId,
+      authContext: getAgentInboxCallerAuthContextOrThrow(),
     });
 
     return true;
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_CHANNEL_ACCESS_POLICY))
   async reopenAgentChatThreadInChannel(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     await this.triageService.applyToChannelCopy({
       threadId,
       change: { action: AgentChatInboxAction.MOVE_TO_INBOX },
-      workspaceMemberId,
-      workspaceId,
+      authContext: getAgentInboxCallerAuthContextOrThrow(),
     });
 
     return true;

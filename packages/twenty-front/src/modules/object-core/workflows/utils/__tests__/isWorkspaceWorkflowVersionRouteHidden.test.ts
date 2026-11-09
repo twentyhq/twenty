@@ -1,4 +1,4 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 
@@ -6,7 +6,7 @@ describe('isWorkspaceWorkflowVersionRouteHidden', () => {
   it('should hide the workflow version route', () => {
     expect(
       isWorkspaceWorkflowVersionRouteHidden({
-        objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+        objectNameSingular: StandardObjectNameSingular.WorkflowVersion,
       }),
     ).toBe(true);
   });
@@ -14,13 +14,13 @@ describe('isWorkspaceWorkflowVersionRouteHidden', () => {
   it('should not hide other objects', () => {
     expect(
       isWorkspaceWorkflowVersionRouteHidden({
-        objectNameSingular: CoreObjectNameSingular.Workflow,
+        objectNameSingular: StandardObjectNameSingular.Workflow,
       }),
     ).toBe(false);
 
     expect(
       isWorkspaceWorkflowVersionRouteHidden({
-        objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+        objectNameSingular: StandardObjectNameSingular.WorkflowRun,
       }),
     ).toBe(false);
   });

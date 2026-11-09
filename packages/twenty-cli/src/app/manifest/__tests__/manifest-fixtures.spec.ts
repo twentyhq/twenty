@@ -388,7 +388,7 @@ export default defineWorkflow({
       expect(result.filePaths.workflows).toEqual(['my.workflow.ts']);
     }
 
-    await writeWorkflow('CODE');
+    await writeWorkflow('TRANSLATE');
     const invalidResult = await compareManifest(appPath);
 
     expect(invalidResult.success).toBe(false);

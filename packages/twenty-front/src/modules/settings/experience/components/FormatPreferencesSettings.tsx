@@ -30,7 +30,9 @@ export const FormatPreferencesSettings = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { formatPreferences, updateFormatPreference } = useFormatPreferences();
 
-  if (!isDefined(currentWorkspaceMember)) return null;
+  if (!isDefined(currentWorkspaceMember)) {
+    return null;
+  }
 
   const handleTimeZoneChange = (value: string) => {
     updateFormatPreference('timeZone', value);

@@ -1,3 +1,4 @@
+import { ensureAbsoluteUrl, isNonEmptyString } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { emailFieldSchema } from '@/partner-application/email-field-schema';
@@ -9,13 +10,29 @@ const partnerTypeValues = AFFILIATE_PARTNER_TYPE_OPTIONS.map(
   (option) => option.value,
 );
 
+// Applicants often type "youtube.com/@name": add the scheme instead of refusing it.
+const withHttpsScheme = (value: unknown) =>
+  isNonEmptyString(value) ? ensureAbsoluteUrl(value) : value;
+
+// "john@gmail.com" becomes https://john@gmail.com, a URL whose host is gmail.com.
+const hasNoCredentials = (value: string) => {
+  try {
+    return new URL(value).username === '';
+  } catch {
+    return false;
+  }
+};
+
 export const affiliateApplicationRequestSchema = z.strictObject({
   name: z.string().trim().min(1, { error: 'Name is required.' }),
   email: emailFieldSchema,
   partnerType: z.enum(partnerTypeValues, {
     error: 'Partner type is required.',
   }),
-  mainChannel: httpUrlFieldSchema.optional(),
+  mainChannel: z.preprocess(
+    withHttpsScheme,
+    httpUrlFieldSchema.refine(hasNoCredentials, { error: 'Invalid URL.' }),
+  ),
   audienceSize: z.string().trim().max(200).optional(),
   country: z.string().trim().max(100).optional(),
   promotionPlan: z.string().trim().max(2000).optional(),

@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -6,6 +5,7 @@ import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/recor
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { useLingui } from '@lingui/react/macro';
 
 type RecordTableCalendarFieldDropdownContentProps = {
   pageLayoutId: string;
@@ -20,6 +20,7 @@ export const RecordTableCalendarFieldDropdownContent = ({
   objectMetadataId,
   currentCalendarFieldMetadataId,
 }: RecordTableCalendarFieldDropdownContentProps) => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
 
   const { objectMetadataItems } = useObjectMetadataItems();

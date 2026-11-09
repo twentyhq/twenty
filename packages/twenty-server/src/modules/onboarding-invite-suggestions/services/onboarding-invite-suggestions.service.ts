@@ -7,15 +7,21 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import {
+  OnboardingException,
+  OnboardingExceptionCode,
+} from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-cache-ttl-ms.constant';
+import { ONBOARDING_INVITE_SUGGESTIONS_CALENDAR_TIMEOUT_MS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-calendar-timeout-ms.constant';
 import { ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-max-count.constant';
 import { CalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/calendar-attendees.service';
 import { type CalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/calendar-attendee.type';
 import { getOnboardingInviteSuggestionsCacheKey } from 'src/modules/onboarding-invite-suggestions/utils/get-onboarding-invite-suggestions-cache-key.util';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import { withDeadline } from 'src/utils/with-deadline';
 
 @Injectable()
 export class OnboardingInviteSuggestionsService {
@@ -101,9 +107,17 @@ export class OnboardingInviteSuggestionsService {
     let attendees: CalendarAttendee[] = [];
 
     try {
-      attendees = await this.calendarAttendeesService.getRecentAttendees(
-        mostRecentlyConnectedAccount,
-      );
+      attendees = await withDeadline({
+        promise: this.calendarAttendeesService.getRecentAttendees(
+          mostRecentlyConnectedAccount,
+        ),
+        timeoutMs: ONBOARDING_INVITE_SUGGESTIONS_CALENDAR_TIMEOUT_MS,
+        createTimeoutError: () =>
+          new OnboardingException(
+            `Calendar read timed out after ${ONBOARDING_INVITE_SUGGESTIONS_CALENDAR_TIMEOUT_MS} ms`,
+            OnboardingExceptionCode.EXTERNAL_PROVIDER_TIMEOUT,
+          ),
+      });
     } catch (error) {
       this.logger.warn(
         `Could not compute invite suggestions for workspace ${workspaceId}: ${

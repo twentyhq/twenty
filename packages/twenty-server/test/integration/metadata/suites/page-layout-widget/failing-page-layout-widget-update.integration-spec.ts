@@ -18,7 +18,6 @@ import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 
-import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 
@@ -141,7 +140,7 @@ describe('Page layout widget update should fail', () => {
             configuration: {
               ...INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY,
               configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
-            } as unknown as UpdatePageLayoutWidgetInput['configuration'],
+            },
           },
         });
 
@@ -156,7 +155,7 @@ describe('Page layout widget update should fail', () => {
             configuration: {
               ...INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE,
               configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
-            } as unknown as UpdatePageLayoutWidgetInput['configuration'],
+            },
           },
         });
 
@@ -170,8 +169,7 @@ describe('Page layout widget update should fail', () => {
           expectToFail: true,
           input: {
             id: testPageLayoutWidgetId,
-            configuration:
-              INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS as unknown as UpdatePageLayoutWidgetInput['configuration'],
+            configuration: INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
           },
         });
 
@@ -183,8 +181,7 @@ describe('Page layout widget update should fail', () => {
           expectToFail: true,
           input: {
             id: testPageLayoutWidgetId,
-            configuration:
-              INVALID_NUMBER_CHART_CONFIG_BAD_UUID as unknown as UpdatePageLayoutWidgetInput['configuration'],
+            configuration: INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
           },
         });
 
@@ -198,8 +195,7 @@ describe('Page layout widget update should fail', () => {
           expectToFail: true,
           input: {
             id: testPageLayoutWidgetId,
-            configuration:
-              INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY as unknown as UpdatePageLayoutWidgetInput['configuration'],
+            configuration: INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
           },
         });
 
@@ -211,8 +207,7 @@ describe('Page layout widget update should fail', () => {
           expectToFail: true,
           input: {
             id: testPageLayoutWidgetId,
-            configuration:
-              INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY as unknown as UpdatePageLayoutWidgetInput['configuration'],
+            configuration: INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
           },
         });
 
@@ -226,8 +221,7 @@ describe('Page layout widget update should fail', () => {
           expectToFail: true,
           input: {
             id: testPageLayoutWidgetId,
-            configuration:
-              null as unknown as UpdatePageLayoutWidgetInput['configuration'],
+            configuration: null,
           },
         });
 
@@ -241,7 +235,7 @@ describe('Page layout widget update should fail', () => {
             id: testPageLayoutWidgetId,
             configuration: {
               someField: 'value',
-            } as unknown as UpdatePageLayoutWidgetInput['configuration'],
+            },
           },
         });
 
@@ -256,7 +250,7 @@ describe('Page layout widget update should fail', () => {
             configuration: {
               configurationType: 'UNSUPPORTED_TYPE',
               someField: 'value',
-            } as unknown as UpdatePageLayoutWidgetInput['configuration'],
+            },
           },
         });
 

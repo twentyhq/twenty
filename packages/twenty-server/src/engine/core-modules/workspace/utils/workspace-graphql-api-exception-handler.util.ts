@@ -31,6 +31,7 @@ export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
       case WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSION_ORIGIN_NOT_VALID:
       case WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE:
       case WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID:
+      case WorkspaceExceptionCode.AI_CHAT_ASSISTANT_PROFILE_NOT_VALID:
         throw new UserInputError(error);
       default: {
         return assertUnreachable(error.code);
