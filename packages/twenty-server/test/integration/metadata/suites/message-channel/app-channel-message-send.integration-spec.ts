@@ -7,6 +7,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type MarkerServer } from 'test/integration/types/marker-server.type';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
@@ -60,6 +61,14 @@ const INGEST_MESSAGES_MUTATION = gql`
         messageId
         messageThreadId
       }
+    }
+  }
+`;
+
+const GET_MESSAGE_THREAD_CHANNEL_QUERY = gql`
+  query GetMessageThreadChannel($messageThreadId: UUID!) {
+    getMessageThreadChannel(messageThreadId: $messageThreadId) {
+      conversationStyle
     }
   }
 `;
@@ -303,6 +312,7 @@ describe('sendAppChannelMessage (e2e)', () => {
               sendMessageLogicFunction: {
                 universalIdentifier: SEND_MESSAGE_IDENTIFIER,
               },
+              conversationStyle: 'chat',
             },
           ],
         },
@@ -430,6 +440,23 @@ describe('sendAppChannelMessage (e2e)', () => {
     expect(association).toEqual({
       direction: MessageDirection.OUTGOING,
       messageExternalId: 'sent:Tuesday works',
+    });
+  });
+
+  it('lays out the thread in the conversation style its messaging provider declares', async () => {
+    const { messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await makeGraphqlApiRequest({
+      query: GET_MESSAGE_THREAD_CHANNEL_QUERY,
+      variables: { messageThreadId },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.getMessageThreadChannel).toEqual({
+      conversationStyle: 'chat',
     });
   });
 
