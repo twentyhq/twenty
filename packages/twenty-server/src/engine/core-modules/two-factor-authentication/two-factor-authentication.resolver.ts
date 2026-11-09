@@ -285,11 +285,13 @@ export class TwoFactorAuthenticationResolver {
     }
 
     const backupCodes =
-      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodes({
-        userId: user.id,
-        workspaceId: workspace.id,
-        twoFactorAuthenticationMethodId,
-      });
+      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodesOrThrow(
+        {
+          userId: user.id,
+          workspaceId: workspace.id,
+          twoFactorAuthenticationMethodId,
+        },
+      );
 
     return { success: true, backupCodes };
   }
@@ -327,11 +329,13 @@ export class TwoFactorAuthenticationResolver {
       );
 
     const backupCodes =
-      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodes({
-        userId: user.id,
-        workspaceId: workspace.id,
-        twoFactorAuthenticationMethodId,
-      });
+      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodesOrThrow(
+        {
+          userId: user.id,
+          workspaceId: workspace.id,
+          twoFactorAuthenticationMethodId,
+        },
+      );
 
     await this.twoFactorAuthenticationEmailService.sendBackupCodesRegeneratedEmail(
       { userId: user.id, workspaceId: workspace.id },

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type EntityManager,
@@ -21,6 +22,10 @@ import {
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-backup-code.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
+import {
+  TwoFactorAuthenticationException,
+  TwoFactorAuthenticationExceptionCode,
+} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 import { generateTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/generate-two-factor-authentication-recovery-code.util';
 import { hashTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/hash-two-factor-authentication-recovery-code.util';
 import { revokeTwoFactorAuthenticationAppTokens } from 'src/engine/core-modules/two-factor-authentication/utils/revoke-two-factor-authentication-app-tokens.util';
@@ -35,7 +40,7 @@ export class TwoFactorAuthenticationBackupCodeService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
   ) {}
 
-  async issueBackupCodes({
+  async issueBackupCodesOrThrow({
     userId,
     workspaceId,
     twoFactorAuthenticationMethodId,
@@ -55,6 +60,27 @@ export class TwoFactorAuthenticationBackupCodeService {
         userId,
         mode: 'exclusive',
       });
+
+      // A stale request must not revoke the codes of an authenticator that replaced this one
+      const verifiedTwoFactorAuthenticationMethodId =
+        await this.findVerifiedTwoFactorAuthenticationMethodId({
+          entityManager,
+          userId,
+          workspaceId,
+        });
+
+      if (
+        verifiedTwoFactorAuthenticationMethodId !==
+        twoFactorAuthenticationMethodId
+      ) {
+        throw new TwoFactorAuthenticationException(
+          'The two-factor authentication method changed before backup codes were issued',
+          TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
+          {
+            userFriendlyMessage: msg`Your two-factor authentication changed. Generate backup codes again.`,
+          },
+        );
+      }
 
       await this.revokeBackupCodes({ userId, workspaceId, entityManager });
 
