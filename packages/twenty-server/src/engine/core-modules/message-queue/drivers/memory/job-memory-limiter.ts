@@ -7,6 +7,7 @@ import {
   JOB_MEMORY_INFO_CACHE_MS,
   JOB_MEMORY_RECONCILE_BATCH_SIZE,
   JOB_MEMORY_RECONCILE_SUSPECTS_TTL_SECONDS,
+  JOB_MEMORY_TOP_GROUP_KEYS_CACHE_MS,
   JOB_MEMORY_TOP_GROUP_KEYS_REPORTED,
 } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
@@ -328,6 +329,13 @@ export class JobMemoryLimiter {
     }
 
     const client = await this.options.getClient(queueName);
+    const cacheKey = `${this.options.keyPrefix}:jobmem:top`;
+    const cachedUsages = await client.runCommand('get', [cacheKey]);
+
+    if (isDefined(cachedUsages)) {
+      return JSON.parse(String(cachedUsages)) as GroupKeyMemoryUsage[];
+    }
+
     const usedKeyPrefix = `${this.options.keyPrefix}:jobmem:used:`;
     const usedKeys = new Set<string>();
 
@@ -361,9 +369,18 @@ export class JobMemoryLimiter {
       });
     }
 
-    return usages
+    const topUsages = usages
       .sort((first, second) => second.usedBytes - first.usedBytes)
       .slice(0, JOB_MEMORY_TOP_GROUP_KEYS_REPORTED);
+
+    await client.runCommand('set', [
+      cacheKey,
+      JSON.stringify(topUsages),
+      'PX',
+      JOB_MEMORY_TOP_GROUP_KEYS_CACHE_MS,
+    ]);
+
+    return topUsages;
   }
 
   async getUsedRatio(queueName: MessageQueue): Promise<number | undefined> {

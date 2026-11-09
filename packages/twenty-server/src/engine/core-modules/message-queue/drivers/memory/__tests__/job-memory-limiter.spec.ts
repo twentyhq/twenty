@@ -435,6 +435,25 @@ describe('JobMemoryLimiter', () => {
       expect(usages[19]).toEqual({ groupKey: 'workspace:ws-6', usedBytes: 6 });
     });
 
+    it('serves the cached top group keys until the cache expires', async () => {
+      const { redis, limiter } = await createLimiter();
+
+      await redis.set(usedKeyOf(WORKSPACE_1), 300);
+      await limiter.getTopGroupKeyMemoryUsages(QUEUE);
+      await redis.set(usedKeyOf(WORKSPACE_2), 900);
+
+      expect(await limiter.getTopGroupKeyMemoryUsages(QUEUE)).toEqual([
+        { groupKey: WORKSPACE_1, usedBytes: 300 },
+      ]);
+
+      await redis.del(`${KEY_PREFIX}:jobmem:top`);
+
+      expect(await limiter.getTopGroupKeyMemoryUsages(QUEUE)).toEqual([
+        { groupKey: WORKSPACE_2, usedBytes: 900 },
+        { groupKey: WORKSPACE_1, usedBytes: 300 },
+      ]);
+    });
+
     it('reports nothing when memory fairness is disabled', async () => {
       const { redis, limiter } = await createLimiter({ isEnabled: false });
 
