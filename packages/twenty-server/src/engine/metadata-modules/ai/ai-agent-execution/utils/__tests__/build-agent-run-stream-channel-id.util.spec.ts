@@ -21,16 +21,19 @@ const workspaceMemberOwner = (
   workspaceMemberId: string = memberId,
 ): AgentRunStreamOwner => ({ kind: 'workspaceMember', workspaceMemberId });
 
-const channelOf = (
-  owner: AgentRunStreamOwner = applicationOwner(),
-  overriddenRunId: string = runId,
-) => buildAgentRunStreamChannelId({ owner, runId: overriddenRunId });
+const channelOf = ({
+  owner = applicationOwner(),
+  runId: overriddenRunId = runId,
+}: {
+  owner?: AgentRunStreamOwner;
+  runId?: string;
+} = {}) => buildAgentRunStreamChannelId({ owner, runId: overriddenRunId });
 
 describe('buildAgentRunStreamChannelId', () => {
   it('should derive the same channel for the same run of the same caller', () => {
     expect(channelOf()).toBe(channelOf());
-    expect(channelOf(workspaceMemberOwner())).toBe(
-      channelOf(workspaceMemberOwner()),
+    expect(channelOf({ owner: workspaceMemberOwner() })).toBe(
+      channelOf({ owner: workspaceMemberOwner() }),
     );
   });
 
@@ -41,7 +44,7 @@ describe('buildAgentRunStreamChannelId', () => {
         AGENT_RUN_STREAM_CHANNEL_ID_NAMESPACE,
       ),
     );
-    expect(channelOf(applicationOwner(null))).toBe(
+    expect(channelOf({ owner: applicationOwner(null) })).toBe(
       v5(
         `${applicationId}:application:${runId}`,
         AGENT_RUN_STREAM_CHANNEL_ID_NAMESPACE,
@@ -50,35 +53,39 @@ describe('buildAgentRunStreamChannelId', () => {
   });
 
   it('should give another member naming the same run another channel', () => {
-    expect(channelOf(applicationOwner(otherMemberId))).not.toBe(channelOf());
-    expect(channelOf(workspaceMemberOwner(otherMemberId))).not.toBe(
-      channelOf(workspaceMemberOwner()),
+    expect(channelOf({ owner: applicationOwner(otherMemberId) })).not.toBe(
+      channelOf(),
+    );
+    expect(channelOf({ owner: workspaceMemberOwner(otherMemberId) })).not.toBe(
+      channelOf({ owner: workspaceMemberOwner() }),
     );
   });
 
   it('should give an application-only token its own channel, apart from every member', () => {
-    expect(channelOf(applicationOwner(null))).not.toBe(channelOf());
+    expect(channelOf({ owner: applicationOwner(null) })).not.toBe(channelOf());
   });
 
   it('should keep a member session apart from any application acting as that member', () => {
-    expect(channelOf(workspaceMemberOwner())).not.toBe(channelOf());
+    expect(channelOf({ owner: workspaceMemberOwner() })).not.toBe(channelOf());
   });
 
   it('should give another run or another application another channel', () => {
     expect(
-      channelOf(applicationOwner(), '8d2e4f6a-1b3c-4d5e-9f70-a1b2c3d4e5f6'),
+      channelOf({ runId: '8d2e4f6a-1b3c-4d5e-9f70-a1b2c3d4e5f6' }),
     ).not.toBe(channelOf());
     expect(
       channelOf({
-        kind: 'application',
-        applicationId: '20202020-3d15-4f4d-a9b6-1fd1d0a8b5c0',
-        workspaceMemberId: memberId,
+        owner: {
+          kind: 'application',
+          applicationId: '20202020-3d15-4f4d-a9b6-1fd1d0a8b5c0',
+          workspaceMemberId: memberId,
+        },
       }),
     ).not.toBe(channelOf());
   });
 
   it('should not reuse the run id itself as the channel', () => {
     expect(channelOf()).not.toBe(runId);
-    expect(channelOf(workspaceMemberOwner())).not.toBe(runId);
+    expect(channelOf({ owner: workspaceMemberOwner() })).not.toBe(runId);
   });
 });

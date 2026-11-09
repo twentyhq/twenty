@@ -6,8 +6,7 @@ import { type AgentRunStreamOwner } from 'src/engine/metadata-modules/ai/ai-agen
 // a token without a member can never stand for one, so its channels are named apart from every member's
 const APPLICATION_ONLY_CALLER = 'application';
 
-// application ids are UUIDs, so this prefix keeps a member's own runs apart from every application's,
-// including the workspace custom application whose tokens logic functions hold on a member's behalf
+// never a UUID, so a member's own runs stay apart from every application's, the custom one included
 const WORKSPACE_MEMBER_OWNER_PREFIX = 'workspaceMember';
 
 const serializeOwner = (owner: AgentRunStreamOwner): string => {
@@ -19,7 +18,6 @@ const serializeOwner = (owner: AgentRunStreamOwner): string => {
   }
 };
 
-// keyed by the whole owner, so a caller can only name the channels of its own runs
 export const buildAgentRunStreamChannelId = ({
   owner,
   runId,
