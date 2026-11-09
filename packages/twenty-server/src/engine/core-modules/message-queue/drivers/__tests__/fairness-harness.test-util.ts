@@ -454,8 +454,10 @@ export const createFairnessHarness = async ({
       applicationUniversalIdentifier,
       maxRate,
       delay,
+      jobIds,
     }: {
       labels: string[];
+      jobIds?: string[];
       workspaceId: string;
       applicationUniversalIdentifier?: string;
       maxRate?: QueueJobMaxRate;
@@ -464,15 +466,18 @@ export const createFairnessHarness = async ({
       await driver.bulkAdd<ScenarioJobData>(
         QUEUE,
         JOB_NAME,
-        labels.map((label) => ({
+        labels.map((label, index) => ({
           data: { label, workspaceId },
+          jobId: jobIds?.[index],
           maxRate,
           ...buildScenarioJobScope({
             workspaceId,
             applicationUniversalIdentifier,
           }),
         })),
-        isDefined(delay) ? { delay } : undefined,
+        isDefined(delay) || isDefined(jobIds)
+          ? { delay, doNotCheckDuplicatesBasedOnPrefix: isDefined(jobIds) }
+          : undefined,
       );
     },
     scheduleCron: async ({

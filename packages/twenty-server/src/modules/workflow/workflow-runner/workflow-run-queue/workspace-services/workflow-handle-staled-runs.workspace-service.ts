@@ -23,6 +23,7 @@ import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workf
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { hasInFlightRunWorkflowJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/has-in-flight-run-workflow-job.util';
 import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
 import { getStuckRunningRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-find-options.util';
 import { getStuckRunningRunsMonitorCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-monitor-cache-key.util';
@@ -64,6 +65,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       }
 
       const batchCount = Math.ceil(staledRunsCount / QUERY_MAX_RECORDS);
+      const staledRunIds: string[] = [];
 
       for (let batchIndex = 0; batchIndex < batchCount; batchIndex++) {
         const staledWorkflowRuns = await workflowRunRepository.find({
@@ -74,6 +76,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           order: {
             createdAt: 'ASC',
           },
+          skip: batchIndex * QUERY_MAX_RECORDS,
           take: QUERY_MAX_RECORDS,
         });
 
@@ -81,8 +84,27 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           break;
         }
 
+        staledRunIds.push(
+          ...staledWorkflowRuns.map((workflowRun) => workflowRun.id),
+        );
+      }
+
+      // A run paced by its workflow maxRate can wait in the queue past the
+      // threshold: only runs whose job is gone are lost.
+      const inFlightJobs =
+        await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
+      const lostRunIds = staledRunIds.filter(
+        (workflowRunId) =>
+          !hasInFlightRunWorkflowJob({ inFlightJobs, workflowRunId }),
+      );
+
+      for (
+        let offset = 0;
+        offset < lostRunIds.length;
+        offset += QUERY_MAX_RECORDS
+      ) {
         await workflowRunRepository.update(
-          staledWorkflowRuns.map((workflowRun) => workflowRun.id),
+          lostRunIds.slice(offset, offset + QUERY_MAX_RECORDS),
           {
             enqueuedAt: null,
             status: WorkflowRunStatus.NOT_STARTED,
@@ -143,11 +165,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
 
     const hasInFlightJob = (workflowRunId: string) =>
-      inFlightJobs.some(
-        (job) =>
-          job.id?.startsWith(`${workflowRunId}-`) ||
-          job.data?.workflowRunId === workflowRunId,
-      );
+      hasInFlightRunWorkflowJob({ inFlightJobs, workflowRunId });
 
     const stillFlaggedRuns: Record<string, string> = {};
 

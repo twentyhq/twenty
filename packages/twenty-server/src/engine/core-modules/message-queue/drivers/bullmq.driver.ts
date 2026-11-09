@@ -980,10 +980,27 @@ export class BullMQDriver
       shouldReportSizes: true,
     });
 
+    // Re-adding an existing job id is a no-op in BullMQ, so it must not
+    // reserve a pacing slot again.
+    const existingPacedJobIds = this.fairQueueScheduler.isGroupMaxRateEnabled()
+      ? await this.findExistingJobIds({
+          queueName,
+          jobIds: jobsToAdd.flatMap((job) =>
+            isDefined(job.jobId) && isDefined(job.maxRate ?? options?.maxRate)
+              ? [job.jobId]
+              : [],
+          ),
+        })
+      : new Set<string>();
+
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: jobsToAdd,
-      maxRates: jobsToAdd.map((job) => job.maxRate ?? options?.maxRate),
+      maxRates: jobsToAdd.map((job) =>
+        isDefined(job.jobId) && existingPacedJobIds.has(job.jobId)
+          ? undefined
+          : (job.maxRate ?? options?.maxRate),
+      ),
       additionalGroupKeys: options?.groupKeys,
       delay: options?.delay,
       staticPriority: queueOptions.priority,

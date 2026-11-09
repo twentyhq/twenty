@@ -89,6 +89,39 @@ describe('BullMQDriver maxRate', () => {
     ]);
   });
 
+  it('does not reserve a slot again for a job id that is already queued', async () => {
+    const harness = await createFairnessHarness({
+      isGroupMaxRateEnabled: true,
+    });
+    const jobIds = ['job-1', 'job-2', 'job-3'];
+
+    await harness.enqueueBulk({
+      labels: buildLabels({ prefix: 'H', count: 3 }),
+      jobIds,
+      workspaceId: 'A',
+      applicationUniversalIdentifier: 'H',
+      maxRate: MAX_RATE,
+    });
+    await harness.enqueueBulk({
+      labels: buildLabels({ prefix: 'R', count: 3 }),
+      jobIds,
+      workspaceId: 'A',
+      applicationUniversalIdentifier: 'H',
+      maxRate: MAX_RATE,
+    });
+    await harness.enqueueBulk({
+      labels: ['F1'],
+      jobIds: ['job-4'],
+      workspaceId: 'A',
+      applicationUniversalIdentifier: 'H',
+      maxRate: MAX_RATE,
+    });
+
+    expect(harness.readDelay({ label: 'H3' })).toBe(500);
+    expect(harness.readDelay({ label: 'F1' })).toBeGreaterThan(900);
+    expect(harness.readDelay({ label: 'F1' })).toBeLessThanOrEqual(1_000);
+  });
+
   it('never paces the urgent lane', async () => {
     const harness = await createFairnessHarness({
       isGroupMaxRateEnabled: true,
