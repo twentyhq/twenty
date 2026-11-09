@@ -9,6 +9,8 @@ import {
   type TipTapNode,
 } from 'twenty-shared/utils';
 
+import { HTML_LINE_BREAK_TAG_PATTERN } from 'src/engine/core-modules/record-transformer/constants/html-line-break-tag-pattern.constant';
+
 type InlineStyle =
   | typeof TIPTAP_MARK_TYPES.BOLD
   | typeof TIPTAP_MARK_TYPES.ITALIC
@@ -26,8 +28,6 @@ const STYLE_BY_TOKEN_TYPE: Record<string, InlineStyle> = {
   em: TIPTAP_MARK_TYPES.ITALIC,
   del: TIPTAP_MARK_TYPES.STRIKE,
 };
-
-const HTML_LINE_BREAK_TAG_PATTERN = /^<br\s*\/?>$/i;
 
 export const getChildTokens = (token: Token): Token[] =>
   'tokens' in token && Array.isArray(token.tokens) ? token.tokens : [];

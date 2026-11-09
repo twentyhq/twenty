@@ -7,6 +7,7 @@ import {
   type TipTapNode,
 } from 'twenty-shared/utils';
 
+import { SPACES_AND_TABS_ONLY_PATTERN } from 'src/engine/core-modules/record-transformer/constants/spaces-and-tabs-only-pattern.constant';
 import {
   convertMarkdownInlineTokens,
   isImageToken,
@@ -17,8 +18,6 @@ type ListNodeType =
   | typeof TIPTAP_NODE_TYPES.BULLET_LIST
   | typeof TIPTAP_NODE_TYPES.ORDERED_LIST
   | typeof TIPTAP_NODE_TYPES.TASK_LIST;
-
-const SPACES_AND_TABS_ONLY_PATTERN = /^[ \t]*$/;
 
 const isBlankContent = (content: TipTapNode[]) =>
   content.every(
