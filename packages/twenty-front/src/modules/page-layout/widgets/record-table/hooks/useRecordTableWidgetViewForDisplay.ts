@@ -1,9 +1,8 @@
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
-import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
+import { getRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetViewForDisplay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
 import { type View } from '@/views/types/View';
-import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordTableWidgetViewForDisplayParams = {
   viewId: string;
@@ -25,11 +24,10 @@ export const useRecordTableWidgetViewForDisplay = ({
     pageLayoutId,
   );
 
-  const draftSnapshot = recordTableWidgetViewDraft[widgetId];
-
-  const viewFromDraft = isDefined(draftSnapshot)
-    ? constructViewFromRecordTableWidgetViewSnapshot(draftSnapshot)
-    : undefined;
-
-  return { view: viewFromDraft ?? view };
+  return {
+    view: getRecordTableWidgetViewForDisplay({
+      draftSnapshot: recordTableWidgetViewDraft[widgetId],
+      view,
+    }),
+  };
 };
