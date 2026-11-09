@@ -235,6 +235,31 @@ describe('importLinkedinMessageAttachments', () => {
     }
   });
 
+  it('keeps going when attaching the files of a message fails', async () => {
+    const onMessageAttachments = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('attachments unavailable'))
+      .mockResolvedValue(undefined);
+
+    const importedCount = await importLinkedinMessageAttachments({
+      unipileAccountId: 'acc_1',
+      messages: [
+        buildMessage([{ id: 'img-1', type: 'img', mimetype: 'image/png' }]),
+        {
+          ...buildMessage([
+            { id: 'img-2', type: 'img', mimetype: 'image/png' },
+          ]),
+          id: 'message-2',
+        },
+      ],
+      deadlineAtMs: Date.now() + 60_000,
+      onMessageAttachments,
+    });
+
+    expect(importedCount).toBe(1);
+    expect(onMessageAttachments).toHaveBeenCalledTimes(2);
+  });
+
   it('lets a rate limit through so the import can pause', async () => {
     mocks.downloadUnipileMessageAttachment.mockRejectedValue(
       new UnipileRateLimitError('rate limited', 3600),

@@ -111,12 +111,20 @@ export const importLinkedinMessageAttachments = async ({
       }
     }
 
-    if (attachments.length > 0) {
+    if (attachments.length === 0) {
+      continue;
+    }
+
+    try {
       await onMessageAttachments({
         messageExternalId: message.id,
         attachments,
       });
       importedCount += attachments.length;
+    } catch (error) {
+      console.warn(
+        `[linkedin] attachments of message ${message.id} not attached: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
