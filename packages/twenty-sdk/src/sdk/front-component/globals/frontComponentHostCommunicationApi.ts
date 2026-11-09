@@ -82,6 +82,7 @@ type OpenPurposeBuiltSidePanelPageParams =
         | SidePanelPages.AskAI
         | SidePanelPages.ViewRecords
         | SidePanelPages.Copilot
+        | SidePanelPages.DashboardFilterSettings
       >;
       pageTitle: string;
       pageIcon?: string;

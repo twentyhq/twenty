@@ -3,11 +3,13 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
+import { getPageLayoutPageTitle } from '@/side-panel/pages/page-layout/utils/getPageLayoutPageTitle';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconFilter,
   IconFrame,
   IconLayoutDashboard,
   IconListDetails,
@@ -218,6 +220,20 @@ export const usePageLayoutHeaderInfo = ({
         headerType: t`View`,
         widgetInEditMode,
       });
+    }
+
+    case SidePanelPages.DashboardFilterSettings: {
+      return {
+        headerIcon: IconFilter,
+        headerIconColor: iconColor,
+        headerType: '',
+        title: getPageLayoutPageTitle(sidePanelPage),
+        isReadonly: true,
+        tab: undefined,
+        widgetInEditMode: undefined,
+        isIconEditable: false,
+        selectedIconKey: null,
+      };
     }
 
     case SidePanelPages.PageLayoutDashboardWidgetTypeSelect: {

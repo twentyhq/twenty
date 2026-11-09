@@ -24,6 +24,7 @@ export { CSV_INJECTION_PREVENTION_ZWJ } from './CsvInjectionPreventionZwj';
 export { CurrencyCode } from './CurrencyCode';
 export { CURRENCY_CODE_LABELS } from './CurrencyCodeLabels';
 export { DASHBOARD_FILTER_PLAIN_DATE_OPERANDS } from './DashboardFilterPlainDateOperands';
+export { DASHBOARD_FILTER_RELATIVE_DATE_AMOUNT_MAX } from './DashboardFilterRelativeDateAmountMax';
 export { DATE_TYPE_FORMAT } from './DateTypeFormat';
 export { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from './DefaultNumberOfGroupsLimit';
 export { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from './DefaultRelativeDateFilterValue';

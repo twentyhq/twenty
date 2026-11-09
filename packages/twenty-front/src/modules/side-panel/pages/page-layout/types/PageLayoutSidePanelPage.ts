@@ -7,6 +7,7 @@ export type PageLayoutSidePanelPage =
   | SidePanelPages.DashboardChartSettings
   | SidePanelPages.DashboardIframeSettings
   | SidePanelPages.DashboardRecordTableSettings
+  | SidePanelPages.DashboardFilterSettings
   | SidePanelPages.RecordPageFieldsSettings
   | SidePanelPages.RecordPageFieldSettings
   | SidePanelPages.PageLayoutRecordPageWidgetTypeSelect;
