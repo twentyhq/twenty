@@ -79,8 +79,8 @@ export class RecordEventPermissionsService {
         flatObjectMetadata: eventBatch.objectMetadata,
         fieldList: 'unreadableFields',
         records: resolveEventRecordSnapshots(events),
-        findRelationHopJoinValues: (args) =>
-          this.recordPermissionReadRepository.findRelationHopJoinValues({
+        findRelationJoinValues: (args) =>
+          this.recordPermissionReadRepository.findRelationJoinValues({
             ...args,
             workspaceId: eventBatch.workspaceId,
           }),
@@ -201,8 +201,8 @@ export class RecordEventPermissionsService {
           shouldIgnoreSoftDeleteDefaultFilter: true,
           fetchRecordShares,
           findPrivateRecordStates,
-          findRelationHopJoinValues: (args) =>
-            this.recordPermissionReadRepository.findRelationHopJoinValues({
+          findRelationJoinValues: (args) =>
+            this.recordPermissionReadRepository.findRelationJoinValues({
               ...args,
               workspaceId,
             }),

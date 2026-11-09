@@ -23,9 +23,9 @@ import { buildRecordAccessGroupConditions } from 'src/engine/permissions/interna
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
-import { findRlsRuleRelationHopsToObject } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-relation-hops-to-object.util';
+import { findRlsRuleRelationPredicatesToObject } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-relation-predicates-to-object.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
-import { isRlsRuleRelationHopAffectedByUpdate } from 'src/engine/permissions/internal/access-group/utils/is-rls-rule-relation-hop-affected-by-update.util';
+import { isRlsRuleRelationAffectedByUpdate } from 'src/engine/permissions/internal/access-group/utils/is-rls-rule-relation-affected-by-update.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -168,7 +168,7 @@ export class RecordAccessGroupService {
     });
   }
 
-  async isObjectReachedByRlsRuleRelationHop({
+  async isObjectReachedByRlsRuleRelation({
     workspaceId,
     objectMetadataId,
   }: {
@@ -178,7 +178,7 @@ export class RecordAccessGroupService {
     const metadataMaps = await this.findMetadataMaps(workspaceId);
 
     return isNonEmptyArray(
-      findRlsRuleRelationHopsToObject({
+      findRlsRuleRelationPredicatesToObject({
         ...metadataMaps,
         objectMetadataId,
       }),
@@ -201,12 +201,12 @@ export class RecordAccessGroupService {
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<RelatedRecords[]> {
     const metadataMaps = await this.findMetadataMaps(workspaceId);
-    const relationHops = findRlsRuleRelationHopsToObject({
+    const relationPredicates = findRlsRuleRelationPredicatesToObject({
       ...metadataMaps,
       objectMetadataId,
     });
 
-    if (relationHops.length === 0) {
+    if (relationPredicates.length === 0) {
       return [];
     }
 
@@ -216,11 +216,28 @@ export class RecordAccessGroupService {
     });
     const relatedRecords: RelatedRecords[] = [];
 
-    for (const relationHop of relationHops) {
+    const relationFieldMetadataIds = new Set(
+      relationPredicates
+        .map(({ relationFieldMetadataId }) => relationFieldMetadataId)
+        .filter(isDefined),
+    );
+
+    for (const relationFieldMetadataId of relationFieldMetadataIds) {
+      const relationFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: relationFieldMetadataId,
+        flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
+      });
+
       if (
         isDefined(updatedColumnNames) &&
-        !isRlsRuleRelationHopAffectedByUpdate({
-          relationHop,
+        !isRlsRuleRelationAffectedByUpdate({
+          relationFieldMetadata,
+          comparedFieldMetadataIds: relationPredicates
+            .filter(
+              (predicate) =>
+                predicate.relationFieldMetadataId === relationFieldMetadataId,
+            )
+            .map(({ fieldMetadataId }) => fieldMetadataId),
           updatedColumnNames,
           targetFlatObjectMetadata,
           flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
@@ -229,7 +246,6 @@ export class RecordAccessGroupService {
         continue;
       }
 
-      const { relationFieldMetadata } = relationHop;
       const sourceFlatObjectMetadata =
         findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityId: relationFieldMetadata.objectMetadataId,

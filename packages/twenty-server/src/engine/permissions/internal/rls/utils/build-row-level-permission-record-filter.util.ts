@@ -168,13 +168,13 @@ export const buildRecordFilterForRole = ({
       );
     }
 
-    const hopRelationFieldMetadataId = isRelationHopEnabled
+    const predicateRelationFieldMetadataId = isRelationHopEnabled
       ? predicate.relationFieldMetadataId
       : undefined;
 
     if (
       isDefined(predicate.relationFieldMetadataId) &&
-      !isDefined(hopRelationFieldMetadataId)
+      !isDefined(predicateRelationFieldMetadataId)
     ) {
       unsatisfiableRecordFilterIds.add(predicate.id);
     }
@@ -222,8 +222,9 @@ export const buildRecordFilterForRole = ({
 
     recordFilters.push({
       id: predicate.id,
-      fieldMetadataId: hopRelationFieldMetadataId ?? predicate.fieldMetadataId,
-      relationTargetFieldMetadataId: isDefined(hopRelationFieldMetadataId)
+      fieldMetadataId:
+        predicateRelationFieldMetadataId ?? predicate.fieldMetadataId,
+      relationTargetFieldMetadataId: isDefined(predicateRelationFieldMetadataId)
         ? predicate.fieldMetadataId
         : undefined,
       value: convertViewFilterValueToString(predicateValue),

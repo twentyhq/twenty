@@ -8,7 +8,7 @@ import {
   type PermissionsMetadataMaps,
   type RowAccessEvaluationContext,
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { resolveRelationHopsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relation-hops-in-record-filter.util';
+import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import {
   PermissionsException,
@@ -22,7 +22,7 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectRecord> = {
   objectMetadata: FlatObjectMetadata;
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
-  findRelationHopJoinValues: RowAccessEvaluationContext['findRelationHopJoinValues'];
+  findRelationJoinValues: RowAccessEvaluationContext['findRelationJoinValues'];
 };
 
 export const validateRLSPredicatesForRecords = async <T extends ObjectRecord>({
@@ -30,7 +30,7 @@ export const validateRLSPredicatesForRecords = async <T extends ObjectRecord>({
   objectMetadata,
   principals,
   metadataMaps,
-  findRelationHopJoinValues,
+  findRelationJoinValues,
 }: ValidateRLSPredicatesForRecordsArgs<T>): Promise<void> => {
   const recordFilter = resolveRowLevelPermissionRecordFilter({
     principals,
@@ -42,12 +42,12 @@ export const validateRLSPredicatesForRecords = async <T extends ObjectRecord>({
     return;
   }
 
-  const resolvedRecordFilter = await resolveRelationHopsInRecordFilter({
+  const resolvedRecordFilter = await resolveRelationsInRecordFilter({
     recordFilter,
     flatObjectMetadata: objectMetadata,
     records,
     metadataMaps,
-    findRelationHopJoinValues,
+    findRelationJoinValues,
   });
 
   for (const record of records) {

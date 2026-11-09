@@ -1558,7 +1558,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.flatObjectMetadata.id,
         )
       ) &&
-      !(await this.options.internalContext.recordPermissions.isObjectReachedByRlsRuleRelationHop(
+      !(await this.options.internalContext.recordPermissions.isObjectReachedByRlsRuleRelation(
         {
           featureFlagsMap: this.options.internalContext.featureFlagsMap,
           workspaceId: this.options.internalContext.workspaceId,

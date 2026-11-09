@@ -15,15 +15,15 @@ import {
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 
-const HOP_TARGET_TABLE_ALIAS = 'hopTarget';
+const RELATION_TARGET_TABLE_ALIAS = 'relationTarget';
 
-// In memory matching can't follow a relation, so each hop becomes a filter on the record's own column
-export const resolveRelationHopsInRecordFilter = async ({
+// In memory matching can't follow a relation, so each relation becomes a filter on the record's own column
+export const resolveRelationsInRecordFilter = async ({
   recordFilter,
   flatObjectMetadata,
   records,
   metadataMaps,
-  findRelationHopJoinValues,
+  findRelationJoinValues,
 }: {
   recordFilter: RecordGqlOperationFilter;
   flatObjectMetadata: FlatObjectMetadata;
@@ -32,7 +32,7 @@ export const resolveRelationHopsInRecordFilter = async ({
     PermissionsMetadataMaps,
     'flatFieldMetadataMaps' | 'flatObjectMetadataMaps'
   >;
-  findRelationHopJoinValues: RowAccessEvaluationContext['findRelationHopJoinValues'];
+  findRelationJoinValues: RowAccessEvaluationContext['findRelationJoinValues'];
 }): Promise<RecordGqlOperationFilter> => {
   const { flatFieldMetadataMaps, flatObjectMetadataMaps } = metadataMaps;
   const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
@@ -88,13 +88,13 @@ export const resolveRelationHopsInRecordFilter = async ({
             relationFieldMetadata: fieldMetadata,
             flatFieldMetadataMaps,
           });
-        const joinValues = await findRelationHopJoinValues({
+        const joinValues = await findRelationJoinValues({
           targetFlatObjectMetadata,
           targetColumnName,
-          tableAlias: HOP_TARGET_TABLE_ALIAS,
+          tableAlias: RELATION_TARGET_TABLE_ALIAS,
           condition: renderRowLevelPermissionFilterToSql({
             recordFilter: filterValue as RecordGqlOperationFilter,
-            tableAlias: HOP_TARGET_TABLE_ALIAS,
+            tableAlias: RELATION_TARGET_TABLE_ALIAS,
             objectMetadata: targetFlatObjectMetadata,
             flatFieldMetadataMaps,
             flatObjectMetadataMaps,

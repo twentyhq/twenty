@@ -81,8 +81,8 @@ describe('RLS rules through a relation (integration)', () => {
     const { data } = await createOneRole({
       expectToFail: false,
       input: {
-        label: `RLS hop ${v4()}`,
-        description: 'RLS hop',
+        label: `RLS relation ${v4()}`,
+        description: 'RLS relation',
         canReadAllObjectRecords: true,
         canUpdateAllObjectRecords: true,
         canSoftDeleteAllObjectRecords: false,
@@ -270,7 +270,7 @@ describe('RLS rules through a relation (integration)', () => {
 
   it('should follow a many to one relation and its related record changes', async () => {
     await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "name" = 'Hop match' WHERE "id" = $1`,
+      `UPDATE ${COMPANY_TABLE} SET "name" = 'Relation match' WHERE "id" = $1`,
       [company.id],
     );
     await assignRuleThroughRelation({
@@ -283,7 +283,7 @@ describe('RLS rules through a relation (integration)', () => {
         objectMetadataId: companyObjectMetadataId,
         name: 'name',
       }),
-      value: 'Hop match',
+      value: 'Relation match',
     });
 
     const findPerson = () =>
@@ -306,7 +306,7 @@ describe('RLS rules through a relation (integration)', () => {
 
   it('should check creates and updates through the relation', async () => {
     await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "name" = 'Hop match' WHERE "id" = $1`,
+      `UPDATE ${COMPANY_TABLE} SET "name" = 'Relation match' WHERE "id" = $1`,
       [company.id],
     );
     await assignRuleThroughRelation({
@@ -319,7 +319,7 @@ describe('RLS rules through a relation (integration)', () => {
         objectMetadataId: companyObjectMetadataId,
         name: 'name',
       }),
-      value: 'Hop match',
+      value: 'Relation match',
     });
 
     const createPerson = (companyId: string) =>
@@ -358,7 +358,7 @@ describe('RLS rules through a relation (integration)', () => {
 
   it('should follow a one to many relation and a related record moving away', async () => {
     await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'Hop title' WHERE "id" = $1`,
+      `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'Relation title' WHERE "id" = $1`,
       [person.id],
     );
     await assignRuleThroughRelation({
@@ -371,7 +371,7 @@ describe('RLS rules through a relation (integration)', () => {
         objectMetadataId: personObjectMetadataId,
         name: 'jobTitle',
       }),
-      value: 'Hop title',
+      value: 'Relation title',
     });
 
     const findCompanies = () =>
@@ -394,7 +394,7 @@ describe('RLS rules through a relation (integration)', () => {
 
   it('should update the related record a system write moves away from', async () => {
     await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'Hop title' WHERE "id" = $1`,
+      `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'Relation title' WHERE "id" = $1`,
       [person.id],
     );
     await assignRuleThroughRelation({
@@ -407,7 +407,7 @@ describe('RLS rules through a relation (integration)', () => {
         objectMetadataId: personObjectMetadataId,
         name: 'jobTitle',
       }),
-      value: 'Hop title',
+      value: 'Relation title',
     });
 
     const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
@@ -438,7 +438,7 @@ describe('RLS rules through a relation (integration)', () => {
     const personOfCompanyId = v4();
 
     await global.testDataSource.query(
-      `INSERT INTO ${COMPANY_TABLE} ("id", "name") VALUES ($1, 'Hop destroy')`,
+      `INSERT INTO ${COMPANY_TABLE} ("id", "name") VALUES ($1, 'Relation destroy')`,
       [companyToDestroyId],
     );
     await global.testDataSource.query(
@@ -455,7 +455,7 @@ describe('RLS rules through a relation (integration)', () => {
         objectMetadataId: companyObjectMetadataId,
         name: 'name',
       }),
-      value: 'Hop destroy',
+      value: 'Relation destroy',
     });
 
     const findPerson = () =>
@@ -500,7 +500,7 @@ describe('RLS rules through a relation (integration)', () => {
     };
 
     await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "name" = 'Hop match' WHERE "id" = $1`,
+      `UPDATE ${COMPANY_TABLE} SET "name" = 'Relation match' WHERE "id" = $1`,
       [company.id],
     );
     await assignRuleThroughRelation({
@@ -513,7 +513,7 @@ describe('RLS rules through a relation (integration)', () => {
         objectMetadataId: companyObjectMetadataId,
         name: 'name',
       }),
-      value: 'Hop match',
+      value: 'Relation match',
     });
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL WHERE "id" = $1`,
@@ -531,7 +531,7 @@ describe('RLS rules through a relation (integration)', () => {
     await updateAsAdmin({
       singular: 'company',
       recordId: company.id,
-      data: { name: 'Hop match again' },
+      data: { name: 'Relation match again' },
     });
 
     expect(await findPersonAccessGroupIds()).not.toBeNull();
@@ -546,7 +546,7 @@ describe('RLS rules through a relation (integration)', () => {
     const personIds = Array.from({ length: 101 }, () => v4());
 
     await global.testDataSource.query(
-      `UPDATE ${COMPANY_TABLE} SET "name" = 'Hop match' WHERE "id" = $1`,
+      `UPDATE ${COMPANY_TABLE} SET "name" = 'Relation match' WHERE "id" = $1`,
       [company.id],
     );
     await global.testDataSource.query(
@@ -563,7 +563,7 @@ describe('RLS rules through a relation (integration)', () => {
         objectMetadataId: companyObjectMetadataId,
         name: 'name',
       }),
-      value: 'Hop match',
+      value: 'Relation match',
     });
 
     const response = await makeGraphqlApiRequest(

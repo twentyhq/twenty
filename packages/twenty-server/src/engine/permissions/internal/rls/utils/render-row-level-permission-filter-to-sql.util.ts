@@ -165,7 +165,7 @@ const joinConditions = (
   return `(${conditions.join(` ${logicalOperator} `)})`;
 };
 
-const renderRelationHopCondition = ({
+const renderRelationCondition = ({
   relationFieldMetadata,
   targetFilter,
   context,
@@ -242,7 +242,7 @@ const renderFieldCondition = (
     isReferencedByFieldName &&
     isMorphOrRelationFlatFieldMetadata(fieldMetadata)
   ) {
-    return renderRelationHopCondition({
+    return renderRelationCondition({
       relationFieldMetadata: fieldMetadata,
       targetFilter: filterValue as RecordGqlOperationFilter,
       context,

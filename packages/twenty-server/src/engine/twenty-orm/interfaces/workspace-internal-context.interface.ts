@@ -34,7 +34,7 @@ export interface WorkspaceInternalContext {
     | 'assertUpdatesKeepRecordAccessOrThrow'
     | 'recomputeRecordAccessGroupIdsOfRecords'
     | 'findRelatedRecords'
-    | 'isObjectReachedByRlsRuleRelationHop'
+    | 'isObjectReachedByRlsRuleRelation'
     | 'isRecomputingRecordAccessGroupIdsOnWrite'
     | 'findRlsRuleUnreadableFieldsByRole'
     | 'buildRlsRuleSqlConditionOrThrow'

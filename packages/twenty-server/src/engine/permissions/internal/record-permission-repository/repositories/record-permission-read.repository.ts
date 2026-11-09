@@ -213,7 +213,7 @@ export class RecordPermissionReadRepository {
     );
   }
 
-  async findRelationHopJoinValues({
+  async findRelationJoinValues({
     workspaceId,
     targetFlatObjectMetadata,
     targetColumnName,

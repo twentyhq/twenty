@@ -272,7 +272,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     ).toThrow('through relation "accountOwner"');
   });
 
-  it('renders a many to one relation hop as a correlated subquery on the target object', () => {
+  it('renders a many to one relation as a correlated subquery on the target object', () => {
     const relationField = createFlatFieldMetadata({
       id: 'relation-field-id',
       name: 'accountOwner',

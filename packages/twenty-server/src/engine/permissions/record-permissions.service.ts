@@ -120,7 +120,7 @@ export class RecordPermissionsService {
     });
   }
 
-  async isObjectReachedByRlsRuleRelationHop({
+  async isObjectReachedByRlsRuleRelation({
     featureFlagsMap,
     workspaceId,
     objectMetadataId,
@@ -131,7 +131,7 @@ export class RecordPermissionsService {
   }): Promise<boolean> {
     return (
       areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
-      (await this.recordAccessGroupService.isObjectReachedByRlsRuleRelationHop({
+      (await this.recordAccessGroupService.isObjectReachedByRlsRuleRelation({
         workspaceId,
         objectMetadataId,
       }))
@@ -586,7 +586,7 @@ export class RecordPermissionsService {
       objectMetadata: flatObjectMetadata,
       principals,
       metadataMaps,
-      findRelationHopJoinValues: this.buildFindRelationHopJoinValues({
+      findRelationJoinValues: this.buildFindRelationJoinValues({
         workspaceId: principals.workspaceId,
         transactionScope,
       }),
@@ -715,7 +715,7 @@ export class RecordPermissionsService {
       records: formatRecords(
         updates.map(({ rawRecordBefore }) => rawRecordBefore),
       ),
-      findRelationHopJoinValues: this.buildFindRelationHopJoinValues({
+      findRelationJoinValues: this.buildFindRelationJoinValues({
         workspaceId: principals.workspaceId,
         transactionScope,
       }),
@@ -1059,7 +1059,7 @@ export class RecordPermissionsService {
 
     return {
       shouldIgnoreSoftDeleteDefaultFilter: false,
-      findRelationHopJoinValues: this.buildFindRelationHopJoinValues({
+      findRelationJoinValues: this.buildFindRelationJoinValues({
         workspaceId,
         transactionScope,
       }),
@@ -1099,15 +1099,15 @@ export class RecordPermissionsService {
     };
   }
 
-  private buildFindRelationHopJoinValues({
+  private buildFindRelationJoinValues({
     workspaceId,
     transactionScope,
   }: {
     workspaceId: string;
     transactionScope?: RecordPermissionTransactionScope;
-  }): RowAccessEvaluationContext['findRelationHopJoinValues'] {
+  }): RowAccessEvaluationContext['findRelationJoinValues'] {
     return (args) =>
-      this.recordPermissionReadRepository.findRelationHopJoinValues({
+      this.recordPermissionReadRepository.findRelationJoinValues({
         ...args,
         workspaceId,
         transactionScope,

@@ -53,7 +53,7 @@ export type RowAccessEvaluationContext = {
     objectMetadataId: string;
     recordIds: string[];
   }) => Promise<Map<string, PrivateRecordState>>;
-  findRelationHopJoinValues: (args: {
+  findRelationJoinValues: (args: {
     targetFlatObjectMetadata: FlatObjectMetadata;
     targetColumnName: string;
     tableAlias: string;

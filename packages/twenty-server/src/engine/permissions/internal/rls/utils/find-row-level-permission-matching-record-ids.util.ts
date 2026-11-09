@@ -3,7 +3,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { resolveRelationHopsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relation-hops-in-record-filter.util';
+import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-row-level-permission-filter.util';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
@@ -21,12 +21,12 @@ export const findRowLevelPermissionMatchingRecordIds = async ({
     return undefined;
   }
 
-  const recordFilter = await resolveRelationHopsInRecordFilter({
+  const recordFilter = await resolveRelationsInRecordFilter({
     recordFilter: rowLevelPermissionFilter.recordFilter,
     flatObjectMetadata: request.flatObjectMetadata,
     records,
     metadataMaps: request.metadataMaps,
-    findRelationHopJoinValues: context.findRelationHopJoinValues,
+    findRelationJoinValues: context.findRelationJoinValues,
   });
 
   return records

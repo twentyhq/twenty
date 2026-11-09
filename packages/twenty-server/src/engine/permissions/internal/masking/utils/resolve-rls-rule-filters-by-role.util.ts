@@ -7,7 +7,7 @@ import {
   type RowAccessEvaluationContext,
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/masking/utils/find-rls-rule-fields-by-role.util';
-import { resolveRelationHopsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relation-hops-in-record-filter.util';
+import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
 import { resolveRowLevelPermissionRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter-for-role.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
@@ -17,14 +17,14 @@ export const resolveRlsRuleFiltersByRole = async ({
   flatObjectMetadata,
   fieldList,
   records,
-  findRelationHopJoinValues,
+  findRelationJoinValues,
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
   flatObjectMetadata: FlatObjectMetadata;
   fieldList: 'unreadableFields' | 'uneditableFields';
   records: object[];
-  findRelationHopJoinValues: RowAccessEvaluationContext['findRelationHopJoinValues'];
+  findRelationJoinValues: RowAccessEvaluationContext['findRelationJoinValues'];
 }): Promise<Map<string, RecordGqlOperationFilter | null>> => {
   const rlsRuleFilterByRoleId = new Map<
     string,
@@ -47,12 +47,12 @@ export const resolveRlsRuleFiltersByRole = async ({
     rlsRuleFilterByRoleId.set(
       roleId,
       isDefined(recordFilter)
-        ? await resolveRelationHopsInRecordFilter({
+        ? await resolveRelationsInRecordFilter({
             recordFilter,
             flatObjectMetadata,
             records,
             metadataMaps,
-            findRelationHopJoinValues,
+            findRelationJoinValues,
           })
         : null,
     );

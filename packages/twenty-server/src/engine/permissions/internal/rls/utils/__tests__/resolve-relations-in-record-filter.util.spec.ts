@@ -8,7 +8,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { resolveRelationHopsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relation-hops-in-record-filter.util';
+import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
 
 const PERSON_ID = 'person-object-id';
 const COMPANY_ID = 'company-object-id';
@@ -77,14 +77,12 @@ const flatFieldMetadataMaps = [
 
 const metadataMaps = { flatFieldMetadataMaps, flatObjectMetadataMaps };
 
-describe('resolveRelationHopsInRecordFilter', () => {
-  it('should turn a many to one hop into a filter on the join column', async () => {
-    const findRelationHopJoinValues = jest
-      .fn()
-      .mockResolvedValue(['company-1']);
+describe('resolveRelationsInRecordFilter', () => {
+  it('should turn a many to one relation into a filter on the join column', async () => {
+    const findRelationJoinValues = jest.fn().mockResolvedValue(['company-1']);
 
     await expect(
-      resolveRelationHopsInRecordFilter({
+      resolveRelationsInRecordFilter({
         recordFilter: { company: { name: { eq: 'Acme' } } },
         flatObjectMetadata: person,
         records: [
@@ -92,11 +90,11 @@ describe('resolveRelationHopsInRecordFilter', () => {
           { id: 'person-2' },
         ],
         metadataMaps,
-        findRelationHopJoinValues,
+        findRelationJoinValues,
       }),
     ).resolves.toEqual({ companyId: { in: ['company-1'] } });
 
-    expect(findRelationHopJoinValues).toHaveBeenCalledWith(
+    expect(findRelationJoinValues).toHaveBeenCalledWith(
       expect.objectContaining({
         targetFlatObjectMetadata: company,
         targetColumnName: 'id',
@@ -105,24 +103,22 @@ describe('resolveRelationHopsInRecordFilter', () => {
     );
   });
 
-  it('should turn a one to many hop into a filter on the record id', async () => {
-    const findRelationHopJoinValues = jest
-      .fn()
-      .mockResolvedValue(['company-1']);
+  it('should turn a one to many relation into a filter on the record id', async () => {
+    const findRelationJoinValues = jest.fn().mockResolvedValue(['company-1']);
 
     await expect(
-      resolveRelationHopsInRecordFilter({
+      resolveRelationsInRecordFilter({
         recordFilter: {
           people: { jobTitle: { eq: 'CEO' } },
         } as RecordGqlOperationFilter,
         flatObjectMetadata: company,
         records: [{ id: 'company-1' }, { id: 'company-2' }],
         metadataMaps,
-        findRelationHopJoinValues,
+        findRelationJoinValues,
       }),
     ).resolves.toEqual({ id: { in: ['company-1'] } });
 
-    expect(findRelationHopJoinValues).toHaveBeenCalledWith(
+    expect(findRelationJoinValues).toHaveBeenCalledWith(
       expect.objectContaining({
         targetFlatObjectMetadata: person,
         targetColumnName: 'companyId',
@@ -131,9 +127,9 @@ describe('resolveRelationHopsInRecordFilter', () => {
     );
   });
 
-  it('should resolve hops inside logical groups and keep plain fields', async () => {
+  it('should resolve relations inside logical groups and keep plain fields', async () => {
     await expect(
-      resolveRelationHopsInRecordFilter({
+      resolveRelationsInRecordFilter({
         recordFilter: {
           or: [
             { jobTitle: { eq: 'CEO' } },
@@ -143,7 +139,7 @@ describe('resolveRelationHopsInRecordFilter', () => {
         flatObjectMetadata: person,
         records: [{ id: 'person-1', companyId: 'company-1' }],
         metadataMaps,
-        findRelationHopJoinValues: jest.fn().mockResolvedValue([]),
+        findRelationJoinValues: jest.fn().mockResolvedValue([]),
       }),
     ).resolves.toEqual({
       or: [{ jobTitle: { eq: 'CEO' } }, { not: { companyId: { in: [] } } }],
