@@ -25,6 +25,7 @@ import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/str
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { generateTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/generate-two-factor-authentication-recovery-code.util';
 import { hashTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/hash-two-factor-authentication-recovery-code.util';
+import { revokeTwoFactorAuthenticationAppTokens } from 'src/engine/core-modules/two-factor-authentication/utils/revoke-two-factor-authentication-app-tokens.util';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -141,19 +142,13 @@ export class TwoFactorAuthenticationBackupCodeService {
     workspaceId: WorkspaceEntity['id'];
     entityManager?: EntityManager;
   }): Promise<void> {
-    const appTokenRepository =
-      entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository;
-
-    await appTokenRepository.update(
-      {
-        userId,
-        workspaceId,
-        type: AppTokenType.TwoFactorAuthenticationBackupCode,
-        deletedAt: IsNull(),
-        revokedAt: IsNull(),
-      },
-      { revokedAt: new Date() },
-    );
+    await revokeTwoFactorAuthenticationAppTokens({
+      appTokenRepository:
+        entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository,
+      userId,
+      workspaceId,
+      type: AppTokenType.TwoFactorAuthenticationBackupCode,
+    });
   }
 
   async consumeBackupCode({

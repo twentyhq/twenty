@@ -6,7 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager, IsNull, Repository } from 'typeorm';
+import { type EntityManager, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -35,6 +35,7 @@ import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-a
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { buildTwoFactorAuthenticationOtpRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-otp-rate-limit-key.util';
 import { buildTwoFactorAuthenticationUsedOtpKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-used-otp-key.util';
+import { revokeTwoFactorAuthenticationAppTokens } from 'src/engine/core-modules/two-factor-authentication/utils/revoke-two-factor-authentication-app-tokens.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -324,21 +325,14 @@ export class TwoFactorAuthenticationService {
     includeRedeemed?: boolean;
     entityManager?: EntityManager;
   }): Promise<number> {
-    const appTokenRepository =
-      entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository;
-
-    const updateResult = await appTokenRepository.update(
-      {
-        workspaceId,
-        userId,
-        type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
-        revokedAt: IsNull(),
-        ...(includeRedeemed ? {} : { deletedAt: IsNull() }),
-      },
-      { revokedAt: new Date() },
-    );
-
-    return updateResult.affected ?? 0;
+    return revokeTwoFactorAuthenticationAppTokens({
+      appTokenRepository:
+        entityManager?.getRepository(AppTokenEntity) ?? this.appTokenRepository,
+      userId,
+      workspaceId,
+      type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+      includeRedeemed,
+    });
   }
 
   async assertFreshStepUpAuthenticationOrThrow({
