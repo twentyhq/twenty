@@ -203,7 +203,6 @@ export class SsoService {
     const isFirstUse = await this.cacheStorage.setIfAbsent(
       `${CONSUMED_SAML_ASSERTION_CACHE_KEY_PREFIX}:${identityProviderId}:${assertionId}`,
       true,
-      // A non-positive ttl would keep the key forever
       Math.max(validUntil.getTime() - Date.now(), 1),
     );
 
