@@ -76,16 +76,14 @@ export const useEmailComposerState = ({
   const [showCcBcc, setShowCcBcc] = useState(
     initialCc.length > 0 || initialBcc.length > 0,
   );
-  const [files, setFiles] = useState<EmailAttachment[]>([]);
+  const [attachedFiles, setFiles] = useState<EmailAttachment[]>([]);
 
-  // app sends carry no files, so attachments picked for a native sender would be dropped silently
-  const selectSender = (nextSender: ConnectedAccountSender) => {
-    if (nextSender.connectedAccountId === appReplyTarget?.connectedAccountId) {
-      setFiles([]);
-    }
+  const isSendingThroughAppSender =
+    isDefined(appReplyTarget) &&
+    appReplyTarget.connectedAccountId === connectedAccountId;
 
-    setSender(nextSender);
-  };
+  // app sends carry no files: hide them, including uploads that finish after switching to the app
+  const files = isSendingThroughAppSender ? [] : attachedFiles;
 
   const { sendEmail, loading: isSendingEmail } = useSendEmail();
   const { sendAppChannelMessage } = useSendAppChannelMessage();
@@ -124,10 +122,7 @@ export const useEmailComposerState = ({
     const serializedCc = serializeEmailRecipients(cc);
     const serializedBcc = serializeEmailRecipients(bcc);
 
-    if (
-      isDefined(appReplyTarget) &&
-      appReplyTarget.connectedAccountId === connectedAccountId
-    ) {
+    if (isSendingThroughAppSender) {
       setIsSendingThroughApp(true);
 
       const email = {
@@ -201,6 +196,7 @@ export const useEmailComposerState = ({
     files,
     contextRecord,
     appReplyTarget,
+    isSendingThroughAppSender,
     pendingAppSend,
     sendEmail,
     sendAppChannelMessage,
@@ -211,7 +207,7 @@ export const useEmailComposerState = ({
   return {
     connectedAccountId,
     fromHandle,
-    setSender: selectSender,
+    setSender,
     to,
     setTo,
     cc,

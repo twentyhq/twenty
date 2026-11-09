@@ -1,4 +1,5 @@
 import { type MockLink } from '@apollo/client/testing';
+import { isNonEmptyString } from '@sniptt/guards';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
@@ -246,8 +247,8 @@ describe('useEmailComposerState', () => {
 
     const { result } = renderAppComposerState({
       mocks: [
-        createSendAppChannelMessageMock(
-          (idempotencyKey) => idempotencyKey !== '',
+        createSendAppChannelMessageMock((idempotencyKey) =>
+          isNonEmptyString(idempotencyKey),
         ),
       ],
       onSent,
@@ -258,6 +259,7 @@ describe('useEmailComposerState', () => {
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
+    expect(onSent).toHaveBeenCalledTimes(1);
     expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
@@ -290,6 +292,7 @@ describe('useEmailComposerState', () => {
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
+    expect(onSent).toHaveBeenCalledTimes(1);
   });
 
   it('sends with the picked account instead of the app when the sender changes', async () => {
@@ -316,23 +319,33 @@ describe('useEmailComposerState', () => {
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
+    expect(onSent).toHaveBeenCalledTimes(1);
   });
 
-  it('drops attachments when the sender switches back to the app, which sends no files', () => {
+  it('hides attachments while the app is the sender, including uploads that finish after switching', () => {
     const { result } = renderAppComposerState({ mocks: [], onSent: jest.fn() });
 
     act(() => {
       result.current.setSender({ connectedAccountId: 'account-2' });
-      result.current.setFiles([{ id: 'file-1', name: 'deck.pdf' }]);
     });
 
-    expect(result.current.files).toHaveLength(1);
+    const setFilesFromPendingUpload = result.current.setFiles;
 
     act(() => {
       result.current.setSender({ connectedAccountId: 'account-1' });
     });
 
+    act(() => {
+      setFilesFromPendingUpload([{ id: 'file-1', name: 'deck.pdf' }]);
+    });
+
     expect(result.current.files).toEqual([]);
+
+    act(() => {
+      result.current.setSender({ connectedAccountId: 'account-2' });
+    });
+
+    expect(result.current.files).toEqual([{ id: 'file-1', name: 'deck.pdf' }]);
   });
 
   it('drops a picked alias when the reply moves to another account', () => {
