@@ -2002,6 +2002,11 @@ msgstr "Brødtekst må være et objekt"
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Brødtekst må være et objekt for widgeten \"{widgetTitle}\""
 
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr ""
+
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
@@ -2447,6 +2452,11 @@ msgstr "Samtaleopptak"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Samtaleopptak"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr ""
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13330,6 +13340,11 @@ msgstr "Fane ikke funnet for duplisering av widget."
 msgid "Tailor your workspace"
 msgstr "Tilpass arbeidsområdet ditt"
 
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr ""
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
@@ -17037,6 +17052,11 @@ msgstr "Vi kunne ikke logge inn på e-postkontoen din. Vennligst sjekk e-postadr
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Vi opplevde et problem med å koble til e-postkontoen din. Vennligst sjekk innstillingene dine og prøv igjen."
+
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr ""
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

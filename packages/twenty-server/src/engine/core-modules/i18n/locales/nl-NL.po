@@ -2002,6 +2002,11 @@ msgstr "Inhoud moet een object zijn"
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Inhoud moet een object zijn voor widget \"{widgetTitle}\""
 
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr ""
+
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
@@ -2447,6 +2452,11 @@ msgstr "Gespreksopnamen"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Gespreksopnamen"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr ""
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13330,6 +13340,11 @@ msgstr "Tabblad niet gevonden voor duplicatie van widget."
 msgid "Tailor your workspace"
 msgstr "Pas je werkruimte aan"
 
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr ""
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
@@ -17037,6 +17052,11 @@ msgstr "We konden niet inloggen op uw e-mailaccount. Controleer uw e-mailadres e
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "We ondervonden een probleem bij de verbinding met uw e-mailaccount. Controleer uw instellingen en probeer het opnieuw."
+
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr ""
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
