@@ -4,6 +4,7 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
+  resolveApiUrlFromEnvironment,
 } from 'twenty-shared/application-runtime';
 
 import { type TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
@@ -165,7 +166,7 @@ export class RestApiClient {
 
   private resolveBaseUrl(): string {
     const baseUrl =
-      this.baseUrl ?? getProcessEnvironment()[DEFAULT_API_URL_NAME];
+      this.baseUrl ?? resolveApiUrlFromEnvironment(getProcessEnvironment());
 
     if (!isDefined(baseUrl) || baseUrl.trim().length === 0) {
       throw new RestApiClientError(

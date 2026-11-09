@@ -22,6 +22,8 @@ const StyledCard = styled.section<{ isCompleted: boolean }>`
         : themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.lg};
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   transition: border-color
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease-out;
@@ -114,6 +116,7 @@ const StyledDescription = styled.span`
 `;
 
 const StyledBody = styled.div`
+  overflow-y: auto;
   padding: ${themeCssVariables.spacing[5]} ${themeCssVariables.spacing[6]};
 `;
 

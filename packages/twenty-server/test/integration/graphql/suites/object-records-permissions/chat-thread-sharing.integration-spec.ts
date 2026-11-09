@@ -52,7 +52,7 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
+import { type RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
@@ -1089,8 +1089,8 @@ describe('Conversations through the record API', () => {
     }
 
     const readableEvents =
-      await getAppProviderByClassName<RecordEventPermissionsService>(
-        'RecordEventPermissionsService',
+      await getAppProviderByClassName<RecordEventPermissionsReadService>(
+        'RecordEventPermissionsReadService',
       ).filterReadableEvents({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId: SEED_APPLE_WORKSPACE_ID,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
@@ -22,7 +22,7 @@ const NON_TERMINAL_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
 export class CallRecordingService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
   ) {}
 
   async findCallRecordingIdForCalendarEvent(
@@ -38,11 +38,13 @@ export class CallRecordingService {
         getWorkspaceContext();
 
       if (
-        !(await this.recordPermissionsService.canRoleAccessSomeRecords({
-          operationType: 'read',
-          principals: permissionsPrincipals,
-          objectMetadataId: objectIdByNameSingular.callRecording,
-        }))
+        !(await this.recordPermissionsOnlyRoleReadService.canRoleAccessSomeRecords(
+          {
+            operationType: 'read',
+            principals: permissionsPrincipals,
+            objectMetadataId: objectIdByNameSingular.callRecording,
+          },
+        ))
       ) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,

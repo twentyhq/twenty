@@ -342,7 +342,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         unreadableFieldMetadataIds:
-          await this.recordPermissionsService.findUnreadableFields({
+          await this.recordPermissionsOnlyRoleReadService.findUnreadableFields({
             principals: permissionsPrincipals,
             objectMetadataId: flatObjectMetadata.id,
           }),

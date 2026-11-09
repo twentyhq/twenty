@@ -29,6 +29,7 @@ export type View = {
   kanbanAggregateOperationFieldMetadataId?: string | null;
   mainGroupByFieldMetadataId?: string | null;
   shouldHideEmptyGroups: boolean;
+  shouldDisplayGroupsAsTabs?: boolean | null;
   kanbanColumnWidth?: number | null;
   groupLoadLimit?: number | null;
   calendarFieldMetadataId?: string | null;

@@ -1941,6 +1941,7 @@ input CreateViewInput {
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   position: Float = 0
+  shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
   visibility: ViewVisibility
@@ -2436,6 +2437,7 @@ enum FeatureFlagKey {
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
+  IS_RECORD_GROUP_TABS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
@@ -5683,6 +5685,7 @@ input UpdateViewInput {
   """
   openRecordIn: ViewOpenRecordIn
   position: Float
+  shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
@@ -6222,6 +6225,7 @@ type View {
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   position: Float!
+  shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
   type: ViewType!
   universalIdentifier: UUID!

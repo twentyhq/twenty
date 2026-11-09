@@ -13,13 +13,14 @@ import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
 import {
   type RecordSharingDTO,
   type RecordSharingGrantDTO,
@@ -47,8 +48,9 @@ export class RecordSharingReadService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
-    private readonly recordPermissionsService: RecordPermissionsService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
   async findRecordSharingPanel(
@@ -189,14 +191,18 @@ export class RecordSharingReadService {
       sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordPermissionsService.canRoleAccessSomeRecords({
-        principals:
-          await this.principalPermissionsService.resolvePermissionsPrincipals({
-            authContext: args.authContext,
-          }),
-        objectMetadataId: sharingObject.flatObjectMetadata.id,
-        operationType: 'update',
-      }))
+      (await this.recordPermissionsOnlyRoleReadService.canRoleAccessSomeRecords(
+        {
+          principals:
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+              {
+                authContext: args.authContext,
+              },
+            ),
+          objectMetadataId: sharingObject.flatObjectMetadata.id,
+          operationType: 'update',
+        },
+      ))
     );
   }
 
@@ -299,7 +305,7 @@ export class RecordSharingReadService {
         'roleIdsWithAllRecordsAccess',
       ]);
     const principals =
-      await this.principalPermissionsService.resolvePermissionsPrincipals({
+      await this.principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext,
       });
     const canAccessAllRecords =
@@ -386,7 +392,7 @@ export class RecordSharingReadService {
     sharingObject: RecordSharingObject;
   }): Promise<RecordPermissionsDTO> {
     const permissionsByRecordId =
-      await this.recordPermissionsService.findRecordsActions({
+      await this.recordPermissionsReadService.findRecordsActions({
         authContext: args.authContext,
         objectNameSingular: sharingObject.flatObjectMetadata.nameSingular,
         recordIds: [args.recordId],

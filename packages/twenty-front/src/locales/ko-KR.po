@@ -116,6 +116,11 @@ msgstr "\"{path}\"은 관계를 두 단계 이상 거칩니다."
 msgid "\"{path}\" is not a value"
 msgstr "\"{path}\"은 값이 아닙니다."
 
+#. js-lingui-id: ZIIOJj
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
+msgstr ""
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -2927,7 +2932,7 @@ msgid "agent"
 msgstr "에이전트"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -3246,6 +3251,7 @@ msgstr "정렬"
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-group/components/RecordGroupTabChip.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -4443,6 +4449,7 @@ msgid "Assignment"
 msgstr "할당"
 
 #. js-lingui-id: d/bvvp
+#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
 msgstr "어시스턴트"
@@ -4553,23 +4560,43 @@ msgstr "파일 첨부"
 msgid "Attach files"
 msgstr "파일 첨부"
 
+#. js-lingui-id: ieVzQB
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
+msgid "Attached this conversation to {recordCount} {objectLabelPlural}"
+msgstr ""
+
+#. js-lingui-id: ZkRvxR
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
+msgid "Attached this conversation to {recordCount} records"
+msgstr ""
+
 #. js-lingui-id: 4xOjp/
-#: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Attached this conversation to a record"
 msgstr "이 대화를 레코드에 연결했습니다"
 
 #. js-lingui-id: DCyq1H
-#: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Attached this conversation to the {objectLabel}"
 msgstr "이 대화를 {objectLabel}에 연결했습니다"
 
+#. js-lingui-id: 55tyIK
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
+msgid "Attaching this conversation to {recordCount} {objectLabelPlural}"
+msgstr ""
+
+#. js-lingui-id: gOvAKb
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
+msgid "Attaching this conversation to {recordCount} records"
+msgstr ""
+
 #. js-lingui-id: e9I63P
-#: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Attaching this conversation to a record"
 msgstr "이 대화를 레코드에 연결하는 중"
 
 #. js-lingui-id: 0/s5dI
-#: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Attaching this conversation to the {objectLabel}"
 msgstr "이 대화를 {objectLabel}에 연결하는 중"
 
@@ -7819,13 +7846,23 @@ msgstr "100만 토큰당 비용(USD)"
 msgid "Cost per million tokens for cached input (USD)"
 msgstr "캐시된 입력에 대한 100만 토큰당 비용(USD)"
 
+#. js-lingui-id: mxLDGf
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
+msgid "Could not attach this conversation to {recordCount} {objectLabelPlural}"
+msgstr ""
+
+#. js-lingui-id: JFMywX
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
+msgid "Could not attach this conversation to {recordCount} records"
+msgstr ""
+
 #. js-lingui-id: lvWtM4
-#: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Could not attach this conversation to a record"
 msgstr "이 대화를 레코드에 연결할 수 없습니다"
 
 #. js-lingui-id: 3KqAq7
-#: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
+#: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Could not attach this conversation to the {objectLabel}"
 msgstr "이 대화를 {objectLabel}에 연결할 수 없습니다"
 
@@ -10201,6 +10238,12 @@ msgstr "해제"
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainAiSetup.tsx
 msgid "Dismiss AI setup prompt"
 msgstr "AI 설정 프롬프트 닫기"
+
+#. js-lingui-id: Xm/s+u
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+msgid "Display"
+msgstr ""
 
 #. js-lingui-id: Ldgs6e
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
@@ -12806,6 +12849,11 @@ msgstr "응용 프로그램 설치에 실패했습니다."
 msgid "Failed to link the related records to this event"
 msgstr "관련 레코드를 이 이벤트에 연결하지 못했습니다"
 
+#. js-lingui-id: XC1d54
+#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+msgid "Failed to load agent details."
+msgstr ""
+
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -14473,6 +14521,11 @@ msgstr "그룹 이름"
 msgid "Group sorting"
 msgstr "그룹 정렬"
 
+#. js-lingui-id: 7kO0HM
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Group tabs"
+msgstr ""
+
 #. js-lingui-id: Qt5Mu7
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Grouped {objectLabel}"
@@ -14487,6 +14540,11 @@ msgstr "오류 코드 및 함수별로 그룹화됨"
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Grouping {objectLabel}"
 msgstr "{objectLabel} 그룹화 중"
+
+#. js-lingui-id: zhrjek
+#: src/modules/object-record/record-group/components/RecordGroupTabs.tsx
+msgid "Groups"
+msgstr ""
 
 #. js-lingui-id: R4r4XO
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -16152,6 +16210,11 @@ msgstr "이터레이터"
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "채팅이 {destinationChannelName} 채널로 이동합니다. 이 작업은 취소할 수 없습니다."
 
+#. js-lingui-id: yNfoGL
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
+msgid "Its code could not be moved into the step, so it cannot be edited here."
+msgstr ""
+
 #. js-lingui-id: J6OYmT
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Jade"
@@ -16876,6 +16939,11 @@ msgstr "{host}에서 마이크와 카메라를 사용하도록 허용"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
 msgid "Let each member decide for themselves"
 msgstr "각 구성원이 스스로 결정하도록 허용합니다"
+
+#. js-lingui-id: 3qTz94
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes."
+msgstr ""
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22549,6 +22617,7 @@ msgstr "수신자가 수신을 거부할 때 보게 되는 페이지 미리보�
 #: src/modules/ui/input/components/internal/date/components/DatePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation.tsx
+#: src/modules/validation-rules/utils/buildValidationRuleEditorFields.ts
 msgid "Previous"
 msgstr "이전"
 
@@ -25495,6 +25564,12 @@ msgstr "섹션"
 msgid "Section"
 msgstr "섹션"
 
+#. js-lingui-id: R4OWFD
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+msgid "Sections"
+msgstr ""
+
 #. js-lingui-id: a3LDKx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -28139,6 +28214,8 @@ msgid "Table, Kanban, Calendar"
 msgstr "테이블, 칸반, 캘린더"
 
 #. js-lingui-id: 38Or+7
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Tabs"
 msgstr ""
@@ -28633,6 +28710,11 @@ msgstr "전사를 준비하는 중입니다…"
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
 msgstr "이 한도가 적용되는 사용량입니다."
+
+#. js-lingui-id: S3wM+7
+#: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
+msgid "The value a field had before the update. Empty when the record is created."
+msgstr ""
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -29177,6 +29259,11 @@ msgstr "이 설정은 환경 변수로만 구성할 수 있습니다."
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This should never happen"
 msgstr "이런 일이 발생해서는 안 됩니다"
+
+#. js-lingui-id: v6DC3g
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
+msgid "This step runs from its original function"
+msgstr ""
 
 #. js-lingui-id: Ryrt8E
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
