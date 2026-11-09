@@ -20,11 +20,13 @@ export class IsX509CertificateConstraint implements ValidatorConstraintInterface
     }
 
     try {
-      const der = Buffer.from(getCertificateBase64Body(value), 'base64');
+      const base64Body = getCertificateBase64Body(value);
 
-      const cert = new crypto.X509Certificate(der);
+      const cert = new crypto.X509Certificate(
+        Buffer.from(base64Body, 'base64'),
+      );
 
-      return cert instanceof crypto.X509Certificate;
+      return cert.raw.toString('base64') === base64Body;
     } catch {
       return false;
     }
