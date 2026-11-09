@@ -22,7 +22,7 @@ import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolv
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-import { type RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
+import { type RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -295,8 +295,8 @@ describe('A restricted record on an object open by default', () => {
     }
 
     const readableEvents =
-      await getAppProviderByClassName<RecordEventPermissionsService>(
-        'RecordEventPermissionsService',
+      await getAppProviderByClassName<RecordEventPermissionsReadService>(
+        'RecordEventPermissionsReadService',
       ).filterReadableEvents({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId,

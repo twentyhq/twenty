@@ -20,8 +20,8 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
-import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
+import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
+import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -141,11 +141,11 @@ describe('RLS rules through a relation (integration)', () => {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
     });
-    await getAppProviderByClassName<AccessGroupService>(
-      'AccessGroupService',
+    await getAppProviderByClassName<AccessGroupSyncService>(
+      'AccessGroupSyncService',
     ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
-    await getAppProviderByClassName<RecordAccessGroupService>(
-      'RecordAccessGroupService',
+    await getAppProviderByClassName<RecordAccessGroupComputationService>(
+      'RecordAccessGroupComputationService',
     ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
@@ -274,12 +274,14 @@ describe('RLS rules through a relation (integration)', () => {
     personObjectMetadataId = await findObjectMetadataId('person');
     companyObjectMetadataId = await findObjectMetadataId('company');
 
-    [company, otherCompany] = await global.testDataSource.query(
-      `SELECT "id", "name", "employees" FROM ${COMPANY_TABLE} WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 2`,
-    );
+    company = { id: v4(), name: 'Relation original', employees: null };
+    otherCompany = { id: v4() };
+    person = { id: v4(), jobTitle: 'Original', companyId: company.id };
 
-    // Earlier specs in the shard can delete the seeded people
-    person = { id: v4(), jobTitle: '', companyId: company.id };
+    await global.testDataSource.query(
+      `INSERT INTO ${COMPANY_TABLE} ("id", "name") VALUES ($1, $2), ($3, 'Relation other')`,
+      [company.id, company.name, otherCompany.id],
+    );
     await global.testDataSource.query(
       `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle", "companyId") VALUES ($1, $2, $3)`,
       [person.id, person.jobTitle, person.companyId],
@@ -327,6 +329,10 @@ describe('RLS rules through a relation (integration)', () => {
     await global.testDataSource.query(
       `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
       [person.id],
+    );
+    await global.testDataSource.query(
+      `DELETE FROM ${COMPANY_TABLE} WHERE "id" = ANY($1)`,
+      [[company.id, otherCompany.id]],
     );
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,

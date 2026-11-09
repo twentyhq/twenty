@@ -14,8 +14,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
-import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
+import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
+import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -26,8 +26,8 @@ const PERSON_TABLE = `${SCHEMA}."person"`;
 type PersonRow = { id: string; jobTitle: string; accessGroupIds: number[] };
 
 describe('access group ids on records (integration)', () => {
-  let accessGroupService: AccessGroupService;
-  let recordAccessGroupService: RecordAccessGroupService;
+  let accessGroupSyncService: AccessGroupSyncService;
+  let recordAccessGroupComputationService: RecordAccessGroupComputationService;
   let objectMetadataId: string;
   let jobTitleFieldMetadataId: string;
   let originalPeople: Pick<PersonRow, 'id' | 'jobTitle'>[];
@@ -57,8 +57,8 @@ describe('access group ids on records (integration)', () => {
   };
 
   const syncAndRecompute = async () => {
-    await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
-    await recordAccessGroupService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
+    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
       {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         objectMetadataId,
@@ -67,11 +67,12 @@ describe('access group ids on records (integration)', () => {
   };
 
   beforeAll(async () => {
-    accessGroupService =
-      getAppProviderByClassName<AccessGroupService>('AccessGroupService');
-    recordAccessGroupService =
-      getAppProviderByClassName<RecordAccessGroupService>(
-        'RecordAccessGroupService',
+    accessGroupSyncService = getAppProviderByClassName<AccessGroupSyncService>(
+      'AccessGroupSyncService',
+    );
+    recordAccessGroupComputationService =
+      getAppProviderByClassName<RecordAccessGroupComputationService>(
+        'RecordAccessGroupComputationService',
       );
 
     [{ id: objectMetadataId }] = await global.testDataSource.query(
