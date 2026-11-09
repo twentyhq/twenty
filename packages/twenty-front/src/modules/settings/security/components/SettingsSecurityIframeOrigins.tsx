@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, normalizeIframeOrigin } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
@@ -11,8 +10,8 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { SettingsSecurityAddWebsiteForm } from '@/settings/security/components/SettingsSecurityAddWebsiteForm';
 import { SettingsSecurityIframeOriginsTable } from '@/settings/security/components/SettingsSecurityIframeOriginsTable';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import {
   GetWorkspaceAllowedEmbeddingOriginsDocument,
   UpdateWorkspaceAllowedEmbeddingOriginsDocument,
@@ -22,16 +21,6 @@ const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledForm = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledInputContainer = styled.div`
-  flex: 1;
-  min-width: 0;
 `;
 
 export const SettingsSecurityIframeOrigins = () => {
@@ -103,30 +92,18 @@ export const SettingsSecurityIframeOrigins = () => {
             <Button onClick={() => refetch()}>{t`Retry`}</Button>
           </>
         )}
-        <StyledForm>
-          <StyledInputContainer>
-            <SettingsTextInput
-              instanceId="allowed-iframe-origin"
-              aria-label={t`Website origin`}
-              placeholder="https://portal.example.com"
-              value={originInput}
-              disabled={isDisabled}
-              onChange={(value) => {
-                setOriginInput(value);
-                setError(undefined);
-              }}
-              onInputEnter={handleAddOrigin}
-              error={error}
-              fullWidth
-            />
-          </StyledInputContainer>
-          <Button
-            disabled={isDisabled || !isNonEmptyString(originInput.trim())}
-            onClick={handleAddOrigin}
-          >
-            {t`Add website`}
-          </Button>
-        </StyledForm>
+        <SettingsSecurityAddWebsiteForm
+          instanceId="allowed-iframe-origin"
+          placeholder="https://portal.example.com"
+          value={originInput}
+          disabled={isDisabled}
+          error={error}
+          onChange={(value) => {
+            setOriginInput(value);
+            setError(undefined);
+          }}
+          onSubmit={() => void handleAddOrigin()}
+        />
         <SettingsSecurityIframeOriginsTable
           disabled={isDisabled}
           origins={origins}

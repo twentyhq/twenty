@@ -1,29 +1,15 @@
 import { useState } from 'react';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined, normalizeIframeOrigin } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 
+import { SettingsSecurityAddWebsiteForm } from '@/settings/security/components/SettingsSecurityAddWebsiteForm';
 import { useSettingsSecurityIframeMediaPermissionsOrThrow } from '@/settings/security/contexts/SettingsSecurityIframeMediaPermissionsContext';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 type SettingsSecurityIframeMediaPermissionFormProps = {
   disabled: boolean;
   permissions: IframeMediaPermission[];
 };
-
-const StyledForm = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledInputContainer = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
 
 export const SettingsSecurityIframeMediaPermissionForm = ({
   disabled,
@@ -60,29 +46,19 @@ export const SettingsSecurityIframeMediaPermissionForm = ({
   };
 
   return (
-    <StyledForm role="group" aria-label={t`Add embedded website`}>
-      <StyledInputContainer>
-        <SettingsTextInput
-          instanceId="iframe-media-permission-origin"
-          aria-label={t`Website origin`}
-          placeholder="https://workspace.aircall.io"
-          value={originInput}
-          disabled={disabled}
-          onChange={(value) => {
-            setOriginInput(value);
-            setError(undefined);
-          }}
-          onInputEnter={() => void handleAddOrigin()}
-          error={error}
-          fullWidth
-        />
-      </StyledInputContainer>
-      <Button
-        disabled={disabled || !isNonEmptyString(originInput.trim())}
-        onClick={() => void handleAddOrigin()}
-      >
-        {t`Add website`}
-      </Button>
-    </StyledForm>
+    <div role="group" aria-label={t`Add embedded website`}>
+      <SettingsSecurityAddWebsiteForm
+        instanceId="iframe-media-permission-origin"
+        placeholder="https://workspace.aircall.io"
+        value={originInput}
+        disabled={disabled}
+        error={error}
+        onChange={(value) => {
+          setOriginInput(value);
+          setError(undefined);
+        }}
+        onSubmit={() => void handleAddOrigin()}
+      />
+    </div>
   );
 };
