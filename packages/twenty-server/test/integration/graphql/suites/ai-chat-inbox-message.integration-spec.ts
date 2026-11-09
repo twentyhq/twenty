@@ -498,12 +498,15 @@ describe('Sending an inbox message as an application', () => {
     it('mentions a member again for a new message, never for a message sent again', async () => {
       const threadKey = `inbox-thread-${uuidv4()}`;
       const mentionThreadId = buildThreadId(threadKey);
-      const sendComment = (idempotencyKey: string) =>
+      const sendComment = (
+        idempotencyKey: string,
+        mentionedWorkspaceMemberId = JONY,
+      ) =>
         sendInboxMessage(applicationToken, {
           toolCall: null,
           threadKey,
           idempotencyKey,
-          text: `${mention(JONY)}, can you check the figures?`,
+          text: `${mention(mentionedWorkspaceMemberId)}, can you check the figures?`,
         });
       const findJonyParticipant = () =>
         findMyParticipant(mentionThreadId, APPLE_JONY_MEMBER_ACCESS_TOKEN);
@@ -520,6 +523,13 @@ describe('Sending an inbox message as an application', () => {
         expect(await findJonyParticipant()).toMatchObject({
           lastMentionedAt: resolvedParticipant?.lastMentionedAt,
           mentionsResolvedAt: resolvedParticipant?.mentionsResolvedAt,
+        });
+
+        expect(
+          (await sendComment('comment:1', JANE)).body.errors,
+        ).toBeUndefined();
+        expect(await findMyParticipant(mentionThreadId)).toMatchObject({
+          lastMentionedAt: null,
         });
 
         await sendComment('comment:2');
