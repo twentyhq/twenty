@@ -137,8 +137,6 @@ const omit = ({
     metadataMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       flatApplicationMaps: { byId: {} },
       featureFlagsMap: {},
       rolesPermissions: {},

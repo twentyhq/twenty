@@ -1,6 +1,8 @@
 import {
   FieldMetadataType,
   RelationType,
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -12,10 +14,9 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
-import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
+import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 import {
   buildRecordFilterForRole,
   buildRowLevelPermissionRecordFilter,
@@ -180,44 +181,26 @@ const flatFieldMetadataMaps = buildMaps([
   }),
 ]);
 
-const FLAT_ENTITY_DEFAULTS = {
-  applicationId: 'application-id',
-  applicationUniversalIdentifier: 'application-universal-identifier',
-  workspaceId: 'workspace-id',
-  createdAt: '2026-01-01T00:00:00.000Z',
-  updatedAt: '2026-01-01T00:00:00.000Z',
-};
-
 const buildPredicate = (
   id: string,
   roleId: string,
-  predicate: Partial<FlatRowLevelPermissionPredicate>,
-): FlatRowLevelPermissionPredicate => ({
+  predicate: Partial<RowLevelPermissionPredicate>,
+): RowLevelPermissionPredicate => ({
   id,
-  universalIdentifier: id,
-  ...FLAT_ENTITY_DEFAULTS,
   roleId,
   objectMetadataId: OBJECT_ID,
   fieldMetadataId: FIELD_ID,
   relationFieldMetadataId: null,
-  fieldMetadataUniversalIdentifier: FIELD_ID,
-  relationFieldMetadataUniversalIdentifier: null,
-  objectMetadataUniversalIdentifier: OBJECT_ID,
-  roleUniversalIdentifier: roleId,
-  workspaceMemberFieldMetadataUniversalIdentifier: null,
-  rowLevelPermissionPredicateGroupUniversalIdentifier: null,
   operand: RowLevelPermissionPredicateOperand.CONTAINS,
   value: null,
   subFieldName: null,
   workspaceMemberFieldMetadataId: null,
   workspaceMemberSubFieldName: null,
   rowLevelPermissionPredicateGroupId: null,
-  positionInRowLevelPermissionPredicateGroup: null,
-  deletedAt: null,
   ...predicate,
 });
 
-const flatRowLevelPermissionPredicateMaps = buildMaps([
+const predicates = [
   buildPredicate('predicate-user', USER_ROLE_ID, { value: 'visible-to-user' }),
   buildPredicate('predicate-application', APPLICATION_ROLE_ID, {
     value: 'visible-to-application',
@@ -289,39 +272,27 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
     relationFieldMetadataId: 'relation-field',
     value: 'reached-through-relation',
   }),
-]);
+];
 
 const buildPredicateGroup = (
   id: string,
   roleId: string,
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,
   parentRowLevelPermissionPredicateGroupId: string | null = null,
-): FlatRowLevelPermissionPredicateGroup => ({
+): RowLevelPermissionPredicateGroup => ({
   id,
-  universalIdentifier: id,
-  ...FLAT_ENTITY_DEFAULTS,
   objectMetadataId: OBJECT_ID,
   positionInRowLevelPermissionPredicateGroup: null,
   canReadRecords: true,
-  canCreateRecords: true,
   canUpdateRecords: true,
   canSoftDeleteRecords: true,
   canDestroyRecords: true,
-  childRowLevelPermissionPredicateGroupIds: [],
-  rowLevelPermissionPredicateIds: [],
-  childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
-  rowLevelPermissionPredicateUniversalIdentifiers: [],
-  objectMetadataUniversalIdentifier: OBJECT_ID,
-  roleUniversalIdentifier: roleId,
-  parentRowLevelPermissionPredicateGroupUniversalIdentifier:
-    parentRowLevelPermissionPredicateGroupId,
   roleId,
   logicalOperator,
   parentRowLevelPermissionPredicateGroupId,
-  deletedAt: null,
 });
 
-const flatRowLevelPermissionPredicateGroupMaps = buildMaps([
+const predicateGroups = [
   buildPredicateGroup(
     'or-group',
     OR_GROUP_ROLE_ID,
@@ -348,7 +319,22 @@ const flatRowLevelPermissionPredicateGroupMaps = buildMaps([
     OR_GROUP_ONLY_MEMBER_ROLE_ID,
     RowLevelPermissionPredicateGroupLogicalOperator.OR,
   ),
-]);
+];
+
+const findRule = (roleId: string) => {
+  const rolePredicates = predicates.filter(
+    (predicate) => predicate.roleId === roleId,
+  );
+
+  return rolePredicates.length === 0
+    ? undefined
+    : {
+        predicates: rolePredicates,
+        predicateGroups: predicateGroups.filter(
+          (predicateGroup) => predicateGroup.roleId === roleId,
+        ),
+      };
+};
 
 const buildWorkspaceMember = (workspaceMember: Record<string, unknown>) => ({
   id: 'workspace-member-1',
@@ -361,13 +347,15 @@ const build = (
 ) =>
   buildRowLevelPermissionRecordFilter({
     isRelationHopEnabled: false,
-    flatRowLevelPermissionPredicateMaps,
-    flatRowLevelPermissionPredicateGroupMaps,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
-    objectMetadata: flatObjectMetadata,
-    roleIds,
-    workspaceMember,
+    rowLevelPermissionRules: roleIds.map(findRule),
+    memberFieldValues: buildMemberFieldValuesOrThrow({
+      workspaceMember,
+      predicates,
+      flatFieldMetadataMaps,
+    }),
+    currentWorkspaceMemberId: workspaceMember?.id,
   });
 
 describe('buildRowLevelPermissionRecordFilter', () => {
@@ -525,12 +513,9 @@ describe('buildRecordFilterForRole with access group member values', () => {
   }) =>
     buildRecordFilterForRole({
       isRelationHopEnabled: false,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
-      objectMetadata: flatObjectMetadata,
-      roleId,
+      rowLevelPermissionRule: findRule(roleId),
       memberFieldValues,
     });
 

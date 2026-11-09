@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
-import { hasWorkspaceMemberBoundPredicates } from 'src/engine/permissions/internal/rls/utils/has-workspace-member-bound-predicates.util';
+import { findWorkspaceMemberBoundPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-bound-predicates.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -36,16 +36,12 @@ export class PermissionsMetadataMapsService {
       featureFlagsMap,
       rolesPermissions,
       flatApplicationMaps,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
       'featureFlagsMap',
       'rolesPermissions',
       'flatApplicationMaps',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
     const metadataMaps: PermissionsMetadataMaps = {
@@ -54,13 +50,9 @@ export class PermissionsMetadataMapsService {
       featureFlagsMap,
       rolesPermissions,
       flatApplicationMaps,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
     };
 
-    if (
-      !hasWorkspaceMemberBoundPredicates(flatRowLevelPermissionPredicateMaps)
-    ) {
+    if (findWorkspaceMemberBoundPredicates(rolesPermissions).length === 0) {
       return metadataMaps;
     }
 
