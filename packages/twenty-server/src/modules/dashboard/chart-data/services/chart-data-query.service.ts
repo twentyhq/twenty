@@ -4,10 +4,12 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   type ChartFilter,
+  type DashboardFilterBinding,
   ObjectRecordGroupByDateGranularity,
   OrderByWithGroupBy,
 } from 'twenty-shared/types';
 import {
+  getDashboardFilterCandidateFieldMetadataIds,
   isDefined,
   isFieldMetadataArrayKind,
   isFieldMetadataDateKind,
@@ -24,6 +26,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 import { GRAPH_DEFAULT_ORDER_BY } from 'src/modules/dashboard/chart-data/constants/graph-default-order-by.constant';
+import { type DashboardFilterValueInput } from 'src/modules/dashboard/chart-data/dtos/inputs/dashboard-filter-value.input';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -31,11 +34,11 @@ import {
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
+import { buildChartGqlOperationFilterOrThrow } from 'src/modules/dashboard/chart-data/utils/build-chart-gql-operation-filter-or-throw.util';
 import {
   buildGroupByFieldObject,
   type GroupByFieldObject,
 } from 'src/modules/dashboard/chart-data/utils/build-group-by-field-object.util';
-import { convertChartFilterToGqlOperationFilter } from 'src/modules/dashboard/chart-data/utils/convert-chart-filter-to-gql-operation-filter.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getGroupByOrderBy } from 'src/modules/dashboard/chart-data/utils/get-group-by-order-by.util';
 import { isRelationNestedFieldDateKind } from 'src/modules/dashboard/chart-data/utils/is-relation-nested-field-date-kind.util';
@@ -52,6 +55,9 @@ type ExecuteGroupByQueryParams = {
   aggregateFieldMetadataId: string;
   aggregateOperation: AggregateOperations;
   filter?: ChartFilter;
+  dashboardFilterBindings?: DashboardFilterBinding[] | null;
+  dashboardFilterValues?: DashboardFilterValueInput[] | null;
+  viewerTimeZone?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
@@ -81,6 +87,9 @@ export class ChartDataQueryService {
     aggregateFieldMetadataId,
     aggregateOperation,
     filter,
+    dashboardFilterBindings,
+    dashboardFilterValues,
+    viewerTimeZone,
     dateGranularity,
     userTimezone,
     firstDayOfTheWeek,
@@ -96,11 +105,20 @@ export class ChartDataQueryService {
       ? authContext.workspaceMemberId
       : undefined;
 
-    const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
-      filter,
+    const gqlOperationFilter = buildChartGqlOperationFilterOrThrow({
+      widgetFilter: filter,
+      widgetTimeZone: userTimezone,
+      dashboardFilterValues,
+      viewerTimeZone,
+      dashboardFilterBindings,
+      ...getDashboardFilterCandidateFieldMetadataIds({
+        groupByFieldMetadataId,
+        filter,
+      }),
+      firstDayOfTheWeek,
+      flatObjectMetadata,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
-      userTimezone,
       currentWorkspaceMemberId,
     });
 

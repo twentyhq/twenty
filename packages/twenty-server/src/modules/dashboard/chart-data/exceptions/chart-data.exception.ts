@@ -12,6 +12,7 @@ export enum ChartDataExceptionCode {
   QUERY_EXECUTION_FAILED = 'QUERY_EXECUTION_FAILED',
   TRANSFORMATION_FAILED = 'TRANSFORMATION_FAILED',
   PERMISSION_DENIED = 'PERMISSION_DENIED',
+  INVALID_DASHBOARD_FILTER = 'INVALID_DASHBOARD_FILTER',
 }
 
 const getChartDataExceptionUserFriendlyMessage = (
@@ -32,6 +33,8 @@ const getChartDataExceptionUserFriendlyMessage = (
       return msg`Transformation failed.`;
     case ChartDataExceptionCode.PERMISSION_DENIED:
       return msg`You do not have permission to view this data.`;
+    case ChartDataExceptionCode.INVALID_DASHBOARD_FILTER:
+      return msg`The dashboard filter cannot be applied to this widget.`;
     default:
       assertUnreachable(code);
   }
@@ -62,6 +65,7 @@ export const generateChartDataExceptionMessage = (
     [ChartDataExceptionCode.QUERY_EXECUTION_FAILED]: `Query execution failed${context ? `: ${context}` : ''}`,
     [ChartDataExceptionCode.TRANSFORMATION_FAILED]: `Transformation failed${context ? `: ${context}` : ''}`,
     [ChartDataExceptionCode.PERMISSION_DENIED]: `Permission denied${context ? `: ${context}` : ''}`,
+    [ChartDataExceptionCode.INVALID_DASHBOARD_FILTER]: `Invalid dashboard filter${context ? `: ${context}` : ''}`,
   };
 
   return messages[code];

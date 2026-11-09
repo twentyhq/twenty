@@ -1,5 +1,41 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Page layout with filters update should fail when a default value holds a date with a time 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Value "2026-01-01T10:00" of the default value of dashboard filter "Date range" is not valid for operand "IS_AFTER". Expected a YYYY-MM-DD date between years 0001 and 9999.",
+              "userFriendlyMessage": "Dashboard filter default value is not valid for this operand",
+              "value": "2026-01-01T10:00",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Dashboard filter default value is not valid for this operand",
+  },
+  "message": "Multiple validation errors occurred while updating page layout with tabs",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Page layout with filters update should fail when a default value holds the object form of a relative date 1`] = `
 {
   "extensions": {
