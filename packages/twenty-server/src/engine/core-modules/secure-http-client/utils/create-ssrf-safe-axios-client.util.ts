@@ -34,7 +34,6 @@ const assertAllowedProtocol = (
   }
 };
 
-// Framework-free so the HTTP egress Lambda can bundle the same guard the server uses.
 export const createSsrfSafeAxiosClient = ({
   config,
   allowedInternalHosts,
