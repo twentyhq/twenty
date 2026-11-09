@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
@@ -305,10 +306,23 @@ export class TwoFactorAuthenticationResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
   ): Promise<TwoFactorAuthenticationBackupCodesDTO> {
-    const backupCodes =
-      await this.twoFactorAuthenticationBackupCodeService.regenerateBackupCodesOrThrow(
-        { userId: user.id, workspaceId: workspace.id, otp },
+    const { twoFactorAuthenticationMethodId } =
+      await this.twoFactorAuthenticationService.assertFreshStepUpAuthenticationOrThrow(
+        {
+          userId: user.id,
+          workspaceId: workspace.id,
+          otp,
+          otpRequiredMessage: msg`Enter your two-factor authentication code to generate new backup codes.`,
+          twoFactorAuthenticationRequiredMessage: msg`Set up two-factor authentication before generating backup codes.`,
+        },
       );
+
+    const backupCodes =
+      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodes({
+        userId: user.id,
+        workspaceId: workspace.id,
+        twoFactorAuthenticationMethodId,
+      });
 
     return { backupCodes };
   }

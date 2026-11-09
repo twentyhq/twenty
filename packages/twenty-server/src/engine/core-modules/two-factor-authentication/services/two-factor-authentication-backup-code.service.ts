@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type EntityManager,
@@ -22,7 +21,6 @@ import {
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-backup-code.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
-import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { generateTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/generate-two-factor-authentication-recovery-code.util';
 import { hashTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/hash-two-factor-authentication-recovery-code.util';
 import { revokeTwoFactorAuthenticationAppTokens } from 'src/engine/core-modules/two-factor-authentication/utils/revoke-two-factor-authentication-app-tokens.util';
@@ -35,7 +33,6 @@ export class TwoFactorAuthenticationBackupCodeService {
   constructor(
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
-    private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
   ) {}
 
   async issueBackupCodes({
@@ -74,33 +71,6 @@ export class TwoFactorAuthenticationBackupCodeService {
     });
 
     return backupCodes;
-  }
-
-  async regenerateBackupCodesOrThrow({
-    userId,
-    workspaceId,
-    otp,
-  }: {
-    userId: UserEntity['id'];
-    workspaceId: WorkspaceEntity['id'];
-    otp?: string;
-  }): Promise<string[]> {
-    const { twoFactorAuthenticationMethodId } =
-      await this.twoFactorAuthenticationService.assertFreshStepUpAuthenticationOrThrow(
-        {
-          userId,
-          workspaceId,
-          otp,
-          otpRequiredMessage: msg`Enter your two-factor authentication code to generate new backup codes.`,
-          twoFactorAuthenticationRequiredMessage: msg`Set up two-factor authentication before generating backup codes.`,
-        },
-      );
-
-    return this.issueBackupCodes({
-      userId,
-      workspaceId,
-      twoFactorAuthenticationMethodId,
-    });
   }
 
   async getRemainingBackupCodeCount({
