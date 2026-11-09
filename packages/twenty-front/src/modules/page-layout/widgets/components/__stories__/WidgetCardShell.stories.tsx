@@ -17,7 +17,7 @@ import { WidgetDashboardFilterProvider } from '@/page-layout/widgets/components/
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore } from 'jotai';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   FirstDayOfTheWeek,
   type PageLayoutFilterCondition,
@@ -32,6 +32,7 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 type WidgetCardShellStoryProps = {
@@ -116,6 +117,11 @@ const DATE_RANGE_FILTER_ID = 'date-range-filter-id';
 const opportunityObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('opportunity');
 
+const closeDateField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: opportunityObjectMetadataItem,
+  fieldName: 'closeDate',
+});
+
 const THIS_MONTH_CONDITIONS = [
   {
     operand: ViewFilterOperand.IS_RELATIVE,
@@ -124,10 +130,15 @@ const THIS_MONTH_CONDITIONS = [
 ];
 
 type DashboardFilterWidgetCardShellStoryProps = {
+  dashboardFilterBindings?: {
+    pageLayoutFilterId: string;
+    fieldMetadataId: string | null;
+  }[];
   conditions?: PageLayoutFilterCondition[];
 };
 
 const DashboardFilterWidgetCardShellStory = ({
+  dashboardFilterBindings = [],
   conditions = THIS_MONTH_CONDITIONS,
 }: DashboardFilterWidgetCardShellStoryProps) => {
   const store = createStore();
@@ -139,6 +150,7 @@ const DashboardFilterWidgetCardShellStory = ({
     configuration: {
       __typename: 'RecordTableConfiguration' as const,
       configurationType: WidgetConfigurationType.RECORD_TABLE,
+      dashboardFilterBindings,
     },
   };
 
@@ -316,13 +328,93 @@ export const FlushTasks: Story = {
   },
 };
 
-export const DashboardFilterApplied: Story = {
+export const DashboardFilterFollowedByDefault: Story = {
   render: () => <DashboardFilterWidgetCardShellStory />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Opportunities')).toBeVisible();
+    // Until the mocked metadata loads, the widget has no fields and shows the unresolved pill
+    await waitFor(() =>
+      expect(canvas.queryByText(/Date range/)).not.toBeInTheDocument(),
+    );
     expect(canvas.queryByText('Invalid filter')).not.toBeInTheDocument();
+  },
+};
+
+export const DashboardFilterOverridePill: Story = {
+  render: () => (
+    <DashboardFilterWidgetCardShellStory
+      dashboardFilterBindings={[
+        {
+          pageLayoutFilterId: DATE_RANGE_FILTER_ID,
+          fieldMetadataId: closeDateField.id,
+        },
+      ]}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const pill = await canvas.findByText('Date range · Close date');
+
+    expect(pill).toBeVisible();
+
+    await userEvent.hover(pill);
+
+    expect(
+      await body.findByText('Date range filters this widget on Close date.'),
+    ).toBeVisible();
+  },
+};
+
+export const DashboardFilterIgnoredPill: Story = {
+  render: () => (
+    <DashboardFilterWidgetCardShellStory
+      dashboardFilterBindings={[
+        { pageLayoutFilterId: DATE_RANGE_FILTER_ID, fieldMetadataId: null },
+      ]}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const pill = await canvas.findByText('Ignores Date range');
+
+    expect(canvas.queryByText(/Date range ·/)).not.toBeInTheDocument();
+
+    await userEvent.hover(pill);
+
+    expect(
+      await body.findByText(
+        "The Date range filter doesn't apply to this widget.",
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const DashboardFilterUnresolvedOverridePill: Story = {
+  render: () => (
+    <DashboardFilterWidgetCardShellStory
+      dashboardFilterBindings={[
+        {
+          pageLayoutFilterId: DATE_RANGE_FILTER_ID,
+          fieldMetadataId: 'deleted-field-id',
+        },
+      ]}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.hover(await canvas.findByText('Ignores Date range'));
+
+    expect(
+      await body.findByText(
+        "The date field chosen for Date range on this widget is unavailable. Pick another one in the widget's settings.",
+      ),
+    ).toBeVisible();
   },
 };
 
@@ -338,5 +430,6 @@ export const InvalidDashboardFilter: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Invalid filter')).toBeVisible();
+    expect(canvas.queryByText(/Date range/)).not.toBeInTheDocument();
   },
 };

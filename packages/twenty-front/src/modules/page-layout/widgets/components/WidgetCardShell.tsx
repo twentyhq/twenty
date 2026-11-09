@@ -3,6 +3,7 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { useWidgetDashboardFilter } from '@/page-layout/hooks/useWidgetDashboardFilter';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
+import { WidgetDashboardFilterPills } from '@/page-layout/widgets/components/WidgetDashboardFilterPills';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
 import { PageLayoutWidgetStatusDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetStatusDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
@@ -18,6 +19,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 import {
@@ -66,7 +68,8 @@ export const WidgetCardShell = ({
   const { t } = useLingui();
   const theme = useTheme();
   const { layoutMode, presentation } = usePageLayoutContentContext();
-  const { isInvalid: isDashboardFilterInvalid } = useWidgetDashboardFilter();
+  const { isInvalid: isDashboardFilterInvalid, indicators } =
+    useWidgetDashboardFilter();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
@@ -112,6 +115,13 @@ export const WidgetCardShell = ({
             isResizing={isResizing}
             title={widget.title}
             onRemove={onRemove}
+            headerPills={
+              hasAccess &&
+              !isDashboardFilterInvalid &&
+              isNonEmptyArray(indicators) ? (
+                <WidgetDashboardFilterPills indicators={indicators} />
+              ) : undefined
+            }
             forbiddenDisplay={
               !hasAccess && (
                 <PageLayoutWidgetForbiddenDisplay
