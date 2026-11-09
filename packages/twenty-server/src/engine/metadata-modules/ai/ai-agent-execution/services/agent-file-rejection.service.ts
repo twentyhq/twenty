@@ -89,8 +89,6 @@ export class AgentFileRejectionService {
         break;
       }
 
-      this.logger.warn(`Provider refused a file: ${rejection.message}`);
-
       const prompt = await buildFallbackPrompt({
         params: currentParams,
         model,
@@ -100,6 +98,8 @@ export class AgentFileRejectionService {
       if (prompt === currentParams.prompt) {
         continue;
       }
+
+      this.logger.warn(`Provider refused a file: ${rejection.message}`);
 
       currentParams = { ...currentParams, prompt };
 
