@@ -2,9 +2,11 @@ import { Logger } from '@nestjs/common';
 
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
+import { isDefined } from 'twenty-shared/utils';
 
 import { GroupRatePacer } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueGroupMaxRate } from 'src/engine/core-modules/message-queue/types/message-queue-group-max-rate.type';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const QUEUE = MessageQueue.logicFunctionQueue;
@@ -13,6 +15,19 @@ const NOW_MS = 1_800_000_000_000;
 const APPLICATION_LIMITS = {
   application: { max: 3, durationMs: 3_000 },
 };
+
+const withMaxRates = (
+  limits: Record<string, MessageQueueGroupMaxRate>,
+  requests: { groupKeys: string[]; jobCount: number }[],
+) =>
+  requests.map(({ groupKeys, jobCount }) => ({
+    jobCount,
+    maxRates: groupKeys.flatMap((groupKey) => {
+      const maxRate = limits[groupKey.split(':')[0]];
+
+      return isDefined(maxRate) ? [{ groupKey, maxRate }] : [];
+    }),
+  }));
 
 const createPacer = async () => {
   const redis: Redis = new RedisMock();
@@ -68,8 +83,9 @@ describe('GroupRatePacer', () => {
 
     const delays = await pacer.computeDelays({
       queueName: QUEUE,
-      requests: [{ groupKeys: ['workspace:A'], jobCount: 2 }],
-      groupRateLimits: APPLICATION_LIMITS,
+      requests: withMaxRates(APPLICATION_LIMITS, [
+        { groupKeys: ['workspace:A'], jobCount: 2 },
+      ]),
     });
 
     expect(delays).toBeUndefined();
@@ -81,8 +97,9 @@ describe('GroupRatePacer', () => {
 
     const delays = await pacer.computeDelays({
       queueName: QUEUE,
-      requests: [{ groupKeys: ['application:H'], jobCount: 5 }],
-      groupRateLimits: APPLICATION_LIMITS,
+      requests: withMaxRates(APPLICATION_LIMITS, [
+        { groupKeys: ['application:H'], jobCount: 5 },
+      ]),
     });
 
     expect(delays).toEqual([[0, 0, 0, 1_000, 2_000]]);
@@ -92,8 +109,9 @@ describe('GroupRatePacer', () => {
     const { pacer } = await createPacer();
     const request = {
       queueName: QUEUE,
-      requests: [{ groupKeys: ['application:H'], jobCount: 3 }],
-      groupRateLimits: APPLICATION_LIMITS,
+      requests: withMaxRates(APPLICATION_LIMITS, [
+        { groupKeys: ['application:H'], jobCount: 3 },
+      ]),
     };
 
     await pacer.computeDelays(request);
@@ -105,8 +123,9 @@ describe('GroupRatePacer', () => {
     const { pacer } = await createPacer();
     const request = {
       queueName: QUEUE,
-      requests: [{ groupKeys: ['application:H'], jobCount: 3 }],
-      groupRateLimits: APPLICATION_LIMITS,
+      requests: withMaxRates(APPLICATION_LIMITS, [
+        { groupKeys: ['application:H'], jobCount: 3 },
+      ]),
     };
 
     await pacer.computeDelays(request);
@@ -120,10 +139,12 @@ describe('GroupRatePacer', () => {
 
     const delays = await pacer.computeDelays({
       queueName: QUEUE,
-      requests: [{ groupKeys: ['application:H'], jobCount: 3 }],
-      groupRateLimits: {
-        application: { max: 3, durationMs: 3_000, burst: 1 },
-      },
+      requests: withMaxRates(
+        {
+          application: { max: 3, durationMs: 3_000, burst: 1 },
+        },
+        [{ groupKeys: ['application:H'], jobCount: 3 }],
+      ),
     });
 
     expect(delays).toEqual([[0, 1_000, 2_000]]);
@@ -138,17 +159,17 @@ describe('GroupRatePacer', () => {
 
     await pacer.computeDelays({
       queueName: QUEUE,
-      requests: [{ groupKeys: ['application:H'], jobCount: 1 }],
-      groupRateLimits,
+      requests: withMaxRates(groupRateLimits, [
+        { groupKeys: ['application:H'], jobCount: 1 },
+      ]),
     });
 
     const delays = await pacer.computeDelays({
       queueName: QUEUE,
-      requests: [
+      requests: withMaxRates(groupRateLimits, [
         { groupKeys: ['workspace:A', 'application:H'], jobCount: 1 },
         { groupKeys: ['workspace:A', 'application:Q'], jobCount: 1 },
-      ],
-      groupRateLimits,
+      ]),
     });
 
     expect(delays).toEqual([[10_000], [1_000]]);
@@ -159,8 +180,9 @@ describe('GroupRatePacer', () => {
 
     await pacer.computeDelays({
       queueName: QUEUE,
-      requests: [{ groupKeys: ['application:H'], jobCount: 5 }],
-      groupRateLimits: APPLICATION_LIMITS,
+      requests: withMaxRates(APPLICATION_LIMITS, [
+        { groupKeys: ['application:H'], jobCount: 5 },
+      ]),
     });
 
     const slotKey = `${KEY_PREFIX}:${QUEUE}:fair:slot:application:H`;
@@ -176,8 +198,9 @@ describe('GroupRatePacer', () => {
 
     const delays = await pacer.computeDelays({
       queueName: QUEUE,
-      requests: [{ groupKeys: ['application:H'], jobCount: 1 }],
-      groupRateLimits: APPLICATION_LIMITS,
+      requests: withMaxRates(APPLICATION_LIMITS, [
+        { groupKeys: ['application:H'], jobCount: 1 },
+      ]),
     });
 
     expect(delays).toBeUndefined();

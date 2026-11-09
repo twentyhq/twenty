@@ -18,7 +18,14 @@ import { FAIR_TAG_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/f
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { runRedisScript } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
 
-export type FairTicketRequest = { groupKeys: string[]; jobCount: number };
+export type FairTicketLane = { name: string; weight: number };
+
+export type FairTicketRequest = {
+  groupKeys: string[];
+  jobCount: number;
+  workspaceGroupKey?: string;
+  lane?: FairTicketLane;
+};
 
 export type FairTicket = { tag: number; weight: number };
 
@@ -63,17 +70,29 @@ export class FairTicketAllocator {
           ...distinctGroupKeys.map(
             (groupKey) => `${fairKeyPrefix}clock:${groupKey}`,
           ),
+          ...distinctGroupKeys.map(
+            (groupKey) => `${fairKeyPrefix}lanes:${groupKey}`,
+          ),
         ],
         args: [
           FAIR_CLOCK_TTL_MS,
           distinctGroupKeys.length,
           ...distinctGroupKeys,
           requests.length,
-          ...requests.flatMap(({ groupKeys, jobCount }) => [
-            jobCount,
-            groupKeys.length,
-            ...groupKeys.map((groupKey) => groupKeyIndexes.get(groupKey) ?? 0),
-          ]),
+          ...requests.flatMap(
+            ({ groupKeys, jobCount, workspaceGroupKey, lane }) => [
+              jobCount,
+              groupKeys.length,
+              ...groupKeys.map(
+                (groupKey) => groupKeyIndexes.get(groupKey) ?? 0,
+              ),
+              isDefined(workspaceGroupKey)
+                ? (groupKeyIndexes.get(workspaceGroupKey) ?? 0)
+                : 0,
+              lane?.name ?? '',
+              lane?.weight ?? 0,
+            ],
+          ),
         ],
       });
       const [base, ...values] = String(rawTickets).split(' ').map(Number);

@@ -589,7 +589,13 @@ describe('BullMQDriver fair tickets', () => {
 
     expect(mockAllocateTickets).toHaveBeenCalledWith({
       queueName: MessageQueue.workspaceQueue,
-      requests: [{ groupKeys: ['workspace:ws-1'], jobCount: 1 }],
+      requests: [
+        {
+          groupKeys: ['workspace:ws-1'],
+          jobCount: 1,
+          workspaceGroupKey: 'workspace:ws-1',
+        },
+      ],
     });
     expect(mockAdd).toHaveBeenCalledWith(
       'job',
@@ -617,7 +623,11 @@ describe('BullMQDriver fair tickets', () => {
     expect(mockAllocateTickets).toHaveBeenCalledWith({
       queueName: MessageQueue.workspaceQueue,
       requests: [
-        { groupKeys: ['workspace:ws-1', 'application:app-1'], jobCount: 1 },
+        {
+          groupKeys: ['workspace:ws-1', 'application:app-1'],
+          jobCount: 1,
+          workspaceGroupKey: 'workspace:ws-1',
+        },
       ],
     });
   });
@@ -648,6 +658,7 @@ describe('BullMQDriver fair tickets', () => {
             `application:${TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER}`,
           ],
           jobCount: 1,
+          workspaceGroupKey: 'workspace:ws-1',
         },
       ],
     });
@@ -683,7 +694,11 @@ describe('BullMQDriver fair tickets', () => {
     expect(mockAllocateTickets).toHaveBeenCalledWith({
       queueName: MessageQueue.workspaceQueue,
       requests: [
-        { groupKeys: ['workspace:ws-1', 'integration:slack'], jobCount: 1 },
+        {
+          groupKeys: ['workspace:ws-1', 'integration:slack'],
+          jobCount: 1,
+          workspaceGroupKey: 'workspace:ws-1',
+        },
       ],
     });
   });
@@ -706,8 +721,16 @@ describe('BullMQDriver fair tickets', () => {
     expect(mockAllocateTickets).toHaveBeenCalledWith({
       queueName: MessageQueue.workspaceQueue,
       requests: [
-        { groupKeys: ['workspace:ws-1'], jobCount: 2 },
-        { groupKeys: ['workspace:ws-2'], jobCount: 1 },
+        {
+          groupKeys: ['workspace:ws-1'],
+          jobCount: 2,
+          workspaceGroupKey: 'workspace:ws-1',
+        },
+        {
+          groupKeys: ['workspace:ws-2'],
+          jobCount: 1,
+          workspaceGroupKey: 'workspace:ws-2',
+        },
       ],
     });
     expect(

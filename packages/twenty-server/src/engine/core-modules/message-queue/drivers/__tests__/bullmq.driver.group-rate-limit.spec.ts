@@ -22,7 +22,9 @@ jest.mock(
         ...MESSAGE_QUEUE_WORKER_CONFIG,
         [ActualMessageQueue.logicFunctionQueue]: {
           ...MESSAGE_QUEUE_WORKER_CONFIG[ActualMessageQueue.logicFunctionQueue],
-          groupRateLimits: { application: { max: 2, durationMs: 1_000 } },
+          groupConfig: {
+            application: { maxRate: { max: 2, durationMs: 1_000 } },
+          },
         },
       },
     };
@@ -134,7 +136,7 @@ describe('BullMQDriver group rate limit', () => {
     expect(await harness.processAll()).toEqual(['U1', 'U2', 'U3', 'U4']);
   });
 
-  it('does not pace when IS_WORKER_GROUP_RATE_LIMIT_ENABLED is off', async () => {
+  it('does not pace when IS_WORKER_GROUP_MAX_RATE_ENABLED is off', async () => {
     const harness = await createFairnessHarness();
 
     await harness.enqueueBulk({

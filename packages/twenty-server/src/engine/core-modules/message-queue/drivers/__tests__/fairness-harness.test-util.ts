@@ -9,6 +9,7 @@ import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bull
 import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import {
   type QueueJobScope,
+  type QueueJobGroup,
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -72,7 +73,7 @@ const QUEUE = MessageQueue.logicFunctionQueue;
 const KEY_PREFIX = 'bull';
 const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${QUEUE}:`;
 const JOB_NAME = 'scenario-job';
-const GROUP_RATE_LIMIT_FLAG = 'IS_WORKER_GROUP_RATE_LIMIT_ENABLED';
+const GROUP_RATE_LIMIT_FLAG = 'IS_WORKER_GROUP_MAX_RATE_ENABLED';
 const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const PRIORITIZED_KEY = `${QUEUE_KEY_PREFIX}prioritized`;
 const DELAYED_KEY = `${QUEUE_KEY_PREFIX}delayed`;
@@ -323,7 +324,13 @@ type ScenarioJobScope = {
 type EnqueueInput = { label: string } & ScenarioJobScope &
   Pick<
     QueueJobSettings,
-    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'groupKeys'
+    | 'priority'
+    | 'delay'
+    | 'id'
+    | 'retryLimit'
+    | 'backoff'
+    | 'groupKeys'
+    | 'jobGroup'
   >;
 
 const buildScenarioJobScope = ({
@@ -460,12 +467,14 @@ export const createFairnessHarness = async ({
       workspaceId,
       applicationUniversalIdentifier,
       groupKeys,
+      jobGroup,
       delay,
     }: {
       labels: string[];
       workspaceId: string;
       applicationUniversalIdentifier?: string;
       groupKeys?: string[];
+      jobGroup?: QueueJobGroup;
       delay?: number;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
@@ -478,8 +487,8 @@ export const createFairnessHarness = async ({
             applicationUniversalIdentifier,
           }),
         })),
-        isDefined(groupKeys) || isDefined(delay)
-          ? { groupKeys, delay }
+        isDefined(groupKeys) || isDefined(jobGroup) || isDefined(delay)
+          ? { groupKeys, jobGroup, delay }
           : undefined,
       );
     },

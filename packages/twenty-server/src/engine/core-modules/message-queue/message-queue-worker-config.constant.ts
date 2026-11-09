@@ -1,6 +1,6 @@
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type MessageQueueGroupRateLimit } from 'src/engine/core-modules/message-queue/types/message-queue-group-rate-limit.type';
+import { type MessageQueueGroupConfig } from 'src/engine/core-modules/message-queue/types/message-queue-group-config.type';
 
 // Single source of truth to pilot worker behavior per queue. Every value is
 // explicit on purpose (Record + Required): adding a queue without declaring
@@ -21,7 +21,10 @@ export type MessageQueueWorkerConfig = {
     Omit<MessageQueueWorkerOptions, 'globalConcurrency' | 'rateLimit'>
   > &
     Pick<MessageQueueWorkerOptions, 'globalConcurrency' | 'rateLimit'>;
-  groupRateLimits?: Partial<Record<string, MessageQueueGroupRateLimit>>;
+  // Keyed by group key kind; a weight is only meaningful per key, so none here.
+  groupConfig?: Partial<
+    Record<string, Pick<MessageQueueGroupConfig, 'maxRate'>>
+  >;
 };
 
 export const MESSAGE_QUEUE_WORKER_CONFIG: Record<

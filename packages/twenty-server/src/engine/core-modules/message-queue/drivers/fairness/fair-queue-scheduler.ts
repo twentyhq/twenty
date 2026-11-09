@@ -5,12 +5,24 @@ import {
   FAIR_TICKET_OFFSET,
   URGENT_FAIR_PRIORITY,
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
-import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
-import { GroupRatePacer } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
-import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { JOB_GROUP_WEIGHT_RANGE } from 'src/engine/core-modules/message-queue/constants/job-group-weight-range.constant';
+import {
+  type FairTicketLane,
+  FairTicketAllocator,
+} from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
+import {
+  type GroupMaxRate,
+  GroupRatePacer,
+} from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
+import {
+  type QueueJobGroup,
+  type QueueJobScope,
+} from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type MessageQueueGroupRateLimit } from 'src/engine/core-modules/message-queue/types/message-queue-group-rate-limit.type';
+import { type MessageQueueGroupConfig } from 'src/engine/core-modules/message-queue/types/message-queue-group-config.type';
+import { buildJobGroupKey } from 'src/engine/core-modules/message-queue/utils/build-job-group-key.util';
 import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
+import { buildWorkspaceGroupKey } from 'src/engine/core-modules/message-queue/utils/build-workspace-group-key.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -21,15 +33,31 @@ export type FairJobOptions = {
   delay?: number;
 };
 
-type GroupKeysRequest = { groupKeys: string[]; jobIndexes: number[] };
+type GroupKeysRequest = {
+  groupKeys: string[];
+  jobIndexes: number[];
+  workspaceGroupKey?: string;
+  lane?: FairTicketLane;
+  maxRates: GroupMaxRate[];
+};
+
+type GroupConfigByKind = Partial<
+  Record<string, Pick<MessageQueueGroupConfig, 'maxRate'>>
+>;
+
+const getGroupKeyKind = (groupKey: string): string => groupKey.split(':')[0];
+
+const clampJobGroupWeight = (weight: number | undefined): number =>
+  Math.min(
+    JOB_GROUP_WEIGHT_RANGE.max,
+    Math.max(JOB_GROUP_WEIGHT_RANGE.min, weight ?? 1),
+  );
 
 type FairQueueSchedulerOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisClient>;
   getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
-  getGroupRateLimits: (
-    queueName: MessageQueue,
-  ) => Partial<Record<string, MessageQueueGroupRateLimit>> | undefined;
+  getGroupConfig: (queueName: MessageQueue) => GroupConfigByKind | undefined;
   metricsService: MetricsService;
   twentyConfigService: TwentyConfigService;
 };
@@ -55,18 +83,22 @@ export class FairQueueScheduler {
     queueName,
     scopes,
     additionalGroupKeys,
+    jobGroup,
     delay,
     staticPriority,
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
     additionalGroupKeys?: string[];
+    jobGroup?: QueueJobGroup;
     delay: number | undefined;
     staticPriority: number | undefined;
   }): Promise<FairJobOptions[]> {
     const requests = this.groupJobsByGroupKeys({
       scopes,
       additionalGroupKeys,
+      jobGroup,
+      groupConfig: this.options.getGroupConfig(queueName),
     });
     const callerDelayMs = delay ?? 0;
     const [fairJobOptions, pacedDelays] = await Promise.all([
@@ -98,18 +130,54 @@ export class FairQueueScheduler {
   private groupJobsByGroupKeys({
     scopes,
     additionalGroupKeys,
+    jobGroup,
+    groupConfig,
   }: {
     scopes: QueueJobScope[];
     additionalGroupKeys: string[] | undefined;
+    jobGroup: QueueJobGroup | undefined;
+    groupConfig: GroupConfigByKind | undefined;
   }): GroupKeysRequest[] {
     const requestByGroupKeys = new Map<string, GroupKeysRequest>();
 
     scopes.forEach((scope, jobIndex) => {
       const groupKeys = buildQueueJobGroupKeys({ scope, additionalGroupKeys });
-      const signature = JSON.stringify(groupKeys);
+      const workspaceGroupKey = isDefined(scope.workspaceId)
+        ? buildWorkspaceGroupKey(scope.workspaceId)
+        : undefined;
+      const workspaceJobGroup = isDefined(scope.workspaceId)
+        ? jobGroup
+        : undefined;
+      const signature = JSON.stringify([groupKeys, scope.workspaceId]);
       const request = requestByGroupKeys.get(signature) ?? {
         groupKeys,
         jobIndexes: [],
+        workspaceGroupKey,
+        lane: isDefined(workspaceJobGroup)
+          ? {
+              name: workspaceJobGroup.id,
+              weight: clampJobGroupWeight(workspaceJobGroup.weight),
+            }
+          : undefined,
+        maxRates: [
+          ...groupKeys.flatMap((groupKey): GroupMaxRate[] => {
+            const maxRate = groupConfig?.[getGroupKeyKind(groupKey)]?.maxRate;
+
+            return isDefined(maxRate) ? [{ groupKey, maxRate }] : [];
+          }),
+          ...(isDefined(scope.workspaceId) &&
+          isDefined(workspaceJobGroup?.maxRate)
+            ? [
+                {
+                  groupKey: buildJobGroupKey({
+                    workspaceId: scope.workspaceId,
+                    jobGroupId: workspaceJobGroup.id,
+                  }),
+                  maxRate: workspaceJobGroup.maxRate,
+                },
+              ]
+            : []),
+        ],
       };
 
       request.jobIndexes.push(jobIndex);
@@ -143,10 +211,14 @@ export class FairQueueScheduler {
 
     const fairTickets = await this.fairTicketAllocator.allocateTickets({
       queueName,
-      requests: requests.map(({ groupKeys, jobIndexes }) => ({
-        groupKeys,
-        jobCount: jobIndexes.length,
-      })),
+      requests: requests.map(
+        ({ groupKeys, jobIndexes, workspaceGroupKey, lane }) => ({
+          groupKeys,
+          jobCount: jobIndexes.length,
+          workspaceGroupKey,
+          lane,
+        }),
+      ),
     });
 
     if (staticPriority === URGENT_FAIR_PRIORITY) {
@@ -193,22 +265,16 @@ export class FairQueueScheduler {
     jobCount: number;
     requests: GroupKeysRequest[];
   }): Promise<number[] | undefined> {
-    const groupRateLimits = this.options.getGroupRateLimits(queueName);
-
-    if (
-      !this.isGroupRateLimitEnabled(queueName) ||
-      !isDefined(groupRateLimits)
-    ) {
+    if (!this.isGroupMaxRateEnabled()) {
       return undefined;
     }
 
     const delaysByRequest = await this.groupRatePacer.computeDelays({
       queueName,
-      requests: requests.map(({ groupKeys, jobIndexes }) => ({
-        groupKeys,
+      requests: requests.map(({ maxRates, jobIndexes }) => ({
+        maxRates,
         jobCount: jobIndexes.length,
       })),
-      groupRateLimits,
     });
 
     if (!isDefined(delaysByRequest)) {
@@ -244,11 +310,9 @@ export class FairQueueScheduler {
     void this.fairTicketAllocator.recordDispatch({ queueName, jobId });
   }
 
-  isGroupRateLimitEnabled(queueName: MessageQueue): boolean {
-    return (
-      this.options.twentyConfigService.get(
-        'IS_WORKER_GROUP_RATE_LIMIT_ENABLED',
-      ) && isDefined(this.options.getGroupRateLimits(queueName))
+  isGroupMaxRateEnabled(): boolean {
+    return this.options.twentyConfigService.get(
+      'IS_WORKER_GROUP_MAX_RATE_ENABLED',
     );
   }
 }

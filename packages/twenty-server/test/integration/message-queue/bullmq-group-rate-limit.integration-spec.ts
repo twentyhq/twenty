@@ -21,7 +21,9 @@ jest.mock(
         ...MESSAGE_QUEUE_WORKER_CONFIG,
         [ActualMessageQueue.workflowQueue]: {
           ...MESSAGE_QUEUE_WORKER_CONFIG[ActualMessageQueue.workflowQueue],
-          groupRateLimits: { application: { max: 2, durationMs: 60_000 } },
+          groupConfig: {
+            application: { maxRate: { max: 2, durationMs: 60_000 } },
+          },
         },
       },
     };
@@ -47,7 +49,7 @@ describe('BullMQDriver group rate limit (integration)', () => {
         incrementCounterForEvent: jest.fn().mockResolvedValue(undefined),
       } as never,
       {
-        get: (key: string) => key === 'IS_WORKER_GROUP_RATE_LIMIT_ENABLED',
+        get: (key: string) => key === 'IS_WORKER_GROUP_MAX_RATE_ENABLED',
       } as never,
       new EventEmitter2(),
     );
