@@ -136,7 +136,7 @@ export class CodeInterpreterTool implements Tool {
 
     try {
       const { inputFiles, undeliveredFilenames } =
-        await this.downloadInputFiles(files, workspaceId);
+        await this.downloadInputFiles({ files, workspaceId });
 
       this.logger.log(
         `Executing code interpreter with ${inputFiles.length} input files`,
@@ -291,10 +291,13 @@ export class CodeInterpreterTool implements Tool {
     }
   }
 
-  private async downloadInputFiles(
-    files: CodeInterpreterFileInput[] = [],
-    workspaceId: string,
-  ): Promise<{ inputFiles: InputFile[]; undeliveredFilenames: string[] }> {
+  private async downloadInputFiles({
+    files = [],
+    workspaceId,
+  }: {
+    files?: CodeInterpreterFileInput[];
+    workspaceId: string;
+  }): Promise<{ inputFiles: InputFile[]; undeliveredFilenames: string[] }> {
     const inputFiles: InputFile[] = [];
     const undeliveredFilenames: string[] = [];
 

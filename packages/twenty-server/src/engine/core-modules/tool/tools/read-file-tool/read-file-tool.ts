@@ -9,11 +9,12 @@ import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/file/constants
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ReadFileInputZodSchema } from 'src/engine/core-modules/tool/tools/read-file-tool/read-file-tool.schema';
-import { type ReadFileInput } from 'src/engine/core-modules/tool/tools/read-file-tool/types/read-file-input.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+
+const FAILURE_MESSAGE = 'Could not read this file';
 
 @Injectable()
 export class ReadFileTool implements Tool {
@@ -30,8 +31,17 @@ export class ReadFileTool implements Tool {
     parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { url, filename: requestedFilename } = parameters as ReadFileInput;
-    const failureMessage = 'Could not read this file';
+    const parseResult = ReadFileInputZodSchema.safeParse(parameters);
+
+    if (!parseResult.success) {
+      return {
+        success: false,
+        message: FAILURE_MESSAGE,
+        error: parseResult.error.message,
+      };
+    }
+
+    const { url, filename: requestedFilename } = parseResult.data;
 
     const fileId = await this.fileUrlService.getFileIdFromSignedFileUrl({
       fileUrl: url,
@@ -41,7 +51,7 @@ export class ReadFileTool implements Tool {
     if (!isDefined(fileId)) {
       return {
         success: false,
-        message: failureMessage,
+        message: FAILURE_MESSAGE,
         error:
           'This is not a valid file link, or it expired. Fetch the record again to get a fresh link.',
       };
@@ -56,7 +66,7 @@ export class ReadFileTool implements Tool {
     if (!isDefined(file)) {
       return {
         success: false,
-        message: failureMessage,
+        message: FAILURE_MESSAGE,
         error: 'This file no longer exists, or it cannot be read here.',
       };
     }

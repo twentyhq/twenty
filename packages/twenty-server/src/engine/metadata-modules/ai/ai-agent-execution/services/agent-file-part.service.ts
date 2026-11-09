@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  type APICallError,
   type LanguageModelV4,
   type LanguageModelV4CallOptions,
   type LanguageModelV4FilePart,
@@ -9,8 +8,9 @@ import {
   type LanguageModelV4TextPart,
 } from '@ai-sdk/provider';
 import { validateDownloadUrl } from '@ai-sdk/provider-utils';
-import { isArray, isNonEmptyString, isString } from '@sniptt/guards';
+import { isArray, isNonEmptyString, isNull, isString } from '@sniptt/guards';
 import {
+  APICallError,
   type Experimental_DownloadFunction as DownloadFunction,
   type FilePart,
   type LanguageModel,
@@ -31,13 +31,15 @@ import { UNDELIVERED_FILE_REASON } from 'src/engine/metadata-modules/ai/ai-agent
 import { type ModelFileLimits } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/model-file-limits.type';
 import { getFilePartHttpUrl } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/get-file-part-http-url.util';
 import { getModelFileLimits } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/get-model-file-limits.util';
-import { getPromptFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/get-prompt-file-parts.util';
 import { insertModelInputFileMessages } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/insert-model-input-file-messages.util';
-import { isFileRejectedByProvider } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-file-rejected-by-provider.util';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { formatUnsupportedFilePlaceholder } from 'src/engine/metadata-modules/ai/ai-models/utils/format-unsupported-file-placeholder.util';
 import { getNativeMimeTypesForModalities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-mime-types-for-modalities.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+
+const FILE_REJECTION_STATUS_CODES = new Set([400, 413, 422]);
+const FILE_CHECK_PROMPT = 'Reply with OK.';
+const FILE_CHECK_MAX_OUTPUT_TOKENS = 16;
 
 type AgentFileDelivery = {
   model: LanguageModel;
@@ -53,10 +55,18 @@ type AgentRunFiles = {
   limits: ModelFileLimits;
   filesByUrl: Map<string, Promise<FileEntity | null>>;
   bytesByFileId: Map<string, Promise<Buffer | null>>;
-  unreadableFileUrls: Set<string>;
+  fileIdsByBytes: Map<Uint8Array | string, string>;
+  rejectedFileIds: Set<string>;
 };
 
 type FilePartReplacement = LanguageModelV4FilePart | LanguageModelV4TextPart;
+
+type FileRetryArguments = {
+  fileRejection: APICallError;
+  params: LanguageModelV4CallOptions;
+  model: LanguageModelV4;
+  runFiles: AgentRunFiles;
+};
 
 type FileBudget = {
   remainingSizeBytes: number;
@@ -94,12 +104,13 @@ export class AgentFilePartService {
       limits: getModelFileLimits(modelConfig.sdkPackage),
       filesByUrl: new Map(),
       bytesByFileId: new Map(),
-      unreadableFileUrls: new Set(),
+      fileIdsByBytes: new Map(),
+      rejectedFileIds: new Set(),
     };
 
     return {
       model: wrapLanguageModel({
-        model: model as LanguageModelV4,
+        model,
         middleware: this.buildFileFallback(runFiles),
       }),
       prepareFileParts: (messages) => this.prepareFileParts(messages, runFiles),
@@ -114,77 +125,213 @@ export class AgentFilePartService {
       transformParams: async ({ params }) => ({
         ...params,
         prompt: await this.replaceFileParts(params.prompt, (part) =>
-          part.data.type === 'url' &&
-          runFiles.unreadableFileUrls.has(part.data.url.toString())
-            ? this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable)
-            : part,
+          this.replaceUnreadableFilePart(part, runFiles),
         ),
       }),
       wrapStream: async ({ doStream, params, model }) => {
         try {
           return await doStream();
         } catch (error) {
-          if (!isFileRejectedByProvider(error, params.prompt)) {
+          if (!this.isFileRejectedByProvider(error, params.prompt)) {
             throw error;
           }
 
-          const hasFileUrl = getPromptFileParts(params.prompt).some(
+          const retryArguments = {
+            fileRejection: error,
+            params,
+            model,
+            runFiles,
+          };
+          const hasFileUrl = this.getPromptFileParts(params.prompt).some(
             (part) => part.data.type === 'url',
           );
 
           return hasFileUrl
-            ? this.retryFileUrlsAsBytes(error, params, model, runFiles)
-            : this.retryFilesAsPlaceholders(error, params, model, runFiles);
+            ? this.retryFileUrlsAsBytes(retryArguments)
+            : this.retryWithoutRejectedFiles(retryArguments);
         }
       },
     };
   }
 
-  private async retryFileUrlsAsBytes(
-    fileUrlRejection: APICallError,
-    params: LanguageModelV4CallOptions,
-    model: LanguageModelV4,
+  private isFileRejectedByProvider(
+    error: unknown,
+    prompt: LanguageModelV4Prompt,
+  ): error is APICallError {
+    return (
+      APICallError.isInstance(error) &&
+      FILE_REJECTION_STATUS_CODES.has(error.statusCode ?? 0) &&
+      this.getPromptFileParts(prompt).length > 0
+    );
+  }
+
+  private getPromptFileParts(
+    prompt: LanguageModelV4Prompt,
+  ): LanguageModelV4FilePart[] {
+    return prompt.flatMap((message) =>
+      message.role === 'user'
+        ? message.content.filter((part) => part.type === 'file')
+        : [],
+    );
+  }
+
+  private async replaceUnreadableFilePart(
+    part: LanguageModelV4FilePart,
     runFiles: AgentRunFiles,
-  ) {
+  ): Promise<FilePartReplacement> {
+    if (part.data.type !== 'url') {
+      return part;
+    }
+
+    const file = await this.loadFile(part.data.url.toString(), runFiles);
+
+    return !isDefined(file) || isNull(await runFiles.bytesByFileId.get(file.id))
+      ? this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable)
+      : part;
+  }
+
+  private async retryFileUrlsAsBytes({
+    fileRejection,
+    params,
+    model,
+    runFiles,
+  }: FileRetryArguments) {
     this.logger.warn(
-      `Provider refused a file link, retrying with bytes: ${fileUrlRejection.message}`,
+      `Provider refused a file link, retrying with bytes: ${fileRejection.message}`,
     );
     runFiles.canSendSignedUrls = false;
 
-    const promptWithBytes = await this.replaceFileParts(
-      params.prompt,
-      (part) =>
-        part.data.type === 'url'
-          ? this.replaceFileUrlWithBytes(
-              part,
-              part.data.url.toString(),
-              runFiles,
-            )
-          : part,
-    );
+    const paramsWithBytes = {
+      ...params,
+      prompt: await this.replaceFileParts(params.prompt, (part) =>
+        this.replaceFileUrlWithBytes(part, runFiles),
+      ),
+    };
 
     try {
-      return await model.doStream({ ...params, prompt: promptWithBytes });
+      return await model.doStream(paramsWithBytes);
     } catch (bytesRejection) {
-      if (!isFileRejectedByProvider(bytesRejection, promptWithBytes)) {
+      if (
+        !this.isFileRejectedByProvider(bytesRejection, paramsWithBytes.prompt)
+      ) {
         throw bytesRejection;
       }
 
-      return this.retryFilesAsPlaceholders(
-        bytesRejection,
-        params,
+      return this.retryWithoutRejectedFiles({
+        fileRejection: bytesRejection,
+        params: paramsWithBytes,
         model,
         runFiles,
-      );
+      });
     }
   }
 
-  private async retryFilesAsPlaceholders(
-    fileRejection: APICallError,
+  private async retryWithoutRejectedFiles(retryArguments: FileRetryArguments) {
+    const { fileRejection, params, model, runFiles } = retryArguments;
+
+    this.logger.warn(
+      `Provider refused a file, checking each file: ${fileRejection.message}`,
+    );
+
+    const rejectedFileParts = await this.findRejectedFileParts(params, model);
+
+    if (rejectedFileParts.size === 0) {
+      return this.retryWithoutFiles(retryArguments);
+    }
+
+    rejectedFileParts.forEach((part) =>
+      this.rememberRejectedFile(part, runFiles),
+    );
+
+    const paramsWithoutRejectedFiles = {
+      ...params,
+      prompt: await this.replaceFileParts(params.prompt, (part) =>
+        rejectedFileParts.has(part)
+          ? this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.rejected)
+          : part,
+      ),
+    };
+
+    try {
+      return await model.doStream(paramsWithoutRejectedFiles);
+    } catch (remainingFilesRejection) {
+      if (
+        !this.isFileRejectedByProvider(
+          remainingFilesRejection,
+          paramsWithoutRejectedFiles.prompt,
+        )
+      ) {
+        throw remainingFilesRejection;
+      }
+
+      return this.retryWithoutFiles({
+        fileRejection: remainingFilesRejection,
+        params: paramsWithoutRejectedFiles,
+        model,
+        runFiles,
+      });
+    }
+  }
+
+  private async findRejectedFileParts(
     params: LanguageModelV4CallOptions,
     model: LanguageModelV4,
+  ): Promise<Set<LanguageModelV4FilePart>> {
+    const fileParts = this.getPromptFileParts(params.prompt);
+    const rejections = await Promise.all(
+      fileParts.map((part) => this.isFilePartRejected(part, params, model)),
+    );
+
+    return new Set(fileParts.filter((_part, index) => rejections[index]));
+  }
+
+  private async isFilePartRejected(
+    part: LanguageModelV4FilePart,
+    { abortSignal, headers }: LanguageModelV4CallOptions,
+    model: LanguageModelV4,
+  ): Promise<boolean> {
+    const prompt: LanguageModelV4Prompt = [
+      {
+        role: 'user',
+        content: [part, { type: 'text', text: FILE_CHECK_PROMPT }],
+      },
+    ];
+
+    try {
+      await model.doGenerate({
+        prompt,
+        maxOutputTokens: FILE_CHECK_MAX_OUTPUT_TOKENS,
+        abortSignal,
+        headers,
+      });
+
+      return false;
+    } catch (error) {
+      return this.isFileRejectedByProvider(error, prompt);
+    }
+  }
+
+  private rememberRejectedFile(
+    part: LanguageModelV4FilePart,
     runFiles: AgentRunFiles,
-  ) {
+  ): void {
+    if (part.data.type !== 'data') {
+      return;
+    }
+
+    const fileId = runFiles.fileIdsByBytes.get(part.data.data);
+
+    if (isDefined(fileId)) {
+      runFiles.rejectedFileIds.add(fileId);
+    }
+  }
+
+  private async retryWithoutFiles({
+    fileRejection,
+    params,
+    model,
+    runFiles,
+  }: FileRetryArguments) {
     this.logger.warn(
       `Provider refused the files of this run: ${fileRejection.message}`,
     );
@@ -224,10 +371,13 @@ export class AgentFilePartService {
 
   private async replaceFileUrlWithBytes(
     part: LanguageModelV4FilePart,
-    url: string,
     runFiles: AgentRunFiles,
-  ): Promise<LanguageModelV4FilePart | LanguageModelV4TextPart> {
-    const file = await this.loadFile(url, runFiles);
+  ): Promise<FilePartReplacement> {
+    if (part.data.type !== 'url') {
+      return part;
+    }
+
+    const file = await this.loadFile(part.data.url.toString(), runFiles);
 
     const bytes =
       isDefined(file) &&
@@ -282,7 +432,7 @@ export class AgentFilePartService {
       for (const part of [...message.content].reverse()) {
         preparedContent.push(
           part.type === 'file'
-            ? await this.prepareFilePart(part, runFiles, budget)
+            ? await this.prepareFilePart({ part, runFiles, budget })
             : part,
         );
       }
@@ -296,11 +446,15 @@ export class AgentFilePartService {
     return preparedMessages.reverse();
   }
 
-  private async prepareFilePart(
-    part: FilePart,
-    runFiles: AgentRunFiles,
-    budget: FileBudget,
-  ): Promise<FilePart | TextPart> {
+  private async prepareFilePart({
+    part,
+    runFiles,
+    budget,
+  }: {
+    part: FilePart;
+    runFiles: AgentRunFiles;
+    budget: FileBudget;
+  }): Promise<FilePart | TextPart> {
     const url = getFilePartHttpUrl(part);
 
     if (!isDefined(url)) {
@@ -315,6 +469,10 @@ export class AgentFilePartService {
 
     if (!isDefined(file)) {
       return this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable);
+    }
+
+    if (runFiles.rejectedFileIds.has(file.id)) {
+      return this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.rejected);
     }
 
     const mediaType = isNonEmptyString(part.mediaType)
@@ -371,13 +529,7 @@ export class AgentFilePartService {
       ? await this.loadFileBytes(file, runFiles)
       : null;
 
-    if (isDefined(bytes)) {
-      return { data: bytes, mediaType: undefined };
-    }
-
-    runFiles.unreadableFileUrls.add(url);
-
-    return null;
+    return isDefined(bytes) ? { data: bytes, mediaType: undefined } : null;
   }
 
   private buildPlaceholder(
@@ -453,12 +605,18 @@ export class AgentFilePartService {
         allowedFileFolders: AI_READABLE_FILE_FOLDERS,
       });
 
-      return isDefined(fileContent)
-        ? await streamToBuffer(
-            fileContent.stream,
-            runFiles.limits.maxFileSizeBytes,
-          )
-        : null;
+      if (!isDefined(fileContent)) {
+        return null;
+      }
+
+      const bytes = await streamToBuffer(
+        fileContent.stream,
+        runFiles.limits.maxFileSizeBytes,
+      );
+
+      runFiles.fileIdsByBytes.set(bytes, file.id);
+
+      return bytes;
     } catch (error) {
       this.logger.warn(`Could not read file ${file.id} for the model`, error);
 
