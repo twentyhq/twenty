@@ -22,7 +22,12 @@ const isImportableAttachment = (
   (!isDefined(attachment.file_size) ||
     attachment.file_size <= LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES);
 
-const importAttachment = async ({
+type DownloadedAttachment = {
+  attachment: UnipileMessageAttachment;
+  content: Buffer;
+};
+
+const downloadAttachment = async ({
   unipileAccountId,
   message,
   attachment,
@@ -32,7 +37,7 @@ const importAttachment = async ({
   message: UnipileMessage;
   attachment: UnipileMessageAttachment;
   deadlineAtMs: number;
-}): Promise<IngestMessageAttachment | undefined> => {
+}): Promise<Buffer | undefined> => {
   const content = isNonEmptyString(attachment.content)
     ? Buffer.from(attachment.content, 'base64')
     : await downloadUnipileMessageAttachment({
@@ -52,13 +57,29 @@ const importAttachment = async ({
     return undefined;
   }
 
-  return uploadMessageAttachment({
-    filename: buildLinkedinAttachmentFilename(attachment),
-    content: new Uint8Array(content),
-    signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
-  });
+  return content;
 };
 
+const warnAttachmentNotImported = ({
+  attachmentId,
+  messageId,
+  error,
+}: {
+  attachmentId: string;
+  messageId: string;
+  error: unknown;
+}) =>
+  console.warn(
+    `[linkedin] attachment ${attachmentId} of message ${messageId} not imported: ${error instanceof Error ? error.message : String(error)}`,
+  );
+
+const warnDeadlineReached = (message: UnipileMessage) =>
+  console.warn(
+    `[linkedin] chat ${message.chat_id}: attachment import reached the job deadline, files of message ${message.id} and later ones skipped`,
+  );
+
+// A message only gets attachments once, so a set cut by the deadline is dropped,
+// and every file is downloaded before any upload so a dropped set leaves no stored files
 export const importLinkedinMessageAttachments = async ({
   unipileAccountId,
   messages,
@@ -75,52 +96,82 @@ export const importLinkedinMessageAttachments = async ({
   let importedCount = 0;
 
   for (const message of messages) {
-    const attachments: IngestMessageAttachment[] = [];
+    const downloadedAttachments: DownloadedAttachment[] = [];
 
     for (const attachment of (message.attachments ?? []).filter(
       isImportableAttachment,
     )) {
-      // A message only gets attachments once, so a partial set would never be completed
       if (Date.now() >= deadlineAtMs) {
-        console.warn(
-          `[linkedin] chat ${message.chat_id}: attachment import reached the job deadline, remaining files skipped`,
-        );
+        warnDeadlineReached(message);
 
         return importedCount;
       }
 
       try {
-        const importedAttachment = await importAttachment({
+        const content = await downloadAttachment({
           unipileAccountId,
           message,
           attachment,
           deadlineAtMs,
         });
 
-        if (isDefined(importedAttachment)) {
-          attachments.push(importedAttachment);
+        if (isDefined(content)) {
+          downloadedAttachments.push({ attachment, content });
         }
       } catch (error) {
         if (error instanceof UnipileRateLimitError) {
           throw error;
         }
 
-        console.warn(
-          `[linkedin] attachment ${attachment.id} of message ${message.id} not imported: ${error instanceof Error ? error.message : String(error)}`,
-        );
+        warnAttachmentNotImported({
+          attachmentId: attachment.id,
+          messageId: message.id,
+          error,
+        });
       }
     }
 
-    if (attachments.length === 0) {
+    if (downloadedAttachments.length === 0) {
       continue;
     }
 
     if (Date.now() >= deadlineAtMs) {
-      console.warn(
-        `[linkedin] chat ${message.chat_id}: attachment import reached the job deadline, files of message ${message.id} not attached`,
-      );
+      warnDeadlineReached(message);
 
       return importedCount;
+    }
+
+    const attachments: IngestMessageAttachment[] = [];
+    let hasUploadFailedAtDeadline = false;
+
+    for (const { attachment, content } of downloadedAttachments) {
+      try {
+        attachments.push(
+          await uploadMessageAttachment({
+            filename: buildLinkedinAttachmentFilename(attachment),
+            content: new Uint8Array(content),
+            signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
+          }),
+        );
+      } catch (error) {
+        hasUploadFailedAtDeadline ||= Date.now() >= deadlineAtMs;
+
+        warnAttachmentNotImported({
+          attachmentId: attachment.id,
+          messageId: message.id,
+          error,
+        });
+      }
+    }
+
+    if (hasUploadFailedAtDeadline) {
+      warnDeadlineReached(message);
+
+      return importedCount;
+    }
+
+    if (attachments.length === 0) {
+      continue;
     }
 
     try {

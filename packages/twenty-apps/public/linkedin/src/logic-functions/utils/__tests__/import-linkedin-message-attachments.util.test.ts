@@ -255,7 +255,37 @@ describe('importLinkedinMessageAttachments', () => {
         deadlineAtMs: Date.now() + 1_000,
       });
 
-      expect(mocks.uploadMessageAttachment).toHaveBeenCalledOnce();
+      expect(mocks.uploadMessageAttachment).not.toHaveBeenCalled();
+      expect(importedCount).toBe(0);
+      expect(importedMessages).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('attaches nothing when an upload fails at the deadline', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(Date.parse('2026-10-29T08:00:00.000Z'));
+    mocks.uploadMessageAttachment
+      .mockResolvedValueOnce({
+        fileId: 'file-id-1',
+        label: 'linkedin-image.png',
+      })
+      .mockImplementationOnce(async () => {
+        vi.advanceTimersByTime(2_000);
+
+        throw new Error('The operation was aborted due to timeout');
+      });
+
+    try {
+      const { importedMessages, importedCount } = await importAttachments({
+        attachments: [
+          { id: 'img-1', type: 'img', mimetype: 'image/png' },
+          { id: 'img-2', type: 'img', mimetype: 'image/png' },
+        ],
+        deadlineAtMs: Date.now() + 1_000,
+      });
+
       expect(importedCount).toBe(0);
       expect(importedMessages).toEqual([]);
     } finally {
