@@ -348,6 +348,21 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     });
   });
 
+  it('restores component source without requiring its imported local files', async () => {
+    const exported = createComponentExport();
+    exported.files[0].content = exported.files[0].content.replace(
+      'const Hello = () => <div>Hello</div>;',
+      "import { Hello } from './helper';",
+    );
+    requireSuccess(await pull(exported));
+    expect(await read(componentPath)).toBe(exported.files[0].content);
+    await expect(read('src/front-components/helper.tsx')).rejects.toMatchObject(
+      {
+        code: 'ENOENT',
+      },
+    );
+  });
+
   it('builds a pulled component and includes the edited source and bundle in the apply artifacts', async () => {
     const exported = createComponentExport();
     requireSuccess(await pull(exported));

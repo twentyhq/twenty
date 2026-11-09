@@ -2,7 +2,6 @@ import { Readable } from 'node:stream';
 import { Test } from '@nestjs/testing';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
-import { type ApplicationExportFile } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { PageLayoutType, FileFolder } from 'twenty-shared/types';
 import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-export.service';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
@@ -44,11 +43,9 @@ describe('ApplicationFrontComponentExportService', () => {
   let service: ApplicationFrontComponentExportService;
   const run = ({
     shouldIncludeSourceFiles = true,
-    dependencyFiles = [],
     frontComponent = component,
   }: {
     shouldIncludeSourceFiles?: boolean;
-    dependencyFiles?: ApplicationExportFile[];
     frontComponent?: FlatFrontComponent;
   } = {}) =>
     service.exportFrontComponents({
@@ -61,7 +58,6 @@ describe('ApplicationFrontComponentExportService', () => {
           flatEntityMaps: maps.flatFrontComponentMaps,
         }),
       },
-      dependencyFiles,
       shouldIncludeSourceFiles,
     });
   beforeEach(async () => {
@@ -95,7 +91,7 @@ describe('ApplicationFrontComponentExportService', () => {
       resourcePath: sourcePath,
     });
   });
-  it('accepts the actual AI-generated entry source with workspace dependencies', async () => {
+  it('accepts the actual AI-generated entry source', async () => {
     const entrySource = buildFrontComponentEntrySource({
       componentId: identifier,
       name: 'Hello',
@@ -105,22 +101,7 @@ describe('ApplicationFrontComponentExportService', () => {
     storage.readFile.mockImplementation(async () =>
       Readable.from([Buffer.from(entrySource)]),
     );
-    const result = await run({
-      shouldIncludeSourceFiles: true,
-      dependencyFiles: [
-        {
-          folder: FileFolder.Dependencies,
-          path: 'package.json',
-          content: JSON.stringify({
-            dependencies: {
-              react: '19.0.0',
-              'react-dom': '19.0.0',
-              'twenty-ui': '2.55.0',
-            },
-          }),
-        },
-      ],
-    });
+    const result = await run();
     expect(result.coverage[0].status).toBe('EXPORTED');
     expect(result.files[0].content).toBe(entrySource);
   });
@@ -129,7 +110,6 @@ describe('ApplicationFrontComponentExportService', () => {
     async (updates) => {
       const result = await run({
         shouldIncludeSourceFiles: true,
-        dependencyFiles: [],
         frontComponent: { ...component, ...updates },
       });
       expect(result.frontComponents).toEqual([]);
@@ -158,7 +138,6 @@ describe('ApplicationFrontComponentExportService', () => {
       (
         await run({
           shouldIncludeSourceFiles: true,
-          dependencyFiles: [],
           frontComponent: {
             ...component,
             name: 'Named',
@@ -171,7 +150,6 @@ describe('ApplicationFrontComponentExportService', () => {
   it('reports unresolved object restrictions instead of exporting unrestricted availability', async () => {
     const result = await run({
       shouldIncludeSourceFiles: true,
-      dependencyFiles: [],
       frontComponent: {
         ...component,
         universalWidgetAvailability: [
@@ -193,7 +171,6 @@ describe('ApplicationFrontComponentExportService', () => {
   it('retains unrestricted record page availability', async () => {
     const result = await run({
       shouldIncludeSourceFiles: true,
-      dependencyFiles: [],
       frontComponent: {
         ...component,
         universalWidgetAvailability: [
@@ -204,26 +181,6 @@ describe('ApplicationFrontComponentExportService', () => {
     expect(result.frontComponents[0].widgetAvailability).toEqual({
       pageLayoutType: PageLayoutType.RECORD_PAGE,
     });
-  });
-  it('accepts imports from optional dependencies', async () => {
-    storage.readFile.mockImplementation(async () =>
-      Readable.from([
-        Buffer.from(`import 'optional-package/style.css';\n${source}`),
-      ]),
-    );
-    const result = await run({
-      shouldIncludeSourceFiles: true,
-      dependencyFiles: [
-        {
-          folder: FileFolder.Dependencies,
-          path: 'package.json',
-          content: JSON.stringify({
-            optionalDependencies: { 'optional-package': '1.0.0' },
-          }),
-        },
-      ],
-    });
-    expect(result.coverage[0].status).toBe('EXPORTED');
   });
   it('keeps components out of metadata-only exports without reading storage', async () => {
     expect(await run({ shouldIncludeSourceFiles: false })).toEqual({
@@ -264,16 +221,21 @@ describe('ApplicationFrontComponentExportService', () => {
       reason: expect.stringContaining('source file is missing'),
     });
   });
-  it('does not export a component requiring unexported helpers', async () => {
+  it.each([
+    "import { label } from './helper';",
+    "import './style.css';",
+    "import 'optional-package/style.css';",
+  ])('exports source without resolving imports: %s', async (importSource) => {
+    const content = `${importSource}\n${source}`;
     storage.readFile.mockImplementation(async () =>
-      Readable.from([
-        Buffer.from(`import type { Props } from './props';\n${source}`),
-      ]),
+      Readable.from([Buffer.from(content)]),
     );
-    expect((await run()).coverage[0]).toMatchObject({
-      status: 'UNSUPPORTED',
-      reason: expect.stringContaining('local imports'),
-    });
+    const result = await run();
+    expect(result.frontComponents).toEqual([frontComponentManifest]);
+    expect(result.files).toEqual([
+      { folder: FileFolder.Source, path: sourcePath, content },
+    ]);
+    expect(result.coverage[0].status).toBe('EXPORTED');
   });
   it('surfaces storage failures instead of silently omitting source', async () => {
     storage.readFile.mockRejectedValue(new Error('storage unavailable'));

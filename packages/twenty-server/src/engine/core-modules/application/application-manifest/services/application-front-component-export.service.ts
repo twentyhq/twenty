@@ -4,7 +4,7 @@ import {
   type FrontComponentManifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatFrontComponentToFrontComponentManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-front-component-to-front-component-manifest.util';
 import {
@@ -26,13 +26,11 @@ export class ApplicationFrontComponentExportService {
     workspaceId,
     applicationUniversalIdentifier,
     applicationAllFlatEntityMaps,
-    dependencyFiles,
     shouldIncludeSourceFiles,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     applicationAllFlatEntityMaps: AllFlatEntityMaps;
-    dependencyFiles: ApplicationExportFile[];
     shouldIncludeSourceFiles: boolean;
   }) {
     const frontComponents: FrontComponentManifest[] = [];
@@ -40,29 +38,6 @@ export class ApplicationFrontComponentExportService {
     const coverage: ApplicationExportCoverageEntry[] = [];
     if (!shouldIncludeSourceFiles) {
       return { frontComponents, files, coverage };
-    }
-    const packageNames = new Set([
-      'twenty-sdk',
-      'twenty-shared',
-      'twenty-client-sdk',
-    ]);
-    const packageFile = dependencyFiles.find(
-      (file) => file.path === 'package.json',
-    );
-    if (isDefined(packageFile)) {
-      const packageJson: unknown = JSON.parse(packageFile.content);
-      if (isPlainObject(packageJson)) {
-        for (const dependencies of [
-          packageJson.dependencies,
-          packageJson.devDependencies,
-          packageJson.peerDependencies,
-          packageJson.optionalDependencies,
-        ]) {
-          if (isPlainObject(dependencies)) {
-            Object.keys(dependencies).forEach((name) => packageNames.add(name));
-          }
-        }
-      }
     }
     for (const component of sortFlatEntitiesByUniversalIdentifier(
       applicationAllFlatEntityMaps.flatFrontComponentMaps,
@@ -113,7 +88,6 @@ export class ApplicationFrontComponentExportService {
         name: component.name,
         description: component.description,
         componentName: component.componentName,
-        packageNames,
       });
       if (isDefined(reason)) {
         coverage.push({ ...unsupportedCoverage, reason });

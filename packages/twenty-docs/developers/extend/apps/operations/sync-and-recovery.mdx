@@ -109,7 +109,7 @@ A plan:
   before running it, and review the diff.
 </Warning>
 
-`twenty app pull` is the inverse of `apply`: it reads an application out of the workspace and restores its define files, translations, stored dependency files and self-contained front component source.
+`twenty app pull` is the inverse of `apply`: it reads an application out of the workspace and restores its define files, translations, stored dependency files and front component entry source.
 
 ```bash
 twenty app pull --remote dev
@@ -125,7 +125,7 @@ If dependency installation fails for a new project, the scaffold is kept. Run `y
 **What it writes:**
 
 - the application config;
-- self-contained front components, including AI-generated components, as their stored original TSX;
+- front component entry files, including AI-generated components, as their stored original TSX;
 - stored `package.json` and `yarn.lock` dependency files, at the project root;
 - objects, with their fields inline;
 - fields your app added to objects it does not own;
@@ -146,7 +146,7 @@ If dependency installation fails for a new project, the scaffold is kept. Run `y
 
 Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. A file is also rewritten when it uses a different define function than pull would write, for example a role that became or stopped being the default role. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
 
-**Front component source.** Pull restores the original source path, or updates the local file already defining the component. Declared package imports are supported; imported local helpers, styles and other source files are not pulled yet. The source must have a direct `export default defineFrontComponent({...})` with a literal matching identifier and no computed or spread metadata. Missing source, metadata that differs from the workspace, and unsupported definitions are reported as coverage gaps, together with widgets that depend on them. An unrelated file at the source path stops the pull before any writes. Unchanged remote source preserves local edits; changed source replaces it and reports overwritten edits. Older servers without source export continue to pull the metadata they support.
+**Front component source.** Pull restores the original source path, or updates the local file already defining the component. Imports are preserved without resolving them. Imported local helpers, styles and other source files are not pulled yet; restore missing dependencies before building or applying. The source must have a direct `export default defineFrontComponent({...})` with a literal matching identifier and no computed or spread metadata. Missing source, metadata that differs from the workspace, and unsupported definitions are reported as coverage gaps, together with widgets that depend on them. An unrelated file at the source path stops the pull before any writes. Unchanged remote source preserves local edits; changed source replaces it and reports overwritten edits. Older servers without source export continue to pull the metadata they support.
 
 **Dependency files.** When the stored `package.json` or `yarn.lock` changes, pull replaces the local file and reports any overwritten local edits. If the remote file has not changed since the previous pull, local edits are kept. A missing remote file does not delete its local counterpart. When the exported package omits `twenty-sdk`, as the workspace Custom application does, pull retains your local SDK dependency so CLI commands can still load the project. Dependency files, metadata and the baseline are written together and rolled back together if a write fails.
 
@@ -155,7 +155,7 @@ Run `yarn install` after pulling dependency changes. Pull installs dependencies 
 **What it does not write:**
 
 - **Not exported yet** — command menu items and settings menu items, logic functions, settings front components, connection providers, application variables, public assets, timeline activity types, and the stored source of your functions.
-- **Front components with incomplete source**, missing source, local imports, computed identifiers, or widget availability that one definition cannot express are reported and left in place. Source graphs are tracked in [#29462](https://github.com/twentyhq/twenty/issues/29462).
+- **Front components the export cannot carry yet** — missing source, computed identifiers, metadata that differs from the workspace, or widget availability that one definition cannot express are reported and left in place. Support for imported local files is tracked in [#29462](https://github.com/twentyhq/twenty/issues/29462).
 - **Derived by the engine** — system fields, default relations, default views and backing indexes, and the default page layouts of each object. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
 - **Placed on a default or foreign view** — filters, filter groups, sorts, groups and field groups added to an engine default view, or to a view owned by another application, have no source form yet and are reported. View fields added there are written as standalone files, since the view's identifier is known.
 - **Placed on a default or foreign page layout** — tabs and widgets added to an engine default page layout, or to one owned by another application, are written as standalone `definePageLayoutTab()` and `definePageLayoutWidget()` files, since the identifier they attach to is known.

@@ -9,10 +9,9 @@ const check = (source: string) =>
     name: 'Component',
     description: null,
     componentName: 'Component',
-    packageNames: new Set(['twenty-sdk', 'react', 'twenty-ui']),
   });
 
-describe('standalone front component export', () => {
+describe('front component source export', () => {
   it('accepts original TSX and package subpath imports without executing it', () => {
     expect(
       check(`import { defineFrontComponent } from 'twenty-sdk/define';
@@ -32,8 +31,8 @@ ${definition}`),
     `const load = () => import(moduleName);`,
     `const helper = require('./helper');`,
     `/// <reference path="../types.d.ts" />`,
-  ])('reports an incomplete source for %s', (importSource) => {
-    expect(check(`${importSource}\n${definition}`)).toBeDefined();
+  ])('leaves import resolution to the app build: %s', (importSource) => {
+    expect(check(`${importSource}\n${definition}`)).toBeUndefined();
   });
   it.each(['const broken = ;', 'const Component = () => <div><span></div>;'])(
     'leaves source syntax validation to the app build: %s',

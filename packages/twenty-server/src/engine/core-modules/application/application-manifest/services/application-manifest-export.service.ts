@@ -135,14 +135,7 @@ export class ApplicationManifestExportService {
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
     });
-    const shouldReadDependencyFiles =
-      shouldIncludeDependencies ||
-      (shouldIncludeSourceFiles &&
-        Object.keys(
-          applicationAllFlatEntityMaps.flatFrontComponentMaps
-            .byUniversalIdentifier,
-        ).length > 0);
-    const dependencyFiles = shouldReadDependencyFiles
+    const dependencyFiles = shouldIncludeDependencies
       ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
           { workspaceId, applicationUniversalIdentifier },
         )
@@ -156,7 +149,6 @@ export class ApplicationManifestExportService {
         workspaceId,
         applicationUniversalIdentifier,
         applicationAllFlatEntityMaps,
-        dependencyFiles,
         shouldIncludeSourceFiles,
       },
     );
