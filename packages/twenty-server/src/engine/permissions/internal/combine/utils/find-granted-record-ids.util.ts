@@ -7,9 +7,9 @@ import { areRecordGrantsHeldToRowLevelPermissions } from 'src/engine/permissions
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-access-outcome.util';
 import { findRecordIdsGrantedByCreator } from 'src/engine/permissions/internal/private-record/utils/find-record-ids-granted-by-creator.util';
 import { findRecordIdsGrantedByShare } from 'src/engine/permissions/internal/record-share/utils/find-record-ids-granted-by-share.util';
-import { findRecordIdsGrantedByRls } from 'src/engine/permissions/internal/rls/utils/find-record-ids-granted-by-rls.util';
-import { findRowLevelPermissionMatchingRecordIds } from 'src/engine/permissions/internal/rls/utils/find-row-level-permission-matching-record-ids.util';
-import { findRecordIdsGrantedByAllRecords } from 'src/engine/permissions/internal/all-records/utils/find-record-ids-granted-by-all-records.util';
+import { findRecordIdsGrantedByRls } from 'src/engine/permissions/internal/combine/utils/find-record-ids-granted-by-rls.util';
+import { findRowLevelPermissionMatchingRecordIds } from 'src/engine/permissions/internal/combine/utils/find-row-level-permission-matching-record-ids.util';
+import { findRecordIdsGrantedByAllRecords } from 'src/engine/permissions/internal/combine/utils/find-record-ids-granted-by-all-records.util';
 
 export const findGrantedRecordIds = async (
   request: PermissionsRowAccessEvaluationRequest,

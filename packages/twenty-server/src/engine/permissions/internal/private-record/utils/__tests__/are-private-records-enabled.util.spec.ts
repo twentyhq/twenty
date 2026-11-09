@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { arePrivateRecordsEnabled } from 'src/engine/permissions/private-record/utils/are-private-records-enabled.util';
+import { arePrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/are-private-records-enabled.util';
 
 const ORDINARY_OBJECT = {
   universalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
