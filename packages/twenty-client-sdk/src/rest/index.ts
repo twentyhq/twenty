@@ -134,7 +134,7 @@ export class RestApiClient {
     requestOptions?: Pick<RestApiRequestOptions, 'query'>,
   ): string {
     // Links are handed to browsers and third parties, which can't reach the internal URL.
-    const target = this.resolveTarget(path, 'public');
+    const target = this.resolveTarget({ path, visibility: 'public' });
 
     return buildRequestUrl(target.baseUrl, target.path, requestOptions?.query);
   }
@@ -195,10 +195,13 @@ export class RestApiClient {
     return functionsBaseUrl.trim().replace(/\/+$/, '');
   }
 
-  private resolveTarget(
-    path: string,
-    visibility: ApiUrlVisibility,
-  ): { baseUrl: string; path: string } {
+  private resolveTarget({
+    path,
+    visibility,
+  }: {
+    path: string;
+    visibility: ApiUrlVisibility;
+  }): { baseUrl: string; path: string } {
     if (isDefined(this.baseUrl) || !isAppRoutePath(path)) {
       return { baseUrl: this.resolveBaseUrl(visibility), path };
     }
@@ -369,7 +372,7 @@ export class RestApiClient {
     body: unknown,
     requestOptions?: RestApiRequestOptions,
   ): Promise<TResponse> {
-    const target = this.resolveTarget(path, 'internal');
+    const target = this.resolveTarget({ path, visibility: 'internal' });
     const url = buildRequestUrl(
       target.baseUrl,
       target.path,
