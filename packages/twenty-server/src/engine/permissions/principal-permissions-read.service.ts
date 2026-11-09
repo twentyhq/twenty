@@ -18,7 +18,7 @@ import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/in
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class PrincipalPermissionsService {
+export class PrincipalPermissionsReadService {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
   async resolvePermissionsPrincipalsOrThrow({
