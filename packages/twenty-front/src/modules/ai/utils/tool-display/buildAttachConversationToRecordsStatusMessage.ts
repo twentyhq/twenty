@@ -18,7 +18,7 @@ const AttachConversationToRecordsOutputSchema = z.object({
 
 type RecordToAttach = z.infer<typeof RecordToAttachSchema>;
 
-// single-record calls were made before the tool took a list
+// remove the single-record branch with ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME
 const parseRecordsToAttach = (input: ToolInput): RecordToAttach[] => {
   const batchInput = AttachConversationToRecordsInputSchema.safeParse(input);
 
@@ -39,7 +39,7 @@ export const buildAttachConversationToRecordsStatusMessage = ({
 }: {
   input: ToolInput;
   isFinished: boolean;
-  displayContext: ToolDisplayContext;
+  displayContext: Pick<ToolDisplayContext, 'objectMetadataItems'>;
   output?: unknown;
 }): string => {
   const hasFailed = hasToolOutputFailed(output);
