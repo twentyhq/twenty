@@ -16152,6 +16152,11 @@ msgstr "Iterador"
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "Seus chats serão movidos para {destinationChannelName}. Esta ação não pode ser desfeita."
 
+#. js-lingui-id: yNfoGL
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
+msgid "Its code could not be moved into the step, so it cannot be edited here."
+msgstr ""
+
 #. js-lingui-id: J6OYmT
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Jade"
@@ -29177,6 +29182,11 @@ msgstr "Esta configuração só pode ser feita por variáveis de ambiente."
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This should never happen"
 msgstr "Isso nunca deveria acontecer"
+
+#. js-lingui-id: v6DC3g
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
+msgid "This step runs from its original function"
+msgstr ""
 
 #. js-lingui-id: Ryrt8E
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
