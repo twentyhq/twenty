@@ -81,7 +81,7 @@
     "addressparser": "1.0.1",
     "ai": "7.0.126",
     "archiver": "7.0.1",
-    "axios": "^1.16.0",
+    "axios": "^1.21.0",
     "axios-retry": "^4.5.0",
     "bcrypt": "^6.0.0",
     "bullmq": "5.78.0",
