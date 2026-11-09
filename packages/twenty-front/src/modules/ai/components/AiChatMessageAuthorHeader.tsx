@@ -3,8 +3,10 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
+import { AiChatAgentMessageHeader } from '@/ai/components/AiChatAgentMessageHeader';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { ChatMessageHeader } from '@/chat/components/ChatMessageHeader';
+import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { AppChip } from '@/applications/components/AppChip';
@@ -16,13 +18,17 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type AiChatMessageAuthorHeaderProps = {
   metadata: ExtendedUIMessage['metadata'];
-  sender: PartialWorkspaceMember | undefined;
+  role: ExtendedUIMessage['role'];
+  sender:
+    | Pick<PartialWorkspaceMember, 'name' | 'userEmail' | 'avatarUrl'>
+    | undefined;
   messageId: string;
   createdAt: Date | string;
 };
 
 export const AiChatMessageAuthorHeader = ({
   metadata,
+  role,
   sender,
   messageId,
   createdAt,
@@ -30,8 +36,16 @@ export const AiChatMessageAuthorHeader = ({
   const { t } = useLingui();
   const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const applicationId = metadata?.senderApplicationId;
+  const senderId = metadata?.senderWorkspaceMemberId;
+  const agentId = metadata?.agentId;
+  const isBuiltInAssistant =
+    metadata?.isBuiltInAssistant &&
+    !isDefined(applicationId) &&
+    !isDefined(senderId) &&
+    !isDefined(agentId);
 
-  if (metadata?.isBuiltInAssistant === true) {
+  if (isBuiltInAssistant) {
     return (
       <ChatMessageHeader
         avatar={<AiChatAssistantAvatar />}
@@ -40,8 +54,6 @@ export const AiChatMessageAuthorHeader = ({
       />
     );
   }
-
-  const applicationId = metadata?.senderApplicationId;
 
   if (isDefined(applicationId)) {
     return (
@@ -56,13 +68,15 @@ export const AiChatMessageAuthorHeader = ({
     );
   }
 
-  const senderId = metadata?.senderWorkspaceMemberId;
-  const agentId = metadata?.agentId;
+  if (isDefined(agentId) && !isDefined(senderId)) {
+    return <AiChatAgentMessageHeader agentId={agentId} createdAt={createdAt} />;
+  }
+
+  const unknownAuthorName =
+    role === AGENT_MESSAGE_ROLE.ASSISTANT ? t`Assistant` : t`Unknown sender`;
   const authorName = isDefined(senderId)
     ? getAgentChatSenderLabel({ sender, isCurrentWorkspaceMember: false })
-    : isDefined(agentId)
-      ? t`Agent`
-      : t`Unknown sender`;
+    : unknownAuthorName;
 
   return (
     <ChatMessageHeader
