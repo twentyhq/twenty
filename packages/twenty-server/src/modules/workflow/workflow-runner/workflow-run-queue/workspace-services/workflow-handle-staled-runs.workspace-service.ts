@@ -13,6 +13,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -45,6 +46,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     private readonly metricsService: MetricsService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async handleStaledRunsForWorkspace(workspaceId: string) {
@@ -66,12 +68,11 @@ export class WorkflowHandleStaledRunsWorkspaceService {
         );
 
       // maxRate pacing can hold a run past the threshold, so only runs without a job are lost.
-      const inFlightJobs =
-        await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
-      const lostRunIds = staledRunIds.filter(
-        (workflowRunId) =>
-          !hasInFlightRunWorkflowJob({ inFlightJobs, workflowRunId }),
-      );
+      const lostRunIds = this.twentyConfigService.get(
+        'IS_WORKER_GROUP_MAX_RATE_ENABLED',
+      )
+        ? await this.filterRunsWithoutInFlightJob(staledRunIds)
+        : staledRunIds;
 
       for (
         let offset = 0;
@@ -264,6 +265,18 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     }
 
     return WorkflowRunStatus.COMPLETED;
+  }
+
+  private async filterRunsWithoutInFlightJob(
+    workflowRunIds: string[],
+  ): Promise<string[]> {
+    const inFlightJobs =
+      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
+
+    return workflowRunIds.filter(
+      (workflowRunId) =>
+        !hasInFlightRunWorkflowJob({ inFlightJobs, workflowRunId }),
+    );
   }
 
   private async collectRunIds({

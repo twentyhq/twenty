@@ -12,6 +12,7 @@ import {
   type QueueJobScope,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { buildPaceSlotKey } from 'src/engine/core-modules/message-queue/utils/build-pace-slot-key.util';
 import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -27,17 +28,6 @@ type PacedJobsRequest = {
   maxRate: QueueJobMaxRate;
   jobIndexes: number[];
 };
-
-const buildPaceSlotKey = ({
-  scope,
-  maxRate,
-}: {
-  scope: Pick<QueueJobScope, 'workspaceId' | 'applicationUniversalIdentifier'>;
-  maxRate: Pick<QueueJobMaxRate, 'key'>;
-}): string | undefined =>
-  isDefined(scope.workspaceId)
-    ? `${scope.workspaceId}:${scope.applicationUniversalIdentifier ?? '-'}:${maxRate.key}`
-    : undefined;
 
 type FairQueueSchedulerOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisClient>;
