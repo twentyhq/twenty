@@ -146,10 +146,18 @@ export const useEmailThread = (threadId: string | null) => {
     viewerMessageChannels.map(({ id }) => id),
   );
 
+  const isLastMessageInThread = messages.some(({ id }) => id === lastMessageId);
+
+  const lastMessageAssociations = isLastMessageInThread
+    ? messageChannelMessageAssociations.filter(
+        ({ messageId }) => messageId === lastMessageId,
+      )
+    : [];
+
   const resolvedLastMessageAssociation =
-    messageChannelMessageAssociations.find(({ messageChannelId }) =>
+    lastMessageAssociations.find(({ messageChannelId }) =>
       viewerMessageChannelIds.has(messageChannelId),
-    ) ?? messageChannelMessageAssociations[0];
+    ) ?? lastMessageAssociations[0];
 
   // Keeps the reply channel while a new last message re-queries its association,
   // otherwise the chat composer unmounts on every send

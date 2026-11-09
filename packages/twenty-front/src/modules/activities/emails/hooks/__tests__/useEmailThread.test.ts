@@ -110,6 +110,41 @@ describe('useEmailThread', () => {
     expect(result.current.lastMessageChannelId).toBe('channel-id');
   });
 
+  it('does not carry the reply channel of the previous thread over to a new one', () => {
+    stubQueries({
+      messages: [buildMessage('message-1')],
+      associations: [
+        {
+          id: 'association-1',
+          messageId: 'message-1',
+          messageChannelId: 'channel-id',
+        },
+      ],
+    });
+
+    const { result, rerender } = renderHook(
+      ({ threadId }) => useEmailThread(threadId),
+      { initialProps: { threadId: 'thread-id' } },
+    );
+
+    expect(result.current.lastMessageChannelId).toBe('channel-id');
+
+    stubQueries({
+      messages: [buildMessage('other-thread-message')],
+      associations: [
+        {
+          id: 'association-1',
+          messageId: 'message-1',
+          messageChannelId: 'channel-id',
+        },
+      ],
+    });
+
+    rerender({ threadId: 'other-thread-id' });
+
+    expect(result.current.lastMessageChannelId).toBeNull();
+  });
+
   it('only reports fetching more messages during pagination, not during a refetch', () => {
     stubQueries({
       messages: [buildMessage('message-1')],
