@@ -188,7 +188,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and (objectMetadataItem.nameSingular == "note" or objectMetadataItem.nameSingular == "task") and someNonEmptyString(selectedRecords, "bodyV2.markdown")',
+      'pageType == "RECORD_PAGE" and objectMetadataItem.nameSingular == "note" and someNonEmptyString(selectedRecords, "bodyV2.markdown")',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EXPORT_NOTE_TO_PDF,

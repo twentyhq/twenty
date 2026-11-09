@@ -194,7 +194,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "isPinned": false,
     "payload": null,
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "pageType == \"RECORD_PAGE\" and (objectMetadataItem.nameSingular == \"note\" or objectMetadataItem.nameSingular == \"task\") and someNonEmptyString(selectedRecords, \"bodyV2.markdown\")",
+    "conditionalAvailabilityExpression": "pageType == \"RECORD_PAGE\" and objectMetadataItem.nameSingular == \"note\" and someNonEmptyString(selectedRecords, \"bodyV2.markdown\")",
     "availabilityType": "RECORD_SELECTION",
     "availabilityObjectMetadataId": null,
     "pageLayoutId": null,
