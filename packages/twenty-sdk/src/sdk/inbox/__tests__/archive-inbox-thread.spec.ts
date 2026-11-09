@@ -50,6 +50,8 @@ describe('archiveInboxThread', () => {
 
     await expect(archiveInboxThread(ARCHIVE_INPUT)).resolves.toBe(undefined);
 
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
     expect(url).toBe('https://api.test/metadata');
