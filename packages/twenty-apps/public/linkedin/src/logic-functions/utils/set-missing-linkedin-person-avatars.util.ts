@@ -78,6 +78,11 @@ const getRemainingTimeSignal = (deadlineAtMs: number): AbortSignal =>
     ),
   );
 
+const createDeadlineBoundFetch =
+  (deadlineAtMs: number) =>
+  (input: RequestInfo | URL, init?: RequestInit): Promise<Response> =>
+    fetch(input, { ...init, signal: getRemainingTimeSignal(deadlineAtMs) });
+
 const downloadLinkedinPicture = async ({
   pictureUrl,
   deadlineAtMs,
@@ -119,7 +124,10 @@ const uploadAvatarFile = async ({
     throw new Error('job deadline reached before the upload');
   }
 
-  const metadataClient = new MetadataApiClient({ runAs: 'application' });
+  const metadataClient = new MetadataApiClient({
+    runAs: 'application',
+    fetch: createDeadlineBoundFetch(deadlineAtMs),
+  });
 
   const { createFileUpload } = await metadataClient.mutation({
     createFileUpload: {
@@ -176,6 +184,7 @@ const setPersonAvatar = async ({
 
   const { updatePeople } = await new CoreApiClient({
     runAs: 'application',
+    fetch: createDeadlineBoundFetch(deadlineAtMs),
   }).mutation({
     updatePeople: {
       __args: {

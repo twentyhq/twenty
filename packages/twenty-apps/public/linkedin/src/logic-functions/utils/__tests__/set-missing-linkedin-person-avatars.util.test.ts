@@ -6,11 +6,16 @@ const mocks = vi.hoisted(() => ({
   query: vi.fn(),
   mutation: vi.fn(),
   metadataMutation: vi.fn(),
+  clientOptions: [] as { fetch?: unknown }[],
   fetch: vi.fn(),
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
+    constructor(options: { fetch?: unknown }) {
+      mocks.clientOptions.push(options);
+    }
+
     query = mocks.query;
     mutation = mocks.mutation;
   },
@@ -18,6 +23,10 @@ vi.mock('twenty-client-sdk/core', () => ({
 
 vi.mock('twenty-client-sdk/metadata', () => ({
   MetadataApiClient: class {
+    constructor(options: { fetch?: unknown }) {
+      mocks.clientOptions.push(options);
+    }
+
     mutation = mocks.metadataMutation;
   },
 }));
@@ -93,6 +102,7 @@ const getUpdateArgs = () => mocks.mutation.mock.calls[0][0].updatePeople.__args;
 describe('setMissingLinkedinPersonAvatars', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.clientOptions.length = 0;
     vi.stubGlobal('fetch', mocks.fetch);
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -142,6 +152,18 @@ describe('setMissingLinkedinPersonAvatars', () => {
     expect(getUpdateArgs().data).toEqual({
       avatarFile: [{ fileId: 'file-id', label: 'linkedin-avatar.jpg' }],
     });
+  });
+
+  it('bounds the upload and update requests by the job deadline', async () => {
+    mockPeople([{ id: 'priya-id', avatarFile: [] }]);
+    mockPictureResponse();
+
+    await setAvatars();
+
+    const [, metadataClientOptions, updateClientOptions] = mocks.clientOptions;
+
+    expect(metadataClientOptions.fetch).toEqual(expect.any(Function));
+    expect(updateClientOptions.fetch).toEqual(expect.any(Function));
   });
 
   it('only writes the avatar if the person still has none', async () => {
