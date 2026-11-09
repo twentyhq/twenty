@@ -49,7 +49,7 @@ const StyledIllustrationLine = styled.span<{
 }>`
   background-color: ${({ illustrationColor }) =>
     themeCssVariables.color[`${illustrationColor}4`]};
-  border-radius: 1px;
+  border-radius: ${themeCssVariables.border.radius.xs};
   flex: 0 0 3px;
   margin-right: ${({ inset }) => inset};
 `;

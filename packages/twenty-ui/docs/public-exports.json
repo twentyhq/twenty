@@ -1,6 +1,12 @@
 {
   ".": {
-    "reExports": ["components", "icon", "primitives", "theme", "utilities"],
+    "reExports": [
+      "components",
+      "icon",
+      "primitives",
+      "theme",
+      "utilities"
+    ],
     "values": {},
     "types": {}
   },
@@ -295,6 +301,7 @@
       "IconCalendarTime": "icon/components/TablerIcons",
       "IconCalendarWeek": "icon/components/TablerIcons",
       "IconCalendarX": "icon/components/TablerIcons",
+      "IconCamera": "icon/components/TablerIcons",
       "IconCancel": "icon/components/TablerIcons",
       "IconCaretLeft": "icon/components/TablerIcons",
       "IconCaretRight": "icon/components/TablerIcons",

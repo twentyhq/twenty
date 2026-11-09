@@ -69,6 +69,7 @@ export {
   IconCalendarTime,
   IconCalendarWeek,
   IconCalendarX,
+  IconCamera,
   IconCancel,
   IconCaretLeft,
   IconCaretRight,

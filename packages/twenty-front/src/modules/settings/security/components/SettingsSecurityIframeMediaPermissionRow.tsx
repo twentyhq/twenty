@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/components/input';
-import { IconMicrophone, IconPhoto, IconVideo, IconX } from 'twenty-ui/icon';
+import { IconCamera, IconMicrophone, IconVideo, IconX } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
 import { SettingsSecurityOriginTableCell } from '@/settings/security/components/SettingsSecurityOriginTableCell';
@@ -34,7 +34,7 @@ export const SettingsSecurityIframeMediaPermissionRow = ({
       Icon: IconVideo,
     },
     { value: 'microphone', label: t`Microphone only`, Icon: IconMicrophone },
-    { value: 'camera', label: t`Camera only`, Icon: IconPhoto },
+    { value: 'camera', label: t`Camera only`, Icon: IconCamera },
   ];
 
   return (
