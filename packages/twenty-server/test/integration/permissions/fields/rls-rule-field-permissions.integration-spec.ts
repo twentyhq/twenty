@@ -1,5 +1,6 @@
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
@@ -7,6 +8,7 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -14,6 +16,7 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -353,6 +356,107 @@ describe('field permissions on an RLS rule (integration)', () => {
         expectToFail: false,
         input: { idToDelete: removedRuleRoleId },
       });
+    }
+  });
+
+  it('should add up object level and RLS rule unreadable fields', async () => {
+    const jobTitleResponse = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id avatarUrl',
+        filter: { id: { in: [originalPeople[0].id] } },
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(jobTitleResponse.body.data.people.edges[0].node.avatarUrl).toBe('');
+
+    const linkedinFieldMetadataId = await findFieldMetadataId('linkedinLink');
+
+    await upsertFieldPermissions({
+      expectToFail: false,
+      input: {
+        roleId,
+        fieldPermissions: [
+          {
+            objectMetadataId,
+            fieldMetadataId: linkedinFieldMetadataId,
+            canReadFieldValue: false,
+          },
+        ],
+      },
+    });
+
+    try {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id linkedinLink { primaryLinkUrl }',
+          filter: { id: { in: [originalPeople[0].id] } },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeDefined();
+    } finally {
+      await upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId,
+          fieldPermissions: [
+            {
+              objectMetadataId,
+              fieldMetadataId: linkedinFieldMetadataId,
+              canReadFieldValue: null,
+            },
+          ],
+        },
+      });
+    }
+  });
+
+  it('should reject an update of an RLS rule uneditable field on a record it matches', async () => {
+    await global.testDataSource.query(
+      `UPDATE core."objectPermission" SET "canUpdateObjectRecords" = TRUE WHERE "roleId" = $1`,
+      [roleId],
+    );
+    await global.testDataSource.query(
+      `UPDATE core."role" SET "canUpdateAllObjectRecords" = TRUE WHERE "id" = $1`,
+      [roleId],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['rolesPermissions']);
+
+    try {
+      const response = await makeGraphqlApiRequest(
+        updateOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          recordId: originalPeople[0].id,
+          data: { avatarUrl: 'changed' },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeDefined();
+
+      const [{ avatarUrl }] = await global.testDataSource.query(
+        `SELECT "avatarUrl" FROM ${PERSON_TABLE} WHERE "id" = $1`,
+        [originalPeople[0].id],
+      );
+
+      expect(avatarUrl).toBe('Secret avatar');
+    } finally {
+      await global.testDataSource.query(
+        `UPDATE core."role" SET "canUpdateAllObjectRecords" = FALSE WHERE "id" = $1`,
+        [roleId],
+      );
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['rolesPermissions']);
     }
   });
 

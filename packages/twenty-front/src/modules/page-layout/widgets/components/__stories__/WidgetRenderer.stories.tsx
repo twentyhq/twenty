@@ -2046,7 +2046,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             canUpdateAllRecords: false,
             canSoftDeleteAllRecords: false,
             canDestroyAllRecords: false,
-            restrictedFields: {},
+            unreadableFields: [],
+            uneditableFields: [],
           },
         ],
       });
@@ -2062,7 +2063,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             canUpdateAllRecords: true,
             canSoftDeleteAllRecords: true,
             canDestroyAllRecords: true,
-            restrictedFields: {},
+            unreadableFields: [],
+            uneditableFields: [],
           },
         ],
       });

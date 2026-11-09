@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, one {crèdit gratuït} other {crèdits grat
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} i {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -6227,10 +6227,10 @@ msgstr "Trieu què passa quan feu clic a una adreça de correu electrònic"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Trieu a què pot accedir Twenty per donar-vos suport i millorar el producte."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Tria quan {AGENT_CHAT_ASSISTANT_NAME} participa en converses de tot el teu espai de treball"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Trieu quan {assistantName} participa en les converses de tot el vostre espai de treball"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Mai"
 msgid "Never expires"
 msgstr "Mai caduca"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Mai manté {AGENT_CHAT_ASSISTANT_NAME} fora. Només quan se'l menciona demana a {AGENT_CHAT_ASSISTANT_NAME} que respongui quan se'l etiqueta. Automàtic permet que {AGENT_CHAT_ASSISTANT_NAME} decideixi quan respondre. Els xats només amb tu i {AGENT_CHAT_ASSISTANT_NAME} sempre reben respostes."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Mai manté {assistantName} fora. Només quan se'l menciona demana a {assistantName} que respongui quan se'l etiqueta. Automàtic permet que {assistantName} decideixi quan respondre. Els xats només amb vós i {assistantName} sempre reben respostes."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20602,12 +20602,12 @@ msgstr "Ometre valors zero"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "en {dayName}"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "els {remainingDays} i {lastDay}"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "només el {dayName}"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "només els {remainingDays} i l'últim dia del mes"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

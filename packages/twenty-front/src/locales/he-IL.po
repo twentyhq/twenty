@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, one {קרדיט חינם} two {קרדיטי
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} ו-{dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -6227,10 +6227,10 @@ msgstr "בחרו מה קורה בעת לחיצה על כתובת דוא\"ל"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "בחר למה ל-Twenty יש גישה כדי לתמוך בך ולשפר את המוצר."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "בחירה מתי {AGENT_CHAT_ASSISTANT_NAME} משתתף בשיחות ברחבי סביבת העבודה שלך"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "בחר מתי {assistantName} משתתף בשיחות ברחבי סביבת העבודה שלך"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "אף פעם"
 msgid "Never expires"
 msgstr "אף פעם לא פוקע"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "האפשרות \"לעולם לא\" משאירה את {AGENT_CHAT_ASSISTANT_NAME} בחוץ. האפשרות \"רק כשמוזכר\" מבקשת מ-{AGENT_CHAT_ASSISTANT_NAME} להשיב כשהוא מתויג. האפשרות \"אוטומטי\" מאפשרת ל-{AGENT_CHAT_ASSISTANT_NAME} להחליט מתי להשיב. שיחות שבהן רק את/ה ו-{AGENT_CHAT_ASSISTANT_NAME} תמיד מקבלות תשובות."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "האפשרות \"לעולם לא\" משאירה את {assistantName} בחוץ. האפשרות \"רק כשמוזכר\" מבקשת מ-{assistantName} להשיב כשמתייגים אותו. האפשרות \"אוטומטי\" מאפשרת ל-{assistantName} להחליט מתי להשיב. בצ'אטים שבהם נמצאים רק אתה ו-{assistantName} תמיד מתקבלות תשובות."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20602,12 +20602,12 @@ msgstr "שחרור ערכים אפסיים"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "ב-{dayName}"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "ב-{remainingDays} וב-{lastDay}"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "רק ב-{dayName}"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "רק ב-{remainingDays} וב-{lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

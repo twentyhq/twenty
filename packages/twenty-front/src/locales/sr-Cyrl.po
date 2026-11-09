@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, one {бесплатни кредит} few {
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} и {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -6227,10 +6227,10 @@ msgstr "Изаберите шта се дешава када кликнете н
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Изаберите чему Twenty може да приступи како би вам пружио подршку и унапредио производ."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Изаберите када {AGENT_CHAT_ASSISTANT_NAME} учествује у разговорима широм вашег радног простора"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Изаберите када {assistantName} учествује у разговорима у вашем радном простору"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Никада"
 msgid "Never expires"
 msgstr "Никада не истиче"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "„Никад“ не укључује {AGENT_CHAT_ASSISTANT_NAME}. „Само када је поменут“ тражи од {AGENT_CHAT_ASSISTANT_NAME} да одговори када је означен. „Аутоматски“ омогућава {AGENT_CHAT_ASSISTANT_NAME} да одлучи када да одговори. У ћаскањима само са вама и {AGENT_CHAT_ASSISTANT_NAME} увек се добијају одговори."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Никад не искључује {assistantName}. Само када је поменут тражи од {assistantName} да одговори када је означен. Аутоматски омогућава {assistantName} да одлучи када ће одговорити. У ћаскањима само са вама и {assistantName} увек стижу одговори."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20602,12 +20602,12 @@ msgstr "Изостави нулте вредности"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "на {dayName}"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "на {remainingDays} и {lastDay}"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "само на {dayName}"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "само на {remainingDays} и {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, one {ilmainen krediitti} other {ilmaiset kr
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} ja {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -6227,10 +6227,10 @@ msgstr "Valitse, mitä tapahtuu, kun napsautat sähköpostiosoitetta"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Valitse, mihin Twenty voi päästä tukeakseen sinua ja parantaakseen tuotetta."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Valitse, milloin {AGENT_CHAT_ASSISTANT_NAME} osallistuu keskusteluihin työtilassasi"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Valitse, milloin {assistantName} osallistuu keskusteluihin työtilassasi"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Ei koskaan"
 msgid "Never expires"
 msgstr "Ei koskaan vanhene"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Ei koskaan pitää {AGENT_CHAT_ASSISTANT_NAME}-avustajan poissa. Vain mainittaessa pyytää {AGENT_CHAT_ASSISTANT_NAME}-avustajaa vastaamaan, kun se merkitään. Automaattinen antaa {AGENT_CHAT_ASSISTANT_NAME}-avustajan päättää, milloin se vastaa. Keskusteluihin, joissa olette vain sinä ja {AGENT_CHAT_ASSISTANT_NAME}, vastataan aina."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Ei koskaan pitää {assistantName}-avustajan poissa. Vain mainittaessa pyytää {assistantName}-avustajaa vastaamaan, kun se merkitään. Automaattinen antaa {assistantName}-avustajan päättää, milloin se vastaa. Keskusteluihin, joissa olette vain sinä ja {assistantName}-avustaja, vastataan aina."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20602,12 +20602,12 @@ msgstr "Jätä nollarvot pois"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "kohteessa {dayName}"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "{remainingDays} ja {lastDay} päivinä"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "vain {dayName} päivänä"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "vain {remainingDays} ja {lastDay} päivinä"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

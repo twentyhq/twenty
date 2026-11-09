@@ -3,18 +3,15 @@ import {
   type ObjectRecordEvent,
   type ObjectRecordUpdateEvent,
 } from 'twenty-shared/database-events';
-import {
-  FieldMetadataType,
-  RelationType,
-  type RestrictedFieldsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/internal/masking/utils/omit-restricted-fields-from-event.util';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { omitUnreadableFieldsFromEvent } from 'src/engine/permissions/internal/masking/utils/omit-unreadable-fields-from-event.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_METADATA_ID = 'company-object-id';
@@ -90,9 +87,9 @@ const updateEvent: ObjectRecordUpdateEvent<CompanyEventRecord> = {
 };
 
 const buildRecordsPermissions = (
-  restrictedFields: RestrictedFieldsPermissions | undefined,
+  unreadableFields: string[] | undefined,
 ): Pick<RoleRecordsPermissions, 'objects'> => {
-  if (!isDefined(restrictedFields)) {
+  if (!isDefined(unreadableFields)) {
     return { objects: {} };
   }
 
@@ -104,7 +101,8 @@ const buildRecordsPermissions = (
         canUpdateAllRecords: true,
         canSoftDeleteAllRecords: true,
         canDestroyAllRecords: true,
-        restrictedFields,
+        unreadableFields,
+        uneditableFields: unreadableFields,
       },
     },
   };
@@ -112,37 +110,56 @@ const buildRecordsPermissions = (
 
 const omit = ({
   event,
-  restrictedFields,
+  unreadableFields,
 }: {
   event: ObjectRecordEvent<CompanyEventRecord>;
-  restrictedFields: RestrictedFieldsPermissions | undefined;
+  unreadableFields: string[] | undefined;
 }) =>
-  omitRestrictedFieldsFromEvent({
+  omitUnreadableFieldsFromEvent({
     event,
-    objectMetadata: { id: OBJECT_METADATA_ID, nameSingular: 'company' },
-    recordsPermissions: buildRecordsPermissions(restrictedFields),
+    principals: {
+      workspaceId: 'workspace-id',
+      mainPrincipal: {
+        type: 'workspaceMember',
+        roleId: 'role-id',
+        workspaceMemberId: 'member-id',
+      },
+      applicationPrincipal: { type: 'customApplication' },
+    },
+    objectMetadata: getFlatObjectMetadataMock({
+      id: OBJECT_METADATA_ID,
+      universalIdentifier: OBJECT_METADATA_ID,
+      nameSingular: 'company',
+    }),
+    recordsPermissions: buildRecordsPermissions(unreadableFields),
     recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
-    flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-    flatFieldMetadataMaps,
+    rlsRuleFilterByRoleId: new Map(),
+    metadataMaps: {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
+      flatApplicationMaps: { byId: {} },
+      featureFlagsMap: {},
+      rolesPermissions: {},
+    },
   });
 
-describe('omitRestrictedFieldsFromEvent', () => {
-  it('should return the event untouched when no field is restricted', () => {
+describe('omitUnreadableFieldsFromEvent', () => {
+  it('should return the event untouched when no field is unreadable', () => {
     expect(
       omit({
         event: updateEvent,
-        restrictedFields: {
-          [SALARY_FIELD_ID]: { canRead: true, canUpdate: false },
-        },
+        unreadableFields: [],
       }),
     ).toBe(updateEvent);
   });
 
-  it('should return the event untouched without restricted fields', () => {
+  it('should return the event untouched without object permissions', () => {
     expect(
       omit({
         event: updateEvent,
-        restrictedFields: undefined,
+        unreadableFields: undefined,
       }),
     ).toBe(updateEvent);
   });
@@ -151,9 +168,7 @@ describe('omitRestrictedFieldsFromEvent', () => {
     expect(
       omit({
         event: updateEvent,
-        restrictedFields: {
-          [SALARY_FIELD_ID]: { canRead: false, canUpdate: false },
-        },
+        unreadableFields: [SALARY_FIELD_ID],
       }),
     ).toEqual({
       recordId: 'record-1',
@@ -181,9 +196,7 @@ describe('omitRestrictedFieldsFromEvent', () => {
     expect(
       omit({
         event: salaryOnlyUpdateEvent,
-        restrictedFields: {
-          [SALARY_FIELD_ID]: { canRead: false, canUpdate: false },
-        },
+        unreadableFields: [SALARY_FIELD_ID],
       }).properties,
     ).toEqual({
       updatedFields: [],
@@ -202,9 +215,7 @@ describe('omitRestrictedFieldsFromEvent', () => {
     expect(
       omit({
         event: deleteEvent,
-        restrictedFields: {
-          [SALARY_FIELD_ID]: { canRead: false, canUpdate: false },
-        },
+        unreadableFields: [SALARY_FIELD_ID],
       }).properties,
     ).toEqual({ before: { id: 'record-1', name: 'Old' } });
   });
@@ -226,9 +237,7 @@ describe('omitRestrictedFieldsFromEvent', () => {
     expect(
       omit({
         event: companyUpdateEvent,
-        restrictedFields: {
-          [COMPANY_FIELD_ID]: { canRead: false, canUpdate: false },
-        },
+        unreadableFields: [COMPANY_FIELD_ID],
       }).properties,
     ).toEqual({
       updatedFields: ['name'],
@@ -254,9 +263,7 @@ describe('omitRestrictedFieldsFromEvent', () => {
     expect(
       omit({
         event: ownerUpdateEvent,
-        restrictedFields: {
-          [OWNER_FIELD_ID]: { canRead: false, canUpdate: false },
-        },
+        unreadableFields: [OWNER_FIELD_ID],
       }).properties,
     ).toEqual({
       updatedFields: [],

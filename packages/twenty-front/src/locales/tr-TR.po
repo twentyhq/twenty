@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, one {ücretsiz kredi} other {ücretsiz kred
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} ve {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -6227,10 +6227,10 @@ msgstr "Bir e-posta adresine tıkladığınızda ne olacağını seçin"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Size destek olmak ve ürünü geliştirmek için Twenty'nin neler erişebileceğini seçin."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "{AGENT_CHAT_ASSISTANT_NAME} öğesinin çalışma alanınızdaki konuşmalara ne zaman katılacağını seçin"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "{assistantName} öğesinin çalışma alanınızdaki konuşmalara ne zaman katılacağını seçin"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Asla"
 msgid "Never expires"
 msgstr "Asla sona ermez"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Asla, {AGENT_CHAT_ASSISTANT_NAME} öğesini dışarıda tutar. Yalnızca bahsedildiğinde, etiketlendiğinde {AGENT_CHAT_ASSISTANT_NAME} öğesinden yanıt vermesini ister. Otomatik, {AGENT_CHAT_ASSISTANT_NAME} öğesinin ne zaman yanıt vereceğine karar vermesine izin verir. Yalnızca siz ve {AGENT_CHAT_ASSISTANT_NAME} öğesinin bulunduğu sohbetlerde her zaman yanıt verilir."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Asla, {assistantName} öğesini dışarıda tutar. Yalnızca bahsedildiğinde, {assistantName} öğesinden etiketlendiğinde yanıt vermesini ister. Otomatik, {assistantName} öğesinin ne zaman yanıt vereceğine karar vermesini sağlar. Yalnızca siz ve {assistantName} arasındaki sohbetler her zaman yanıt alır."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20602,12 +20602,12 @@ msgstr "Sıfır değerleri hariç tut"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "{dayName} üzerinde"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "{remainingDays} ve {lastDay} günlerinde"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "sadece {dayName} günü"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "sadece {remainingDays} ve {lastDay} günlerinde"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

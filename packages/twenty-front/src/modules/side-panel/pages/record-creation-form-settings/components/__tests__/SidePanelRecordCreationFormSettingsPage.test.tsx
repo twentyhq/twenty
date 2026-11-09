@@ -89,9 +89,8 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItemById', () => ({
 
 jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
   useObjectPermissionsForObject: () => ({
-    restrictedFields: {
-      'field-secret': { canRead: true, canUpdate: false },
-    },
+    unreadableFields: [],
+    uneditableFields: ['field-secret'],
   }),
 }));
 

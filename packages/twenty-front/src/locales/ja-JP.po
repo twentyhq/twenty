@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, other {無料クレジット}}"
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} と {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -6227,10 +6227,10 @@ msgstr "メールアドレスをクリックしたときの動作を選択して
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "サポートと製品改善のためにTwentyがアクセスできる内容を選択します。"
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "{AGENT_CHAT_ASSISTANT_NAME} がワークスペース全体の会話に参加するタイミングを選択"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "{assistantName} がワークスペース全体の会話に参加するタイミングを選択してください"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "なし"
 msgid "Never expires"
 msgstr "期限が切れることはありません"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "「なし」では {AGENT_CHAT_ASSISTANT_NAME} は参加しません。「メンション時のみ」では、タグ付けされたときに {AGENT_CHAT_ASSISTANT_NAME} に返信を求めます。「自動」では、{AGENT_CHAT_ASSISTANT_NAME} が返信するタイミングを決定します。あなたと {AGENT_CHAT_ASSISTANT_NAME} だけのチャットには常に返信があります。"
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "「なし」では {assistantName} は会話に参加しません。「メンションされたときのみ」では、タグ付けされた場合に {assistantName} に返信を依頼します。「自動」では、{assistantName} が返信するタイミングを決定します。あなたと {assistantName} だけのチャットには常に返信があります。"
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20602,12 +20602,12 @@ msgstr "ゼロ値を省略する"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "{dayName} 用"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "{remainingDays} と {lastDay} に"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "{dayName} のみ"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "{remainingDays} と {lastDay} のみ"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, one {credit gratuit} few {credite gratuite}
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} și {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -6227,10 +6227,10 @@ msgstr "Alege ce se întâmplă când dai clic pe o adresă de e-mail"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Alegeți ce poate accesa Twenty pentru a vă oferi asistență și a îmbunătăți produsul."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Alege când {AGENT_CHAT_ASSISTANT_NAME} participă la conversații în întregul spațiu de lucru"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Alege când {assistantName} participă la conversațiile din spațiul tău de lucru"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "Niciodată"
 msgid "Never expires"
 msgstr "Nu expiră niciodată"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Niciodată îl exclude pe {AGENT_CHAT_ASSISTANT_NAME}. Doar când este menționat îi solicită lui {AGENT_CHAT_ASSISTANT_NAME} să răspundă când este etichetat. Automat îi permite lui {AGENT_CHAT_ASSISTANT_NAME} să decidă când să răspundă. Chat-urile doar cu tine și {AGENT_CHAT_ASSISTANT_NAME} primesc întotdeauna răspunsuri."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Niciodată îl exclude pe {assistantName}. Doar când este menționat îi cere lui {assistantName} să răspundă când este etichetat. Automat îi permite lui {assistantName} să decidă când să răspundă. Conversațiile doar cu tine și {assistantName} primesc întotdeauna răspunsuri."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20602,12 +20602,12 @@ msgstr "Omiterea valorilor zero"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "pe {dayName}"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "în zilele {remainingDays} și {lastDay}"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "doar în zilele {dayName}"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "doar în zilele {remainingDays} și {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

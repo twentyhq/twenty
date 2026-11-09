@@ -11,6 +11,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFieldPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util';
+import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { isSameRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-same-row-level-permission-predicate-group.util';
 
@@ -75,13 +76,9 @@ export class FlatFieldPermissionValidatorService {
         }),
       );
 
-      if (!referencedRole.isEditable) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-          message: t`Role is not editable`,
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-        });
-      }
+      validationResult.errors.push(
+        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
+      );
     }
 
     const referencedObjectMetadata = findFlatEntityByUniversalIdentifier({
@@ -119,6 +116,8 @@ export class FlatFieldPermissionValidatorService {
         flatRole: referencedRole,
         applicationDefaultRoleUniversalIdentifier:
           buildOptions.applicationDefaultRoleUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
       }),
     );
 
@@ -212,13 +211,9 @@ export class FlatFieldPermissionValidatorService {
         }),
       );
 
-      if (!referencedRole.isEditable) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-          message: t`Role is not editable`,
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-        });
-      }
+      validationResult.errors.push(
+        ...getRoleNotEditableErrors({ flatRole: referencedRole, buildOptions }),
+      );
     }
 
     if (isDefined(flatEntityUpdate.objectMetadataUniversalIdentifier)) {
@@ -264,6 +259,8 @@ export class FlatFieldPermissionValidatorService {
         flatRole: referencedRole,
         applicationDefaultRoleUniversalIdentifier:
           buildOptions.applicationDefaultRoleUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          buildOptions.workspaceCustomApplicationUniversalIdentifier,
       }),
     );
 
@@ -302,6 +299,7 @@ export class FlatFieldPermissionValidatorService {
       flatFieldPermissionMaps: optimisticFlatFieldPermissionMaps,
       flatRoleMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldPermission
   >): FailedFlatEntityValidation<'fieldPermission', 'delete'> {
@@ -331,12 +329,13 @@ export class FlatFieldPermissionValidatorService {
         flatEntityMaps: flatRoleMaps,
       });
 
-      if (isDefined(referencedRole) && !referencedRole.isEditable) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-          message: t`Role is not editable`,
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-        });
+      if (isDefined(referencedRole)) {
+        validationResult.errors.push(
+          ...getRoleNotEditableErrors({
+            flatRole: referencedRole,
+            buildOptions,
+          }),
+        );
       }
     }
 

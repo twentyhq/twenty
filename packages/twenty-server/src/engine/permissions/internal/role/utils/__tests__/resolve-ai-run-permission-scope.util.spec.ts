@@ -128,9 +128,9 @@ describe('resolveAiRunPermissionScope', () => {
       ],
     });
 
-    expect(
-      recordsPermissions.objects[PERSON_ID]?.restrictedFields[EMAIL_FIELD_ID],
-    ).toMatchObject({ canRead: false });
+    expect(recordsPermissions.objects[PERSON_ID]?.unreadableFields).toContain(
+      EMAIL_FIELD_ID,
+    );
   });
 
   it.each([
@@ -313,7 +313,8 @@ describe('resolveAiRunPermissionScope', () => {
                     canUpdateAllRecords: true,
                     canSoftDeleteAllRecords: true,
                     canDestroyAllRecords: true,
-                    restrictedFields: {},
+                    unreadableFields: [],
+                    uneditableFields: [],
                   },
                 },
               },

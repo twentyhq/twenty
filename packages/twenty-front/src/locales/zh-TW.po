@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, other {免費點數}}"
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} 和 {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -6227,10 +6227,10 @@ msgstr "選擇按一下電子郵件地址時的動作"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "選擇允許 Twenty 存取哪些內容，以便為您提供支援並改善產品。"
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "選擇 {AGENT_CHAT_ASSISTANT_NAME} 何時參與您工作區中的對話"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "選擇 {assistantName} 何時參與整個工作區的對話"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18714,10 +18714,10 @@ msgstr "從不"
 msgid "Never expires"
 msgstr "永不過期"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "「永不」會讓 {AGENT_CHAT_ASSISTANT_NAME} 不參與對話。「僅在被提及時」會在標註 {AGENT_CHAT_ASSISTANT_NAME} 時要求其回覆。「自動」會讓 {AGENT_CHAT_ASSISTANT_NAME} 決定何時回覆。只有您和 {AGENT_CHAT_ASSISTANT_NAME} 的聊天一律會收到回覆。"
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "「從不」會讓 {assistantName} 不參與。「僅在提及時」會在標註 {assistantName} 時要求其回覆。「自動」讓 {assistantName} 決定何時回覆。只有您和 {assistantName} 的聊天室一律會收到回覆。"
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20602,12 +20602,12 @@ msgstr "省略零值"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "在 {dayName} 上"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "在 {remainingDays} 和 {lastDay}"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20762,7 +20762,7 @@ msgstr "僅在 {dayName}"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "僅在 {remainingDays} 和 {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

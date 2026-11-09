@@ -702,7 +702,7 @@ msgstr "{currentStepCredits, plural, one {gratiskredit} other {gratiskrediter}}"
 #. js-lingui-id: QG0ttf
 #: src/utils/cron-to-human/descriptors/getDaysDescription.ts
 msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
-msgstr ""
+msgstr "{dayOfMonthDescription} och {dayOfWeekDescription}"
 
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -6227,10 +6227,10 @@ msgstr "Välj vad som händer när du klickar på en e-postadress"
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Välj vad Twenty kan få åtkomst till för att hjälpa dig och förbättra produkten."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Välj när {AGENT_CHAT_ASSISTANT_NAME} deltar i konversationer i hela din arbetsyta"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Välj när {assistantName} deltar i konversationer i hela din arbetsyta"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -18716,10 +18716,10 @@ msgstr "Aldrig"
 msgid "Never expires"
 msgstr "Förfaller aldrig"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Aldrig håller {AGENT_CHAT_ASSISTANT_NAME} utanför. Endast när nämnd ber {AGENT_CHAT_ASSISTANT_NAME} att svara när den taggas. Automatiskt låter {AGENT_CHAT_ASSISTANT_NAME} avgöra när den ska svara. Chattar med endast dig och {AGENT_CHAT_ASSISTANT_NAME} får alltid svar."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Aldrig håller {assistantName} utanför. Endast när omnämnd ber {assistantName} att svara när den taggas. Automatiskt låter {assistantName} avgöra när den ska svara. Chattar med endast dig och {assistantName} får alltid svar."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20604,12 +20604,12 @@ msgstr "Uteslut nollvärden"
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
-msgstr ""
+msgstr "på {dayName}"
 
 #. js-lingui-id: 5QglRc
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "på {remainingDays} och {lastDay}"
 
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -20764,7 +20764,7 @@ msgstr "endast på {dayName}"
 #. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {lastDay}"
-msgstr ""
+msgstr "endast på {remainingDays} och {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

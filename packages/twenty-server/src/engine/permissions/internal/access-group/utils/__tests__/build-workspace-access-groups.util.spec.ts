@@ -29,7 +29,8 @@ const noAccess: ObjectRecordsPermissions = {
   canUpdateAllRecords: false,
   canSoftDeleteAllRecords: false,
   canDestroyAllRecords: false,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const buildRoleRecordsPermissions = (

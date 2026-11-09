@@ -23,7 +23,8 @@ const allRecords: ObjectRecordsPermissions = {
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const withRlsRule: ObjectRecordsPermissions = {
