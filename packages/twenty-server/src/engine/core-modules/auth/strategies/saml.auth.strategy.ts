@@ -16,6 +16,7 @@ import { type Request } from 'express';
 import { z } from 'zod';
 
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
+import { getCertificateBase64Body } from 'src/engine/core-modules/sso/utils/get-certificate-base64-body.util';
 
 const WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA = z.object({
   workspaceInviteHash: z.string().optional(),
@@ -66,16 +67,14 @@ export class SamlAuthStrategy extends PassportStrategy(
                 identityProvider &&
                 this.ssoService.isSamlIdentityProvider(identityProvider)
               ) {
-                // IdP metadata XML typically has whitespace-formatted certificates
-                const sanitizedCertificate =
-                  identityProvider.certificate.replace(/\s/g, '');
-
                 const config: SamlConfig = {
                   entryPoint: identityProvider.ssoURL,
                   issuer: this.ssoService.buildIssuerURL(identityProvider),
                   callbackUrl:
                     this.ssoService.buildCallbackUrl(identityProvider),
-                  idpCert: sanitizedCertificate,
+                  idpCert: getCertificateBase64Body(
+                    identityProvider.certificate,
+                  ),
                   wantAssertionsSigned: true,
                   wantAuthnResponseSigned: false,
                   disableRequestedAuthnContext: true,

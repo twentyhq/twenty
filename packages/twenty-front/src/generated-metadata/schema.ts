@@ -182,10 +182,12 @@ export type AgentMessage = {
   agentId?: Maybe<Scalars['UUID']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
+  isBuiltInAssistant: Scalars['Boolean']['output'];
   parts: Array<AgentMessagePart>;
   processedAt?: Maybe<Scalars['DateTime']['output']>;
   reactions: Array<AgentMessageReactionSummary>;
   role: Scalars['String']['output'];
+  senderApplicationId?: Maybe<Scalars['UUID']['output']>;
   senderUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   senderWorkspaceMemberId?: Maybe<Scalars['UUID']['output']>;
   status: Scalars['String']['output'];
@@ -2889,6 +2891,7 @@ export type GettingStartedProgress = {
 };
 
 export enum GettingStartedStepActionKey {
+  BOOK_CALL = 'BOOK_CALL',
   CONNECT_MAILBOX = 'CONNECT_MAILBOX',
   CUSTOMIZE_DATA_MODEL = 'CUSTOMIZE_DATA_MODEL',
   FOLLOW_UP_DEALS = 'FOLLOW_UP_DEALS',

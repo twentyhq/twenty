@@ -154,10 +154,12 @@ type AgentMessage {
   agentId: UUID
   createdAt: DateTime!
   id: UUID!
+  isBuiltInAssistant: Boolean!
   parts: [AgentMessagePart!]!
   processedAt: DateTime
   reactions: [AgentMessageReactionSummary!]!
   role: String!
+  senderApplicationId: UUID
   senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
   status: String!
@@ -2730,6 +2732,7 @@ type GettingStartedProgress {
 }
 
 enum GettingStartedStepActionKey {
+  BOOK_CALL
   CONNECT_MAILBOX
   CUSTOMIZE_DATA_MODEL
   FOLLOW_UP_DEALS

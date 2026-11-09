@@ -701,6 +701,7 @@ describe('core workflow visibility (e2e)', () => {
       await getAppProviderByClassName<AgentConversationWriterService>(
         'AgentConversationWriterService',
       ).upsertAssistantMessage({
+        agentId: null,
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         id: randomUUID(),
         threadId,

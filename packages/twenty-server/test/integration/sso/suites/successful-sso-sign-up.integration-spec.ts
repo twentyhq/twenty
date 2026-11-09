@@ -1,3 +1,4 @@
+import { clearInvitationSendingThrottle } from 'test/integration/graphql/utils/clear-invitation-sending-throttle.util';
 import { createApprovedAccessDomain } from 'test/integration/graphql/utils/create-approved-access-domain.util';
 import { deleteApprovedAccessDomain } from 'test/integration/graphql/utils/delete-approved-access-domain.util';
 import { findCurrentWorkspaceInviteHash } from 'test/integration/graphql/utils/find-current-workspace-invite-hash.util';
@@ -91,6 +92,8 @@ describe('SSO sign-up should succeed', () => {
           approvedAccessDomainId = undefined;
         }
 
+        await clearInvitationSendingThrottle({ email: newcomerEmail });
+
         await deleteWorkspaceInvitationsByEmail({ email: newcomerEmail });
 
         // Runs last so an unreachable identity provider can't skip the steps above
@@ -99,7 +102,7 @@ describe('SSO sign-up should succeed', () => {
           (await exchangeLoginToken(await signInAsNewcomer()));
 
         if (isDefined(accessToken)) {
-          await deleteSsoUser({ accessToken, email: newcomerEmail });
+          await deleteSsoUser({ accessToken });
         }
 
         newcomerAccessToken = undefined;
