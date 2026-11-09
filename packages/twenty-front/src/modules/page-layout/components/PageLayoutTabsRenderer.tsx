@@ -1,5 +1,6 @@
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { Tabs } from 'twenty-ui/primitives/navigation';
+import { DashboardFilterBar } from '@/page-layout/components/DashboardFilterBar';
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutPrerenderedTabIdsResetEffect } from '@/page-layout/components/PageLayoutPrerenderedTabIdsResetEffect';
@@ -26,7 +27,9 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useIsMobile } from 'twenty-ui/utilities';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -92,6 +95,12 @@ const StyledTabsAndDashboardContainer = styled.div`
   }
 `;
 
+const StyledTabListRow = styled.div`
+  box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.light};
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+`;
+
 // display: none, not a hidden <Activity>, which skips the effects Apollo fetches from (see pageLayoutTabPrerenderContract.test).
 const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
   display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
@@ -143,6 +152,10 @@ export const PageLayoutTabsRenderer = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const isMobile = useIsMobile();
+
+  const isDashboardFiltersEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED,
+  );
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
@@ -207,6 +220,10 @@ export const PageLayoutTabsRenderer = () => {
   const behaveAsLinks =
     workspaceSurface.type === 'main' && !isPageLayoutInEditMode;
   const hasTabPanels = shouldRenderTabList && !behaveAsLinks;
+  const shouldRenderDashboardFilterBar =
+    isDashboardFiltersEnabled &&
+    isPageLayoutInEditMode &&
+    currentPageLayout.type === PageLayoutType.DASHBOARD;
 
   const tabList = shouldRenderTabList && (
     <PageLayoutTabList
@@ -265,7 +282,15 @@ export const PageLayoutTabsRenderer = () => {
                   undefined
                 }
               />
-              {!shouldRenderRecordIdentifierBar && tabList}
+              {!shouldRenderRecordIdentifierBar &&
+                (shouldRenderDashboardFilterBar ? (
+                  <StyledTabListRow>
+                    {tabList}
+                    <DashboardFilterBar />
+                  </StyledTabListRow>
+                ) : (
+                  tabList
+                ))}
 
               <StyledScrollWrapperContainer>
                 <ScrollWrapper

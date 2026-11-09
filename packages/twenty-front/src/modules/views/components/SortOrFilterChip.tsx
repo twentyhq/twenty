@@ -110,7 +110,7 @@ type SortOrFilterChipProps = {
   labelSubField?: ReactNode;
   variant?: SortOrFilterChipVariant;
   Icon?: IconComponent;
-  onRemove: () => void;
+  onRemove?: () => void;
   onClick?: () => void;
   testId?: string;
   type: SortOrFilterChipType;
@@ -131,7 +131,7 @@ export const SortOrFilterChip = ({
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onRemove();
+    onRemove?.();
   };
 
   return (
@@ -155,12 +155,14 @@ export const SortOrFilterChip = ({
           </>
         )}
       </StyledKeyLabelContainer>
-      <StyledDelete
-        onClick={handleDeleteClick}
-        data-testid={'remove-icon-' + testId}
-      >
-        <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-      </StyledDelete>
+      {isDefined(onRemove) && (
+        <StyledDelete
+          onClick={handleDeleteClick}
+          data-testid={'remove-icon-' + testId}
+        >
+          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+        </StyledDelete>
+      )}
     </StyledChip>
   );
 };
