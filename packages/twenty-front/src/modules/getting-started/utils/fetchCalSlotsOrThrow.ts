@@ -11,7 +11,7 @@ const calSlotsResponseSchema = z.object({
   ),
 });
 
-export const fetchCalSlots = async ({
+export const fetchCalSlotsOrThrow = async ({
   eventTypeReference,
   startDate,
   endDate,

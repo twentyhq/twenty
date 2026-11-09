@@ -1,5 +1,5 @@
 import { gettingStartedBookCallSlotsByDayState } from '@/getting-started/states/gettingStartedBookCallSlotsByDayState';
-import { fetchCalSlots } from '@/getting-started/utils/fetchCalSlots';
+import { fetchCalSlotsOrThrow } from '@/getting-started/utils/fetchCalSlotsOrThrow';
 import { getCalEventTypeReference } from '@/getting-started/utils/getCalEventTypeReference';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { captureException } from '@sentry/react';
@@ -36,7 +36,7 @@ export const GettingStartedBookCallSlotsLoadEffect = ({
     const abortController = new AbortController();
     const today = Temporal.Now.plainDateISO(timeZone);
 
-    fetchCalSlots({
+    fetchCalSlotsOrThrow({
       eventTypeReference,
       startDate: today.toString(),
       endDate: today.add({ days: SLOTS_WINDOW_DAYS }).toString(),

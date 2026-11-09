@@ -111,7 +111,7 @@ export const GettingStartedBookCallSummary = () => {
               : t`Pick a time that suits you`}
           </Text>
         ) : (
-          <Skeleton height={SKELETON_HEIGHT_SIZES.s} width={140} />
+          <Skeleton height={SKELETON_HEIGHT_SIZES.s} />
         )}
       </StyledNextAvailable>
     </StyledSummary>
