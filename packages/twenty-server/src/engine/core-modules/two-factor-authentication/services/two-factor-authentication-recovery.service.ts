@@ -623,7 +623,7 @@ export class TwoFactorAuthenticationRecoveryService {
       to: targetUserWorkspace.user.email,
       locale,
       subject: msg`A two-factor authentication recovery code was generated for you`,
-      buildEmailTemplate: () =>
+      buildEmailTemplate: async () =>
         TwoFactorAuthenticationRecoveryCodeIssuedEmail({
           actorName:
             `${actor.firstName} ${actor.lastName}`.trim() || actor.email,
@@ -647,7 +647,7 @@ export class TwoFactorAuthenticationRecoveryService {
       to: userWorkspace.user.email,
       locale,
       subject: msg`Your two-factor authentication was reset`,
-      buildEmailTemplate: () =>
+      buildEmailTemplate: async () =>
         TwoFactorAuthenticationResetEmail({
           workspaceDisplayName: workspaceDisplayName ?? '',
           locale,
@@ -695,9 +695,7 @@ export class TwoFactorAuthenticationRecoveryService {
     to: string;
     locale: UserWorkspaceEntity['locale'];
     subject: MessageDescriptor;
-    buildEmailTemplate: () =>
-      | Parameters<typeof renderEmail>[0]
-      | Promise<Parameters<typeof renderEmail>[0]>;
+    buildEmailTemplate: () => Promise<Parameters<typeof renderEmail>[0]>;
   }): Promise<void> {
     try {
       const emailTemplate = await buildEmailTemplate();
