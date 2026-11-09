@@ -43,6 +43,8 @@ import { getNativeMimeTypesForModalities } from 'src/engine/metadata-modules/ai/
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const FILE_REJECTION_STATUS_CODES = new Set([400, 413, 422]);
+const PROMPT_TOO_LONG_ERROR_PATTERN =
+  /context.length|prompt is too long|input is too long|maximum prompt length|maximum number of tokens/i;
 const FILE_CHECK_PROMPT = 'Reply with OK.';
 const FILE_CHECK_MAX_OUTPUT_TOKENS = 16;
 
@@ -188,6 +190,10 @@ export class AgentFilePartService {
     );
   }
 
+  private isPromptTooLong({ message, responseBody }: APICallError): boolean {
+    return PROMPT_TOO_LONG_ERROR_PATTERN.test(`${message} ${responseBody}`);
+  }
+
   private getPromptFileParts(
     prompt: LanguageModelV4Prompt,
   ): LanguageModelV4FilePart[] {
@@ -252,6 +258,10 @@ export class AgentFilePartService {
 
   private async retryWithoutRejectedFiles(retryArguments: FileRetryArguments) {
     const { fileRejection, params, model, deliveryState } = retryArguments;
+
+    if (this.isPromptTooLong(fileRejection)) {
+      return this.retryWithoutFiles(retryArguments);
+    }
 
     this.logger.warn(
       `Provider refused a file, checking each file: ${fileRejection.message}`,
