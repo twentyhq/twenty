@@ -1,15 +1,13 @@
 import { createApprovedAccessDomain } from 'test/integration/graphql/utils/create-approved-access-domain.util';
 import { deleteApprovedAccessDomain } from 'test/integration/graphql/utils/delete-approved-access-domain.util';
-import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { findCurrentWorkspaceInviteHash } from 'test/integration/graphql/utils/find-current-workspace-invite-hash.util';
-import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { deleteWorkspaceInvitationsByEmail } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { sendInvitations } from 'test/integration/graphql/suites/user-session/utils/send-invitations.util';
-import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
-import { findMyConnectedAccounts } from 'test/integration/metadata/suites/connected-account/utils/find-my-connected-accounts.util';
 import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
 import { createTestOidcIdentityProvider } from 'test/integration/sso/utils/create-test-oidc-identity-provider.util';
+import { deleteSsoUser } from 'test/integration/sso/utils/delete-sso-user.util';
+import { exchangeLoginToken } from 'test/integration/sso/utils/exchange-login-token.util';
 import { getSsoTestIdentityProvider } from 'test/integration/sso/utils/get-sso-test-identity-provider.util';
 import { signInWithOidc } from 'test/integration/sso/utils/sign-in-with-oidc.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
@@ -17,23 +15,6 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
-
-const exchangeLoginToken = async (verifyUrl: URL) => {
-  const loginToken = verifyUrl.searchParams.get('loginToken');
-
-  if (!isDefined(loginToken)) {
-    return undefined;
-  }
-
-  const { data } = await getAuthTokensFromLoginToken({
-    loginToken,
-    origin: verifyUrl.origin,
-    expectToFail: false,
-  });
-
-  return data.getAuthTokensFromLoginToken.tokens.accessOrWorkspaceAgnosticToken
-    .token;
-};
 
 const setEmailVerificationRequired = (value: boolean) =>
   updateConfigVariable({
@@ -110,23 +91,7 @@ describe('SSO sign-up should succeed', () => {
       (await exchangeLoginToken(await signInAsNewcomer()));
 
     if (isDefined(accessToken)) {
-      // deleteUser hands the departing member's connected accounts to another member
-      const newcomerSsoConnectedAccounts = (
-        await findMyConnectedAccounts({ token: accessToken })
-      ).filter(
-        ({ provider, handle }) =>
-          provider === 'oidc' && handle === newcomerEmail,
-      );
-
-      for (const { id } of newcomerSsoConnectedAccounts) {
-        await deleteConnectedAccount({
-          id,
-          expectToFail: false,
-          token: accessToken,
-        });
-      }
-
-      await deleteUser({ accessToken, expectToFail: false });
+      await deleteSsoUser({ accessToken, email: newcomerEmail });
     }
 
     newcomerAccessToken = undefined;
