@@ -60,7 +60,8 @@ const agentRolePermissions = buildRoleRecordsPermissions({
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
-    restrictedFields: {},
+    unreadableFields: [],
+    uneditableFields: [],
   },
 });
 
@@ -71,7 +72,8 @@ const defaultRolePermissions = buildRoleRecordsPermissions({
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
-    restrictedFields: {},
+    unreadableFields: [],
+    uneditableFields: [],
   },
 });
 
@@ -392,7 +394,8 @@ const FULL_ACCESS: ObjectRecordsPermissions = {
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
@@ -583,12 +586,11 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
 
       expect(invoicePermissions?.canDestroyAllRecords).toBe(canDestroy);
       expect(
-        invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]?.canUpdate ===
-          false,
+        invoicePermissions?.uneditableFields.includes(AMOUNT_FIELD_ID),
       ).toBe(!canDestroy);
       expect(
-        invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]?.canRead,
-      ).not.toBe(false);
+        invoicePermissions?.unreadableFields.includes(AMOUNT_FIELD_ID),
+      ).toBe(false);
     },
   );
 
@@ -670,17 +672,15 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
       flatApplicationMaps,
     });
 
-    expect(
-      objects[INVOICE_ID]?.restrictedFields['invoice-name-field-id']?.canRead,
-    ).not.toBe(false);
-    expect(
-      objects[COMPANY_ID]?.restrictedFields['company-invoices-field-id']
-        ?.canRead,
-    ).toBe(false);
-    expect(
-      objects[COMPANY_ID]?.restrictedFields['company-paid-invoices-field-id']
-        ?.canRead,
-    ).toBe(false);
+    expect(objects[INVOICE_ID]?.unreadableFields).not.toContain(
+      'invoice-name-field-id',
+    );
+    expect(objects[COMPANY_ID]?.unreadableFields).toContain(
+      'company-invoices-field-id',
+    );
+    expect(objects[COMPANY_ID]?.unreadableFields).toContain(
+      'company-paid-invoices-field-id',
+    );
   });
 });
 
@@ -707,7 +707,8 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
         canUpdateAllRecords: false,
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
-        restrictedFields: {},
+        unreadableFields: [],
+        uneditableFields: [],
         rowLevelRecordsPermissions: {
           canCreateRecords: true,
           canReadRecords: true,
@@ -827,16 +828,13 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     const invoicePermissions = compute({
       scopeObjectPermissions: {
         ...FULL_ACCESS,
-        restrictedFields: {
-          [AMOUNT_FIELD_ID]: { canRead: false, canUpdate: false },
-        },
+        unreadableFields: [AMOUNT_FIELD_ID],
+        uneditableFields: [AMOUNT_FIELD_ID],
       },
     });
 
-    expect(invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]).toEqual({
-      canRead: false,
-      canUpdate: false,
-    });
+    expect(invoicePermissions?.unreadableFields).toContain(AMOUNT_FIELD_ID);
+    expect(invoicePermissions?.uneditableFields).toContain(AMOUNT_FIELD_ID);
   });
 
   describe('inserting a record that sets the predicate field', () => {
@@ -879,9 +877,8 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
           compute({
             scopeObjectPermissions: {
               ...FULL_ACCESS,
-              restrictedFields: {
-                [AMOUNT_FIELD_ID]: { canRead: null, canUpdate: false },
-              },
+              unreadableFields: [],
+              uneditableFields: [AMOUNT_FIELD_ID],
             },
           }),
         ),

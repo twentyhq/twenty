@@ -87,7 +87,7 @@ export class RecordSharingChangeService {
               },
             );
           const isWritable =
-            await this.recordPermissionsService.canAccessRecords({
+            await this.recordPermissionsService.canAccessKnownRecords({
               operationType: 'update',
               principals,
               objectMetadataId: args.objectMetadataId,

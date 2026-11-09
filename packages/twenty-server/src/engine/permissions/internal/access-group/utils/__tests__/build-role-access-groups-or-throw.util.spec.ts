@@ -38,7 +38,8 @@ const noAccess: ObjectRecordsPermissions = {
   canUpdateAllRecords: false,
   canSoftDeleteAllRecords: false,
   canDestroyAllRecords: false,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const buildPredicate = (
@@ -206,6 +207,51 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     ]);
   });
 
+  it('should keep the whole list in one group when the rule excludes values', () => {
+    const accessGroups = build({
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [
+          buildPredicate({
+            id: 'predicate',
+            operand: RowLevelPermissionPredicateOperand.IS_NOT,
+            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+          }),
+        ],
+      }),
+      workspaceMembers: [{ ...JANE, teams: ['support', 'sales'] }, BOB],
+    });
+
+    expect(
+      accessGroups.map((accessGroup) => accessGroup.memberFieldValues),
+    ).toEqual([
+      { [MEMBER_FIELD_KEY]: ['sales', 'support'] },
+      { [MEMBER_FIELD_KEY]: ['sales'] },
+    ]);
+  });
+
+  it('should keep the whole list in one group when two predicates read it', () => {
+    const accessGroups = build({
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [
+          buildPredicate({
+            id: 'first',
+            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+          }),
+          buildPredicate({
+            id: 'second',
+            fieldMetadataId: 'other-field-id',
+            workspaceMemberFieldMetadataId: MEMBER_FIELD_ID,
+          }),
+        ],
+      }),
+      workspaceMembers: [JANE],
+    });
+
+    expect(
+      accessGroups.map((accessGroup) => accessGroup.memberFieldValues),
+    ).toEqual([{ [MEMBER_FIELD_KEY]: ['sales', 'support'] }]);
+  });
+
   it('should make one rule per role and object, whatever the predicates hang on', () => {
     const accessGroups = build({
       objectRecordsPermissions: buildRowLevelPermissions({
@@ -259,6 +305,77 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     });
 
     expect(ruleAccessGroup.groupHash).not.toBe(allRecordsAccessGroup.groupHash);
+  });
+
+  it('should change the hash when the content of a rule changes', () => {
+    const buildHash = (value: string) =>
+      build({
+        objectRecordsPermissions: buildRowLevelPermissions({
+          predicates: [buildPredicate({ id: 'predicate', value })],
+        }),
+      })[0].groupHash;
+
+    expect(buildHash('Paris')).not.toBe(buildHash('London'));
+  });
+
+  it('should keep the hash when ids below the root, order or operation flags change', () => {
+    const firstPredicate = buildPredicate({ id: 'first', value: 'Paris' });
+    const secondPredicate = buildPredicate({
+      id: 'second',
+      value: 'London',
+      rowLevelPermissionPredicateGroupId: 'nested',
+    });
+    const [accessGroup] = build({
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [firstPredicate, secondPredicate],
+      }),
+    });
+    const [sameRuleAccessGroup] = build({
+      objectRecordsPermissions: buildRowLevelPermissions({
+        predicates: [
+          {
+            ...secondPredicate,
+            id: 'other-second',
+            rowLevelPermissionPredicateGroupId: 'other-nested',
+          },
+          { ...firstPredicate, id: 'other-first' },
+        ],
+        predicateGroups: [
+          buildPredicateGroup({
+            id: 'other-nested',
+            parentRowLevelPermissionPredicateGroupId: RULE_ID,
+          }),
+          buildPredicateGroup({
+            id: RULE_ID,
+            parentRowLevelPermissionPredicateGroupId: null,
+          }),
+        ].map((predicateGroup) => ({
+          ...predicateGroup,
+          positionInRowLevelPermissionPredicateGroup: 1,
+          canUpdateRecords: true,
+        })),
+      }),
+    });
+
+    expect(sameRuleAccessGroup.groupHash).toBe(accessGroup.groupHash);
+  });
+
+  it('should change the hash when a predicate moves to another group', () => {
+    const buildHash = (rowLevelPermissionPredicateGroupId: string) =>
+      build({
+        objectRecordsPermissions: buildRowLevelPermissions({
+          predicates: [
+            buildPredicate({ id: 'first', value: 'Paris' }),
+            buildPredicate({
+              id: 'second',
+              value: 'London',
+              rowLevelPermissionPredicateGroupId,
+            }),
+          ],
+        }),
+      })[0].groupHash;
+
+    expect(buildHash(RULE_ID)).not.toBe(buildHash('nested'));
   });
 
   it('should make no member group when no member holds the role', () => {
