@@ -25,23 +25,6 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "targetRecordIdentifier": null
   },
   {
-    "id": "d6cc6806-100d-4c6e-91fd-e82fc1d8237a",
-    "userWorkspaceId": null,
-    "targetRecordId": null,
-    "targetObjectMetadataId": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
-    "viewId": null,
-    "folderId": "c91d2186-fd13-4a4c-b95a-d90b61628c2c",
-    "name": null,
-    "link": null,
-    "icon": null,
-    "color": "gray",
-    "position": 0,
-    "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
-    "createdAt": "2026-04-10T08:55:56.200Z",
-    "updatedAt": "2026-04-10T08:55:56.200Z",
-    "targetRecordIdentifier": null
-  },
-  {
     "id": "b3d5ea51-6004-467c-9757-ce1d736f983e",
     "userWorkspaceId": null,
     "targetRecordId": null,

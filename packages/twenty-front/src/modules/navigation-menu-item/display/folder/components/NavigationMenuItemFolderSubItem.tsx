@@ -13,7 +13,6 @@ import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
-import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -113,11 +112,6 @@ export const NavigationMenuItemFolderSubItem = ({
           navigateToNavigationMenuItemLink(computedLink);
         });
 
-  const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({
-    navigationMenuItemType: navigationMenuItem.type,
-    objectNameSingular,
-  });
-
   const viewSecondaryLabel =
     navigationMenuItem.type === NavigationMenuItemType.VIEW
       ? getObjectNavigationMenuItemSecondaryLabel({
@@ -128,7 +122,6 @@ export const NavigationMenuItemFolderSubItem = ({
       : undefined;
 
   const secondaryLabel =
-    isCoreWorkflowsIndexItem ||
     navigationMenuItem.type === NavigationMenuItemType.NATIVE_PAGE
       ? undefined
       : viewSecondaryLabel;

@@ -40,6 +40,7 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
     ...sortedCommandMenuItems.filter(
       (item) =>
         isPinnedContextualCreationCommand(item) ||
+        isDefined(item.availabilityCoreObjectName) ||
         (item.engineComponentKey !== EngineComponentKey.CREATE_NEW_RECORD &&
           item.engineComponentKey !== EngineComponentKey.NAVIGATION),
     ),
