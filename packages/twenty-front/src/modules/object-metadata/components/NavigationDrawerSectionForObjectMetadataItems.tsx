@@ -107,7 +107,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
         ),
-        operationType: 'select',
+        operationType: 'read',
       }),
     );
 

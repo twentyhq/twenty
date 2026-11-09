@@ -699,6 +699,11 @@ msgstr "{currentCreditAmountDisplay} πιστώσεις "
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, one {δωρεάν πίστωση} other {δωρεάν πιστώσεις}}"
 
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} και {dayOfWeekDescription}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -1724,6 +1729,11 @@ msgstr "Σχετικά με την εφαρμογή σας"
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Accepted and signed DPAs for this workspace, with their template version and date."
 msgstr "Αποδεκτές και υπογεγραμμένες DPA για αυτόν τον χώρο εργασίας, με την έκδοση του προτύπου και την ημερομηνία τους."
+
+#. js-lingui-id: 7T2MJI
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Access groups"
+msgstr "Ομάδες πρόσβασης"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -3980,6 +3990,11 @@ msgstr "Εφαρμόζεται σε"
 msgid "Apply"
 msgstr "Εφαρμογή"
 
+#. js-lingui-id: 2+R4Vf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again."
+msgstr "Εφαρμογή ιδιωτικών εγγραφών σε αντικείμενα που δεν είναι ιδιωτικά από προεπιλογή. Πάντα ενεργό για χώρους εργασίας που έχουν ορίσει κοινή χρήση εγγραφών. Η απενεργοποίησή του κάνει τις εγγραφές που έχουν οριστεί ως ιδιωτικές σε αυτά τα αντικείμενα ξανά ορατές."
+
 #. js-lingui-id: 9re43z
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 msgid "Apply{progressText}"
@@ -4376,7 +4391,7 @@ msgid "Assistant avatar"
 msgstr "Άβαταρ βοηθού"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Όνομα βοηθού"
 
@@ -5961,6 +5976,11 @@ msgstr "Λίστα ελέγχου"
 msgid "Check recent runs"
 msgstr "Έλεγχος πρόσφατων εκτελέσεων"
 
+#. js-lingui-id: 1rduS8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Check the create permission on its own when creating records, rather than the update permission."
+msgstr "Ελέγξτε την άδεια δημιουργίας ξεχωριστά κατά τη δημιουργία εγγραφών, αντί για την άδεια ενημέρωσης."
+
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -6207,10 +6227,10 @@ msgstr "Επιλέξτε τι συμβαίνει όταν κάνετε κλικ 
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Επιλέξτε σε τι μπορεί να έχει πρόσβαση το Twenty για να σας υποστηρίζει και να βελτιώνει το προϊόν."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Επιλέξτε πότε το {AGENT_CHAT_ASSISTANT_NAME} συμμετέχει σε συνομιλίες σε ολόκληρο τον χώρο εργασίας σας"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Επιλέξτε πότε το {assistantName} συμμετέχει σε συνομιλίες σε ολόκληρο τον χώρο εργασίας σας"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -6899,6 +6919,11 @@ msgstr "Προεπισκόπηση στοιχείου με δείγματα δε
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Σύνταξη email"
+
+#. js-lingui-id: xwW7YT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
+msgstr "Υπολογίστε τις ομάδες πρόσβασης που θα χρησιμοποιούν οι λίστες εγγραφών για δικαιώματα σε επίπεδο γραμμής. Ενεργοποιήστε το μετά την ολοκλήρωση της αναβάθμισης του χώρου εργασίας."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -8171,6 +8196,11 @@ msgstr "Δημιουργία εγγραφής"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Δημιουργία εγγραφής"
+
+#. js-lingui-id: frmOeu
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create records permission"
+msgstr "Άδεια δημιουργίας εγγραφών"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -10255,6 +10285,7 @@ msgid "Downgrade to monthly"
 msgstr "Υποβάθμιση σε μηνιαίο"
 
 #. js-lingui-id: mzI/c+
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
@@ -11276,7 +11307,7 @@ msgid "Enter a JSON value"
 msgstr "Εισαγάγετε μια τιμή JSON"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Εισαγάγετε ένα όνομα από 1 έως {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} χαρακτήρες σε μία γραμμή. Οι αγκύλες πρέπει να είναι ζευγαρωμένες και δεν μπορούν να είναι ένθετες."
 
@@ -12748,6 +12779,11 @@ msgstr "Αποτυχία ανάκλησης κλειδιού υπογραφής.
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Αποτυχία ανάκλησης του κωδικού ανάκτησης."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "Αποτυχία αποθήκευσης των ρυθμίσεων του βοηθού. Δοκιμάστε ξανά."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -14325,6 +14361,11 @@ msgstr "Αναγνωριστικό"
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
 msgid "Happy"
 msgstr "Χαρούμενο"
+
+#. js-lingui-id: WsF7cD
+#: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
+msgid "Has attachments"
+msgstr "Έχει συνημμένα"
 
 #. js-lingui-id: MvwlmR
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -18263,6 +18304,7 @@ msgid "More advanced fields for advanced projects"
 msgstr "Περισσότερα προηγμένα πεδία για προηγμένα έργα"
 
 #. js-lingui-id: 3Siwmw
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -18672,10 +18714,10 @@ msgstr "Ποτέ"
 msgid "Never expires"
 msgstr "Δεν λήγει ποτέ"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Το Ποτέ κρατά το {AGENT_CHAT_ASSISTANT_NAME} εκτός. Το Μόνο όταν αναφέρεται ζητά από το {AGENT_CHAT_ASSISTANT_NAME} να απαντήσει όταν επισημαίνεται. Το Αυτόματο επιτρέπει στο {AGENT_CHAT_ASSISTANT_NAME} να αποφασίζει πότε θα απαντήσει. Οι συνομιλίες μόνο με εσάς και το {AGENT_CHAT_ASSISTANT_NAME} λαμβάνουν πάντα απαντήσεις."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Η επιλογή «Ποτέ» κρατά το {assistantName} εκτός. Η επιλογή «Μόνο όταν αναφέρεται» ζητά από το {assistantName} να απαντά όταν επισημαίνεται. Η επιλογή «Αυτόματα» επιτρέπει στο {assistantName} να αποφασίζει πότε να απαντά. Οι συνομιλίες μόνο με εσάς και το {assistantName} λαμβάνουν πάντα απαντήσεις."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20557,6 +20599,16 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "Παράλειψη μηδενικών τιμών"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "σε {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "τις {remainingDays} και {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20704,20 +20756,13 @@ msgstr "Μόνο μέλη που μπορούν να διαχειρίζοντα�
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "μόνο την {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "μόνο τις {firstDay} και {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "μόνο τις {remainingDays} και {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "μόνο τις {remainingDays} και {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
@@ -22156,6 +22201,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "Αποτροπή ανάθεσης της ίδιας τιμής σε διαφορετικές εγγραφές"
 
 #. js-lingui-id: rdUucN
+#: src/modules/activities/emails/components/EmailThreadMessageAttachments.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -22327,6 +22373,11 @@ msgstr "Πολιτική Απορρήτου"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Private"
 msgstr "Ιδιωτικό"
+
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Ιδιωτικές εγγραφές"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -23673,11 +23724,6 @@ msgstr "Οι σύνδεσμοι εγκατάστασης Replit απαιτούν
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Απάντηση"
-
-#. js-lingui-id: fiPYZo
-#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
-msgid "Reply..."
-msgstr "Απάντηση..."
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx

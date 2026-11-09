@@ -39,7 +39,7 @@ import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
-import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.util';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
 import { type StockScope } from 'src/engine/core-modules/usage-limit/types/stock-scope.type';

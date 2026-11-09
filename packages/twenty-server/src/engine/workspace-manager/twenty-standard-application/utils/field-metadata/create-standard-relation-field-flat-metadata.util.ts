@@ -145,6 +145,8 @@ export const createStandardRelationFieldFlatMetadata = <
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataIds: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    fieldMetadataOptionIds: [],
+    fieldMetadataOptionUniversalIdentifiers: [],
     universalSettings: {
       ...settings,
       ...(junctionTargetFieldUniversalIdentifier && {

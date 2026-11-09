@@ -15,8 +15,9 @@ export const useBaseLicensedPriceByPlanKeyAndInterval = () => {
   ) => {
     const baseProduct = getBaseProductByPlanKey(planKey);
 
-    if (!baseProduct.prices)
+    if (!baseProduct.prices) {
       throw new Error(doNotTranslate('Product prices is undefined.'));
+    }
 
     return findSellablePriceForIntervalOrThrow(baseProduct.prices, interval);
   };

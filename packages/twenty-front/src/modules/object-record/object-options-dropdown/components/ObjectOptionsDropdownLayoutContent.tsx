@@ -53,7 +53,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
 
   const setAndPersistIsCompactModeActive = useCallback(
     (isCompactModeActive: boolean, view: GraphQLView | undefined) => {
-      if (!view) return;
+      if (!view) {
+        return;
+      }
       updateCurrentView({
         isCompact: isCompactModeActive,
       });

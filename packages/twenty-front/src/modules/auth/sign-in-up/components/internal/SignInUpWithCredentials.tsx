@@ -69,7 +69,9 @@ export const SignInUpWithCredentials = ({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isSubmitButtonDisabled) return;
+    if (isSubmitButtonDisabled) {
+      return;
+    }
 
     if (signInUpStep === SignInUpStep.Init) {
       continueWithEmail();

@@ -7,7 +7,8 @@ type ObjectRecordsPermissions = {
   canUpdateAllRecords: boolean;
   canSoftDeleteAllRecords: boolean;
   canDestroyAllRecords: boolean;
-  restrictedFields: Record<string, unknown>;
+  unreadableFields: string[];
+  uneditableFields: string[];
   rowLevelRecordsPermissions: {
     canReadRecords: boolean;
     canUpdateRecords: boolean;
@@ -24,7 +25,8 @@ const CURRENT_USER_OBJECT_PERMISSIONS_FIELDS = `
   canUpdateObjectRecords
   canSoftDeleteObjectRecords
   canDestroyObjectRecords
-  restrictedFields
+  unreadableFields
+  uneditableFields
   rowLevelPermissionPredicates {
     id
   }
@@ -39,7 +41,8 @@ const buildExpectedObjectPermission = ({
   canUpdateAllRecords,
   canSoftDeleteAllRecords,
   canDestroyAllRecords,
-  restrictedFields,
+  unreadableFields,
+  uneditableFields,
   rowLevelRecordsPermissions,
 }: ObjectRecordsPermissions) => ({
   objectMetadataId,
@@ -54,7 +57,8 @@ const buildExpectedObjectPermission = ({
   canDestroyObjectRecords:
     canDestroyAllRecords ||
     (rowLevelRecordsPermissions?.canDestroyRecords ?? false),
-  restrictedFields,
+  unreadableFields,
+  uneditableFields,
   rowLevelPermissionPredicates: rowLevelRecordsPermissions?.predicates ?? [],
   rowLevelPermissionPredicateGroups:
     rowLevelRecordsPermissions?.predicateGroups ?? [],
@@ -73,7 +77,8 @@ describe('deprecated current user object permissions', () => {
                 canUpdateAllRecords
                 canSoftDeleteAllRecords
                 canDestroyAllRecords
-                restrictedFields
+                unreadableFields
+                uneditableFields
                 rowLevelRecordsPermissions {
                   canReadRecords
                   canUpdateRecords

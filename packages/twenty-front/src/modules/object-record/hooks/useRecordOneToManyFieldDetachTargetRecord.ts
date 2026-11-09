@@ -67,7 +67,9 @@ export const useRecordOneToManyFieldDetachTargetRecord = () => {
             fieldNameOnRecordObjectConnection,
           );
 
-          if (!edges) return fieldNameOnRecordObjectConnection;
+          if (!edges) {
+            return fieldNameOnRecordObjectConnection;
+          }
 
           return {
             ...fieldNameOnRecordObjectConnection,

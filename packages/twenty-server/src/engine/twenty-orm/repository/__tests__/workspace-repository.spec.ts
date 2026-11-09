@@ -108,13 +108,18 @@ const buildRepository = ({
       flatFieldMetadataMaps,
       flatIndexMaps: createEmptyFlatEntityMaps(),
       permissionsPrincipals: undefined,
-      recordRepositoryPermissions: {
-        isOperationDisabled: jest.fn().mockResolvedValue(false),
-        assertObjectOperationAccessibleOrThrow: jest.fn(),
-        assertColumnsReadableAndUpdatableOrThrow: jest.fn(),
-        buildRecordsAccessCondition: jest.fn().mockResolvedValue(true),
+      recordPermissions: {
+        isReadDisabled: jest.fn().mockResolvedValue(false),
+        assertCanRunOperationOrThrow: jest.fn(),
+        buildManyRecordsAccessCondition: jest.fn().mockResolvedValue(true),
         assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
         assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
+        recomputeRecordAccessGroupIdsOfRecords: jest.fn(),
+        findRlsRuleUnreadableFieldsByRole: jest.fn().mockResolvedValue([]),
+        buildRlsRuleSqlConditionOrThrow: jest.fn(),
+        isRecomputingRecordAccessGroupIdsOnWrite: jest
+          .fn()
+          .mockReturnValue(false),
       },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
