@@ -89,7 +89,22 @@ describe('SSO sign-up should succeed', () => {
   });
 
   afterEach(async () => {
-    // A case that failed before its token exchange left no session to delete the newcomer with
+    if (isEmailVerificationRequired) {
+      await setEmailVerificationRequired(false);
+      isEmailVerificationRequired = false;
+    }
+
+    if (isDefined(approvedAccessDomainId)) {
+      await deleteApprovedAccessDomain({
+        input: { id: approvedAccessDomainId },
+        expectToFail: false,
+      });
+      approvedAccessDomainId = undefined;
+    }
+
+    await deleteWorkspaceInvitationsByEmail({ email: newcomerEmail });
+
+    // Runs last so an unreachable identity provider can't skip the steps above
     const accessToken =
       newcomerAccessToken ??
       (await exchangeLoginToken(await signInAsNewcomer()));
@@ -115,21 +130,6 @@ describe('SSO sign-up should succeed', () => {
     }
 
     newcomerAccessToken = undefined;
-
-    if (isEmailVerificationRequired) {
-      await setEmailVerificationRequired(false);
-      isEmailVerificationRequired = false;
-    }
-
-    if (isDefined(approvedAccessDomainId)) {
-      await deleteApprovedAccessDomain({
-        input: { id: approvedAccessDomainId },
-        expectToFail: false,
-      });
-      approvedAccessDomainId = undefined;
-    }
-
-    await deleteWorkspaceInvitationsByEmail({ email: newcomerEmail });
   });
 
   afterAll(async () => {
