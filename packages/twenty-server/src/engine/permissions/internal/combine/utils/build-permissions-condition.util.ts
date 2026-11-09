@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { areRecordGrantsHeldToRowLevelPermissions } from 'src/engine/permissions/internal/combine/utils/are-record-grants-held-to-row-level-permissions.util';
-import { combineSqlConditions } from 'src/engine/permissions/internal/combine/utils/combine-sql-conditions.util';
+import { combineSqlConditions } from 'src/engine/permissions/utils/combine-sql-conditions.util';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-access-outcome.util';
 import { buildPermissionsCreatorCondition } from 'src/engine/permissions/internal/private-record/utils/build-permissions-creator-condition.util';
 import { buildPermissionsShareCondition } from 'src/engine/permissions/internal/record-share/utils/build-permissions-share-condition.util';
