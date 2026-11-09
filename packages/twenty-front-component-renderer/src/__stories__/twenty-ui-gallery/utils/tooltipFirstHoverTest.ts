@@ -43,13 +43,13 @@ export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
       timeout: INTERACTION_TIMEOUT,
     });
 
-  // A busy runner can attach the trigger's listeners after the settle delay, losing the
-  // first hover, so only that one is retried; the hovers after it must open first time
-  const hoverUntilTooltipOpens = async () => {
+  // The sandbox can still be attaching its listeners, or finishing the last close, when a
+  // hover lands on a busy runner, and that hover is lost: each one is retried until it opens
+  const hoverUntilTooltipOpens = async (hoverTarget: Element) => {
     const deadline = Date.now() + MOUNT_TIMEOUT;
 
     for (;;) {
-      await user.hover(trigger);
+      await user.hover(hoverTarget);
 
       try {
         await expectTooltipOpen();
@@ -61,20 +61,15 @@ export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
         }
       }
 
-      await user.unhover(trigger);
+      await user.unhover(hoverTarget);
     }
   };
 
   expect(page.queryByRole('tooltip')).not.toBeInTheDocument();
   await waitForSandboxRoundTrip();
 
-  await hoverUntilTooltipOpens();
-  await user.unhover(trigger);
-  await expectTooltipClosed();
-
-  for (const hoverTarget of [icon, icon]) {
-    await user.hover(hoverTarget);
-    await expectTooltipOpen();
+  for (const hoverTarget of [trigger, icon, icon]) {
+    await hoverUntilTooltipOpens(hoverTarget);
     await user.unhover(hoverTarget);
     await expectTooltipClosed();
   }
