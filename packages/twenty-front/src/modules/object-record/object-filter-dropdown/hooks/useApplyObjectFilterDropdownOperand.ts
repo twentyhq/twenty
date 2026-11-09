@@ -13,7 +13,7 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 
 import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 import {
@@ -97,9 +97,10 @@ export const useApplyObjectFilterDropdownOperand = () => {
           DEFAULT_RELATIVE_DATE_FILTER_VALUE,
         );
 
-        recordFilterToUpsert.value = stringifyRelativeDateFilter(
-          newRelativeDateFilter,
-        );
+        recordFilterToUpsert.value =
+          stringifyRelativeDateFilterWithDetectedStartDay(
+            newRelativeDateFilter,
+          );
       } else {
         const filterValueIsEmpty = !isNonEmptyString(
           recordFilterToUpsert.value,

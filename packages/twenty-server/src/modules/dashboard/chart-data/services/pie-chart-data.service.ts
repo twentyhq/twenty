@@ -12,6 +12,7 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart-maximum-number-of-slices.constant';
 import { PieChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/pie-chart-data.dto';
+import { type DashboardFilterValueInput } from 'src/modules/dashboard/chart-data/dtos/inputs/dashboard-filter-value.input';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -29,6 +30,8 @@ type GetPieChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: PieChartConfigurationDTO;
+  dashboardFilterValues?: DashboardFilterValueInput[] | null;
+  viewerTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
 };
 
@@ -44,6 +47,8 @@ export class PieChartDataService {
     workspaceId,
     objectMetadataId,
     configuration,
+    dashboardFilterValues,
+    viewerTimeZone,
     authContext,
   }: GetPieChartDataParams): Promise<PieChartDataDTO> {
     try {
@@ -115,6 +120,9 @@ export class PieChartDataService {
         aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
         aggregateOperation: configuration.aggregateOperation,
         filter: configuration.filter,
+        dashboardFilterBindings: configuration.dashboardFilterBindings,
+        dashboardFilterValues,
+        viewerTimeZone,
         dateGranularity: configuration.dateGranularity,
         userTimezone: configuration.timezone ?? 'UTC',
         firstDayOfTheWeek:

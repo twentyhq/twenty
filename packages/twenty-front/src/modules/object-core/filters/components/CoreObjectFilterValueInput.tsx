@@ -16,7 +16,7 @@ import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-typ
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormRelativeDatePicker } from '@/object-record/record-field/ui/form-types/components/FormRelativeDatePicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 
@@ -97,7 +97,9 @@ export const CoreObjectFilterValueInput = ({
         <FormRelativeDatePicker
           defaultValue={
             isDefined(relativeDateFilter)
-              ? stringifyRelativeDateFilter(relativeDateFilter)
+              ? stringifyRelativeDateFilterWithDetectedStartDay(
+                  relativeDateFilter,
+                )
               : ''
           }
           onChange={(newRelativeDateFilter: RelativeDateFilter) =>

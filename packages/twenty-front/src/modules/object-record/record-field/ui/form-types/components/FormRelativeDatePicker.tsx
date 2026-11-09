@@ -1,7 +1,7 @@
 import { RelativeDateFilterRangeHint } from '@/object-record/record-field/ui/form-types/components/RelativeDateFilterRangeHint';
 import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record-filter/hooks/useGetRelativeDateFilterWithUserTimezone';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -46,7 +46,7 @@ export const FormRelativeDatePicker = ({
 
   const effectiveRelativeDateFilterValue = isNonEmptyString(defaultValue)
     ? defaultValue
-    : stringifyRelativeDateFilter(
+    : stringifyRelativeDateFilterWithDetectedStartDay(
         getRelativeDateFilterWithUserTimezone(
           DEFAULT_RELATIVE_DATE_FILTER_VALUE,
         ),
