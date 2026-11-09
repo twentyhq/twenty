@@ -1,6 +1,5 @@
 import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
-import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
 const MODEL_COST_CONFIG: AiModelCostConfig = {
   modelId: 'test-model',
@@ -18,7 +17,6 @@ const MODEL_COST_CONFIG: AiModelCostConfig = {
 
 const CLAUDE_SONNET_COST_CONFIG: AiModelCostConfig = {
   modelId: 'claude-sonnet-4-6',
-  modelFamily: ModelFamily.CLAUDE,
   inputCostPerMillionTokens: 3,
   outputCostPerMillionTokens: 15,
   cachedInputCostPerMillionTokens: 0.3,
@@ -27,13 +25,19 @@ const CLAUDE_SONNET_COST_CONFIG: AiModelCostConfig = {
 
 describe('computeStepCostBreakdown', () => {
   it('applies the long-context rate only when the step itself crosses the threshold', () => {
-    const stepUnderThreshold = computeStepCostBreakdown(MODEL_COST_CONFIG, {
-      inputTokens: 150_000,
-      outputTokens: 1_000,
+    const stepUnderThreshold = computeStepCostBreakdown({
+      model: MODEL_COST_CONFIG,
+      usage: {
+        inputTokens: 150_000,
+        outputTokens: 1_000,
+      },
     });
-    const stepOverThreshold = computeStepCostBreakdown(MODEL_COST_CONFIG, {
-      inputTokens: 300_000,
-      outputTokens: 2_000,
+    const stepOverThreshold = computeStepCostBreakdown({
+      model: MODEL_COST_CONFIG,
+      usage: {
+        inputTokens: 300_000,
+        outputTokens: 2_000,
+      },
     });
 
     expect(2 * stepUnderThreshold.totalCostInDollars).toBeCloseTo(0.304);
@@ -41,11 +45,14 @@ describe('computeStepCostBreakdown', () => {
   });
 
   it('reads cache reads and reasoning tokens from the usage details', () => {
-    const breakdown = computeStepCostBreakdown(MODEL_COST_CONFIG, {
-      inputTokens: 100_000,
-      outputTokens: 10_000,
-      inputTokenDetails: { cacheReadTokens: 40_000 },
-      outputTokenDetails: { reasoningTokens: 4_000 },
+    const breakdown = computeStepCostBreakdown({
+      model: MODEL_COST_CONFIG,
+      usage: {
+        inputTokens: 100_000,
+        outputTokens: 10_000,
+        inputTokenDetails: { cacheReadTokens: 40_000 },
+        outputTokenDetails: { reasoningTokens: 4_000 },
+      },
     });
 
     expect(breakdown.inputCostInDollars).toBeCloseTo(0.08);
@@ -58,10 +65,13 @@ describe('computeStepCostBreakdown', () => {
   });
 
   it('prices cache writes at the cache creation rate', () => {
-    const breakdown = computeStepCostBreakdown(MODEL_COST_CONFIG, {
-      inputTokens: 100_000,
-      outputTokens: 0,
-      inputTokenDetails: { cacheWriteTokens: 100_000 },
+    const breakdown = computeStepCostBreakdown({
+      model: MODEL_COST_CONFIG,
+      usage: {
+        inputTokens: 100_000,
+        outputTokens: 0,
+        inputTokenDetails: { cacheWriteTokens: 100_000 },
+      },
     });
 
     expect(breakdown.totalCostInDollars).toBeCloseTo(0.3);
@@ -71,18 +81,24 @@ describe('computeStepCostBreakdown', () => {
     });
   });
 
-  it('bills a Claude turn with adaptive thinking what Anthropic bills, thinking included once in outputTokens', () => {
-    const cacheReadTurn = computeStepCostBreakdown(CLAUDE_SONNET_COST_CONFIG, {
-      inputTokens: 21_200,
-      outputTokens: 6_000,
-      inputTokenDetails: { cacheReadTokens: 20_000, cacheWriteTokens: 0 },
-      outputTokenDetails: { reasoningTokens: 4_500 },
+  it('prices Claude thinking once since outputTokens already includes it', () => {
+    const cacheReadTurn = computeStepCostBreakdown({
+      model: CLAUDE_SONNET_COST_CONFIG,
+      usage: {
+        inputTokens: 21_200,
+        outputTokens: 6_000,
+        inputTokenDetails: { cacheReadTokens: 20_000, cacheWriteTokens: 0 },
+        outputTokenDetails: { reasoningTokens: 4_500 },
+      },
     });
-    const cacheWriteTurn = computeStepCostBreakdown(CLAUDE_SONNET_COST_CONFIG, {
-      inputTokens: 21_200,
-      outputTokens: 6_000,
-      inputTokenDetails: { cacheReadTokens: 0, cacheWriteTokens: 20_000 },
-      outputTokenDetails: { reasoningTokens: 4_500 },
+    const cacheWriteTurn = computeStepCostBreakdown({
+      model: CLAUDE_SONNET_COST_CONFIG,
+      usage: {
+        inputTokens: 21_200,
+        outputTokens: 6_000,
+        inputTokenDetails: { cacheReadTokens: 0, cacheWriteTokens: 20_000 },
+        outputTokenDetails: { reasoningTokens: 4_500 },
+      },
     });
 
     expect(cacheReadTurn.totalCostInDollars).toBeCloseTo(0.0996, 6);
@@ -91,7 +107,7 @@ describe('computeStepCostBreakdown', () => {
 
   it('costs nothing for a step without usage', () => {
     expect(
-      computeStepCostBreakdown(MODEL_COST_CONFIG, undefined).totalCostInDollars,
+      computeStepCostBreakdown({ model: MODEL_COST_CONFIG }).totalCostInDollars,
     ).toBe(0);
   });
 });

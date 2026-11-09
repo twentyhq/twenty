@@ -14,7 +14,10 @@ export const addStepToAgentTurnUsage = (
   turnUsage: AgentTurnUsage,
   step: AgentTurnUsageStep,
 ): AgentTurnUsage => {
-  const breakdown = computeStepCostBreakdown(model, step.usage);
+  const breakdown = computeStepCostBreakdown({
+    model,
+    usage: step.usage,
+  });
 
   return {
     inputTokens: turnUsage.inputTokens + breakdown.tokenCounts.totalInputTokens,

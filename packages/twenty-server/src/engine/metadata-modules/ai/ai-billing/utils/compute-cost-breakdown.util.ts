@@ -28,8 +28,7 @@ const safeNumber = (value: number | undefined): number => {
   return Number.isFinite(result) ? result : 0;
 };
 
-// every provider we use counts cached and cache-creation tokens inside inputTokens,
-// and reasoning tokens inside outputTokens
+// every provider we use counts cache reads and writes inside inputTokens and reasoning inside outputTokens
 export const computeCostBreakdown = (
   model: AiModelCostConfig,
   usage: TokenUsageInput,

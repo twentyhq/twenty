@@ -70,14 +70,18 @@ export class AiBillingService {
     return steps.reduce(
       (costInDollars, step) =>
         costInDollars +
-        computeStepCostBreakdown(model, step.usage).totalCostInDollars,
+        computeStepCostBreakdown({ model, usage: step.usage })
+          .totalCostInDollars,
       0,
     );
   }
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
     const model = this.getCostConfig(modelId);
-    const breakdown = computeStepCostBreakdown(model, billingInput.usage);
+    const breakdown = computeStepCostBreakdown({
+      model,
+      usage: billingInput.usage,
+    });
 
     this.logger.log(
       `Cost for ${model.modelId}: $${breakdown.totalCostInDollars.toFixed(6)} ` +
