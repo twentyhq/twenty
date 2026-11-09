@@ -124,6 +124,17 @@ export class AgentChatThreadTriageService {
     }
 
     for (const workspaceMemberId of uniqueWorkspaceMemberIds) {
+      // ARCHIVE subscribes; a member not following has nothing in their inbox
+      if (
+        !(await this.participantService.isFollowing({
+          workspaceId,
+          workspaceMemberId,
+          threadId,
+        }))
+      ) {
+        continue;
+      }
+
       await this.updateInboxState({
         workspaceId,
         workspaceMemberId,

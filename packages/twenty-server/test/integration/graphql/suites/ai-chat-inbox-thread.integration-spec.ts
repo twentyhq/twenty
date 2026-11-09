@@ -440,6 +440,23 @@ describe('Inbox thread mutations for members and applications', () => {
     ]);
   });
 
+  it('leaves a member who stopped following the conversation unsubscribed', async () => {
+    const threadId = await createApplicationThread();
+
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThreadParticipant" SET "isSubscribed" = false
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+    );
+
+    expect((await archiveThread({ threadId })).body).toEqual({
+      data: { archiveInboxThread: true },
+    });
+    expect(await readJaneInboxState(threadId)).toEqual([
+      { archivedAt: null, isSubscribed: false },
+    ]);
+  });
+
   it('refuses an application that did not write in the conversation', async () => {
     const threadId = await createMemberThread();
 
