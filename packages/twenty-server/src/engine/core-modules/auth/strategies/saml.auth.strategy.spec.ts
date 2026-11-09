@@ -37,10 +37,27 @@ const buildRequest = ({
   };
 };
 
-const buildProfile = (
-  email: string = VALID_EMAIL,
+const BEARER_METHOD = 'urn:oasis:names:tc:SAML:2.0:cm:bearer';
+const SENDER_VOUCHES_METHOD = 'urn:oasis:names:tc:SAML:2.0:cm:sender-vouches';
+
+const buildSubjectConfirmation = ({
+  method = BEARER_METHOD,
   notOnOrAfter = '2099-01-01T00:00:00.000Z',
-): Parameters<SamlAuthStrategy['validate']>[1] => ({
+}: {
+  method?: string;
+  notOnOrAfter?: string;
+} = {}) => ({
+  $: { Method: method },
+  SubjectConfirmationData: [{ $: { NotOnOrAfter: notOnOrAfter } }],
+});
+
+const buildProfile = ({
+  email = VALID_EMAIL,
+  subjectConfirmations = [buildSubjectConfirmation()],
+}: {
+  email?: string;
+  subjectConfirmations?: Record<string, unknown>[];
+} = {}): Parameters<SamlAuthStrategy['validate']>[1] => ({
   email,
   nameID: email,
   nameIDFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
@@ -49,15 +66,7 @@ const buildProfile = (
   getAssertion: () => ({
     Assertion: {
       $: { ID: 'assertion-id' },
-      Subject: [
-        {
-          SubjectConfirmation: [
-            {
-              SubjectConfirmationData: [{ $: { NotOnOrAfter: notOnOrAfter } }],
-            },
-          ],
-        },
-      ],
+      Subject: [{ SubjectConfirmation: subjectConfirmations }],
     },
   }),
   getSamlResponseXml: () => '',
@@ -217,7 +226,11 @@ describe('SamlAuthStrategy.validate', () => {
     const request = buildRequest({ paramsIdpId: IDP_A });
     const done = jest.fn();
 
-    await strategy.validate(request, buildProfile('not-an-email'), done);
+    await strategy.validate(
+      request,
+      buildProfile({ email: 'not-an-email' }),
+      done,
+    );
 
     expect(done).toHaveBeenCalledTimes(1);
     expect(done.mock.calls[0][0]).toBeInstanceOf(Error);
@@ -241,13 +254,65 @@ describe('SamlAuthStrategy.validate', () => {
 
     await strategy.validate(
       request,
-      buildProfile(VALID_EMAIL, '2000-01-01T00:00:00.000Z'),
+      buildProfile({
+        subjectConfirmations: [
+          buildSubjectConfirmation({
+            notOnOrAfter: '2000-01-01T00:00:00.000Z',
+          }),
+        ],
+      }),
       done,
     );
 
     expect(done).toHaveBeenCalledTimes(1);
     expect(done.mock.calls[0][0]).toBeInstanceOf(AuthException);
     expect(done.mock.calls[0][0].message).toBe('SAML assertion has expired');
+    expect(consumeSamlAssertion).not.toHaveBeenCalled();
+  });
+
+  it('accepts a bearer confirmation alongside a non-bearer confirmation without SubjectConfirmationData', async () => {
+    const request = buildRequest({ paramsIdpId: IDP_A });
+    const done = jest.fn();
+
+    await strategy.validate(
+      request,
+      buildProfile({
+        subjectConfirmations: [
+          { $: { Method: SENDER_VOUCHES_METHOD } },
+          buildSubjectConfirmation(),
+        ],
+      }),
+      done,
+    );
+
+    expect(done).toHaveBeenCalledTimes(1);
+    expect(done.mock.calls[0][0]).toBeNull();
+    expect(consumeSamlAssertion).toHaveBeenCalledWith({
+      identityProviderId: IDP_A,
+      assertionId: 'assertion-id',
+      validUntil: new Date('2099-01-01T00:00:00.000Z'),
+    });
+  });
+
+  it('rejects an assertion whose only NotOnOrAfter is on a non-bearer confirmation', async () => {
+    const request = buildRequest({ paramsIdpId: IDP_A });
+    const done = jest.fn();
+
+    await strategy.validate(
+      request,
+      buildProfile({
+        subjectConfirmations: [
+          buildSubjectConfirmation({ method: SENDER_VOUCHES_METHOD }),
+        ],
+      }),
+      done,
+    );
+
+    expect(done).toHaveBeenCalledTimes(1);
+    expect(done.mock.calls[0][0]).toBeInstanceOf(AuthException);
+    expect(done.mock.calls[0][0].message).toBe(
+      'SAML assertion has no ID or bearer NotOnOrAfter',
+    );
     expect(consumeSamlAssertion).not.toHaveBeenCalled();
   });
 });

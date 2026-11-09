@@ -13,6 +13,7 @@ import {
 import { type AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
 import { isEmail } from 'class-validator';
 import { type Request } from 'express';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import {
@@ -44,30 +45,56 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
     .pipe(WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA),
 });
 
-const SAML_ASSERTION_SCHEMA = z.object({
-  Assertion: z.object({
-    $: z.object({ ID: z.string().min(1) }),
-    Subject: z
-      .array(
+const SAML_BEARER_CONFIRMATION_METHOD = 'urn:oasis:names:tc:SAML:2.0:cm:bearer';
+
+const SAML_ASSERTION_SCHEMA = z
+  .object({
+    Assertion: z.object({
+      $: z.object({ ID: z.string().min(1) }),
+      Subject: z.array(
         z.object({
-          SubjectConfirmation: z
-            .array(
-              z.object({
-                SubjectConfirmationData: z
-                  .array(
-                    z.object({
-                      $: z.object({ NotOnOrAfter: z.coerce.date() }),
-                    }),
-                  )
-                  .min(1),
-              }),
-            )
-            .min(1),
+          SubjectConfirmation: z.array(
+            z.object({
+              $: z.object({ Method: z.string() }),
+              SubjectConfirmationData: z
+                .array(
+                  z.object({
+                    $: z
+                      .object({ NotOnOrAfter: z.coerce.date().optional() })
+                      .optional(),
+                  }),
+                )
+                .optional(),
+            }),
+          ),
         }),
-      )
-      .min(1),
-  }),
-});
+      ),
+    }),
+  })
+  .transform(({ Assertion }, ctx) => {
+    const bearerNotOnOrAfterTimestamps = Assertion.Subject.flatMap(
+      ({ SubjectConfirmation }) =>
+        SubjectConfirmation.filter(
+          ({ $ }) => $.Method === SAML_BEARER_CONFIRMATION_METHOD,
+        ).flatMap(({ SubjectConfirmationData = [] }) =>
+          SubjectConfirmationData.map(({ $ }) => $?.NotOnOrAfter?.getTime()),
+        ),
+    ).filter(isDefined);
+
+    if (bearerNotOnOrAfterTimestamps.length === 0) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'No bearer SubjectConfirmationData with NotOnOrAfter',
+      });
+
+      return z.NEVER;
+    }
+
+    return {
+      assertionId: Assertion.$.ID,
+      validUntil: new Date(Math.max(...bearerNotOnOrAfterTimestamps)),
+    };
+  });
 
 export type SamlRequest = Omit<
   Request,
@@ -182,20 +209,13 @@ export class SamlAuthStrategy extends PassportStrategy(
       if (!assertion.success) {
         return done(
           new AuthException(
-            'SAML assertion has no ID or NotOnOrAfter',
+            'SAML assertion has no ID or bearer NotOnOrAfter',
             AuthExceptionCode.SSO_AUTH_FAILED,
           ),
         );
       }
 
-      const notOnOrAfterTimestamps = assertion.data.Assertion.Subject.flatMap(
-        ({ SubjectConfirmation }) =>
-          SubjectConfirmation.flatMap(({ SubjectConfirmationData }) =>
-            SubjectConfirmationData.map(({ $ }) => $.NotOnOrAfter.getTime()),
-          ),
-      );
-
-      const validUntil = new Date(Math.max(...notOnOrAfterTimestamps));
+      const { assertionId, validUntil } = assertion.data;
 
       if (Date.now() >= validUntil.getTime()) {
         return done(
@@ -208,7 +228,7 @@ export class SamlAuthStrategy extends PassportStrategy(
 
       const isFirstUse = await this.ssoService.consumeSamlAssertion({
         identityProviderId: request.params.identityProviderId,
-        assertionId: assertion.data.Assertion.$.ID,
+        assertionId,
         validUntil,
       });
 
