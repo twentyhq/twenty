@@ -113,11 +113,10 @@ describe('filterGettingStartedStepActionKeys', () => {
         },
         hasSendingMailbox: true,
         hasFeaturedApp: true,
-        hasCalendarBookingPage: true,
+        hasCalendarBookingPage: false,
       }),
     ).toEqual([
       GettingStartedStepActionKey.CONNECT_MAILBOX,
-      GettingStartedStepActionKey.BOOK_CALL,
       GettingStartedStepActionKey.IMPORT_DATA,
       GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
       GettingStartedStepActionKey.INVITE_TEAM,
