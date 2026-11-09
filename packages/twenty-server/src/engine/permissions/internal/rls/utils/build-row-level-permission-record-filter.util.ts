@@ -112,6 +112,44 @@ const resolveMemberBoundPredicateValue = ({
     : null;
 };
 
+// Compilation honours only the first parentless group: keep it the root reached by the first grouped predicate
+const putFirstPredicateRootGroupFirst = ({
+  predicates,
+  predicateGroups,
+}: RowLevelPermissionRule): RowLevelPermissionRule['predicateGroups'] => {
+  const predicateGroupById = new Map(
+    predicateGroups.map((predicateGroup) => [
+      predicateGroup.id,
+      predicateGroup,
+    ]),
+  );
+  const visitedPredicateGroupIds = new Set<string>();
+  let rootPredicateGroup = predicateGroupById.get(
+    predicates.find(({ rowLevelPermissionPredicateGroupId }) =>
+      isDefined(rowLevelPermissionPredicateGroupId),
+    )?.rowLevelPermissionPredicateGroupId ?? '',
+  );
+
+  while (
+    isDefined(rootPredicateGroup?.parentRowLevelPermissionPredicateGroupId) &&
+    !visitedPredicateGroupIds.has(rootPredicateGroup.id)
+  ) {
+    visitedPredicateGroupIds.add(rootPredicateGroup.id);
+    rootPredicateGroup = predicateGroupById.get(
+      rootPredicateGroup.parentRowLevelPermissionPredicateGroupId,
+    );
+  }
+
+  return isDefined(rootPredicateGroup)
+    ? [
+        rootPredicateGroup,
+        ...predicateGroups.filter(
+          (predicateGroup) => predicateGroup !== rootPredicateGroup,
+        ),
+      ]
+    : predicateGroups;
+};
+
 export const buildRecordFilterForRole = ({
   rowLevelPermissionRule,
   memberFieldValues,
@@ -199,18 +237,18 @@ export const buildRecordFilterForRole = ({
 
   const prunedRecordFilters = pruneUnsatisfiableRecordFilters({
     recordFilters,
-    recordFilterGroups: rowLevelPermissionRule.predicateGroups.map(
-      (predicateGroup) => ({
-        id: predicateGroup.id,
-        logicalOperator:
-          predicateGroup.logicalOperator ===
-          RowLevelPermissionPredicateGroupLogicalOperator.OR
-            ? RecordFilterGroupLogicalOperator.OR
-            : RecordFilterGroupLogicalOperator.AND,
-        parentRecordFilterGroupId:
-          predicateGroup.parentRowLevelPermissionPredicateGroupId,
-      }),
-    ),
+    recordFilterGroups: putFirstPredicateRootGroupFirst(
+      rowLevelPermissionRule,
+    ).map((predicateGroup) => ({
+      id: predicateGroup.id,
+      logicalOperator:
+        predicateGroup.logicalOperator ===
+        RowLevelPermissionPredicateGroupLogicalOperator.OR
+          ? RecordFilterGroupLogicalOperator.OR
+          : RecordFilterGroupLogicalOperator.AND,
+      parentRecordFilterGroupId:
+        predicateGroup.parentRowLevelPermissionPredicateGroupId,
+    })),
     unsatisfiableRecordFilterIds,
   });
 

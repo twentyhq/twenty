@@ -33,8 +33,7 @@ const groupByKey = <TItem>(
   return itemsByKey;
 };
 
-// An OR group fails when every branch fails, an AND group when one does; the
-// root is an AND. Groups holding no filter are dropped. null when nothing can match.
+// OR fails when all branches fail, AND (and the root) when one does; null when nothing can match
 export const pruneUnsatisfiableRecordFilters = ({
   recordFilters,
   recordFilterGroups,

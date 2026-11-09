@@ -40,6 +40,7 @@ const OR_GROUP_ONLY_MEMBER_ROLE_ID = 'or-group-only-member-role-1';
 const TEXT_IS_ROLE_ID = 'text-is-role-1';
 const SELECT_CONTAINS_ROLE_ID = 'select-contains-role-1';
 const RELATION_HOP_ROLE_ID = 'relation-hop-role-1';
+const TWO_ROOT_GROUPS_ROLE_ID = 'two-root-groups-role-1';
 const COMPANY_OBJECT_ID = 'company-object';
 const PERSON_OBJECT_ID = 'person-object';
 const OWNER_MORPH_ID = 'owner-morph';
@@ -268,6 +269,14 @@ const predicates = [
     operand: RowLevelPermissionPredicateOperand.CONTAINS,
     value: 'OPEN',
   }),
+  buildPredicate('predicate-root-b', TWO_ROOT_GROUPS_ROLE_ID, {
+    value: 'from-root-b',
+    rowLevelPermissionPredicateGroupId: 'root-b',
+  }),
+  buildPredicate('predicate-root-a', TWO_ROOT_GROUPS_ROLE_ID, {
+    value: 'from-root-a',
+    rowLevelPermissionPredicateGroupId: 'root-a',
+  }),
   buildPredicate('predicate-relation-hop', RELATION_HOP_ROLE_ID, {
     relationFieldMetadataId: 'relation-field',
     value: 'reached-through-relation',
@@ -293,6 +302,16 @@ const buildPredicateGroup = (
 });
 
 const predicateGroups = [
+  buildPredicateGroup(
+    'root-a',
+    TWO_ROOT_GROUPS_ROLE_ID,
+    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  ),
+  buildPredicateGroup(
+    'root-b',
+    TWO_ROOT_GROUPS_ROLE_ID,
+    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  ),
   buildPredicateGroup(
     'or-group',
     OR_GROUP_ROLE_ID,
@@ -326,14 +345,16 @@ const findRule = (roleId: string) => {
     (predicate) => predicate.roleId === roleId,
   );
 
-  return rolePredicates.length === 0
-    ? undefined
-    : {
-        predicates: rolePredicates,
-        predicateGroups: predicateGroups.filter(
-          (predicateGroup) => predicateGroup.roleId === roleId,
-        ),
-      };
+  if (rolePredicates.length === 0) {
+    return undefined;
+  }
+
+  return {
+    predicates: rolePredicates,
+    predicateGroups: predicateGroups.filter(
+      (predicateGroup) => predicateGroup.roleId === roleId,
+    ),
+  };
 };
 
 const buildWorkspaceMember = (workspaceMember: Record<string, unknown>) => ({
@@ -414,6 +435,12 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       });
     },
   );
+
+  it('should enforce the root group of the first grouped predicate whatever the group order', () => {
+    expect(build([TWO_ROOT_GROUPS_ROLE_ID])).toEqual({
+      and: [{ name: { ilike: '%from-root-b%' } }],
+    });
+  });
 
   it('should match nothing for a predicate reached through a relation hop', () => {
     expect(build([RELATION_HOP_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
