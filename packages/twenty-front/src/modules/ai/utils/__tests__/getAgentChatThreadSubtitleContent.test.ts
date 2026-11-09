@@ -25,6 +25,7 @@ const getContent = ({
     draftPreviewText,
     workspaceMembers: [],
     currentWorkspaceMemberId: undefined,
+    assistantDisplayName: 'Scout',
   });
 
 describe('getAgentChatThreadSubtitleContent', () => {
