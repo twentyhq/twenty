@@ -1,4 +1,4 @@
-import { WorkflowVisibility } from 'twenty-shared/types';
+import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
@@ -7,6 +7,9 @@ import { findByUniversalIdentifier } from 'src/engine/core-modules/application/a
 import { getNavigationMenuItemContentLabel } from 'src/engine/core-modules/application/application-content/utils/get-navigation-menu-item-content-label.util';
 import { getLogicFunctionTriggerTag } from 'src/engine/core-modules/application/application-content/utils/get-logic-function-trigger-tag.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 
 export type ApplicationContentFlatEntityMaps = Pick<
   AllFlatEntityMaps,
@@ -65,6 +68,13 @@ const isPersonalNavigationMenuItem = (navigationMenuItem: {
   userWorkspaceId: string | null;
 }) => isDefined(navigationMenuItem.userWorkspaceId);
 
+const isPersonalView = (view: {
+  visibility: ViewVisibility;
+  createdByUserWorkspaceId: string | null;
+}) =>
+  view.visibility === ViewVisibility.UNLISTED &&
+  isDefined(view.createdByUserWorkspaceId);
+
 export const buildApplicationContentFromFlatEntityMaps = ({
   applicationId,
   flatEntityMaps,
@@ -72,17 +82,13 @@ export const buildApplicationContentFromFlatEntityMaps = ({
   applicationId: string;
   flatEntityMaps: ApplicationContentFlatEntityMaps;
 }): ApplicationContentDTO => {
-  const findOwned = <TFlatEntity>(maps: {
-    byUniversalIdentifier: Partial<Record<string, TFlatEntity>>;
-    universalIdentifiersByApplicationId: Partial<Record<string, string[]>>;
-  }): TFlatEntity[] =>
-    (maps.universalIdentifiersByApplicationId[applicationId] ?? [])
-      .map(
-        (universalIdentifier) =>
-          maps.byUniversalIdentifier[universalIdentifier],
-      )
-      .filter(isDefined)
-      .filter((flatEntity) => !isSoftDeletedFlatEntity(flatEntity));
+  const findOwned = <TFlatEntity extends SyncableFlatEntity>(
+    maps: FlatEntityMaps<TFlatEntity>,
+  ): TFlatEntity[] =>
+    findFlatEntitiesByApplicationId({
+      applicationId,
+      flatEntityMaps: maps,
+    }).filter((flatEntity) => !isSoftDeletedFlatEntity(flatEntity));
 
   const objects = findOwned(flatEntityMaps.flatObjectMetadataMaps).filter(
     (object) => !object.isSystem,
@@ -93,11 +99,19 @@ export const buildApplicationContentFromFlatEntityMaps = ({
   const indexes = findOwned(flatEntityMaps.flatIndexMaps).filter(
     (index) => !index.isSystemSideEffect,
   );
-  const views = findOwned(flatEntityMaps.flatViewMaps).filter(
-    (view) => !view.isSystemSideEffect,
+  const ownedViews = findOwned(flatEntityMaps.flatViewMaps);
+  const personalViewUniversalIdentifiers = new Set(
+    ownedViews.filter(isPersonalView).map((view) => view.universalIdentifier),
+  );
+  const views = ownedViews.filter(
+    (view) =>
+      !view.isSystemSideEffect &&
+      !personalViewUniversalIdentifiers.has(view.universalIdentifier),
   );
   const viewFields = findOwned(flatEntityMaps.flatViewFieldMaps).filter(
-    (viewField) => !viewField.isSystemSideEffect,
+    (viewField) =>
+      !viewField.isSystemSideEffect &&
+      !personalViewUniversalIdentifiers.has(viewField.viewUniversalIdentifier),
   );
   const pageLayouts = findOwned(flatEntityMaps.flatPageLayoutMaps).filter(
     (pageLayout) => !pageLayout.isSystemSideEffect,
