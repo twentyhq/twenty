@@ -167,3 +167,29 @@ export const SelectsAGroup: Story = {
     expect(allTab).toHaveAttribute('aria-selected', 'false');
   },
 };
+
+export const OverflowsIntoMore: Story = {
+  parameters: { container: { width: 280 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await waitFor(() => {
+      seedGroupedTableState();
+      expect(canvas.getByTestId('tab-tab-more-button')).toBeVisible();
+    });
+
+    expect(canvas.queryByRole('tab', { name: /Meeting/ })).toBeNull();
+
+    await userEvent.click(canvas.getByTestId('tab-tab-more-button'));
+    // The hidden width measurement also renders the label, the menu comes last
+    const meetingLabels = await body.findAllByText('Meeting');
+    await userEvent.click(meetingLabels[meetingLabels.length - 1]);
+
+    await waitFor(() => {
+      expect(canvas.getByTestId('tab-tab-more-button')).toHaveAttribute(
+        'data-active',
+      );
+    });
+  },
+};
