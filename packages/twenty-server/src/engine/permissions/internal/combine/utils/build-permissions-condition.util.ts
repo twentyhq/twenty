@@ -9,9 +9,9 @@ import { combineSqlConditions } from 'src/engine/permissions/utils/combine-sql-c
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-access-outcome.util';
 import { buildPermissionsCreatorCondition } from 'src/engine/permissions/internal/private-record/utils/build-permissions-creator-condition.util';
 import { buildPermissionsShareCondition } from 'src/engine/permissions/internal/record-share/utils/build-permissions-share-condition.util';
-import { buildPermissionsRlsCondition } from 'src/engine/permissions/internal/rls/utils/build-permissions-rls-condition.util';
-import { resolvePermissionsRowLevelPermissionSqlCondition } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-row-level-permission-sql-condition.util';
-import { buildPermissionsAllRecordsCondition } from 'src/engine/permissions/internal/all-records/utils/build-permissions-all-records-condition.util';
+import { buildPermissionsRlsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-rls-condition.util';
+import { resolvePermissionsRowLevelPermissionSqlCondition } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-level-permission-sql-condition.util';
+import { buildPermissionsAllRecordsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-all-records-condition.util';
 
 const combineWithOr = (conditions: SqlCondition[]): SqlCondition =>
   conditions.length === 1

@@ -11,7 +11,7 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/internal/private-record/constants/created-by-workspace-member-id-column-name.constant';
+import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/created-by-workspace-member-id-column-name.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { PrivateRecordRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/private-record.repository';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -23,7 +23,7 @@ import {
 } from 'src/engine/permissions/internal/record-share/services/record-sharing-change.service';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
-import { hasCreatedByField } from 'src/engine/permissions/internal/private-record/utils/has-created-by-field.util';
+import { hasCreatedByField } from 'src/engine/permissions/internal/record-permission-repository/utils/has-created-by-field.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
   PermissionsException,
