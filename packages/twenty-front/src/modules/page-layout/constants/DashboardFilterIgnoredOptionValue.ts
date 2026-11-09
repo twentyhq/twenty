@@ -1,0 +1,1 @@
+export const DASHBOARD_FILTER_IGNORED_OPTION_VALUE = 'ignored';

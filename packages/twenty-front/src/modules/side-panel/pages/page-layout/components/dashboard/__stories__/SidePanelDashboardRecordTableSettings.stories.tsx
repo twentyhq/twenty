@@ -1,4 +1,6 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { RecordTableWidgetSettingsStory } from '@/side-panel/pages/page-layout/components/dashboard/__stories__/RecordTableWidgetSettingsStory';
@@ -9,14 +11,135 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PageLayoutFilterType,
+  ViewCalendarLayout,
+  ViewFilterOperand,
+  ViewType,
+} from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const onBackgroundClickOutside = fn();
 const { pageLayoutId, widgetId } = RECORD_TABLE_WIDGET_SETTINGS_STORY_DATA;
+const pageLayoutDraftState = pageLayoutDraftComponentState.atomFamily({
+  instanceId: pageLayoutId,
+});
+const widgetViewDraftState =
+  recordTableWidgetViewDraftComponentState.atomFamily({
+    instanceId: pageLayoutId,
+  });
+const THIRD_PARTY_APPLICATION_ID = 'acme-sync-application';
+
+const initializeDashboardFilterBindingsStory = ({
+  applicationId,
+  isWidgetPersisted,
+  isCloseDateOverridden = true,
+  isDateRangeFilterStored = true,
+  pageLayoutApplicationId = '',
+}: {
+  applicationId: string;
+  isWidgetPersisted: boolean;
+  isCloseDateOverridden?: boolean;
+  isDateRangeFilterStored?: boolean;
+  pageLayoutApplicationId?: string;
+}) => {
+  initializeRecordTableWidgetSettingsStory();
+  const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    installedApplications: [
+      ...mockCurrentWorkspace.installedApplications,
+      {
+        id: THIRD_PARTY_APPLICATION_ID,
+        name: 'Acme Sync',
+        universalIdentifier: THIRD_PARTY_APPLICATION_ID,
+        logoUrl: null,
+        createdAt: '2024-01-01T00:00:00.000Z',
+      },
+    ],
+    featureFlags: [
+      { key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED, value: true },
+    ],
+  });
+  const closeDate = getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: getMockObjectMetadataItemOrThrow('opportunity'),
+    fieldName: 'closeDate',
+  });
+  const pageLayoutDraft = jotaiStore.get(pageLayoutDraftState);
+  const [tab] = pageLayoutDraft.tabs;
+  const [widget] = tab.widgets;
+  const draftWithFilter = {
+    ...pageLayoutDraft,
+    filters: isDateRangeFilterStored
+      ? [
+          {
+            id: 'date-range-filter',
+            label: 'Date range',
+            type: PageLayoutFilterType.DATE,
+            position: 0,
+            defaultValue: null,
+          },
+        ]
+      : null,
+    tabs: [
+      {
+        ...tab,
+        widgets: [
+          {
+            ...widget,
+            applicationId,
+            configuration: {
+              ...widget.configuration,
+              dashboardFilterBindings: isCloseDateOverridden
+                ? [
+                    {
+                      pageLayoutFilterId: 'date-range-filter',
+                      fieldMetadataId: closeDate.id,
+                    },
+                  ]
+                : null,
+            },
+          },
+        ],
+      },
+    ],
+  };
+  jotaiStore.set(pageLayoutDraftState, draftWithFilter);
+  jotaiStore.set(
+    pageLayoutPersistedComponentState.atomFamily({ instanceId: pageLayoutId }),
+    {
+      ...draftWithFilter,
+      applicationId: pageLayoutApplicationId,
+      universalIdentifier: pageLayoutId,
+      isSystemSideEffect: false,
+      createdAt: '2026-08-01T00:00:00.000Z',
+      updatedAt: '2026-08-01T00:00:00.000Z',
+      tabs: isWidgetPersisted ? draftWithFilter.tabs : [],
+    },
+  );
+  jotaiStore.set(widgetViewDraftState, (widgetViewDrafts) => ({
+    ...widgetViewDrafts,
+    [widgetId]: {
+      ...widgetViewDrafts[widgetId],
+      viewFilters: [
+        {
+          id: 'close-date-view-filter',
+          fieldMetadataId: closeDate.id,
+          operand: ViewFilterOperand.IS_AFTER,
+          value: '2026-01-01',
+          viewId: widgetViewDrafts[widgetId].view.id,
+        },
+      ],
+    },
+  }));
+  return () => jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
+};
+
 const getWidgetViewSnapshot = () =>
   jotaiStore.get(
     recordTableWidgetViewDraftComponentState.atomFamily({
@@ -261,5 +384,106 @@ export const EmbeddedViewLayoutRows: Story = {
       await body.findByRole('button', { name: /^Calendar view/ }),
     ).toHaveTextContent('Month');
     expect(onBackgroundClickOutside).not.toHaveBeenCalled();
+  },
+};
+
+export const DashboardFilterBindings: Story = {
+  beforeEach: () =>
+    initializeDashboardFilterBindingsStory({
+      applicationId: '',
+      isWidgetPersisted: true,
+    }),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const overlapWarning =
+      "This widget's own filter also uses Close date. Both apply, so it only shows records that match both.";
+    const trigger = await body.findByRole('button', { name: /^Date range/ });
+
+    expect(body.getByText('Dashboard filters')).toBeVisible();
+    expect(trigger).toHaveTextContent('Close date');
+    expect(body.getByText(overlapWarning)).toBeVisible();
+
+    await userEvent.click(trigger);
+    await userEvent.click(await body.findByRole('option', { name: 'Ignored' }));
+
+    await waitFor(() => expect(trigger).toHaveTextContent('Ignored'));
+    expect(body.queryByText(overlapWarning)).not.toBeInTheDocument();
+    expect(onBackgroundClickOutside).not.toHaveBeenCalled();
+  },
+};
+
+export const DashboardFilterBindingsReadOnlyOnAppWidget: Story = {
+  beforeEach: () =>
+    initializeDashboardFilterBindingsStory({
+      applicationId: THIRD_PARTY_APPLICATION_ID,
+      isWidgetPersisted: true,
+    }),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await body.findByRole('button', { name: /^Date range/ });
+
+    expect(trigger).toBeDisabled();
+    await userEvent.click(trigger);
+    expect(
+      body.queryByRole('option', { name: 'Ignored' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const DashboardFilterBindingsEditableOnUnsavedCopyOfAppWidget: Story = {
+  beforeEach: () =>
+    initializeDashboardFilterBindingsStory({
+      applicationId: THIRD_PARTY_APPLICATION_ID,
+      isWidgetPersisted: false,
+    }),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await body.findByRole('button', { name: /^Date range/ });
+
+    expect(trigger).toBeEnabled();
+    await userEvent.click(trigger);
+    expect(await body.findByRole('option', { name: 'Ignored' })).toBeVisible();
+  },
+};
+
+export const DashboardFilterBindingsLockedForUnstoredDateRangeOnAppDashboard: Story =
+  {
+    beforeEach: () =>
+      initializeDashboardFilterBindingsStory({
+        applicationId: THIRD_PARTY_APPLICATION_ID,
+        isWidgetPersisted: false,
+        isCloseDateOverridden: false,
+        isDateRangeFilterStored: false,
+        pageLayoutApplicationId: THIRD_PARTY_APPLICATION_ID,
+      }),
+    play: async ({ canvasElement }) => {
+      const body = within(canvasElement.ownerDocument.body);
+      const trigger = await body.findByRole('button', { name: /^Date range/ });
+
+      expect(trigger).toBeDisabled();
+
+      await userEvent.hover(trigger);
+
+      expect(await body.findByText('Managed by an app')).toBeVisible();
+    },
+  };
+
+export const DashboardFilterDefaultOnViewFilterDate: Story = {
+  beforeEach: () =>
+    initializeDashboardFilterBindingsStory({
+      applicationId: '',
+      isWidgetPersisted: true,
+      isCloseDateOverridden: false,
+    }),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await body.findByRole('button', { name: /^Date range/ });
+
+    expect(trigger).toHaveTextContent('Default (Close date)');
+    expect(
+      body.getByText(
+        "This widget's own filter also uses Close date. Both apply, so it only shows records that match both.",
+      ),
+    ).toBeVisible();
   },
 };
