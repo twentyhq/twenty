@@ -1,4 +1,5 @@
 import { RecordGroupTabs } from '@/object-record/record-group/components/RecordGroupTabs';
+import { RecordGroupTabsPortalProvider } from '@/object-record/record-group/components/RecordGroupTabsPortalProvider';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordListBody } from '@/object-record/record-list/components/RecordListBody';
@@ -7,6 +8,7 @@ import { RecordListFieldTooltip } from '@/object-record/record-list/components/R
 import { RecordListRecordGroupsBody } from '@/object-record/record-list/components/RecordListRecordGroupsBody';
 import { RecordListResponsiveFieldsEffect } from '@/object-record/record-list/components/RecordListResponsiveFieldsEffect';
 import { RecordListSSESubscribeEffect } from '@/object-record/record-list/components/RecordListSSESubscribeEffect';
+import { RECORD_LIST_ROW_DND_TYPE } from '@/object-record/record-list/constants/RecordListRowDndType';
 import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
 import { RecordSelectionEscapeHotkeyEffect } from '@/object-record/record-selection/components/RecordSelectionEscapeHotkeyEffect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -44,21 +46,26 @@ export const RecordList = () => {
       <RecordSelectionEscapeHotkeyEffect />
       <RecordListSSESubscribeEffect />
       <RecordIndexRemoveSortingModal />
-      <RecordGroupTabs viewType={ViewType.LIST} />
-      <RecordListFieldTooltip>
-        <ScrollWrapper
-          componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
-          defaultEnableXScroll={false}
-        >
-          <RecordListDragDropProvider>
-            {hasRecordGroups ? (
-              <RecordListRecordGroupsBody />
-            ) : (
-              <RecordListBody />
-            )}
-          </RecordListDragDropProvider>
-        </ScrollWrapper>
-      </RecordListFieldTooltip>
+      <RecordGroupTabsPortalProvider>
+        <RecordListFieldTooltip>
+          <ScrollWrapper
+            componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
+            defaultEnableXScroll={false}
+          >
+            <RecordListDragDropProvider>
+              <RecordGroupTabs
+                viewType={ViewType.LIST}
+                dndType={RECORD_LIST_ROW_DND_TYPE}
+              />
+              {hasRecordGroups ? (
+                <RecordListRecordGroupsBody />
+              ) : (
+                <RecordListBody />
+              )}
+            </RecordListDragDropProvider>
+          </ScrollWrapper>
+        </RecordListFieldTooltip>
+      </RecordGroupTabsPortalProvider>
     </StyledContainer>
   );
 };
