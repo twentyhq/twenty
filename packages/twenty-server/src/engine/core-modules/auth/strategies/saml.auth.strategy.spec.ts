@@ -120,6 +120,12 @@ describe('SamlAuthStrategy.validate', () => {
       workspaceInviteHash: undefined,
       email: VALID_EMAIL,
     });
+    expect(consumeSamlAssertionOrThrow).toHaveBeenCalledTimes(1);
+    expect(consumeSamlAssertionOrThrow).toHaveBeenCalledWith({
+      identityProviderId: IDP_A,
+      assertionId: 'assertion-id',
+      validUntil: new Date('2099-01-01T00:00:00.000Z'),
+    });
   });
 
   it('threads workspaceInviteHash from RelayState through to req.user', async () => {
