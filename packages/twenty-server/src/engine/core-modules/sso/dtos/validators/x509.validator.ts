@@ -26,8 +26,6 @@ export class IsX509CertificateConstraint implements ValidatorConstraintInterface
         Buffer.from(base64Body, 'base64'),
       );
 
-      // Buffer.from stops at the first padding and X509Certificate ignores trailing bytes,
-      // so only a round trip rejects a chain, an appended key or trailing data
       return cert.raw.toString('base64') === base64Body;
     } catch {
       return false;
