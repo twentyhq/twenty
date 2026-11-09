@@ -87,7 +87,7 @@ export class FileService {
     });
   }
 
-  async findReadableFileById({
+  async getFileById({
     fileId,
     workspaceId,
     allowedFileFolders,
@@ -121,7 +121,7 @@ export class FileService {
     workspaceId: string;
     allowedFileFolders?: FileFolder[];
   }): Promise<{ stream: Readable; mimeType: string } | null> {
-    const file = await this.findReadableFileById({
+    const file = await this.getFileById({
       fileId,
       workspaceId,
       allowedFileFolders,

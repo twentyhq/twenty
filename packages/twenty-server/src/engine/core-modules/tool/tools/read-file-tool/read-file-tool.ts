@@ -5,9 +5,9 @@ import { basename } from 'path';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/file/constants/ai-readable-file-folders.constant';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/tool/constants/ai-readable-file-folders.constant';
 import { ReadFileInputZodSchema } from 'src/engine/core-modules/tool/tools/read-file-tool/read-file-tool.schema';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -57,7 +57,7 @@ export class ReadFileTool implements Tool {
       };
     }
 
-    const file = await this.fileService.findReadableFileById({
+    const file = await this.fileService.getFileById({
       fileId,
       workspaceId: context.workspaceId,
       allowedFileFolders: AI_READABLE_FILE_FOLDERS,

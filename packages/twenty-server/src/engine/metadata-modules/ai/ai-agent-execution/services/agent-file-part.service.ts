@@ -23,10 +23,10 @@ import {
 } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/file/constants/ai-readable-file-folders.constant';
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/tool/constants/ai-readable-file-folders.constant';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
@@ -59,7 +59,7 @@ type AgentFileBilling = {
   spenders: UsageSpenders;
 };
 
-type AgentRunFiles = AgentFileBilling & {
+type AgentFileDeliveryState = AgentFileBilling & {
   canSendSignedUrls: boolean;
   areFilesRejected: boolean;
   nativeMimeTypes: Set<string>;
@@ -76,7 +76,7 @@ type FilePartReplacement = LanguageModelV4FilePart | LanguageModelV4TextPart;
 type FileCheckArguments = {
   params: LanguageModelV4CallOptions;
   model: LanguageModelV4;
-  runFiles: AgentRunFiles;
+  deliveryState: AgentFileDeliveryState;
 };
 
 type FilePartCheckArguments = FileCheckArguments & {
@@ -115,7 +115,7 @@ export class AgentFilePartService {
       return { model, prepareFileParts: async (messages) => messages };
     }
 
-    const runFiles: AgentRunFiles = {
+    const deliveryState: AgentFileDeliveryState = {
       ...billing,
       canSendSignedUrls: this.canSendSignedUrls(),
       areFilesRejected: false,
@@ -131,21 +131,24 @@ export class AgentFilePartService {
     return {
       model: wrapLanguageModel({
         model,
-        middleware: this.buildFileFallback(runFiles),
+        middleware: this.buildFileDeliveryMiddleware(deliveryState),
       }),
-      prepareFileParts: (messages) => this.prepareFileParts(messages, runFiles),
+      prepareFileParts: (messages) =>
+        this.prepareFileParts(messages, deliveryState),
       downloadFiles: (requestedFiles) =>
-        this.downloadFiles(requestedFiles, runFiles),
+        this.downloadFiles(requestedFiles, deliveryState),
     };
   }
 
-  private buildFileFallback(runFiles: AgentRunFiles): LanguageModelMiddleware {
+  private buildFileDeliveryMiddleware(
+    deliveryState: AgentFileDeliveryState,
+  ): LanguageModelMiddleware {
     return {
       specificationVersion: 'v4',
       transformParams: async ({ params }) => ({
         ...params,
         prompt: await this.replaceFileParts(params.prompt, (part) =>
-          this.replaceUnreadableFilePart(part, runFiles),
+          this.replaceUnreadableFilePart(part, deliveryState),
         ),
       }),
       wrapStream: async ({ doStream, params, model }) => {
@@ -160,7 +163,7 @@ export class AgentFilePartService {
             fileRejection: error,
             params,
             model,
-            runFiles,
+            deliveryState,
           };
           const hasFileUrl = this.getPromptFileParts(params.prompt).some(
             (part) => part.data.type === 'url',
@@ -197,15 +200,16 @@ export class AgentFilePartService {
 
   private async replaceUnreadableFilePart(
     part: LanguageModelV4FilePart,
-    runFiles: AgentRunFiles,
+    deliveryState: AgentFileDeliveryState,
   ): Promise<FilePartReplacement> {
     if (part.data.type !== 'url') {
       return part;
     }
 
-    const file = await this.loadFile(part.data.url.toString(), runFiles);
+    const file = await this.loadFile(part.data.url.toString(), deliveryState);
 
-    return !isDefined(file) || isNull(await runFiles.bytesByFileId.get(file.id))
+    return !isDefined(file) ||
+      isNull(await deliveryState.bytesByFileId.get(file.id))
       ? this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable)
       : part;
   }
@@ -214,17 +218,17 @@ export class AgentFilePartService {
     fileRejection,
     params,
     model,
-    runFiles,
+    deliveryState,
   }: FileRetryArguments) {
     this.logger.warn(
       `Provider refused a file link, retrying with bytes: ${fileRejection.message}`,
     );
-    runFiles.canSendSignedUrls = false;
+    deliveryState.canSendSignedUrls = false;
 
     const paramsWithBytes = {
       ...params,
       prompt: await this.replaceFileParts(params.prompt, (part) =>
-        this.replaceFileUrlWithBytes(part, runFiles),
+        this.replaceFileUrlWithBytes(part, deliveryState),
       ),
     };
 
@@ -241,13 +245,13 @@ export class AgentFilePartService {
         fileRejection: bytesRejection,
         params: paramsWithBytes,
         model,
-        runFiles,
+        deliveryState,
       });
     }
   }
 
   private async retryWithoutRejectedFiles(retryArguments: FileRetryArguments) {
-    const { fileRejection, params, model, runFiles } = retryArguments;
+    const { fileRejection, params, model, deliveryState } = retryArguments;
 
     this.logger.warn(
       `Provider refused a file, checking each file: ${fileRejection.message}`,
@@ -260,7 +264,7 @@ export class AgentFilePartService {
     }
 
     rejectedFileParts.forEach((part) =>
-      this.rememberRejectedFile(part, runFiles),
+      this.rememberRejectedFile(part, deliveryState),
     );
 
     const paramsWithoutRejectedFiles = {
@@ -288,7 +292,7 @@ export class AgentFilePartService {
         fileRejection: remainingFilesRejection,
         params: paramsWithoutRejectedFiles,
         model,
-        runFiles,
+        deliveryState,
       });
     }
   }
@@ -296,12 +300,14 @@ export class AgentFilePartService {
   private async findRejectedFileParts({
     params,
     model,
-    runFiles,
+    deliveryState,
   }: FileCheckArguments): Promise<Set<LanguageModelV4FilePart>> {
     const rejectedFileParts = new Set<LanguageModelV4FilePart>();
 
     for (const part of this.getPromptFileParts(params.prompt)) {
-      if (await this.isFilePartRejected({ part, params, model, runFiles })) {
+      if (
+        await this.isFilePartRejected({ part, params, model, deliveryState })
+      ) {
         rejectedFileParts.add(part);
       }
     }
@@ -312,14 +318,15 @@ export class AgentFilePartService {
   private async isFilePartRejected(
     filePartCheck: FilePartCheckArguments,
   ): Promise<boolean> {
-    const { part, runFiles } = filePartCheck;
+    const { part, deliveryState } = filePartCheck;
 
     if (part.data.type !== 'data') {
       return this.sendFilePartCheck(filePartCheck);
     }
 
     const fileBytes = part.data.data;
-    const previousRejection = runFiles.fileRejectionsByBytes.get(fileBytes);
+    const previousRejection =
+      deliveryState.fileRejectionsByBytes.get(fileBytes);
 
     if (isDefined(previousRejection)) {
       return previousRejection;
@@ -327,7 +334,7 @@ export class AgentFilePartService {
 
     const isRejected = await this.sendFilePartCheck(filePartCheck);
 
-    runFiles.fileRejectionsByBytes.set(fileBytes, isRejected);
+    deliveryState.fileRejectionsByBytes.set(fileBytes, isRejected);
 
     return isRejected;
   }
@@ -336,7 +343,7 @@ export class AgentFilePartService {
     part,
     params: { abortSignal, headers },
     model,
-    runFiles,
+    deliveryState,
   }: FilePartCheckArguments): Promise<boolean> {
     const prompt: LanguageModelV4Prompt = [
       {
@@ -353,7 +360,7 @@ export class AgentFilePartService {
         headers,
       });
 
-      this.billFilePartCheck(usage, runFiles);
+      this.billFilePartCheck(usage, deliveryState);
 
       return false;
     } catch (error) {
@@ -367,7 +374,7 @@ export class AgentFilePartService {
 
   private billFilePartCheck(
     usage: LanguageModelV4Usage,
-    { modelId, workspaceId, operationType, spenders }: AgentRunFiles,
+    { modelId, workspaceId, operationType, spenders }: AgentFileDeliveryState,
   ): void {
     void this.aiBillingService
       .calculateAndBillUsage({
@@ -399,16 +406,16 @@ export class AgentFilePartService {
 
   private rememberRejectedFile(
     part: LanguageModelV4FilePart,
-    runFiles: AgentRunFiles,
+    deliveryState: AgentFileDeliveryState,
   ): void {
     if (part.data.type !== 'data') {
       return;
     }
 
-    const fileId = runFiles.fileIdsByBytes.get(part.data.data);
+    const fileId = deliveryState.fileIdsByBytes.get(part.data.data);
 
     if (isDefined(fileId)) {
-      runFiles.rejectedFileIds.add(fileId);
+      deliveryState.rejectedFileIds.add(fileId);
     }
   }
 
@@ -416,19 +423,22 @@ export class AgentFilePartService {
     fileRejection,
     params,
     model,
-    runFiles,
+    deliveryState,
   }: FileRetryArguments) {
     this.logger.warn(
       `Provider refused the files of this run: ${fileRejection.message}`,
     );
-    runFiles.areFilesRejected = true;
 
-    return model.doStream({
+    const streamWithoutFiles = await model.doStream({
       ...params,
       prompt: await this.replaceFileParts(params.prompt, (part) =>
         this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.rejected),
       ),
     });
+
+    deliveryState.areFilesRejected = true;
+
+    return streamWithoutFiles;
   }
 
   private replaceFileParts(
@@ -457,18 +467,18 @@ export class AgentFilePartService {
 
   private async replaceFileUrlWithBytes(
     part: LanguageModelV4FilePart,
-    runFiles: AgentRunFiles,
+    deliveryState: AgentFileDeliveryState,
   ): Promise<FilePartReplacement> {
     if (part.data.type !== 'url') {
       return part;
     }
 
-    const file = await this.loadFile(part.data.url.toString(), runFiles);
+    const file = await this.loadFile(part.data.url.toString(), deliveryState);
 
     const bytes =
       isDefined(file) &&
-      !runFiles.limits.mimeTypesRequiringUrl.has(part.mediaType)
-        ? await this.loadFileBytes(file, runFiles)
+      !deliveryState.limits.mimeTypesRequiringUrl.has(part.mediaType)
+        ? await this.loadFileBytes(file, deliveryState)
         : null;
 
     return isDefined(bytes)
@@ -497,11 +507,11 @@ export class AgentFilePartService {
 
   private async prepareFileParts(
     messages: ModelMessage[],
-    runFiles: AgentRunFiles,
+    deliveryState: AgentFileDeliveryState,
   ): Promise<ModelMessage[]> {
     const budget: FileBudget = {
-      remainingSizeBytes: runFiles.limits.maxTotalSizeBytes,
-      remainingFileCount: runFiles.limits.maxFileCount,
+      remainingSizeBytes: deliveryState.limits.maxTotalSizeBytes,
+      remainingFileCount: deliveryState.limits.maxFileCount,
     };
     const newestMessagesFirst =
       insertModelInputFileMessages(messages).reverse();
@@ -518,7 +528,7 @@ export class AgentFilePartService {
       for (const part of [...message.content].reverse()) {
         preparedContent.push(
           part.type === 'file'
-            ? await this.prepareFilePart({ part, runFiles, budget })
+            ? await this.prepareFilePart({ part, deliveryState, budget })
             : part,
         );
       }
@@ -534,11 +544,11 @@ export class AgentFilePartService {
 
   private async prepareFilePart({
     part,
-    runFiles,
+    deliveryState,
     budget,
   }: {
     part: FilePart;
-    runFiles: AgentRunFiles;
+    deliveryState: AgentFileDeliveryState;
     budget: FileBudget;
   }): Promise<FilePart | TextPart> {
     const url = getFilePartHttpUrl(part);
@@ -547,17 +557,17 @@ export class AgentFilePartService {
       return part;
     }
 
-    if (runFiles.areFilesRejected) {
+    if (deliveryState.areFilesRejected) {
       return this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.rejected);
     }
 
-    const file = await this.loadFile(url, runFiles);
+    const file = await this.loadFile(url, deliveryState);
 
     if (!isDefined(file)) {
       return this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable);
     }
 
-    if (runFiles.rejectedFileIds.has(file.id)) {
+    if (deliveryState.rejectedFileIds.has(file.id)) {
       return this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.rejected);
     }
 
@@ -565,7 +575,7 @@ export class AgentFilePartService {
       ? part.mediaType
       : file.mimeType;
 
-    if (!runFiles.nativeMimeTypes.has(mediaType)) {
+    if (!deliveryState.nativeMimeTypes.has(mediaType)) {
       return {
         type: 'text',
         text: formatUnsupportedFilePlaceholder({
@@ -576,7 +586,7 @@ export class AgentFilePartService {
     }
 
     if (
-      file.size > runFiles.limits.maxFileSizeBytes ||
+      file.size > deliveryState.limits.maxFileSizeBytes ||
       file.size > budget.remainingSizeBytes ||
       budget.remainingFileCount === 0
     ) {
@@ -587,8 +597,8 @@ export class AgentFilePartService {
     budget.remainingFileCount -= 1;
 
     if (
-      !runFiles.canSendSignedUrls &&
-      runFiles.limits.mimeTypesRequiringUrl.has(mediaType)
+      !deliveryState.canSendSignedUrls &&
+      deliveryState.limits.mimeTypesRequiringUrl.has(mediaType)
     ) {
       return this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable);
     }
@@ -598,21 +608,24 @@ export class AgentFilePartService {
 
   private downloadFiles(
     requestedFiles: Parameters<DownloadFunction>[0],
-    runFiles: AgentRunFiles,
+    deliveryState: AgentFileDeliveryState,
   ) {
     return Promise.all(
       requestedFiles.map(({ url, isUrlSupportedByModel }) =>
-        runFiles.canSendSignedUrls && isUrlSupportedByModel
+        deliveryState.canSendSignedUrls && isUrlSupportedByModel
           ? null
-          : this.downloadFile(url.toString(), runFiles),
+          : this.downloadFile(url.toString(), deliveryState),
       ),
     );
   }
 
-  private async downloadFile(url: string, runFiles: AgentRunFiles) {
-    const file = await this.loadFile(url, runFiles);
+  private async downloadFile(
+    url: string,
+    deliveryState: AgentFileDeliveryState,
+  ) {
+    const file = await this.loadFile(url, deliveryState);
     const bytes = isDefined(file)
-      ? await this.loadFileBytes(file, runFiles)
+      ? await this.loadFileBytes(file, deliveryState)
       : null;
 
     return isDefined(bytes) ? { data: bytes, mediaType: undefined } : null;
@@ -630,17 +643,17 @@ export class AgentFilePartService {
 
   private loadFile(
     url: string,
-    runFiles: AgentRunFiles,
+    deliveryState: AgentFileDeliveryState,
   ): Promise<FileEntity | null> {
-    const loadedFile = runFiles.filesByUrl.get(url);
+    const loadedFile = deliveryState.filesByUrl.get(url);
 
     if (isDefined(loadedFile)) {
       return loadedFile;
     }
 
-    const fileLoad = this.findFileBySignedUrl(url, runFiles.workspaceId);
+    const fileLoad = this.findFileBySignedUrl(url, deliveryState.workspaceId);
 
-    runFiles.filesByUrl.set(url, fileLoad);
+    deliveryState.filesByUrl.set(url, fileLoad);
 
     return fileLoad;
   }
@@ -655,7 +668,7 @@ export class AgentFilePartService {
     });
 
     return isDefined(fileId)
-      ? this.fileService.findReadableFileById({
+      ? this.fileService.getFileById({
           fileId,
           workspaceId,
           allowedFileFolders: AI_READABLE_FILE_FOLDERS,
@@ -665,29 +678,29 @@ export class AgentFilePartService {
 
   private loadFileBytes(
     file: FileEntity,
-    runFiles: AgentRunFiles,
+    deliveryState: AgentFileDeliveryState,
   ): Promise<Buffer | null> {
-    const loadedBytes = runFiles.bytesByFileId.get(file.id);
+    const loadedBytes = deliveryState.bytesByFileId.get(file.id);
 
     if (isDefined(loadedBytes)) {
       return loadedBytes;
     }
 
-    const bytesLoad = this.readFileBytes(file, runFiles);
+    const bytesLoad = this.readFileBytes(file, deliveryState);
 
-    runFiles.bytesByFileId.set(file.id, bytesLoad);
+    deliveryState.bytesByFileId.set(file.id, bytesLoad);
 
     return bytesLoad;
   }
 
   private async readFileBytes(
     file: FileEntity,
-    runFiles: AgentRunFiles,
+    deliveryState: AgentFileDeliveryState,
   ): Promise<Buffer | null> {
     try {
       const fileContent = await this.fileService.getFileStreamById({
         fileId: file.id,
-        workspaceId: runFiles.workspaceId,
+        workspaceId: deliveryState.workspaceId,
         allowedFileFolders: AI_READABLE_FILE_FOLDERS,
       });
 
@@ -697,10 +710,10 @@ export class AgentFilePartService {
 
       const bytes = await streamToBuffer(
         fileContent.stream,
-        runFiles.limits.maxFileSizeBytes,
+        deliveryState.limits.maxFileSizeBytes,
       );
 
-      runFiles.fileIdsByBytes.set(bytes, file.id);
+      deliveryState.fileIdsByBytes.set(bytes, file.id);
 
       return bytes;
     } catch (error) {

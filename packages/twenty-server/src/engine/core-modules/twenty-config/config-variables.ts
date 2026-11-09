@@ -2214,7 +2214,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Send AI providers a signed link to files when this server is public. Turn off when the server URL looks public but providers cannot reach it, for example behind a VPN. Files are then sent as bytes.',
+      'Send AI providers a signed link to files when this server is public. Turn off when the server URL looks public but providers cannot reach it, for example behind a VPN, or when file links must not leave this server. Files are then sent as bytes.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()

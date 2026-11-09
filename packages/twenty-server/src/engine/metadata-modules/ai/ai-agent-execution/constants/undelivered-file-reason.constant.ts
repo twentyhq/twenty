@@ -1,7 +1,7 @@
 export const UNDELIVERED_FILE_REASON = {
   unavailable:
-    'file could not be loaded, it may have been deleted or its link expired',
+    'file could not be loaded, it may have been deleted or its link expired. Query its record again to get a new link',
   tooLarge:
-    'file is too large for this model, or too many files are attached to this conversation',
+    'file exceeds the size or file count this model accepts in one request',
   rejected: 'the AI provider could not process this file',
 } as const;

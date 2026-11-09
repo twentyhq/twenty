@@ -30,10 +30,10 @@ import {
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { truncateCodeInterpreterOutput } from 'src/engine/core-modules/code-interpreter/utils/truncate-code-interpreter-output.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/file/constants/ai-readable-file-folders.constant';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/tool/constants/ai-readable-file-folders.constant';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
 import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.constant';
 import {
