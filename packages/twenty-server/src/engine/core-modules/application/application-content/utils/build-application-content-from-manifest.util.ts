@@ -71,8 +71,13 @@ export const buildApplicationContentFromManifest = (
     items: viewFields,
     getKey: (viewField) => viewField.viewUniversalIdentifier,
   });
+  const listedViewUniversalIdentifiers = new Set(
+    views.map((view) => view.universalIdentifier),
+  );
   const viewCountByField = countByKey({
-    items: viewFields,
+    items: viewFields.filter((viewField) =>
+      listedViewUniversalIdentifiers.has(viewField.viewUniversalIdentifier),
+    ),
     getKey: (viewField) => viewField.fieldMetadataUniversalIdentifier,
   });
   const tabCountByPageLayout = countByKey({

@@ -100,6 +100,29 @@ describe('buildApplicationContentFromManifest', () => {
     ]);
   });
 
+  it('should not count views the content does not list', () => {
+    const content = buildApplicationContentFromManifest({
+      fields: [TIER_FIELD],
+      viewFields: [
+        {
+          universalIdentifier: 'all-companies-tier',
+          fieldMetadataUniversalIdentifier: 'tier',
+          viewUniversalIdentifier: 'all-companies',
+          position: 3,
+        },
+      ],
+    });
+
+    expect(content.fields).toEqual([
+      expect.objectContaining({ label: 'Tier', count: 0 }),
+    ]);
+    expect(content.viewFields).toEqual([
+      expect.objectContaining({
+        parentUniversalIdentifier: 'all-companies',
+      }),
+    ]);
+  });
+
   it('should tag page layouts, logic functions and public assets', () => {
     const content = buildApplicationContentFromManifest({
       pageLayouts: [INVOICE_PAGE_LAYOUT],
