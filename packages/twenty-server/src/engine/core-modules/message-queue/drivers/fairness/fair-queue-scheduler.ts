@@ -32,8 +32,8 @@ const buildPaceSlotKey = ({
   scope,
   maxRate,
 }: {
-  scope: QueueJobScope;
-  maxRate: QueueJobMaxRate;
+  scope: Pick<QueueJobScope, 'workspaceId' | 'applicationUniversalIdentifier'>;
+  maxRate: Pick<QueueJobMaxRate, 'key'>;
 }): string | undefined =>
   isDefined(scope.workspaceId)
     ? `${scope.workspaceId}:${scope.applicationUniversalIdentifier ?? '-'}:${maxRate.key}`

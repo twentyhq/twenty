@@ -48,6 +48,15 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   ) {}
 
   async handleStaledRunsForWorkspace(workspaceId: string) {
+    const staledRunIds = await this.collectRunIds({
+      workspaceId,
+      findOptions: getStaledRunsFindOptions(),
+    });
+
+    if (staledRunIds.length === 0) {
+      return;
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -55,39 +64,6 @@ export class WorkflowHandleStaledRunsWorkspaceService {
         this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           WorkflowRunWorkspaceEntity,
         );
-
-      const staledRunsCount = await workflowRunRepository.count({
-        where: getStaledRunsFindOptions(),
-      });
-
-      if (staledRunsCount <= 0) {
-        return;
-      }
-
-      const batchCount = Math.ceil(staledRunsCount / QUERY_MAX_RECORDS);
-      const staledRunIds: string[] = [];
-
-      for (let batchIndex = 0; batchIndex < batchCount; batchIndex++) {
-        const staledWorkflowRuns = await workflowRunRepository.find({
-          where: getStaledRunsFindOptions(),
-          select: {
-            id: true,
-          },
-          order: {
-            createdAt: 'ASC',
-          },
-          skip: batchIndex * QUERY_MAX_RECORDS,
-          take: QUERY_MAX_RECORDS,
-        });
-
-        if (staledWorkflowRuns.length <= 0) {
-          break;
-        }
-
-        staledRunIds.push(
-          ...staledWorkflowRuns.map((workflowRun) => workflowRun.id),
-        );
-      }
 
       // A run paced by its workflow maxRate can wait in the queue past the
       // threshold: only runs whose job is gone are lost.

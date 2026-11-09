@@ -980,8 +980,7 @@ export class BullMQDriver
       shouldReportSizes: true,
     });
 
-    // Re-adding an existing job id is a no-op in BullMQ, so it must not
-    // reserve a pacing slot again.
+    // BullMQ ignores a re-added job id, so it must not take a pacing slot.
     const existingPacedJobIds = this.fairQueueScheduler.isGroupMaxRateEnabled()
       ? await this.findExistingJobIds({
           queueName,
