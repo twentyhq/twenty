@@ -5,6 +5,7 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -280,6 +281,47 @@ export const AllDone: Story = {
   },
 };
 
+export const DoneStepWithoutThread: Story = {
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: {
+          data: {
+            gettingStartedProgress: {
+              ...TRIAL_PROGRESS,
+              completedStepActionKeys: [
+                GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+              ],
+              selectedStepActionKey:
+                GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+            },
+          },
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const followUpStepCard = await canvas.findByRole('region', {
+      name: 'Deal follow-ups on track',
+    });
+
+    await expect(
+      within(followUpStepCard).queryByRole('button'),
+    ).not.toBeInTheDocument();
+    await expect(
+      within(followUpStepCard).queryByRole('group', {
+        name: 'Follow-up instructions',
+      }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+const FOLLOW_UP_DEALS_CHAT_THREAD_ID = '20202020-3a7e-4c1d-8b2f-5e9d0c6a1b47';
+
 const DONE_STEP_CHAT_THREADS = [
   {
     actionKey: GettingStartedStepActionKey.IMPORT_DATA,
@@ -287,7 +329,7 @@ const DONE_STEP_CHAT_THREADS = [
   },
   {
     actionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
-    chatThreadId: '20202020-3a7e-4c1d-8b2f-5e9d0c6a1b47',
+    chatThreadId: FOLLOW_UP_DEALS_CHAT_THREAD_ID,
   },
 ];
 
@@ -430,6 +472,20 @@ export const DoneSteps: Story = {
         ).toBeVisible(),
       );
     }
+
+    const followUpStepCard = await canvas.findByRole('region', {
+      name: 'Deal follow-ups on track',
+    });
+
+    await userEvent.click(
+      within(followUpStepCard).getByRole('button', { name: 'Continue thread' }),
+    );
+
+    await waitFor(() =>
+      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+        FOLLOW_UP_DEALS_CHAT_THREAD_ID,
+      ),
+    );
   },
 };
 

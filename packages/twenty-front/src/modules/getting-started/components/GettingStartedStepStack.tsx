@@ -32,7 +32,6 @@ const StyledActiveStep = styled.div`
   position: relative;
 `;
 
-// Steps sit at the top of tall cards (auto margin) and center on cards shorter than them
 const StyledStepsTrack = styled.div`
   bottom: 0;
   display: flex;
