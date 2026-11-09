@@ -116,6 +116,11 @@ msgstr "\"{path}\"은 관계를 두 단계 이상 거칩니다."
 msgid "\"{path}\" is not a value"
 msgstr "\"{path}\"은 값이 아닙니다."
 
+#. js-lingui-id: ZIIOJj
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
+msgstr ""
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -2927,7 +2932,7 @@ msgid "agent"
 msgstr "에이전트"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -4443,6 +4448,7 @@ msgid "Assignment"
 msgstr "할당"
 
 #. js-lingui-id: d/bvvp
+#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
 msgstr "어시스턴트"
@@ -12806,6 +12812,11 @@ msgstr "응용 프로그램 설치에 실패했습니다."
 msgid "Failed to link the related records to this event"
 msgstr "관련 레코드를 이 이벤트에 연결하지 못했습니다"
 
+#. js-lingui-id: XC1d54
+#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+msgid "Failed to load agent details."
+msgstr ""
+
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -16151,6 +16162,11 @@ msgstr "이터레이터"
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "채팅이 {destinationChannelName} 채널로 이동합니다. 이 작업은 취소할 수 없습니다."
+
+#. js-lingui-id: yNfoGL
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
+msgid "Its code could not be moved into the step, so it cannot be edited here."
+msgstr ""
 
 #. js-lingui-id: J6OYmT
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -22549,6 +22565,7 @@ msgstr "수신자가 수신을 거부할 때 보게 되는 페이지 미리보�
 #: src/modules/ui/input/components/internal/date/components/DatePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation.tsx
+#: src/modules/validation-rules/utils/buildValidationRuleEditorFields.ts
 msgid "Previous"
 msgstr "이전"
 
@@ -28634,6 +28651,11 @@ msgstr "전사를 준비하는 중입니다…"
 msgid "The usage this limit applies to."
 msgstr "이 한도가 적용되는 사용량입니다."
 
+#. js-lingui-id: S3wM+7
+#: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
+msgid "The value a field had before the update. Empty when the record is created."
+msgstr ""
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -29177,6 +29199,11 @@ msgstr "이 설정은 환경 변수로만 구성할 수 있습니다."
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This should never happen"
 msgstr "이런 일이 발생해서는 안 됩니다"
+
+#. js-lingui-id: v6DC3g
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
+msgid "This step runs from its original function"
+msgstr ""
 
 #. js-lingui-id: Ryrt8E
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
