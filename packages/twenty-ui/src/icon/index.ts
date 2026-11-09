@@ -18,6 +18,7 @@ export { IconBrandSalesforce } from './components/IconBrandSalesforce';
 export { IconBrandTypesafeAi } from './components/IconBrandTypesafeAi';
 export { IconBrandXai } from './components/IconBrandXai';
 export { IconChartBarHorizontal } from './components/IconChartBarHorizontal';
+export { IconEuStars } from './components/IconEuStars';
 export { IconGmail } from './components/IconGmail';
 export { IconGoogle } from './components/IconGoogle';
 export { IconGoogleCalendar } from './components/IconGoogleCalendar';

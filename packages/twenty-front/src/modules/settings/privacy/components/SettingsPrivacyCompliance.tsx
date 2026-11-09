@@ -2,11 +2,14 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconRosetteDiscountCheck, IconSignature } from 'twenty-ui/icon';
+import {
+  IconEuStars,
+  IconRosetteDiscountCheck,
+  IconSignature,
+} from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { SettingsPrivacyEuStarsIcon } from '@/settings/privacy/components/SettingsPrivacyEuStarsIcon';
 import { TWENTY_TRUST_CENTER_URLS } from '@/settings/privacy/constants/TwentyTrustCenterUrls';
 
 const StyledCardsGrid = styled.div`
@@ -72,7 +75,7 @@ export const SettingsPrivacyCompliance = () => {
       <SettingsCard
         href={TWENTY_TRUST_CENTER_URLS.gdpr}
         illustrationColor="blue"
-        Icon={<SettingsPrivacyEuStarsIcon />}
+        Icon={<IconEuStars size={theme.icon.size.md} />}
         title={t`GDPR`}
         description={t`Built to meet EU data protection rules`}
       />
