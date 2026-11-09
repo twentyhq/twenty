@@ -54,7 +54,7 @@ Emails, calendar events, notes and tasks are not linked to companies, people or 
 
 To attach an activity in a workflow, use CREATE_RECORD on the target object, e.g. { "objectName": "messageThreadTarget", "objectRecord": { "messageThread": { "id": "..." }, "targetOpportunity": { "id": "..." } } }. One target record attaches to exactly one record; attaching the same thread to several records means one target record each.
 
-To react to an activity being attached, trigger on the target object, e.g. \`messageThreadTarget.created\` — the join record's foreign keys (e.g. \`messageThreadId\`, \`targetCompanyId\`) are available on {{trigger.properties.after}}. Custom objects get their own morph variant (\`target<ObjectName>\`); check the target object's metadata for exact field names.
+To react to an activity being attached, trigger on the target object, e.g. \`messageThreadTarget.created\` — the join record's foreign keys (e.g. \`messageThreadId\`, \`targetCompanyId\`) are available on {{trigger.properties.after}}. Custom objects get their own morph variant (\`target<ObjectName>\`) on \`noteTarget\` and \`taskTarget\` only; \`messageThreadTarget\` and \`calendarEventTarget\` do not get one automatically. Check the target object's metadata for exact field names.
 
 ## CRON Trigger Settings Schema
 
