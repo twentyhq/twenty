@@ -489,4 +489,29 @@ describe('RLS rules through a relation (integration)', () => {
 
     expect(Number(count)).toBe(personIds.length);
   });
+
+  it('should stop and resume access when the relation flag is toggled', async () => {
+    const setRelationFlag = async (value: boolean) => {
+      await updateFeatureFlag({
+        featureFlag:
+          FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+        value,
+        expectToFail: false,
+      });
+    };
+
+    await assignPersonRuleThroughCompanyName();
+
+    expect(await findPeopleAsMember([person.id])).toEqual([person.id]);
+
+    await setRelationFlag(false);
+
+    expect(await findPeopleAsMember([person.id])).toEqual([]);
+
+    await waitForAllJobsToFinish();
+    await setRelationFlag(true);
+    await waitForAllJobsToFinish();
+
+    expect(await findPeopleAsMember([person.id])).toEqual([person.id]);
+  });
 });
