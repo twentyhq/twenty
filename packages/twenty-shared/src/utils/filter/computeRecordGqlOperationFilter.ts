@@ -11,6 +11,7 @@ import {
   type FieldShared,
   turnRecordFilterIntoRecordGqlOperationFilter,
 } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import { findRootRecordFilterGroup } from '@/utils/filter/findRootRecordFilterGroup';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const computeRecordGqlOperationFilter = ({
@@ -40,9 +41,8 @@ export const computeRecordGqlOperationFilter = ({
       })
       .filter(isDefined);
 
-  const outermostFilterGroupId = recordFilterGroups.find(
-    (recordFilterGroup) => !recordFilterGroup.parentRecordFilterGroupId,
-  )?.id;
+  const outermostFilterGroupId =
+    findRootRecordFilterGroup(recordFilterGroups)?.id;
 
   const advancedRecordGqlOperationFilter =
     turnRecordFilterGroupsIntoGqlOperationFilter({

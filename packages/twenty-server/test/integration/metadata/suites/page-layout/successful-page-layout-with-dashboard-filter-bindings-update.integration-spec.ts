@@ -255,6 +255,7 @@ describe('Dashboard filter bindings', () => {
 
   describe('when the bound field changes', () => {
     let renewalDateFieldId: string;
+    let isRenewalDateFieldDeleted: boolean;
 
     const deactivateRenewalDateField = () =>
       updateOneFieldMetadata({
@@ -284,6 +285,7 @@ describe('Dashboard filter bindings', () => {
       });
 
       renewalDateFieldId = data.createOneField.id;
+      isRenewalDateFieldDeleted = false;
 
       await saveDashboard({
         filters: [PERIOD_FILTER],
@@ -292,6 +294,10 @@ describe('Dashboard filter bindings', () => {
     });
 
     afterEach(async () => {
+      if (isRenewalDateFieldDeleted) {
+        return;
+      }
+
       await deactivateRenewalDateField();
       await deleteOneFieldMetadata({
         expectToFail: false,
@@ -309,6 +315,101 @@ describe('Dashboard filter bindings', () => {
       const { errors } = await saveDashboard({
         filters: [PERIOD_FILTER],
         dashboardFilterBindings: [renewalDateBinding()],
+      });
+
+      expect(errors).toBeUndefined();
+    });
+
+    const deleteField = async (fieldMetadataId: string) => {
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: fieldMetadataId,
+          updatePayload: { isActive: false },
+        },
+        gqlFields: 'id',
+      });
+
+      return deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: fieldMetadataId },
+      });
+    };
+
+    const buildChartFilter = (fieldMetadataId: string): ChartFilter => ({
+      recordFilters: [
+        {
+          id: v4(),
+          fieldMetadataId,
+          operand: ViewFilterOperand.IS_NOT_EMPTY,
+          value: '',
+        },
+      ],
+    });
+
+    it('should drop the bindings to a deleted field and keep the widget', async () => {
+      await deleteField(renewalDateFieldId);
+      isRenewalDateFieldDeleted = true;
+
+      expect(await findStoredDashboardFilterBindings(widgetId)).toEqual([]);
+    });
+
+    it('should drop the binding and the chart filter on a deleted field, and keep the dashboard saving', async () => {
+      await saveDashboard({
+        filters: [PERIOD_FILTER],
+        chartFilter: buildChartFilter(renewalDateFieldId),
+        dashboardFilterBindings: [renewalDateBinding()],
+      });
+
+      const { errors: deletionErrors } = await deleteField(renewalDateFieldId);
+
+      isRenewalDateFieldDeleted = true;
+      expect(deletionErrors).toBeUndefined();
+      expect(await findStoredConfiguration(widgetId)).toMatchObject({
+        filter: { recordFilters: [] },
+        dashboardFilterBindings: [],
+      });
+
+      const { errors } = await saveDashboard({
+        filters: [PERIOD_FILTER],
+        chartFilter: { recordFilters: [] },
+        dashboardFilterBindings: [],
+      });
+
+      expect(errors).toBeUndefined();
+    });
+
+    it('should delete the bound field of a widget whose chart filter already dangles', async () => {
+      const { data } = await createOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          objectMetadataId: fieldIds.companyObjectMetadataId,
+          name: 'churnDate',
+          label: 'Churn date',
+          type: FieldMetadataType.DATE,
+        },
+        gqlFields: 'id',
+      });
+
+      await saveDashboard({
+        filters: [PERIOD_FILTER],
+        chartFilter: buildChartFilter(data.createOneField.id),
+        dashboardFilterBindings: [renewalDateBinding()],
+      });
+      await deleteField(data.createOneField.id);
+
+      const { errors: deletionErrors } = await deleteField(renewalDateFieldId);
+
+      isRenewalDateFieldDeleted = true;
+      expect(deletionErrors).toBeUndefined();
+      expect(await findStoredConfiguration(widgetId)).toMatchObject({
+        filter: { recordFilters: [] },
+        dashboardFilterBindings: [],
+      });
+
+      const { errors } = await saveDashboard({
+        filters: [PERIOD_FILTER],
+        dashboardFilterBindings: [],
       });
 
       expect(errors).toBeUndefined();
