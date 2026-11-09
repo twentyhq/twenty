@@ -123,8 +123,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
           findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
           recomputeAfterWrite: jest.fn().mockResolvedValue([]),
-          queueRecompute: jest.fn(),
         },
+        recordAccessGroupQueue: { queueRecompute: jest.fn() },
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),

@@ -96,8 +96,8 @@ const sumPetColumn = ({
         isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
         findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
         recomputeAfterWrite: jest.fn().mockResolvedValue([]),
-        queueRecompute: jest.fn(),
       },
+      recordAccessGroupQueue: { queueRecompute: jest.fn() },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
         acquireRecordStock: jest.fn(),

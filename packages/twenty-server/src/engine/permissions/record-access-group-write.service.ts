@@ -2,9 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { type FeatureFlagKey } from 'twenty-shared/types';
+
 import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
 import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
-import { type RecordAccessGroupWriteScope } from 'src/engine/permissions/internal/access-group/types/record-access-group-write-scope.type';
 import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
 import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -19,7 +20,11 @@ export class RecordAccessGroupWriteService {
     featureFlagsMap,
     workspaceId,
     objectMetadataId,
-  }: RecordAccessGroupWriteScope): Promise<boolean> {
+  }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<boolean> {
     return (
       areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
       (await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
@@ -33,7 +38,11 @@ export class RecordAccessGroupWriteService {
     featureFlagsMap,
     workspaceId,
     objectMetadataId,
-  }: RecordAccessGroupWriteScope): Promise<boolean> {
+  }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<boolean> {
     return (
       areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
       (await this.recordAccessGroupService.isObjectReachedByRlsRuleRelation({
@@ -51,7 +60,10 @@ export class RecordAccessGroupWriteService {
     recordIds,
     recordsBefore,
     transactionScope,
-  }: RecordAccessGroupWriteScope & {
+  }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+    workspaceId: string;
+    objectMetadataId: string;
     recordIds: string[];
     recordsBefore: Record<string, unknown>[];
     transactionScope: RecordPermissionTransactionScope;
@@ -78,7 +90,10 @@ export class RecordAccessGroupWriteService {
     updatedColumnNames,
     relatedRecordsBeforeDelete,
     transactionScope,
-  }: RecordAccessGroupWriteScope & {
+  }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+    workspaceId: string;
+    objectMetadataId: string;
     writtenRecordIds: string[];
     isRecomputingWrittenRecords: boolean;
     recordsBefore: Record<string, unknown>[];

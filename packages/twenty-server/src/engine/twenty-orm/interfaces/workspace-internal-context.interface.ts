@@ -42,8 +42,8 @@ export interface WorkspaceInternalContext {
     | 'isRecordsBeforeWriteRequired'
     | 'findRelatedRecordsBeforeDelete'
     | 'recomputeAfterWrite'
-    | 'queueRecompute'
   >;
+  recordAccessGroupQueue: Pick<RecordAccessGroupWriteService, 'queueRecompute'>;
   recordStock: Pick<
     WorkspaceRecordStockService,
     'assertRecordStockAvailable' | 'acquireRecordStock' | 'releaseRecordStock'

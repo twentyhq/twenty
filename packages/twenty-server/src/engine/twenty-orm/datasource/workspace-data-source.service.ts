@@ -61,6 +61,7 @@ export class WorkspaceDataSourceService {
       recordStock: this.workspaceRecordStockService,
       recordPermissions: this.recordPermissionsService,
       recordAccessGroupWrite: this.recordAccessGroupWriteService,
+      recordAccessGroupQueue: this.recordAccessGroupWriteService,
       coreDataSource: this.coreDataSource,
     };
   }
