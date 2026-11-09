@@ -165,7 +165,9 @@ export const RecordDetailRelationRecordsListItem = ({
       };
 
   const handleDetach = () => {
-    if (!relationFieldMetadataItem?.name) return;
+    if (!relationFieldMetadataItem?.name) {
+      return;
+    }
 
     if (isToOneObject) {
       onSubmit?.({ newValue: null });
@@ -245,7 +247,7 @@ export const RecordDetailRelationRecordsListItem = ({
                 {!isAccountOwnerRelation &&
                   canReachSomeRecords({
                     objectRecordsPermissions: relationObjectPermissions,
-                    operationType: 'soft-delete',
+                    operationType: 'softDelete',
                   }) && (
                     <Dropdown.ActionItem
                       startIcon={<IconTrash />}

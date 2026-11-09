@@ -222,10 +222,13 @@ export const mockedUserData: MockedUser = {
     objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
       (item) => ({
         objectMetadataId: item.id,
+        canCreateAllRecords: true,
         canReadAllRecords: true,
         canUpdateAllRecords: true,
         canSoftDeleteAllRecords: true,
         canDestroyAllRecords: true,
+        unreadableFields: [],
+        uneditableFields: [],
         restrictedFields: {},
       }),
     ),
@@ -252,10 +255,13 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
 
         return {
           objectMetadataId: item.id,
+          canCreateAllRecords: hasAccess,
           canReadAllRecords: hasAccess,
           canUpdateAllRecords: hasAccess,
           canSoftDeleteAllRecords: hasAccess,
           canDestroyAllRecords: hasAccess,
+          unreadableFields: [],
+          uneditableFields: [],
           restrictedFields: {},
         };
       },
@@ -285,10 +291,13 @@ export const mockedOnboardingUserData = (
       objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
         (item) => ({
           objectMetadataId: item.id,
+          canCreateAllRecords: true,
           canReadAllRecords: true,
           canUpdateAllRecords: true,
           canSoftDeleteAllRecords: true,
           canDestroyAllRecords: true,
+          unreadableFields: [],
+          uneditableFields: [],
           restrictedFields: {},
         }),
       ),

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
-import { AiChatMessageHeader } from '@/ai/components/AiChatMessageHeader';
+import { ChatMessageHeader } from '@/chat/components/ChatMessageHeader';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { AppChip } from '@/applications/components/AppChip';
@@ -33,7 +33,7 @@ export const AiChatMessageAuthorHeader = ({
 
   if (metadata?.isBuiltInAssistant === true) {
     return (
-      <AiChatMessageHeader
+      <ChatMessageHeader
         avatar={<AiChatAssistantAvatar />}
         name={assistantDisplayName}
         createdAt={createdAt}
@@ -45,7 +45,7 @@ export const AiChatMessageAuthorHeader = ({
 
   if (isDefined(applicationId)) {
     return (
-      <AiChatMessageHeader
+      <ChatMessageHeader
         avatar={<AppChip applicationId={applicationId} chipOnly rounded />}
         name={getInstalledApplicationDisplayName({
           applicationId,
@@ -65,7 +65,7 @@ export const AiChatMessageAuthorHeader = ({
       : t`Unknown sender`;
 
   return (
-    <AiChatMessageHeader
+    <ChatMessageHeader
       avatar={
         <Avatar
           src={getAbsoluteImageUrl(sender?.avatarUrl)}

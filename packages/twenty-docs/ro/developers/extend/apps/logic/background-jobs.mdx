@@ -115,6 +115,26 @@ await enqueueJobs({
 
 Rularea pusă în coadă moștenește utilizatorul activ al funcției care a pus-o în coadă, astfel încât acționează cu aceleași permisiuni.
 
+## Memoria cozii
+
+Sarcinile puse în coadă rămân în memorie până se finalizează, astfel încât fiecare spațiu de lucru și fiecare aplicație pot deține doar o parte din memoria cozii pe care celelalte o lasă liberă. O singură sarcină este, de asemenea, limitată la 5 MB de sarcină utilă serializată. Aceste limite se aplică numai pe serverele care le activează (`IS_REDIS_MEMORY_FAIRNESS_ENABLED`).
+
+`enqueueJobs` raportează ce a utilizat fiecare apel. Aceste câmpuri necesită Twenty 2.57.0 sau o versiune ulterioară, care este și versiunea minimă a serverului pentru SDK:
+
+| Câmp              | Ce conține                                                                                                                                                                                |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `locuri de muncă` | Valorile `jobId` și `sizeBytes` ale fiecărei sarcini puse în coadă.                                                                                                                       |
+| `availableBytes`  | Memoria pe care aplicația și spațiul dvs. de lucru o mai pot pune în coadă la momentul acestui apel. `null` când serverul nu limitează memoria cozii. Este o instantanee, nu o rezervare. |
+
+Când se atinge o limită, întregul apel este respins și nu se pune nimic în coadă:
+
+| `subCode` al erorii              | Când                                                       | Detalii                                                |
+| -------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------ |
+| `JOB_TOO_LARGE`                  | O sarcină depășește limita de dimensiune.                  | `index`, `sizeBytes`, `maxBytes`                       |
+| `JOB_QUEUE_MEMORY_LIMIT_REACHED` | Lotul nu încape în cota dvs. Încercați din nou mai târziu. | `requestedBytes`, `availableBytes`, `refusedGroupKeys` |
+
+Păstrați încărcăturile utile mici: transmiteți ID-urile înregistrărilor și preluați înregistrările în timpul rulării, în loc să le încorporați. Dacă `availableBytes` devine insuficient, puneți mai puține sarcini în coadă simultan sau înlănțuiți-le cu `delayMs`.
+
 ## Reîncercați după un eșec temporar
 
 Twenty nu reîncearcă fiecare excepție din codul aplicației. O eroare obișnuită lansată este tratată ca un eșec permanent. Pentru un eșec temporar, o funcție logică pusă în coadă poate solicita până la trei reîncercări prin lansarea `RetryableLogicFunctionError`.

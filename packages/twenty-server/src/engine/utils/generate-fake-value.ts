@@ -42,9 +42,8 @@ const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
     });
 
     return objData;
-  } else {
-    return null;
   }
+  return null;
 };
 
 const generateFieldMetadataTypeValue = (

@@ -102,7 +102,9 @@ export class ViewQueryParamsService {
           flatEntityMaps: flatFieldMetadataMaps,
         });
 
-        if (!field) return null;
+        if (!field) {
+          return null;
+        }
 
         return {
           id: viewFilter.id,
@@ -143,7 +145,9 @@ export class ViewQueryParamsService {
           flatEntityMaps: flatFieldMetadataMaps,
         });
 
-        if (!field) return null;
+        if (!field) {
+          return null;
+        }
 
         return {
           [field.name]:

@@ -45,7 +45,11 @@ export class FieldMetadataOptionEntity
   @Column({ nullable: false, type: 'uuid' })
   fieldMetadataId: string;
 
-  @ManyToOne(() => FieldMetadataEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.fieldMetadataOptions,
+    { onDelete: 'CASCADE' },
+  )
   @JoinColumn({ name: 'fieldMetadataId' })
   fieldMetadata: Relation<FieldMetadataEntity>;
 

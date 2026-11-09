@@ -104,6 +104,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
         isAuditLogged: true,
         fieldPermissionUniversalIdentifiers: [],
         viewSortUniversalIdentifiers: [],
+        fieldMetadataOptionUniversalIdentifiers: [],
         searchFieldMetadataUniversalIdentifiers: [],
         isLabelSyncedWithName: false,
         isSystem: false,

@@ -24,7 +24,9 @@ import { logError } from './logError';
 // TODO: review all of this with Temporal
 // - also break down this into small files
 export const parseDate = (dateToParse: Date | string | number): Date => {
-  if (dateToParse === 'now') return new Date();
+  if (dateToParse === 'now') {
+    return new Date();
+  }
 
   let formattedDate: Date | null = null;
 
@@ -127,22 +129,34 @@ export const beautifyPastDateRelativeToNowShort = (
       (now.getTime() - parsedDate.getTime()) / 1000,
     );
 
-    if (diffInSeconds < 60) return t`now`;
+    if (diffInSeconds < 60) {
+      return t`now`;
+    }
 
     const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes}m`;
+    }
 
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}h`;
+    if (diffInHours < 24) {
+      return `${diffInHours}h`;
+    }
 
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}d`;
+    if (diffInDays < 7) {
+      return `${diffInDays}d`;
+    }
 
     const diffInWeeks = Math.floor(diffInDays / 7);
-    if (diffInWeeks < 5) return `${diffInWeeks}w`;
+    if (diffInWeeks < 5) {
+      return `${diffInWeeks}w`;
+    }
 
     const diffInMonths = Math.floor(diffInDays / 30);
-    if (diffInMonths < 12) return `${diffInMonths}mo`;
+    if (diffInMonths < 12) {
+      return `${diffInMonths}mo`;
+    }
 
     const diffInYears = Math.floor(diffInDays / 365);
 
@@ -195,7 +209,9 @@ export const beautifyDateDiff = (
       other: `${years} years`,
     });
 
-    if (short) return result;
+    if (short) {
+      return result;
+    }
   }
 
   if (years !== 0 && days !== 0) {

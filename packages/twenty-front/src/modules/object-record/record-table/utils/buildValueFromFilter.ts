@@ -291,9 +291,8 @@ const computeValueFromFilterRelation = (
           return parsedValue?.isCurrentWorkspaceMemberSelected
             ? currentWorkspaceMember?.id
             : undefined;
-        } else {
-          return parsedValue?.selectedRecordIds?.[0];
         }
+        return parsedValue?.selectedRecordIds?.[0];
       }
       return undefined; // todo
     }

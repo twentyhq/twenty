@@ -1044,6 +1044,9 @@ export const STANDARD_OBJECTS = {
       groupHashUniqueIndex: {
         universalIdentifier: 'dcb0d254-43ae-442e-9223-8ac052eddb28',
       },
+      objectMetadataIdIndex: {
+        universalIdentifier: '60e48c2a-a3db-4f11-b25b-49c7e8a385bc',
+      },
     },
     views: {},
   },

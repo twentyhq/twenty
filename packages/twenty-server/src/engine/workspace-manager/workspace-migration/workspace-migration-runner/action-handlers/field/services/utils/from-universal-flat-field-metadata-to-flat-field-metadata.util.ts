@@ -136,6 +136,7 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
     kanbanAggregateOperationViewIds: [],
     viewSortIds: [],
     searchFieldMetadataIds: [],
+    fieldMetadataOptionIds: [],
     ...emptyUniversalForeignKeyAggregators,
   };
 };
