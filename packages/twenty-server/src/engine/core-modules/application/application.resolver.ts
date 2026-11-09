@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
+import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -61,6 +63,7 @@ export class ApplicationResolver {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationStopService: ApplicationStopService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationContentService: ApplicationContentService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -306,6 +309,36 @@ export class ApplicationResolver {
     return context.loaders.objectMetadataByApplicationIdLoader.load({
       workspaceId,
       applicationId: application.id,
+    });
+  }
+
+  @ResolveField(() => ApplicationContentDTO, { nullable: true })
+  async content(
+    @Parent()
+    application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,
+    @AuthWorkspace()
+    {
+      id: workspaceId,
+      workspaceCustomApplicationId,
+    }: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
+  ): Promise<ApplicationContentDTO | null> {
+    if (
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
+      })
+    ) {
+      return null;
+    }
+
+    return this.applicationContentService.getInstalledApplicationContent({
+      workspaceId,
+      applicationId: application.id,
+      applicationRegistrationId: application.applicationRegistrationId,
     });
   }
 
