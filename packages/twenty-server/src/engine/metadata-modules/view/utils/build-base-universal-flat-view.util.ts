@@ -44,6 +44,7 @@ export const buildBaseUniversalFlatView = ({
     calendarLayout: null,
     isCompact: false,
     shouldHideEmptyGroups: false,
+    shouldDisplayGroupsAsTabs: false,
     kanbanColumnWidth: null,
     groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     kanbanAggregateOperation: null,

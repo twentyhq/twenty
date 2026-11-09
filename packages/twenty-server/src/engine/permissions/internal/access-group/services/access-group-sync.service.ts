@@ -2,8 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecordsOperationType } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -16,16 +15,12 @@ import {
 import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-job-name.constant';
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
-import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
-import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
-import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class AccessGroupService {
+export class AccessGroupSyncService {
   constructor(
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -128,56 +123,5 @@ export class AccessGroupService {
         },
       );
     }
-  }
-
-  async findCallerCompactIds({
-    principals,
-    objectMetadataId,
-    operationType,
-  }: {
-    principals: Pick<
-      PermissionsPrincipalsWithRolesContext,
-      'workspaceId' | 'mainPrincipal'
-    >;
-    objectMetadataId: string;
-    operationType: ObjectRecordsOperationType;
-  }): Promise<number[]> {
-    const { workspaceId, mainPrincipal } = principals;
-    const {
-      featureFlagsMap,
-      rolesPermissions,
-      flatFieldMetadataMaps,
-      flatWorkspaceMemberMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'featureFlagsMap',
-      'rolesPermissions',
-      'flatFieldMetadataMaps',
-      'flatWorkspaceMemberMaps',
-    ]);
-    const workspaceMember = isPermissionMainPrincipalWorkspaceMember(
-      mainPrincipal,
-    )
-      ? flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId]
-      : undefined;
-    const callerAccessGroups = buildRoleAccessGroupsOrThrow({
-      roleId: mainPrincipal.roleId,
-      objectMetadataId,
-      objectRecordsPermissions:
-        rolesPermissions[mainPrincipal.roleId]?.objects[objectMetadataId],
-      operationTypes: [operationType],
-      workspaceMembers: isDefined(workspaceMember) ? [workspaceMember] : [],
-      flatFieldMetadataMaps,
-      isRelationHopEnabled:
-        isRowLevelPermissionRelationHopEnabled(featureFlagsMap),
-    });
-
-    if (!isNonEmptyArray(callerAccessGroups)) {
-      return [];
-    }
-
-    return this.accessGroupRepository.findCompactIdsByGroupHashes({
-      workspaceId,
-      groupHashes: callerAccessGroups.map(({ groupHash }) => groupHash),
-    });
   }
 }

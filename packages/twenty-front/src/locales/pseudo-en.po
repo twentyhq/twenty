@@ -111,6 +111,11 @@ msgstr ""
 msgid "\"{path}\" is not a value"
 msgstr ""
 
+#. js-lingui-id: ZIIOJj
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
+msgstr ""
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -2922,7 +2927,7 @@ msgid "agent"
 msgstr ""
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -4438,6 +4443,7 @@ msgid "Assignment"
 msgstr ""
 
 #. js-lingui-id: d/bvvp
+#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
 msgstr ""
@@ -12765,6 +12771,11 @@ msgstr ""
 msgid "Failed to link the related records to this event"
 msgstr ""
 
+#. js-lingui-id: XC1d54
+#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+msgid "Failed to load agent details."
+msgstr ""
+
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -16109,6 +16120,11 @@ msgstr ""
 #. js-lingui-id: R9VnB9
 #: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
+msgstr ""
+
+#. js-lingui-id: yNfoGL
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
+msgid "Its code could not be moved into the step, so it cannot be edited here."
 msgstr ""
 
 #. js-lingui-id: J6OYmT
@@ -22508,6 +22524,7 @@ msgstr ""
 #: src/modules/ui/input/components/internal/date/components/DatePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerHeader.tsx
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation.tsx
+#: src/modules/validation-rules/utils/buildValidationRuleEditorFields.ts
 msgid "Previous"
 msgstr ""
 
@@ -28593,6 +28610,11 @@ msgstr ""
 msgid "The usage this limit applies to."
 msgstr ""
 
+#. js-lingui-id: S3wM+7
+#: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
+msgid "The value a field had before the update. Empty when the record is created."
+msgstr ""
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -29135,6 +29157,11 @@ msgstr ""
 #. js-lingui-id: iAubP2
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This should never happen"
+msgstr ""
+
+#. js-lingui-id: v6DC3g
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
+msgid "This step runs from its original function"
 msgstr ""
 
 #. js-lingui-id: Ryrt8E

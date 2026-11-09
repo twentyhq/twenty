@@ -5,8 +5,9 @@ import { Injectable } from '@nestjs/common';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
 import { RecordSharingReadService } from 'src/engine/permissions/internal/record-share/services/record-sharing-read.service';
 import { RecordShareRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-share.repository';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
@@ -33,8 +34,9 @@ export class RecordSharingChangeService {
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareRepository: RecordShareRepository,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
     private readonly recordSharingReadService: RecordSharingReadService,
   ) {}
 
@@ -81,13 +83,13 @@ export class RecordSharingChangeService {
           });
 
           const principals =
-            await this.principalPermissionsService.resolvePermissionsPrincipals(
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
               {
                 authContext: args.authContext,
               },
             );
           const isWritable =
-            await this.recordPermissionsService.canAccessKnownRecords({
+            await this.recordPermissionsReadService.canAccessKnownRecords({
               operationType: 'update',
               principals,
               objectMetadataId: args.objectMetadataId,
@@ -97,11 +99,13 @@ export class RecordSharingChangeService {
 
           if (
             !isWritable ||
-            !(await this.recordPermissionsService.canRoleAccessSomeRecords({
-              operationType: 'update',
-              principals,
-              objectMetadataId: args.objectMetadataId,
-            }))
+            !(await this.recordPermissionsOnlyRoleReadService.canRoleAccessSomeRecords(
+              {
+                operationType: 'update',
+                principals,
+                objectMetadataId: args.objectMetadataId,
+              },
+            ))
           ) {
             throw new NotFoundError('Record not found');
           }

@@ -17,7 +17,7 @@ import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { resolveRlsRuleFiltersByRole } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-filters-by-role.util';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -30,7 +30,7 @@ type EventBatchAccessLoaders = {
 };
 
 @Injectable()
-export class RecordEventPermissionsService {
+export class RecordEventPermissionsReadService {
   private readonly accessLoadersByEventBatch = new WeakMap<
     WorkspaceEventBatch<ObjectRecordEvent>,
     EventBatchAccessLoaders
@@ -39,7 +39,7 @@ export class RecordEventPermissionsService {
   constructor(
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
   async filterReadableEvents<TEvent extends ObjectRecordEvent>({
@@ -52,7 +52,7 @@ export class RecordEventPermissionsService {
     events?: TEvent[];
   }): Promise<TEvent[]> {
     const principals =
-      await this.principalPermissionsService.resolvePermissionsPrincipals({
+      await this.principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext,
       });
 

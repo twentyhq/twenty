@@ -55,8 +55,8 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -77,8 +77,8 @@ export class AgentChatSharingService {
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly settingPermissionsService: SettingPermissionsService,
     private readonly rolePermissionsService: RolePermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -383,7 +383,7 @@ export class AgentChatSharingService {
         await Promise.all(
           [...roleIdByMemberId.keys()].map(async (memberId) => {
             const principals =
-              await this.principalPermissionsService.resolvePermissionsPrincipals(
+              await this.principalPermissionsReadService.resolvePermissionsPrincipals(
                 {
                   authContext: {
                     type: 'user',
@@ -400,11 +400,11 @@ export class AgentChatSharingService {
               transactionScope,
             };
             const [canReadThread, canUpdateThread] = await Promise.all([
-              this.recordPermissionsService.canAccessKnownRecords({
+              this.recordPermissionsReadService.canAccessKnownRecords({
                 ...question,
                 operationType: 'read',
               }),
-              this.recordPermissionsService.canAccessKnownRecords({
+              this.recordPermissionsReadService.canAccessKnownRecords({
                 ...question,
                 operationType: 'update',
               }),
@@ -820,7 +820,7 @@ export class AgentChatSharingService {
     const { permissionsPrincipals, objectIdByNameSingular } =
       getWorkspaceContext();
 
-    return this.recordPermissionsService.filterAccessibleKnownRecordIds({
+    return this.recordPermissionsReadService.filterAccessibleKnownRecordIds({
       principals: permissionsPrincipals,
       objectMetadataId: objectIdByNameSingular.agentChatThread,
       recordIds: threadIds,
