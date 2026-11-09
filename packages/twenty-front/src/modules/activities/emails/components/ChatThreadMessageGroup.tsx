@@ -66,10 +66,17 @@ export const ChatThreadMessageGroup = ({
             ? message.sender
             : undefined;
         const hasHeader = isDefined(headerSender);
+        const senderHeader = hasHeader && (
+          <ChatThreadMessageSenderHeader
+            sender={headerSender}
+            receivedAt={message.receivedAt}
+          />
+        );
 
         if (isFieldValueRestricted(message.text)) {
           return (
             <StyledChatMessageRow key={message.id} isRightAligned={isOutgoing}>
+              {senderHeader}
               <EmailThreadNotShared
                 visibility={MessageChannelVisibility.METADATA}
               />
@@ -84,12 +91,7 @@ export const ChatThreadMessageGroup = ({
 
         return (
           <StyledChatMessageRow key={message.id} isRightAligned={isOutgoing}>
-            {hasHeader && (
-              <ChatThreadMessageSenderHeader
-                sender={headerSender}
-                receivedAt={message.receivedAt}
-              />
-            )}
+            {senderHeader}
             {(hasText || !isNonEmptyArray(files)) && (
               <StyledChatMessageBubble isUser isOtherMember={!isOutgoing}>
                 <StyledMessageText>

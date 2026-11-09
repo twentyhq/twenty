@@ -286,6 +286,30 @@ describe('ChatThreadMessageGroup', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  it('keeps the sender of an incoming group whose first body is masked', () => {
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: false,
+          messages: [
+            buildMessage({
+              text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+              sender: {
+                id: 'participant-id',
+                displayName: 'Jane Doe',
+                handle: 'jane',
+              } as EmailThreadMessageWithSender['sender'],
+            }),
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByText('Jane Doe')).toBeInTheDocument();
+    expect(screen.getByText('Not shared')).toBeInTheDocument();
+  });
+
   it('does not render a body masked by metadata visibility', () => {
     renderWithProviders(
       <ChatThreadMessageGroup
