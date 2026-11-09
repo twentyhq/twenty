@@ -2,7 +2,7 @@ import {
   CREDIT_UNAVAILABLE_REASONS,
   type CreditAvailability,
   type CreditUnavailableReason,
-  resolveApiUrlFromEnvironment,
+  DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application-runtime';
 
 import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
@@ -41,7 +41,7 @@ const parseCreditAvailability = (body: unknown): CreditAvailability | null => {
 
 // Fails open on timeouts or bad responses: a hint before expensive work, never an authorization decision
 export const getCreditAvailability = async (): Promise<CreditAvailability> => {
-  const apiUrl = resolveApiUrlFromEnvironment(process.env);
+  const apiUrl = process.env[DEFAULT_API_URL_NAME];
   const token = getApplicationAccessToken();
 
   if (!apiUrl || !token) {

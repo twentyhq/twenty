@@ -22,7 +22,7 @@ export const granolaUninstallHandler = async () => {
       await cleanupPendingGranolaRegistrationOrThrow({
         client,
         endpoints,
-        apiUrl: process.env.TWENTY_API_URL,
+        apiUrl: process.env.TWENTY_PUBLIC_API_URL || process.env.TWENTY_API_URL,
       });
     } catch (error) {
       console.error(

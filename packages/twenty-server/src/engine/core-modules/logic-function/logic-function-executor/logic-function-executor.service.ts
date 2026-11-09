@@ -10,7 +10,7 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
-  DEFAULT_INTERNAL_API_URL_NAME,
+  DEFAULT_PUBLIC_API_URL_NAME,
   DEFAULT_SERVER_ROUTES_URL_NAME,
 } from 'twenty-shared/application-runtime';
 import {
@@ -562,6 +562,9 @@ export class LogicFunctionExecutorService {
     const serverInternalUrl = this.twentyConfigService.get(
       'SERVER_INTERNAL_URL',
     );
+    const apiUrl = isNonEmptyString(serverInternalUrl)
+      ? cleanServerUrl(serverInternalUrl)
+      : baseUrl;
     const functionsBaseUrl = await this.buildFunctionsBaseUrl({
       workspaceId,
       flatApplication,
@@ -592,10 +595,9 @@ export class LogicFunctionExecutorService {
       ...serverVariables,
       ...workspaceVariables,
       ...userVariables,
-      [DEFAULT_API_URL_NAME]: baseUrl ?? '',
-      ...(isNonEmptyString(serverInternalUrl)
-        ? { [DEFAULT_INTERNAL_API_URL_NAME]: cleanServerUrl(serverInternalUrl) }
-        : {}),
+      [DEFAULT_API_URL_NAME]: apiUrl ?? '',
+      // Links handed to browsers and third parties can't use the internal URL.
+      [DEFAULT_PUBLIC_API_URL_NAME]: baseUrl ?? '',
       // Falls back to the application so cron schedules and install hooks work with nobody triggering.
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
         delegatedAccessToken ?? applicationAccessToken

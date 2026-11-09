@@ -56,7 +56,8 @@ export const fathomRegisterConnectionHandler = async (
     );
   }
 
-  const apiUrl = process.env.TWENTY_API_URL;
+  const apiUrl =
+    process.env.TWENTY_PUBLIC_API_URL || process.env.TWENTY_API_URL;
 
   if (!isNonEmptyString(apiUrl)) {
     throw new Error('TWENTY_API_URL is required to register a Fathom webhook');
