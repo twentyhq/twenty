@@ -2922,6 +2922,7 @@ msgid "agent"
 msgstr ""
 
 #. js-lingui-id: iEQQyu
+#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -4437,7 +4438,6 @@ msgid "Assignment"
 msgstr ""
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
 msgstr ""
@@ -30364,7 +30364,7 @@ msgstr ""
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 msgid "Unknown sender"
 msgstr ""
 
