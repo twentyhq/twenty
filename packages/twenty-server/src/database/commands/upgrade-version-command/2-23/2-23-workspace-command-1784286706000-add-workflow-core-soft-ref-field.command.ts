@@ -1,5 +1,4 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -7,16 +6,18 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import {
+  LEGACY_WORKFLOW_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER,
+  LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/database/commands/upgrade-version-command/2-23/constants/legacy-workflow-universal-identifiers.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { buildLegacyWorkflowCoreWorkflowIdFlatFieldMetadata } from 'src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const WORKFLOW = STANDARD_OBJECTS.workflow;
 const CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER =
-  WORKFLOW.fields.coreWorkflowId.universalIdentifier;
+  LEGACY_WORKFLOW_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER;
 
 @RegisteredWorkspaceCommand('2.23.0', 1784286706000)
 @Command({
@@ -49,7 +50,7 @@ export class AddWorkflowCoreSoftRefFieldCommand extends ProvisionedWorkspaceComm
     const workflowObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier: WORKFLOW.universalIdentifier,
+        universalIdentifier: LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
       });
 
     if (!isDefined(workflowObjectMetadata)) {
@@ -75,25 +76,6 @@ export class AddWorkflowCoreSoftRefFieldCommand extends ProvisionedWorkspaceComm
         { workspaceId },
       );
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
-
-    const standardField =
-      findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
-        flatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
-        universalIdentifier: CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER,
-      });
-
-    if (!isDefined(standardField)) {
-      throw new Error(
-        'Standard application is missing workflow field coreWorkflowId',
-      );
-    }
-
     if (isDryRun) {
       this.logger.log(
         `[DRY RUN] Would add coreWorkflowId field for workspace ${workspaceId}`,
@@ -102,11 +84,13 @@ export class AddWorkflowCoreSoftRefFieldCommand extends ProvisionedWorkspaceComm
       return;
     }
 
-    const flatFieldMetadataToCreate: FlatFieldMetadata = {
-      ...standardField,
-      viewFieldIds: [],
-      viewFieldUniversalIdentifiers: [],
-    };
+    const flatFieldMetadataToCreate =
+      buildLegacyWorkflowCoreWorkflowIdFlatFieldMetadata({
+        workspaceId,
+        workflowObjectMetadataId: workflowObjectMetadata.id,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+        now: new Date().toISOString(),
+      });
 
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
