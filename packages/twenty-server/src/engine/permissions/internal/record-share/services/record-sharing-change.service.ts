@@ -8,7 +8,7 @@ import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-err
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
 import { RecordSharingReadService } from 'src/engine/permissions/internal/record-share/services/record-sharing-read.service';
-import { RecordShareWriteOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-share-write-orm.service';
+import { RecordShareRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-share.repository';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import {
@@ -16,7 +16,7 @@ import {
   resolveRecordSharingObjectOrThrow,
 } from 'src/engine/permissions/internal/record-share/utils/resolve-record-sharing-object-or-throw.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
-import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-orm/utils/to-permissions-exception.util';
+import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-repository/utils/to-permissions-exception.util';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -32,7 +32,7 @@ export class RecordSharingChangeService {
   constructor(
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareWriteOrmService: RecordShareWriteOrmService,
+    private readonly recordShareRepository: RecordShareRepository,
     private readonly principalPermissionsService: PrincipalPermissionsService,
     private readonly recordPermissionsService: RecordPermissionsService,
     private readonly recordSharingReadService: RecordSharingReadService,
@@ -41,9 +41,11 @@ export class RecordSharingChangeService {
   async runChange({
     args,
     write,
+    requiredCapability,
   }: {
     args: RecordSharingArgs;
     write: (change: RecordSharingChange) => Promise<void>;
+    requiredCapability: 'isShareable' | 'canSetRecordPrivacy';
   }): Promise<RecordSharingDTO> {
     const { flatObjectMetadataMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(
@@ -58,7 +60,7 @@ export class RecordSharingChangeService {
     const { flatObjectMetadata } = sharingObject;
     const workspaceId = args.authContext.workspace.id;
 
-    if (!sharingObject.isShareable) {
+    if (!sharingObject[requiredCapability]) {
       throw new NotFoundError('Record not found');
     }
 
@@ -71,7 +73,7 @@ export class RecordSharingChangeService {
               executor.execute({ text: sql, values: parameters }),
           };
 
-          await this.recordShareWriteOrmService.lockRecordForSharingChange({
+          await this.recordShareRepository.lockRecordForSharingChange({
             workspaceId,
             flatObjectMetadata,
             recordId: args.recordId,
@@ -85,7 +87,7 @@ export class RecordSharingChangeService {
               },
             );
           const isWritable =
-            await this.recordPermissionsService.canAccessRecords({
+            await this.recordPermissionsService.canAccessKnownRecords({
               operationType: 'update',
               principals,
               objectMetadataId: args.objectMetadataId,

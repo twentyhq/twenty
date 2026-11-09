@@ -5,10 +5,10 @@ import { useEmailComposerState } from '@/activities/emails/hooks/useEmailCompose
 import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
-import { EmailThreadComposerFooterEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerFooterEffect';
+import { type WidgetCommandMenuItem } from '@/command-menu-item/types/WidgetCommandMenuItem';
+import { EmailThreadComposerCommandMenuItemsEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerCommandMenuItemsEffect';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,8 +18,19 @@ import {
   IconSend,
   IconX,
 } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/components/input';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { PageFocusId } from '@/types/PageFocusId';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
+
+const StyledComposerContainer = styled.div`
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+`;
 
 type EmailThreadComposerProps = {
   replyContext: ReplyContextReady;
@@ -70,53 +81,64 @@ export const EmailThreadComposer = ({
 
   const canSendReply = canSend && !isUploadingAttachments;
 
-  const footerCommandMenuItems =
-    useMemo((): SidePanelFooterCommandMenuItem[] => {
-      if (!isComposerOpen) {
-        return [
-          {
-            id: 'reply',
-            label: t`Reply`,
-            Icon: IconArrowBackUp,
-            isPrimaryCTA: true,
-            onClick: () => setIsComposerOpen(true),
-          },
-        ];
-      }
-
+  const widgetCommandMenuItems = useMemo((): WidgetCommandMenuItem[] => {
+    if (!isComposerOpen) {
       return [
         {
-          id: 'cancel-reply',
-          label: t`Cancel reply`,
-          Icon: IconX,
-          isPinned: false,
-          onClick: () => setIsComposerOpen(false),
-        },
-        {
-          id: 'attach-files',
-          label: t`Attach files`,
-          Icon: IconPaperclip,
-          isPinned: false,
-          onClick: openAttachmentPicker,
-        },
-        {
-          id: 'send',
-          label: t`Send`,
-          Icon: IconSend,
+          id: 'reply',
+          label: t`Reply`,
+          Icon: IconArrowBackUp,
           isPrimaryCTA: true,
-          shortcut: ['Mod', 'Enter'],
-          onClick: handleSend,
-          disabled: !canSendReply,
+          onClick: () => setIsComposerOpen(true),
+          replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
         },
       ];
-    }, [
-      isComposerOpen,
-      handleSend,
-      canSendReply,
-      setIsComposerOpen,
-      openAttachmentPicker,
-      t,
-    ]);
+    }
+
+    const cancelReplyCommandMenuItem: WidgetCommandMenuItem = {
+      id: 'cancel-reply',
+      label: t`Cancel reply`,
+      Icon: IconX,
+      isPinned: !isInSidePanel,
+      onClick: () => setIsComposerOpen(false),
+      replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
+    };
+
+    const sendCommandMenuItem: WidgetCommandMenuItem = {
+      id: 'send',
+      label: t`Send`,
+      Icon: IconSend,
+      isPrimaryCTA: true,
+      shortcut: ['Mod', 'Enter'],
+      onClick: handleSend,
+      disabled: !canSendReply,
+      replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
+    };
+
+    if (!isInSidePanel) {
+      return [cancelReplyCommandMenuItem, sendCommandMenuItem];
+    }
+
+    return [
+      cancelReplyCommandMenuItem,
+      {
+        id: 'attach-files',
+        label: t`Attach files`,
+        Icon: IconPaperclip,
+        isPinned: false,
+        onClick: openAttachmentPicker,
+      },
+      sendCommandMenuItem,
+    ];
+  }, [
+    isComposerOpen,
+    isInSidePanel,
+    handleSend,
+    canSendReply,
+    setIsComposerOpen,
+    openAttachmentPicker,
+    t,
+  ]);
 
   const handleSendHotkey = useCallback(() => {
     if (isComposerOpen && canSendReply) {
@@ -127,34 +149,23 @@ export const EmailThreadComposer = ({
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
     callback: handleSendHotkey,
-    focusId: SIDE_PANEL_FOCUS_ID,
+    focusId: isInSidePanel ? SIDE_PANEL_FOCUS_ID : PageFocusId.RecordShowPage,
     dependencies: [handleSendHotkey],
   });
 
   return (
     <>
-      {isInSidePanel && (
-        <EmailThreadComposerFooterEffect
-          footerCommandMenuItems={footerCommandMenuItems}
-        />
-      )}
-      {isComposerOpen ? (
-        <EmailComposerFields
-          composerState={composerState}
-          onAttachFiles={isInSidePanel ? undefined : openAttachmentPicker}
-        />
-      ) : (
-        !isInSidePanel && (
-          <LightButton
-            emphasis="subtle"
-            size="md"
-            fullWidth
-            startIcon={<IconArrowBackUp />}
-            onClick={() => setIsComposerOpen(true)}
-          >
-            {t`Reply...`}
-          </LightButton>
-        )
+      <EmailThreadComposerCommandMenuItemsEffect
+        commandMenuItems={widgetCommandMenuItems}
+        isInSidePanel={isInSidePanel}
+      />
+      {isComposerOpen && (
+        <StyledComposerContainer>
+          <EmailComposerFields
+            composerState={composerState}
+            onAttachFiles={isInSidePanel ? undefined : openAttachmentPicker}
+          />
+        </StyledComposerContainer>
       )}
     </>
   );

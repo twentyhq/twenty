@@ -1,5 +1,7 @@
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { WidgetCommandMenuItemButtons } from '@/command-menu-item/components/WidgetCommandMenuItemButtons';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
+import { recordShowPageWidgetHeaderCommandMenuItemsState } from '@/command-menu-item/states/recordShowPageWidgetHeaderCommandMenuItemsState';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -35,6 +37,18 @@ export const RecordShowCommandMenu = () => {
     isLayoutCustomizationModeEnabledState,
   );
 
+  const recordShowPageWidgetHeaderCommandMenuItems = useAtomStateValue(
+    recordShowPageWidgetHeaderCommandMenuItemsState,
+  );
+
+  const widgetCommandMenuItems = isLayoutCustomizationModeEnabled
+    ? []
+    : recordShowPageWidgetHeaderCommandMenuItems;
+
+  const replacedEngineComponentKey = widgetCommandMenuItems.find(
+    (commandMenuItem) => commandMenuItem.isPinned !== false,
+  )?.replacedEngineComponentKey;
+
   return (
     <>
       {hasSelectedRecord &&
@@ -46,8 +60,13 @@ export const RecordShowCommandMenu = () => {
               containerType={CommandMenuItemContainerType.ShowPageHeader}
               isInPreviewMode={isLayoutCustomizationModeEnabled}
             >
-              <PinnedCommandMenuItemButtons />
+              <PinnedCommandMenuItemButtons
+                hiddenEngineComponentKey={replacedEngineComponentKey}
+              />
             </CommandMenuContextProvider>
+            <WidgetCommandMenuItemButtons
+              commandMenuItems={widgetCommandMenuItems}
+            />
             <CommandMenuItemEditButton />
           </>
         )}

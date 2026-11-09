@@ -69,6 +69,7 @@ const SidePanelRecordUpdateForm = ({
     requestId,
     objectMetadataId,
     draftRecord,
+    previousRecord,
     fieldMetadataIds,
     violations,
   },
@@ -111,6 +112,7 @@ const SidePanelRecordUpdateForm = ({
       computeRecordUpdateFieldsToComplete({
         validationRules,
         currentRecord: draftRecordToCheck,
+        previousRecord,
         updateInput: {},
         fields: buildValidationRuleFieldDescriptors({
           objectMetadataItem,

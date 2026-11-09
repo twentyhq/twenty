@@ -1,16 +1,25 @@
-import { TintedIconTile } from 'twenty-ui/components/data-display';
-import { IconSparkles } from 'twenty-ui/icon';
-import { useTheme } from 'twenty-ui/theme';
+import {
+  AssistantAvatar,
+  type AssistantAvatarProps,
+} from 'twenty-ui/components/data-display';
 
-import { AGENT_CHAT_ASSISTANT_COLOR } from '@/ai/constants/AgentChatAssistantColor';
+import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 
-export const AiChatAssistantAvatar = () => {
-  const theme = useTheme();
+type AiChatAssistantAvatarProps = Pick<AssistantAvatarProps, 'size'>;
+
+export const AiChatAssistantAvatar = ({
+  size = 16,
+}: AiChatAssistantAvatarProps) => {
+  const { avatarShape, avatarColor, avatarFace, isAvatarAnimated } =
+    useAiChatAssistantProfile();
 
   return (
-    <TintedIconTile
-      icon={<IconSparkles size={theme.icon.size.sm} />}
-      color={AGENT_CHAT_ASSISTANT_COLOR}
+    <AssistantAvatar
+      shape={avatarShape}
+      color={avatarColor}
+      face={avatarFace}
+      isAnimated={isAvatarAnimated}
+      size={size}
     />
   );
 };

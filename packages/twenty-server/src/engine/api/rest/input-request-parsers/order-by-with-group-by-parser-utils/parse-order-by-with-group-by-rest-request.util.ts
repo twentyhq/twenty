@@ -10,7 +10,9 @@ export const parseOrderByWithGroupByRestRequest = (
 ): OrderByWithGroupBy | undefined => {
   const orderByWithGroupByQuery = request.query.order_by;
 
-  if (typeof orderByWithGroupByQuery !== 'string') return undefined;
+  if (typeof orderByWithGroupByQuery !== 'string') {
+    return undefined;
+  }
 
   try {
     return JSON.parse(orderByWithGroupByQuery);

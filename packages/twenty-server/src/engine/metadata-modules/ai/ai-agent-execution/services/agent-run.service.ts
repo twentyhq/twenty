@@ -288,7 +288,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       },
     });
 
-    if (input.waitForCompletion === false) {
+    if (isDefined(input.waitForCompletion) && !input.waitForCompletion) {
       return this.buildRunAgentResult({ threadId, runId, status: 'RUNNING' });
     }
 

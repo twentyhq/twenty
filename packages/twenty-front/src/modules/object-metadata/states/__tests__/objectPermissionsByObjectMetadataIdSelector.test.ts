@@ -21,9 +21,8 @@ const COMPANY_OBJECT_RECORDS_PERMISSIONS: CurrentUserWorkspace['objectRecordsPer
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
-    restrictedFields: {
-      'company-name-field-metadata-id': { canRead: true, canUpdate: false },
-    },
+    unreadableFields: [],
+    uneditableFields: ['company-name-field-metadata-id'],
   };
 
 const PERSON_ROW_LEVEL_PERMISSION_PREDICATE: RowLevelPermissionPredicate = {
@@ -61,7 +60,8 @@ const PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS: CurrentUserWorksp
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
-    restrictedFields: {},
+    unreadableFields: [],
+    uneditableFields: [],
     rowLevelRecordsPermissions: {
       canCreateRecords: true,
       canReadRecords: true,
@@ -113,12 +113,8 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
           canDestroyAllRecords: false,
-          restrictedFields: {
-            'company-name-field-metadata-id': {
-              canRead: true,
-              canUpdate: false,
-            },
-          },
+          unreadableFields: [],
+          uneditableFields: ['company-name-field-metadata-id'],
         },
       },
     );
@@ -144,7 +140,8 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
       canUpdateAllRecords: false,
       canSoftDeleteAllRecords: false,
       canDestroyAllRecords: false,
-      restrictedFields: {},
+      unreadableFields: [],
+      uneditableFields: [],
       rowLevelRecordsPermissions:
         PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS.rowLevelRecordsPermissions,
     });

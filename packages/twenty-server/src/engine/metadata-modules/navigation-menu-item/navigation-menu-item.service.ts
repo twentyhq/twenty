@@ -68,7 +68,9 @@ export class NavigationMenuItemService {
       flatNavigationMenuItemMaps.byUniversalIdentifier,
     )
       .filter((item): item is NonNullable<typeof item> => {
-        if (!isDefined(item)) return false;
+        if (!isDefined(item)) {
+          return false;
+        }
 
         const itemIsUserScoped = isDefined(item.userWorkspaceId);
 

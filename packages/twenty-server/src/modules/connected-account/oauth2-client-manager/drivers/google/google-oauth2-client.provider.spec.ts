@@ -79,9 +79,12 @@ describe('GoogleOAuth2ClientProvider', () => {
           provide: TwentyConfigService,
           useValue: {
             get: jest.fn().mockImplementation((key: string) => {
-              if (key === 'AUTH_GOOGLE_CLIENT_ID') return 'google-client-id';
-              if (key === 'AUTH_GOOGLE_CLIENT_SECRET')
+              if (key === 'AUTH_GOOGLE_CLIENT_ID') {
+                return 'google-client-id';
+              }
+              if (key === 'AUTH_GOOGLE_CLIENT_SECRET') {
                 return 'google-client-secret';
+              }
 
               return undefined;
             }),

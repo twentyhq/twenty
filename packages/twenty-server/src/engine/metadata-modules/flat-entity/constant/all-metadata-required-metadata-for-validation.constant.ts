@@ -93,6 +93,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     role: true,
     objectMetadata: true,
     fieldMetadata: true,
+    rowLevelPermissionPredicateGroup: true,
   },
   pageLayout: {
     objectMetadata: true,

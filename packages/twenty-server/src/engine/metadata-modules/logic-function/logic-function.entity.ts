@@ -20,7 +20,7 @@ import {
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-export const DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS = 300; // 5 minutes
+export const DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS = 300;
 
 export enum LogicFunctionRuntime {
   NODE18 = 'nodejs18.x',
