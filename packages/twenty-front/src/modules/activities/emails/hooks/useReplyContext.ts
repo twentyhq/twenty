@@ -49,6 +49,7 @@ export const useReplyContext = (
         subject: '',
         inReplyTo: '',
         connectedAccountId,
+        connectedAccountHandle,
         connectedAccountProvider,
       };
     }
@@ -69,6 +70,7 @@ export const useReplyContext = (
       subject,
       inReplyTo: lastSentMessage.headerMessageId ?? '',
       connectedAccountId,
+      connectedAccountHandle,
       connectedAccountProvider,
     };
   }, [

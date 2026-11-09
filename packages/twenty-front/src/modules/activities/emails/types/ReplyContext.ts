@@ -10,6 +10,7 @@ export type ReplyContextReady = {
   subject: string;
   inReplyTo: string;
   connectedAccountId: string;
+  connectedAccountHandle: string | null;
   connectedAccountProvider: ConnectedAccountProvider;
 };
 
