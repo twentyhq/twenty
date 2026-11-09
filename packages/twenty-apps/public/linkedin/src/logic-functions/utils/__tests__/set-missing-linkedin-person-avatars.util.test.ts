@@ -131,7 +131,10 @@ describe('setMissingLinkedinPersonAvatars', () => {
     });
     expect(mocks.fetch).toHaveBeenCalledWith(
       UPLOAD_URL,
-      expect.objectContaining({ method: 'PUT' }),
+      expect.objectContaining({
+        method: 'PUT',
+        signal: expect.any(AbortSignal),
+      }),
     );
     expect(
       mocks.metadataMutation.mock.calls[1][0].completeFileUpload.__args,

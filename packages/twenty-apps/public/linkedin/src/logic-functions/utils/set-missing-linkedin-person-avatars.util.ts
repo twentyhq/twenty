@@ -2,7 +2,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-import { LINKEDIN_AVATAR_DOWNLOAD_TIMEOUT_MILLISECONDS } from 'src/constants/linkedin-avatar-download-timeout-milliseconds.constant';
+import { LINKEDIN_AVATAR_REQUEST_TIMEOUT_MILLISECONDS } from 'src/constants/linkedin-avatar-request-timeout-milliseconds.constant';
 import { LINKEDIN_AVATAR_MAX_SIZE_BYTES } from 'src/constants/linkedin-avatar-max-size-bytes.constant';
 import { PERSON_AVATAR_FILE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/person-avatar-file-field-universal-identifier.constant';
 
@@ -67,6 +67,17 @@ const readBoundedBody = async (
   return Buffer.concat(chunks);
 };
 
+const getRemainingTimeSignal = (deadlineAtMs: number): AbortSignal =>
+  AbortSignal.timeout(
+    Math.max(
+      Math.min(
+        LINKEDIN_AVATAR_REQUEST_TIMEOUT_MILLISECONDS,
+        deadlineAtMs - Date.now(),
+      ),
+      1,
+    ),
+  );
+
 const downloadLinkedinPicture = async ({
   pictureUrl,
   deadlineAtMs,
@@ -75,15 +86,7 @@ const downloadLinkedinPicture = async ({
   deadlineAtMs: number;
 }): Promise<{ content: Buffer; mimeType: string }> => {
   const response = await fetch(pictureUrl, {
-    signal: AbortSignal.timeout(
-      Math.max(
-        Math.min(
-          LINKEDIN_AVATAR_DOWNLOAD_TIMEOUT_MILLISECONDS,
-          deadlineAtMs - Date.now(),
-        ),
-        1,
-      ),
-    ),
+    signal: getRemainingTimeSignal(deadlineAtMs),
   });
 
   if (!response.ok || response.body === null) {
@@ -106,10 +109,16 @@ const downloadLinkedinPicture = async ({
 const uploadAvatarFile = async ({
   content,
   filename,
+  deadlineAtMs,
 }: {
   content: Buffer;
   filename: string;
+  deadlineAtMs: number;
 }): Promise<string> => {
+  if (Date.now() >= deadlineAtMs) {
+    throw new Error('job deadline reached before the upload');
+  }
+
   const metadataClient = new MetadataApiClient({ runAs: 'application' });
 
   const { createFileUpload } = await metadataClient.mutation({
@@ -131,6 +140,7 @@ const uploadAvatarFile = async ({
     method: 'PUT',
     headers: { 'Content-Type': createFileUpload.contentType },
     body: new Uint8Array(content),
+    signal: getRemainingTimeSignal(deadlineAtMs),
   });
 
   if (!uploadResponse.ok) {
@@ -158,7 +168,11 @@ const setPersonAvatar = async ({
   });
   const filename = `linkedin-avatar.${mimeType.replace('image/', '').replace('jpeg', 'jpg')}`;
 
-  const fileId = await uploadAvatarFile({ content, filename });
+  const fileId = await uploadAvatarFile({
+    content,
+    filename,
+    deadlineAtMs,
+  });
 
   const { updatePeople } = await new CoreApiClient({
     runAs: 'application',
