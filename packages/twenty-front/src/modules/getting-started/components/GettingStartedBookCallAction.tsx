@@ -1,63 +1,70 @@
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { GettingStartedBookCallPreview } from '@/getting-started/components/GettingStartedBookCallPreview';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
-import { BookCallEmbed } from '@/onboarding/components/BookCallEmbed';
+import { BookCallStepBody } from '@/onboarding/components/BookCallStepBody';
 import { BookCallBookingSuccessEffect } from '@/onboarding/effect-components/BookCallBookingSuccessEffect';
+import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useRef, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { useState } from 'react';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { GettingStartedStepActionKey } from '~/generated-metadata/graphql';
 
-const MIN_HEIGHT_PX = 300;
-// Card body and page bottom paddings, so the step ends at the bottom of the screen.
-const SPACE_BELOW_PX = 64;
+const StyledBookingPage = styled.div`
+  align-items: center;
+  gap: ${themeCssVariables.spacing[5]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[8]};
 
-const StyledScrollArea = styled.div<{ height: number | null }>`
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  height: ${({ height }) => (isDefined(height) ? `${height}px` : 'auto')};
-  overflow-y: auto;
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]};
+  }
 `;
 
+type BookingPage = { dayKey?: string };
+
 export const GettingStartedBookCallAction = () => {
+  const { t } = useLingui();
   const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const { updateGettingStarted } = useUpdateGettingStarted();
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState<number | null>(null);
+  const [openedBookingPage, setOpenedBookingPage] =
+    useState<BookingPage | null>(null);
 
-  useEffect(() => {
-    const updateHeight = () => {
-      const top = scrollAreaRef.current?.getBoundingClientRect().top;
+  const { renderFullScreenModal } = useFullScreenModal({
+    links: [{ children: t`Getting started` }, { children: t`Book a call` }],
+    onClose: () => setOpenedBookingPage(null),
+  });
 
-      if (isDefined(top)) {
-        setHeight(
-          Math.max(MIN_HEIGHT_PX, window.innerHeight - top - SPACE_BELOW_PX),
-        );
-      }
-    };
-
-    updateHeight();
-    window.addEventListener('resize', updateHeight);
-
-    return () => window.removeEventListener('resize', updateHeight);
-  }, [calendarBookingPageId]);
+  const handleBookingSuccessful = () => {
+    setOpenedBookingPage(null);
+    void updateGettingStarted({
+      completedStepActionKey: GettingStartedStepActionKey.BOOK_CALL,
+    });
+  };
 
   if (!isNonEmptyString(calendarBookingPageId)) {
     return null;
   }
 
   return (
-    <StyledScrollArea ref={scrollAreaRef} height={height}>
-      <BookCallBookingSuccessEffect
-        onBookingSuccessful={() =>
-          void updateGettingStarted({
-            completedStepActionKey: GettingStartedStepActionKey.BOOK_CALL,
-          })
-        }
+    <>
+      <GettingStartedBookCallPreview
+        calendarBookingPageId={calendarBookingPageId}
+        onOpenBookingPage={(dayKey) => setOpenedBookingPage({ dayKey })}
       />
-      <BookCallEmbed calendarBookingPageId={calendarBookingPageId} />
-    </StyledScrollArea>
+      {renderFullScreenModal(
+        <StyledBookingPage>
+          <BookCallBookingSuccessEffect
+            onBookingSuccessful={handleBookingSuccessful}
+          />
+          <BookCallStepBody
+            calendarBookingPageId={calendarBookingPageId}
+            date={openedBookingPage?.dayKey}
+          />
+        </StyledBookingPage>,
+        openedBookingPage !== null,
+      )}
+    </>
   );
 };
