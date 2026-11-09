@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -69,6 +70,7 @@ export class UserWorkspaceService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly billingSeatService: BillingSeatService,
   ) {}
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
@@ -232,14 +234,22 @@ export class UserWorkspaceService {
       workspace,
     );
 
-    const userWorkspace = await this.create({
-      userId: user.id,
-      workspaceId: workspace.id,
-      isExistingUser: true,
-      locale: user.locale,
-    });
+    const userWorkspace =
+      await this.billingSeatService.addMemberWithinSeatLimit({
+        workspaceId: workspace.id,
+        addMember: async () => {
+          const createdUserWorkspace = await this.create({
+            userId: user.id,
+            workspaceId: workspace.id,
+            isExistingUser: true,
+            locale: user.locale,
+          });
 
-    await this.createWorkspaceMember(workspace.id, user);
+          await this.createWorkspaceMember(workspace.id, user);
+
+          return createdUserWorkspace;
+        },
+      });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',

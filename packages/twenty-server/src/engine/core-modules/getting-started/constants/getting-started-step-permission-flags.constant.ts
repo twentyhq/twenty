@@ -22,5 +22,8 @@ export const GETTING_STARTED_STEP_PERMISSION_FLAGS: Record<
     PermissionFlagType.WORKSPACE_MEMBERS,
   ],
   [GettingStartedStepActionKey.HANDOVER_DEALS]: [PermissionFlagType.WORKFLOWS],
-  [GettingStartedStepActionKey.FOLLOW_UP_DEALS]: [PermissionFlagType.AI],
+  [GettingStartedStepActionKey.FOLLOW_UP_DEALS]: [
+    PermissionFlagType.WORKFLOWS,
+    PermissionFlagType.AI,
+  ],
 };

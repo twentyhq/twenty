@@ -1,3 +1,4 @@
+import { createIdentityProviderSessionToken } from 'test/integration/sso/utils/create-identity-provider-session-token.util';
 import { isDefined } from 'twenty-shared/utils';
 
 type AuthorizeWithPasswordArgs = {
@@ -6,44 +7,22 @@ type AuthorizeWithPasswordArgs = {
   password: string;
 };
 
-type AuthnResponse = {
-  status?: string;
-  sessionToken?: string;
-  errorSummary?: string;
-};
-
-// Headless login: /api/v1/authn trades the password for a one-time
-// sessionToken that /authorize accepts in place of its sign-in page.
 export const authorizeWithPassword = async ({
   authorizationUrl,
   username,
   password,
 }: AuthorizeWithPasswordArgs) => {
-  const authnResponse = await fetch(
-    new URL('/api/v1/authn', authorizationUrl.origin),
-    {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    },
-  );
-
-  const authn = (await authnResponse.json()) as AuthnResponse;
-
-  if (authn.status !== 'SUCCESS' || !isDefined(authn.sessionToken)) {
-    throw new Error(
-      `Identity provider authn did not succeed (HTTP ${authnResponse.status}, status ${authn.status}): ${authn.errorSummary}`,
-    );
-  }
+  const sessionToken = await createIdentityProviderSessionToken({
+    identityProviderOrigin: authorizationUrl.origin,
+    username,
+    password,
+  });
 
   const authorizationUrlWithSessionToken = new URL(authorizationUrl);
 
   authorizationUrlWithSessionToken.searchParams.set(
     'sessionToken',
-    authn.sessionToken,
+    sessionToken,
   );
 
   const authorizeResponse = await fetch(authorizationUrlWithSessionToken, {
