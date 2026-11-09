@@ -303,3 +303,127 @@ describe('evaluateValidationRuleExpression', () => {
     expect(evaluate('stage ==', { stage: 'WON' }).status).toBe('errored');
   });
 });
+
+const A_TO_B_TO_C =
+  'stage == previous.stage or (isEmpty(previous.stage) and stage == "A") or (previous.stage == "A" and stage == "B") or (previous.stage == "B" and stage == "C")';
+
+describe('evaluateValidationRuleExpression with previous values', () => {
+  const evaluateTransition = ({
+    previousRecord,
+    record,
+  }: {
+    previousRecord?: Record<string, unknown>;
+    record: Record<string, unknown>;
+  }) =>
+    evaluateValidationRuleExpression({
+      expression: A_TO_B_TO_C,
+      record,
+      previousRecord,
+      fields: FIELDS,
+      now: NOW,
+    });
+
+  it('should pass a step to the next stage', () => {
+    expect(
+      evaluateTransition({
+        previousRecord: { stage: 'A' },
+        record: { stage: 'B' },
+      }),
+    ).toEqual({
+      status: 'passed',
+    });
+  });
+
+  it('should fail a skipped stage', () => {
+    expect(
+      evaluateTransition({
+        previousRecord: { stage: 'A' },
+        record: { stage: 'C' },
+      }),
+    ).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it('should pass an update that leaves the stage as it was', () => {
+    expect(
+      evaluateTransition({
+        previousRecord: { stage: 'C' },
+        record: { stage: 'C' },
+      }),
+    ).toEqual({
+      status: 'passed',
+    });
+  });
+
+  it('should read every previous value as empty without a stored record', () => {
+    expect(evaluateTransition({ record: { stage: 'A' } })).toEqual({
+      status: 'passed',
+    });
+    expect(evaluateTransition({ record: { stage: 'B' } })).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it('should read a previous Boolean as empty without a stored record', () => {
+    const evaluateFrozenQualification = (
+      previousRecord: Record<string, unknown> | undefined,
+    ) =>
+      evaluateValidationRuleExpression({
+        expression:
+          'isEmpty(previous.isQualified) or previous.isQualified == isQualified',
+        record: { isQualified: true },
+        previousRecord,
+        fields: FIELDS,
+        now: NOW,
+      });
+
+    expect(evaluateFrozenQualification(undefined)).toEqual({
+      status: 'passed',
+    });
+    expect(evaluateFrozenQualification({ isQualified: false })).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it('should read a previous composite subfield as empty without a stored record', () => {
+    expect(
+      evaluateValidationRuleExpression({
+        expression: 'previous.amount.amountMicros != amount.amountMicros',
+        record: { amount: { amountMicros: 500, currencyCode: 'USD' } },
+        fields: FIELDS,
+        now: NOW,
+      }),
+    ).toEqual({ status: 'passed' });
+  });
+
+  it('should compare a composite subfield with its previous value', () => {
+    expect(
+      evaluateValidationRuleExpression({
+        expression: 'amount.amountMicros >= previous.amount.amountMicros',
+        record: { amount: { amountMicros: 500, currencyCode: 'USD' } },
+        previousRecord: { amount: { amountMicros: 1000, currencyCode: 'USD' } },
+        fields: FIELDS,
+        now: NOW,
+      }),
+    ).toEqual({ status: 'failed' });
+  });
+
+  it('should read the previous value of a field named now', () => {
+    expect(
+      evaluateValidationRuleExpression({
+        expression: 'previous.now == "draft"',
+        record: { now: 'sent' },
+        previousRecord: { now: 'draft' },
+        fields: [
+          {
+            name: 'now',
+            type: FieldMetadataType.TEXT,
+            universalIdentifier: 'opportunity-now',
+          },
+        ],
+        now: NOW,
+      }),
+    ).toEqual({ status: 'passed' });
+  });
+});
