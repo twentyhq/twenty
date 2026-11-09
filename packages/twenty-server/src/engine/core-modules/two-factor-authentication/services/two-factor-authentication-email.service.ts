@@ -4,7 +4,9 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
   TwoFactorAuthenticationBackupCodeUsedEmail,
+  TwoFactorAuthenticationBackupCodesRegeneratedEmail,
   TwoFactorAuthenticationRecoveryCodeIssuedEmail,
+  TwoFactorAuthenticationRemovedEmail,
   TwoFactorAuthenticationResetEmail,
   renderEmail,
 } from 'twenty-emails';
@@ -94,6 +96,31 @@ export class TwoFactorAuthenticationEmailService {
             ),
           locale,
         }),
+    });
+  }
+
+  async sendBackupCodesRegeneratedEmail(
+    recipient: TwoFactorAuthenticationEmailRecipient,
+  ): Promise<void> {
+    await this.sendSecurityEmail({
+      ...recipient,
+      subject: msg`New backup codes were generated for your account`,
+      buildEmailTemplate: async ({ locale, workspaceDisplayName }) =>
+        TwoFactorAuthenticationBackupCodesRegeneratedEmail({
+          workspaceDisplayName,
+          locale,
+        }),
+    });
+  }
+
+  async sendTwoFactorAuthenticationRemovedEmail(
+    recipient: TwoFactorAuthenticationEmailRecipient,
+  ): Promise<void> {
+    await this.sendSecurityEmail({
+      ...recipient,
+      subject: msg`Two-factor authentication was removed from your account`,
+      buildEmailTemplate: async ({ locale, workspaceDisplayName }) =>
+        TwoFactorAuthenticationRemovedEmail({ workspaceDisplayName, locale }),
     });
   }
 

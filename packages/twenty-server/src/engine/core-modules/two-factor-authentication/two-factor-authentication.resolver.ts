@@ -31,6 +31,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/uti
 import { TwoFactorAuthenticationExceptionFilter } from './two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 import { TwoFactorAuthenticationBackupCodeService } from './services/two-factor-authentication-backup-code.service';
+import { TwoFactorAuthenticationEmailService } from './services/two-factor-authentication-email.service';
 import { TwoFactorAuthenticationRecoveryService } from './services/two-factor-authentication-recovery.service';
 
 import { DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
@@ -47,6 +48,7 @@ import { TwoFactorAuthenticationRecoveryCodeDTO } from './dto/two-factor-authent
 import { TwoFactorAuthenticationRecoveryStatusDTO } from './dto/two-factor-authentication-recovery-status.dto';
 import { TwoFactorAuthenticationRecoveryTargetInput } from './dto/two-factor-authentication-recovery-target.input';
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
+import { OTPStatus } from './strategies/otp/otp.constants';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
@@ -91,6 +93,7 @@ export class TwoFactorAuthenticationResolver {
   constructor(
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly twoFactorAuthenticationBackupCodeService: TwoFactorAuthenticationBackupCodeService,
+    private readonly twoFactorAuthenticationEmailService: TwoFactorAuthenticationEmailService,
     private readonly twoFactorAuthenticationRecoveryService: TwoFactorAuthenticationRecoveryService,
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
@@ -253,6 +256,12 @@ export class TwoFactorAuthenticationResolver {
       workspaceId: workspace.id,
     });
 
+    if (twoFactorMethod.status === OTPStatus.VERIFIED) {
+      await this.twoFactorAuthenticationEmailService.sendTwoFactorAuthenticationRemovedEmail(
+        { userId: user.id, workspaceId: workspace.id },
+      );
+    }
+
     return { success: true };
   }
 
@@ -323,6 +332,10 @@ export class TwoFactorAuthenticationResolver {
         workspaceId: workspace.id,
         twoFactorAuthenticationMethodId,
       });
+
+    await this.twoFactorAuthenticationEmailService.sendBackupCodesRegeneratedEmail(
+      { userId: user.id, workspaceId: workspace.id },
+    );
 
     return { backupCodes };
   }
