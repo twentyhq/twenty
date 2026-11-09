@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -20,17 +21,17 @@ const StyledTime = styled.span`
   flex-shrink: 0;
 `;
 
-type AiChatMessageHeaderProps = {
+type ChatMessageHeaderProps = {
   avatar: ReactNode;
   name: string;
-  createdAt: Date | string;
+  createdAt?: Date | string;
 };
 
-export const AiChatMessageHeader = ({
+export const ChatMessageHeader = ({
   avatar,
   name,
   createdAt,
-}: AiChatMessageHeaderProps) => {
+}: ChatMessageHeaderProps) => {
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   return (
@@ -45,9 +46,11 @@ export const AiChatMessageHeader = ({
       >
         {name}
       </Text>
-      <Text render={<StyledTime />} size="sm" color="light">
-        {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
-      </Text>
+      {isDefined(createdAt) && (
+        <Text render={<StyledTime />} size="sm" color="light">
+          {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
+        </Text>
+      )}
     </StyledHeader>
   );
 };

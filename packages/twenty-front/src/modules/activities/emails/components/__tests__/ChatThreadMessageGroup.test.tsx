@@ -1,21 +1,23 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { type ReactNode } from 'react';
 import userEvent from '@testing-library/user-event';
-import { Provider as JotaiProvider } from 'jotai';
-import {
-  CalendarStartDay,
-  FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-} from 'twenty-shared/constants';
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { DateFormat } from '@/localization/constants/DateFormat';
-import { NumberFormat } from '@/localization/constants/NumberFormat';
-import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+
+const Providers = ({ children }: { children: ReactNode }) => (
+  <I18nProvider i18n={i18n}>
+    <ToastProvider>{children}</ToastProvider>
+  </I18nProvider>
+);
+
+const renderWithProviders = (ui: ReactNode) =>
+  render(ui, { wrapper: Providers });
 
 const asAttachments = (
   files: FieldFilesValue[],
@@ -46,7 +48,7 @@ describe('ChatThreadMessageGroup', () => {
   });
 
   it('renders the text of each message', () => {
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -60,7 +62,7 @@ describe('ChatThreadMessageGroup', () => {
   });
 
   it('renders image, video and audio attachments as media', () => {
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -109,7 +111,7 @@ describe('ChatThreadMessageGroup', () => {
   });
 
   it('renders other attachments as a file chip next to the text', () => {
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -136,8 +138,8 @@ describe('ChatThreadMessageGroup', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders no empty text bubble for a message that only holds files', () => {
-    const { container } = render(
+  it('offers no text to copy for a message that only holds files', () => {
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -159,16 +161,36 @@ describe('ChatThreadMessageGroup', () => {
       />,
     );
 
-    const group = container.firstElementChild;
+    expect(screen.getByRole('img', { name: 'photo.png' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Copy to Clipboard' }),
+    ).not.toBeInTheDocument();
+  });
 
-    expect(group?.children).toHaveLength(1);
-    expect(group?.firstElementChild).toContainElement(
-      screen.getByRole('img', { name: 'photo.png' }),
+  it('shows the sender name above an incoming group', () => {
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: false,
+          messages: [
+            buildMessage({
+              sender: {
+                id: 'participant-id',
+                displayName: 'Jane Doe',
+                handle: 'jane',
+              } as EmailThreadMessageWithSender['sender'],
+            }),
+          ],
+        }}
+      />,
     );
+
+    expect(screen.getByText('Jane Doe')).toBeInTheDocument();
   });
 
   it('falls back to a file chip when the browser cannot play a file', () => {
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -220,7 +242,9 @@ describe('ChatThreadMessageGroup', () => {
       />
     );
 
-    const { rerender } = render(renderVideo('https://files.test/expired.mp4'));
+    const { rerender } = renderWithProviders(
+      renderVideo('https://files.test/expired.mp4'),
+    );
 
     fireEvent.error(screen.getByLabelText('clip.mp4'));
     rerender(renderVideo('https://files.test/refreshed.mp4'));
@@ -236,7 +260,7 @@ describe('ChatThreadMessageGroup', () => {
 
     global.fetch = fetchSpy;
 
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -262,53 +286,43 @@ describe('ChatThreadMessageGroup', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it.each([
-    [TimeFormat.HOUR_24, '14:07'],
-    [TimeFormat.HOUR_12, '2:07 PM'],
-  ])(
-    'renders the time of each message in the member time format (%s)',
-    (timeFormat, expectedTime) => {
-      jotaiStore.set(workspaceMemberFormatPreferencesState.atom, {
-        timeZone: 'Europe/Paris',
-        dateFormat: DateFormat.MONTH_FIRST,
-        timeFormat,
-        numberFormat: NumberFormat.COMMAS_AND_DOT,
-        calendarStartDay: CalendarStartDay.MONDAY,
-      });
+  it('keeps the sender of an incoming group whose first body is masked', () => {
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: false,
+          messages: [
+            buildMessage({
+              text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+              sender: {
+                id: 'participant-id',
+                displayName: 'Jane Doe',
+                handle: 'jane',
+              } as EmailThreadMessageWithSender['sender'],
+            }),
+          ],
+        }}
+      />,
+    );
 
-      render(
-        <JotaiProvider store={jotaiStore}>
-          <ChatThreadMessageGroup
-            group={{
-              id: 'group-id',
-              isOutgoing: true,
-              messages: [
-                buildMessage({ receivedAt: '2026-01-05T13:07:00.000Z' }),
-              ],
-            }}
-          />
-        </JotaiProvider>,
-      );
-
-      expect(screen.getByText(expectedTime)).toBeInTheDocument();
-    },
-  );
+    expect(screen.getByText('Jane Doe')).toBeInTheDocument();
+    expect(screen.getByText('Not shared')).toBeInTheDocument();
+  });
 
   it('does not render a body masked by metadata visibility', () => {
-    render(
-      <I18nProvider i18n={i18n}>
-        <ChatThreadMessageGroup
-          group={{
-            id: 'group-id',
-            isOutgoing: true,
-            messages: [
-              buildMessage({
-                text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-              }),
-            ],
-          }}
-        />
-      </I18nProvider>,
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: true,
+          messages: [
+            buildMessage({
+              text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+            }),
+          ],
+        }}
+      />,
     );
 
     expect(screen.getByText('Not shared')).toBeInTheDocument();
