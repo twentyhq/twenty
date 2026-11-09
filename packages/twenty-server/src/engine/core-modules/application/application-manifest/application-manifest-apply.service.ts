@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -18,6 +19,7 @@ export class ApplicationManifestApplyService {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationGrantRoleService: ApplicationGrantRoleService,
   ) {}
 
   async applyManifestToWorkspace({
@@ -62,6 +64,11 @@ export class ApplicationManifestApplyService {
         persistVersion,
         shouldDeferActions,
       });
+
+    await this.applicationGrantRoleService.upsertGrantRole({
+      workspaceId,
+      applicationId: application.id,
+    });
 
     if (forceSdkClientGeneration || isFirstApply || hasSchemaMetadataChanged) {
       await this.sdkClientGenerationService.generateSdkClientForApplication({

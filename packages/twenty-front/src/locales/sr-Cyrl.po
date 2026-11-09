@@ -699,6 +699,11 @@ msgstr "{currentCreditAmountDisplay} кредита "
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, one {бесплатни кредит} few {бесплатна кредита} other {бесплатних кредита}}"
 
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} и {dayOfWeekDescription}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -4386,7 +4391,7 @@ msgid "Assistant avatar"
 msgstr "Аватар асистента"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Име асистента"
 
@@ -6222,10 +6227,10 @@ msgstr "Изаберите шта се дешава када кликнете н
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Изаберите чему Twenty може да приступи како би вам пружио подршку и унапредио производ."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Изаберите када {AGENT_CHAT_ASSISTANT_NAME} учествује у разговорима широм вашег радног простора"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Изаберите када {assistantName} учествује у разговорима у вашем радном простору"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -11302,7 +11307,7 @@ msgid "Enter a JSON value"
 msgstr "Унесите JSON вредност"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Унесите име од 1 до {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} знакова у једном реду. Угласте заграде морају бити упарене и не могу бити угнежђене."
 
@@ -12774,6 +12779,11 @@ msgstr "Није успело опозивање кључа за потписи�
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "Опозив кода за опоравак није успео."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "Чување подешавања помоћника није успело. Покушајте поново."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -18704,10 +18714,10 @@ msgstr "Никада"
 msgid "Never expires"
 msgstr "Никада не истиче"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "„Никад“ не укључује {AGENT_CHAT_ASSISTANT_NAME}. „Само када је поменут“ тражи од {AGENT_CHAT_ASSISTANT_NAME} да одговори када је означен. „Аутоматски“ омогућава {AGENT_CHAT_ASSISTANT_NAME} да одлучи када да одговори. У ћаскањима само са вама и {AGENT_CHAT_ASSISTANT_NAME} увек се добијају одговори."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Никад не искључује {assistantName}. Само када је поменут тражи од {assistantName} да одговори када је означен. Аутоматски омогућава {assistantName} да одлучи када ће одговорити. У ћаскањима само са вама и {assistantName} увек стижу одговори."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20589,6 +20599,16 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "Изостави нулте вредности"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "на {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "на {remainingDays} и {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20736,20 +20756,13 @@ msgstr "Само чланови који могу да управљају апл
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "само на {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "само на {firstDay} и {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "само на {remainingDays} и {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "само на {remainingDays} и {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

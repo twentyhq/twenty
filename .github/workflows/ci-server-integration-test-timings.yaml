@@ -16,6 +16,10 @@ jobs:
     uses: ./.github/workflows/ci-server-integration-test.yaml
     with:
       record-timings: true
+    secrets:
+      OKTA_SSO_TEST_CLIENT_SECRET: ${{ secrets.OKTA_SSO_TEST_CLIENT_SECRET }}
+      OKTA_SSO_TEST_PASSWORD: ${{ secrets.OKTA_SSO_TEST_PASSWORD }}
+      OKTA_SSO_TEST_NON_MEMBER_PASSWORD: ${{ secrets.OKTA_SSO_TEST_NON_MEMBER_PASSWORD }}
 
   save-integration-test-timings:
     needs: server-integration-test

@@ -2,27 +2,86 @@
 
 import { createHash } from 'crypto';
 
-import { type AccessGroupMemberFieldValues } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import {
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
+  type RowLevelRecordsPermissions,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
+
+const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
+  entries.map((entry) => JSON.stringify(entry)).sort();
+
+const buildPredicateGroupContent = ({
+  parentPredicateGroupId,
+  predicates,
+  predicateGroups,
+}: {
+  parentPredicateGroupId: string | null;
+  predicates: RowLevelPermissionPredicate[];
+  predicateGroups: RowLevelPermissionPredicateGroup[];
+}): { predicates: string[]; predicateGroups: string[] } => ({
+  predicates: sortByContent(
+    predicates
+      .filter(
+        ({ rowLevelPermissionPredicateGroupId }) =>
+          (rowLevelPermissionPredicateGroupId ?? null) ===
+          parentPredicateGroupId,
+      )
+      .map((predicate) => [
+        predicate.fieldMetadataId,
+        predicate.subFieldName,
+        predicate.operand,
+        predicate.value,
+        predicate.workspaceMemberFieldMetadataId,
+        predicate.workspaceMemberSubFieldName,
+      ]),
+  ),
+  predicateGroups: sortByContent(
+    predicateGroups
+      .filter(
+        ({ parentRowLevelPermissionPredicateGroupId }) =>
+          (parentRowLevelPermissionPredicateGroupId ?? null) ===
+          parentPredicateGroupId,
+      )
+      .map((predicateGroup) => [
+        predicateGroup.logicalOperator,
+        buildPredicateGroupContent({
+          parentPredicateGroupId: predicateGroup.id,
+          predicates,
+          predicateGroups,
+        }),
+      ]),
+  ),
+});
 
 export const computeAccessGroupHash = ({
   roleId,
   objectMetadataId,
-  hasRowLevelRule,
+  rowLevelRecordsPermissions,
   rowLevelPermissionPredicateGroupId,
   memberFieldValues,
 }: {
   roleId: string;
   objectMetadataId: string;
-  hasRowLevelRule: boolean;
+  rowLevelRecordsPermissions: RowLevelRecordsPermissions | null | undefined;
   rowLevelPermissionPredicateGroupId: string | null;
-  memberFieldValues: AccessGroupMemberFieldValues | null;
+  memberFieldValues: RowLevelPermissionMemberFieldValues | null;
 }): string =>
   createHash('sha256')
     .update(
       JSON.stringify([
         roleId,
         objectMetadataId,
-        hasRowLevelRule,
+        isDefined(rowLevelRecordsPermissions)
+          ? buildPredicateGroupContent({
+              parentPredicateGroupId: null,
+              predicates: rowLevelRecordsPermissions.predicates,
+              predicateGroups: rowLevelRecordsPermissions.predicateGroups,
+            })
+          : null,
         rowLevelPermissionPredicateGroupId,
         Object.entries(memberFieldValues ?? {}).sort(
           ([firstKey], [secondKey]) => firstKey.localeCompare(secondKey),

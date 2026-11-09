@@ -9,6 +9,7 @@ import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exc
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
+import { isApplicationGrantRole } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-application-grant-role.util';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 export const validateObjectPermissionGrantsNoDisabledAction = ({
@@ -16,6 +17,7 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
   flatObjectMetadata,
   flatRole,
   applicationDefaultRoleUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   flatObjectPermission: Pick<
     UniversalFlatObjectPermission,
@@ -34,6 +36,7 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
       >
     | undefined;
   applicationDefaultRoleUniversalIdentifier: string | undefined;
+  workspaceCustomApplicationUniversalIdentifier: string;
 }): FlatEntityValidationError[] => {
   if (!isDefined(flatObjectMetadata)) {
     return [];
@@ -46,6 +49,18 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
       applicationDefaultRoleUniversalIdentifier &&
     flatRole.applicationUniversalIdentifier ===
       flatObjectMetadata.applicationUniversalIdentifier
+  ) {
+    return [];
+  }
+
+  // A grant copies its application's default role
+  if (
+    isApplicationGrantRole({
+      flatRole,
+      grantedApplicationUniversalIdentifier:
+        flatObjectMetadata.applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
+    })
   ) {
     return [];
   }

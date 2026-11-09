@@ -1,6 +1,6 @@
 import {
   type FilterableAndTSVectorFieldType,
-  type ViewFilterOperand as RecordFilterOperand,
+  type RecordFilterOperand,
 } from 'twenty-shared/types';
 import { getFilterOperandsForFilterableFieldType } from 'twenty-shared/utils';
 

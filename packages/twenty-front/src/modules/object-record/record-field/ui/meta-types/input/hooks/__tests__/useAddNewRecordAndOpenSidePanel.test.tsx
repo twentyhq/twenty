@@ -39,7 +39,8 @@ jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
     canUpdateAllRecords: true,
     canSoftDeleteAllRecords: true,
     canDestroyAllRecords: true,
-    restrictedFields: {},
+    unreadableFields: [],
+    uneditableFields: [],
   }),
 }));
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({

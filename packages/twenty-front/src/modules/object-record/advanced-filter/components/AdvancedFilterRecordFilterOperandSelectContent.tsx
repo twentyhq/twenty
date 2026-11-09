@@ -6,7 +6,6 @@ import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filt
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { useTimeZoneAbbreviationForNowInUserTimeZone } from '@/object-record/record-filter/hooks/useTimeZoneAbbreviationForNowInUserTimeZone';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { type RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -15,7 +14,10 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { type ViewFilterOperand } from 'twenty-shared/types';
+import {
+  type RecordFilterOperand,
+  type ViewFilterOperand,
+} from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {

@@ -59,7 +59,8 @@ const narrowRecordsPermissionsToExplicitDenies = ({
       canDestroyAllRecords:
         grantedObjectRecordsPermissions.canDestroyAllRecords &&
         objectPermission.canDestroyObjectRecords !== false,
-      restrictedFields: grantedObjectRecordsPermissions.restrictedFields,
+      unreadableFields: grantedObjectRecordsPermissions.unreadableFields,
+      uneditableFields: grantedObjectRecordsPermissions.uneditableFields,
       rowLevelRecordsPermissions:
         grantedObjectRecordsPermissions.rowLevelRecordsPermissions,
     };
@@ -178,6 +179,7 @@ export const resolveAiRunPermissionScope = ({
             {
               objectMetadataId,
               fieldMetadataId: flatFieldMetadata.id,
+              rowLevelPermissionPredicateGroupId: null,
               canReadFieldValue: fieldPermission.canReadFieldValue,
               canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
             },

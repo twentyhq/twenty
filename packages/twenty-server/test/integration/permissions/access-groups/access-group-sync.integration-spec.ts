@@ -1,4 +1,12 @@
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
@@ -59,6 +67,86 @@ describe('access group sync (integration)', () => {
     await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
     expect(await readAccessGroups()).toEqual(accessGroups);
+  });
+
+  it('should replace the group of a rule when its content changes', async () => {
+    const objectMetadataId = await findPersonObjectMetadataId();
+    const [{ id: fieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'jobTitle'`,
+      [objectMetadataId],
+    );
+    const { data } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Access group rule hash',
+        description: 'Access group rule hash',
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+      },
+    });
+    const roleId = data.createOneRole.id;
+    const predicateGroupId = v4();
+    const predicateId = v4();
+    const upsertRule = (value: string) =>
+      upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId,
+          objectMetadataId,
+          predicateGroups: [
+            {
+              id: predicateGroupId,
+              objectMetadataId,
+              logicalOperator:
+                RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            },
+          ],
+          predicates: [
+            {
+              id: predicateId,
+              fieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value,
+              rowLevelPermissionPredicateGroupId: predicateGroupId,
+            },
+          ],
+        },
+      });
+    const readRuleAccessGroups = (): Promise<
+      { compactId: number; groupHash: string }[]
+    > =>
+      global.testDataSource.query(
+        `SELECT "compactId", "groupHash" FROM ${ACCESS_GROUP_TABLE} WHERE "rowLevelPermissionPredicateGroupId" = $1`,
+        [predicateGroupId],
+      );
+
+    try {
+      await upsertRule('Paris');
+      await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+
+      const [parisAccessGroup] = await readRuleAccessGroups();
+
+      await upsertRule('London');
+      await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+
+      const londonAccessGroups = await readRuleAccessGroups();
+
+      expect(parisAccessGroup).toBeDefined();
+      expect(londonAccessGroups).toHaveLength(1);
+      expect(londonAccessGroups[0].groupHash).not.toBe(
+        parisAccessGroup.groupHash,
+      );
+      expect(londonAccessGroups[0].compactId).not.toBe(
+        parisAccessGroup.compactId,
+      );
+    } finally {
+      await deleteOneRole({
+        expectToFail: false,
+        input: { idToDelete: roleId },
+      });
+    }
   });
 
   it('should resolve the caller to the groups of its role', async () => {

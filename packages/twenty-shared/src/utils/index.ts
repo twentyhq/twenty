@@ -135,6 +135,7 @@ export { filterOutInvalidRecordFilters } from './filter/filterOutInvalidRecordFi
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
 export { isRecordFilterOperandExpectingValue } from './filter/isRecordFilterOperandExpectingValue';
 export { isRecordFilterValueValid } from './filter/isRecordFilterValueValid';
+export { mapRLSOperandToRecordFilterOperand } from './filter/mapRLSOperandToRecordFilterOperand';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
   RecordFilter,

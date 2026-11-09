@@ -103,20 +103,23 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant = await this.recordPermissionsService.canAccessRecords({
-        operationType: 'read',
-        principals:
-          await this.principalPermissionsService.resolvePermissionsPrincipals({
-            authContext: {
-              type: 'user',
-              workspace: { id: workspaceId },
-              workspaceMemberId: principal.principalId,
-            },
-          }),
-        objectMetadataId: flatObjectMetadata.id,
-        recordIds,
-        transactionScope,
-      });
+      const hasGrant =
+        await this.recordPermissionsService.canAccessKnownRecords({
+          operationType: 'read',
+          principals:
+            await this.principalPermissionsService.resolvePermissionsPrincipals(
+              {
+                authContext: {
+                  type: 'user',
+                  workspace: { id: workspaceId },
+                  workspaceMemberId: principal.principalId,
+                },
+              },
+            ),
+          objectMetadataId: flatObjectMetadata.id,
+          recordIds,
+          transactionScope,
+        });
 
       if (!hasGrant) {
         throw new RecordShareException(
