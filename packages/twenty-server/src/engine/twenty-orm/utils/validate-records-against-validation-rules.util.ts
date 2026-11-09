@@ -31,7 +31,7 @@ type ValidateRecordsAgainstValidationRulesArgs<TEntity extends ObjectLiteral> =
     tableShape: WorkspaceTableShape;
     validationRules: FlatValidationRule[];
     writtenRecords: ObjectRecord[];
-    recordsBeforeWrite?: ObjectRecord[];
+    recordsBeforeWrite: ObjectRecord[];
     inputRecordIds?: (string | undefined)[];
   };
 
@@ -151,7 +151,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
   tableShape,
   validationRules,
   writtenRecords,
-  recordsBeforeWrite = [],
+  recordsBeforeWrite,
   inputRecordIds,
 }: ValidateRecordsAgainstValidationRulesArgs<TEntity>): Promise<void> => {
   const recordIds = writtenRecords

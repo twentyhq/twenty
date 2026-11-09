@@ -386,6 +386,17 @@ describe('evaluateValidationRuleExpression with previous values', () => {
     });
   });
 
+  it('should read a previous composite subfield as empty without a stored record', () => {
+    expect(
+      evaluateValidationRuleExpression({
+        expression: 'previous.amount.amountMicros != amount.amountMicros',
+        record: { amount: { amountMicros: 500, currencyCode: 'USD' } },
+        fields: FIELDS,
+        now: NOW,
+      }),
+    ).toEqual({ status: 'passed' });
+  });
+
   it('should compare a composite subfield with its previous value', () => {
     expect(
       evaluateValidationRuleExpression({

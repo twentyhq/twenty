@@ -5,6 +5,7 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
+import { getValidationRulePreviousValueFieldPath } from '@/utils/validation-rule/getValidationRulePreviousValueFieldPath';
 import {
   validationRuleCompositeFieldTypeByValue,
   validationRuleNullPlaceholders,
@@ -78,8 +79,6 @@ const descendIntoContainer = (
   return ownedCopy;
 };
 
-const PREVIOUS_PATH_PREFIX = `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.`;
-
 export const buildValidationRuleEvaluationContext = ({
   record,
   previousRecord,
@@ -97,8 +96,8 @@ export const buildValidationRuleEvaluationContext = ({
   const ownedContainers = new WeakSet<object>();
 
   const previousValuePaths = identifierPaths
-    .filter((path) => path.startsWith(PREVIOUS_PATH_PREFIX))
-    .map((path) => path.slice(PREVIOUS_PATH_PREFIX.length));
+    .map(getValidationRulePreviousValueFieldPath)
+    .filter(isDefined);
 
   // Without a stored record (a creation) every previous value is empty, Booleans included
   if (previousValuePaths.length > 0) {
