@@ -1639,6 +1639,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'Delay the jobs that carry a maxRate (workflows, logic functions) so that each one runs at most max times per durationMs, per workspace and application. Off: jobs are never delayed by their maxRate.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKER_GROUP_MAX_RATE_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       'Maximum size in bytes of a single job (serialized data and options) when Redis memory fairness is enabled',
     type: ConfigVariableType.NUMBER,
   })

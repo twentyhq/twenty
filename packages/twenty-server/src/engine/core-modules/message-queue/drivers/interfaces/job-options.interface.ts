@@ -1,3 +1,5 @@
+import { type MessageQueueMaxRate } from 'src/engine/core-modules/message-queue/types/message-queue-max-rate.type';
+
 export type QueueJobBackoffOptions = {
   strategy: 'fixed' | 'exponential';
   initialDelayMilliseconds: number;
@@ -40,6 +42,8 @@ export type QueueJobScope =
   | WorkspaceQueueJobScope
   | ApplicationQueueJobScope;
 
+export type QueueJobMaxRate = { key: string } & MessageQueueMaxRate;
+
 export type QueueJobSettings = {
   id?: string;
   doNotCheckDuplicatesBasedOnPrefix?: boolean;
@@ -50,6 +54,7 @@ export type QueueJobSettings = {
   deduplication?: QueueJobDeduplicationOptions;
   broadcastTo?: QueueJobRecipient;
   groupKeys?: string[];
+  maxRate?: QueueJobMaxRate;
 };
 
 export type QueueJobOptions = QueueJobSettings & QueueJobScope;

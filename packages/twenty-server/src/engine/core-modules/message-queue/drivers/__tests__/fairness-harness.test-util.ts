@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import {
+  type QueueJobMaxRate,
   type QueueJobScope,
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
@@ -315,7 +316,7 @@ type ScenarioJobScope = {
 type EnqueueInput = { label: string } & ScenarioJobScope &
   Pick<
     QueueJobSettings,
-    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff'
+    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'maxRate'
   >;
 
 const buildScenarioJobScope = ({
@@ -333,7 +334,9 @@ const buildScenarioJobScope = ({
   return { workspaceId, applicationUniversalIdentifier };
 };
 
-export const createFairnessHarness = async () => {
+export const createFairnessHarness = async ({
+  isGroupMaxRateEnabled = false,
+}: { isGroupMaxRateEnabled?: boolean } = {}) => {
   const redis: Redis = new RedisMock();
 
   await redis.flushall();
@@ -346,7 +349,12 @@ export const createFairnessHarness = async () => {
   const driver = new BullMQDriver(
     { prefix: KEY_PREFIX, connection: {} },
     metricsService as never,
-    { get: () => undefined } as never,
+    {
+      get: (key: string) =>
+        key === 'IS_WORKER_GROUP_MAX_RATE_ENABLED'
+          ? isGroupMaxRateEnabled
+          : undefined,
+    } as never,
     { emit: jest.fn() } as never,
   );
 
@@ -444,21 +452,27 @@ export const createFairnessHarness = async () => {
       labels,
       workspaceId,
       applicationUniversalIdentifier,
+      maxRate,
+      delay,
     }: {
       labels: string[];
       workspaceId: string;
       applicationUniversalIdentifier?: string;
+      maxRate?: QueueJobMaxRate;
+      delay?: number;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
         QUEUE,
         JOB_NAME,
         labels.map((label) => ({
           data: { label, workspaceId },
+          maxRate,
           ...buildScenarioJobScope({
             workspaceId,
             applicationUniversalIdentifier,
           }),
         })),
+        isDefined(delay) ? { delay } : undefined,
       );
     },
     scheduleCron: async ({
@@ -530,6 +544,8 @@ export const createFairnessHarness = async () => {
     },
     readPriority: ({ label }: { label: string }) =>
       mockBullMQ.jobs.find((job) => job.data.label === label)?.options.priority,
+    readDelay: ({ label }: { label: string }) =>
+      mockBullMQ.jobs.find((job) => job.data.label === label)?.options.delay,
     breakRedis: () => {
       const runCommand = jest
         .fn()

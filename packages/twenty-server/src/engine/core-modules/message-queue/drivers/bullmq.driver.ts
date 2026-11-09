@@ -119,6 +119,8 @@ export class BullMQDriver
         this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
+      isGroupMaxRateEnabled: () =>
+        twentyConfigService.get('IS_WORKER_GROUP_MAX_RATE_ENABLED'),
     });
     this.jobSizeLimiter = new JobSizeLimiter(
       metricsService,
@@ -673,6 +675,7 @@ export class BullMQDriver
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: [options],
+      maxRates: [options.maxRate],
       additionalGroupKeys: options.groupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
@@ -911,7 +914,9 @@ export class BullMQDriver
 
   private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
     return this.queueMap[queueName].getRanges(
-      ['waiting', 'paused', 'prioritized'],
+      this.fairQueueScheduler.isGroupMaxRateEnabled()
+        ? ['waiting', 'paused', 'prioritized', 'delayed']
+        : ['waiting', 'paused', 'prioritized'],
       0,
       -1,
     );
@@ -978,6 +983,7 @@ export class BullMQDriver
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: jobsToAdd,
+      maxRates: jobsToAdd.map((job) => job.maxRate ?? options?.maxRate),
       additionalGroupKeys: options?.groupKeys,
       delay: options?.delay,
       staticPriority: queueOptions.priority,
