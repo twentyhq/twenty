@@ -8,6 +8,11 @@ import {
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
+import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
 import { assertArrayOperatorValueIsNonEmptyArrayOrThrow } from 'src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util';
 import { computeWhereConditionParts } from 'src/engine/record-filter/utils/compute-where-condition-parts';
@@ -26,6 +31,8 @@ import {
 const ALWAYS_TRUE_CONDITION = '1=1';
 
 type SqlRenderingContext = {
+  workspaceId: string;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   tableAlias: string;
   fieldIdByName: Record<string, string>;
   fieldIdByJoinColumnName: Record<string, string>;
@@ -43,11 +50,13 @@ export const renderRowLevelPermissionFilterToSql = ({
   tableAlias,
   objectMetadata,
   flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
 }: {
   recordFilter: RecordGqlOperationFilter;
   tableAlias: string;
   objectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): RenderedSqlCondition | null => {
   const { fieldIdByName, fieldIdByJoinColumnName } =
     buildFieldMapsFromFlatObjectMetadata(flatFieldMetadataMaps, objectMetadata);
@@ -55,6 +64,8 @@ export const renderRowLevelPermissionFilterToSql = ({
   const collectedParameters: ObjectLiteral = {};
 
   const sql = renderFilterAsConjunction(recordFilter, {
+    workspaceId: objectMetadata.workspaceId,
+    flatObjectMetadataMaps,
     tableAlias,
     fieldIdByName,
     fieldIdByJoinColumnName,
@@ -154,6 +165,52 @@ const joinConditions = (
   return `(${conditions.join(` ${logicalOperator} `)})`;
 };
 
+const renderRelationCondition = ({
+  relationFieldMetadata,
+  targetFilter,
+  context,
+}: {
+  relationFieldMetadata: OrmFlatFieldMetadata;
+  targetFilter: RecordGqlOperationFilter;
+  context: SqlRenderingContext;
+}): string => {
+  const { workspaceId, tableAlias, flatFieldMetadataMaps } = context;
+  const targetFlatObjectMetadata = isDefined(
+    relationFieldMetadata.relationTargetObjectMetadataId,
+  )
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: relationFieldMetadata.relationTargetObjectMetadataId,
+        flatEntityMaps: context.flatObjectMetadataMaps,
+      })
+    : undefined;
+
+  if (!isDefined(targetFlatObjectMetadata)) {
+    throw new PermissionsException(
+      `Cannot render row level permission predicate through relation "${relationFieldMetadata.name}"`,
+      PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND,
+    );
+  }
+
+  const { sourceColumnName, targetColumnName } = findRelationJoinColumnsOrThrow(
+    { relationFieldMetadata, flatFieldMetadataMaps },
+  );
+  const targetTableAlias = `${tableAlias}_${relationFieldMetadata.name}`;
+  const targetCondition = renderFilterAsConjunction(targetFilter, {
+    ...context,
+    tableAlias: targetTableAlias,
+    ...buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      targetFlatObjectMetadata,
+    ),
+  });
+  const quotedTargetTableAlias = escapeIdentifier(targetTableAlias);
+
+  return `EXISTS (SELECT 1 FROM ${buildWorkspaceTableExpression({
+    workspaceId,
+    tableName: computeObjectTargetTable(targetFlatObjectMetadata),
+  })} AS ${quotedTargetTableAlias} WHERE ${quotedTargetTableAlias}.${escapeIdentifier(targetColumnName)} = ${escapeIdentifier(tableAlias)}.${escapeIdentifier(sourceColumnName)} AND ${quotedTargetTableAlias}."deletedAt" IS NULL AND (${targetCondition || ALWAYS_TRUE_CONDITION}))`;
+};
+
 const renderFieldCondition = (
   fieldNameOrJoinColumnName: string,
   filterValue: unknown,
@@ -185,10 +242,11 @@ const renderFieldCondition = (
     isReferencedByFieldName &&
     isMorphOrRelationFlatFieldMetadata(fieldMetadata)
   ) {
-    throw new PermissionsException(
-      `Cannot render row level permission predicate on relation "${fieldNameOrJoinColumnName}": traversing a relation requires an additional join, which a join condition cannot express`,
-      PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND,
-    );
+    return renderRelationCondition({
+      relationFieldMetadata: fieldMetadata,
+      targetFilter: filterValue as RecordGqlOperationFilter,
+      context,
+    });
   }
 
   if (isCompositeFieldMetadataType(fieldMetadata.type)) {

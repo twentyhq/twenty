@@ -8,12 +8,10 @@ import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metad
 
 export const buildWorkflowVersionDeleteSideEffects = ({
   flatEntity,
-  allFlatEntityOperationRecordByMetadataName,
   relatedFlatEntityMaps: {
     flatWorkflowMaps,
     flatWorkflowVersionMaps,
     flatCommandMenuItemMaps,
-    flatLogicFunctionMaps,
   },
 }: BuildSideEffectsArgs<'workflow'>): MetadataSideEffectResult => {
   const managedVersionUniversalIdentifier =
@@ -52,11 +50,7 @@ export const buildWorkflowVersionDeleteSideEffects = ({
       },
       ...buildWorkflowVersionDependenciesDeleteOperations({
         deletedWorkflowVersions,
-        allFlatEntityOperationRecordByMetadataName,
-        flatWorkflowMaps,
-        flatWorkflowVersionMaps,
         flatCommandMenuItemMaps,
-        flatLogicFunctionMaps,
       }),
     },
   };

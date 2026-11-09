@@ -31,7 +31,7 @@ export const GettingStartedSnoozeMenu = () => {
   const { t } = useLingui();
   const dropdownId = `getting-started-snooze-${useId()}`;
   const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
-  const { trialEnd } = useGettingStartedTrial();
+  const { trialEnd, isCountdownVisible } = useGettingStartedTrial();
   const { timeZone, dateFormat, timeFormat } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const navigate = useNavigate();
@@ -48,7 +48,15 @@ export const GettingStartedSnoozeMenu = () => {
   }[] = [
     { option: 'hour', label: t`In an hour`, Icon: IconClock },
     { option: 'tomorrow', label: t`Tomorrow`, Icon: IconCalendar },
-    { option: 'lastThreeDays', label: t`Until the last 3 days`, Icon: IconZzz },
+    ...(isCountdownVisible
+      ? [
+          {
+            option: 'lastThreeDays' as const,
+            label: t`Until the last 3 days`,
+            Icon: IconZzz,
+          },
+        ]
+      : []),
   ];
 
   const updateAndNavigateHome = async (input: UpdateGettingStartedInput) => {

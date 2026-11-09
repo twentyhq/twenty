@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { RecomputeRecordAccessGroupIdsOfRecordsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids-of-records.job';
 import { RecomputeRecordAccessGroupIdsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids.job';
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
 import { AccessGroupSyncListener } from 'src/engine/permissions/internal/access-group/listeners/access-group-sync.listener';
@@ -22,6 +23,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AccessGroupSyncListener,
     AccessGroupSyncSchedulerService,
     RecomputeRecordAccessGroupIdsJob,
+    RecomputeRecordAccessGroupIdsOfRecordsJob,
     SyncAccessGroupsJob,
   ],
   exports: [AccessGroupService, RecordAccessGroupService],

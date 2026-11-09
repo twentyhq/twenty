@@ -180,6 +180,7 @@ export const AiChatMessage = ({
         {hasHeader && (
           <AiChatMessageAuthorHeader
             metadata={agentChatMessage.metadata}
+            role={agentChatMessage.role}
             sender={sender}
             messageId={messageId}
             createdAt={createdAt}

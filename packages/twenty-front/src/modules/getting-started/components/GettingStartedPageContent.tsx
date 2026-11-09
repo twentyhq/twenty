@@ -21,11 +21,14 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-const StyledScroll = styled.div`
-  container-name: getting-started-scroll;
+const StyledPage = styled.div`
+  container-name: getting-started-page;
   container-type: inline-size;
+  display: flex;
   flex: 1;
-  overflow: auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
   padding: ${themeCssVariables.spacing[10]} ${themeCssVariables.spacing[6]};
 `;
 
@@ -35,6 +38,8 @@ const StyledContent = styled.div`
   gap: ${themeCssVariables.spacing[8]};
   margin: 0 auto;
   max-width: ${GETTING_STARTED_CONTENT_MAX_WIDTH}px;
+  min-height: 0;
+  width: 100%;
 `;
 
 const StyledHeading = styled.div`
@@ -116,7 +121,7 @@ export const GettingStartedPageContent = () => {
   });
 
   return (
-    <StyledScroll>
+    <StyledPage>
       <StyledContent>
         <StyledHeading>
           <StyledCountdown>
@@ -171,6 +176,6 @@ export const GettingStartedPageContent = () => {
           </>
         )}
       </StyledContent>
-    </StyledScroll>
+    </StyledPage>
   );
 };

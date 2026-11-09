@@ -129,6 +129,7 @@ const build = (
     objectMetadataId: OBJECT_METADATA_ID,
     workspaceMembers: [],
     flatFieldMetadataMaps,
+    isRelationHopEnabled: true,
     ...overrides,
   });
 
