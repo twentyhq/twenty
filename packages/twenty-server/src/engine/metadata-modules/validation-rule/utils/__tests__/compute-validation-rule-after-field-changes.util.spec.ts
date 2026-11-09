@@ -104,20 +104,20 @@ describe('computeValidationRuleAfterFieldChanges', () => {
       computeValidationRuleAfterFieldChanges({
         validationRule: {
           ...RULE,
-          expression: 'stage == $previous.stage or $previous.stage != "WON"',
+          expression: 'stage == previous.stage or previous.stage != "WON"',
           bindings: {
             stage: STAGE_UNIVERSAL_IDENTIFIER,
-            '$previous.stage': STAGE_UNIVERSAL_IDENTIFIER,
+            'previous.stage': STAGE_UNIVERSAL_IDENTIFIER,
           },
         },
         fieldChanges: [rename(STAGE_UNIVERSAL_IDENTIFIER, 'dealStage')],
       }),
     ).toMatchObject({
       expression:
-        'dealStage == $previous.dealStage or $previous.dealStage != "WON"',
+        'dealStage == previous.dealStage or previous.dealStage != "WON"',
       bindings: {
         dealStage: STAGE_UNIVERSAL_IDENTIFIER,
-        '$previous.dealStage': STAGE_UNIVERSAL_IDENTIFIER,
+        'previous.dealStage': STAGE_UNIVERSAL_IDENTIFIER,
       },
       isActive: true,
     });
@@ -128,14 +128,14 @@ describe('computeValidationRuleAfterFieldChanges', () => {
       computeValidationRuleAfterFieldChanges({
         validationRule: {
           ...RULE,
-          expression: '$previous.amount.amountMicros > 0',
-          bindings: { '$previous.amount': AMOUNT_UNIVERSAL_IDENTIFIER },
+          expression: 'previous.amount.amountMicros > 0',
+          bindings: { 'previous.amount': AMOUNT_UNIVERSAL_IDENTIFIER },
         },
         fieldChanges: [rename(AMOUNT_UNIVERSAL_IDENTIFIER, 'dealAmount')],
       }),
     ).toMatchObject({
-      expression: '$previous.dealAmount.amountMicros > 0',
-      bindings: { '$previous.dealAmount': AMOUNT_UNIVERSAL_IDENTIFIER },
+      expression: 'previous.dealAmount.amountMicros > 0',
+      bindings: { 'previous.dealAmount': AMOUNT_UNIVERSAL_IDENTIFIER },
       isActive: true,
     });
   });
@@ -210,29 +210,6 @@ describe('computeValidationRuleAfterFieldChanges', () => {
         }),
       ).toEqual({ ...RULE, isActive: false });
     }
-  });
-
-  it('should keep the rule active when a field it reads is renamed to previous', () => {
-    expect(
-      computeValidationRuleAfterFieldChanges({
-        validationRule: {
-          ...RULE,
-          expression: 'stage == $previous.stage',
-          bindings: {
-            stage: STAGE_UNIVERSAL_IDENTIFIER,
-            '$previous.stage': STAGE_UNIVERSAL_IDENTIFIER,
-          },
-        },
-        fieldChanges: [rename(STAGE_UNIVERSAL_IDENTIFIER, 'previous')],
-      }),
-    ).toMatchObject({
-      expression: 'previous == $previous.previous',
-      bindings: {
-        previous: STAGE_UNIVERSAL_IDENTIFIER,
-        '$previous.previous': STAGE_UNIVERSAL_IDENTIFIER,
-      },
-      isActive: true,
-    });
   });
 
   it('should rename a related-record field to a name that is only reserved at the start of a path', () => {

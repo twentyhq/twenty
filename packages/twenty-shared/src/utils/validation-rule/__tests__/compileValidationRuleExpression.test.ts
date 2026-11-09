@@ -240,66 +240,45 @@ describe('compileValidationRuleExpression', () => {
 describe('compileValidationRuleExpression with previous values', () => {
   it('should bind a previous value to the field it reads', () => {
     expect(
-      compile('$previous.stage == stage or $previous.stage != "WON"'),
+      compile('previous.stage == stage or previous.stage != "WON"'),
     ).toEqual({
       isValid: true,
       bindings: {
         stage: 'opportunity-stage',
-        '$previous.stage': 'opportunity-stage',
+        'previous.stage': 'opportunity-stage',
       },
     });
   });
 
   it('should accept a composite subfield of a previous value', () => {
     expect(
-      compile('amount.amountMicros >= $previous.amount.amountMicros'),
+      compile('amount.amountMicros >= previous.amount.amountMicros'),
     ).toEqual({
       isValid: true,
       bindings: {
         amount: 'opportunity-amount',
-        '$previous.amount': 'opportunity-amount',
+        'previous.amount': 'opportunity-amount',
       },
     });
   });
 
-  it('should read a field named previous next to its previous value', () => {
-    expect(
-      compileValidationRuleExpression({
-        expression: 'previous == $previous.previous',
-        fields: [
-          {
-            name: 'previous',
-            type: FieldMetadataType.TEXT,
-            universalIdentifier: 'opportunity-previous',
-          },
-        ],
-      }),
-    ).toEqual({
-      isValid: true,
-      bindings: {
-        previous: 'opportunity-previous',
-        '$previous.previous': 'opportunity-previous',
-      },
-    });
-  });
-
-  it('should reject $previous on its own', () => {
-    expect(compile('isDefined($previous)')).toMatchObject({
+  it('should reject previous on its own', () => {
+    expect(compile('isDefined(previous)')).toMatchObject({
       isValid: false,
       errorCode: 'NOT_A_VALUE',
     });
   });
 
   it('should reject the previous value of a relation', () => {
-    expect(compile('$previous.company.industry == "SaaS"')).toMatchObject({
+    expect(compile('previous.company.industry == "SaaS"')).toMatchObject({
       isValid: false,
       errorCode: 'PREVIOUS_VALUE_OF_RELATION',
-      errorParams: { path: '$previous.company.industry' },
+      errorParams: { path: 'previous.company.industry' },
     });
   });
 
   it('should reject the previous value of an unknown field', () => {
-    expect(compile('$previous.closeDate == stage')).toMatchObject({
+    expect(compile('previous.closeDate == stage')).toMatchObject({
       isValid: false,
       errorCode: 'UNKNOWN_FIELD',
       errorParams: { fieldName: 'closeDate' },

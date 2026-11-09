@@ -181,7 +181,7 @@ describe('computeRecordUpdateFieldsToComplete', () => {
       ...LOST_REASON_RULE,
       id: 'lost-needs-reason-once',
       expression:
-        "stage != 'LOST' or $previous.stage == 'LOST' or not isEmpty(lostReason)",
+        "stage != 'LOST' or previous.stage == 'LOST' or not isEmpty(lostReason)",
     };
 
     expect(

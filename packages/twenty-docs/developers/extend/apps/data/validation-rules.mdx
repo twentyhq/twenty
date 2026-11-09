@@ -69,11 +69,11 @@ The builder outputs a plain string, which is what [`twenty app pull`](/developer
 expression: 'amount > 0 and isNonEmptyString(reference)',
 ```
 
-Strings use `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]`, not `&&` or `||`. Text goes in single or double quotes. A previous value is written `$previous.stage`:
+Strings use `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]`, not `&&` or `||`. Text goes in single or double quotes. A previous value is written `previous.stage`:
 
 ```ts
 // A proposal only follows a meeting
-expression: 'stage != "PROPOSAL" or $previous.stage in ["MEETING", "PROPOSAL"]',
+expression: 'stage != "PROPOSAL" or previous.stage in ["MEETING", "PROPOSAL"]',
 ```
 
 A rule can read fields you declare, and the [system fields](/developers/extend/apps/data/system-fields) Twenty provisions, such as `createdAt`. The CLI checks expressions against your app's own objects. On an object outside your app, it only checks the syntax and the server checks the fields at sync time.

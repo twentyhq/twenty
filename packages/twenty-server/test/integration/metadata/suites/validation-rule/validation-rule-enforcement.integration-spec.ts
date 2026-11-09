@@ -392,7 +392,7 @@ describe('Validation rules reading previous values should be enforced on updates
       errorFieldMetadataId: stageField.id,
       name: 'Proposal follows a meeting',
       expression:
-        'stage != "PROPOSAL" or $previous.stage in ["MEETING", "PROPOSAL"]',
+        'stage != "PROPOSAL" or previous.stage in ["MEETING", "PROPOSAL"]',
       message: 'Hold a meeting before sending a proposal',
     });
 
