@@ -39,5 +39,5 @@ export const useMcpToolStepForm = ({
     saveAction(updatedSettings);
   };
 
-  return { settings, updateSettings };
+  return { settings, updateSettings, flushPendingSave: saveAction.flush };
 };

@@ -6,8 +6,10 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { McpServerEntity } from 'src/engine/metadata-modules/mcp-server/entities/mcp-server.entity';
 import { McpServerClientModule } from 'src/engine/metadata-modules/mcp-server/mcp-server-client.module';
+import { McpServerToolTestResolver } from 'src/engine/metadata-modules/mcp-server/mcp-server-tool-test.resolver';
 import { McpServerResolver } from 'src/engine/metadata-modules/mcp-server/mcp-server.resolver';
 import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-server.service';
+import { McpServerToolTestService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-test.service';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -21,7 +23,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     McpServerClientModule,
     TypeOrmModule.forFeature([McpServerEntity]),
   ],
-  providers: [McpServerService, McpServerResolver],
+  providers: [
+    McpServerService,
+    McpServerResolver,
+    McpServerToolTestService,
+    McpServerToolTestResolver,
+  ],
   exports: [McpServerService],
 })
 export class McpServerModule {}

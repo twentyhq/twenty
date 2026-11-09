@@ -3236,6 +3236,12 @@ type McpServerTool {
   name: String!
 }
 
+type McpServerToolTestResult {
+  error: String
+  result: JSON
+  success: Boolean!
+}
+
 type MessageCampaignBodyConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -3685,6 +3691,7 @@ type Mutation {
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
   syncMarketplaceCatalog: Boolean!
   syncMcpServerTools(id: UUID!): McpServer!
+  testMcpServerTool(input: TestMcpServerToolInput!): McpServerToolTestResult!
   trackAnalytics(event: String, name: String, properties: JSON, type: AnalyticsType!): Analytics!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   triggerAddPeopleToMessageListJob(input: TriggerAddPeopleToMessageListJobInput!): TriggerAddPeopleToMessageListJobResult!
@@ -5084,6 +5091,12 @@ input SyncAppMessageFoldersInput {
 
 type TasksConfiguration {
   configurationType: WidgetConfigurationType!
+}
+
+input TestMcpServerToolInput {
+  mcpServerId: UUID!
+  toolArguments: JSON
+  toolName: String!
 }
 
 type TimelineActivityType {
