@@ -68,8 +68,6 @@ type AgentFileDeliveryState = AgentFileBilling & {
   limits: ModelFileLimits;
   filesByUrl: Map<string, Promise<FileEntity | null>>;
   bytesByFileId: Map<string, Promise<Buffer | null>>;
-  fileIdsByBytes: Map<Uint8Array | string, string>;
-  rejectedFileIds: Set<string>;
   fileRejectionsByBytes: Map<Uint8Array | string, boolean>;
 };
 
@@ -125,8 +123,6 @@ export class AgentFilePartService {
       limits: getModelFileLimits(modelConfig.sdkPackage),
       filesByUrl: new Map(),
       bytesByFileId: new Map(),
-      fileIdsByBytes: new Map(),
-      rejectedFileIds: new Set(),
       fileRejectionsByBytes: new Map(),
     };
 
@@ -273,10 +269,6 @@ export class AgentFilePartService {
       return this.retryWithoutFiles(retryArguments);
     }
 
-    rejectedFileParts.forEach((part) =>
-      this.rememberRejectedFile(part, deliveryState),
-    );
-
     const paramsWithoutRejectedFiles = {
       ...params,
       prompt: await this.replaceFileParts(params.prompt, (part) =>
@@ -412,21 +404,6 @@ export class AgentFilePartService {
           error instanceof Error ? error.stack : error,
         ),
       );
-  }
-
-  private rememberRejectedFile(
-    part: LanguageModelV4FilePart,
-    deliveryState: AgentFileDeliveryState,
-  ): void {
-    if (part.data.type !== 'data') {
-      return;
-    }
-
-    const fileId = deliveryState.fileIdsByBytes.get(part.data.data);
-
-    if (isDefined(fileId)) {
-      deliveryState.rejectedFileIds.add(fileId);
-    }
   }
 
   private async retryWithoutFiles({
@@ -577,7 +554,12 @@ export class AgentFilePartService {
       return this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.unavailable);
     }
 
-    if (deliveryState.rejectedFileIds.has(file.id)) {
+    const fileBytes = await deliveryState.bytesByFileId.get(file.id);
+
+    if (
+      isDefined(fileBytes) &&
+      deliveryState.fileRejectionsByBytes.get(fileBytes) === true
+    ) {
       return this.buildPlaceholder(part, UNDELIVERED_FILE_REASON.rejected);
     }
 
@@ -718,14 +700,10 @@ export class AgentFilePartService {
         return null;
       }
 
-      const bytes = await streamToBuffer(
+      return await streamToBuffer(
         fileContent.stream,
         deliveryState.limits.maxFileSizeBytes,
       );
-
-      deliveryState.fileIdsByBytes.set(bytes, file.id);
-
-      return bytes;
     } catch (error) {
       this.logger.warn(`Could not read file ${file.id} for the model`, error);
 
