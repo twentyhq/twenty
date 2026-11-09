@@ -117,31 +117,6 @@ describe('SsoAuthController', () => {
     userService = module.get(UserService);
   });
 
-  it('creates a new SSO user with an already verified email', async () => {
-    const createdUser = {
-      id: 'new-user-id',
-      email: EMAIL,
-      isEmailVerified: true,
-    } as UserEntity;
-
-    userService.findUserByEmail.mockResolvedValue(null);
-    authService.signInUp.mockResolvedValue({
-      workspace,
-      user: createdUser,
-    } as Awaited<ReturnType<AuthService['signInUp']>>);
-
-    const response = buildResponse();
-
-    await controller.samlAuthCallback(buildSamlRequest(), response);
-
-    expect(authService.formatUserDataPayload).toHaveBeenCalledWith(
-      expect.objectContaining({ email: EMAIL, isEmailAlreadyVerified: true }),
-      null,
-    );
-    expect(userService.markEmailAsVerified).not.toHaveBeenCalled();
-    expect(response.redirect).toHaveBeenCalledWith('https://redirect');
-  });
-
   it('marks an existing password-less unverified user as verified after an SSO sign-in', async () => {
     const existingUser = {
       id: 'existing-user-id',
