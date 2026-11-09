@@ -302,7 +302,7 @@ export class TwoFactorAuthenticationService {
       await this.revokeRecoveryCodes({
         workspaceId,
         userId,
-        includeRedeemed: true,
+        shouldIncludeRedeemed: true,
         entityManager,
       });
     });
@@ -317,12 +317,12 @@ export class TwoFactorAuthenticationService {
   async revokeRecoveryCodes({
     workspaceId,
     userId,
-    includeRedeemed = false,
+    shouldIncludeRedeemed = false,
     entityManager,
   }: {
     workspaceId: WorkspaceEntity['id'];
     userId: UserEntity['id'];
-    includeRedeemed?: boolean;
+    shouldIncludeRedeemed?: boolean;
     entityManager?: EntityManager;
   }): Promise<number> {
     return revokeTwoFactorAuthenticationAppTokens({
@@ -331,7 +331,7 @@ export class TwoFactorAuthenticationService {
       userId,
       workspaceId,
       type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
-      includeRedeemed,
+      shouldIncludeRedeemed,
     });
   }
 

@@ -12,7 +12,7 @@ export const revokeTwoFactorAuthenticationAppTokens = async ({
   userId,
   workspaceId,
   type,
-  includeRedeemed = false,
+  shouldIncludeRedeemed = false,
 }: {
   appTokenRepository: Repository<AppTokenEntity>;
   userId: UserEntity['id'];
@@ -20,7 +20,7 @@ export const revokeTwoFactorAuthenticationAppTokens = async ({
   type:
     | AppTokenType.TwoFactorAuthenticationRecoveryCode
     | AppTokenType.TwoFactorAuthenticationBackupCode;
-  includeRedeemed?: boolean;
+  shouldIncludeRedeemed?: boolean;
 }): Promise<number> => {
   const updateResult = await appTokenRepository.update(
     {
@@ -28,7 +28,7 @@ export const revokeTwoFactorAuthenticationAppTokens = async ({
       workspaceId,
       type,
       revokedAt: IsNull(),
-      ...(includeRedeemed ? {} : { deletedAt: IsNull() }),
+      ...(shouldIncludeRedeemed ? {} : { deletedAt: IsNull() }),
     },
     { revokedAt: new Date() },
   );
