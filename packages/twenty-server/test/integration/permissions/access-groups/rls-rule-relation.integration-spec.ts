@@ -274,16 +274,15 @@ describe('RLS rules through a relation (integration)', () => {
     personObjectMetadataId = await findObjectMetadataId('person');
     companyObjectMetadataId = await findObjectMetadataId('company');
 
-    [person] = await global.testDataSource.query(
-      `SELECT "id", "jobTitle", "companyId" FROM ${PERSON_TABLE} WHERE "deletedAt" IS NULL AND "companyId" IS NOT NULL ORDER BY "id" LIMIT 1`,
+    [company, otherCompany] = await global.testDataSource.query(
+      `SELECT "id", "name", "employees" FROM ${COMPANY_TABLE} WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 2`,
     );
-    [company] = await global.testDataSource.query(
-      `SELECT "id", "name", "employees" FROM ${COMPANY_TABLE} WHERE "id" = $1`,
-      [person.companyId],
-    );
-    [otherCompany] = await global.testDataSource.query(
-      `SELECT "id" FROM ${COMPANY_TABLE} WHERE "deletedAt" IS NULL AND "id" <> $1 ORDER BY "id" LIMIT 1`,
-      [person.companyId],
+
+    // Earlier specs in the shard can delete the seeded people
+    person = { id: v4(), jobTitle: '', companyId: company.id };
+    await global.testDataSource.query(
+      `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle", "companyId") VALUES ($1, $2, $3)`,
+      [person.id, person.jobTitle, person.companyId],
     );
 
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
@@ -325,6 +324,10 @@ describe('RLS rules through a relation (integration)', () => {
 
   afterAll(async () => {
     await setFeatureFlags(false);
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
+      [person.id],
+    );
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
     );
