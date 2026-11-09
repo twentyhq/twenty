@@ -61,7 +61,7 @@ const computeUniversalFlatEntityPropertiesToCompareAndStringify = <
       );
     }
 
-    if (configuration.toStringify === true) {
+    if (configuration.toStringify) {
       accumulator.propertiesToStringify.push(
         universalProperty as MetadataUniversalFlatEntityPropertiesToStringify<T>,
       );

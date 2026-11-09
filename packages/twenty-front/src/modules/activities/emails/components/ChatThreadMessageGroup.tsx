@@ -4,6 +4,7 @@ import Linkify from 'linkify-react';
 import { Fragment } from 'react';
 
 import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
+import { ChatThreadMessageTime } from '@/activities/emails/components/ChatThreadMessageTime';
 import { StyledChatMessageBubble } from '@/activities/emails/components/StyledChatMessageBubble';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
@@ -81,6 +82,9 @@ export const ChatThreadMessageGroup = ({
                 >
                   {message.text}
                 </Linkify>
+                {isNonEmptyString(message.receivedAt) && (
+                  <ChatThreadMessageTime receivedAt={message.receivedAt} />
+                )}
               </StyledChatMessageBubble>
             )}
             {files.map((file) => (

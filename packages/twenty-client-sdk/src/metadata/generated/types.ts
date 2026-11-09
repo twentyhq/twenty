@@ -11369,6 +11369,9 @@ export default {
                     "shouldIncludeDependencies": [
                         4
                     ],
+                    "shouldIncludeSourceFiles": [
+                        4
+                    ],
                     "universalIdentifier": [
                         548,
                         "UUID!"
