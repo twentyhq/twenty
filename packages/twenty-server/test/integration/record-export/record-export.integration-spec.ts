@@ -304,10 +304,13 @@ describe('record export lifecycle (integration)', () => {
   }, 60_000);
 
   afterEach(async () => {
-    for (const connection of connections.splice(0)) connection.dispose();
+    for (const connection of connections.splice(0)) {
+      connection.dispose();
+    }
     jest.restoreAllMocks();
-    for (const id of exportIds)
+    for (const id of exportIds) {
       await exports.cancel({ workspaceId: SEED_APPLE_WORKSPACE_ID, id });
+    }
     exportIds.clear();
     downloadTokens.clear();
     const sessions =

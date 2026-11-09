@@ -60,7 +60,9 @@ export const UnmatchColumn = ({
 
   const allMatched = column.type === SpreadsheetColumnType.matchedSelectOptions;
 
-  if (!isSelect) return null;
+  if (!isSelect) {
+    return null;
+  }
 
   return (
     <Collapsible.Root render={<StyledContainer />}>

@@ -40,7 +40,7 @@ export const useActivityLinkConfig = ({
   );
   const canLinkActivities = canReachSomeRecords({
     objectRecordsPermissions: junctionObjectPermissions,
-    operationType: 'update',
+    operationType: 'create',
   });
 
   const companyRelationField = objectMetadataItem.fields.find(

@@ -202,13 +202,17 @@ export const SettingsAdminQueueJobsTable = ({
   };
 
   const formatTimestampRelative = (timestamp?: number | null) => {
-    if (!timestamp) return '-';
+    if (!timestamp) {
+      return '-';
+    }
 
     return beautifyPastDateRelativeToNow(timestamp);
   };
 
   const formatTimestampFull = (timestamp?: number | null) => {
-    if (!timestamp) return '';
+    if (!timestamp) {
+      return '';
+    }
 
     return new Date(timestamp).toLocaleString();
   };

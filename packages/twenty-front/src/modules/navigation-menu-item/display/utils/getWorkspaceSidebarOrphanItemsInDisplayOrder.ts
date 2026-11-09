@@ -79,7 +79,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
             objectPermissionsByObjectMetadataId,
             objectMetadataItem.id,
           ),
-          operationType: 'select',
+          operationType: 'read',
         })
       ) {
         acc.push(rowSource);

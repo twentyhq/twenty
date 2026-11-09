@@ -10,6 +10,7 @@ import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager
 import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { WORKSPACE_CREATION_ONLY_WIDGET_TYPES } from 'src/engine/workspace-manager/twenty-standard-application/constants/workspace-creation-only-widget-types.constant';
 import { getStandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
+import { buildStandardFlatFieldMetadataOptionMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata-option/build-standard-flat-field-metadata-option-maps.util';
 import { buildStandardFlatIndexMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util';
 import { buildStandardFlatCommandMenuItemMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/build-standard-flat-command-menu-item-maps.util';
 import { buildStandardFlatNavigationMenuItemMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/build-standard-flat-navigation-menu-item-maps.util';
@@ -70,6 +71,13 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       flatObjectMetadataMaps,
     },
     twentyStandardApplicationId,
+  });
+
+  const flatFieldMetadataOptionMaps = buildStandardFlatFieldMetadataOptionMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps: { flatFieldMetadataMaps },
   });
 
   const flatIndexMaps = buildStandardFlatIndexMetadataMaps({
@@ -297,6 +305,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatIndexMaps,
     flatSearchFieldMetadataMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps,
     flatNavigationMenuItemMaps,
     flatPermissionFlagMaps,

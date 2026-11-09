@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { convertToModelMessages, hasToolCall } from 'ai';
 import {
+  AgentChatThreadConversationType,
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
@@ -58,7 +59,7 @@ import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/
 import { splitContextInstructions } from 'src/engine/metadata-modules/ai/ai-chat/utils/split-context-instructions.util';
 import { tagAiChatExecutionScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-execution-scope.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
-import { AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-chat-thread-conversation-type.enum';
+
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -96,6 +97,7 @@ type ChatExecutionResult = Pick<
 };
 
 type ChatExecutionProfile = {
+  assistantDisplayName: string | undefined;
   toolset: Parameters<AgentTurnService['start']>[0]['toolset'] & {
     isWorkspaceSetupThread: boolean;
   };
@@ -189,7 +191,7 @@ export class ChatExecutionService {
 
     const executionProfile = await this.buildExecutionProfile({
       thread,
-      workspaceId: workspace.id,
+      workspace,
       userWorkspaceId,
       messages,
       browsingContext,
@@ -251,6 +253,7 @@ export class ChatExecutionService {
 
         return {
           systemPrompt: buildFullSystemPrompt({
+            assistantDisplayName: executionProfile.assistantDisplayName,
             toolCatalog: toolset.toolCatalog,
             ...skillContext,
             preloadedTools: toolset.directToolNames,
@@ -309,23 +312,33 @@ export class ChatExecutionService {
 
   private async buildExecutionProfile({
     thread,
-    workspaceId,
+    workspace,
     userWorkspaceId,
     messages,
     browsingContext,
     toolContext,
   }: {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'conversationType'>;
-    workspaceId: string;
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>;
     userWorkspaceId: string;
     messages: ExtendedUIMessage[];
     browsingContext: BrowsingContextType | null;
     toolContext: ToolContext;
   }): Promise<ChatExecutionProfile> {
+    const workspaceId = workspace.id;
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      workspaceId,
+    );
+    const assistantDisplayName = isAiChatInboxEnabled
+      ? workspace.aiChatAssistantProfile.displayName
+      : undefined;
+
     if (
       thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
     ) {
       return {
+        assistantDisplayName,
         toolset: {
           registryAccess: { type: 'none' },
           nativeToolOptions: { webSearch: false, twitterSearch: false },
@@ -349,10 +362,6 @@ export class ChatExecutionService {
       !hasSucceededWorkspaceSetupCompletion(messages);
     const isWorkspaceSetupKickoffTurn =
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
-    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-      workspaceId,
-    );
     const canAttachConversationToRecords =
       !isWorkspaceSetupConversation && isAiChatInboxEnabled;
     const latestUserMessage = [...messages]
@@ -360,6 +369,7 @@ export class ChatExecutionService {
       .find((message) => message.role === AgentMessageRole.USER);
 
     return {
+      assistantDisplayName,
       toolset: {
         registryAccess: {
           type: 'assistant',

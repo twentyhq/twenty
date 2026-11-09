@@ -7,8 +7,9 @@ export const isEventInTimeRange = (
   windowStart: Date,
   windowEnd: Date,
 ): boolean => {
-  if (!isNonEmptyString(event.startsAt) || !isNonEmptyString(event.endsAt))
+  if (!isNonEmptyString(event.startsAt) || !isNonEmptyString(event.endsAt)) {
     return false;
+  }
 
   const eventStart = new Date(event.startsAt);
   const eventEnd = new Date(event.endsAt);

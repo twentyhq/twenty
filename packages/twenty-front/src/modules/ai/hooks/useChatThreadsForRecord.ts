@@ -40,6 +40,9 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   thread: {
     id: true,
     title: true,
+    conversationType: true,
+    directMessageFirstWorkspaceMemberId: true,
+    directMessageSecondWorkspaceMemberId: true,
     deletedAt: true,
     createdAt: true,
     updatedAt: true,
@@ -128,7 +131,7 @@ export const useChatThreadsForRecord = ({
   );
   const canReadSomeRecords = canReachSomeRecords({
     objectRecordsPermissions: junctionObjectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const { threads, refetchLimit } = getChatThreadsForRecordPage({

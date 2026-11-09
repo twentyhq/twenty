@@ -108,6 +108,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
         isAuditLogged: true,
         fieldPermissionUniversalIdentifiers: [],
         viewSortUniversalIdentifiers: [],
+        fieldMetadataOptionUniversalIdentifiers: [],
         searchFieldMetadataUniversalIdentifiers: [],
         isLabelSyncedWithName: false,
         isSystem: false,

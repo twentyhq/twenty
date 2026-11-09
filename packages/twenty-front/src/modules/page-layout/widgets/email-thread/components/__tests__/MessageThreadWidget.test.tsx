@@ -8,6 +8,8 @@ import { MessageChannelType } from '~/generated/graphql';
 
 const mockUseMessageThreadChannel = jest.fn();
 const mockUseEmailThread = jest.fn();
+const mockUseSubscribeToMessageThreadMessages = jest.fn();
+const mockRefetchMessages = jest.fn();
 
 jest.mock('@/ui/layout/contexts/useTargetRecord', () => ({
   useTargetRecord: () => ({ id: 'thread-id' }),
@@ -20,6 +22,15 @@ jest.mock('@/activities/emails/hooks/useEmailThread', () => ({
 jest.mock('@/activities/emails/hooks/useMessageThreadChannel', () => ({
   useMessageThreadChannel: () => mockUseMessageThreadChannel(),
 }));
+
+jest.mock(
+  '@/activities/emails/hooks/useSubscribeToMessageThreadMessages',
+  () => ({
+    useSubscribeToMessageThreadMessages: (
+      ...args: Parameters<typeof mockUseSubscribeToMessageThreadMessages>
+    ) => mockUseSubscribeToMessageThreadMessages(...args),
+  }),
+);
 
 jest.mock(
   '@/page-layout/widgets/email-thread/components/ChatThreadWidgetContent',
@@ -43,6 +54,7 @@ const mockThread = ({ threadLoading = false } = {}) =>
     thread: { id: 'thread-id' },
     messages: [{ id: 'message-id' }],
     fetchMoreMessages: jest.fn(),
+    refetchMessages: mockRefetchMessages,
     threadLoading,
   });
 
@@ -54,6 +66,7 @@ const mockChannel = (type: MessageChannelType) =>
 
 describe('MessageThreadWidget', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     mockThread();
   });
 
@@ -63,6 +76,19 @@ describe('MessageThreadWidget', () => {
     renderWidget();
 
     expect(screen.getByText('Chat thread')).toBeInTheDocument();
+  });
+
+  it('subscribes to new messages of the thread', () => {
+    mockChannel(MessageChannelType.APP);
+
+    renderWidget();
+
+    expect(mockUseSubscribeToMessageThreadMessages).toHaveBeenCalledTimes(1);
+    expect(mockUseSubscribeToMessageThreadMessages).toHaveBeenCalledWith({
+      messageThreadId: 'thread-id',
+      loadedMessageCount: 1,
+      refetchMessages: mockRefetchMessages,
+    });
   });
 
   it.each([MessageChannelType.EMAIL, MessageChannelType.SMS])(

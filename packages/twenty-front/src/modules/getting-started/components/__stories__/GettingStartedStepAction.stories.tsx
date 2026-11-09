@@ -83,3 +83,49 @@ export const Import: Story = {
     );
   },
 };
+
+export const DataModelPrompt: Story = {
+  args: {
+    stepDefinition: {
+      ...getMockStepDefinition(GettingStartedStepActionKey.FOLLOW_UP_DEALS),
+      actionKey: GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
+      promptLabel: 'Setup instructions',
+      prompt:
+        'Look at the data I imported and suggest the objects, fields and views I need to run my business. Ask me what I want to track before creating anything.',
+    },
+  },
+  decorators: [ToastDecorator],
+  beforeEach: () => {
+    jotaiStore.set(aiModelsState.atom, [
+      { modelId: 'story-model', label: 'Story model' },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('group', { name: 'Setup instructions' }),
+    ).toBeVisible();
+  },
+};
+
+export const FollowUpPrompt: Story = {
+  args: {
+    stepDefinition: getMockStepDefinition(
+      GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+    ),
+  },
+  decorators: [ToastDecorator],
+  beforeEach: () => {
+    jotaiStore.set(aiModelsState.atom, [
+      { modelId: 'story-model', label: 'Story model' },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('group', { name: 'Follow-up instructions' }),
+    ).toBeVisible();
+  },
+};

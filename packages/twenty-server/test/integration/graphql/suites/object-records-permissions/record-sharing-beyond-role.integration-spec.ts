@@ -262,7 +262,7 @@ describe('Records shared beyond the role that can access their object', () => {
     }
 
     const buildJonyPrincipals = async () =>
-      principalPermissionsService.buildPermissionsPrincipals({
+      principalPermissionsService.resolvePermissionsPrincipals({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId,
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -270,8 +270,8 @@ describe('Records shared beyond the role that can access their object', () => {
       });
 
     expect(
-      await recordPermissionsService.hasAccessToSomeRecords({
-        operationType: 'select',
+      await recordPermissionsService.canAccessSomeRecords({
+        operationType: 'read',
         principals: await buildJonyPrincipals(),
         objectMetadataId: flatObjectMetadata.id,
       }),
@@ -282,35 +282,38 @@ describe('Records shared beyond the role that can access their object', () => {
     const principals = await buildJonyPrincipals();
 
     expect(
-      await recordPermissionsService.hasAccessToSomeRecords({
-        operationType: 'select',
+      await recordPermissionsService.canAccessSomeRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(true);
     expect(
-      await recordPermissionsService.hasAccessToSomeRecords({
+      await recordPermissionsService.canAccessSomeRecords({
         operationType: 'update',
         principals,
         objectMetadataId: flatObjectMetadata.id,
       }),
     ).toBe(false);
     expect(
-      await recordPermissionsService.canReadRecords({
+      await recordPermissionsService.canAccessKnownRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [OTHER_RECORD_ID],
       }),
     ).toBe(false);
     expect(
-      await recordPermissionsService.canReadRecords({
+      await recordPermissionsService.canAccessKnownRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID],
       }),
     ).toBe(true);
     expect(
-      await recordPermissionsService.canReadRecords({
+      await recordPermissionsService.canAccessKnownRecords({
+        operationType: 'read',
         principals,
         objectMetadataId: flatObjectMetadata.id,
         recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
@@ -520,32 +523,35 @@ describe('Records shared beyond the role that can access their object', () => {
         throw new Error('Test object metadata is missing');
       }
 
-      return getAppProviderByClassName<RecordEventPermissionsService>(
-        'RecordEventPermissionsService',
-      ).findReadableEventRecordIds({
-        authContext: await resolveWorkspaceMemberAuthContext({
-          workspaceId,
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        }),
-        eventBatch: {
-          name: `${OBJECT_NAME}.updated`,
-          workspaceId,
-          objectMetadata,
-          events: [SHARED_RECORD_ID, OTHER_RECORD_ID].map((recordId) => ({
-            recordId,
-            properties: { after: { id: recordId } },
-          })) as ObjectRecordEvent[],
-        },
-      });
+      const readableEvents =
+        await getAppProviderByClassName<RecordEventPermissionsService>(
+          'RecordEventPermissionsService',
+        ).filterReadableEvents({
+          authContext: await resolveWorkspaceMemberAuthContext({
+            workspaceId,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          }),
+          eventBatch: {
+            name: `${OBJECT_NAME}.updated`,
+            workspaceId,
+            objectMetadata,
+            events: [SHARED_RECORD_ID, OTHER_RECORD_ID].map((recordId) => ({
+              recordId,
+              properties: { after: { id: recordId } },
+            })) as ObjectRecordEvent[],
+          },
+        });
+
+      return readableEvents.map(({ recordId }) => recordId);
     };
 
     expect((await findIdsAsJony()).ids).toEqual([]);
-    expect([...(await resolveReadableRecordIds())]).toEqual([]);
+    expect(await resolveReadableRecordIds()).toEqual([]);
 
     await setShare({ principal: JONY });
 
     expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
-    expect([...(await resolveReadableRecordIds())]).toEqual([SHARED_RECORD_ID]);
+    expect(await resolveReadableRecordIds()).toEqual([SHARED_RECORD_ID]);
   });
 
   it('should keep grants within the role while the flag is off', async () => {

@@ -3,7 +3,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type ObjectRecordsPermissions,
-  type RestrictedFieldsPermissions,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
 } from 'twenty-shared/types';
@@ -13,7 +12,6 @@ import { type FieldPermissionEntity } from 'src/engine/metadata-modules/object-p
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
@@ -28,6 +26,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
   | 'canUpdateAllObjectRecords'
   | 'canSoftDeleteAllObjectRecords'
   | 'canDestroyAllObjectRecords'
+  | 'canCreateAllObjectRecords'
 > & {
   isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
   // an AI run scope leaves system objects readable but not writable unless it grants them
@@ -35,6 +34,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
   objectPermissions: Pick<
     ObjectPermissionEntity,
     | 'objectMetadataId'
+    | 'canCreateObjectRecords'
     | 'canReadObjectRecords'
     | 'canUpdateObjectRecords'
     | 'canSoftDeleteObjectRecords'
@@ -44,6 +44,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
     FieldPermissionEntity,
     | 'objectMetadataId'
     | 'fieldMetadataId'
+    | 'rowLevelPermissionPredicateGroupId'
     | 'canReadFieldValue'
     | 'canUpdateFieldValue'
   >[];
@@ -52,6 +53,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
 };
 
 type ObjectRecordsAccess = {
+  canCreate: boolean;
   canRead: boolean;
   canUpdate: boolean;
   canSoftDelete: boolean;
@@ -61,6 +63,7 @@ type ObjectRecordsAccess = {
 const grantAllObjectRecordsAccess = (
   isGranted: boolean,
 ): ObjectRecordsAccess => ({
+  canCreate: isGranted,
   canRead: isGranted,
   canUpdate: isGranted,
   canSoftDelete: isGranted,
@@ -106,6 +109,11 @@ const resolveObjectRecordsAccess = ({
   );
 
   return {
+    canCreate: resolveObjectPermissionValue({
+      objectValue: objectPermissionOverride?.canCreateObjectRecords,
+      hasAllObjectsPermission: roleDefinition.canCreateAllObjectRecords,
+      isSystemObject: isSystemObjectWritableByDefault,
+    }),
     canRead: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canReadObjectRecords,
       hasAllObjectsPermission: roleDefinition.canReadAllObjectRecords,
@@ -129,89 +137,85 @@ const resolveObjectRecordsAccess = ({
   };
 };
 
-const buildRestrictedFields = ({
+const buildUnreadableAndUneditableFields = ({
   objectMetadata,
   fieldPermissions,
   resolveMorphRelationPermissionFieldIds,
 }: {
-  objectMetadata: Pick<
-    ObjectMetadataEntity,
-    'id' | 'labelIdentifierFieldMetadataId'
-  >;
+  objectMetadata: Pick<ObjectMetadataEntity, 'labelIdentifierFieldMetadataId'>;
   fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
-}): RestrictedFieldsPermissions => {
-  const restrictedFields: RestrictedFieldsPermissions = {};
+}): { unreadableFields: string[]; uneditableFields: string[] } => {
+  const unreadableFields = new Set<string>();
+  const uneditableFields = new Set<string>();
 
   for (const fieldPermission of fieldPermissions) {
-    if (fieldPermission.objectMetadataId !== objectMetadata.id) {
-      continue;
-    }
-
-    if (
-      !isDefined(fieldPermission.canReadFieldValue) &&
-      !isDefined(fieldPermission.canUpdateFieldValue)
-    ) {
-      continue;
-    }
-
-    const isFieldLabelIdentifier =
-      fieldPermission.fieldMetadataId ===
-      objectMetadata.labelIdentifierFieldMetadataId;
-    const fieldRestriction = {
-      canRead: isFieldLabelIdentifier
-        ? true
-        : fieldPermission.canReadFieldValue,
-      canUpdate: fieldPermission.canUpdateFieldValue,
-    };
+    const isUnreadable =
+      fieldPermission.canReadFieldValue === false &&
+      fieldPermission.fieldMetadataId !==
+        objectMetadata.labelIdentifierFieldMetadataId;
 
     for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
       fieldPermission.fieldMetadataId,
     )) {
-      restrictedFields[restrictedFieldId] = mergeRestrictedFieldPermissions({
-        existing: restrictedFields[restrictedFieldId],
-        incoming: fieldRestriction,
-      });
+      if (isUnreadable) {
+        unreadableFields.add(restrictedFieldId);
+      }
+
+      if (isUnreadable || fieldPermission.canUpdateFieldValue === false) {
+        uneditableFields.add(restrictedFieldId);
+      }
     }
   }
 
-  return restrictedFields;
+  return {
+    unreadableFields: [...unreadableFields],
+    uneditableFields: [...uneditableFields],
+  };
 };
+
+const NO_FIELDS = { unreadableFields: [], uneditableFields: [] };
 
 const buildObjectRecordsPermissions = ({
   objectRecordsAccess,
-  restrictedFields,
+  objectFields,
   predicates,
   predicateGroups,
+  rlsRuleFields,
 }: {
   objectRecordsAccess: ObjectRecordsAccess;
-  restrictedFields: RestrictedFieldsPermissions;
+  objectFields: { unreadableFields: string[]; uneditableFields: string[] };
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
+  rlsRuleFields: { unreadableFields: string[]; uneditableFields: string[] };
 }): ObjectRecordsPermissions => {
   if (predicates.length === 0) {
     return {
+      canCreateAllRecords: objectRecordsAccess.canCreate,
       canReadAllRecords: objectRecordsAccess.canRead,
       canUpdateAllRecords: objectRecordsAccess.canUpdate,
       canSoftDeleteAllRecords: objectRecordsAccess.canSoftDelete,
       canDestroyAllRecords: objectRecordsAccess.canDestroy,
-      restrictedFields,
+      ...objectFields,
     };
   }
 
   return {
+    canCreateAllRecords: false,
     canReadAllRecords: false,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
-    restrictedFields,
+    ...objectFields,
     rowLevelRecordsPermissions: {
+      canCreateRecords: objectRecordsAccess.canCreate,
       canReadRecords: objectRecordsAccess.canRead,
       canUpdateRecords: objectRecordsAccess.canUpdate,
       canSoftDeleteRecords: objectRecordsAccess.canSoftDelete,
       canDestroyRecords: objectRecordsAccess.canDestroy,
       predicates,
       predicateGroups,
+      ...rlsRuleFields,
     },
   };
 };
@@ -247,35 +251,60 @@ export const computeRoleRecordsPermissions = ({
       objectMetadata,
       roleDefinition,
     });
-    const restrictedFields = isWorkflowObject
-      ? {}
-      : buildRestrictedFields({
-          objectMetadata,
-          fieldPermissions,
-          resolveMorphRelationPermissionFieldIds,
-        });
     const hasAiAccess =
       universalIdentifier !==
         STANDARD_OBJECTS.agentChatThread.universalIdentifier ||
       isPermissionFlagGranted(PermissionFlagType.AI);
 
+    const predicateGroups = rowLevelPermissionPredicateGroups.filter(
+      (rowLevelPermissionPredicateGroup) =>
+        rowLevelPermissionPredicateGroup.objectMetadataId === objectMetadataId,
+    );
+
+    const rootPredicateGroupIds = new Set(
+      predicateGroups
+        .filter(
+          ({ parentRowLevelPermissionPredicateGroupId }) =>
+            !isDefined(parentRowLevelPermissionPredicateGroupId),
+        )
+        .map(({ id }) => id),
+    );
+
     objects[objectMetadataId] = buildObjectRecordsPermissions({
+      objectFields: isWorkflowObject
+        ? NO_FIELDS
+        : buildUnreadableAndUneditableFields({
+            objectMetadata,
+            fieldPermissions: fieldPermissions.filter(
+              (fieldPermission) =>
+                fieldPermission.objectMetadataId === objectMetadataId &&
+                !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId),
+            ),
+            resolveMorphRelationPermissionFieldIds,
+          }),
       objectRecordsAccess: {
+        canCreate: objectRecordsAccess.canCreate && hasAiAccess,
         canRead: objectRecordsAccess.canRead && hasAiAccess,
         canUpdate: objectRecordsAccess.canUpdate && hasAiAccess,
         canSoftDelete: objectRecordsAccess.canSoftDelete && hasAiAccess,
         canDestroy: objectRecordsAccess.canDestroy && hasAiAccess,
       },
-      restrictedFields,
       predicates: rowLevelPermissionPredicates.filter(
         (rowLevelPermissionPredicate) =>
           rowLevelPermissionPredicate.objectMetadataId === objectMetadataId,
       ),
-      predicateGroups: rowLevelPermissionPredicateGroups.filter(
-        (rowLevelPermissionPredicateGroup) =>
-          rowLevelPermissionPredicateGroup.objectMetadataId ===
-          objectMetadataId,
-      ),
+      predicateGroups,
+      rlsRuleFields: isWorkflowObject
+        ? NO_FIELDS
+        : buildUnreadableAndUneditableFields({
+            objectMetadata,
+            fieldPermissions: fieldPermissions.filter(
+              ({ rowLevelPermissionPredicateGroupId }) =>
+                isDefined(rowLevelPermissionPredicateGroupId) &&
+                rootPredicateGroupIds.has(rowLevelPermissionPredicateGroupId),
+            ),
+            resolveMorphRelationPermissionFieldIds,
+          }),
     });
   }
 

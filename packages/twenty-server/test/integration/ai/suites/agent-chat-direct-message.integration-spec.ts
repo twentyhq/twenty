@@ -10,7 +10,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
-import { type RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { type RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -52,6 +52,12 @@ describe('Private text direct messages', () => {
        UNION ALL SELECT id, "_isPrivate" FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1
        UNION ALL SELECT part.id, part."_isPrivate" FROM "${context.schema}"."agentMessagePart" part
          JOIN "${context.schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1`,
+      [threadId],
+    );
+
+  const softDeleteThread = (threadId: string) =>
+    global.testDataSource.query(
+      `UPDATE "${context.schema}"."agentChatThread" SET "deletedAt" = CURRENT_TIMESTAMP WHERE id = $1`,
       [threadId],
     );
 
@@ -109,7 +115,7 @@ describe('Private text direct messages', () => {
     return threadId;
   };
 
-  it('reopens one pair and persists private pair-shared messages in both directions without running Ada', async () => {
+  it('reuses one private pair and restores it on reply or reopen without running Ada', async () => {
     const threadId = await openDirectMessage();
 
     expect(
@@ -126,6 +132,9 @@ describe('Private text direct messages', () => {
         WORKSPACE_MEMBER_DATA_SEED_IDS.JONY.toUpperCase(),
       ],
     });
+
+    await softDeleteThread(threadId);
+
     const reply = await sendChatParticipationMessage({
       threadId,
       text: 'Hello Jane',
@@ -157,6 +166,7 @@ describe('Private text direct messages', () => {
       ]),
     );
     expect(await context.readThread(threadId)).toMatchObject({
+      deletedAt: null,
       isAssistantParticipant: false,
       activeStreamId: null,
     });
@@ -177,6 +187,13 @@ describe('Private text direct messages', () => {
         ].sort(),
       );
     }
+
+    await softDeleteThread(threadId);
+
+    expect(await openDirectMessage()).toBe(threadId);
+    expect(await context.readThread(threadId)).toMatchObject({
+      deletedAt: null,
+    });
   });
 
   it('replaces streamed parts and removes their grants when the assistant message is deleted', async () => {
@@ -249,17 +266,17 @@ describe('Private text direct messages', () => {
       status: AgentTurnStatus.COMPLETED,
     });
     const recordsBefore = await readContentRecords(threadId);
-    const recordSharingWriteService =
-      getAppProviderByClassName<RecordSharingWriteService>(
-        'RecordSharingWriteService',
+    const recordShareSystemWriteService =
+      getAppProviderByClassName<RecordShareSystemWriteService>(
+        'RecordShareSystemWriteService',
       );
     const sharingFailure = new Error('Part sharing failed');
     const insertRecordShares =
-      recordSharingWriteService.insertRecordShares.bind(
-        recordSharingWriteService,
+      recordShareSystemWriteService.insertRecordShares.bind(
+        recordShareSystemWriteService,
       );
     const insertShares = jest
-      .spyOn(recordSharingWriteService, 'insertRecordShares')
+      .spyOn(recordShareSystemWriteService, 'insertRecordShares')
       .mockImplementationOnce(insertRecordShares)
       .mockRejectedValueOnce(sharingFailure);
     const messageId = randomUUID();

@@ -32,10 +32,7 @@ export const resolveWorkspaceMemberPredicateValue = ({
   workspaceMemberFieldMetadata,
   workspaceMemberSubFieldName,
 }: ResolveWorkspaceMemberPredicateValueArgs): RowLevelPermissionPredicateValue | null => {
-  const workspaceMemberValues = workspaceMember as unknown as Record<
-    string,
-    unknown
-  >;
+  const workspaceMemberValues: Record<string, unknown> = workspaceMember;
 
   if (isMorphOrRelationFlatFieldMetadata(workspaceMemberFieldMetadata)) {
     if (!isOwningRelationFlatFieldMetadata(workspaceMemberFieldMetadata)) {

@@ -15,7 +15,11 @@ type SettingsAiAssistantAvatarMenuPageProps = {
   attribute: 'avatarShape' | 'avatarColor' | 'avatarFace';
   title: string;
   value: AiChatAssistantProfile;
-  onChange: (value: AiChatAssistantProfile) => void;
+  onChange: (
+    value: Partial<
+      Pick<AiChatAssistantProfile, 'avatarShape' | 'avatarColor' | 'avatarFace'>
+    >,
+  ) => void;
   disabled: boolean;
 };
 
@@ -32,16 +36,19 @@ export const SettingsAiAssistantAvatarMenuPage = ({
       key: shape,
       label: t(SETTINGS_AI_ASSISTANT_SHAPE_LABELS[shape]),
       profile: { ...value, avatarShape: shape },
+      patch: { avatarShape: shape },
     })),
     avatarColor: AI_CHAT_ASSISTANT_AVATAR_COLORS.map((color) => ({
       key: color,
       label: t(SETTINGS_AI_ASSISTANT_COLOR_LABELS[color]),
       profile: { ...value, avatarColor: color },
+      patch: { avatarColor: color },
     })),
     avatarFace: AI_CHAT_ASSISTANT_AVATAR_FACES.map((face) => ({
       key: face,
       label: t(SETTINGS_AI_ASSISTANT_FACE_LABELS[face]),
       profile: { ...value, avatarFace: face },
+      patch: { avatarFace: face },
     })),
   };
 
@@ -57,7 +64,7 @@ export const SettingsAiAssistantAvatarMenuPage = ({
             selected={value[attribute] === option.key}
             disabled={disabled}
             closeOnSelect={false}
-            onSelect={() => onChange(option.profile)}
+            onSelect={() => onChange(option.patch)}
             startIcon={
               <SettingsAiAssistantAvatarOptionPreview
                 value={option.profile}

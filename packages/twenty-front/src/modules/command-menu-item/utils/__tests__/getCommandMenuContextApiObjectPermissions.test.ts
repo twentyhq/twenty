@@ -23,12 +23,15 @@ describe('getCommandMenuContextApiObjectPermissions', () => {
       getCommandMenuContextApiObjectPermissions({
         objectMetadataId: 'person-object-metadata-id',
         objectRecordsPermissions: {
+          canCreateAllRecords: false,
           canReadAllRecords: false,
           canUpdateAllRecords: false,
           canSoftDeleteAllRecords: false,
           canDestroyAllRecords: false,
-          restrictedFields: {},
+          unreadableFields: [],
+          uneditableFields: [],
           rowLevelRecordsPermissions: {
+            canCreateRecords: false,
             canReadRecords: true,
             canUpdateRecords: true,
             canSoftDeleteRecords: false,
@@ -40,11 +43,13 @@ describe('getCommandMenuContextApiObjectPermissions', () => {
       }),
     ).toEqual({
       objectMetadataId: 'person-object-metadata-id',
+      canCreateObjectRecords: false,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
-      restrictedFields: {},
+      unreadableFields: [],
+      uneditableFields: [],
       rowLevelPermissionPredicates: [ROW_LEVEL_PERMISSION_PREDICATE],
       rowLevelPermissionPredicateGroups: [],
     });

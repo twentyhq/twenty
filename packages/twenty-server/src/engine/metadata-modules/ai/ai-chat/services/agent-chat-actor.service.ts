@@ -4,8 +4,9 @@ import {
 } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { Injectable } from '@nestjs/common';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -168,7 +169,9 @@ export class AgentChatActorService {
 
   // a member with no role left cannot act in the chat nor run the calls they approve
   async hasRole(authContext: WorkspaceAuthContext): Promise<boolean> {
-    return this.rolePermissionsService.hasAnyRole({ authContext });
+    return isNonEmptyArray(
+      await this.rolePermissionsService.findRoleIds({ authContext }),
+    );
   }
 
   // resolved from the application context of the turn that made the call

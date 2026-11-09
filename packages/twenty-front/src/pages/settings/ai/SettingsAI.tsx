@@ -1,5 +1,6 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { getSettingsAiTabs } from '@/settings/ai/utils/getSettingsAiTabs';
+import { SettingsAiWorkspaceAssistantSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceAssistantSection';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -69,6 +70,7 @@ export const SettingsAI = () => {
     return (
       <SettingsAiOverview
         secondaryBar={secondaryBar}
+        avatarSection={<SettingsAiWorkspaceAssistantSection />}
         behaviorSection={<SettingsAiWorkspaceBehaviorSection />}
         mcpSection={<SettingsAiMcpSection />}
         workspaceInstructionsSection={

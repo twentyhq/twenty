@@ -9,6 +9,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "defaultValue": null,
   "description": "default flat field metadata description",
   "disabledFieldPermissionActions": null,
+  "fieldMetadataOptionUniversalIdentifiers": [],
   "fieldPermissionUniversalIdentifiers": [],
   "icon": "icon",
   "isActive": true,

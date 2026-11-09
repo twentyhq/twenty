@@ -21,12 +21,12 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class PrincipalPermissionsService {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
-  async buildPermissionsPrincipalsOrThrow({
+  async resolvePermissionsPrincipalsOrThrow({
     authContext,
   }: {
     authContext: PermissionsAuthContext;
   }): Promise<PermissionsPrincipalsWithRolesContext> {
-    const principals = await this.buildPermissionsPrincipals({ authContext });
+    const principals = await this.resolvePermissionsPrincipals({ authContext });
 
     if (!isDefined(principals)) {
       throw new PermissionsException(
@@ -38,7 +38,7 @@ export class PrincipalPermissionsService {
     return principals;
   }
 
-  async buildUserWorkspacePermissionsPrincipalsOrThrow({
+  async resolveUserWorkspacePermissionsPrincipalsOrThrow({
     workspaceId,
     userWorkspaceId,
   }: {
@@ -62,7 +62,7 @@ export class PrincipalPermissionsService {
     });
   }
 
-  async buildPermissionsPrincipals({
+  async resolvePermissionsPrincipals({
     authContext,
   }: {
     authContext: PermissionsAuthContext;
