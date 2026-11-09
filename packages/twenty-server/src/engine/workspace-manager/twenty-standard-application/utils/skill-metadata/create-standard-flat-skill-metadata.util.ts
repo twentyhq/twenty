@@ -44,6 +44,18 @@ You help users create and manage automation workflows.
 - **Data flow**: Use {{stepId.fieldName}} to reference previous step outputs
 - **Relationships**: Use nested objects like {"company": {"id": "{{reference}}"}}
 
+## Attaching Activities to Records (Target Objects)
+
+Emails, calendar events, notes and tasks are not linked to companies, people or opportunities by a foreign key on the activity itself — each attachment is its own join record:
+
+- Email thread → \`messageThreadTarget\` (a \`messageThread\` relation plus a morph relation to the attached record: \`targetCompany\`, \`targetPerson\`, \`targetOpportunity\`, ...)
+- Calendar event → \`calendarEventTarget\` (same pattern, with a \`calendarEvent\` relation)
+- Note → \`noteTarget\`, Task → \`taskTarget\` (same pattern, with \`note\` / \`task\` relations)
+
+To attach an activity in a workflow, use CREATE_RECORD on the target object, e.g. { "objectName": "messageThreadTarget", "objectRecord": { "messageThread": { "id": "..." }, "targetOpportunity": { "id": "..." } } }. One target record attaches to exactly one record; attaching the same thread to several records means one target record each.
+
+To react to an activity being attached, trigger on the target object, e.g. \`messageThreadTarget.created\` — the join record's foreign keys (e.g. \`messageThreadId\`, \`targetCompanyId\`) are available on {{trigger.properties.after}}. Custom objects get their own morph variant (\`target<ObjectName>\`); check the target object's metadata for exact field names.
+
 ## CRON Trigger Settings Schema
 
 For CRON triggers, settings.type must be one of these exact values:
