@@ -2,6 +2,7 @@ import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/u
 import { type BuildChartDrilldownQueryParamsInput } from '@/page-layout/widgets/graph/types/BuildChartDrilldownQueryParamsInput';
 import { buildFilterFromChartBucket } from '@/page-layout/widgets/graph/utils/buildFilterFromChartBucket';
 import { buildFilterQueryParams } from '@/page-layout/widgets/graph/utils/buildFilterQueryParams';
+import { combineChartFilterWithDashboardRecordFilters } from '@/page-layout/widgets/graph/utils/combineChartFilterWithDashboardRecordFilters';
 import { buildSortsFromChartConfig } from '@/page-layout/widgets/graph/utils/buildSortsFromChartConfig';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
@@ -14,25 +15,28 @@ export const buildChartDrilldownQueryParams = ({
   viewId,
   timezone,
   firstDayOfTheWeek,
+  dashboardRecordFilters,
 }: BuildChartDrilldownQueryParamsInput): URLSearchParams => {
   const drilldownQueryParams = new URLSearchParams();
 
-  if (isDefined(configuration.filter)) {
-    const { recordFilters, recordFilterGroups } = sanitizeChartRecordFilters({
-      chartFilters: configuration.filter,
-      fieldMetadataItems: objectMetadataItem.fields,
-    });
+  const chartFilter = isDefined(configuration.filter)
+    ? sanitizeChartRecordFilters({
+        chartFilters: configuration.filter,
+        fieldMetadataItems: objectMetadataItem.fields,
+      })
+    : {};
 
-    const chartFilterParams = buildFilterQueryParams({
-      recordFilters,
-      recordFilterGroups,
-      objectMetadataItem,
-    });
+  const chartFilterParams = buildFilterQueryParams({
+    ...combineChartFilterWithDashboardRecordFilters({
+      chartFilter,
+      dashboardRecordFilters,
+    }),
+    objectMetadataItem,
+  });
 
-    chartFilterParams.forEach((value, key) => {
-      drilldownQueryParams.append(key, value);
-    });
-  }
+  chartFilterParams.forEach((value, key) => {
+    drilldownQueryParams.append(key, value);
+  });
 
   const { groupByFieldMetadataId, dateGranularity, groupBySubFieldName } =
     normalizeChartConfigurationFields(configuration);

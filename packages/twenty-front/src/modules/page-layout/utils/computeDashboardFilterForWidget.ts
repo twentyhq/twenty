@@ -4,6 +4,7 @@ import { type DashboardFilterWidgetConfiguration } from '@/page-layout/types/Das
 import { type DashboardFilterWidgetField } from '@/page-layout/types/DashboardFilterWidgetField';
 import { type WidgetDashboardFilter } from '@/page-layout/types/WidgetDashboardFilter';
 import { getDashboardFilterWidgetCandidateFieldMetadataIds } from '@/page-layout/utils/getDashboardFilterWidgetCandidateFieldMetadataIds';
+import { getWidgetDashboardFilterIndicators } from '@/page-layout/utils/getWidgetDashboardFilterIndicators';
 import { getWidgetDashboardFilterBindings } from '@/page-layout/utils/getWidgetDashboardFilterBindings';
 import { isDashboardFilterDataWidgetConfiguration } from '@/page-layout/utils/isDashboardFilterDataWidgetConfiguration';
 import { type RecordFilterValueDependencies } from 'twenty-shared/types';
@@ -15,7 +16,7 @@ import {
 } from 'twenty-shared/utils';
 
 export const computeDashboardFilterForWidget = ({
-  dashboardFilters: { values, timeZone, firstDayOfTheWeek },
+  dashboardFilters,
   configuration,
   fields,
   viewFilterFieldMetadataIds,
@@ -23,13 +24,15 @@ export const computeDashboardFilterForWidget = ({
 }: {
   dashboardFilters: Pick<
     DashboardFilters,
-    'values' | 'timeZone' | 'firstDayOfTheWeek'
+    'pageLayoutFilters' | 'values' | 'timeZone' | 'firstDayOfTheWeek'
   >;
   configuration: DashboardFilterWidgetConfiguration;
   fields: Omit<DashboardFilterWidgetField, 'icon' | 'isActive'>[];
   viewFilterFieldMetadataIds: string[];
   filterValueDependencies: RecordFilterValueDependencies;
 }): WidgetDashboardFilter => {
+  const { values, timeZone, firstDayOfTheWeek } = dashboardFilters;
+
   if (
     !isNonEmptyArray(values) ||
     !isDashboardFilterDataWidgetConfiguration(configuration)
@@ -58,6 +61,11 @@ export const computeDashboardFilterForWidget = ({
         filterValueDependencies,
         recordFilters: dashboardFilter.recordFilters,
         recordFilterGroups: [],
+      }),
+      indicators: getWidgetDashboardFilterIndicators({
+        dashboardFilters,
+        widgetDashboardFilter: dashboardFilter,
+        fields,
       }),
     };
   } catch (error) {

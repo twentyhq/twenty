@@ -34,6 +34,9 @@ const THIS_MONTH_VALUE = {
 };
 
 const DASHBOARD_FILTERS = {
+  pageLayoutFilters: [
+    { id: PERIOD_FILTER_ID, label: 'Period', type: PageLayoutFilterType.DATE },
+  ],
   values: [THIS_MONTH_VALUE],
   timeZone: 'Asia/Tokyo',
   firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
@@ -81,6 +84,7 @@ describe('computeDashboardFilterForWidget', () => {
           { createdAt: { lt: expect.any(String) } },
         ],
       },
+      indicators: [],
     });
   });
 
@@ -102,8 +106,8 @@ describe('computeDashboardFilterForWidget', () => {
     ]);
   });
 
-  it('should report a widget set to not applied', () => {
-    const { recordFilters, notAppliedPageLayoutFilterIds } =
+  it('should report a widget set to ignored', () => {
+    const { recordFilters, notAppliedPageLayoutFilterIds, indicators } =
       computeDashboardFilterForWidget({
         dashboardFilters: DASHBOARD_FILTERS,
         configuration: {
@@ -119,6 +123,13 @@ describe('computeDashboardFilterForWidget', () => {
 
     expect(recordFilters).toEqual([]);
     expect(notAppliedPageLayoutFilterIds).toEqual([PERIOD_FILTER_ID]);
+    expect(indicators).toEqual([
+      {
+        pageLayoutFilterId: PERIOD_FILTER_ID,
+        label: 'Period',
+        kind: 'IGNORED',
+      },
+    ]);
   });
 
   it('should ignore widgets that show no records', () => {
