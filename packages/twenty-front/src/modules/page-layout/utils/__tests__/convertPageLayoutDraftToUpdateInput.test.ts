@@ -103,6 +103,25 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     });
   });
 
+  it('should not send null dashboard filter bindings', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      type: WidgetType.GRAPH,
+      configuration: {
+        ...TEST_BAR_CHART_CONFIGURATION,
+        dashboardFilterBindings: null,
+      },
+    });
+
+    const result = convertPageLayoutDraftToUpdateInput(
+      makeDraft([makeTab('tab-1', [widget])]),
+    );
+
+    expect(result.tabs[0].widgets[0].configuration).not.toHaveProperty(
+      'dashboardFilterBindings',
+    );
+  });
+
   it('should not send filters when the draft was loaded without them', () => {
     const result = convertPageLayoutDraftToUpdateInput(
       makeDraft([makeTab('tab-1', [])]),

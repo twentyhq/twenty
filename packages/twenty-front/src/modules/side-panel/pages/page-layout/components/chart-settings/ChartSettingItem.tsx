@@ -4,6 +4,7 @@ import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMen
 import { CommandMenuItemTextInput } from '@/command-menu/components/CommandMenuItemTextInput';
 import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
+import { CHART_SETTINGS_DROPDOWN_SIDE_OFFSET } from '@/side-panel/pages/page-layout/constants/ChartSettingsDropdownSideOffset';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
@@ -23,8 +24,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
-
-const CHART_SETTINGS_DROPDOWN_SIDE_OFFSET = 4;
 
 type ChartSettingItemProps = {
   item: ChartSettingsItem;
