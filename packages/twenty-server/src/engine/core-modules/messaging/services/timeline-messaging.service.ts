@@ -13,9 +13,7 @@ import { In, type Repository } from 'typeorm';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
-import { MessagingProviderEntity } from 'src/engine/metadata-modules/messaging-provider/entities/messaging-provider.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type TimelineThreadChannelDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-channel.dto';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { getEffectiveMessageChannelVisibility } from 'src/engine/core-modules/messaging/utils/get-effective-message-channel-visibility.util';
@@ -47,8 +45,7 @@ export class TimelineMessagingService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectWorkspaceScopedRepository(MessagingProviderEntity)
-    private readonly messagingProviderRepository: WorkspaceScopedRepository<MessagingProviderEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileUrlService: FileUrlService,
     private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
@@ -468,22 +465,16 @@ export class TimelineMessagingService {
       return new Map();
     }
 
-    const messagingProviders = await this.messagingProviderRepository.find(
-      workspaceId,
-      {
-        where: {
-          universalIdentifier: In([
-            ...new Set(messagingProviderUniversalIdentifiers),
-          ]),
-        },
-        select: { universalIdentifier: true, conversationStyle: true },
-      },
-    );
+    const { flatMessagingProviderMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatMessagingProviderMaps',
+      ]);
 
     return new Map(
-      messagingProviders.map(({ universalIdentifier, conversationStyle }) => [
+      messagingProviderUniversalIdentifiers.map((universalIdentifier) => [
         universalIdentifier,
-        conversationStyle,
+        flatMessagingProviderMaps.byUniversalIdentifier[universalIdentifier]
+          ?.conversationStyle ?? null,
       ]),
     );
   }

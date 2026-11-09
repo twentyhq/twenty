@@ -7,12 +7,11 @@ import { TimelineMessagingService } from 'src/engine/core-modules/messaging/serv
 import { TimelineMessagingResolver } from 'src/engine/core-modules/messaging/timeline-messaging.resolver';
 import { RelatedPersonIdsModule } from 'src/engine/core-modules/related-person-ids/related-person-ids.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { MessagingProviderEntity } from 'src/engine/metadata-modules/messaging-provider/entities/messaging-provider.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { TargetModule } from 'src/engine/core-modules/target/target.module';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -21,18 +20,14 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     PermissionsModule,
     RelatedPersonIdsModule,
     TargetModule,
-    TypeOrmModule.forFeature([
-      MessageChannelEntity,
-      ConnectedAccountEntity,
-      MessagingProviderEntity,
-    ]),
+    WorkspaceCacheModule,
+    TypeOrmModule.forFeature([MessageChannelEntity, ConnectedAccountEntity]),
   ],
   exports: [],
   providers: [
     TimelineMessagingResolver,
     TimelineMessagingService,
     GetMessagesService,
-    provideWorkspaceScopedRepository(MessagingProviderEntity),
   ],
 })
 export class TimelineMessagingModule {}

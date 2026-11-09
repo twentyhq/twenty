@@ -16,7 +16,6 @@ export class TimelineThreadChannelDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   applicationId: string | null;
 
-  // declared by the channel's messaging provider; null when it declares none
   @Field(() => String, { nullable: true })
   conversationStyle: MessagingProviderConversationStyle | null;
 }

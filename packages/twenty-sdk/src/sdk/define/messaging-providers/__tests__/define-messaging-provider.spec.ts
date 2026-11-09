@@ -58,7 +58,8 @@ describe('defineMessagingProvider', () => {
   it('rejects an unknown conversation style', () => {
     const result = defineMessagingProvider({
       ...baseValidConfig,
-      conversationStyle: 'thread' as never,
+      // @ts-expect-error apps written in JavaScript can pass any value
+      conversationStyle: 'thread',
     });
 
     expect(result.success).toBe(false);
