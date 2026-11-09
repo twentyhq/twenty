@@ -740,15 +740,7 @@ export class UsageLimitQuotaService {
       this.findQuotaLimits({ workspaceId, resourceType }),
     ]);
 
-    const overridden = applyPerSpenderDefaultOverrides({
-      quotaLimitDefaults,
-      limits: quotaLimits,
-    });
-
-    return {
-      quotaLimitDefaults: overridden.quotaLimitDefaults,
-      quotaLimits: overridden.limits,
-    };
+    return applyPerSpenderDefaultOverrides({ quotaLimitDefaults, quotaLimits });
   }
 
   private async buildQuotaLimitDefaults({

@@ -62,11 +62,11 @@ describe('applyPerSpenderDefaultOverrides', () => {
     expect(
       applyPerSpenderDefaultOverrides({
         quotaLimitDefaults: [userCreditDefault],
-        limits: [overridingLimit, otherLimit],
+        quotaLimits: [overridingLimit, otherLimit],
       }),
     ).toEqual({
       quotaLimitDefaults: [{ ...userCreditDefault, limitValue: 0 }],
-      limits: [otherLimit],
+      quotaLimits: [otherLimit],
     });
   });
 
@@ -76,11 +76,11 @@ describe('applyPerSpenderDefaultOverrides', () => {
     expect(
       applyPerSpenderDefaultOverrides({
         quotaLimitDefaults: [{ ...userCreditDefault, limitValue: null }],
-        limits: [overridingLimit],
+        quotaLimits: [overridingLimit],
       }),
     ).toEqual({
       quotaLimitDefaults: [{ ...userCreditDefault, limitValue: 3_000_000 }],
-      limits: [],
+      quotaLimits: [],
     });
   });
 
@@ -88,9 +88,9 @@ describe('applyPerSpenderDefaultOverrides', () => {
     expect(
       applyPerSpenderDefaultOverrides({
         quotaLimitDefaults: [{ ...userCreditDefault, limitValue: null }],
-        limits: [],
+        quotaLimits: [],
       }),
-    ).toEqual({ quotaLimitDefaults: [], limits: [] });
+    ).toEqual({ quotaLimitDefaults: [], quotaLimits: [] });
   });
 
   it('leaves the default untouched when no row overrides it', () => {
@@ -99,11 +99,11 @@ describe('applyPerSpenderDefaultOverrides', () => {
     expect(
       applyPerSpenderDefaultOverrides({
         quotaLimitDefaults: [userCreditDefault],
-        limits: [otherLimit],
+        quotaLimits: [otherLimit],
       }),
     ).toEqual({
       quotaLimitDefaults: [userCreditDefault],
-      limits: [otherLimit],
+      quotaLimits: [otherLimit],
     });
   });
 
@@ -118,11 +118,11 @@ describe('applyPerSpenderDefaultOverrides', () => {
     expect(
       applyPerSpenderDefaultOverrides({
         quotaLimitDefaults: [workspaceCreditDefault],
-        limits: [workspaceLimit],
+        quotaLimits: [workspaceLimit],
       }),
     ).toEqual({
       quotaLimitDefaults: [workspaceCreditDefault],
-      limits: [workspaceLimit],
+      quotaLimits: [workspaceLimit],
     });
   });
 });

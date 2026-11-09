@@ -5,19 +5,22 @@ import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/f
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 
-export const applyPerSpenderDefaultOverrides = <TLimit extends FlatQuotaLimit>({
+export const applyPerSpenderDefaultOverrides = ({
   quotaLimitDefaults,
-  limits,
+  quotaLimits,
 }: {
   quotaLimitDefaults: ConfiguredQuotaLimitDefault[];
-  limits: TLimit[];
-}): { quotaLimitDefaults: QuotaLimitDefault[]; limits: TLimit[] } => {
+  quotaLimits: FlatQuotaLimit[];
+}): {
+  quotaLimitDefaults: QuotaLimitDefault[];
+  quotaLimits: FlatQuotaLimit[];
+} => {
   const overrides = quotaLimitDefaults.map((quotaLimitDefault) => ({
     quotaLimitDefault,
     overridingLimit: quotaLimitDefault.isPerSpender
-      ? limits.find((limit) =>
+      ? quotaLimits.find((quotaLimit) =>
           doesUsageLimitRowSuppressDefault({
-            scope: limit,
+            scope: quotaLimit,
             usageLimitDefault: quotaLimitDefault,
           }),
         )
@@ -41,6 +44,8 @@ export const applyPerSpenderDefaultOverrides = <TLimit extends FlatQuotaLimit>({
           : [];
       },
     ),
-    limits: limits.filter((limit) => !overridingLimitIds.has(limit.id)),
+    quotaLimits: quotaLimits.filter(
+      (quotaLimit) => !overridingLimitIds.has(quotaLimit.id),
+    ),
   };
 };
