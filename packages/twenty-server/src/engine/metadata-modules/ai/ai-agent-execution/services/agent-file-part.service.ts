@@ -171,7 +171,7 @@ export class AgentFilePartService {
             (part) => part.data.type === 'url',
           );
 
-          return hasFileUrl
+          return hasFileUrl && !this.isPromptTooLong(error)
             ? this.retryFileUrlsAsBytes(retryArguments)
             : this.retryWithoutRejectedFiles(retryArguments);
         }
