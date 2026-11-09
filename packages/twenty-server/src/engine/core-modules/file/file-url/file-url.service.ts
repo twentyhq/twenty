@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -84,6 +86,42 @@ export class FileUrlService {
     this.inflightFileUrlSignings.set(signingCacheKey, signing);
 
     return signing;
+  }
+
+  async getFileIdFromSignedFileUrl({
+    fileUrl,
+    workspaceId,
+  }: {
+    fileUrl: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
+
+    if (!fileUrl.startsWith(`${serverUrl}/file/`) || !URL.canParse(fileUrl)) {
+      return null;
+    }
+
+    const { pathname, searchParams } = new URL(fileUrl);
+    const [fileFolder, fileId] = pathname.split('/').slice(-2);
+    const token = searchParams.get('token');
+    const fileFolderConfig = fileFolderConfigs[fileFolder as FileFolder];
+
+    if (!isDefined(fileFolderConfig) || !isNonEmptyString(token)) {
+      return null;
+    }
+
+    const payload: FileTokenJwtPayload | null = await this.jwtWrapperService
+      .verifyJwtToken(token, {
+        ignoreExpiration: fileFolderConfig.ignoreExpirationToken,
+      })
+      .catch(() => null);
+
+    const isTokenForThisFile =
+      payload?.type === JwtTokenTypeEnum.FILE &&
+      payload.fileId === fileId &&
+      payload.workspaceId === workspaceId;
+
+    return isTokenForThisFile ? fileId : null;
   }
 
   private async buildSignedFileUrl({

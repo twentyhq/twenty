@@ -87,15 +87,15 @@ export class FileService {
     });
   }
 
-  async getFileStreamById({
+  async findReadableFileById({
     fileId,
     workspaceId,
-    allowedFileFolders = [FileFolder.Workflow],
+    allowedFileFolders,
   }: {
     fileId: string;
     workspaceId: string;
-    allowedFileFolders?: FileFolder[];
-  }): Promise<{ stream: Readable; mimeType: string } | null> {
+    allowedFileFolders: FileFolder[];
+  }): Promise<FileEntity | null> {
     const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
@@ -109,9 +109,29 @@ export class FileService {
 
     const [fileFolder] = file.path.split('/');
 
-    if (!allowedFileFolders.includes(fileFolder as FileFolder)) {
+    return allowedFileFolders.includes(fileFolder as FileFolder) ? file : null;
+  }
+
+  async getFileStreamById({
+    fileId,
+    workspaceId,
+    allowedFileFolders = [FileFolder.Workflow],
+  }: {
+    fileId: string;
+    workspaceId: string;
+    allowedFileFolders?: FileFolder[];
+  }): Promise<{ stream: Readable; mimeType: string } | null> {
+    const file = await this.findReadableFileById({
+      fileId,
+      workspaceId,
+      allowedFileFolders,
+    });
+
+    if (file === null) {
       return null;
     }
+
+    const [fileFolder] = file.path.split('/');
 
     if (file.status === FILE_STATUS.REMOTE) {
       return this.fileRemoteContentService.openRemoteContent({

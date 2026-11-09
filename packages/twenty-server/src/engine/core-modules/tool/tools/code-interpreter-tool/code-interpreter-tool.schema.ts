@@ -8,7 +8,14 @@ export const CodeInterpreterInputZodSchema = z.object({
         filename: z.string().describe('Name of the file'),
         fileId: z
           .string()
+          .optional()
           .describe('ID of the uploaded file (from user attachments)'),
+        url: z
+          .string()
+          .optional()
+          .describe(
+            'Signed url of a file attached to a record, exactly as returned with the record',
+          ),
       }),
     )
     .optional()

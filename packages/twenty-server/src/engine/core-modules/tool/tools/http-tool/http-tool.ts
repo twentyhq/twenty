@@ -6,7 +6,9 @@ import { parseDataFromContentType } from 'twenty-shared/workflow';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/tool/tools/http-tool/constants/http-tool-max-payload-size-bytes.constant';
+import { HTTP_TOOL_BINARY_RESPONSE_WARNING } from 'src/engine/core-modules/tool/tools/http-tool/constants/http-tool-binary-response-warning.constant';
 import { HTTP_TOOL_TIMEOUT_MS } from 'src/engine/core-modules/tool/tools/http-tool/constants/http-tool-timeout-ms.constant';
+import { isBinaryContentType } from 'src/engine/core-modules/tool/tools/http-tool/utils/is-binary-content-type.util';
 import { HttpRequestInputZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
 import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-tool/types/http-request-input.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -60,6 +62,9 @@ export class HttpTool implements Tool {
         },
       );
       const response = await axiosClient(axiosConfig);
+      const responseContentType = String(
+        response.headers['content-type'] ?? '',
+      );
 
       return {
         success: true,
@@ -68,6 +73,9 @@ export class HttpTool implements Tool {
         status: response.status,
         statusText: response.statusText,
         headers: response.headers as Record<string, string>,
+        warnings: isBinaryContentType(responseContentType)
+          ? [HTTP_TOOL_BINARY_RESPONSE_WARNING]
+          : undefined,
       };
     } catch (error) {
       if (isAxiosError(error)) {
