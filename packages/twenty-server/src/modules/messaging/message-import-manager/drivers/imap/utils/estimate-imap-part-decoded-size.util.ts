@@ -4,7 +4,7 @@ import { IMAP_BASE64_DECODED_BYTES_PER_LINE } from 'src/modules/messaging/messag
 import { IMAP_BASE64_ENCODED_BYTES_PER_LINE } from 'src/modules/messaging/message-import-manager/drivers/imap/constants/imap-base64-encoded-bytes-per-line.constant';
 
 export const estimateImapPartDecodedSize = (
-  part: MessageStructureObject,
+  part: Pick<MessageStructureObject, 'size' | 'encoding'>,
 ): number => {
   const encodedSize = part.size ?? 0;
 

@@ -25,7 +25,7 @@ export const getAttachmentData = (
   ) {
     const part = parts.shift()!;
 
-    if (part.parts) {
+    if (isDefined(part.parts)) {
       parts.unshift(...part.parts);
     }
 

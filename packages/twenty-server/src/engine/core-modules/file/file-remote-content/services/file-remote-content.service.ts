@@ -19,7 +19,7 @@ export class FileRemoteContentService {
     file,
     workspaceId,
   }: {
-    file: FileEntity;
+    file: Pick<FileEntity, 'id' | 'path' | 'remoteOrigin'>;
     workspaceId: string;
   }): Promise<{ stream: Readable; mimeType: string } | null> {
     if (!isDefined(file.remoteOrigin)) {
