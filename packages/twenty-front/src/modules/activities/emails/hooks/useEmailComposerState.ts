@@ -2,7 +2,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
+import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
+import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
+import { v4 } from 'uuid';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
@@ -18,6 +24,7 @@ type UseEmailComposerStateArgs = {
   defaultSubject?: string;
   defaultInReplyTo?: string;
   contextRecord?: EmailComposerContextRecord | null;
+  appReplyTarget?: AppReplyTarget | null;
   onSent?: (messageThreadId: string | null) => void;
 };
 
@@ -33,6 +40,7 @@ export const useEmailComposerState = ({
   defaultSubject = '',
   defaultInReplyTo,
   contextRecord,
+  appReplyTarget,
   onSent,
 }: UseEmailComposerStateArgs) => {
   const initialTo = draftPrefill?.to ?? defaultTo;
@@ -70,7 +78,11 @@ export const useEmailComposerState = ({
   );
   const [files, setFiles] = useState<EmailAttachment[]>([]);
 
-  const { sendEmail, loading } = useSendEmail();
+  const { sendEmail, loading: isSendingEmail } = useSendEmail();
+  const { sendAppChannelMessage } = useSendAppChannelMessage();
+  const [isSendingThroughApp, setIsSendingThroughApp] = useState(false);
+  const { enqueueToast } = useToast();
+  const loading = isSendingEmail || isSendingThroughApp;
 
   const recipientCount = to.length + cc.length + bcc.length;
 
@@ -98,6 +110,37 @@ export const useEmailComposerState = ({
 
     const serializedCc = serializeEmailRecipients(cc);
     const serializedBcc = serializeEmailRecipients(bcc);
+
+    if (isDefined(appReplyTarget)) {
+      setIsSendingThroughApp(true);
+
+      try {
+        const sentMessage = await sendAppChannelMessage({
+          messageChannelId: appReplyTarget.messageChannelId,
+          messageThreadId: appReplyTarget.messageThreadId,
+          idempotencyKey: v4(),
+          email: {
+            to: serializeEmailRecipients(to),
+            cc: serializedCc || undefined,
+            bcc: serializedBcc || undefined,
+            subject,
+            body,
+            inReplyTo: defaultInReplyTo,
+          },
+        });
+
+        onSent?.(sentMessage?.messageThreadId ?? null);
+      } catch {
+        enqueueToast({
+          status: 'error',
+          children: t`Failed to send email`,
+        });
+      } finally {
+        setIsSendingThroughApp(false);
+      }
+
+      return;
+    }
 
     const { success, messageThreadId } = await sendEmail({
       connectedAccountId,
@@ -129,7 +172,10 @@ export const useEmailComposerState = ({
     draftPrefill?.messageId,
     files,
     contextRecord,
+    appReplyTarget,
     sendEmail,
+    sendAppChannelMessage,
+    enqueueToast,
     onSent,
   ]);
 

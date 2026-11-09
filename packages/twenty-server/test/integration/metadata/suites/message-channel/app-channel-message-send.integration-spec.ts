@@ -191,7 +191,14 @@ describe('sendAppChannelMessage (e2e)', () => {
   }: {
     messageChannelId: string;
     messageThreadId: string;
-    text: string;
+    text?: string;
+    email?: {
+      to: string;
+      cc?: string;
+      subject: string;
+      body: string;
+      inReplyTo?: string;
+    };
     idempotencyKey?: string;
   }) =>
     makeMetadataApiRequest({
@@ -431,6 +438,76 @@ describe('sendAppChannelMessage (e2e)', () => {
       direction: MessageDirection.OUTGOING,
       messageExternalId: 'sent:Tuesday works',
     });
+  });
+
+  it('sends an email-style reply with its subject, cc and the message it answers', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      email: {
+        to: CONTACT_HANDLE,
+        cc: 'urn:li:person:grace',
+        subject: 'Re: Next week',
+        body: 'Tuesday works',
+        inReplyTo: `app:${applicationDbId}:${messageChannelId}:inbound-1`,
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(readSendExecutions()).toEqual([
+      expect.objectContaining({
+        text: 'Tuesday works',
+        recipients: [{ handle: CONTACT_HANDLE, displayName: 'Ada Lovelace' }],
+        email: {
+          subject: 'Re: Next week',
+          html: expect.stringContaining('Tuesday works'),
+          cc: [{ handle: 'urn:li:person:grace', displayName: null }],
+          bcc: [],
+          inReplyToExternalId: 'inbound-1',
+        },
+      }),
+    ]);
+
+    const sentMessageId = response.body.data.sendAppChannelMessage.messageId;
+
+    const [sentMessage] = await globalThis.testDataSource.query(
+      `SELECT subject FROM "${WORKSPACE_SCHEMA}"."message" WHERE id = $1`,
+      [sentMessageId],
+    );
+    const participants = await globalThis.testDataSource.query(
+      `SELECT role, handle FROM "${WORKSPACE_SCHEMA}"."messageParticipant"
+        WHERE "messageId" = $1 ORDER BY role, handle`,
+      [sentMessageId],
+    );
+
+    expect(sentMessage).toEqual({ subject: 'Re: Next week' });
+    expect(participants).toEqual([
+      { role: MessageParticipantRole.FROM, handle: CHANNEL_HANDLE },
+      { role: MessageParticipantRole.TO, handle: CONTACT_HANDLE },
+      { role: MessageParticipantRole.CC, handle: 'urn:li:person:grace' },
+    ]);
+  });
+
+  it('refuses a reply that is both a text and an email', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'Tuesday works',
+      email: { to: CONTACT_HANDLE, subject: 'Re: Next week', body: 'Hi' },
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(readSendExecutions()).toEqual([]);
   });
 
   it('keeps one message when the app later ingests the reply it sent', async () => {

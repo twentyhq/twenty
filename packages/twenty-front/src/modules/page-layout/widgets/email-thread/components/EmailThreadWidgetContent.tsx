@@ -15,6 +15,7 @@ import {
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type EmailThreadWidgetContentProps = {
@@ -22,6 +23,7 @@ type EmailThreadWidgetContentProps = {
   lastMessage: EmailThreadMessageWithSender;
   loading: boolean;
   onFetchMoreMessages: () => void;
+  messageChannelId: string | null;
 };
 
 export const EmailThreadWidgetContent = ({
@@ -29,6 +31,7 @@ export const EmailThreadWidgetContent = ({
   lastMessage,
   loading,
   onFetchMoreMessages,
+  messageChannelId,
 }: EmailThreadWidgetContentProps) => {
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
@@ -67,6 +70,13 @@ export const EmailThreadWidgetContent = ({
   );
 
   const canReply = isDefined(replyContext) && !replyContext.loading;
+
+  const appReplyTarget =
+    canReply &&
+    replyContext.connectedAccountProvider === ConnectedAccountProvider.APP &&
+    isDefined(messageChannelId)
+      ? { messageChannelId, messageThreadId: targetRecord.id }
+      : null;
 
   const messagesCount = messages.length;
   const is5OrMoreMessages = messagesCount >= 5;
@@ -123,6 +133,7 @@ export const EmailThreadWidgetContent = ({
           isComposerOpen={isComposerOpen}
           setIsComposerOpen={handleComposerOpenChange}
           draftPrefill={draftPrefill}
+          appReplyTarget={appReplyTarget}
         />
       )}
     </StyledWidgetContentContainer>

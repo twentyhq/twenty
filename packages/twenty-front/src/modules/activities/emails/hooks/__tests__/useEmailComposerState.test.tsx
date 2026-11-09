@@ -2,6 +2,7 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
+import { SEND_APP_CHANNEL_MESSAGE } from '@/activities/emails/graphql/mutations/sendAppChannelMessage';
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 
@@ -13,8 +14,12 @@ jest.mock('twenty-ui/components/feedback', () => ({
 }));
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
-  useApolloCoreClient: () => ({ refetchQueries: jest.fn() }),
+  useApolloCoreClient: () => ({
+    refetchQueries: jest.fn().mockResolvedValue(undefined),
+  }),
 }));
+
+jest.mock('uuid', () => ({ v4: () => 'idempotency-key-1' }));
 
 const createSendEmailMock = (input: {
   connectedAccountId: string;
@@ -153,6 +158,70 @@ describe('useEmailComposerState', () => {
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
+  });
+
+  it('sends the reply through the app when the account belongs to an app', async () => {
+    const onSent = jest.fn();
+
+    const { result } = renderHook(
+      () =>
+        useEmailComposerState({
+          connectedAccountId: 'account-1',
+          defaultTo: 'ada@lovelace.com',
+          defaultSubject: 'Re: Hello',
+          defaultInReplyTo: '<inbound-1@app>',
+          appReplyTarget: {
+            messageChannelId: 'channel-1',
+            messageThreadId: 'message-thread-1',
+          },
+          onSent,
+        }),
+      {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <MockedProvider
+            mocks={[
+              {
+                request: {
+                  query: SEND_APP_CHANNEL_MESSAGE,
+                  variables: {
+                    input: {
+                      messageChannelId: 'channel-1',
+                      messageThreadId: 'message-thread-1',
+                      idempotencyKey: 'idempotency-key-1',
+                      email: {
+                        to: 'ada@lovelace.com',
+                        cc: undefined,
+                        bcc: undefined,
+                        subject: 'Re: Hello',
+                        body: '',
+                        inReplyTo: '<inbound-1@app>',
+                      },
+                    },
+                  },
+                },
+                result: {
+                  data: {
+                    sendAppChannelMessage: {
+                      messageId: 'message-1',
+                      messageThreadId: 'message-thread-1',
+                    },
+                  },
+                },
+              },
+            ]}
+          >
+            {children}
+          </MockedProvider>
+        ),
+      },
+    );
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

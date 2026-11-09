@@ -5,14 +5,22 @@ import {
   MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  convertEmailBodyToEmailDocument,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
+import { sanitizeOutboundEmailSubject } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
+import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { type SendAppChannelMessageEmailInput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.input';
 import { type SendAppChannelMessageOutput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.output';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -24,6 +32,7 @@ import {
   type AppMessageReplyRecipient,
   buildAppMessageReplyRecipients,
 } from 'src/engine/metadata-modules/message-channel/utils/build-app-message-reply-recipients.util';
+import { withKnownParticipantIdentities } from 'src/engine/metadata-modules/message-channel/utils/with-known-participant-identities.util';
 import { MessagingProviderMessageSenderService } from 'src/engine/metadata-modules/messaging-provider/services/messaging-provider-message-sender.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -43,7 +52,8 @@ type SendArgs = {
   userWorkspaceId: string;
   messageChannelId: string;
   messageThreadId: string;
-  text: string;
+  text?: string;
+  email?: SendAppChannelMessageEmailInput;
   idempotencyKey: string;
 };
 
@@ -52,10 +62,27 @@ type Conversation = {
   recipients: AppMessageReplyRecipient[];
 };
 
+type AppMessageEmailContent = {
+  subject: string;
+  html: string;
+  cc: AppMessageReplyRecipient[];
+  bcc: AppMessageReplyRecipient[];
+  inReplyTo: string | null;
+};
+
+type AppMessageContent = {
+  text: string;
+  to: AppMessageReplyRecipient[] | null;
+  email: AppMessageEmailContent | null;
+};
+
 type AppMessageDelivery = Conversation & {
   externalId: string;
   text: string;
   sentAt: string;
+  subject: string | null;
+  cc: AppMessageReplyRecipient[];
+  bcc: AppMessageReplyRecipient[];
 };
 
 @Injectable()
@@ -79,8 +106,11 @@ export class ApplicationMessageSendService {
     messageChannelId,
     messageThreadId,
     text,
+    email,
     idempotencyKey,
   }: SendArgs): Promise<SendAppChannelMessageOutput> {
+    const content = await this.buildContentOrThrow({ text, email });
+
     const messageChannel = await this.messageChannelRepository.findOne({
       where: {
         id: messageChannelId,
@@ -142,7 +172,7 @@ export class ApplicationMessageSendService {
             connectedAccountId: connectedAccount.id,
             messageThreadId,
             idempotencyKey,
-            text,
+            content,
             deliveryKey,
           }));
 
@@ -157,6 +187,7 @@ export class ApplicationMessageSendService {
             {
               externalId: delivery.externalId,
               threadExternalId: delivery.threadExternalId,
+              subject: delivery.subject ?? undefined,
               text: delivery.text,
               receivedAt: new Date(delivery.sentAt),
               participants: [
@@ -171,6 +202,14 @@ export class ApplicationMessageSendService {
                 },
                 ...delivery.recipients.map((recipient) => ({
                   role: MessageParticipantRole.TO,
+                  ...recipient,
+                })),
+                ...(delivery.cc ?? []).map((recipient) => ({
+                  role: MessageParticipantRole.CC,
+                  ...recipient,
+                })),
+                ...(delivery.bcc ?? []).map((recipient) => ({
+                  role: MessageParticipantRole.BCC,
                   ...recipient,
                 })),
               ],
@@ -195,7 +234,7 @@ export class ApplicationMessageSendService {
     connectedAccountId,
     messageThreadId,
     idempotencyKey,
-    text,
+    content,
     deliveryKey,
   }: {
     workspaceId: string;
@@ -204,7 +243,7 @@ export class ApplicationMessageSendService {
     connectedAccountId: string;
     messageThreadId: string;
     idempotencyKey: string;
-    text: string;
+    content: AppMessageContent;
     deliveryKey: string;
   }): Promise<AppMessageDelivery> {
     const sender =
@@ -222,6 +261,48 @@ export class ApplicationMessageSendService {
       messageThreadId,
     });
 
+    const recipients = isDefined(content.to)
+      ? withKnownParticipantIdentities(content.to, conversation.recipients)
+      : conversation.recipients;
+
+    if (recipients.length === 0) {
+      throw new MessageChannelException(
+        `Message thread ${messageThreadId} has no participant to reply to`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    const email = isDefined(content.email)
+      ? {
+          ...content.email,
+          cc: withKnownParticipantIdentities(
+            content.email.cc,
+            conversation.recipients,
+          ),
+          bcc: withKnownParticipantIdentities(
+            content.email.bcc,
+            conversation.recipients,
+          ),
+        }
+      : null;
+
+    const inReplyToExternalId = isDefined(email?.inReplyTo)
+      ? await this.findMessageExternalId({
+          workspaceId,
+          messageChannelId: messageChannel.id,
+          messageThreadId,
+          headerMessageId: email.inReplyTo,
+        })
+      : null;
+
+    const toSendAppMessageRecipient = ({
+      handle,
+      displayName,
+    }: AppMessageReplyRecipient) => ({
+      handle,
+      displayName: displayName ?? null,
+    });
+
     const sentMessage =
       await this.messagingProviderMessageSenderService.sendOrThrow({
         sender,
@@ -230,23 +311,30 @@ export class ApplicationMessageSendService {
           connectedAccountId,
           messageChannelId: messageChannel.id,
           threadExternalId: conversation.threadExternalId,
-          text,
+          text: content.text,
           idempotencyKey,
-          recipients: conversation.recipients.map(
-            ({ handle, displayName }) => ({
-              handle,
-              displayName: displayName ?? null,
-            }),
-          ),
+          recipients: recipients.map(toSendAppMessageRecipient),
+          ...(isDefined(email) && {
+            email: {
+              subject: email.subject,
+              html: email.html,
+              cc: email.cc.map(toSendAppMessageRecipient),
+              bcc: email.bcc.map(toSendAppMessageRecipient),
+              inReplyToExternalId,
+            },
+          }),
         },
       });
 
     const delivery: AppMessageDelivery = {
       externalId: sentMessage.externalId,
       threadExternalId: conversation.threadExternalId,
-      text,
+      text: content.text,
       sentAt: sentMessage.sentAt ?? new Date().toISOString(),
-      recipients: conversation.recipients,
+      recipients,
+      subject: email?.subject ?? null,
+      cc: email?.cc ?? [],
+      bcc: email?.bcc ?? [],
     };
 
     await this.cacheStorageService.set(
@@ -367,14 +455,96 @@ export class ApplicationMessageSendService {
       );
     }
 
-    if (conversation.recipients.length === 0) {
+    return conversation;
+  }
+
+  private async buildContentOrThrow({
+    text,
+    email,
+  }: {
+    text?: string;
+    email?: SendAppChannelMessageEmailInput;
+  }): Promise<AppMessageContent> {
+    if (isDefined(text) === isDefined(email)) {
       throw new MessageChannelException(
-        `Message thread ${messageThreadId} has no participant to reply to`,
+        'Send either a text or an email, not both',
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
 
-    return conversation;
+    if (!isDefined(email)) {
+      return { text: text ?? '', to: null, email: null };
+    }
+
+    const bodyConversionResult = convertEmailBodyToEmailDocument(email.body);
+
+    if (!bodyConversionResult.success) {
+      throw new MessageChannelException(
+        `Invalid email body: ${bodyConversionResult.error}`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    const { html, plainText } = await compileOutboundEmailContent(
+      bodyConversionResult.document,
+    );
+
+    const toRecipients = (handles: string | undefined) =>
+      parseCommaSeparatedEmails(handles).map((handle) => ({ handle }));
+
+    return {
+      text: plainText,
+      to: toRecipients(email.to),
+      email: {
+        subject: await sanitizeOutboundEmailSubject(email.subject),
+        html,
+        cc: toRecipients(email.cc),
+        bcc: toRecipients(email.bcc),
+        inReplyTo: email.inReplyTo ?? null,
+      },
+    };
+  }
+
+  private async findMessageExternalId({
+    workspaceId,
+    messageChannelId,
+    messageThreadId,
+    headerMessageId,
+  }: {
+    workspaceId: string;
+    messageChannelId: string;
+    messageThreadId: string;
+    headerMessageId: string;
+  }): Promise<string | null> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repliedMessage = await this.workspaceOrmManager
+          .getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
+            'message',
+          )
+          .findOne({
+            where: { messageThreadId, headerMessageId },
+            select: { id: true },
+          });
+
+        if (!isDefined(repliedMessage)) {
+          return null;
+        }
+
+        const association = await this.workspaceOrmManager
+          .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
+            'messageChannelMessageAssociation',
+          )
+          .findOne({
+            where: { messageChannelId, messageId: repliedMessage.id },
+            select: { messageExternalId: true },
+          });
+
+        return association?.messageExternalId ?? null;
+      },
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
   }
 
   private async dropLinksToDeletedRecords(
