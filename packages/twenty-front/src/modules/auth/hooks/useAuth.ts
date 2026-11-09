@@ -671,18 +671,12 @@ export const useAuth = () => {
           );
         }
 
-        if (isDefined(redemption.provisioningUri)) {
-          return {
-            provisioningUri: redemption.provisioningUri,
-            isTwoFactorAuthenticationReset:
-              redemption.isTwoFactorAuthenticationReset,
-          };
+        if (!isDefined(redemption.provisioningUri)) {
+          await handleLoadWorkspaceAfterAuthentication();
         }
 
-        await handleLoadWorkspaceAfterAuthentication();
-
         return {
-          provisioningUri: null,
+          provisioningUri: redemption.provisioningUri ?? null,
           isTwoFactorAuthenticationReset:
             redemption.isTwoFactorAuthenticationReset,
         };
