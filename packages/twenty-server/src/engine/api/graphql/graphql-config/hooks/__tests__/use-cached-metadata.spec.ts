@@ -3,6 +3,7 @@ import { createHash } from 'crypto';
 import * as Sentry from '@sentry/node';
 import { type Request } from 'express';
 import { parse, print } from 'graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type CachedOperationConfig,
@@ -10,6 +11,7 @@ import {
 } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { getActiveWorkspaceCachePins } from 'src/engine/workspace-cache/storage/workspace-cache-request-pins.storage';
 
 jest.mock('@sentry/node', () => ({
   captureException: jest.fn(),
@@ -28,6 +30,11 @@ const fingerprintOf = (query: string) =>
     .digest('hex');
 
 const ACCESS_POLICY = {} as AccessPolicy;
+
+const DEPENDENCY_HASHES = {
+  combinedHash: 'dependency-hash',
+  sourceHashes: { flatViewMaps: 'view-generation-1' },
+};
 
 describe('useCachedMetadata', () => {
   const mockScope = {
@@ -67,13 +74,13 @@ describe('useCachedMetadata', () => {
   const createPlugin = ({
     cacheGetter = jest.fn().mockResolvedValue(undefined),
     cacheSetter = jest.fn(),
-    dependencyHashGetter = jest.fn().mockResolvedValue('dependency-hash'),
+    dependencyHashesGetter = jest.fn().mockResolvedValue(DEPENDENCY_HASHES),
     assertAccessPolicySatisfied = jest.fn().mockResolvedValue(undefined),
     scope = 'userWorkspace',
   }: {
     cacheGetter?: jest.Mock;
     cacheSetter?: jest.Mock;
-    dependencyHashGetter?: jest.Mock;
+    dependencyHashesGetter?: jest.Mock;
     assertAccessPolicySatisfied?: jest.Mock;
     scope?: CachedOperationConfig['scope'];
   } = {}) =>
@@ -94,7 +101,7 @@ describe('useCachedMetadata', () => {
           ],
         },
       },
-      dependencyHashGetter,
+      dependencyHashesGetter,
       assertAccessPolicySatisfied,
     });
 
@@ -102,15 +109,31 @@ describe('useCachedMetadata', () => {
     plugin,
     request,
     responseBody = { data: { getViews: [] } },
+    execute = () => undefined,
   }: {
     plugin: ReturnType<typeof createPlugin>;
     request: Request;
     responseBody?: unknown;
+    execute?: () => void;
   }) => {
     const serverContext = { req: request };
     const endResponse = jest.fn();
 
     await plugin.onRequest?.({ endResponse, serverContext } as never);
+
+    if (endResponse.mock.calls.length === 0) {
+      let executeFn: (executeArgs: unknown) => unknown = () => execute();
+
+      void plugin.onExecute?.({
+        args: { contextValue: serverContext },
+        executeFn,
+        setExecuteFn: (wrappedExecuteFn: typeof executeFn) => {
+          executeFn = wrappedExecuteFn;
+        },
+      } as never);
+
+      await executeFn({});
+    }
 
     const response =
       endResponse.mock.calls[0]?.[0] ?? Response.json(responseBody);
@@ -178,18 +201,20 @@ describe('useCachedMetadata', () => {
   it('stores the response under a versioned key built from the document fingerprint', async () => {
     const cacheGetter = jest.fn().mockResolvedValue(undefined);
     const cacheSetter = jest.fn();
-    const dependencyHashGetter = jest.fn().mockResolvedValue('dependency-hash');
+    const dependencyHashesGetter = jest
+      .fn()
+      .mockResolvedValue(DEPENDENCY_HASHES);
     const plugin = createPlugin({
       cacheGetter,
       cacheSetter,
-      dependencyHashGetter,
+      dependencyHashesGetter,
     });
     const responseBody = { data: { getViews: [] } };
 
     await runRequest({ plugin, request: createRequest(), responseBody });
 
-    expect(dependencyHashGetter).toHaveBeenCalledTimes(1);
-    expect(dependencyHashGetter).toHaveBeenCalledWith('workspace-id', [
+    expect(dependencyHashesGetter).toHaveBeenCalledTimes(1);
+    expect(dependencyHashesGetter).toHaveBeenCalledWith('workspace-id', [
       'flatViewMaps',
     ]);
 
@@ -200,6 +225,60 @@ describe('useCachedMetadata', () => {
     expect(cacheKey).toContain('user-workspace-id');
     expect(cacheKey).toContain(fingerprintOf(APPROVED_QUERY));
     expect(cacheSetter).toHaveBeenCalledWith(cacheKey, responseBody);
+  });
+
+  it('runs execution inside a request pin scope', async () => {
+    const plugin = createPlugin();
+    let hasPinScopeDuringExecution = false;
+
+    await runRequest({
+      plugin,
+      request: createRequest(),
+      execute: () => {
+        hasPinScopeDuringExecution = isDefined(
+          getActiveWorkspaceCachePins('workspace-id'),
+        );
+      },
+    });
+
+    expect(hasPinScopeDuringExecution).toBe(true);
+    expect(getActiveWorkspaceCachePins('workspace-id')).toBeUndefined();
+  });
+
+  it('stores the response when the consumed generation matches the key', async () => {
+    const cacheSetter = jest.fn();
+    const plugin = createPlugin({ cacheSetter });
+
+    await runRequest({
+      plugin,
+      request: createRequest(),
+      execute: () => {
+        getActiveWorkspaceCachePins('workspace-id')?.set('flatViewMaps', {
+          data: {} as never,
+          hash: 'view-generation-1',
+        });
+      },
+    });
+
+    expect(cacheSetter).toHaveBeenCalledTimes(1);
+  });
+
+  it('never stores a response built from a generation other than the key', async () => {
+    const cacheSetter = jest.fn();
+    const plugin = createPlugin({ cacheSetter });
+
+    await runRequest({
+      plugin,
+      request: createRequest(),
+      execute: () => {
+        getActiveWorkspaceCachePins('workspace-id')?.set('flatViewMaps', {
+          data: {} as never,
+          hash: 'view-generation-0',
+        });
+      },
+    });
+
+    expect(cacheSetter).not.toHaveBeenCalled();
   });
 
   it('shares cache entries across users for workspace-scoped operations', async () => {
@@ -281,11 +360,11 @@ describe('useCachedMetadata', () => {
   ])('runs uncached for $title', async ({ body }) => {
     const cacheGetter = jest.fn();
     const cacheSetter = jest.fn();
-    const dependencyHashGetter = jest.fn();
+    const dependencyHashesGetter = jest.fn();
     const plugin = createPlugin({
       cacheGetter,
       cacheSetter,
-      dependencyHashGetter,
+      dependencyHashesGetter,
     });
 
     const { endResponse } = await runRequest({
@@ -296,7 +375,7 @@ describe('useCachedMetadata', () => {
     expect(endResponse).not.toHaveBeenCalled();
     expect(cacheGetter).not.toHaveBeenCalled();
     expect(cacheSetter).not.toHaveBeenCalled();
-    expect(dependencyHashGetter).not.toHaveBeenCalled();
+    expect(dependencyHashesGetter).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -357,13 +436,13 @@ describe('useCachedMetadata', () => {
   it('serves the request uncached when dependency hashes cannot be resolved', async () => {
     const cacheGetter = jest.fn();
     const cacheSetter = jest.fn();
-    const dependencyHashGetter = jest
+    const dependencyHashesGetter = jest
       .fn()
       .mockRejectedValue(new Error('cache storage unavailable'));
     const plugin = createPlugin({
       cacheGetter,
       cacheSetter,
-      dependencyHashGetter,
+      dependencyHashesGetter,
     });
 
     await runRequest({ plugin, request: createRequest() });
@@ -394,8 +473,8 @@ describe('useCachedMetadata', () => {
 
   it('ignores operation names inherited from Object.prototype', async () => {
     const cacheGetter = jest.fn();
-    const dependencyHashGetter = jest.fn();
-    const plugin = createPlugin({ cacheGetter, dependencyHashGetter });
+    const dependencyHashesGetter = jest.fn();
+    const plugin = createPlugin({ cacheGetter, dependencyHashesGetter });
 
     await runRequest({
       plugin,
@@ -408,6 +487,6 @@ describe('useCachedMetadata', () => {
     });
 
     expect(cacheGetter).not.toHaveBeenCalled();
-    expect(dependencyHashGetter).not.toHaveBeenCalled();
+    expect(dependencyHashesGetter).not.toHaveBeenCalled();
   });
 });

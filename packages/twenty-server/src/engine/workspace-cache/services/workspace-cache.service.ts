@@ -36,6 +36,10 @@ import {
 import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
 import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import {
+  clearActiveWorkspaceCachePins,
+  getActiveWorkspaceCachePins,
+} from 'src/engine/workspace-cache/storage/workspace-cache-request-pins.storage';
+import {
   WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
   type WorkspaceCacheOrDerivedCacheDataMap,
@@ -61,7 +65,7 @@ import {
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
 const LOCAL_TTL_MS = 100;
-const MEMOIZER_TTL_MS = 10_000;
+const COMPLETED_LOAD_RETENTION_MS = 0;
 const STALE_VERSION_TTL_MS = 5_000;
 const MAX_LOCAL_STALE_VERSIONS = 5;
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling.
@@ -121,7 +125,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     number
   >();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
-    MEMOIZER_TTL_MS,
+    COMPLETED_LOAD_RETENTION_MS,
   );
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
@@ -315,6 +319,52 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<CacheEntriesResult> {
+    const workspacePins = getActiveWorkspaceCachePins(workspaceId);
+
+    if (!isDefined(workspacePins)) {
+      return this.loadProviderEntries(workspaceId, cacheKeyNames);
+    }
+
+    const unpinnedKeyNames = cacheKeyNames.filter(
+      (cacheKeyName) => !workspacePins.has(cacheKeyName),
+    );
+    const loadedEntries: CacheEntriesResult =
+      unpinnedKeyNames.length > 0
+        ? await this.loadProviderEntries(workspaceId, unpinnedKeyNames)
+        : { data: {}, hashes: {} };
+
+    for (const cacheKeyName of unpinnedKeyNames) {
+      const data = loadedEntries.data[cacheKeyName];
+      const hash = loadedEntries.hashes[cacheKeyName];
+
+      if (
+        isDefined(data) &&
+        isDefined(hash) &&
+        !workspacePins.has(cacheKeyName)
+      ) {
+        workspacePins.set(cacheKeyName, { data, hash });
+      }
+    }
+
+    const result: CacheEntriesResult = { data: {}, hashes: {} };
+
+    for (const cacheKeyName of cacheKeyNames) {
+      const pin = workspacePins.get(cacheKeyName);
+
+      Object.assign(result.data, {
+        [cacheKeyName]: pin?.data ?? loadedEntries.data[cacheKeyName],
+      });
+      result.hashes[cacheKeyName] =
+        pin?.hash ?? loadedEntries.hashes[cacheKeyName];
+    }
+
+    return result;
+  }
+
+  private async loadProviderEntries(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<CacheEntriesResult> {
     const memoKey =
       `${workspaceId}-${[...cacheKeyNames].sort().join(',')}` as const;
 
@@ -373,14 +423,42 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
   ): Promise<string> {
+    const { combinedHash } = await this.getOrRecomputeDependencyHashes(
+      workspaceId,
+      cacheKeyNames,
+    );
+
+    return combinedHash;
+  }
+
+  public async getOrRecomputeDependencyHashes(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
+  ): Promise<{
+    combinedHash: string;
+    sourceHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+  }> {
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
     const sourceCacheKeyNames = this.getSourceCacheKeyNames(cacheKeyNames);
+    const workspacePins = getActiveWorkspaceCachePins(workspaceId);
+    const pinnedHashes = Object.fromEntries(
+      sourceCacheKeyNames.flatMap((cacheKeyName) => {
+        const pin = workspacePins?.get(cacheKeyName);
 
-    const cachedHashes = await this.getCacheHashes(
-      workspaceId,
-      sourceCacheKeyNames,
+        return isDefined(pin) ? [[cacheKeyName, pin.hash]] : [];
+      }),
     );
+
+    const cachedHashes = {
+      ...(await this.getCacheHashes(
+        workspaceId,
+        sourceCacheKeyNames.filter(
+          (cacheKeyName) => !isDefined(pinnedHashes[cacheKeyName]),
+        ),
+      )),
+      ...pinnedHashes,
+    };
     const missingKeys = sourceCacheKeyNames.filter(
       (cacheKeyName) => !isDefined(cachedHashes[cacheKeyName]),
     );
@@ -408,7 +486,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
     }
 
-    return combineCacheHashes(cacheOrDerivedCacheHashes, cacheKeyNames);
+    return {
+      combinedHash: combineCacheHashes(
+        cacheOrDerivedCacheHashes,
+        cacheKeyNames,
+      ),
+      sourceHashes,
+    };
   }
 
   private collectRowsRequirements(cacheKeyNames: WorkspaceCacheKeyName[]) {
@@ -506,6 +590,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     });
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
     await this.memoizer.clearKeys(`${workspaceId}-`);
+    clearActiveWorkspaceCachePins(workspaceId);
 
     return invalidatedKeys;
   }

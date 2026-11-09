@@ -59,8 +59,8 @@ export const metadataModuleFactory = async (
         cacheGetter: cacheStorageService.get.bind(cacheStorageService),
         cacheSetter: cacheStorageService.set.bind(cacheStorageService),
         operationsToCache: METADATA_GRAPHQL_OPERATIONS_TO_CACHE,
-        dependencyHashGetter:
-          workspaceCacheService.getOrRecomputeCombinedHash.bind(
+        dependencyHashesGetter:
+          workspaceCacheService.getOrRecomputeDependencyHashes.bind(
             workspaceCacheService,
           ),
         assertAccessPolicySatisfied:

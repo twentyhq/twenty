@@ -11,7 +11,16 @@ import {
 import { isPlainWorkspaceMemberRequest } from 'src/engine/api/graphql/graphql-config/utils/is-plain-workspace-member-request.util';
 import { isWorkspaceSuspended } from 'src/engine/core-modules/workspace/utils/is-workspace-suspended.util';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
-import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import {
+  createWorkspaceCacheRequestPins,
+  getPinnedWorkspaceCacheHashes,
+  runWithWorkspaceCacheRequestPins,
+  type WorkspaceCacheRequestPins,
+} from 'src/engine/workspace-cache/storage/workspace-cache-request-pins.storage';
+import {
+  type WorkspaceCacheKeyName,
+  type WorkspaceCacheOrDerivedCacheKeyName,
+} from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 const RESPONSE_CACHE_NAMESPACE = 'graphql:operations:v2';
 
@@ -23,16 +32,39 @@ export type CachedOperationConfig = {
   approvedRequests: MetadataResponseCacheApprovedRequest[];
 };
 
+type DependencyHashes = {
+  combinedHash: string;
+  sourceHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+};
+
+type RequestCacheEntry = {
+  cacheKey: string;
+  sourceHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+};
+
+const doPinnedHashesMatchSourceHashes = ({
+  pinnedHashes,
+  sourceHashes,
+}: {
+  pinnedHashes: Partial<Record<string, string>>;
+  sourceHashes: Partial<Record<string, string>>;
+}): boolean =>
+  Object.entries(sourceHashes).every(([cacheKeyName, sourceHash]) => {
+    const pinnedHash = pinnedHashes[cacheKeyName];
+
+    return !isDefined(pinnedHash) || pinnedHash === sourceHash;
+  });
+
 export type CacheMetadataPluginConfig = {
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheGetter: (key: string) => any;
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheSetter: (key: string, value: any) => void;
   operationsToCache: Record<string, CachedOperationConfig>;
-  dependencyHashGetter: (
+  dependencyHashesGetter: (
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
-  ) => Promise<string>;
+  ) => Promise<DependencyHashes>;
   assertAccessPolicySatisfied: (args: {
     accessPolicy: AccessPolicy;
     request: Request;
@@ -41,7 +73,7 @@ export type CacheMetadataPluginConfig = {
 
 export function useCachedMetadata(
   config: CacheMetadataPluginConfig,
-): Plugin<object, { req: Request }> {
+): Plugin<{ req?: Request }, { req: Request }> {
   const computeCacheKey = async ({
     operationName,
     operationConfig,
@@ -54,8 +86,8 @@ export function useCachedMetadata(
     workspaceId: string;
     request: Pick<Request, 'locale' | 'userWorkspaceId'>;
     approvedRequest: ApprovedMetadataCacheRequest;
-  }): Promise<string> => {
-    const dependencyHash = await config.dependencyHashGetter(
+  }): Promise<RequestCacheEntry> => {
+    const { combinedHash, sourceHashes } = await config.dependencyHashesGetter(
       workspaceId,
       operationConfig.dependencies,
     );
@@ -64,7 +96,10 @@ export function useCachedMetadata(
         ? `:${request.userWorkspaceId}`
         : '';
 
-    return `${RESPONSE_CACHE_NAMESPACE}:${operationName}:${workspaceId}:${dependencyHash}${userScopeSegment}:${request.locale}:${approvedRequest.documentFingerprint}:${approvedRequest.variablesFingerprint}`;
+    return {
+      cacheKey: `${RESPONSE_CACHE_NAMESPACE}:${operationName}:${workspaceId}:${combinedHash}${userScopeSegment}:${request.locale}:${approvedRequest.documentFingerprint}:${approvedRequest.variablesFingerprint}`,
+      sourceHashes,
+    };
   };
 
   const resolveEligibleApprovedRequest = async ({
@@ -126,7 +161,24 @@ export function useCachedMetadata(
       : undefined;
 
   const cacheHitRequests = new WeakSet<Request>();
-  const requestCacheKeys = new WeakMap<Request, string | null>();
+  const requestCacheEntries = new WeakMap<Request, RequestCacheEntry>();
+  const requestPins = new WeakMap<Request, WorkspaceCacheRequestPins>();
+
+  const getOrCreateRequestPins = (
+    request: Request,
+  ): WorkspaceCacheRequestPins => {
+    const existingRequestPins = requestPins.get(request);
+
+    if (isDefined(existingRequestPins)) {
+      return existingRequestPins;
+    }
+
+    const createdRequestPins = createWorkspaceCacheRequestPins();
+
+    requestPins.set(request, createdRequestPins);
+
+    return createdRequestPins;
+  };
 
   const resolveCacheKey = async ({
     operationName,
@@ -140,25 +192,24 @@ export function useCachedMetadata(
     workspaceId: string;
     request: Request;
     approvedRequest: ApprovedMetadataCacheRequest;
-  }): Promise<string | null> => {
-    let cacheKey: string | null;
-
+  }): Promise<RequestCacheEntry | undefined> => {
     try {
-      cacheKey = await computeCacheKey({
+      const requestCacheEntry = await computeCacheKey({
         operationName,
         operationConfig,
         workspaceId,
         request,
         approvedRequest,
       });
+
+      requestCacheEntries.set(request, requestCacheEntry);
+
+      return requestCacheEntry;
     } catch (error) {
       Sentry.captureException(error);
-      cacheKey = null;
+
+      return undefined;
     }
-
-    requestCacheKeys.set(request, cacheKey);
-
-    return cacheKey;
   };
 
   const getCachedResponse = ({
@@ -220,7 +271,7 @@ export function useCachedMetadata(
       Sentry.setTags({ operationName, operation: 'query' });
       Sentry.getCurrentScope().setTransactionName(operationName);
 
-      const cacheKey = await resolveCacheKey({
+      const requestCacheEntry = await resolveCacheKey({
         operationName,
         operationConfig,
         workspaceId,
@@ -228,12 +279,12 @@ export function useCachedMetadata(
         approvedRequest,
       });
 
-      if (!isDefined(cacheKey)) {
+      if (!isDefined(requestCacheEntry)) {
         return;
       }
 
       const cachedResponse = await getCachedResponse({
-        cacheKey,
+        cacheKey: requestCacheEntry.cacheKey,
         operationName,
         phase: 'request',
       });
@@ -246,10 +297,24 @@ export function useCachedMetadata(
         return endResponse(earlyResponse);
       }
     },
+    onExecute: ({ args, executeFn, setExecuteFn }) => {
+      const request = args.contextValue.req;
+
+      if (!isDefined(request)) {
+        return;
+      }
+
+      const pins = getOrCreateRequestPins(request);
+
+      setExecuteFn((executeArgs) =>
+        runWithWorkspaceCacheRequestPins(pins, () => executeFn(executeArgs)),
+      );
+    },
     onResponse: async ({ response, serverContext }) => {
       const request = serverContext.req;
+      const workspaceId = request.workspace?.id;
 
-      if (!request.workspace?.id) {
+      if (!isDefined(workspaceId)) {
         return;
       }
 
@@ -263,11 +328,27 @@ export function useCachedMetadata(
         return;
       }
 
-      const cacheKey = requestCacheKeys.get(request);
+      const requestCacheEntry = requestCacheEntries.get(request);
 
-      if (!isDefined(cacheKey)) {
+      if (!isDefined(requestCacheEntry)) {
         return;
       }
+
+      const pins = requestPins.get(request);
+      const pinnedHashes = isDefined(pins)
+        ? getPinnedWorkspaceCacheHashes(pins, workspaceId)
+        : {};
+
+      if (
+        !doPinnedHashesMatchSourceHashes({
+          pinnedHashes,
+          sourceHashes: requestCacheEntry.sourceHashes,
+        })
+      ) {
+        return;
+      }
+
+      const { cacheKey } = requestCacheEntry;
 
       const cachedResponse = await getCachedResponse({
         cacheKey,
