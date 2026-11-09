@@ -1,7 +1,7 @@
+import { useResetRecordSelectionAcrossRecordGroups } from '@/object-record/record-group/hooks/useResetRecordSelectionAcrossRecordGroups';
 import { lastActiveRecordGroupTabIdComponentState } from '@/object-record/record-group/states/lastActiveRecordGroupTabIdComponentState';
 import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useEffect } from 'react';
@@ -18,7 +18,8 @@ export const RecordGroupTabsSelectionResetEffect = () => {
   const [lastActiveRecordGroupTabId, setLastActiveRecordGroupTabId] =
     useAtomComponentState(lastActiveRecordGroupTabIdComponentState);
 
-  const { resetRecordSelection } = useResetRecordSelection(recordIndexId);
+  const { resetRecordSelectionAcrossRecordGroups } =
+    useResetRecordSelectionAcrossRecordGroups(recordIndexId);
 
   useEffect(() => {
     if (lastActiveRecordGroupTabId === activeRecordGroupTabId) {
@@ -26,14 +27,14 @@ export const RecordGroupTabsSelectionResetEffect = () => {
     }
 
     if (isDefined(lastActiveRecordGroupTabId)) {
-      resetRecordSelection();
+      resetRecordSelectionAcrossRecordGroups();
     }
 
     setLastActiveRecordGroupTabId(activeRecordGroupTabId);
   }, [
     activeRecordGroupTabId,
     lastActiveRecordGroupTabId,
-    resetRecordSelection,
+    resetRecordSelectionAcrossRecordGroups,
     setLastActiveRecordGroupTabId,
   ]);
 
