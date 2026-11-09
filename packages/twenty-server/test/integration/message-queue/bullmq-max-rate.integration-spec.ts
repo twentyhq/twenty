@@ -193,18 +193,12 @@ describe('BullMQDriver maxRate (integration)', () => {
   it('runs the paced jobs no faster than maxRate allows', async () => {
     const startedAtByLabel: Record<string, number> = {};
     const labels = ['H1', 'H2', 'H3', 'H4'];
-    const enqueuedAt = Date.now();
     let resolveAllStarted: () => void = () => {};
     const allStarted = new Promise<void>((resolve) => {
       resolveAllStarted = resolve;
     });
 
-    await enqueueBulk({
-      labels,
-      workspaceId: 'A',
-      applicationUniversalIdentifier: 'H',
-    });
-
+    // Started before enqueueing so worker startup cannot shift the first jobs.
     driver.work<MaxRateTestJobData>(
       QUEUE,
       async (job) => {
@@ -217,15 +211,30 @@ describe('BullMQDriver maxRate (integration)', () => {
       MESSAGE_QUEUE_WORKER_CONFIG[QUEUE].workerOptions,
     );
 
+    const enqueuedAt = Date.now();
+
+    await enqueueBulk({
+      labels,
+      workspaceId: 'A',
+      applicationUniversalIdentifier: 'H',
+    });
+
     await allStarted;
 
     const firstStartedAt = Math.min(startedAtByLabel.H1, startedAtByLabel.H2);
 
-    expect(startedAtByLabel.H3 - firstStartedAt).toBeGreaterThanOrEqual(
+    expect(startedAtByLabel.H3).toBeGreaterThanOrEqual(
       INTERVAL_MS - TOLERANCE_MS,
     );
+    expect(startedAtByLabel.H4).toBeGreaterThanOrEqual(
+      2 * INTERVAL_MS - TOLERANCE_MS,
+    );
+    // Half an interval absorbs runner jitter while still catching a burst.
+    expect(startedAtByLabel.H3 - firstStartedAt).toBeGreaterThanOrEqual(
+      INTERVAL_MS / 2,
+    );
     expect(startedAtByLabel.H4 - startedAtByLabel.H3).toBeGreaterThanOrEqual(
-      INTERVAL_MS - TOLERANCE_MS,
+      INTERVAL_MS / 2,
     );
   }, 15_000);
 });
