@@ -229,6 +229,7 @@ export const mockedUserData: MockedUser = {
         canDestroyAllRecords: true,
         unreadableFields: [],
         uneditableFields: [],
+        restrictedFields: {},
       }),
     ),
   },
@@ -261,6 +262,7 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
           canDestroyAllRecords: hasAccess,
           unreadableFields: [],
           uneditableFields: [],
+          restrictedFields: {},
         };
       },
     ),
@@ -296,6 +298,7 @@ export const mockedOnboardingUserData = (
           canDestroyAllRecords: true,
           unreadableFields: [],
           uneditableFields: [],
+          restrictedFields: {},
         }),
       ),
     },
