@@ -275,13 +275,11 @@ export class TwoFactorAuthenticationResolver {
     }
 
     const backupCodes =
-      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodesOrThrow(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          twoFactorAuthenticationMethodId,
-        },
-      );
+      await this.twoFactorAuthenticationBackupCodeService.issueBackupCodes({
+        userId: user.id,
+        workspaceId: workspace.id,
+        twoFactorAuthenticationMethodId,
+      });
 
     return { success: true, backupCodes };
   }

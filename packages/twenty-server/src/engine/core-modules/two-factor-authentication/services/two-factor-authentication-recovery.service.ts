@@ -319,7 +319,12 @@ export class TwoFactorAuthenticationRecoveryService {
 
         const isBackupCodeConsumed =
           await this.twoFactorAuthenticationBackupCodeService.consumeBackupCode(
-            { entityManager, userWorkspace, backupCode: recoveryCode },
+            {
+              entityManager,
+              userId,
+              workspaceId: workspace.id,
+              backupCode: recoveryCode,
+            },
           );
 
         if (isBackupCodeConsumed) {

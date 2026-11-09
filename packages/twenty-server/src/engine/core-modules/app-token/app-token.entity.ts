@@ -111,5 +111,6 @@ export class AppTokenEntity {
     authProvider?: AuthProviderEnum;
     revokedReason?: UserSessionRevokedReason;
     issuedByUserId?: string;
+    twoFactorAuthenticationMethodId?: string;
   } | null;
 }

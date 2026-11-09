@@ -5,8 +5,9 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type EntityManager,
+  type FindOptionsWhere,
   IsNull,
-  MoreThanOrEqual,
+  Raw,
   Repository,
 } from 'typeorm';
 
@@ -21,15 +22,9 @@ import {
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-backup-code.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
-import {
-  TwoFactorAuthenticationException,
-  TwoFactorAuthenticationExceptionCode,
-} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { generateTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/generate-two-factor-authentication-recovery-code.util';
 import { hashTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/hash-two-factor-authentication-recovery-code.util';
-import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -40,10 +35,9 @@ export class TwoFactorAuthenticationBackupCodeService {
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
-    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
-  async issueBackupCodesOrThrow({
+  async issueBackupCodes({
     userId,
     workspaceId,
     twoFactorAuthenticationMethodId,
@@ -64,26 +58,6 @@ export class TwoFactorAuthenticationBackupCodeService {
         mode: 'exclusive',
       });
 
-      const isAuthenticatorStillVerified = await entityManager
-        .getRepository(TwoFactorAuthenticationMethodEntity)
-        .exists({
-          where: {
-            id: twoFactorAuthenticationMethodId,
-            workspaceId,
-            status: OTPStatus.VERIFIED,
-          },
-        });
-
-      if (!isAuthenticatorStillVerified) {
-        throw new TwoFactorAuthenticationException(
-          'The two-factor authentication method changed before backup codes were issued',
-          TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
-          {
-            userFriendlyMessage: msg`Your two-factor authentication changed. Generate backup codes again.`,
-          },
-        );
-      }
-
       await this.revokeBackupCodes({ userId, workspaceId, entityManager });
 
       await entityManager.getRepository(AppTokenEntity).insert(
@@ -93,6 +67,7 @@ export class TwoFactorAuthenticationBackupCodeService {
           type: AppTokenType.TwoFactorAuthenticationBackupCode,
           value: hashTwoFactorAuthenticationRecoveryCode(backupCode),
           expiresAt: TWO_FACTOR_AUTHENTICATION_BACKUP_CODE_EXPIRES_AT,
+          context: { twoFactorAuthenticationMethodId },
         })),
       );
     });
@@ -120,7 +95,7 @@ export class TwoFactorAuthenticationBackupCodeService {
         },
       );
 
-    return this.issueBackupCodesOrThrow({
+    return this.issueBackupCodes({
       userId,
       workspaceId,
       twoFactorAuthenticationMethodId,
@@ -134,22 +109,26 @@ export class TwoFactorAuthenticationBackupCodeService {
     userId: UserEntity['id'];
     workspaceId: WorkspaceEntity['id'];
   }): Promise<number> {
-    const userWorkspace =
-      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+    const entityManager = this.appTokenRepository.manager;
+
+    const verifiedTwoFactorAuthenticationMethodId =
+      await this.findVerifiedTwoFactorAuthenticationMethodId({
+        entityManager,
         userId,
         workspaceId,
-        relations: [],
       });
 
-    return this.appTokenRepository.count({
-      where: {
+    if (!isDefined(verifiedTwoFactorAuthenticationMethodId)) {
+      return 0;
+    }
+
+    return entityManager.getRepository(AppTokenEntity).count({
+      where: this.buildActiveBackupCodeWhere({
         userId,
         workspaceId,
-        type: AppTokenType.TwoFactorAuthenticationBackupCode,
-        deletedAt: IsNull(),
-        revokedAt: IsNull(),
-        createdAt: MoreThanOrEqual(userWorkspace.createdAt),
-      },
+        twoFactorAuthenticationMethodId:
+          verifiedTwoFactorAuthenticationMethodId,
+      }),
     });
   }
 
@@ -179,52 +158,88 @@ export class TwoFactorAuthenticationBackupCodeService {
 
   async consumeBackupCode({
     entityManager,
-    userWorkspace,
+    userId,
+    workspaceId,
     backupCode,
   }: {
     entityManager: EntityManager;
-    userWorkspace: Pick<
-      UserWorkspaceEntity,
-      'id' | 'userId' | 'workspaceId' | 'createdAt'
-    >;
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
     backupCode: string;
   }): Promise<boolean> {
-    const verifiedTwoFactorAuthenticationMethod = await entityManager
-      .getRepository(TwoFactorAuthenticationMethodEntity)
-      .findOne({
-        where: {
-          workspaceId: userWorkspace.workspaceId,
-          userWorkspaceId: userWorkspace.id,
-          status: OTPStatus.VERIFIED,
-        },
+    const verifiedTwoFactorAuthenticationMethodId =
+      await this.findVerifiedTwoFactorAuthenticationMethodId({
+        entityManager,
+        userId,
+        workspaceId,
       });
 
-    if (!isDefined(verifiedTwoFactorAuthenticationMethod)) {
+    if (!isDefined(verifiedTwoFactorAuthenticationMethodId)) {
       return false;
     }
-
-    const currentEnrollmentStartedAt = new Date(
-      Math.max(
-        userWorkspace.createdAt.getTime(),
-        verifiedTwoFactorAuthenticationMethod.createdAt.getTime(),
-      ),
-    );
 
     const consumeResult = await entityManager
       .getRepository(AppTokenEntity)
       .update(
         {
-          userId: userWorkspace.userId,
-          workspaceId: userWorkspace.workspaceId,
-          type: AppTokenType.TwoFactorAuthenticationBackupCode,
+          ...this.buildActiveBackupCodeWhere({
+            userId,
+            workspaceId,
+            twoFactorAuthenticationMethodId:
+              verifiedTwoFactorAuthenticationMethodId,
+          }),
           value: hashTwoFactorAuthenticationRecoveryCode(backupCode),
-          deletedAt: IsNull(),
-          revokedAt: IsNull(),
-          createdAt: MoreThanOrEqual(currentEnrollmentStartedAt),
         },
         { deletedAt: new Date() },
       );
 
     return (consumeResult.affected ?? 0) > 0;
+  }
+
+  private async findVerifiedTwoFactorAuthenticationMethodId({
+    entityManager,
+    userId,
+    workspaceId,
+  }: {
+    entityManager: EntityManager;
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+  }): Promise<TwoFactorAuthenticationMethodEntity['id'] | null> {
+    const verifiedTwoFactorAuthenticationMethod = await entityManager
+      .getRepository(TwoFactorAuthenticationMethodEntity)
+      .findOne({
+        select: { id: true },
+        where: {
+          workspaceId,
+          status: OTPStatus.VERIFIED,
+          userWorkspace: { userId, workspaceId },
+        },
+      });
+
+    return verifiedTwoFactorAuthenticationMethod?.id ?? null;
+  }
+
+  // A code only works for the authenticator it was issued with, so replacing the authenticator retires its codes
+  private buildActiveBackupCodeWhere({
+    userId,
+    workspaceId,
+    twoFactorAuthenticationMethodId,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+    twoFactorAuthenticationMethodId: TwoFactorAuthenticationMethodEntity['id'];
+  }): FindOptionsWhere<AppTokenEntity> {
+    return {
+      userId,
+      workspaceId,
+      type: AppTokenType.TwoFactorAuthenticationBackupCode,
+      deletedAt: IsNull(),
+      revokedAt: IsNull(),
+      context: Raw(
+        (alias) =>
+          `${alias} ->> 'twoFactorAuthenticationMethodId' = :twoFactorAuthenticationMethodId`,
+        { twoFactorAuthenticationMethodId },
+      ),
+    };
   }
 }

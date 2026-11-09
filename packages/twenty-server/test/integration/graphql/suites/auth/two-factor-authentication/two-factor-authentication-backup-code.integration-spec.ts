@@ -315,6 +315,56 @@ describe('Two-factor authentication backup codes (integration)', () => {
     expect(errors?.[0]?.extensions?.subCode).toBe('INVALID_RECOVERY_CODE');
   });
 
+  it('only accepts codes issued for the current authenticator, even if they were never revoked', async () => {
+    const { data: backupCodesData } =
+      await generateTwoFactorAuthenticationBackupCodes({
+        otp: await generateOtp(jonySecret),
+        accessToken: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        expectToFail: false,
+      });
+
+    const previousAuthenticatorBackupCodes: string[] =
+      backupCodesData.generateTwoFactorAuthenticationBackupCodes.backupCodes;
+
+    const [{ id: previousTwoFactorAuthenticationMethodId }] =
+      await global.testDataSource.query(
+        `SELECT "id" FROM core."twoFactorAuthenticationMethod" WHERE "userWorkspaceId" = $1`,
+        [USER_WORKSPACE_DATA_SEED_IDS.JONY],
+      );
+
+    await deleteTwoFactorAuthenticationMethod({
+      input: {
+        twoFactorAuthenticationMethodId:
+          previousTwoFactorAuthenticationMethodId,
+      },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    const { secret } = await enrollJonyAuthenticator();
+
+    jonySecret = secret;
+
+    await global.testDataSource.query(
+      `UPDATE core."appToken" SET "revokedAt" = NULL WHERE "type" = $1 AND "userId" = $2 AND "value" = ANY($3)`,
+      [
+        AppTokenType.TwoFactorAuthenticationBackupCode,
+        USER_DATA_SEED_IDS.JONY,
+        previousAuthenticatorBackupCodes.map(
+          hashTwoFactorAuthenticationRecoveryCode,
+        ),
+      ],
+    );
+
+    expect(await getRemainingBackupCodeCount()).toBe(10);
+
+    const { errors } = await signInWithCode(
+      previousAuthenticatorBackupCodes[0],
+    );
+
+    expect(errors?.[0]?.extensions?.subCode).toBe('INVALID_RECOVERY_CODE');
+  });
+
   it('revokes the backup codes when a recovery code resets two-factor authentication', async () => {
     const { data: backupCodesData } =
       await generateTwoFactorAuthenticationBackupCodes({
