@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type AppMessageChannel,
+  type IngestedMessage,
   ingestMessages,
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
@@ -234,33 +235,49 @@ export const ingestLinkedinMessages = async ({
       }),
     }));
 
+  const ingestedMessages: IngestedMessage[] = [];
+
   for (
     let batchStart = 0;
     batchStart < ingestMessagesInput.length;
     batchStart += INGEST_MESSAGES_MAX_BATCH_SIZE
   ) {
-    await ingestMessages({
-      messageChannelId: channel.id,
-      messages: ingestMessagesInput.slice(
-        batchStart,
-        batchStart + INGEST_MESSAGES_MAX_BATCH_SIZE,
-      ),
-    });
+    ingestedMessages.push(
+      ...(await ingestMessages({
+        messageChannelId: channel.id,
+        messages: ingestMessagesInput.slice(
+          batchStart,
+          batchStart + INGEST_MESSAGES_MAX_BATCH_SIZE,
+        ),
+      })),
+    );
   }
+
+  const messageExternalIdsToAttach = new Set(
+    ingestedMessages
+      .filter((ingestedMessage) => !ingestedMessage.hasAttachments)
+      .map((ingestedMessage) => ingestedMessage.externalId),
+  );
 
   const importedAttachmentCount = await importLinkedinMessageAttachments({
     unipileAccountId,
-    messages: ingestableMessages,
+    messages: ingestableMessages.filter((message) =>
+      messageExternalIdsToAttach.has(message.id),
+    ),
     deadlineAtMs: attachmentDeadlineAtMs,
-    onAttachmentFile: async ({
-      messageExternalId,
-      type,
-      mimeType,
-      content,
-    }) => {
-      console.log(
-        `[linkedin] message ${messageExternalId}: imported ${type} attachment (${mimeType}, ${content.byteLength}B), not stored yet`,
+    onMessageAttachments: async ({ messageExternalId, attachments }) => {
+      const ingestMessage = ingestMessagesInput.find(
+        (message) => message.externalId === messageExternalId,
       );
+
+      if (!isDefined(ingestMessage)) {
+        return;
+      }
+
+      await ingestMessages({
+        messageChannelId: channel.id,
+        messages: [{ ...ingestMessage, attachments }],
+      });
     },
   });
 
