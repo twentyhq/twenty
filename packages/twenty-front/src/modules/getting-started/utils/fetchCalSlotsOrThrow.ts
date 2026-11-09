@@ -2,6 +2,7 @@ import { CAL_API } from '@/getting-started/constants/CalApi';
 import { type BookCallSlot } from '@/getting-started/types/BookCallSlot';
 import { type CalEventTypeReference } from '@/getting-started/types/CalEventTypeReference';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { CustomError } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 const calSlotsResponseSchema = z.object({
@@ -38,8 +39,9 @@ export const fetchCalSlotsOrThrow = async ({
   });
 
   if (!response.ok) {
-    throw new Error(
+    throw new CustomError(
       doNotTranslate(`Cal.com slots request failed with ${response.status}`),
+      'CAL_SLOTS_REQUEST_FAILED',
     );
   }
 
