@@ -9,22 +9,12 @@ describe('redactOutboundRequestUrl', () => {
     ).toBe('https://api.example.com:8443/v1/users');
   });
 
-  it('redacts every query value and keeps the parameter names', () => {
+  it('drops the query string', () => {
     expect(
       redactOutboundRequestUrl(
-        new URL('https://api.example.com/search?api_key=secret&q=a%20b&q=c'),
+        new URL('https://api.example.com/search?api_key=secret&q=a%20b'),
       ),
-    ).toBe(
-      'https://api.example.com/search?api_key=REDACTED&q=REDACTED&q=REDACTED',
-    );
-  });
-
-  it('redacts a parameter without a value entirely', () => {
-    expect(
-      redactOutboundRequestUrl(
-        new URL('https://api.example.com/hook?secret-token&page=1'),
-      ),
-    ).toBe('https://api.example.com/hook?REDACTED&page=REDACTED');
+    ).toBe('https://api.example.com/search');
   });
 
   it('drops credentials and fragments', () => {
