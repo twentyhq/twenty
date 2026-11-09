@@ -1,5 +1,8 @@
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { DashboardFilterBar } from '@/page-layout/components/DashboardFilterBar';
+import { DashboardFiltersProvider } from '@/page-layout/components/DashboardFiltersProvider';
+import { DASHBOARD_DATE_RANGE_FILTER_ID } from '@/page-layout/constants/DashboardDateRangeFilterId';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -11,19 +14,54 @@ import {
   makeDraft,
   makeTab,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
-import { getDashboardPageLayoutFilters } from '@/page-layout/utils/getDashboardPageLayoutFilters';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { MemoryRouter } from 'react-router-dom';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
+  FeatureFlagKey,
+  type PageLayoutFilter,
+  PageLayoutFilterType,
   PageLayoutType,
   ViewFilterOperand,
 } from '~/generated-metadata/graphql';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
+const DATE_RANGE_FILTER_ID = '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e01';
+const SIGNUP_FILTER_ID = '6f2b8f1e-6a3c-4f4e-9d61-2f1c8a7b5e02';
+const DASHBOARD_RECORD_ID = 'dashboard-record-id';
 const THIRD_PARTY_APPLICATION_ID = 'acme-application';
+
+// The bar renders once the mocked metadata has loaded
+const FIRST_RENDER_TIMEOUT = { timeout: 10000 };
+
+const DATE_RANGE_FILTER: PageLayoutFilter = {
+  id: DATE_RANGE_FILTER_ID,
+  label: 'Date range',
+  type: PageLayoutFilterType.DATE,
+  position: 0,
+  defaultValue: {
+    conditions: [
+      { operand: ViewFilterOperand.IS_RELATIVE, value: 'THIS_1_MONTH' },
+    ],
+  },
+};
+
+const SIGNUP_FILTER: PageLayoutFilter = {
+  id: SIGNUP_FILTER_ID,
+  label: 'Signup',
+  type: PageLayoutFilterType.DATE,
+  position: 1,
+  defaultValue: null,
+};
 
 const PAGE_LAYOUT_PERSISTED_ATOM = pageLayoutPersistedComponentState.atomFamily(
   { instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID },
@@ -31,32 +69,81 @@ const PAGE_LAYOUT_PERSISTED_ATOM = pageLayoutPersistedComponentState.atomFamily(
 const PAGE_LAYOUT_DRAFT_ATOM = pageLayoutDraftComponentState.atomFamily({
   instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
 });
+const IS_IN_EDIT_MODE_ATOM = isDashboardInEditModeComponentState.atomFamily({
+  instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+});
 
-const DashboardFilterBarStory = () => (
-  <PageLayoutTestWrapper
-    layoutType={PageLayoutType.DASHBOARD}
-    store={jotaiStore}
-  >
-    <DashboardFilterBar />
-  </PageLayoutTestWrapper>
+const setDashboard = ({
+  filters,
+  applicationId = '',
+}: {
+  filters: PageLayoutFilter[] | null;
+  applicationId?: string;
+}) => {
+  const pageLayout = {
+    ...makeDraft([makeTab('tab-1', [])]),
+    id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+    type: PageLayoutType.DASHBOARD,
+    filters,
+  };
+
+  jotaiStore.set(PAGE_LAYOUT_PERSISTED_ATOM, {
+    ...pageLayout,
+    applicationId,
+    universalIdentifier: PAGE_LAYOUT_TEST_INSTANCE_ID,
+    isSystemSideEffect: false,
+    createdAt: '2026-08-01T00:00:00.000Z',
+    updatedAt: '2026-08-01T00:00:00.000Z',
+  });
+  jotaiStore.set(PAGE_LAYOUT_DRAFT_ATOM, pageLayout);
+};
+
+type DashboardFilterBarStoryProps = {
+  initialSearch: string;
+};
+
+const DashboardFilterBarStory = ({
+  initialSearch,
+}: DashboardFilterBarStoryProps) => (
+  <MemoryRouter initialEntries={[`/object/dashboard/1${initialSearch}`]}>
+    <PageLayoutTestWrapper
+      layoutType={PageLayoutType.DASHBOARD}
+      store={jotaiStore}
+    >
+      <LayoutRenderingProvider
+        value={{
+          targetRecordIdentifier: {
+            id: DASHBOARD_RECORD_ID,
+            targetObjectNameSingular: 'dashboard',
+          },
+          layoutType: PageLayoutType.DASHBOARD,
+        }}
+      >
+        <DashboardFiltersProvider>
+          <DashboardFilterBar />
+        </DashboardFiltersProvider>
+      </LayoutRenderingProvider>
+    </PageLayoutTestWrapper>
+  </MemoryRouter>
 );
 
 const meta: Meta<typeof DashboardFilterBarStory> = {
   title: 'Modules/PageLayout/DashboardFilterBar',
   component: DashboardFilterBarStory,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, ObjectMetadataItemsDecorator],
   parameters: { container: { width: 480, height: 320 } },
+  args: { initialSearch: '' },
   beforeEach: () => {
     const previousWorkspace = jotaiStore.get(currentWorkspaceState.atom);
-    const pageLayout = {
-      ...makeDraft([makeTab('tab-1', [])]),
-      id: PAGE_LAYOUT_TEST_INSTANCE_ID,
-      type: PageLayoutType.DASHBOARD,
-      filters: null,
-    };
+    const previousUserWorkspace = jotaiStore.get(
+      currentUserWorkspaceState.atom,
+    );
 
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED, value: true },
+      ],
       installedApplications: [
         ...mockCurrentWorkspace.installedApplications,
         {
@@ -66,40 +153,213 @@ const meta: Meta<typeof DashboardFilterBarStory> = {
         },
       ],
     });
-    jotaiStore.set(PAGE_LAYOUT_PERSISTED_ATOM, {
-      ...pageLayout,
-      applicationId: '',
-      universalIdentifier: PAGE_LAYOUT_TEST_INSTANCE_ID,
-      isSystemSideEffect: false,
-      createdAt: '2026-08-01T00:00:00.000Z',
-      updatedAt: '2026-08-01T00:00:00.000Z',
-    });
-    jotaiStore.set(PAGE_LAYOUT_DRAFT_ATOM, pageLayout);
     jotaiStore.set(
-      isDashboardInEditModeComponentState.atomFamily({
-        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-      }),
-      true,
+      currentUserWorkspaceState.atom,
+      mockedUserData.currentUserWorkspace,
     );
+    jotaiStore.set(IS_IN_EDIT_MODE_ATOM, false);
+    setDashboard({ filters: [DATE_RANGE_FILTER] });
 
-    return () => jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
+    return () => {
+      jotaiStore.set(currentWorkspaceState.atom, previousWorkspace);
+      jotaiStore.set(currentUserWorkspaceState.atom, previousUserWorkspace);
+      jotaiStore.set(
+        recordStoreFamilyState.atomFamily(DASHBOARD_RECORD_ID),
+        null,
+      );
+    };
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const EditsTheDefaultOfTheBuiltInDateRange: Story = {
+const findChip = (canvasElement: HTMLElement, name: string | RegExp) =>
+  within(canvasElement).findByRole('button', { name }, FIRST_RENDER_TIMEOUT);
+
+export const ShowsTheDefaultValue: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'Date range: All time' }),
+      await findChip(canvasElement, 'Date range: This month'),
     );
 
-    expect(await body.findByText('Default for everyone')).toBeVisible();
+    expect(await body.findByText('Relative date')).toBeVisible();
+    expect(body.queryByText('Default for everyone')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: 'Reset' }),
+    ).not.toBeInTheDocument();
+  },
+};
 
+export const ShowsTheBuiltInDateRangeOnADashboardWithoutFilters: Story = {
+  beforeEach: () => setDashboard({ filters: null }),
+  play: async ({ canvasElement }) => {
+    expect(await findChip(canvasElement, 'Date range: All time')).toBeVisible();
+  },
+};
+
+export const ResetsAUrlValueToTheDefault: Story = {
+  args: {
+    initialSearch: `?dashboardFilter[${DATE_RANGE_FILTER_ID}][IS_RELATIVE]=PAST_7_DAY`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await findChip(canvasElement, 'Date range: Past 7 days'),
+    ).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Reset' }));
+
+    expect(
+      await canvas.findByRole('button', { name: 'Date range: This month' }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Reset' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const ResetsEveryUrlValueAtOnce: Story = {
+  args: {
+    initialSearch: `?dashboardFilter[${DATE_RANGE_FILTER_ID}][IS_RELATIVE]=PAST_7_DAY&dashboardFilter[${SIGNUP_FILTER_ID}][IS_RELATIVE]=THIS_1_YEAR`,
+  },
+  beforeEach: () =>
+    setDashboard({ filters: [DATE_RANGE_FILTER, SIGNUP_FILTER] }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await findChip(canvasElement, 'Date range: Past 7 days'),
+    ).toBeVisible();
+    expect(
+      canvas.getByRole('button', { name: 'Signup: This year' }),
+    ).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Reset' }));
+
+    expect(
+      await canvas.findByRole('button', { name: 'Date range: This month' }),
+    ).toBeVisible();
+    expect(
+      canvas.getByRole('button', { name: 'Signup: All time' }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Reset' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const HidesResetWhenTheUrlValueIsTheDefault: Story = {
+  args: {
+    initialSearch: `?dashboardFilter[${DATE_RANGE_FILTER_ID}][IS_RELATIVE]=THIS_1_MONTH`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await findChip(canvasElement, 'Date range: This month'),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Reset' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const SetsTheViewValueAsTheDefault: Story = {
+  args: {
+    initialSearch: `?dashboardFilter[${DATE_RANGE_FILTER_ID}][IS_RELATIVE]=PAST_7_DAY`,
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await findChip(canvasElement, 'Date range: Past 7 days'),
+    );
+    await userEvent.click(await body.findByText('Set as default'));
+
+    await waitFor(() =>
+      expect(jotaiStore.get(IS_IN_EDIT_MODE_ATOM)).toBe(true),
+    );
+    expect(jotaiStore.get(PAGE_LAYOUT_DRAFT_ATOM).filters).toMatchObject([
+      {
+        id: DATE_RANGE_FILTER_ID,
+        defaultValue: {
+          conditions: [
+            { operand: ViewFilterOperand.IS_RELATIVE, value: 'PAST_7_DAY' },
+          ],
+        },
+      },
+    ]);
+    expect(
+      await findChip(canvasElement, 'Date range: Past 7 days'),
+    ).toBeVisible();
+  },
+};
+
+export const HidesSetAsDefaultWithoutDashboardEditPermission: Story = {
+  // ObjectMetadataItemsDecorator sets the user workspace on mount, after beforeEach
+  parameters: {
+    currentUserWorkspace: {
+      ...mockedUserData.currentUserWorkspace,
+      objectRecordsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
+        ({ id }) => ({
+          objectMetadataId: id,
+          canReadAllRecords: true,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
+          restrictedFields: {},
+        }),
+      ),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await findChip(canvasElement, 'Date range: This month'),
+    );
+
+    expect(await body.findByText('Relative date')).toBeVisible();
+    expect(body.queryByText('Set as default')).not.toBeInTheDocument();
+  },
+};
+
+export const HidesSetAsDefaultOnADeletedDashboard: Story = {
+  beforeEach: () => {
+    jotaiStore.set(recordStoreFamilyState.atomFamily(DASHBOARD_RECORD_ID), {
+      id: DASHBOARD_RECORD_ID,
+      __typename: 'Dashboard',
+      deletedAt: '2026-08-02T00:00:00.000Z',
+    });
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await findChip(canvasElement, 'Date range: This month'),
+    );
+
+    expect(await body.findByText('Relative date')).toBeVisible();
+    expect(body.queryByText('Set as default')).not.toBeInTheDocument();
+  },
+};
+
+export const EditsTheDefaultOfTheBuiltInDateRange: Story = {
+  beforeEach: () => {
+    jotaiStore.set(IS_IN_EDIT_MODE_ATOM, true);
+    setDashboard({ filters: null });
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await findChip(canvasElement, 'Date range: All time'),
+    );
     await userEvent.click(await body.findByText('All time'));
     await userEvent.click(
       await body.findByRole('option', { name: 'Relative date' }),
@@ -108,36 +368,44 @@ export const EditsTheDefaultOfTheBuiltInDateRange: Story = {
     await userEvent.click(await body.findByRole('option', { name: 'Week' }));
 
     expect(
-      await canvas.findByRole('button', { name: 'Date range: This week' }),
+      await findChip(canvasElement, 'Date range: This week'),
     ).toBeVisible();
-    expect(jotaiStore.get(PAGE_LAYOUT_DRAFT_ATOM).filters).toHaveLength(1);
+    expect(jotaiStore.get(PAGE_LAYOUT_DRAFT_ATOM).filters).toMatchObject([
+      {
+        id: DASHBOARD_DATE_RANGE_FILTER_ID,
+        label: 'Date range',
+        defaultValue: {
+          conditions: [
+            { operand: ViewFilterOperand.IS_RELATIVE, value: 'THIS_1_WEEK' },
+          ],
+        },
+      },
+    ]);
   },
 };
 
 export const PicksBothDatesOfARangeFromTheCalendar: Story = {
   beforeEach: () => {
-    const pageLayoutDraft = jotaiStore.get(PAGE_LAYOUT_DRAFT_ATOM);
-
-    jotaiStore.set(PAGE_LAYOUT_DRAFT_ATOM, {
-      ...pageLayoutDraft,
-      filters: getDashboardPageLayoutFilters(null).map((filter) => ({
-        ...filter,
-        defaultValue: {
-          conditions: [
-            { operand: ViewFilterOperand.IS_AFTER, value: '2026-03-02' },
-            { operand: ViewFilterOperand.IS_BEFORE, value: '2026-03-29' },
-          ],
+    jotaiStore.set(IS_IN_EDIT_MODE_ATOM, true);
+    setDashboard({
+      filters: [
+        {
+          ...DATE_RANGE_FILTER,
+          defaultValue: {
+            conditions: [
+              { operand: ViewFilterOperand.IS_AFTER, value: '2026-03-02' },
+              { operand: ViewFilterOperand.IS_BEFORE, value: '2026-03-29' },
+            ],
+          },
         },
-      })),
+      ],
     });
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(
-      await canvas.findByRole('button', { name: /^Date range: Mar 2/ }),
-    );
+    await userEvent.click(await findChip(canvasElement, /^Date range: Mar 2/));
 
     const [startDateInput, endDateInput] = await body.findAllByRole('textbox', {
       name: 'Date',
@@ -161,32 +429,127 @@ export const PicksBothDatesOfARangeFromTheCalendar: Story = {
         name: /^Date range: Mar 10(, 2026)? – Mar 20(, 2026)?$/,
       }),
     ).toBeVisible();
-    expect(body.getByText('Default for everyone')).toBeVisible();
   },
 };
 
-export const IsLockedOnADashboardOfAnApp: Story = {
+export const EditsTheDefaultAndIgnoresTheUrlInEditMode: Story = {
+  args: {
+    initialSearch: `?dashboardFilter[${DATE_RANGE_FILTER_ID}][IS_RELATIVE]=PAST_7_DAY`,
+  },
   beforeEach: () => {
-    const pageLayoutPersisted = jotaiStore.get(PAGE_LAYOUT_PERSISTED_ATOM);
-
-    if (isDefined(pageLayoutPersisted)) {
-      jotaiStore.set(PAGE_LAYOUT_PERSISTED_ATOM, {
-        ...pageLayoutPersisted,
-        applicationId: THIRD_PARTY_APPLICATION_ID,
-      });
-    }
+    jotaiStore.set(IS_IN_EDIT_MODE_ATOM, true);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const chip = await canvas.findByRole('button', {
-      name: 'Date range: All time',
+
+    await userEvent.click(
+      await findChip(canvasElement, 'Date range: This month'),
+    );
+
+    expect(await body.findByText('Default for everyone')).toBeVisible();
+    expect(body.queryByText('Set as default')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: 'Reset' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(await body.findByText('Relative date'));
+    await userEvent.click(
+      await body.findByRole('option', { name: 'All time' }),
+    );
+
+    expect(await findChip(canvasElement, 'Date range: All time')).toBeVisible();
+    expect(jotaiStore.get(PAGE_LAYOUT_DRAFT_ATOM).filters).toMatchObject([
+      { id: DATE_RANGE_FILTER_ID, defaultValue: null },
+    ]);
+  },
+};
+
+export const IsLockedInEditModeOnADashboardOfAnApp: Story = {
+  beforeEach: () => {
+    jotaiStore.set(IS_IN_EDIT_MODE_ATOM, true);
+    setDashboard({
+      filters: [DATE_RANGE_FILTER],
+      applicationId: THIRD_PARTY_APPLICATION_ID,
     });
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const chip = await findChip(canvasElement, 'Date range: This month');
 
     expect(chip).toHaveAttribute('aria-disabled', 'true');
 
     await userEvent.hover(chip);
 
     expect(await body.findByText('Managed by an app')).toBeVisible();
+  },
+};
+
+export const IgnoresAValueTheBarCannotShow: Story = {
+  args: {
+    initialSearch: `?dashboardFilter[${DATE_RANGE_FILTER_ID}][IS_RELATIVE]=THIS_1_MONTH;;Bad/Zone;;`,
+  },
+  play: async ({ canvasElement }) => {
+    expect(
+      await findChip(canvasElement, 'Date range: This month'),
+    ).toBeVisible();
+  },
+};
+
+export const PicksAMonthInTheDatePicker: Story = {
+  args: {
+    initialSearch: `?dashboardFilter[${DATE_RANGE_FILTER_ID}][IS_AFTER]=2026-01-10`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await findChip(canvasElement, /^Date range: From /));
+    const [startDateInput] = await body.findAllByRole('textbox', {
+      name: 'Date',
+    });
+    await userEvent.click(startDateInput);
+    await userEvent.click(await body.findByText('January'));
+
+    const marchOption = await body.findByRole('option', { name: 'March' });
+    const { left, top, width, height } = marchOption.getBoundingClientRect();
+
+    const topmostElement = canvasElement.ownerDocument.elementFromPoint(
+      left + width / 2,
+      top + height / 2,
+    );
+
+    expect(topmostElement?.closest('[role="option"]')).toBe(marchOption);
+
+    await userEvent.click(marchOption);
+    await userEvent.click(
+      await body.findByRole('gridcell', { name: /March 5th, 2026/ }),
+    );
+
+    expect(
+      await canvas.findByRole('button', { name: /^Date range: From Mar 5/ }),
+    ).toBeVisible();
+  },
+};
+
+export const KeepsTheValueWhenChoosingADateRange: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await findChip(canvasElement, 'Date range: This month'),
+    );
+    await userEvent.click(await body.findByText('Relative date'));
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Date range' }),
+    );
+
+    await waitFor(() =>
+      expect(body.getAllByRole('textbox', { name: 'Date' })).toHaveLength(2),
+    );
+    expect(
+      canvas.getByRole('button', { name: 'Date range: This month' }),
+    ).toBeVisible();
   },
 };

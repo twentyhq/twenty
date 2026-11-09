@@ -1,3 +1,4 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getWidgetDashboardFilterBindings } from '@/page-layout/utils/getWidgetDashboardFilterBindings';
 import {
   TEST_BAR_CHART_CONFIGURATION,
@@ -7,19 +8,19 @@ import {
 
 describe('getWidgetDashboardFilterBindings', () => {
   it('should return the bindings without their typename and with null exclusions', () => {
-    expect(
-      getWidgetDashboardFilterBindings({
-        ...TEST_BAR_CHART_CONFIGURATION,
-        dashboardFilterBindings: [
-          {
-            __typename: 'DashboardFilterBinding',
-            pageLayoutFilterId: 'date-range-filter',
-            fieldMetadataId: TEST_FIELD_METADATA_ID_1,
-          },
-          { pageLayoutFilterId: 'signup-filter' },
-        ],
-      }),
-    ).toEqual([
+    const configuration: PageLayoutWidget['configuration'] = {
+      ...TEST_BAR_CHART_CONFIGURATION,
+      dashboardFilterBindings: [
+        {
+          __typename: 'DashboardFilterBinding',
+          pageLayoutFilterId: 'date-range-filter',
+          fieldMetadataId: TEST_FIELD_METADATA_ID_1,
+        },
+        { pageLayoutFilterId: 'signup-filter' },
+      ],
+    };
+
+    expect(getWidgetDashboardFilterBindings(configuration)).toEqual([
       {
         pageLayoutFilterId: 'date-range-filter',
         fieldMetadataId: TEST_FIELD_METADATA_ID_1,
