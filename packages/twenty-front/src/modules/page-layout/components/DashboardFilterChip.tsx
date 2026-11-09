@@ -9,6 +9,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -39,6 +40,7 @@ type DashboardFilterChipProps = {
   value: PageLayoutFilterValue | null;
   title?: string;
   onChange: (value: PageLayoutFilterValue | null) => void;
+  children?: ReactNode;
 };
 
 export const DashboardFilterChip = ({
@@ -47,6 +49,7 @@ export const DashboardFilterChip = ({
   value,
   title = label,
   onChange,
+  children,
 }: DashboardFilterChipProps) => {
   const { t } = useLingui();
   const { getValueLabel } = useGetPageLayoutFilterValueLabel();
@@ -101,6 +104,7 @@ export const DashboardFilterChip = ({
             value={value}
             onChange={onChange}
           />
+          {children}
         </StyledDropdownBody>
       </DropdownContent>
     </DropdownRoot>

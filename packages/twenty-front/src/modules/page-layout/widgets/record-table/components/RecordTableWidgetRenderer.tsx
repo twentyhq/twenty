@@ -1,5 +1,6 @@
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useWidgetDashboardFilter } from '@/page-layout/hooks/useWidgetDashboardFilter';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { StyledWidgetTableOutline } from '@/page-layout/widgets/components/WidgetContentFrame';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
@@ -18,6 +19,10 @@ export const RecordTableWidgetRenderer = ({
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const {
+    gqlOperationFilter: dashboardGqlOperationFilter,
+    replacedWidgetRecordFilterIds,
+  } = useWidgetDashboardFilter();
 
   const isRecordTableConfiguration =
     configuration.configurationType === WidgetConfigurationType.RECORD_TABLE;
@@ -49,6 +54,8 @@ export const RecordTableWidgetRenderer = ({
         widgetId={widget.id}
         isEmptyStateHidden
         recordLimit={recordLimit}
+        additionalFilter={dashboardGqlOperationFilter}
+        excludedRecordFilterIds={replacedWidgetRecordFilterIds}
         isUIEditable={!isPageLayoutInEditMode && isUIEditable}
       />
     </StyledWidgetTableOutline>

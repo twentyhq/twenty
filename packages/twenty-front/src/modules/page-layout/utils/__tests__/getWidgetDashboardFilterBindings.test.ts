@@ -1,3 +1,4 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getWidgetDashboardFilterBindings } from '@/page-layout/utils/getWidgetDashboardFilterBindings';
 import { DASHBOARD_DATE_RANGE_FILTER_ID } from 'twenty-shared/constants';
 import {
@@ -6,19 +7,22 @@ import {
   TEST_IFRAME_CONFIGURATION,
 } from '~/testing/mock-data/widget-configurations';
 
+const CONFIGURATION_WITH_TYPENAMED_BINDING: PageLayoutWidget['configuration'] =
+  {
+    ...TEST_BAR_CHART_CONFIGURATION,
+    dashboardFilterBindings: [
+      {
+        __typename: 'DashboardFilterBinding',
+        pageLayoutFilterId: DASHBOARD_DATE_RANGE_FILTER_ID,
+        fieldMetadataId: TEST_FIELD_METADATA_ID_1,
+      },
+    ],
+  };
+
 describe('getWidgetDashboardFilterBindings', () => {
   it('should return an override without its typename', () => {
     expect(
-      getWidgetDashboardFilterBindings({
-        ...TEST_BAR_CHART_CONFIGURATION,
-        dashboardFilterBindings: [
-          {
-            __typename: 'DashboardFilterBinding',
-            pageLayoutFilterId: DASHBOARD_DATE_RANGE_FILTER_ID,
-            fieldMetadataId: TEST_FIELD_METADATA_ID_1,
-          },
-        ],
-      }),
+      getWidgetDashboardFilterBindings(CONFIGURATION_WITH_TYPENAMED_BINDING),
     ).toEqual([
       {
         pageLayoutFilterId: DASHBOARD_DATE_RANGE_FILTER_ID,

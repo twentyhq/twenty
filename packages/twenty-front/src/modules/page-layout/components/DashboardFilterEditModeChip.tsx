@@ -10,7 +10,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 type DashboardFilterEditModeChipProps = {
-  pageLayoutFilter: PageLayoutFilter;
+  pageLayoutFilter: Pick<PageLayoutFilter, 'id' | 'label' | 'defaultValue'>;
 };
 
 export const DashboardFilterEditModeChip = ({
