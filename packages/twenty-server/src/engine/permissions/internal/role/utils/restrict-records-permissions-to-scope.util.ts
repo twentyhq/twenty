@@ -26,9 +26,9 @@ export const restrictRecordsPermissionsToScope = ({
             ?.rowLevelRecordsPermissions;
         const intersectedObjectRecordsPermissions =
           intersectedRecordsPermissions.objects[objectMetadataId];
-        const scopeRestrictedFields =
+        const scopeUneditableFields =
           aiRunScope.recordsPermissions.objects[objectMetadataId]
-            ?.restrictedFields ?? {};
+            ?.uneditableFields ?? [];
 
         if (
           !isDefined(
@@ -47,7 +47,7 @@ export const restrictRecordsPermissionsToScope = ({
               ...intersectedObjectRecordsPermissions.rowLevelRecordsPermissions,
               predicates: roleRowLevelRecordsPermissions.predicates.filter(
                 ({ fieldMetadataId }) =>
-                  scopeRestrictedFields[fieldMetadataId]?.canUpdate !== false,
+                  !scopeUneditableFields.includes(fieldMetadataId),
               ),
               predicateGroups: roleRowLevelRecordsPermissions.predicateGroups,
             },

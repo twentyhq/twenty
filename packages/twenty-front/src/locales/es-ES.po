@@ -699,6 +699,11 @@ msgstr "{currentCreditAmountDisplay} créditos "
 msgid "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgstr "{currentStepCredits, plural, one {crédito gratis} other {créditos gratis}}"
 
+#. js-lingui-id: QG0ttf
+#: src/utils/cron-to-human/descriptors/getDaysDescription.ts
+msgid "{dayOfMonthDescription} and {dayOfWeekDescription}"
+msgstr "{dayOfMonthDescription} y {dayOfWeekDescription}"
+
 #. js-lingui-id: 0aO0VO
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
@@ -4386,7 +4391,7 @@ msgid "Assistant avatar"
 msgstr "Avatar del asistente"
 
 #. js-lingui-id: iHgLrg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Assistant name"
 msgstr "Nombre del asistente"
 
@@ -6222,10 +6227,10 @@ msgstr "Elige qué sucede al hacer clic en una dirección de correo electrónico
 msgid "Choose what Twenty can access to support you and improve the product."
 msgstr "Elige a qué puede acceder Twenty para ayudarte y mejorar el producto."
 
-#. js-lingui-id: T3tKFK
+#. js-lingui-id: Fi1ujk
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr "Elige cuándo {AGENT_CHAT_ASSISTANT_NAME} participa en las conversaciones de todo tu espacio de trabajo"
+msgid "Choose when {assistantName} participates in conversations across your workspace"
+msgstr "Elige cuándo {assistantName} participa en conversaciones en todo tu espacio de trabajo"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -11302,7 +11307,7 @@ msgid "Enter a JSON value"
 msgstr "Introduce un valor JSON"
 
 #. js-lingui-id: 8Yr1fg
-#: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
+#: src/pages/settings/ai/components/SettingsAiAssistantNameInput.tsx
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters on one line. Square brackets must be paired and cannot be nested."
 msgstr "Introduce un nombre de entre 1 y {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caracteres en una sola línea. Los corchetes deben estar emparejados y no pueden anidarse."
 
@@ -12774,6 +12779,11 @@ msgstr "No se pudo revocar la clave de firma. Por favor, inténtelo de nuevo má
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to revoke the recovery code."
 msgstr "No se pudo revocar el código de recuperación."
+
+#. js-lingui-id: umTjkJ
+#: src/modules/settings/ai/hooks/useSettingsAiAssistantProfile.ts
+msgid "Failed to save assistant settings. Try again."
+msgstr "No se pudo guardar la configuración del asistente. Inténtalo de nuevo."
 
 #. js-lingui-id: /CvX5S
 #: src/modules/settings/ai/hooks/useSettingsAiBehavior.ts
@@ -18704,10 +18714,10 @@ msgstr "Nunca"
 msgid "Never expires"
 msgstr "Nunca expira"
 
-#. js-lingui-id: cHEgp5
+#. js-lingui-id: sylw2O
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
-msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr "Nunca mantiene a {AGENT_CHAT_ASSISTANT_NAME} fuera. Solo cuando se menciona hace que {AGENT_CHAT_ASSISTANT_NAME} responda cuando se le etiqueta. Automático permite que {AGENT_CHAT_ASSISTANT_NAME} decida cuándo responder. Los chats en los que solo están tú y {AGENT_CHAT_ASSISTANT_NAME} siempre reciben respuestas."
+msgid "Never keeps {assistantName} out. Only when mentioned asks {assistantName} to reply when tagged. Auto lets {assistantName} decide when to reply. Chats with only you and {assistantName} always get replies."
+msgstr "Nunca mantiene a {assistantName} fuera. Solo cuando se menciona pide a {assistantName} que responda cuando se le etiqueta. Automático permite que {assistantName} decida cuándo responder. Los chats con solo tú y {assistantName} siempre reciben respuestas."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20589,6 +20599,16 @@ msgstr "ol"
 msgid "Omit zero values"
 msgstr "Omitir valores cero"
 
+#. js-lingui-id: 7kr775
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {dayName}"
+msgstr "en {dayName}"
+
+#. js-lingui-id: 5QglRc
+#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
+msgid "on {remainingDays} and {lastDay}"
+msgstr "en {remainingDays} y {lastDay}"
+
 #. js-lingui-id: 2AKHUG
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -20736,20 +20756,13 @@ msgstr "Solo los miembros que pueden administrar aplicaciones pueden conceder ac
 
 #. js-lingui-id: G+ijJ2
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {dayName}"
 msgstr "solo en {dayName}"
 
-#. js-lingui-id: rPnv5P
+#. js-lingui-id: pYaMbU
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {firstDay} and {secondDay}"
-msgstr "solo el {firstDay} y {secondDay}"
-
-#. js-lingui-id: ODid5C
-#. placeholder {0}: lastDay ?? ''
-#: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
-msgid "only on {remainingDays} and {0}"
-msgstr "solo en {remainingDays} y {0}"
+msgid "only on {remainingDays} and {lastDay}"
+msgstr "solo en {remainingDays} y {lastDay}"
 
 #. js-lingui-id: IWOmp4
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx

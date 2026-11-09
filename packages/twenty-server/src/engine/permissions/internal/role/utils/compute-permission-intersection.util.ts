@@ -1,6 +1,5 @@
 import {
   type ObjectRecordsPermissions,
-  type RestrictedFieldPermissions,
   type RowLevelPermissionPredicate,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
@@ -28,35 +27,19 @@ const intersectRowLevelPermissionPredicates = (
   );
 };
 
-const denyIfAnyDenies = (values: (boolean | null | undefined)[]) =>
-  values.some((value) => value === false) ? false : null;
-
-const intersectRestrictedFields = (
-  objectRecordsPermissionsPerRole: (ObjectRecordsPermissions | undefined)[],
-): Record<string, RestrictedFieldPermissions> => {
-  const restrictedFields: Record<string, RestrictedFieldPermissions> = {};
-
-  for (const objectRecordsPermissions of objectRecordsPermissionsPerRole) {
-    for (const [fieldMetadataId, fieldPermissions] of Object.entries(
-      objectRecordsPermissions?.restrictedFields ?? {},
-    )) {
-      const current = restrictedFields[fieldMetadataId] ?? {
-        canRead: null,
-        canUpdate: null,
-      };
-
-      restrictedFields[fieldMetadataId] = {
-        canRead: denyIfAnyDenies([current.canRead, fieldPermissions.canRead]),
-        canUpdate: denyIfAnyDenies([
-          current.canUpdate,
-          fieldPermissions.canUpdate,
-        ]),
-      };
-    }
-  }
-
-  return restrictedFields;
-};
+const unionFields = ({
+  objectRecordsPermissionsPerRole,
+  fieldList,
+}: {
+  objectRecordsPermissionsPerRole: (ObjectRecordsPermissions | undefined)[];
+  fieldList: 'unreadableFields' | 'uneditableFields';
+}): string[] => [
+  ...new Set(
+    objectRecordsPermissionsPerRole.flatMap(
+      (objectRecordsPermissions) => objectRecordsPermissions?.[fieldList] ?? [],
+    ),
+  ),
+];
 
 const intersectObjectRecordsPermissions = (
   objectRecordsPermissionsPerRole: (ObjectRecordsPermissions | undefined)[],
@@ -92,9 +75,14 @@ const intersectObjectRecordsPermissions = (
     canDestroyAllRecords: isGrantedToAllRecordsByEveryRole(
       ({ canDestroyAllRecords }) => canDestroyAllRecords,
     ),
-    restrictedFields: intersectRestrictedFields(
+    unreadableFields: unionFields({
       objectRecordsPermissionsPerRole,
-    ),
+      fieldList: 'unreadableFields',
+    }),
+    uneditableFields: unionFields({
+      objectRecordsPermissionsPerRole,
+      fieldList: 'uneditableFields',
+    }),
   };
 
   const hasRowLevelPermissions = objectRecordsPermissionsPerRole.some(

@@ -112,12 +112,12 @@ export class SsoService {
       };
     } catch (err) {
       if (err instanceof SsoException) {
-        return err;
+        throw err;
       }
 
       this.exceptionHandlerService.captureExceptions([err]);
 
-      return new SsoException(
+      throw new SsoException(
         'Unknown SSO configuration error',
         SsoExceptionCode.UNKNOWN_SSO_CONFIGURATION_ERROR,
       );
@@ -278,7 +278,7 @@ export class SsoService {
     if (!identityProvider) {
       throw new SsoException(
         'Identity Provider not found',
-        SsoExceptionCode.USER_NOT_FOUND,
+        SsoExceptionCode.IDENTITY_PROVIDER_NOT_FOUND,
       );
     }
 

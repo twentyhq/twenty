@@ -57,6 +57,10 @@ const FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['fieldMetadataId'],
   },
+  fieldMetadataOption: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['fieldMetadataId'],
+  },
 } as const;
 
 @Injectable()
@@ -96,6 +100,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
       view: views,
       searchFieldMetadata: searchFieldMetadatas,
       fieldPermission: fieldPermissions,
+      fieldMetadataOption: fieldMetadataOptions,
     } = rows;
 
     const fieldMetadataIdToUniversalIdentifierMap =
@@ -144,6 +149,10 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
           fieldPermissions:
             fieldPermissions.byFieldMetadataId.get(fieldMetadataEntity.id) ||
             [],
+          fieldMetadataOptions:
+            fieldMetadataOptions.byFieldMetadataId.get(
+              fieldMetadataEntity.id,
+            ) || [],
         },
         fieldMetadataIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,

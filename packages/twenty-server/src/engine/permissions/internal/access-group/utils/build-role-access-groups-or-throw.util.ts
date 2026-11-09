@@ -54,9 +54,8 @@ export const buildRoleAccessGroupsOrThrow = ({
     groupHash: computeAccessGroupHash({
       roleId,
       objectMetadataId,
-      hasRowLevelRule: isDefined(
+      rowLevelRecordsPermissions:
         objectRecordsPermissions.rowLevelRecordsPermissions,
-      ),
       rowLevelPermissionPredicateGroupId,
       memberFieldValues,
     }),
