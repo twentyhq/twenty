@@ -114,16 +114,10 @@ export class RecordPermissionsService {
       return false;
     }
 
-    const question = { workspaceId, objectMetadataId };
-
-    return (
-      (await this.recordAccessGroupService.isObjectUsingRecordAccessGroups(
-        question,
-      )) ||
-      (await this.recordAccessGroupService.isObjectReachedByRlsRuleRelationHop(
-        question,
-      ))
-    );
+    return this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
+      workspaceId,
+      objectMetadataId,
+    });
   }
 
   async isObjectReachedByRlsRuleRelationHop({
@@ -141,6 +135,32 @@ export class RecordPermissionsService {
         workspaceId,
         objectMetadataId,
       }))
+    );
+  }
+
+  async queueRecomputeRecordAccessGroupIdsOfRecords({
+    featureFlagsMap,
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+  }: {
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+  }): Promise<void> {
+    if (
+      !areRecordAccessGroupsEnabled({ featureFlagsMap }) ||
+      !(await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
+        workspaceId,
+        objectMetadataId,
+      }))
+    ) {
+      return;
+    }
+
+    await this.recordAccessGroupService.queueRecomputeRecordAccessGroupIdsOfRecords(
+      { workspaceId, objectMetadataId, recordIds },
     );
   }
 

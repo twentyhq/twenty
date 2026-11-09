@@ -91,6 +91,9 @@ const sumPetColumn = ({
       permissionsPrincipals: undefined,
       recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
       recordPermissions: {} as WorkspaceInternalContext['recordPermissions'],
+      recordAccessGroupQueue: {
+        queueRecomputeRecordAccessGroupIdsOfRecords: jest.fn(),
+      },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
         acquireRecordStock: jest.fn(),

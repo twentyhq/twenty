@@ -18,6 +18,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
 import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
 import {
   PermissionsException,
@@ -1811,21 +1812,25 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     relatedRecords: RelatedRecords[],
   ): Promise<void> {
     for (const { objectMetadataId, recordIds } of relatedRecords) {
-      await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRecords(
-        {
-          featureFlagsMap: this.options.internalContext.featureFlagsMap,
-          workspaceId: this.options.internalContext.workspaceId,
-          objectMetadataId,
-          recordIds,
-          transactionScope: this.buildRecordPermissionTransactionScope(),
-        },
-      );
+      await this.queueRecomputeRecordAccessGroupIdsOfRecords({
+        objectMetadataId,
+        recordIds,
+      });
     }
   }
 
   private async recomputeRecordAccessGroupIdsOfRecords(
     recordIds: string[],
   ): Promise<void> {
+    if (recordIds.length > MAX_RECORDS_RECOMPUTED_IN_WRITE) {
+      await this.queueRecomputeRecordAccessGroupIdsOfRecords({
+        objectMetadataId: this.options.flatObjectMetadata.id,
+        recordIds,
+      });
+
+      return;
+    }
+
     await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRecords(
       {
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
@@ -1833,6 +1838,23 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         objectMetadataId: this.options.flatObjectMetadata.id,
         recordIds,
         transactionScope: this.buildRecordPermissionTransactionScope(),
+      },
+    );
+  }
+
+  private async queueRecomputeRecordAccessGroupIdsOfRecords({
+    objectMetadataId,
+    recordIds,
+  }: {
+    objectMetadataId: string;
+    recordIds: string[];
+  }): Promise<void> {
+    await this.options.internalContext.recordAccessGroupQueue.queueRecomputeRecordAccessGroupIdsOfRecords(
+      {
+        featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        workspaceId: this.options.internalContext.workspaceId,
+        objectMetadataId,
+        recordIds,
       },
     );
   }

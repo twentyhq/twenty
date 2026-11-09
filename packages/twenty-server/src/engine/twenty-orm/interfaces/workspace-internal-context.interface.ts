@@ -39,6 +39,10 @@ export interface WorkspaceInternalContext {
     | 'findRlsRuleUnreadableFieldsByRole'
     | 'buildRlsRuleSqlConditionOrThrow'
   >;
+  recordAccessGroupQueue: Pick<
+    RecordPermissionsService,
+    'queueRecomputeRecordAccessGroupIdsOfRecords'
+  >;
   recordStock: Pick<
     WorkspaceRecordStockService,
     'assertRecordStockAvailable' | 'acquireRecordStock' | 'releaseRecordStock'

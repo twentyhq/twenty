@@ -2,12 +2,14 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
@@ -188,6 +190,7 @@ describe('RLS rules through a relation (integration)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
   };
 
   beforeAll(async () => {
@@ -419,6 +422,7 @@ describe('RLS rules through a relation (integration)', () => {
 
       await personRepository.update(person.id, { companyId: otherCompany.id });
     }, buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID));
+    await waitForAllJobsToFinish();
 
     expect(
       await findIdsAsMember({
@@ -472,6 +476,7 @@ describe('RLS rules through a relation (integration)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
     expect(await findPerson()).toEqual([]);
 
     await global.testDataSource.query(
@@ -534,6 +539,56 @@ describe('RLS rules through a relation (integration)', () => {
     await global.testDataSource.query(
       `UPDATE ${COMPANY_TABLE} SET "employees" = $1 WHERE "id" = $2`,
       [employees, company.id],
+    );
+  });
+
+  it('should recompute through a job when a write covers many records', async () => {
+    const personIds = Array.from({ length: 101 }, () => v4());
+
+    await global.testDataSource.query(
+      `UPDATE ${COMPANY_TABLE} SET "name" = 'Hop match' WHERE "id" = $1`,
+      [company.id],
+    );
+    await global.testDataSource.query(
+      `INSERT INTO ${PERSON_TABLE} ("id", "companyId") SELECT UNNEST($1::uuid[]), $2`,
+      [personIds, otherCompany.id],
+    );
+    await assignRuleThroughRelation({
+      objectMetadataId: personObjectMetadataId,
+      relationFieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: personObjectMetadataId,
+        name: 'company',
+      }),
+      fieldMetadataId: await findFieldMetadataId({
+        objectMetadataId: companyObjectMetadataId,
+        name: 'name',
+      }),
+      value: 'Hop match',
+    });
+
+    const response = await makeGraphqlApiRequest(
+      updateManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        data: { companyId: company.id },
+        filter: { id: { in: personIds } },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
+
+    const [{ count }] = await global.testDataSource.query(
+      `SELECT COUNT(*) FROM ${PERSON_TABLE} WHERE "id" = ANY($1) AND CARDINALITY("_accessGroupIds") > 0`,
+      [personIds],
+    );
+
+    expect(Number(count)).toBe(personIds.length);
+
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
+      [personIds],
     );
   });
 });

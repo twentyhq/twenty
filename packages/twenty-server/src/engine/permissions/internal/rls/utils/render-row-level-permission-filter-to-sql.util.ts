@@ -205,12 +205,10 @@ const renderRelationHopCondition = ({
   });
   const quotedTargetTableAlias = escapeIdentifier(targetTableAlias);
 
-  return `${escapeIdentifier(tableAlias)}.${escapeIdentifier(sourceColumnName)} IN (SELECT ${quotedTargetTableAlias}.${escapeIdentifier(targetColumnName)} FROM ${buildWorkspaceTableExpression(
-    {
-      workspaceId,
-      tableName: computeObjectTargetTable(targetFlatObjectMetadata),
-    },
-  )} AS ${quotedTargetTableAlias} WHERE ${quotedTargetTableAlias}."deletedAt" IS NULL AND (${targetCondition || ALWAYS_TRUE_CONDITION}))`;
+  return `EXISTS (SELECT 1 FROM ${buildWorkspaceTableExpression({
+    workspaceId,
+    tableName: computeObjectTargetTable(targetFlatObjectMetadata),
+  })} AS ${quotedTargetTableAlias} WHERE ${quotedTargetTableAlias}.${escapeIdentifier(targetColumnName)} = ${escapeIdentifier(tableAlias)}.${escapeIdentifier(sourceColumnName)} AND ${quotedTargetTableAlias}."deletedAt" IS NULL AND (${targetCondition || ALWAYS_TRUE_CONDITION}))`;
 };
 
 const renderFieldCondition = (

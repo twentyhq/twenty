@@ -100,6 +100,16 @@ export class WorkspaceDataSource {
             ),
           ),
       },
+      // A job queued before the commit could read the records as they were
+      recordAccessGroupQueue: {
+        queueRecomputeRecordAccessGroupIdsOfRecords: async (args) => {
+          afterCommit(() =>
+            this.internalContext.recordAccessGroupQueue.queueRecomputeRecordAccessGroupIdsOfRecords(
+              args,
+            ),
+          );
+        },
+      },
       recordStock: {
         assertRecordStockAvailable: (args) =>
           this.internalContext.recordStock.assertRecordStockAvailable(args),

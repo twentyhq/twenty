@@ -2,14 +2,20 @@
 
 import { Injectable } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
+import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_OF_RECORDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-of-records-job-name.constant';
+import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
@@ -32,6 +38,8 @@ export class RecordAccessGroupService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupRepository: AccessGroupRepository,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
+    @InjectMessageQueue(MessageQueue.accessGroupQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async recomputeRecordAccessGroupIdsOfAllObjectRecords({
@@ -129,6 +137,20 @@ export class RecordAccessGroupService {
     });
   }
 
+  async queueRecomputeRecordAccessGroupIdsOfRecords({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+  }: RecomputeRecordAccessGroupIdsOfRecordsJobData): Promise<void> {
+    for (const recordIdsBatch of chunk(recordIds, RECOMPUTE_BATCH_SIZE)) {
+      await this.messageQueueService.add<RecomputeRecordAccessGroupIdsOfRecordsJobData>(
+        RECOMPUTE_RECORD_ACCESS_GROUP_IDS_OF_RECORDS_JOB_NAME,
+        { workspaceId, objectMetadataId, recordIds: recordIdsBatch },
+        { isWorkspaceJob: true, workspaceId, retryLimit: 3 },
+      );
+    }
+  }
+
   async isObjectUsingRecordAccessGroups({
     workspaceId,
     objectMetadataId,
@@ -163,7 +185,6 @@ export class RecordAccessGroupService {
     );
   }
 
-  // Locks the related records, so concurrent writes evaluate them one after the other
   async findRelatedRecords({
     workspaceId,
     objectMetadataId,

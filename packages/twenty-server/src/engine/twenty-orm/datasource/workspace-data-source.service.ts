@@ -58,6 +58,7 @@ export class WorkspaceDataSourceService {
       eventEmitterService: this.workspaceEventEmitter,
       recordStock: this.workspaceRecordStockService,
       recordPermissions: this.recordPermissionsService,
+      recordAccessGroupQueue: this.recordPermissionsService,
       coreDataSource: this.coreDataSource,
     };
   }

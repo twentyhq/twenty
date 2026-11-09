@@ -272,7 +272,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     ).toThrow('through relation "accountOwner"');
   });
 
-  it('renders a many to one relation hop as a subquery on the target object', () => {
+  it('renders a many to one relation hop as a correlated subquery on the target object', () => {
     const relationField = createFlatFieldMetadata({
       id: 'relation-field-id',
       name: 'accountOwner',
@@ -320,8 +320,10 @@ describe('renderRowLevelPermissionFilterToSql', () => {
       },
     });
 
-    expect(condition?.sql).toContain('"company"."accountOwnerId" IN (SELECT');
-    expect(condition?.sql).toContain('"company_accountOwner"."id" FROM');
+    expect(condition?.sql).toContain('EXISTS (SELECT 1 FROM');
+    expect(condition?.sql).toContain(
+      '"company_accountOwner"."id" = "company"."accountOwnerId"',
+    );
     expect(condition?.sql).toContain(
       '"company_accountOwner"."deletedAt" IS NULL',
     );

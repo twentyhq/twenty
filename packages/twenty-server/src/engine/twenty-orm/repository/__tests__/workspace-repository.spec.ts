@@ -123,6 +123,9 @@ const buildRepository = ({
           .fn()
           .mockReturnValue(false),
       },
+      recordAccessGroupQueue: {
+        queueRecomputeRecordAccessGroupIdsOfRecords: jest.fn(),
+      },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
         acquireRecordStock: jest.fn(),
