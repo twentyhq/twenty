@@ -1,13 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ImapFlow } from 'imapflow';
+import { type ImapFlow, type MessageStructureObject } from 'imapflow';
 import { type Email as ParsedMail } from 'postal-mime';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapMessageParserService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-parser.service';
 import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
+import { extractImapBodyStructureAttachments } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-imap-body-structure-attachments.util';
 import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { resolveReceivedAt } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/resolve-received-at.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
@@ -148,6 +150,7 @@ export class ImapGetMessagesService {
           connectedAccount,
           result.flags,
           result.internalDate,
+          result.bodyStructure,
         ),
       );
     }
@@ -167,6 +170,7 @@ export class ImapGetMessagesService {
     connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>,
     flags?: Set<string>,
     internalDate?: Date | string,
+    bodyStructure?: MessageStructureObject,
   ): MessageWithParticipants {
     const fromAddresses = extractAddressesFromParsedEmail(parsed.from);
     const senderAddress = fromAddresses[0]?.address ?? '';
@@ -184,9 +188,9 @@ export class ImapGetMessagesService {
       text,
       receivedAt: resolveReceivedAt({ headerDate: parsed.date, internalDate }),
       direction: computeMessageDirection(senderAddress, connectedAccount),
-      attachments: (parsed.attachments || []).map((attachment) => ({
-        filename: attachment.filename || 'unnamed-attachment',
-      })),
+      attachments: isDefined(bodyStructure)
+        ? extractImapBodyStructureAttachments(bodyStructure)
+        : [],
       participants: extractParticipantsFromParsedEmail(parsed),
       messageFolderExternalIds: [folderExternalId],
       isDraft: flags?.has('\\Draft') ?? false,

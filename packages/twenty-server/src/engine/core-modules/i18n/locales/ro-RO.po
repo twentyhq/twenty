@@ -2005,7 +2005,7 @@ msgstr "Conținutul trebuie să fie un obiect pentru widgetul \"{widgetTitle}\""
 #. js-lingui-id: MgiiPI
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
-msgstr ""
+msgstr "Programează un apel de 15 de minute și te vom ajuta să îți pregătești spațiul de lucru pentru producție."
 
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
@@ -2456,7 +2456,7 @@ msgstr "Înregistrări de apeluri"
 #. js-lingui-id: eaM0Ir
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Call requested"
-msgstr ""
+msgstr "Apel solicitat"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3578,6 +3578,7 @@ msgid "Conversations"
 msgstr "Conversații"
 
 #. js-lingui-id: X/ryFh
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6173,7 +6174,7 @@ msgstr "frontComponentId nu trebuie setat când engineComponentKey este TRIGGER_
 #. js-lingui-id: 7Z3KH2
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
-msgstr ""
+msgstr "Solicitarea pentru generatorul de componente frontend depășește limita de 6 MiB. Reduceți dependențele aplicației sau dimensiunea SDK-ului generat."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9028,6 +9029,11 @@ msgstr "Furnizorul de conexiune al furnizorului de mesagerie nu poate fi modific
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "Furnizorul de conexiune al furnizorului de mesagerie nu poate fi modificat după creare: declarați un nou furnizor de mesagerie cu un nou universalIdentifier"
 
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr "Stilul de conversație conversationStyle \"{conversationStyle}\" al furnizorului de mesagerie nu este acceptat"
+
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
@@ -11404,6 +11410,7 @@ msgid "Recurring Event ID"
 msgstr "ID eveniment recurent"
 
 #. js-lingui-id: zEHtXk
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13343,7 +13350,7 @@ msgstr "Personalizează-ți spațiul de lucru"
 #. js-lingui-id: gNSS33
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Talk to our team"
-msgstr ""
+msgstr "Discută cu echipa noastră"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13702,6 +13709,11 @@ msgstr "Permisiunile solicitate ale aplicației s-au schimbat. Revizuiți-le din
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
 msgstr "Profilul asistentului nu poate fi actualizat înainte ca spațiul de lucru să fie activat."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr "Atașamentele sunt prea mari pentru a fi trimise într-un singur e-mail."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14920,6 +14932,11 @@ msgstr "Acest membru nu a configurat autentificarea cu doi factori, deci nu este
 msgid "This message channel cannot send messages."
 msgstr "Acest canal de mesaje nu poate trimite mesaje."
 
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr "Stilul de conversație al acestui furnizor de mesagerie nu este acceptat."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -15306,7 +15323,7 @@ msgstr "Acest spațiu de lucru a atins limita de stocare."
 #. js-lingui-id: fqOt5p
 #: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
 msgid "This workspace has used all its seats. Contact your workspace admin to add more."
-msgstr ""
+msgstr "Acest spațiu de lucru și-a folosit toate locurile. Contactați administratorul spațiului de lucru pentru a adăuga mai multe."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -15614,6 +15631,11 @@ msgstr "Au fost găsiți prea mulți candidați administratori."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Prea mulți participanți: {attendeeCount}. Numărul maxim permis este {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr "Sunt deschise prea multe fișiere. Încercați din nou peste un minut."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
@@ -17056,7 +17078,7 @@ msgstr "Am întâmpinat o problemă la conectarea la contul dvs. de e-mail. Vă 
 #. js-lingui-id: tP7Xh1
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "We'll confirm the time by email."
-msgstr ""
+msgstr "Vom confirma ora prin e-mail."
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

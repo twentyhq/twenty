@@ -2005,7 +2005,7 @@ msgstr "Inhoud moet een object zijn voor widget \"{widgetTitle}\""
 #. js-lingui-id: MgiiPI
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
-msgstr ""
+msgstr "Plan een gesprek van 15 minuten en wij helpen je om je werkruimte productieklaar te maken."
 
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
@@ -2456,7 +2456,7 @@ msgstr "Gespreksopnamen"
 #. js-lingui-id: eaM0Ir
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Call requested"
-msgstr ""
+msgstr "Gesprek aangevraagd"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3578,6 +3578,7 @@ msgid "Conversations"
 msgstr "Gesprekken"
 
 #. js-lingui-id: X/ryFh
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6173,7 +6174,7 @@ msgstr "frontComponentId mag niet worden ingesteld wanneer engineComponentKey TR
 #. js-lingui-id: 7Z3KH2
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
-msgstr ""
+msgstr "De aanvraag voor de frontend-componentbouwer overschrijdt de limiet van 6 MiB. Verminder de app-afhankelijkheden of de grootte van de gegenereerde SDK."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9028,6 +9029,11 @@ msgstr "De verbindingsprovider van de berichtenprovider kan niet worden gewijzig
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "De verbindingsprovider van de berichtenprovider kan na het maken niet worden gewijzigd: declareer een nieuwe berichtenprovider met een nieuwe universalIdentifier"
 
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr "Gespreksstijl \"{conversationStyle}\" van berichtenprovider wordt niet ondersteund"
+
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
@@ -11404,6 +11410,7 @@ msgid "Recurring Event ID"
 msgstr "ID van terugkerende gebeurtenis"
 
 #. js-lingui-id: zEHtXk
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13343,7 +13350,7 @@ msgstr "Pas je werkruimte aan"
 #. js-lingui-id: gNSS33
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Talk to our team"
-msgstr ""
+msgstr "Praat met ons team"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13702,6 +13709,11 @@ msgstr "De aangevraagde machtigingen van de applicatie zijn gewijzigd. Controlee
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
 msgstr "Het assistentprofiel kan niet worden bijgewerkt voordat de werkruimte is geactiveerd."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr "De bijlagen zijn te groot om in één e-mail te verzenden."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14920,6 +14932,11 @@ msgstr "Dit lid heeft tweefactorauthenticatie niet ingesteld, dus er valt niets 
 msgid "This message channel cannot send messages."
 msgstr "Dit berichtenkanaal kan geen berichten verzenden."
 
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr "De gespreksstijl van deze berichtenprovider wordt niet ondersteund."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -15306,7 +15323,7 @@ msgstr "Deze werkruimte heeft de opslaglimiet bereikt."
 #. js-lingui-id: fqOt5p
 #: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
 msgid "This workspace has used all its seats. Contact your workspace admin to add more."
-msgstr ""
+msgstr "Deze werkruimte heeft al zijn seats gebruikt. Neem contact op met je werkruimtebeheerder om er meer toe te voegen."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -15614,6 +15631,11 @@ msgstr "Te veel beheerderskandidaten gevonden."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Te veel deelnemers: {attendeeCount}. Het maximaal toegestane aantal is {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr "Er worden te veel bestanden geopend. Probeer het over een minuut opnieuw."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
@@ -17056,7 +17078,7 @@ msgstr "We ondervonden een probleem bij de verbinding met uw e-mailaccount. Cont
 #. js-lingui-id: tP7Xh1
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "We'll confirm the time by email."
-msgstr ""
+msgstr "We bevestigen de tijd per e-mail."
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

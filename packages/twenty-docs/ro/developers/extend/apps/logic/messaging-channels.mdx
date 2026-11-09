@@ -232,8 +232,11 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   },
+  conversationStyle: 'chat',
 });
 ```
+
+`conversationStyle` stabilește modul în care Twenty afișează conversațiile furnizorului: `'chat'` afișează bule de mesaje grupate după expeditor, ca într-o aplicație de mesagerie, iar `'email'` afișează aspectul firului de e-mail. Fără aceasta, canalele aplicației păstrează aspectul de chat. Necesită `"engines": { "twenty": ">=2.58.0" }`.
 
 Asociați un canal cu acesta atunci când creați canalul sau ulterior cu `updateMessageChannel` (transmiterea valorii `null` anulează asocierea):
 

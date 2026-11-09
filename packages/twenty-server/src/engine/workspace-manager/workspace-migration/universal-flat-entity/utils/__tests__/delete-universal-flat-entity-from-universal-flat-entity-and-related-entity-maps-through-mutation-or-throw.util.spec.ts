@@ -133,6 +133,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       calendarLayout: null,
       shouldHideEmptyGroups: false,
+      shouldDisplayGroupsAsTabs: false,
       kanbanColumnWidth: null,
       groupLoadLimit: 20,
       anyFieldFilterValue: null,

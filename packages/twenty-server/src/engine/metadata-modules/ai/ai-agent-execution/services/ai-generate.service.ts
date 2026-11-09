@@ -21,6 +21,7 @@ import { parseAgentInputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-
 import { readGeneratedOutputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-generated-output-or-throw.util';
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
+import { resolveAgentRunStreamOwnerOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-stream-owner-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -168,12 +169,10 @@ export class AiGenerateService {
     callerWorkspaceMemberId: string | null;
     runId: string;
   }): Promise<string> {
-    if (!isDefined(callerApplication)) {
-      throw new AiException(
-        'runId needs an application access token',
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
+    const owner = resolveAgentRunStreamOwnerOrThrow({
+      callerApplication,
+      callerWorkspaceMemberId,
+    });
 
     // a concurrent call that passes this check still fails on the turn's primary key
     const existingTurn = await this.turnRepository.findOne(workspaceId, {
@@ -185,10 +184,6 @@ export class AiGenerateService {
       throw buildRunAlreadyExistsException(runId);
     }
 
-    return buildAgentRunStreamChannelId({
-      applicationId: callerApplication.id,
-      callerWorkspaceMemberId,
-      runId,
-    });
+    return buildAgentRunStreamChannelId({ owner, runId });
   }
 }

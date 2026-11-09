@@ -10,12 +10,9 @@ import {
 } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
-import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
+import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
 
 const INSERT_BATCH_SIZE = 500;
-
-const buildAccessGroupTableExpression = (workspaceId: string): string =>
-  buildWorkspaceTableExpression({ workspaceId, tableName: 'accessGroup' });
 
 @Injectable()
 export class AccessGroupRepository {
@@ -57,26 +54,6 @@ export class AccessGroupRepository {
         parameters: { objectMetadataId },
       },
     });
-  }
-
-  async findCompactIdsByGroupHashes({
-    workspaceId,
-    groupHashes,
-  }: {
-    workspaceId: string;
-    groupHashes: string[];
-  }): Promise<number[]> {
-    const rows = await this.recordPermissionQueryService.execute<{
-      compactId: number;
-    }>({
-      workspaceId,
-      query: {
-        sql: `SELECT "compactId" FROM ${buildAccessGroupTableExpression(workspaceId)} WHERE "groupHash" = ANY(:groupHashes)`,
-        parameters: { groupHashes },
-      },
-    });
-
-    return rows.map(({ compactId }) => compactId);
   }
 
   async insertAccessGroups({

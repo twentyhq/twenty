@@ -101,6 +101,10 @@
     --tw-tabs-icon-color: var(--tw-tabs-color);
   }
 
+  &[data-variant='filled'][data-active] {
+    --tw-tabs-background: var(--t-background-tertiary);
+  }
+
   &[data-orientation='vertical'] {
     justify-content: flex-start;
   }

@@ -465,6 +465,24 @@ describe('SSO login should fail', () => {
       });
     });
 
+    it('when the response is replayed', async () => {
+      const identityProviderId = await createSamlIdentityProvider();
+
+      const samlResponse = await requestSamlResponseAsPhil(identityProviderId);
+
+      const firstRedirectUrl = await completeSamlLogin(samlResponse);
+
+      expect(firstRedirectUrl.searchParams.get('loginToken')).toEqual(
+        expect.any(String),
+      );
+
+      expectSsoErrorRedirect({
+        redirectUrl: await completeSamlLogin(samlResponse),
+        workspaceSubdomain: APPLE_SUBDOMAIN,
+        errorMessage: 'SAML assertion has already been used',
+      });
+    });
+
     it('when the callback targets an unknown identity provider', async () => {
       expectSsoErrorRedirect({
         redirectUrl: await completeSamlLogin({
