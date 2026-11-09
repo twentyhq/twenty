@@ -79,7 +79,7 @@ Inter everywhere in the product, with a 13px root: `font.size.md` is `1rem` = 13
 - Use `Heading` and `Text` from `twenty-ui/primitives/typography` instead of setting font sizes by hand.
 - Three weights: regular for reading, medium for emphasis and unread items, semibold for titles and labels.
 - Put secondary information on the same line, to the right, in a lighter step, before stacking a second line.
-- An inline icon is never larger than the text beside it.
+- Next to text, use the size the component gives the icon (14px beside body text). Never enlarge an icon to add emphasis.
 
 ## Layout
 
@@ -144,7 +144,7 @@ Reuse is the first rule. Before writing a styled component, find what the siblin
 2. **Use shared components as they are,** without overriding their styles from a feature. When one lacks something, use its closest existing variant (gray for tags) and flag the gap. Changing a shared component, or adding a prop or variant to a primitive, waits for the design owner's request.
 3. **One component per concept.** Variants become properties, look-alike components merge, and a component made for one screen is a fork to avoid.
 4. **Verify in the real parent.** Render the change inside its actual page or panel, in light and dark mode and in every state (collapsed sidebar, edit mode, side panel open, empty, loading, long content), and compare icon size, stroke, color and spacing with the neighbours. An isolated story hides mismatches.
-5. **Fix the class, not the instance.** Fix a visual bug at its root cause rather than with a local override. Then find every other place with the same problem and fix it too, and remove the legacy component that let it happen. Before changing anything shared, check every place it reaches.
+5. **Fix the cause, then look for repeats.** Fix a visual bug at its root cause rather than with a local override, and find the other places with the same problem. Fix those within the same feature and list the rest in the PR description. When a shared component does change (rule 2), check every place it reaches.
 
 When no sibling sits next to your work, start from these reference screens:
 
