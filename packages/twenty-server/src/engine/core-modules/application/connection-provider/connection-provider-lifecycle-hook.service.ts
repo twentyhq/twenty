@@ -8,7 +8,6 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildLogicFunctionJobMaxRate } from 'src/engine/core-modules/logic-function/utils/build-logic-function-job-max-rate.util';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
@@ -142,10 +141,6 @@ export class ConnectionProviderLifecycleHookService {
             logicFunction.applicationUniversalIdentifier,
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-          maxRate: buildLogicFunctionJobMaxRate({
-            logicFunctionId: logicFunction.id,
-            maxRate: logicFunction.maxRate,
-          }),
         },
       );
     });
