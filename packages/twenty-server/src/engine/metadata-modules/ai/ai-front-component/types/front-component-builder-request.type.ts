@@ -6,6 +6,7 @@ export type FrontComponentBuilderRequest =
   | { action: 'buildDependencies'; packageJson: string; yarnLock: string }
   | {
       action: 'transpile';
+      typeReferences: string;
       input: FrontComponentBuildInput;
       manifest: z.infer<typeof frontComponentSharedDependenciesManifestSchema>;
     };

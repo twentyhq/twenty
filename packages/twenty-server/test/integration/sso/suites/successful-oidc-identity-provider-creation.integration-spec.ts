@@ -22,9 +22,9 @@ describe('OIDC identity provider creation should succeed', () => {
       expectToFail: false,
       input: {
         name: 'OIDC identity provider',
-        issuer: testIdentityProvider.issuer,
-        clientID: testIdentityProvider.clientId,
-        clientSecret: testIdentityProvider.clientSecret,
+        issuer: testIdentityProvider.oidc.issuer,
+        clientID: testIdentityProvider.oidc.clientId,
+        clientSecret: testIdentityProvider.oidc.clientSecret,
       },
     });
 
@@ -34,7 +34,7 @@ describe('OIDC identity provider creation should succeed', () => {
       id: identityProviderId,
       type: 'OIDC',
       name: 'OIDC identity provider',
-      issuer: testIdentityProvider.issuer,
+      issuer: testIdentityProvider.oidc.issuer,
       status: 'Active',
     };
 

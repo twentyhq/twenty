@@ -527,6 +527,7 @@ export type Application = {
   availablePackages: Scalars['JSON']['output'];
   canBeUninstalled: Scalars['Boolean']['output'];
   commandMenuItems: Array<CommandMenuItem>;
+  content?: Maybe<ApplicationContent>;
   createdAt: Scalars['DateTime']['output'];
   defaultLogicFunctionRole?: Maybe<Role>;
   defaultRoleId?: Maybe<Scalars['String']['output']>;
@@ -614,6 +615,47 @@ export type ApplicationConnectionProviderOAuthConfig = {
   __typename?: 'ApplicationConnectionProviderOAuthConfig';
   isClientCredentialsConfigured: Scalars['Boolean']['output'];
   scopes: Array<Scalars['String']['output']>;
+};
+
+export type ApplicationContent = {
+  __typename?: 'ApplicationContent';
+  agents: Array<ApplicationContentItem>;
+  commandMenuItems: Array<ApplicationContentItem>;
+  connectionProviders: Array<ApplicationContentItem>;
+  fields: Array<ApplicationContentItem>;
+  frontComponents: Array<ApplicationContentItem>;
+  indexes: Array<ApplicationContentItem>;
+  logicFunctions: Array<ApplicationContentItem>;
+  navigationMenuItems: Array<ApplicationContentItem>;
+  objects: Array<ApplicationContentItem>;
+  pageLayoutTabs: Array<ApplicationContentItem>;
+  pageLayouts: Array<ApplicationContentItem>;
+  permissionFlags: Array<ApplicationContentItem>;
+  publicAssets: Array<ApplicationContentItem>;
+  roles: Array<ApplicationContentItem>;
+  skills: Array<ApplicationContentItem>;
+  translations: Array<ApplicationContentItem>;
+  viewFields: Array<ApplicationContentItem>;
+  views: Array<ApplicationContentItem>;
+  workflows: Array<ApplicationContentItem>;
+};
+
+export type ApplicationContentItem = {
+  __typename?: 'ApplicationContentItem';
+  color?: Maybe<Scalars['String']['output']>;
+  count?: Maybe<Scalars['Int']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  fieldUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  label: Scalars['String']['output'];
+  objectUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  parentLabel?: Maybe<Scalars['String']['output']>;
+  parentUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  position?: Maybe<Scalars['Float']['output']>;
+  tag?: Maybe<Scalars['String']['output']>;
+  timeoutSeconds?: Maybe<Scalars['Int']['output']>;
+  universalIdentifier: Scalars['String']['output'];
 };
 
 export type ApplicationExport = {
@@ -2845,6 +2887,7 @@ export type GettingStartedProgress = {
 };
 
 export enum GettingStartedStepActionKey {
+  BOOK_CALL = 'BOOK_CALL',
   CONNECT_MAILBOX = 'CONNECT_MAILBOX',
   CUSTOMIZE_DATA_MODEL = 'CUSTOMIZE_DATA_MODEL',
   FOLLOW_UP_DEALS = 'FOLLOW_UP_DEALS',
@@ -3261,6 +3304,7 @@ export type MarketplaceAppDetail = {
   author?: Maybe<Scalars['String']['output']>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
+  content?: Maybe<ApplicationContent>;
   defaultRoleUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   emailSupport?: Maybe<Scalars['String']['output']>;
