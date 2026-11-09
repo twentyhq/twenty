@@ -8,4 +8,5 @@ export const NO_WIDGET_DASHBOARD_FILTER: WidgetDashboardFilter = {
   replacedWidgetRecordFilterIds: [],
   isInvalid: false,
   gqlOperationFilter: {},
+  indicators: [],
 };

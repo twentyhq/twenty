@@ -2,10 +2,15 @@ import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/u
 import { type BuildChartDrilldownQueryParamsInput } from '@/page-layout/widgets/graph/types/BuildChartDrilldownQueryParamsInput';
 import { buildFilterFromChartBucket } from '@/page-layout/widgets/graph/utils/buildFilterFromChartBucket';
 import { buildFilterQueryParams } from '@/page-layout/widgets/graph/utils/buildFilterQueryParams';
+import { combineChartFilterWithDashboardRecordFilters } from '@/page-layout/widgets/graph/utils/combineChartFilterWithDashboardRecordFilters';
 import { buildSortsFromChartConfig } from '@/page-layout/widgets/graph/utils/buildSortsFromChartConfig';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
+import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  replaceWidgetFilterPeriodsWithDashboardFilter,
+} from 'twenty-shared/utils';
 
 export const buildChartDrilldownQueryParams = ({
   objectMetadataItem,
@@ -14,25 +19,36 @@ export const buildChartDrilldownQueryParams = ({
   viewId,
   timezone,
   firstDayOfTheWeek,
+  dashboardRecordFilters,
 }: BuildChartDrilldownQueryParamsInput): URLSearchParams => {
   const drilldownQueryParams = new URLSearchParams();
 
-  if (isDefined(configuration.filter)) {
-    const { recordFilters, recordFilterGroups } = sanitizeChartRecordFilters({
-      chartFilters: configuration.filter,
-      fieldMetadataItems: objectMetadataItem.fields,
-    });
+  const chartFilters: ChartFilters = configuration.filter ?? {};
 
-    const chartFilterParams = buildFilterQueryParams({
-      recordFilters,
-      recordFilterGroups,
-      objectMetadataItem,
-    });
+  // The drilldown must list exactly what the chart counted
+  const { filter: chartFilter } = replaceWidgetFilterPeriodsWithDashboardFilter(
+    {
+      filter: sanitizeChartRecordFilters({
+        chartFilters,
+        fieldMetadataItems: objectMetadataItem.fields,
+      }),
+      fieldMetadataIds: dashboardRecordFilters.map(
+        ({ fieldMetadataId }) => fieldMetadataId,
+      ),
+    },
+  );
 
-    chartFilterParams.forEach((value, key) => {
-      drilldownQueryParams.append(key, value);
-    });
-  }
+  const chartFilterParams = buildFilterQueryParams({
+    ...combineChartFilterWithDashboardRecordFilters({
+      chartFilter,
+      dashboardRecordFilters,
+    }),
+    objectMetadataItem,
+  });
+
+  chartFilterParams.forEach((value, key) => {
+    drilldownQueryParams.append(key, value);
+  });
 
   const { groupByFieldMetadataId, dateGranularity, groupBySubFieldName } =
     normalizeChartConfigurationFields(configuration);

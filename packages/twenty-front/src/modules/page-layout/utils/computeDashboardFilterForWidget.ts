@@ -6,6 +6,7 @@ import { type DashboardFilterWidgetFilter } from '@/page-layout/types/DashboardF
 import { type WidgetDashboardFilter } from '@/page-layout/types/WidgetDashboardFilter';
 import { getDashboardFilterWidgetCandidateFieldMetadataIds } from '@/page-layout/utils/getDashboardFilterWidgetCandidateFieldMetadataIds';
 import { getWidgetDashboardFilterBindings } from '@/page-layout/utils/getWidgetDashboardFilterBindings';
+import { getWidgetDashboardFilterIndicators } from '@/page-layout/utils/getWidgetDashboardFilterIndicators';
 import { isDashboardFilterDataWidgetConfiguration } from '@/page-layout/utils/isDashboardFilterDataWidgetConfiguration';
 import { type RecordFilterValueDependencies } from 'twenty-shared/types';
 import {
@@ -17,8 +18,13 @@ import {
   replaceWidgetFilterPeriodsWithDashboardFilter,
 } from 'twenty-shared/utils';
 
+const NO_WIDGET_FILTER_REPLACEMENT = {
+  replacedRecordFilters: [],
+  stillFilteredFieldMetadataIds: [],
+};
+
 export const computeDashboardFilterForWidget = ({
-  dashboardFilters: { values, timeZone, firstDayOfTheWeek },
+  dashboardFilters,
   configuration,
   fields,
   widgetFilter,
@@ -26,34 +32,62 @@ export const computeDashboardFilterForWidget = ({
 }: {
   dashboardFilters: Pick<
     DashboardFilters,
-    'values' | 'timeZone' | 'firstDayOfTheWeek'
+    'pageLayoutFilters' | 'values' | 'timeZone' | 'firstDayOfTheWeek'
   >;
   configuration: DashboardFilterWidgetConfiguration;
   fields: Omit<DashboardFilterWidgetField, 'icon' | 'isActive'>[];
   widgetFilter: DashboardFilterWidgetFilter;
   filterValueDependencies: RecordFilterValueDependencies;
 }): WidgetDashboardFilter => {
-  if (
-    !isNonEmptyArray(values) ||
-    !isDashboardFilterDataWidgetConfiguration(configuration)
-  ) {
+  const { values, timeZone, firstDayOfTheWeek } = dashboardFilters;
+
+  if (!isDashboardFilterDataWidgetConfiguration(configuration)) {
     return NO_WIDGET_DASHBOARD_FILTER;
+  }
+
+  const bindings = getWidgetDashboardFilterBindings(configuration);
+  const candidateFieldMetadataIds =
+    getDashboardFilterWidgetCandidateFieldMetadataIds({
+      configuration,
+      widgetFilter,
+    });
+
+  // Until the object's fields load, every filter would read as an unavailable field
+  const getIndicators = (
+    appliedFields: WidgetDashboardFilter['appliedFields'],
+    widgetFilterReplacement: Parameters<
+      typeof getWidgetDashboardFilterIndicators
+    >[0]['widgetFilterReplacement'],
+  ) =>
+    isNonEmptyArray(fields)
+      ? getWidgetDashboardFilterIndicators({
+          dashboardFilters,
+          bindings,
+          candidateFieldMetadataIds,
+          appliedFields,
+          widgetFilterReplacement,
+          fields,
+        })
+      : [];
+
+  if (!isNonEmptyArray(values)) {
+    return {
+      ...NO_WIDGET_DASHBOARD_FILTER,
+      indicators: getIndicators([], NO_WIDGET_FILTER_REPLACEMENT),
+    };
   }
 
   try {
     const dashboardFilter = buildDashboardFilterForWidget({
-      bindings: getWidgetDashboardFilterBindings(configuration),
-      ...getDashboardFilterWidgetCandidateFieldMetadataIds({
-        configuration,
-        widgetFilter,
-      }),
+      bindings,
+      ...candidateFieldMetadataIds,
       fields,
       values,
       timeZone,
       firstDayOfTheWeek,
     });
 
-    const { replacedRecordFilters } =
+    const widgetFilterReplacement =
       replaceWidgetFilterPeriodsWithDashboardFilter({
         filter: widgetFilter,
         fieldMetadataIds: dashboardFilter.appliedFields.map(
@@ -63,9 +97,10 @@ export const computeDashboardFilterForWidget = ({
 
     return {
       ...dashboardFilter,
-      replacedWidgetRecordFilterIds: replacedRecordFilters
-        .map(({ id }) => id)
-        .filter(isDefined),
+      replacedWidgetRecordFilterIds:
+        widgetFilterReplacement.replacedRecordFilters
+          .map(({ id }) => id)
+          .filter(isDefined),
       isInvalid: false,
       gqlOperationFilter: computeRecordGqlOperationFilter({
         fieldMetadataItems: fields,
@@ -73,6 +108,10 @@ export const computeDashboardFilterForWidget = ({
         recordFilters: dashboardFilter.recordFilters,
         recordFilterGroups: [],
       }),
+      indicators: getIndicators(
+        dashboardFilter.appliedFields,
+        widgetFilterReplacement,
+      ),
     };
   } catch (error) {
     if (!(error instanceof InvalidDashboardFilterError)) {
@@ -80,6 +119,10 @@ export const computeDashboardFilterForWidget = ({
     }
 
     // A value that cannot be resolved must never render as an unfiltered widget
-    return { ...NO_WIDGET_DASHBOARD_FILTER, isInvalid: true };
+    return {
+      ...NO_WIDGET_DASHBOARD_FILTER,
+      isInvalid: true,
+      indicators: getIndicators([], NO_WIDGET_FILTER_REPLACEMENT),
+    };
   }
 };
