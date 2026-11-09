@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isObject } from '@sniptt/guards';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -210,6 +211,50 @@ export class RecordPermissionReadRepository {
             .map(({ id }) => id),
         ),
     );
+  }
+
+  async findRelationJoinValues({
+    workspaceId,
+    targetFlatObjectMetadata,
+    targetColumnName,
+    tableAlias,
+    condition,
+    joinValues,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    targetFlatObjectMetadata: FlatObjectMetadata;
+    targetColumnName: string;
+    tableAlias: string;
+    condition: SqlCondition | null;
+    joinValues: string[];
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<string[]> {
+    if (joinValues.length === 0) {
+      return [];
+    }
+
+    const quotedTableAlias = escapeIdentifier(tableAlias);
+    const quotedColumn = `${quotedTableAlias}.${escapeIdentifier(targetColumnName)}`;
+    const rows = await this.recordPermissionQueryService.execute<{
+      joinValue: string;
+    }>({
+      workspaceId,
+      transactionScope,
+      query: {
+        sql: `SELECT DISTINCT ${quotedColumn} AS "joinValue"
+          FROM ${buildWorkspaceTableExpression({
+            workspaceId,
+            tableName: computeObjectTargetTable(targetFlatObjectMetadata),
+          })} AS ${quotedTableAlias}
+          WHERE ${quotedColumn} = ANY(:joinValues)
+            AND ${quotedTableAlias}."deletedAt" IS NULL
+            ${isDefined(condition) ? `AND (${condition.sql})` : ''}`,
+        parameters: { ...(condition?.parameters ?? {}), joinValues },
+      },
+    });
+
+    return rows.map(({ joinValue }) => joinValue);
   }
 
   async findRecordIdsMatchingCondition({

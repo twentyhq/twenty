@@ -16,6 +16,7 @@ export const filterReadableEvents = <TEvent extends ObjectRecordEvent>({
   objectMetadata,
   recordsPermissions,
   metadataMaps,
+  rlsRuleFilterByRoleId,
 }: {
   events: TEvent[];
   readableRecordIds: Set<string>;
@@ -23,15 +24,11 @@ export const filterReadableEvents = <TEvent extends ObjectRecordEvent>({
   objectMetadata: FlatObjectMetadata;
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   metadataMaps: PermissionsMetadataMaps;
+  rlsRuleFilterByRoleId: Map<string, RecordGqlOperationFilter | null>;
 }): TEvent[] => {
   const recordReadRestrictions = buildRecordReadRestrictions({
     recordsPermissions,
   });
-
-  const rlsRuleFilterByRoleId = new Map<
-    string,
-    RecordGqlOperationFilter | null
-  >();
 
   return events
     .filter((event) => readableRecordIds.has(event.recordId))

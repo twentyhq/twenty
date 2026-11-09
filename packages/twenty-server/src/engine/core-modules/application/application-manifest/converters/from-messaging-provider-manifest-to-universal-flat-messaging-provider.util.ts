@@ -20,6 +20,7 @@ export const fromMessagingProviderManifestToUniversalFlatMessagingProvider = ({
   sendMessageLogicFunctionUniversalIdentifier:
     messagingProviderManifest.sendMessageLogicFunction?.universalIdentifier ??
     null,
+  conversationStyle: messagingProviderManifest.conversationStyle ?? null,
   createdAt: now,
   updatedAt: now,
 });
