@@ -19,10 +19,10 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 const PERSON_ID = 'person-id';
 const COMPANY_ID = 'company-id';
-const WORKFLOW_ID = 'workflow-id';
+const WORKFLOW_RUN_ID = 'workflow-run-id';
 const CAMPAIGN_ID = 'campaign-id';
-const WORKFLOW_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.workflow.universalIdentifier;
+const WORKFLOW_RUN_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.workflowRun.universalIdentifier;
 const EMAIL_FIELD_ID = 'email-field-id';
 
 const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
@@ -31,7 +31,7 @@ const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
 for (const [id, universalIdentifier, isSystem] of [
   [PERSON_ID, 'person', false],
   [COMPANY_ID, 'company', false],
-  [WORKFLOW_ID, WORKFLOW_UNIVERSAL_IDENTIFIER, false],
+  [WORKFLOW_RUN_ID, WORKFLOW_RUN_UNIVERSAL_IDENTIFIER, false],
   [CAMPAIGN_ID, 'campaign', true],
 ] as const) {
   flatObjectMetadataMaps.byUniversalIdentifier[universalIdentifier] =
@@ -182,7 +182,7 @@ describe('resolveAiRunPermissionScope', () => {
     it('grants every action with the flag', () => {
       expect(
         resolve({ permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG] })
-          .recordsPermissions.objects[WORKFLOW_ID],
+          .recordsPermissions.objects[WORKFLOW_RUN_ID],
       ).toMatchObject({
         canCreateAllRecords: true,
         canReadAllRecords: true,
@@ -197,12 +197,12 @@ describe('resolveAiRunPermissionScope', () => {
           permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG],
           objectPermissions: [
             {
-              objectUniversalIdentifier: WORKFLOW_UNIVERSAL_IDENTIFIER,
+              objectUniversalIdentifier: WORKFLOW_RUN_UNIVERSAL_IDENTIFIER,
               canUpdateObjectRecords: false,
               canDestroyObjectRecords: false,
             },
           ],
-        }).recordsPermissions.objects[WORKFLOW_ID],
+        }).recordsPermissions.objects[WORKFLOW_RUN_ID],
       ).toMatchObject({
         canCreateAllRecords: false,
         canReadAllRecords: true,
@@ -216,11 +216,11 @@ describe('resolveAiRunPermissionScope', () => {
         resolve({
           objectPermissions: [
             {
-              objectUniversalIdentifier: WORKFLOW_UNIVERSAL_IDENTIFIER,
+              objectUniversalIdentifier: WORKFLOW_RUN_UNIVERSAL_IDENTIFIER,
               canReadObjectRecords: true,
             },
           ],
-        }).recordsPermissions.objects[WORKFLOW_ID]?.canReadAllRecords,
+        }).recordsPermissions.objects[WORKFLOW_RUN_ID]?.canReadAllRecords,
       ).toBe(false);
     });
   });
