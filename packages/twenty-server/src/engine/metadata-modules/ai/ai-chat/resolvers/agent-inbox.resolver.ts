@@ -7,6 +7,7 @@ import {
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -18,6 +19,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { ArchiveInboxThreadInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/archive-inbox-thread.input';
 import { SendInboxMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-inbox-message-result.dto';
 import { SendInboxMessageInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-inbox-message.input';
+import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
 import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
@@ -73,6 +75,17 @@ export class AgentInboxResolver {
     @Args('input') input: ArchiveInboxThreadInputDTO,
   ): Promise<boolean> {
     const authContext = getAgentInboxCallerAuthContextOrThrow();
+
+    // Without members, the conversation is marked done in its channel
+    if (!isDefined(input.workspaceMemberIds)) {
+      await this.triageService.applyToChannelCopy({
+        threadId: input.threadId,
+        change: { action: AgentChatInboxAction.ARCHIVE },
+        authContext,
+      });
+
+      return true;
+    }
 
     await this.inboxAccessService.assertThreadIsWritableOrThrow({
       authContext,

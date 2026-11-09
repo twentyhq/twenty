@@ -931,7 +931,7 @@ export type ApprovedAccessDomain = {
 
 export type ArchiveInboxThreadInput = {
   threadId: Scalars['UUID']['input'];
-  workspaceMemberIds: Array<Scalars['UUID']['input']>;
+  workspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
 };
 
 export type AuthBypassProviders = {

@@ -56,6 +56,10 @@ const MARK_THREAD_DONE = parse(
   `mutation MarkThreadDone($threadId: UUID!) { markAgentChatThreadAsDoneInChannel(threadId: $threadId) }`,
 );
 
+const ARCHIVE_INBOX_THREAD = parse(
+  `mutation ArchiveInboxThread($input: ArchiveInboxThreadInput!) { archiveInboxThread(input: $input) }`,
+);
+
 const SNOOZE_THREAD = parse(
   `mutation SnoozeThread($threadId: UUID!, $snoozedUntil: DateTime!) { snoozeAgentChatThreadInChannel(threadId: $threadId, snoozedUntil: $snoozedUntil) }`,
 );
@@ -386,6 +390,28 @@ describe('Inbox channels for applications', () => {
     expect(await readThreadChannelState(threadId)).toEqual({
       channelId: destinationChannelId,
       channelArchivedAt: null,
+      channelSnoozedUntil: null,
+    });
+    expect(await readThreadParticipants(threadId)).toEqual(participantsBefore);
+  });
+
+  it('marks a channel conversation done through archiveInboxThread when no member is named', async () => {
+    const channelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), roleIds: [channelReader.roleId] },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+    const threadId = await createThreadInChannel(channelId);
+    const participantsBefore = await readThreadParticipants(threadId);
+
+    assertGraphQLSuccessfulResponse(
+      await makeMetadataApiRequest(
+        { query: ARCHIVE_INBOX_THREAD, variables: { input: { threadId } } },
+        channelReader.token,
+      ),
+    );
+    expect(await readThreadChannelState(threadId)).toEqual({
+      channelId,
+      channelArchivedAt: expect.anything(),
       channelSnoozedUntil: null,
     });
     expect(await readThreadParticipants(threadId)).toEqual(participantsBefore);

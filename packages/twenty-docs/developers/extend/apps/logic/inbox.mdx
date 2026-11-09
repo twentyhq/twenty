@@ -139,4 +139,10 @@ await archiveInboxThread({
 - Every member you name must be able to read the conversation. If one cannot, the call fails with `THREAD_NOT_FOUND` and archives it for nobody.
 - A new message in the conversation brings it back to the inbox, as it does after a member archives it.
 
+Leave out `workspaceMemberIds` to mark a conversation done in its channel instead, as `markAgentChatThreadAsDoneInChannel()` does. Members' own inboxes are left as they are, and a conversation that is in no channel fails with `CHAT_THREAD_NOT_IN_CHANNEL`.
+
+```ts
+await archiveInboxThread({ threadId });
+```
+
 <PageBanner illustration="card-page-inbox" />

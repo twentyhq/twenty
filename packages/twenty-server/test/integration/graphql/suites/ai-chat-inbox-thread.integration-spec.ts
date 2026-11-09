@@ -470,6 +470,22 @@ describe('Inbox thread mutations for members and applications', () => {
     ]);
   });
 
+  it('refuses to archive in a channel a conversation that is in none', async () => {
+    const threadId = await createApplicationThread();
+
+    const response = await makeMetadataApiRequest(
+      { query: ARCHIVE_INBOX_THREAD, variables: { input: { threadId } } },
+      applicationToken,
+    );
+
+    expect(response.body.errors?.[0]?.extensions).toMatchObject({
+      subCode: AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL,
+    });
+    expect(await readJaneInboxState(threadId)).toEqual([
+      expect.objectContaining({ archivedAt: null }),
+    ]);
+  });
+
   it('is not open to members, who archive from their own inbox', async () => {
     const threadId = await createApplicationThread();
 

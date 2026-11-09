@@ -1,4 +1,4 @@
 export type ArchiveInboxThreadInput = {
   threadId: string;
-  workspaceMemberIds: string[];
+  workspaceMemberIds?: string[];
 };

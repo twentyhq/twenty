@@ -5247,7 +5247,7 @@ export interface ApprovedAccessDomainGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ArchiveInboxThreadInput {threadId: Scalars['UUID'],workspaceMemberIds: Scalars['UUID'][]}
+export interface ArchiveInboxThreadInput {threadId: Scalars['UUID'],workspaceMemberIds?: (Scalars['UUID'][] | null)}
 
 export interface AuthBypassProvidersGenqlSelection{
     google?: boolean | number

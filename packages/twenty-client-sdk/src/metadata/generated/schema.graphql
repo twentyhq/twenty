@@ -852,7 +852,7 @@ type ApprovedAccessDomain {
 
 input ArchiveInboxThreadInput {
   threadId: UUID!
-  workspaceMemberIds: [UUID!]!
+  workspaceMemberIds: [UUID!]
 }
 
 type AuthBypassProviders {

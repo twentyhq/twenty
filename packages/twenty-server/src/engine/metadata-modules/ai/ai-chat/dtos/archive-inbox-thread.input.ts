@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { ArrayNotEmpty, IsArray, IsUUID } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsOptional, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -10,9 +10,10 @@ export class ArchiveInboxThreadInputDTO {
   @Field(() => UUIDScalarType)
   threadId: string;
 
+  @IsOptional()
   @IsArray()
   @ArrayNotEmpty()
   @IsUUID(undefined, { each: true })
-  @Field(() => [UUIDScalarType])
-  workspaceMemberIds: string[];
+  @Field(() => [UUIDScalarType], { nullable: true })
+  workspaceMemberIds?: string[];
 }
