@@ -19,6 +19,8 @@ const queryDefaultUrl = async () => {
     await cleanup();
   }
 
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+
   return fetchMock.mock.calls[0]?.[0];
 };
 
