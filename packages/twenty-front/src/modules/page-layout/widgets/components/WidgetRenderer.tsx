@@ -1,31 +1,30 @@
+import { useDashboardFilters } from '@/page-layout/hooks/useDashboardFilters';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
-import { useWidgetRendererState } from '@/page-layout/widgets/hooks/useWidgetRendererState';
+import { isDashboardFilterDataWidgetConfiguration } from '@/page-layout/utils/isDashboardFilterDataWidgetConfiguration';
+import { WidgetDashboardFilterProvider } from '@/page-layout/widgets/components/WidgetDashboardFilterProvider';
+import { WidgetRendererCard } from '@/page-layout/widgets/components/WidgetRendererCard';
+import { isDefined } from 'twenty-shared/utils';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
 };
 
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
-  const state = useWidgetRendererState(widget);
+  const dashboardFilters = useDashboardFilters();
 
-  const isWidgetEditable = state.isPageLayoutInEditMode;
+  if (
+    !isDefined(dashboardFilters) ||
+    !isDashboardFilterDataWidgetConfiguration(widget.configuration)
+  ) {
+    return <WidgetRendererCard widget={widget} />;
+  }
 
   return (
-    <WidgetCardShell
+    <WidgetDashboardFilterProvider
       widget={widget}
-      variant={state.variant}
-      isEditable={isWidgetEditable}
-      isEditing={state.isEditing}
-      isDragging={state.isDragging}
-      isResizing={state.isResizing}
-      showHeader={state.showHeader}
-      hasAccess={state.hasAccess}
-      restriction={state.restriction}
-      onClick={isWidgetEditable ? state.handleClick : undefined}
-      onRemove={state.handleRemove}
-      onMouseEnter={state.handleMouseEnter}
-      onMouseLeave={state.handleMouseLeave}
-    />
+      dashboardFilters={dashboardFilters}
+    >
+      <WidgetRendererCard widget={widget} />
+    </WidgetDashboardFilterProvider>
   );
 };
