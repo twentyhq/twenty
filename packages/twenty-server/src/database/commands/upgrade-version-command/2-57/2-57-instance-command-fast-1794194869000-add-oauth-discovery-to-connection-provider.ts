@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.57.0', 1794161524000)
+@RegisteredInstanceCommand('2.57.0', 1794194869000)
 export class AddOauthDiscoveryToConnectionProviderFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('CREATE TABLE "core"."connectionProviderOAuthClient" ("workspaceId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "connectionProviderId" uuid NOT NULL, "registrationMethod" character varying NOT NULL, "clientId" character varying NOT NULL, "clientSecret" character varying, "clientSecretExpiresAt" TIMESTAMP WITH TIME ZONE, "tokenEndpointAuthMethod" character varying, "redirectUri" character varying NOT NULL, "discoveryState" jsonb NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "CHK_connectionProviderOAuthClient_clientSecret_encrypted" CHECK ("clientSecret" IS NULL OR "clientSecret" LIKE \'enc:v2:%\'), CONSTRAINT "PK_378876ac9fa9e1d9177a7f2c790" PRIMARY KEY ("id"))');
