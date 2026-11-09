@@ -54,8 +54,9 @@ export class AgentRunStopService {
     const abortController = new AbortController();
     const stopChannel = this.getStopChannel(target);
 
-    await this.cancelSubscriberService.subscribe(stopChannel, () =>
-      abortController.abort(),
+    const unsubscribe = await this.cancelSubscriberService.subscribe(
+      stopChannel,
+      () => abortController.abort(),
     );
 
     try {
@@ -71,7 +72,7 @@ export class AgentRunStopService {
 
       return await work(abortController.signal);
     } finally {
-      await this.cancelSubscriberService.unsubscribe(stopChannel);
+      await unsubscribe();
     }
   }
 }

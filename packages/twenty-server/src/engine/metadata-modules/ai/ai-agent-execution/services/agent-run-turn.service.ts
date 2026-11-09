@@ -300,9 +300,13 @@ export class AgentRunTurnService {
     let steps = loopSteps;
     let structuredOutputSteps: AgentTurnUsageStep[] = [];
 
+    const isStopped = () => abortSignal?.aborted === true;
     // a stopped run fails whatever it returned, so it spends no request on its output
     const isStructuredOutputExpected =
-      isDefined(agentSchema) && !isPaused && !isDefined(stopReason);
+      isDefined(agentSchema) &&
+      !isPaused &&
+      !isDefined(stopReason) &&
+      !isStopped();
 
     if (isStructuredOutputExpected && isStructuredOutputInSameRequest) {
       result = await this.readSameRequestOutputOrThrow(turn);
@@ -329,33 +333,42 @@ export class AgentRunTurnService {
           userWorkspaceId,
           agentId: persona.agentId ?? undefined,
         }),
+      }).catch((error: unknown) => {
+        // a stop during this request ends the run as stopped, which needs no output
+        if (isStopped()) {
+          return null;
+        }
+
+        throw error;
       });
 
-      void this.aiBillingService.calculateAndBillUsage({
-        modelId: registeredModel.modelId,
-        billingInput: {
-          usage: structuredResult.usage,
-          cacheCreationTokens: extractCacheCreationTokensFromSteps(
-            structuredResult.steps,
-          ),
-        },
-        workspaceId,
-        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-        spenders,
-      });
+      if (isDefined(structuredResult)) {
+        void this.aiBillingService.calculateAndBillUsage({
+          modelId: registeredModel.modelId,
+          billingInput: {
+            usage: structuredResult.usage,
+            cacheCreationTokens: extractCacheCreationTokensFromSteps(
+              structuredResult.steps,
+            ),
+          },
+          workspaceId,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          spenders,
+        });
 
-      usage = mergeLanguageModelUsage(usage, structuredResult.usage);
-      steps = [...steps, ...structuredResult.steps];
-      structuredOutputSteps = structuredResult.steps;
+        usage = mergeLanguageModelUsage(usage, structuredResult.usage);
+        steps = [...steps, ...structuredResult.steps];
+        structuredOutputSteps = structuredResult.steps;
 
-      if (structuredResult.output == null) {
-        throw new AiException(
-          'Failed to generate structured output from execution results',
-          AiExceptionCode.AGENT_EXECUTION_FAILED,
-        );
+        if (structuredResult.output == null) {
+          throw new AiException(
+            'Failed to generate structured output from execution results',
+            AiExceptionCode.AGENT_EXECUTION_FAILED,
+          );
+        }
+
+        result = structuredResult.output as object;
       }
-
-      result = structuredResult.output as object;
     }
 
     const nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(steps);
