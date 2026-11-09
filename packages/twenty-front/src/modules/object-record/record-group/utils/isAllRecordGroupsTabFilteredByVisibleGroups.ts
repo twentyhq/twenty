@@ -7,8 +7,7 @@ type IsAllRecordGroupsTabFilteredByVisibleGroupsArgs = {
   recordGroupFieldMetadata: FieldWithRelation | null | undefined;
 };
 
-// Relation groups only cover the related records configured as groups,
-// so All must be narrowed to them even when no group is hidden
+// Relation groups cover only the configured related records, so All is narrowed even with none hidden
 export const isAllRecordGroupsTabFilteredByVisibleGroups = ({
   hiddenRecordGroupIds,
   recordGroupFieldMetadata,
