@@ -163,7 +163,6 @@ export class BullMQDriver
       callback: () => this.collectQueueMemoryUsedRatio(),
     });
 
-    // only the top group keys, so workspace ids do not blow up label cardinality
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_queue_memory_group_used_bytes',
       options: {
