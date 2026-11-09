@@ -7,6 +7,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { type MessagingProviderConversationStyle } from 'twenty-shared/application';
 
 import { ADD_MESSAGING_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-52/add-messaging-provider-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -39,6 +40,9 @@ export class MessagingProviderEntity
 
   @Column({ nullable: true, type: 'uuid' })
   sendMessageLogicFunctionUniversalIdentifier: string | null;
+
+  @Column({ nullable: false, type: 'varchar', default: 'email' })
+  conversationStyle: MessagingProviderConversationStyle;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

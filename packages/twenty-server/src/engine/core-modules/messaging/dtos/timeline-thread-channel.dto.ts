@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { type MessagingProviderConversationStyle } from 'twenty-shared/application';
 import { MessageChannelType } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -14,4 +15,8 @@ export class TimelineThreadChannelDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   applicationId: string | null;
+
+  // 'chat' or 'email', declared by the channel's messaging provider
+  @Field(() => String)
+  conversationStyle: MessagingProviderConversationStyle;
 }

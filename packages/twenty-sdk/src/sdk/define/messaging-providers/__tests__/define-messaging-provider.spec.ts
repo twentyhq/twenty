@@ -47,4 +47,20 @@ describe('defineMessagingProvider', () => {
 
     expect(result.errors).toHaveLength(2);
   });
+
+  it('accepts a chat conversation style', () => {
+    expect(
+      defineMessagingProvider({ ...baseValidConfig, conversationStyle: 'chat' })
+        .success,
+    ).toBe(true);
+  });
+
+  it('rejects an unknown conversation style', () => {
+    const result = defineMessagingProvider({
+      ...baseValidConfig,
+      conversationStyle: 'thread' as never,
+    });
+
+    expect(result.success).toBe(false);
+  });
 });
