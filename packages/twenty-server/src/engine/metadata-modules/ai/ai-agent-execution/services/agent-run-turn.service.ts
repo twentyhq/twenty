@@ -245,7 +245,7 @@ export class AgentRunTurnService {
             {
               transform: (part, controller) => {
                 // a stop can surface as the provider's abort error, and is recorded as a stop instead
-                if (part.type === 'error' && abortSignal?.aborted !== true) {
+                if (part.type === 'error' && !abortSignal?.aborted) {
                   streamError ??= part.error;
                 }
 
@@ -300,7 +300,7 @@ export class AgentRunTurnService {
     let steps = loopSteps;
     let structuredOutputSteps: AgentTurnUsageStep[] = [];
 
-    const isStopped = () => abortSignal?.aborted === true;
+    const isStopped = () => abortSignal?.aborted ?? false;
     // a stopped run fails whatever it returned, so it spends no request on its output
     const isStructuredOutputExpected =
       isDefined(agentSchema) &&
@@ -413,7 +413,7 @@ export class AgentRunTurnService {
 
       return { text, usage, steps };
     } catch (error) {
-      if (abortSignal?.aborted !== true) {
+      if (!abortSignal?.aborted) {
         throw error;
       }
 

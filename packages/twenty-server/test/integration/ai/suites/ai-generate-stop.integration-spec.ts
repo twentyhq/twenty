@@ -65,7 +65,7 @@ const mockModelThatWaitsForAbort = (
 ) => {
   let waitingCallCount = 0;
 
-  mockScriptedAiModel((callIndex, { abortSignal }) => {
+  mockScriptedAiModel(({ callIndex, options: { abortSignal } }) => {
     const scriptedAnswer = scriptedAnswers[callIndex];
 
     if (isDefined(scriptedAnswer)) {
@@ -75,7 +75,7 @@ const mockModelThatWaitsForAbort = (
     return new Promise((_resolve, reject) => {
       waitingCallCount++;
 
-      if (abortSignal?.aborted === true) {
+      if (abortSignal?.aborted) {
         reject(abortSignal.reason);
 
         return;

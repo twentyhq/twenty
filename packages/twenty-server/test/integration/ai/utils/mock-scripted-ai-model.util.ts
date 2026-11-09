@@ -23,16 +23,16 @@ export const answerWith = (text: string): ScriptedModelResponse => ({
 });
 
 export const mockScriptedAiModel = (
-  respond: (
-    callIndex: number,
-    options: LanguageModelV4CallOptions,
-  ) => ScriptedModelResponse | Promise<ScriptedModelResponse>,
+  respond: (call: {
+    callIndex: number;
+    options: LanguageModelV4CallOptions;
+  }) => ScriptedModelResponse | Promise<ScriptedModelResponse>,
 ) => {
   const offeredToolNamesByCall: string[][] = [];
   const model = createScriptedLanguageModel((options, callIndex) => {
     offeredToolNamesByCall.push((options.tools ?? []).map((tool) => tool.name));
 
-    return respond(callIndex, options);
+    return respond({ callIndex, options });
   });
 
   jest
