@@ -78,6 +78,15 @@ export const useEmailComposerState = ({
   );
   const [files, setFiles] = useState<EmailAttachment[]>([]);
 
+  // app sends carry no files, so attachments picked for a native sender would be dropped silently
+  const selectSender = (nextSender: ConnectedAccountSender) => {
+    if (nextSender.connectedAccountId === appReplyTarget?.connectedAccountId) {
+      setFiles([]);
+    }
+
+    setSender(nextSender);
+  };
+
   const { sendEmail, loading: isSendingEmail } = useSendEmail();
   const { sendAppChannelMessage } = useSendAppChannelMessage();
   const [isSendingThroughApp, setIsSendingThroughApp] = useState(false);
@@ -202,7 +211,7 @@ export const useEmailComposerState = ({
   return {
     connectedAccountId,
     fromHandle,
-    setSender,
+    setSender: selectSender,
     to,
     setTo,
     cc,

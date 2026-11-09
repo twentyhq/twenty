@@ -318,6 +318,23 @@ describe('useEmailComposerState', () => {
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
   });
 
+  it('drops attachments when the sender switches back to the app, which sends no files', () => {
+    const { result } = renderAppComposerState({ mocks: [], onSent: jest.fn() });
+
+    act(() => {
+      result.current.setSender({ connectedAccountId: 'account-2' });
+      result.current.setFiles([{ id: 'file-1', name: 'deck.pdf' }]);
+    });
+
+    expect(result.current.files).toHaveLength(1);
+
+    act(() => {
+      result.current.setSender({ connectedAccountId: 'account-1' });
+    });
+
+    expect(result.current.files).toEqual([]);
+  });
+
   it('drops a picked alias when the reply moves to another account', () => {
     const { result, rerender } = renderHook(
       ({ connectedAccountId }: { connectedAccountId: string }) =>
