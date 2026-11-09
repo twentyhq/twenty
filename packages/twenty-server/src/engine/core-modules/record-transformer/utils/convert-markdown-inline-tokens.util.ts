@@ -30,6 +30,11 @@ const STYLE_BY_TOKEN_TYPE: Record<string, InlineStyle> = {
 export const getChildTokens = (token: Token): Token[] =>
   'tokens' in token && Array.isArray(token.tokens) ? token.tokens : [];
 
+const HTML_LINE_BREAK_PATTERN = /^<br\s*\/?>$/i;
+
+export const isHtmlLineBreakToken = (token: Token): boolean =>
+  token.type === 'html' && HTML_LINE_BREAK_PATTERN.test(token.raw.trim());
+
 export const isImageToken = (token: Token): token is Tokens.Image =>
   token.type === 'image' && isStorableRichTextUrl(token.href);
 
@@ -80,7 +85,7 @@ const collectInlineRuns = ({
   href?: string;
   runs: InlineRun[];
 }): void => {
-  for (const token of tokens) {
+  tokens.forEach((token, index) => {
     const style = STYLE_BY_TOKEN_TYPE[token.type];
 
     if (isDefined(style)) {
@@ -90,17 +95,31 @@ const collectInlineRuns = ({
         href,
         runs,
       });
-      continue;
+
+      return;
     }
 
     switch (token.type) {
-      case 'text':
+      case 'text': {
         if (isNonEmptyArray(token.tokens)) {
           collectInlineRuns({ tokens: token.tokens, styles, href, runs });
-        } else {
-          runs.push({ text: token.text, styles, href });
+          break;
         }
+
+        const previousToken = tokens[index - 1];
+        const isAfterHtmlLineBreak =
+          isDefined(previousToken) && isHtmlLineBreakToken(previousToken);
+
+        // The source newline after `<br>` is formatting, not a second break
+        runs.push({
+          text: isAfterHtmlLineBreak
+            ? token.text.replace(/^\n/, '')
+            : token.text,
+          styles,
+          href,
+        });
         break;
+      }
       case 'escape':
         runs.push({ text: token.text, styles, href });
         break;
@@ -128,9 +147,13 @@ const collectInlineRuns = ({
       case 'checkbox':
         break;
       default:
-        runs.push({ text: token.raw, styles, href });
+        runs.push({
+          text: isHtmlLineBreakToken(token) ? '\n' : token.raw,
+          styles,
+          href,
+        });
     }
-  }
+  });
 };
 
 const isSameRunFormat = (firstRun: InlineRun, secondRun: InlineRun) =>

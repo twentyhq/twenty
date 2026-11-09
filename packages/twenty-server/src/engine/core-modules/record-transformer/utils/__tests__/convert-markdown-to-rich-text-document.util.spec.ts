@@ -1,4 +1,7 @@
-import { richTextDocumentSchema } from 'twenty-shared/utils';
+import {
+  richTextDocumentSchema,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 
 import { convertMarkdownToRichTextDocument } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-rich-text-document.util';
 
@@ -252,6 +255,65 @@ describe('convertMarkdownToRichTextDocument', () => {
         { type: 'hardBreak' },
         text('</div>'),
       ),
+    ]);
+  });
+
+  it('should turn extra blank lines between blocks into empty paragraphs', () => {
+    expect(convert('A\n\nB')).toEqual([paragraph(text('A')), paragraph(text('B'))]);
+    expect(convert('A\n \nB')).toEqual([
+      paragraph(text('A')),
+      paragraph(text('B')),
+    ]);
+    expect(convert('A\n\n\nB')).toEqual([
+      paragraph(text('A')),
+      { type: 'paragraph' },
+      paragraph(text('B')),
+    ]);
+    expect(convert('\n\nA\n\n\n\n\n\n## B\n\n\n\n')).toEqual([
+      paragraph(text('A')),
+      { type: 'paragraph' },
+      { type: 'paragraph' },
+      { type: 'heading', attrs: { level: 2 }, content: [text('B')] },
+    ]);
+  });
+
+  it('should round trip empty paragraphs through markdown', () => {
+    const document = convertMarkdownToRichTextDocument('A\n\n\n\n\n\nB');
+
+    expect(
+      convertMarkdownToRichTextDocument(tipTapDocumentToMarkdown(document)),
+    ).toEqual(document);
+  });
+
+  it('should turn br tags into hard breaks', () => {
+    expect(convert('A<br><BR/>B<br />\nC')).toEqual([
+      paragraph(
+        text('A'),
+        { type: 'hardBreak' },
+        { type: 'hardBreak' },
+        text('B'),
+        { type: 'hardBreak' },
+        text('C'),
+      ),
+    ]);
+  });
+
+  it('should keep markdown after a line starting with a br tag', () => {
+    expect(convert('Intro\n\n<br>\n**bold**\n- item')).toEqual([
+      paragraph(text('Intro')),
+      paragraph({ type: 'hardBreak' }, text('bold', [{ type: 'bold' }])),
+      {
+        type: 'bulletList',
+        content: [listItem(paragraph(text('item')))],
+      },
+    ]);
+  });
+
+  it('should turn a paragraph of only br tags into an empty paragraph', () => {
+    expect(convert('A\n\n<br>\n\nB')).toEqual([
+      paragraph(text('A')),
+      { type: 'paragraph' },
+      paragraph(text('B')),
     ]);
   });
 
