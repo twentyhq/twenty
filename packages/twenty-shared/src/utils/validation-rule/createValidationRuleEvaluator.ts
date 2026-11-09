@@ -7,6 +7,7 @@ import { parseValidationRuleExpression } from '@/utils/validation-rule/parseVali
 
 type ValidationRuleEvaluator = (params: {
   record: Record<string, unknown>;
+  previousRecord?: Record<string, unknown>;
   now: string;
 }) => ValidationRuleEvaluationResult;
 
@@ -33,11 +34,12 @@ export const createValidationRuleEvaluator = ({
   const identifierPaths = parsedExpression.variables({ withMembers: true });
   const fieldByName = new Map(fields.map((field) => [field.name, field]));
 
-  return ({ record, now }) => {
+  return ({ record, previousRecord, now }) => {
     try {
       const result: unknown = parsedExpression.evaluate(
         buildValidationRuleEvaluationContext({
           record,
+          previousRecord,
           fieldByName,
           identifierPaths,
           now,
