@@ -6,8 +6,8 @@ import { RecomputeRecordAccessGroupIdsJob } from 'src/engine/permissions/interna
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
 import { AccessGroupSyncListener } from 'src/engine/permissions/internal/access-group/listeners/access-group-sync.listener';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
-import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
-import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
+import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
+import { AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { RecordPermissionRepositoryModule } from 'src/engine/permissions/internal/record-permission-repository/record-permission-repository.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -18,14 +18,14 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
   ],
   providers: [
-    RecordAccessGroupService,
-    AccessGroupService,
+    RecordAccessGroupComputationService,
+    AccessGroupSyncService,
     AccessGroupSyncListener,
     AccessGroupSyncSchedulerService,
     RecomputeRecordAccessGroupIdsJob,
     RecomputeRecordAccessGroupIdsOfRecordsJob,
     SyncAccessGroupsJob,
   ],
-  exports: [AccessGroupService, RecordAccessGroupService],
+  exports: [AccessGroupSyncService, RecordAccessGroupComputationService],
 })
-export class AccessGroupModule {}
+export class AccessGroupComputationModule {}

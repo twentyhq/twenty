@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
-import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
+import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
 import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -13,7 +13,7 @@ import { type RecordPermissionTransactionScope } from 'src/engine/permissions/ty
 @Injectable()
 export class RecordAccessGroupWriteService {
   constructor(
-    private readonly recordAccessGroupService: RecordAccessGroupService,
+    private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
   ) {}
 
   async isWriteTransactionRequired({
@@ -27,10 +27,12 @@ export class RecordAccessGroupWriteService {
   }): Promise<boolean> {
     return (
       areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
-      (await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
-        workspaceId,
-        objectMetadataId,
-      }))
+      (await this.recordAccessGroupComputationService.isObjectUsingRecordAccessGroups(
+        {
+          workspaceId,
+          objectMetadataId,
+        },
+      ))
     );
   }
 
@@ -45,10 +47,12 @@ export class RecordAccessGroupWriteService {
   }): Promise<boolean> {
     return (
       areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
-      (await this.recordAccessGroupService.isObjectReachedByRlsRuleRelation({
-        workspaceId,
-        objectMetadataId,
-      }))
+      (await this.recordAccessGroupComputationService.isObjectReachedByRlsRuleRelation(
+        {
+          workspaceId,
+          objectMetadataId,
+        },
+      ))
     );
   }
 
@@ -68,7 +72,7 @@ export class RecordAccessGroupWriteService {
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<RelatedRecords[]> {
     return areRecordAccessGroupsEnabled({ featureFlagsMap })
-      ? this.recordAccessGroupService.findRelatedRecords({
+      ? this.recordAccessGroupComputationService.findRelatedRecords({
           workspaceId,
           objectMetadataId,
           recordIds,
@@ -108,7 +112,7 @@ export class RecordAccessGroupWriteService {
       writtenRecordIds.length <= MAX_RECORDS_RECOMPUTED_IN_WRITE;
 
     if (isRecomputingInWrite) {
-      await this.recordAccessGroupService.recomputeRecordAccessGroupIdsOfRecords(
+      await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecords(
         {
           workspaceId,
           objectMetadataId,
@@ -120,7 +124,7 @@ export class RecordAccessGroupWriteService {
 
     const relatedRecords =
       relatedRecordsBeforeDelete ??
-      (await this.recordAccessGroupService.findRelatedRecords({
+      (await this.recordAccessGroupComputationService.findRelatedRecords({
         workspaceId,
         objectMetadataId,
         recordIds: writtenRecordIds,
@@ -143,12 +147,14 @@ export class RecordAccessGroupWriteService {
   }): Promise<void> {
     for (const { objectMetadataId, recordIds } of recordsToQueue) {
       if (
-        await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
-          workspaceId,
-          objectMetadataId,
-        })
+        await this.recordAccessGroupComputationService.isObjectUsingRecordAccessGroups(
+          {
+            workspaceId,
+            objectMetadataId,
+          },
+        )
       ) {
-        await this.recordAccessGroupService.queueRecomputeRecordAccessGroupIdsOfRecords(
+        await this.recordAccessGroupComputationService.queueRecomputeRecordAccessGroupIdsOfRecords(
           { workspaceId, objectMetadataId, recordIds },
         );
       }

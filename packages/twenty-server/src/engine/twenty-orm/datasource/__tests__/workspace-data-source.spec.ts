@@ -91,6 +91,10 @@ const sumPetColumn = ({
       permissionsPrincipals: undefined,
       recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
       recordPermissions: {} as WorkspaceInternalContext['recordPermissions'],
+      recordPermissionsOnlyRls: {
+        findRlsRuleUnreadableFieldsByRole: jest.fn(),
+        buildRlsRuleSqlConditionOrThrow: jest.fn(),
+      },
       recordAccessGroupWrite: {
         isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
         isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),

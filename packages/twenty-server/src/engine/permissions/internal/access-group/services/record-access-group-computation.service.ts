@@ -32,7 +32,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 const RECOMPUTE_BATCH_SIZE = 1_000;
 
 @Injectable()
-export class RecordAccessGroupService {
+export class RecordAccessGroupComputationService {
   constructor(
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
