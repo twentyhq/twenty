@@ -4,6 +4,7 @@ import { type JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import testTokens from './test/integration/constants/test-tokens.json';
+import { isSsoTestIdentityProviderConfigured } from './test/integration/sso/utils/get-sso-test-identity-provider.util';
 
 if (process.env.NODE_ENV === 'test') {
   dotenv.config({ path: '.env.test', override: true });
@@ -13,6 +14,10 @@ if (process.env.NODE_ENV === 'test') {
 
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
+// Always in CI so a missing secret fails loudly, except fork PRs which get no secrets
+const isSsoSuiteEnabled =
+  (process.env.CI === 'true' && process.env.IS_FORK_PULL_REQUEST !== 'true') ||
+  isSsoTestIdentityProviderConfigured();
 
 const tsConfig = require('./tsconfig.json');
 
@@ -30,6 +35,7 @@ const jestConfig: JestConfigWithTsJest = {
   testPathIgnorePatterns: [
     ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
     ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
+    ...(isSsoSuiteEnabled ? [] : ['<rootDir>/test/integration/sso']),
     // Needs a secure-deployment app; runs via jest-integration-secure.config.ts (nx test:integration:secure)
     '<rootDir>/test/integration/secure-deployment',
   ],

@@ -19,11 +19,10 @@ export const getOrderByFieldForObjectMetadataItem = (
       field: labelIdentifierFieldMetadata,
       orderByDirection: orderBy,
     });
-  } else {
-    return [
-      {
-        createdAt: orderBy ?? 'DescNullsLast',
-      },
-    ];
   }
+  return [
+    {
+      createdAt: orderBy ?? 'DescNullsLast',
+    },
+  ];
 };

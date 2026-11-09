@@ -1,3 +1,4 @@
+import { buildUniversalFlatFieldMetadataOptionsForField } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/build-universal-flat-field-metadata-options-for-field.util';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -114,10 +115,11 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           },
         );
 
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity: flatFieldMetadata,
-          universalFlatEntityMapsToMutate:
-            allUniversalFlatEntityMaps.flatFieldMetadataMaps,
+        this.addFieldMetadataAndOptions({
+          universalFlatFieldMetadata: flatFieldMetadata,
+          applicationUniversalIdentifier,
+          now,
+          allUniversalFlatEntityMaps,
         });
       }
     }
@@ -137,10 +139,11 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             ?.isSearchable,
       });
 
-      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: flatFieldMetadata,
-        universalFlatEntityMapsToMutate:
-          allUniversalFlatEntityMaps.flatFieldMetadataMaps,
+      this.addFieldMetadataAndOptions({
+        universalFlatFieldMetadata: flatFieldMetadata,
+        applicationUniversalIdentifier,
+        now,
+        allUniversalFlatEntityMaps,
       });
     }
 
@@ -153,7 +156,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const flatField of Object.values(
       allUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     )) {
-      if (!isDefined(flatField)) continue;
+      if (!isDefined(flatField)) {
+        continue;
+      }
 
       const bucket =
         fieldsByObjectUniversalIdentifier.get(
@@ -741,6 +746,50 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     return allUniversalFlatEntityMaps;
+  }
+
+  private addFieldMetadataAndOptions({
+    universalFlatFieldMetadata,
+    applicationUniversalIdentifier,
+    now,
+    allUniversalFlatEntityMaps,
+  }: {
+    universalFlatFieldMetadata: UniversalFlatFieldMetadata;
+    applicationUniversalIdentifier: string;
+    now: string;
+    allUniversalFlatEntityMaps: AllFlatEntityMaps;
+  }): void {
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: universalFlatFieldMetadata,
+      universalFlatEntityMapsToMutate:
+        allUniversalFlatEntityMaps.flatFieldMetadataMaps,
+    });
+
+    for (const universalFlatFieldMetadataOption of buildUniversalFlatFieldMetadataOptionsForField(
+      {
+        universalFlatFieldMetadata,
+        applicationUniversalIdentifier,
+        now,
+      },
+    )) {
+      // An option id reused across fields keeps its first field's row.
+      if (
+        isDefined(
+          allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps
+            .byUniversalIdentifier[
+            universalFlatFieldMetadataOption.universalIdentifier
+          ],
+        )
+      ) {
+        continue;
+      }
+
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: universalFlatFieldMetadataOption,
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps,
+      });
+    }
   }
 
   private addPageLayoutTab({

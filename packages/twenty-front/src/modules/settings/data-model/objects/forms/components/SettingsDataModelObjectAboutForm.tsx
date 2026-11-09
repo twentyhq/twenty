@@ -97,7 +97,9 @@ export const SettingsDataModelObjectAboutForm = ({
   });
 
   const fillLabelPlural = (labelSingular: string | undefined) => {
-    if (!isDefined(labelSingular)) return;
+    if (!isDefined(labelSingular)) {
+      return;
+    }
 
     const labelPluralFromSingularLabel = plural(labelSingular);
     setValue('labelPlural', labelPluralFromSingularLabel, {

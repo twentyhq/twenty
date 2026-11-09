@@ -1653,6 +1653,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "defaultValue": null,
           "description": "Ticket description",
           "disabledFieldPermissionActions": null,
+          "fieldMetadataOptionUniversalIdentifiers": [],
           "fieldPermissionUniversalIdentifiers": [],
           "icon": "IconFileDescription",
           "isActive": true,

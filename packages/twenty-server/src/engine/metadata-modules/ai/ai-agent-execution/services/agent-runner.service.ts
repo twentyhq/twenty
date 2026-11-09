@@ -1127,6 +1127,7 @@ export class AgentRunnerService {
         claim: stream?.claim ?? null,
         streamChannelId,
         turnId,
+        agentId: persona.agentId,
         abortSignal,
         startTurn: () => this.agentRunTurnService.startTurn(turnInput),
         completeTurn: async (streamed) => {

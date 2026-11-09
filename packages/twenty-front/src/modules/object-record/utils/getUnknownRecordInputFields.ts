@@ -31,7 +31,9 @@ export const getUnknownRecordInputFields = ({
 
     const potentialMorphRelationJoinColumnNameFieldMetadataItem =
       objectMetadataItem.fields.find((field) => {
-        if (!isFieldMorphRelation(field)) return false;
+        if (!isFieldMorphRelation(field)) {
+          return false;
+        }
 
         return isDefined(
           getFieldMetadataFromGqlField({

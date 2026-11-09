@@ -1,42 +1,49 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/internal/masking/utils/is-update-of-hidden-fields-only.util';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/internal/masking/utils/omit-restricted-fields-from-event.util';
+import { omitUnreadableFieldsFromEvent } from 'src/engine/permissions/internal/masking/utils/omit-unreadable-fields-from-event.util';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export const filterReadableEvents = <TEvent extends ObjectRecordEvent>({
   events,
   readableRecordIds,
+  principals,
   objectMetadata,
   recordsPermissions,
   metadataMaps,
 }: {
   events: TEvent[];
   readableRecordIds: Set<string>;
-  objectMetadata: Pick<FlatObjectMetadata, 'id' | 'nameSingular'>;
+  principals: PermissionsPrincipalsWithRolesContext;
+  objectMetadata: FlatObjectMetadata;
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
-  metadataMaps: Pick<
-    PermissionsMetadataMaps,
-    'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
-  >;
+  metadataMaps: PermissionsMetadataMaps;
 }): TEvent[] => {
   const recordReadRestrictions = buildRecordReadRestrictions({
     recordsPermissions,
   });
 
+  const rlsRuleFilterByRoleId = new Map<
+    string,
+    RecordGqlOperationFilter | null
+  >();
+
   return events
     .filter((event) => readableRecordIds.has(event.recordId))
     .map((event) =>
-      omitRestrictedFieldsFromEvent({
+      omitUnreadableFieldsFromEvent({
         event,
+        principals,
         objectMetadata,
         recordsPermissions,
         recordReadRestrictions,
-        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        metadataMaps,
+        rlsRuleFilterByRoleId,
       }),
     )
     .filter((event) => !isUpdateOfHiddenFieldsOnly(event));

@@ -8,7 +8,7 @@ import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/co
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
-import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
+import { resolveRowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-workspace-member.util';
 
 export const resolveRowLevelPermissionRecordFilter = ({
   principals,
@@ -20,12 +20,6 @@ export const resolveRowLevelPermissionRecordFilter = ({
   flatObjectMetadata: FlatObjectMetadata;
 }): RecordGqlOperationFilter | null => {
   const roleIds = getPermissionsPrincipalsRoleIds(principals);
-  const workspaceMemberId = isPermissionMainPrincipalWorkspaceMember(
-    principals.mainPrincipal,
-  )
-    ? principals.mainPrincipal.workspaceMemberId
-    : undefined;
-
   if (roleIds.length === 0) {
     return null;
   }
@@ -39,11 +33,10 @@ export const resolveRowLevelPermissionRecordFilter = ({
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     objectMetadata: flatObjectMetadata,
     roleIds,
-    workspaceMember: isDefined(workspaceMemberId)
-      ? (metadataMaps.flatWorkspaceMemberMaps?.byId[workspaceMemberId] ?? {
-          id: workspaceMemberId,
-        })
-      : undefined,
+    workspaceMember: resolveRowLevelPermissionWorkspaceMember({
+      principals,
+      metadataMaps,
+    }),
   });
 
   return isDefined(recordFilter) && Object.keys(recordFilter).length > 0

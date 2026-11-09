@@ -4,7 +4,7 @@ import * as prettier from 'prettier';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
+import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.constant';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
 import { assertPayloadIsUsable } from './utils/assert-payload-is-usable.util';

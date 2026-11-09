@@ -24,6 +24,7 @@ const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
 
 export type ObjectSharing = {
   isShareable: boolean;
+  canSetRecordPrivacy: boolean;
   isPrivateByDefault: boolean;
   canShareBeyondRole: boolean;
   operationTypesGrantedBeyondRole: ObjectRecordsOperationType[];
@@ -58,6 +59,9 @@ export const resolveObjectSharing = ({
 
   return {
     isShareable,
+    canSetRecordPrivacy:
+      isShareable ||
+      (featureFlagsMap[FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED] ?? false),
     isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
     canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
     operationTypesGrantedBeyondRole,

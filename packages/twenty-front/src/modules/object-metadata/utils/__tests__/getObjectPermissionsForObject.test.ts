@@ -11,7 +11,8 @@ describe('getObjectPermissionsForObject', () => {
       canUpdateAllRecords: true,
       canSoftDeleteAllRecords: true,
       canDestroyAllRecords: true,
-      restrictedFields: {},
+      unreadableFields: [],
+      uneditableFields: [],
     });
   });
 
@@ -22,9 +23,8 @@ describe('getObjectPermissionsForObject', () => {
       canUpdateAllRecords: false,
       canSoftDeleteAllRecords: false,
       canDestroyAllRecords: false,
-      restrictedFields: {
-        'field-metadata-id': { canRead: false, canUpdate: false },
-      },
+      unreadableFields: ['field-metadata-id'],
+      uneditableFields: ['field-metadata-id'],
       rowLevelRecordsPermissions: null,
     };
 

@@ -46,6 +46,8 @@ export const USER_QUERY_FRAGMENT = gql`
         canUpdateAllRecords
         canSoftDeleteAllRecords
         canDestroyAllRecords
+        unreadableFields
+        uneditableFields
         restrictedFields
         rowLevelRecordsPermissions {
           canCreateRecords
