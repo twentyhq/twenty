@@ -3,6 +3,7 @@ import { RecordGroupTab } from '@/object-record/record-group/components/RecordGr
 import { RecordGroupTabsHiddenMeasurements } from '@/object-record/record-group/components/RecordGroupTabsHiddenMeasurements';
 import { RecordGroupTabsMoreDropdown } from '@/object-record/record-group/components/RecordGroupTabsMoreDropdown';
 import { RecordGroupTabsRecordCountsEffect } from '@/object-record/record-group/components/RecordGroupTabsRecordCountsEffect';
+import { RecordGroupTabsSelectionResetEffect } from '@/object-record/record-group/components/RecordGroupTabsSelectionResetEffect';
 import { ALL_RECORD_GROUPS_TAB_ID } from '@/object-record/record-group/constants/AllRecordGroupsTabId';
 import { RecordGroupTabsPortalContext } from '@/object-record/record-group/states/context/RecordGroupTabsPortalContext';
 import { isAllRecordGroupsTabActiveComponentSelector } from '@/object-record/record-group/states/selectors/isAllRecordGroupsTabActiveComponentSelector';
@@ -168,6 +169,7 @@ export const RecordGroupTabs = ({
           )}
         </StyledTabsRow>
       </StyledNodeDimension>
+      <RecordGroupTabsSelectionResetEffect />
       {recordIndexShouldHideEmptyRecordGroups &&
         isDefined(recordIndexGroupFieldMetadataItem) && (
           <RecordGroupTabsRecordCountsEffect
