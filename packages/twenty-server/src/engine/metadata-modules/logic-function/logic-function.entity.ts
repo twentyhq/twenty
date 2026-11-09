@@ -17,6 +17,7 @@ import {
   WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
 
+import { type MessageQueueMaxRate } from 'src/engine/core-modules/message-queue/types/message-queue-max-rate.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
@@ -95,6 +96,9 @@ export class LogicFunctionEntity
 
   @Column({ nullable: true, type: 'jsonb' })
   workflowActionTriggerSettings: JsonbProperty<WorkflowActionTriggerSettings> | null;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  maxRate: JsonbProperty<MessageQueueMaxRate> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -195,6 +195,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "serverRouteTriggerSettings",
       "toolTriggerSettings",
       "workflowActionTriggerSettings",
+      "maxRate",
       "builtHandlerPath",
     ],
     "propertiesToStringify": [
@@ -204,6 +205,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "serverRouteTriggerSettings",
       "toolTriggerSettings",
       "workflowActionTriggerSettings",
+      "maxRate",
     ],
   },
   "mcpServer": {
@@ -596,6 +598,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "workflow": {
     "propertiesToCompare": [
+      "maxRate",
       "versionDefinitionHash",
       "name",
       "isSystem",
@@ -603,7 +606,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "lastPublishedVersionId",
       "lastPublishedCoreWorkflowVersionId",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "maxRate",
+    ],
   },
   "workflowVersion": {
     "propertiesToCompare": [
