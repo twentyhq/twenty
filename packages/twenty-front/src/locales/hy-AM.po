@@ -7451,7 +7451,7 @@ msgstr "Շարունակել կարգավորումը"
 #. js-lingui-id: byc7Ak
 #: src/modules/getting-started/components/GettingStartedChatThreadDoneButton.tsx
 msgid "Continue thread"
-msgstr ""
+msgstr "Շարունակել թելը"
 
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -14183,7 +14183,7 @@ msgstr "Անցնել կարգավորումներին"
 #. js-lingui-id: WeeG8G
 #: src/modules/getting-started/components/GettingStartedWorkflowDoneButton.tsx
 msgid "Go to workflow"
-msgstr ""
+msgstr "Անցնել աշխատահոսքին"
 
 #. js-lingui-id: FYlHHU
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -15839,7 +15839,7 @@ msgstr "Հրավերի հղումը ուղարկված է էլ. փոստի հա�
 #. js-lingui-id: aNtX0/
 #: src/modules/getting-started/components/GettingStartedInviteDoneButton.tsx
 msgid "Invite more"
-msgstr ""
+msgstr "Հրավիրել ևս"
 
 #. js-lingui-id: x1m5RZ
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
