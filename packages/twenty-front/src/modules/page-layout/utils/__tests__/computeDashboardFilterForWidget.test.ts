@@ -35,6 +35,9 @@ const THIS_MONTH_VALUE = {
 };
 
 const DASHBOARD_FILTERS = {
+  pageLayoutFilters: [
+    { id: PERIOD_FILTER_ID, label: 'Period', type: PageLayoutFilterType.DATE },
+  ],
   values: [THIS_MONTH_VALUE],
   timeZone: 'Asia/Tokyo',
   firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
@@ -84,6 +87,14 @@ describe('computeDashboardFilterForWidget', () => {
           { createdAt: { lt: expect.any(String) } },
         ],
       },
+      indicators: [
+        {
+          pageLayoutFilterId: PERIOD_FILTER_ID,
+          label: 'Period',
+          value: THIS_MONTH_VALUE,
+          fieldLabel: 'Creation date',
+        },
+      ],
     });
   });
 

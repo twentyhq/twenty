@@ -7,4 +7,5 @@ export const NO_WIDGET_DASHBOARD_FILTER: WidgetDashboardFilter = {
   unresolvedPageLayoutFilterIds: [],
   isInvalid: false,
   gqlOperationFilter: {},
+  indicators: [],
 };

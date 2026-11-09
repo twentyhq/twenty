@@ -32,6 +32,7 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 type WidgetCardShellStoryProps = {
@@ -116,6 +117,11 @@ const PERIOD_FILTER_ID = 'period-filter-id';
 const opportunityObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('opportunity');
 
+const closeDateField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: opportunityObjectMetadataItem,
+  fieldName: 'closeDate',
+});
+
 const THIS_MONTH_CONDITIONS = [
   {
     operand: ViewFilterOperand.IS_RELATIVE,
@@ -124,10 +130,15 @@ const THIS_MONTH_CONDITIONS = [
 ];
 
 type DashboardFilterWidgetCardShellStoryProps = {
+  dashboardFilterBindings?: {
+    pageLayoutFilterId: string;
+    fieldMetadataId: string | null;
+  }[];
   conditions?: PageLayoutFilterCondition[];
 };
 
 const DashboardFilterWidgetCardShellStory = ({
+  dashboardFilterBindings = [],
   conditions = THIS_MONTH_CONDITIONS,
 }: DashboardFilterWidgetCardShellStoryProps) => {
   const store = createStore();
@@ -139,6 +150,7 @@ const DashboardFilterWidgetCardShellStory = ({
     configuration: {
       __typename: 'RecordTableConfiguration' as const,
       configurationType: WidgetConfigurationType.RECORD_TABLE,
+      dashboardFilterBindings,
     },
   };
 
@@ -316,14 +328,66 @@ export const FlushTasks: Story = {
   },
 };
 
-export const DashboardFilterApplied: Story = {
+export const DashboardFilterChip: Story = {
   render: () => <DashboardFilterWidgetCardShellStory />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Opportunities')).toBeVisible();
+    expect(
+      await canvas.findByText('Period · Creation date: This month'),
+    ).toBeVisible();
     expect(canvas.queryByText('Invalid filter')).not.toBeInTheDocument();
   },
+};
+
+export const DashboardFilterOverrideChip: Story = {
+  render: () => (
+    <DashboardFilterWidgetCardShellStory
+      dashboardFilterBindings={[
+        {
+          pageLayoutFilterId: PERIOD_FILTER_ID,
+          fieldMetadataId: closeDateField.id,
+        },
+      ]}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Period · Close date: This month'),
+    ).toBeVisible();
+  },
+};
+
+export const DashboardFilterNotApplied: Story = {
+  render: () => (
+    <DashboardFilterWidgetCardShellStory
+      dashboardFilterBindings={[
+        { pageLayoutFilterId: PERIOD_FILTER_ID, fieldMetadataId: null },
+      ]}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Not filtered by Period')).toBeVisible();
+    expect(canvas.queryByText(/Period ·/)).not.toBeInTheDocument();
+  },
+};
+
+export const DashboardFilterUnresolvedOverride: Story = {
+  render: () => (
+    <DashboardFilterWidgetCardShellStory
+      dashboardFilterBindings={[
+        {
+          pageLayoutFilterId: PERIOD_FILTER_ID,
+          fieldMetadataId: 'deleted-field-id',
+        },
+      ]}
+    />
+  ),
+  play: DashboardFilterNotApplied.play,
 };
 
 export const InvalidDashboardFilter: Story = {
@@ -338,5 +402,6 @@ export const InvalidDashboardFilter: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Invalid filter')).toBeVisible();
+    expect(canvas.queryByText(/Period/)).not.toBeInTheDocument();
   },
 };

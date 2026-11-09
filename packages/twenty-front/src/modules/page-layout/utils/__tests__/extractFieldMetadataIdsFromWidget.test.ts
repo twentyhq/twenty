@@ -3,6 +3,7 @@ import {
   PageLayoutTabLayoutMode,
   type PageLayoutWidget,
   type WidgetConfiguration,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
@@ -51,7 +52,12 @@ describe('extractFieldMetadataIdsFromWidget', () => {
       configuration: TEST_IFRAME_CONFIGURATION,
     });
 
-    expect(extractFieldMetadataIdsFromWidget(widget)).toEqual([]);
+    expect(
+      extractFieldMetadataIdsFromWidget({
+        widget,
+        dashboardFilterFieldMetadataIds: [],
+      }),
+    ).toEqual([]);
   });
 
   it('should extract field IDs from BarChartConfiguration', () => {
@@ -60,7 +66,10 @@ describe('extractFieldMetadataIdsFromWidget', () => {
       objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
-    const result = extractFieldMetadataIdsFromWidget(widget);
+    const result = extractFieldMetadataIdsFromWidget({
+      widget,
+      dashboardFilterFieldMetadataIds: [],
+    });
 
     expect(result).toHaveLength(2);
     expect(result).toContain(TEST_FIELD_METADATA_ID_1);
@@ -76,7 +85,10 @@ describe('extractFieldMetadataIdsFromWidget', () => {
       objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
-    const result = extractFieldMetadataIdsFromWidget(widget);
+    const result = extractFieldMetadataIdsFromWidget({
+      widget,
+      dashboardFilterFieldMetadataIds: [],
+    });
 
     expect(result).toHaveLength(3);
     expect(result).toContain(TEST_FIELD_METADATA_ID_1);
@@ -90,7 +102,10 @@ describe('extractFieldMetadataIdsFromWidget', () => {
       objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
-    const result = extractFieldMetadataIdsFromWidget(widget);
+    const result = extractFieldMetadataIdsFromWidget({
+      widget,
+      dashboardFilterFieldMetadataIds: [],
+    });
 
     expect(result).toHaveLength(2);
     expect(result).toContain(TEST_FIELD_METADATA_ID_1);
@@ -103,7 +118,10 @@ describe('extractFieldMetadataIdsFromWidget', () => {
       objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
-    const result = extractFieldMetadataIdsFromWidget(widget);
+    const result = extractFieldMetadataIdsFromWidget({
+      widget,
+      dashboardFilterFieldMetadataIds: [],
+    });
 
     expect(result).toHaveLength(2);
     expect(result).toContain(TEST_FIELD_METADATA_ID_1);
@@ -116,7 +134,10 @@ describe('extractFieldMetadataIdsFromWidget', () => {
       objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
-    const result = extractFieldMetadataIdsFromWidget(widget);
+    const result = extractFieldMetadataIdsFromWidget({
+      widget,
+      dashboardFilterFieldMetadataIds: [],
+    });
 
     expect(result).toHaveLength(1);
     expect(result).toContain(TEST_FIELD_METADATA_ID_1);
@@ -131,9 +152,67 @@ describe('extractFieldMetadataIdsFromWidget', () => {
       objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 
-    const result = extractFieldMetadataIdsFromWidget(widget);
+    const result = extractFieldMetadataIdsFromWidget({
+      widget,
+      dashboardFilterFieldMetadataIds: [],
+    });
 
     expect(result).toHaveLength(2);
     expect(result).not.toContain(undefined);
+  });
+
+  it('should include the ratio field of an aggregate chart', () => {
+    const widget = createMockWidget({
+      configuration: {
+        ...TEST_AGGREGATE_CHART_CONFIGURATION,
+        ratioAggregateConfig: {
+          fieldMetadataId: TEST_FIELD_METADATA_ID_2,
+          optionValue: 'WON',
+        },
+      },
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
+    });
+
+    expect(
+      extractFieldMetadataIdsFromWidget({
+        widget,
+        dashboardFilterFieldMetadataIds: [],
+      }),
+    ).toEqual([TEST_FIELD_METADATA_ID_1, TEST_FIELD_METADATA_ID_2]);
+  });
+
+  it('should include the fields dashboard filters resolved to, once each', () => {
+    const widget = createMockWidget({
+      configuration: TEST_AGGREGATE_CHART_CONFIGURATION,
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
+    });
+
+    expect(
+      extractFieldMetadataIdsFromWidget({
+        widget,
+        dashboardFilterFieldMetadataIds: [
+          TEST_FIELD_METADATA_ID_1,
+          TEST_FIELD_METADATA_ID_3,
+        ],
+      }),
+    ).toEqual([TEST_FIELD_METADATA_ID_1, TEST_FIELD_METADATA_ID_3]);
+  });
+
+  it('should include them for a record table widget', () => {
+    const widget = createMockWidget({
+      type: WidgetType.RECORD_TABLE,
+      configuration: {
+        __typename: 'RecordTableConfiguration',
+        configurationType: WidgetConfigurationType.RECORD_TABLE,
+      },
+      objectMetadataId: TEST_OBJECT_METADATA_ID,
+    });
+
+    expect(
+      extractFieldMetadataIdsFromWidget({
+        widget,
+        dashboardFilterFieldMetadataIds: [TEST_FIELD_METADATA_ID_2],
+      }),
+    ).toEqual([TEST_FIELD_METADATA_ID_2]);
   });
 });
