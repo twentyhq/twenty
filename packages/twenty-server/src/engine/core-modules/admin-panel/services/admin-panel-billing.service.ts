@@ -244,7 +244,7 @@ export class AdminPanelBillingService {
             productName: item.billingProduct?.name ?? '',
             productKey: typeof productKey === 'string' ? productKey : null,
             stripePriceId: item.stripePriceId,
-            quantity: item.quantity != null ? Number(item.quantity) : null,
+            quantity: isDefined(item.quantity) ? Number(item.quantity) : null,
             unitAmount:
               price?.unitAmount != null ? Number(price.unitAmount) : null,
             includedCredits:

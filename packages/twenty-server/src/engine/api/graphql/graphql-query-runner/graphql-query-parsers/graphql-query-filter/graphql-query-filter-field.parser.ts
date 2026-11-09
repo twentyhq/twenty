@@ -86,8 +86,7 @@ export class GraphqlQueryFilterFieldParser {
     outerQueryBuilder: WorkspaceSelectQueryBuilder,
     objectNameSingular: string,
     key: string,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    filterValue: any,
+    filterValue: Partial<ObjectRecordFilter>,
     isFirst = false,
     useDirectTableReference = false,
   ): void {
@@ -407,8 +406,7 @@ export class GraphqlQueryFilterFieldParser {
     queryBuilder: WhereExpressionBuilder,
     fieldMetadata: OrmFlatFieldMetadata,
     objectNameSingular: string,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    fieldValue: any,
+    fieldValue: Partial<ObjectRecordFilter>,
     isFirst = false,
     useDirectTableReference = false,
   ): void {
@@ -435,10 +433,7 @@ export class GraphqlQueryFilterFieldParser {
 
       const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-      const [[operator, value]] = Object.entries(
-        // oxlint-disable-next-line typescript/no-explicit-any
-        subFieldFilter as Record<string, any>,
-      );
+      const [[operator, value]] = Object.entries(subFieldFilter);
 
       assertArrayOperatorValueIsNonEmptyArrayOrThrow({
         operator,

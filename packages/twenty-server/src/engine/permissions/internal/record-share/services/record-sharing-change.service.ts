@@ -5,10 +5,11 @@ import { Injectable } from '@nestjs/common';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
-import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
-import { RecordShareWriteOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-share-write-orm.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
+import { RecordSharingReadService } from 'src/engine/permissions/internal/record-share/services/record-sharing-read.service';
+import { RecordShareRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-share.repository';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import {
@@ -16,7 +17,7 @@ import {
   resolveRecordSharingObjectOrThrow,
 } from 'src/engine/permissions/internal/record-share/utils/resolve-record-sharing-object-or-throw.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
-import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-orm/utils/to-permissions-exception.util';
+import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-repository/utils/to-permissions-exception.util';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -32,18 +33,21 @@ export class RecordSharingChangeService {
   constructor(
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareWriteOrmService: RecordShareWriteOrmService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
-    private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
+    private readonly recordShareRepository: RecordShareRepository,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
+    private readonly recordSharingReadService: RecordSharingReadService,
   ) {}
 
   async runChange({
     args,
     write,
+    requiredCapability,
   }: {
     args: RecordSharingArgs;
     write: (change: RecordSharingChange) => Promise<void>;
+    requiredCapability: 'isShareable' | 'canSetRecordPrivacy';
   }): Promise<RecordSharingDTO> {
     const { flatObjectMetadataMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(
@@ -58,7 +62,7 @@ export class RecordSharingChangeService {
     const { flatObjectMetadata } = sharingObject;
     const workspaceId = args.authContext.workspace.id;
 
-    if (!sharingObject.isShareable) {
+    if (!sharingObject[requiredCapability]) {
       throw new NotFoundError('Record not found');
     }
 
@@ -71,7 +75,7 @@ export class RecordSharingChangeService {
               executor.execute({ text: sql, values: parameters }),
           };
 
-          await this.recordShareWriteOrmService.lockRecordForSharingChange({
+          await this.recordShareRepository.lockRecordForSharingChange({
             workspaceId,
             flatObjectMetadata,
             recordId: args.recordId,
@@ -79,11 +83,14 @@ export class RecordSharingChangeService {
           });
 
           const principals =
-            await this.principalPermissionsService.buildPermissionsPrincipals({
-              authContext: args.authContext,
-            });
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+              {
+                authContext: args.authContext,
+              },
+            );
           const isWritable =
-            await this.recordPermissionsService.canUpdateRecords({
+            await this.recordPermissionsReadService.canAccessKnownRecords({
+              operationType: 'update',
               principals,
               objectMetadataId: args.objectMetadataId,
               recordIds: [args.recordId],
@@ -92,17 +99,19 @@ export class RecordSharingChangeService {
 
           if (
             !isWritable ||
-            !(await this.recordPermissionsService.canRoleReachSomeRecords({
-              operationType: 'update',
-              principals,
-              objectMetadataId: args.objectMetadataId,
-            }))
+            !(await this.recordPermissionsOnlyRoleReadService.canRoleAccessSomeRecords(
+              {
+                operationType: 'update',
+                principals,
+                objectMetadataId: args.objectMetadataId,
+              },
+            ))
           ) {
             throw new NotFoundError('Record not found');
           }
 
           const { viewerAccessLevel, creatorWorkspaceMemberId } =
-            await this.recordSharingPermissionsService.findViewerRecordAccess({
+            await this.recordSharingReadService.findViewerRecordAccess({
               ...args,
               transactionScope,
             });
@@ -123,8 +132,6 @@ export class RecordSharingChangeService {
       throw toPermissionsException(error);
     }
 
-    return this.recordSharingPermissionsService.findRecordSharingAfterChange(
-      args,
-    );
+    return this.recordSharingReadService.findRecordSharingAfterChange(args);
   }
 }

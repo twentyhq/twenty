@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { convertToModelMessages, hasToolCall } from 'ai';
 import {
   AgentChatThreadConversationType,
-  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+  ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
   REACT_TO_MESSAGE_TOOL_NAME,
@@ -39,7 +39,7 @@ import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
+import { createAttachConversationToRecordsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-records.tool';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
@@ -97,6 +97,7 @@ type ChatExecutionResult = Pick<
 };
 
 type ChatExecutionProfile = {
+  assistantDisplayName: string | undefined;
   toolset: Parameters<AgentTurnService['start']>[0]['toolset'] & {
     isWorkspaceSetupThread: boolean;
   };
@@ -190,7 +191,7 @@ export class ChatExecutionService {
 
     const executionProfile = await this.buildExecutionProfile({
       thread,
-      workspaceId: workspace.id,
+      workspace,
       userWorkspaceId,
       messages,
       browsingContext,
@@ -252,6 +253,7 @@ export class ChatExecutionService {
 
         return {
           systemPrompt: buildFullSystemPrompt({
+            assistantDisplayName: executionProfile.assistantDisplayName,
             toolCatalog: toolset.toolCatalog,
             ...skillContext,
             preloadedTools: toolset.directToolNames,
@@ -310,23 +312,33 @@ export class ChatExecutionService {
 
   private async buildExecutionProfile({
     thread,
-    workspaceId,
+    workspace,
     userWorkspaceId,
     messages,
     browsingContext,
     toolContext,
   }: {
     thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'conversationType'>;
-    workspaceId: string;
+    workspace: Pick<WorkspaceEntity, 'id' | 'aiChatAssistantProfile'>;
     userWorkspaceId: string;
     messages: ExtendedUIMessage[];
     browsingContext: BrowsingContextType | null;
     toolContext: ToolContext;
   }): Promise<ChatExecutionProfile> {
+    const workspaceId = workspace.id;
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      workspaceId,
+    );
+    const assistantDisplayName = isAiChatInboxEnabled
+      ? workspace.aiChatAssistantProfile.displayName
+      : undefined;
+
     if (
       thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
     ) {
       return {
+        assistantDisplayName,
         toolset: {
           registryAccess: { type: 'none' },
           nativeToolOptions: { webSearch: false, twitterSearch: false },
@@ -350,10 +362,6 @@ export class ChatExecutionService {
       !hasSucceededWorkspaceSetupCompletion(messages);
     const isWorkspaceSetupKickoffTurn =
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
-    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-      workspaceId,
-    );
     const canAttachConversationToRecords =
       !isWorkspaceSetupConversation && isAiChatInboxEnabled;
     const latestUserMessage = [...messages]
@@ -361,6 +369,7 @@ export class ChatExecutionService {
       .find((message) => message.role === AgentMessageRole.USER);
 
     return {
+      assistantDisplayName,
       toolset: {
         registryAccess: {
           type: 'assistant',
@@ -379,8 +388,8 @@ export class ChatExecutionService {
             : {}),
           ...(canAttachConversationToRecords
             ? {
-                [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
-                  createAttachConversationToRecordTool({
+                [ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME]:
+                  createAttachConversationToRecordsTool({
                     agentChatThreadTargetService:
                       this.agentChatThreadTargetService,
                     toolContext,

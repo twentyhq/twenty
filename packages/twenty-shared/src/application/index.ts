@@ -118,6 +118,7 @@ export type { CustomConnectionProviderConfig } from './customConnectionProviderC
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
+export { getApplicationGrantRoleUniversalIdentifier } from './deterministic-identifier/get-application-grant-role-universal-identifier.util';
 export { getApplicationVariableUniversalIdentifier } from './deterministic-identifier/get-application-variable-universal-identifier.util';
 export { getConnectionProviderUniversalIdentifier } from './deterministic-identifier/get-connection-provider-universal-identifier.util';
 export { getFieldPermissionUniversalIdentifier } from './deterministic-identifier/get-field-permission-universal-identifier.util';
@@ -171,6 +172,7 @@ export type {
   EnqueueJobResult,
   EnqueueJobItem,
   EnqueueJobsInput,
+  EnqueuedJob,
   EnqueueJobsResult,
   JobStatusState,
   JobStatusResult,
@@ -210,6 +212,8 @@ export type {
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
 export type { McpServerManifest } from './mcpServerManifestType';
+export type { MessagingProviderConversationStyle } from './messagingProviderConversationStyleType';
+export { MESSAGING_PROVIDER_CONVERSATION_STYLES } from './messagingProviderConversationStyleType';
 export type { MessagingProviderManifest } from './messagingProviderManifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type {
@@ -221,8 +225,14 @@ export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderCon
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
-export type { ObjectPermissionAction } from './objectPermissionActionType';
-export { OBJECT_PERMISSION_ACTIONS } from './objectPermissionActionType';
+export type {
+  ObjectPermissionAction,
+  DisableableObjectPermissionAction,
+} from './objectPermissionActionType';
+export {
+  OBJECT_PERMISSION_ACTIONS,
+  DISABLEABLE_OBJECT_PERMISSION_ACTIONS,
+} from './objectPermissionActionType';
 export type {
   PageLayoutWidgetManifest,
   StandalonePageLayoutWidgetManifest,
@@ -324,6 +334,7 @@ export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontComponentSourcePath';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';

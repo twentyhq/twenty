@@ -78,7 +78,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const objectSharing = resolveObjectSharing(queryRunnerContext);
 
     if (objectSharing.isPrivateByDefault || isNonEmptyArray(args.shareWith)) {
-      await this.recordSharingWriteService.validateShareWithOrThrow({
+      await this.recordSharingWriteService.assertShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
       });
@@ -479,14 +479,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       }),
     );
 
-    const restrictedFields =
-      await this.recordPermissionsService.findRestrictedFields({
+    const unreadableFieldMetadataIds =
+      await this.recordPermissionsOnlyRoleReadService.findUnreadableFields({
         principals: permissionsPrincipals,
         objectMetadataId: flatObjectMetadata.id,
       });
 
     const selectOptions = getAllSelectableColumnNames({
-      restrictedFields,
+      unreadableFieldMetadataIds,
       objectMetadata: {
         objectMetadataMapItem: flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -626,7 +626,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     await this.recordSharingWriteService.insertRecordSharesForCreatedRecords({
       authContext,
-      flatObjectMetadata,
+      objectMetadataId: flatObjectMetadata.id,
       objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       createdRecordSharing,

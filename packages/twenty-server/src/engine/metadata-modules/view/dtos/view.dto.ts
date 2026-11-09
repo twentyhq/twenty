@@ -85,6 +85,10 @@ export class ViewDTO {
   @Field({ nullable: false, defaultValue: false })
   shouldHideEmptyGroups: boolean;
 
+  // Nullable since cached views can predate the column and Boolean! fails the query
+  @Field(() => Boolean, { nullable: true })
+  shouldDisplayGroupsAsTabs?: boolean | null;
+
   @Field(() => Int, { nullable: true })
   kanbanColumnWidth?: number | null;
 

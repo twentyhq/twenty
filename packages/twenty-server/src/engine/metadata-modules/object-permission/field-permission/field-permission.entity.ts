@@ -8,20 +8,28 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   type Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_RLS_RULE_FIELD_PERMISSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-rls-rule-field-permissions-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('fieldPermission')
-@Unique('IDX_FIELD_PERMISSION_FIELD_METADATA_ID_ROLE_ID_UNIQUE', [
-  'fieldMetadataId',
-  'roleId',
-])
+@Index(
+  'IDX_FIELD_PERMISSION_OBJECT_LEVEL_FIELD_ROLE_UNIQUE',
+  ['fieldMetadataId', 'roleId'],
+  { unique: true, where: '"rowLevelPermissionPredicateGroupId" IS NULL' },
+)
+@Index(
+  'IDX_FIELD_PERMISSION_RLS_RULE_FIELD_ROLE_GROUP_UNIQUE',
+  ['fieldMetadataId', 'roleId', 'rowLevelPermissionPredicateGroupId'],
+  { unique: true, where: '"rowLevelPermissionPredicateGroupId" IS NOT NULL' },
+)
 @Index('IDX_FIELD_PERMISSION_WORKSPACE_ID_ROLE_ID', ['workspaceId', 'roleId'])
 export class FieldPermissionEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -61,6 +69,19 @@ export class FieldPermissionEntity extends SyncableEntity {
   )
   @JoinColumn({ name: 'fieldMetadataId' })
   fieldMetadata: Relation<FieldMetadataEntity>;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_RLS_RULE_FIELD_PERMISSIONS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  rowLevelPermissionPredicateGroupId: string | null;
+
+  @ManyToOne(() => RowLevelPermissionPredicateGroupEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'rowLevelPermissionPredicateGroupId' })
+  rowLevelPermissionPredicateGroup: Relation<RowLevelPermissionPredicateGroupEntity> | null;
 
   @Column({ nullable: true, type: 'boolean' })
   canReadFieldValue?: boolean | null;

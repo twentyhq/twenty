@@ -154,10 +154,12 @@ type AgentMessage {
   agentId: UUID
   createdAt: DateTime!
   id: UUID!
+  isBuiltInAssistant: Boolean!
   parts: [AgentMessagePart!]!
   processedAt: DateTime
   reactions: [AgentMessageReactionSummary!]!
   role: String!
+  senderApplicationId: UUID
   senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
   status: String!
@@ -264,6 +266,22 @@ enum AiChatAssistantMode {
   AUTOMATIC
   MENTION_ONLY
   NEVER
+}
+
+type AiChatAssistantProfile {
+  avatarColor: String!
+  avatarFace: String!
+  avatarShape: String!
+  displayName: String!
+  isAvatarAnimated: Boolean!
+}
+
+input AiChatAssistantProfileInput {
+  avatarColor: String
+  avatarFace: String
+  avatarShape: String
+  displayName: String
+  isAvatarAnimated: Boolean
 }
 
 type AiChatUsage {
@@ -465,6 +483,7 @@ type Application {
   availablePackages: JSON!
   canBeUninstalled: Boolean!
   commandMenuItems: [CommandMenuItem!]!
+  content: ApplicationContent
   createdAt: DateTime!
   defaultLogicFunctionRole: Role
   defaultRoleId: String
@@ -545,6 +564,45 @@ type ApplicationConnectionProvider {
 type ApplicationConnectionProviderOAuthConfig {
   isClientCredentialsConfigured: Boolean!
   scopes: [String!]!
+}
+
+type ApplicationContent {
+  agents: [ApplicationContentItem!]!
+  commandMenuItems: [ApplicationContentItem!]!
+  connectionProviders: [ApplicationContentItem!]!
+  fields: [ApplicationContentItem!]!
+  frontComponents: [ApplicationContentItem!]!
+  indexes: [ApplicationContentItem!]!
+  logicFunctions: [ApplicationContentItem!]!
+  navigationMenuItems: [ApplicationContentItem!]!
+  objects: [ApplicationContentItem!]!
+  pageLayoutTabs: [ApplicationContentItem!]!
+  pageLayouts: [ApplicationContentItem!]!
+  permissionFlags: [ApplicationContentItem!]!
+  publicAssets: [ApplicationContentItem!]!
+  roles: [ApplicationContentItem!]!
+  skills: [ApplicationContentItem!]!
+  translations: [ApplicationContentItem!]!
+  viewFields: [ApplicationContentItem!]!
+  views: [ApplicationContentItem!]!
+  workflows: [ApplicationContentItem!]!
+}
+
+type ApplicationContentItem {
+  color: String
+  count: Int
+  description: String
+  fieldUniversalIdentifier: String
+  icon: String
+  id: String
+  label: String!
+  objectUniversalIdentifier: String
+  parentLabel: String
+  parentUniversalIdentifier: String
+  position: Float
+  tag: String
+  timeoutSeconds: Int
+  universalIdentifier: String!
 }
 
 type ApplicationExport {
@@ -1883,6 +1941,7 @@ input CreateViewInput {
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   position: Float = 0
+  shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
   visibility: ViewVisibility
@@ -2254,10 +2313,17 @@ input EnqueueJobsInput {
 }
 
 type EnqueueJobsResult {
+  availableBytes: Float
   enqueued: Boolean!
   enqueuedJobsCount: Int!
   jobIds: [String!]!
+  jobs: [EnqueuedJob!]!
   logicFunctionUniversalIdentifier: String!
+}
+
+type EnqueuedJob {
+  jobId: String!
+  sizeBytes: Int!
 }
 
 type EnterpriseLicenseInfoDTO {
@@ -2358,6 +2424,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ACCESS_GROUPS_ENABLED
   IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
@@ -2365,9 +2432,12 @@ enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
+  IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
+  IS_PRIVATE_RECORDS_ENABLED
+  IS_RECORD_GROUP_TABS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
@@ -2487,6 +2557,7 @@ type FieldPermission {
   id: UUID!
   objectMetadataId: UUID!
   roleId: UUID!
+  rowLevelPermissionPredicateGroupId: UUID
 }
 
 input FieldPermissionInput {
@@ -2494,6 +2565,7 @@ input FieldPermissionInput {
   canUpdateFieldValue: Boolean
   fieldMetadataId: UUID!
   objectMetadataId: UUID!
+  rowLevelPermissionPredicateGroupId: UUID
 }
 
 type FieldRichTextConfiguration {
@@ -2660,6 +2732,7 @@ type GettingStartedProgress {
 }
 
 enum GettingStartedStepActionKey {
+  BOOK_CALL
   CONNECT_MAILBOX
   CUSTOMIZE_DATA_MODEL
   FOLLOW_UP_DEALS
@@ -3060,6 +3133,7 @@ type MarketplaceAppDetail {
   author: String
   billsCredits: Boolean!
   category: String
+  content: ApplicationContent
   defaultRoleUniversalIdentifier: String
   description: String
   emailSupport: String
@@ -3544,8 +3618,9 @@ type Mutation {
   renewToken(appToken: String!): AuthTokens!
   reopenAgentChatThreadInChannel(threadId: UUID!): Boolean!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
-  resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
+  resendEmailVerificationToken(affiliatePartnerName: String, email: String!, origin: String!): ResendEmailVerificationToken!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
+  resetAiChatAssistantProfile: AiChatAssistantProfile!
   resetCommandMenuItem(id: UUID!): CommandMenuItem!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
   resetPageLayoutToDefault(id: String!): PageLayout!
@@ -3577,7 +3652,7 @@ type Mutation {
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signOut(refreshToken: String): Boolean!
-  signUp(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
+  signUp(affiliatePartnerName: String, captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
@@ -3825,9 +3900,11 @@ type ObjectPermission {
   canSoftDeleteObjectRecords: Boolean
   canUpdateObjectRecords: Boolean
   objectMetadataId: UUID!
-  restrictedFields: JSON
+  restrictedFields: JSON @deprecated(reason: "Use unreadableFields and uneditableFields")
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
+  uneditableFields: [UUID!]
+  unreadableFields: [UUID!]
 }
 
 input ObjectPermissionInput {
@@ -3880,13 +3957,16 @@ enum ObjectRecordGroupByDateGranularity {
 }
 
 type ObjectRecordsPermissions {
+  canCreateAllRecords: Boolean!
   canDestroyAllRecords: Boolean!
   canReadAllRecords: Boolean!
   canSoftDeleteAllRecords: Boolean!
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
-  restrictedFields: JSON!
+  restrictedFields: JSON! @deprecated(reason: "Use unreadableFields and uneditableFields")
   rowLevelRecordsPermissions: RowLevelRecordsPermissions
+  uneditableFields: [UUID!]!
+  unreadableFields: [UUID!]!
 }
 
 """Onboarding status"""
@@ -4237,7 +4317,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
-  exportApplication(shouldIncludeDependencies: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
+  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(
     """The id of the record to find."""
     id: UUID!
@@ -4536,6 +4616,7 @@ type Role {
   label: String!
   objectPermissions: [ObjectPermission!]
   permissionFlags: [RolePermissionFlag!]
+  rowLevelPermissionFieldPermissions: [FieldPermission!]
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
   universalIdentifier: UUID
@@ -4630,12 +4711,15 @@ enum RowLevelPermissionPredicateOperand {
 }
 
 type RowLevelRecordsPermissions {
+  canCreateRecords: Boolean!
   canDestroyRecords: Boolean!
   canReadRecords: Boolean!
   canSoftDeleteRecords: Boolean!
   canUpdateRecords: Boolean!
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
   predicates: [RowLevelPermissionPredicate!]!
+  uneditableFields: [UUID!]
+  unreadableFields: [UUID!]
 }
 
 input RunAgentInput {
@@ -4872,9 +4956,9 @@ type SignUp {
 }
 
 input SignUpInNewWorkspaceInput {
+  affiliatePartnerName: String
   captchaToken: String
   displayName: String
-  partner: String
   subdomain: String
 }
 
@@ -5591,6 +5675,7 @@ input UpdateViewInput {
   """
   openRecordIn: ViewOpenRecordIn
   position: Float
+  shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
@@ -5640,6 +5725,7 @@ input UpdateWorkspaceIframeMediaPermissionsInput {
 input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier
+  aiChatAssistantProfile: AiChatAssistantProfileInput
   aiChatDirectMessageAssistantMode: AiChatAssistantMode
   aiChatInboxAssistantMode: AiChatAssistantMode
   aiChatModelTier: AiModelTier
@@ -6129,6 +6215,7 @@ type View {
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   position: Float!
+  shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
   type: ViewType!
   universalIdentifier: UUID!
@@ -6413,6 +6500,7 @@ type Workspace {
   activationStatus: WorkspaceActivationStatus!
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier!
+  aiChatAssistantProfile: AiChatAssistantProfile!
   aiChatDirectMessageAssistantMode: AiChatAssistantMode!
   aiChatInboxAssistantMode: AiChatAssistantMode!
   aiChatModelTier: AiModelTier!

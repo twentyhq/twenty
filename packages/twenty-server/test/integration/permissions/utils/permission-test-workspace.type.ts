@@ -39,7 +39,7 @@ export type PermissionTestWorkspace = {
 };
 
 export type PermissionTestExpectedAnswers = {
-  findRecordsPermissions: {
+  findRecordsActions: {
     canRead: boolean;
     canUpdate: boolean;
     canSoftDelete: boolean;

@@ -16,7 +16,6 @@ import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/
 import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
-import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
@@ -27,7 +26,6 @@ export type WebSearchOperationType =
 
 export type BillingUsageInput = {
   usage: BillingTokenUsage;
-  cacheCreationTokens?: number;
 };
 
 @Injectable()
@@ -72,19 +70,18 @@ export class AiBillingService {
     return steps.reduce(
       (costInDollars, step) =>
         costInDollars +
-        computeStepCostBreakdown(model, {
-          usage: step.usage,
-          cacheCreationTokens: extractCacheCreationTokens(
-            step.providerMetadata,
-          ),
-        }).totalCostInDollars,
+        computeStepCostBreakdown({ model, usage: step.usage })
+          .totalCostInDollars,
       0,
     );
   }
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
     const model = this.getCostConfig(modelId);
-    const breakdown = computeStepCostBreakdown(model, billingInput);
+    const breakdown = computeStepCostBreakdown({
+      model,
+      usage: billingInput.usage,
+    });
 
     this.logger.log(
       `Cost for ${model.modelId}: $${breakdown.totalCostInDollars.toFixed(6)} ` +

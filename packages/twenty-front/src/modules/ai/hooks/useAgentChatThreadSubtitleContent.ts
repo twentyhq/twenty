@@ -1,3 +1,4 @@
+import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { agentChatDraftPreviewTextFamilySelector } from '@/ai/states/selectors/agentChatDraftPreviewTextFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadSubtitleContent } from '@/ai/utils/getAgentChatThreadSubtitleContent';
@@ -9,6 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 export const useAgentChatThreadSubtitleContent = (
   thread: AgentChatThreadRecord,
 ) => {
+  const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -21,6 +23,7 @@ export const useAgentChatThreadSubtitleContent = (
   return getAgentChatThreadSubtitleContent({
     thread,
     draftPreviewText,
+    assistantDisplayName,
     workspaceMembers: currentWorkspaceMembers,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });
