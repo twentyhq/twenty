@@ -74,6 +74,15 @@ describe('getDayOfMonthDescription', () => {
     );
   });
 
+  it('should handle lists containing ranges', () => {
+    expect(getDayOfMonthDescription('1-3,15', options)).toBe(
+      'on the 1st, 2nd, 3rd and 15th of the month',
+    );
+    expect(getDayOfMonthDescription('1-2,2-3', options)).toBe(
+      'on the 1st, 2nd and 3rd of the month',
+    );
+  });
+
   it('should handle weekday specifier', () => {
     expect(getDayOfMonthDescription('15W', options)).toBe(
       'on the weekday closest to the 15th of the month',

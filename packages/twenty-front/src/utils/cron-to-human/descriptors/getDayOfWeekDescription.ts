@@ -7,6 +7,7 @@ import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '~/utils/cron-to-human/types/CronDescriptionOptions';
+import { expandCronListValues } from '~/utils/cron-to-human/utils/expandCronListValues';
 
 const getDayName = (
   dayNum: number,
@@ -122,7 +123,7 @@ export const getDayOfWeekDescription = (
   }
 
   if (isListValue(dayOfWeek)) {
-    const values = dayOfWeek.split(',').map((v) => v.trim());
+    const values = expandCronListValues(dayOfWeek);
     const dayNames = values.map((day) => {
       const dayNum = parseInt(day, 10);
       return !isNaN(dayNum)
