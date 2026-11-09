@@ -312,7 +312,7 @@ services:
 
 On Kubernetes, use the cluster DNS name of the server's Service. Keep it private: anything that can reach it skips the proxy.
 
-This works with the local logic function driver only. Lambda functions run outside your network, so they can't reach a private address.
+This works with the local logic function driver only. Leave it unset with the Lambda driver: Lambda functions run outside your network, so they can't reach a private address and their calls would fail.
 
 Some URLs that functions use still point at `SERVER_URL` and stay blocked: file upload URLs when presigned S3 URLs are off, file download URLs, and `getPublicAssetUrl`.
 
