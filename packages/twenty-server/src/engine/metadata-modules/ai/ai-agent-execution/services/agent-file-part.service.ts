@@ -6,6 +6,7 @@ import {
   type LanguageModelV4FilePart,
   type LanguageModelV4Prompt,
   type LanguageModelV4TextPart,
+  type LanguageModelV4Usage,
 } from '@ai-sdk/provider';
 import { validateDownloadUrl } from '@ai-sdk/provider-utils';
 import { isArray, isNonEmptyString, isNull, isString } from '@sniptt/guards';
@@ -67,6 +68,7 @@ type AgentRunFiles = AgentFileBilling & {
   bytesByFileId: Map<string, Promise<Buffer | null>>;
   fileIdsByBytes: Map<Uint8Array | string, string>;
   rejectedFileIds: Set<string>;
+  fileRejectionsByBytes: Map<Uint8Array | string, boolean>;
 };
 
 type FilePartReplacement = LanguageModelV4FilePart | LanguageModelV4TextPart;
@@ -75,6 +77,10 @@ type FileCheckArguments = {
   params: LanguageModelV4CallOptions;
   model: LanguageModelV4;
   runFiles: AgentRunFiles;
+};
+
+type FilePartCheckArguments = FileCheckArguments & {
+  part: LanguageModelV4FilePart;
 };
 
 type FileRetryArguments = FileCheckArguments & {
@@ -119,6 +125,7 @@ export class AgentFilePartService {
       bytesByFileId: new Map(),
       fileIdsByBytes: new Map(),
       rejectedFileIds: new Set(),
+      fileRejectionsByBytes: new Map(),
     };
 
     return {
@@ -302,12 +309,35 @@ export class AgentFilePartService {
     return rejectedFileParts;
   }
 
-  private async isFilePartRejected({
+  private async isFilePartRejected(
+    filePartCheck: FilePartCheckArguments,
+  ): Promise<boolean> {
+    const { part, runFiles } = filePartCheck;
+
+    if (part.data.type !== 'data') {
+      return this.sendFilePartCheck(filePartCheck);
+    }
+
+    const fileBytes = part.data.data;
+    const previousRejection = runFiles.fileRejectionsByBytes.get(fileBytes);
+
+    if (isDefined(previousRejection)) {
+      return previousRejection;
+    }
+
+    const isRejected = await this.sendFilePartCheck(filePartCheck);
+
+    runFiles.fileRejectionsByBytes.set(fileBytes, isRejected);
+
+    return isRejected;
+  }
+
+  private async sendFilePartCheck({
     part,
     params: { abortSignal, headers },
     model,
     runFiles,
-  }: FileCheckArguments & { part: LanguageModelV4FilePart }): Promise<boolean> {
+  }: FilePartCheckArguments): Promise<boolean> {
     const prompt: LanguageModelV4Prompt = [
       {
         role: 'user',
@@ -323,8 +353,25 @@ export class AgentFilePartService {
         headers,
       });
 
-      void this.aiBillingService.calculateAndBillUsage({
-        modelId: runFiles.modelId,
+      this.billFilePartCheck(usage, runFiles);
+
+      return false;
+    } catch (error) {
+      if (!this.isFileRejectedByProvider(error, prompt)) {
+        throw error;
+      }
+
+      return true;
+    }
+  }
+
+  private billFilePartCheck(
+    usage: LanguageModelV4Usage,
+    { modelId, workspaceId, operationType, spenders }: AgentRunFiles,
+  ): void {
+    void this.aiBillingService
+      .calculateAndBillUsage({
+        modelId,
         billingInput: {
           usage: {
             inputTokens: usage.inputTokens.total,
@@ -338,19 +385,16 @@ export class AgentFilePartService {
             },
           },
         },
-        workspaceId: runFiles.workspaceId,
-        operationType: runFiles.operationType,
-        spenders: runFiles.spenders,
-      });
-
-      return false;
-    } catch (error) {
-      if (!this.isFileRejectedByProvider(error, prompt)) {
-        throw error;
-      }
-
-      return true;
-    }
+        workspaceId,
+        operationType,
+        spenders,
+      })
+      .catch((error: unknown) =>
+        this.logger.error(
+          `Could not bill a file check in workspace ${workspaceId}`,
+          error instanceof Error ? error.stack : error,
+        ),
+      );
   }
 
   private rememberRejectedFile(
