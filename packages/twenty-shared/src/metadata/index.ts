@@ -15,6 +15,8 @@ export {
 export { ALL_METADATA_NAME } from './constants/all-metadata-name.constant';
 export { DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from './constants/default-relations-object-standard-ids.constant';
 export { IDENTIFIER_MAX_CHAR_LENGTH } from './constants/identifier-max-char-length.constant';
+export type { MetadataResponseCacheApprovedRequest } from './constants/metadata-response-cache-approved-requests.constant';
+export { METADATA_RESPONSE_CACHE_APPROVED_REQUESTS } from './constants/metadata-response-cache-approved-requests.constant';
 export { RESERVED_METADATA_NAME_KEYWORDS } from './constants/reserved-metadata-name-keywords.constant';
 export { RESERVED_SYSTEM_FIELD_TYPE_BY_NAME } from './constants/reserved-system-field-type-by-name.constant';
 export { STANDARD_OBJECT_FIELDS } from './constants/standard-object-fields.constant';

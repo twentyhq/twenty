@@ -1,15 +1,26 @@
-import { createHash } from 'crypto';
-
 import * as Sentry from '@sentry/node';
 import { type Request } from 'express';
 import { type Plugin } from 'graphql-yoga';
+import { type MetadataResponseCacheApprovedRequest } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  type ApprovedMetadataCacheRequest,
+  findApprovedMetadataCacheRequest,
+} from 'src/engine/api/graphql/graphql-config/utils/find-approved-metadata-cache-request.util';
+import { isPlainWorkspaceMemberRequest } from 'src/engine/api/graphql/graphql-config/utils/is-plain-workspace-member-request.util';
+import { isWorkspaceSuspended } from 'src/engine/core-modules/workspace/utils/is-workspace-suspended.util';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+
+const RESPONSE_CACHE_NAMESPACE = 'graphql:operations:v2';
 
 export type CachedOperationConfig = {
   dependencies: WorkspaceCacheOrDerivedCacheKeyName[];
   scope: 'workspace' | 'userWorkspace';
+  accessPolicy: AccessPolicy;
+  isAllowedWhenWorkspaceSuspended: boolean;
+  approvedRequests: MetadataResponseCacheApprovedRequest[];
 };
 
 export type CacheMetadataPluginConfig = {
@@ -22,6 +33,10 @@ export type CacheMetadataPluginConfig = {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
   ) => Promise<string>;
+  assertAccessPolicySatisfied: (args: {
+    accessPolicy: AccessPolicy;
+    request: Request;
+  }) => Promise<void>;
 };
 
 export function useCachedMetadata(
@@ -32,26 +47,67 @@ export function useCachedMetadata(
     operationConfig,
     workspaceId,
     request,
+    approvedRequest,
   }: {
     operationName: string;
     operationConfig: CachedOperationConfig;
     workspaceId: string;
-    request: Pick<Request, 'locale' | 'body' | 'userWorkspaceId'>;
+    request: Pick<Request, 'locale' | 'userWorkspaceId'>;
+    approvedRequest: ApprovedMetadataCacheRequest;
   }): Promise<string> => {
     const dependencyHash = await config.dependencyHashGetter(
       workspaceId,
       operationConfig.dependencies,
     );
-    const queryHash = createHash('sha256')
-      .update(request.body.query)
-      .update(JSON.stringify(request.body.variables ?? null))
-      .digest('hex');
     const userScopeSegment =
       operationConfig.scope === 'userWorkspace'
         ? `:${request.userWorkspaceId}`
         : '';
 
-    return `graphql:operations:${operationName}:${workspaceId}:${dependencyHash}${userScopeSegment}:${request.locale}:${queryHash}`;
+    return `${RESPONSE_CACHE_NAMESPACE}:${operationName}:${workspaceId}:${dependencyHash}${userScopeSegment}:${request.locale}:${approvedRequest.documentFingerprint}:${approvedRequest.variablesFingerprint}`;
+  };
+
+  const resolveEligibleApprovedRequest = async ({
+    operationName,
+    operationConfig,
+    request,
+  }: {
+    operationName: string;
+    operationConfig: CachedOperationConfig;
+    request: Request;
+  }): Promise<ApprovedMetadataCacheRequest | undefined> => {
+    if (!isPlainWorkspaceMemberRequest(request)) {
+      return undefined;
+    }
+
+    if (
+      !operationConfig.isAllowedWhenWorkspaceSuspended &&
+      isWorkspaceSuspended(request.workspace)
+    ) {
+      return undefined;
+    }
+
+    const approvedRequest = findApprovedMetadataCacheRequest({
+      operationName,
+      query: request.body?.query,
+      variables: request.body?.variables,
+      approvedRequests: operationConfig.approvedRequests,
+    });
+
+    if (!isDefined(approvedRequest)) {
+      return undefined;
+    }
+
+    try {
+      await config.assertAccessPolicySatisfied({
+        accessPolicy: operationConfig.accessPolicy,
+        request,
+      });
+    } catch {
+      return undefined;
+    }
+
+    return approvedRequest;
   };
 
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -77,11 +133,13 @@ export function useCachedMetadata(
     operationConfig,
     workspaceId,
     request,
+    approvedRequest,
   }: {
     operationName: string;
     operationConfig: CachedOperationConfig;
     workspaceId: string;
     request: Request;
+    approvedRequest: ApprovedMetadataCacheRequest;
   }): Promise<string | null> => {
     let cacheKey: string | null;
 
@@ -91,6 +149,7 @@ export function useCachedMetadata(
         operationConfig,
         workspaceId,
         request,
+        approvedRequest,
       });
     } catch (error) {
       Sentry.captureException(error);
@@ -148,6 +207,16 @@ export function useCachedMetadata(
         return;
       }
 
+      const approvedRequest = await resolveEligibleApprovedRequest({
+        operationName,
+        operationConfig,
+        request,
+      });
+
+      if (!isDefined(approvedRequest)) {
+        return;
+      }
+
       Sentry.setTags({ operationName, operation: 'query' });
       Sentry.getCurrentScope().setTransactionName(operationName);
 
@@ -156,6 +225,7 @@ export function useCachedMetadata(
         operationConfig,
         workspaceId,
         request,
+        approvedRequest,
       });
 
       if (!isDefined(cacheKey)) {

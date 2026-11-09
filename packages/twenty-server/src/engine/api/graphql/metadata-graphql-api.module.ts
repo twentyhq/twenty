@@ -15,6 +15,8 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
+import { AccessPolicyModule } from 'src/engine/guards/access-policy/access-policy.module';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engine.module';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -30,6 +32,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
         MetricsModule,
         I18nModule,
         WorkspaceCacheModule,
+        AccessPolicyModule,
       ],
       inject: [
         TwentyConfigService,
@@ -40,6 +43,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
         I18nService,
         FeatureFlagService,
         WorkspaceCacheService,
+        AccessPolicyService,
       ],
     }),
     MetadataEngineModule,

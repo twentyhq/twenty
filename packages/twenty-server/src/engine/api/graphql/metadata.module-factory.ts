@@ -20,6 +20,7 @@ import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
+import { type AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ModulesModule } from 'src/modules/modules.module';
@@ -33,6 +34,7 @@ export const metadataModuleFactory = async (
   i18nService: I18nService,
   _featureFlagService: FeatureFlagService,
   workspaceCacheService: WorkspaceCacheService,
+  accessPolicyService: AccessPolicyService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -60,6 +62,10 @@ export const metadataModuleFactory = async (
         dependencyHashGetter:
           workspaceCacheService.getOrRecomputeCombinedHash.bind(
             workspaceCacheService,
+          ),
+        assertAccessPolicySatisfied:
+          accessPolicyService.assertRequestAccessPolicySatisfiedOrThrow.bind(
+            accessPolicyService,
           ),
       }),
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
