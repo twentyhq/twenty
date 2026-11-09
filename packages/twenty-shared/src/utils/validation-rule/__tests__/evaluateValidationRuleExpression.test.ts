@@ -408,4 +408,22 @@ describe('evaluateValidationRuleExpression with previous values', () => {
       }),
     ).toEqual({ status: 'failed' });
   });
+
+  it('should read the previous value of a field named now', () => {
+    expect(
+      evaluateValidationRuleExpression({
+        expression: 'previous.now == "draft"',
+        record: { now: 'sent' },
+        previousRecord: { now: 'draft' },
+        fields: [
+          {
+            name: 'now',
+            type: FieldMetadataType.TEXT,
+            universalIdentifier: 'opportunity-now',
+          },
+        ],
+        now: NOW,
+      }),
+    ).toEqual({ status: 'passed' });
+  });
 });
