@@ -14,6 +14,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  type EntityManager,
   IsNull,
   MoreThan,
   MoreThanOrEqual,
@@ -315,8 +316,6 @@ export class TwoFactorAuthenticationRecoveryService {
           mode: 'exclusive',
         });
 
-        const appTokenRepository = entityManager.getRepository(AppTokenEntity);
-
         const isBackupCodeConsumed =
           await this.twoFactorAuthenticationBackupCodeService.consumeBackupCode(
             {
@@ -334,85 +333,14 @@ export class TwoFactorAuthenticationRecoveryService {
           };
         }
 
-        // A redeemed code stays unrevoked only while it reserves enrollment for the authenticator it issued
-        const consumeResult = await appTokenRepository.update(
-          {
-            userId,
-            workspaceId: workspace.id,
-            type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
-            value: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
-            deletedAt: IsNull(),
-            revokedAt: IsNull(),
-            expiresAt: MoreThan(new Date()),
-            createdAt: MoreThanOrEqual(userWorkspace.createdAt),
-          },
-          workspace.isTwoFactorAuthenticationEnforced
-            ? { deletedAt: new Date() }
-            : { deletedAt: new Date(), revokedAt: new Date() },
-        );
-
-        if ((consumeResult.affected ?? 0) === 0) {
-          return null;
-        }
-
-        const twoFactorAuthenticationMethodRepository =
-          entityManager.getRepository(TwoFactorAuthenticationMethodEntity);
-
-        await twoFactorAuthenticationMethodRepository.delete({
-          workspaceId: workspace.id,
-          userWorkspaceId: userWorkspace.id,
-        });
-
-        await this.twoFactorAuthenticationBackupCodeService.revokeBackupCodes({
-          userId,
-          workspaceId: workspace.id,
+        return this.resetTwoFactorAuthenticationWithRecoveryCode({
           entityManager,
+          userId,
+          userEmail,
+          userWorkspace,
+          workspace,
+          recoveryCode,
         });
-
-        await appTokenRepository
-          .createQueryBuilder()
-          .update()
-          // Tokens already rotated are still renewable within the reuse grace period, so they need the reason too
-          .set({
-            revokedAt: () => `COALESCE("revokedAt", now())`,
-            context: () =>
-              `COALESCE("context", '{}'::jsonb) || jsonb_build_object('revokedReason', :revokedReason::text)`,
-          })
-          .where({
-            userId,
-            workspaceId: workspace.id,
-            type: AppTokenType.RefreshToken,
-            expiresAt: MoreThan(new Date()),
-          })
-          .setParameters({
-            revokedReason:
-              UserSessionRevokedReason.TwoFactorAuthenticationReset,
-          })
-          .execute();
-
-        if (!workspace.isTwoFactorAuthenticationEnforced) {
-          return {
-            provisioningUri: null,
-            isTwoFactorAuthenticationReset: true,
-          };
-        }
-
-        const { uri, encryptedSecret, status } =
-          this.twoFactorAuthenticationService.generatePendingTotpSecret({
-            userEmail,
-            workspaceId: workspace.id,
-            workspaceDisplayName: workspace.displayName,
-          });
-
-        await twoFactorAuthenticationMethodRepository.insert({
-          workspaceId: workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          secret: encryptedSecret,
-          status,
-          strategy: TwoFactorAuthenticationStrategy.TOTP,
-        });
-
-        return { provisioningUri: uri, isTwoFactorAuthenticationReset: true };
       },
     );
 
@@ -444,6 +372,110 @@ export class TwoFactorAuthenticationRecoveryService {
     });
 
     return redemption;
+  }
+
+  private async resetTwoFactorAuthenticationWithRecoveryCode({
+    entityManager,
+    userId,
+    userEmail,
+    userWorkspace,
+    workspace,
+    recoveryCode,
+  }: {
+    entityManager: EntityManager;
+    userId: UserEntity['id'];
+    userEmail: string;
+    userWorkspace: Pick<UserWorkspaceEntity, 'id' | 'createdAt'>;
+    workspace: Pick<
+      WorkspaceEntity,
+      'id' | 'displayName' | 'isTwoFactorAuthenticationEnforced'
+    >;
+    recoveryCode: string;
+  }): Promise<{
+    provisioningUri: string | null;
+    isTwoFactorAuthenticationReset: true;
+  } | null> {
+    const appTokenRepository = entityManager.getRepository(AppTokenEntity);
+
+    // A redeemed code stays unrevoked only while it reserves enrollment for the authenticator it issued
+    const consumeResult = await appTokenRepository.update(
+      {
+        userId,
+        workspaceId: workspace.id,
+        type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+        value: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
+        deletedAt: IsNull(),
+        revokedAt: IsNull(),
+        expiresAt: MoreThan(new Date()),
+        createdAt: MoreThanOrEqual(userWorkspace.createdAt),
+      },
+      workspace.isTwoFactorAuthenticationEnforced
+        ? { deletedAt: new Date() }
+        : { deletedAt: new Date(), revokedAt: new Date() },
+    );
+
+    if ((consumeResult.affected ?? 0) === 0) {
+      return null;
+    }
+
+    const twoFactorAuthenticationMethodRepository = entityManager.getRepository(
+      TwoFactorAuthenticationMethodEntity,
+    );
+
+    await twoFactorAuthenticationMethodRepository.delete({
+      workspaceId: workspace.id,
+      userWorkspaceId: userWorkspace.id,
+    });
+
+    await this.twoFactorAuthenticationBackupCodeService.revokeBackupCodes({
+      userId,
+      workspaceId: workspace.id,
+      entityManager,
+    });
+
+    await appTokenRepository
+      .createQueryBuilder()
+      .update()
+      // Tokens already rotated are still renewable within the reuse grace period, so they need the reason too
+      .set({
+        revokedAt: () => `COALESCE("revokedAt", now())`,
+        context: () =>
+          `COALESCE("context", '{}'::jsonb) || jsonb_build_object('revokedReason', :revokedReason::text)`,
+      })
+      .where({
+        userId,
+        workspaceId: workspace.id,
+        type: AppTokenType.RefreshToken,
+        expiresAt: MoreThan(new Date()),
+      })
+      .setParameters({
+        revokedReason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
+      })
+      .execute();
+
+    if (!workspace.isTwoFactorAuthenticationEnforced) {
+      return {
+        provisioningUri: null,
+        isTwoFactorAuthenticationReset: true,
+      };
+    }
+
+    const { uri, encryptedSecret, status } =
+      this.twoFactorAuthenticationService.generatePendingTotpSecret({
+        userEmail,
+        workspaceId: workspace.id,
+        workspaceDisplayName: workspace.displayName,
+      });
+
+    await twoFactorAuthenticationMethodRepository.insert({
+      workspaceId: workspace.id,
+      userWorkspaceId: userWorkspace.id,
+      secret: encryptedSecret,
+      status,
+      strategy: TwoFactorAuthenticationStrategy.TOTP,
+    });
+
+    return { provisioningUri: uri, isTwoFactorAuthenticationReset: true };
   }
 
   async assertEnrollmentNotReservedForRecoveryOrThrow({
