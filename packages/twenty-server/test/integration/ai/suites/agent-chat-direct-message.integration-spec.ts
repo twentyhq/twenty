@@ -208,6 +208,7 @@ describe('Private text direct messages', () => {
       workspaceId: context.workspaceId,
       threadId: threadId.toUpperCase(),
       turnId,
+      agentId: null,
       id: randomUUID().toUpperCase(),
     };
 

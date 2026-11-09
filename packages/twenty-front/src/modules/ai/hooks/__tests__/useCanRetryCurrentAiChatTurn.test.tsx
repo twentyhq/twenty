@@ -35,11 +35,15 @@ describe('Shared chat execution controls', () => {
   ])(
     'uses normal update permission (%s) and the saved sender (%s) for retries',
     (canUpdate, senderWorkspaceMemberId, expected) => {
-      setAgentChatThreadPermissions(jotaiStore, 'thread', {
-        canRead: true,
-        canUpdate,
-        canDelete: false,
-        canSoftDelete: false,
+      setAgentChatThreadPermissions({
+        store: jotaiStore,
+        threadId: 'thread',
+        permissions: {
+          canRead: true,
+          canUpdate,
+          canDelete: false,
+          canSoftDelete: false,
+        },
       });
       jotaiStore.set(
         agentChatMessagesFamilyState.atomFamily({ threadId: 'thread' }),

@@ -15,12 +15,18 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import {
+  UpdateSubscriptionQuantityJob,
+  type UpdateSubscriptionQuantityJobData,
+} from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
@@ -31,6 +37,9 @@ import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/u
 import { findActiveWorkspaceCreditAllowanceMicro } from 'src/engine/core-modules/billing/utils/find-active-workspace-credit-allowance-micro.util';
 import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
 import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
@@ -55,6 +64,9 @@ export class BillingWebhookInvoiceService {
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly billingSeatService: BillingSeatService,
+    @InjectMessageQueue(MessageQueue.billingQueue)
+    private readonly billingMessageQueueService: MessageQueueService,
   ) {}
 
   async processStripeEvent(
@@ -109,6 +121,27 @@ export class BillingWebhookInvoiceService {
       // Stripe's own clock, comparable to subscription boundaries without skew
       invoiceCreatedAt: new Date(invoiceCreatedAtInSeconds * 1000),
     });
+
+    await this.enqueueSeatSyncForSeatArrangements(subscription.workspaceId);
+  }
+
+  private async enqueueSeatSyncForSeatArrangements(workspaceId: string) {
+    const seatArrangements =
+      await this.billingSeatService.findSeatArrangements(workspaceId);
+
+    if (seatArrangements.length === 0) {
+      return;
+    }
+
+    await this.billingMessageQueueService.add<UpdateSubscriptionQuantityJobData>(
+      UpdateSubscriptionQuantityJob.name,
+      { workspaceId },
+      {
+        ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
+        workspaceId,
+        isWorkspaceJob: true,
+      },
+    );
   }
 
   private async processRollover({

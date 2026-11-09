@@ -9,6 +9,8 @@ import {
   type ValidatorConstraintInterface,
 } from 'class-validator';
 
+import { getCertificateBase64Body } from 'src/engine/core-modules/sso/utils/get-certificate-base64-body.util';
+
 @ValidatorConstraint({ async: false })
 export class IsX509CertificateConstraint implements ValidatorConstraintInterface {
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -18,12 +20,7 @@ export class IsX509CertificateConstraint implements ValidatorConstraintInterface
     }
 
     try {
-      const cleanCert = value.replace(
-        /-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\n|\r/g,
-        '',
-      );
-
-      const der = Buffer.from(cleanCert, 'base64');
+      const der = Buffer.from(getCertificateBase64Body(value), 'base64');
 
       const cert = new crypto.X509Certificate(der);
 
