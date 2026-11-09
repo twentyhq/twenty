@@ -65,8 +65,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           WorkflowRunWorkspaceEntity,
         );
 
-      // A run paced by its workflow maxRate can wait in the queue past the
-      // threshold: only runs whose job is gone are lost.
+      // maxRate pacing can hold a run past the threshold, so only runs without a job are lost.
       const inFlightJobs =
         await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
       const lostRunIds = staledRunIds.filter(
