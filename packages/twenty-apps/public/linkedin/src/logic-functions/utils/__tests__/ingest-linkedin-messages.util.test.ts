@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   importLinkedinMessageAttachments: vi.fn(),
   resolveCounterpart: vi.fn(),
   hasPersonNamedLikeLinkedinUser: vi.fn(),
+  setMissingLinkedinPersonAvatars: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -40,6 +41,13 @@ vi.mock(
   'src/logic-functions/utils/import-linkedin-message-attachments.util',
   () => ({
     importLinkedinMessageAttachments: mocks.importLinkedinMessageAttachments,
+  }),
+);
+
+vi.mock(
+  'src/logic-functions/utils/set-missing-linkedin-person-avatars.util',
+  () => ({
+    setMissingLinkedinPersonAvatars: mocks.setMissingLinkedinPersonAvatars,
   }),
 );
 
@@ -259,6 +267,27 @@ describe('ingestLinkedinMessages', () => {
     await expect(ingest()).resolves.toMatchObject({ ingestedMessageCount: 1 });
     expect(ingestedParticipantPersonIds()).toEqual([undefined, 'priya-id']);
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
+  });
+
+  it('passes the profile picture of matched and created people to set as avatar', async () => {
+    const priyaWithPicture = {
+      ...PRIYA,
+      public_picture_url: 'https://media.licdn.com/priya.jpg',
+    };
+
+    await ingest({
+      chat: { ...ONE_TO_ONE_CHAT, user: priyaWithPicture },
+      counterparts: [priyaWithPicture],
+    });
+
+    expect(
+      mocks.setMissingLinkedinPersonAvatars,
+    ).toHaveBeenCalledExactlyOnceWith([
+      {
+        personId: 'created-id',
+        pictureUrl: 'https://media.licdn.com/priya.jpg',
+      },
+    ]);
   });
 
   it('names the conversation after the other person', async () => {
