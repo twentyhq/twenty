@@ -4,7 +4,7 @@ import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Like, Not } from 'typeorm';
+import { In, Like } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -99,7 +99,7 @@ export class FileService {
     const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
-        status: Not(FILE_STATUS.PENDING),
+        status: In([FILE_STATUS.UPLOADED, FILE_STATUS.REMOTE]),
       },
     });
 
@@ -168,7 +168,7 @@ export class FileService {
       where: {
         id: params.fileId,
         path: Like(`${params.fileFolder}/%`),
-        status: Not(FILE_STATUS.PENDING),
+        status: In([FILE_STATUS.UPLOADED, FILE_STATUS.REMOTE]),
       },
     });
 
