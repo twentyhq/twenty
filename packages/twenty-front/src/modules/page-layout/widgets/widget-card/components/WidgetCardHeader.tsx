@@ -25,6 +25,7 @@ export type WidgetCardHeaderProps = {
   title: string;
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
+  headerPills?: ReactNode;
   className?: string;
   isResizing?: boolean;
 };
@@ -62,6 +63,17 @@ const StyledCount = styled.span`
   font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
+// Keeps its natural width up to half the header, so the title truncates first
+const StyledHeaderPillsContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[1]};
+  max-width: 50%;
+  min-width: 0;
+  overflow: hidden;
+`;
+
 const StyledRightContainer = styled.div`
   align-items: center;
   display: flex;
@@ -85,6 +97,7 @@ export const WidgetCardHeader = ({
   title,
   onRemove,
   forbiddenDisplay,
+  headerPills,
   className,
 }: WidgetCardHeaderProps) => {
   const { t } = useLingui();
@@ -112,6 +125,9 @@ export const WidgetCardHeader = ({
           <StyledCount>{formatNumber(widgetHeaderCount)}</StyledCount>
         )}
       </StyledTitleContainer>
+      {isDefined(headerPills) && (
+        <StyledHeaderPillsContainer>{headerPills}</StyledHeaderPillsContainer>
+      )}
       <StyledRightContainer>
         {hasAccess && <WidgetCardHeaderActionsRenderer />}
         {isDefined(forbiddenDisplay) && forbiddenDisplay}

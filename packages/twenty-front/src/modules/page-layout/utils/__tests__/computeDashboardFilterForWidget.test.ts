@@ -34,6 +34,15 @@ const THIS_MONTH_VALUE = {
 };
 
 const DASHBOARD_FILTERS = {
+  pageLayoutFilters: [
+    {
+      id: DATE_RANGE_FILTER_ID,
+      label: 'Date range',
+      type: PageLayoutFilterType.DATE,
+      position: 0,
+      defaultValue: null,
+    },
+  ],
   values: [THIS_MONTH_VALUE],
   timeZone: 'Asia/Tokyo',
   firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
@@ -82,6 +91,16 @@ describe('computeDashboardFilterForWidget', () => {
           { createdAt: { lt: expect.any(String) } },
         ],
       },
+      indicators: [
+        {
+          pageLayoutFilterId: DATE_RANGE_FILTER_ID,
+          label: 'Date range',
+          hasValue: true,
+          kind: 'APPLIED',
+          fieldLabel: 'Creation date',
+          overlapsWidgetFilter: false,
+        },
+      ],
     });
   });
 
@@ -104,8 +123,8 @@ describe('computeDashboardFilterForWidget', () => {
     ]);
   });
 
-  it('should report a widget set to not applied', () => {
-    const { recordFilters, notAppliedPageLayoutFilterIds } =
+  it('should report a widget set to ignored', () => {
+    const { recordFilters, notAppliedPageLayoutFilterIds, indicators } =
       computeDashboardFilterForWidget({
         dashboardFilters: DASHBOARD_FILTERS,
         configuration: {
@@ -121,6 +140,47 @@ describe('computeDashboardFilterForWidget', () => {
 
     expect(recordFilters).toEqual([]);
     expect(notAppliedPageLayoutFilterIds).toEqual([DATE_RANGE_FILTER_ID]);
+    expect(indicators).toEqual([
+      {
+        pageLayoutFilterId: DATE_RANGE_FILTER_ID,
+        label: 'Date range',
+        hasValue: true,
+        kind: 'IGNORED',
+      },
+    ]);
+  });
+
+  it('should resolve the field of each filter without a value', () => {
+    const { recordFilters, indicators } = computeDashboardFilterForWidget({
+      dashboardFilters: { ...DASHBOARD_FILTERS, values: [] },
+      configuration: RECORD_TABLE_CONFIGURATION,
+      fields: [CLOSE_DATE_FIELD, CREATED_AT_FIELD],
+      viewFilterFieldMetadataIds: [CLOSE_DATE_FIELD.id],
+      filterValueDependencies: {},
+    });
+
+    expect(recordFilters).toEqual([]);
+    expect(indicators).toEqual([
+      {
+        pageLayoutFilterId: DATE_RANGE_FILTER_ID,
+        label: 'Date range',
+        hasValue: false,
+        kind: 'APPLIED',
+        fieldLabel: 'Close date',
+      },
+    ]);
+  });
+
+  it('should show no indicator until the fields have loaded', () => {
+    expect(
+      computeDashboardFilterForWidget({
+        dashboardFilters: DASHBOARD_FILTERS,
+        configuration: RECORD_TABLE_CONFIGURATION,
+        fields: [],
+        viewFilterFieldMetadataIds: [],
+        filterValueDependencies: {},
+      }).indicators,
+    ).toEqual([]);
   });
 
   it('should ignore widgets that show no records', () => {
@@ -155,7 +215,12 @@ describe('computeDashboardFilterForWidget', () => {
         fields: [CREATED_AT_FIELD],
         viewFilterFieldMetadataIds: [],
         filterValueDependencies: {},
-      }).isInvalid,
-    ).toBe(true);
+      }),
+    ).toMatchObject({
+      isInvalid: true,
+      indicators: [
+        { kind: 'APPLIED', fieldLabel: 'Creation date', hasValue: false },
+      ],
+    });
   });
 });
