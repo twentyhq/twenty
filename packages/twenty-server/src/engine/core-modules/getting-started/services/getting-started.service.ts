@@ -31,6 +31,7 @@ import { getGettingStartedProfile } from 'src/engine/core-modules/getting-starte
 import { isGettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/utils/is-getting-started-step-action-key.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
@@ -52,6 +53,7 @@ export class GettingStartedService {
     private readonly settingPermissionsService: SettingPermissionsService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly keyValuePairService: KeyValuePairService<CompanyEnrichmentKeyValueTypeMap>,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
@@ -104,6 +106,9 @@ export class GettingStartedService {
       permissionFlags,
       hasSendingMailbox: isDefined(ownSendingMailbox),
       hasFeaturedApp: isNonEmptyArray(featuredApps),
+      hasCalendarBookingPage: isNonEmptyString(
+        this.twentyConfigService.get('CALENDAR_BOOKING_PAGE_ID'),
+      ),
     });
 
     const getSavedCompletion = (stepActionKey: GettingStartedStepActionKey) =>
