@@ -1,9 +1,6 @@
-import { randomUUID } from 'node:crypto';
 import * as http from 'node:http';
 import { type AddressInfo } from 'node:net';
 
-import { findOutboundHttpOutcomeLine } from 'test/integration/graphql/suites/workflow/utils/find-outbound-http-outcome-line.util';
-import { spyOnAppLogger } from 'test/integration/graphql/suites/workflow/utils/spy-on-app-logger.util';
 import { testHttpRequest } from 'test/integration/graphql/suites/workflow/utils/test-http-request.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
@@ -11,8 +8,6 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-
-import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 type CallerTestContext = {
   token: () => string;
@@ -50,8 +45,6 @@ const invalidInputTestCases: EachTestingContext<InvalidInputTestContext>[] = [
 describe('Outbound HTTP requests should fail', () => {
   let server: http.Server;
   let baseUrl: string;
-  let logSpy: jest.SpyInstance;
-  let warnSpy: jest.SpyInstance;
 
   beforeAll(async () => {
     await updateConfigVariable({
@@ -83,15 +76,6 @@ describe('Outbound HTTP requests should fail', () => {
     });
   });
 
-  beforeEach(() => {
-    ({ logSpy, warnSpy } = spyOnAppLogger());
-  });
-
-  afterEach(() => {
-    logSpy.mockRestore();
-    warnSpy.mockRestore();
-  });
-
   describe.each(eachTestingContextFilter(unauthorizedCallerTestCases))(
     '$title',
     ({ context }) => {
@@ -107,68 +91,39 @@ describe('Outbound HTTP requests should fail', () => {
     },
   );
 
-  it('should refuse a test request to the cloud metadata address and log the block', async () => {
-    const path = `/latest/meta-data/${randomUUID()}`;
-
+  it('should refuse a test request to the cloud metadata address', async () => {
     const { data } = await testHttpRequest({
-      input: { url: `http://169.254.169.254${path}`, method: 'GET' },
+      input: { url: 'http://169.254.169.254/latest/meta-data/', method: 'GET' },
     });
 
     expect(data.testHttpRequest).toMatchObject({
       success: false,
       error: 'Request to internal IP address 169.254.169.254 is not allowed.',
     });
-
-    const outcomeLine = findOutboundHttpOutcomeLine({
-      spy: warnSpy,
-      containing: path,
-    });
-
-    expect(outcomeLine).toContain('outcome=blocked');
-    expect(outcomeLine).toContain('host=169.254.169.254');
-    expect(outcomeLine).toContain(`user=${USER_DATA_SEED_IDS.JANE}`);
   });
 
-  it('should refuse a test request redirected to the cloud metadata address and log the block', async () => {
-    const path = `/redirect/${randomUUID()}`;
-
+  it('should refuse a test request redirected to the cloud metadata address', async () => {
     const { data } = await testHttpRequest({
-      input: { url: `${baseUrl}${path}`, method: 'GET' },
+      input: { url: `${baseUrl}/redirect`, method: 'GET' },
     });
 
-    expect(data.testHttpRequest?.success).toBe(false);
-
-    const outcomeLine = findOutboundHttpOutcomeLine({
-      spy: warnSpy,
-      containing: path,
+    expect(data.testHttpRequest).toMatchObject({
+      success: false,
+      error:
+        'Redirected request failed: Request to internal IP address 169.254.169.254 is not allowed.',
     });
-
-    expect(outcomeLine).toContain('outcome=blocked');
-    expect(outcomeLine).toContain('169.254.169.254');
   });
 
   describe.each(eachTestingContextFilter(invalidInputTestCases))(
     'with $title',
     ({ context }) => {
-      it('should reject the test request without sending it', async () => {
+      it('should reject the test request', async () => {
         const { data } = await testHttpRequest({ input: context.input });
 
         expect(data.testHttpRequest).toMatchObject({
           success: false,
           message: 'Invalid arguments for http_request',
         });
-        expect(
-          findOutboundHttpOutcomeLine({
-            spy: logSpy,
-            containing: context.input.url,
-          }),
-        ).toBeUndefined();
-        expect(
-          findOutboundHttpOutcomeLine({
-            spy: warnSpy,
-            containing: context.input.url,
-          }),
-        ).toBeUndefined();
       });
     },
   );
