@@ -896,7 +896,9 @@ export class WorkspaceService {
     }
 
     if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.cancelSubscription(workspace.id);
+      await this.billingSubscriptionService.cancelAllStripeSubscriptions(
+        workspace.id,
+      );
     }
 
     const userWorkspaces = await this.userWorkspaceRepository.find({

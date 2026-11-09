@@ -27,10 +27,12 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { ENTERPRISE_SELF_HOSTED_SUBSCRIPTION_SOURCE } from 'src/engine/core-modules/billing/constants/enterprise-self-hosted-subscription-source.constant';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -49,6 +51,7 @@ export class BillingWebhookController {
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
     private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Post(`${ApiPath.Webhooks}/stripe`)
@@ -133,13 +136,23 @@ export class BillingWebhookController {
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED:
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED:
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED: {
-        const workspaceId = event.data.object.metadata?.workspaceId;
+        const { metadata } = event.data.object;
+
+        if (metadata?.source === ENTERPRISE_SELF_HOSTED_SUBSCRIPTION_SOURCE) {
+          return {};
+        }
+
+        const workspaceId = metadata?.workspaceId;
 
         if (!workspaceId) {
-          throw new BillingException(
-            'Workspace ID is required for subscription events',
-            BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
-          );
+          this.exceptionHandlerService.captureExceptions([
+            new BillingException(
+              `Workspace ID is missing on subscription event ${event.id} / subscription: ${event.data.object.id}`,
+              BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_ID_MISSING,
+            ),
+          ]);
+
+          return {};
         }
 
         return await this.billingWebhookSubscriptionService.processStripeEvent(

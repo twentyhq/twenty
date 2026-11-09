@@ -19,6 +19,7 @@ export enum BillingExceptionCode {
   BILLING_SUBSCRIPTION_INVALID = 'BILLING_SUBSCRIPTION_INVALID',
   BILLING_SUBSCRIPTION_ALREADY_EXISTS = 'BILLING_SUBSCRIPTION_ALREADY_EXISTS',
   BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND',
+  BILLING_SUBSCRIPTION_EVENT_WORKSPACE_ID_MISSING = 'BILLING_SUBSCRIPTION_EVENT_WORKSPACE_ID_MISSING',
   BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND',
   BILLING_MISSING_REQUEST_BODY = 'BILLING_MISSING_REQUEST_BODY',
   BILLING_UNHANDLED_ERROR = 'BILLING_UNHANDLED_ERROR',
@@ -68,6 +69,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`This workspace already has a subscription.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND:
       return msg`Workspace not found for subscription event.`;
+    case BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_ID_MISSING:
+      return msg`Workspace ID is missing on subscription event.`;
     case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
       return msg`Workspace not found for customer event.`;
     case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:

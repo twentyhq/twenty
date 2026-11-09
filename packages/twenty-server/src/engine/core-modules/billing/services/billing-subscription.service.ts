@@ -129,14 +129,13 @@ export class BillingSubscriptionService {
     return notCanceledSubscription;
   }
 
-  async cancelSubscription(workspaceId: string): Promise<void> {
-    const subscription = await this.getCurrentBillingSubscription({
-      workspaceId,
-    });
+  async cancelAllStripeSubscriptions(workspaceId: string): Promise<void> {
+    const notEndedStripeSubscriptions =
+      await this.listNotEndedStripeSubscriptions(workspaceId);
 
-    if (isDefined(subscription)) {
+    for (const stripeSubscription of notEndedStripeSubscriptions) {
       await this.stripeSubscriptionService.cancelSubscription(
-        subscription.stripeSubscriptionId,
+        stripeSubscription.id,
       );
     }
   }
@@ -146,7 +145,13 @@ export class BillingSubscriptionService {
       workspaceId,
     });
 
-    if (isDefined(activeSubscription)) {
+    const notEndedStripeSubscriptions =
+      await this.listNotEndedStripeSubscriptions(workspaceId);
+
+    if (
+      isDefined(activeSubscription) ||
+      notEndedStripeSubscriptions.length > 0
+    ) {
       throw new BillingException(
         `Subscription for workspace ${workspaceId} is not canceled`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED,
@@ -499,6 +504,18 @@ export class BillingSubscriptionService {
           ? 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD'
           : 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
       ),
+    );
+  }
+
+  private async listNotEndedStripeSubscriptions(workspaceId: string) {
+    const billingCustomer = await this.getBillingCustomer(workspaceId);
+
+    if (!isDefined(billingCustomer)) {
+      return [];
+    }
+
+    return await this.stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule(
+      billingCustomer.stripeCustomerId,
     );
   }
 }

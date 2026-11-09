@@ -33,6 +33,7 @@ import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/t
 import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -71,6 +72,7 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async processStripeEvent(
@@ -101,27 +103,19 @@ export class BillingWebhookSubscriptionService {
       withDeleted: true,
     });
 
-    if (!isDefined(workspace)) {
-      throw new BillingException(
-        `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
-        },
-      );
-    }
-
     if (
-      isDefined(workspace.deletedAt) &&
-      type !== BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED
+      !isDefined(workspace) ||
+      (isDefined(workspace.deletedAt) &&
+        type !== BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED)
     ) {
-      throw new BillingException(
-        `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
-        },
-      );
+      this.exceptionHandlerService.captureExceptions([
+        new BillingException(
+          `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId} / subscription: ${data.object.id}`,
+          BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+        ),
+      ]);
+
+      return {};
     }
 
     await this.billingCustomerRepository.upsert(
