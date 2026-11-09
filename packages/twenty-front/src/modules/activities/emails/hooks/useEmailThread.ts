@@ -68,7 +68,7 @@ export const useEmailThread = (threadId: string | null) => {
     skip: !threadId,
   });
 
-  const isFetchingMoreMessages = useAtomFamilyStateValue(
+  const isFetchingMoreRecords = useAtomFamilyStateValue(
     isFetchingMoreRecordsFamilyState,
     messagesQueryIdentifier,
   );
@@ -213,7 +213,7 @@ export const useEmailThread = (threadId: string | null) => {
     connectedAccountHandle,
     connectedAccountProvider,
     threadLoading: threadRecordLoading || messagesLoading,
-    isFetchingMoreMessages,
+    isFetchingMoreMessages: isFetchingMoreRecords,
     messageChannelLoading,
     lastMessageExternalId,
     lastMessageChannelId,
