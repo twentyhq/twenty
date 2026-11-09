@@ -2683,6 +2683,11 @@ msgstr "Je eerste workflow toevoegen"
 msgid "Added {beautifiedCreatedAt}"
 msgstr "Toegevoegd {beautifiedCreatedAt}"
 
+#. js-lingui-id: WHJA3l
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
+msgstr ""
+
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
@@ -2881,6 +2886,7 @@ msgid "agent"
 msgstr "agent"
 
 #. js-lingui-id: iEQQyu
+#: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -3035,6 +3041,11 @@ msgstr "AI-gegevensverwerking"
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "AI is paused"
 msgstr "AI is gepauzeerd"
+
+#. js-lingui-id: u9aqca
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "AI matches your columns to fields, even renamed ones."
+msgstr ""
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3540,6 +3551,7 @@ msgid "Amber"
 msgstr "Amber"
 
 #. js-lingui-id: hehnjM
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -3634,6 +3646,11 @@ msgstr "Er is een interne fout opgetreden bij het toepassen van uw wijzigingen. 
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "An internal error occurred while validating your changes. Please contact support."
 msgstr "Er is een interne fout opgetreden bij het valideren van uw wijzigingen. Neem contact op met de ondersteuning."
+
+#. js-lingui-id: 2SfoVo
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "An Invoices object linked to Subscriptions and Companies."
+msgstr ""
 
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -6562,6 +6579,11 @@ msgstr "Zijpaneel sluiten"
 msgid "Close video"
 msgstr "Video sluiten"
 
+#. js-lingui-id: fYGMGN
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Closes in 6 days"
+msgstr ""
+
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Cloud"
@@ -6842,10 +6864,16 @@ msgid "Compact view"
 msgstr "Compacte weergave"
 
 #. js-lingui-id: s2QZS6
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/onboarding/components/import-contacts/OnboardingImportPreviewCompanies.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Companies"
 msgstr "Bedrijven"
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Company"
+msgstr ""
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -8301,6 +8329,11 @@ msgstr "{objectLabel} gemaakt"
 msgid "Created by"
 msgstr "Gemaakt door"
 
+#. js-lingui-id: AruIkC
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created object <0>{subscriptionsLabel}</0>"
+msgstr ""
+
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -8311,6 +8344,11 @@ msgstr "Gemaakt op {0}"
 #: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Created or updated"
 msgstr "Gemaakt of bijgewerkt"
+
+#. js-lingui-id: nyr6nA
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Created view <0>Renewals this quarter</0>"
+msgstr ""
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -10365,6 +10403,11 @@ msgstr "Concept-e-mail"
 msgid "Drafted"
 msgstr "Als concept opgeslagen"
 
+#. js-lingui-id: 5t1yRu
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafted <0>4 follow-up emails</0>"
+msgstr ""
+
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafted email"
@@ -10374,6 +10417,11 @@ msgstr "Concept-e-mail"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Drafting email"
 msgstr "E-mail opstellen"
+
+#. js-lingui-id: BnOv+M
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Drafts only. You review and send."
+msgstr ""
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -11000,6 +11048,7 @@ msgid "emails"
 msgstr "e-mails"
 
 #. js-lingui-id: BXEcos
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
@@ -11988,6 +12037,11 @@ msgstr "Elke regel code is openbaar, zodat u deze zelf kunt controleren"
 #: src/utils/cron-to-human/descriptors/getMinutesDescription.ts
 msgid "every minute"
 msgstr "elke minuut"
+
+#. js-lingui-id: pjZ9WF
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Every Monday"
+msgstr ""
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13670,6 +13724,11 @@ msgstr "Doorstuuradres gekopieerd naar klembord"
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Found {objectLabel}"
 msgstr "{objectLabel} gevonden"
+
+#. js-lingui-id: laQ+m7
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Found <0>4 deals</0> closing in the next 30 days"
+msgstr ""
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -18523,6 +18582,7 @@ msgstr "n.v.t."
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
@@ -20240,6 +20300,11 @@ msgstr "Nog niet gemeten bij deze inspanning, dus dit zijn de metingen van het b
 msgid "Not measured at this effort yet. Showing the base model's reading."
 msgstr "Nog niet gemeten bij deze inspanning. De waarde van het basismodel wordt weergegeven."
 
+#. js-lingui-id: PBxg/E
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Not now"
+msgstr ""
+
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
 msgid "Not open to you"
@@ -21048,6 +21113,11 @@ msgstr "operaties"
 msgid "Operations"
 msgstr "Operaties"
 
+#. js-lingui-id: 4MyDFl
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "Opportunities"
+msgstr ""
+
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
 msgid "Opt out of tracking"
@@ -21674,6 +21744,13 @@ msgstr "In afwachting"
 #: src/modules/ai/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Openstaande verzoeken"
+
+#. js-lingui-id: 1wdjme
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
+msgid "People"
+msgstr ""
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -22766,6 +22843,11 @@ msgstr "E-mails lezen"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Lees de systeemprompts"
+
+#. js-lingui-id: l668+W
+#: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
+msgid "Read the last emails and meetings for each"
+msgstr ""
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -27389,6 +27471,11 @@ msgstr "Abonnement wordt overgezet naar het {planLabel}-abonnement op {0}."
 msgid "Subscription will be switched to monthly billing the {0}."
 msgstr "Abonnement wordt op {0} gewijzigd naar maandelijkse facturatie."
 
+#. js-lingui-id: P6F38F
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Subscriptions"
+msgstr ""
+
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Subsection heading"
@@ -27953,6 +28040,11 @@ msgstr "Dat zijn ongeveer {formattedNewlyEarnedAiActions} AI-acties. Credits ver
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
 msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 msgstr "Het adres waarvan je werkruimte e-mail zal verzenden en ontvangen (bijv. support@mycompany.com). Voor uitgaand verzenden moet het domein worden geverifieerd in Uitgaande domeinen."
+
+#. js-lingui-id: PKwDg+
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "The agent asks before creating anything."
+msgstr ""
 
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -29273,6 +29365,11 @@ msgstr "Totaal aantal taken"
 msgid "Track AI consumption across your workspace."
 msgstr "Volg het AI-verbruik in uw werkruimte."
 
+#. js-lingui-id: LpPRBt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "Track invoices too?"
+msgstr ""
+
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
 msgid "Track link clicks"
@@ -29597,6 +29694,7 @@ msgid "Twenty adds the people you email and meet, and keeps them up to date with
 msgstr "Twenty voegt de mensen toe die je e-mailt en ontmoet, en houdt hun gegevens actueel zonder handmatige gegevensinvoer."
 
 #. js-lingui-id: JnaRPe
+#: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid.tsx
 msgid "Twenty fields"
 msgstr "Twenty-velden"
@@ -31601,6 +31699,11 @@ msgstr "We koppelen op deze velden. Als een {0} al bestaat, werken we het bij. A
 msgid "We notify you within 72 hours, as set out in the DPA"
 msgstr "We stellen u binnen 72 uur op de hoogte, zoals uiteengezet in de DPA"
 
+#. js-lingui-id: InKpMt
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
+msgid "We sell subscriptions to design teams."
+msgstr ""
+
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
@@ -32487,6 +32590,7 @@ msgid "yes"
 msgstr "ja"
 
 #. js-lingui-id: l75CjT
+#: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
