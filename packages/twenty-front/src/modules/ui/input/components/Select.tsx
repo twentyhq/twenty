@@ -61,6 +61,7 @@ export const Select = <TValue extends SelectValue>({
   pinnedOption,
   callToActionButton,
   dropdownSideOffset = 0,
+  dropdownPortalContainer,
   hasRightElement,
   showContextualTextInControl = true,
   showIconInControl = true,
@@ -220,6 +221,7 @@ export const Select = <TValue extends SelectValue>({
             width={dropdownWidthAuto ? 'var(--anchor-width)' : dropdownWidth}
             align="start"
             sideOffset={dropdownSideOffset}
+            container={dropdownPortalContainer}
             aria-label={isNonEmptyString(label) ? label : undefined}
           >
             {withSearchInput === true && (
