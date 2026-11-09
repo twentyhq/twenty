@@ -84,9 +84,9 @@ export const WorkflowEditActionCode = ({
   actionOptions: givenActionOptions,
 }: WorkflowEditActionCodeProps) => {
   const { t } = useLingui();
-  // its source could not be inlined, and editing it would replace that source without showing it
+  // its source could not be inlined, and editing it would replace that source without showing it; an emptied inline step keeps `code: ''`
   const isRunningFromLegacyFunction =
-    !isNonEmptyString(action.settings.input.code) &&
+    !isDefined(action.settings.input.code) &&
     isNonEmptyString(action.settings.input.logicFunctionId);
   const actionOptions: WorkflowEditActionCodeProps['actionOptions'] =
     isRunningFromLegacyFunction ? { readonly: true } : givenActionOptions;
