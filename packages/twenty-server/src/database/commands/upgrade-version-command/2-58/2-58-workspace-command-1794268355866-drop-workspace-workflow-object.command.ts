@@ -27,6 +27,30 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
+const LEGACY_WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION = `
+  "navigationMenuItem"."workspaceId" = $1
+  AND (
+    ("navigationMenuItem"."type" = 'OBJECT' AND "navigationMenuItem"."targetObjectMetadataId" = $2)
+    OR (
+      "navigationMenuItem"."type" = 'VIEW'
+      AND "navigationMenuItem"."viewId" IN (
+        SELECT "view".id FROM core."view" "view" WHERE "view"."workspaceId" = $1 AND "view"."objectMetadataId" = $2
+      )
+    )
+  )`;
+
+const WORKFLOWS_NATIVE_PAGE_ALREADY_VISIBLE_CONDITION = `
+  EXISTS (
+    SELECT 1 FROM core."navigationMenuItem" "nativePageItem"
+    WHERE "nativePageItem"."workspaceId" = $1
+      AND "nativePageItem"."type" = 'NATIVE_PAGE'
+      AND "nativePageItem"."nativePageKey" = 'workflows'
+      AND (
+        "nativePageItem"."userWorkspaceId" IS NULL
+        OR "nativePageItem"."userWorkspaceId" = "navigationMenuItem"."userWorkspaceId"
+      )
+  )`;
+
 @RegisteredWorkspaceCommand('2.58.0', 1794268355866)
 @Command({
   name: 'upgrade:2-58:drop-workspace-workflow-object',
@@ -85,27 +109,33 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
       .filter(isDefined);
     const deletedObjectIds = new Set(objectsToDelete.map(({ id }) => id));
 
-    const fieldsToDelete = Object.values(flatFieldMetadataMaps.byUniversalIdentifier).filter(isDefined).filter(
-      (field) =>
-        !deletedObjectIds.has(field.objectMetadataId) &&
-        (LEGACY_WORKFLOW_RELATION_FIELD_UNIVERSAL_IDENTIFIERS.includes(
-          field.universalIdentifier,
-        ) ||
-          (isDefined(field.relationTargetObjectMetadataId) &&
-            deletedObjectIds.has(field.relationTargetObjectMetadataId))),
-    );
+    const fieldsToDelete = Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (field) =>
+          !deletedObjectIds.has(field.objectMetadataId) &&
+          (LEGACY_WORKFLOW_RELATION_FIELD_UNIVERSAL_IDENTIFIERS.includes(
+            field.universalIdentifier,
+          ) ||
+            (isDefined(field.relationTargetObjectMetadataId) &&
+              deletedObjectIds.has(field.relationTargetObjectMetadataId))),
+      );
     const deletedFieldIds = new Set(fieldsToDelete.map(({ id }) => id));
 
-    const indexesToDelete = Object.values(flatIndexMaps.byUniversalIdentifier).filter(isDefined).filter(
-      (index) =>
-        !deletedObjectIds.has(index.objectMetadataId) &&
-        (LEGACY_WORKFLOW_ID_INDEX_UNIVERSAL_IDENTIFIERS.includes(
-          index.universalIdentifier,
-        ) ||
-          index.flatIndexFieldMetadatas.some(({ fieldMetadataId }) =>
-            deletedFieldIds.has(fieldMetadataId),
-          )),
-    );
+    const indexesToDelete = Object.values(flatIndexMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (index) =>
+          !deletedObjectIds.has(index.objectMetadataId) &&
+          (LEGACY_WORKFLOW_ID_INDEX_UNIVERSAL_IDENTIFIERS.includes(
+            index.universalIdentifier,
+          ) ||
+            index.flatIndexFieldMetadatas.some(({ fieldMetadataId }) =>
+              deletedFieldIds.has(fieldMetadataId),
+            )),
+      );
 
     // Field widgets keep their field id in their configuration, out of reach of foreign keys.
     const pageLayoutWidgetsToDelete = Object.values(
@@ -130,13 +160,14 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const coreWorkflowIdField = flatFieldMetadataMaps.byUniversalIdentifier[
-      WORKFLOW_RUN_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER
-    ];
-    const standardCoreWorkflowIdField = standardAllFlatEntityMaps
-      .flatFieldMetadataMaps.byUniversalIdentifier[
-      WORKFLOW_RUN_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER
-    ];
+    const coreWorkflowIdField =
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        WORKFLOW_RUN_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER
+      ];
+    const standardCoreWorkflowIdField =
+      standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        WORKFLOW_RUN_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER
+      ];
     const fieldsToUpdate =
       isDefined(coreWorkflowIdField) &&
       isDefined(standardCoreWorkflowIdField) &&
@@ -155,11 +186,10 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
       ? getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
           standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
           existingFlatEntityMaps: flatViewFieldMaps,
-          universalIdentifiers: (
-            Object.values(
-              standardAllFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
-            ).filter(isDefined)
+          universalIdentifiers: Object.values(
+            standardAllFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
           )
+            .filter(isDefined)
             .filter(
               ({ fieldMetadataUniversalIdentifier, viewUniversalIdentifier }) =>
                 fieldMetadataUniversalIdentifier ===
@@ -175,13 +205,11 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     const commandMenuItemsToUpdate =
       WORKFLOW_VERSION_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.flatMap(
         (universalIdentifier) => {
-          const commandMenuItem = flatCommandMenuItemMaps.byUniversalIdentifier[
-            universalIdentifier
-          ];
-          const standardCommandMenuItem = standardAllFlatEntityMaps
-            .flatCommandMenuItemMaps.byUniversalIdentifier[
-            universalIdentifier
-          ];
+          const commandMenuItem =
+            flatCommandMenuItemMaps.byUniversalIdentifier[universalIdentifier];
+          const standardCommandMenuItem =
+            standardAllFlatEntityMaps.flatCommandMenuItemMaps
+              .byUniversalIdentifier[universalIdentifier];
 
           if (
             !isDefined(commandMenuItem) ||
@@ -269,6 +297,19 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     const applicationUniversalIdentifier =
       twentyStandardFlatApplication.universalIdentifier;
 
+    const legacyWorkflowObject = objectsToDelete.find(
+      ({ universalIdentifier }) =>
+        universalIdentifier === LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
+    );
+
+    if (isDefined(legacyWorkflowObject)) {
+      await this.moveNavigationMenuItemsToWorkflowsNativePage({
+        workspaceId,
+        dataSource,
+        legacyWorkflowObjectId: legacyWorkflowObject.id,
+      });
+    }
+
     if (hasDeletions) {
       await this.runMigrationOrThrow({
         workspaceId,
@@ -304,13 +345,7 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
         `UPDATE core."fieldMetadata"
          SET "isSystem" = $1, label = $2, description = $3, "updatedAt" = NOW()
          WHERE "workspaceId" = $4 AND id = $5`,
-        [
-          field.isSystem,
-          field.label,
-          field.description,
-          workspaceId,
-          field.id,
-        ],
+        [field.isSystem, field.label, field.description, workspaceId, field.id],
       );
     }
 
@@ -347,6 +382,43 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     this.logger.log(
       `Dropped ${plan}; applied ${metadataChanges} for workspace ${workspaceId}`,
     );
+  }
+
+  // Items added since the 2.56 conversion would otherwise cascade away with the object.
+  private async moveNavigationMenuItemsToWorkflowsNativePage({
+    workspaceId,
+    dataSource,
+    legacyWorkflowObjectId,
+  }: {
+    workspaceId: string;
+    dataSource: NonNullable<RunOnWorkspaceArgs['dataSource']>;
+    legacyWorkflowObjectId: string;
+  }): Promise<void> {
+    const parameters = [workspaceId, legacyWorkflowObjectId];
+
+    const [, deletedCount]: [unknown[], number] = await dataSource.query(
+      `DELETE FROM core."navigationMenuItem" "navigationMenuItem"
+       WHERE ${LEGACY_WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION}
+         AND ${WORKFLOWS_NATIVE_PAGE_ALREADY_VISIBLE_CONDITION}`,
+      parameters,
+    );
+
+    const [, convertedCount]: [unknown[], number] = await dataSource.query(
+      `UPDATE core."navigationMenuItem" "navigationMenuItem"
+       SET "type" = 'NATIVE_PAGE',
+           "nativePageKey" = 'workflows',
+           "targetObjectMetadataId" = NULL,
+           "viewId" = NULL,
+           "updatedAt" = NOW()
+       WHERE ${LEGACY_WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION}`,
+      parameters,
+    );
+
+    if (deletedCount + convertedCount > 0) {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatNavigationMenuItemMaps',
+      ]);
+    }
   }
 
   private async summarizeLegacyData({
@@ -407,12 +479,16 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
       query: `SELECT COUNT(*) AS count FROM "${schema}"."workflow" legacy WHERE NOT EXISTS (SELECT 1 FROM core."workflow" cw WHERE cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = legacy.id)`,
       parameters: [workspaceId],
     });
-    const favoriteCount = await countRows({
-      query: `SELECT COUNT(*) AS count FROM core."navigationMenuItem" WHERE "workspaceId" = $1 AND "targetObjectMetadataId" = $2`,
+    const sidebarItemCount = await countRows({
+      query: `SELECT COUNT(*) AS count FROM core."navigationMenuItem" "navigationMenuItem" WHERE ${LEGACY_WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION}`,
+      parameters: [workspaceId, workflowObject.id],
+    });
+    const recordFavoriteCount = await countRows({
+      query: `SELECT COUNT(*) AS count FROM core."navigationMenuItem" WHERE "workspaceId" = $1 AND "type" = 'RECORD' AND "targetObjectMetadataId" = $2`,
       parameters: [workspaceId, workflowObject.id],
     });
 
-    return `${workflowRecordCount} workflow record(s) (${legacyWorkflowWithoutCoreCount} without a core workflow), ${workflowAutomatedTriggerRecordCount} automated trigger record(s), ${attachmentCount} attachment link(s), ${timelineActivityCount} timeline activity link(s), ${favoriteCount} favorite(s)`;
+    return `${workflowRecordCount} workflow record(s) (${legacyWorkflowWithoutCoreCount} without a core workflow), ${workflowAutomatedTriggerRecordCount} automated trigger record(s), ${attachmentCount} attachment link(s), ${timelineActivityCount} timeline activity link(s), ${recordFavoriteCount} record favorite(s); ${sidebarItemCount} sidebar item(s) moved to the Workflows page`;
   }
 
   private async runMigrationOrThrow(
