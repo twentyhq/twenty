@@ -1,8 +1,13 @@
 import { DashboardFilterEditModeChip } from '@/page-layout/components/DashboardFilterEditModeChip';
-import { pageLayoutDraftFiltersComponentSelector } from '@/page-layout/states/selectors/pageLayoutDraftFiltersComponentSelector';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { DashboardFilterViewModeChip } from '@/page-layout/components/DashboardFilterViewModeChip';
+import { useDashboardFilters } from '@/page-layout/hooks/useDashboardFilters';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useSetDashboardFilterValue } from '@/page-layout/hooks/useSetDashboardFilterValue';
+import { isPageLayoutFilterValueEqual } from '@/page-layout/utils/isPageLayoutFilterValueEqual';
 import { styled } from '@linaria/react';
-import { getEffectiveDashboardPageLayoutFilters } from 'twenty-shared/utils';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -15,20 +20,48 @@ const StyledContainer = styled.div`
 `;
 
 export const DashboardFilterBar = () => {
-  const pageLayoutDraftFilters = useAtomComponentSelectorValue(
-    pageLayoutDraftFiltersComponentSelector,
+  const { t } = useLingui();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const dashboardFilters = useDashboardFilters();
+  const { resetDashboardFilterValues } = useSetDashboardFilterValue();
+
+  if (!isDefined(dashboardFilters)) {
+    return null;
+  }
+
+  const { pageLayoutFilters, urlValueByPageLayoutFilterId } = dashboardFilters;
+
+  const pageLayoutFiltersDifferingFromDefault = pageLayoutFilters.filter(
+    ({ id, defaultValue }) =>
+      isDefined(urlValueByPageLayoutFilterId[id]) &&
+      !isPageLayoutFilterValueEqual({
+        firstValue: urlValueByPageLayoutFilterId[id],
+        secondValue: defaultValue,
+      }),
   );
 
   return (
     <StyledContainer>
-      {getEffectiveDashboardPageLayoutFilters(pageLayoutDraftFilters).map(
-        (pageLayoutFilter) => (
+      {pageLayoutFilters.map((pageLayoutFilter) =>
+        isPageLayoutInEditMode ? (
           <DashboardFilterEditModeChip
             key={pageLayoutFilter.id}
             pageLayoutFilter={pageLayoutFilter}
           />
+        ) : (
+          <DashboardFilterViewModeChip
+            key={pageLayoutFilter.id}
+            pageLayoutFilter={pageLayoutFilter}
+            urlValue={urlValueByPageLayoutFilterId[pageLayoutFilter.id]}
+          />
         ),
       )}
+      {!isPageLayoutInEditMode &&
+        isNonEmptyArray(pageLayoutFiltersDifferingFromDefault) && (
+          <LightButton emphasis="subtle" onClick={resetDashboardFilterValues}>
+            {t`Reset`}
+          </LightButton>
+        )}
     </StyledContainer>
   );
 };
