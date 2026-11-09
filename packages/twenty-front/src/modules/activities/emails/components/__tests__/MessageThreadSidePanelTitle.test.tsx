@@ -9,12 +9,19 @@ jest.mock('@/activities/emails/hooks/useMessageThreadChannel', () => ({
   useMessageThreadChannel: () => mockUseMessageThreadChannel(),
 }));
 
-jest.mock('@/activities/emails/hooks/useChatThreadTitle', () => ({
-  useChatThreadTitle: () => 'Sundar Pichai',
+jest.mock('@/activities/emails/hooks/useEmailThread', () => ({
+  useEmailThread: () => ({ messages: [] }),
 }));
 
-jest.mock('@/activities/emails/components/MessageChannelLogo', () => ({
-  MessageChannelLogo: () => <span>Channel logo</span>,
+jest.mock('@/activities/emails/hooks/useChatThreadCounterparts', () => ({
+  useChatThreadCounterparts: () => [
+    {
+      handle: 'sundar@google.com',
+      displayName: 'Sundar Pichai',
+      person: { id: 'person-id', avatarUrl: null },
+      workspaceMember: null,
+    },
+  ],
 }));
 
 const renderTitle = () =>
@@ -47,12 +54,12 @@ const mockChannel = ({
   });
 
 describe('MessageThreadSidePanelTitle', () => {
-  it('should show the channel logo and the contact name on an app chat', () => {
+  it('should show the counterpart avatar and name on an app chat', () => {
     mockChannel({ type: MessageChannelType.APP });
 
     renderTitle();
 
-    expect(screen.getByText('Channel logo')).toBeVisible();
+    expect(screen.getByText('S')).toBeVisible();
     expect(screen.getByText('Sundar Pichai')).toBeVisible();
     expect(screen.queryByText('Email subject')).not.toBeInTheDocument();
   });

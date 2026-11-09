@@ -26,10 +26,7 @@ export const MessageThreadSidePanelTitle = ({
     isChatTimelineThreadChannel(messageThreadChannel)
   ) {
     return (
-      <ChatThreadSidePanelTitle
-        messageThreadId={messageThreadId}
-        channel={messageThreadChannel}
-      />
+      <ChatThreadSidePanelTitle messageThreadId={messageThreadId} />
     );
   }
 

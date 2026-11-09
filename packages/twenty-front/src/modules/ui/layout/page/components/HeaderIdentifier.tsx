@@ -30,7 +30,7 @@ const StyledIcon = styled.div<{ iconColor?: string }>`
   flex-shrink: 0;
   height: ${HEADER_IDENTIFIER_TILE_SIZE};
   justify-content: center;
-  width: ${HEADER_IDENTIFIER_TILE_SIZE};
+  min-width: ${HEADER_IDENTIFIER_TILE_SIZE};
 `;
 
 const StyledTextContainer = styled.div`
