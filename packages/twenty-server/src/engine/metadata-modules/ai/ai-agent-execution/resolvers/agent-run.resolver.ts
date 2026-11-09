@@ -24,6 +24,7 @@ import { GenerateInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { GenerateResultDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/generate-result.dto';
 import { RunAgentInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent.input';
 import { RunAgentResultDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-result.dto';
+import { StopGenerateInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/stop-generate.input';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AiGenerateService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/ai-generate.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
@@ -102,5 +103,24 @@ export class AgentRunResolver {
       callerApiKey,
       input,
     });
+  }
+
+  @Mutation(() => Boolean)
+  async stopGenerate(
+    @Args('input') input: StopGenerateInputDTO,
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
+    @AuthWorkspaceMemberId()
+    workspaceMemberId: string | undefined,
+  ): Promise<boolean> {
+    await this.aiGenerateService.stop({
+      workspace,
+      callerApplication,
+      requestWorkspaceMemberId: workspaceMemberId ?? null,
+      runId: input.runId,
+    });
+
+    return true;
   }
 }
