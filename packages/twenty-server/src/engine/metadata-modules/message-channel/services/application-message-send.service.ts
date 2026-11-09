@@ -255,6 +255,17 @@ export class ApplicationMessageSendService {
         workspaceId,
       });
 
+    const isEmailStyle = sender.messagingProvider.conversationStyle === 'email';
+
+    if (isEmailStyle !== isDefined(content.email)) {
+      throw new MessageChannelException(
+        isEmailStyle
+          ? `Messaging provider ${sender.messagingProvider.id} sends email-style replies: send an email`
+          : `Messaging provider ${sender.messagingProvider.id} sends chat replies: send a text`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
     const conversation = await this.findConversation({
       workspaceId,
       messageChannel,
@@ -262,7 +273,10 @@ export class ApplicationMessageSendService {
     });
 
     const recipients = isDefined(content.to)
-      ? withKnownParticipantIdentities(content.to, conversation.recipients)
+      ? withKnownParticipantIdentities({
+          recipients: content.to,
+          knownParticipants: conversation.recipients,
+        })
       : conversation.recipients;
 
     if (recipients.length === 0) {
@@ -275,14 +289,14 @@ export class ApplicationMessageSendService {
     const email = isDefined(content.email)
       ? {
           ...content.email,
-          cc: withKnownParticipantIdentities(
-            content.email.cc,
-            conversation.recipients,
-          ),
-          bcc: withKnownParticipantIdentities(
-            content.email.bcc,
-            conversation.recipients,
-          ),
+          cc: withKnownParticipantIdentities({
+            recipients: content.email.cc,
+            knownParticipants: conversation.recipients,
+          }),
+          bcc: withKnownParticipantIdentities({
+            recipients: content.email.bcc,
+            knownParticipants: conversation.recipients,
+          }),
         }
       : null;
 
@@ -303,27 +317,33 @@ export class ApplicationMessageSendService {
       displayName: displayName ?? null,
     });
 
+    const payloadBase = {
+      messagingProviderName: sender.messagingProvider.name,
+      connectedAccountId,
+      messageChannelId: messageChannel.id,
+      threadExternalId: conversation.threadExternalId,
+      text: content.text,
+      idempotencyKey,
+      recipients: recipients.map(toSendAppMessageRecipient),
+    };
+
     const sentMessage =
       await this.messagingProviderMessageSenderService.sendOrThrow({
         sender,
         workspaceId,
-        payload: {
-          connectedAccountId,
-          messageChannelId: messageChannel.id,
-          threadExternalId: conversation.threadExternalId,
-          text: content.text,
-          idempotencyKey,
-          recipients: recipients.map(toSendAppMessageRecipient),
-          ...(isDefined(email) && {
-            email: {
-              subject: email.subject,
-              html: email.html,
-              cc: email.cc.map(toSendAppMessageRecipient),
-              bcc: email.bcc.map(toSendAppMessageRecipient),
-              inReplyToExternalId,
-            },
-          }),
-        },
+        payload: isDefined(email)
+          ? {
+              ...payloadBase,
+              conversationStyle: 'email',
+              email: {
+                subject: email.subject,
+                html: email.html,
+                cc: email.cc.map(toSendAppMessageRecipient),
+                bcc: email.bcc.map(toSendAppMessageRecipient),
+                inReplyToExternalId,
+              },
+            }
+          : { ...payloadBase, conversationStyle: 'chat' },
       });
 
     const delivery: AppMessageDelivery = {

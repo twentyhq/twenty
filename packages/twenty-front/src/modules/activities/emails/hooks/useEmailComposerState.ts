@@ -82,6 +82,10 @@ export const useEmailComposerState = ({
   const { sendAppChannelMessage } = useSendAppChannelMessage();
   const [isSendingThroughApp, setIsSendingThroughApp] = useState(false);
   const { enqueueToast } = useToast();
+  const [pendingAppSend, setPendingAppSend] = useState<{
+    emailKey: string;
+    idempotencyKey: string;
+  } | null>(null);
   const loading = isSendingEmail || isSendingThroughApp;
 
   const recipientCount = to.length + cc.length + bcc.length;
@@ -111,24 +115,39 @@ export const useEmailComposerState = ({
     const serializedCc = serializeEmailRecipients(cc);
     const serializedBcc = serializeEmailRecipients(bcc);
 
-    if (isDefined(appReplyTarget)) {
+    if (
+      isDefined(appReplyTarget) &&
+      appReplyTarget.connectedAccountId === connectedAccountId
+    ) {
       setIsSendingThroughApp(true);
+
+      const email = {
+        to: serializeEmailRecipients(to),
+        cc: serializedCc || undefined,
+        bcc: serializedBcc || undefined,
+        subject,
+        body,
+        inReplyTo: defaultInReplyTo,
+      };
+      const emailKey = JSON.stringify(email);
+
+      // a retry of the same email reuses its key so the server does not deliver it twice
+      const idempotencyKey =
+        pendingAppSend?.emailKey === emailKey
+          ? pendingAppSend.idempotencyKey
+          : v4();
+
+      setPendingAppSend({ emailKey, idempotencyKey });
 
       try {
         const sentMessage = await sendAppChannelMessage({
           messageChannelId: appReplyTarget.messageChannelId,
           messageThreadId: appReplyTarget.messageThreadId,
-          idempotencyKey: v4(),
-          email: {
-            to: serializeEmailRecipients(to),
-            cc: serializedCc || undefined,
-            bcc: serializedBcc || undefined,
-            subject,
-            body,
-            inReplyTo: defaultInReplyTo,
-          },
+          idempotencyKey,
+          email,
         });
 
+        setPendingAppSend(null);
         onSent?.(sentMessage?.messageThreadId ?? null);
       } catch {
         enqueueToast({
@@ -173,6 +192,7 @@ export const useEmailComposerState = ({
     files,
     contextRecord,
     appReplyTarget,
+    pendingAppSend,
     sendEmail,
     sendAppChannelMessage,
     enqueueToast,

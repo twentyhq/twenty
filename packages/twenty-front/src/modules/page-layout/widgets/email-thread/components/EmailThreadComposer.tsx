@@ -78,7 +78,8 @@ export const EmailThreadComposer = ({
   });
 
   // app sends carry no files yet
-  const canAttachFiles = !isDefined(appReplyTarget);
+  const canAttachFiles =
+    appReplyTarget?.connectedAccountId !== composerState.connectedAccountId;
 
   const { handleSend, canSend } = composerState;
 

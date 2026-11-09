@@ -31,6 +31,7 @@ const SENDING_PROVIDER_IDENTIFIER = v4();
 const SILENT_PROVIDER_IDENTIFIER = v4();
 const SEND_MESSAGE_IDENTIFIER = v4();
 const MESSAGING_PROVIDER_IDENTIFIER = v4();
+const EMAIL_MESSAGING_PROVIDER_IDENTIFIER = v4();
 
 const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
@@ -321,6 +322,18 @@ describe('sendAppChannelMessage (e2e)', () => {
               },
               conversationStyle: 'chat',
             },
+            {
+              universalIdentifier: EMAIL_MESSAGING_PROVIDER_IDENTIFIER,
+              name: 'outlook-mail',
+              displayName: 'Outlook Mail',
+              connectionProvider: {
+                universalIdentifier: SENDING_PROVIDER_IDENTIFIER,
+              },
+              sendMessageLogicFunction: {
+                universalIdentifier: SEND_MESSAGE_IDENTIFIER,
+              },
+              conversationStyle: 'email',
+            },
           ],
         },
       }),
@@ -434,6 +447,7 @@ describe('sendAppChannelMessage (e2e)', () => {
         threadExternalId: THREAD_EXTERNAL_ID,
         text: 'Tuesday works',
         recipients: [{ handle: CONTACT_HANDLE, displayName: 'Ada Lovelace' }],
+        conversationStyle: 'chat',
       }),
     ]);
 
@@ -453,7 +467,7 @@ describe('sendAppChannelMessage (e2e)', () => {
   it('sends an email-style reply with its subject, cc and the message it answers', async () => {
     const { messageChannelId, messageThreadId } = await startConversation({
       connectedAccountId: sendingConnectionId,
-      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+      messagingProviderUniversalIdentifier: EMAIL_MESSAGING_PROVIDER_IDENTIFIER,
     });
 
     const response = await send({
@@ -471,8 +485,10 @@ describe('sendAppChannelMessage (e2e)', () => {
     expect(response.body.errors).toBeUndefined();
     expect(readSendExecutions()).toEqual([
       expect.objectContaining({
+        messagingProviderName: 'outlook-mail',
         text: 'Tuesday works',
         recipients: [{ handle: CONTACT_HANDLE, displayName: 'Ada Lovelace' }],
+        conversationStyle: 'email',
         email: {
           subject: 'Re: Next week',
           html: expect.stringContaining('Tuesday works'),
@@ -513,6 +529,38 @@ describe('sendAppChannelMessage (e2e)', () => {
       messageChannelId,
       messageThreadId,
       text: 'Tuesday works',
+      email: { to: CONTACT_HANDLE, subject: 'Re: Next week', body: 'Hi' },
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(readSendExecutions()).toEqual([]);
+  });
+
+  it('refuses a text reply when the provider writes emails', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: EMAIL_MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'Tuesday works',
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(readSendExecutions()).toEqual([]);
+  });
+
+  it('refuses an email reply when the provider writes chat messages', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
       email: { to: CONTACT_HANDLE, subject: 'Re: Next week', body: 'Hi' },
     });
 

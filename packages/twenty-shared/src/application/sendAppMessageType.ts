@@ -1,9 +1,10 @@
+import { type MessagingProviderConversationStyle } from './messagingProviderConversationStyleType';
+
 export type SendAppMessageRecipient = {
   handle: string;
   displayName: string | null;
 };
 
-// Set when the reply is written in the email layout (provider conversationStyle 'email')
 export type SendAppMessageEmail = {
   subject: string;
   html: string;
@@ -13,17 +14,25 @@ export type SendAppMessageEmail = {
   inReplyToExternalId: string | null;
 };
 
-export type SendAppMessagePayload = {
+type SendAppMessagePayloadBase = {
   messagingProviderName: string;
   connectedAccountId: string;
   messageChannelId: string;
   threadExternalId: string;
   text: string;
   idempotencyKey: string;
-  // the To recipients: the conversation's latest participants, or the ones picked in the email layout
+  // the To recipients: the conversation's latest participants, or the ones picked in the email composer
   recipients: SendAppMessageRecipient[];
-  email?: SendAppMessageEmail;
 };
+
+export type SendAppMessagePayload =
+  | (SendAppMessagePayloadBase & {
+      conversationStyle: Extract<MessagingProviderConversationStyle, 'chat'>;
+    })
+  | (SendAppMessagePayloadBase & {
+      conversationStyle: Extract<MessagingProviderConversationStyle, 'email'>;
+      email: SendAppMessageEmail;
+    });
 
 export type SendAppMessageResult = {
   externalId: string;

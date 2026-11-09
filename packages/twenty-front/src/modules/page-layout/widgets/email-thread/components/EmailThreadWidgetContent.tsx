@@ -75,7 +75,11 @@ export const EmailThreadWidgetContent = ({
     canReply &&
     replyContext.connectedAccountProvider === ConnectedAccountProvider.APP &&
     isDefined(messageChannelId)
-      ? { messageChannelId, messageThreadId: targetRecord.id }
+      ? {
+          connectedAccountId: replyContext.connectedAccountId,
+          messageChannelId,
+          messageThreadId: targetRecord.id,
+        }
       : null;
 
   const messagesCount = messages.length;
