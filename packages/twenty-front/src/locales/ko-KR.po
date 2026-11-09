@@ -839,11 +839,6 @@ msgstr "{importContactsCallRecordingHours, plural, other {{formattedImportContac
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, other {{1}회 설치됨}}"
 
-#. js-lingui-id: XcDI87
-#: src/modules/getting-started/components/GettingStartedInviteDoneAction.tsx
-msgid "{invitationCount, plural, one {# invitation sent} other {# invitations sent}}"
-msgstr "{invitationCount, plural, other {#개의 초대가 전송됨}}"
-
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
@@ -7452,6 +7447,11 @@ msgstr "반복 실패 시 계속 진행"
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Continue setup"
 msgstr "설정 계속하기"
+
+#. js-lingui-id: byc7Ak
+#: src/modules/getting-started/components/GettingStartedChatThreadDoneButton.tsx
+msgid "Continue thread"
+msgstr ""
 
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -14180,6 +14180,11 @@ msgstr "초안으로 이동"
 msgid "Go to Settings"
 msgstr "설정으로 이동"
 
+#. js-lingui-id: WeeG8G
+#: src/modules/getting-started/components/GettingStartedWorkflowDoneButton.tsx
+msgid "Go to workflow"
+msgstr ""
+
 #. js-lingui-id: FYlHHU
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Gold"
@@ -15830,6 +15835,11 @@ msgstr "링크로 초대"
 #: src/modules/onboarding/hooks/useInviteTeam.ts
 msgid "Invite link sent to email addresses"
 msgstr "이메일 주소로 전송된 초대 링크"
+
+#. js-lingui-id: aNtX0/
+#: src/modules/getting-started/components/GettingStartedInviteDoneButton.tsx
+msgid "Invite more"
+msgstr ""
 
 #. js-lingui-id: x1m5RZ
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
