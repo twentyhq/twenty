@@ -1911,7 +1911,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       const principals = this.resolvePermissionsPrincipalsOrThrow();
       const rlsRuleUnreadableFieldsByRole =
-        await this.options.internalContext.recordPermissions.findRlsRuleUnreadableFieldsByRole(
+        await this.options.internalContext.recordPermissionsOnlyRls.findRlsRuleUnreadableFieldsByRole(
           { principals, objectMetadataId: tableShape.objectMetadataId },
         );
 
@@ -1940,7 +1940,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             )
             .map(([columnName]) => columnName),
           condition:
-            await this.options.internalContext.recordPermissions.buildRlsRuleSqlConditionOrThrow(
+            await this.options.internalContext.recordPermissionsOnlyRls.buildRlsRuleSqlConditionOrThrow(
               {
                 principals,
                 objectMetadataId: tableShape.objectMetadataId,
