@@ -946,7 +946,6 @@ export class OnboardingService {
       return false;
     }
 
-    // Getting Started offers the call as a step instead.
     if (
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_GETTING_STARTED_ENABLED,

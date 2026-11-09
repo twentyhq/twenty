@@ -1,4 +1,4 @@
-export type CalSlot = {
+export type BookCallSlot = {
   start: string;
   end: string;
 };

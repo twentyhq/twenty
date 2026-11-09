@@ -32,7 +32,7 @@ import { isGettingStartedBookCallOffered } from 'src/engine/core-modules/getting
 import { isGettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/utils/is-getting-started-step-action-key.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
+import { getBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/get-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
@@ -103,6 +103,10 @@ export class GettingStartedService {
       companyEnrichment,
     });
 
+    const calendarBookingPageId = this.twentyConfigService.get(
+      'CALENDAR_BOOKING_PAGE_ID',
+    );
+
     const stepActionKeys = filterGettingStartedStepActionKeys({
       stepActionKeys: assignedStepActionKeys,
       permissionFlags,
@@ -110,12 +114,13 @@ export class GettingStartedService {
       hasFeaturedApp: isNonEmptyArray(featuredApps),
       isBookCallOffered: isGettingStartedBookCallOffered({
         profile: getGettingStartedProfile({ userEmail, companyEnrichment }),
-        calendarBookingPageId: this.twentyConfigService.get(
-          'CALENDAR_BOOKING_PAGE_ID',
-        ),
-        minEmployeeCount: readBookCallStepMinEmployeeCount(
-          this.twentyConfigService,
-        ),
+        calendarBookingPageId,
+        minEmployeeCount: getBookCallStepMinEmployeeCount({
+          calendarBookingPageId,
+          minEmployeeCount: this.twentyConfigService.get(
+            'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT',
+          ),
+        }),
         employeeCount: companyEnrichment?.employeeCount,
       }),
     });

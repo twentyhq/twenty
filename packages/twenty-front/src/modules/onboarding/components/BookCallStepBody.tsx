@@ -3,18 +3,8 @@ import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingSt
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-
-const StyledEmbed = styled(OnboardingStepAnimatedItem)`
-  display: flex;
-  flex: 1;
-  justify-content: center;
-  min-height: 0;
-  overflow: hidden;
-  width: 100%;
-`;
 
 type BookCallStepBodyProps = {
   calendarBookingPageId: string | null;
@@ -41,12 +31,12 @@ export const BookCallStepBody = ({
       </StyledOnboardingStepHeading>
 
       {isNonEmptyString(calendarBookingPageId) && (
-        <StyledEmbed index={2}>
+        <OnboardingStepAnimatedItem index={2} isFillingRemainingSpace>
           <BookCallEmbed
             calendarBookingPageId={calendarBookingPageId}
             date={date}
           />
-        </StyledEmbed>
+        </OnboardingStepAnimatedItem>
       )}
     </>
   );

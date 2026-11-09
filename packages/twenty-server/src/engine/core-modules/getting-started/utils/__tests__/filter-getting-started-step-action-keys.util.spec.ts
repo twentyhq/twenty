@@ -139,4 +139,19 @@ describe('filterGettingStartedStepActionKeys', () => {
       }),
     ).not.toContain(GettingStartedStepActionKey.BOOK_CALL);
   });
+
+  it('should leave out the book call step without the workspace settings permission', () => {
+    expect(
+      filterGettingStartedStepActionKeys({
+        stepActionKeys: GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE.TEAM,
+        permissionFlags: {
+          ...ALL_PERMISSION_FLAGS,
+          [PermissionFlagType.WORKSPACE]: false,
+        },
+        hasSendingMailbox: true,
+        hasFeaturedApp: true,
+        isBookCallOffered: true,
+      }),
+    ).not.toContain(GettingStartedStepActionKey.BOOK_CALL);
+  });
 });

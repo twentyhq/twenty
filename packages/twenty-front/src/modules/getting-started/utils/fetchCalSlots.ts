@@ -1,6 +1,6 @@
 import { CAL_API } from '@/getting-started/constants/CalApi';
+import { type BookCallSlot } from '@/getting-started/types/BookCallSlot';
 import { type CalEventTypeReference } from '@/getting-started/types/CalEventTypeReference';
-import { type CalSlot } from '@/getting-started/types/CalSlot';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { z } from 'zod';
 
@@ -23,7 +23,7 @@ export const fetchCalSlots = async ({
   endDate: string;
   timeZone: string;
   signal: AbortSignal;
-}): Promise<Record<string, CalSlot[]>> => {
+}): Promise<Record<string, BookCallSlot[]>> => {
   const searchParams = new URLSearchParams({
     ...eventTypeReference,
     start: startDate,
