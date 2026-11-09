@@ -233,6 +233,8 @@ export const AssistantProfileSaveAndRetry: Story = {
     expect(fixture.saveAssistantProfile).toHaveBeenLastCalledWith({
       aiChatAssistantProfile: { displayName: 'Nimbus' },
     });
+    expect(canvas.getByText(/^Choose when Nimbus participates/)).toBeVisible();
+    expect(canvas.getByText(/^Never keeps Nimbus out/)).toBeVisible();
 
     await userEvent.click(body.getByRole('button', { name: 'Reset to Ada' }));
     await waitFor(() =>

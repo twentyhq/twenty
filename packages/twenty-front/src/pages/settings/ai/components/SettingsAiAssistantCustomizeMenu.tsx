@@ -47,7 +47,6 @@ export const SettingsAiAssistantCustomizeMenu = ({
         <Dropdown.Section>
           <Dropdown.ActionItem
             page="avatarShape"
-            disabled={disabled}
             startIcon={
               <AssistantAvatar
                 shape={value.avatarShape}
@@ -65,7 +64,6 @@ export const SettingsAiAssistantCustomizeMenu = ({
           </Dropdown.ActionItem>
           <Dropdown.ActionItem
             page="avatarColor"
-            disabled={disabled}
             startIcon={<IconColorSwatch />}
             description={t(
               SETTINGS_AI_ASSISTANT_COLOR_LABELS[value.avatarColor],
@@ -76,7 +74,6 @@ export const SettingsAiAssistantCustomizeMenu = ({
           </Dropdown.ActionItem>
           <Dropdown.ActionItem
             page="avatarFace"
-            disabled={disabled}
             startIcon={<IconMoodSmile />}
             description={t(SETTINGS_AI_ASSISTANT_FACE_LABELS[value.avatarFace])}
             descriptionPlacement="end"
