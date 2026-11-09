@@ -9,13 +9,15 @@ export type CodeStepLogicFunctionReference = {
   logicFunctionId: string;
 };
 
-// a CODE step without code still runs from its function, so it keeps the reference while the function exists
+// a CODE step without code still runs from its function; a retained function keeps its references so a later run can still delete it
 export const dropInlinedCodeStepLogicFunctionIds = ({
   steps,
   existingLogicFunctionIds,
+  retainedLogicFunctionIds,
 }: {
   steps: StoredWorkflowStep[];
   existingLogicFunctionIds: ReadonlySet<string>;
+  retainedLogicFunctionIds: ReadonlySet<string>;
 }): {
   steps: StoredWorkflowStep[];
   droppedReferences: CodeStepLogicFunctionReference[];
@@ -41,6 +43,10 @@ export const dropInlinedCodeStepLogicFunctionIds = ({
     const reference = { stepId: step.id, logicFunctionId };
 
     if (isNonEmptyString(input.code)) {
+      if (retainedLogicFunctionIds.has(logicFunctionId)) {
+        return step;
+      }
+
       droppedReferences.push(reference);
 
       return {

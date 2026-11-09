@@ -19,10 +19,14 @@ const buildStep = ({
   settings: { input, outputSchema: {} },
 });
 
-const drop = (steps: StoredWorkflowStep[]) =>
+const drop = (
+  steps: StoredWorkflowStep[],
+  retainedLogicFunctionIds: ReadonlySet<string> = new Set(),
+) =>
   dropInlinedCodeStepLogicFunctionIds({
     steps,
     existingLogicFunctionIds: new Set(['logic-function-id']),
+    retainedLogicFunctionIds,
   });
 
 const NO_REFERENCES = {
@@ -53,6 +57,17 @@ describe('dropInlinedCodeStepLogicFunctionIds', () => {
       droppedReferences: [
         { stepId: 'step-id', logicFunctionId: 'logic-function-id' },
       ],
+    });
+  });
+
+  it('keeps the logic function of a code step with code when the function is retained', () => {
+    const step = buildStep({
+      input: { code: SOURCE, logicFunctionId: 'logic-function-id' },
+    });
+
+    expect(drop([step], new Set(['logic-function-id']))).toEqual({
+      ...NO_REFERENCES,
+      steps: [step],
     });
   });
 

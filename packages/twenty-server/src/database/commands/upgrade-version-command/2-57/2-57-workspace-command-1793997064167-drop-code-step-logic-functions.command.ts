@@ -126,6 +126,15 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
           flatLogicFunctionsToDelete,
         });
 
+    const deletedLogicFunctionIds = new Set(
+      flatLogicFunctionsToDelete.map(({ id }) => id),
+    );
+    const retainedLogicFunctionIds = new Set(
+      [...existingLogicFunctionIds].filter(
+        (id) => !deletedLogicFunctionIds.has(id),
+      ),
+    );
+
     const rewrittenRowCounts: number[] = [];
 
     for (const source of workflowVersionSources) {
@@ -146,6 +155,7 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
             } = dropInlinedCodeStepLogicFunctionIds({
               steps: value,
               existingLogicFunctionIds,
+              retainedLogicFunctionIds,
             });
 
             for (const { stepId, logicFunctionId } of codelessReferences) {
@@ -440,10 +450,10 @@ export class DropCodeStepLogicFunctionsCommand extends ProvisionedWorkspaceComma
   }
 }
 
+// the CODE step builder gave every function the seed workflow action settings, and LOGIC_FUNCTION steps count as references
 const hasNoTriggerOutsideWorkflows = (flatLogicFunction: FlatLogicFunction) =>
   !isDefined(flatLogicFunction.cronTriggerSettings) &&
   !isDefined(flatLogicFunction.databaseEventTriggerSettings) &&
   !isDefined(flatLogicFunction.httpRouteTriggerSettings) &&
   !isDefined(flatLogicFunction.serverRouteTriggerSettings) &&
-  !isDefined(flatLogicFunction.toolTriggerSettings) &&
-  !isDefined(flatLogicFunction.workflowActionTriggerSettings);
+  !isDefined(flatLogicFunction.toolTriggerSettings);

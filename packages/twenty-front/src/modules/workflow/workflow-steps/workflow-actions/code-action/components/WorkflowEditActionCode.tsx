@@ -33,7 +33,9 @@ import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-s
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { Callout } from 'twenty-ui/components/feedback';
 
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
@@ -79,9 +81,15 @@ type WorkflowEditActionCodeProps = {
 
 export const WorkflowEditActionCode = ({
   action,
-  actionOptions,
+  actionOptions: givenActionOptions,
 }: WorkflowEditActionCodeProps) => {
   const { t } = useLingui();
+  // its source could not be inlined, and editing it would replace that source without showing it
+  const isRunningFromLegacyFunction =
+    !isNonEmptyString(action.settings.input.code) &&
+    isNonEmptyString(action.settings.input.logicFunctionId);
+  const actionOptions: WorkflowEditActionCodeProps['actionOptions'] =
+    isRunningFromLegacyFunction ? { readonly: true } : givenActionOptions;
   const [isFullScreen, setIsFullScreen] = useState(false);
   const isMobile = useIsMobile();
   const fullScreenFocusId = `code-editor-fullscreen-${action.id}`;
@@ -313,6 +321,13 @@ export const WorkflowEditActionCode = ({
           <WorkflowStepBody>
             {activeTabId === WorkflowLogicFunctionTabId.CODE && (
               <>
+                {isRunningFromLegacyFunction && (
+                  <Callout
+                    status="neutral"
+                    title={t`This step runs from its original function`}
+                    description={t`Its code could not be moved into the step, so it cannot be edited here.`}
+                  />
+                )}
                 <WorkflowEditActionCodeFields
                   functionInput={functionInput}
                   inputSchema={codeStepInputSchema}
