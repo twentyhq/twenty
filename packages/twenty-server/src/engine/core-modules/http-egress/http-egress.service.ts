@@ -23,7 +23,7 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 const RATE_LIMIT_SCOPE_LABELS: Record<
-  Exclude<HttpEgressRejection['reason'], 'suspended' | 'concurrency'>,
+  Exclude<HttpEgressRejection['reason'], 'suspended'>,
   string
 > = {
   'test-user-rate': 'test requests per user',
@@ -40,8 +40,6 @@ const buildRejectionErrorMessage = ({
   switch (reason) {
     case 'suspended':
       return 'HTTP requests are paused for this workspace after repeated requests to internal addresses. They resume automatically within 24 hours.';
-    case 'concurrency':
-      return 'Too many HTTP requests are running for this workspace. Try again in a few seconds.';
     default: {
       const retryAfterSeconds = Math.ceil((retryAfterMs ?? 0) / 1_000);
 
@@ -91,7 +89,6 @@ export class HttpEgressService {
       workspaceId: context.workspaceId,
       userWorkspaceId: context.userWorkspaceId,
       source,
-      requestRef,
     });
 
     if (isDefined(admission.rejection) && admission.isEnforced) {
@@ -118,35 +115,31 @@ export class HttpEgressService {
       });
     }
 
-    try {
-      const response = await executeHttpEgressRequest(
-        {
-          input,
-          limits: {
-            timeoutMs: HTTP_TOOL_TIMEOUT_MS,
-            maxPayloadSizeBytes: HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES,
-          },
+    const response = await executeHttpEgressRequest(
+      {
+        input,
+        limits: {
+          timeoutMs: HTTP_TOOL_TIMEOUT_MS,
+          maxPayloadSizeBytes: HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES,
         },
-        this.secureHttpClientService.getHttpClient(),
+      },
+      this.secureHttpClientService.getHttpClient(),
+    );
+
+    if (response.diagnostics.outcome === 'blocked') {
+      await this.httpEgressAdmissionService.recordBlockedRequest(
+        context.workspaceId,
       );
-
-      if (response.diagnostics.outcome === 'blocked') {
-        await this.httpEgressAdmissionService.recordBlockedRequest(
-          context.workspaceId,
-        );
-      }
-
-      return this.finish({
-        rawInput,
-        context,
-        source,
-        requestRef,
-        shadowRejection: admission.rejection ?? undefined,
-        response,
-      });
-    } finally {
-      await admission.release();
     }
+
+    return this.finish({
+      rawInput,
+      context,
+      source,
+      requestRef,
+      shadowRejection: admission.rejection ?? undefined,
+      response,
+    });
   }
 
   private finish({

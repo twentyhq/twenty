@@ -7,9 +7,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageException } from 'src/engine/core-modules/cache-storage/exceptions/cache-storage.exception';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { ACQUIRE_HTTP_EGRESS_CONCURRENCY_SLOT_SCRIPT } from 'src/engine/core-modules/http-egress/constants/acquire-http-egress-concurrency-slot-script.constant';
 import { HTTP_EGRESS_BURST_DIVISOR } from 'src/engine/core-modules/http-egress/constants/http-egress-burst-divisor.constant';
-import { HTTP_EGRESS_CONCURRENCY_SLOT_TTL_MS } from 'src/engine/core-modules/http-egress/constants/http-egress-concurrency-slot-ttl-ms.constant';
 import { HTTP_EGRESS_SUSPENSION_WINDOW_MS } from 'src/engine/core-modules/http-egress/constants/http-egress-suspension-window-ms.constant';
 import { type HttpEgressAdmission } from 'src/engine/core-modules/http-egress/types/http-egress-admission.type';
 import { type HttpEgressRejection } from 'src/engine/core-modules/http-egress/types/http-egress-rejection.type';
@@ -24,8 +22,6 @@ type HttpEgressRateBucket = {
   refillPerWindow: number;
   windowMs: number;
 };
-
-const releaseNothing = async (): Promise<void> => {};
 
 @Injectable()
 export class HttpEgressAdmissionService {
@@ -43,12 +39,10 @@ export class HttpEgressAdmissionService {
     workspaceId,
     userWorkspaceId,
     source,
-    requestRef,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
     source: OutboundRequestSource;
-    requestRef: string;
   }): Promise<HttpEgressAdmission> {
     const isEnforced =
       source === 'workflow-http-test' ||
@@ -56,46 +50,16 @@ export class HttpEgressAdmissionService {
 
     try {
       if (await this.isSuspended(workspaceId)) {
-        return {
-          rejection: { reason: 'suspended' },
-          isEnforced,
-          release: releaseNothing,
-        };
+        return { rejection: { reason: 'suspended' }, isEnforced };
       }
 
-      const hasConcurrencySlot = await this.acquireConcurrencySlot({
-        workspaceId,
-        requestRef,
-      });
-
-      if (!hasConcurrencySlot) {
-        return {
-          rejection: { reason: 'concurrency' },
-          isEnforced,
-          release: releaseNothing,
-        };
-      }
-
-      const release = () =>
-        this.releaseConcurrencySlot({ workspaceId, requestRef });
-
-      const rateRejection = await this.consumeRateLimits({
+      const rejection = await this.consumeRateLimits({
         workspaceId,
         userWorkspaceId,
         source,
       });
 
-      if (isDefined(rateRejection) && isEnforced) {
-        await release();
-
-        return {
-          rejection: rateRejection,
-          isEnforced,
-          release: releaseNothing,
-        };
-      }
-
-      return { rejection: rateRejection, isEnforced, release };
+      return { rejection, isEnforced };
     } catch (error) {
       if (!(error instanceof CacheStorageException)) {
         throw error;
@@ -105,7 +69,7 @@ export class HttpEgressAdmissionService {
         `HTTP egress limits unavailable, admitting request: ${error.message}`,
       );
 
-      return { rejection: null, isEnforced, release: releaseNothing };
+      return { rejection: null, isEnforced };
     }
   }
 
@@ -156,53 +120,6 @@ export class HttpEgressAdmissionService {
 
   private getSuspensionKey(workspaceId: string): string {
     return `http-egress:suspended:${workspaceId}`;
-  }
-
-  private getConcurrencyKey(workspaceId: string): string {
-    return `http-egress:in-flight:${workspaceId}`;
-  }
-
-  private async acquireConcurrencySlot({
-    workspaceId,
-    requestRef,
-  }: {
-    workspaceId: string;
-    requestRef: string;
-  }): Promise<boolean> {
-    const isAcquired = await this.cacheStorage.runScript<number>({
-      script: ACQUIRE_HTTP_EGRESS_CONCURRENCY_SLOT_SCRIPT,
-      keys: [this.getConcurrencyKey(workspaceId)],
-      args: [
-        requestRef,
-        String(
-          this.twentyConfigService.get('HTTP_EGRESS_WORKSPACE_MAX_CONCURRENCY'),
-        ),
-        String(HTTP_EGRESS_CONCURRENCY_SLOT_TTL_MS),
-      ],
-    });
-
-    return isAcquired === 1;
-  }
-
-  private async releaseConcurrencySlot({
-    workspaceId,
-    requestRef,
-  }: {
-    workspaceId: string;
-    requestRef: string;
-  }): Promise<void> {
-    try {
-      await this.cacheStorage.sortedSetRemove(
-        this.getConcurrencyKey(workspaceId),
-        [requestRef],
-      );
-    } catch (error) {
-      this.logger.error(
-        `Could not release HTTP egress slot for workspace ${workspaceId}, it expires on its own: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-    }
   }
 
   private async consumeRateLimits({

@@ -42,11 +42,7 @@ describe('HttpEgressService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    admission = {
-      rejection: null,
-      isEnforced: true,
-      release: jest.fn().mockResolvedValue(undefined),
-    };
+    admission = { rejection: null, isEnforced: true };
     admissionService = {
       admit: jest.fn().mockImplementation(async () => admission),
       recordBlockedRequest: jest.fn(),
@@ -77,7 +73,7 @@ describe('HttpEgressService', () => {
     jest.restoreAllMocks();
   });
 
-  it('should run an admitted request with the in-process limits and release its slot', async () => {
+  it('should run an admitted request with the in-process limits', async () => {
     const output = await service.execute(VALID_INPUT, TEST_CONTEXT);
 
     expect(output).toEqual({ success: true, message: 'ok', status: 200 });
@@ -89,7 +85,6 @@ describe('HttpEgressService', () => {
       expect.anything(),
     );
     expect(secureHttpClientService.getHttpClient).toHaveBeenCalledWith();
-    expect(admission.release).toHaveBeenCalledTimes(1);
   });
 
   it('should admit with the caller identity and source', async () => {
@@ -99,7 +94,6 @@ describe('HttpEgressService', () => {
       workspaceId: 'workspace-1',
       userWorkspaceId: 'user-workspace-1',
       source: 'workflow-http-test',
-      requestRef: expect.any(String),
     });
   });
 
@@ -173,7 +167,6 @@ describe('HttpEgressService', () => {
     admission = {
       rejection: { reason: 'test-user-rate', retryAfterMs: 41_200 },
       isEnforced: true,
-      release: jest.fn(),
     };
 
     const output = await service.execute(VALID_INPUT, TEST_CONTEXT);
@@ -195,7 +188,6 @@ describe('HttpEgressService', () => {
     admission = {
       rejection: { reason: 'suspended' },
       isEnforced: true,
-      release: jest.fn(),
     };
 
     const output = await service.execute(VALID_INPUT, TEST_CONTEXT);
@@ -208,7 +200,6 @@ describe('HttpEgressService', () => {
     admission = {
       rejection: { reason: 'workspace-rate', retryAfterMs: 1_000 },
       isEnforced: false,
-      release: jest.fn(),
     };
 
     await service.execute(VALID_INPUT, {
@@ -242,14 +233,5 @@ describe('HttpEgressService', () => {
       outcome: 'blocked',
       resolvedAddress: '169.254.169.254',
     });
-  });
-
-  it('should release the slot when the request throws', async () => {
-    mockedExecuteHttpEgressRequest.mockRejectedValue(new Error('boom'));
-
-    await expect(service.execute(VALID_INPUT, TEST_CONTEXT)).rejects.toThrow(
-      'boom',
-    );
-    expect(admission.release).toHaveBeenCalledTimes(1);
   });
 });

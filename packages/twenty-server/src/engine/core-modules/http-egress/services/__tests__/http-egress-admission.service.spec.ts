@@ -17,7 +17,6 @@ const CONFIG: Record<string, unknown> = {
   HTTP_EGRESS_WORKSPACE_THROTTLE_LIMIT: 5000,
   HTTP_EGRESS_TRIAL_WORKSPACE_THROTTLE_LIMIT: 200,
   HTTP_EGRESS_THROTTLE_TTL: 3_600_000,
-  HTTP_EGRESS_WORKSPACE_MAX_CONCURRENCY: 10,
   HTTP_EGRESS_BLOCKED_REQUESTS_BEFORE_SUSPENSION: 20,
 };
 
@@ -29,12 +28,7 @@ describe('HttpEgressAdmissionService', () => {
     tokenBucketConsumeUpTo: jest.Mock;
   };
   let billingCreditAllowanceService: { getSubscriptionPlan: jest.Mock };
-  let cacheStorage: {
-    get: jest.Mock;
-    set: jest.Mock;
-    runScript: jest.Mock;
-    sortedSetRemove: jest.Mock;
-  };
+  let cacheStorage: { get: jest.Mock; set: jest.Mock };
 
   const admit = (
     source: 'workflow-http-test' | 'workflow-http' | 'agent-http-tool',
@@ -44,7 +38,6 @@ describe('HttpEgressAdmissionService', () => {
       workspaceId: 'workspace-1',
       userWorkspaceId,
       source,
-      requestRef: 'request-1',
     });
 
   const getConsumedBucketKeys = (): string[] =>
@@ -64,8 +57,6 @@ describe('HttpEgressAdmissionService', () => {
     cacheStorage = {
       get: jest.fn().mockResolvedValue(undefined),
       set: jest.fn(),
-      runScript: jest.fn().mockResolvedValue(1),
-      sortedSetRemove: jest.fn(),
     };
 
     service = new HttpEgressAdmissionService(
@@ -153,19 +144,15 @@ describe('HttpEgressAdmissionService', () => {
   });
 
   describe('enforcement', () => {
-    it('should reject an exhausted test request and free its slot', async () => {
+    it('should reject an exhausted test request', async () => {
       throttlerService.tryConsumeTokenBuckets.mockResolvedValue([0, 1, 42_000]);
 
       const admission = await admit('workflow-http-test');
 
-      expect(admission).toMatchObject({
+      expect(admission).toEqual({
         rejection: { reason: 'test-user-rate', retryAfterMs: 42_000 },
         isEnforced: true,
       });
-      expect(cacheStorage.sortedSetRemove).toHaveBeenCalledWith(
-        'http-egress:in-flight:workspace-1',
-        ['request-1'],
-      );
     });
 
     it('should only report an exhausted step request while step limits are not enforced', async () => {
@@ -173,15 +160,10 @@ describe('HttpEgressAdmissionService', () => {
 
       const admission = await admit('workflow-http');
 
-      expect(admission).toMatchObject({
-        rejection: { reason: 'workspace-rate' },
+      expect(admission).toEqual({
+        rejection: { reason: 'workspace-rate', retryAfterMs: 1_000 },
         isEnforced: false,
       });
-      expect(cacheStorage.sortedSetRemove).not.toHaveBeenCalled();
-
-      await admission.release();
-
-      expect(cacheStorage.sortedSetRemove).toHaveBeenCalledTimes(1);
     });
 
     it('should enforce step limits once enabled', async () => {
@@ -194,43 +176,14 @@ describe('HttpEgressAdmissionService', () => {
     });
   });
 
-  describe('concurrency', () => {
-    it('should acquire a slot keyed by request and release it', async () => {
-      const admission = await admit('workflow-http-test');
-
-      expect(cacheStorage.runScript).toHaveBeenCalledWith(
-        expect.objectContaining({
-          keys: ['http-egress:in-flight:workspace-1'],
-          args: ['request-1', '10', expect.any(String)],
-        }),
-      );
-
-      await admission.release();
-
-      expect(cacheStorage.sortedSetRemove).toHaveBeenCalledWith(
-        'http-egress:in-flight:workspace-1',
-        ['request-1'],
-      );
-    });
-
-    it('should reject without spending rate tokens when all slots are taken', async () => {
-      cacheStorage.runScript.mockResolvedValue(0);
-
-      const admission = await admit('workflow-http-test');
-
-      expect(admission.rejection).toEqual({ reason: 'concurrency' });
-      expect(throttlerService.tryConsumeTokenBuckets).not.toHaveBeenCalled();
-    });
-  });
-
   describe('suspension', () => {
-    it('should reject a suspended workspace before taking a slot', async () => {
+    it('should reject a suspended workspace without spending rate tokens', async () => {
       cacheStorage.get.mockResolvedValue(true);
 
       const admission = await admit('workflow-http-test');
 
       expect(admission.rejection).toEqual({ reason: 'suspended' });
-      expect(cacheStorage.runScript).not.toHaveBeenCalled();
+      expect(throttlerService.tryConsumeTokenBuckets).not.toHaveBeenCalled();
     });
 
     it('should not suspend while blocked requests stay under the threshold', async () => {
@@ -260,7 +213,7 @@ describe('HttpEgressAdmissionService', () => {
 
   describe('cache failures', () => {
     it('should admit the request when the cache cannot run scripts', async () => {
-      cacheStorage.runScript.mockRejectedValue(
+      throttlerService.tryConsumeTokenBuckets.mockRejectedValue(
         new CacheStorageException(
           'runScript is only supported with Redis cache',
           CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
@@ -270,14 +223,6 @@ describe('HttpEgressAdmissionService', () => {
       const admission = await admit('workflow-http-test');
 
       expect(admission.rejection).toBeNull();
-    });
-
-    it('should not throw when a slot cannot be released', async () => {
-      cacheStorage.sortedSetRemove.mockRejectedValue(new Error('down'));
-
-      const admission = await admit('workflow-http-test');
-
-      await expect(admission.release()).resolves.toBeUndefined();
     });
   });
 });

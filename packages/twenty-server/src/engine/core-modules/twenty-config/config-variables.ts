@@ -2416,15 +2416,6 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
-      'Maximum user-controlled HTTP requests in flight at once per workspace.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  HTTP_EGRESS_WORKSPACE_MAX_CONCURRENCY = 10;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
       'Requests blocked by the SSRF guard within 24 hours after which a workspace cannot make user-controlled HTTP requests for 24 hours.',
     type: ConfigVariableType.NUMBER,
   })
