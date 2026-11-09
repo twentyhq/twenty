@@ -21,6 +21,7 @@ const StyledFailedRow = styled.div`
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 type ChatThreadPendingMessageProps = {
