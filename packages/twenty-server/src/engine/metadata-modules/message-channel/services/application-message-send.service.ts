@@ -18,6 +18,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
 import { sanitizeOutboundEmailSubject } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
+import { getEmailRecipientsError } from 'src/engine/core-modules/tool/tools/email-tool/utils/get-email-recipients-error.util';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { type SendAppChannelMessageEmailInput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.input';
@@ -509,17 +510,33 @@ export class ApplicationMessageSendService {
       bodyConversionResult.document,
     );
 
-    const toRecipients = (handles: string | undefined) =>
-      parseCommaSeparatedEmails(handles).map((handle) => ({ handle }));
+    const handles = {
+      to: parseCommaSeparatedEmails(email.to),
+      cc: parseCommaSeparatedEmails(email.cc),
+      bcc: parseCommaSeparatedEmails(email.bcc),
+    };
+
+    const recipientsError = getEmailRecipientsError(handles);
+
+    if (isDefined(recipientsError)) {
+      throw new MessageChannelException(
+        'Invalid email recipients',
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+        { userFriendlyMessage: recipientsError },
+      );
+    }
+
+    const toRecipients = (recipientHandles: string[]) =>
+      recipientHandles.map((handle) => ({ handle }));
 
     return {
       text: plainText,
-      to: toRecipients(email.to),
+      to: toRecipients(handles.to),
       email: {
         subject: await sanitizeOutboundEmailSubject(email.subject),
         html,
-        cc: toRecipients(email.cc),
-        bcc: toRecipients(email.bcc),
+        cc: toRecipients(handles.cc),
+        bcc: toRecipients(handles.bcc),
         inReplyTo: email.inReplyTo ?? null,
       },
     };

@@ -37,6 +37,7 @@ const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const CHANNEL_HANDLE = 'urn:li:person:jane';
 const CONTACT_HANDLE = 'urn:li:person:ada';
+const CONTACT_EMAIL = 'ada@example.com';
 const THREAD_EXTERNAL_ID = 'urn:li:conversation:1';
 
 const CREATE_CHANNEL_MUTATION = gql`
@@ -474,8 +475,8 @@ describe('sendAppChannelMessage (e2e)', () => {
       messageChannelId,
       messageThreadId,
       email: {
-        to: CONTACT_HANDLE,
-        cc: 'urn:li:person:grace',
+        to: CONTACT_EMAIL,
+        cc: 'grace@example.com',
         subject: 'Re: Next week',
         body: 'Tuesday works',
         inReplyTo: `app:${applicationDbId}:${messageChannelId}:inbound-1`,
@@ -487,12 +488,12 @@ describe('sendAppChannelMessage (e2e)', () => {
       expect.objectContaining({
         messagingProviderName: 'outlook-mail',
         text: 'Tuesday works',
-        recipients: [{ handle: CONTACT_HANDLE, displayName: 'Ada Lovelace' }],
+        recipients: [{ handle: CONTACT_EMAIL, displayName: null }],
         conversationStyle: 'email',
         email: {
           subject: 'Re: Next week',
           html: expect.stringContaining('Tuesday works'),
-          cc: [{ handle: 'urn:li:person:grace', displayName: null }],
+          cc: [{ handle: 'grace@example.com', displayName: null }],
           bcc: [],
           inReplyToExternalId: 'inbound-1',
         },
@@ -514,9 +515,50 @@ describe('sendAppChannelMessage (e2e)', () => {
     expect(sentMessage).toEqual({ subject: 'Re: Next week' });
     expect(participants).toEqual([
       { role: MessageParticipantRole.FROM, handle: CHANNEL_HANDLE },
-      { role: MessageParticipantRole.TO, handle: CONTACT_HANDLE },
-      { role: MessageParticipantRole.CC, handle: 'urn:li:person:grace' },
+      { role: MessageParticipantRole.TO, handle: CONTACT_EMAIL },
+      { role: MessageParticipantRole.CC, handle: 'grace@example.com' },
     ]);
+  });
+
+  it('sends an email-style reply with only a subject', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: EMAIL_MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      email: { to: CONTACT_EMAIL, subject: 'Re: Next week', body: '' },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(readSendExecutions()).toEqual([
+      expect.objectContaining({
+        conversationStyle: 'email',
+        email: expect.objectContaining({ subject: 'Re: Next week' }),
+      }),
+    ]);
+  });
+
+  it('refuses an email-style reply to an invalid address without calling the app', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: EMAIL_MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      email: {
+        to: `${CONTACT_EMAIL}, not-an-email`,
+        subject: 'Re: Next week',
+        body: 'Tuesday works',
+      },
+    });
+
+    expect(response.body.errors?.[0]?.message).toBe('Invalid email recipients');
+    expect(readSendExecutions()).toEqual([]);
   });
 
   it('refuses a reply that is both a text and an email', async () => {
@@ -529,7 +571,7 @@ describe('sendAppChannelMessage (e2e)', () => {
       messageChannelId,
       messageThreadId,
       text: 'Tuesday works',
-      email: { to: CONTACT_HANDLE, subject: 'Re: Next week', body: 'Hi' },
+      email: { to: CONTACT_EMAIL, subject: 'Re: Next week', body: 'Hi' },
     });
 
     expect(response.body.errors).toBeDefined();
@@ -561,7 +603,7 @@ describe('sendAppChannelMessage (e2e)', () => {
     const response = await send({
       messageChannelId,
       messageThreadId,
-      email: { to: CONTACT_HANDLE, subject: 'Re: Next week', body: 'Hi' },
+      email: { to: CONTACT_EMAIL, subject: 'Re: Next week', body: 'Hi' },
     });
 
     expect(response.body.errors).toBeDefined();

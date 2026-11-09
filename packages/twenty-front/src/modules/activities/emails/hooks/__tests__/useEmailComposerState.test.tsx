@@ -93,37 +93,42 @@ const APP_REPLY_EMAIL_INPUT = {
   inReplyTo: '<inbound-1@app>',
 };
 
-const createSendAppChannelMessageMock = ({
-  isExpectedIdempotencyKey,
-  error,
-}: {
-  isExpectedIdempotencyKey: (idempotencyKey: string) => boolean;
-  error?: Error;
-}): MockLink.MockedResponse<
+type SendAppChannelMessageMockedResponse = MockLink.MockedResponse<
   SendAppChannelMessageMutation,
   SendAppChannelMessageMutationVariables
-> => ({
-  request: {
-    query: SEND_APP_CHANNEL_MESSAGE,
-    variables: ({ input }) =>
-      input.messageChannelId === 'channel-1' &&
-      input.messageThreadId === 'message-thread-1' &&
-      JSON.stringify(input.email) === JSON.stringify(APP_REPLY_EMAIL_INPUT) &&
-      isExpectedIdempotencyKey(input.idempotencyKey),
+>;
+
+const buildSendAppChannelMessageRequest = (
+  isExpectedIdempotencyKey: (idempotencyKey: string) => boolean,
+): SendAppChannelMessageMockedResponse['request'] => ({
+  query: SEND_APP_CHANNEL_MESSAGE,
+  variables: ({ input }) =>
+    input.messageChannelId === 'channel-1' &&
+    input.messageThreadId === 'message-thread-1' &&
+    JSON.stringify(input.email) === JSON.stringify(APP_REPLY_EMAIL_INPUT) &&
+    isExpectedIdempotencyKey(input.idempotencyKey),
+});
+
+const createSendAppChannelMessageMock = (
+  isExpectedIdempotencyKey: (idempotencyKey: string) => boolean,
+): SendAppChannelMessageMockedResponse => ({
+  request: buildSendAppChannelMessageRequest(isExpectedIdempotencyKey),
+  result: {
+    data: {
+      sendAppChannelMessage: {
+        __typename: 'SendAppChannelMessageOutput',
+        messageId: 'message-1',
+        messageThreadId: 'message-thread-1',
+      },
+    },
   },
-  ...(error
-    ? { error }
-    : {
-        result: {
-          data: {
-            sendAppChannelMessage: {
-              __typename: 'SendAppChannelMessageOutput',
-              messageId: 'message-1',
-              messageThreadId: 'message-thread-1',
-            },
-          },
-        },
-      }),
+});
+
+const createFailingSendAppChannelMessageMock = (
+  isExpectedIdempotencyKey: (idempotencyKey: string) => boolean,
+): SendAppChannelMessageMockedResponse => ({
+  request: buildSendAppChannelMessageRequest(isExpectedIdempotencyKey),
+  error: new Error('Network error'),
 });
 
 const renderAppComposerState = ({
@@ -142,6 +147,7 @@ const renderAppComposerState = ({
         defaultInReplyTo: '<inbound-1@app>',
         appReplyTarget: {
           connectedAccountId: 'account-1',
+          handle: 'jane@outlook.com',
           messageChannelId: 'channel-1',
           messageThreadId: 'message-thread-1',
         },
@@ -240,9 +246,9 @@ describe('useEmailComposerState', () => {
 
     const { result } = renderAppComposerState({
       mocks: [
-        createSendAppChannelMessageMock({
-          isExpectedIdempotencyKey: (idempotencyKey) => idempotencyKey !== '',
-        }),
+        createSendAppChannelMessageMock(
+          (idempotencyKey) => idempotencyKey !== '',
+        ),
       ],
       onSent,
     });
@@ -261,18 +267,14 @@ describe('useEmailComposerState', () => {
 
     const { result } = renderAppComposerState({
       mocks: [
-        createSendAppChannelMessageMock({
-          isExpectedIdempotencyKey: (idempotencyKey) => {
-            sentIdempotencyKeys.push(idempotencyKey);
+        createFailingSendAppChannelMessageMock((idempotencyKey) => {
+          sentIdempotencyKeys.push(idempotencyKey);
 
-            return true;
-          },
-          error: new Error('Network error'),
+          return true;
         }),
-        createSendAppChannelMessageMock({
-          isExpectedIdempotencyKey: (idempotencyKey) =>
-            idempotencyKey === sentIdempotencyKeys[0],
-        }),
+        createSendAppChannelMessageMock(
+          (idempotencyKey) => idempotencyKey === sentIdempotencyKeys[0],
+        ),
       ],
       onSent,
     });

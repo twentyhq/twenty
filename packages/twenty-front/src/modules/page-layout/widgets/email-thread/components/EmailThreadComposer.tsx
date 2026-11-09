@@ -176,6 +176,7 @@ export const EmailThreadComposer = ({
         <StyledComposerContainer>
           <EmailComposerFields
             composerState={composerState}
+            appSender={appReplyTarget}
             onAttachFiles={
               isInSidePanel || !canAttachFiles
                 ? undefined

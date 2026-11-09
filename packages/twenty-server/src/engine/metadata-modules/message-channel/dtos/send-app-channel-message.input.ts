@@ -13,10 +13,8 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MAX_APP_MESSAGE_TEXT_LENGTH } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 
-// Same shape as sendEmail's input, for providers whose conversations are emails
 @InputType('SendAppChannelMessageEmailInput')
 export class SendAppChannelMessageEmailInput {
-  // comma-separated handles
   @Field()
   @IsString()
   @IsNotEmpty()
@@ -37,13 +35,10 @@ export class SendAppChannelMessageEmailInput {
   @MaxLength(998)
   subject: string;
 
-  // the email composer document, as sent to sendEmail
   @Field()
   @IsString()
-  @IsNotEmpty()
   body: string;
 
-  // headerMessageId of the message being replied to
   @Field({ nullable: true })
   @IsOptional()
   @IsString()

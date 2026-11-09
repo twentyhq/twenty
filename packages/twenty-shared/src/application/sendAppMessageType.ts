@@ -10,7 +10,6 @@ export type SendAppMessageEmail = {
   html: string;
   cc: SendAppMessageRecipient[];
   bcc: SendAppMessageRecipient[];
-  // externalId of the message being replied to, when Twenty knows it
   inReplyToExternalId: string | null;
 };
 

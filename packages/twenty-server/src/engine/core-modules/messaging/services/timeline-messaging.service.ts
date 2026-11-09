@@ -582,6 +582,14 @@ export class TimelineMessagingService {
             return [];
           }
 
+          const conversationStyle = isDefined(
+            channel.messagingProviderUniversalIdentifier,
+          )
+            ? (conversationStyleByMessagingProviderUniversalIdentifier.get(
+                channel.messagingProviderUniversalIdentifier,
+              ) ?? null)
+            : null;
+
           return [
             [
               channel.id,
@@ -589,12 +597,7 @@ export class TimelineMessagingService {
                 type: channel.type,
                 provider: connectedAccount.provider,
                 applicationId: connectedAccount.applicationId ?? null,
-                conversationStyle:
-                  (isDefined(channel.messagingProviderUniversalIdentifier)
-                    ? conversationStyleByMessagingProviderUniversalIdentifier.get(
-                        channel.messagingProviderUniversalIdentifier,
-                      )
-                    : undefined) ?? null,
+                conversationStyle,
               },
             ],
           ];

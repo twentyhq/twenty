@@ -9,13 +9,13 @@ import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEm
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
+import { getAppReplyTarget } from '@/page-layout/widgets/email-thread/utils/getAppReplyTarget';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type EmailThreadWidgetContentProps = {
@@ -71,16 +71,11 @@ export const EmailThreadWidgetContent = ({
 
   const canReply = isDefined(replyContext) && !replyContext.loading;
 
-  const appReplyTarget =
-    canReply &&
-    replyContext.connectedAccountProvider === ConnectedAccountProvider.APP &&
-    isDefined(messageChannelId)
-      ? {
-          connectedAccountId: replyContext.connectedAccountId,
-          messageChannelId,
-          messageThreadId: targetRecord.id,
-        }
-      : null;
+  const appReplyTarget = getAppReplyTarget({
+    replyContext,
+    messageChannelId,
+    messageThreadId: targetRecord.id,
+  });
 
   const messagesCount = messages.length;
   const is5OrMoreMessages = messagesCount >= 5;
