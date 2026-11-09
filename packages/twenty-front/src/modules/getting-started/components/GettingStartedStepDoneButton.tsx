@@ -2,7 +2,7 @@ import { GettingStartedChatThreadDoneButton } from '@/getting-started/components
 import { GettingStartedWorkflowDoneButton } from '@/getting-started/components/GettingStartedWorkflowDoneButton';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_BUTTONS } from '@/getting-started/constants/GettingStartedCustomStepDoneButtons';
 import { type GettingStartedStepDoneButtonProps } from '@/getting-started/types/GettingStartedStepDoneButtonProps';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { GettingStartedStepKind } from '~/generated-metadata/graphql';
 
@@ -28,5 +28,7 @@ export const GettingStartedStepDoneButton = ({
         <CustomStepDoneButton stepDefinition={stepDefinition} />
       ) : null;
     }
+    default:
+      return assertUnreachable(stepDefinition.kind);
   }
 };
