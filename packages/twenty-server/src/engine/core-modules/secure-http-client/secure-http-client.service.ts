@@ -10,7 +10,7 @@ import axios, {
   type InternalAxiosRequestConfig,
   isAxiosError,
 } from 'axios';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
@@ -35,7 +35,7 @@ type LogAttributes = Record<string, string | number | undefined>;
 
 const formatLogAttributes = (attributes: LogAttributes): string =>
   Object.entries(attributes)
-    .filter(([, value]) => isDefined(value) && value !== '')
+    .filter(([, value]) => isNumber(value) || isNonEmptyString(value))
     .map(([key, value]) => `${key}=${value}`)
     .join(' ');
 
