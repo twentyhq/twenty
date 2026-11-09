@@ -2686,7 +2686,7 @@ msgstr "افزوده‌شده در {beautifiedCreatedAt}"
 #. js-lingui-id: WHJA3l
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
-msgstr ""
+msgstr "<0>تاریخ تمدید</0> به <1>{companiesLabel}</1> اضافه شد"
 
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
@@ -3045,7 +3045,7 @@ msgstr "هوش مصنوعی متوقف شده است"
 #. js-lingui-id: u9aqca
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "AI matches your columns to fields, even renamed ones."
-msgstr ""
+msgstr "هوش مصنوعی ستون‌های شما را با فیلدها تطبیق می‌دهد، حتی مواردی که تغییر نام داده‌اند."
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3650,7 +3650,7 @@ msgstr "هنگام اعتبارسنجی تغییرات شما یک خطای دا
 #. js-lingui-id: 2SfoVo
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "An Invoices object linked to Subscriptions and Companies."
-msgstr ""
+msgstr "یک شیء فاکتورها که به اشتراک‌ها و شرکت‌ها مرتبط است."
 
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -6582,7 +6582,7 @@ msgstr "بستن ویدیو"
 #. js-lingui-id: fYGMGN
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Closes in 6 days"
-msgstr ""
+msgstr "۶ روز دیگر بسته می‌شود"
 
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -6873,7 +6873,7 @@ msgstr "شرکت‌ها"
 #. js-lingui-id: 7i8j3G
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Company"
-msgstr ""
+msgstr "شرکت"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -8332,7 +8332,7 @@ msgstr "ایجادشده توسط"
 #. js-lingui-id: AruIkC
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created object <0>{subscriptionsLabel}</0>"
-msgstr ""
+msgstr "شیء <0>{subscriptionsLabel}</0> ایجاد شد"
 
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
@@ -8348,7 +8348,7 @@ msgstr "ایجاد یا به‌روزرسانی شد"
 #. js-lingui-id: nyr6nA
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created view <0>Renewals this quarter</0>"
-msgstr ""
+msgstr "نمای <0>تمدیدها در این سه‌ماهه</0> ایجاد شد"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -10406,7 +10406,7 @@ msgstr "پیش‌نویس شد"
 #. js-lingui-id: 5t1yRu
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafted <0>4 follow-up emails</0>"
-msgstr ""
+msgstr "<0>۴ ایمیل پیگیری</0> پیش‌نویس شد"
 
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -10421,7 +10421,7 @@ msgstr "در حال تهیه پیش‌نویس ایمیل"
 #. js-lingui-id: BnOv+M
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafts only. You review and send."
-msgstr ""
+msgstr "فقط پیش‌نویس‌ها. شما بررسی و ارسال می‌کنید."
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -12041,7 +12041,7 @@ msgstr "هر دقیقه"
 #. js-lingui-id: pjZ9WF
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Every Monday"
-msgstr ""
+msgstr "هر دوشنبه"
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13728,7 +13728,7 @@ msgstr "{objectLabel} یافت شد"
 #. js-lingui-id: laQ+m7
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Found <0>4 deals</0> closing in the next 30 days"
-msgstr ""
+msgstr "<0>۴ معامله</0> که در ۳۰ روز آینده بسته می‌شوند پیدا شد"
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -20303,7 +20303,7 @@ msgstr "هنوز در این سطح تلاش اندازه‌گیری نشده ا
 #. js-lingui-id: PBxg/E
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Not now"
-msgstr ""
+msgstr "اکنون نه"
 
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
@@ -21116,7 +21116,7 @@ msgstr "عملیات"
 #. js-lingui-id: 4MyDFl
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Opportunities"
-msgstr ""
+msgstr "فرصت‌ها"
 
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
@@ -21750,7 +21750,7 @@ msgstr "درخواست‌های در انتظار"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "People"
-msgstr ""
+msgstr "افراد"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -22847,7 +22847,7 @@ msgstr "خواندن دستورهای سیستمی"
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Read the last emails and meetings for each"
-msgstr ""
+msgstr "آخرین ایمیل‌ها و جلسه‌های هرکدام را بخوانید"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -27474,7 +27474,7 @@ msgstr "اشتراک در {0} به صورت‌حساب ماهانه تغییر �
 #. js-lingui-id: P6F38F
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Subscriptions"
-msgstr ""
+msgstr "اشتراک‌ها"
 
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -28044,7 +28044,7 @@ msgstr "نشانی‌ای که فضای کاری شما از آن ایمیل ا�
 #. js-lingui-id: PKwDg+
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "The agent asks before creating anything."
-msgstr ""
+msgstr "عامل پیش از ایجاد هر چیزی سؤال می‌پرسد."
 
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -29366,7 +29366,7 @@ msgstr "مصرف هوش مصنوعی را در فضای کاری خود پیگی
 #. js-lingui-id: LpPRBt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Track invoices too?"
-msgstr ""
+msgstr "فاکتورها را هم پیگیری می‌کنید؟"
 
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
@@ -31700,7 +31700,7 @@ msgstr "همان‌طور که در DPA آمده است، ظرف ۷۲ ساعت �
 #. js-lingui-id: InKpMt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "We sell subscriptions to design teams."
-msgstr ""
+msgstr "ما اشتراک‌ها را به تیم‌های طراحی می‌فروشیم."
 
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx

@@ -2686,7 +2686,7 @@ msgstr "Додато {beautifiedCreatedAt}"
 #. js-lingui-id: WHJA3l
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
-msgstr ""
+msgstr "Додат је <0>Датум обнове</0> у <1>{companiesLabel}</1>"
 
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
@@ -3045,7 +3045,7 @@ msgstr "ВИ је паузирана"
 #. js-lingui-id: u9aqca
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "AI matches your columns to fields, even renamed ones."
-msgstr ""
+msgstr "AI упарује ваше колоне са пољима, чак и преименованим."
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3650,7 +3650,7 @@ msgstr "Дошло је до унутрашње грешке приликом в
 #. js-lingui-id: 2SfoVo
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "An Invoices object linked to Subscriptions and Companies."
-msgstr ""
+msgstr "Објекат Фактуре повезан са Претплатама и Компанијама."
 
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -6582,7 +6582,7 @@ msgstr "Затвори видео"
 #. js-lingui-id: fYGMGN
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Closes in 6 days"
-msgstr ""
+msgstr "Затвара се за 6 дана"
 
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -6873,7 +6873,7 @@ msgstr "Компаније"
 #. js-lingui-id: 7i8j3G
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Company"
-msgstr ""
+msgstr "Компанија"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -8332,7 +8332,7 @@ msgstr "Креирао/ла"
 #. js-lingui-id: AruIkC
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created object <0>{subscriptionsLabel}</0>"
-msgstr ""
+msgstr "Креиран је објекат <0>{subscriptionsLabel}</0>"
 
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
@@ -8348,7 +8348,7 @@ msgstr "Креирано или ажурирано"
 #. js-lingui-id: nyr6nA
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created view <0>Renewals this quarter</0>"
-msgstr ""
+msgstr "Креиран је приказ <0>Обнове у овом кварталу</0>"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -10406,7 +10406,7 @@ msgstr "Сачувано као нацрт"
 #. js-lingui-id: 5t1yRu
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafted <0>4 follow-up emails</0>"
-msgstr ""
+msgstr "Припремљена су <0>4 имејла за накнадно праћење</0>"
 
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -10421,7 +10421,7 @@ msgstr "Креирање нацрта имејла"
 #. js-lingui-id: BnOv+M
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafts only. You review and send."
-msgstr ""
+msgstr "Само нацрти. Ви прегледате и шаљете."
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -12041,7 +12041,7 @@ msgstr "сваког минута"
 #. js-lingui-id: pjZ9WF
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Every Monday"
-msgstr ""
+msgstr "Сваког понедељка"
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13728,7 +13728,7 @@ msgstr "Пронађено {objectLabel}"
 #. js-lingui-id: laQ+m7
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Found <0>4 deals</0> closing in the next 30 days"
-msgstr ""
+msgstr "Пронађена су <0>4 посла</0> која се затварају у наредних 30 дана"
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -20303,7 +20303,7 @@ msgstr "Још није измерено при овом нивоу напора
 #. js-lingui-id: PBxg/E
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Not now"
-msgstr ""
+msgstr "Не сада"
 
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
@@ -21116,7 +21116,7 @@ msgstr "Операције"
 #. js-lingui-id: 4MyDFl
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Opportunities"
-msgstr ""
+msgstr "Прилике"
 
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
@@ -21750,7 +21750,7 @@ msgstr "Захтеви на чекању"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "People"
-msgstr ""
+msgstr "Лица"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -22847,7 +22847,7 @@ msgstr "Прочитајте системске промптове"
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Read the last emails and meetings for each"
-msgstr ""
+msgstr "Прочитајте последње имејлове и састанке за сваки од њих"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -27474,7 +27474,7 @@ msgstr "Претплата ће бити пребачена на месечну 
 #. js-lingui-id: P6F38F
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Subscriptions"
-msgstr ""
+msgstr "Претплате"
 
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -28044,7 +28044,7 @@ msgstr "Адреса са које ће ваш радни простор сла�
 #. js-lingui-id: PKwDg+
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "The agent asks before creating anything."
-msgstr ""
+msgstr "Агент пита пре него што било шта креира."
 
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -29366,7 +29366,7 @@ msgstr "Пратите потрошњу AI у свом радном просто
 #. js-lingui-id: LpPRBt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Track invoices too?"
-msgstr ""
+msgstr "Да ли да пратите и фактуре?"
 
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
@@ -31700,7 +31700,7 @@ msgstr "Обавестићемо вас у року од 72 сата, како �
 #. js-lingui-id: InKpMt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "We sell subscriptions to design teams."
-msgstr ""
+msgstr "Продајемо претплате тимовима за дизајн."
 
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx

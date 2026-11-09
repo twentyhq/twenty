@@ -2686,7 +2686,7 @@ msgstr "Dodano {beautifiedCreatedAt}"
 #. js-lingui-id: WHJA3l
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
-msgstr ""
+msgstr "Dodano <0>datę odnowienia</0> do <1>{companiesLabel}</1>"
 
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
@@ -3045,7 +3045,7 @@ msgstr "AI jest wstrzymana"
 #. js-lingui-id: u9aqca
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "AI matches your columns to fields, even renamed ones."
-msgstr ""
+msgstr "AI dopasowuje kolumny do pól, nawet jeśli zmieniono ich nazwy."
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3650,7 +3650,7 @@ msgstr "Wystąpił błąd wewnętrzny podczas walidacji zmian. Skontaktuj się z
 #. js-lingui-id: 2SfoVo
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "An Invoices object linked to Subscriptions and Companies."
-msgstr ""
+msgstr "Obiekt Faktury powiązany z Subskrypcjami i Firmami."
 
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -6582,7 +6582,7 @@ msgstr "Zamknij wideo"
 #. js-lingui-id: fYGMGN
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Closes in 6 days"
-msgstr ""
+msgstr "Zamknięcie za 6 dni"
 
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -6873,7 +6873,7 @@ msgstr "Firmy"
 #. js-lingui-id: 7i8j3G
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Company"
-msgstr ""
+msgstr "Firma"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -8332,7 +8332,7 @@ msgstr "Utworzone przez"
 #. js-lingui-id: AruIkC
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created object <0>{subscriptionsLabel}</0>"
-msgstr ""
+msgstr "Utworzono obiekt <0>{subscriptionsLabel}</0>"
 
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
@@ -8348,7 +8348,7 @@ msgstr "Utworzono lub zaktualizowano"
 #. js-lingui-id: nyr6nA
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created view <0>Renewals this quarter</0>"
-msgstr ""
+msgstr "Utworzono widok <0>Odnowienia w tym kwartale</0>"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -10406,7 +10406,7 @@ msgstr "Zapisano jako szkic"
 #. js-lingui-id: 5t1yRu
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafted <0>4 follow-up emails</0>"
-msgstr ""
+msgstr "Przygotowano <0>4 e-maile uzupełniające</0>"
 
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -10421,7 +10421,7 @@ msgstr "Tworzenie szkicu wiadomości e-mail"
 #. js-lingui-id: BnOv+M
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafts only. You review and send."
-msgstr ""
+msgstr "Tylko wersje robocze. Ty je sprawdzasz i wysyłasz."
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -12041,7 +12041,7 @@ msgstr "co minutę"
 #. js-lingui-id: pjZ9WF
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Every Monday"
-msgstr ""
+msgstr "W każdy poniedziałek"
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13728,7 +13728,7 @@ msgstr "Znaleziono {objectLabel}"
 #. js-lingui-id: laQ+m7
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Found <0>4 deals</0> closing in the next 30 days"
-msgstr ""
+msgstr "Znaleziono <0>4 transakcje</0>, które zostaną zamknięte w ciągu następnych 30 dni"
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -20303,7 +20303,7 @@ msgstr "Nie zmierzono jeszcze przy tym poziomie wysiłku. Wyświetlany jest odcz
 #. js-lingui-id: PBxg/E
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Not now"
-msgstr ""
+msgstr "Nie teraz"
 
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
@@ -21116,7 +21116,7 @@ msgstr "Operacje"
 #. js-lingui-id: 4MyDFl
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Opportunities"
-msgstr ""
+msgstr "Szanse"
 
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
@@ -21750,7 +21750,7 @@ msgstr "Oczekujące żądania"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "People"
-msgstr ""
+msgstr "Osoby"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -22847,7 +22847,7 @@ msgstr "Przeczytaj prompty systemowe"
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Read the last emails and meetings for each"
-msgstr ""
+msgstr "Przeczytaj ostatnie e-maile i informacje ze spotkań dla każdej z nich"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -27474,7 +27474,7 @@ msgstr "Subskrypcja zostanie przełączona na rozliczenie miesięczne w dniu {0}
 #. js-lingui-id: P6F38F
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Subscriptions"
-msgstr ""
+msgstr "Subskrypcje"
 
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -28044,7 +28044,7 @@ msgstr "Adres, z którego twoja przestrzeń robocza będzie wysyłać i odbiera�
 #. js-lingui-id: PKwDg+
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "The agent asks before creating anything."
-msgstr ""
+msgstr "Agent pyta, zanim cokolwiek utworzy."
 
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -29366,7 +29366,7 @@ msgstr "Śledź zużycie AI w swojej przestrzeni roboczej."
 #. js-lingui-id: LpPRBt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Track invoices too?"
-msgstr ""
+msgstr "Śledzić także faktury?"
 
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
@@ -31700,7 +31700,7 @@ msgstr "Powiadomimy Cię w ciągu 72 godzin, zgodnie z postanowieniami DPA"
 #. js-lingui-id: InKpMt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "We sell subscriptions to design teams."
-msgstr ""
+msgstr "Sprzedajemy subskrypcje zespołom projektowym."
 
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx

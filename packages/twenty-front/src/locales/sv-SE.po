@@ -2686,7 +2686,7 @@ msgstr "Tillagd {beautifiedCreatedAt}"
 #. js-lingui-id: WHJA3l
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
-msgstr ""
+msgstr "Lade till <0>Förnyelsedatum</0> i <1>{companiesLabel}</1>"
 
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
@@ -3045,7 +3045,7 @@ msgstr "AI är pausad"
 #. js-lingui-id: u9aqca
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "AI matches your columns to fields, even renamed ones."
-msgstr ""
+msgstr "AI matchar dina kolumner med fält, även om de har bytt namn."
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3650,7 +3650,7 @@ msgstr "Ett internt fel inträffade vid validering av dina ändringar. Vänligen
 #. js-lingui-id: 2SfoVo
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "An Invoices object linked to Subscriptions and Companies."
-msgstr ""
+msgstr "Ett fakturaobjekt länkat till prenumerationer och företag."
 
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -6582,7 +6582,7 @@ msgstr "Stäng video"
 #. js-lingui-id: fYGMGN
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Closes in 6 days"
-msgstr ""
+msgstr "Avslutas om 6 dagar"
 
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -6873,7 +6873,7 @@ msgstr "Företag"
 #. js-lingui-id: 7i8j3G
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Company"
-msgstr ""
+msgstr "Företag"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -8332,7 +8332,7 @@ msgstr "Skapad av"
 #. js-lingui-id: AruIkC
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created object <0>{subscriptionsLabel}</0>"
-msgstr ""
+msgstr "Skapade objektet <0>{subscriptionsLabel}</0>"
 
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
@@ -8348,7 +8348,7 @@ msgstr "Skapad eller uppdaterad"
 #. js-lingui-id: nyr6nA
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created view <0>Renewals this quarter</0>"
-msgstr ""
+msgstr "Skapade vyn <0>Förnyelser detta kvartal</0>"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -10406,7 +10406,7 @@ msgstr "Utkast skapades"
 #. js-lingui-id: 5t1yRu
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafted <0>4 follow-up emails</0>"
-msgstr ""
+msgstr "Skapade utkast till <0>4 uppföljningsmejl</0>"
 
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -10421,7 +10421,7 @@ msgstr "Skapar e-postutkast"
 #. js-lingui-id: BnOv+M
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafts only. You review and send."
-msgstr ""
+msgstr "Endast utkast. Du granskar och skickar."
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -12041,7 +12041,7 @@ msgstr "varje minut"
 #. js-lingui-id: pjZ9WF
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Every Monday"
-msgstr ""
+msgstr "Varje måndag"
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13728,7 +13728,7 @@ msgstr "Hittade {objectLabel}"
 #. js-lingui-id: laQ+m7
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Found <0>4 deals</0> closing in the next 30 days"
-msgstr ""
+msgstr "Hittade <0>4 affärer</0> som avslutas inom de närmaste 30 dagarna"
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -20305,7 +20305,7 @@ msgstr "Ännu inte uppmätt vid denna ansträngningsnivå. Visar basmodellens v�
 #. js-lingui-id: PBxg/E
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Not now"
-msgstr ""
+msgstr "Inte nu"
 
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
@@ -21118,7 +21118,7 @@ msgstr "Operationer"
 #. js-lingui-id: 4MyDFl
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Opportunities"
-msgstr ""
+msgstr "Affärsmöjligheter"
 
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
@@ -21752,7 +21752,7 @@ msgstr "Väntande förfrågningar"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "People"
-msgstr ""
+msgstr "Personer"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -22849,7 +22849,7 @@ msgstr "Läs systeminstruktionerna"
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Read the last emails and meetings for each"
-msgstr ""
+msgstr "Läs de senaste e-postmeddelandena och mötena för varje"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -27478,7 +27478,7 @@ msgstr "Prenumerationen kommer att bytas till månadsvis fakturering den {0}."
 #. js-lingui-id: P6F38F
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Subscriptions"
-msgstr ""
+msgstr "Prenumerationer"
 
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -28050,7 +28050,7 @@ msgstr "Adressen som din arbetsyta kommer att skicka och ta emot e-post från (t
 #. js-lingui-id: PKwDg+
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "The agent asks before creating anything."
-msgstr ""
+msgstr "Agenten frågar innan den skapar något."
 
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -29374,7 +29374,7 @@ msgstr "Spåra AI-förbrukning i din arbetsyta."
 #. js-lingui-id: LpPRBt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Track invoices too?"
-msgstr ""
+msgstr "Spåra även fakturor?"
 
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
@@ -31708,7 +31708,7 @@ msgstr "Vi meddelar dig inom 72 timmar, enligt vad som anges i DPA"
 #. js-lingui-id: InKpMt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "We sell subscriptions to design teams."
-msgstr ""
+msgstr "Vi säljer prenumerationer till designteam."
 
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx

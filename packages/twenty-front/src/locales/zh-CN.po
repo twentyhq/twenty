@@ -2686,7 +2686,7 @@ msgstr "已添加 {beautifiedCreatedAt}"
 #. js-lingui-id: WHJA3l
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Added <0>Renewal date</0> to <1>{companiesLabel}</1>"
-msgstr ""
+msgstr "已将<0>续订日期</0>添加到<1>{companiesLabel}</1>"
 
 #. js-lingui-id: 9iIYOy
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
@@ -3045,7 +3045,7 @@ msgstr "AI 已暂停"
 #. js-lingui-id: u9aqca
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "AI matches your columns to fields, even renamed ones."
-msgstr ""
+msgstr "AI 会将您的列与字段匹配，即使字段已重命名也没问题。"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -3650,7 +3650,7 @@ msgstr "验证更改时发生内部错误。请联系支持。"
 #. js-lingui-id: 2SfoVo
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "An Invoices object linked to Subscriptions and Companies."
-msgstr ""
+msgstr "一个与订阅和公司关联的发票对象。"
 
 #. js-lingui-id: U+NKyj
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -6582,7 +6582,7 @@ msgstr "关闭视频"
 #. js-lingui-id: fYGMGN
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Closes in 6 days"
-msgstr ""
+msgstr "将在 6 天后截止"
 
 #. js-lingui-id: XLMJ7O
 #: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
@@ -6873,7 +6873,7 @@ msgstr "公司"
 #. js-lingui-id: 7i8j3G
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Company"
-msgstr ""
+msgstr "公司"
 
 #. js-lingui-id: awM9hH
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -8332,7 +8332,7 @@ msgstr "创建者"
 #. js-lingui-id: AruIkC
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created object <0>{subscriptionsLabel}</0>"
-msgstr ""
+msgstr "已创建对象 <0>{subscriptionsLabel}</0>"
 
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
@@ -8348,7 +8348,7 @@ msgstr "已创建或已更新"
 #. js-lingui-id: nyr6nA
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Created view <0>Renewals this quarter</0>"
-msgstr ""
+msgstr "已创建视图 <0>本季度续订</0>"
 
 #. js-lingui-id: sfLpPB
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -10406,7 +10406,7 @@ msgstr "已生成草稿"
 #. js-lingui-id: 5t1yRu
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafted <0>4 follow-up emails</0>"
-msgstr ""
+msgstr "已起草 <0>4 封跟进电子邮件</0>"
 
 #. js-lingui-id: vXM54W
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -10421,7 +10421,7 @@ msgstr "正在生成邮件草稿"
 #. js-lingui-id: BnOv+M
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Drafts only. You review and send."
-msgstr ""
+msgstr "仅起草。由您审核并发送。"
 
 #. js-lingui-id: XKUtpI
 #: src/modules/activities/files/components/DropZone.tsx
@@ -12041,7 +12041,7 @@ msgstr "每分钟"
 #. js-lingui-id: pjZ9WF
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Every Monday"
-msgstr ""
+msgstr "每周一"
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13728,7 +13728,7 @@ msgstr "已找到 {objectLabel}"
 #. js-lingui-id: laQ+m7
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Found <0>4 deals</0> closing in the next 30 days"
-msgstr ""
+msgstr "发现 <0>4 笔交易</0>将在未来 30 天内成交"
 
 #. js-lingui-id: 5Vg0Q7
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
@@ -20303,7 +20303,7 @@ msgstr "尚未以此推理强度进行测量。正在显示基础模型的读数
 #. js-lingui-id: PBxg/E
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Not now"
-msgstr ""
+msgstr "暂不"
 
 #. js-lingui-id: IzW9bK
 #: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
@@ -21116,7 +21116,7 @@ msgstr "操作"
 #. js-lingui-id: 4MyDFl
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "Opportunities"
-msgstr ""
+msgstr "机会"
 
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
@@ -21750,7 +21750,7 @@ msgstr "待处理请求"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 msgid "People"
-msgstr ""
+msgstr "人员"
 
 #. js-lingui-id: 5ls+QH
 #: src/modules/side-panel/pages/add-to-message-list/hooks/useAddPeopleToMessageList.ts
@@ -22847,7 +22847,7 @@ msgstr "阅读系统提示词"
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Read the last emails and meetings for each"
-msgstr ""
+msgstr "阅读每笔交易最近的电子邮件和会议记录"
 
 #. js-lingui-id: EKsFda
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
@@ -27474,7 +27474,7 @@ msgstr "订阅将于 {0} 切换为按月计费。"
 #. js-lingui-id: P6F38F
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Subscriptions"
-msgstr ""
+msgstr "订阅"
 
 #. js-lingui-id: U17bCx
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -28044,7 +28044,7 @@ msgstr "工作区用于发送和接收电子邮件的地址（例如：support@m
 #. js-lingui-id: PKwDg+
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "The agent asks before creating anything."
-msgstr ""
+msgstr "代理会在创建任何内容前先询问。"
 
 #. js-lingui-id: VzRxGM
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -29366,7 +29366,7 @@ msgstr "在您的工作区中跟踪 AI 消耗。"
 #. js-lingui-id: LpPRBt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "Track invoices too?"
-msgstr ""
+msgstr "也要跟踪发票吗？"
 
 #. js-lingui-id: tdtdiH
 #: src/modules/settings/workspace/components/ClickTrackingSwitch.tsx
@@ -31700,7 +31700,7 @@ msgstr "我们将在 72 小时内通知您，具体如 DPA 中所述"
 #. js-lingui-id: InKpMt
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
 msgid "We sell subscriptions to design teams."
-msgstr ""
+msgstr "我们向设计团队销售订阅服务。"
 
 #. js-lingui-id: id6ein
 #: src/modules/settings/components/SettingsImageInput.tsx
