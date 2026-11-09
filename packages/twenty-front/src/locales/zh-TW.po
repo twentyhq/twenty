@@ -2927,7 +2927,7 @@ msgid "agent"
 msgstr "代理"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
@@ -4443,6 +4443,7 @@ msgid "Assignment"
 msgstr "分配"
 
 #. js-lingui-id: d/bvvp
+#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
 msgstr "助理"
@@ -12805,6 +12806,11 @@ msgstr "應用程式安裝失敗。"
 #: src/modules/activities/calendar/hooks/useCalendarEventComposer.ts
 msgid "Failed to link the related records to this event"
 msgstr "無法將相關記錄連結至此活動"
+
+#. js-lingui-id: XC1d54
+#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+msgid "Failed to load agent details."
+msgstr ""
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
