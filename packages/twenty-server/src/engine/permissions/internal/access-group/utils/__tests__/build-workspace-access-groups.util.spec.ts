@@ -127,6 +127,7 @@ const workspaceMember: FlatWorkspaceMember = {
 describe('buildWorkspaceAccessGroups', () => {
   it('should report a role it cannot compute and still build the others', () => {
     const { accessGroups, hasFailures } = buildWorkspaceAccessGroups({
+      featureFlagsMap: {},
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),

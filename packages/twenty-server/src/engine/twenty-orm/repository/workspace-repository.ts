@@ -22,6 +22,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -746,12 +747,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (validationRules.length === 0) {
-      return (await this.options.internalContext.recordPermissions.isRecomputingRecordAccessGroupIdsOnWrite(
-        {
-          featureFlagsMap: this.options.internalContext.featureFlagsMap,
-          workspaceId: this.options.internalContext.workspaceId,
-          objectMetadataId: this.options.flatObjectMetadata.id,
-        },
+      return (await this.options.internalContext.recordAccessGroupWrite.isWriteTransactionRequired(
+        this.buildRecordAccessGroupWriteTarget(),
       ))
         ? this.runAtomically((repository) => write(repository))
         : write(this);
@@ -1046,6 +1043,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           principals: this.resolvePermissionsPrincipalsOrThrow(),
           objectMetadataId: this.options.flatObjectMetadata.id,
           records: this.formatResult<ObjectRecord[]>(formattedRecords),
+          transactionScope: this.buildRecordPermissionTransactionScope(),
         },
       );
     }
@@ -1076,7 +1074,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
-    await this.recomputeRecordAccessGroupIdsOfRecords(insertedIds);
+    await this.recomputeRecordAccessGroupIdsAfterWrite({
+      writtenRecordIds: insertedIds,
+      isRecomputingWrittenRecords: true,
+      recordsBefore: [],
+    });
 
     await this.emitCreateEvents(insertedIds);
 
@@ -1268,9 +1270,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       recordsBeforeWrite: Object.values(existingRecordsMapById),
     });
 
-    await this.recomputeRecordAccessGroupIdsOfRecords(
-      generatedMaps.map((record) => record.id).filter(isNonEmptyString),
-    );
+    await this.recomputeRecordAccessGroupIdsAfterWrite({
+      writtenRecordIds: generatedMaps
+        .map((record) => record.id)
+        .filter(isNonEmptyString),
+      isRecomputingWrittenRecords: true,
+      recordsBefore,
+      updatedColumnNames: distinctUpdatedColumns.flat(),
+    });
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1553,7 +1560,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    // The before-image feeds events, scoped-write checks, files field diffs and previous-value rules
     const canSkipBeforeImage =
       this.options.shouldBypassPermissionChecks &&
       this.options.shouldSkipEventEmission &&
@@ -1565,7 +1571,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           data,
           this.options.flatObjectMetadata.id,
         )
-      );
+      ) &&
+      !(await this.options.internalContext.recordAccessGroupWrite.isRecordsBeforeWriteRequired(
+        this.buildRecordAccessGroupWriteTarget(),
+      ));
 
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
@@ -1632,6 +1641,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
+    const relatedRecordsBeforeDelete =
+      kind === 'delete'
+        ? await this.options.internalContext.recordAccessGroupWrite.findRelatedRecordsBeforeDelete(
+            {
+              ...this.buildRecordAccessGroupWriteTarget(),
+              recordIds: recordsBefore
+                .map((recordBefore) => recordBefore.id)
+                .filter(isNonEmptyString),
+              recordsBefore,
+              transactionScope: this.buildRecordPermissionTransactionScope(),
+            },
+          )
+        : undefined;
+
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
@@ -1658,13 +1681,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       });
     }
 
-    if (kind === 'update') {
-      await this.recomputeRecordAccessGroupIdsOfRecords(
-        mutationResult.generatedMaps
-          .map((record) => record.id)
-          .filter(isNonEmptyString),
-      );
-    }
+    await this.recomputeRecordAccessGroupIdsAfterWrite({
+      writtenRecordIds: mutationResult.generatedMaps
+        .map((record) => record.id)
+        .filter(isNonEmptyString),
+      isRecomputingWrittenRecords: kind === 'update',
+      recordsBefore,
+      updatedColumnNames: isDefined(setColumns)
+        ? Object.keys(setColumns)
+        : undefined,
+      relatedRecordsBeforeDelete,
+    });
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1775,18 +1802,32 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  private async recomputeRecordAccessGroupIdsOfRecords(
-    recordIds: string[],
-  ): Promise<void> {
-    await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRecords(
-      {
-        featureFlagsMap: this.options.internalContext.featureFlagsMap,
-        workspaceId: this.options.internalContext.workspaceId,
-        objectMetadataId: this.options.flatObjectMetadata.id,
-        recordIds,
+  private async recomputeRecordAccessGroupIdsAfterWrite(args: {
+    writtenRecordIds: string[];
+    isRecomputingWrittenRecords: boolean;
+    recordsBefore: ObjectRecord[];
+    updatedColumnNames?: string[];
+    relatedRecordsBeforeDelete?: RelatedRecords[];
+  }): Promise<void> {
+    const { recordAccessGroupWrite, recordAccessGroupQueue, workspaceId } =
+      this.options.internalContext;
+
+    await recordAccessGroupQueue.queueRecompute({
+      workspaceId,
+      recordsToQueue: await recordAccessGroupWrite.recomputeAfterWrite({
+        ...this.buildRecordAccessGroupWriteTarget(),
+        ...args,
         transactionScope: this.buildRecordPermissionTransactionScope(),
-      },
-    );
+      }),
+    });
+  }
+
+  private buildRecordAccessGroupWriteTarget() {
+    return {
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      workspaceId: this.options.internalContext.workspaceId,
+      objectMetadataId: this.options.flatObjectMetadata.id,
+    };
   }
 
   private buildRecordPermissionTransactionScope(): RecordPermissionTransactionScope {
