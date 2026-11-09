@@ -32,7 +32,9 @@ import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { AgentFileLoaderService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-loader.service';
 import { AgentFilePartService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-part.service';
+import { AgentFileRejectionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-rejection.service';
 import { AgentStepLoopService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
 import { AgentToolsetService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-toolset.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
@@ -97,7 +99,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AiGenerateService,
     AgentRunSettlementService,
     AgentRunnerService,
+    AgentFileLoaderService,
     AgentFilePartService,
+    AgentFileRejectionService,
     AgentStepLoopService,
     AgentToolsetService,
     AgentRunTurnService,
