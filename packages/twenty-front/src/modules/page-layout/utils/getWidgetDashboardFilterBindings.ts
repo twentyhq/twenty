@@ -1,14 +1,12 @@
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { type DashboardFilterWidgetConfiguration } from '@/page-layout/types/DashboardFilterWidgetConfiguration';
 import { type DashboardFilterBinding } from 'twenty-shared/types';
 
 export const getWidgetDashboardFilterBindings = (
-  configuration: PageLayoutWidget['configuration'],
+  configuration: DashboardFilterWidgetConfiguration,
 ): DashboardFilterBinding[] =>
-  'dashboardFilterBindings' in configuration
-    ? (configuration.dashboardFilterBindings ?? []).map(
-        ({ pageLayoutFilterId, fieldMetadataId }) => ({
-          pageLayoutFilterId,
-          fieldMetadataId: fieldMetadataId ?? null,
-        }),
-      )
-    : [];
+  (configuration.dashboardFilterBindings ?? []).map(
+    ({ pageLayoutFilterId, fieldMetadataId }) => ({
+      pageLayoutFilterId,
+      fieldMetadataId: fieldMetadataId ?? null,
+    }),
+  );

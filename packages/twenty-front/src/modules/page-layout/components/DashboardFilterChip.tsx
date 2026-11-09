@@ -6,6 +6,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Dropdown,
@@ -22,6 +23,7 @@ type DashboardFilterChipProps = {
   inputLabel?: string;
   disabledReason?: string;
   onChange: (value: PageLayoutFilterValue | null) => void;
+  children?: ReactNode;
 };
 
 export const DashboardFilterChip = ({
@@ -31,6 +33,7 @@ export const DashboardFilterChip = ({
   inputLabel,
   disabledReason,
   onChange,
+  children,
 }: DashboardFilterChipProps) => {
   const { getValueLabel } = useGetPageLayoutFilterValueLabel();
   const valueLabel = getValueLabel(value);
@@ -83,6 +86,7 @@ export const DashboardFilterChip = ({
             onChange={onChange}
           />
         </Dropdown.Section>
+        {children}
       </DropdownContent>
     </DropdownRoot>
   );
