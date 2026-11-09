@@ -27,12 +27,16 @@ import { type FileEntity } from 'src/engine/core-modules/file/entities/file.enti
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { UNDELIVERED_FILE_REASON } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/undelivered-file-reason.constant';
 import { type ModelFileLimits } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/model-file-limits.type';
 import { getFilePartHttpUrl } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/get-file-part-http-url.util';
 import { getModelFileLimits } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/get-model-file-limits.util';
 import { insertModelInputFileMessages } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/insert-model-input-file-messages.util';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { formatUnsupportedFilePlaceholder } from 'src/engine/metadata-modules/ai/ai-models/utils/format-unsupported-file-placeholder.util';
 import { getNativeMimeTypesForModalities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-mime-types-for-modalities.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -47,8 +51,14 @@ type AgentFileDelivery = {
   downloadFiles?: DownloadFunction;
 };
 
-type AgentRunFiles = {
+type AgentFileBilling = {
+  modelId: ModelId;
   workspaceId: string;
+  operationType: UsageOperationType;
+  spenders: UsageSpenders;
+};
+
+type AgentRunFiles = AgentFileBilling & {
   canSendSignedUrls: boolean;
   areFilesRejected: boolean;
   nativeMimeTypes: Set<string>;
@@ -61,11 +71,14 @@ type AgentRunFiles = {
 
 type FilePartReplacement = LanguageModelV4FilePart | LanguageModelV4TextPart;
 
-type FileRetryArguments = {
-  fileRejection: APICallError;
+type FileCheckArguments = {
   params: LanguageModelV4CallOptions;
   model: LanguageModelV4;
   runFiles: AgentRunFiles;
+};
+
+type FileRetryArguments = FileCheckArguments & {
+  fileRejection: APICallError;
 };
 
 type FileBudget = {
@@ -81,23 +94,23 @@ export class AgentFilePartService {
     private readonly fileUrlService: FileUrlService,
     private readonly fileService: FileService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly aiBillingService: AiBillingService,
   ) {}
 
   createFileDelivery({
     model,
     modelConfig,
-    workspaceId,
-  }: {
+    ...billing
+  }: AgentFileBilling & {
     model: LanguageModel;
     modelConfig: Pick<AiModelConfig, 'sdkPackage' | 'modalities'>;
-    workspaceId: string;
   }): AgentFileDelivery {
     if (isString(model)) {
       return { model, prepareFileParts: async (messages) => messages };
     }
 
     const runFiles: AgentRunFiles = {
-      workspaceId,
+      ...billing,
       canSendSignedUrls: this.canSendSignedUrls(),
       areFilesRejected: false,
       nativeMimeTypes: getNativeMimeTypesForModalities(modelConfig.modalities),
@@ -233,7 +246,7 @@ export class AgentFilePartService {
       `Provider refused a file, checking each file: ${fileRejection.message}`,
     );
 
-    const rejectedFileParts = await this.findRejectedFileParts(params, model);
+    const rejectedFileParts = await this.findRejectedFileParts(retryArguments);
 
     if (rejectedFileParts.size === 0) {
       return this.retryWithoutFiles(retryArguments);
@@ -273,23 +286,28 @@ export class AgentFilePartService {
     }
   }
 
-  private async findRejectedFileParts(
-    params: LanguageModelV4CallOptions,
-    model: LanguageModelV4,
-  ): Promise<Set<LanguageModelV4FilePart>> {
-    const fileParts = this.getPromptFileParts(params.prompt);
-    const rejections = await Promise.all(
-      fileParts.map((part) => this.isFilePartRejected(part, params, model)),
-    );
+  private async findRejectedFileParts({
+    params,
+    model,
+    runFiles,
+  }: FileCheckArguments): Promise<Set<LanguageModelV4FilePart>> {
+    const rejectedFileParts = new Set<LanguageModelV4FilePart>();
 
-    return new Set(fileParts.filter((_part, index) => rejections[index]));
+    for (const part of this.getPromptFileParts(params.prompt)) {
+      if (await this.isFilePartRejected({ part, params, model, runFiles })) {
+        rejectedFileParts.add(part);
+      }
+    }
+
+    return rejectedFileParts;
   }
 
-  private async isFilePartRejected(
-    part: LanguageModelV4FilePart,
-    { abortSignal, headers }: LanguageModelV4CallOptions,
-    model: LanguageModelV4,
-  ): Promise<boolean> {
+  private async isFilePartRejected({
+    part,
+    params: { abortSignal, headers },
+    model,
+    runFiles,
+  }: FileCheckArguments & { part: LanguageModelV4FilePart }): Promise<boolean> {
     const prompt: LanguageModelV4Prompt = [
       {
         role: 'user',
@@ -298,16 +316,40 @@ export class AgentFilePartService {
     ];
 
     try {
-      await model.doGenerate({
+      const { usage } = await model.doGenerate({
         prompt,
         maxOutputTokens: FILE_CHECK_MAX_OUTPUT_TOKENS,
         abortSignal,
         headers,
       });
 
+      void this.aiBillingService.calculateAndBillUsage({
+        modelId: runFiles.modelId,
+        billingInput: {
+          usage: {
+            inputTokens: usage.inputTokens.total,
+            outputTokens: usage.outputTokens.total,
+            inputTokenDetails: {
+              cacheReadTokens: usage.inputTokens.cacheRead,
+              cacheWriteTokens: usage.inputTokens.cacheWrite,
+            },
+            outputTokenDetails: {
+              reasoningTokens: usage.outputTokens.reasoning,
+            },
+          },
+        },
+        workspaceId: runFiles.workspaceId,
+        operationType: runFiles.operationType,
+        spenders: runFiles.spenders,
+      });
+
       return false;
     } catch (error) {
-      return this.isFileRejectedByProvider(error, prompt);
+      if (!this.isFileRejectedByProvider(error, prompt)) {
+        throw error;
+      }
+
+      return true;
     }
   }
 

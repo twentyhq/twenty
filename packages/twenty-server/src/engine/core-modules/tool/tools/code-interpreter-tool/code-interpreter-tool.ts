@@ -302,7 +302,7 @@ export class CodeInterpreterTool implements Tool {
     const undeliveredFilenames: string[] = [];
 
     for (const file of files) {
-      const inputFile = await this.readInputFile(file, workspaceId);
+      const inputFile = await this.readInputFile({ file, workspaceId });
 
       if (isDefined(inputFile)) {
         inputFiles.push(inputFile);
@@ -314,12 +314,18 @@ export class CodeInterpreterTool implements Tool {
     return { inputFiles, undeliveredFilenames };
   }
 
-  private async readInputFile(
-    file: CodeInterpreterFileInput,
-    workspaceId: string,
-  ): Promise<InputFile | null> {
+  private async readInputFile({
+    file,
+    workspaceId,
+  }: {
+    file: CodeInterpreterFileInput;
+    workspaceId: string;
+  }): Promise<InputFile | null> {
     try {
-      const fileSource = await this.resolveInputFileSource(file, workspaceId);
+      const fileSource = await this.resolveInputFileSource({
+        file,
+        workspaceId,
+      });
 
       if (!isDefined(fileSource)) {
         return null;
@@ -349,10 +355,13 @@ export class CodeInterpreterTool implements Tool {
     }
   }
 
-  private async resolveInputFileSource(
-    file: CodeInterpreterFileInput,
-    workspaceId: string,
-  ): Promise<{ fileId: string; allowedFileFolders: FileFolder[] } | null> {
+  private async resolveInputFileSource({
+    file,
+    workspaceId,
+  }: {
+    file: CodeInterpreterFileInput;
+    workspaceId: string;
+  }): Promise<{ fileId: string; allowedFileFolders: FileFolder[] } | null> {
     if (isDefined(file.url)) {
       const fileId = await this.fileUrlService.getFileIdFromSignedFileUrl({
         fileUrl: file.url,

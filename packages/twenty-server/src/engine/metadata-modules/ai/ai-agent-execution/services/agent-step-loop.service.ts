@@ -184,7 +184,10 @@ export class AgentStepLoopService {
     } = this.agentFilePartService.createFileDelivery({
       model: registeredModel.model,
       modelConfig,
+      modelId: registeredModel.modelId,
       workspaceId: billing.workspaceId,
+      operationType: billing.operationType,
+      spenders: billing.spenders,
     });
 
     const notifyUserCreditsCrossing = async (debit: StepDebitResult) => {
