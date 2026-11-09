@@ -3,6 +3,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { getDashboardFilterBindingsUpdateOnObjectChange } from '@/page-layout/utils/getDashboardFilterBindingsUpdateOnObjectChange';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useResetChartDraftFiltersSettings } from '@/side-panel/pages/page-layout/hooks/useResetChartDraftFiltersSettings';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -71,6 +72,9 @@ export const ChartDataSourceDropdownContent = () => {
           groupBySubFieldName: undefined,
           filter: {},
           ratioAggregateConfig: undefined,
+          ...getDashboardFilterBindingsUpdateOnObjectChange(
+            widgetInEditMode?.configuration,
+          ),
         },
       });
 

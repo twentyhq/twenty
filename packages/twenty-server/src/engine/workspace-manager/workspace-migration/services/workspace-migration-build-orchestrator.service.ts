@@ -431,6 +431,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     const crossEntityFailureReport = crossEntityTransversalValidation({
       optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
       orchestratorActionsReport,
+      orchestratorFailureReport,
       preDeletionFlatViewFieldMaps,
     });
 

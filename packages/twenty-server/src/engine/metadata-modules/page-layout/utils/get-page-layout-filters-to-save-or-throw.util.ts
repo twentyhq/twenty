@@ -1,5 +1,4 @@
 import { isUndefined } from '@sniptt/guards';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type PageLayoutFilter, PageLayoutType } from 'twenty-shared/types';
 import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
@@ -10,6 +9,7 @@ import {
   PageLayoutException,
   PageLayoutExceptionCode,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
+import { isOwnedByThirdPartyApplication } from 'src/engine/metadata-modules/page-layout/utils/is-owned-by-third-party-application.util';
 
 const sortPageLayoutFiltersById = (
   filters: PageLayoutFilter[] | null,
@@ -49,14 +49,14 @@ export const getPageLayoutFiltersToSaveOrThrow = ({
     return existingPageLayout.filters;
   }
 
-  const isDashboardInstalledByApplication =
+  if (
     existingPageLayout.type === PageLayoutType.DASHBOARD &&
-    ![
+    isOwnedByThirdPartyApplication({
+      applicationUniversalIdentifier:
+        existingPageLayout.applicationUniversalIdentifier,
       workspaceCustomApplicationUniversalIdentifier,
-      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-    ].includes(existingPageLayout.applicationUniversalIdentifier);
-
-  if (isDashboardInstalledByApplication) {
+    })
+  ) {
     throw new PageLayoutException(
       `Filters of dashboard page layout "${existingPageLayout.id}" are defined by the application that installed it and cannot be changed`,
       PageLayoutExceptionCode.PAGE_LAYOUT_FILTERS_NOT_EDITABLE,

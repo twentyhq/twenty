@@ -24,6 +24,8 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { DashboardFilterBindingsField } from 'src/engine/metadata-modules/page-layout-widget/decorators/dashboard-filter-bindings-field.decorator';
+import { type DashboardFilterBindingDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/dashboard-filter-binding.dto';
 import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -122,6 +124,9 @@ export class PieChartConfigurationDTO implements PieChartConfiguration {
   @IsObject()
   @IsOptional()
   filter?: ChartFilter;
+
+  @DashboardFilterBindingsField()
+  dashboardFilterBindings?: DashboardFilterBindingDTO[] | null;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()

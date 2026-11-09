@@ -4,6 +4,7 @@ import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entit
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
+import { isDashboardFilterBindingToMissingField } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-dashboard-filter-binding-to-missing-field.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
@@ -33,6 +34,25 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
     entity: pageLayoutWidgetEntity,
   });
 
+  const { configuration: storedConfiguration } = pageLayoutWidgetScalarEntity;
+
+  // A stale override falls back to automatic: the stored row heals on the next write
+  const configuration =
+    'dashboardFilterBindings' in storedConfiguration &&
+    isDefined(storedConfiguration.dashboardFilterBindings)
+      ? {
+          ...storedConfiguration,
+          dashboardFilterBindings:
+            storedConfiguration.dashboardFilterBindings.filter(
+              (dashboardFilterBinding) =>
+                !isDashboardFilterBindingToMissingField({
+                  dashboardFilterBinding,
+                  fieldMetadataUniversalIdentifierById,
+                }),
+            ),
+        }
+      : storedConfiguration;
+
   const relationUniversalIdentifiers =
     resolveManyToOneRelationIdsToUniversalIdentifiers({
       metadataName: 'pageLayoutWidget',
@@ -41,7 +61,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
 
   const configurationWithUniversalIdentifiers =
     fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-      configuration: pageLayoutWidgetScalarEntity.configuration,
+      configuration,
       fieldMetadataUniversalIdentifierById,
       frontComponentUniversalIdentifierById,
       viewFieldGroupUniversalIdentifierById,
@@ -59,6 +79,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
   return {
     ...pageLayoutWidgetScalarEntity,
     ...relationUniversalIdentifiers,
+    configuration,
     universalConfiguration: configurationWithUniversalIdentifiers,
     universalOverrides,
   };

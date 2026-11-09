@@ -5,6 +5,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { getDashboardFilterBindingsUpdateOnObjectChange } from '@/page-layout/utils/getDashboardFilterBindingsUpdateOnObjectChange';
 import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
 import { useRemoveDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useRemoveDraftViewForRecordTableWidget';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
@@ -69,6 +70,9 @@ export const RecordTableDataSourceDropdownContent = () => {
       objectMetadataId: newObjectMetadataItemId,
       configToUpdate: {
         viewId: undefined,
+        ...getDashboardFilterBindingsUpdateOnObjectChange(
+          widgetInEditMode?.configuration,
+        ),
       },
     });
 

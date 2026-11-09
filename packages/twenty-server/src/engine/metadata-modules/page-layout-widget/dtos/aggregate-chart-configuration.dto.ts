@@ -25,6 +25,8 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { DashboardFilterBindingsField } from 'src/engine/metadata-modules/page-layout-widget/decorators/dashboard-filter-bindings-field.decorator';
+import { type DashboardFilterBindingDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/dashboard-filter-binding.dto';
 import { RatioAggregateConfigDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/ratio-aggregate-config.dto';
 import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -70,6 +72,9 @@ export class AggregateChartConfigurationDTO implements AggregateChartConfigurati
   @IsObject()
   @IsOptional()
   filter?: ChartFilter;
+
+  @DashboardFilterBindingsField()
+  dashboardFilterBindings?: DashboardFilterBindingDTO[] | null;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()
