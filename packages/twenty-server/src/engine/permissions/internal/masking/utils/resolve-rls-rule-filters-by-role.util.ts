@@ -1,3 +1,4 @@
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,7 +9,6 @@ import {
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/masking/utils/find-rls-rule-fields-by-role.util';
 import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
-import { resolveRowLevelPermissionRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter-for-role.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 export const resolveRlsRuleFiltersByRole = async ({
@@ -37,7 +37,7 @@ export const resolveRlsRuleFiltersByRole = async ({
     objectMetadataId: flatObjectMetadata.id,
     fieldList,
   })) {
-    const recordFilter = resolveRowLevelPermissionRecordFilterForRole({
+    const recordFilter = resolveRlsRuleRecordFilter({
       principals,
       metadataMaps,
       flatObjectMetadata,

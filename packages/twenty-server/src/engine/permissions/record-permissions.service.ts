@@ -3,7 +3,6 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  type FeatureFlagKey,
   type ObjectRecordsOperationType,
   type RecordShareAccessLevel,
   type ObjectRecord,
@@ -15,17 +14,14 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { composeRecordFieldMetadataIds } from 'src/engine/permissions/internal/masking/utils/compose-record-field-metadata-ids.util';
 import { resolveRlsRuleFiltersByRole } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-filters-by-role.util';
 import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/masking/utils/find-rls-rule-fields-by-role.util';
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
-import { resolveRowLevelPermissionRecordFilterForRole } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter-for-role.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
-import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
 import { AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
 import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
-import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
 import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
@@ -59,7 +55,6 @@ import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/ut
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
-import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/permissions/internal/rls/utils/validate-rls-predicates-for-records.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
@@ -97,109 +92,8 @@ export class RecordPermissionsService {
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordAccessGroupService: RecordAccessGroupService,
     private readonly accessGroupService: AccessGroupService,
   ) {}
-
-  async isRecomputingRecordAccessGroupIdsOnWrite({
-    featureFlagsMap,
-    workspaceId,
-    objectMetadataId,
-  }: {
-    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-    workspaceId: string;
-    objectMetadataId: string;
-  }): Promise<boolean> {
-    if (!areRecordAccessGroupsEnabled({ featureFlagsMap })) {
-      return false;
-    }
-
-    return this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
-      workspaceId,
-      objectMetadataId,
-    });
-  }
-
-  async isObjectReachedByRlsRuleRelation({
-    featureFlagsMap,
-    workspaceId,
-    objectMetadataId,
-  }: {
-    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-    workspaceId: string;
-    objectMetadataId: string;
-  }): Promise<boolean> {
-    return (
-      areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
-      (await this.recordAccessGroupService.isObjectReachedByRlsRuleRelation({
-        workspaceId,
-        objectMetadataId,
-      }))
-    );
-  }
-
-  async queueRecomputeRecordAccessGroupIdsOfRecords({
-    featureFlagsMap,
-    workspaceId,
-    objectMetadataId,
-    recordIds,
-  }: {
-    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-    workspaceId: string;
-    objectMetadataId: string;
-    recordIds: string[];
-  }): Promise<void> {
-    if (
-      !areRecordAccessGroupsEnabled({ featureFlagsMap }) ||
-      !(await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
-        workspaceId,
-        objectMetadataId,
-      }))
-    ) {
-      return;
-    }
-
-    await this.recordAccessGroupService.queueRecomputeRecordAccessGroupIdsOfRecords(
-      { workspaceId, objectMetadataId, recordIds },
-    );
-  }
-
-  async findRelatedRecords(
-    args: Parameters<RecordAccessGroupService['findRelatedRecords']>[0] & {
-      featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-    },
-  ): Promise<RelatedRecords[]> {
-    if (!areRecordAccessGroupsEnabled(args)) {
-      return [];
-    }
-
-    return this.recordAccessGroupService.findRelatedRecords(args);
-  }
-
-  async recomputeRecordAccessGroupIdsOfRecords({
-    featureFlagsMap,
-    workspaceId,
-    objectMetadataId,
-    recordIds,
-    transactionScope,
-  }: {
-    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-    workspaceId: string;
-    objectMetadataId: string;
-    recordIds: string[];
-    transactionScope: RecordPermissionTransactionScope;
-  }): Promise<void> {
-    if (!areRecordAccessGroupsEnabled({ featureFlagsMap })) {
-      return;
-    }
-
-    await this.recordAccessGroupService.recomputeRecordAccessGroupIdsOfRecords({
-      workspaceId,
-      objectMetadataId,
-      recordIds,
-      transactionScope,
-    });
-  }
 
   async findRecordsActions({
     authContext,
@@ -535,7 +429,7 @@ export class RecordPermissionsService {
     return (
       renderRowLevelPermissionFilterToSql({
         recordFilter:
-          resolveRowLevelPermissionRecordFilterForRole({
+          resolveRlsRuleRecordFilter({
             principals,
             metadataMaps,
             flatObjectMetadata,
@@ -618,7 +512,7 @@ export class RecordPermissionsService {
 
     if (
       !isDefined(
-        resolveRowLevelPermissionRecordFilter({
+        resolveRlsRuleRecordFilter({
           principals,
           metadataMaps,
           flatObjectMetadata,

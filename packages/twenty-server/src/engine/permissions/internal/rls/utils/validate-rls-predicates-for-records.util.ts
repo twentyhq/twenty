@@ -8,22 +8,13 @@ import {
   type PermissionsMetadataMaps,
   type RowAccessEvaluationContext,
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
+import { findRecordsMatchingRecordFilter } from 'src/engine/permissions/internal/rls/utils/find-records-matching-record-filter.util';
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
-import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
-import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
-
-type ValidateRLSPredicatesForRecordsArgs<T extends ObjectRecord> = {
-  records: T[];
-  objectMetadata: FlatObjectMetadata;
-  principals: PermissionsPrincipalsWithRolesContext;
-  metadataMaps: PermissionsMetadataMaps;
-  findRelationJoinValues: RowAccessEvaluationContext['findRelationJoinValues'];
-};
 
 export const validateRLSPredicatesForRecords = async <T extends ObjectRecord>({
   records,
@@ -31,8 +22,14 @@ export const validateRLSPredicatesForRecords = async <T extends ObjectRecord>({
   principals,
   metadataMaps,
   findRelationJoinValues,
-}: ValidateRLSPredicatesForRecordsArgs<T>): Promise<void> => {
-  const recordFilter = resolveRowLevelPermissionRecordFilter({
+}: {
+  records: T[];
+  objectMetadata: FlatObjectMetadata;
+  principals: PermissionsPrincipalsWithRolesContext;
+  metadataMaps: PermissionsMetadataMaps;
+  findRelationJoinValues: RowAccessEvaluationContext['findRelationJoinValues'];
+}): Promise<void> => {
+  const recordFilter = resolveRlsRuleRecordFilter({
     principals,
     metadataMaps,
     flatObjectMetadata: objectMetadata,
@@ -42,27 +39,18 @@ export const validateRLSPredicatesForRecords = async <T extends ObjectRecord>({
     return;
   }
 
-  const resolvedRecordFilter = await resolveRelationsInRecordFilter({
+  const matchingRecords = await findRecordsMatchingRecordFilter({
+    records,
     recordFilter,
     flatObjectMetadata: objectMetadata,
-    records,
     metadataMaps,
     findRelationJoinValues,
   });
 
-  for (const record of records) {
-    const matchesRLS = isRecordMatchingFilter({
-      record,
-      filter: resolvedRecordFilter,
-      flatObjectMetadata: objectMetadata,
-      flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-    });
-
-    if (!matchesRLS) {
-      throw new PermissionsException(
-        'Record does not satisfy row-level security constraints of your current role',
-        PermissionsExceptionCode.RLS_VALIDATION_FAILED,
-      );
-    }
+  if (matchingRecords.length !== records.length) {
+    throw new PermissionsException(
+      'Record does not satisfy row-level security constraints of your current role',
+      PermissionsExceptionCode.RLS_VALIDATION_FAILED,
+    );
   }
 };

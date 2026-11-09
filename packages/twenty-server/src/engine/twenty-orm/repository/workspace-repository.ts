@@ -18,7 +18,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
+import { type RecordAccessGroupWriteScope } from 'src/engine/permissions/internal/access-group/types/record-access-group-write-scope.type';
 import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
 import {
   PermissionsException,
@@ -757,12 +757,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private async runAtomicallyWhenRecomputingRecordAccessGroupIds<TResult>(
     write: (repository: WorkspaceRepository<TEntity>) => Promise<TResult>,
   ): Promise<TResult> {
-    return (await this.options.internalContext.recordPermissions.isRecomputingRecordAccessGroupIdsOnWrite(
-      {
-        featureFlagsMap: this.options.internalContext.featureFlagsMap,
-        workspaceId: this.options.internalContext.workspaceId,
-        objectMetadataId: this.options.flatObjectMetadata.id,
-      },
+    return (await this.options.internalContext.recordAccessGroupWrite.isWriteTransactionRequired(
+      this.buildRecordAccessGroupWriteScope(),
     ))
       ? this.runAtomically(write)
       : write(this);
@@ -1062,13 +1058,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
-    await this.recomputeRecordAccessGroupIdsOfRecords(insertedIds);
-    await this.recomputeRecordAccessGroupIdsOfRelatedRecords(
-      await this.findRelatedRecords({
-        recordIds: insertedIds,
-        recordsBefore: [],
-      }),
-    );
+    await this.recomputeRecordAccessGroupIdsAfterWrite({
+      writtenRecordIds: insertedIds,
+      isRecomputingWrittenRecords: true,
+      recordsBefore: [],
+    });
 
     await this.emitCreateEvents(insertedIds);
 
@@ -1249,18 +1243,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await validateWrittenRecords?.(generatedMaps);
 
-    await this.recomputeRecordAccessGroupIdsOfRecords(
-      generatedMaps.map((record) => record.id).filter(isNonEmptyString),
-    );
-    await this.recomputeRecordAccessGroupIdsOfRelatedRecords(
-      await this.findRelatedRecords({
-        recordIds: generatedMaps
-          .map((record) => record.id)
-          .filter(isNonEmptyString),
-        recordsBefore,
-        updatedColumnNames: distinctUpdatedColumns.flat(),
-      }),
-    );
+    await this.recomputeRecordAccessGroupIdsAfterWrite({
+      writtenRecordIds: generatedMaps
+        .map((record) => record.id)
+        .filter(isNonEmptyString),
+      isRecomputingWrittenRecords: true,
+      recordsBefore,
+      updatedColumnNames: distinctUpdatedColumns.flat(),
+    });
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1558,12 +1548,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.flatObjectMetadata.id,
         )
       ) &&
-      !(await this.options.internalContext.recordPermissions.isObjectReachedByRlsRuleRelation(
-        {
-          featureFlagsMap: this.options.internalContext.featureFlagsMap,
-          workspaceId: this.options.internalContext.workspaceId,
-          objectMetadataId: this.options.flatObjectMetadata.id,
-        },
+      !(await this.options.internalContext.recordAccessGroupWrite.isRecordsBeforeWriteRequired(
+        this.buildRecordAccessGroupWriteScope(),
       ));
 
     const eventSelectQueryBuilder =
@@ -1627,16 +1613,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    // A hard delete can null the join columns pointing at these records, so they are read first
     const relatedRecordsBeforeDelete =
       kind === 'delete'
-        ? await this.findRelatedRecords({
-            recordIds: recordsBefore
-              .map((recordBefore) => recordBefore.id)
-              .filter(isNonEmptyString),
-            recordsBefore,
-          })
-        : [];
+        ? await this.options.internalContext.recordAccessGroupWrite.findRelatedRecordsBeforeDelete(
+            {
+              ...this.buildRecordAccessGroupWriteScope(),
+              recordIds: recordsBefore
+                .map((recordBefore) => recordBefore.id)
+                .filter(isNonEmptyString),
+              recordsBefore,
+              transactionScope: this.buildRecordPermissionTransactionScope(),
+            },
+          )
+        : undefined;
 
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
@@ -1657,27 +1646,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await validateWrittenRecords?.(mutationResult.generatedMaps);
 
-    if (kind === 'update') {
-      await this.recomputeRecordAccessGroupIdsOfRecords(
-        mutationResult.generatedMaps
-          .map((record) => record.id)
-          .filter(isNonEmptyString),
-      );
-    }
-
-    await this.recomputeRecordAccessGroupIdsOfRelatedRecords(
-      kind === 'delete'
-        ? relatedRecordsBeforeDelete
-        : await this.findRelatedRecords({
-            recordIds: mutationResult.generatedMaps
-              .map((record) => record.id)
-              .filter(isNonEmptyString),
-            recordsBefore,
-            updatedColumnNames: isDefined(setColumns)
-              ? Object.keys(setColumns)
-              : undefined,
-          }),
-    );
+    await this.recomputeRecordAccessGroupIdsAfterWrite({
+      writtenRecordIds: mutationResult.generatedMaps
+        .map((record) => record.id)
+        .filter(isNonEmptyString),
+      isRecomputingWrittenRecords: kind === 'update',
+      recordsBefore,
+      updatedColumnNames: isDefined(setColumns)
+        ? Object.keys(setColumns)
+        : undefined,
+      relatedRecordsBeforeDelete,
+    });
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1788,75 +1767,32 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  private findRelatedRecords({
-    recordIds,
-    recordsBefore,
-    updatedColumnNames,
-  }: {
-    recordIds: string[];
+  private async recomputeRecordAccessGroupIdsAfterWrite(args: {
+    writtenRecordIds: string[];
+    isRecomputingWrittenRecords: boolean;
     recordsBefore: ObjectRecord[];
     updatedColumnNames?: string[];
-  }): Promise<RelatedRecords[]> {
-    return this.options.internalContext.recordPermissions.findRelatedRecords({
-      featureFlagsMap: this.options.internalContext.featureFlagsMap,
-      workspaceId: this.options.internalContext.workspaceId,
-      objectMetadataId: this.options.flatObjectMetadata.id,
-      recordIds,
-      recordsBefore,
-      updatedColumnNames,
-      transactionScope: this.buildRecordPermissionTransactionScope(),
+    relatedRecordsBeforeDelete?: RelatedRecords[];
+  }): Promise<void> {
+    const { recordAccessGroupWrite, workspaceId } =
+      this.options.internalContext;
+
+    await recordAccessGroupWrite.queueRecompute({
+      workspaceId,
+      recordsToQueue: await recordAccessGroupWrite.recomputeAfterWrite({
+        ...this.buildRecordAccessGroupWriteScope(),
+        ...args,
+        transactionScope: this.buildRecordPermissionTransactionScope(),
+      }),
     });
   }
 
-  private async recomputeRecordAccessGroupIdsOfRelatedRecords(
-    relatedRecords: RelatedRecords[],
-  ): Promise<void> {
-    for (const { objectMetadataId, recordIds } of relatedRecords) {
-      await this.queueRecomputeRecordAccessGroupIdsOfRecords({
-        objectMetadataId,
-        recordIds,
-      });
-    }
-  }
-
-  private async recomputeRecordAccessGroupIdsOfRecords(
-    recordIds: string[],
-  ): Promise<void> {
-    if (recordIds.length > MAX_RECORDS_RECOMPUTED_IN_WRITE) {
-      await this.queueRecomputeRecordAccessGroupIdsOfRecords({
-        objectMetadataId: this.options.flatObjectMetadata.id,
-        recordIds,
-      });
-
-      return;
-    }
-
-    await this.options.internalContext.recordPermissions.recomputeRecordAccessGroupIdsOfRecords(
-      {
-        featureFlagsMap: this.options.internalContext.featureFlagsMap,
-        workspaceId: this.options.internalContext.workspaceId,
-        objectMetadataId: this.options.flatObjectMetadata.id,
-        recordIds,
-        transactionScope: this.buildRecordPermissionTransactionScope(),
-      },
-    );
-  }
-
-  private async queueRecomputeRecordAccessGroupIdsOfRecords({
-    objectMetadataId,
-    recordIds,
-  }: {
-    objectMetadataId: string;
-    recordIds: string[];
-  }): Promise<void> {
-    await this.options.internalContext.recordAccessGroupQueue.queueRecomputeRecordAccessGroupIdsOfRecords(
-      {
-        featureFlagsMap: this.options.internalContext.featureFlagsMap,
-        workspaceId: this.options.internalContext.workspaceId,
-        objectMetadataId,
-        recordIds,
-      },
-    );
+  private buildRecordAccessGroupWriteScope(): RecordAccessGroupWriteScope {
+    return {
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      workspaceId: this.options.internalContext.workspaceId,
+      objectMetadataId: this.options.flatObjectMetadata.id,
+    };
   }
 
   private buildRecordPermissionTransactionScope(): RecordPermissionTransactionScope {

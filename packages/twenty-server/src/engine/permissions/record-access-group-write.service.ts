@@ -1,0 +1,144 @@
+/* @license Enterprise */
+
+import { Injectable } from '@nestjs/common';
+
+import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
+import { RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
+import { type RecordAccessGroupWriteScope } from 'src/engine/permissions/internal/access-group/types/record-access-group-write-scope.type';
+import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
+import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
+import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
+
+@Injectable()
+export class RecordAccessGroupWriteService {
+  constructor(
+    private readonly recordAccessGroupService: RecordAccessGroupService,
+  ) {}
+
+  async isWriteTransactionRequired({
+    featureFlagsMap,
+    workspaceId,
+    objectMetadataId,
+  }: RecordAccessGroupWriteScope): Promise<boolean> {
+    return (
+      areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
+      (await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
+        workspaceId,
+        objectMetadataId,
+      }))
+    );
+  }
+
+  async isRecordsBeforeWriteRequired({
+    featureFlagsMap,
+    workspaceId,
+    objectMetadataId,
+  }: RecordAccessGroupWriteScope): Promise<boolean> {
+    return (
+      areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
+      (await this.recordAccessGroupService.isObjectReachedByRlsRuleRelation({
+        workspaceId,
+        objectMetadataId,
+      }))
+    );
+  }
+
+  // A hard delete can null the join columns pointing at these records
+  async findRelatedRecordsBeforeDelete({
+    featureFlagsMap,
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    recordsBefore,
+    transactionScope,
+  }: RecordAccessGroupWriteScope & {
+    recordIds: string[];
+    recordsBefore: Record<string, unknown>[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<RelatedRecords[]> {
+    return areRecordAccessGroupsEnabled({ featureFlagsMap })
+      ? this.recordAccessGroupService.findRelatedRecords({
+          workspaceId,
+          objectMetadataId,
+          recordIds,
+          recordsBefore,
+          transactionScope,
+        })
+      : [];
+  }
+
+  // Returns the records to queue, so the caller can queue them after its commit
+  async recomputeAfterWrite({
+    featureFlagsMap,
+    workspaceId,
+    objectMetadataId,
+    writtenRecordIds,
+    isRecomputingWrittenRecords,
+    recordsBefore,
+    updatedColumnNames,
+    relatedRecordsBeforeDelete,
+    transactionScope,
+  }: RecordAccessGroupWriteScope & {
+    writtenRecordIds: string[];
+    isRecomputingWrittenRecords: boolean;
+    recordsBefore: Record<string, unknown>[];
+    updatedColumnNames?: string[];
+    relatedRecordsBeforeDelete?: RelatedRecords[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<RelatedRecords[]> {
+    if (!areRecordAccessGroupsEnabled({ featureFlagsMap })) {
+      return [];
+    }
+
+    const isRecomputingInWrite =
+      isRecomputingWrittenRecords &&
+      writtenRecordIds.length <= MAX_RECORDS_RECOMPUTED_IN_WRITE;
+
+    if (isRecomputingInWrite) {
+      await this.recordAccessGroupService.recomputeRecordAccessGroupIdsOfRecords(
+        {
+          workspaceId,
+          objectMetadataId,
+          recordIds: writtenRecordIds,
+          transactionScope,
+        },
+      );
+    }
+
+    const relatedRecords =
+      relatedRecordsBeforeDelete ??
+      (await this.recordAccessGroupService.findRelatedRecords({
+        workspaceId,
+        objectMetadataId,
+        recordIds: writtenRecordIds,
+        recordsBefore,
+        updatedColumnNames,
+        transactionScope,
+      }));
+
+    return isRecomputingWrittenRecords && !isRecomputingInWrite
+      ? [{ objectMetadataId, recordIds: writtenRecordIds }, ...relatedRecords]
+      : relatedRecords;
+  }
+
+  async queueRecompute({
+    workspaceId,
+    recordsToQueue,
+  }: {
+    workspaceId: string;
+    recordsToQueue: RelatedRecords[];
+  }): Promise<void> {
+    for (const { objectMetadataId, recordIds } of recordsToQueue) {
+      if (
+        await this.recordAccessGroupService.isObjectUsingRecordAccessGroups({
+          workspaceId,
+          objectMetadataId,
+        })
+      ) {
+        await this.recordAccessGroupService.queueRecomputeRecordAccessGroupIdsOfRecords(
+          { workspaceId, objectMetadataId, recordIds },
+        );
+      }
+    }
+  }
+}

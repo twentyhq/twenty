@@ -100,13 +100,25 @@ export class WorkspaceDataSource {
             ),
           ),
       },
-      // A job queued before the commit could read the records as they were
-      recordAccessGroupQueue: {
-        queueRecomputeRecordAccessGroupIdsOfRecords: async (args) => {
+      recordAccessGroupWrite: {
+        isWriteTransactionRequired: (args) =>
+          this.internalContext.recordAccessGroupWrite.isWriteTransactionRequired(
+            args,
+          ),
+        isRecordsBeforeWriteRequired: (args) =>
+          this.internalContext.recordAccessGroupWrite.isRecordsBeforeWriteRequired(
+            args,
+          ),
+        findRelatedRecordsBeforeDelete: (args) =>
+          this.internalContext.recordAccessGroupWrite.findRelatedRecordsBeforeDelete(
+            args,
+          ),
+        recomputeAfterWrite: (args) =>
+          this.internalContext.recordAccessGroupWrite.recomputeAfterWrite(args),
+        // A job queued before the commit could read the records as they were
+        queueRecompute: async (args) => {
           afterCommit(() =>
-            this.internalContext.recordAccessGroupQueue.queueRecomputeRecordAccessGroupIdsOfRecords(
-              args,
-            ),
+            this.internalContext.recordAccessGroupWrite.queueRecompute(args),
           );
         },
       },

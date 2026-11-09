@@ -3,42 +3,29 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
+import { findRecordsMatchingRecordFilter } from 'src/engine/permissions/internal/rls/utils/find-records-matching-record-filter.util';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/rls/utils/resolve-permissions-row-level-permission-filter.util';
-import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
 export const findRowLevelPermissionMatchingRecordIds = async ({
   records,
   context,
   ...request
 }: PermissionsRowAccessEvaluationRequest): Promise<string[] | undefined> => {
-  const rowLevelPermissionFilter = resolvePermissionsRowLevelPermissionFilter({
-    ...request,
-    tableAlias: request.flatObjectMetadata.nameSingular,
-  });
+  const recordFilter = resolvePermissionsRowLevelPermissionFilter(request);
 
-  if (!isDefined(rowLevelPermissionFilter)) {
+  if (!isDefined(recordFilter)) {
     return undefined;
   }
 
-  const recordFilter = await resolveRelationsInRecordFilter({
-    recordFilter: rowLevelPermissionFilter.recordFilter,
-    flatObjectMetadata: request.flatObjectMetadata,
+  const matchingRecords = await findRecordsMatchingRecordFilter({
     records,
+    recordFilter,
+    flatObjectMetadata: request.flatObjectMetadata,
     metadataMaps: request.metadataMaps,
     findRelationJoinValues: context.findRelationJoinValues,
+    shouldIgnoreSoftDeleteDefaultFilter:
+      context.shouldIgnoreSoftDeleteDefaultFilter,
   });
 
-  return records
-    .filter((record) =>
-      isRecordMatchingFilter({
-        record,
-        filter: recordFilter,
-        flatObjectMetadata: request.flatObjectMetadata,
-        flatFieldMetadataMaps: request.metadataMaps.flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter:
-          context.shouldIgnoreSoftDeleteDefaultFilter,
-      }),
-    )
-    .map((record) => record.id);
+  return matchingRecords.map((record) => record.id);
 };
