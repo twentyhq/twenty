@@ -95,6 +95,25 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       ],
     },
   },
+  {
+    title: 'when a default value holds a date with a time',
+    context: {
+      pageLayoutType: PageLayoutType.DASHBOARD,
+      filters: [
+        {
+          ...PERIOD_FILTER,
+          defaultValue: {
+            conditions: [
+              {
+                operand: ViewFilterOperand.IS_AFTER,
+                value: '2026-01-01T10:00',
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
 ];
 
 describe('Page layout with filters update should fail', () => {

@@ -26,6 +26,9 @@ export const chartDataGraphqlApiExceptionHandler = (error: Error) => {
       case ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION:
         logger.warn(error.message);
         throw new UserInputError(error.message);
+      case ChartDataExceptionCode.INVALID_DASHBOARD_FILTER:
+        logger.warn(error.message);
+        throw new UserInputError(error);
       case ChartDataExceptionCode.PERMISSION_DENIED:
         logger.warn(error.message);
         throw new ForbiddenError(error.message);

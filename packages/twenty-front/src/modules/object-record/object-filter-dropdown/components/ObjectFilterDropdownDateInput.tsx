@@ -10,7 +10,7 @@ import { DatePicker } from '@/ui/input/components/internal/date/components/DateP
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 import { useContext } from 'react';
 import { type FirstDayOfTheWeek, ViewFilterOperand } from 'twenty-shared/types';
 import {
@@ -74,7 +74,7 @@ export const ObjectFilterDropdownDateInput = () => {
     ) as FirstDayOfTheWeek;
 
     const newFilterValue = relativeDate
-      ? stringifyRelativeDateFilter({
+      ? stringifyRelativeDateFilterWithDetectedStartDay({
           ...relativeDate,
           timezone: timeZone,
           firstDayOfTheWeek: resolvedCalendarStartDay,

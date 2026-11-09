@@ -9,7 +9,7 @@ import { FormRelativeDatePicker } from '@/object-record/record-field/ui/form-typ
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 
 import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterValueCompositeInput';
@@ -157,7 +157,7 @@ export const WorkflowStepFilterValueInput = ({
 
   const relativeDateFilterValue =
     isRelativeDateFilter && isDefined(relativeDateFilter)
-      ? stringifyRelativeDateFilter(relativeDateFilter)
+      ? stringifyRelativeDateFilterWithDetectedStartDay(relativeDateFilter)
       : '';
 
   if (isFullRecord) {

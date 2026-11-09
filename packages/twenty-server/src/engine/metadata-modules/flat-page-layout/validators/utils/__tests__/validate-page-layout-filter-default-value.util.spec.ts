@@ -92,6 +92,25 @@ describe('validatePageLayoutFilterDefaultValue', () => {
     ).toHaveLength(1);
   });
 
+  it.each([
+    [ViewFilterOperand.IS_AFTER, '2026-01-01T10:00', 'YYYY-MM-DD'],
+    [ViewFilterOperand.IS_AFTER, '+012026-01-01', 'YYYY-MM-DD'],
+    [ViewFilterOperand.IS_BEFORE, '0000-01-01', 'YYYY-MM-DD'],
+    [ViewFilterOperand.IS, '20260101', 'YYYY-MM-DD'],
+    [ViewFilterOperand.IS_RELATIVE, 'PAST_5000_YEAR', 'at most 1000'],
+    [ViewFilterOperand.IS_RELATIVE, 'PAST_1000_SECOND', 'a day or longer'],
+    [ViewFilterOperand.IS_RELATIVE, 'THIS_1_HOUR', 'a day or longer'],
+  ])(
+    'should reject %s value %s, which every chart would fail on',
+    (operand, value, expectedHint) => {
+      const errors = validateConditions([{ operand, value }]);
+
+      expect(errors).toHaveLength(1);
+      expect(errors[0].message).toContain(expectedHint);
+      expect(errors[0].value).toBe(value);
+    },
+  );
+
   it('should report every invalid condition', () => {
     expect(
       validateConditions([

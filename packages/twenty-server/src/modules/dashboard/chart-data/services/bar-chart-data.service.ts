@@ -16,6 +16,7 @@ import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from 'src/modules/dashboard/chart-da
 import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from 'src/modules/dashboard/chart-data/constants/bar-chart-maximum-number-of-groups-per-bar.constant';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
 import { BarChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/bar-chart-data.dto';
+import { type DashboardFilterValueInput } from 'src/modules/dashboard/chart-data/dtos/inputs/dashboard-filter-value.input';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -34,6 +35,8 @@ type GetBarChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: BarChartConfigurationDTO;
+  dashboardFilterValues?: DashboardFilterValueInput[] | null;
+  viewerTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
   locale: keyof typeof APP_LOCALES;
 };
@@ -51,6 +54,8 @@ export class BarChartDataService {
     workspaceId,
     objectMetadataId,
     configuration,
+    dashboardFilterValues,
+    viewerTimeZone,
     authContext,
     locale,
   }: GetBarChartDataParams): Promise<BarChartDataDTO> {
@@ -141,6 +146,9 @@ export class BarChartDataService {
         aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
         aggregateOperation: configuration.aggregateOperation,
         filter: configuration.filter,
+        dashboardFilterBindings: configuration.dashboardFilterBindings,
+        dashboardFilterValues,
+        viewerTimeZone,
         dateGranularity: configuration.primaryAxisDateGranularity,
         userTimezone,
         firstDayOfTheWeek,

@@ -25,7 +25,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { stringifyRelativeDateFilterWithDetectedStartDay } from '@/views/view-filter-value/utils/stringifyRelativeDateFilterWithDetectedStartDay';
 import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
@@ -90,7 +90,9 @@ export const AdvancedFilterSidePanelValueFormInput = ({
   };
 
   const handleRelativeDateFilterChange = (newValue: RelativeDateFilter) => {
-    applyObjectFilterDropdownFilterValue(stringifyRelativeDateFilter(newValue));
+    applyObjectFilterDropdownFilterValue(
+      stringifyRelativeDateFilterWithDetectedStartDay(newValue),
+    );
   };
 
   const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(

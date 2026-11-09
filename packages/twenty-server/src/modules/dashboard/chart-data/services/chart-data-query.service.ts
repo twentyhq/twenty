@@ -4,10 +4,13 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   type ChartFilter,
+  type DashboardFilterBinding,
   ObjectRecordGroupByDateGranularity,
   OrderByWithGroupBy,
 } from 'twenty-shared/types';
 import {
+  combineFilters,
+  getDashboardFilterCandidateFieldMetadataIds,
   isDefined,
   isFieldMetadataArrayKind,
   isFieldMetadataDateKind,
@@ -24,6 +27,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 import { GRAPH_DEFAULT_ORDER_BY } from 'src/modules/dashboard/chart-data/constants/graph-default-order-by.constant';
+import { type DashboardFilterValueInput } from 'src/modules/dashboard/chart-data/dtos/inputs/dashboard-filter-value.input';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -31,6 +35,7 @@ import {
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { buildAggregateFieldKey } from 'src/modules/dashboard/chart-data/utils/build-aggregate-field-key.util';
+import { buildDashboardGqlOperationFilterOrThrow } from 'src/modules/dashboard/chart-data/utils/build-dashboard-gql-operation-filter-or-throw.util';
 import {
   buildGroupByFieldObject,
   type GroupByFieldObject,
@@ -52,6 +57,9 @@ type ExecuteGroupByQueryParams = {
   aggregateFieldMetadataId: string;
   aggregateOperation: AggregateOperations;
   filter?: ChartFilter;
+  dashboardFilterBindings?: DashboardFilterBinding[] | null;
+  dashboardFilterValues?: DashboardFilterValueInput[] | null;
+  viewerTimeZone?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
@@ -81,6 +89,9 @@ export class ChartDataQueryService {
     aggregateFieldMetadataId,
     aggregateOperation,
     filter,
+    dashboardFilterBindings,
+    dashboardFilterValues,
+    viewerTimeZone,
     dateGranularity,
     userTimezone,
     firstDayOfTheWeek,
@@ -96,13 +107,29 @@ export class ChartDataQueryService {
       ? authContext.workspaceMemberId
       : undefined;
 
-    const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
-      filter,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-      userTimezone,
-      currentWorkspaceMemberId,
-    });
+    const gqlOperationFilter = combineFilters([
+      convertChartFilterToGqlOperationFilter({
+        filter,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        userTimezone,
+        currentWorkspaceMemberId,
+      }),
+      buildDashboardGqlOperationFilterOrThrow({
+        dashboardFilterValues,
+        viewerTimeZone,
+        dashboardFilterBindings,
+        ...getDashboardFilterCandidateFieldMetadataIds({
+          groupByFieldMetadataId,
+          filter,
+        }),
+        firstDayOfTheWeek,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        currentWorkspaceMemberId,
+      }),
+    ]);
 
     const primaryGroupByField = getFieldMetadata(
       groupByFieldMetadataId,

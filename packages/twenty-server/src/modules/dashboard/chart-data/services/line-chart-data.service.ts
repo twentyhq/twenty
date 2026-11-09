@@ -16,6 +16,7 @@ import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from 'src/modules/dashboard/
 import { LINE_CHART_MAXIMUM_NUMBER_OF_NON_STACKED_SERIES } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-non-stacked-series.constant';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_STACKED_SERIES } from 'src/modules/dashboard/chart-data/constants/line-chart-maximum-number-of-stacked-series.constant';
 import { LineChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/line-chart-data.dto';
+import { type DashboardFilterValueInput } from 'src/modules/dashboard/chart-data/dtos/inputs/dashboard-filter-value.input';
 import {
   ChartDataException,
   ChartDataExceptionCode,
@@ -35,6 +36,8 @@ type GetLineChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: LineChartConfigurationDTO;
+  dashboardFilterValues?: DashboardFilterValueInput[] | null;
+  viewerTimeZone?: string | null;
   authContext: WorkspaceAuthContext;
   locale: keyof typeof APP_LOCALES;
 };
@@ -52,6 +55,8 @@ export class LineChartDataService {
     workspaceId,
     objectMetadataId,
     configuration,
+    dashboardFilterValues,
+    viewerTimeZone,
     authContext,
     locale,
   }: GetLineChartDataParams): Promise<LineChartDataDTO> {
@@ -144,6 +149,9 @@ export class LineChartDataService {
         aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
         aggregateOperation: configuration.aggregateOperation,
         filter: configuration.filter,
+        dashboardFilterBindings: configuration.dashboardFilterBindings,
+        dashboardFilterValues,
+        viewerTimeZone,
         dateGranularity: configuration.primaryAxisDateGranularity,
         userTimezone,
         firstDayOfTheWeek,
