@@ -14,6 +14,7 @@ export const GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE: Record<
   ],
   SMALL_TEAM: [
     GettingStartedStepActionKey.CONNECT_MAILBOX,
+    GettingStartedStepActionKey.BOOK_CALL,
     GettingStartedStepActionKey.IMPORT_DATA,
     GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
     GettingStartedStepActionKey.FOLLOW_UP_DEALS,
@@ -22,6 +23,7 @@ export const GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE: Record<
   ],
   TEAM: [
     GettingStartedStepActionKey.CONNECT_MAILBOX,
+    GettingStartedStepActionKey.BOOK_CALL,
     GettingStartedStepActionKey.IMPORT_DATA,
     GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
     GettingStartedStepActionKey.INVITE_TEAM,

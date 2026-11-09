@@ -1268,7 +1268,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Minimum enriched company employee count required to show the book-a-call onboarding step. Leave unset or set to 0 to disable the step. The step also requires CALENDAR_BOOKING_PAGE_ID.',
+      'Minimum enriched company employee count required to offer the book-a-call step in onboarding, or to smaller teams in Getting Started (larger teams always get it there). Leave unset or set to 0 to only offer it to larger teams in Getting Started. The step requires CALENDAR_BOOKING_PAGE_ID.',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.NUMBER,
   })

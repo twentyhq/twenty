@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { isNumber } from '@sniptt/guards';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   assertUnreachable,
@@ -30,6 +29,7 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
 import { getOnboardingEnrichmentCreditRewardMicro } from 'src/engine/core-modules/onboarding/utils/get-onboarding-enrichment-credit-reward-micro.util';
+import { isBookCallQualified } from 'src/engine/core-modules/onboarding/utils/is-book-call-qualified.util';
 import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -935,14 +935,23 @@ export class OnboardingService {
     workspaceId: string;
     employeeCount: number | null;
   }): Promise<boolean> {
-    const minEmployeeCount = readBookCallStepMinEmployeeCount(
-      this.twentyConfigService,
-    );
-
     if (
-      !isDefined(minEmployeeCount) ||
-      !isNumber(employeeCount) ||
-      employeeCount < minEmployeeCount
+      !isBookCallQualified({
+        minEmployeeCount: readBookCallStepMinEmployeeCount(
+          this.twentyConfigService,
+        ),
+        employeeCount,
+      })
+    ) {
+      return false;
+    }
+
+    // Getting Started offers the call as a step instead.
+    if (
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
+        workspaceId,
+      )
     ) {
       return false;
     }

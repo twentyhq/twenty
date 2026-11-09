@@ -265,6 +265,7 @@ describe('gettingStarted (e2e)', () => {
       expect(await findJaneUserVar('GETTING_STARTED_STEP_ACTION_KEYS')).toEqual(
         [
           'CONNECT_MAILBOX',
+          'BOOK_CALL',
           'IMPORT_DATA',
           'CUSTOMIZE_DATA_MODEL',
           'INVITE_TEAM',

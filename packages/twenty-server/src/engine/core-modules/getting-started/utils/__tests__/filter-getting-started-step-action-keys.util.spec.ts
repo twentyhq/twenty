@@ -27,6 +27,7 @@ describe('filterGettingStartedStepActionKeys', () => {
       profile: 'SMALL_TEAM' as const,
       expected: [
         GettingStartedStepActionKey.CONNECT_MAILBOX,
+        GettingStartedStepActionKey.BOOK_CALL,
         GettingStartedStepActionKey.IMPORT_DATA,
         GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
         GettingStartedStepActionKey.FOLLOW_UP_DEALS,
@@ -38,6 +39,7 @@ describe('filterGettingStartedStepActionKeys', () => {
       profile: 'TEAM' as const,
       expected: [
         GettingStartedStepActionKey.CONNECT_MAILBOX,
+        GettingStartedStepActionKey.BOOK_CALL,
         GettingStartedStepActionKey.IMPORT_DATA,
         GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
         GettingStartedStepActionKey.INVITE_TEAM,
@@ -55,6 +57,7 @@ describe('filterGettingStartedStepActionKeys', () => {
           permissionFlags: ALL_PERMISSION_FLAGS,
           hasSendingMailbox: true,
           hasFeaturedApp: true,
+          isBookCallOffered: true,
         }),
       ).toEqual(expected);
     },
@@ -69,6 +72,7 @@ describe('filterGettingStartedStepActionKeys', () => {
       },
       hasSendingMailbox: true,
       hasFeaturedApp: true,
+      isBookCallOffered: true,
     });
 
     expect(stepActionKeys).not.toContain(
@@ -89,9 +93,11 @@ describe('filterGettingStartedStepActionKeys', () => {
         },
         hasSendingMailbox: true,
         hasFeaturedApp: true,
+        isBookCallOffered: true,
       }),
     ).toEqual([
       GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.BOOK_CALL,
       GettingStartedStepActionKey.INVITE_TEAM,
       GettingStartedStepActionKey.HANDOVER_DEALS,
       GettingStartedStepActionKey.INSTALL_APP,
@@ -105,6 +111,7 @@ describe('filterGettingStartedStepActionKeys', () => {
         permissionFlags: ALL_PERMISSION_FLAGS,
         hasSendingMailbox: false,
         hasFeaturedApp: true,
+        isBookCallOffered: true,
       }),
     ).not.toContain(GettingStartedStepActionKey.HANDOVER_DEALS);
   });
@@ -116,7 +123,20 @@ describe('filterGettingStartedStepActionKeys', () => {
         permissionFlags: ALL_PERMISSION_FLAGS,
         hasSendingMailbox: true,
         hasFeaturedApp: false,
+        isBookCallOffered: true,
       }),
     ).not.toContain(GettingStartedStepActionKey.INSTALL_APP);
+  });
+
+  it('should leave out the book call step when it is not offered', () => {
+    expect(
+      filterGettingStartedStepActionKeys({
+        stepActionKeys: GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE.TEAM,
+        permissionFlags: ALL_PERMISSION_FLAGS,
+        hasSendingMailbox: true,
+        hasFeaturedApp: true,
+        isBookCallOffered: false,
+      }),
+    ).not.toContain(GettingStartedStepActionKey.BOOK_CALL);
   });
 });

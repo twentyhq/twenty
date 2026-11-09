@@ -2676,6 +2676,7 @@ type GettingStartedProgress {
 }
 
 enum GettingStartedStepActionKey {
+  BOOK_CALL
   CONNECT_MAILBOX
   CUSTOMIZE_DATA_MODEL
   FOLLOW_UP_DEALS

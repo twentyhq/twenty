@@ -2832,6 +2832,7 @@ export type GettingStartedProgress = {
 };
 
 export enum GettingStartedStepActionKey {
+  BOOK_CALL = 'BOOK_CALL',
   CONNECT_MAILBOX = 'CONNECT_MAILBOX',
   CUSTOMIZE_DATA_MODEL = 'CUSTOMIZE_DATA_MODEL',
   FOLLOW_UP_DEALS = 'FOLLOW_UP_DEALS',
