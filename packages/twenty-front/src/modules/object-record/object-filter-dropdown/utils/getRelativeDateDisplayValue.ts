@@ -15,7 +15,7 @@ export const getRelativeDateDisplayValue = (
   const { direction, amount, unit } = relativeDate;
 
   const directionFormatted = capitalize(direction.toLowerCase());
-  const amountFormatted = direction === 'THIS' ? '' : amount;
+  const amountFormatted = direction === 'THIS' ? undefined : amount;
   let unitFormatted =
     direction === 'THIS'
       ? unit.toLowerCase()
@@ -33,6 +33,6 @@ export const getRelativeDateDisplayValue = (
   }
 
   return [directionFormatted, amountFormatted, unitFormatted]
-    .filter((item) => item !== undefined)
+    .filter(isDefined)
     .join(' ');
 };

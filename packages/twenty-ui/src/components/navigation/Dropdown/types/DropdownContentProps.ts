@@ -14,6 +14,7 @@ export type DropdownContentProps = PopoverPopupProps &
     | 'alignOffset'
     | 'anchor'
     | 'collisionPadding'
+    | 'collisionAvoidance'
   > & {
     width?: CSSProperties['width'];
   };

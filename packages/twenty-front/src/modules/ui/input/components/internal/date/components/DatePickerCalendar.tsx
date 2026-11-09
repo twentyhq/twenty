@@ -13,6 +13,7 @@ type DatePickerCalendarProps = {
   onChange?: (date: string) => void;
   onSelect?: (date: string) => void;
   highlightedRange?: { start: string; end: string };
+  viewedDate?: string | null;
   readOnly?: boolean;
   isGridHidden?: boolean;
   today?: string;
@@ -27,6 +28,7 @@ export const DatePickerCalendar = ({
   onChange,
   onSelect,
   highlightedRange,
+  viewedDate,
   readOnly,
   isGridHidden,
   today,
@@ -38,7 +40,8 @@ export const DatePickerCalendar = ({
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentToday = today ?? Temporal.Now.plainDateISO().toString();
-  const referenceDate = highlightedRange?.start ?? value ?? currentToday;
+  const referenceDate =
+    viewedDate ?? highlightedRange?.start ?? value ?? currentToday;
   const referenceKey = isDefined(highlightedRange)
     ? `${highlightedRange.start}-${highlightedRange.end}`
     : referenceDate;

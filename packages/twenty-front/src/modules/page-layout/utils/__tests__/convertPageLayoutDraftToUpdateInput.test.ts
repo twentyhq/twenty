@@ -103,6 +103,25 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     });
   });
 
+  it('should not send filters when the draft was loaded without them', () => {
+    const result = convertPageLayoutDraftToUpdateInput(
+      makeDraft([makeTab('tab-1', [])]),
+    );
+
+    expect(result).not.toHaveProperty('filters');
+  });
+
+  it('should send the filters the draft holds, so an untouched save sends them unchanged', () => {
+    const draft = makeDraft([makeTab('tab-1', [])]);
+
+    expect(
+      convertPageLayoutDraftToUpdateInput({ ...draft, filters: null }).filters,
+    ).toBeNull();
+    expect(
+      convertPageLayoutDraftToUpdateInput({ ...draft, filters: [] }).filters,
+    ).toEqual([]);
+  });
+
   it('should handle multiple widget types', () => {
     const fieldsWidget = makeWidget({ id: 'w1', type: WidgetType.FIELDS });
     const timelineWidget = makeWidget({

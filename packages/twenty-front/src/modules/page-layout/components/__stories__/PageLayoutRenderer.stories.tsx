@@ -5,7 +5,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, within } from 'storybook/test';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { DASHBOARD_DATE_RANGE_FILTER } from 'twenty-shared/constants';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
@@ -13,6 +17,7 @@ import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingCon
 import {
   AggregateOperations,
   AxisNameDisplay,
+  FeatureFlagKey,
   type BarChartConfiguration,
   BarChartLayout,
   FindOnePageLayoutDocument,
@@ -21,11 +26,13 @@ import {
   PageLayoutType,
   type PageLayoutWidget,
   WidgetConfigurationType,
+  ViewFilterOperand,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const mockPersonObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 const mockDashboardObjectMetadataItem =
@@ -172,12 +179,57 @@ const mixedGraphsPageLayoutMocks = {
   ],
 };
 
+const PHONE_TABS_PAGE_LAYOUT_ID = 'phone-tabs-layout';
+
+const phoneTabsPageLayoutMocks = {
+  ...mixedGraphsPageLayoutMocks,
+  id: PHONE_TABS_PAGE_LAYOUT_ID,
+  filters: [
+    {
+      __typename: 'PageLayoutFilter',
+      ...DASHBOARD_DATE_RANGE_FILTER,
+      defaultValue: {
+        __typename: 'PageLayoutFilterValue',
+        conditions: [
+          {
+            __typename: 'PageLayoutFilterCondition',
+            operand: ViewFilterOperand.IS_AFTER,
+            value: '2025-12-01',
+          },
+          {
+            __typename: 'PageLayoutFilterCondition',
+            operand: ViewFilterOperand.IS_BEFORE,
+            value: '2026-03-29',
+          },
+        ],
+      },
+    },
+  ],
+  tabs: ['Overview', 'Details', 'Pipeline', 'Forecasts', 'Activity'].map(
+    (title, position) => ({
+      ...mixedGraphsPageLayoutMocks.tabs[0],
+      id: `phone-tab-${position}`,
+      title,
+      position,
+      pageLayoutId: PHONE_TABS_PAGE_LAYOUT_ID,
+      widgets: [],
+    }),
+  ),
+};
+
 const barChartGroupByQuery = generateGroupByAggregateQuery({
   objectMetadataItem: mockPersonObjectMetadataItem,
   aggregateOperationGqlFields: ['totalCount'],
 });
 
 const graphqlMocks: MockedResponse[] = [
+  {
+    request: {
+      query: FindOnePageLayoutDocument,
+      variables: { id: PHONE_TABS_PAGE_LAYOUT_ID },
+    },
+    result: { data: { getPageLayout: phoneTabsPageLayoutMocks } },
+  },
   {
     request: {
       query: FindOnePageLayoutDocument,
@@ -311,5 +363,69 @@ export const MobileView: Story = {
   },
   play: async ({ canvasElement }) => {
     await validatePageLayoutContent(canvasElement);
+  },
+};
+
+// iPhone 13; story viewport parameters do not resize the vitest browser, and useIsMobile reads the window
+const PHONE_VIEWPORT = { width: 390, height: 844 };
+
+const setUpPhoneDashboard = async () => {
+  const { page } = await import('vitest/browser');
+  const previousViewport = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+
+  await page.viewport(PHONE_VIEWPORT.width, PHONE_VIEWPORT.height);
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    featureFlags: [
+      { key: FeatureFlagKey.IS_DASHBOARD_FILTERS_ENABLED, value: true },
+    ],
+  });
+
+  return async () => {
+    await page.viewport(previousViewport.width, previousViewport.height);
+  };
+};
+
+export const KeepsTheFirstTabVisibleOnAPhone: Story = {
+  args: { pageLayoutId: PHONE_TABS_PAGE_LAYOUT_ID },
+  beforeEach: setUpPhoneDashboard,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Loading a dashboard sets its edit mode, so enter it afterwards
+    await canvas.findByText('Add Widget');
+    jotaiStore.set(
+      isDashboardInEditModeComponentState.atomFamily({
+        instanceId: PHONE_TABS_PAGE_LAYOUT_ID,
+      }),
+      true,
+    );
+    const control = await canvas.findByRole('button', {
+      name: /^Date range: Dec 1, 2025/,
+    });
+
+    const firstTab = await canvas.findByText('Overview');
+    const tabRow = firstTab.closest('.page-layout-tab-list-print-hidden');
+
+    expect(tabRow).not.toBeNull();
+    expect(tabRow?.scrollLeft).toBe(0);
+    expect(firstTab.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+      tabRow?.getBoundingClientRect().left ?? 0,
+    );
+    expect(control.getBoundingClientRect().right).toBeLessThanOrEqual(
+      window.innerWidth,
+    );
+
+    // The tab list absorbs the overflow, so the row around it and the bar never scrolls
+    const rowAroundTabsAndBar = control.closest(
+      '.page-layout-tab-list-print-hidden',
+    );
+
+    expect(rowAroundTabsAndBar?.scrollWidth).toBe(
+      rowAroundTabsAndBar?.clientWidth,
+    );
   },
 };
