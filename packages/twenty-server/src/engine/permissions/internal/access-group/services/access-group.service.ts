@@ -21,6 +21,7 @@ import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -47,6 +48,7 @@ export class AccessGroupService {
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       [
+        'featureFlagsMap',
         'rolesPermissions',
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
@@ -141,12 +143,17 @@ export class AccessGroupService {
     operationType: ObjectRecordsOperationType;
   }): Promise<number[]> {
     const { workspaceId, mainPrincipal } = principals;
-    const { rolesPermissions, flatFieldMetadataMaps, flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-        'flatFieldMetadataMaps',
-        'flatWorkspaceMemberMaps',
-      ]);
+    const {
+      featureFlagsMap,
+      rolesPermissions,
+      flatFieldMetadataMaps,
+      flatWorkspaceMemberMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'featureFlagsMap',
+      'rolesPermissions',
+      'flatFieldMetadataMaps',
+      'flatWorkspaceMemberMaps',
+    ]);
     const workspaceMember = isPermissionMainPrincipalWorkspaceMember(
       mainPrincipal,
     )
@@ -160,6 +167,8 @@ export class AccessGroupService {
       operationTypes: [operationType],
       workspaceMembers: isDefined(workspaceMember) ? [workspaceMember] : [],
       flatFieldMetadataMaps,
+      isRelationHopEnabled:
+        isRowLevelPermissionRelationHopEnabled(featureFlagsMap),
     });
 
     if (!isNonEmptyArray(callerAccessGroups)) {

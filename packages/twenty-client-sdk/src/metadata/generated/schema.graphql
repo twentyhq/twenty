@@ -154,10 +154,12 @@ type AgentMessage {
   agentId: UUID
   createdAt: DateTime!
   id: UUID!
+  isBuiltInAssistant: Boolean!
   parts: [AgentMessagePart!]!
   processedAt: DateTime
   reactions: [AgentMessageReactionSummary!]!
   role: String!
+  senderApplicationId: UUID
   senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
   status: String!
@@ -481,6 +483,7 @@ type Application {
   availablePackages: JSON!
   canBeUninstalled: Boolean!
   commandMenuItems: [CommandMenuItem!]!
+  content: ApplicationContent
   createdAt: DateTime!
   defaultLogicFunctionRole: Role
   defaultRoleId: String
@@ -561,6 +564,45 @@ type ApplicationConnectionProvider {
 type ApplicationConnectionProviderOAuthConfig {
   isClientCredentialsConfigured: Boolean!
   scopes: [String!]!
+}
+
+type ApplicationContent {
+  agents: [ApplicationContentItem!]!
+  commandMenuItems: [ApplicationContentItem!]!
+  connectionProviders: [ApplicationContentItem!]!
+  fields: [ApplicationContentItem!]!
+  frontComponents: [ApplicationContentItem!]!
+  indexes: [ApplicationContentItem!]!
+  logicFunctions: [ApplicationContentItem!]!
+  navigationMenuItems: [ApplicationContentItem!]!
+  objects: [ApplicationContentItem!]!
+  pageLayoutTabs: [ApplicationContentItem!]!
+  pageLayouts: [ApplicationContentItem!]!
+  permissionFlags: [ApplicationContentItem!]!
+  publicAssets: [ApplicationContentItem!]!
+  roles: [ApplicationContentItem!]!
+  skills: [ApplicationContentItem!]!
+  translations: [ApplicationContentItem!]!
+  viewFields: [ApplicationContentItem!]!
+  views: [ApplicationContentItem!]!
+  workflows: [ApplicationContentItem!]!
+}
+
+type ApplicationContentItem {
+  color: String
+  count: Int
+  description: String
+  fieldUniversalIdentifier: String
+  icon: String
+  id: String
+  label: String!
+  objectUniversalIdentifier: String
+  parentLabel: String
+  parentUniversalIdentifier: String
+  position: Float
+  tag: String
+  timeoutSeconds: Int
+  universalIdentifier: String!
 }
 
 type ApplicationExport {
@@ -2693,6 +2735,7 @@ type GettingStartedProgress {
 }
 
 enum GettingStartedStepActionKey {
+  BOOK_CALL
   CONNECT_MAILBOX
   CUSTOMIZE_DATA_MODEL
   FOLLOW_UP_DEALS
@@ -3093,6 +3136,7 @@ type MarketplaceAppDetail {
   author: String
   billsCredits: Boolean!
   category: String
+  content: ApplicationContent
   defaultRoleUniversalIdentifier: String
   description: String
   emailSupport: String

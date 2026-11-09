@@ -237,7 +237,7 @@ describe('AiChatMessage', () => {
       isAiChatInboxEnabled: true,
     });
 
-    expect(screen.getByText('Assistant')).toBeInTheDocument();
+    expect(screen.getByText('Unknown sender')).toBeInTheDocument();
     expect(
       screen.getByText('Five deals are in the final stage.'),
     ).toBeInTheDocument();
