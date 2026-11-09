@@ -8,7 +8,8 @@ export type CurrentUserWorkspace = Pick<
 > & {
   objectRecordsPermissions: (ObjectRecordsPermissions & {
     objectMetadataId: string;
-    // This value is persisted, so it can be read by a bundle older or newer than the one that wrote it
+    // TODO: remove this, its fragment selection and withFieldListsFromRestrictedFields once values
+    // persisted by bundles older than 2.57 are gone; the server field is deprecated
     restrictedFields?: Record<
       string,
       { canRead?: boolean | null; canUpdate?: boolean | null }
