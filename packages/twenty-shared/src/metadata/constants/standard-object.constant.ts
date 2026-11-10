@@ -1385,7 +1385,7 @@ export const STANDARD_OBJECTS = {
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
         fields: STANDARD_OBJECT_FIELDS.workflowRun,
-        viewFieldNames: ['name', 'workflow', 'status'],
+        viewFieldNames: ['name', 'workflow', 'coreWorkflowId', 'status'],
       }),
       workflowRunRecordPageFields: buildStandardObjectRecordPageFieldsView({
         objectUniversalIdentifier:
@@ -1394,6 +1394,7 @@ export const STANDARD_OBJECTS = {
         viewFieldNames: [
           'status',
           'workflow',
+          'coreWorkflowId',
           'workflowVersion',
           'startedAt',
           'endedAt',

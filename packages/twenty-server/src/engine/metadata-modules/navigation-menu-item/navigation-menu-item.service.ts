@@ -203,6 +203,8 @@ export class NavigationMenuItemService {
       flatViewMaps,
       flatPageLayoutMaps,
       flatAgentChatChannelMaps,
+      flatWorkflowMaps,
+      flatAgentMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -212,6 +214,8 @@ export class NavigationMenuItemService {
           'flatViewMaps',
           'flatPageLayoutMaps',
           'flatAgentChatChannelMaps',
+          'flatWorkflowMaps',
+          'flatAgentMaps',
         ],
       },
     );
@@ -251,6 +255,8 @@ export class NavigationMenuItemService {
           flatViewMaps,
           flatPageLayoutMaps,
           flatAgentChatChannelMaps,
+          flatWorkflowMaps,
+          flatAgentMaps,
         });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({

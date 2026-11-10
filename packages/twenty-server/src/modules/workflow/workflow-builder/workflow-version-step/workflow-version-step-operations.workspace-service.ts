@@ -702,7 +702,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }: {
     workspaceId: string;
     step: WorkflowFormAction;
-    response: object;
+    response: Record<string, unknown>;
     recordReadContext?: Pick<WorkflowExecutionContext, 'authContext'>;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
@@ -712,29 +712,27 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
       const enrichedResponses = await Promise.all(
         responseKeys.map(async (key) => {
-          // @ts-expect-error legacy noImplicitAny
-          if (!isDefined(response[key])) {
-            // @ts-expect-error legacy noImplicitAny
-            return { key, value: response[key] };
+          const value = response[key];
+
+          if (!isDefined(value)) {
+            return { key, value };
           }
 
           const field = step.settings.input.find((field) => field.name === key);
+          const recordId = isPlainObject(value) ? value.id : undefined;
 
           if (
             field?.type === 'RECORD' &&
             field?.settings?.objectName &&
-            // @ts-expect-error legacy noImplicitAny
-            isDefined(response[key].id) &&
-            // @ts-expect-error legacy noImplicitAny
-            isValidUuid(response[key].id)
+            isString(recordId) &&
+            isValidUuid(recordId)
           ) {
             if (isDefined(recordReadContext)) {
               return {
                 key,
                 value: await this.findSelectedRecordOrThrow({
                   objectName: field.settings.objectName,
-                  // @ts-expect-error legacy noImplicitAny
-                  recordId: response[key].id,
+                  recordId,
                   recordReadContext,
                 }),
               };
@@ -759,24 +757,24 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               );
 
             const record = await repository.findOne({
-              // @ts-expect-error legacy noImplicitAny
-              where: { id: response[key].id },
+              where: { id: recordId },
               relations: relationFieldsNames,
             });
 
             return { key, value: record };
           }
-          // @ts-expect-error legacy noImplicitAny
-          return { key, value: response[key] };
+          return { key, value };
         }),
       );
 
-      return enrichedResponses.reduce((acc, { key, value }) => {
-        // @ts-expect-error legacy noImplicitAny
-        acc[key] = value;
+      return enrichedResponses.reduce<Record<string, unknown>>(
+        (acc, { key, value }) => {
+          acc[key] = value;
 
-        return acc;
-      }, {});
+          return acc;
+        },
+        {},
+      );
     }, authContext);
   }
 

@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 
 import { WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
 import { RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
-import { RecordPermissionsOnlyRLSReadService } from 'src/engine/permissions/record-permissions-only-rls-read.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -19,7 +19,7 @@ export class WorkspaceDataSourceService {
   constructor(
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
-    private readonly recordPermissionsOnlyRlsReadService: RecordPermissionsOnlyRLSReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
     private readonly recordAccessGroupWriteService: RecordAccessGroupWriteService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectDataSource()
@@ -62,7 +62,7 @@ export class WorkspaceDataSourceService {
       eventEmitterService: this.workspaceEventEmitter,
       recordStock: this.workspaceRecordStockService,
       recordPermissions: this.recordPermissionsReadService,
-      recordPermissionsOnlyRls: this.recordPermissionsOnlyRlsReadService,
+      recordFieldPermissions: this.recordFieldPermissionsReadService,
       recordAccessGroupWrite: this.recordAccessGroupWriteService,
       recordAccessGroupQueue: this.recordAccessGroupWriteService,
       coreDataSource: this.coreDataSource,

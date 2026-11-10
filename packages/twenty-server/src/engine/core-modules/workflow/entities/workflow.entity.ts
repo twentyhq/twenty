@@ -6,6 +6,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
@@ -23,6 +24,7 @@ import { type MessageQueueMaxRate } from 'src/engine/core-modules/message-queue/
 import { DEFAULT_WORKFLOW_MAX_RATE } from 'src/engine/core-modules/workflow/constants/default-workflow-max-rate.constant';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
@@ -111,6 +113,13 @@ export class WorkflowEntity extends SyncableEntity {
     foreignKeyConstraintName: 'FK_WORKFLOW_CREATED_BY_USER_WORKSPACE',
   })
   createdBy: Relation<UserWorkspaceEntity> | null;
+
+  @OneToMany(
+    () => NavigationMenuItemEntity,
+    (navigationMenuItem: NavigationMenuItemEntity) =>
+      navigationMenuItem.workflow,
+  )
+  navigationMenuItems: Relation<NavigationMenuItemEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

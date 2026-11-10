@@ -1195,6 +1195,7 @@ Punti chiave:
   Quando il tuo codice viene eseguito su Twenty (funzioni logiche o componenti front-end), la piattaforma inietta le credenziali come variabili d'ambiente:
 
 * `TWENTY_API_URL` — URL di base dell'API di Twenty
+* `TWENTY_INTERNAL_API_URL`: indirizzo privato di Twenty. Solo funzioni logiche, e solo quando l'operatore imposta `SERVER_INTERNAL_URL`, ad esempio dietro un proxy di autenticazione. I client lo usano automaticamente, incluso `RestApiClient.resolveUrl`. Se chiami l'API autonomamente, usalo quando è impostato e ricorri a `TWENTY_API_URL` come alternativa. Crea i collegamenti che fornisci ai browser o ad altri servizi, come gli URL dei webhook, a partire da `TWENTY_API_URL` o `getServerRouteUrl`.
 * `TWENTY_APP_ACCESS_TOKEN` — Chiave a breve durata per l'accesso predefinito: il ruolo di una persona intersecato con quello della tua applicazione quando qualcuno è alle spalle dell'esecuzione, il ruolo della tua applicazione quando non c'è nessuno. La persona è chiunque abbia attivato l'esecuzione in una funzione logica, oppure chiunque stia visualizzando la pagina in un componente front-end.
 * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Chiave a breve durata con ambito esclusivamente al ruolo della tua applicazione. Solo funzioni logiche, sempre inserita lì, ed è ciò che utilizza `runAs: 'application'`.
 

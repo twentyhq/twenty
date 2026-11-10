@@ -18,7 +18,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
-import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 
 export type CommonApiContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
@@ -34,7 +34,7 @@ export class CommonApiContextBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
-    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
   ) {}
 
   async build({
@@ -97,7 +97,7 @@ export class CommonApiContextBuilderService {
       );
 
     const unreadableFieldMetadataIds =
-      await this.recordPermissionsOnlyRoleReadService.findUnreadableFields({
+      await this.recordFieldPermissionsReadService.findUnreadableFields({
         principals,
         objectMetadataId: flatObjectMetadata.id,
       });
