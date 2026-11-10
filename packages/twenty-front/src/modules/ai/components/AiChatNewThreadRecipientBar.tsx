@@ -8,7 +8,7 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
-import { AiChatNewThreadRecipientChip } from '@/ai/components/AiChatNewThreadRecipientChip';
+import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
 import { AiChatNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
@@ -84,7 +84,7 @@ export const AiChatNewThreadRecipientBar = () => {
       contentPaddingInline={0}
     >
       {recipients.isAssistantParticipant && (
-        <AiChatNewThreadRecipientChip
+        <ChatRecipientChip
           label={assistantName}
           avatar={<AiChatAssistantAvatar />}
           disabled={agentChatIsSendingMessage}
@@ -101,7 +101,7 @@ export const AiChatNewThreadRecipientBar = () => {
         const label = getWorkspaceMemberNameOrEmail(workspaceMember);
 
         return (
-          <AiChatNewThreadRecipientChip
+          <ChatRecipientChip
             key={workspaceMember.id}
             label={label}
             disabled={agentChatIsSendingMessage}
@@ -128,7 +128,7 @@ export const AiChatNewThreadRecipientBar = () => {
         );
       })}
       {isDefined(channel) && (
-        <AiChatNewThreadRecipientChip
+        <ChatRecipientChip
           label={channel.name}
           disabled={agentChatIsSendingMessage}
           avatar={

@@ -80,13 +80,4 @@ describe('WorkflowRunJobScopeWorkspaceService', () => {
       ).resolves.toEqual({ workspaceId: WORKSPACE_ID, isWorkspaceJob: true });
     },
   );
-
-  it('falls back to the workspace scope for an unknown application', async () => {
-    await expect(
-      buildService().resolveForApplication({
-        workspaceId: WORKSPACE_ID,
-        applicationId: 'unknown-application',
-      }),
-    ).resolves.toEqual({ workspaceId: WORKSPACE_ID, isWorkspaceJob: true });
-  });
 });

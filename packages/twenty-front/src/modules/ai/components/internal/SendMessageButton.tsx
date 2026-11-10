@@ -1,14 +1,15 @@
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
+import { agentChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/agentChatIsAssistantReplyPendingFamilySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useLingui } from '@lingui/react/macro';
 
@@ -31,9 +32,9 @@ export const SendMessageButton = ({
     agentChatIsStreamingFamilyState,
     { threadId: currentAiChatThread },
   );
-  const agentChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
-    agentChatIsAwaitingFirstChunkFamilyState,
-    { threadId: currentAiChatThread },
+  const agentChatIsAssistantReplyPending = useAtomFamilySelectorValue(
+    agentChatIsAssistantReplyPendingFamilySelector,
+    currentAiChatThread,
   );
 
   const handleSendClick = () => {
@@ -44,7 +45,7 @@ export const SendMessageButton = ({
     dispatchBrowserEvent(AGENT_CHAT_STOP_EVENT_NAME);
   };
 
-  if (agentChatIsStreaming || agentChatIsAwaitingFirstChunk) {
+  if (agentChatIsStreaming || agentChatIsAssistantReplyPending) {
     return (
       <IconButton
         variant="solid"

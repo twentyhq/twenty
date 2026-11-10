@@ -137,6 +137,9 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
     viewSortIds: [],
     searchFieldMetadataIds: [],
     fieldMetadataOptionIds: [],
+    rowLevelPermissionPredicateIds: [],
+    relationRowLevelPermissionPredicateIds: [],
+    workspaceMemberRowLevelPermissionPredicateIds: [],
     ...emptyUniversalForeignKeyAggregators,
   };
 };
