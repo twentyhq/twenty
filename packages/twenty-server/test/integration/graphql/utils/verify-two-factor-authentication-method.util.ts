@@ -25,6 +25,7 @@ export const verifyTwoFactorAuthenticationMethod = async ({
     ) {
       verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: $otp) {
         success
+        backupCodes
       }
     }
   `;
