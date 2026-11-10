@@ -7,7 +7,7 @@ describe('hasUnpositionedWorkflowNode', () => {
     expect(
       hasUnpositionedWorkflowNode({
         trigger: { position: POSITION },
-        steps: [{ id: 'first', position: POSITION }],
+        steps: [{ position: POSITION }],
       }),
     ).toBe(false);
   });
@@ -16,7 +16,7 @@ describe('hasUnpositionedWorkflowNode', () => {
     expect(
       hasUnpositionedWorkflowNode({
         trigger: { position: POSITION },
-        steps: [{ id: 'first', position: POSITION }, { id: 'second' }],
+        steps: [{ position: POSITION }, {}],
       }),
     ).toBe(true);
   });
@@ -25,7 +25,7 @@ describe('hasUnpositionedWorkflowNode', () => {
     expect(
       hasUnpositionedWorkflowNode({
         trigger: { position: null },
-        steps: [{ id: 'first', position: POSITION }],
+        steps: [{ position: POSITION }],
       }),
     ).toBe(true);
   });
@@ -34,7 +34,7 @@ describe('hasUnpositionedWorkflowNode', () => {
     expect(
       hasUnpositionedWorkflowNode({
         trigger: null,
-        steps: [{ id: 'first', position: POSITION }],
+        steps: [{ position: POSITION }],
       }),
     ).toBe(false);
   });

@@ -13,7 +13,10 @@ import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/u
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
-import { type WorkflowAction } from '@/workflow/types/Workflow';
+import {
+  type WorkflowAction,
+  type WorkflowEmptyAction,
+} from '@/workflow/types/Workflow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   EngineComponentKey,
@@ -98,10 +101,35 @@ const CommandButtons = () => {
   ));
 };
 
-const renderWorkflowCommands = (
-  applicationId: string,
-  steps: { id: string; position?: { x: number; y: number } }[] = [],
-) => {
+const buildEmptyStep = ({
+  id,
+  position,
+}: {
+  id: string;
+  position?: { x: number; y: number };
+}): WorkflowEmptyAction => ({
+  id,
+  name: id,
+  type: 'EMPTY',
+  valid: true,
+  position,
+  settings: {
+    input: {},
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    },
+  },
+});
+
+const renderWorkflowCommands = ({
+  applicationId,
+  steps = [],
+}: {
+  applicationId: string;
+  steps?: WorkflowAction[];
+}) => {
   jest.mocked(useAtomStateValue).mockImplementation((state) => {
     if (state === commandMenuItemsSelector) {
       return COMMANDS;
@@ -124,7 +152,7 @@ const renderWorkflowCommands = (
         name: 'v1',
         status: 'ACTIVE',
         trigger: null,
-        steps: steps as WorkflowAction[],
+        steps,
         workflowId: 'workflow',
         createdAt: '2026-09-30T00:00:00.000Z',
         updatedAt: '2026-09-30T00:00:00.000Z',
@@ -156,7 +184,7 @@ const renderWorkflowCommands = (
 
 describe('workflow command availability', () => {
   it('hides commands that change or delete a workflow installed by an application', () => {
-    renderWorkflowCommands('installed-application');
+    renderWorkflowCommands({ applicationId: 'installed-application' });
 
     expect(screen.getByRole('button', { name: 'Test workflow' })).toBeVisible();
     expect(
@@ -174,7 +202,7 @@ describe('workflow command availability', () => {
   });
 
   it('keeps every command on a workspace workflow', () => {
-    renderWorkflowCommands('workspace-application');
+    renderWorkflowCommands({ applicationId: 'workspace-application' });
 
     expect(screen.getByRole('button', { name: 'Test workflow' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Duplicate' })).toBeVisible();
@@ -184,10 +212,13 @@ describe('workflow command availability', () => {
   });
 
   it('offers manual layout commands once a node has a stored position', () => {
-    renderWorkflowCommands('workspace-application', [
-      { id: 'first', position: { x: 10, y: 20 } },
-      { id: 'second' },
-    ]);
+    renderWorkflowCommands({
+      applicationId: 'workspace-application',
+      steps: [
+        buildEmptyStep({ id: 'first', position: { x: 10, y: 20 } }),
+        buildEmptyStep({ id: 'second' }),
+      ],
+    });
 
     expect(
       screen.getByRole('button', { name: 'Manual layout only' }),
@@ -195,10 +226,13 @@ describe('workflow command availability', () => {
   });
 
   it('hides manual layout commands on an automatically laid out workflow', () => {
-    renderWorkflowCommands('workspace-application', [
-      { id: 'first' },
-      { id: 'second' },
-    ]);
+    renderWorkflowCommands({
+      applicationId: 'workspace-application',
+      steps: [
+        buildEmptyStep({ id: 'first' }),
+        buildEmptyStep({ id: 'second' }),
+      ],
+    });
 
     expect(
       screen.queryByRole('button', { name: 'Manual layout only' }),

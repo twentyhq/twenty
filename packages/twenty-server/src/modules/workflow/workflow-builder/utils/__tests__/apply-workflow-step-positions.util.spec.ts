@@ -1,18 +1,13 @@
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { applyWorkflowStepPositions } from 'src/modules/workflow/workflow-builder/utils/apply-workflow-step-positions.util';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-const trigger = {
-  type: 'MANUAL',
-  position: { x: 1, y: 2 },
-} as WorkflowTrigger;
+const trigger = { position: { x: 1, y: 2 } };
 
 const steps = [
   { id: 'first', position: { x: 3, y: 4 } },
   { id: 'second', position: { x: 5, y: 6 } },
-] as WorkflowAction[];
+];
 
 describe('applyWorkflowStepPositions', () => {
   it('should write the given positions and leave the other nodes untouched', () => {
