@@ -7,7 +7,7 @@ import { CoreAgentEditionCommands } from '@/object-core/commands/components/Core
 import { CoreAgentPageCommands } from '@/object-core/commands/components/CoreAgentPageCommands';
 import { CoreAgentsDeleteCommand } from '@/object-core/commands/components/CoreAgentsDeleteCommand';
 import { CoreAgentsIndexCommands } from '@/object-core/commands/components/CoreAgentsIndexCommands';
-import { CoreAgentsSeeRunsCommand } from '@/object-core/commands/components/CoreAgentsSeeRunsCommand';
+import { CoreAgentsSeeTurnsCommand } from '@/object-core/commands/components/CoreAgentsSeeTurnsCommand';
 import { CoreWorkflowsDeleteConfirmationDialogCleanupEffect } from '@/object-core/commands/components/CoreWorkflowsDeleteConfirmationDialogCleanupEffect';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteConfirmationDialogId';
@@ -48,8 +48,8 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
 
   const {
     selectedCoreAgentIds,
-    seeRunsCommandLabel: coreAgentsSeeRunsCommandLabel,
-    shouldDisplaySeeRunsCommand: shouldDisplayCoreAgentsSeeRunsCommand,
+    seeTurnsCommandLabel: coreAgentsSeeTurnsCommandLabel,
+    shouldDisplaySeeTurnsCommand: shouldDisplayCoreAgentsSeeTurnsCommand,
     deleteCommandLabel: coreAgentsDeleteCommandLabel,
     shouldDisplayDeleteCommand: shouldDisplayCoreAgentsDeleteCommand,
   } = useCoreAgentsSelectionCommands();
@@ -138,10 +138,10 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
           <CoreAgentPageCommands />
         </>
       )}
-      {section === 'SELECTION' && shouldDisplayCoreAgentsSeeRunsCommand && (
-        <CoreAgentsSeeRunsCommand
+      {section === 'SELECTION' && shouldDisplayCoreAgentsSeeTurnsCommand && (
+        <CoreAgentsSeeTurnsCommand
           agentId={selectedCoreAgentIds[0]}
-          label={coreAgentsSeeRunsCommandLabel}
+          label={coreAgentsSeeTurnsCommandLabel}
         />
       )}
       {section === 'SELECTION' && shouldDisplayCoreAgentsDeleteCommand && (

@@ -5,23 +5,23 @@ import { IconTerminal } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CORE_AGENT_SHOW_PAGE_TABS } from '@/object-core/agents/constants/CoreAgentShowPageTabs';
-import { CORE_AGENTS_SEE_RUNS_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsSeeRunsCommandId';
+import { CORE_AGENTS_SEE_TURNS_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsSeeTurnsCommandId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
-type CoreAgentsSeeRunsCommandProps = {
+type CoreAgentsSeeTurnsCommandProps = {
   agentId: string;
   label: string;
 };
 
-export const CoreAgentsSeeRunsCommand = ({
+export const CoreAgentsSeeTurnsCommand = ({
   agentId,
   label,
-}: CoreAgentsSeeRunsCommandProps) => {
+}: CoreAgentsSeeTurnsCommandProps) => {
   const navigate = useNavigate();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const handleSeeRuns = () => {
+  const handleSeeTurns = () => {
     closeSidePanelMenu();
     navigate({
       pathname: getAppPath(AppPath.AgentShowPage, { agentId }),
@@ -31,14 +31,14 @@ export const CoreAgentsSeeRunsCommand = ({
 
   return (
     <SelectableListItem
-      itemId={CORE_AGENTS_SEE_RUNS_COMMAND_ID}
-      onEnter={handleSeeRuns}
+      itemId={CORE_AGENTS_SEE_TURNS_COMMAND_ID}
+      onEnter={handleSeeTurns}
     >
       <CommandMenuItem
-        id={CORE_AGENTS_SEE_RUNS_COMMAND_ID}
+        id={CORE_AGENTS_SEE_TURNS_COMMAND_ID}
         label={label}
         Icon={IconTerminal}
-        onClick={handleSeeRuns}
+        onClick={handleSeeTurns}
       />
     </SelectableListItem>
   );
