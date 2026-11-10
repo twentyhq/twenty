@@ -1,15 +1,20 @@
 import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
+import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
 import { GETTING_STARTED_STACKED_STEP_COLOR_BY_DEPTH } from '@/getting-started/constants/GettingStartedStackedStepColorByDepth';
 import { GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH } from '@/getting-started/constants/GettingStartedStepTicksMinContainerWidth';
 import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
+import { type GettingStartedStackTransition } from '@/getting-started/types/GettingStartedStackTransition';
 import { getGettingStartedAdjacentSteps } from '@/getting-started/utils/getGettingStartedAdjacentSteps';
+import { getGettingStartedSelectedStepVariants } from '@/getting-started/utils/getGettingStartedSelectedStepVariants';
+import { getGettingStartedStackedStepVariants } from '@/getting-started/utils/getGettingStartedStackedStepVariants';
 import { getGettingStartedStackedSteps } from '@/getting-started/utils/getGettingStartedStackedSteps';
 import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import {
@@ -25,16 +30,16 @@ import {
   type GettingStartedStepActionKey,
   type GettingStartedStepDefinition,
 } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledStack = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 0;
+  position: relative;
 `;
 
 const StyledActiveStep = styled.div`
-  border-radius: ${themeCssVariables.border.radius.lg};
-  box-shadow: ${themeCssVariables.boxShadow.strong};
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -42,9 +47,13 @@ const StyledActiveStep = styled.div`
 `;
 
 const StyledActiveStepCardBase = styled.div`
+  border-radius: ${themeCssVariables.border.radius.lg};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   display: flex;
   flex-direction: column;
   min-height: 0;
+  position: relative;
+  transform-origin: top center;
 `;
 
 const StyledActiveStepCard = motion.create(StyledActiveStepCardBase);
@@ -176,9 +185,17 @@ export const GettingStartedStepStack = ({
   const stepTransition = {
     duration: theme.animation.duration.normal,
     ease: EASE_OUT,
+    opacity: { duration: theme.animation.duration.fast, ease: EASE_OUT },
   };
-  const stackOffset = shouldReduceMotion ? 0 : theme.spacingMultiplicator * 2;
-  const cardOffset = shouldReduceMotion ? 0 : theme.spacingMultiplicator * 4;
+  const stackedStepHeight = theme.spacingMultiplicator * 11;
+  const stackedStepOverlap = theme.spacingMultiplicator * 1.5;
+  const stackedStepWidthStep = theme.spacingMultiplicator * 8;
+  const slotOffset = shouldReduceMotion
+    ? 0
+    : stackedStepHeight - stackedStepOverlap;
+  const depthScale = shouldReduceMotion
+    ? 0
+    : stackedStepWidthStep / GETTING_STARTED_CONTENT_MAX_WIDTH;
 
   const selectedStepIndex = steps.findIndex(
     ({ actionKey }) => actionKey === selectedStepActionKey,
@@ -190,17 +207,49 @@ export const GettingStartedStepStack = ({
       completedStepActionKeys,
       selectedStepActionKey,
     });
-  const stackedSteps = getGettingStartedStackedSteps({
+  const stackedStepDefinitions = getGettingStartedStackedSteps({
     steps,
     completedStepActionKeys,
     selectedStepActionKey,
-  })
+  });
+  const stackedStepActionKeys = stackedStepDefinitions.map(
+    ({ actionKey }) => actionKey,
+  );
+  const stackedSteps = stackedStepDefinitions
     .map((stepDefinition, index) => ({ depth: index + 1, stepDefinition }))
     .reverse();
 
+  // Entering cards read the previous stack to know which slot they come from
+  const [stackTransition, setStackTransition] =
+    useState<GettingStartedStackTransition>({
+      selectedStepActionKey,
+      stackedStepActionKeys,
+      previousSelectedStepActionKey: selectedStepActionKey,
+      previousStackedStepActionKeys: stackedStepActionKeys,
+      isBackward: false,
+    });
+
+  if (
+    stackTransition.selectedStepActionKey !== selectedStepActionKey ||
+    !isDeeplyEqual(stackTransition.stackedStepActionKeys, stackedStepActionKeys)
+  ) {
+    setStackTransition({
+      selectedStepActionKey,
+      stackedStepActionKeys,
+      previousSelectedStepActionKey: stackTransition.selectedStepActionKey,
+      previousStackedStepActionKeys: stackTransition.stackedStepActionKeys,
+      isBackward:
+        stackedStepActionKeys[0] === stackTransition.selectedStepActionKey,
+    });
+  }
+
   return (
     <StyledStack>
-      <AnimatePresence initial={false} mode="popLayout">
+      <AnimatePresence
+        initial={false}
+        mode="popLayout"
+        custom={stackTransition}
+      >
         {stackedSteps.map(({ depth, stepDefinition }) => {
           const { actionKey, icon, iconColor, title, doneTitle } =
             stepDefinition;
@@ -211,9 +260,16 @@ export const GettingStartedStepStack = ({
             <StyledStackedStep
               key={actionKey}
               layout="position"
-              initial={{ opacity: 0, y: -stackOffset }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: stackOffset }}
+              custom={stackTransition}
+              variants={getGettingStartedStackedStepVariants({
+                actionKey,
+                depth,
+                slotOffset,
+                depthScale,
+              })}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
               transition={stepTransition}
               type="button"
               depth={depth}
@@ -285,20 +341,22 @@ export const GettingStartedStepStack = ({
             </LightIconButton>
           </StyledSteps>
         </StyledStepsTrack>
-        <AnimatePresence initial={false} mode="wait">
+        <AnimatePresence
+          initial={false}
+          mode="popLayout"
+          custom={stackTransition}
+        >
           <StyledActiveStepCard
             key={selectedStepActionKey}
-            initial={{ opacity: 0, y: -cardOffset }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{
-              opacity: 0,
-              y: cardOffset,
-              scale: shouldReduceMotion ? 1 : 0.98,
-              transition: {
-                duration: theme.animation.duration.fast,
-                ease: EASE_OUT,
-              },
-            }}
+            custom={stackTransition}
+            variants={getGettingStartedSelectedStepVariants({
+              actionKey: selectedStepActionKey,
+              slotOffset,
+              depthScale,
+            })}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             transition={stepTransition}
           >
             <GettingStartedStepCard
