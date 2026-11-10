@@ -78,7 +78,9 @@ const StyledTrialHeader = styled.div`
 `;
 
 const StyledTrialProgressBar = styled.div`
-  padding: ${themeCssVariables.spacing[1]} 0;
+  border-radius: ${themeCssVariables.border.radius.pill};
+  margin: ${themeCssVariables.spacing[1]} 0;
+  overflow: hidden;
 `;
 
 export const GettingStartedSidebarCard = () => {
@@ -124,6 +126,7 @@ export const GettingStartedSidebarCard = () => {
                   {!isGettingStartedPageOpen && (
                     <IconChevronRight
                       size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
                       color={theme.font.color.tertiary}
                     />
                   )}
@@ -136,7 +139,6 @@ export const GettingStartedSidebarCard = () => {
                     size="sm"
                     backgroundColor={themeCssVariables.border.color.medium}
                     barColor={themeCssVariables.color.green9}
-                    withBorderRadius
                   />
                 </StyledTrialProgressBar>
               </StyledTrialProgress>

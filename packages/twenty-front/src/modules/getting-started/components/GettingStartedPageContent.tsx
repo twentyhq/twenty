@@ -45,8 +45,7 @@ const StyledHeading = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[5]};
-  margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-bottom: ${themeCssVariables.spacing[12]};
   text-align: center;
 `;
 
