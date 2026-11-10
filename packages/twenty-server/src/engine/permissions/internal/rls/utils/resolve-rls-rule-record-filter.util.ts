@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 import {
   buildRowLevelPermissionRecordFilter,
@@ -26,9 +25,9 @@ export const resolveRlsRuleRecordFilter = ({
   flatObjectMetadata: FlatObjectMetadata;
   roleId?: string;
 }): RecordGqlOperationFilter | null => {
-  const rowLevelPermissionRules: RowLevelPermissionRule[] = (
-    isDefined(roleId) ? [roleId] : getPermissionsPrincipalsRoleIds(principals)
-  )
+  const rowLevelPermissionRules: RowLevelPermissionRule[] = [
+    roleId ?? principals.mainPrincipal.roleId,
+  ]
     .map(
       (principalRoleId) =>
         metadataMaps.rolesPermissions[principalRoleId]?.objects[

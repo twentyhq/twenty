@@ -738,11 +738,6 @@ msgstr "{dayOfMonthDescription} și {dayOfWeekDescription}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} zi} few {{days} zile} other {{days} zile}}"
 
-#. js-lingui-id: Irx6Dx
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
-msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr "{daysLeft, plural, one {# zi rămasă} few {# zile rămase} other {# de zile rămase}}"
-
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
@@ -1064,7 +1059,7 @@ msgstr "{readOnlyFieldCount, plural, one {Nu se poate edita # câmp} few {Nu se 
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
-msgstr ""
+msgstr "{remainingBackupCodeCount, plural, one {# cod de rezervă rămas} few {# coduri de rezervă rămase} other {# de coduri de rezervă rămase}}"
 
 #. js-lingui-id: N7gP92
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
@@ -4948,12 +4943,12 @@ msgstr "Backspace"
 #. js-lingui-id: M2cci0
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Backup codes"
-msgstr ""
+msgstr "Coduri de rezervă"
 
 #. js-lingui-id: 6kNBNT
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Backup codes copied to clipboard"
-msgstr ""
+msgstr "Coduri de rezervă copiate în clipboard"
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -11805,7 +11800,7 @@ msgstr "Introduceți offsetul"
 #. js-lingui-id: lRIswr
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
-msgstr ""
+msgstr "Introduceți unul dintre codurile de rezervă sau codul de recuperare oferit de un administrator al spațiului de lucru. Un cod de recuperare elimină autentificatorul actual pentru acest spațiu de lucru."
 
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -12937,7 +12932,7 @@ msgstr "Generarea unui cod de recuperare a eșuat."
 #. js-lingui-id: 3YKuoA
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Failed to generate backup codes."
-msgstr ""
+msgstr "Generarea codurilor de rezervă a eșuat."
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -13114,6 +13109,7 @@ msgid "Failed to send campaign"
 msgstr "Trimiterea campaniei a eșuat"
 
 #. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useEmailComposerState.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
@@ -14300,7 +14296,7 @@ msgstr "Generați o copie semnată cu un singur clic"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate backup codes"
-msgstr ""
+msgstr "Generați coduri de rezervă"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -14310,7 +14306,7 @@ msgstr "Generează cod"
 #. js-lingui-id: c63Wy6
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate codes"
-msgstr ""
+msgstr "Generați coduri"
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -14321,7 +14317,7 @@ msgstr "Generați DPA"
 #. js-lingui-id: P2msE+
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate new codes"
-msgstr ""
+msgstr "Generați coduri noi"
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -14385,6 +14381,7 @@ msgstr "Primește doar această înregistrare: rolul său nu poate accesa {objec
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
@@ -14392,6 +14389,7 @@ msgid "Getting started"
 msgstr "Începeți"
 
 #. js-lingui-id: YRBB4k
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
 msgstr "Progresul inițierii"
@@ -15549,11 +15547,6 @@ msgstr "În {dateDiff}"
 msgid "In {listName}"
 msgstr "În {listName}"
 
-#. js-lingui-id: jS5U2e
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "In an hour"
-msgstr "Peste o oră"
-
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "In progress"
@@ -16099,7 +16092,7 @@ msgstr "Număr invalid"
 #. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Invalid or expired code."
-msgstr ""
+msgstr "Cod nevalid sau expirat."
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -16477,11 +16470,6 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Widget Kanban"
 
-#. js-lingui-id: uW9WOr
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep {planLabel}"
-msgstr "Păstrați {planLabel}"
-
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
@@ -16502,10 +16490,11 @@ msgstr "Păstrați urmărirea deschiderilor mele"
 msgid "Keep tracking my opens and clicks"
 msgstr "Păstrați urmărirea deschiderilor și clicurilor mele"
 
-#. js-lingui-id: 9l8cs3
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep your plan"
-msgstr "Păstrați planul"
+#. js-lingui-id: TOIQKe
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+msgid "Keep Twenty"
+msgstr ""
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -17776,7 +17765,7 @@ msgstr "buclă"
 #. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr ""
+msgstr "Ați pierdut autentificatorul? Utilizați un cod de rezervă sau de recuperare"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19247,7 +19236,7 @@ msgstr "Nou Domeniu de Acces Aprobat"
 #. js-lingui-id: pQIH+r
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "New backup codes replace your current ones, which stop working."
-msgstr ""
+msgstr "Noile coduri de rezervă le înlocuiesc pe cele actuale, care nu vor mai funcționa."
 
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
@@ -25119,7 +25108,7 @@ msgstr "Salvează setările"
 #. js-lingui-id: /hNRXq
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
-msgstr ""
+msgstr "Salvați aceste coduri într-un loc sigur, cum ar fi un manager de parole. Fiecare cod funcționează o singură dată. Nu le veți mai putea vedea."
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -27275,6 +27264,7 @@ msgstr "fragment"
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Amână"
@@ -27295,7 +27285,6 @@ msgid "Snooze ended {eventTime}"
 msgstr "Amânarea s-a încheiat {eventTime}"
 
 #. js-lingui-id: oIDreL
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
@@ -29868,7 +29857,6 @@ msgstr "Tomată"
 
 #. js-lingui-id: BRMXj0
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Mâine"
@@ -30086,7 +30074,6 @@ msgid "Triage"
 msgstr "Triere"
 
 #. js-lingui-id: lhkaAC
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -30946,11 +30933,6 @@ msgstr "Format de imagine neacceptat"
 msgid "Until {snoozedUntilDay}"
 msgstr "Până la {snoozedUntilDay}"
 
-#. js-lingui-id: LRU2W5
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "Until the last 3 days"
-msgstr "Până în ultimele 3 zile"
-
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
@@ -31541,12 +31523,12 @@ msgstr "Folosește ‘{trimmedSidePanelSearch}’ cu..."
 #. js-lingui-id: jFGgyP
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
-msgstr ""
+msgstr "Utilizați un cod de rezervă pentru a vă conecta dacă pierdeți accesul la aplicația de autentificare. Fiecare cod funcționează o singură dată."
 
 #. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
 msgid "Use a backup or recovery code"
-msgstr ""
+msgstr "Utilizați un cod de rezervă sau de recuperare"
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts

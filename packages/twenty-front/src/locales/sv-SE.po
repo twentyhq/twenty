@@ -738,11 +738,6 @@ msgstr "{dayOfMonthDescription} och {dayOfWeekDescription}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} dag} other {{days} dagar}}"
 
-#. js-lingui-id: Irx6Dx
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
-msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr "{daysLeft, plural, one {# dag kvar} other {# dagar kvar}}"
-
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
@@ -1064,7 +1059,7 @@ msgstr "{readOnlyFieldCount, plural, one {Kan inte redigera # fält} other {Kan 
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
-msgstr ""
+msgstr "{remainingBackupCodeCount, plural, one {# reservkod kvar} other {# reservkoder kvar}}"
 
 #. js-lingui-id: N7gP92
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
@@ -4948,12 +4943,12 @@ msgstr "Backsteg"
 #. js-lingui-id: M2cci0
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Backup codes"
-msgstr ""
+msgstr "Reservkoder"
 
 #. js-lingui-id: 6kNBNT
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Backup codes copied to clipboard"
-msgstr ""
+msgstr "Reservkoder kopierade till urklipp"
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -11805,7 +11800,7 @@ msgstr "Ange offset"
 #. js-lingui-id: lRIswr
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
-msgstr ""
+msgstr "Ange en av dina reservkoder eller återställningskoden som en arbetsyteadministratör har gett dig. En återställningskod tar bort din nuvarande autentiserare för den här arbetsytan."
 
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -12937,7 +12932,7 @@ msgstr "Det gick inte att generera en återställningskod."
 #. js-lingui-id: 3YKuoA
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Failed to generate backup codes."
-msgstr ""
+msgstr "Det gick inte att generera reservkoder."
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -13114,6 +13109,7 @@ msgid "Failed to send campaign"
 msgstr "Det gick inte att skicka kampanj"
 
 #. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useEmailComposerState.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
@@ -14300,7 +14296,7 @@ msgstr "Generera en signerad kopia med ett klick"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate backup codes"
-msgstr ""
+msgstr "Generera reservkoder"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -14310,7 +14306,7 @@ msgstr "Generera kod"
 #. js-lingui-id: c63Wy6
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate codes"
-msgstr ""
+msgstr "Generera koder"
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -14321,7 +14317,7 @@ msgstr "Generera DPA"
 #. js-lingui-id: P2msE+
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate new codes"
-msgstr ""
+msgstr "Generera nya koder"
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -14385,6 +14381,7 @@ msgstr "Får endast denna post: deras roll kan inte komma åt {objectLabelPlural
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
@@ -14392,6 +14389,7 @@ msgid "Getting started"
 msgstr "Kom igång"
 
 #. js-lingui-id: YRBB4k
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
 msgstr "Kom igång-status"
@@ -15549,11 +15547,6 @@ msgstr "Inom {dateDiff}"
 msgid "In {listName}"
 msgstr "Inom {listName}"
 
-#. js-lingui-id: jS5U2e
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "In an hour"
-msgstr "Om en timme"
-
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "In progress"
@@ -16099,7 +16092,7 @@ msgstr "Ogiltigt nummer"
 #. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Invalid or expired code."
-msgstr ""
+msgstr "Ogiltig eller utgången kod."
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -16477,11 +16470,6 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Kanbanwidget"
 
-#. js-lingui-id: uW9WOr
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep {planLabel}"
-msgstr "Behåll {planLabel}"
-
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
@@ -16502,10 +16490,11 @@ msgstr "Fortsätt spåra mina öppningar"
 msgid "Keep tracking my opens and clicks"
 msgstr "Fortsätt spåra mina öppningar och klick"
 
-#. js-lingui-id: 9l8cs3
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep your plan"
-msgstr "Behåll din plan"
+#. js-lingui-id: TOIQKe
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+msgid "Keep Twenty"
+msgstr ""
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -17776,7 +17765,7 @@ msgstr "loop"
 #. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr ""
+msgstr "Har du förlorat din autentiserare? Använd en reserv- eller återställningskod"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19249,7 +19238,7 @@ msgstr "Ny godkänd åtkomstdomän"
 #. js-lingui-id: pQIH+r
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "New backup codes replace your current ones, which stop working."
-msgstr ""
+msgstr "Nya reservkoder ersätter dina nuvarande koder, som slutar fungera."
 
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
@@ -25123,7 +25112,7 @@ msgstr "Spara inställningar"
 #. js-lingui-id: /hNRXq
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
-msgstr ""
+msgstr "Spara dessa koder på en säker plats, till exempel i en lösenordshanterare. Varje kod fungerar en gång. Du kommer inte att kunna se dem igen."
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -27279,6 +27268,7 @@ msgstr "kodavsnitt"
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Snooza"
@@ -27299,7 +27289,6 @@ msgid "Snooze ended {eventTime}"
 msgstr "Snoozning avslutad {eventTime}"
 
 #. js-lingui-id: oIDreL
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
@@ -29876,7 +29865,6 @@ msgstr "Tomat"
 
 #. js-lingui-id: BRMXj0
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "I morgon"
@@ -30094,7 +30082,6 @@ msgid "Triage"
 msgstr "Sortering"
 
 #. js-lingui-id: lhkaAC
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -30954,11 +30941,6 @@ msgstr "Bildformatet stöds inte"
 msgid "Until {snoozedUntilDay}"
 msgstr "Till {snoozedUntilDay}"
 
-#. js-lingui-id: LRU2W5
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "Until the last 3 days"
-msgstr "Tills det återstår 3 dagar"
-
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
@@ -31549,12 +31531,12 @@ msgstr "Använd ‘{trimmedSidePanelSearch}’ med..."
 #. js-lingui-id: jFGgyP
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
-msgstr ""
+msgstr "Använd en reservkod för att logga in om du förlorar åtkomsten till din autentiseringsapp. Varje kod fungerar en gång."
 
 #. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
 msgid "Use a backup or recovery code"
-msgstr ""
+msgstr "Använd en reserv- eller återställningskod"
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts

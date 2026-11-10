@@ -275,6 +275,7 @@ export type {
 export type {
   SendAppMessageRecipient,
   SendAppMessageAttachment,
+  SendAppMessageEmail,
   SendAppMessagePayload,
   SendAppMessageResult,
 } from './sendAppMessageType';

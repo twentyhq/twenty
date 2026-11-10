@@ -1,20 +1,20 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
+import { type RuntimeLimitingRole } from 'src/engine/permissions/principal/types/runtime-limiting-role.type';
 import { computePermissionIntersection } from 'src/engine/permissions/internal/role/utils/compute-permission-intersection.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 // the roles' predicates keep their insert-guard field exemption, except on fields the scope denies writing
-export const restrictRecordsPermissionsToScope = ({
+export const restrictRecordsPermissionsToRuntimeLimitingRole = ({
   recordsPermissions,
-  aiRunScope,
+  runtimeLimitingRole,
 }: {
   recordsPermissions: RoleRecordsPermissions;
-  aiRunScope: Pick<AiRunPermissionScope, 'recordsPermissions'>;
+  runtimeLimitingRole: Pick<RuntimeLimitingRole, 'recordsPermissions'>;
 }): RoleRecordsPermissions => {
   const intersectedRecordsPermissions = computePermissionIntersection([
     recordsPermissions,
-    aiRunScope.recordsPermissions,
+    runtimeLimitingRole.recordsPermissions,
   ]);
 
   return {
@@ -27,7 +27,7 @@ export const restrictRecordsPermissionsToScope = ({
         const intersectedObjectRecordsPermissions =
           intersectedRecordsPermissions.objects[objectMetadataId];
         const scopeUneditableFields =
-          aiRunScope.recordsPermissions.objects[objectMetadataId]
+          runtimeLimitingRole.recordsPermissions.objects[objectMetadataId]
             ?.uneditableFields ?? [];
 
         if (

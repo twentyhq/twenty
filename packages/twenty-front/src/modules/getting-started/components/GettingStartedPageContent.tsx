@@ -1,4 +1,3 @@
-import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
@@ -46,8 +45,7 @@ const StyledHeading = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[5]};
-  margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-bottom: ${themeCssVariables.spacing[12]};
   text-align: center;
 `;
 
@@ -97,8 +95,7 @@ const StyledDigit = styled.span`
 export const GettingStartedPageContent = () => {
   const { t } = useLingui();
   const { progress, loading, error, refetch } = useGettingStartedProgress();
-  const { daysLeft, isCountdownVisible, canKeepPlan } =
-    useGettingStartedTrial();
+  const { daysLeft, isCountdownVisible } = useGettingStartedTrial();
   const gettingStartedJustCompletedStep = useAtomStateValue(
     gettingStartedJustCompletedStepState,
   );
@@ -147,7 +144,6 @@ export const GettingStartedPageContent = () => {
               )}
             </StyledOnboardingStepTitle>
           </StyledCountdown>
-          {canKeepPlan && <GettingStartedKeepPlanButton color="accent" />}
         </StyledHeading>
         {loading && !isDefined(progress) && (
           <Loader role="status" aria-label={t`Loading your progress`} />

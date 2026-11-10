@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Potvrdite ovaj domen da biste dozvo
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "Rezervni kod je korišćen za prijavljivanje na {workspaceDisplayName}. Preostalo rezervnih kodova: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Nakon toga, radni prostor i svi njegovi podaci biće trajno obrisani —
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Korišćen je rezervni kod"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Zdravo {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Ako ovo niste bili vi, promenite lozinku i generišite nove rezervne kodove u okviru Podešavanja, Profil, Dvofaktorska autentifikacija."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Ako ovo niste bili vi, promenite lozinku i generišite nove rezervne kodove."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Upravljajte pretplatom"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Generisani su novi rezervni kodovi"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "Novi rezervni kodovi su generisani za vaš nalog u {workspaceDisplayName}. Vaši prethodni rezervni kodovi više ne rade."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Hvala što ste registrovali nalog na Twenty! Pre nego što počnemo, pot
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "Autentifikator za vaš nalog u {workspaceDisplayName} je uklonjen iz Podešavanja. Vaši rezervni kodovi za ovaj radni prostor više ne rade."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Izdat je kôd za oporavak dvofaktorske autentifikacije"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Dvofaktorska autentifikacija je uklonjena"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Logotip radnog prostora"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Možete generisati nove rezervne kodove u okviru Podešavanja, Profil, Dvofaktorska autentifikacija."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

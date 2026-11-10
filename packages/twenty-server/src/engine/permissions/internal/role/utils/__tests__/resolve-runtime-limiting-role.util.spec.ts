@@ -7,7 +7,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
-import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
+import { resolveRuntimeLimitingRole } from 'src/engine/permissions/role/utils/resolve-runtime-limiting-role.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/combine/utils/is-object-operation-denied-to-principals.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -59,9 +59,9 @@ flatFieldMetadataMaps.byUniversalIdentifier.email = getFlatFieldMetadataMock({
 flatFieldMetadataMaps.universalIdentifierById[EMAIL_FIELD_ID] = 'email';
 
 const resolve = (
-  scope: Parameters<typeof resolveAiRunPermissionScope>[0]['scope'],
+  scope: Parameters<typeof resolveRuntimeLimitingRole>[0]['scope'],
 ) => {
-  const { recordsPermissions, permissionFlags } = resolveAiRunPermissionScope({
+  const { recordsPermissions, permissionFlags } = resolveRuntimeLimitingRole({
     scope,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
@@ -75,7 +75,7 @@ const resolve = (
   };
 };
 
-describe('resolveAiRunPermissionScope', () => {
+describe('resolveRuntimeLimitingRole', () => {
   it('denies everything an empty scope leaves out', () => {
     const { recordsPermissions, grantedPermissionFlags } = resolve({});
 
@@ -305,7 +305,7 @@ describe('resolveAiRunPermissionScope', () => {
 
     it('refuses an insert by a member who can write it, under a scope that grants nothing', () => {
       const isInsertDenied = (
-        aiRunScope?: PermissionsPrincipalsWithRolesContext['aiRunScope'],
+        runtimeLimitingRole?: PermissionsPrincipalsWithRolesContext['runtimeLimitingRole'],
       ) =>
         isObjectOperationDeniedToPrincipals({
           principals: {
@@ -316,7 +316,7 @@ describe('resolveAiRunPermissionScope', () => {
               workspaceMemberId: 'workspace-member-id',
             },
             applicationPrincipal: { type: 'customApplication' },
-            ...(isDefined(aiRunScope) ? { aiRunScope } : {}),
+            ...(isDefined(runtimeLimitingRole) ? { runtimeLimitingRole } : {}),
           },
           metadataMaps: {
             flatObjectMetadataMaps,
@@ -348,7 +348,7 @@ describe('resolveAiRunPermissionScope', () => {
       expect(isInsertDenied()).toBe(false);
       expect(
         isInsertDenied(
-          resolveAiRunPermissionScope({
+          resolveRuntimeLimitingRole({
             scope: {},
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,

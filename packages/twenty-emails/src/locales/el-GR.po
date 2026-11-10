@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Παρακαλώ επικυρώστ
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "Χρησιμοποιήθηκε ένας κωδικός ανάκτησης για σύνδεση στο {workspaceDisplayName}. Υπολειπόμενοι κωδικοί ανάκτησης: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Μετά από αυτό, ο χώρος εργασίας και όλα �
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Χρησιμοποιήθηκε κωδικός ανάκτησης"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Γεια σου {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Αν δεν ήσασταν εσείς, αλλάξτε τον κωδικό πρόσβασής σας και δημιουργήστε νέους κωδικούς ανάκτησης στις Ρυθμίσεις, Προφίλ, Δύο-Παραγοντική Ταυτοποίηση."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Αν δεν ήσασταν εσείς, αλλάξτε τον κωδικό πρόσβασής σας και δημιουργήστε νέους κωδικούς ανάκτησης."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Διαχείριση συνδρομής"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Δημιουργήθηκαν νέοι κωδικοί ανάκτησης"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "Δημιουργήθηκαν νέοι κωδικοί ανάκτησης για τον λογαριασμό σας στο {workspaceDisplayName}. Οι προηγούμενοι κωδικοί ανάκτησής σας δεν λειτουργούν πλέον."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Σας ευχαριστούμε που κάνατε εγγραφή γι�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "Ο έλεγχος ταυτότητας για τον λογαριασμό σας στο {workspaceDisplayName} καταργήθηκε από τις Ρυθμίσεις. Οι κωδικοί ανάκτησής σας για αυτόν τον χώρο εργασίας δεν λειτουργούν πλέον."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Εκδόθηκε κωδικός ανάκτησης για έλεγχο �
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Η Δύο-Παραγοντική Ταυτοποίηση καταργήθηκε"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Λογότυπο Workspace"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Μπορείτε να δημιουργήσετε νέους κωδικούς ανάκτησης στις Ρυθμίσεις, Προφίλ, Δύο-Παραγοντική Ταυτοποίηση."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

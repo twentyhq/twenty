@@ -253,7 +253,7 @@ await createMessageChannel({
 
 The messaging provider must belong to your app and use the connection provider of the channel's account; its connection provider cannot change after the first sync. Changing the send function in a later version applies to every channel bound to the provider.
 
-Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread, the text and an `idempotencyKey` (a UUID the client generates per reply and reuses when retrying it), and runs the provider's function:
+Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread, either the `text` or, for providers whose `conversationStyle` is `'email'`, an `email` block (`to`, `cc`, `bcc`, `subject`, rich text `body`, `inReplyTo`), and an `idempotencyKey` (a UUID the client generates per reply and reuses when retrying it), and runs the provider's function:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
@@ -278,6 +278,8 @@ export const linkedinSendMessageHandler = async ({
 The payload carries the `messagingProviderName`, the conversation's `threadExternalId` as you ingested it, the `text`, the `attachments`, the `idempotencyKey`, and the `recipients`: the participants of the thread's latest message other than the channel's own handle, so someone who only took part in an earlier exchange is not messaged. Prefer the provider's own conversation over `recipients` when its API sends to a conversation id. Return the provider's id for the sent message as `externalId`.
 
 To let members attach files to a reply, set `canSendAttachments: true` on the messaging provider. The payload's `attachments` then holds one `{ filename, mimeType, size, url }` per file (type `SendAppMessageAttachment`): download each file from its `url`, a short-lived signed URL, and forward it to the provider. `text` may be empty when the reply only carries files. Twenty stores the files on the recorded reply itself, so do not upload them again. Without the flag, the composer offers no attachment and Twenty refuses a reply with files without calling your function, so `attachments` is always empty. Requires `"engines": { "twenty": ">=2.58.0" }`.
+
+The payload's `conversationStyle` matches the provider's (`'chat'` when it declares none). With `'email'` (for example an app that syncs Outlook or Gmail), members reply with the email composer instead, and the payload also carries an `email` block: the `subject`, the rich text body compiled to `html`, the `cc` and `bcc` recipients, and `inReplyToExternalId`, the `externalId` of the message being answered when Twenty knows it. `recipients` are then the `To` addresses the member picked and `text` is the plain-text version of the body. Attachments are not sent yet. Requires `"engines": { "twenty": ">=2.58.0" }`.
 
 Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
 

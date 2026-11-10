@@ -3,7 +3,7 @@ import { type FlatMessagingProvider } from 'src/engine/metadata-modules/flat-mes
 export type MessagingProviderSender = {
   messagingProvider: Pick<
     FlatMessagingProvider,
-    'id' | 'name' | 'canSendAttachments'
+    'id' | 'name' | 'conversationStyle' | 'canSendAttachments'
   >;
   sendMessageLogicFunctionId: string;
 };

@@ -131,7 +131,7 @@ msgstr "24 godz."
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
-msgstr ""
+msgstr "Kod zapasowy został użyty do zalogowania się na Twoje konto"
 
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
@@ -5086,7 +5086,7 @@ msgstr "Wprowadź kod uwierzytelniania dwuskładnikowego, aby wygenerować kod o
 #. js-lingui-id: gb/uW+
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
 msgid "Enter your two-factor authentication code to generate new backup codes."
-msgstr ""
+msgstr "Wprowadź swój kod uwierzytelniania dwuskładnikowego, aby wygenerować nowe kody zapasowe."
 
 #. js-lingui-id: vNNSFX
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
@@ -6963,7 +6963,7 @@ msgid "Invalid email address."
 msgstr "Nieprawidłowy adres e-mail."
 
 #. js-lingui-id: e2K52e
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Invalid email addresses: {invalidEmailList}"
 msgstr "Nieprawidłowe adresy e-mail: {invalidEmailList}"
 
@@ -9306,7 +9306,7 @@ msgstr "Nowy"
 #. js-lingui-id: 2k6acO
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "New backup codes were generated for your account"
-msgstr ""
+msgstr "Dla Twojego konta wygenerowano nowe kody zapasowe"
 
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12535,7 +12535,7 @@ msgstr "serverRouteTriggerSettings może być ustawione wyłącznie przez zainst
 #. js-lingui-id: aMFlAV
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
 msgid "Set up two-factor authentication before generating backup codes."
-msgstr ""
+msgstr "Skonfiguruj uwierzytelnianie dwuskładnikowe przed wygenerowaniem kodów zapasowych."
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -15567,7 +15567,7 @@ msgid "Too many people selected. Narrow your selection and try again."
 msgstr "Wybrano zbyt wiele osób. Zawęź wybór i spróbuj ponownie."
 
 #. js-lingui-id: JS61oF
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Zbyt wielu odbiorców: {total}. Maksymalna dozwolona liczba to {MAX_EMAIL_RECIPIENTS}."
 
@@ -15818,7 +15818,7 @@ msgstr "Wymagana jest weryfikacja uwierzytelniania dwuskładnikowego."
 #. js-lingui-id: CTG0vZ
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "Two-factor authentication was removed from your account"
-msgstr ""
+msgstr "Uwierzytelnianie dwuskładnikowe zostało usunięte z Twojego konta"
 
 #. js-lingui-id: /OnFql
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -18203,7 +18203,7 @@ msgstr "Twój okres próbny Twenty wkrótce się kończy"
 #. js-lingui-id: 9xG1k0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service.ts
 msgid "Your two-factor authentication changed. Generate backup codes again."
-msgstr ""
+msgstr "Twoje uwierzytelnianie dwuskładnikowe uległo zmianie. Wygeneruj ponownie kody zapasowe."
 
 #. js-lingui-id: pOQQ3U
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts

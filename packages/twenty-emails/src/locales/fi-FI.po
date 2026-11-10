@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Vahvista tämä verkkotunnus, jotta
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "Varakoodia käytettiin kirjautumiseen työtilaan {workspaceDisplayName}. Varakoodeja jäljellä: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Sen jälkeen työtila ja kaikki sen tiedot poistetaan pysyvästi — emm
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Varakoodia käytetty"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Hei {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Jos et ollut sinä, vaihda salasanasi ja luo uudet varakoodit kohdassa Asetukset, Profiili, Kaksivaiheinen todennus."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Jos et ollut sinä, vaihda salasanasi ja luo uudet varakoodit."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Hallitse tilausta"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Uudet varakoodit luotu"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "Tilillesi työtilassa {workspaceDisplayName} luotiin uudet varakoodit. Aiemmat varakoodisi eivät enää toimi."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Kiitos, että rekisteröidyit Twenty:n käyttäjäksi! Ennen kuin aloita
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "Tilisi todennussovellus työtilassa {workspaceDisplayName} poistettiin Asetuksista. Tämän työtilan varakoodisi eivät enää toimi."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Kaksivaiheisen todennuksen palautuskoodi myönnetty"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Kaksivaiheinen todennus poistettu"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Työtilan logo"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Voit luoda uudet varakoodit kohdassa Asetukset, Profiili, Kaksivaiheinen todennus."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
