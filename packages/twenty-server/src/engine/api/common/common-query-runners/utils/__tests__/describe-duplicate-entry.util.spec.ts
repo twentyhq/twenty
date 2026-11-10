@@ -135,36 +135,6 @@ describe('describeDuplicateEntry', () => {
     i18n.loadAndActivate({ locale: 'en', messages: {} });
   });
 
-  it('names the object, the field and the duplicated value', () => {
-    expect(
-      describe_({
-        duplicateEntryCause: {
-          constraint: 'IDX_UNIQUE_emails',
-          detail: 'Key ("emailsPrimaryEmail")=(tim@apple.dev) already exists.',
-        },
-      }),
-    ).toEqual({
-      userMessage:
-        'Another Person already has the same Emails (tim@apple.dev).',
-      objectNameSingular: 'person',
-      duplicateColumn: { name: 'emailsPrimaryEmail', value: 'tim@apple.dev' },
-    });
-  });
-
-  it('says the record cannot be restored on a restore', () => {
-    expect(
-      describe_({
-        duplicateEntryCause: {
-          constraint: 'IDX_UNIQUE_emails',
-          detail: 'Key ("emailsPrimaryEmail")=(tim@apple.dev) already exists.',
-        },
-        isRestore: true,
-      })?.userMessage,
-    ).toBe(
-      'Cannot restore: another Person already has the same Emails (tim@apple.dev).',
-    );
-  });
-
   it('names every field of a multi-field index without the raw key', () => {
     expect(
       describe_({

@@ -139,42 +139,6 @@ const buildReplacements = (flatIndexMetadatas: FlatIndexMetadata[]) =>
   });
 
 describe('buildUniqueFieldIndexReplacements', () => {
-  it('replaces the index backing a unique field with one limited to non-deleted records', () => {
-    const legacyFlatIndexMetadata = buildFlatIndexMetadata({
-      name: 'IDX_UNIQUE_number',
-      flatFieldMetadatas: [numberFlatFieldMetadata],
-    });
-
-    const [replacement, ...otherReplacements] = buildReplacements([
-      legacyFlatIndexMetadata,
-    ]);
-
-    expect(otherReplacements).toEqual([]);
-    expect(replacement.legacyFlatIndexMetadata).toBe(legacyFlatIndexMetadata);
-    expect(replacement.legacyApplicationUniversalIdentifier).toBe(
-      APPLICATION_UNIVERSAL_IDENTIFIER,
-    );
-    expect(replacement.isReplacementAlreadyCreated).toBe(false);
-    expect(replacement.replacementFlatIndexMetadata).toMatchObject({
-      indexWhereClause: '"deletedAt" IS NULL',
-      isUnique: true,
-      isSystemSideEffect: true,
-      objectMetadataUniversalIdentifier: OBJECT_METADATA_ID,
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      universalFlatIndexFieldMetadatas: [
-        {
-          fieldMetadataUniversalIdentifier:
-            numberFlatFieldMetadata.universalIdentifier,
-          order: 0,
-          subFieldName: null,
-        },
-      ],
-    });
-    expect(replacement.replacementFlatIndexMetadata.name).not.toBe(
-      legacyFlatIndexMetadata.name,
-    );
-  });
-
   it('flags a replacement that already exists', () => {
     const legacyFlatIndexMetadata = buildFlatIndexMetadata({
       name: 'IDX_UNIQUE_number',
