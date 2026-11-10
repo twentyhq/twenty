@@ -1,34 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { IconBrandLinkedin, IconBrandWhatsapp, IconMail } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ChatThreadNewMessage } from '@/activities/emails/components/ChatThreadNewMessage';
-import { type ChatThreadComposerChannel } from '@/activities/emails/types/ChatThreadComposerChannel';
 import { type ChatThreadRecipient } from '@/activities/emails/types/ChatThreadRecipient';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-
-const CHANNELS: ChatThreadComposerChannel[] = [
-  {
-    id: 'email',
-    name: 'Email',
-    handle: 'sundar@google.com',
-    logo: <IconMail size={14} />,
-  },
-  {
-    id: 'whatsapp',
-    name: 'WhatsApp',
-    handle: '+1 650 253 0000',
-    logo: <IconBrandWhatsapp size={14} />,
-  },
-  {
-    id: 'linkedin',
-    name: 'LinkedIn',
-    handle: 'Sundar Pichai',
-    logo: <IconBrandLinkedin size={14} />,
-  },
-];
 
 const RECIPIENTS: ChatThreadRecipient[] = [
   { id: 'sundar', name: 'Sundar Pichai' },
@@ -40,7 +17,6 @@ const onMessageSent = fn(() => new Promise(() => undefined));
 
 const ChatThreadNewMessageStory = () => {
   const [recipients, setRecipients] = useState(RECIPIENTS);
-  const [selectedChannelId, setSelectedChannelId] = useState('whatsapp');
 
   return (
     <ChatThreadNewMessage
@@ -50,9 +26,7 @@ const ChatThreadNewMessageStory = () => {
           currentRecipients.filter(({ id }) => id !== recipientId),
         )
       }
-      channels={CHANNELS}
-      selectedChannelId={selectedChannelId}
-      onChannelChange={setSelectedChannelId}
+      channelName="WhatsApp"
       onSendMessage={onSendMessage}
       onMessageSent={onMessageSent}
       canAttachFiles

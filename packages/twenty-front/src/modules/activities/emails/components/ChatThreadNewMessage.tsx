@@ -7,7 +7,6 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
-import { type ChatThreadComposerChannel } from '@/activities/emails/types/ChatThreadComposerChannel';
 import { type ChatThreadRecipient } from '@/activities/emails/types/ChatThreadRecipient';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
@@ -27,9 +26,7 @@ const StyledBody = styled.div`
 type ChatThreadNewMessageProps = {
   recipients: ChatThreadRecipient[];
   onRecipientRemove: (recipientId: string) => void;
-  channels: ChatThreadComposerChannel[];
-  selectedChannelId: string;
-  onChannelChange: (channelId: string) => void;
+  channelName: string;
   onSendMessage: (pendingMessage: PendingChatMessage) => Promise<unknown>;
   onMessageSent: () => Promise<unknown>;
   canAttachFiles?: boolean;
@@ -38,16 +35,13 @@ type ChatThreadNewMessageProps = {
 export const ChatThreadNewMessage = ({
   recipients,
   onRecipientRemove,
-  channels,
-  selectedChannelId,
-  onChannelChange,
+  channelName,
   onSendMessage,
   onMessageSent,
   canAttachFiles = false,
 }: ChatThreadNewMessageProps) => {
   const { t } = useLingui();
   const [firstRecipient] = recipients;
-  const selectedChannel = channels.find(({ id }) => id === selectedChannelId);
 
   return (
     <StyledContainer>
@@ -75,16 +69,13 @@ export const ChatThreadNewMessage = ({
       </FormFieldRow>
       <StyledBody />
       <ChatThreadComposer
-        channelName={selectedChannel?.name ?? ''}
+        channelName={channelName}
         recipientName={firstRecipient?.name ?? null}
         isDisconnected={false}
         isSendDisabled={!isNonEmptyArray(recipients)}
         onSendMessage={onSendMessage}
         onMessageSent={onMessageSent}
         canAttachFiles={canAttachFiles}
-        channels={channels}
-        selectedChannelId={selectedChannelId}
-        onChannelChange={onChannelChange}
       />
     </StyledContainer>
   );
