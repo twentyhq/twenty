@@ -129,6 +129,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'fieldPermissionUniversalIdentifiers',
     },
+    rowLevelPermissionRules: {
+      metadataName: 'rowLevelPermissionRule',
+      flatEntityForeignKeyAggregator: 'rowLevelPermissionRuleIds',
+      universalFlatEntityForeignKeyAggregator:
+        'rowLevelPermissionRuleUniversalIdentifiers',
+    },
     views: {
       metadataName: 'view',
       flatEntityForeignKeyAggregator: 'viewIds',
@@ -247,6 +253,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       flatEntityForeignKeyAggregator: 'rowLevelPermissionPredicateGroupIds',
       universalFlatEntityForeignKeyAggregator:
         'rowLevelPermissionPredicateGroupUniversalIdentifiers',
+    },
+    rowLevelPermissionRules: {
+      metadataName: 'rowLevelPermissionRule',
+      flatEntityForeignKeyAggregator: 'rowLevelPermissionRuleIds',
+      universalFlatEntityForeignKeyAggregator:
+        'rowLevelPermissionRuleUniversalIdentifiers',
     },
     agentChatChannelRoles: {
       metadataName: 'agentChatChannelRole',

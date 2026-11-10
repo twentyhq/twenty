@@ -84,6 +84,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       fieldUniversalIdentifiers: [],
       objectPermissionUniversalIdentifiers: [],
       fieldPermissionUniversalIdentifiers: [],
+      rowLevelPermissionRuleUniversalIdentifiers: [],
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
       searchFieldMetadataUniversalIdentifiers: [],

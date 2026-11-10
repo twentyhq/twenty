@@ -61,11 +61,17 @@ export class RowLevelPermissionRuleEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @ManyToOne(() => RoleEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => RoleEntity, (role) => role.rowLevelPermissionRules, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'roleId' })
   role: Relation<RoleEntity>;
 
-  @ManyToOne(() => ObjectMetadataEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(
+    () => ObjectMetadataEntity,
+    (objectMetadata) => objectMetadata.rowLevelPermissionRules,
+    { onDelete: 'CASCADE' },
+  )
   @JoinColumn({ name: 'objectMetadataId' })
   objectMetadata: Relation<ObjectMetadataEntity>;
 }

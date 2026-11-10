@@ -52,6 +52,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
         isUICreatable: true,
         commandMenuItemUniversalIdentifiers: [],
         fieldPermissionUniversalIdentifiers: [],
+        rowLevelPermissionRuleUniversalIdentifiers: [],
         navigationMenuItemUniversalIdentifiers: [],
         objectPermissionUniversalIdentifiers: [],
         pageLayoutUniversalIdentifiers: [],
