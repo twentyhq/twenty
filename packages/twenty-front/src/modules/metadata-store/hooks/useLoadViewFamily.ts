@@ -13,6 +13,7 @@ import {
   type FindSharedViewsQuery,
   type ViewFamilyResponse,
 } from '@/metadata-store/types/ViewFamilyQueries';
+import { captureViewFamilyLoadContext } from '@/metadata-store/utils/captureViewFamilyLoadContext';
 import { getViewFamilyHintFromCollectionHashes } from '@/metadata-store/utils/getViewFamilyHintFromCollectionHashes';
 import { isViewFamilySplitModeActive } from '@/metadata-store/utils/isViewFamilySplitModeActive';
 import { resolveViewFamilyLoadOutcome } from '@/metadata-store/utils/resolveViewFamilyLoadOutcome';
@@ -71,7 +72,7 @@ export const useLoadViewFamily = () => {
   }, [client]);
 
   const refreshViewFamilyHint = useCallback(async () => {
-    const refreshEpoch = store.get(viewFamilyLoadEpochState.atom);
+    const refreshContext = captureViewFamilyLoadContext(store);
     const result = await client.query<FindMinimalMetadataQuery>({
       query: FIND_MINIMAL_METADATA,
       fetchPolicy: 'network-only',
@@ -81,7 +82,7 @@ export const useLoadViewFamily = () => {
       result.data?.minimalMetadata.collectionHashes,
     );
 
-    if (store.get(viewFamilyLoadEpochState.atom) === refreshEpoch) {
+    if (!refreshContext.isSuperseded()) {
       store.set(viewFamilyHintState.atom, hint);
     }
 
@@ -116,10 +117,9 @@ export const useLoadViewFamily = () => {
   const attemptViewFamilyLoad = useCallback(async (): Promise<boolean> => {
     store.set(viewFamilyLoadEpochState.atom, (epoch) => epoch + 1);
 
-    const startEpoch = store.get(viewFamilyLoadEpochState.atom);
+    const loadContext = captureViewFamilyLoadContext(store);
     const isSuperseded = () =>
-      store.get(viewFamilyLoadEpochState.atom) !== startEpoch ||
-      !isSplitModeActive();
+      loadContext.isSuperseded() || !isSplitModeActive();
 
     const responses = await fetchViewFamilyResponses();
     const familyVersions = responses.map((response) => response.familyVersion);

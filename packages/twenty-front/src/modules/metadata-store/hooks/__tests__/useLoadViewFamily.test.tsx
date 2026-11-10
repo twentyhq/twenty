@@ -131,4 +131,28 @@ describe('useLoadViewFamily', () => {
       'empty',
     );
   });
+
+  it('never installs a family when split mode is toggled off then on mid-load', async () => {
+    const store = createSplitModeStore('h1');
+    let familyQueryCount = 0;
+
+    mockQuery.mockImplementation(({ query }) => {
+      if (familyQueryCount++ % 4 === 0) {
+        store.set(currentWorkspaceState.atom, { featureFlags: [] } as never);
+        store.set(currentWorkspaceState.atom, {
+          featureFlags: [
+            { key: FeatureFlagKey.IS_PRIVATE_METADATA_ENABLED, value: true },
+          ],
+        } as never);
+      }
+
+      return Promise.resolve(familyResponse(query, 'h1'));
+    });
+
+    await expect(renderLoadViewFamily(store)()).rejects.toThrow();
+
+    expect(store.get(metadataStoreState.atomFamily('views')).status).toBe(
+      'empty',
+    );
+  });
 });

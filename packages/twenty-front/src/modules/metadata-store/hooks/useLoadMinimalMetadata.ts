@@ -9,6 +9,7 @@ import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMe
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { viewFamilyHintState } from '@/metadata-store/states/viewFamilyHintState';
 import { type FindMinimalMetadataQuery } from '@/metadata-store/types/MinimalMetadata';
+import { captureViewFamilyLoadContext } from '@/metadata-store/utils/captureViewFamilyLoadContext';
 import { getViewFamilyHintFromCollectionHashes } from '@/metadata-store/utils/getViewFamilyHintFromCollectionHashes';
 import { isViewFamilySplitModeActive } from '@/metadata-store/utils/isViewFamilySplitModeActive';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
@@ -22,6 +23,7 @@ export const useLoadMinimalMetadata = () => {
   const store = useStore();
 
   const loadMinimalMetadata = useCallback(async () => {
+    const loadContext = captureViewFamilyLoadContext(store);
     const result = await client.query<FindMinimalMetadataQuery>({
       query: FIND_MINIMAL_METADATA,
       fetchPolicy: 'network-only',
@@ -35,8 +37,9 @@ export const useLoadMinimalMetadata = () => {
       result.data.minimalMetadata;
 
     const isSplitModeActive = isViewFamilySplitModeActive(store);
+    const isViewFamilySuperseded = loadContext.isSuperseded();
 
-    if (isSplitModeActive) {
+    if (isSplitModeActive && !isViewFamilySuperseded) {
       store.set(
         viewFamilyHintState.atom,
         getViewFamilyHintFromCollectionHashes(collectionHashes),
@@ -114,7 +117,7 @@ export const useLoadMinimalMetadata = () => {
 
     const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
 
-    if (viewsEntry.status === 'empty') {
+    if (viewsEntry.status === 'empty' && !isViewFamilySuperseded) {
       store.set(metadataStoreState.atomFamily('views'), (prev) => ({
         ...prev,
         current: views as unknown as FlatView[],

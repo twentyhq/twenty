@@ -11,6 +11,7 @@ import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelate
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { viewFamilyLoadEpochState } from '@/metadata-store/states/viewFamilyLoadEpochState';
+import { captureViewFamilyLoadContext } from '@/metadata-store/utils/captureViewFamilyLoadContext';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -85,7 +86,7 @@ export const useLoadStaleMetadataEntities = () => {
       } else if (hasOverlap(staleEntityKeys, VIEW_FAMILY_ENTITY_KEYS)) {
         store.set(viewFamilyLoadEpochState.atom, (epoch) => epoch + 1);
 
-        const legacyLoadEpoch = store.get(viewFamilyLoadEpochState.atom);
+        const legacyLoadContext = captureViewFamilyLoadContext(store);
 
         fetchPromises.push(
           Promise.all([
@@ -110,9 +111,7 @@ export const useLoadStaleMetadataEntities = () => {
               fieldsWidgetViewsResult,
               tableWidgetViewsResult,
             ]) => {
-              if (
-                store.get(viewFamilyLoadEpochState.atom) !== legacyLoadEpoch
-              ) {
+              if (legacyLoadContext.isSuperseded()) {
                 return;
               }
 
