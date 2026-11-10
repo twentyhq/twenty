@@ -48,7 +48,10 @@ export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
     // Reseeds from the server keep the local nodes of a save in progress, so a draft created meanwhile keeps the positions
     store.set(saveInProgressCallbackState, {
       flowKeys: positions.map(({ id }) => id),
-      promise: saving.then(() => undefined),
+      promise: saving.then(
+        () => undefined,
+        () => undefined,
+      ),
     });
 
     try {
