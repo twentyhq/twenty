@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
@@ -47,26 +48,55 @@ export const CoreAgentNewRoleDraftEffect = ({
       return;
     }
 
-    if (roles.length === 0 || settingsDraftRole.id === coreAgentNewRoleId) {
+    if (roles.length === 0) {
       return;
     }
 
     const agentLabel = agent.label;
-    const newRole = buildCoreAgentNewRole({
-      roleId: coreAgentNewRoleId,
-      agent,
-      label: getAvailableRoleLabel({
-        label: t`${agentLabel} Agent Role`,
-        takenLabels: roles.map(({ label }) => label),
-      }),
-      description: t`Role for ${agentLabel} agent`,
+    const roleLabel = getAvailableRoleLabel({
+      label: t`${agentLabel} Agent Role`,
+      takenLabels: roles
+        .filter(({ id }) => id !== coreAgentNewRoleId)
+        .map(({ label }) => label),
     });
+    const roleDescription = t`Role for ${agentLabel} agent`;
 
-    setSettingsDraftRole(newRole);
-    setSettingsDraftRoleBase(newRole);
+    if (settingsDraftRole.id !== coreAgentNewRoleId) {
+      const newRole = buildCoreAgentNewRole({
+        roleId: coreAgentNewRoleId,
+        agent,
+        label: roleLabel,
+        description: roleDescription,
+      });
+
+      setSettingsDraftRole(newRole);
+      setSettingsDraftRoleBase(newRole);
+
+      return;
+    }
+
+    if (settingsDraftRole.label === roleLabel) {
+      return;
+    }
+
+    setSettingsDraftRole((currentDraftRole) => ({
+      ...currentDraftRole,
+      label: roleLabel,
+      description: roleDescription,
+    }));
+    setSettingsDraftRoleBase((currentDraftRoleBase) =>
+      isDefined(currentDraftRoleBase)
+        ? {
+            ...currentDraftRoleBase,
+            label: roleLabel,
+            description: roleDescription,
+          }
+        : currentDraftRoleBase,
+    );
   }, [
     agent,
     settingsDraftRole.id,
+    settingsDraftRole.label,
     coreAgentNewRoleId,
     setSettingsDraftRole,
     setSettingsDraftRoleBase,

@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -11,6 +12,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { UpdateOneAgentDocument } from '~/generated-metadata/graphql';
 
 export const useRenameCoreAgent = (agent: CoreAgent) => {
+  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
   const setCoreAgentDraft = useSetAtomFamilyState(
@@ -20,10 +22,20 @@ export const useRenameCoreAgent = (agent: CoreAgent) => {
 
   const renameCoreAgent = async (label: string) => {
     const trimmedLabel = label.trim();
+
+    if (!isNonEmptyString(trimmedLabel) || trimmedLabel === agent.label) {
+      return true;
+    }
+
     const name = computeMetadataNameFromLabel(trimmedLabel);
 
-    if (!isNonEmptyString(name) || trimmedLabel === agent.label) {
-      return true;
+    if (!isNonEmptyString(name)) {
+      enqueueToast({
+        status: 'error',
+        children: t`Agent name must contain letters or numbers`,
+      });
+
+      return false;
     }
 
     try {

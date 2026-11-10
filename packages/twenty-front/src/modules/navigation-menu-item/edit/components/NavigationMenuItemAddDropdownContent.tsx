@@ -124,8 +124,9 @@ export const NavigationMenuItemAddDropdownContent = ({
     (item.searchableValues ?? [item.label]).some((value) =>
       normalizeSearchText(value).includes(normalizedSearch),
     );
-  const groups = isSearchingAllItems
-    ? [
+  const getGroups = () => {
+    if (isSearchingAllItems) {
+      return [
         { label: t`Objects`, items: getItems('object').filter(matchesSearch) },
         { label: t`Views`, items: getItems('view').filter(matchesSearch) },
         { label: t`Pages`, items: getItems('page').filter(matchesSearch) },
@@ -149,20 +150,27 @@ export const NavigationMenuItemAddDropdownContent = ({
               matchesSearch(item),
           ),
         },
-      ]
-    : step === 'automation'
-      ? automationItemGroups.map((group) => ({
-          label: group.label,
-          items: group.items.filter(matchesSearch),
-        }))
-      : [
-          {
-            label: '',
-            items: getItems().filter(
-              (item) => step === 'record' || matchesSearch(item),
-            ),
-          },
-        ];
+      ];
+    }
+
+    if (step === 'automation') {
+      return automationItemGroups.map((group) => ({
+        label: group.label,
+        items: group.items.filter(matchesSearch),
+      }));
+    }
+
+    return [
+      {
+        label: '',
+        items: getItems().filter(
+          (item) => step === 'record' || matchesSearch(item),
+        ),
+      },
+    ];
+  };
+
+  const groups = getGroups();
   const items = groups.flatMap((group) => group.items);
   const getEmptyMessage = () => {
     if (step === 'page' && isDefined(standalonePagesError)) {

@@ -71,7 +71,7 @@ export const SidePanelCoreAgentToolsPage = () => {
         noResults={matchingToolPermissions.length === 0}
         noResultsText={t`No tools match your search`}
       >
-        {isDefined(agent) && isReadOnly && (
+        {isDefined(role) && isReadOnly && (
           <SidePanelCoreAgentReadOnlyBanner message={readOnlyMessage} />
         )}
         {matchingToolPermissions.length > 0 && (

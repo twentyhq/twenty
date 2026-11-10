@@ -1,4 +1,5 @@
 import { useApolloClient, useMutation } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -16,6 +17,7 @@ import {
 import { logError } from '~/utils/logError';
 
 export const useDeleteSelectedCoreAgents = () => {
+  const { t } = useLingui();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
   const [deleteOneAgent] = useMutation(DeleteOneAgentDocument);
@@ -56,7 +58,18 @@ export const useDeleteSelectedCoreAgents = () => {
     const [firstDeletionError] = deletionErrors;
 
     if (isDefined(firstDeletionError)) {
-      enqueueToast(getToastOptionsFromError({ error: firstDeletionError }));
+      const deletionErrorCount = deletionErrors.length;
+      const selectedCoreAgentCount = selectedCoreAgentIds.length;
+
+      enqueueToast(
+        getToastOptionsFromError({
+          error: firstDeletionError,
+          children:
+            deletionErrorCount > 1
+              ? t`Failed to delete ${deletionErrorCount} of ${selectedCoreAgentCount} agents`
+              : undefined,
+        }),
+      );
 
       return false;
     }

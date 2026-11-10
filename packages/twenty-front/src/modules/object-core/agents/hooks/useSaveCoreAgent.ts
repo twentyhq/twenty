@@ -1,5 +1,5 @@
 import { useApolloClient, useMutation } from '@apollo/client/react';
-import { useState } from 'react';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -8,6 +8,7 @@ import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentD
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useCoreAgentRole } from '@/object-core/agents/hooks/useCoreAgentRole';
 import { coreAgentDiscardCountFamilyState } from '@/object-core/agents/states/coreAgentDiscardCountFamilyState';
+import { coreAgentIsSavingFamilyState } from '@/object-core/agents/states/coreAgentIsSavingFamilyState';
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentDraftError } from '@/object-core/agents/utils/getCoreAgentDraftError';
@@ -28,7 +29,15 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
   const { enqueueToast } = useToast();
   const apolloClient = useApolloClient();
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
-  const [isSaving, setIsSaving] = useState(false);
+  const store = useStore();
+  const coreAgentIsSaving = useAtomFamilyStateValue(
+    coreAgentIsSavingFamilyState,
+    agent.id,
+  );
+  const setCoreAgentIsSaving = useSetAtomFamilyState(
+    coreAgentIsSavingFamilyState,
+    agent.id,
+  );
 
   const { draft, resetDraft, resetDraftIfUnchanged } = useCoreAgentDraft(agent);
   const { roleId, isNewRole } = useCoreAgentRole(agent);
@@ -90,6 +99,10 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
   };
 
   const saveCoreAgent = async () => {
+    if (store.get(coreAgentIsSavingFamilyState.atomFamily(agent.id))) {
+      return;
+    }
+
     const draftError = getCoreAgentDraftError(draft);
 
     if (isDefined(draftError)) {
@@ -98,7 +111,7 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
       return;
     }
 
-    setIsSaving(true);
+    setCoreAgentIsSaving(true);
 
     try {
       if (isRoleDirty) {
@@ -111,8 +124,6 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
           variables: {
             input: {
               id: agent.id,
-              name: draft.name || '',
-              label: draft.label,
               description: draft.description,
               icon: draft.icon,
               avatarColor: draft.avatarColor,
@@ -140,7 +151,7 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     } finally {
-      setIsSaving(false);
+      setCoreAgentIsSaving(false);
     }
   };
 
@@ -154,7 +165,7 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
   };
 
   return {
-    isSaving,
+    isSaving: coreAgentIsSaving,
     saveCoreAgent,
     discardCoreAgentChanges,
   };

@@ -79,7 +79,7 @@ export const SidePanelCoreAgentDataAccessPage = () => {
         noResults={selectableItemIds.length === 0}
         noResultsText={t`No objects match your search`}
       >
-        {isDefined(agent) && isReadOnly && (
+        {isDefined(role) && isReadOnly && (
           <SidePanelCoreAgentReadOnlyBanner message={readOnlyMessage} />
         )}
         {isGeneralShown && (

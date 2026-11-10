@@ -2,22 +2,9 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
 import { type Role } from '~/generated-metadata/graphql';
 
-export const CORE_AGENT_RECORD_ACCESS_LEVELS: {
-  level: CoreAgentRecordAccessLevel;
-  allRecordsKey: keyof Pick<
-    Role,
-    | 'canReadAllObjectRecords'
-    | 'canUpdateAllObjectRecords'
-    | 'canSoftDeleteAllObjectRecords'
-    | 'canDestroyAllObjectRecords'
-  >;
-  objectKey: SettingsRoleObjectPermissionKey;
-  label: MessageDescriptor;
-  allRecordsLabel: MessageDescriptor;
-}[] = [
+export const CORE_AGENT_RECORD_ACCESS_LEVELS = [
   {
     level: 'see',
     allRecordsKey: 'canReadAllObjectRecords',
@@ -46,4 +33,16 @@ export const CORE_AGENT_RECORD_ACCESS_LEVELS: {
     label: msg`Destroy`,
     allRecordsLabel: msg`Destroy all records`,
   },
-];
+] as const satisfies readonly {
+  level: string;
+  allRecordsKey: keyof Pick<
+    Role,
+    | 'canReadAllObjectRecords'
+    | 'canUpdateAllObjectRecords'
+    | 'canSoftDeleteAllObjectRecords'
+    | 'canDestroyAllObjectRecords'
+  >;
+  objectKey: SettingsRoleObjectPermissionKey;
+  label: MessageDescriptor;
+  allRecordsLabel: MessageDescriptor;
+}[];

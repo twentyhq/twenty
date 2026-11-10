@@ -16,7 +16,9 @@ export const getCoreAgentDefaultTriggerObjectNameSingular = ({
         ? [splitWorkflowTriggerEventName(trigger.settings.eventName).objectType]
         : [],
     )
-    .at(0);
+    .find((objectNameSingular) =>
+      objectNameSingulars.includes(objectNameSingular),
+    );
 
   return (
     existingObjectNameSingular ??

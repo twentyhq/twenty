@@ -38,16 +38,17 @@ export const CoreAgentTriggersSection = ({
     draft.triggers,
   ).map((trigger) => {
     const { label, icon } = getCoreAgentTriggerTypeLabelAndIcon(trigger);
+    const description = getCoreAgentTriggerDescription(trigger);
 
     return {
       id: trigger.id,
       label,
-      description: getCoreAgentTriggerDescription(trigger),
+      description,
       icon: <CoreAgentTriggerTypeIcon trigger={trigger} />,
       edit: isReadOnly
         ? undefined
         : {
-            label: t`Edit trigger`,
+            label: t`Edit ${label}, ${description}`,
             onClick: () =>
               openCoreAgentSidePanelPage({
                 agentId: agent.id,
@@ -60,7 +61,7 @@ export const CoreAgentTriggersSection = ({
       remove: isReadOnly
         ? undefined
         : {
-            label: t`Remove trigger`,
+            label: t`Remove ${label}, ${description}`,
             onClick: () =>
               updateDraft((currentDraft) => ({
                 ...currentDraft,
@@ -82,7 +83,7 @@ export const CoreAgentTriggersSection = ({
       <CoreAgentSectionBody>
         <CoreAgentSectionList
           items={items}
-          emptyMessage={t`This agent only runs when a workflow or an app calls it.`}
+          emptyMessage={t`This agent only runs when a workflow, an app or the API calls it.`}
         />
         {!isReadOnly && (
           <Button
