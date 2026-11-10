@@ -3,11 +3,25 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { canReachSomeRecords } from 'twenty-shared/utils';
 
 import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
+import { type CoreWorkflowShowPageTabId } from '@/object-core/workflows/types/CoreWorkflowShowPageTabId';
 import { getCoreWorkflowShowPageTabIdFromHash } from '@/object-core/workflows/utils/getCoreWorkflowShowPageTabIdFromHash';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 
-export const useCoreWorkflowShowPageActiveTab = (coreWorkflowId: string) => {
+const RUN_TAB_IDS: CoreWorkflowShowPageTabId[] = [
+  CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW,
+  CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.RUNS,
+];
+
+type UseCoreWorkflowShowPageActiveTabArgs = {
+  coreWorkflowId: string;
+  isPublished: boolean;
+};
+
+export const useCoreWorkflowShowPageActiveTab = ({
+  coreWorkflowId,
+  isPublished,
+}: UseCoreWorkflowShowPageActiveTabArgs) => {
   const location = useLocation();
 
   const { objectMetadataItem: workflowRunObjectMetadataItem } =
@@ -22,10 +36,18 @@ export const useCoreWorkflowShowPageActiveTab = (coreWorkflowId: string) => {
     operationType: 'read',
   });
 
-  const tabIdFromHash = getCoreWorkflowShowPageTabIdFromHash(location.hash);
+  // A draft has no runs to show yet, so it opens on its flow
+  const defaultTabId =
+    isPublished && canReadWorkflowRuns
+      ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW
+      : CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW;
+
+  const tabIdFromHash = getCoreWorkflowShowPageTabIdFromHash({
+    hash: location.hash,
+    defaultTabId,
+  });
   const isLinkedToUnreadableRuns =
-    tabIdFromHash === CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.RUNS &&
-    !canReadWorkflowRuns;
+    RUN_TAB_IDS.includes(tabIdFromHash) && !canReadWorkflowRuns;
 
   return {
     activeTabId: isLinkedToUnreadableRuns

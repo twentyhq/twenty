@@ -1,0 +1,72 @@
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
+@ObjectType('CoreWorkflowDailyRunCount')
+export class CoreWorkflowDailyRunCountDTO {
+  @Field(() => String, {
+    description: 'Day in the requested time zone, as YYYY-MM-DD',
+  })
+  day: string;
+
+  @Field(() => Int)
+  completedRunCount: number;
+
+  @Field(() => Int)
+  failedRunCount: number;
+
+  @Field(() => Int, { description: 'Runs neither completed nor failed yet' })
+  otherRunCount: number;
+}
+
+@ObjectType('CoreWorkflowFailedRun')
+export class CoreWorkflowFailedRunDTO {
+  @Field(() => UUIDScalarType)
+  id: string;
+
+  @Field(() => String, { nullable: true })
+  name: string | null;
+
+  @Field(() => String)
+  createdAt: string;
+
+  @Field(() => String, { nullable: true })
+  errorMessage: string | null;
+}
+
+@ObjectType('CoreWorkflowRunInsights')
+export class CoreWorkflowRunInsightsDTO {
+  @Field(() => UUIDScalarType)
+  coreWorkflowId: string;
+
+  @Field(() => Int, { description: 'Runs in the last 14 days' })
+  runCount: number;
+
+  @Field(() => Int, { description: 'Failed runs in the last 14 days' })
+  failedRunCount: number;
+
+  @Field(() => Boolean, {
+    description:
+      'True when run retention may have deleted runs from the window, so the counts are lower bounds',
+  })
+  isRunCountLowerBound: boolean;
+
+  @Field(() => Float, {
+    nullable: true,
+    description: 'Average duration of completed runs in the last 14 days',
+  })
+  averageDurationInMs: number | null;
+
+  @Field(() => String, { nullable: true })
+  lastFailedRunAt: string | null;
+
+  @Field(() => [CoreWorkflowDailyRunCountDTO], {
+    description: 'One entry per day of the last 14 days, oldest first',
+  })
+  dailyRunCounts: CoreWorkflowDailyRunCountDTO[];
+
+  @Field(() => [CoreWorkflowFailedRunDTO], {
+    description: 'Most recent failed runs first',
+  })
+  recentFailedRuns: CoreWorkflowFailedRunDTO[];
+}

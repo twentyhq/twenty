@@ -10,12 +10,14 @@ const isCoreWorkflowShowPageTabId = (
 ): tabId is CoreWorkflowShowPageTabId =>
   CORE_WORKFLOW_SHOW_PAGE_TAB_IDS.includes(tabId);
 
-export const getCoreWorkflowShowPageTabIdFromHash = (
-  hash: string,
-): CoreWorkflowShowPageTabId => {
+export const getCoreWorkflowShowPageTabIdFromHash = ({
+  hash,
+  defaultTabId,
+}: {
+  hash: string;
+  defaultTabId: CoreWorkflowShowPageTabId;
+}): CoreWorkflowShowPageTabId => {
   const tabId = hash.replace('#', '');
 
-  return isCoreWorkflowShowPageTabId(tabId)
-    ? tabId
-    : CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW;
+  return isCoreWorkflowShowPageTabId(tabId) ? tabId : defaultTabId;
 };

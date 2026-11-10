@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import {
+  IconLayoutDashboard,
   IconSettingsAutomation,
   IconTerminal,
   IconVersions,
@@ -35,6 +36,12 @@ export const CoreWorkflowShowPageTabList = ({
         componentInstanceId={componentInstanceId}
         centerTabs
         tabs={[
+          {
+            id: CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW,
+            title: t`Overview`,
+            Icon: IconLayoutDashboard,
+            hide: !canReadWorkflowRuns,
+          },
           {
             id: CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW,
             title: t`Flow`,

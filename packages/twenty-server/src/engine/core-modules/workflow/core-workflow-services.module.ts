@@ -12,6 +12,7 @@ import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflo
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
+import { CoreWorkflowRunInsightsService } from 'src/engine/core-modules/workflow/services/core-workflow-run-insights.service';
 import { CoreWorkflowRunSummaryService } from 'src/engine/core-modules/workflow/services/core-workflow-run-summary.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
@@ -56,6 +57,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     CoreWorkflowListService,
     CoreWorkflowMutationWorkspaceService,
     CoreWorkflowRunSummaryService,
+    CoreWorkflowRunInsightsService,
     CoreWorkflowVersionListService,
     CoreWorkflowVersionMutationWorkspaceService,
     CoreWorkflowVersionRunService,
@@ -68,6 +70,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     CoreWorkflowListService,
     CoreWorkflowMutationWorkspaceService,
     CoreWorkflowRunSummaryService,
+    CoreWorkflowRunInsightsService,
     CoreWorkflowVersionListService,
     CoreWorkflowVersionMutationWorkspaceService,
     CoreWorkflowVersionRunService,

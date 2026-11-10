@@ -9,7 +9,8 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
-import { CoreWorkflowRunSummaryDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-summary.dto';
+import { CoreWorkflowRunInsightsDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-insights.dto';
+import { CoreWorkflowRunInsightsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-insights.input';
 import { CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
 import { CoreWorkflowsWithCurrentVersionsInput } from 'src/engine/core-modules/workflow/dtos/core-workflows-with-current-versions.input';
 import { CreateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow.input';
@@ -30,7 +31,7 @@ import { UpdateCoreWorkflowVisibilityInput } from 'src/engine/core-modules/workf
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
-import { CoreWorkflowRunSummaryService } from 'src/engine/core-modules/workflow/services/core-workflow-run-summary.service';
+import { CoreWorkflowRunInsightsService } from 'src/engine/core-modules/workflow/services/core-workflow-run-insights.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -94,7 +95,7 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowListService: CoreWorkflowListService,
     private readonly coreWorkflowMutationWorkspaceService: CoreWorkflowMutationWorkspaceService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
-    private readonly coreWorkflowRunSummaryService: CoreWorkflowRunSummaryService,
+    private readonly coreWorkflowRunInsightsService: CoreWorkflowRunInsightsService,
   ) {}
 
   private assertWorkflowActorOrThrow(principal: {
@@ -279,17 +280,17 @@ export class CoreWorkflowResolver {
     });
   }
 
-  @Query(() => CoreWorkflowRunSummaryDTO, { nullable: true })
+  @Query(() => CoreWorkflowRunInsightsDTO, { nullable: true })
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
-  async coreWorkflowRunSummary(
+  async coreWorkflowRunInsights(
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @AuthApplication({ allowUndefined: true })
     callerApplication: FlatApplication | undefined,
-    @Args() { coreWorkflowId }: CoreWorkflowByIdArgs,
-  ): Promise<CoreWorkflowRunSummaryDTO | null> {
+    @Args() { coreWorkflowId, timeZone }: CoreWorkflowRunInsightsArgs,
+  ): Promise<CoreWorkflowRunInsightsDTO | null> {
     const coreWorkflow = await this.coreWorkflowListService.findOneById({
       workspaceId,
       userWorkspaceId,
@@ -302,12 +303,10 @@ export class CoreWorkflowResolver {
       return null;
     }
 
-    const [runSummary] =
-      await this.coreWorkflowRunSummaryService.findManyByCoreWorkflowIds([
-        coreWorkflow.id,
-      ]);
-
-    return runSummary ?? null;
+    return this.coreWorkflowRunInsightsService.findOneByCoreWorkflowId({
+      coreWorkflowId: coreWorkflow.id,
+      timeZone,
+    });
   }
 
   @Query(() => [CoreWorkflowWithCurrentVersionDTO])

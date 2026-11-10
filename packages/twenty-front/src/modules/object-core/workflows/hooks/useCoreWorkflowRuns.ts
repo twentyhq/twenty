@@ -1,15 +1,11 @@
 import { useMemo } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { useDebouncedCallback } from 'use-debounce';
 
-import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { useListenToCoreWorkflowRunEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowRunEvents';
 import { type CoreWorkflowRunListItem } from '@/object-core/workflows/types/CoreWorkflowRunListItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 
 const RUNS_PAGE_SIZE = 50;
-
-const RUN_EVENTS_REFETCH_DEBOUNCE_IN_MS = 1000;
 
 export const useCoreWorkflowRuns = (coreWorkflowId: string) => {
   const runsFilter = useMemo(
@@ -18,7 +14,6 @@ export const useCoreWorkflowRuns = (coreWorkflowId: string) => {
   );
 
   const {
-    objectMetadataItem,
     records,
     loading,
     error,
@@ -42,28 +37,10 @@ export const useCoreWorkflowRuns = (coreWorkflowId: string) => {
     fetchPolicy: 'cache-and-network',
   });
 
-  // Runs change step by step while they execute, so bursts of events collapse into one refetch
-  const refetchRunsDebounced = useDebouncedCallback(() => {
-    void refetchRuns();
-  }, RUN_EVENTS_REFETCH_DEBOUNCE_IN_MS);
-
-  const runsOperationSignature = useMemo(
-    () => ({
-      objectNameSingular: StandardObjectNameSingular.WorkflowRun,
-      variables: { filter: runsFilter },
-    }),
-    [runsFilter],
-  );
-
-  useListenToEventsForQuery({
+  useListenToCoreWorkflowRunEvents({
+    coreWorkflowId,
     queryId: `core-workflow-runs-${coreWorkflowId}`,
-    operationSignature: runsOperationSignature,
-    onSseReconnected: refetchRunsDebounced,
-  });
-
-  useListenToObjectRecordOperationBrowserEvent({
-    onObjectRecordOperationBrowserEvent: refetchRunsDebounced,
-    objectMetadataItemId: objectMetadataItem.id,
+    onRunsChanged: refetchRuns,
   });
 
   return {

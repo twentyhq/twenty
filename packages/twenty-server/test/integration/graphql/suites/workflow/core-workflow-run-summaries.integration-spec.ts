@@ -68,33 +68,6 @@ const listCoreWorkflowsWithRunSummaries =
     return response.body.data.coreWorkflows;
   };
 
-const CORE_WORKFLOW_RUN_SUMMARY_QUERY = `
-  query CoreWorkflowRunSummary($coreWorkflowId: UUID!) {
-    coreWorkflowRunSummary(coreWorkflowId: $coreWorkflowId) {
-      coreWorkflowId
-      runCountLast14Days
-      isRunCountLowerBound
-      recentRuns {
-        id
-      }
-    }
-  }
-`;
-
-const getCoreWorkflowRunSummary = async (coreWorkflowId: string) => {
-  const response = await client
-    .post('/graphql')
-    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-    .send({
-      query: CORE_WORKFLOW_RUN_SUMMARY_QUERY,
-      variables: { coreWorkflowId },
-    });
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.coreWorkflowRunSummary;
-};
-
 describe('coreWorkflows run summaries (e2e)', () => {
   let manualCoreWorkflowId: string;
   let manualCoreWorkflowVersionId: string;
@@ -154,24 +127,5 @@ describe('coreWorkflows run summaries (e2e)', () => {
     expect(manualRunSummary?.runCountLast14Days).toBe(1);
     expect(manualRunSummary?.recentRuns).toHaveLength(1);
     expect(manualRunSummary?.recentRuns[0].id).toBe(workflowRunId);
-  });
-
-  it('should return the same summary for a single workflow', async () => {
-    const { runSummaries } = await listCoreWorkflowsWithRunSummaries();
-
-    const listedRunSummary = runSummaries.find(
-      ({ coreWorkflowId }) => coreWorkflowId === manualCoreWorkflowId,
-    );
-
-    expect(await getCoreWorkflowRunSummary(manualCoreWorkflowId)).toEqual({
-      coreWorkflowId: manualCoreWorkflowId,
-      runCountLast14Days: listedRunSummary?.runCountLast14Days,
-      isRunCountLowerBound: false,
-      recentRuns: listedRunSummary?.recentRuns.map(({ id }) => ({ id })),
-    });
-  });
-
-  it('should return no summary for an unknown workflow', async () => {
-    expect(await getCoreWorkflowRunSummary(randomUUID())).toBeNull();
   });
 });

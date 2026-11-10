@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useMemo } from 'react';
 
+import { CoreWorkflowOverviewTab } from '@/object-core/workflows/components/CoreWorkflowOverviewTab';
 import { CoreWorkflowRunsTab } from '@/object-core/workflows/components/CoreWorkflowRunsTab';
 import { CoreWorkflowVersionsTab } from '@/object-core/workflows/components/CoreWorkflowVersionsTab';
 import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
@@ -30,6 +31,14 @@ export const CoreWorkflowShowPageActiveTab = ({
     () => new Map(coreWorkflowVersions.map(({ id, label }) => [id, label])),
     [coreWorkflowVersions],
   );
+
+  if (activeTabId === CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW) {
+    return (
+      <StyledTabContent>
+        <CoreWorkflowOverviewTab coreWorkflowId={coreWorkflowId} />
+      </StyledTabContent>
+    );
+  }
 
   if (activeTabId === CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.RUNS) {
     return (

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { CORE_WORKFLOW_RUN_COUNT_WINDOW_IN_DAYS } from 'src/engine/core-modules/workflow/constants/core-workflow-run-count-window-in-days.constant';
 import { type CoreWorkflowRunSummaryDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-summary.dto';
 import {
   PermissionsException,
@@ -10,8 +11,6 @@ import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/sta
 import { NUMBER_OF_WORKFLOW_RUNS_TO_KEEP } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/number-of-workflow-runs-to-keep';
 
 const RECENT_RUNS_LIMIT = 10;
-
-const RUN_COUNT_WINDOW_IN_DAYS = 14;
 
 const WORKFLOW_RUN_ALIAS = 'workflowRun';
 
@@ -80,7 +79,7 @@ export class CoreWorkflowRunSummaryService {
       .addSelect('COUNT(*)', 'runCount')
       .andWhere(
         `${column('createdAt')} >= NOW() - MAKE_INTERVAL(days => :runCountWindowInDays)`,
-        { runCountWindowInDays: RUN_COUNT_WINDOW_IN_DAYS },
+        { runCountWindowInDays: CORE_WORKFLOW_RUN_COUNT_WINDOW_IN_DAYS },
       );
 
     await recentRunsQueryBuilder.applyRowLevelPermissions();
