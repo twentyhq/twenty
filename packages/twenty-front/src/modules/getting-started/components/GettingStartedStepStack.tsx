@@ -214,7 +214,6 @@ export const GettingStartedStepStack = ({
     .map((stepDefinition, index) => ({ depth: index + 1, stepDefinition }))
     .reverse();
 
-  // Entering cards read the previous stack to know which slot they come from
   const [stackTransition, setStackTransition] =
     useState<GettingStartedStackTransition>({
       selectedStepActionKey,
