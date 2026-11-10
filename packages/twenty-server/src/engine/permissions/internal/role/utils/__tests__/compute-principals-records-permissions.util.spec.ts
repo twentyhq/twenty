@@ -246,6 +246,58 @@ describe('computePrincipalsRecordsPermissions', () => {
     });
   });
 
+  it('should deny an object a limiting agent only reaches through the RLS rule of the role it shares with the main principal', () => {
+    const rowLevelOnly: ObjectRecordsPermissions = {
+      canCreateAllRecords: false,
+      canReadAllRecords: false,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+      unreadableFields: [],
+      uneditableFields: [],
+      rowLevelRecordsPermissions: [
+        {
+          ruleId: 'rule-id',
+          canCreateRecords: false,
+          canReadRecords: true,
+          canUpdateRecords: false,
+          canSoftDeleteRecords: false,
+          canDestroyRecords: false,
+          predicates: [],
+          predicateGroups: [],
+          unreadableFields: [],
+          uneditableFields: [],
+        },
+      ],
+    };
+
+    const recordsPermissions = computePrincipalsRecordsPermissions({
+      principals: {
+        mainPrincipal: { type: 'role', roleId: 'shared-role-id' },
+        limitingPrincipal: {
+          type: 'agent',
+          agentId: 'agent-id',
+          roleId: 'shared-role-id',
+        },
+        applicationPrincipal: { type: 'customApplication' },
+      },
+      rolesPermissions: {
+        'shared-role-id': buildRoleRecordsPermissions({
+          [OBJECT_ID]: rowLevelOnly,
+        }),
+      },
+      flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+      flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
+      flatApplicationMaps: { byId: {} },
+    });
+
+    expect(
+      recordsPermissions.objects[OBJECT_ID]?.rowLevelRecordsPermissions,
+    ).toEqual([
+      expect.objectContaining({ ruleId: 'rule-id', canReadRecords: false }),
+    ]);
+  });
+
   it('should not grant a permission that only one of the roles allows', () => {
     expect(
       computeForPrincipals({
