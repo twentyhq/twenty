@@ -88,7 +88,9 @@ export const buildRowLevelPermissionRules = ({
     ]),
   );
 
-  const findRootPredicateGroup = (predicateGroupUniversalIdentifier: string) => {
+  const findRootPredicateGroup = (
+    predicateGroupUniversalIdentifier: string,
+  ) => {
     const visitedUniversalIdentifiers = new Set<string>();
     let predicateGroup = predicateGroupByUniversalIdentifier.get(
       predicateGroupUniversalIdentifier,

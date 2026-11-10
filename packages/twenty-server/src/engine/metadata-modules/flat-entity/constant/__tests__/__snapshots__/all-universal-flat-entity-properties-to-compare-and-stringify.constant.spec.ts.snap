@@ -149,6 +149,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "rowLevelPermissionPredicateGroupUniversalIdentifier",
       "canReadFieldValue",
       "canUpdateFieldValue",
+      "rowLevelPermissionRuleUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },
@@ -396,6 +397,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "workspaceMemberFieldMetadataUniversalIdentifier",
       "workspaceMemberSubFieldName",
       "deletedAt",
+      "rowLevelPermissionRuleUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "value",
@@ -412,6 +414,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "canDestroyRecords",
       "parentRowLevelPermissionPredicateGroupUniversalIdentifier",
       "deletedAt",
+      "rowLevelPermissionRuleUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },

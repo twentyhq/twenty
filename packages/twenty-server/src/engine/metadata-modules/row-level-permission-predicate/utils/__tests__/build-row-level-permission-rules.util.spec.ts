@@ -9,7 +9,9 @@ const NOW = '2026-11-10T00:00:00.000Z';
 
 const buildPredicateGroup = (
   universalIdentifier: string,
-  parentRowLevelPermissionPredicateGroupUniversalIdentifier: string | null = null,
+  parentRowLevelPermissionPredicateGroupUniversalIdentifier:
+    | string
+    | null = null,
 ) => ({
   ...OWNER,
   universalIdentifier,

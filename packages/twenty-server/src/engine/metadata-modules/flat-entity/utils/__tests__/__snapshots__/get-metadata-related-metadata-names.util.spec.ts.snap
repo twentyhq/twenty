@@ -58,6 +58,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "objectMetadata",
   "fieldMetadata",
   "rowLevelPermissionPredicateGroup",
+  "rowLevelPermissionRule",
 ]
 `;
 
@@ -182,6 +183,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldMetadata",
   "objectMetadata",
   "rowLevelPermissionPredicateGroup",
+  "rowLevelPermissionRule",
 ]
 `;
 
@@ -190,6 +192,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "objectMetadata",
   "role",
   "rowLevelPermissionPredicateGroup",
+  "rowLevelPermissionRule",
   "rowLevelPermissionPredicate",
 ]
 `;
