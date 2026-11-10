@@ -16165,14 +16165,8 @@ export default {
             "locale": [
                 1
             ],
-            "objectPermissions": [
-                408
-            ],
             "objectRecordsPermissions": [
                 415
-            ],
-            "objectsPermissions": [
-                408
             ],
             "permissionFlags": [
                 433

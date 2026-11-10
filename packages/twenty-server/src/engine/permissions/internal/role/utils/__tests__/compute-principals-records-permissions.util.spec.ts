@@ -189,7 +189,7 @@ describe('computePrincipalsRecordsPermissions', () => {
     ).toEqual(defaultRolePermissions);
   });
 
-  it('should mask with the object access of a limiting role, ignoring its RLS rule', () => {
+  it('should deny an object a limiting role only reaches through an RLS rule', () => {
     const readAllRecords: ObjectRecordsPermissions = {
       canCreateAllRecords: false,
       canReadAllRecords: true,
@@ -240,7 +240,10 @@ describe('computePrincipalsRecordsPermissions', () => {
       flatApplicationMaps: { byId: {} },
     });
 
-    expect(recordsPermissions.objects[OBJECT_ID]).toEqual(readAllRecords);
+    expect(recordsPermissions.objects[OBJECT_ID]).toEqual({
+      ...readAllRecords,
+      canReadAllRecords: false,
+    });
   });
 
   it('should not grant a permission that only one of the roles allows', () => {
