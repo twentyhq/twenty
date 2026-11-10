@@ -301,6 +301,7 @@ describe('AiChatThreadDetailsDropdown', () => {
 
     await user.click(screen.getByRole('button', { name: 'Unfollow for me' }));
 
+    expect(executeAgentChatThreadInboxAction).toHaveBeenCalledTimes(1);
     expect(executeAgentChatThreadInboxAction).toHaveBeenCalledWith({
       threadIds: [THREAD_ID],
       action: AgentChatInboxAction.UNSUBSCRIBE,
