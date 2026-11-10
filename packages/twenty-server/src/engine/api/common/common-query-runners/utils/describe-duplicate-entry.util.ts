@@ -32,12 +32,14 @@ export const describeDuplicateEntry = ({
   flatIndexMaps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
+  unreadableFieldMetadataIds,
 }: {
   duplicateEntryCause: unknown;
   isRestore: boolean;
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  unreadableFieldMetadataIds: Set<string>;
 }): DuplicateEntryDescription | undefined => {
   const constraintName = getStringProperty(duplicateEntryCause, 'constraint');
 
@@ -84,7 +86,11 @@ export const describeDuplicateEntry = ({
   const duplicateColumn =
     isDefined(duplicateColumnName) &&
     isDefined(duplicateColumnValue) &&
-    !indexedFlatFieldMetadatas.some(isMorphOrRelationFlatFieldMetadata)
+    !indexedFlatFieldMetadatas.some(
+      (flatFieldMetadata) =>
+        isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
+        unreadableFieldMetadataIds.has(flatFieldMetadata.id),
+    )
       ? { name: duplicateColumnName, value: duplicateColumnValue }
       : undefined;
 

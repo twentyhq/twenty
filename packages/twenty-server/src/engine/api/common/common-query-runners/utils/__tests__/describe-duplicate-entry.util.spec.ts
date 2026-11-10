@@ -89,13 +89,16 @@ const buildFlatIndexMetadata = ({
 const describe_ = ({
   duplicateEntryCause,
   isRestore = false,
+  unreadableFieldMetadataIds = new Set<string>(),
 }: {
   duplicateEntryCause: unknown;
   isRestore?: boolean;
+  unreadableFieldMetadataIds?: Set<string>;
 }) => {
   const duplicateEntryDescription = describeDuplicateEntry({
     duplicateEntryCause,
     isRestore,
+    unreadableFieldMetadataIds,
     flatIndexMaps: buildFlatEntityMaps([
       buildFlatIndexMetadata({
         name: 'IDX_UNIQUE_emails',
@@ -162,6 +165,24 @@ describe('describeDuplicateEntry', () => {
       }),
     ).toEqual({
       userMessage: 'Another Person already has the same Company.',
+      objectNameSingular: 'person',
+      duplicateColumn: undefined,
+    });
+  });
+
+  it('does not expose the value of a field the caller cannot read', () => {
+    expect(
+      describe_({
+        duplicateEntryCause: {
+          constraint: 'IDX_UNIQUE_emails',
+          detail: 'Key ("emailsPrimaryEmail")=(tim@apple.dev) already exists.',
+        },
+        isRestore: true,
+        unreadableFieldMetadataIds: new Set([emailsFlatFieldMetadata.id]),
+      }),
+    ).toEqual({
+      userMessage:
+        'Cannot restore: another Person already has the same Emails.',
       objectNameSingular: 'person',
       duplicateColumn: undefined,
     });

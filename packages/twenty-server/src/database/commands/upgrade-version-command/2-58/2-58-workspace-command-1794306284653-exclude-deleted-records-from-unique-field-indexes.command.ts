@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -156,12 +156,26 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
     replacements: UniqueFieldIndexReplacement[];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   }): Promise<void> {
-    const queryRunner = dataSource.createQueryRunner();
-    let isQueryRunnerConnected = false;
+    const coreDataSourceOptions = dataSource.options;
+
+    if (coreDataSourceOptions.type !== 'postgres') {
+      throw new Error(
+        `Concurrent index builds need a postgres datasource, got ${coreDataSourceOptions.type}`,
+      );
+    }
+
+    const indexBuildDataSource = await new DataSource({
+      ...coreDataSourceOptions,
+      entities: [],
+      migrations: [],
+      subscribers: [],
+      poolSize: 1,
+      extra: { ...coreDataSourceOptions.extra, query_timeout: undefined },
+    }).initialize();
+    const queryRunner = indexBuildDataSource.createQueryRunner();
 
     try {
       await queryRunner.connect();
-      isQueryRunnerConnected = true;
 
       for (const replacement of replacements) {
         if (replacement.isReplacementAlreadyCreated) {
@@ -177,7 +191,7 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
           },
         );
 
-        const invalidIndexes = await dataSource.query<{ name: string }[]>(
+        const invalidIndexes: { name: string }[] = await queryRunner.query(
           `SELECT c.relname AS name
            FROM pg_index i
            JOIN pg_class c ON c.oid = i.indexrelid
@@ -217,9 +231,7 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
         });
       }
     } finally {
-      if (isQueryRunnerConnected) {
-        await queryRunner.release();
-      }
+      await indexBuildDataSource.destroy();
     }
   }
 

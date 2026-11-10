@@ -193,10 +193,13 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
-  private async describeDuplicateEntryError(
-    error: unknown,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<void> {
+  private async describeDuplicateEntryError({
+    error,
+    queryRunnerContext,
+  }: {
+    error: unknown;
+    queryRunnerContext: CommonBaseQueryRunnerContext;
+  }): Promise<void> {
     if (!isDuplicateEntryError(error)) {
       return;
     }
@@ -218,6 +221,10 @@ export abstract class CommonBaseQueryRunnerService<
       flatIndexMaps,
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+      unreadableFieldMetadataIds:
+        await this.findFieldMetadataIdsHiddenFromCaller(
+          queryRunnerContext.flatObjectMetadata,
+        ),
     });
 
     if (!isDefined(duplicateEntryDescription)) {
@@ -230,12 +237,36 @@ export abstract class CommonBaseQueryRunnerService<
     );
   }
 
+  private async findFieldMetadataIdsHiddenFromCaller(
+    flatObjectMetadata: FlatObjectMetadata,
+  ): Promise<Set<string>> {
+    const question = {
+      principals: getWorkspaceContext().permissionsPrincipals,
+      objectMetadataId: flatObjectMetadata.id,
+    };
+    const [unreadableFieldMetadataIds, fieldsHiddenOnMatchingRecords] =
+      await Promise.all([
+        this.recordFieldPermissionsReadService.findUnreadableFields(question),
+        this.recordFieldPermissionsReadService.findFieldsHiddenOnMatchingRecords(
+          { ...question, tableAlias: flatObjectMetadata.nameSingular },
+        ),
+      ]);
+
+    return new Set([
+      ...unreadableFieldMetadataIds,
+      ...fieldsHiddenOnMatchingRecords.flatMap(
+        ({ fieldMetadataIds }) => fieldMetadataIds,
+      ),
+    ]);
+  }
+
   private async findConflictingRecord({
     flatObjectMetadata,
     duplicateColumn,
-  }: DuplicateEntryDescription): Promise<
-    TwentyOrmException['conflictingRecord']
-  > {
+  }: Pick<
+    DuplicateEntryDescription,
+    'flatObjectMetadata' | 'duplicateColumn'
+  >): Promise<TwentyOrmException['conflictingRecord']> {
     if (!isDefined(duplicateColumn)) {
       return undefined;
     }
@@ -246,7 +277,13 @@ export abstract class CommonBaseQueryRunnerService<
       .where({ [duplicateColumn.name]: duplicateColumn.value })
       .setFindOptions({ select: { id: true } })
       .getOne<ObjectRecord>()
-      .catch(() => undefined);
+      .catch((lookupError: unknown) => {
+        this.logger.warn(
+          `Could not look up the ${flatObjectMetadata.nameSingular} holding a duplicate value: ${lookupError instanceof Error ? lookupError.message : String(lookupError)}`,
+        );
+
+        return undefined;
+      });
 
     return isDefined(conflictingRecord)
       ? {
@@ -367,7 +404,7 @@ export abstract class CommonBaseQueryRunnerService<
         commonQueryParser,
       },
     ).catch(async (error: unknown) => {
-      await this.describeDuplicateEntryError(error, queryRunnerContext);
+      await this.describeDuplicateEntryError({ error, queryRunnerContext });
 
       throw error;
     });

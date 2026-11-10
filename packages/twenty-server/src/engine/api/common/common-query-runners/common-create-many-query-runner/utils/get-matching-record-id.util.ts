@@ -50,12 +50,11 @@ export const getMatchingRecordId = (
       }),
     );
 
-    const matchingRecord =
-      fieldGroup.isIgnoringDeletedRecords === true
-        ? matchingRecords.find(
-            (existingRecord) => !isDefined(existingRecord.deletedAt),
-          )
-        : matchingRecords[0];
+    const matchingRecord = fieldGroup.isIgnoringDeletedRecords
+      ? matchingRecords.find(
+          (existingRecord) => !isDefined(existingRecord.deletedAt),
+        )
+      : matchingRecords[0];
 
     if (isDefined(matchingRecord)) {
       matchingRecordIds.push(matchingRecord.id);

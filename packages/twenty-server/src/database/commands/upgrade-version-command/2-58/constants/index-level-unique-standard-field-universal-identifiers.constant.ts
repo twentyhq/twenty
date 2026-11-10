@@ -1,5 +1,12 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
 export const INDEX_LEVEL_UNIQUE_STANDARD_FIELD_UNIVERSAL_IDENTIFIERS = {
-  accessGroupGroupHash: '04687cce-1268-4774-b47e-04076a152630',
-  shortLinkTemplateAndResolvedUrlHash: '175f7743-b027-4374-b577-6503679d00fc',
-  campaignDeliveryProviderMessageId: 'a560bd1a-716b-4fc3-b931-a34ff46bca6f',
+  accessGroupGroupHash:
+    STANDARD_OBJECTS.accessGroup.fields.groupHash.universalIdentifier,
+  shortLinkTemplateAndResolvedUrlHash:
+    STANDARD_OBJECTS.shortLink.fields.templateAndResolvedUrlHash
+      .universalIdentifier,
+  campaignDeliveryProviderMessageId:
+    STANDARD_OBJECTS.campaignDelivery.fields.providerMessageId
+      .universalIdentifier,
 } as const;

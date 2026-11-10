@@ -2,8 +2,6 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { INDEX_LEVEL_UNIQUE_STANDARD_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-58/constants/index-level-unique-standard-field-universal-identifiers.constant';
 import { buildUniqueFieldIndexReplacements } from 'src/database/commands/upgrade-version-command/2-58/utils/build-unique-field-index-replacements.util';
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -35,15 +33,9 @@ const buildFlatEntityMaps = <TFlatEntity extends SyncableFlatEntity>(
   universalIdentifiersByApplicationId: {},
 });
 
-const flatApplicationMaps: FlatApplicationCacheMaps = {
+const flatApplicationMaps = {
   byId: {
-    [APPLICATION_ID]: {
-      id: APPLICATION_ID,
-      universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-    } as FlatApplication,
-  },
-  idByUniversalIdentifier: {
-    [APPLICATION_UNIVERSAL_IDENTIFIER]: APPLICATION_ID,
+    [APPLICATION_ID]: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
   },
 };
 

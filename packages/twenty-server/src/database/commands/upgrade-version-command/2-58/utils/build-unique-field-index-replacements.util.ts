@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { INDEX_LEVEL_UNIQUE_STANDARD_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-58/constants/index-level-unique-standard-field-universal-identifiers.constant';
 import { type UniqueFieldIndexReplacement } from 'src/database/commands/upgrade-version-command/2-58/types/unique-field-index-replacement.type';
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -27,7 +27,9 @@ export const buildUniqueFieldIndexReplacements = ({
   AllFlatEntityMaps,
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
 > & {
-  flatApplicationMaps: FlatApplicationCacheMaps;
+  flatApplicationMaps: {
+    byId: Partial<Record<string, Pick<FlatApplication, 'universalIdentifier'>>>;
+  };
   now: string;
 }): UniqueFieldIndexReplacement[] =>
   Object.values(flatIndexMaps.byUniversalIdentifier)
