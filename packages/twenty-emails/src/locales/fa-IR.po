@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): لطفاً این دامنه را �
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "از یک کد پشتیبان برای ورود به {workspaceDisplayName} استفاده شد. کدهای پشتیبان باقی‌مانده: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "پس از آن، فضای کاری و همه داده‌های آن بر
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "کد پشتیبان استفاده شد"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "سلام {userName}،"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "اگر این شما نبودید، گذرواژه خود را تغییر دهید و در تنظیمات، پروفایل، احراز هویت دومرحله‌ای کدهای پشتیبان جدید ایجاد کنید."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "اگر این شما نبودید، گذرواژه خود را تغییر دهید و کدهای پشتیبان جدید ایجاد کنید."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "مدیریت اشتراک"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "کدهای پشتیبان جدید ایجاد شدند"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "کدهای پشتیبان جدیدی برای حساب شما در {workspaceDisplayName} ایجاد شدند. کدهای پشتیبان قبلی شما دیگر کار نمی‌کنند."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "از ثبت‌نام برای یک حساب در Twenty سپاسگزار
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "احرازکننده حساب شما در {workspaceDisplayName} از تنظیمات حذف شد. کدهای پشتیبان شما برای این فضای کاری دیگر کار نمی‌کنند."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "کد بازیابی احراز هویت دومرحله‌ای صادر �
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "احراز هویت دومرحله‌ای حذف شد"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "نشان‌واره فضای کاری"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "می‌توانید در تنظیمات، پروفایل، احراز هویت دومرحله‌ای کدهای پشتیبان جدید ایجاد کنید."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

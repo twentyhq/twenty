@@ -131,7 +131,7 @@ msgstr "24h"
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
-msgstr ""
+msgstr "K přihlášení k vašemu účtu byl použit záložní kód"
 
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
@@ -5086,7 +5086,7 @@ msgstr "Chcete-li vygenerovat obnovovací kód, zadejte svůj kód dvoufaktorov�
 #. js-lingui-id: gb/uW+
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
 msgid "Enter your two-factor authentication code to generate new backup codes."
-msgstr ""
+msgstr "Zadejte svůj kód dvoufaktorového ověření pro vygenerování nových záložních kódů."
 
 #. js-lingui-id: vNNSFX
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
@@ -9306,7 +9306,7 @@ msgstr "Nový"
 #. js-lingui-id: 2k6acO
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "New backup codes were generated for your account"
-msgstr ""
+msgstr "Pro váš účet byly vygenerovány nové záložní kódy"
 
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12535,7 +12535,7 @@ msgstr "serverRouteTriggerSettings může nastavit pouze nainstalovaná aplikace
 #. js-lingui-id: aMFlAV
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
 msgid "Set up two-factor authentication before generating backup codes."
-msgstr ""
+msgstr "Nastavte dvoufaktorové ověřování před vygenerováním záložních kódů."
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -15818,7 +15818,7 @@ msgstr "Je vyžadováno ověření v rámci dvoufaktorového ověřování."
 #. js-lingui-id: CTG0vZ
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "Two-factor authentication was removed from your account"
-msgstr ""
+msgstr "Dvoufaktorové ověřování bylo z vašeho účtu odstraněno"
 
 #. js-lingui-id: /OnFql
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -18203,7 +18203,7 @@ msgstr "Vaše zkušební období Twenty brzy skončí"
 #. js-lingui-id: 9xG1k0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service.ts
 msgid "Your two-factor authentication changed. Generate backup codes again."
-msgstr ""
+msgstr "Vaše dvoufaktorové ověřování se změnilo. Znovu vygenerujte záložní kódy."
 
 #. js-lingui-id: pOQQ3U
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts

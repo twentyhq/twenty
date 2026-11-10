@@ -1064,7 +1064,7 @@ msgstr "{readOnlyFieldCount, plural, zero {لا يمكن تعديل أي حقل}
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
-msgstr ""
+msgstr "{remainingBackupCodeCount, plural, zero {لا توجد رموز نسخ احتياطي متبقية} one {تبقى # رمز نسخ احتياطي} two {تبقى # رمزا نسخ احتياطي} few {تبقى # رموز نسخ احتياطي} many {تبقى # رمز نسخ احتياطي} other {تبقى # رمز نسخ احتياطي}}"
 
 #. js-lingui-id: N7gP92
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
@@ -4948,12 +4948,12 @@ msgstr "مسافة للخلف"
 #. js-lingui-id: M2cci0
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Backup codes"
-msgstr ""
+msgstr "رموز النسخ الاحتياطي"
 
 #. js-lingui-id: 6kNBNT
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Backup codes copied to clipboard"
-msgstr ""
+msgstr "تم نسخ رموز النسخ الاحتياطي إلى الحافظة"
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -11805,7 +11805,7 @@ msgstr "أدخل الإزاحة"
 #. js-lingui-id: lRIswr
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
-msgstr ""
+msgstr "أدخل أحد رموز النسخ الاحتياطية الخاصة بك، أو رمز الاسترداد الذي أعطاك إياه مسؤول مساحة العمل. يؤدي رمز الاسترداد إلى إزالة أداة المصادقة الحالية لمساحة العمل هذه."
 
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -12937,7 +12937,7 @@ msgstr "فشل إنشاء رمز الاسترداد."
 #. js-lingui-id: 3YKuoA
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Failed to generate backup codes."
-msgstr ""
+msgstr "فشل إنشاء رموز النسخ الاحتياطية."
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -14300,7 +14300,7 @@ msgstr "أنشئ نسخة موقعة بنقرة واحدة"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate backup codes"
-msgstr ""
+msgstr "إنشاء رموز النسخ الاحتياطية"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -14310,7 +14310,7 @@ msgstr "إنشاء رمز"
 #. js-lingui-id: c63Wy6
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate codes"
-msgstr ""
+msgstr "إنشاء رموز"
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -14321,7 +14321,7 @@ msgstr "إنشاء DPA"
 #. js-lingui-id: P2msE+
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate new codes"
-msgstr ""
+msgstr "إنشاء رموز جديدة"
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -16099,7 +16099,7 @@ msgstr "رقم غير صالح"
 #. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Invalid or expired code."
-msgstr ""
+msgstr "الرمز غير صالح أو منتهي الصلاحية."
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -17776,7 +17776,7 @@ msgstr "حلقة"
 #. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr ""
+msgstr "هل فقدت أداة المصادقة؟ استخدم رمز نسخ احتياطي أو رمز استرداد"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19247,7 +19247,7 @@ msgstr "نطاق وصول معتمد جديد"
 #. js-lingui-id: pQIH+r
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "New backup codes replace your current ones, which stop working."
-msgstr ""
+msgstr "تستبدل رموز النسخ الاحتياطية الجديدة رموزك الحالية، التي ستتوقف عن العمل."
 
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
@@ -25119,7 +25119,7 @@ msgstr "حفظ الإعدادات"
 #. js-lingui-id: /hNRXq
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
-msgstr ""
+msgstr "احفظ هذه الرموز في مكان آمن، مثل مدير كلمات المرور. يعمل كل رمز مرة واحدة. لن تتمكن من رؤيتها مجددًا."
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -31541,12 +31541,12 @@ msgstr "استخدم ‘{trimmedSidePanelSearch}’ مع..."
 #. js-lingui-id: jFGgyP
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
-msgstr ""
+msgstr "استخدم رمز نسخ احتياطي لتسجيل الدخول إذا فقدت إمكانية الوصول إلى تطبيق المصادقة. يعمل كل رمز مرة واحدة."
 
 #. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
 msgid "Use a backup or recovery code"
-msgstr ""
+msgstr "استخدم رمز نسخ احتياطي أو رمز استرداد"
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts

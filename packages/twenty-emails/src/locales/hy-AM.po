@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>)․ Խնդրում ենք վավեր�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "{workspaceDisplayName}-ում մուտք գործելու համար օգտագործվել է պահուստային կոդ։ Մնացած պահուստային կոդերը՝ {remainingBackupCodeCount}։"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Դրանից հետո workspace-ը և դրա բոլոր տվյալներ
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Օգտագործվել է պահուստային կոդ"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Ողջույն, {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Եթե դա դուք չեք եղել, փոխեք ձեր գաղտնաբառը և ստեղծեք նոր պահուստային կոդեր՝ Կարգավորումներ, Պրոֆիլ, Երկքայլ նույնականացում բաժնում։"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Եթե դա դուք չեք եղել, փոխեք ձեր գաղտնաբառը և ստեղծեք նոր պահուստային կոդեր։"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Կառավարել բաժանորդագրությունը"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Ստեղծվել են նոր պահուստային կոդեր"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "{workspaceDisplayName}-ում ձեր հաշվի համար ստեղծվել են նոր պահուստային կոդեր։ Ձեր նախկին պահուստային կոդերն այլևս չեն գործում։"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Շնորհակալություն Twenty-ում հաշիվ գրանցել
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "{workspaceDisplayName}-ում ձեր հաշվի նույնականացուցիչը հեռացվել է Կարգավորումներից։ Այս աշխատանքային տարածքի ձեր պահուստային կոդերն այլևս չեն գործում։"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Երկքայլ նույնականացման վերականգնման կ�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Երկքայլ նույնականացումը հեռացվել է"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Workspace-ի լոգո"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Դուք կարող եք ստեղծել նոր պահուստային կոդեր՝ Կարգավորումներ, Պրոֆիլ, Երկքայլ նույնականացում բաժնում։"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

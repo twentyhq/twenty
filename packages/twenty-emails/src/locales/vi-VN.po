@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Vui lòng xác thực tên miền n
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "Một mã dự phòng đã được dùng để đăng nhập vào {workspaceDisplayName}. Số mã dự phòng còn lại: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Sau thời điểm đó, không gian làm việc và toàn bộ dữ li�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Đã sử dụng mã dự phòng"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Chào {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Nếu không phải bạn đã thực hiện việc này, hãy thay đổi mật khẩu và tạo mã dự phòng mới trong Cài đặt, Hồ sơ, Xác thực hai yếu tố."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Nếu không phải bạn đã thực hiện việc này, hãy thay đổi mật khẩu và tạo mã dự phòng mới."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Quản lý gói đăng ký"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Đã tạo mã dự phòng mới"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "Mã dự phòng mới đã được tạo cho tài khoản của bạn trong {workspaceDisplayName}. Các mã dự phòng trước đó của bạn không còn hoạt động."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Cảm ơn bạn đã đăng ký tài khoản trên Twenty! Trước khi 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "Trình xác thực cho tài khoản của bạn trong {workspaceDisplayName} đã bị xóa khỏi Cài đặt. Các mã dự phòng của bạn cho không gian làm việc này không còn hoạt động."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Đã cấp mã khôi phục xác thực hai yếu tố"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Đã xóa xác thực hai yếu tố"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Logo không gian làm việc"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Bạn có thể tạo mã dự phòng mới trong Cài đặt, Hồ sơ, Xác thực hai yếu tố."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

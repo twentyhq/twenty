@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Vă rugăm să validați acest dome
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "A fost utilizat un cod de rezervă pentru a vă conecta la {workspaceDisplayName}. Coduri de rezervă rămase: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "După aceea, spațiul de lucru și toate datele sale vor fi șterse defi
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Cod de rezervă utilizat"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Bună, {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Dacă nu ați fost dumneavoastră, schimbați-vă parola și generați coduri de rezervă noi din Setări, Profil, Autentificare în doi pași."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Dacă nu ați fost dumneavoastră, schimbați-vă parola și generați coduri de rezervă noi."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Gestionează abonamentul"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Au fost generate coduri de rezervă noi"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "Au fost generate coduri de rezervă noi pentru contul dvs. în {workspaceDisplayName}. Codurile de rezervă anterioare nu mai funcționează."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Vă mulțumim că v-ați înregistrat pentru un cont pe Twenty! Înainte
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "Autentificatorul pentru contul dvs. în {workspaceDisplayName} a fost eliminat din Setări. Codurile de rezervă pentru acest spațiu de lucru nu mai funcționează."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Cod de recuperare pentru autentificarea în doi pași emis"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Autentificare în doi pași eliminată"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Logo Spațiu de lucru"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Puteți genera coduri de rezervă noi din Setări, Profil, Autentificare în doi pași."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

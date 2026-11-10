@@ -1064,7 +1064,7 @@ msgstr "{readOnlyFieldCount, plural, other {Không thể chỉnh sửa # trườ
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
-msgstr ""
+msgstr "{remainingBackupCodeCount, plural, other {Còn # mã dự phòng}}"
 
 #. js-lingui-id: N7gP92
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
@@ -4948,12 +4948,12 @@ msgstr "Phím Backspace"
 #. js-lingui-id: M2cci0
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Backup codes"
-msgstr ""
+msgstr "Mã dự phòng"
 
 #. js-lingui-id: 6kNBNT
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Backup codes copied to clipboard"
-msgstr ""
+msgstr "Đã sao chép mã dự phòng vào bảng tạm"
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -11805,7 +11805,7 @@ msgstr "Nhập độ lệch"
 #. js-lingui-id: lRIswr
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
-msgstr ""
+msgstr "Nhập một trong các mã dự phòng của bạn hoặc mã khôi phục mà quản trị viên không gian làm việc đã cấp cho bạn. Mã khôi phục sẽ xóa trình xác thực hiện tại của bạn cho không gian làm việc này."
 
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -12937,7 +12937,7 @@ msgstr "Tạo mã khôi phục thất bại."
 #. js-lingui-id: 3YKuoA
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Failed to generate backup codes."
-msgstr ""
+msgstr "Không thể tạo mã dự phòng."
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -14300,7 +14300,7 @@ msgstr "Tạo bản sao đã ký chỉ với một cú nhấp"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate backup codes"
-msgstr ""
+msgstr "Tạo mã dự phòng"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -14310,7 +14310,7 @@ msgstr "Tạo mã"
 #. js-lingui-id: c63Wy6
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate codes"
-msgstr ""
+msgstr "Tạo mã"
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -14321,7 +14321,7 @@ msgstr "Tạo DPA"
 #. js-lingui-id: P2msE+
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate new codes"
-msgstr ""
+msgstr "Tạo mã mới"
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -16099,7 +16099,7 @@ msgstr "Số không hợp lệ"
 #. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Invalid or expired code."
-msgstr ""
+msgstr "Mã không hợp lệ hoặc đã hết hạn."
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -17776,7 +17776,7 @@ msgstr "vòng lặp"
 #. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr ""
+msgstr "Mất trình xác thực? Hãy dùng mã dự phòng hoặc mã khôi phục"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19247,7 +19247,7 @@ msgstr "Miền Truy Cập Đã Được Phê Duyệt Mới"
 #. js-lingui-id: pQIH+r
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "New backup codes replace your current ones, which stop working."
-msgstr ""
+msgstr "Mã dự phòng mới sẽ thay thế mã hiện tại của bạn, khiến các mã đó không còn hoạt động."
 
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
@@ -25119,7 +25119,7 @@ msgstr "Lưu cài đặt"
 #. js-lingui-id: /hNRXq
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
-msgstr ""
+msgstr "Lưu các mã này ở nơi an toàn, chẳng hạn như trình quản lý mật khẩu. Mỗi mã chỉ dùng được một lần. Bạn sẽ không thể xem lại chúng."
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -31541,12 +31541,12 @@ msgstr "Sử dụng ‘{trimmedSidePanelSearch}’ với..."
 #. js-lingui-id: jFGgyP
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
-msgstr ""
+msgstr "Dùng mã dự phòng để đăng nhập nếu bạn mất quyền truy cập vào ứng dụng trình xác thực. Mỗi mã chỉ dùng được một lần."
 
 #. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
 msgid "Use a backup or recovery code"
-msgstr ""
+msgstr "Dùng mã dự phòng hoặc mã khôi phục"
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts

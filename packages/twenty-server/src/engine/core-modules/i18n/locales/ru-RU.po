@@ -131,7 +131,7 @@ msgstr "24 часа"
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
-msgstr ""
+msgstr "Для входа в вашу учетную запись был использован резервный код"
 
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
@@ -5086,7 +5086,7 @@ msgstr "Введите свой код двухфакторной аутенти
 #. js-lingui-id: gb/uW+
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
 msgid "Enter your two-factor authentication code to generate new backup codes."
-msgstr ""
+msgstr "Введите свой код двухфакторной аутентификации, чтобы создать новые резервные коды."
 
 #. js-lingui-id: vNNSFX
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
@@ -9306,7 +9306,7 @@ msgstr "Новый"
 #. js-lingui-id: 2k6acO
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "New backup codes were generated for your account"
-msgstr ""
+msgstr "Для вашей учетной записи были созданы новые резервные коды"
 
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12535,7 +12535,7 @@ msgstr "serverRouteTriggerSettings может быть задано только
 #. js-lingui-id: aMFlAV
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
 msgid "Set up two-factor authentication before generating backup codes."
-msgstr ""
+msgstr "Настройте двухфакторную аутентификацию перед созданием резервных кодов."
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -15818,7 +15818,7 @@ msgstr "Требуется подтверждение двухфакторной
 #. js-lingui-id: CTG0vZ
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "Two-factor authentication was removed from your account"
-msgstr ""
+msgstr "Двухфакторная аутентификация была удалена из вашей учетной записи"
 
 #. js-lingui-id: /OnFql
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -18203,7 +18203,7 @@ msgstr "Срок действия вашего пробного периода T
 #. js-lingui-id: 9xG1k0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service.ts
 msgid "Your two-factor authentication changed. Generate backup codes again."
-msgstr ""
+msgstr "Ваша двухфакторная аутентификация изменилась. Создайте резервные коды снова."
 
 #. js-lingui-id: pOQQ3U
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
