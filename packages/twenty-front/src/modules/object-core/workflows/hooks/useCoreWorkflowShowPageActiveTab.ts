@@ -48,7 +48,7 @@ export const useCoreWorkflowShowPageActiveTab = ({
 
   // Drafts have no runs yet and a requested version is opened to see its flow
   const defaultTabId =
-    isPublishedOnLoad === true && canReadWorkflowRuns && !isVersionRequested
+    isPublishedOnLoad && canReadWorkflowRuns && !isVersionRequested
       ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW
       : CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW;
 
