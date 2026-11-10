@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
+import { assertAgentTriggerConditionsCompileOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/assert-agent-trigger-conditions-compile-or-throw.util';
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
@@ -85,11 +86,23 @@ export class AgentService {
     { isSystem = false, ...input }: CreateAgentInput & { isSystem?: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
-    const { flatApplicationMaps, flatRoleMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-        'flatRoleMaps',
-      ]);
+    const {
+      flatApplicationMaps,
+      flatRoleMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatApplicationMaps',
+      'flatRoleMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
+
+    assertAgentTriggerConditionsCompileOrThrow({
+      triggers: input.triggers,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -175,12 +188,25 @@ export class AgentService {
         },
       );
 
-    const { flatRoleTargetByAgentIdMaps, flatAgentMaps, flatRoleMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatRoleTargetByAgentIdMaps',
-        'flatAgentMaps',
-        'flatRoleMaps',
-      ]);
+    const {
+      flatRoleTargetByAgentIdMaps,
+      flatAgentMaps,
+      flatRoleMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatRoleTargetByAgentIdMaps',
+      'flatAgentMaps',
+      'flatRoleMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
+
+    assertAgentTriggerConditionsCompileOrThrow({
+      triggers: input.triggers,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     const {
       flatAgentToUpdate,

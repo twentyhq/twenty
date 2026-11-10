@@ -8,6 +8,7 @@ import {
 import {
   compileValidationRuleExpression,
   isDefined,
+  toDatabaseEventValidationRuleField,
 } from 'twenty-shared/utils';
 
 import { type DatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/types/database-event-trigger-manifest-resolver.type';
@@ -16,7 +17,6 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { toDatabaseEventTriggerConditionField } from 'src/engine/workspace-event-emitter/utils/build-database-event-trigger-condition-fields.util';
 
 const ANY_OBJECT = '*';
 
@@ -56,7 +56,7 @@ const assertConditionCompilesOrThrow = ({
 
   const fields = resolver
     .listObjectFields(objectUniversalIdentifier)
-    .map(toDatabaseEventTriggerConditionField)
+    .map(toDatabaseEventValidationRuleField)
     .filter(isDefined);
   const compilation = compileValidationRuleExpression({
     expression: condition,

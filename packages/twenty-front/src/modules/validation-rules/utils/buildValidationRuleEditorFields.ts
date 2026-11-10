@@ -6,12 +6,16 @@ import {
   FieldMetadataType,
 } from 'twenty-shared/types';
 import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
+import { type ValidationRuleScope } from '@/validation-rules/types/ValidationRuleScope';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type ValidationRuleEditorObject = Pick<
@@ -96,9 +100,11 @@ const buildScalarEditorFields = ({
 const buildCurrentValueEditorFields = ({
   objectMetadataItem,
   objectMetadataItems,
+  scope,
 }: {
   objectMetadataItem: ValidationRuleEditorObject;
   objectMetadataItems: ValidationRuleEditorObject[];
+  scope: ValidationRuleScope;
 }): ValidationRuleEditorField[] =>
   objectMetadataItem.fields
     .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
@@ -125,6 +131,31 @@ const buildCurrentValueEditorFields = ({
       const targetObjectMetadataItem = objectMetadataItems.find(
         (candidate) => candidate.id === relation.targetObjectMetadata.id,
       );
+
+      if (scope === 'databaseEvent') {
+        return [
+          {
+            path: computeRelationGqlFieldJoinColumnName({
+              name: fieldMetadataItem.name,
+            }),
+            label: fieldMetadataItem.label,
+            parentLabel: null,
+            iconName:
+              [fieldMetadataItem.icon, targetObjectMetadataItem?.icon].find(
+                isNonEmptyString,
+              ) ?? DEFAULT_OBJECT_ICON,
+            type: FieldMetadataType.UUID,
+            objectLabelSingular: objectMetadataItem.labelSingular,
+            objectIconName: isNonEmptyString(objectMetadataItem.icon)
+              ? objectMetadataItem.icon
+              : DEFAULT_OBJECT_ICON,
+            selectOptionValues: [],
+            isSystem: fieldMetadataItem.isSystem ?? false,
+            hasMembers: false,
+            readsRelatedRecord: false,
+          },
+        ];
+      }
 
       const relationField: ValidationRuleEditorField = {
         path: fieldMetadataItem.name,
@@ -184,13 +215,16 @@ const buildPreviousValueEditorField = (
 export const buildValidationRuleEditorFields = ({
   objectMetadataItem,
   objectMetadataItems,
+  scope = 'record',
 }: {
   objectMetadataItem: ValidationRuleEditorObject;
   objectMetadataItems: ValidationRuleEditorObject[];
+  scope?: ValidationRuleScope;
 }): ValidationRuleEditorField[] => {
   const currentValueFields = buildCurrentValueEditorFields({
     objectMetadataItem,
     objectMetadataItems,
+    scope,
   });
 
   const previousValueFields = currentValueFields

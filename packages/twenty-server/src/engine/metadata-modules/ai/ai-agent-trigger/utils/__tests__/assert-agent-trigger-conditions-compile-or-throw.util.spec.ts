@@ -1,0 +1,89 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { assertAgentTriggerConditionsCompileOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/assert-agent-trigger-conditions-compile-or-throw.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+const STAGE = getFlatFieldMetadataMock({
+  id: 'stage-id',
+  universalIdentifier: 'opportunity-stage',
+  objectMetadataId: 'opportunity-id',
+  type: FieldMetadataType.SELECT,
+  name: 'stage',
+});
+
+const flatFieldMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
+  flatEntity: STAGE,
+  flatEntityMaps:
+    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
+});
+
+const flatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
+  flatEntity: getFlatObjectMetadataMock({
+    id: 'opportunity-id',
+    universalIdentifier: 'opportunity',
+    nameSingular: 'opportunity',
+    fieldIds: [STAGE.id],
+  }),
+  flatEntityMaps:
+    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>,
+});
+
+const assertConditions = (eventName: string, condition: string) =>
+  assertAgentTriggerConditionsCompileOrThrow({
+    triggers: [
+      {
+        id: 'trigger-id',
+        type: 'DATABASE_EVENT',
+        isActive: true,
+        instructions: null,
+        settings: { eventName, condition },
+      },
+    ],
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  });
+
+describe('assertAgentTriggerConditionsCompileOrThrow', () => {
+  it('accepts a condition on the fields of the trigger object', () => {
+    expect(() =>
+      assertConditions(
+        'opportunity.updated',
+        "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+      ),
+    ).not.toThrow();
+  });
+
+  it('rejects a condition reading a field the object does not have', () => {
+    expect(() => assertConditions('opportunity.created', 'amount > 0')).toThrow(
+      /Condition "amount > 0" of an agent trigger is invalid/,
+    );
+  });
+
+  it('rejects a condition on an unknown object', () => {
+    expect(() =>
+      assertConditions('invoice.created', "stage == 'PAID'"),
+    ).toThrow(/Unknown object invoice/);
+  });
+
+  it('ignores triggers without a condition', () => {
+    expect(() =>
+      assertAgentTriggerConditionsCompileOrThrow({
+        triggers: [
+          {
+            type: 'DATABASE_EVENT',
+            settings: { eventName: 'invoice.created' },
+          },
+          { type: 'CRON', settings: { pattern: '0 9 * * 1' } },
+        ],
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    ).not.toThrow();
+  });
+});
