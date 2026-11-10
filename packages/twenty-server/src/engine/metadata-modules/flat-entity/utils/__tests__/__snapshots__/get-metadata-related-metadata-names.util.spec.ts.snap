@@ -43,6 +43,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "view",
   "searchFieldMetadata",
   "fieldMetadataOption",
+  "rowLevelPermissionPredicate",
 ]
 `;
 
