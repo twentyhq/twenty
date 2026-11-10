@@ -6,6 +6,8 @@ import { type Options } from 'prettier';
 import slash from 'slash';
 import ts from 'typescript';
 
+import { PER_MODULE_EXPORT_CONDITION } from '../src/vite/PerModuleExportCondition';
+
 // TODO prastoin refactor this file in several one into its dedicated package and make it a TypeScript CLI
 
 const INDEX_FILENAME = 'index';
@@ -192,6 +194,7 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
 
 type ExportOccurrence = {
   types: string;
+  [PER_MODULE_EXPORT_CONDITION]?: string;
   import: string;
   require: string;
 };
@@ -210,8 +213,9 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
       ...acc,
       [`./${moduleName}`]: {
         types: `./dist/${moduleName}/index.d.ts`,
-        import: `./dist/${moduleName}/index.mjs`,
-        require: `./dist/${moduleName}/index.cjs`,
+        [PER_MODULE_EXPORT_CONDITION]: `./dist/individual/${moduleName}/index.js`,
+        import: `./dist/${moduleName}.mjs`,
+        require: `./dist/${moduleName}.cjs`,
       },
     };
   }, {});

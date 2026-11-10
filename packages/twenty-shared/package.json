@@ -72,98 +72,117 @@
     },
     "./ai": {
       "types": "./dist/ai/index.d.ts",
-      "import": "./dist/ai/index.mjs",
-      "require": "./dist/ai/index.cjs"
+      "twenty-per-module": "./dist/individual/ai/index.js",
+      "import": "./dist/ai.mjs",
+      "require": "./dist/ai.cjs"
     },
     "./application": {
       "types": "./dist/application/index.d.ts",
-      "import": "./dist/application/index.mjs",
-      "require": "./dist/application/index.cjs"
+      "twenty-per-module": "./dist/individual/application/index.js",
+      "import": "./dist/application.mjs",
+      "require": "./dist/application.cjs"
     },
     "./application-runtime": {
       "types": "./dist/application-runtime/index.d.ts",
-      "import": "./dist/application-runtime/index.mjs",
-      "require": "./dist/application-runtime/index.cjs"
+      "twenty-per-module": "./dist/individual/application-runtime/index.js",
+      "import": "./dist/application-runtime.mjs",
+      "require": "./dist/application-runtime.cjs"
     },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
-      "import": "./dist/constants/index.mjs",
-      "require": "./dist/constants/index.cjs"
+      "twenty-per-module": "./dist/individual/constants/index.js",
+      "import": "./dist/constants.mjs",
+      "require": "./dist/constants.cjs"
     },
     "./database-events": {
       "types": "./dist/database-events/index.d.ts",
-      "import": "./dist/database-events/index.mjs",
-      "require": "./dist/database-events/index.cjs"
+      "twenty-per-module": "./dist/individual/database-events/index.js",
+      "import": "./dist/database-events.mjs",
+      "require": "./dist/database-events.cjs"
     },
     "./front-component-build": {
       "types": "./dist/front-component-build/index.d.ts",
-      "import": "./dist/front-component-build/index.mjs",
-      "require": "./dist/front-component-build/index.cjs"
+      "twenty-per-module": "./dist/individual/front-component-build/index.js",
+      "import": "./dist/front-component-build.mjs",
+      "require": "./dist/front-component-build.cjs"
     },
     "./i18n": {
       "types": "./dist/i18n/index.d.ts",
-      "import": "./dist/i18n/index.mjs",
-      "require": "./dist/i18n/index.cjs"
+      "twenty-per-module": "./dist/individual/i18n/index.js",
+      "import": "./dist/i18n.mjs",
+      "require": "./dist/i18n.cjs"
     },
     "./logic-function": {
       "types": "./dist/logic-function/index.d.ts",
-      "import": "./dist/logic-function/index.mjs",
-      "require": "./dist/logic-function/index.cjs"
+      "twenty-per-module": "./dist/individual/logic-function/index.js",
+      "import": "./dist/logic-function.mjs",
+      "require": "./dist/logic-function.cjs"
     },
     "./markdown": {
       "types": "./dist/markdown/index.d.ts",
-      "import": "./dist/markdown/index.mjs",
-      "require": "./dist/markdown/index.cjs"
+      "twenty-per-module": "./dist/individual/markdown/index.js",
+      "import": "./dist/markdown.mjs",
+      "require": "./dist/markdown.cjs"
     },
     "./metadata": {
       "types": "./dist/metadata/index.d.ts",
-      "import": "./dist/metadata/index.mjs",
-      "require": "./dist/metadata/index.cjs"
+      "twenty-per-module": "./dist/individual/metadata/index.js",
+      "import": "./dist/metadata.mjs",
+      "require": "./dist/metadata.cjs"
     },
     "./pending-wake-up": {
       "types": "./dist/pending-wake-up/index.d.ts",
-      "import": "./dist/pending-wake-up/index.mjs",
-      "require": "./dist/pending-wake-up/index.cjs"
+      "twenty-per-module": "./dist/individual/pending-wake-up/index.js",
+      "import": "./dist/pending-wake-up.mjs",
+      "require": "./dist/pending-wake-up.cjs"
     },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
-      "import": "./dist/testing/index.mjs",
-      "require": "./dist/testing/index.cjs"
+      "twenty-per-module": "./dist/individual/testing/index.js",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.cjs"
     },
     "./timeline": {
       "types": "./dist/timeline/index.d.ts",
-      "import": "./dist/timeline/index.mjs",
-      "require": "./dist/timeline/index.cjs"
+      "twenty-per-module": "./dist/individual/timeline/index.js",
+      "import": "./dist/timeline.mjs",
+      "require": "./dist/timeline.cjs"
     },
     "./translations": {
       "types": "./dist/translations/index.d.ts",
-      "import": "./dist/translations/index.mjs",
-      "require": "./dist/translations/index.cjs"
+      "twenty-per-module": "./dist/individual/translations/index.js",
+      "import": "./dist/translations.mjs",
+      "require": "./dist/translations.cjs"
     },
     "./types": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/types/index.mjs",
-      "require": "./dist/types/index.cjs"
+      "twenty-per-module": "./dist/individual/types/index.js",
+      "import": "./dist/types.mjs",
+      "require": "./dist/types.cjs"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.mjs",
-      "require": "./dist/utils/index.cjs"
+      "twenty-per-module": "./dist/individual/utils/index.js",
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.cjs"
     },
     "./vite": {
       "types": "./dist/vite/index.d.ts",
-      "import": "./dist/vite/index.mjs",
-      "require": "./dist/vite/index.cjs"
+      "twenty-per-module": "./dist/individual/vite/index.js",
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.cjs"
     },
     "./workflow": {
       "types": "./dist/workflow/index.d.ts",
-      "import": "./dist/workflow/index.mjs",
-      "require": "./dist/workflow/index.cjs"
+      "twenty-per-module": "./dist/individual/workflow/index.js",
+      "import": "./dist/workflow.mjs",
+      "require": "./dist/workflow.cjs"
     },
     "./workspace": {
       "types": "./dist/workspace/index.d.ts",
-      "import": "./dist/workspace/index.mjs",
-      "require": "./dist/workspace/index.cjs"
+      "twenty-per-module": "./dist/individual/workspace/index.js",
+      "import": "./dist/workspace.mjs",
+      "require": "./dist/workspace.cjs"
     }
   },
   "files": [

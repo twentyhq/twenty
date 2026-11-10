@@ -8,3 +8,4 @@
  */
 
 export { createWywProfilingPlugin } from './createWywProfilingPlugin';
+export { PER_MODULE_EXPORT_CONDITION } from './PerModuleExportCondition';

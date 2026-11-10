@@ -9,7 +9,10 @@
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": ["production", "^production"],
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build",
+        { "target": "build:individual", "projects": "twenty-shared" }
+      ],
       "outputs": ["{projectRoot}/dist"],
       "options": {
         "cwd": "{projectRoot}",
