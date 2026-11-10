@@ -388,20 +388,14 @@ export class OAuthService {
           refreshToken,
         );
 
-      const application = await this.applicationRepository.findOne(
-        payload.workspaceId,
-        {
-          where: { id: payload.applicationId },
-          relations: { applicationRegistration: true },
-        },
-      );
+      const application = await this.findApplicationIssuedToClient({
+        workspaceId: payload.workspaceId,
+        applicationId: payload.applicationId,
+        applicationRegistration,
+        clientId,
+      });
 
-      // A client that connected before its vendor app existed keeps tokens bound to its own registration
-      const isIssuedToClient =
-        application?.applicationRegistrationId === applicationRegistration.id ||
-        application?.applicationRegistration?.oAuthClientId === clientId;
-
-      if (!isDefined(application) || !isIssuedToClient) {
+      if (!isDefined(application)) {
         return this.errorResponse(
           'invalid_grant',
           'Refresh token was not issued to this client',
@@ -484,16 +478,14 @@ export class OAuthService {
 
       // RFC 7009 §2.1: only the issuing client may revoke; access tokens stay valid until expiry
       if (isDefined(applicationRegistration) && isDefined(payload.userId)) {
-        const application = await this.applicationRepository.findOne(
-          payload.workspaceId,
-          {
-            where: { id: payload.applicationId },
-          },
-        );
+        const application = await this.findApplicationIssuedToClient({
+          workspaceId: payload.workspaceId,
+          applicationId: payload.applicationId,
+          applicationRegistration,
+          clientId,
+        });
 
-        if (
-          application?.applicationRegistrationId === applicationRegistration.id
-        ) {
+        if (isDefined(application)) {
           await this.revokeUserAuthorization({
             userId: payload.userId,
             workspaceId: payload.workspaceId,
@@ -554,17 +546,14 @@ export class OAuthService {
         return { active: false };
       }
 
-      const application = await this.applicationRepository.findOne(
-        decoded.workspaceId,
-        {
-          where: { id: decoded.applicationId },
-        },
-      );
+      const application = await this.findApplicationIssuedToClient({
+        workspaceId: decoded.workspaceId,
+        applicationId: decoded.applicationId,
+        applicationRegistration: clientValidation,
+        clientId,
+      });
 
-      if (
-        !application ||
-        application.applicationRegistrationId !== clientValidation.id
-      ) {
+      if (!isDefined(application)) {
         return { active: false };
       }
 
@@ -597,17 +586,14 @@ export class OAuthService {
             token,
           );
 
-        const application = await this.applicationRepository.findOne(
-          payload.workspaceId,
-          {
-            where: { id: payload.applicationId },
-          },
-        );
+        const application = await this.findApplicationIssuedToClient({
+          workspaceId: payload.workspaceId,
+          applicationId: payload.applicationId,
+          applicationRegistration: clientValidation,
+          clientId,
+        });
 
-        if (
-          !application ||
-          application.applicationRegistrationId !== clientValidation.id
-        ) {
+        if (!isDefined(application)) {
           return { active: false };
         }
 
@@ -656,6 +642,31 @@ export class OAuthService {
     }
 
     return null;
+  }
+
+  // A client that connected before its vendor app existed keeps tokens bound to its own registration
+  private async findApplicationIssuedToClient({
+    workspaceId,
+    applicationId,
+    applicationRegistration,
+    clientId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    applicationRegistration: Pick<ApplicationRegistrationEntity, 'id'>;
+    clientId: string | undefined;
+  }): Promise<ApplicationEntity | null> {
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: applicationId },
+      relations: { applicationRegistration: true },
+    });
+
+    const isIssuedToClient =
+      application?.applicationRegistrationId === applicationRegistration.id ||
+      (isDefined(clientId) &&
+        application?.applicationRegistration?.oAuthClientId === clientId);
+
+    return isIssuedToClient ? application : null;
   }
 
   // Refresh tokens predating this table have no row: backfill it rather than sign every integration out
