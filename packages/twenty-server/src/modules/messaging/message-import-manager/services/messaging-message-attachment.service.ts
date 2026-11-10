@@ -197,7 +197,6 @@ export class MessagingMessageAttachmentService {
     );
   }
 
-  // rejecting lets the caller retry instead of losing the files
   async assertMessageAttachmentsAreEnabledOrThrow(
     workspaceId: string,
   ): Promise<void> {

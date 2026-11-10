@@ -11,7 +11,6 @@ import { type LinkedinOutgoingAttachment } from 'src/logic-functions/types/linke
 import { downloadLinkedinOutgoingAttachments } from 'src/logic-functions/utils/download-linkedin-outgoing-attachments.util';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
 
-// the pinned twenty-sdk does not type `attachments` yet, and older servers do not send it
 type LinkedinSendMessagePayload = SendAppMessagePayload & {
   attachments?: LinkedinOutgoingAttachment[];
 };

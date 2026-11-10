@@ -6,7 +6,6 @@ import {
   LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// the pinned twenty-sdk does not type `canSendAttachments` yet
 const linkedinMessagingProvider: Parameters<
   typeof defineMessagingProvider
 >[0] & { canSendAttachments: boolean } = {

@@ -9,7 +9,6 @@ export type SendAppMessageAttachment = {
   filename: string;
   mimeType: string;
   size: number;
-  // short-lived signed URL the logic function downloads the file from
   url: string;
 };
 

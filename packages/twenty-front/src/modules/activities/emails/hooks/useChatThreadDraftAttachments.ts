@@ -51,7 +51,6 @@ export const useChatThreadDraftAttachments = () => {
     fieldMetadataId: string,
   ) => {
     try {
-      // the server only attaches to a message files uploaded into the attachment file field
       const uploadedFile = await uploadFile(file, {
         fileFolder: FileFolder.FilesField,
         fieldMetadataId,

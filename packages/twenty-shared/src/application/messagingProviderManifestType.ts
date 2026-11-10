@@ -7,6 +7,5 @@ export type MessagingProviderManifest = SyncableEntityOptions & {
   connectionProvider: SyncableEntityOptions;
   sendMessageLogicFunction?: SyncableEntityOptions;
   conversationStyle?: MessagingProviderConversationStyle;
-  // opt-in: a send function that ignores payload attachments would drop the files silently
   canSendAttachments?: boolean;
 };

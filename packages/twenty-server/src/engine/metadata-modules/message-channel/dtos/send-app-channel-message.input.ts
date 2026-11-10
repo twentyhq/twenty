@@ -63,7 +63,6 @@ export class SendAppChannelMessageInput {
   @IsUUID()
   messageThreadId: string;
 
-  // may be empty when a chat reply only carries attachments
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
