@@ -3,11 +3,16 @@ import { type AddressInfo } from 'node:net';
 
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { testHttpRequest } from 'test/integration/graphql/suites/workflow/utils/test-http-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
+import { FeatureFlagKey } from 'twenty-shared/types';
+
+import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 type BodyEncodingTestContext = {
   contentType: string;
@@ -41,6 +46,22 @@ const bodyEncodingTestCases: EachTestingContext<BodyEncodingTestContext>[] = [
     },
   },
 ];
+
+type LogicFunctionDriverTestContext = {
+  driverType: LogicFunctionDriverType;
+};
+
+const logicFunctionDriverTestCases: EachTestingContext<LogicFunctionDriverTestContext>[] =
+  [
+    {
+      title: 'the local logic function driver',
+      context: { driverType: LogicFunctionDriverType.LOCAL },
+    },
+    {
+      title: 'logic functions disabled',
+      context: { driverType: LogicFunctionDriverType.DISABLED },
+    },
+  ];
 
 describe('Outbound HTTP requests should succeed', () => {
   let server: http.Server;
@@ -163,6 +184,43 @@ describe('Outbound HTTP requests should succeed', () => {
       body: expect.stringContaining('name="b"'),
     });
   });
+
+  describe.each(eachTestingContextFilter(logicFunctionDriverTestCases))(
+    'through $title',
+    ({ context }) => {
+      beforeAll(async () => {
+        await updateConfigVariable({
+          input: { key: 'LOGIC_FUNCTION_TYPE', value: context.driverType },
+        });
+        await updateFeatureFlag({
+          featureFlag: FeatureFlagKey.IS_HTTP_EGRESS_LAMBDA_ENABLED,
+          value: true,
+          expectToFail: false,
+        });
+      });
+
+      afterAll(async () => {
+        await updateFeatureFlag({
+          featureFlag: FeatureFlagKey.IS_HTTP_EGRESS_LAMBDA_ENABLED,
+          value: false,
+          expectToFail: false,
+        });
+        await deleteConfigVariable({ input: { key: 'LOGIC_FUNCTION_TYPE' } });
+      });
+
+      it('should return the response of a test request', async () => {
+        const { data } = await testHttpRequest({
+          input: { url: `${baseUrl}/items`, method: 'GET' },
+        });
+
+        expect(data.testHttpRequest).toMatchObject({
+          success: true,
+          result: { ok: true },
+          status: 200,
+        });
+      });
+    },
+  );
 
   it('should run a workflow HTTP Request step', async () => {
     const { stepStatus } = await runWorkflowActionStep({

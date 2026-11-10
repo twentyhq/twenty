@@ -26,10 +26,10 @@ const blockedAddressTestCases: EachTestingContext<BlockedAddressTestContext>[] =
       },
     },
     {
-      title: 'the cloud metadata address',
+      title: 'a private network host',
       context: {
-        url: 'http://169.254.169.254/latest/meta-data/',
-        blockedIp: '169.254.169.254',
+        url: 'http://10.0.0.1/internal',
+        blockedIp: '10.0.0.1',
       },
     },
   ];
@@ -45,11 +45,11 @@ describe('Outbound HTTP requests on the Lambda driver should fail', () => {
       value: true,
       expectToFail: false,
     });
-    // Allowed for the server only: the Lambda must refuse it whatever the server allows.
+    // Allowed for the server only: the Lambda must refuse them whatever the server allows.
     await updateConfigVariable({
       input: {
         key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS',
-        value: ['127.0.0.1'],
+        value: ['127.0.0.1', '10.0.0.1'],
       },
     });
   }, LAMBDA_TEST_TIMEOUT_MS);
