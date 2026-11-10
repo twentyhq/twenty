@@ -16,11 +16,12 @@ export const SettingsConnectableAppConnectButton = ({
 }: SettingsConnectableAppConnectButtonProps) => {
   const { t } = useLingui();
   const connectLink = useConnectableAppConnectLink(connectableApp);
+  const isConnectDisabled = !isDefined(connectLink);
 
   return (
     <SettingsConnectableAppConnectTooltip
       appName={connectableApp.name}
-      isConnectDisabled={!isDefined(connectLink)}
+      isConnectDisabled={isConnectDisabled}
     >
       <span>
         <Button
@@ -28,7 +29,7 @@ export const SettingsConnectableAppConnectButton = ({
           variant="solid"
           color="accent"
           size="sm"
-          disabled={!isDefined(connectLink)}
+          disabled={isConnectDisabled}
           onClick={() => isDefined(connectLink) && openUrlInNewTab(connectLink)}
         >{t`Connect`}</Button>
       </span>

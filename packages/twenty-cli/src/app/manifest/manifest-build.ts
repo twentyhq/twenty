@@ -645,21 +645,19 @@ export const buildManifest = async (
 
   const hasOAuthIdentity = isDefined(applicationConfig?.oAuthIdentity);
 
-  if (hasOAuthIdentity) {
-    const shippedEntityKinds = Object.entries(entityFilePaths)
-      .filter(
-        ([entityKind, filePaths]) =>
-          entityKind !== 'application' &&
-          entityKind !== 'publicAssets' &&
-          filePaths.length > 0,
-      )
-      .map(([entityKind]) => entityKind);
+  const shippedEntityKinds = Object.entries(entityFilePaths)
+    .filter(
+      ([entityKind, filePaths]) =>
+        entityKind !== 'application' &&
+        entityKind !== 'publicAssets' &&
+        filePaths.length > 0,
+    )
+    .map(([entityKind]) => entityKind);
 
-    if (shippedEntityKinds.length > 0) {
-      errors.push(
-        `An application with an OAuth identity acts with the connecting member's permissions, so it cannot ship ${shippedEntityKinds.join(', ')}`,
-      );
-    }
+  if (hasOAuthIdentity && shippedEntityKinds.length > 0) {
+    errors.push(
+      `An application with an OAuth identity acts with the connecting member's permissions, so it cannot ship ${shippedEntityKinds.join(', ')}`,
+    );
   }
 
   if (applicationConfig) {
