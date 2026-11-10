@@ -91,7 +91,7 @@ export const resolveRelationsInRecordFilter = async ({
           targetFlatObjectMetadata,
           targetColumnName,
           tableAlias: RELATION_TARGET_TABLE_ALIAS,
-          condition: renderRowLevelPermissionFilterToSql({
+          sqlCondition: renderRowLevelPermissionFilterToSql({
             recordFilter: filterValue as RecordGqlOperationFilter,
             tableAlias: RELATION_TARGET_TABLE_ALIAS,
             objectMetadata: targetFlatObjectMetadata,

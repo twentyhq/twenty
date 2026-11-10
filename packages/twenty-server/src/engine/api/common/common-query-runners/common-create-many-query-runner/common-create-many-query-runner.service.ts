@@ -480,7 +480,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
 
     const unreadableFieldMetadataIds =
-      await this.recordPermissionsOnlyRoleReadService.findUnreadableFields({
+      await this.recordFieldPermissionsReadService.findUnreadableFields({
         principals: permissionsPrincipals,
         objectMetadataId: flatObjectMetadata.id,
       });

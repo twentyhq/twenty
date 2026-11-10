@@ -119,7 +119,7 @@ msgstr "\"{path}\" nije vrednost"
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
-msgstr ""
+msgstr "\"{path}\" čita relaciju, ali prethodne vrednosti obuhvataju samo sopstvena polja ovog zapisa"
 
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -211,7 +211,7 @@ msgstr "{0, plural, one {{1} primalac} few {{2} primaoca} other {{2} primalaca}}
 #. placeholder {2}: formatNumber(contentLink.itemCount)
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{0, plural, one {{1} resource} other {{2} resources}}"
-msgstr ""
+msgstr "{0, plural, one {{1} resurs} few {{2} resursa} other {{2} resursa}}"
 
 #. js-lingui-id: 0LMb5P
 #. placeholder {0}: Math.abs(days)
@@ -247,7 +247,7 @@ msgstr "{0, plural, one {# e-poruka izabrana · 0 e-poruka preskočeno} few {# e
 #. placeholder {0}: selectedOptions.length
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "{0, plural, one {# Field} other {# Fields}}"
-msgstr ""
+msgstr "{0, plural, one {# polje} few {# polja} other {# polja}}"
 
 #. js-lingui-id: XHO5F1
 #. placeholder {0}: failedResults.length
@@ -366,7 +366,7 @@ msgid "{0, plural, one {Your invite isn't sent yet} other {Your # invites aren't
 msgstr "{0, plural, one {Vaša pozivnica još nije poslata} few {Vaše # pozivnice još nisu poslate} other {Vaših # pozivnica još nije poslato}}"
 
 #. js-lingui-id: 2UOALe
-#. placeholder {0}: t(SETTINGS_AI_ASSISTANT_SHAPE_LABELS[preset.avatarShape])
+#. placeholder {0}: t(AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS[preset.avatarShape])
 #. placeholder {1}: t(SETTINGS_AI_ASSISTANT_COLOR_LABELS[preset.avatarColor])
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
 msgid "{0} · {1}"
@@ -581,7 +581,7 @@ msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}
 msgstr "{agentCount, plural, one {{agentCount} agent} few {{agentCount} agenta} other {{agentCount} agenata}}"
 
 #. js-lingui-id: lhr2m3
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentNewRoleDraftEffect.tsx
 msgid "{agentLabel} Agent Role"
 msgstr "Uloga agenta {agentLabel}"
 
@@ -651,7 +651,7 @@ msgstr "{browser} na {operatingSystem}"
 #. js-lingui-id: uKNXVv
 #: src/modules/getting-started/components/GettingStartedBookCallSummary.tsx
 msgid "{callDurationMinutes} min"
-msgstr ""
+msgstr "{callDurationMinutes} min"
 
 #. js-lingui-id: p8aaxP
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -691,7 +691,7 @@ msgstr "{count, plural, one {Npr. {example} za # decimalu} few {Npr. {example} z
 #. js-lingui-id: pxt1Xf
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "{count} on {objectLabel}"
-msgstr ""
+msgstr "{count} na {objectLabel}"
 
 #. js-lingui-id: JDT7KY
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject.tsx
@@ -758,6 +758,11 @@ msgstr "{decimals, plural, one {Npr. {example} za # decimalno mesto} few {Npr. {
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
 msgstr "{deletedCount, plural, one {Uspešno obrisan {deletedCount} posao} few {Uspešno obrisana {deletedCount} posla} other {Uspešno obrisano {deletedCount} poslova}}"
+
+#. js-lingui-id: ANUXpJ
+#: src/modules/object-core/agents/hooks/useGetCoreAgentTriggerDescription.ts
+msgid "{details} · Paused"
+msgstr "{details} · Pauzirano"
 
 #. js-lingui-id: miXj9r
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
@@ -936,7 +941,7 @@ msgstr "{minutes, plural, one {# minut} few {# minuta} other {# minuta}}"
 #. js-lingui-id: XVt4Q9
 #: src/modules/settings/applications/components/SettingsApplicationContentItemCell.tsx
 msgid "{minutes} min"
-msgstr ""
+msgstr "{minutes} min"
 
 #. js-lingui-id: ZOtn9F
 #: src/utils/format/formatRoundedDuration.ts
@@ -1051,6 +1056,11 @@ msgstr "{queuedCount, plural, one {Kampanja je stavljena u red za slanje za {0} 
 msgid "{queuedMessage}, skipping {skipReasons}"
 msgstr "{queuedMessage}, preskače se {skipReasons}"
 
+#. js-lingui-id: SmbuF4
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
+msgstr "{readOnlyFieldCount, plural, one {Ne možete uređivati # polje} few {Ne možete uređivati # polja} other {Ne možete uređivati # polja}}"
+
 #. js-lingui-id: N7gP92
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 msgid "{remainingCount} more"
@@ -1135,7 +1145,7 @@ msgstr "{seconds, plural, one {# sekunda} few {# sekunde} other {# sekundi}}"
 #. js-lingui-id: qXKmEF
 #: src/modules/settings/applications/components/SettingsApplicationContentItemCell.tsx
 msgid "{seconds} s"
-msgstr ""
+msgstr "{seconds} s"
 
 #. js-lingui-id: kvVMdH
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -1271,6 +1281,11 @@ msgstr "{unitCount, plural, one {Godina} few {Godine} other {Godina}}"
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
 msgstr "{unlistedCount, plural, one {Nijedna navedena aplikacija ne odgovara. Dostupna je # nenavedena aplikacija.} few {Nijedna navedena aplikacija ne odgovara. Dostupne su # nenavedene aplikacije.} other {Nijedna navedena aplikacija ne odgovara. Dostupno je # nenavedenih aplikacija.}}"
+
+#. js-lingui-id: rU6wAU
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "{unreadableFieldCount, plural, one {Can't see # field} other {Can't see # fields}}"
+msgstr "{unreadableFieldCount, plural, one {Ne možete videti # polje} few {Ne možete videti # polja} other {Ne možete videti # polja}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -1768,7 +1783,7 @@ msgstr "Prihvaćeni i potpisani DPA sporazumi za ovaj radni prostor, sa njihovom
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
-msgstr ""
+msgstr "Pristup"
 
 #. js-lingui-id: 7T2MJI
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -1788,7 +1803,7 @@ msgstr "Pristup objektima {objectLabelPlural} određuje se ulogama, a ne zapis p
 #. js-lingui-id: 6J2O5m
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Access to specific features"
-msgstr ""
+msgstr "Pristup određenim funkcijama"
 
 #. js-lingui-id: rkbqAv
 #: src/modules/settings/mcp/utils/mcpSetup.ts
@@ -1922,7 +1937,7 @@ msgstr "Akcije"
 #. js-lingui-id: ecdYx+
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Actions in the command menu"
-msgstr ""
+msgstr "Radnje u meniju komandi"
 
 #. js-lingui-id: N4ZcCd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
@@ -1965,8 +1980,6 @@ msgid "Activating..."
 msgstr "Aktiviranje..."
 
 #. js-lingui-id: F6pfE9
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -2506,11 +2519,6 @@ msgstr "Dodaj reakciju"
 msgid "Add recipient"
 msgstr "Dodaj primaoca"
 
-#. js-lingui-id: pCK4rY
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
-msgid "Add record trigger"
-msgstr "Dodaj okidač zapisa"
-
 #. js-lingui-id: AmiJYR
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -2558,11 +2566,6 @@ msgstr "Dodaj pravilo"
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 msgid "Add rule group"
 msgstr "Dodaj grupu pravila"
-
-#. js-lingui-id: pM+R6K
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
-msgid "Add schedule"
-msgstr "Dodaj raspored"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2648,6 +2651,12 @@ msgstr "Dodaj na listu"
 #: src/modules/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection.tsx
 msgid "Add topic"
 msgstr "Dodaj temu"
+
+#. js-lingui-id: tVVIF0
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "Add trigger"
+msgstr "Dodaj okidač"
 
 #. js-lingui-id: 4D/zWv
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -2934,21 +2943,32 @@ msgstr "agent"
 #. js-lingui-id: iEQQyu
 #: src/modules/ai/components/AiChatAgentMessageHeader.tsx
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField.tsx
-#: src/pages/object-core/AgentCoreShowPage.tsx
 msgid "Agent"
 msgstr "Agent"
 
 #. js-lingui-id: HvikfA
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Agent · its model isn't allowed by these settings"
-msgstr ""
+msgstr "Agent · njegov model nije dozvoljen ovim podešavanjima"
 
 #. js-lingui-id: ZPXEWi
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Agent configuration"
 msgstr "Konfiguracija agenta"
+
+#. js-lingui-id: tIhTfo
+#: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
+msgid "Agent name cannot be empty"
+msgstr "Ime agenta ne može biti prazno"
+
+#. js-lingui-id: VY/7j2
+#: src/modules/object-core/agents/hooks/useRenameCoreAgent.ts
+msgid "Agent name must contain letters or numbers"
+msgstr "Ime agenta mora sadržati slova ili brojeve"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -2965,11 +2985,6 @@ msgstr "Uloge agenta"
 msgid "Agent run"
 msgstr "Pokretanje agenta"
 
-#. js-lingui-id: Wfy3rU
-#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
-msgid "Agent settings"
-msgstr "Podešavanja agenta"
-
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Agent Web Search"
@@ -2977,7 +2992,10 @@ msgstr "Veb pretraga agenta"
 
 #. js-lingui-id: 8Uv5e6
 #: src/modules/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions.ts
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
+#: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -3037,7 +3055,7 @@ msgstr "AI agenti"
 #. js-lingui-id: FyxBF4
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "AI assistants that work for your team"
-msgstr ""
+msgstr "AI asistenti koji rade za vaš tim"
 
 #. js-lingui-id: n2fhCy
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -3119,7 +3137,7 @@ msgstr "AI alat"
 #. js-lingui-id: r8DqXh
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "AI training"
-msgstr ""
+msgstr "Obuka AI-ja"
 
 #. js-lingui-id: tzhisR
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -3411,12 +3429,18 @@ msgstr "Svi razlozi"
 msgid "all records"
 msgstr "svi zapisi"
 
+#. js-lingui-id: rAUKN+
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "All records"
+msgstr "Svi zapisi"
+
 #. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "All roles"
 msgstr "Sve uloge"
 
 #. js-lingui-id: 2ls1gc
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All settings"
 msgstr "Sva podešavanja"
@@ -4156,7 +4180,7 @@ msgid "Arabic"
 msgstr "Arapski"
 
 #. js-lingui-id: DzER9P
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Arch"
 msgstr "Luk"
 
@@ -4563,12 +4587,12 @@ msgstr "Priložite datoteke"
 #. js-lingui-id: ieVzQB
 #: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Attached this conversation to {recordCount} {objectLabelPlural}"
-msgstr ""
+msgstr "Priložen je ovaj razgovor uz {recordCount} {objectLabelPlural}"
 
 #. js-lingui-id: ZkRvxR
 #: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Attached this conversation to {recordCount} records"
-msgstr ""
+msgstr "Priložen je ovaj razgovor uz {recordCount} zapisa"
 
 #. js-lingui-id: 4xOjp/
 #: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
@@ -4583,12 +4607,12 @@ msgstr "Priložio/la je ovaj razgovor objektu {objectLabel}"
 #. js-lingui-id: 55tyIK
 #: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Attaching this conversation to {recordCount} {objectLabelPlural}"
-msgstr ""
+msgstr "Dodavanje ovog razgovora uz {recordCount} {objectLabelPlural}"
 
 #. js-lingui-id: gOvAKb
 #: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Attaching this conversation to {recordCount} records"
-msgstr ""
+msgstr "Dodavanje ovog razgovora uz {recordCount} zapisa"
 
 #. js-lingui-id: e9I63P
 #: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
@@ -4783,12 +4807,19 @@ msgstr "Automatski nadogradi ovu aplikaciju kada se objavi nova verzija"
 #. js-lingui-id: AoMIl7
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 msgid "Automation and AI"
-msgstr ""
+msgstr "Automatizacija i AI"
+
+#. js-lingui-id: EF+M0w
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
+msgid "Automations"
+msgstr "Automatizacije"
 
 #. js-lingui-id: j4VsTZ
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Automations that run on triggers"
-msgstr ""
+msgstr "Automatizacije koje se pokreću okidačima"
 
 #. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -4812,6 +4843,7 @@ msgid "Available times"
 msgstr "Dostupna vremena"
 
 #. js-lingui-id: kfcRb0
+#: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 #: src/modules/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon.tsx
 #: src/modules/ui/field/display/utils/getAvatarButtonRender.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantSection.tsx
@@ -4827,7 +4859,7 @@ msgstr "Prosek"
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "AWS, Frankfurt, Germany"
-msgstr ""
+msgstr "AWS, Frankfurt, Nemačka"
 
 #. js-lingui-id: li9In6
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAxisNameSelectionDropdownContent.tsx
@@ -4911,7 +4943,7 @@ msgstr "Brisanje unazad"
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Backups"
-msgstr ""
+msgstr "Rezervne kopije"
 
 #. js-lingui-id: uayqnb
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -5140,12 +5172,12 @@ msgstr "Podebljano"
 #. js-lingui-id: MgiiPI
 #: src/modules/onboarding/components/BookCallStepBody.tsx
 msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
-msgstr ""
+msgstr "Zakažite poziv u trajanju od 15 minuta i pomoći ćemo vam da vaš radni prostor bude spreman za produkciju."
 
 #. js-lingui-id: MkvsWx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Book a call"
-msgstr ""
+msgstr "Zakažite poziv"
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -5197,7 +5229,7 @@ msgstr "Pristup uglastim zagradama nije podržan, umesto toga koristite pristup 
 #. js-lingui-id: 50fz3s
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Breaches"
-msgstr ""
+msgstr "Povrede bezbednosti"
 
 #. js-lingui-id: iu7tUI
 #: src/modules/ui/navigation/bread-crumb/components/Breadcrumb.tsx
@@ -5325,8 +5357,8 @@ msgid "Bundled with {applicationName}"
 msgstr "Isporučeno uz {applicationName}"
 
 #. js-lingui-id: /blpUq
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
 msgid "Burst"
 msgstr "Naleti"
 
@@ -5593,7 +5625,7 @@ msgstr "Pristup kameri omogućen"
 #. js-lingui-id: /A1wNx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Camera only"
-msgstr ""
+msgstr "Samo kamera"
 
 #. js-lingui-id: w3vNoK
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -5620,6 +5652,11 @@ msgstr "Zakazivanje kampanje je otkazano i vraćena je u vaše nacrte"
 msgid "Can't scan? Copy the"
 msgstr "Ne možete da skenirate? Kopirajte"
 
+#. js-lingui-id: ztvhPH
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Can't see"
+msgstr "Ne može da vidi"
+
 #. js-lingui-id: RtHGDr
 #: src/modules/ai/constants/DataResidencyConfig.ts
 msgid "Canada"
@@ -5629,6 +5666,7 @@ msgstr "Kanada"
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -5669,6 +5707,12 @@ msgstr "Otkaži promenu kreditnog paketa"
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
 msgid "Cancel credit pack switching?"
 msgstr "Otkazati promenu kreditnog paketa?"
+
+#. js-lingui-id: HYLdMN
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
+msgid "Cancel Edition"
+msgstr "Otkaži izdanje"
 
 #. js-lingui-id: D14fs0
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -5896,6 +5940,11 @@ msgstr "Promeni"
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Change assignee"
 msgstr "Promeni izvršioca"
+
+#. js-lingui-id: VyTYmS
+#: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
+msgid "Change avatar"
+msgstr "Promeni avatar"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -6362,7 +6411,7 @@ msgstr "Izaberite da li se ova vrsta aktivnosti prikazuje na vremenskim linijama
 #. js-lingui-id: 0zJW+z
 #: src/modules/settings/privacy/components/SettingsPrivacyAiDataProcessing.tsx
 msgid "Choose which AI providers may process your requests. Stricter settings leave fewer models, some pricier."
-msgstr ""
+msgstr "Izaberite koji AI pružaoci usluga mogu obrađivati vaše zahteve. Stroža podešavanja ostavljaju manje modela, od kojih su neki skuplji."
 
 #. js-lingui-id: PPf/RT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -6380,7 +6429,7 @@ msgid "Choose your preferences for the apps installed on your workspace by the a
 msgstr "Izaberite podešavanja za aplikacije koje je administrator instalirao u vašem radnom prostoru"
 
 #. js-lingui-id: 7xMmki
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Circle"
 msgstr "Krug"
 
@@ -6676,7 +6725,7 @@ msgid "Closes in 6 days"
 msgstr "Zatvara se za 6 dana"
 
 #. js-lingui-id: XLMJ7O
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Cloud"
 msgstr "Oblak"
 
@@ -6686,7 +6735,7 @@ msgid "Cloudflare may expect a name relative to the zone rather than the full ho
 msgstr "Cloudflare možda očekuje ime relativno u odnosu na zonu, a ne puno ime hosta; izbegnite dvostruko dodavanje domena. Prikažite mi predložene izmene i zatražite potvrdu pre nego što ih sačuvate."
 
 #. js-lingui-id: ExH3eu
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Clover"
 msgstr "Detelina"
 
@@ -6747,7 +6796,7 @@ msgstr "Korak koda"
 #. js-lingui-id: 7WSRxx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Code that apps and workflows run"
-msgstr ""
+msgstr "Kôd koji pokreću aplikacije i Workflows"
 
 #. js-lingui-id: bKJYIa
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
@@ -6812,6 +6861,7 @@ msgstr "skupljiv"
 
 #. js-lingui-id: jZlrte
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
@@ -7418,7 +7468,7 @@ msgstr "provajder povezivanja"
 #. js-lingui-id: sbBqyy
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Connection providers"
-msgstr ""
+msgstr "Provajderi povezivanja"
 
 #. js-lingui-id: W4Kgwq
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -7655,7 +7705,7 @@ msgid "Cook"
 msgstr "Kuk"
 
 #. js-lingui-id: SB9yVb
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Cookie"
 msgstr "Kolačić"
 
@@ -7849,12 +7899,12 @@ msgstr "Cena po milion tokena za keširani ulaz (USD)"
 #. js-lingui-id: mxLDGf
 #: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Could not attach this conversation to {recordCount} {objectLabelPlural}"
-msgstr ""
+msgstr "Nije moguće dodati ovaj razgovor uz {recordCount} {objectLabelPlural}"
 
 #. js-lingui-id: JFMywX
 #: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
 msgid "Could not attach this conversation to {recordCount} records"
-msgstr ""
+msgstr "Nije moguće dodati ovaj razgovor uz {recordCount} zapisa"
 
 #. js-lingui-id: lvWtM4
 #: src/modules/ai/utils/tool-display/buildAttachConversationToRecordsStatusMessage.ts
@@ -7919,7 +7969,7 @@ msgid "Could not load related records"
 msgstr "Nije moguće učitati povezane zapise"
 
 #. js-lingui-id: Ft89Ck
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Could not load runs"
 msgstr "Nije moguće učitati pokretanja"
 
@@ -8149,6 +8199,7 @@ msgstr "kreirajte"
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
+#: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Create"
 msgstr "Kreirajte"
 
@@ -8192,11 +8243,6 @@ msgstr "Kreirajte zapis"
 msgid "Create a relation with other objects"
 msgstr "Kreirajte relaciju sa drugim objektima"
 
-#. js-lingui-id: ZITKtg
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
-msgid "Create a role to define permissions for this agent."
-msgstr "Kreirajte ulogu da biste definisali dozvole za ovog agenta."
-
 #. js-lingui-id: OW4ZDC
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -8232,6 +8278,12 @@ msgstr "Kreirajte Workflow da automatizujete svoj rad."
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
 msgstr "Kreiraj radni prostor"
+
+#. js-lingui-id: TgkHRS
+#: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
+#: src/pages/object-core/AgentCoreIndexPage.tsx
+msgid "Create Agent"
+msgstr "Kreiraj agenta"
 
 #. js-lingui-id: bFIJZx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -8353,7 +8405,6 @@ msgid "Create related"
 msgstr "Kreiraj povezani zapis"
 
 #. js-lingui-id: RoyYUE
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Create Role"
 msgstr "Kreiraj ulogu"
@@ -8418,7 +8469,6 @@ msgstr "Kreirajte, izmenite i izbrišite prikaze radnog prostora"
 
 #. js-lingui-id: d+F6q9
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
@@ -8455,11 +8505,6 @@ msgstr "Kreiran je objekat <0>{subscriptionsLabel}</0>"
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 msgid "Created on {0}"
 msgstr "Kreirano {0}"
-
-#. js-lingui-id: esG9lm
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Created or updated"
-msgstr "Kreirano ili ažurirano"
 
 #. js-lingui-id: nyr6nA
 #: src/modules/getting-started/components/step-preview/GettingStartedDataModelPreview.tsx
@@ -8574,7 +8619,7 @@ msgstr "krediti"
 #. js-lingui-id: lDIOek
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -8661,11 +8706,6 @@ msgstr "Cron (prilagođeno)"
 #: src/utils/cron-to-human/utils/parseCronExpression.ts
 msgid "Cron expression is required"
 msgstr "Cron izraz je obavezan"
-
-#. js-lingui-id: 0KivXX
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Cron pattern"
-msgstr "Cron obrazac"
 
 #. js-lingui-id: rV1+uS
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
@@ -9074,10 +9114,9 @@ msgstr "Dnevno korišćenje"
 #. js-lingui-id: ylNdyP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Daily, kept 30 days"
-msgstr ""
+msgstr "Dnevno, čuva se 30 dana"
 
 #. js-lingui-id: Zz6Cxn
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -9108,7 +9147,7 @@ msgstr "Tamni"
 #. js-lingui-id: 7p5kLi
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Dashboard"
-msgstr ""
+msgstr "Kontrolna tabla"
 
 #. js-lingui-id: ogQzcZ
 #: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
@@ -9121,6 +9160,7 @@ msgid "Dashboard widget"
 msgstr "Vidžet kontrolne table"
 
 #. js-lingui-id: HKH+W+
+#: src/modules/object-core/agents/components/CoreAgentTriggerTypeList.tsx
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -9128,6 +9168,11 @@ msgstr "Vidžet kontrolne table"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Data"
 msgstr "Podaci"
+
+#. js-lingui-id: PDNS5Z
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Data access"
+msgstr "Pristup podacima"
 
 #. js-lingui-id: nxnCld
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -9524,6 +9569,8 @@ msgstr "obriši"
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu.tsx
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
@@ -9583,6 +9630,11 @@ msgstr "Obriši {channelName}?"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Delete {fieldLabel} field?"
 msgstr "Obriši polje {fieldLabel}?"
+
+#. js-lingui-id: 2zz1P3
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "Delete {numberOfCoreAgents} agents?"
+msgstr "Obriši {numberOfCoreAgents} agenata?"
 
 #. js-lingui-id: DKQlby
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -9649,12 +9701,38 @@ msgstr "Obriši nalog i sinhronizovane podatke"
 msgid "Delete account and synced data?"
 msgstr "Obriši nalog i sinhronizovane podatke?"
 
+#. js-lingui-id: 3F2bUD
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "Delete agent"
+msgstr "Obriši agenta"
+
 #. js-lingui-id: YMNj8z
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Delete Agent"
 msgstr "Obriši agenta"
+
+#. js-lingui-id: 7j7Dud
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "Delete agent?"
+msgstr "Obriši agenta?"
+
+#. js-lingui-id: 3TMVdm
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "Delete agents"
+msgstr "Obriši agente"
+
+#. js-lingui-id: 76cXD3
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
+msgid "Delete Agents"
+msgstr "Obriši agente"
+
+#. js-lingui-id: k2+blJ
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "Delete all records"
+msgstr "Obriši sve zapise"
 
 #. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -9779,11 +9857,6 @@ msgstr "Obriši red"
 msgid "Delete Skill"
 msgstr "Obrišite veštinu"
 
-#. js-lingui-id: DgHnjS
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
-msgid "Delete this agent"
-msgstr "Obrišite ovog agenta"
-
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Delete this index?"
@@ -9888,7 +9961,6 @@ msgstr "Obriši ceo svoj prostor za rad"
 
 #. js-lingui-id: vGjmyl
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/object-record/record-group/components/RecordGroupRelationChip.tsx
 #: src/modules/object-record/record-index/hooks/useHandleToggleTrashColumnFilter.ts
 #: src/modules/object-record/record-show/utils/getRecordGroupByValueLabel.ts
@@ -9979,6 +10051,7 @@ msgstr "Opišite šta želite da AI uradi..."
 
 #. js-lingui-id: Nu4oKW
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentOverview.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -10027,6 +10100,11 @@ msgstr "Računar"
 msgid "destroy"
 msgstr "uništi"
 
+#. js-lingui-id: 2xxBws
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "Destroy"
+msgstr "Uništi"
+
 #. js-lingui-id: vI0W/N
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Destroy {objectLabel}"
@@ -10036,6 +10114,11 @@ msgstr "Uništi {objectLabel}"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Destroy {objectLabelPlural}"
 msgstr "Uništi {objectLabelPlural}"
+
+#. js-lingui-id: ud791S
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "Destroy all records"
+msgstr "Trajno uništi sve zapise"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -10243,7 +10326,7 @@ msgstr "Odbaci upit za AI podešavanje"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Display"
-msgstr ""
+msgstr "Prikaz"
 
 #. js-lingui-id: Ldgs6e
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
@@ -10607,7 +10690,7 @@ msgid "Duplicate widget"
 msgstr "Dupliraj vidžet"
 
 #. js-lingui-id: lkz6PL
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -10750,6 +10833,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #. js-lingui-id: ePK91l
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -10763,6 +10847,11 @@ msgstr "eddy@gmail.com, @apple.com"
 msgid "Edit"
 msgstr "Uredi"
 
+#. js-lingui-id: Fw7UIN
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "Edit {label}, {description}"
+msgstr "Uredi {label}, {description}"
+
 #. js-lingui-id: fGxkii
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Edit {objectLabel}"
@@ -10772,6 +10861,12 @@ msgstr "Izmeni {objectLabel}"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Edit {objectLabelPlural}"
 msgstr "Izmeni {objectLabelPlural}"
+
+#. js-lingui-id: GsbKaa
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Edit access"
+msgstr "Uredi pristup"
 
 #. js-lingui-id: 9B436y
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -10785,6 +10880,11 @@ msgstr "Izmeni nalog"
 #: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
 msgid "Edit actions"
 msgstr "Uredi radnje"
+
+#. js-lingui-id: Q0ytOP
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "Edit all records"
+msgstr "Uredi sve zapise"
 
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -10932,6 +11032,12 @@ msgstr "Uredi ikonu taba"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Edit this HTML in the block settings panel."
 msgstr "Uredite ovaj HTML u panelu za podešavanja bloka."
+
+#. js-lingui-id: fVQaN/
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "Edit tools"
+msgstr "Uredi alate"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -11248,7 +11354,7 @@ msgstr "Pristup medijima ugrađene veb-lokacije"
 #. js-lingui-id: OgVoD0
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Embedding this workspace"
-msgstr ""
+msgstr "Umetanje ovog radnog prostora"
 
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -11363,7 +11469,7 @@ msgstr "Omogući specifične karakteristike modela"
 #. js-lingui-id: q1srUM
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Encryption"
-msgstr ""
+msgstr "Šifrovanje"
 
 #. js-lingui-id: Iy8Gze
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -11536,11 +11642,6 @@ msgstr "Unesite važeći URL"
 msgid "Enter a value to store in database"
 msgstr "Unesite vrednost za čuvanje u bazu podataka"
 
-#. js-lingui-id: P/e64M
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
-msgid "Enter agent name*"
-msgstr "Unesite ime agenta*"
-
 #. js-lingui-id: lU5cVU
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 msgid "Enter amount x 1 000 000 (e.g. $3.21 → 3210000)"
@@ -11549,12 +11650,12 @@ msgstr "Unesite iznos x 1 000 000 (npr. $3.21 → 3210000)"
 #. js-lingui-id: /ywbcu
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Enter an HTTP or HTTPS origin without a path or wildcard."
-msgstr ""
+msgstr "Unesite HTTP ili HTTPS izvor bez putanje ili džoker znaka."
 
 #. js-lingui-id: WpbjAl
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Enter an HTTPS origin without a path or wildcard."
-msgstr ""
+msgstr "Unesite HTTPS izvor bez putanje ili džoker znaka."
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -11740,11 +11841,6 @@ msgstr "Unesite poruku za objavljivanje"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
 msgstr "Unesite kôd za oporavak koji vam je dao administrator prostora za rad. Vaš trenutni autentifikator za ovaj prostor za rad biće uklonjen."
-
-#. js-lingui-id: 3EF9HN
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
-msgid "Enter the system prompt that defines this agent's behavior and capabilities"
-msgstr "Unesite sistemski upit koji definiše ponašanje i mogućnosti ovog agenta"
 
 #. js-lingui-id: tEWpbi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -12062,7 +12158,6 @@ msgstr "Evaluacija"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 #: src/modules/log-console/utils/__tests__/getLogConsoleFieldFilters.test.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -12727,6 +12822,11 @@ msgstr "Nije uspelo kreiranje teme za odjavu sa slanja imejlova."
 msgid "Failed to create workflow"
 msgstr "Kreiranje toka rada nije uspelo"
 
+#. js-lingui-id: qzWRef
+#: src/modules/object-core/agents/hooks/useDeleteSelectedCoreAgents.ts
+msgid "Failed to delete {deletionErrorCount} of {selectedCoreAgentCount} agents"
+msgstr "Brisanje nije uspelo za {deletionErrorCount} od {selectedCoreAgentCount} agenata"
+
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Failed to delete email channel."
@@ -12852,7 +12952,7 @@ msgstr "Nije uspelo povezivanje povezanih zapisa sa ovim događajem"
 #. js-lingui-id: XC1d54
 #: src/modules/ai/components/AiChatAgentMessageHeader.tsx
 msgid "Failed to load agent details."
-msgstr ""
+msgstr "Učitavanje detalja agenta nije uspelo."
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
@@ -12975,11 +13075,6 @@ msgstr "Čuvanje podešavanja ponašanja nije uspelo. Pokušajte ponovo."
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Failed to save layout customization"
 msgstr "Čuvanje prilagođavanja rasporeda nije uspelo"
-
-#. js-lingui-id: y3HIOa
-#: src/modules/object-core/agents/hooks/useCoreAgentSave.ts
-msgid "Failed to save role permissions: {errorMessage}"
-msgstr "Čuvanje dozvola uloge nije uspelo: {errorMessage}"
 
 #. js-lingui-id: bH624/
 #: src/modules/settings/applications/hooks/useApplicationVariablesDraft.ts
@@ -13168,7 +13263,7 @@ msgstr "Rezervna vrednost"
 #. js-lingui-id: qMmN5z
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Falls back"
-msgstr ""
+msgstr "Prebacuje se na"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -13344,12 +13439,8 @@ msgstr "Dozvole na nivou polja"
 msgid "Fields"
 msgstr "Polja"
 
-#. js-lingui-id: K0tSFR
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Fields (optional)"
-msgstr "Polja (opciono)"
-
 #. js-lingui-id: oy3EF7
+#: src/modules/object-core/agents/components/CoreAgentRecordTriggerForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
@@ -13374,7 +13465,7 @@ msgstr "Grupa polja"
 #. js-lingui-id: e4KMbf
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "Fields members with the Edit Profile permission can change"
-msgstr ""
+msgstr "Polja koja članovi sa dozvolom Uređivanje profila mogu da promene"
 
 #. js-lingui-id: 5UU7Q6
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -13389,7 +13480,7 @@ msgstr "Podešavanja polja"
 #. js-lingui-id: KRkS98
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fields shown in each view, and their order"
-msgstr ""
+msgstr "Polja prikazana u svakom prikazu i njihov redosled"
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -13495,7 +13586,7 @@ msgstr "Datoteke"
 #. js-lingui-id: c4EzVS
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 msgid "Files and translations that ship with it."
-msgstr ""
+msgstr "Datoteke i prevodi koji se isporučuju uz nju."
 
 #. js-lingui-id: BZGmTs
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -13521,6 +13612,11 @@ msgstr "Popuni primerom unosa iz"
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Filter"
 msgstr "Filter"
+
+#. js-lingui-id: ndNAzG
+#: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
+msgid "Filter agents"
+msgstr "Filtriraj agente"
 
 #. js-lingui-id: q5TuAU
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -13735,7 +13831,7 @@ msgid "Flow"
 msgstr "Tok"
 
 #. js-lingui-id: abEdHK
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Flower"
 msgstr "Cvet"
 
@@ -13808,7 +13904,7 @@ msgstr "Na primer: Da li bi ovaj kupac preporučio uslugu na osnovu svojih povra
 #. js-lingui-id: MnEK5y
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "For members who join without a role or lose theirs"
-msgstr ""
+msgstr "Za članove koji se pridruže bez uloge ili je izgube"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
@@ -14116,7 +14212,7 @@ msgid "GDPR"
 msgstr "GDPR"
 
 #. js-lingui-id: WFxtuG
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Gem"
 msgstr "Dragulj"
 
@@ -14127,6 +14223,7 @@ msgstr "Gemini CLI"
 
 #. js-lingui-id: Weq9zb
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -14524,7 +14621,7 @@ msgstr "Grupno sortiranje"
 #. js-lingui-id: 7kO0HM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Group tabs"
-msgstr ""
+msgstr "Kartice grupa"
 
 #. js-lingui-id: Qt5Mu7
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -14544,7 +14641,7 @@ msgstr "Grupisanje {objectLabel}"
 #. js-lingui-id: zhrjek
 #: src/modules/object-record/record-group/components/RecordGroupTabs.tsx
 msgid "Groups"
-msgstr ""
+msgstr "Grupe"
 
 #. js-lingui-id: R4r4XO
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -14763,7 +14860,7 @@ msgid "Help improve Twenty"
 msgstr "Pomozite da unapredimo Twenty"
 
 #. js-lingui-id: tIb8bD
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Hexagon"
 msgstr "Šestougao"
 
@@ -14953,7 +15050,7 @@ msgstr "Koliko se može potrošiti i koliko često se resetuje."
 #. js-lingui-id: aID6pg
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 msgid "How records are shown and navigated."
-msgstr ""
+msgstr "Kako se zapisi prikazuju i kako se kroz njih kreće."
 
 #. js-lingui-id: tdbxbk
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
@@ -15028,7 +15125,7 @@ msgstr "HTTP zahtev nije uspeo"
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
-msgstr ""
+msgstr "HTTP ruta"
 
 #. js-lingui-id: +ZytMR
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -15218,7 +15315,7 @@ msgstr "Slika \"{fileName}\" prelazi {maxUploadSize}"
 #. js-lingui-id: hDtwIV
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Images and files that ship with the app"
-msgstr ""
+msgstr "Slike i datoteke koje se isporučuju uz aplikaciju"
 
 #. js-lingui-id: Grur3I
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
@@ -15432,7 +15529,7 @@ msgstr "Na listi"
 #. js-lingui-id: JtosUX
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "In transit and at rest"
-msgstr ""
+msgstr "U prenosu i u mirovanju"
 
 #. js-lingui-id: hVockd
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -15485,7 +15582,7 @@ msgstr "Uključeno po mestu"
 #. js-lingui-id: 11h9eK
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "Includes"
-msgstr ""
+msgstr "Uključuje"
 
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -15588,7 +15685,7 @@ msgstr "Početne vrednosti"
 #. js-lingui-id: XU5AOg
 #: src/modules/ai/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -15777,7 +15874,7 @@ msgid "Instruction for AI"
 msgstr "Uputstvo za AI"
 
 #. js-lingui-id: NxHkkp
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -15787,7 +15884,12 @@ msgstr "Uputstva"
 #. js-lingui-id: 7q/glw
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Instructions and tools agents can use"
-msgstr ""
+msgstr "Uputstva i alatke koje agenti mogu da koriste"
+
+#. js-lingui-id: oVi2Tk
+#: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
+msgid "Instructions cannot be empty"
+msgstr "Uputstva ne mogu biti prazna"
 
 #. js-lingui-id: 77QeTr
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -16168,7 +16270,7 @@ msgstr "Je danas{timeZoneAbbreviationSuffix}"
 #. js-lingui-id: WNO2Ac
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Isolation"
-msgstr ""
+msgstr "Izolacija"
 
 #. js-lingui-id: IhCN5p
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -16213,7 +16315,7 @@ msgstr "Njegovi četovi se premeštaju u {destinationChannelName}. Ovo se ne mo�
 #. js-lingui-id: yNfoGL
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Its code could not be moved into the step, so it cannot be edited here."
-msgstr ""
+msgstr "Njegov kod nije mogao da se premesti u korak, pa se ovde ne može uređivati."
 
 #. js-lingui-id: J6OYmT
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -16410,7 +16512,7 @@ msgstr "Nedostaje element KeyInfo"
 #. js-lingui-id: WQg61I
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Keys"
-msgstr ""
+msgstr "Ključevi"
 
 #. js-lingui-id: nhxAdQ
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperDetails.tsx
@@ -16461,7 +16563,7 @@ msgstr "Oznake"
 #. js-lingui-id: HkFcJS
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Labels and text in other languages"
-msgstr ""
+msgstr "Oznake i tekst na drugim jezicima"
 
 #. js-lingui-id: vXIe7J
 #: src/modules/settings/translations/components/MetadataTranslationsTable.tsx
@@ -16824,7 +16926,7 @@ msgstr "Izgledi"
 #. js-lingui-id: Fy0GYm
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Layouts for record pages, dashboards and other pages"
-msgstr ""
+msgstr "Rasporedi za stranice zapisa, kontrolne table i druge stranice"
 
 #. js-lingui-id: zwWKhA
 #: src/modules/information-banner/components/maintenance/InformationBannerMaintenance.tsx
@@ -16943,7 +17045,7 @@ msgstr "Neka svaki član odluči za sebe"
 #. js-lingui-id: 3qTz94
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes."
-msgstr ""
+msgstr "Omogućite da grupisani prikazi tabela i lista prikazuju svoje grupe kao kartice, jednu po jednu grupu. Omogućite nakon što se nadogradnja instance završi."
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17442,6 +17544,7 @@ msgstr "Učitavanje vašeg napretka"
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
@@ -18067,7 +18170,7 @@ msgstr "Pristup medijima je omogućen"
 #. js-lingui-id: KZvYaW
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Media access for {origin}"
-msgstr ""
+msgstr "Pristup medijima za {origin}"
 
 #. js-lingui-id: rH8KbL
 #: src/modules/media-access/components/MediaAccessIndicator.tsx
@@ -18332,12 +18435,12 @@ msgstr "Pristup mikrofonu i kameri je omogućen"
 #. js-lingui-id: MwKzii
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Microphone and camera in iframes"
-msgstr ""
+msgstr "Mikrofon i kamera u iframe-ovima"
 
 #. js-lingui-id: QzZblG
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Microphone only"
-msgstr ""
+msgstr "Samo mikrofon"
 
 #. js-lingui-id: yGBwBp
 #: src/modules/media-access/components/MediaAccessIndicator.tsx
@@ -18439,6 +18542,7 @@ msgstr "Režim"
 #: src/modules/ai/components/AiModelPicker.tsx
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
+#: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
@@ -18486,7 +18590,7 @@ msgstr "Model je obavezan"
 #. js-lingui-id: WXKshQ
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Model tier · switches to an allowed model"
-msgstr ""
+msgstr "Nivo modela · prebacuje se na dozvoljeni model"
 
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -18982,7 +19086,7 @@ msgstr "Istorija navigacije"
 #. js-lingui-id: Vn3jYy
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Navigation items"
-msgstr ""
+msgstr "Stavke navigacije"
 
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -19050,7 +19154,7 @@ msgstr "Nikada se ne prikazuje prilikom prijave. Članovi koriste URL radnog pro
 #. js-lingui-id: 3JnA+j
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Never, by Twenty or providers"
-msgstr ""
+msgstr "Nikada, od strane Twenty-ja ili pružalaca usluga"
 
 #. js-lingui-id: isRobC
 #: src/modules/ai/components/AiChatMessage.tsx
@@ -19331,7 +19435,7 @@ msgstr "Sledeće odobrenje"
 #. js-lingui-id: hfhtGs
 #: src/modules/getting-started/components/GettingStartedBookCallSummary.tsx
 msgid "Next available"
-msgstr ""
+msgstr "Sledeći dostupan termin"
 
 #. js-lingui-id: L0DCk4
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19517,7 +19621,7 @@ msgstr "Nijedan model AI-ja u ovom radnom prostoru ne ispunjava ova podešavanja
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Nijedan AI provajder nije konfigurisan na ovoj instanci."
 
@@ -19988,6 +20092,11 @@ msgstr "Nijedan model nije dostupan za ovaj režim."
 msgid "No notes"
 msgstr "Nema beleški"
 
+#. js-lingui-id: fq3TKy
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+msgid "No objects match your search"
+msgstr "Nijedan objekat ne odgovara vašoj pretrazi"
+
 #. js-lingui-id: XIpopT
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 msgid "No operations found"
@@ -20194,7 +20303,7 @@ msgid "No rules yet"
 msgstr "Još nema pravila"
 
 #. js-lingui-id: eOvDHm
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "No runs yet"
 msgstr "Još nema pokretanja"
 
@@ -20253,6 +20362,11 @@ msgstr "Nema teme"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionMorphRelationFieldView.tsx
 msgid "No targets available"
 msgstr "Nema dostupnih ciljeva"
+
+#. js-lingui-id: h9Kktq
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
+msgid "No tools match your search"
+msgstr "Nijedan alat ne odgovara vašoj pretrazi"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -20671,7 +20785,7 @@ msgstr "Obaveštenja"
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Notified within 72 hours"
-msgstr ""
+msgstr "Obaveštenje u roku od 72 sata"
 
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
@@ -20899,7 +21013,7 @@ msgstr "Podešavanja dozvola za objekte i polja"
 #. js-lingui-id: 51U9ZD
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 msgid "Objects, fields and indexes that shape your records."
-msgstr ""
+msgstr "Objekti, polja i indeksi koji oblikuju vaše zapise."
 
 #. js-lingui-id: BwJKBw
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -20952,7 +21066,6 @@ msgid "on {remainingDays} and {lastDay}"
 msgstr "u {remainingDays} i {lastDay}"
 
 #. js-lingui-id: 2AKHUG
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 msgid "On a schedule"
 msgstr "Po rasporedu"
@@ -21106,11 +21219,6 @@ msgstr "samo na {dayName}"
 msgid "only on {remainingDays} and {lastDay}"
 msgstr "samo na {remainingDays} i {lastDay}"
 
-#. js-lingui-id: IWOmp4
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Only run when one of these fields changes"
-msgstr "Pokreni samo kada se jedno od ovih polja promeni"
-
 #. js-lingui-id: YSJayJ
 #: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
@@ -21253,6 +21361,7 @@ msgid "Open in full page"
 msgstr "Otvori na celoj stranici"
 
 #. js-lingui-id: DP5C7w
+#: src/modules/object-core/agents/components/SidePanelCoreAgentRoleLayout.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "Otvorite u Ulogama"
@@ -21449,6 +21558,11 @@ msgstr "Opciono — Bedrock API ključ, koji se koristi umesto para pristupnih k
 msgid "Optional — uses IAM role if empty"
 msgstr "Opcionalno — koristi IAM ulogu ako je prazno"
 
+#. js-lingui-id: X8Kmj8
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
+msgid "Optional · A short summary of what this agent does"
+msgstr "Opciono · Kratak sažetak onoga što ovaj agent radi"
+
 #. js-lingui-id: BVmWQT
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -21640,6 +21754,7 @@ msgid "Other workspaces rely on this app's server route, which is served from th
 msgstr "Drugi radni prostori se oslanjaju na serversku rutu ove aplikacije, koja se opslužuje iz ovog radnog prostora. Prenesite vlasništvo nad aplikacijom na drugi radni prostor u kom je instalirana ili je deinstalirajte iz svih drugih radnih prostora pre nego što je ovde deinstalirate."
 
 #. js-lingui-id: NuKR0h
+#: src/modules/object-core/agents/components/CoreAgentTriggerTypeList.tsx
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
 msgid "Others"
 msgstr "Drugo"
@@ -21732,7 +21847,7 @@ msgstr "Pregled"
 #. js-lingui-id: jXkJjN
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Own database schema"
-msgstr ""
+msgstr "Sopstvena šema baze podataka"
 
 #. js-lingui-id: LtI9AS
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordRecipient.tsx
@@ -21786,7 +21901,7 @@ msgstr "Naziv paketa ili univerzalni identifikator"
 #. js-lingui-id: pD/Ew0
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 msgid "Packaging"
-msgstr ""
+msgstr "Pakovanje"
 
 #. js-lingui-id: fdjq4c
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -21832,7 +21947,7 @@ msgstr "kartica Raspored stranice"
 #. js-lingui-id: +Q45+/
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Page layout tabs"
-msgstr ""
+msgstr "Kartice rasporeda stranice"
 
 #. js-lingui-id: sVcqjZ
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -22123,7 +22238,6 @@ msgstr "Trajno brisanje. Unesite broj dana."
 
 #. js-lingui-id: e7kLp1
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Permanently deleted"
 msgstr "Trajno obrisano"
 
@@ -22150,7 +22264,7 @@ msgstr "zastavica dozvole"
 #. js-lingui-id: 6UJVe9
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Permission flags"
-msgstr ""
+msgstr "Zastavice dozvola"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -22254,7 +22368,7 @@ msgstr "Izaberite početnu tačku, a zatim je prilagodite sebi"
 #. js-lingui-id: 8hUAfY
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Pick a time"
-msgstr ""
+msgstr "Izaberite vreme"
 
 #. js-lingui-id: BypbQt
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -22264,7 +22378,7 @@ msgstr "Izaberite vreme u budućnosti"
 #. js-lingui-id: aGfbJv
 #: src/modules/getting-started/components/GettingStartedBookCallSummary.tsx
 msgid "Pick a time that suits you"
-msgstr ""
+msgstr "Izaberite vreme koje vam odgovara"
 
 #. js-lingui-id: rV71K7
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -22310,7 +22424,7 @@ msgid "Pie Chart"
 msgstr "Kružni grafikon"
 
 #. js-lingui-id: qoLYkj
-#: src/pages/settings/ai/constants/SettingsAiAssistantShapeLabels.ts
+#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Pill"
 msgstr "Pilula"
 
@@ -22358,7 +22472,7 @@ msgstr "Pozicija"
 #. js-lingui-id: Dy1KuZ
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Placements"
-msgstr ""
+msgstr "Pozicije"
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -22508,7 +22622,7 @@ msgstr "Portugalski — Portugal"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Position"
-msgstr ""
+msgstr "Pozicija"
 
 #. js-lingui-id: JQw9es
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -22847,7 +22961,7 @@ msgstr "Svojstva"
 #. js-lingui-id: qvOk2n
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Properties and relations added to objects"
-msgstr ""
+msgstr "Svojstva i relacije dodati objektima"
 
 #. js-lingui-id: 8B+pY5
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -22924,7 +23038,7 @@ msgstr "Javno"
 #. js-lingui-id: ke+Pgm
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Public assets"
-msgstr ""
+msgstr "Javna sredstva"
 
 #. js-lingui-id: 3ixt5E
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -23380,6 +23494,7 @@ msgstr "Dnevnici promena zapisa"
 
 #. js-lingui-id: VW8X7n
 #: src/modules/log-console/constants/LogConsoleSources.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentTriggerTypeLabelAndIcon.ts
 msgid "Record changes"
 msgstr "Izmene zapisa"
 
@@ -23429,6 +23544,16 @@ msgstr "Zapis je kreiran ili ažuriran"
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 msgid "Record is deleted"
 msgstr "Zapis je obrisan"
+
+#. js-lingui-id: B6/jGB
+#: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
+msgid "Record is permanently deleted"
+msgstr "Zapis je trajno obrisan"
+
+#. js-lingui-id: 72O3vf
+#: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
+msgid "Record is restored"
+msgstr "Zapis je vraćen"
 
 #. js-lingui-id: rdLUKj
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -23484,12 +23609,8 @@ msgstr "Podešavanja tabele zapisa"
 msgid "Record text"
 msgstr "Tekst zapisa"
 
-#. js-lingui-id: CV/ZuS
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Record type"
-msgstr "Tip zapisa"
-
 #. js-lingui-id: kvxD0C
+#: src/modules/object-core/agents/components/CoreAgentRecordTriggerForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/wait-for-event-action/components/WorkflowEditActionWaitForEvent.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Record Type"
@@ -23500,6 +23621,11 @@ msgstr "Tip zapisa"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "Record-level"
 msgstr "Nivo zapisa"
+
+#. js-lingui-id: VQ4KjL
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Record-level filter"
+msgstr "Filter na nivou zapisa"
 
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
@@ -23560,6 +23686,11 @@ msgstr "Zapisi do kojih se dolazi putem ovih relacija prate pristup objektu {obj
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Records selected"
 msgstr "Izabrani zapisi"
+
+#. js-lingui-id: TZIC1Z
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Records this agent can see and change"
+msgstr "Zapisi koje ovaj agent može da vidi i menja"
 
 #. js-lingui-id: sE6EHz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -23836,15 +23967,35 @@ msgstr "Ukloni {displayName}"
 msgid "Remove {label}"
 msgstr "Ukloni {label}"
 
+#. js-lingui-id: elnmVe
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "Remove {label}, {description}"
+msgstr "Ukloni {label}, {description}"
+
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOriginsTable.tsx
 msgid "Remove {origin}"
 msgstr "Ukloni {origin}"
 
+#. js-lingui-id: wzdVhz
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "Remove {toolName}"
+msgstr "Ukloni {toolName}"
+
 #. js-lingui-id: kL4wuJ
 #: src/modules/object-record/record-sharing/components/RecordSharingAccessLevelOptions.tsx
 msgid "Remove access"
 msgstr "Ukloni pristup"
+
+#. js-lingui-id: wf5QIp
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Remove access to {objectLabel}"
+msgstr "Ukloni pristup objektu {objectLabel}"
+
+#. js-lingui-id: EK2N/p
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "Remove access to all records"
+msgstr "Ukloni pristup svim zapisima"
 
 #. js-lingui-id: VjbCv0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -24019,11 +24170,6 @@ msgstr "Ukloni sortiranje?"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Remove this provider and disconnect all its models"
 msgstr "Uklonite ovog provajdera i isključite sve njegove modele"
-
-#. js-lingui-id: txqag8
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "Remove trigger"
-msgstr "Ukloni okidač"
 
 #. js-lingui-id: XrlYG5
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -24386,7 +24532,6 @@ msgstr "Vratite postavke tipa aktivnosti koje je definisala aplikacija"
 
 #. js-lingui-id: o8va6N
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 msgid "Restored"
 msgstr "Vraćeno"
 
@@ -24571,8 +24716,6 @@ msgid "role"
 msgstr "uloga"
 
 #. js-lingui-id: GDvlUT
-#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -24584,7 +24727,7 @@ msgid "Role"
 msgstr "Uloga"
 
 #. js-lingui-id: l2yKTq
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentNewRoleDraftEffect.tsx
 msgid "Role for {agentLabel} agent"
 msgstr "Uloga za agenta {agentLabel}"
 
@@ -24761,11 +24904,6 @@ msgstr "Pokrenite kod za analizu fajlova i podataka"
 msgid "Run Function"
 msgstr "Izvrši funkciju"
 
-#. js-lingui-id: ++zKOb
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
-msgid "Run this agent on its own when records change or on a schedule. It runs with its role's permissions."
-msgstr "Pokrenite ovog agenta samostalno kada se zapisi promene ili po rasporedu. Pokreće se sa dozvolama svoje uloge."
-
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
@@ -24800,7 +24938,6 @@ msgid "runs"
 msgstr "pokretanja"
 
 #. js-lingui-id: Tpm2G9
-#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
@@ -24814,7 +24951,7 @@ msgid "Runs and failures per version"
 msgstr "Pokretanja i neuspešna izvršavanja po verziji"
 
 #. js-lingui-id: RASTzS
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Runs appear here once a workflow or an app uses this agent"
 msgstr "Pokretanja se pojavljuju ovde kada radni tok ili aplikacija koristi ovog agenta"
 
@@ -24836,7 +24973,7 @@ msgstr "Ruski"
 #. js-lingui-id: v/9mhO
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Safeguards, audits and the agreements that cover your data."
-msgstr ""
+msgstr "Mere zaštite, revizije i ugovori koji pokrivaju vaše podatke."
 
 #. js-lingui-id: mUv9U4
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
@@ -24887,6 +25024,7 @@ msgid "Saturday"
 msgstr "Subota"
 
 #. js-lingui-id: tfDRzk
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
@@ -24902,6 +25040,12 @@ msgstr "Sačuvaj"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Save 25% when billed annually"
 msgstr "Uštedite 25% kada se naplaćuje godišnje"
+
+#. js-lingui-id: TXVA2l
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
+msgid "Save Agent"
+msgstr "Sačuvaj agenta"
 
 #. js-lingui-id: 8tM8+a
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -24937,7 +25081,7 @@ msgstr "Prvo sačuvajte izmene"
 #. js-lingui-id: MMr22t
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Saved tables, boards and calendars"
-msgstr ""
+msgstr "Sačuvane tabele, table i kalendari"
 
 #. js-lingui-id: A0/0NU
 #: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
@@ -25084,7 +25228,7 @@ msgstr "Pretraga"
 #. js-lingui-id: xjlwdx
 #: src/modules/settings/applications/components/SettingsApplicationContentItemsTable.tsx
 msgid "Search {lowerCaseTypeLabel}..."
-msgstr ""
+msgstr "Pretraži {lowerCaseTypeLabel}..."
 
 #. js-lingui-id: g2dQp/
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
@@ -25161,7 +25305,7 @@ msgstr "Pretražite agente"
 #. js-lingui-id: hxU5li
 #: src/modules/settings/applications/components/SettingsApplicationContentOverview.tsx
 msgid "Search all resources..."
-msgstr ""
+msgstr "Pretraži sve resurse..."
 
 #. js-lingui-id: fGTI3o
 #: src/modules/settings/applications/components/SettingsApplicationsTable.tsx
@@ -25348,6 +25492,7 @@ msgid "Search members"
 msgstr "Pretraži članove"
 
 #. js-lingui-id: two5rl
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -25411,6 +25556,11 @@ msgstr "Pretražite veštine"
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
 msgid "Search steps and fields"
 msgstr "Pretraži korake i polja"
+
+#. js-lingui-id: mW8qA2
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
+msgid "Search tools"
+msgstr "Pretraži alate"
 
 #. js-lingui-id: rws5EE
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
@@ -25568,7 +25718,7 @@ msgstr "Sekcija"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Sections"
-msgstr ""
+msgstr "Sekcije"
 
 #. js-lingui-id: a3LDKx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -25585,6 +25735,7 @@ msgid "see"
 msgstr "vidi"
 
 #. js-lingui-id: h+8V38
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "See"
 msgstr "Vidi"
@@ -25608,6 +25759,11 @@ msgstr "Pogledaj sve {relationLabelPlural} u vezi sa ovim zapisom"
 #: src/modules/page-layout/widgets/call-recording/components/WidgetActionCallRecordingSeeAll.tsx
 msgid "See all call recordings linked to this calendar event"
 msgstr "Pogledajte sve snimke poziva povezane sa ovim događajem u kalendaru"
+
+#. js-lingui-id: B5odfQ
+#: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+msgid "See all records"
+msgstr "Vidi sve zapise"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -25638,7 +25794,7 @@ msgstr "Pogledajte instalirane aplikacije"
 #. js-lingui-id: V1fa9u
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
-msgstr ""
+msgstr "Prikaži više"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -25655,6 +25811,17 @@ msgstr "Vidi zapise"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "See Records on All Objects"
 msgstr "Pogledaj zapise na svim objektima"
+
+#. js-lingui-id: dcr/0m
+#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
+msgid "See Runs"
+msgstr "Pogledajte izvršenja"
+
+#. js-lingui-id: dKYXK6
+#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+msgid "See Settings"
+msgstr "Vidi podešavanja"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -25872,6 +26039,7 @@ msgid "Select all rows"
 msgstr "Izaberite sve redove"
 
 #. js-lingui-id: hVPa4O
+#: src/modules/object-core/agents/components/CoreAgentRecordTriggerForm.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
@@ -26000,6 +26168,7 @@ msgid "Select Source"
 msgstr "Izaberite izvor"
 
 #. js-lingui-id: LHkEre
+#: src/modules/object-core/agents/components/CoreAgentRecordTriggerForm.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Select specific fields to listen to"
 msgstr "Izaberite konkretna polja koja želite da pratite"
@@ -26433,7 +26602,7 @@ msgstr "Podesite promenljive konfiguracije vaše aplikacije"
 #. js-lingui-id: 5zLzS2
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Sets of permissions you can assign"
-msgstr ""
+msgstr "Skupovi dozvola koje možete dodeliti"
 
 #. js-lingui-id: d1bI+P
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
@@ -26444,7 +26613,6 @@ msgstr "Podešavamo vašu <0>bazu podataka</0>..."
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
-#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -26472,6 +26640,12 @@ msgstr "stavka menija podešavanja"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Settings most workspaces never need to change"
 msgstr "Podešavanja koja većina radnih prostora nikada ne mora da menja"
+
+#. js-lingui-id: sWdVbT
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "Settings permission"
+msgstr "Dozvola za podešavanja"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -26501,6 +26675,7 @@ msgid "Seventh"
 msgstr "Sedmi"
 
 #. js-lingui-id: WkbAmY
+#: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiAssistantCustomizeMenu.tsx
 msgid "Shape"
@@ -26610,7 +26785,7 @@ msgstr "Kratka oznaka"
 #. js-lingui-id: tPFKB5
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Shortcuts in the workspace sidebar"
-msgstr ""
+msgstr "Prečice na bočnoj traci radnog prostora"
 
 #. js-lingui-id: gWk8gY
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -27232,7 +27407,7 @@ msgstr "Sortiranja"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -27251,7 +27426,7 @@ msgstr "Izvor"
 #. js-lingui-id: joolK7
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Source code"
-msgstr ""
+msgstr "Izvorni kôd"
 
 #. js-lingui-id: 5f1fxa
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -27292,7 +27467,7 @@ msgstr "Ubrzajte čitanje polja po kojima najčešće filtrirate ili sortirate. 
 #. js-lingui-id: b0DRa9
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Speed up search and keep values unique"
-msgstr ""
+msgstr "Ubrzajte pretragu i održavajte vrednosti jedinstvenim"
 
 #. js-lingui-id: wwdak+
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -27376,7 +27551,7 @@ msgstr "Faze"
 #. js-lingui-id: Y78BI4
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Standalone"
-msgstr ""
+msgstr "Samostalno"
 
 #. js-lingui-id: TJBHlP
 #: src/modules/applications/utils/getApplicationDisplayName.ts
@@ -27435,7 +27610,7 @@ msgid "Start Your Subscription"
 msgstr "Započni pretplatu"
 
 #. js-lingui-id: JEGlfK
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Started"
 msgstr "Započeto"
 
@@ -27489,7 +27664,7 @@ msgstr "Statistika"
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -28111,7 +28286,6 @@ msgstr "Sinhronizacija će se zaustaviti, a akreditivi ovog naloga će biti uklo
 
 #. js-lingui-id: D+NlUC
 #: src/modules/log-console/utils/getLogConsoleRecordChangeActor.ts
-#: src/modules/navigation-menu-item/display/object/components/NavigationDrawerItemForObjectMetadataItem.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
@@ -28133,7 +28307,6 @@ msgid "System objects"
 msgstr "Sistemski objekti"
 
 #. js-lingui-id: FHPe8O
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 #: src/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -28218,12 +28391,12 @@ msgstr "Tabela, Kanban, Kalendar"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Tabs"
-msgstr ""
+msgstr "Kartice"
 
 #. js-lingui-id: /OvDTS
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Tabs inside a page layout"
-msgstr ""
+msgstr "Kartice unutar rasporeda stranice"
 
 #. js-lingui-id: DBxdLI
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -28714,7 +28887,7 @@ msgstr "Upotreba na koju se ovo ograničenje odnosi."
 #. js-lingui-id: S3wM+7
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The value a field had before the update. Empty when the record is created."
-msgstr ""
+msgstr "Vrednost koju je polje imalo pre ažuriranja. Prazno kada se zapis kreira."
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -28858,10 +29031,10 @@ msgid ""
 "            entire account."
 msgstr "Ova akcija se ne može opozvati. Ovo će trajno obrisati vaš ceo nalog."
 
-#. js-lingui-id: bNY3MH
+#. js-lingui-id: bWmXw/
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
-msgid "This action cannot be undone. This will permanently delete your agent.<0/>Please type in the agent name to confirm."
-msgstr "Ova akcija se ne može poništiti. Ovo će trajno obrisati vašeg agenta.<0/>Molimo vas, unesite ime agenta da biste potvrdili."
+msgid "This action cannot be undone. This will permanently delete your agent."
+msgstr "Ova radnja se ne može opozvati. Ovo će trajno obrisati vašeg agenta."
 
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -28899,10 +29072,40 @@ msgstr "Ova radnja će izbrisati ovu fasciklu i stavku navigacionog menija unuta
 msgid "This address is already taken"
 msgstr "Ova adresa je već zauzeta"
 
-#. js-lingui-id: 4bI4er
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
-msgid "This agent only runs when someone sends it a message."
-msgstr "Ovaj agent se pokreće samo kada mu neko pošalje poruku."
+#. js-lingui-id: Wg5iFS
+#: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+msgid "This agent can't see any records yet."
+msgstr "Ovaj agent još ne može da vidi nijedan zapis."
+
+#. js-lingui-id: zJHUio
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "This agent can't use any tools yet."
+msgstr "Ovaj agent još ne može da koristi nijedan alat."
+
+#. js-lingui-id: N5v8kc
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+msgid "This agent comes from an app, so its access can't be changed here."
+msgstr "Ovaj agent dolazi iz aplikacije, pa se njegov pristup ovde ne može promeniti."
+
+#. js-lingui-id: EVX1ND
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
+msgid "This agent comes from an app, so its tools can't be changed here."
+msgstr "Ovaj agent dolazi iz aplikacije, pa se njegovi alati ovde ne mogu promeniti."
+
+#. js-lingui-id: PGt3yj
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "This agent only runs when a workflow, an app or the API calls it."
+msgstr "Ovaj agent se pokreće samo kada ga pozove radni tok, aplikacija ili API."
+
+#. js-lingui-id: RKKH61
+#: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+msgid "This agent shares its role with other members or agents. Change its access in Settings > Roles."
+msgstr "Ovaj agent deli svoju ulogu sa drugim članovima ili agentima. Promenite njegov pristup u Podešavanja > Uloge."
+
+#. js-lingui-id: YMrA7j
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
+msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
+msgstr "Ovaj agent deli svoju ulogu sa drugim članovima ili agentima. Promenite njegove alate u Podešavanja > Uloge."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
@@ -29018,11 +29221,6 @@ msgstr "Ova veza ne postoji ili nije dostupna za ovu aplikaciju."
 #: src/modules/ai/hooks/useAgentChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Ovaj razgovor više nije dostupan."
-
-#. js-lingui-id: 4Rs3za
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "This cron pattern is not valid"
-msgstr "Ovaj cron obrazac nije važeći"
 
 #. js-lingui-id: 5VD/sC
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -29165,10 +29363,20 @@ msgstr "Ovim se trajno briše {accountHandle} i sve njegove sinhronizovane e-por
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
 msgstr "Ovim se trajno brišu sledeće stavke, kao i sve njihove sinhronizovane e-poruke i događaji. Ova radnja se ne može opozvati."
 
+#. js-lingui-id: YMiCUw
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "This permanently deletes these {numberOfCoreAgents} agents. This action cannot be undone."
+msgstr "Ovim se trajno briše ovih {numberOfCoreAgents} agenata. Ova radnja se ne može opozvati."
+
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
 msgid "This permanently deletes these {numberOfCoreWorkflows} workflows and all their run history. This action cannot be undone."
 msgstr "Ovim se trajno brišu ova {numberOfCoreWorkflows} toka rada i cela njihova istorija pokretanja. Ova radnja se ne može opozvati."
+
+#. js-lingui-id: KNcaaQ
+#: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
+msgid "This permanently deletes this agent. This action cannot be undone."
+msgstr "Ovim se trajno briše ovaj agent. Ova radnja se ne može opozvati."
 
 #. js-lingui-id: riRzbk
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29225,11 +29433,6 @@ msgstr "Ova uloga može {humanReadableAction} sve zapise"
 msgid "This role is assigned to these {roleTargetDisplayName}."
 msgstr "Ova uloga je dodeljena ovim {roleTargetDisplayName}."
 
-#. js-lingui-id: fp6HUI
-#: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
-msgid "This role is shared with other users or agents and cannot be edited here."
-msgstr "Ova uloga se deli sa drugim korisnicima ili agentima i ovde se ne može uređivati."
-
 #. js-lingui-id: 9IqK24
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "This rule is disabled. Records are not checked against it."
@@ -29263,7 +29466,7 @@ msgstr "Ovo se nikada ne bi trebalo desiti"
 #. js-lingui-id: v6DC3g
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "This step runs from its original function"
-msgstr ""
+msgstr "Ovaj korak se pokreće iz svoje originalne funkcije"
 
 #. js-lingui-id: Ryrt8E
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
@@ -29302,7 +29505,7 @@ msgstr "Ovaj prikaz koristi {usageLabel} na objektu \"{0}\", kojem nije omoguće
 #. js-lingui-id: rzFr6m
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "This website is already in the list."
-msgstr ""
+msgstr "Ova veb-lokacija je već na listi."
 
 #. js-lingui-id: yByRxz
 #: src/modules/ai/utils/groupThreadsByDate.ts
@@ -29604,7 +29807,7 @@ msgid "tokens"
 msgstr "tokeni"
 
 #. js-lingui-id: 6RDwJM
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Tokens"
@@ -29644,7 +29847,7 @@ msgstr "Previše zapisa. Dozvoljeno do {maxRecordsString}"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Tool"
-msgstr ""
+msgstr "Alatka"
 
 #. js-lingui-id: sjgzcA
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -29681,6 +29884,8 @@ msgstr "Detalji alata: {displayMessage}"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+#: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Tools"
@@ -29889,6 +30094,7 @@ msgstr "Probni period"
 #. js-lingui-id: H2Sfhg
 #: src/modules/getting-started/components/GettingStartedWorkflowPreview.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunSource.tsx
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -29922,8 +30128,6 @@ msgid "Trigger Type"
 msgstr "Tip okdašajućeg događaja"
 
 #. js-lingui-id: 34nxyb
-#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
-#: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Triggers"
 msgstr "Okidači"
@@ -30011,7 +30215,7 @@ msgid "Try again"
 msgstr "Pokušajte ponovo"
 
 #. js-lingui-id: P8jvuh
-#: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Try again in a moment"
 msgstr "Pokušajte ponovo za trenutak"
 
@@ -30076,7 +30280,7 @@ msgstr "Twenty dodaje osobe kojima šaljete imejl i koje upoznajete i održava n
 #. js-lingui-id: UXtQTZ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
 msgid "Twenty Cloud"
-msgstr ""
+msgstr "Twenty Cloud"
 
 #. js-lingui-id: JnaRPe
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
@@ -30092,7 +30296,7 @@ msgstr "Twenty popunjava svaki nivo najboljim modelom koji ispunjava vaše zahte
 #. js-lingui-id: WGKXUo
 #: src/modules/getting-started/components/GettingStartedBookCallSummary.tsx
 msgid "Twenty team"
-msgstr ""
+msgstr "Twenty tim"
 
 #. js-lingui-id: qUadjH
 #: src/modules/onboarding/components/OnboardingInviteTeamSkipDialog.tsx
@@ -30100,7 +30304,7 @@ msgid "Twenty works better with your team"
 msgstr "Twenty bolje funkcioniše sa vašim timom"
 
 #. js-lingui-id: YIjS4q
-#: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
+#: src/modules/ai/hooks/useAgentModelCapabilities.ts
 msgid "Twitter/X Search"
 msgstr "Tviter/X Pretraga"
 
@@ -30219,7 +30423,7 @@ msgstr "Vrste sadržaja koje ovaj model može da obrađuje pored teksta"
 #. js-lingui-id: zUhxh2
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Types of records in your workspace"
-msgstr ""
+msgstr "Tipovi zapisa u vašem radnom prostoru"
 
 #. js-lingui-id: G7gWQo
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -30704,6 +30908,12 @@ msgstr "Do poslednja 3 dana"
 #: src/modules/ai/components/AiChatThreadTitle.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
+#: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemWorkflowOptions.tsx
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/agents/components/CoreAgentNameCell.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
 #: src/modules/object-core/components/cells/CoreObjectNameCell.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
@@ -30889,7 +31099,6 @@ msgstr "ažurirano"
 
 #. js-lingui-id: +b7T3G
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -31760,7 +31969,7 @@ msgstr "grupa polja prikaza"
 #. js-lingui-id: t9f//v
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "View fields"
-msgstr ""
+msgstr "Polja pregleda"
 
 #. js-lingui-id: BA3jId
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -32054,7 +32263,7 @@ msgstr "Pogledajte demo članova"
 #. js-lingui-id: jZOJVH
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Ways to connect external accounts"
-msgstr ""
+msgstr "Načini povezivanja spoljnih naloga"
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
@@ -32160,7 +32369,7 @@ msgid "We're still waiting for the payment confirmation"
 msgstr "Još uvek čekamo potvrdu plaćanja"
 
 #. js-lingui-id: LnnVIT
-#: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
+#: src/modules/ai/hooks/useAgentModelCapabilities.ts
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Web Search"
 msgstr "Veb Pretraga"
@@ -32246,7 +32455,7 @@ msgstr "Veb-sajtovi kojima je dozvoljeno da ugrade ovaj radni prostor. Dodajte s
 #. js-lingui-id: lF1gZZ
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Websites whose iframe widgets can ask members for their microphone or camera. Changes apply after a page reload."
-msgstr ""
+msgstr "Veb-lokacije čiji iframe vidžeti mogu da zatraže od članova pristup njihovom mikrofonu ili kameri. Promene se primenjuju nakon ponovnog učitavanja stranice."
 
 #. js-lingui-id: VAcXNz
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -32295,7 +32504,12 @@ msgstr "Dobrodošli, {workspaceName}."
 #. js-lingui-id: mAi8YZ
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "What {applicationName} adds to your workspace"
-msgstr ""
+msgstr "Šta {applicationName} dodaje vašem radnom prostoru"
+
+#. js-lingui-id: 1rpyKy
+#: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
+msgid "What AI model should your agent run on"
+msgstr "Na kom AI modelu treba da radi vaš agent"
 
 #. js-lingui-id: Itn+J7
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
@@ -32327,10 +32541,10 @@ msgstr "Šta ljudi vide kada je uslov false i gde se prikazuje."
 msgid "What should be classified?"
 msgstr "Šta treba klasifikovati?"
 
-#. js-lingui-id: rmMbbz
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "What should the agent do when this trigger fires?"
-msgstr "Šta agent treba da uradi kada se ovaj okidač aktivira?"
+#. js-lingui-id: Z1117Y
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
+msgid "What should the agent do every time it runs?"
+msgstr "Šta agent treba da radi pri svakom pokretanju?"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -32342,6 +32556,11 @@ msgstr "O čemu model treba da odluči?"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "What this API can do: Select a user role to define its permissions."
 msgstr "Šta ovaj API može: Izaberite korisničku ulogu da definišete njene dozvole."
+
+#. js-lingui-id: w7CKq8
+#: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
+msgid "What tools can this agent use for its mission"
+msgstr "Koje alate ovaj agent može da koristi za svoju misiju"
 
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -32363,11 +32582,6 @@ msgstr "Kada se faza dogovora promeni u Zatvoren - dobijen, kreirajte zadatak do
 msgid "When a new lead is created with source \"Website\", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead."
 msgstr "Kada se kreira novi lid sa izvorom \"Website\", dodelite ga prodajnom predstavniku čija teritorija (po regionu/državi) odgovara adresi lida; ako nema podudarnosti, dodelite ga vođi tima."
 
-#. js-lingui-id: 8bOffh
-#: src/modules/object-core/agents/components/CoreAgentTriggerCard.tsx
-msgid "When a record changes"
-msgstr "Kada se zapis promeni"
-
 #. js-lingui-id: haFWB2
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
@@ -32387,6 +32601,11 @@ msgstr "Kada je isključeno, događaj se kreira bez učesnika i niko ne dobija o
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentConversationFields.tsx
 msgid "When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop."
 msgstr "Kada agent treba da se zaustavi i pita vas? Npr. pre slanja bilo kog imejla ili promene iznosa posla. Ostavite prazno da se nikada ne zaustavlja."
+
+#. js-lingui-id: vn42KP
+#: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
+msgid "When should this agent run on its own"
+msgstr "Kada ovaj agent treba samostalno da se pokrene"
 
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
@@ -32444,7 +32663,7 @@ msgstr "U koji razgovor sa primaocem ovaj korak upisuje"
 #. js-lingui-id: ruTIpV
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 msgid "Who can see and do what."
-msgstr ""
+msgstr "Ko šta može da vidi i radi."
 
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -32478,7 +32697,7 @@ msgstr "Vidžeti"
 #. js-lingui-id: Ud5TAx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Widgets, panels and other interface components"
-msgstr ""
+msgstr "Vidžeti, paneli i druge komponente interfejsa"
 
 #. js-lingui-id: aFWU1n
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -32495,7 +32714,7 @@ msgstr "Nastaviće na sledeću iteraciju čak i ako trenutna ne uspe"
 #. js-lingui-id: 90z9K9
 #: src/modules/settings/privacy/components/SettingsPrivacyAffectedByAiDataPolicy.tsx
 msgid "Will fail"
-msgstr ""
+msgstr "Neće uspeti"
 
 #. js-lingui-id: 8RLvWE
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -32554,6 +32773,7 @@ msgid "workflow"
 msgstr "tok rada"
 
 #. js-lingui-id: bLt/0J
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
@@ -32620,6 +32840,7 @@ msgstr "Verzije toka rada"
 
 #. js-lingui-id: woYYQq
 #: src/modules/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions.ts
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -32633,7 +32854,7 @@ msgstr "Tokovi Rada"
 #. js-lingui-id: HoWgut
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 msgid "Workflows, functions and agents that act for your team."
-msgstr ""
+msgstr "Workflows, funkcije i agenti koji deluju za vaš tim."
 
 #. js-lingui-id: OskBrZ
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -32912,6 +33133,7 @@ msgid "Write {target}"
 msgstr "Upiši {target}"
 
 #. js-lingui-id: Q9pNST
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -32921,11 +33143,6 @@ msgstr "Upiši {target}"
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Write a description"
 msgstr "Napišite opis"
-
-#. js-lingui-id: 7QXVrh
-#: src/modules/object-core/agents/components/CoreAgentSettingsTab.tsx
-msgid "Write a description for this agent"
-msgstr "Napišite opis za ovog agenta"
 
 #. js-lingui-id: eWlz27
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
@@ -32941,6 +33158,11 @@ msgstr "Napišite poruku..."
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Write and delete {target}"
 msgstr "Upiši i izbriši {target}"
+
+#. js-lingui-id: qJSzDh
+#: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
+msgid "Write some instructions"
+msgstr "Napišite uputstva"
 
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/AiChatApprovalEmailReview.tsx

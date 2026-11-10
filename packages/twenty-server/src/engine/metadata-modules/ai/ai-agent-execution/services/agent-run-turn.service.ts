@@ -29,10 +29,10 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-excluded-tool-names.const';
-import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
-import { PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/preloaded-agent-registry-tool-categories.const';
-import { SCOPED_AGENT_RUN_ACTION_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/scoped-agent-run-action-tool-names.const';
+import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-excluded-tool-names.constant';
+import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.constant';
+import { PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/preloaded-agent-registry-tool-categories.constant';
+import { SCOPED_AGENT_RUN_ACTION_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/scoped-agent-run-action-tool-names.constant';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { type AgentRegistryAccess } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-toolset.service';

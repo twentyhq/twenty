@@ -28,6 +28,8 @@
         "{projectRoot}/i18n/dist",
         "{projectRoot}/logic-function/package.json",
         "{projectRoot}/logic-function/dist",
+        "{projectRoot}/markdown/package.json",
+        "{projectRoot}/markdown/dist",
         "{projectRoot}/metadata/package.json",
         "{projectRoot}/metadata/dist",
         "{projectRoot}/pending-wake-up/package.json",

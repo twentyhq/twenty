@@ -11,6 +11,7 @@ import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/type
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -295,11 +296,15 @@ export class AgentService {
         },
       );
 
-    const { flatAgentMaps, flatRoleTargetByAgentIdMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatAgentMaps',
-        'flatRoleTargetByAgentIdMaps',
-      ]);
+    const {
+      flatAgentMaps,
+      flatRoleTargetByAgentIdMaps,
+      flatNavigationMenuItemMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatAgentMaps',
+      'flatRoleTargetByAgentIdMaps',
+      'flatNavigationMenuItemMaps',
+    ]);
 
     const agentsToDelete = ids
       .map((id) =>
@@ -318,6 +323,13 @@ export class AgentService {
       .map((agent) => flatRoleTargetByAgentIdMaps[agent.id])
       .filter(isDefined);
 
+    const navigationMenuItemsToDelete = agentsToDelete.flatMap((agent) =>
+      findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: agent.navigationMenuItemIds,
+        flatEntityMaps: flatNavigationMenuItemMaps,
+      }),
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -330,6 +342,11 @@ export class AgentService {
             roleTarget: {
               flatEntityToCreate: [],
               flatEntityToDelete: roleTargetsToDelete,
+              flatEntityToUpdate: [],
+            },
+            navigationMenuItem: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: navigationMenuItemsToDelete,
               flatEntityToUpdate: [],
             },
           },
