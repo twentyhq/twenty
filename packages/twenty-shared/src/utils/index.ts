@@ -15,11 +15,13 @@ export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
 export { findOrThrow } from './array/findOrThrow';
 export { getContiguousIncrementalValues } from './array/getContiguousIncrementalValues';
+export { isNonEmptyArray } from './array/isNonEmptyArray';
 export { mapById } from './array/mapById';
 export { mapByProperty } from './array/mapByProperty';
 export { sumByProperty } from './array/sumByProperty';
 export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectsComparingId';
 export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
+export { assertUnreachable } from './assertUnreachable';
 export { base64UrlEncode } from './base64UrlEncode';
 export { isCallRecordingTranscriptStatusMarker } from './callRecording/isCallRecordingTranscriptStatusMarker';
 export { parseCallRecordingTranscriptEntries } from './callRecording/parseCallRecordingTranscriptEntries';
@@ -226,21 +228,12 @@ export {
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { isAutoSelectModelId } from './isAutoSelectModelId';
 export { isFieldValueRestricted } from './isFieldValueRestricted';
+export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { isNativePageKey } from './navigation/isNativePageKey';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
 export { parseJson } from './parseJson';
-export {
-  assertUnreachable,
-  capitalize,
-  fastDeepEqual,
-  isDefined,
-  isNonEmptyArray,
-  isNonEmptyString,
-  isPlainObject,
-  uncapitalize,
-} from './primitives';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { safeParseRelativeDateFilterJsonStringified } from './safeParseRelativeDateFilterJsonStringified';
@@ -256,10 +249,12 @@ export { sortKeysDeeply } from './sortKeysDeeply';
 export { appendCopySuffix } from './strings/appendCopySuffix';
 export { camelToKebab } from './strings/camelToKebab';
 export { camelToSnakeCase } from './strings/camelToSnakeCase';
+export { capitalize } from './strings/capitalize';
 export { kebabToCamelCase } from './strings/kebabToCamelCase';
 export { pascalCase } from './strings/pascalCase';
 export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
+export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
 export { findMalformedTemplateVariable } from './template-variable/find-malformed-template-variable';
 export { formatTemplateVariableWithFallback } from './template-variable/format-template-variable-with-fallback';
@@ -342,6 +337,8 @@ export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
 export { typedObjectEntries } from './typed-object-entries';
 export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperationSignature';
+export { isNonEmptyString } from './typeguard/isNonEmptyString';
+export { isPlainObject } from './typeguard/isPlainObject';
 export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { formatUpgradeCommandName } from './upgrade/formatUpgradeCommandName';
@@ -389,6 +386,7 @@ export {
 export { assertIsDefinedOrThrow } from './validation/assertIsDefinedOrThrow';
 export { emailSchema } from './validation/emailSchema';
 export { escapeForIlike } from './validation/escapeForIlike';
+export { isDefined } from './validation/isDefined';
 export { isEmptyObject } from './validation/isEmptyObject';
 export { isImageIdentifierFieldMetadataType } from './validation/isImageIdentifierFieldMetadataType';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
