@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { CoreAgentRunStatus } from '@/object-core/agents/components/CoreAgentRunStatus';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
@@ -13,17 +14,19 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { formatNumber } from '@/localization/utils/formatNumber';
 
 type CoreAgentRunConversationProps = {
+  threadId: string;
   title: string | null;
   runs: CoreAgentRun[];
-  onClick: () => void;
 };
 
 export const CoreAgentRunConversation = ({
+  threadId,
   title,
   runs,
-  onClick,
 }: CoreAgentRunConversationProps) => {
+  const { openAskAiThread } = useOpenAskAiThread();
   const [latestRun] = runs;
+  const openConversation = () => openAskAiThread(threadId);
   // a total missing some runs' usage would read as the whole conversation's cost
   const hasCreditsForEveryRun = runs.every((run) => isDefined(run.credits));
   const totalCredits = runs.reduce(
@@ -35,8 +38,8 @@ export const CoreAgentRunConversation = ({
   return (
     <TableRow
       gridTemplateColumns={CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS}
-      onClick={onClick}
-      onKeyDown={handleCoreObjectTableRowKeyDown(onClick)}
+      onClick={openConversation}
+      onKeyDown={handleCoreObjectTableRowKeyDown(openConversation)}
       role="button"
       tabIndex={0}
     >

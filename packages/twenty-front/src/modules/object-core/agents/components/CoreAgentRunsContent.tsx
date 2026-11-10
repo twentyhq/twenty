@@ -167,9 +167,9 @@ export const CoreAgentRunsContent = ({
           item.type === 'conversation' ? (
             <CoreAgentRunConversation
               key={item.threadId}
+              threadId={item.threadId}
               title={item.title}
               runs={item.runs}
-              onClick={() => openAskAiThread(item.threadId)}
             />
           ) : (
             <CoreAgentRunRow
