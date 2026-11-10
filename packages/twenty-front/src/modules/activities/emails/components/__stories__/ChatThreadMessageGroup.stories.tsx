@@ -43,6 +43,43 @@ const meta: Meta<typeof ChatThreadMessageGroup> = {
 export default meta;
 type Story = StoryObj<typeof ChatThreadMessageGroup>;
 
+export const OutgoingText: Story = {
+  args: {
+    group: {
+      id: 'group-id',
+      isOutgoing: true,
+      messages: [
+        {
+          ...buildVoiceNoteMessage(''),
+          id: 'short-message-id',
+          text: 'Yes, SAML with Okta is included. SCIM too.',
+          attachments: [],
+        },
+        {
+          ...buildVoiceNoteMessage(''),
+          id: 'long-message-id',
+          text: 'Sending the security doc by email for legal, with the audit report and the list of subprocessors attached.',
+          attachments: [],
+        },
+        {
+          ...buildVoiceNoteMessage(''),
+          id: 'long-token-message-id',
+          text: `https://example.com/${'securityauditreport'.repeat(8)}`,
+          attachments: [],
+        },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findAllByText(/\d{1,2}:52/)).toHaveLength(3);
+    await expect(
+      await canvas.findAllByRole('img', { name: 'Sent' }),
+    ).toHaveLength(3);
+  },
+};
+
 export const VoiceNote: Story = {
   args: {
     group: {
