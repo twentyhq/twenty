@@ -47,7 +47,10 @@ const buildRequest = ({
 }: {
   objectRecordsPermissions: ObjectRecordsPermissions;
   isAccessGroupsEnabled?: boolean;
-}): Omit<PermissionsObjectAccessRequest, 'operationType'> => ({
+}): Pick<
+  PermissionsObjectAccessRequest,
+  'principals' | 'metadataMaps' | 'flatObjectMetadata'
+> => ({
   principals: {
     workspaceId: 'workspace-id',
     mainPrincipal: {

@@ -10,9 +10,9 @@ export const resolveRecordsAccessSQLConditionStrategy = ({
   principals,
   metadataMaps,
   flatObjectMetadata,
-}: Omit<
+}: Pick<
   PermissionsObjectAccessRequest,
-  'operationType'
+  'principals' | 'metadataMaps' | 'flatObjectMetadata'
 >): RecordsAccessSQLConditionStrategy => {
   const roleIdsWithRlsRule = findPrincipalsRoleIdsWithRlsRule({
     principals,
