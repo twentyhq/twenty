@@ -43,6 +43,29 @@ const meta: Meta<typeof ChatThreadMessageGroup> = {
 export default meta;
 type Story = StoryObj<typeof ChatThreadMessageGroup>;
 
+export const OutgoingText: Story = {
+  args: {
+    group: {
+      id: 'group-id',
+      isOutgoing: true,
+      messages: [
+        {
+          ...buildVoiceNoteMessage(''),
+          id: 'short-message-id',
+          text: 'Yes, SAML with Okta is included. SCIM too.',
+          attachments: [],
+        },
+        {
+          ...buildVoiceNoteMessage(''),
+          id: 'long-message-id',
+          text: 'Sending the security doc by email for legal, with the audit report and the list of subprocessors attached.',
+          attachments: [],
+        },
+      ],
+    },
+  },
+};
+
 export const VoiceNote: Story = {
   args: {
     group: {

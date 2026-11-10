@@ -6,9 +6,12 @@ import { ChatThreadMessageAttachment } from '@/activities/emails/components/Chat
 import { ChatThreadMessageSenderHeader } from '@/activities/emails/components/ChatThreadMessageSenderHeader';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGroup';
+import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
+import { StyledChatMessageBubbleContent } from '@/chat/components/StyledChatMessageBubbleContent';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
+import { StyledChatMessageMeta } from '@/chat/components/StyledChatMessageMeta';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import {
@@ -93,13 +96,23 @@ export const ChatThreadMessageGroup = ({
             {senderHeader}
             {(hasText || !isNonEmptyArray(files)) && (
               <StyledChatMessageBubble isUser isOtherMember={!isOutgoing}>
-                <StyledMessageText>
-                  <Linkify
-                    options={{ target: '_blank', rel: 'noopener noreferrer' }}
-                  >
-                    {message.text}
-                  </Linkify>
-                </StyledMessageText>
+                <StyledChatMessageBubbleContent>
+                  <StyledMessageText>
+                    <Linkify
+                      options={{
+                        target: '_blank',
+                        rel: 'noopener noreferrer',
+                      }}
+                    >
+                      {message.text}
+                    </Linkify>
+                  </StyledMessageText>
+                  {isOutgoing && isDefined(message.receivedAt) && (
+                    <StyledChatMessageMeta>
+                      <ChatMessageTime date={message.receivedAt} />
+                    </StyledChatMessageMeta>
+                  )}
+                </StyledChatMessageBubbleContent>
               </StyledChatMessageBubble>
             )}
             {isNonEmptyArray(files) && (
