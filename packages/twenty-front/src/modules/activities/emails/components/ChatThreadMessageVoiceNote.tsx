@@ -52,7 +52,14 @@ export const ChatThreadMessageVoiceNote = ({
     const audioElement = audioElementRef.current;
 
     if (audioElement?.paused === true) {
-      audioElement.play().catch(() => undefined);
+      audioElement.play().catch((error: unknown) => {
+        // Pausing or reloading can interrupt play without a media failure.
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return;
+        }
+
+        onError();
+      });
 
       return;
     }
