@@ -94,6 +94,9 @@ export class CoreWorkflowRunInsightsService {
           coreWorkflowId,
         });
 
+    // Calendar days in the reader's time zone, so the totals add up to the daily bars
+    const windowStartPredicate = `${column('createdAt')} >= (DATE_TRUNC('day', NOW() AT TIME ZONE :timeZone) - MAKE_INTERVAL(days => :lastDayOffset)) AT TIME ZONE :timeZone`;
+
     const totalsQueryBuilder = buildWorkflowRunsQueryBuilder()
       .addSelect('COUNT(*)', 'runCount')
       .addSelect(
@@ -108,18 +111,13 @@ export class CoreWorkflowRunInsightsService {
         `MAX(${column('createdAt')}) FILTER (WHERE ${column('status')} = :failedStatus)`,
         'lastFailedRunAt',
       )
-      .andWhere(
-        `${column('createdAt')} >= NOW() - MAKE_INTERVAL(days => :runCountWindowInDays)`,
-      );
+      .andWhere(windowStartPredicate);
 
-    // Days are calendar days in the reader's time zone, so the range starts at local midnight
     const dailyRunsQueryBuilder = buildWorkflowRunsQueryBuilder()
       .addSelect(column('id'), 'id')
       .addSelect(column('status'), 'status')
       .addSelect(column('createdAt'), 'createdAt')
-      .andWhere(
-        `${column('createdAt')} >= (DATE_TRUNC('day', NOW() AT TIME ZONE :timeZone) - MAKE_INTERVAL(days => :lastDayOffset)) AT TIME ZONE :timeZone`,
-      );
+      .andWhere(windowStartPredicate);
 
     const failedRunsQueryBuilder = buildWorkflowRunsQueryBuilder()
       .addSelect(column('id'), 'id')
@@ -135,7 +133,6 @@ export class CoreWorkflowRunInsightsService {
     const parameters = {
       completedStatus: WorkflowRunStatus.COMPLETED,
       failedStatus: WorkflowRunStatus.FAILED,
-      runCountWindowInDays: CORE_WORKFLOW_RUN_COUNT_WINDOW_IN_DAYS,
       lastDayOffset: CORE_WORKFLOW_RUN_COUNT_WINDOW_IN_DAYS - 1,
       timeZone,
       recentFailedRunsLimit: RECENT_FAILED_RUNS_LIMIT,
