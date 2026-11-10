@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { useListenToCoreWorkflowRunEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowRunEvents';
@@ -37,10 +38,22 @@ export const useCoreWorkflowRuns = (coreWorkflowId: string) => {
     fetchPolicy: 'cache-and-network',
   });
 
+  const loadedRunCount = records.length;
+
+  // A plain refetch replaces the loaded pages with the first one, so re-request every loaded run
+  const refetchLoadedRuns = useCallback(() => {
+    void refetchRuns({
+      limit: Math.min(
+        Math.max(loadedRunCount, RUNS_PAGE_SIZE),
+        QUERY_MAX_RECORDS,
+      ),
+    });
+  }, [loadedRunCount, refetchRuns]);
+
   useListenToCoreWorkflowRunEvents({
     coreWorkflowIds: [coreWorkflowId],
     queryId: `core-workflow-runs-${coreWorkflowId}`,
-    onRunsChanged: refetchRuns,
+    onRunsChanged: refetchLoadedRuns,
   });
 
   return {
