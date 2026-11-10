@@ -62,6 +62,8 @@ export const createApp = async (
     rawBody: true,
   });
 
+  app.useBodyParser('json', { limit: settings.maxRequestBodySize });
+
   // The production CORS setup, not the Nest wildcard default, so integration
   // tests exercise the credentialed-origin allowlist the deployment runs.
   applyCredentialedCors(app, app.get(TwentyConfigService));
