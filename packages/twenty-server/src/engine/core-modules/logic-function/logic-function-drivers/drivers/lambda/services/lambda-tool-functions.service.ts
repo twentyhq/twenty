@@ -47,8 +47,10 @@ import {
   type YarnInstallLambdaResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { buildHttpEgressHandlerBundle } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-handler-bundle.util';
+import { type HttpEgressLambdaResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/http-egress-lambda-response.type';
 import { buildHttpEgressRequestTooLargeResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-request-too-large-response.util';
 import { buildHttpEgressUnavailableResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-unavailable-response.util';
+import { restoreResultDuplicatingError } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/restore-result-duplicating-error.util';
 import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
 import {
@@ -315,7 +317,9 @@ export class LambdaToolFunctionsService {
       });
     }
 
-    return JSON.parse(resultPayload) as HttpEgressResponse;
+    return restoreResultDuplicatingError(
+      JSON.parse(resultPayload) as HttpEgressLambdaResponse,
+    );
   }
 
   private async ensureHttpEgressLambdaIsActive(): Promise<string> {
