@@ -36,6 +36,7 @@ import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation
 import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/object-metadata/constants/rename-is-ui-read-only-to-is-ui-editable-upgrade-command-name.constant';
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { RowLevelPermissionRuleEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-rule.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
@@ -263,6 +264,12 @@ export class ObjectMetadataEntity
     },
   )
   fieldPermissions: Relation<FieldPermissionEntity[]>;
+
+  @OneToMany(
+    () => RowLevelPermissionRuleEntity,
+    (rowLevelPermissionRule) => rowLevelPermissionRule.objectMetadata,
+  )
+  rowLevelPermissionRules: Relation<RowLevelPermissionRuleEntity[]>;
 
   @OneToMany(() => ViewEntity, (view) => view.objectMetadata, {
     cascade: true,

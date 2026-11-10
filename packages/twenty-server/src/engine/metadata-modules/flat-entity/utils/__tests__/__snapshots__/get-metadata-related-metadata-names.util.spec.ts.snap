@@ -97,6 +97,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "index",
   "objectPermission",
   "fieldPermission",
+  "rowLevelPermissionRule",
   "view",
   "searchFieldMetadata",
   "pageLayout",
@@ -155,6 +156,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldPermission",
   "rowLevelPermissionPredicate",
   "rowLevelPermissionPredicateGroup",
+  "rowLevelPermissionRule",
   "agentChatChannelRole",
 ]
 `;

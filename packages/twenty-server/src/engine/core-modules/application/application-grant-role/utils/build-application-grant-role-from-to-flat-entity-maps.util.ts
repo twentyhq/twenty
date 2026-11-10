@@ -371,6 +371,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
         roleTargetUniversalIdentifiers: [],
         objectPermissionUniversalIdentifiers: [],
         fieldPermissionUniversalIdentifiers: [],
+        rowLevelPermissionRuleUniversalIdentifiers: [],
         rolePermissionFlagUniversalIdentifiers: [],
         rowLevelPermissionPredicateUniversalIdentifiers: [],
         rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
