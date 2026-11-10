@@ -137,7 +137,7 @@ I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user
   * `connectedAccountId`: una variabile, ad esempio `{{trigger.properties.after.connectedAccountId}}`. I passaggi Email accettano anche un ID membro dell'area di lavoro, ad esempio `{{trigger.properties.after.assigneeId}}`, che viene risolto nel primo account di quel membro in grado di inviare.
 
   Imposta esattamente uno dei due.
-* `SEND_CHAT_MESSAGE` invia un messaggio alla posta in arrivo di un membro del workspace, impostato con `workspaceMemberId`. Anche gli ID dei membri sono locali a ciascun workspace, quindi un'app passa una variabile, ad esempio `{{trigger.properties.after.assigneeId}}`.
+* `SEND_CHAT_MESSAGE` invia un messaggio alla posta in arrivo di un membro del workspace, impostato con `workspaceMemberId`. Anche gli ID dei membri sono locali a ciascun workspace, quindi un'app passa una variabile, ad esempio `{{trigger.properties.after.assigneeId}}`. I membri menzionati nel relativo `text`, ad esempio quelli nel corpo di una nota passato come `{{trigger.properties.after.bodyV2.markdown}}`, ricevono una notifica, come per i [messaggi della posta in arrivo](/it/developers/extend/apps/logic/inbox#mentions-and-record-references).
 
 ## Dopo l'installazione
 

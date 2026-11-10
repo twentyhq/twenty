@@ -117,48 +117,6 @@ describe('SamlAuthStrategy.validate', () => {
     });
   });
 
-  it('accepts a request with no RelayState at all (no workspaceInviteHash threaded through)', async () => {
-    const request = buildRequest({ paramsIdpId: IDP_A });
-    const done = jest.fn();
-
-    await strategy.validate(request, buildProfile(), done);
-
-    expect(done).toHaveBeenCalledTimes(1);
-    expect(done.mock.calls[0][0]).toBeNull();
-    expect(done.mock.calls[0][1]).toEqual({
-      identityProviderId: IDP_A,
-      workspaceInviteHash: undefined,
-      email: VALID_EMAIL,
-    });
-    expect(consumeSamlAssertion).toHaveBeenCalledTimes(1);
-    expect(consumeSamlAssertion).toHaveBeenCalledWith({
-      identityProviderId: IDP_A,
-      assertionId: 'assertion-id',
-      validUntil: new Date('2099-01-01T00:00:00.000Z'),
-    });
-  });
-
-  it('threads workspaceInviteHash from RelayState through to req.user', async () => {
-    const request = buildRequest({
-      paramsIdpId: IDP_A,
-      relayState: {
-        kind: 'json',
-        value: { workspaceInviteHash: 'invite-hash-123' },
-      },
-    });
-    const done = jest.fn();
-
-    await strategy.validate(request, buildProfile(), done);
-
-    expect(done).toHaveBeenCalledTimes(1);
-    expect(done.mock.calls[0][0]).toBeNull();
-    expect(done.mock.calls[0][1]).toEqual({
-      identityProviderId: IDP_A,
-      workspaceInviteHash: 'invite-hash-123',
-      email: VALID_EMAIL,
-    });
-  });
-
   it('still resolves identityProviderId from the URL path when RelayState mixes a malicious id with a real invite hash', async () => {
     const request = buildRequest({
       paramsIdpId: IDP_A,

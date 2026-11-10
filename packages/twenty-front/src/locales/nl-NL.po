@@ -762,7 +762,7 @@ msgstr "{deletedCount, plural, one {Succesvol {deletedCount} taak verwijderd} ot
 #. js-lingui-id: ANUXpJ
 #: src/modules/object-core/agents/hooks/useGetCoreAgentTriggerDescription.ts
 msgid "{details} · Paused"
-msgstr ""
+msgstr "{details} · Gepauzeerd"
 
 #. js-lingui-id: miXj9r
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
@@ -1059,6 +1059,11 @@ msgstr "{queuedMessage}, {skipReasons} overgeslagen"
 #. js-lingui-id: SmbuF4
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
+msgstr "{readOnlyFieldCount, plural, one {Kan # veld niet bewerken} other {Kan # velden niet bewerken}}"
+
+#. js-lingui-id: ociapy
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
 msgstr ""
 
 #. js-lingui-id: N7gP92
@@ -1285,7 +1290,7 @@ msgstr "{unlistedCount, plural, one {Geen vermelde applicatie komt overeen. # ni
 #. js-lingui-id: rU6wAU
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{unreadableFieldCount, plural, one {Can't see # field} other {Can't see # fields}}"
-msgstr ""
+msgstr "{unreadableFieldCount, plural, one {Kan # veld niet zien} other {Kan # velden niet zien}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -2656,7 +2661,7 @@ msgstr "Onderwerp toevoegen"
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Add trigger"
-msgstr ""
+msgstr "Trigger toevoegen"
 
 #. js-lingui-id: 4D/zWv
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -2963,12 +2968,12 @@ msgstr "Agentconfiguratie"
 #. js-lingui-id: tIhTfo
 #: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
 msgid "Agent name cannot be empty"
-msgstr ""
+msgstr "Agentnaam mag niet leeg zijn"
 
 #. js-lingui-id: VY/7j2
 #: src/modules/object-core/agents/hooks/useRenameCoreAgent.ts
 msgid "Agent name must contain letters or numbers"
-msgstr ""
+msgstr "Agentnaam moet letters of cijfers bevatten"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -3432,7 +3437,7 @@ msgstr "alle records"
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "All records"
-msgstr ""
+msgstr "Alle records"
 
 #. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -4814,7 +4819,7 @@ msgstr "Automatisering en AI"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 msgid "Automations"
-msgstr ""
+msgstr "Automatiseringen"
 
 #. js-lingui-id: j4VsTZ
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -4939,6 +4944,16 @@ msgstr "Achtergrondkleuren"
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
 msgid "Backspace"
 msgstr "Backspace"
+
+#. js-lingui-id: M2cci0
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Backup codes"
+msgstr ""
+
+#. js-lingui-id: 6kNBNT
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Backup codes copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -5655,7 +5670,7 @@ msgstr "Kan je niet scannen? Kopieer de"
 #. js-lingui-id: ztvhPH
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Can't see"
-msgstr ""
+msgstr "Kan niet zien"
 
 #. js-lingui-id: RtHGDr
 #: src/modules/ai/constants/DataResidencyConfig.ts
@@ -5712,7 +5727,7 @@ msgstr "Kredietbundelwijziging annuleren?"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
 msgid "Cancel Edition"
-msgstr ""
+msgstr "Annuleer Bewerken"
 
 #. js-lingui-id: D14fs0
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -5944,7 +5959,7 @@ msgstr "Verantwoordelijke wijzigen"
 #. js-lingui-id: VyTYmS
 #: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 msgid "Change avatar"
-msgstr ""
+msgstr "Avatar wijzigen"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7731,6 +7746,7 @@ msgstr "Kopieert een Cloudflare-installatieprompt voor je AI-codetool"
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Copy"
@@ -8283,7 +8299,7 @@ msgstr "Werkruimte aanmaken"
 #: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Create Agent"
-msgstr ""
+msgstr "Agent maken"
 
 #. js-lingui-id: bFIJZx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -9172,7 +9188,7 @@ msgstr "Data"
 #. js-lingui-id: PDNS5Z
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Data access"
-msgstr ""
+msgstr "Gegevenstoegang"
 
 #. js-lingui-id: nxnCld
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -9634,7 +9650,7 @@ msgstr "Veld {fieldLabel} verwijderen?"
 #. js-lingui-id: 2zz1P3
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete {numberOfCoreAgents} agents?"
-msgstr ""
+msgstr "{numberOfCoreAgents} agenten verwijderen?"
 
 #. js-lingui-id: DKQlby
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -9704,7 +9720,7 @@ msgstr "Account en gesynchroniseerde gegevens verwijderen?"
 #. js-lingui-id: 3F2bUD
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agent"
-msgstr ""
+msgstr "Agent verwijderen"
 
 #. js-lingui-id: YMNj8z
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
@@ -9717,22 +9733,22 @@ msgstr "Agent verwijderen"
 #. js-lingui-id: 7j7Dud
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agent?"
-msgstr ""
+msgstr "Agent verwijderen?"
 
 #. js-lingui-id: 3TMVdm
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agents"
-msgstr ""
+msgstr "Agenten verwijderen"
 
 #. js-lingui-id: 76cXD3
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Delete Agents"
-msgstr ""
+msgstr "Agenten verwijderen"
 
 #. js-lingui-id: k2+blJ
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Delete all records"
-msgstr ""
+msgstr "Alle records verwijderen"
 
 #. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -10103,7 +10119,7 @@ msgstr "vernietigen"
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy"
-msgstr ""
+msgstr "Vernietigen"
 
 #. js-lingui-id: vI0W/N
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
@@ -10118,7 +10134,7 @@ msgstr "Vernietig {objectLabelPlural}"
 #. js-lingui-id: ud791S
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
-msgstr ""
+msgstr "Alle records vernietigen"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -10543,6 +10559,7 @@ msgstr "Downgraden naar maandelijks"
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Download"
 msgstr "Downloaden"
@@ -10850,7 +10867,7 @@ msgstr "Bewerken"
 #. js-lingui-id: Fw7UIN
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Edit {label}, {description}"
-msgstr ""
+msgstr "{label}, {description} bewerken"
 
 #. js-lingui-id: fGxkii
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
@@ -10866,7 +10883,7 @@ msgstr "Bewerk {objectLabelPlural}"
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Edit access"
-msgstr ""
+msgstr "Toegang bewerken"
 
 #. js-lingui-id: 9B436y
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -10884,7 +10901,7 @@ msgstr "Acties bewerken"
 #. js-lingui-id: Q0ytOP
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Edit all records"
-msgstr ""
+msgstr "Alle records bewerken"
 
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -11037,7 +11054,7 @@ msgstr "Bewerk deze HTML in het instellingenpaneel van het blok."
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Edit tools"
-msgstr ""
+msgstr "Tools bewerken"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -11785,6 +11802,11 @@ msgstr "Voer een getal in groter dan 1"
 msgid "Enter offset"
 msgstr "Offset invoeren"
 
+#. js-lingui-id: lRIswr
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
+msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
+msgstr ""
+
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line"
@@ -11837,11 +11859,6 @@ msgstr "Voer de informatie in om de verbinding in te stellen"
 msgid "Enter the message to post"
 msgstr "Voer het te plaatsen bericht in"
 
-#. js-lingui-id: lZC0Js
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
-msgstr "Voer de herstelcode in die een werkruimtebeheerder je heeft gegeven. Je huidige authenticator voor deze werkruimte wordt verwijderd."
-
 #. js-lingui-id: tEWpbi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
@@ -11882,7 +11899,7 @@ msgstr "Voer je tekst in"
 
 #. js-lingui-id: GDMzJS
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
-#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationOtpConfirmationDialog.tsx
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Voer uw tweefactorauthenticatiecode in ter bevestiging."
 
@@ -12825,7 +12842,7 @@ msgstr "Aanmaken van workflow mislukt"
 #. js-lingui-id: qzWRef
 #: src/modules/object-core/agents/hooks/useDeleteSelectedCoreAgents.ts
 msgid "Failed to delete {deletionErrorCount} of {selectedCoreAgentCount} agents"
-msgstr ""
+msgstr "Kan {deletionErrorCount} van {selectedCoreAgentCount} agenten niet verwijderen"
 
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -12916,6 +12933,11 @@ msgstr "Voltooien van logo-upload mislukt"
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to generate a recovery code."
 msgstr "Herstelcode genereren mislukt."
+
+#. js-lingui-id: 3YKuoA
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Failed to generate backup codes."
+msgstr ""
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -13616,7 +13638,7 @@ msgstr "Filteren"
 #. js-lingui-id: ndNAzG
 #: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
 msgid "Filter agents"
-msgstr ""
+msgstr "Agenten filteren"
 
 #. js-lingui-id: q5TuAU
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -14274,16 +14296,32 @@ msgstr "Een herstelcode genereren"
 msgid "Generate a signed copy in one click"
 msgstr "Genereer met één klik een ondertekend exemplaar"
 
+#. js-lingui-id: yf0GMx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate backup codes"
+msgstr ""
+
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate code"
 msgstr "Code genereren"
+
+#. js-lingui-id: c63Wy6
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate codes"
+msgstr ""
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Generate DPA"
 msgstr "DPA genereren"
+
+#. js-lingui-id: P2msE+
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate new codes"
+msgstr ""
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -15889,7 +15927,7 @@ msgstr "Instructies en hulpmiddelen die agents kunnen gebruiken"
 #. js-lingui-id: oVi2Tk
 #: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
 msgid "Instructions cannot be empty"
-msgstr ""
+msgstr "Instructies mogen niet leeg zijn"
 
 #. js-lingui-id: 77QeTr
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -16058,10 +16096,10 @@ msgstr "Ongeldige minuutwaarde \"{newMinute}\". Moet een geheel getal zijn dat g
 msgid "Invalid number"
 msgstr "Ongeldig getal"
 
-#. js-lingui-id: Mwwd+k
+#. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Invalid or expired recovery code."
-msgstr "Ongeldige of verlopen herstelcode."
+msgid "Invalid or expired code."
+msgstr ""
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -17735,10 +17773,10 @@ msgstr "Opzoeken"
 msgid "loop"
 msgstr "lus"
 
-#. js-lingui-id: B3teiJ
+#. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a recovery code"
-msgstr "Authenticator verloren? Gebruik een herstelcode"
+msgid "Lost your authenticator? Use a backup or recovery code"
+msgstr ""
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19206,6 +19244,11 @@ msgstr "Nieuwe AI-aanbieder"
 msgid "New Approved Access Domain"
 msgstr "Nieuw goedgekeurd toegangsdomoen"
 
+#. js-lingui-id: pQIH+r
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "New backup codes replace your current ones, which stop working."
+msgstr ""
+
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
@@ -20095,7 +20138,7 @@ msgstr "Geen notities"
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "No objects match your search"
-msgstr ""
+msgstr "Geen objecten voldoen aan je zoekopdracht"
 
 #. js-lingui-id: XIpopT
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
@@ -20366,7 +20409,7 @@ msgstr "Geen doelen beschikbaar"
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
-msgstr ""
+msgstr "Geen tools voldoen aan je zoekopdracht"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -21561,7 +21604,7 @@ msgstr "Optioneel — gebruikt een IAM-rol als dit leeg is"
 #. js-lingui-id: X8Kmj8
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "Optional · A short summary of what this agent does"
-msgstr ""
+msgstr "Optioneel · Een korte samenvatting van wat deze agent doet"
 
 #. js-lingui-id: BVmWQT
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -23548,12 +23591,12 @@ msgstr "Record is verwijderd"
 #. js-lingui-id: B6/jGB
 #: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
 msgid "Record is permanently deleted"
-msgstr ""
+msgstr "Record is permanent verwijderd"
 
 #. js-lingui-id: 72O3vf
 #: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
 msgid "Record is restored"
-msgstr ""
+msgstr "Record is hersteld"
 
 #. js-lingui-id: rdLUKj
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -23625,7 +23668,7 @@ msgstr "Recordniveau"
 #. js-lingui-id: VQ4KjL
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Record-level filter"
-msgstr ""
+msgstr "Filter op recordniveau"
 
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
@@ -23690,7 +23733,7 @@ msgstr "Records geselecteerd"
 #. js-lingui-id: TZIC1Z
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Records this agent can see and change"
-msgstr ""
+msgstr "Records die deze agent kan zien en wijzigen"
 
 #. js-lingui-id: sE6EHz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -23970,7 +24013,7 @@ msgstr "{label} verwijderen"
 #. js-lingui-id: elnmVe
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Remove {label}, {description}"
-msgstr ""
+msgstr "{label}, {description} verwijderen"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOriginsTable.tsx
@@ -23980,7 +24023,7 @@ msgstr "{origin} verwijderen"
 #. js-lingui-id: wzdVhz
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Remove {toolName}"
-msgstr ""
+msgstr "{toolName} verwijderen"
 
 #. js-lingui-id: kL4wuJ
 #: src/modules/object-record/record-sharing/components/RecordSharingAccessLevelOptions.tsx
@@ -23990,12 +24033,12 @@ msgstr "Toegang verwijderen"
 #. js-lingui-id: wf5QIp
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Remove access to {objectLabel}"
-msgstr ""
+msgstr "Toegang tot {objectLabel} verwijderen"
 
 #. js-lingui-id: EK2N/p
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Remove access to all records"
-msgstr ""
+msgstr "Toegang tot alle records verwijderen"
 
 #. js-lingui-id: VjbCv0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -25045,7 +25088,7 @@ msgstr "Bespaar 25% bij jaarlijkse facturatie"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
 msgid "Save Agent"
-msgstr ""
+msgstr "Agent opslaan"
 
 #. js-lingui-id: 8tM8+a
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -25072,6 +25115,11 @@ msgstr "Sla de dashboardwijzigingen op of annuleer ze voordat u de lay-out bewer
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Save settings"
 msgstr "Instellingen opslaan"
+
+#. js-lingui-id: /hNRXq
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
+msgstr ""
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -25560,7 +25608,7 @@ msgstr "Stappen en velden zoeken"
 #. js-lingui-id: mW8qA2
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "Search tools"
-msgstr ""
+msgstr "Tools zoeken"
 
 #. js-lingui-id: rws5EE
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
@@ -25763,7 +25811,7 @@ msgstr "Bekijk alle gespreksopnamen die aan deze agendagebeurtenis zijn gekoppel
 #. js-lingui-id: B5odfQ
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "See all records"
-msgstr ""
+msgstr "Alle records bekijken"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -25816,12 +25864,12 @@ msgstr "Bekijk gegevens op alle objecten"
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Runs"
-msgstr ""
+msgstr "Runs bekijken"
 
 #. js-lingui-id: dKYXK6
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 msgid "See Settings"
-msgstr ""
+msgstr "Instellingen bekijken"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26645,7 +26693,7 @@ msgstr "Instellingen die de meeste werkruimten nooit hoeven te wijzigen"
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Settings permission"
-msgstr ""
+msgstr "Toestemming voor instellingen"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -29036,7 +29084,7 @@ msgstr ""
 #. js-lingui-id: bWmXw/
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
 msgid "This action cannot be undone. This will permanently delete your agent."
-msgstr ""
+msgstr "Deze actie kan niet ongedaan worden gemaakt. Hiermee wordt je agent permanent verwijderd."
 
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -29077,37 +29125,37 @@ msgstr "Dit adres is al in gebruik"
 #. js-lingui-id: Wg5iFS
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "This agent can't see any records yet."
-msgstr ""
+msgstr "Deze agent kan nog geen records zien."
 
 #. js-lingui-id: zJHUio
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "This agent can't use any tools yet."
-msgstr ""
+msgstr "Deze agent kan nog geen tools gebruiken."
 
 #. js-lingui-id: N5v8kc
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "This agent comes from an app, so its access can't be changed here."
-msgstr ""
+msgstr "Deze agent komt uit een app, dus de toegang kan hier niet worden gewijzigd."
 
 #. js-lingui-id: EVX1ND
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
-msgstr ""
+msgstr "Deze agent komt uit een app, dus de tools kunnen hier niet worden gewijzigd."
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "This agent only runs when a workflow, an app or the API calls it."
-msgstr ""
+msgstr "Deze agent wordt alleen uitgevoerd wanneer een workflow, een app of de API deze aanroept."
 
 #. js-lingui-id: RKKH61
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "This agent shares its role with other members or agents. Change its access in Settings > Roles."
-msgstr ""
+msgstr "Deze agent deelt zijn rol met andere leden of agenten. Wijzig de toegang in Instellingen > Rollen."
 
 #. js-lingui-id: YMrA7j
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
-msgstr ""
+msgstr "Deze agent deelt zijn rol met andere leden of agenten. Wijzig de tools in Instellingen > Rollen."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
@@ -29368,7 +29416,7 @@ msgstr "Hiermee worden de volgende items en al hun gesynchroniseerde e-mails en 
 #. js-lingui-id: YMiCUw
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "This permanently deletes these {numberOfCoreAgents} agents. This action cannot be undone."
-msgstr ""
+msgstr "Hiermee worden deze {numberOfCoreAgents} agenten permanent verwijderd. Deze actie kan niet ongedaan worden gemaakt."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29378,7 +29426,7 @@ msgstr "Hiermee worden deze {numberOfCoreWorkflows} workflows en hun volledige u
 #. js-lingui-id: KNcaaQ
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "This permanently deletes this agent. This action cannot be undone."
-msgstr ""
+msgstr "Hiermee wordt deze agent permanent verwijderd. Deze actie kan niet ongedaan worden gemaakt."
 
 #. js-lingui-id: riRzbk
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -31492,10 +31540,15 @@ msgstr "Gebruiksperiode"
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "Gebruik ‘{trimmedSidePanelSearch}’ met..."
 
-#. js-lingui-id: bmkeQS
+#. js-lingui-id: jFGgyP
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
+msgstr ""
+
+#. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
-msgid "Use a recovery code"
-msgstr "Een herstelcode gebruiken"
+msgid "Use a backup or recovery code"
+msgstr ""
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
@@ -32511,7 +32564,7 @@ msgstr "Wat {applicationName} aan je werkruimte toevoegt"
 #. js-lingui-id: 1rpyKy
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "What AI model should your agent run on"
-msgstr ""
+msgstr "Op welk AI-model moet je agent worden uitgevoerd"
 
 #. js-lingui-id: Itn+J7
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
@@ -32546,7 +32599,7 @@ msgstr "Wat moet worden geclassificeerd?"
 #. js-lingui-id: Z1117Y
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "What should the agent do every time it runs?"
-msgstr ""
+msgstr "Wat moet de agent doen telkens wanneer deze wordt uitgevoerd?"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -32562,7 +32615,7 @@ msgstr "Wat deze API kan doen: Selecteer een gebruikersrol om de rechten te defi
 #. js-lingui-id: w7CKq8
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "What tools can this agent use for its mission"
-msgstr ""
+msgstr "Welke tools kan deze agent gebruiken voor zijn missie"
 
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -32607,7 +32660,7 @@ msgstr "Wanneer moet de agent stoppen en het je vragen? Bijvoorbeeld voordat een
 #. js-lingui-id: vn42KP
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "When should this agent run on its own"
-msgstr ""
+msgstr "Wanneer moet deze agent zelfstandig worden uitgevoerd"
 
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
@@ -33164,7 +33217,7 @@ msgstr "{target} schrijven en verwijderen"
 #. js-lingui-id: qJSzDh
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "Write some instructions"
-msgstr ""
+msgstr "Schrijf instructies"
 
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/AiChatApprovalEmailReview.tsx
