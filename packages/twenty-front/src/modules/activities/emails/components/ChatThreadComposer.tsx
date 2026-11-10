@@ -190,7 +190,12 @@ export const ChatThreadComposer = ({
   const handlePaste = (event: ClipboardEvent<HTMLTextAreaElement>) => {
     const pastedFiles = Array.from(event.clipboardData.files);
 
-    if (!canAttachFiles || pastedFiles.length === 0) {
+    // spreadsheets and rich text put an image next to the text: keep pasting the text
+    if (
+      !canAttachFiles ||
+      pastedFiles.length === 0 ||
+      event.clipboardData.types.includes('text/plain')
+    ) {
       return;
     }
 

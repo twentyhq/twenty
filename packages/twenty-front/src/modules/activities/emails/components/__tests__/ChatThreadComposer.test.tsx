@@ -72,12 +72,13 @@ describe('ChatThreadComposer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Send' }));
 
     await waitFor(() =>
-      expect(mockSendAppChannelMessage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          text: '',
-          attachments: [{ fileId: 'file-id', label: 'offer.pdf' }],
-        }),
-      ),
+      expect(mockSendAppChannelMessage).toHaveBeenCalledTimes(1),
+    );
+    expect(mockSendAppChannelMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: '',
+        attachments: [{ fileId: 'file-id', label: 'offer.pdf' }],
+      }),
     );
     expect(mockClearDraftAttachments).toHaveBeenCalledTimes(1);
   });

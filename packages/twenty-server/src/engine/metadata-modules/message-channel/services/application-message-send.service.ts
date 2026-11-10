@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   type SendAppMessageAttachment,
   type SendAppMessageEmail,
@@ -564,7 +565,7 @@ export class ApplicationMessageSendService {
     attachments: AppMessageAttachmentInput[];
   }): Promise<ValidatedAppReply> {
     if (!isDefined(email)) {
-      if ((text ?? '').trim().length === 0 && attachments.length === 0) {
+      if (!isNonEmptyString(text?.trim()) && attachments.length === 0) {
         throw new MessageChannelException(
           'A message needs a text or at least one attachment',
           MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,

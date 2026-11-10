@@ -4,6 +4,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
+import { CHAT_THREAD_MAX_ATTACHMENT_COUNT } from '@/activities/emails/constants/ChatThreadMaxAttachmentCount';
 import { type ChatThreadDraftAttachment } from '@/activities/emails/types/ChatThreadDraftAttachment';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
@@ -48,7 +49,7 @@ export const useChatThreadDraftAttachments = () => {
   const uploadDraftAttachment = async (
     { file, abortController }: ChatThreadAttachmentUpload,
     fieldMetadataId: string,
-  ): Promise<ChatThreadDraftAttachment | null> => {
+  ) => {
     try {
       // the server only attaches to a message files uploaded into the attachment file field
       const uploadedFile = await uploadFile(file, {
@@ -58,16 +59,19 @@ export const useChatThreadDraftAttachments = () => {
       });
 
       if (abortController.signal.aborted) {
-        return null;
+        return;
       }
 
-      return {
-        type: 'file',
-        fileId: uploadedFile.id,
-        filename: file.name,
-        mediaType: file.type,
-        url: uploadedFile.url,
-      };
+      setDraftAttachments((currentDraftAttachments) => [
+        ...currentDraftAttachments,
+        {
+          type: 'file',
+          fileId: uploadedFile.id,
+          filename: file.name,
+          mediaType: file.type,
+          url: uploadedFile.url,
+        },
+      ]);
     } catch {
       const fileName = file.name;
 
@@ -77,8 +81,6 @@ export const useChatThreadDraftAttachments = () => {
           children: t`Failed to upload file: ${fileName}`,
         });
       }
-
-      return null;
     } finally {
       removeUpload(file);
     }
@@ -89,25 +91,35 @@ export const useChatThreadDraftAttachments = () => {
       return;
     }
 
-    const newUploads = files.map((file) => ({
+    const acceptedFiles = files.slice(
+      0,
+      Math.max(
+        CHAT_THREAD_MAX_ATTACHMENT_COUNT -
+          uploads.length -
+          draftAttachments.length,
+        0,
+      ),
+    );
+
+    if (acceptedFiles.length < files.length) {
+      enqueueToast({
+        status: 'error',
+        children: t`A message can carry up to ${CHAT_THREAD_MAX_ATTACHMENT_COUNT} files`,
+      });
+    }
+
+    const newUploads = acceptedFiles.map((file) => ({
       file,
       abortController: new AbortController(),
     }));
 
     setUploads((currentUploads) => [...currentUploads, ...newUploads]);
 
-    const uploadedAttachments = (
-      await Promise.all(
-        newUploads.map((upload) =>
-          uploadDraftAttachment(upload, attachmentFileFieldMetadataId),
-        ),
-      )
-    ).filter(isDefined);
-
-    setDraftAttachments((currentDraftAttachments) => [
-      ...currentDraftAttachments,
-      ...uploadedAttachments,
-    ]);
+    await Promise.all(
+      newUploads.map((upload) =>
+        uploadDraftAttachment(upload, attachmentFileFieldMetadataId),
+      ),
+    );
   };
 
   const cancelUpload = (file: File) => {
