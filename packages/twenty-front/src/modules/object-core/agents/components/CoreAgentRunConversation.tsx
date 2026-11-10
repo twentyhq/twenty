@@ -1,10 +1,8 @@
 import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronRight } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CoreAgentRunRow } from '@/object-core/agents/components/CoreAgentRunRow';
 import { CoreAgentRunStatus } from '@/object-core/agents/components/CoreAgentRunStatus';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
@@ -17,23 +15,15 @@ import { formatNumber } from '@/localization/utils/formatNumber';
 type CoreAgentRunConversationProps = {
   title: string | null;
   runs: CoreAgentRun[];
-  isExpanded: boolean;
-  onToggle: () => void;
-  expandedRunIds: Set<string>;
-  onToggleRun: (runId: string) => void;
+  onClick: () => void;
 };
 
 export const CoreAgentRunConversation = ({
   title,
   runs,
-  isExpanded,
-  onToggle,
-  expandedRunIds,
-  onToggleRun,
+  onClick,
 }: CoreAgentRunConversationProps) => {
-  const theme = useTheme();
   const [latestRun] = runs;
-  const ChevronIcon = isExpanded ? IconChevronDown : IconChevronRight;
   // a total missing some runs' usage would read as the whole conversation's cost
   const hasCreditsForEveryRun = runs.every((run) => isDefined(run.credits));
   const totalCredits = runs.reduce(
@@ -43,55 +33,37 @@ export const CoreAgentRunConversation = ({
   const runCount = runs.length;
 
   return (
-    <>
-      <TableRow
-        gridTemplateColumns={CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS}
-        isExpanded={isExpanded}
-        onClick={onToggle}
-        onKeyDown={handleCoreObjectTableRowKeyDown(onToggle)}
-        role="button"
-        tabIndex={0}
-        ariaExpanded={isExpanded}
-      >
-        <TableCell gap={themeCssVariables.spacing[1]}>
-          <ChevronIcon
-            size={theme.icon.size.sm}
-            stroke={theme.icon.stroke.sm}
-          />
-          <CoreAgentRunStatus status={latestRun.status} />
-        </TableCell>
-        <TableCell color={themeCssVariables.font.color.tertiary}>
-          {beautifyPastDateRelativeToNow(
-            latestRun.startedAt ?? latestRun.createdAt,
-          )}
-        </TableCell>
-        <TableCell color={themeCssVariables.font.color.secondary}>
-          {plural(runCount, { one: '# run', other: '# runs' })}
-        </TableCell>
-        <TableCell overflow="hidden">
-          <OverflowingTextWithTooltip
-            text={<>{title ?? latestRun.input}</>}
-            tooltipContent={title ?? latestRun.input ?? ''}
-          />
-        </TableCell>
-        <TableCell />
-        <TableCell align="right" color={themeCssVariables.font.color.secondary}>
-          {hasCreditsForEveryRun
-            ? formatNumber(totalCredits, { decimals: 2 })
-            : '-'}
-        </TableCell>
-        <TableCell />
-      </TableRow>
-      {isExpanded &&
-        runs.map((run) => (
-          <CoreAgentRunRow
-            key={run.id}
-            run={run}
-            isNested
-            isExpanded={expandedRunIds.has(run.id)}
-            onToggle={() => onToggleRun(run.id)}
-          />
-        ))}
-    </>
+    <TableRow
+      gridTemplateColumns={CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS}
+      onClick={onClick}
+      onKeyDown={handleCoreObjectTableRowKeyDown(onClick)}
+      role="button"
+      tabIndex={0}
+    >
+      <TableCell>
+        <CoreAgentRunStatus status={latestRun.status} />
+      </TableCell>
+      <TableCell color={themeCssVariables.font.color.tertiary}>
+        {beautifyPastDateRelativeToNow(
+          latestRun.startedAt ?? latestRun.createdAt,
+        )}
+      </TableCell>
+      <TableCell color={themeCssVariables.font.color.secondary}>
+        {plural(runCount, { one: '# turn', other: '# turns' })}
+      </TableCell>
+      <TableCell overflow="hidden">
+        <OverflowingTextWithTooltip
+          text={<>{title ?? latestRun.input}</>}
+          tooltipContent={title ?? latestRun.input ?? ''}
+        />
+      </TableCell>
+      <TableCell />
+      <TableCell align="right" color={themeCssVariables.font.color.secondary}>
+        {hasCreditsForEveryRun
+          ? formatNumber(totalCredits, { decimals: 2 })
+          : '-'}
+      </TableCell>
+      <TableCell />
+    </TableRow>
   );
 };

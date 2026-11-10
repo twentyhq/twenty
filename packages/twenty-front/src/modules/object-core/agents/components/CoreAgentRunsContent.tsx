@@ -12,9 +12,11 @@ import {
   IconTimeDuration30,
 } from 'twenty-ui/icon';
 
+import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { CoreAgentRunConversation } from '@/object-core/agents/components/CoreAgentRunConversation';
 import { CoreAgentRunRow } from '@/object-core/agents/components/CoreAgentRunRow';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
+import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
 import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/groupCoreAgentRunsByConversation';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
@@ -61,9 +63,7 @@ export const CoreAgentRunsContent = ({
 }: CoreAgentRunsContentProps) => {
   const { t } = useLingui();
   const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
-  const [expandedThreadIds, setExpandedThreadIds] = useState<Set<string>>(
-    new Set(),
-  );
+  const { openAskAiThread } = useOpenAskAiThread();
 
   // runs start and settle outside this page, so the list refreshes while it is visible
   const { data, loading, error } = useQuery(GetAgentRunsDocument, {
@@ -150,8 +150,14 @@ export const CoreAgentRunsContent = ({
     );
   }
 
-  const handleToggleRun = (runId: string) =>
-    setExpandedRunIds((runIds) => toggleId(runIds, runId));
+  const handleRunClick = (run: CoreAgentRun) => {
+    if (isDefined(run.threadId)) {
+      openAskAiThread(run.threadId);
+      return;
+    }
+
+    setExpandedRunIds((runIds) => toggleId(runIds, run.id));
+  };
 
   return (
     <StyledTurnsContainer>
@@ -163,21 +169,14 @@ export const CoreAgentRunsContent = ({
               key={item.threadId}
               title={item.title}
               runs={item.runs}
-              isExpanded={expandedThreadIds.has(item.threadId)}
-              onToggle={() =>
-                setExpandedThreadIds((threadIds) =>
-                  toggleId(threadIds, item.threadId),
-                )
-              }
-              expandedRunIds={expandedRunIds}
-              onToggleRun={handleToggleRun}
+              onClick={() => openAskAiThread(item.threadId)}
             />
           ) : (
             <CoreAgentRunRow
               key={item.run.id}
               run={item.run}
               isExpanded={expandedRunIds.has(item.run.id)}
-              onToggle={() => handleToggleRun(item.run.id)}
+              onClick={() => handleRunClick(item.run)}
             />
           ),
         )}
