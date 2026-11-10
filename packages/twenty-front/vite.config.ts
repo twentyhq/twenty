@@ -222,6 +222,7 @@ export default defineConfig(({ mode }) => {
         'twenty-shared/ai',
         'twenty-shared/application',
         'twenty-shared/constants',
+        'twenty-shared/i18n',
         'twenty-shared/logic-function',
         'twenty-shared/markdown',
         'twenty-shared/metadata',
