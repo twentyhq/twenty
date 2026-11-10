@@ -61,6 +61,7 @@ export const Default: Story = {
     await expect(
       within(recipients).queryByText('Thomas Kurian'),
     ).not.toBeInTheDocument();
+    await expect(recipients).toHaveFocus();
 
     await userEvent.type(
       canvas.getByPlaceholderText('Message Sundar Pichai'),

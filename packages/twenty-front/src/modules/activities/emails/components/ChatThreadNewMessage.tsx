@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useRef } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { FormFieldRow } from 'twenty-ui/components/input';
 import { IconUsers } from 'twenty-ui/icon';
@@ -41,11 +42,14 @@ export const ChatThreadNewMessage = ({
   canAttachFiles = false,
 }: ChatThreadNewMessageProps) => {
   const { t } = useLingui();
+  const recipientRowRef = useRef<HTMLDivElement>(null);
   const [firstRecipient] = recipients;
 
   return (
     <StyledContainer>
       <FormFieldRow
+        ref={recipientRowRef}
+        tabIndex={-1}
         aria-label={t`Recipients`}
         startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
         hasDivider
@@ -63,7 +67,10 @@ export const ChatThreadNewMessage = ({
                 shape="circle"
               />
             }
-            onRemove={() => onRecipientRemove(id)}
+            onRemove={() => {
+              recipientRowRef.current?.focus();
+              onRecipientRemove(id);
+            }}
           />
         ))}
       </FormFieldRow>
