@@ -346,7 +346,10 @@ export class CodeInterpreterTool implements Tool {
         mimeType: fileContent.mimeType,
       };
     } catch (error) {
-      this.logger.warn(`Failed to resolve file ${file.filename}`, error);
+      this.logger.warn(
+        `Failed to resolve file ${file.filename} in workspace ${workspaceId}`,
+        error,
+      );
 
       return null;
     }
@@ -366,13 +369,15 @@ export class CodeInterpreterTool implements Tool {
       });
     }
 
-    return isDefined(file.fileId)
-      ? this.fileService.getFileById({
-          fileId: file.fileId,
-          workspaceId,
-          allowedFileFolders: [FileFolder.AgentChat],
-        })
-      : null;
+    if (!isDefined(file.fileId)) {
+      return null;
+    }
+
+    return this.fileService.getFileById({
+      fileId: file.fileId,
+      workspaceId,
+      allowedFileFolders: [FileFolder.AgentChat],
+    });
   }
 
   private async resolveSandboxPrincipal(

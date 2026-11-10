@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -106,7 +107,10 @@ export class FileUrlService {
     fileId: string;
     fileFolder: string;
   }): Promise<string | null> {
-    if (!this.isSupportedFileFolder(fileFolder) || !fileToken) {
+    if (
+      !this.isSupportedFileFolder(fileFolder) ||
+      !isNonEmptyString(fileToken)
+    ) {
       return null;
     }
 
@@ -116,14 +120,14 @@ export class FileUrlService {
       })
       .catch(() => null);
 
-    if (!payload?.workspaceId || payload.fileId !== fileId) {
+    if (!isNonEmptyString(payload?.workspaceId) || payload.fileId !== fileId) {
       return null;
     }
 
-    const isServable = await this.isFileFolderServable(
+    const isServable = await this.isFileFolderServable({
       fileFolder,
-      payload.workspaceId,
-    );
+      workspaceId: payload.workspaceId,
+    });
 
     return isServable ? payload.workspaceId : null;
   }
@@ -144,27 +148,34 @@ export class FileUrlService {
     const { pathname, searchParams } = new URL(fileUrl);
     const [fileFolder, fileId] = pathname.split('/').slice(-2);
 
+    if (!this.isSupportedFileFolder(fileFolder)) {
+      return null;
+    }
+
     const tokenWorkspaceId = await this.verifyFileToken({
       fileToken: searchParams.get('token'),
       fileId,
       fileFolder,
     });
 
-    return tokenWorkspaceId === workspaceId
-      ? { fileId, fileFolder: fileFolder as FileFolder }
-      : null;
+    return tokenWorkspaceId === workspaceId ? { fileId, fileFolder } : null;
   }
 
   private isSupportedFileFolder(
     fileFolder: string,
   ): fileFolder is SupportedFileFolder {
-    return SUPPORTED_FILE_FOLDERS.includes(fileFolder as SupportedFileFolder);
+    return SUPPORTED_FILE_FOLDERS.some(
+      (supportedFileFolder) => supportedFileFolder === fileFolder,
+    );
   }
 
-  private async isFileFolderServable(
-    fileFolder: SupportedFileFolder,
-    workspaceId: string,
-  ): Promise<boolean> {
+  private async isFileFolderServable({
+    fileFolder,
+    workspaceId,
+  }: {
+    fileFolder: SupportedFileFolder;
+    workspaceId: string;
+  }): Promise<boolean> {
     if (FILE_FOLDERS_SERVED_WHEN_SUSPENDED.includes(fileFolder)) {
       return true;
     }

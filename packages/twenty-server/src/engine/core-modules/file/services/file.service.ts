@@ -110,8 +110,11 @@ export class FileService {
     }
 
     const [fileFolder] = file.path.split('/');
+    const isFileFolderAllowed = allowedFileFolders.some(
+      (allowedFileFolder) => allowedFileFolder === fileFolder,
+    );
 
-    return allowedFileFolders.includes(fileFolder as FileFolder) ? file : null;
+    return isFileFolderAllowed ? file : null;
   }
 
   async getFileBySignedUrl({
@@ -150,7 +153,7 @@ export class FileService {
       allowedFileFolders,
     });
 
-    return file === null ? null : this.getFileStream({ file, workspaceId });
+    return isDefined(file) ? this.getFileStream({ file, workspaceId }) : null;
   }
 
   async getFileStream({

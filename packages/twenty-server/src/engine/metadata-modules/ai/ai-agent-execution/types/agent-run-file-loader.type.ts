@@ -4,4 +4,5 @@ export type AgentRunFileLoader = {
   loadFile: (url: string) => Promise<FileEntity | null>;
   loadFileBytes: (url: string) => Promise<Buffer | null>;
   getLoadedFileBytes: (url: string) => Promise<Buffer | null | undefined>;
+  releaseFileBytesExcept: (urlsToKeep: Set<string>) => Promise<void>;
 };

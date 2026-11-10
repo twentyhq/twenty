@@ -8,7 +8,7 @@ import {
   type LanguageModelV4TextPart,
   type LanguageModelV4Usage,
 } from '@ai-sdk/provider';
-import { isNull } from '@sniptt/guards';
+import { isNull, isString } from '@sniptt/guards';
 import { APICallError, type LanguageModelMiddleware } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -141,7 +141,10 @@ export class AgentFileRejectionService {
     );
   }
 
-  private isPromptTooLong({ message, responseBody }: APICallError): boolean {
+  private isPromptTooLong({
+    message,
+    responseBody,
+  }: Pick<APICallError, 'message' | 'responseBody'>): boolean {
     return PROMPT_TOO_LONG_ERROR_PATTERN.test(`${message} ${responseBody}`);
   }
 
@@ -190,7 +193,7 @@ export class AgentFileRejectionService {
     deliveryState,
   }: {
     part: LanguageModelV4FilePart;
-    deliveryState: AgentFileDeliveryState;
+    deliveryState: Pick<AgentFileDeliveryState, 'fileLoader'>;
   }) {
     if (part.data.type !== 'url') {
       return part;
@@ -231,7 +234,7 @@ export class AgentFileRejectionService {
     deliveryState: { fileLoader, limits },
   }: {
     part: LanguageModelV4FilePart;
-    deliveryState: AgentFileDeliveryState;
+    deliveryState: Pick<AgentFileDeliveryState, 'fileLoader' | 'limits'>;
   }) {
     if (part.data.type !== 'url') {
       return part;
@@ -277,7 +280,7 @@ export class AgentFileRejectionService {
   ): Promise<boolean> {
     const { part, deliveryState } = filePartCheck;
 
-    if (part.data.type !== 'data') {
+    if (part.data.type !== 'data' || isString(part.data.data)) {
       return false;
     }
 
@@ -298,7 +301,7 @@ export class AgentFileRejectionService {
 
   private async sendFilePartCheck({
     part,
-    params: { abortSignal, headers },
+    params: { abortSignal, headers, providerOptions },
     model,
     deliveryState,
   }: FilePartCheckArguments): Promise<boolean> {
@@ -315,6 +318,7 @@ export class AgentFileRejectionService {
         maxOutputTokens: FILE_CHECK_MAX_OUTPUT_TOKENS,
         abortSignal,
         headers,
+        providerOptions,
       });
 
       this.billFilePartCheck({ usage, deliveryState });
@@ -334,7 +338,10 @@ export class AgentFileRejectionService {
     deliveryState: { modelId, workspaceId, operationType, spenders },
   }: {
     usage: LanguageModelV4Usage;
-    deliveryState: AgentFileDeliveryState;
+    deliveryState: Pick<
+      AgentFileDeliveryState,
+      'modelId' | 'workspaceId' | 'operationType' | 'spenders'
+    >;
   }): void {
     void this.aiBillingService
       .calculateAndBillUsage({

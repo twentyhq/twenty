@@ -35,6 +35,7 @@ type UserContentPart = Exclude<UserContent, string>[number];
 type FileBudget = {
   remainingSizeBytes: number;
   remainingFileCount: number;
+  urlsToKeepLoaded: Set<string>;
 };
 
 @Injectable()
@@ -77,7 +78,7 @@ export class AgentFilePartService {
       }),
       canSendSignedUrls: this.canSendSignedUrls(),
       areFilesRejected: false,
-      fileRejectionsByBytes: new Map(),
+      fileRejectionsByBytes: new WeakMap(),
     };
 
     return {
@@ -130,6 +131,7 @@ export class AgentFilePartService {
     const budget: FileBudget = {
       remainingSizeBytes: deliveryState.limits.maxTotalSizeBytes,
       remainingFileCount: deliveryState.limits.maxFileCount,
+      urlsToKeepLoaded: new Set(),
     };
     const preparedParts = new Map<UserContentPart, FilePart | TextPart>();
 
@@ -139,6 +141,10 @@ export class AgentFilePartService {
         await this.prepareFilePart({ part, deliveryState, budget }),
       );
     }
+
+    await deliveryState.fileLoader.releaseFileBytesExcept(
+      budget.urlsToKeepLoaded,
+    );
 
     return messagesWithInputFiles.map((message) => {
       if (message.role !== 'user' || !isArray(message.content)) {
@@ -165,7 +171,15 @@ export class AgentFilePartService {
     budget,
   }: {
     part: FilePart;
-    deliveryState: AgentFileDeliveryState;
+    deliveryState: Pick<
+      AgentFileDeliveryState,
+      | 'areFilesRejected'
+      | 'fileLoader'
+      | 'fileRejectionsByBytes'
+      | 'nativeMimeTypes'
+      | 'limits'
+      | 'canSendSignedUrls'
+    >;
     budget: FileBudget;
   }): Promise<FilePart | TextPart> {
     const url = getFilePartHttpUrl(part);
@@ -187,6 +201,8 @@ export class AgentFilePartService {
     const loadedBytes = await fileLoader.getLoadedFileBytes(url);
 
     if (isDefined(loadedBytes) && fileRejectionsByBytes.get(loadedBytes)) {
+      budget.urlsToKeepLoaded.add(url);
+
       return buildFilePlaceholder({ part, reason: 'rejected' });
     }
 
@@ -215,6 +231,8 @@ export class AgentFilePartService {
       return buildFilePlaceholder({ part, reason: 'unavailable' });
     }
 
+    budget.urlsToKeepLoaded.add(url);
+
     return { ...part, mediaType };
   }
 
@@ -223,7 +241,10 @@ export class AgentFilePartService {
     deliveryState,
   }: {
     requestedFiles: Parameters<DownloadFunction>[0];
-    deliveryState: AgentFileDeliveryState;
+    deliveryState: Pick<
+      AgentFileDeliveryState,
+      'canSendSignedUrls' | 'fileLoader'
+    >;
   }) {
     return Promise.all(
       requestedFiles.map(async ({ url, isUrlSupportedByModel }) => {

@@ -50,6 +50,18 @@ export class AgentFileLoaderService {
 
         return isDefined(file) ? bytesByFileId.get(file.id) : null;
       },
+      releaseFileBytesExcept: async (urlsToKeep) => {
+        const filesToKeep = await Promise.all([...urlsToKeep].map(loadFile));
+        const fileIdsToKeep = new Set(
+          filesToKeep.filter(isDefined).map(({ id }) => id),
+        );
+
+        for (const fileId of bytesByFileId.keys()) {
+          if (!fileIdsToKeep.has(fileId)) {
+            bytesByFileId.delete(fileId);
+          }
+        }
+      },
     };
   }
 

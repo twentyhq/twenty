@@ -1,4 +1,5 @@
 import { type FilePart, type TextPart } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UNDELIVERED_FILE_REASON } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/undelivered-file-reason.constant';
 import { formatUnsupportedFilePlaceholder } from 'src/engine/metadata-modules/ai/ai-models/utils/format-unsupported-file-placeholder.util';
@@ -14,6 +15,6 @@ export const buildFilePlaceholder = ({
   text: formatUnsupportedFilePlaceholder({
     filename,
     mediaType,
-    reason: reason && UNDELIVERED_FILE_REASON[reason],
+    reason: isDefined(reason) ? UNDELIVERED_FILE_REASON[reason] : undefined,
   }),
 });
