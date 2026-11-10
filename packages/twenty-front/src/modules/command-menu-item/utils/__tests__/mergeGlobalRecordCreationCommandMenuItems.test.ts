@@ -214,3 +214,31 @@ it('keeps creation commands scoped to a core object, which global creation canno
     ...globalRecordCreationCommandMenuItems,
   ]);
 });
+
+it('replaces the legacy workflow creation with the core one once both exist', () => {
+  const createCoreWorkflowCommand = {
+    ...pinnedCreationCommand,
+    id: 'create-core-workflow',
+    availabilityCoreObjectName: 'workflow',
+  };
+
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [pinnedCreationCommand, createCoreWorkflowCommand],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: true,
+      contextObjectMetadataId: 'company',
+    }),
+  ).toEqual([createCoreWorkflowCommand, taskCreationCommand]);
+});
+
+it('keeps the legacy workflow creation until the core one exists', () => {
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [pinnedCreationCommand],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: true,
+      contextObjectMetadataId: 'company',
+    }),
+  ).toEqual([pinnedCreationCommand, taskCreationCommand]);
+});

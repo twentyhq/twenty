@@ -3,20 +3,34 @@ import { getRecordCreationCommandType } from '@/command-menu-item/engine-command
 
 it.each([
   {
+    objectNameSingular: 'company',
     creationTargetObjectMetadataId: 'company-id',
     expected: 'global',
   },
   {
+    objectNameSingular: 'task',
     creationTargetObjectMetadataId: 'task-id',
     expected: 'global',
   },
   {
+    objectNameSingular: 'company',
     creationTargetObjectMetadataId: null,
     expected: 'index',
   },
   {
+    objectNameSingular: 'task',
     creationTargetObjectMetadataId: undefined,
     expected: 'index',
+  },
+  {
+    objectNameSingular: 'workflow',
+    creationTargetObjectMetadataId: 'workflow-id',
+    expected: 'workflow',
+  },
+  {
+    objectNameSingular: 'workflow',
+    creationTargetObjectMetadataId: null,
+    expected: 'workflow',
   },
 ])('dispatches record creation to $expected: %j', ({ expected, ...params }) => {
   expect(getRecordCreationCommandType(params)).toBe(expected);
@@ -44,6 +58,7 @@ it.each([
   ({ expected, ...context }) => {
     expect(
       getRecordCreationCommandType({
+        objectNameSingular: 'company',
         creationTargetObjectMetadataId: 'company-id',
         ...context,
       }),
@@ -54,6 +69,7 @@ it.each([
 it('uses global creation for the current object in a trash view', () => {
   expect(
     getRecordCreationCommandType({
+      objectNameSingular: 'company',
       contextObjectMetadataId: 'company-id',
       creationTargetObjectMetadataId: 'company-id',
       recordIndexId: 'company-index',
