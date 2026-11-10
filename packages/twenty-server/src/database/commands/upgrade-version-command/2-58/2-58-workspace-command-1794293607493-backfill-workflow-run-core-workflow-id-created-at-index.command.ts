@@ -24,9 +24,7 @@ const {
   fieldUniversalIdentifiers,
 } = WORKFLOW_RUN_CORE_WORKFLOW_ID_CREATED_AT_INDEX;
 
-// workflowRun is written by every running workflow, so the physical index is
-// built CONCURRENTLY outside the migration transaction first; the migration
-// then only persists the metadata, its CREATE INDEX IF NOT EXISTS finding it.
+// Built CONCURRENTLY first so run writes are not blocked; the migration then only persists metadata
 @RegisteredWorkspaceCommand('2.58.0', 1794293607493)
 @Command({
   name: 'upgrade:2-58:backfill-workflow-run-core-workflow-id-created-at-index',
@@ -158,6 +156,27 @@ export class BackfillWorkflowRunCoreWorkflowIdCreatedAtIndexCommand extends Prov
     try {
       await queryRunner.connect();
       isQueryRunnerConnected = true;
+
+      const invalidIndexes = await dataSource.query<{ name: string }[]>(
+        `SELECT c.relname AS name
+         FROM pg_index i
+         JOIN pg_class c ON c.oid = i.indexrelid
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = $1 AND c.relname = $2 AND NOT i.indisvalid`,
+        [schemaName, universalFlatIndexMetadata.name],
+      );
+
+      for (const { name } of invalidIndexes) {
+        await this.workspaceSchemaManagerService.indexManager.dropIndex({
+          queryRunner,
+          schemaName,
+          indexName: name,
+        });
+
+        this.logger.warn(
+          `Dropped invalid index ${name} left by an interrupted build in workspace ${workspaceId}, recreating it`,
+        );
+      }
 
       await this.workspaceSchemaManagerService.indexManager.createIndex({
         queryRunner,

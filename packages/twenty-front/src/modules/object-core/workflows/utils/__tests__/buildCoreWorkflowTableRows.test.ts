@@ -3,7 +3,7 @@ import { type CoreWorkflowRunSummary } from '@/object-core/workflows/types/CoreW
 import { buildCoreWorkflowTableRows } from '@/object-core/workflows/utils/buildCoreWorkflowTableRows';
 import {
   CoreWorkflowStatus,
-  WorkflowRunStatusEnum,
+  CoreWorkflowRunStatus,
   WorkflowVisibility,
 } from '~/generated/graphql';
 
@@ -26,17 +26,18 @@ describe('buildCoreWorkflowTableRows', () => {
       __typename: 'CoreWorkflowRunSummary',
       coreWorkflowId: 'with-runs',
       runCountLast14Days: 42,
+      isRunCountLowerBound: false,
       recentRuns: [
         {
           __typename: 'CoreWorkflowRecentRun',
           id: 'newest',
-          status: WorkflowRunStatusEnum.FAILED,
+          status: CoreWorkflowRunStatus.FAILED,
           createdAt: '2026-11-10T10:00:00.000Z',
         },
         {
           __typename: 'CoreWorkflowRecentRun',
           id: 'older',
-          status: WorkflowRunStatusEnum.COMPLETED,
+          status: CoreWorkflowRunStatus.COMPLETED,
           createdAt: '2026-11-09T10:00:00.000Z',
         },
       ],
@@ -62,6 +63,7 @@ describe('buildCoreWorkflowTableRows', () => {
             __typename: 'CoreWorkflowRunSummary',
             coreWorkflowId: 'never-ran',
             runCountLast14Days: 0,
+            isRunCountLowerBound: false,
             recentRuns: [],
           },
         ],

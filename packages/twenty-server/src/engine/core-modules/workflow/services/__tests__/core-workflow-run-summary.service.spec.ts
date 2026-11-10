@@ -18,6 +18,7 @@ const buildService = async ({
     select: jest.fn().mockReturnThis(),
     addSelect: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
     applyRowLevelPermissions,
     getQuery: jest.fn().mockReturnValue('SELECT ranked runs'),
     getParameters: jest.fn().mockReturnValue({ coreWorkflowIds: [] }),
@@ -72,7 +73,7 @@ describe('CoreWorkflowRunSummaryService', () => {
       rows: [
         {
           coreWorkflowId: 'workflow-with-runs',
-          runCountLast14Days: '2',
+          runCount: '2',
           recentRuns,
         },
       ],
@@ -87,14 +88,30 @@ describe('CoreWorkflowRunSummaryService', () => {
       {
         coreWorkflowId: 'workflow-without-runs',
         runCountLast14Days: 0,
+        isRunCountLowerBound: false,
         recentRuns: [],
       },
       {
         coreWorkflowId: 'workflow-with-runs',
         runCountLast14Days: 2,
+        isRunCountLowerBound: false,
         recentRuns,
       },
     ]);
+  });
+
+  it('flags a count that run retention may have truncated', async () => {
+    const { service } = await buildService({
+      rows: [
+        { coreWorkflowId: 'busy-workflow', runCount: '1000', recentRuns: [] },
+      ],
+    });
+
+    const [runSummary] = await service.findManyByCoreWorkflowIds([
+      'busy-workflow',
+    ]);
+
+    expect(runSummary.isRunCountLowerBound).toBe(true);
   });
 
   it('applies the reader row level permissions before querying', async () => {

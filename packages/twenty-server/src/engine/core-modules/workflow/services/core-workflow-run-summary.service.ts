@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type CoreWorkflowRunSummaryDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-summary.dto';
 import {
   PermissionsException,
@@ -9,6 +7,7 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { NUMBER_OF_WORKFLOW_RUNS_TO_KEEP } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/number-of-workflow-runs-to-keep';
 
 const RECENT_RUNS_LIMIT = 10;
 
@@ -16,18 +15,19 @@ const RUN_COUNT_WINDOW_IN_DAYS = 14;
 
 const WORKFLOW_RUN_ALIAS = 'workflowRun';
 
+const REQUESTED_WORKFLOW_ALIAS = 'requestedWorkflow';
+
 type CoreWorkflowRunSummaryRow = {
   coreWorkflowId: string;
-  runCountLast14Days: string | number;
-  recentRuns: CoreWorkflowRunSummaryDTO['recentRuns'] | null;
+  runCount: string | number;
+  recentRuns: CoreWorkflowRunSummaryDTO['recentRuns'];
 };
 
 @Injectable()
 export class CoreWorkflowRunSummaryService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  // Callers pass workflow ids the reader has already been authorized to see;
-  // run-level permissions are enforced by the reader's own repository below.
+  // Callers pass ids the reader may see; run permissions apply through the reader's repository
   async findManyByCoreWorkflowIds(
     coreWorkflowIds: string[],
   ): Promise<CoreWorkflowRunSummaryDTO[]> {
@@ -62,40 +62,62 @@ export class CoreWorkflowRunSummaryService {
     const column = (columnName: keyof WorkflowRunWorkspaceEntity) =>
       `"${WORKFLOW_RUN_ALIAS}"."${columnName}"`;
 
-    const rankedRunsQueryBuilder = workflowRunRepository
-      .createQueryBuilder(WORKFLOW_RUN_ALIAS)
-      .select([])
-      .addSelect(column('coreWorkflowId'), 'coreWorkflowId')
+    // Correlated on each requested workflow so every lateral walks the (coreWorkflowId, createdAt) index
+    const buildRequestedWorkflowRunsQueryBuilder = () =>
+      workflowRunRepository
+        .createQueryBuilder(WORKFLOW_RUN_ALIAS)
+        .select([])
+        .where(
+          `${column('coreWorkflowId')} = "${REQUESTED_WORKFLOW_ALIAS}"."id"`,
+        );
+
+    const recentRunsQueryBuilder = buildRequestedWorkflowRunsQueryBuilder()
       .addSelect(column('id'), 'id')
       .addSelect(column('status'), 'status')
-      .addSelect(column('createdAt'), 'createdAt')
-      .addSelect(
-        `ROW_NUMBER() OVER (PARTITION BY ${column('coreWorkflowId')} ORDER BY ${column('createdAt')} DESC, ${column('id')} DESC)`,
-        'recencyRank',
-      )
-      .where(`${column('coreWorkflowId')} IN (:...coreWorkflowIds)`, {
-        coreWorkflowIds,
-      });
+      .addSelect(column('createdAt'), 'createdAt');
 
-    await rankedRunsQueryBuilder.applyRowLevelPermissions();
+    const runCountQueryBuilder = buildRequestedWorkflowRunsQueryBuilder()
+      .addSelect('COUNT(*)', 'runCount')
+      .andWhere(
+        `${column('createdAt')} >= NOW() - MAKE_INTERVAL(days => :runCountWindowInDays)`,
+        { runCountWindowInDays: RUN_COUNT_WINDOW_IN_DAYS },
+      );
+
+    await recentRunsQueryBuilder.applyRowLevelPermissions();
+    await runCountQueryBuilder.applyRowLevelPermissions();
 
     const sql = `
       SELECT
-        "coreWorkflowId",
-        COUNT(*) FILTER (
-          WHERE "createdAt" >= NOW() - MAKE_INTERVAL(days => :runCountWindowInDays)
-        ) AS "runCountLast14Days",
-        JSONB_AGG(
-          JSONB_BUILD_OBJECT('id', "id", 'status', "status", 'createdAt', "createdAt")
-          ORDER BY "recencyRank"
-        ) FILTER (WHERE "recencyRank" <= :recentRunsLimit) AS "recentRuns"
-      FROM (${rankedRunsQueryBuilder.getQuery()}) AS "rankedRuns"
-      GROUP BY "coreWorkflowId"`;
+        "${REQUESTED_WORKFLOW_ALIAS}"."id" AS "coreWorkflowId",
+        "runCount"."runCount" AS "runCount",
+        "recentRuns"."recentRuns" AS "recentRuns"
+      FROM UNNEST(ARRAY[:...coreWorkflowIds]::uuid[]) AS "${REQUESTED_WORKFLOW_ALIAS}"("id")
+      CROSS JOIN LATERAL (${runCountQueryBuilder.getQuery()}) AS "runCount"
+      CROSS JOIN LATERAL (
+        SELECT COALESCE(
+          JSONB_AGG(
+            JSONB_BUILD_OBJECT(
+              'id', "recentRun"."id",
+              'status', "recentRun"."status",
+              'createdAt', "recentRun"."createdAt"
+            )
+            ORDER BY "recentRun"."createdAt" DESC, "recentRun"."id" DESC
+          ),
+          '[]'::jsonb
+        ) AS "recentRuns"
+        FROM (
+          SELECT *
+          FROM (${recentRunsQueryBuilder.getQuery()}) AS "candidateRun"
+          ORDER BY "candidateRun"."createdAt" DESC, "candidateRun"."id" DESC
+          LIMIT :recentRunsLimit
+        ) AS "recentRun"
+      ) AS "recentRuns"`;
 
     const rows =
       await workflowRunRepository.executeRaw<CoreWorkflowRunSummaryRow>(sql, {
-        ...rankedRunsQueryBuilder.getParameters(),
-        runCountWindowInDays: RUN_COUNT_WINDOW_IN_DAYS,
+        ...recentRunsQueryBuilder.getParameters(),
+        ...runCountQueryBuilder.getParameters(),
+        coreWorkflowIds,
         recentRunsLimit: RECENT_RUNS_LIMIT,
       });
 
@@ -105,10 +127,12 @@ export class CoreWorkflowRunSummaryService {
 
     return coreWorkflowIds.map((coreWorkflowId) => {
       const row = rowByCoreWorkflowId.get(coreWorkflowId);
+      const runCount = Number(row?.runCount ?? 0);
 
       return {
         coreWorkflowId,
-        runCountLast14Days: isDefined(row) ? Number(row.runCountLast14Days) : 0,
+        runCountLast14Days: runCount,
+        isRunCountLowerBound: runCount >= NUMBER_OF_WORKFLOW_RUNS_TO_KEEP,
         recentRuns: row?.recentRuns ?? [],
       };
     });

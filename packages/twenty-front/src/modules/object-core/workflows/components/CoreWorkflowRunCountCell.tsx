@@ -5,10 +5,12 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 
 type CoreWorkflowRunCountCellProps = {
   runCount: number | null;
+  isLowerBound: boolean;
 };
 
 export const CoreWorkflowRunCountCell = ({
   runCount,
+  isLowerBound,
 }: CoreWorkflowRunCountCellProps) => {
   const { formatNumber } = useNumberFormat();
 
@@ -16,5 +18,10 @@ export const CoreWorkflowRunCountCell = ({
     return null;
   }
 
-  return <Text truncate>{formatNumber(runCount)}</Text>;
+  return (
+    <Text truncate>
+      {formatNumber(runCount)}
+      {isLowerBound && '+'}
+    </Text>
+  );
 };
