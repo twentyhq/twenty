@@ -5,6 +5,8 @@ import { type OAuthClientInformationMixed } from '@modelcontextprotocol/sdk/shar
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { ConnectionProviderOAuthClientEntity } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/entities/connection-provider-oauth-client.entity';
 import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
@@ -71,6 +73,22 @@ export class ConnectionProviderOAuthClientService {
         }),
       },
     };
+  }
+
+  async findStoredClientOrThrow(args: {
+    connectionProviderId: string;
+    workspaceId: string;
+  }): Promise<OAuthDiscoveryStoredClient> {
+    const storedClient = await this.findStoredClient(args);
+
+    if (!isDefined(storedClient)) {
+      throw new ConnectionProviderException(
+        `Connection provider ${args.connectionProviderId} has no OAuth client yet: sign in again`,
+        ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED,
+      );
+    }
+
+    return storedClient;
   }
 
   async saveClient(client: OAuthDiscoveryClientToSave): Promise<void> {

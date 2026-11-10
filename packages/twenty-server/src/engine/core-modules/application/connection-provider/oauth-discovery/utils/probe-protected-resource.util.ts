@@ -1,0 +1,41 @@
+import { extractWWWAuthenticateParams } from '@modelcontextprotocol/sdk/client/auth.js';
+import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
+
+export type ProtectedResourceProbe = {
+  isSignInRequired: boolean;
+  resourceMetadataUrl?: URL;
+  scope?: string;
+};
+
+// A 401 to an unauthenticated ping means the resource wants a sign-in; its header names the metadata and scope.
+export const probeProtectedResource = async ({
+  resourceUrl,
+  fetchFn,
+}: {
+  resourceUrl: string;
+  fetchFn: FetchLike;
+}): Promise<ProtectedResourceProbe> => {
+  try {
+    const response = await fetchFn(resourceUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json, text/event-stream',
+      },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 0, method: 'ping' }),
+    });
+
+    await response.body?.cancel().catch(() => undefined);
+
+    if (response.status !== 401) {
+      return { isSignInRequired: false };
+    }
+
+    return {
+      isSignInRequired: true,
+      ...extractWWWAuthenticateParams(response),
+    };
+  } catch {
+    return { isSignInRequired: false };
+  }
+};

@@ -1,0 +1,155 @@
+import { Injectable } from '@nestjs/common';
+
+import {
+  auth,
+  refreshAuthorization,
+} from '@modelcontextprotocol/sdk/client/auth.js';
+import {
+  InvalidClientError,
+  UnauthorizedClientError,
+} from '@modelcontextprotocol/sdk/server/auth/errors.js';
+import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
+import { OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/constants/oauth-discovery-request-timeout-ms.constant';
+import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
+import { buildOAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-provider.util';
+import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
+import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
+import { parseTokenResponse } from 'src/engine/core-modules/application/connection-provider/utils/parse-token-response.util';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { buildSecureFetchLike } from 'src/engine/core-modules/secure-http-client/utils/build-secure-fetch-like.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+type ProviderContext = {
+  provider: OAuthDiscoveryConnectionProvider;
+  workspaceId: string;
+};
+
+@Injectable()
+export class ConnectionProviderOAuthDiscoveryTokenService {
+  constructor(
+    private readonly oauthClientService: ConnectionProviderOAuthClientService,
+    private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {}
+
+  async exchangeCode({
+    provider,
+    workspaceId,
+    code,
+    codeVerifier,
+    clientId,
+  }: ProviderContext & {
+    code: string;
+    codeVerifier: string;
+    clientId: string;
+  }): Promise<TokenExchangeResponse> {
+    const storedClient = await this.oauthClientService.findStoredClientOrThrow({
+      connectionProviderId: provider.id,
+      workspaceId,
+    });
+
+    // Another sign-in replaced the client meanwhile: this code belongs to the old one
+    if (storedClient.clientInformation.client_id !== clientId) {
+      throw new ConnectionProviderException(
+        `OAuth client of connection provider ${provider.id} changed during sign-in: sign in again`,
+        ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED,
+      );
+    }
+
+    const clientProvider = buildOAuthDiscoveryClientProvider({
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+      storedClient,
+      codeVerifier,
+      shouldReuseStoredDiscoveryState: true,
+    });
+
+    try {
+      await auth(clientProvider, {
+        serverUrl: provider.oauthDiscoveryConfig.resourceUrl,
+        authorizationCode: code,
+        fetchFn: this.buildFetch(workspaceId),
+      });
+    } catch (error) {
+      throw new ConnectionProviderException(
+        error instanceof Error ? error.message : String(error),
+        ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED,
+      );
+    } finally {
+      if (clientProvider.isStoredClientInvalidated) {
+        await this.oauthClientService.deleteClient({
+          connectionProviderId: provider.id,
+          workspaceId,
+          clientId,
+        });
+      }
+    }
+
+    if (!isDefined(clientProvider.savedTokens)) {
+      throw new ConnectionProviderException(
+        `OAuth discovery provider ${provider.id} returned no tokens`,
+        ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED,
+      );
+    }
+
+    return parseTokenResponse(clientProvider.savedTokens);
+  }
+
+  async refreshTokens({
+    provider,
+    workspaceId,
+    refreshToken,
+  }: ProviderContext & {
+    refreshToken: PlaintextString;
+  }): Promise<TokenExchangeResponse> {
+    const storedClient = await this.oauthClientService.findStoredClientOrThrow({
+      connectionProviderId: provider.id,
+      workspaceId,
+    });
+    const {
+      authorizationServerUrl,
+      authorizationServerMetadata,
+      resourceMetadata,
+    } = storedClient.discoveryState;
+
+    try {
+      const tokens = await refreshAuthorization(authorizationServerUrl, {
+        metadata: authorizationServerMetadata,
+        clientInformation: storedClient.clientInformation,
+        refreshToken,
+        resource: isDefined(resourceMetadata)
+          ? new URL(resourceMetadata.resource)
+          : undefined,
+        fetchFn: this.buildFetch(workspaceId),
+      });
+
+      return parseTokenResponse(tokens);
+    } catch (error) {
+      // The authorization server forgot the client: the next sign-in registers a new one.
+      if (
+        error instanceof InvalidClientError ||
+        error instanceof UnauthorizedClientError
+      ) {
+        await this.oauthClientService.deleteClient({
+          connectionProviderId: provider.id,
+          workspaceId,
+          clientId: storedClient.clientInformation.client_id,
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  private buildFetch(workspaceId: string): FetchLike {
+    return buildSecureFetchLike({
+      secureHttpClientService: this.secureHttpClientService,
+      context: { workspaceId, source: 'connection-provider' },
+      timeoutMs: OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS,
+    });
+  }
+}

@@ -9,6 +9,8 @@ import {
 } from '@modelcontextprotocol/sdk/shared/auth.js';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
 import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
 
@@ -86,7 +88,10 @@ export class OAuthDiscoveryClientProvider implements OAuthClientProvider {
 
   codeVerifier(): string {
     if (!isDefined(this.options.codeVerifier)) {
-      throw new Error('No PKCE code verifier for this OAuth discovery sign-in');
+      throw new ConnectionProviderException(
+        'No PKCE code verifier for this OAuth discovery sign-in',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
     }
 
     return this.options.codeVerifier;

@@ -1,11 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { randomUUID } from 'crypto';
+
+import { isDefined } from 'twenty-shared/utils';
+
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type ConnectionAuthorizationArgs } from 'src/engine/core-modules/application/connection-provider/types/connection-authorization-args.type';
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+
+const FLOW_SECRET_CACHE_KEY_PREFIX = 'connection-provider-oauth-flow-secret';
+const FLOW_SECRET_TTL_MS = 10 * 60 * 1000;
+
+export type ConnectionProviderFlowSecrets = {
+  codeVerifier: string;
+  oauthClientId: string | null;
+};
 
 @Injectable()
 export class ConnectionProviderAuthorizationStateService {
@@ -13,7 +28,11 @@ export class ConnectionProviderAuthorizationStateService {
     ConnectionProviderAuthorizationStateService.name,
   );
 
-  constructor(private readonly jwtWrapperService: JwtWrapperService) {}
+  constructor(
+    private readonly jwtWrapperService: JwtWrapperService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineAuthSession)
+    private readonly cacheStorage: CacheStorageService,
+  ) {}
 
   async sign({
     connectionProvider,
@@ -22,12 +41,22 @@ export class ConnectionProviderAuthorizationStateService {
     userWorkspaceId,
     reconnectingConnectedAccountId,
     redirectLocation,
-    codeVerifier,
+    flowSecrets,
     expiresIn,
   }: ConnectionAuthorizationArgs & {
-    codeVerifier: string | null;
+    flowSecrets: ConnectionProviderFlowSecrets | null;
     expiresIn: string;
   }): Promise<string> {
+    const flowSecretId = isDefined(flowSecrets) ? randomUUID() : null;
+
+    if (isDefined(flowSecretId)) {
+      await this.cacheStorage.set(
+        `${FLOW_SECRET_CACHE_KEY_PREFIX}:${flowSecretId}`,
+        flowSecrets,
+        FLOW_SECRET_TTL_MS,
+      );
+    }
+
     const payload: AppOAuthStateJwtPayload = {
       sub: connectionProvider.id,
       type: JwtTokenTypeEnum.APP_OAUTH_STATE,
@@ -38,7 +67,7 @@ export class ConnectionProviderAuthorizationStateService {
       scope: connectionProvider.scope,
       reconnectingConnectedAccountId,
       redirectLocation,
-      codeVerifier,
+      flowSecretId,
     };
 
     return this.jwtWrapperService.signAsyncOrThrow(payload, { expiresIn });
@@ -66,6 +95,26 @@ export class ConnectionProviderAuthorizationStateService {
     }
 
     return verified;
+  }
+
+  // Single use: a replayed callback finds nothing and fails
+  async consumeFlowSecretsOrThrow(
+    flowSecretId: string,
+  ): Promise<ConnectionProviderFlowSecrets> {
+    const cacheKey = `${FLOW_SECRET_CACHE_KEY_PREFIX}:${flowSecretId}`;
+    const flowSecrets =
+      await this.cacheStorage.get<ConnectionProviderFlowSecrets>(cacheKey);
+
+    if (!isDefined(flowSecrets)) {
+      throw new ConnectionProviderException(
+        'OAuth sign-in expired or was already completed',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
+    }
+
+    await this.cacheStorage.del(cacheKey);
+
+    return flowSecrets;
   }
 
   async findErrorRedirectTarget(state: string): Promise<{

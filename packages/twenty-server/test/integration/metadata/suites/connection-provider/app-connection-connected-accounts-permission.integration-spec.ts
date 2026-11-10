@@ -212,7 +212,7 @@ describe('app connection connected accounts permission', () => {
       scope: 'USER',
       reconnectingConnectedAccountId: null,
       redirectLocation: null,
-      codeVerifier: null,
+      flowSecretId: null,
     };
 
     const state = await jwtWrapperService.signAsyncOrThrow(statePayload, {

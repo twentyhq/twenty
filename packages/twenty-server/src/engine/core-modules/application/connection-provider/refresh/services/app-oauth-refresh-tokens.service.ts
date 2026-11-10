@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
-import { ConnectionProviderOAuthDiscoveryService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery.service';
+import { ConnectionProviderOAuthDiscoveryTokenService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery-token.service';
 import { assertOAuthDiscoveryProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
 import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-refresh-token-for-token.util';
@@ -31,7 +31,7 @@ export class AppOAuthRefreshAccessTokenService {
 
   constructor(
     private readonly connectionProviderService: ConnectionProviderService,
-    private readonly oauthDiscoveryService: ConnectionProviderOAuthDiscoveryService,
+    private readonly oauthDiscoveryTokenService: ConnectionProviderOAuthDiscoveryTokenService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
@@ -50,6 +50,13 @@ export class AppOAuthRefreshAccessTokenService {
       connectionProviderId: connectedAccount.connectionProviderId,
       workspaceId: connectedAccount.workspaceId,
     });
+
+    if (provider.type !== 'oauth' && provider.type !== 'oauth-discovery') {
+      throw new ConnectedAccountRefreshAccessTokenException(
+        `Connection provider ${provider.id} of type ${provider.type} cannot refresh tokens`,
+        ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,
+      );
+    }
 
     try {
       const tokenResponse =
@@ -95,10 +102,10 @@ export class AppOAuthRefreshAccessTokenService {
     provider: ConnectionProviderEntity;
     refreshToken: PlaintextString;
   }) {
+    assertOAuthProvider(provider);
+
     const { clientId, clientSecret } =
       await this.resolveClientCredentials(provider);
-
-    assertOAuthProvider(provider);
 
     return exchangeRefreshTokenForToken({
       fetchFn: this.secureHttpClientService.createSsrfSafeFetch(),
@@ -122,7 +129,7 @@ export class AppOAuthRefreshAccessTokenService {
     assertOAuthDiscoveryProvider(provider);
 
     try {
-      return await this.oauthDiscoveryService.refreshTokens({
+      return await this.oauthDiscoveryTokenService.refreshTokens({
         provider,
         workspaceId,
         refreshToken,

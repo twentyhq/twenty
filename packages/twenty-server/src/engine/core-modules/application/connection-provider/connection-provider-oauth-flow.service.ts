@@ -2,13 +2,17 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
+import {
+  ConnectionProviderAuthorizationStateService,
+  type ConnectionProviderFlowSecrets,
+} from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
 import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { ConnectionProviderOAuthDiscoveryTokenService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery-token.service';
 import { ConnectionProviderOAuthDiscoveryService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery.service';
 import { type ConnectionAuthorizationArgs } from 'src/engine/core-modules/application/connection-provider/types/connection-authorization-args.type';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
@@ -47,6 +51,7 @@ export class ConnectionProviderOAuthFlowService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly oauthDiscoveryService: ConnectionProviderOAuthDiscoveryService,
+    private readonly oauthDiscoveryTokenService: ConnectionProviderOAuthDiscoveryTokenService,
   ) {}
 
   async startAuthorizationFlow(
@@ -80,7 +85,9 @@ export class ConnectionProviderOAuthFlowService {
 
     const state = await this.authorizationStateService.sign({
       ...authorizationArgs,
-      codeVerifier,
+      flowSecrets: isDefined(codeVerifier)
+        ? { codeVerifier, oauthClientId: null }
+        : null,
       expiresIn: STATE_JWT_EXPIRES_IN,
     });
 
@@ -127,7 +134,7 @@ export class ConnectionProviderOAuthFlowService {
         authorizationArgs.reconnectingConnectedAccountId,
     });
 
-    const { authorizationUrl, codeVerifier } =
+    const { authorizationUrl, codeVerifier, clientId } =
       await this.oauthDiscoveryService.prepareAuthorization({
         provider: connectionProvider,
         workspaceId,
@@ -135,7 +142,7 @@ export class ConnectionProviderOAuthFlowService {
 
     const state = await this.authorizationStateService.sign({
       ...authorizationArgs,
-      codeVerifier,
+      flowSecrets: { codeVerifier, oauthClientId: clientId },
       expiresIn: STATE_JWT_EXPIRES_IN,
     });
 
@@ -165,11 +172,17 @@ export class ConnectionProviderOAuthFlowService {
         statePayload.reconnectingConnectedAccountId,
     });
 
+    const flowSecrets = isDefined(statePayload.flowSecretId)
+      ? await this.authorizationStateService.consumeFlowSecretsOrThrow(
+          statePayload.flowSecretId,
+        )
+      : null;
+
     const tokenResponse = await this.exchangeCodeForTokens({
       provider,
       workspaceId: statePayload.workspaceId,
       code: callbackArgs.code,
-      codeVerifier: statePayload.codeVerifier,
+      flowSecrets,
     });
 
     const identifiedAccount =
@@ -222,28 +235,29 @@ export class ConnectionProviderOAuthFlowService {
     provider,
     workspaceId,
     code,
-    codeVerifier,
+    flowSecrets,
   }: {
     provider: ConnectionProviderEntity;
     workspaceId: string;
     code: string;
-    codeVerifier: string | null;
+    flowSecrets: ConnectionProviderFlowSecrets | null;
   }): Promise<TokenExchangeResponse> {
     if (provider.type === 'oauth-discovery') {
       assertOAuthDiscoveryProvider(provider);
 
-      if (!isDefined(codeVerifier)) {
+      if (!isDefined(flowSecrets?.oauthClientId)) {
         throw new ConnectionProviderException(
-          'OAuth discovery state has no PKCE verifier',
+          'OAuth discovery state has no PKCE verifier or client',
           ConnectionProviderExceptionCode.INVALID_STATE,
         );
       }
 
-      return this.oauthDiscoveryService.exchangeCode({
+      return this.oauthDiscoveryTokenService.exchangeCode({
         provider,
         workspaceId,
         code,
-        codeVerifier,
+        codeVerifier: flowSecrets.codeVerifier,
+        clientId: flowSecrets.oauthClientId,
       });
     }
 
@@ -260,7 +274,7 @@ export class ConnectionProviderOAuthFlowService {
         clientSecret,
         code,
         redirectUri: buildAppOAuthCallbackUrl(this.getServerUrl()),
-        codeVerifier,
+        codeVerifier: flowSecrets?.codeVerifier ?? null,
         contentType: provider.oauthConfig.tokenRequestContentType,
       });
     } catch (error) {

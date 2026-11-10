@@ -61,7 +61,7 @@ export class ConnectionProviderCustomFlowService {
 
     const state = await this.authorizationStateService.sign({
       ...authorizationArgs,
-      codeVerifier: null,
+      flowSecrets: null,
       expiresIn: STATE_JWT_EXPIRES_IN,
     });
 
