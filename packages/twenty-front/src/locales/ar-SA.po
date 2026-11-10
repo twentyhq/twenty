@@ -23280,6 +23280,11 @@ msgstr "تم التفاعل باستخدام {emoji}"
 msgid "Reacting with {emoji}"
 msgstr "جارٍ التفاعل باستخدام {emoji}"
 
+#. js-lingui-id: cQlPDN
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Read"
+msgstr ""
+
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read {target}"
@@ -26423,6 +26428,11 @@ msgstr ""
 msgid "Sender name"
 msgstr "اسم المرسل"
 
+#. js-lingui-id: 9bG48P
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Sending"
+msgstr ""
+
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Sending domain"
@@ -26460,6 +26470,7 @@ msgid "Sending..."
 msgstr "جاري الإرسال..."
 
 #. js-lingui-id: h69WC6
+#: src/modules/chat/components/ChatMessageReceipt.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Sent"
