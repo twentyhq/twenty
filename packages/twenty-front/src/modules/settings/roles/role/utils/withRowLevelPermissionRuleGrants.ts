@@ -18,26 +18,31 @@ export const withRowLevelPermissionRuleGrants = (
       ({ objectMetadataId }) => objectMetadataId === rule.objectMetadataId,
     );
     // A grant equal to the all-objects one stays inherited, so it keeps following that toggle
-    const inheritWhenEqual = (ruleGrant: boolean, allObjectsGrant: boolean) =>
-      ruleGrant === allObjectsGrant ? null : ruleGrant;
+    const inheritWhenEqual = ({
+      ruleGrant,
+      allObjectsGrant,
+    }: {
+      ruleGrant: boolean;
+      allObjectsGrant: boolean;
+    }) => (ruleGrant === allObjectsGrant ? null : ruleGrant);
     const ruleGrants = {
       objectMetadataId: rule.objectMetadataId,
-      canReadObjectRecords: inheritWhenEqual(
-        rule.canReadRecords,
-        role.canReadAllObjectRecords,
-      ),
-      canUpdateObjectRecords: inheritWhenEqual(
-        rule.canUpdateRecords,
-        role.canUpdateAllObjectRecords,
-      ),
-      canSoftDeleteObjectRecords: inheritWhenEqual(
-        rule.canSoftDeleteRecords,
-        role.canSoftDeleteAllObjectRecords,
-      ),
-      canDestroyObjectRecords: inheritWhenEqual(
-        rule.canDestroyRecords,
-        role.canDestroyAllObjectRecords,
-      ),
+      canReadObjectRecords: inheritWhenEqual({
+        ruleGrant: rule.canReadRecords,
+        allObjectsGrant: role.canReadAllObjectRecords,
+      }),
+      canUpdateObjectRecords: inheritWhenEqual({
+        ruleGrant: rule.canUpdateRecords,
+        allObjectsGrant: role.canUpdateAllObjectRecords,
+      }),
+      canSoftDeleteObjectRecords: inheritWhenEqual({
+        ruleGrant: rule.canSoftDeleteRecords,
+        allObjectsGrant: role.canSoftDeleteAllObjectRecords,
+      }),
+      canDestroyObjectRecords: inheritWhenEqual({
+        ruleGrant: rule.canDestroyRecords,
+        allObjectsGrant: role.canDestroyAllObjectRecords,
+      }),
     };
 
     if (objectPermissionIndex === -1) {
