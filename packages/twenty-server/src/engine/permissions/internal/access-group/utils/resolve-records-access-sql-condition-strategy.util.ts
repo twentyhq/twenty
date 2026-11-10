@@ -10,8 +10,10 @@ export const resolveRecordsAccessSQLConditionStrategy = ({
   principals,
   metadataMaps,
   flatObjectMetadata,
-  operationType,
-}: PermissionsObjectAccessRequest): RecordsAccessSQLConditionStrategy => {
+}: Omit<
+  PermissionsObjectAccessRequest,
+  'operationType'
+>): RecordsAccessSQLConditionStrategy => {
   const roleIdsWithRlsRule = findPrincipalsRoleIdsWithRlsRule({
     principals,
     metadataMaps,
@@ -20,10 +22,6 @@ export const resolveRecordsAccessSQLConditionStrategy = ({
 
   if (roleIdsWithRlsRule.length === 0) {
     return 'withoutRowLevelPermissions';
-  }
-
-  if (operationType !== 'read') {
-    return 'rowLevelPermissionsInWrite';
   }
 
   if (

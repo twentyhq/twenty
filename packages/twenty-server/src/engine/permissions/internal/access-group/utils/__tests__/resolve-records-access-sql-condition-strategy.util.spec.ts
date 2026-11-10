@@ -44,12 +44,10 @@ const withRlsRule: ObjectRecordsPermissions = {
 const buildRequest = ({
   objectRecordsPermissions,
   isAccessGroupsEnabled = true,
-  operationType = 'read',
 }: {
   objectRecordsPermissions: ObjectRecordsPermissions;
   isAccessGroupsEnabled?: boolean;
-  operationType?: PermissionsObjectAccessRequest['operationType'];
-}): PermissionsObjectAccessRequest => ({
+}): Omit<PermissionsObjectAccessRequest, 'operationType'> => ({
   principals: {
     workspaceId: 'workspace-id',
     mainPrincipal: {
@@ -74,7 +72,6 @@ const buildRequest = ({
     },
   },
   flatObjectMetadata,
-  operationType,
 });
 
 describe('resolveRecordsAccessSQLConditionStrategy', () => {
@@ -95,17 +92,6 @@ describe('resolveRecordsAccessSQLConditionStrategy', () => {
         }),
       ),
     ).toBe('degradedRead');
-  });
-
-  it('should keep the RLS condition in the statement of a write', () => {
-    expect(
-      resolveRecordsAccessSQLConditionStrategy(
-        buildRequest({
-          objectRecordsPermissions: withRlsRule,
-          operationType: 'update',
-        }),
-      ),
-    ).toBe('rowLevelPermissionsInWrite');
   });
 
   it('should use the condition without RLS when no role has an RLS rule on the object', () => {

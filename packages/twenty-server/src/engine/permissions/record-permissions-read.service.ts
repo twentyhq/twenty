@@ -315,31 +315,69 @@ export class RecordPermissionsReadService {
     });
   }
 
-  async buildRecordsAccessSQLCondition({
+  async buildReadRecordsAccessSQLCondition({
+    tableAlias,
+    ...question
+  }: Omit<RecordOperationQuestion, 'operationType'> & {
+    tableAlias: string;
+  }): Promise<SQLCondition | boolean> {
+    const objectAccessRequest = await this.findObjectAccessRequestOrThrow({
+      ...question,
+      operationType: 'read',
+    });
+
+    if (
+      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest) !==
+      'accessGroups'
+    ) {
+      return this.buildRecordsAccessSQLCondition({
+        objectAccessRequest,
+        tableAlias,
+      });
+    }
+
+    return this.buildRecordsAccessSQLCondition({
+      objectAccessRequest,
+      tableAlias,
+      callerAccessGroupCompactIds:
+        await this.accessGroupReadService.findCallerCompactIds({
+          principals: objectAccessRequest.principals,
+          objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+          operationType: 'read',
+        }),
+    });
+  }
+
+  // Access groups are recomputed in the background, so a write checks its RLS rules in its own statement
+  async buildWriteRecordsAccessSQLCondition({
     tableAlias,
     ...question
   }: RecordOperationQuestion & {
+    operationType: Exclude<ObjectRecordsOperationType, 'read'>;
     tableAlias: string;
   }): Promise<SQLCondition | boolean> {
-    const objectAccessRequest =
-      await this.findObjectAccessRequestOrThrow(question);
-    const strategy =
-      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest);
+    return this.buildRecordsAccessSQLCondition({
+      objectAccessRequest: await this.findObjectAccessRequestOrThrow(question),
+      tableAlias,
+    });
+  }
 
+  private buildRecordsAccessSQLCondition({
+    objectAccessRequest,
+    tableAlias,
+    callerAccessGroupCompactIds,
+  }: {
+    objectAccessRequest: PermissionsObjectAccessRequest;
+    tableAlias: string;
+    callerAccessGroupCompactIds?: number[];
+  }): SQLCondition | boolean {
     return buildPermissionsSQLCondition({
       ...objectAccessRequest,
       tableAlias,
       recordShareTableExpression: buildRecordShareTableExpression({
         workspaceId: objectAccessRequest.principals.workspaceId,
       }),
-      callerAccessGroupCompactIds:
-        strategy === 'accessGroups'
-          ? await this.accessGroupReadService.findCallerCompactIds({
-              principals: objectAccessRequest.principals,
-              objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
-              operationType: objectAccessRequest.operationType,
-            })
-          : undefined,
+      callerAccessGroupCompactIds,
     });
   }
 
