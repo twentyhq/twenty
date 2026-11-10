@@ -17,6 +17,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isDuplicateEntryError } from 'src/engine/twenty-orm/utils/is-duplicate-entry-error.util';
@@ -30,6 +31,7 @@ import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/con
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { filterOutDeletedPeopleWithReusedPrimaryEmail } from 'src/modules/contact-creation-manager/utils/filter-out-deleted-people-with-reused-primary-email.util';
 import { sortPeopleWithNonDeletedFirst } from 'src/modules/person/utils/sort-people-with-non-deleted-first.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
@@ -107,7 +109,18 @@ export class CreateCompanyAndPersonService {
         .withDeleted()
         .getMany<PersonWorkspaceEntity>();
 
-      const alreadyCreatedPeople = sortPeopleWithNonDeletedFirst(matchedPeople);
+      const alreadyCreatedPeople = sortPeopleWithNonDeletedFirst(
+        filterOutDeletedPeopleWithReusedPrimaryEmail({
+          people: matchedPeople,
+          primaryEmailsOfNonDeletedPeople:
+            await this.findPrimaryEmailsReusedByNonDeletedPeople({
+              personRepository,
+              deletedPeople: matchedPeople.filter((person) =>
+                isDefined(person.deletedAt),
+              ),
+            }),
+        }),
+      );
 
       const {
         contactsThatNeedPersonCreate,
@@ -165,6 +178,33 @@ export class CreateCompanyAndPersonService {
 
       return { ...createdPeople, ...restoredPeople };
     }, authContext);
+  }
+
+  private async findPrimaryEmailsReusedByNonDeletedPeople({
+    personRepository,
+    deletedPeople,
+  }: {
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
+    deletedPeople: PersonWorkspaceEntity[];
+  }): Promise<string[]> {
+    const primaryEmails = deletedPeople
+      .map((person) => person.emails?.primaryEmail)
+      .filter(isNonEmptyString);
+
+    if (primaryEmails.length === 0) {
+      return [];
+    }
+
+    const nonDeletedPeople = await personRepository
+      .createQueryBuilder('person')
+      .where('"person"."emailsPrimaryEmail" IN (:...primaryEmails)', {
+        primaryEmails,
+      })
+      .getMany<PersonWorkspaceEntity>();
+
+    return nonDeletedPeople
+      .map((person) => person.emails?.primaryEmail)
+      .filter(isNonEmptyString);
   }
 
   async createCompaniesAndPeopleAndUpdateParticipants(

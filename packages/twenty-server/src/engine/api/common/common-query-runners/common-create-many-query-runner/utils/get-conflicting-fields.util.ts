@@ -163,14 +163,20 @@ export const getConflictingFields = (
       continue;
     }
 
-    const isIgnoringDeletedRecords =
-      flatIndexMetadata.indexWhereClause ===
-      NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE;
+    if (
+      flatIndexMetadata.indexWhereClause !==
+      NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE
+    ) {
+      conflictingFieldGroups.push(indexConflictingFields);
+      continue;
+    }
 
     conflictingFieldGroups.push({
-      baseFields: indexConflictingFields.baseFields,
-      conflictingProperties: indexConflictingFields.conflictingProperties,
-      ...(isIgnoringDeletedRecords ? { isIgnoringDeletedRecords } : {}),
+      ...indexConflictingFields,
+      deletedRecords:
+        flatIndexMetadata.flatIndexFieldMetadatas.length === 1
+          ? 'ignored'
+          : 'restorable',
     });
   }
 

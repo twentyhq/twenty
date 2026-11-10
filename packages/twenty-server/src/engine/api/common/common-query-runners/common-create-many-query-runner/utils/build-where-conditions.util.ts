@@ -1,6 +1,6 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Equal, In, type FindOperator } from 'typeorm';
+import { Equal, In, IsNull, type FindOperator } from 'typeorm';
 
 import {
   type ConflictingFieldGroup,
@@ -67,7 +67,13 @@ export const buildWhereConditions = (
   const seenCompositeConditionKeys = new Set<string>();
 
   for (const conflictingFieldGroup of conflictingFieldGroups) {
-    const { conflictingProperties } = conflictingFieldGroup;
+    const { conflictingProperties, deletedRecords } = conflictingFieldGroup;
+    const pushGroupCondition = (condition: WhereCondition) =>
+      whereConditions.push(
+        deletedRecords === 'ignored'
+          ? { ...condition, deletedAt: IsNull() }
+          : condition,
+      );
 
     if (conflictingProperties.length === 1) {
       const condition = buildSingleColumnCondition(
@@ -76,7 +82,7 @@ export const buildWhereConditions = (
       );
 
       if (isDefined(condition)) {
-        whereConditions.push(condition);
+        pushGroupCondition(condition);
       }
 
       continue;
@@ -100,7 +106,7 @@ export const buildWhereConditions = (
 
       seenCompositeConditionKeys.add(conditionKey);
 
-      whereConditions.push(
+      pushGroupCondition(
         conditionEntries.reduce<WhereCondition>(
           (accumulator, [column, value]) => {
             accumulator[column] = Equal(value);

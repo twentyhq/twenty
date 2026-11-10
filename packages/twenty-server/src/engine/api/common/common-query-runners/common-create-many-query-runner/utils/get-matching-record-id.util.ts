@@ -50,7 +50,7 @@ export const getMatchingRecordId = (
       }),
     );
 
-    const matchingRecord = fieldGroup.isIgnoringDeletedRecords
+    const matchingRecord = isDefined(fieldGroup.deletedRecords)
       ? matchingRecords.find(
           (existingRecord) => !isDefined(existingRecord.deletedAt),
         )
@@ -58,6 +58,10 @@ export const getMatchingRecordId = (
 
     if (isDefined(matchingRecord)) {
       matchingRecordIds.add(matchingRecord.id);
+      continue;
+    }
+
+    if (fieldGroup.deletedRecords !== 'restorable') {
       continue;
     }
 

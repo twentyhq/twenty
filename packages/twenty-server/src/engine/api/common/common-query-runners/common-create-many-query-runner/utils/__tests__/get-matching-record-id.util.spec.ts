@@ -208,7 +208,7 @@ describe('getMatchingRecordId', () => {
     }
   });
 
-  describe('with unique fields that ignore deleted records', () => {
+  describe('with unique indexes limited to non-deleted records', () => {
     const olderDeletedRecord: PartialObjectRecordWithId = {
       id: 'olderDeletedRecordId',
       uniqueText: 'alpha',
@@ -233,14 +233,14 @@ describe('getMatchingRecordId', () => {
     const uniqueTextGroup: ConflictingFieldGroup = {
       baseFields: ['uniqueText'],
       conflictingProperties: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
-      isIgnoringDeletedRecords: true,
+      deletedRecords: 'restorable',
     };
     const otherUniqueTextGroup: ConflictingFieldGroup = {
       baseFields: ['otherUniqueText'],
       conflictingProperties: [
         { fullPath: 'otherUniqueText', column: 'otherUniqueText' },
       ],
-      isIgnoringDeletedRecords: true,
+      deletedRecords: 'restorable',
     };
 
     it('matches the live record rather than a deleted one holding the same value', () => {
@@ -281,6 +281,16 @@ describe('getMatchingRecordId', () => {
           code: CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT,
         }),
       );
+    });
+
+    it('never matches a deleted record on a unique field', () => {
+      const id = getMatchingRecordId(
+        { uniqueText: 'alpha' },
+        [{ ...uniqueTextGroup, deletedRecords: 'ignored' }],
+        [olderDeletedRecord, newerDeletedRecord],
+      );
+
+      expect(id).toBeUndefined();
     });
 
     it('matches the live record of another unique field rather than a deleted record', () => {

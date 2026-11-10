@@ -48,6 +48,22 @@ describe('buildWhereConditions', () => {
     expect(operator.value).toEqual(['alpha', 'beta']);
   });
 
+  it('restricts a unique field group to non-deleted rows', () => {
+    const where = buildWhereConditions(records, [
+      {
+        baseFields: ['uniqueText'],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
+        deletedRecords: 'ignored',
+      },
+    ]);
+
+    expect(where).toHaveLength(1);
+    expect(where[0].uniqueText.value).toEqual(['alpha', 'beta']);
+    expect(where[0].deletedAt.type.toLowerCase()).toBe('isnull');
+  });
+
   it('deduplicates values within a single-column IN condition', () => {
     const groups: ConflictingFieldGroup[] = [
       {
