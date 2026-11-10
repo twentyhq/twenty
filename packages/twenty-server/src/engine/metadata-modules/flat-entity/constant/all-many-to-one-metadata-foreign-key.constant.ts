@@ -297,6 +297,16 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
+  rowLevelPermissionRule: {
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    role: {
+      foreignKey: 'roleId',
+    },
+    workspace: null,
+    application: null,
+  },
   viewFilterGroup: {
     application: null,
     parentViewFilterGroup: {
