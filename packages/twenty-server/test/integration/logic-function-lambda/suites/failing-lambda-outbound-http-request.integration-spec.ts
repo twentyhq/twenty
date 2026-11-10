@@ -3,11 +3,15 @@ import { type FlociLambdaDriver } from 'test/integration/logic-function-lambda/t
 import { switchToFlociLambdaDriver } from 'test/integration/logic-function-lambda/utils/switch-to-floci-lambda-driver.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { FeatureFlagKey } from 'twenty-shared/types';
+
+import { type HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const LAMBDA_TEST_TIMEOUT_MS = 300_000;
 
@@ -84,5 +88,28 @@ describe('Outbound HTTP requests on the Lambda driver should fail', () => {
         LAMBDA_TEST_TIMEOUT_MS,
       );
     },
+  );
+
+  it(
+    'should refuse a request too large for a Lambda invoke',
+    async () => {
+      // The test app keeps the default 100 KB JSON body limit, so the request goes to HttpTool directly.
+      const output = await getAppProviderByClassName<HttpTool>(
+        'HttpTool',
+      ).execute(
+        {
+          url: 'https://twenty.com',
+          method: 'POST',
+          body: 'x'.repeat(6 * 1024 * 1024),
+        },
+        { workspaceId: SEED_APPLE_WORKSPACE_ID },
+      );
+
+      expect(output).toMatchObject({
+        success: false,
+        error: 'The request is too large to send',
+      });
+    },
+    LAMBDA_TEST_TIMEOUT_MS,
   );
 });
