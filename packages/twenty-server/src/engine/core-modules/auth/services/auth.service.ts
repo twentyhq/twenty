@@ -547,13 +547,19 @@ export class AuthService {
     user,
     workspace,
     requestBaseUrl,
+    requestIp,
   }: {
     authorizeAppInput: AuthorizeAppInput;
     user: AuthContextUser;
     workspace: WorkspaceEntity;
     requestBaseUrl: string;
+    requestIp: string | undefined;
   }): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
+
+    await this.oAuthClientRegistrationResolverService.throttleClientIdMetadataDocumentFetchOrThrow(
+      { clientId, requestIp },
+    );
 
     const resolvedClient =
       await this.oAuthClientRegistrationResolverService.findOrRegisterByClientId(
