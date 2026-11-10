@@ -31,5 +31,17 @@ describe('DisabledDriver', () => {
     });
 
     expect(output).toMatchObject({ status: 200, body: { ok: true } });
+    expect(getHttpClient).toHaveBeenCalledTimes(1);
+    expect(getHttpClient).toHaveBeenCalledWith();
+    expect(httpClient).toHaveBeenCalledTimes(1);
+    expect(httpClient).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: 'https://api.example.com',
+        method: 'GET',
+        timeout: 30_000,
+        maxContentLength: 1024,
+        maxBodyLength: 1024,
+      }),
+    );
   });
 });
