@@ -3,7 +3,6 @@ import {
   IconLayoutDashboard,
   IconSettingsAutomation,
   IconTerminal,
-  IconVersions,
 } from 'twenty-ui/icon';
 
 import { CoreObjectShowPageTabList } from '@/object-core/components/CoreObjectShowPageTabList';
@@ -45,11 +44,6 @@ export const CoreWorkflowShowPageTabList = ({
           title: t`Runs`,
           Icon: IconTerminal,
           hide: !canReadWorkflowRuns,
-        },
-        {
-          id: CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.VERSIONS,
-          title: t`Versions`,
-          Icon: IconVersions,
         },
       ]}
     />
