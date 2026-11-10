@@ -91,21 +91,17 @@ jest.mock('react-router-dom', () => ({
   useMatches: jest.fn(),
 }));
 
-const setupMockUseLocation = (
-  loc: AppPath,
-  objectNamePlural?: string,
-  pageLayoutId?: string,
+const setupMockUseLocation = ({
+  loc,
+  objectNamePlural,
+  pageLayoutId,
   isMatchedByDedicatedRoute = false,
-) => {
-  jest.mocked(useMatches).mockReturnValue([
-    {
-      params:
-        loc === AppPath.RecordIndexPage && !isMatchedByDedicatedRoute
-          ? { objectNamePlural: objectNamePlural ?? 'default-object' }
-          : {},
-    },
-  ] as unknown as ReturnType<typeof useMatches>);
-
+}: {
+  loc: AppPath;
+  objectNamePlural?: string;
+  pageLayoutId?: string;
+  isMatchedByDedicatedRoute?: boolean;
+}) => {
   const pathname =
     loc === AppPath.RecordIndexPage
       ? getAppPath(AppPath.RecordIndexPage, {
@@ -116,6 +112,20 @@ const setupMockUseLocation = (
         : loc === AppPath.PageLayoutPage
           ? '/page-layout'
           : loc;
+
+  jest.mocked(useMatches).mockReturnValue([
+    {
+      id: 'route',
+      pathname,
+      params:
+        loc === AppPath.RecordIndexPage && !isMatchedByDedicatedRoute
+          ? { objectNamePlural: objectNamePlural ?? 'default-object' }
+          : {},
+      data: undefined,
+      loaderData: undefined,
+      handle: undefined,
+    },
+  ]);
 
   jest.mocked(useLocation).mockReturnValueOnce({
     pathname,
@@ -540,12 +550,12 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockIsLogged(isLogged);
       setupMockIsOnAWorkspace(isOnAWorkspace ?? true);
       setupMockUseQuery(useQueryResult);
-      setupMockUseLocation(
+      setupMockUseLocation({
         loc,
-        objectNamePluralFromParams,
+        objectNamePlural: objectNamePluralFromParams,
         pageLayoutId,
         isMatchedByDedicatedRoute,
-      );
+      });
       setupMockState(
         objectNamePluralFromMetadata ??
           (loc === AppPath.RecordIndexPage ? 'default-object' : undefined),
@@ -606,7 +616,7 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
       setupMockIsLogged(true);
       setupMockIsOnAWorkspace(true);
       setupMockUseQuery();
-      setupMockUseLocation(loc);
+      setupMockUseLocation({ loc });
       setupMockState(undefined, undefined, undefined, null);
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SignInUp);
@@ -630,7 +640,7 @@ describe('usePageChangeEffectNavigateLocation — suspended workspace settings p
     setupMockIsLogged(true);
     setupMockIsOnAWorkspace(true);
     setupMockUseQuery();
-    setupMockUseLocation(loc as AppPath);
+    setupMockUseLocation({ loc: loc as AppPath });
     setupMockState();
 
     expect(usePageChangeEffectNavigateLocation()).toEqual(res);
