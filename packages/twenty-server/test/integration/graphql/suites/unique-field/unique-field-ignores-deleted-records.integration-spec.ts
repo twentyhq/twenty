@@ -48,13 +48,15 @@ const deleteRecord = (id: string) =>
     }),
   );
 
-const restoreRecords = (
-  ids: string[],
-  {
-    gqlFields = GQL_FIELDS,
-    token,
-  }: { gqlFields?: string; token?: string } = {},
-) =>
+const restoreRecords = ({
+  ids,
+  gqlFields = GQL_FIELDS,
+  token,
+}: {
+  ids: string[];
+  gqlFields?: string;
+  token?: string;
+}) =>
   makeGraphqlApiRequest(
     restoreManyOperationFactory({
       objectMetadataSingularName: OBJECT_SINGULAR,
@@ -144,7 +146,9 @@ describe('unique field with deleted records', () => {
 
     const liveRecord = await createRecordOrThrow('restored');
 
-    const refusedRestoreResponse = await restoreRecords([deletedRecord.id]);
+    const refusedRestoreResponse = await restoreRecords({
+      ids: [deletedRecord.id],
+    });
 
     expect(refusedRestoreResponse.body.errors[0].extensions).toMatchObject({
       code: 'BAD_USER_INPUT',
@@ -156,7 +160,7 @@ describe('unique field with deleted records', () => {
 
     await deleteRecord(liveRecord.id);
 
-    const restoreResponse = await restoreRecords([deletedRecord.id]);
+    const restoreResponse = await restoreRecords({ ids: [deletedRecord.id] });
 
     expect(restoreResponse.body.errors).toBeUndefined();
     expect(restoreResponse.body.data.restoreUniqueDeletedTestObjects).toEqual([
@@ -176,7 +180,8 @@ describe('unique field with deleted records', () => {
       canReadFieldValue: false,
     });
 
-    const refusedRestoreResponse = await restoreRecords([deletedRecord.id], {
+    const refusedRestoreResponse = await restoreRecords({
+      ids: [deletedRecord.id],
       gqlFields: 'id',
       token: readRestrictedApiKey.token,
     });
