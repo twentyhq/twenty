@@ -22,7 +22,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
+import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
