@@ -5506,7 +5506,7 @@ msgstr "Veld {0}.{fieldName} is niet beschikbaar. Selecteer toegankelijke velden
 #. js-lingui-id: T0uER/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
-msgstr ""
+msgstr "Veld {fieldName} wordt gebruikt door {survivingPredicateCount} machtigingsvoorwaarde(n) op rijniveau"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -7423,7 +7423,7 @@ msgstr "Ongeldige gegevens voor de groep voor toegangsvoorwaarden op rijniveau."
 #. js-lingui-id: SSt1rf
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Invalid row level permission rule data."
-msgstr ""
+msgstr "Ongeldige gegevens voor de toegangsregel op rijniveau."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -11614,7 +11614,7 @@ msgstr "Verwijderen uit favorieten"
 #. js-lingui-id: 60CVOK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Remove the row-level permission rules that use this field before deleting it"
-msgstr ""
+msgstr "Verwijder de machtigingsregels op rijniveau die dit veld gebruiken voordat u het verwijdert"
 
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
@@ -12113,29 +12113,29 @@ msgstr "Toegangsvoorwaarde op rijniveau met deze universele identifier bestaat a
 #. js-lingui-id: 1ypLxw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule already exists"
-msgstr ""
+msgstr "Toegangsregel op rijniveau bestaat al"
 
 #. js-lingui-id: PrMheT
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Row level permission rule not found."
-msgstr ""
+msgstr "Toegangsregel op rijniveau niet gevonden."
 
 #. js-lingui-id: WmZbv+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to delete not found"
-msgstr ""
+msgstr "Te verwijderen toegangsregel op rijniveau niet gevonden"
 
 #. js-lingui-id: B+cihG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to update not found"
-msgstr ""
+msgstr "Te wijzigen toegangsregel op rijniveau niet gevonden"
 
 #. js-lingui-id: LRPzAu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule with this universal identifier already exists"
-msgstr ""
+msgstr "Toegangsregel op rijniveau met deze universele identifier bestaat al"
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts

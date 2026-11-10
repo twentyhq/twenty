@@ -5506,7 +5506,7 @@ msgstr "Câmpul {0}.{fieldName} nu este disponibil. Selectați câmpuri de nivel
 #. js-lingui-id: T0uER/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
-msgstr ""
+msgstr "Câmpul {fieldName} este utilizat de {survivingPredicateCount} predicat(e) de permisiuni la nivel de rând"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -7423,7 +7423,7 @@ msgstr "Date nevalide pentru grupul de predicate de permisiune la nivel de rând
 #. js-lingui-id: SSt1rf
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Invalid row level permission rule data."
-msgstr ""
+msgstr "Date nevalide pentru regula de permisiune la nivel de rând."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -11614,7 +11614,7 @@ msgstr "Elimină din favorite"
 #. js-lingui-id: 60CVOK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Remove the row-level permission rules that use this field before deleting it"
-msgstr ""
+msgstr "Eliminați regulile de permisiuni la nivel de rând care utilizează acest câmp înainte de a-l șterge"
 
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
@@ -12113,29 +12113,29 @@ msgstr "Predicatul de permisiune la nivel de rând cu acest identificator univer
 #. js-lingui-id: 1ypLxw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule already exists"
-msgstr ""
+msgstr "Regula de permisiune la nivel de rând există deja"
 
 #. js-lingui-id: PrMheT
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Row level permission rule not found."
-msgstr ""
+msgstr "Regula de permisiune la nivel de rând nu a fost găsită."
 
 #. js-lingui-id: WmZbv+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to delete not found"
-msgstr ""
+msgstr "Regula de permisiune la nivel de rând de șters nu a fost găsită"
 
 #. js-lingui-id: B+cihG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to update not found"
-msgstr ""
+msgstr "Regula de permisiune la nivel de rând de actualizat nu a fost găsită"
 
 #. js-lingui-id: LRPzAu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule with this universal identifier already exists"
-msgstr ""
+msgstr "Regula de permisiune la nivel de rând cu acest identificator universal există deja"
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts

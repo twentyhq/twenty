@@ -5506,7 +5506,7 @@ msgstr "Feltet {0}.{fieldName} er utilgjengelig. Velg tilgjengelige felt på top
 #. js-lingui-id: T0uER/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
-msgstr ""
+msgstr "Feltet {fieldName} brukes av {survivingPredicateCount} tillatelsespredikat(er) på radnivå"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -7423,7 +7423,7 @@ msgstr "Ugyldige data for gruppe for tillatelsespredikater på radnivå."
 #. js-lingui-id: SSt1rf
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Invalid row level permission rule data."
-msgstr ""
+msgstr "Ugyldige data for tillatelsesregel på radnivå."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -11614,7 +11614,7 @@ msgstr "Fjern fra favoritter"
 #. js-lingui-id: 60CVOK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Remove the row-level permission rules that use this field before deleting it"
-msgstr ""
+msgstr "Fjern tillatelsesreglene på radnivå som bruker dette feltet før du sletter det"
 
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
@@ -12113,29 +12113,29 @@ msgstr "Tillatelsespredikat på radnivå med denne universelle identifikatoren e
 #. js-lingui-id: 1ypLxw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule already exists"
-msgstr ""
+msgstr "Tillatelsesregel på radnivå finnes allerede"
 
 #. js-lingui-id: PrMheT
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Row level permission rule not found."
-msgstr ""
+msgstr "Tillatelsesregel på radnivå ble ikke funnet."
 
 #. js-lingui-id: WmZbv+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to delete not found"
-msgstr ""
+msgstr "Tillatelsesregel på radnivå som skal slettes, ble ikke funnet"
 
 #. js-lingui-id: B+cihG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to update not found"
-msgstr ""
+msgstr "Tillatelsesregel på radnivå som skal oppdateres, ble ikke funnet"
 
 #. js-lingui-id: LRPzAu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule with this universal identifier already exists"
-msgstr ""
+msgstr "Tillatelsesregel på radnivå med denne universelle identifikatoren finnes allerede"
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts

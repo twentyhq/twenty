@@ -778,7 +778,7 @@ msgstr "{emoji} per {reactorNames}"
 #. js-lingui-id: 1u0J17
 #: src/modules/activities/emails/components/ChatThreadMessageReactions.tsx
 msgid "{emoji} by {reactors}"
-msgstr ""
+msgstr "{emoji} per {reactors}"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -7365,7 +7365,7 @@ msgstr "S'està confirmant el teu pagament"
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"
-msgstr ""
+msgstr "Connecta {appName} a {workspaceName}"
 
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
@@ -15173,7 +15173,7 @@ msgstr "La sol·licitud HTTP ha fallat"
 #. js-lingui-id: 82OlFB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "HTTP requests in the logic function runtime"
-msgstr ""
+msgstr "Sol·licituds HTTP en el temps d'execució de la funció lògica"
 
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -23290,7 +23290,7 @@ msgstr "S'està reaccionant amb {emoji}"
 #. js-lingui-id: cQlPDN
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Read"
-msgstr ""
+msgstr "Llegit"
 
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -24881,7 +24881,7 @@ msgstr "grup de predicats de permisos a nivell de fila"
 #. js-lingui-id: JWZ1ef
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "row level permission rule"
-msgstr ""
+msgstr "regla de permisos a nivell de fila"
 
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26425,7 +26425,7 @@ msgstr "Envia a la safata d'entrada"
 #. js-lingui-id: 69d0/t
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr ""
+msgstr "Envieu les sol·licituds HTTP dels fluxos de treball, les sol·licituds de prova i l'eina HTTP de l'agent d'IA a través del controlador de funcions lògiques, que les executa en una Lambda aïllada quan les funcions lògiques s'executen en Lambda."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -26436,7 +26436,7 @@ msgstr "Nom del remitent"
 #. js-lingui-id: 9bG48P
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Sending"
-msgstr ""
+msgstr "Enviant"
 
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx

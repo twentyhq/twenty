@@ -5506,7 +5506,7 @@ msgstr "Il campo {0}.{fieldName} non è disponibile. Seleziona campi di primo li
 #. js-lingui-id: T0uER/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
-msgstr ""
+msgstr "Il campo {fieldName} è utilizzato da {survivingPredicateCount} predicato/i di autorizzazione a livello di riga"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -7423,7 +7423,7 @@ msgstr "Dati non validi del gruppo di predicati di autorizzazione a livello di r
 #. js-lingui-id: SSt1rf
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Invalid row level permission rule data."
-msgstr ""
+msgstr "Dati non validi della regola di autorizzazione a livello di record."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -11614,7 +11614,7 @@ msgstr "Rimuovi dai preferiti"
 #. js-lingui-id: 60CVOK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Remove the row-level permission rules that use this field before deleting it"
-msgstr ""
+msgstr "Rimuovi le regole di autorizzazione a livello di riga che utilizzano questo campo prima di eliminarlo"
 
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
@@ -12113,29 +12113,29 @@ msgstr "Esiste già un predicato di autorizzazione a livello di record con quest
 #. js-lingui-id: 1ypLxw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule already exists"
-msgstr ""
+msgstr "Esiste già una regola di autorizzazione a livello di record"
 
 #. js-lingui-id: PrMheT
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Row level permission rule not found."
-msgstr ""
+msgstr "Regola di autorizzazione a livello di record non trovata."
 
 #. js-lingui-id: WmZbv+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to delete not found"
-msgstr ""
+msgstr "Regola di autorizzazione a livello di record da eliminare non trovata"
 
 #. js-lingui-id: B+cihG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to update not found"
-msgstr ""
+msgstr "Regola di autorizzazione a livello di record da aggiornare non trovata"
 
 #. js-lingui-id: LRPzAu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule with this universal identifier already exists"
-msgstr ""
+msgstr "Esiste già una regola di autorizzazione a livello di record con questo identificatore universale"
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts

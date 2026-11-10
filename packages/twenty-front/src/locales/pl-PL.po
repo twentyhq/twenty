@@ -778,7 +778,7 @@ msgstr "{emoji} od {reactorNames}"
 #. js-lingui-id: 1u0J17
 #: src/modules/activities/emails/components/ChatThreadMessageReactions.tsx
 msgid "{emoji} by {reactors}"
-msgstr ""
+msgstr "{emoji} przez {reactors}"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -7365,7 +7365,7 @@ msgstr "Potwierdzanie płatności"
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"
-msgstr ""
+msgstr "Połącz {appName} z {workspaceName}"
 
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
@@ -15173,7 +15173,7 @@ msgstr "Żądanie HTTP nie powiodło się"
 #. js-lingui-id: 82OlFB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "HTTP requests in the logic function runtime"
-msgstr ""
+msgstr "Żądania HTTP w środowisku uruchomieniowym funkcji logicznej"
 
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -23290,7 +23290,7 @@ msgstr "Reagowanie za pomocą {emoji}"
 #. js-lingui-id: cQlPDN
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Read"
-msgstr ""
+msgstr "Odczytano"
 
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -24881,7 +24881,7 @@ msgstr "grupa predykatów uprawnień na poziomie wiersza"
 #. js-lingui-id: JWZ1ef
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "row level permission rule"
-msgstr ""
+msgstr "reguła uprawnień na poziomie wiersza"
 
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26425,7 +26425,7 @@ msgstr "Wyślij do skrzynki odbiorczej"
 #. js-lingui-id: 69d0/t
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr ""
+msgstr "Wysyłaj żądania HTTP workflow, żądania testowe i narzędzie HTTP agenta AI za pośrednictwem sterownika funkcji logicznej, który uruchamia je w izolowanej Lambdzie, gdy funkcje logiczne działają w Lambdzie."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -26436,7 +26436,7 @@ msgstr "Nazwa nadawcy"
 #. js-lingui-id: 9bG48P
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Sending"
-msgstr ""
+msgstr "Wysyłanie"
 
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx

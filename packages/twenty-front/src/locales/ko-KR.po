@@ -778,7 +778,7 @@ msgstr "{reactorNames}의 {emoji}"
 #. js-lingui-id: 1u0J17
 #: src/modules/activities/emails/components/ChatThreadMessageReactions.tsx
 msgid "{emoji} by {reactors}"
-msgstr ""
+msgstr "{reactors}님의 {emoji}"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -7365,7 +7365,7 @@ msgstr "결제를 확인하는 중"
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"
-msgstr ""
+msgstr "{appName}을 {workspaceName}에 연결"
 
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
@@ -15173,7 +15173,7 @@ msgstr "HTTP 요청 실패"
 #. js-lingui-id: 82OlFB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "HTTP requests in the logic function runtime"
-msgstr ""
+msgstr "로직 함수 런타임의 HTTP 요청"
 
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -23290,7 +23290,7 @@ msgstr "{emoji}로 반응하는 중"
 #. js-lingui-id: cQlPDN
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Read"
-msgstr ""
+msgstr "읽기"
 
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -24881,7 +24881,7 @@ msgstr "레코드 수준 권한 조건 그룹"
 #. js-lingui-id: JWZ1ef
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "row level permission rule"
-msgstr ""
+msgstr "레코드 수준 권한 규칙"
 
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26425,7 +26425,7 @@ msgstr "받은편지함으로 보내기"
 #. js-lingui-id: 69d0/t
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr ""
+msgstr "워크플로 HTTP 요청, 테스트 요청 및 AI 에이전트 HTTP 도구를 로직 함수 드라이버를 통해 전송합니다. 로직 함수가 Lambda에서 실행될 때 로직 함수 드라이버는 격리된 Lambda에서 이를 실행합니다."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -26436,7 +26436,7 @@ msgstr "발신자 이름"
 #. js-lingui-id: 9bG48P
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Sending"
-msgstr ""
+msgstr "전송 중"
 
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx

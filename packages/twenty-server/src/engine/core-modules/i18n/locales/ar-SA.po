@@ -5506,7 +5506,7 @@ msgstr "الحقل {0}.{fieldName} غير متاح. اختر الحقول الم
 #. js-lingui-id: T0uER/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
-msgstr ""
+msgstr "يُستخدم الحقل {fieldName} بواسطة {survivingPredicateCount} شرط (شروط) إذن على مستوى الصف"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -7423,7 +7423,7 @@ msgstr "بيانات مجموعة شروط الإذن على مستوى الصف
 #. js-lingui-id: SSt1rf
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Invalid row level permission rule data."
-msgstr ""
+msgstr "بيانات قاعدة الإذن على مستوى الصف غير صالحة."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -11614,7 +11614,7 @@ msgstr "إزالة من المفضلة"
 #. js-lingui-id: 60CVOK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
 msgid "Remove the row-level permission rules that use this field before deleting it"
-msgstr ""
+msgstr "أزل قواعد الأذونات على مستوى الصف التي تستخدم هذا الحقل قبل حذفه"
 
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
@@ -12113,29 +12113,29 @@ msgstr "شرط الإذن على مستوى الصف بهذا المعرّف ا�
 #. js-lingui-id: 1ypLxw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule already exists"
-msgstr ""
+msgstr "قاعدة الإذن على مستوى الصف موجودة بالفعل"
 
 #. js-lingui-id: PrMheT
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Row level permission rule not found."
-msgstr ""
+msgstr "لم يتم العثور على قاعدة الإذن على مستوى الصف."
 
 #. js-lingui-id: WmZbv+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to delete not found"
-msgstr ""
+msgstr "لم يتم العثور على قاعدة الإذن على مستوى الصف المراد حذفها"
 
 #. js-lingui-id: B+cihG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to update not found"
-msgstr ""
+msgstr "لم يتم العثور على قاعدة الإذن على مستوى الصف المراد تحديثها"
 
 #. js-lingui-id: LRPzAu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule with this universal identifier already exists"
-msgstr ""
+msgstr "قاعدة الإذن على مستوى الصف بهذا المعرّف العالمي موجودة بالفعل"
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
