@@ -116,6 +116,12 @@ export type {
   ConnectionCallbackResult,
 } from './customConnectionFlowType';
 export type { CustomConnectionProviderConfig } from './customConnectionProviderConfigType';
+export type {
+  DatabaseEventTriggerManifestAction,
+  ObjectDatabaseEventTriggerManifestSettings,
+  DatabaseEventTriggerManifestSettings,
+} from './databaseEventTriggerManifestSettingsType';
+export { isObjectDatabaseEventTriggerManifestSettings } from './databaseEventTriggerManifestSettingsType';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';

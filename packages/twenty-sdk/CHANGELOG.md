@@ -101,9 +101,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const objectMetadata = useSelectedObjectMetadata();
   ```
 
+- **Database event triggers name an object, an action and a condition.** A logic function's `databaseEventTriggerSettings` and an agent's `DATABASE_EVENT` trigger now take `objectUniversalIdentifier`, `action` and `fieldUniversalIdentifiers` instead of an event name and field names, plus an optional `condition`: a rule expression the record must meet, where `previous.<field>` reads it before an update. The build fails on an unknown object or field, or a condition reading a field the object does not have. These settings need a Twenty server that knows them; to deploy to an older server, keep `eventName` and `updatedFields`.
+
+  ```ts
+  databaseEventTriggerSettings: {
+    objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+    action: 'updated',
+    fieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+    condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+  },
+  ```
+
 - **`SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` in `twenty-sdk/define`.** The SDK names of the User Apps and Workspace Apps permission flags, with the same universal identifiers as `CONNECTED_ACCOUNTS` and `APPLICATIONS`. They are left out of `Object.keys`, `Object.values` and `Object.entries`, which list the same 26 names as before, so code that enumerates or filters the flags behaves as before. Only the SDK names change: the API keeps reporting these flags as `CONNECTED_ACCOUNTS` and `APPLICATIONS`, for example in `currentUserWorkspace.permissionFlags` and in command menu expressions.
 
 ### Deprecated
+
+- **`eventName` and `updatedFields` in database event trigger settings.** Use `objectUniversalIdentifier`, `action` and `fieldUniversalIdentifiers` instead. The old properties keep working for one more release.
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
 

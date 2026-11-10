@@ -15,6 +15,7 @@ import { validate as uuidValidate } from 'uuid';
 
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
+import { getDatabaseEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-database-event-trigger-settings-errors';
 
 // Keyed by every ModelConfiguration key so a new capability fails to compile until listed
 const MODEL_CAPABILITIES: Record<keyof ModelConfiguration, true> = {
@@ -149,16 +150,16 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
       );
     }
 
-    const eventName =
-      trigger.type === 'DATABASE_EVENT' ? trigger.settings?.eventName : null;
-
-    if (
-      trigger.type === 'DATABASE_EVENT' &&
-      (!isNonEmptyString(eventName) ||
-        !AGENT_TRIGGER_EVENT_NAME_PATTERN.test(eventName))
-    ) {
+    if (trigger.type === 'DATABASE_EVENT' && !isPlainObject(trigger.settings)) {
+      errors.push(`Agent '${config.name}' trigger must have settings`);
+    } else if (trigger.type === 'DATABASE_EVENT') {
       errors.push(
-        `Agent '${config.name}' trigger event name '${eventName}' must look like 'company.created'`,
+        ...getDatabaseEventTriggerSettingsErrors({
+          settings: trigger.settings,
+          subject: `Agent '${config.name}' trigger`,
+          eventNamePattern: AGENT_TRIGGER_EVENT_NAME_PATTERN,
+          requiresObject: true,
+        }),
       );
     }
 

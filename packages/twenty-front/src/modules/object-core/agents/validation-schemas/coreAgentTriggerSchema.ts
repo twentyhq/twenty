@@ -32,11 +32,14 @@ export const coreAgentTriggerSchema = z.discriminatedUnion('type', [
       .object({
         eventName: z.string().regex(AGENT_TRIGGER_EVENT_NAME_PATTERN),
         updatedFields: z.array(z.string().min(1)).optional(),
+        condition: z.string().optional(),
         batchMode: z.boolean().optional(),
       })
       .refine(
         ({ eventName, updatedFields }) =>
-          updatedFields === undefined || eventName.endsWith('.updated'),
+          updatedFields === undefined ||
+          eventName.endsWith('.updated') ||
+          eventName.endsWith('.upserted'),
       ),
   }),
   z.object({

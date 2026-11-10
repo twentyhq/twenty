@@ -52,6 +52,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildDatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/utils/build-database-event-trigger-manifest-resolver.util';
+import { resolveDatabaseEventTriggerManifestSettingsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -73,11 +75,14 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
+    existingAllFlatEntityMaps,
     now,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
+    // Triggers can listen on any object of the workspace, not only the app's own
+    existingAllFlatEntityMaps: AllFlatEntityMaps;
     now: string;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
@@ -230,11 +235,29 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       ),
     );
 
+    const databaseEventTriggerManifestResolver =
+      buildDatabaseEventTriggerManifestResolver({
+        manifestFlatEntityMaps: allUniversalFlatEntityMaps,
+        existingFlatEntityMaps: existingAllFlatEntityMaps,
+      });
+
     for (const logicFunctionManifest of manifest.logicFunctions) {
+      const { databaseEventTriggerSettings } = logicFunctionManifest;
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromLogicFunctionManifestToUniversalFlatLogicFunction({
-            logicFunctionManifest,
+            logicFunctionManifest: isDefined(databaseEventTriggerSettings)
+              ? {
+                  ...logicFunctionManifest,
+                  databaseEventTriggerSettings:
+                    resolveDatabaseEventTriggerManifestSettingsOrThrow({
+                      settings: databaseEventTriggerSettings,
+                      resolver: databaseEventTriggerManifestResolver,
+                      subject: `Logic function ${logicFunctionManifest.name ?? logicFunctionManifest.universalIdentifier}`,
+                    }),
+                }
+              : logicFunctionManifest,
             applicationUniversalIdentifier,
             applicationSourceType,
             existingFlatLogicFunctionMaps:
@@ -485,7 +508,22 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const agentManifest of manifest.agents ?? []) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: fromAgentManifestToUniversalFlatAgent({
-          agentManifest,
+          agentManifest: {
+            ...agentManifest,
+            triggers: agentManifest.triggers?.map((trigger) =>
+              trigger.type === 'DATABASE_EVENT'
+                ? {
+                    ...trigger,
+                    settings:
+                      resolveDatabaseEventTriggerManifestSettingsOrThrow({
+                        settings: trigger.settings,
+                        resolver: databaseEventTriggerManifestResolver,
+                        subject: `Agent ${agentManifest.name}`,
+                      }),
+                  }
+                : trigger,
+            ),
+          },
           applicationUniversalIdentifier,
           now,
         }),

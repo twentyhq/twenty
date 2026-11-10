@@ -50,7 +50,37 @@ describe('defineLogicFunction', () => {
 
     const result = defineLogicFunction(config as any);
 
-    expect(result.config.databaseEventTriggerSettings?.eventName).toBeDefined();
+    expect(result.config.databaseEventTriggerSettings).toEqual({
+      eventName: 'contact.created',
+    });
+  });
+
+  it('should accept databaseEventTriggerSettings on every object', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Any Record Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: { action: 'created' },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should error when a condition has no object to read', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Any Record Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: {
+        action: 'created',
+        condition: 'isDefined(name)',
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Database event trigger needs an objectUniversalIdentifier to watch fields or check a condition',
+    );
   });
 
   it('should accept databaseEventTriggerSettings with batchMode enabled', () => {
@@ -201,7 +231,7 @@ describe('defineLogicFunction', () => {
     expect(result.errors).toContain('Cron trigger must have a pattern');
   });
 
-  it('should return error when databaseEvent trigger is missing eventName', () => {
+  it('should return error when databaseEvent trigger has neither action nor eventName', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
@@ -213,7 +243,7 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Database event trigger must have an eventName',
+      'Database event trigger must have an action or an eventName',
     );
   });
 

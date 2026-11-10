@@ -1,3 +1,4 @@
+import { type DatabaseEventTriggerManifestSettings } from '@/application/databaseEventTriggerManifestSettingsType';
 import { type ServerRouteTriggerSettings } from '@/application/serverRouteTriggerSettingsType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type ToolTriggerSettings } from '@/application/toolTriggerSettingsType';
@@ -9,7 +10,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   description?: string;
   timeoutSeconds?: number;
   cronTriggerSettings?: CronTriggerSettings;
-  databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
+  databaseEventTriggerSettings?: DatabaseEventTriggerManifestSettings;
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
   serverRouteTriggerSettings?: ServerRouteTriggerSettings;
   toolTriggerSettings?: ToolTriggerSettings;

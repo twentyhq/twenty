@@ -1,3 +1,4 @@
+import { type DatabaseEventTriggerManifestSettings } from '@/application/databaseEventTriggerManifestSettingsType';
 import {
   type CronTriggerSettings,
   type DatabaseEventTriggerSettings,
@@ -34,7 +35,7 @@ type AgentTriggerManifestBase = {
 export type AgentTriggerManifest =
   | (AgentTriggerManifestBase & {
       type: 'DATABASE_EVENT';
-      settings: DatabaseEventTriggerSettings;
+      settings: DatabaseEventTriggerManifestSettings;
     })
   | (AgentTriggerManifestBase & {
       type: 'CRON';

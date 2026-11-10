@@ -185,7 +185,49 @@ describe('defineAgent', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      `Agent 'sales-assistant' trigger event name 'undefined' must look like 'company.created'`,
+      `Agent 'sales-assistant' trigger must have settings`,
+    );
+  });
+
+  it('should accept a trigger on an object, its fields and a condition', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      triggers: [
+        {
+          universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+          type: 'DATABASE_EVENT',
+          settings: {
+            objectUniversalIdentifier: 'b7e6c2a1-3f4d-4e5a-9b8c-7d6e5f4a3b2c',
+            action: 'updated',
+            fieldUniversalIdentifiers: ['e3d2c1b0-9a8f-4e7d-8c6b-5a4f3e2d1c0b'],
+            condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+          },
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should error when an object trigger has no object or a wildcard action', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      triggers: [
+        {
+          universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+          type: 'DATABASE_EVENT',
+          settings: { action: '*', condition: 'employees > 10' },
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        `Agent 'sales-assistant' trigger action '*' must be one of: created, updated, deleted, destroyed, restored, upserted`,
+        `Agent 'sales-assistant' trigger needs an objectUniversalIdentifier to watch fields or check a condition`,
+      ]),
     );
   });
 
