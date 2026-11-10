@@ -1,11 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
-import {
-  createCoreWorkflow,
-  deleteCoreWorkflows,
-  updateCoreWorkflowVersionTrigger,
-} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import { deleteCoreWorkflows } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { createManualCoreWorkflowDraft } from 'test/integration/graphql/suites/workflow/utils/create-manual-core-workflow-draft.util';
 import { runCoreWorkflowVersion } from 'test/integration/graphql/suites/workflow/utils/run-core-workflow-version.util';
 import { destroyWorkflowRun } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
@@ -22,10 +18,6 @@ const CORE_WORKFLOWS_WITH_RUN_SUMMARIES_QUERY = `
       edges {
         node {
           id
-          trigger {
-            type
-            databaseEventName
-          }
         }
       }
       runSummaries {
@@ -45,7 +37,6 @@ type CoreWorkflowsWithRunSummaries = {
   edges: {
     node: {
       id: string;
-      trigger: { type: string; databaseEventName: string | null } | null;
     };
   }[];
   runSummaries: {
@@ -80,7 +71,6 @@ const listCoreWorkflowsWithRunSummaries =
 describe('coreWorkflows run summaries (e2e)', () => {
   let manualCoreWorkflowId: string;
   let manualCoreWorkflowVersionId: string;
-  let databaseEventCoreWorkflowId: string;
   let workflowRunId: string | undefined;
 
   beforeAll(async () => {
@@ -90,23 +80,6 @@ describe('coreWorkflows run summaries (e2e)', () => {
     } = await createManualCoreWorkflowDraft({
       name: `${NAME_PREFIX} manual`,
     }));
-
-    const databaseEventCoreWorkflow = await createCoreWorkflow({
-      name: `${NAME_PREFIX} database event`,
-    });
-
-    databaseEventCoreWorkflowId = databaseEventCoreWorkflow.coreWorkflowId;
-
-    await updateCoreWorkflowVersionTrigger({
-      coreWorkflowVersionId: databaseEventCoreWorkflow.coreWorkflowVersionId,
-      trigger: {
-        name: 'Record is created',
-        type: 'DATABASE_EVENT',
-        settings: { eventName: 'company.created', outputSchema: {} },
-        nextStepIds: [],
-        position: { x: 0, y: 0 },
-      },
-    });
   });
 
   afterAll(async () => {
@@ -115,24 +88,7 @@ describe('coreWorkflows run summaries (e2e)', () => {
     }
 
     await deleteCoreWorkflows({
-      coreWorkflowIds: [manualCoreWorkflowId, databaseEventCoreWorkflowId],
-    });
-  });
-
-  it('should summarize the trigger of each workflow', async () => {
-    const { edges } = await listCoreWorkflowsWithRunSummaries();
-
-    const triggerByCoreWorkflowId = new Map(
-      edges.map(({ node }) => [node.id, node.trigger]),
-    );
-
-    expect(triggerByCoreWorkflowId.get(manualCoreWorkflowId)).toEqual({
-      type: 'MANUAL',
-      databaseEventName: null,
-    });
-    expect(triggerByCoreWorkflowId.get(databaseEventCoreWorkflowId)).toEqual({
-      type: 'DATABASE_EVENT',
-      databaseEventName: 'company.created',
+      coreWorkflowIds: [manualCoreWorkflowId],
     });
   });
 

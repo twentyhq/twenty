@@ -25,10 +25,6 @@ export const GET_CORE_WORKFLOWS = gql`
           visibility
           canChangeVisibility
           updatedAt
-          trigger {
-            type
-            databaseEventName
-          }
         }
         cursor
       }

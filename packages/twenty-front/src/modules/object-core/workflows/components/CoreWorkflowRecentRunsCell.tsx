@@ -20,10 +20,10 @@ const StyledStrip = styled.div`
 
 const StyledRunBar = styled.span<{ barColor: string }>`
   background: ${({ barColor }) => barColor};
-  border-radius: ${themeCssVariables.border.radius.xs};
+  border-radius: ${themeCssVariables.border.radius.pill};
   display: block;
-  height: ${themeCssVariables.spacing[4]};
-  width: ${themeCssVariables.spacing['1.5']};
+  height: ${themeCssVariables.spacing[3]};
+  width: 3px;
 `;
 
 type CoreWorkflowRecentRunsCellProps = {
