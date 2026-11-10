@@ -18,7 +18,6 @@ const CORE_WORKFLOW_RUN_INSIGHTS_QUERY = `
       failedRunCount
       isRunCountLowerBound
       averageDurationInMs
-      lastFailedRunAt
       dailyRunCounts {
         day
         completedRunCount
@@ -80,7 +79,6 @@ describe('coreWorkflowRunInsights (e2e)', () => {
       failedRunCount: 0,
       isRunCountLowerBound: false,
       averageDurationInMs: null,
-      lastFailedRunAt: null,
       recentFailedRuns: [],
     });
     expect(insights.dailyRunCounts).toHaveLength(14);

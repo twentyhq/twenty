@@ -3,7 +3,6 @@ import { useLingui } from '@lingui/react/macro';
 import { format, parseISO } from 'date-fns';
 
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { StandaloneGraphWidgetProvider } from '@/page-layout/widgets/graph/components/StandaloneGraphWidgetProvider';
 import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/GraphWidgetBarChart';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type GetCoreWorkflowRunInsightsQuery } from '~/generated/graphql';
@@ -39,24 +38,22 @@ export const CoreWorkflowRunsPerDayChart = ({
   }));
 
   return (
-    <StandaloneGraphWidgetProvider instanceId={chartInstanceId}>
-      <StyledChart>
-        <GraphWidgetBarChart
-          id={chartInstanceId}
-          data={data}
-          indexBy="day"
-          keys={['completed', 'failed', 'other']}
-          series={[
-            { key: 'completed', label: t`Completed`, color: 'green' },
-            { key: 'failed', label: t`Failed`, color: 'red' },
-            { key: 'other', label: t`Other`, color: 'gray' },
-          ]}
-          colorMode="automaticPalette"
-          groupMode="stacked"
-          showGrid
-          showLegend
-        />
-      </StyledChart>
-    </StandaloneGraphWidgetProvider>
+    <StyledChart>
+      <GraphWidgetBarChart
+        id={chartInstanceId}
+        data={data}
+        indexBy="day"
+        keys={['completed', 'failed', 'other']}
+        series={[
+          { key: 'completed', label: t`Completed`, color: 'green' },
+          { key: 'failed', label: t`Failed`, color: 'red' },
+          { key: 'other', label: t`Other`, color: 'gray' },
+        ]}
+        colorMode="automaticPalette"
+        groupMode="stacked"
+        showGrid
+        showLegend
+      />
+    </StyledChart>
   );
 };

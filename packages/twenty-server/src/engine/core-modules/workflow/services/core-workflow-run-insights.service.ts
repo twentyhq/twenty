@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_WORKFLOW_RUN_COUNT_WINDOW_IN_DAYS } from 'src/engine/core-modules/workflow/constants/core-workflow-run-count-window-in-days.constant';
 import { type CoreWorkflowRunInsightsDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-insights.dto';
+import { buildCoreWorkflowRunCountWindowPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-run-count-window-predicate.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -23,7 +24,6 @@ type TotalsRow = {
   runCount: string | number;
   failedRunCount: string | number;
   averageDurationInMs: string | number | null;
-  lastFailedRunAt: Date | string | null;
 };
 
 type DailyRunCountRow = {
@@ -94,9 +94,11 @@ export class CoreWorkflowRunInsightsService {
           coreWorkflowId,
         });
 
-    // Calendar days in the reader's time zone, so the totals add up to the daily bars
+    // Totals share the index column's rolling window; the bars need local calendar days
+    const runCountWindow = buildCoreWorkflowRunCountWindowPredicate(
+      column('createdAt'),
+    );
     const windowFirstLocalDay = `DATE_TRUNC('day', NOW() AT TIME ZONE :timeZone) - MAKE_INTERVAL(days => :lastDayOffset)`;
-    const windowStartPredicate = `${column('createdAt')} >= (${windowFirstLocalDay}) AT TIME ZONE :timeZone`;
 
     const totalsQueryBuilder = buildWorkflowRunsQueryBuilder()
       .addSelect('COUNT(*)', 'runCount')
@@ -108,17 +110,15 @@ export class CoreWorkflowRunInsightsService {
         `AVG(EXTRACT(EPOCH FROM (${column('endedAt')} - ${column('startedAt')})) * 1000) FILTER (WHERE ${column('status')} = :completedStatus)`,
         'averageDurationInMs',
       )
-      .addSelect(
-        `MAX(${column('createdAt')}) FILTER (WHERE ${column('status')} = :failedStatus)`,
-        'lastFailedRunAt',
-      )
-      .andWhere(windowStartPredicate);
+      .andWhere(runCountWindow.predicate, runCountWindow.parameters);
 
     const dailyRunsQueryBuilder = buildWorkflowRunsQueryBuilder()
       .addSelect(column('id'), 'id')
       .addSelect(column('status'), 'status')
       .addSelect(column('createdAt'), 'createdAt')
-      .andWhere(windowStartPredicate);
+      .andWhere(
+        `${column('createdAt')} >= (${windowFirstLocalDay}) AT TIME ZONE :timeZone`,
+      );
 
     const failedRunsQueryBuilder = buildWorkflowRunsQueryBuilder()
       .addSelect(column('id'), 'id')
@@ -186,9 +186,6 @@ export class CoreWorkflowRunInsightsService {
       isRunCountLowerBound: runCount >= NUMBER_OF_WORKFLOW_RUNS_TO_KEEP,
       averageDurationInMs: isDefined(totals?.averageDurationInMs)
         ? Number(totals.averageDurationInMs)
-        : null,
-      lastFailedRunAt: isDefined(totals?.lastFailedRunAt)
-        ? toIsoString(totals.lastFailedRunAt)
         : null,
       dailyRunCounts: dailyRunCounts.map((dailyRunCount) => ({
         day: dailyRunCount.day,

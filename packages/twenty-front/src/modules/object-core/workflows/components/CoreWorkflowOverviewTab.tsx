@@ -4,16 +4,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { CoreWorkflowOverviewCard } from '@/object-core/workflows/components/CoreWorkflowOverviewCard';
-import { CoreWorkflowOverviewStatCard } from '@/object-core/workflows/components/CoreWorkflowOverviewStatCard';
+import { CoreWorkflowOverviewWidget } from '@/object-core/workflows/components/CoreWorkflowOverviewWidget';
 import { CoreWorkflowRecentFailedRuns } from '@/object-core/workflows/components/CoreWorkflowRecentFailedRuns';
 import { CoreWorkflowRunsPerDayChart } from '@/object-core/workflows/components/CoreWorkflowRunsPerDayChart';
 import { useCoreWorkflowRunInsights } from '@/object-core/workflows/hooks/useCoreWorkflowRunInsights';
+import { StandaloneWidgetProvider } from '@/page-layout/widgets/components/StandaloneWidgetProvider';
+import { GraphWidgetAggregateChart } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/components/GraphWidgetAggregateChart';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { formatDuration } from '~/utils/format/formatDuration';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledOverview = styled.div`
   box-sizing: border-box;
@@ -75,73 +75,74 @@ export const CoreWorkflowOverviewTab = ({
     failedRunCount,
     isRunCountLowerBound,
     averageDurationInMs,
-    lastFailedRunAt,
     dailyRunCounts,
     recentFailedRuns,
   } = insights;
 
-  const lowerBoundSuffix = isRunCountLowerBound ? '+' : '';
-  const averageRunsPerDay = runCount / dailyRunCounts.length;
-  // Low-volume workflows average under one run a day, which would round to 0
-  const runsPerDay = formatNumber(averageRunsPerDay, {
-    decimals: averageRunsPerDay < 10 ? 1 : 0,
-  });
-  const formattedRunCount = formatNumber(runCount);
-  const formattedFailedRunCount = formatNumber(failedRunCount);
-  const lastFailedRelativeDate = isDefined(lastFailedRunAt)
-    ? beautifyPastDateRelativeToNow(lastFailedRunAt)
-    : null;
-
   return (
-    <StyledOverview>
-      <StyledStatGrid>
-        <CoreWorkflowOverviewStatCard
-          label={t`Runs · 14d`}
-          value={`${formattedRunCount}${lowerBoundSuffix}`}
-          caption={t`${runsPerDay} per day`}
-        />
-        <CoreWorkflowOverviewStatCard
-          label={t`Failed · 14d`}
-          value={formattedFailedRunCount}
-          caption={
-            isDefined(lastFailedRelativeDate)
-              ? t`Last failed ${lastFailedRelativeDate}`
-              : t`No failures`
-          }
-        />
-        <CoreWorkflowOverviewStatCard
-          label={t`Failure rate`}
-          value={
-            runCount > 0
-              ? `${formatNumber((failedRunCount / runCount) * 100, { decimals: 1 })}%`
-              : '-'
-          }
-          caption={t`${formattedFailedRunCount} of ${formattedRunCount} runs`}
-        />
-        <CoreWorkflowOverviewStatCard
-          label={t`Avg duration`}
-          value={
-            isDefined(averageDurationInMs)
-              ? formatDuration(Math.round(averageDurationInMs))
-              : '-'
-          }
-          caption={t`Completed runs`}
-        />
-      </StyledStatGrid>
-      <StyledPanelGrid>
-        <CoreWorkflowOverviewCard
-          title={t`Runs per day`}
-          caption={t`By status`}
-        >
-          <CoreWorkflowRunsPerDayChart
-            coreWorkflowId={coreWorkflowId}
-            dailyRunCounts={dailyRunCounts}
-          />
-        </CoreWorkflowOverviewCard>
-        <CoreWorkflowOverviewCard title={t`Recent failed runs`}>
-          <CoreWorkflowRecentFailedRuns failedRuns={recentFailedRuns} />
-        </CoreWorkflowOverviewCard>
-      </StyledPanelGrid>
-    </StyledOverview>
+    <StandaloneWidgetProvider
+      instanceId={`core-workflow-overview-${coreWorkflowId}`}
+    >
+      <StyledOverview>
+        <StyledStatGrid>
+          <CoreWorkflowOverviewWidget widgetId="runs" title={t`Runs · 14d`}>
+            <GraphWidgetAggregateChart
+              value={formatNumber(runCount)}
+              suffix={isRunCountLowerBound ? '+' : undefined}
+            />
+          </CoreWorkflowOverviewWidget>
+          <CoreWorkflowOverviewWidget
+            widgetId="failed-runs"
+            title={t`Failed · 14d`}
+          >
+            <GraphWidgetAggregateChart value={formatNumber(failedRunCount)} />
+          </CoreWorkflowOverviewWidget>
+          <CoreWorkflowOverviewWidget
+            widgetId="failure-rate"
+            title={t`Failure rate`}
+          >
+            <GraphWidgetAggregateChart
+              value={
+                runCount > 0
+                  ? formatNumber((failedRunCount / runCount) * 100, {
+                      decimals: 1,
+                    })
+                  : '-'
+              }
+              suffix={runCount > 0 ? '%' : undefined}
+            />
+          </CoreWorkflowOverviewWidget>
+          <CoreWorkflowOverviewWidget
+            widgetId="average-duration"
+            title={t`Avg duration`}
+          >
+            <GraphWidgetAggregateChart
+              value={
+                isDefined(averageDurationInMs)
+                  ? formatDuration(Math.round(averageDurationInMs))
+                  : '-'
+              }
+            />
+          </CoreWorkflowOverviewWidget>
+        </StyledStatGrid>
+        <StyledPanelGrid>
+          <CoreWorkflowOverviewWidget
+            widgetId="runs-per-day"
+            title={t`Runs per day`}
+          >
+            <CoreWorkflowRunsPerDayChart
+              coreWorkflowId={coreWorkflowId}
+              dailyRunCounts={dailyRunCounts}
+            />
+          </CoreWorkflowOverviewWidget>
+          <CoreWorkflowOverviewWidget
+            widgetId="recent-failed-runs"
+            title={t`Recent failed runs`}
+          >
+            <CoreWorkflowRecentFailedRuns failedRuns={recentFailedRuns} />
+          </CoreWorkflowOverviewWidget>
+        </StyledPanelGrid>
+      </StyledOverview>
+    </StandaloneWidgetProvider>
   );
 };

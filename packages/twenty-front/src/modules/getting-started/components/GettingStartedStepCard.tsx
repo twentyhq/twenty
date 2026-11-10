@@ -4,14 +4,19 @@ import { GettingStartedStepDoneButton } from '@/getting-started/components/Getti
 import { GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneActions';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneDescriptions';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
+import { Button } from 'twenty-ui/primitives/input';
 import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';
 
-import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
+import {
+  type GettingStartedStepActionKey,
+  type GettingStartedStepDefinition,
+} from '~/generated-metadata/graphql';
 
 const StyledCard = styled.section<{ isCompleted: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -47,8 +52,7 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
         : themeCssVariables.border.color.light};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]}
-    ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[4]};
   transition:
     background calc(${themeCssVariables.animation.duration.normal} * 1s)
       ease-out,
@@ -61,7 +65,6 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
 
   &:last-child {
     border-bottom: 0;
-    padding-bottom: ${themeCssVariables.spacing[4]};
   }
 `;
 
@@ -94,20 +97,25 @@ const StyledDoneIcon = styled.span`
   }
 `;
 
-const StyledHeadingContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
-
 const StyledTitle = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+`;
+
+const StyledTitleRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+`;
+
+const StyledHeadingActions = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledDescription = styled.span`
@@ -124,13 +132,20 @@ type GettingStartedStepCardProps = {
   stepDefinition: GettingStartedStepDefinition;
   isCompleted: boolean;
   isJustCompleted: boolean;
+  nextStepActionKey: GettingStartedStepActionKey | undefined;
+  isSelectingStep: boolean;
+  onSelectStep: (stepActionKey: GettingStartedStepActionKey) => void;
 };
 
 export const GettingStartedStepCard = ({
   stepDefinition,
   isCompleted,
   isJustCompleted,
+  nextStepActionKey,
+  isSelectingStep,
+  onSelectStep,
 }: GettingStartedStepCardProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -165,8 +180,8 @@ export const GettingStartedStepCard = ({
             }
           />
         )}
-        <StyledHeadingContent>
-          <StyledTitle>
+        <StyledTitle>
+          <StyledTitleRow>
             <Heading size="lg">
               <GettingStartedRollingText
                 text={
@@ -174,18 +189,29 @@ export const GettingStartedStepCard = ({
                 }
               />
             </Heading>
-            <StyledDescription>
-              {isDefined(DoneDescription) ? (
-                <DoneDescription description={description} />
-              ) : (
-                description
+            <StyledHeadingActions>
+              {isCompleted && (
+                <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
               )}
-            </StyledDescription>
-          </StyledTitle>
-          {isCompleted && (
-            <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
-          )}
-        </StyledHeadingContent>
+              {isDefined(nextStepActionKey) && (
+                <Button
+                  size="sm"
+                  disabled={isSelectingStep}
+                  onClick={() => onSelectStep(nextStepActionKey)}
+                >
+                  {t`Next`}
+                </Button>
+              )}
+            </StyledHeadingActions>
+          </StyledTitleRow>
+          <StyledDescription>
+            {isDefined(DoneDescription) ? (
+              <DoneDescription description={description} />
+            ) : (
+              description
+            )}
+          </StyledDescription>
+        </StyledTitle>
       </StyledHeading>
       {!isCompleted && (
         <StyledBody>
