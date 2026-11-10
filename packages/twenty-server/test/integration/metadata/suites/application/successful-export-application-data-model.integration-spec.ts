@@ -2064,7 +2064,6 @@ describe('Application export - workflows built in the workflow builder', () => {
       trigger: {
         name: 'Launch manually',
         type: 'MANUAL',
-        position: { x: 0, y: 0 },
         settings: {
           availability: { type: 'GLOBAL' },
           outputSchema: {},
