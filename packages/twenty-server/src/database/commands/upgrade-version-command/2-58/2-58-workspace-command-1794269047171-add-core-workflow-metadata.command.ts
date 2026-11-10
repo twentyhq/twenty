@@ -8,6 +8,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import {
   CREATE_CORE_WORKFLOW_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+  LEGACY_WORKFLOW_RUN_WORKFLOW_FIELD_UNIVERSAL_IDENTIFIER,
   WORKFLOW_RUN_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER,
   WORKFLOW_VERSION_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
 } from 'src/database/commands/upgrade-version-command/2-58/constants/core-workflow-metadata-universal-identifiers.constant';
@@ -101,6 +102,29 @@ export class AddCoreWorkflowMetadataCommand extends ProvisionedWorkspaceCommandR
         })
       : [];
 
+    // The legacy relation column would otherwise sit next to the new one with the same label.
+    const viewFieldsToUpdate = Object.values(
+      flatViewFieldMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .flatMap((viewField) => {
+        const standardViewField =
+          standardAllFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
+            viewField.universalIdentifier
+          ];
+
+        if (
+          viewField.fieldMetadataUniversalIdentifier !==
+            LEGACY_WORKFLOW_RUN_WORKFLOW_FIELD_UNIVERSAL_IDENTIFIER ||
+          !isDefined(standardViewField) ||
+          viewField.isVisible === standardViewField.isVisible
+        ) {
+          return [];
+        }
+
+        return [{ ...viewField, isVisible: standardViewField.isVisible }];
+      });
+
     const commandMenuItemsToUpdate =
       WORKFLOW_VERSION_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.flatMap(
         (universalIdentifier) => {
@@ -141,6 +165,7 @@ export class AddCoreWorkflowMetadataCommand extends ProvisionedWorkspaceCommandR
 
     const metadataChangeCount =
       viewFieldsToCreate.length +
+      viewFieldsToUpdate.length +
       commandMenuItemsToCreate.length +
       commandMenuItemsToUpdate.length;
 
@@ -148,7 +173,7 @@ export class AddCoreWorkflowMetadataCommand extends ProvisionedWorkspaceCommandR
       return;
     }
 
-    const plan = `${shouldShowCoreWorkflowIdField ? 1 : 0} field to show, ${viewFieldsToCreate.length} view field(s) and ${commandMenuItemsToCreate.length} command menu item(s) to create, ${commandMenuItemsToUpdate.length} command menu item(s) to update`;
+    const plan = `${shouldShowCoreWorkflowIdField ? 1 : 0} field to show, ${viewFieldsToCreate.length} view field(s) and ${commandMenuItemsToCreate.length} command menu item(s) to create, ${viewFieldsToUpdate.length} legacy view field(s) to hide, ${commandMenuItemsToUpdate.length} command menu item(s) to update`;
 
     if (options.dryRun ?? false) {
       this.logger.log(
@@ -191,7 +216,7 @@ export class AddCoreWorkflowMetadataCommand extends ProvisionedWorkspaceCommandR
               viewField: {
                 flatEntityToCreate: viewFieldsToCreate,
                 flatEntityToDelete: [],
-                flatEntityToUpdate: [],
+                flatEntityToUpdate: viewFieldsToUpdate,
               },
               commandMenuItem: {
                 flatEntityToCreate: commandMenuItemsToCreate,
