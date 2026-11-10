@@ -1,3 +1,4 @@
+import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
@@ -23,14 +24,14 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const ACCESS_GROUP_TABLE = `${SCHEMA}."accessGroup"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
+const PARIS_PERSON_ID = v4();
+const LONDON_PERSON_ID = v4();
+const TEST_PERSON_IDS = [PARIS_PERSON_ID, LONDON_PERSON_ID];
 
 describe('querying many records through access groups (integration)', () => {
   let objectMetadataId: string;
-  let people: { id: string; jobTitle: string }[];
   let originalMemberRoleId: string;
   let roleId: string;
-
-  const parisPersonId = () => people[0].id;
 
   const findPersonIdsAsMember = async (): Promise<string[]> => {
     const response = await makeGraphqlApiRequest(
@@ -38,7 +39,7 @@ describe('querying many records through access groups (integration)', () => {
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
         gqlFields: 'id',
-        filter: { id: { in: people.map(({ id }) => id) } },
+        filter: { id: { in: TEST_PERSON_IDS } },
       }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
@@ -67,17 +68,19 @@ describe('querying many records through access groups (integration)', () => {
       [objectMetadataId],
     );
 
-    people = [
-      { id: v4(), jobTitle: 'Paris office' },
-      { id: v4(), jobTitle: 'London office' },
-    ];
+    const createPeopleResponse = await makeGraphqlApiRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        data: [
+          { id: PARIS_PERSON_ID, jobTitle: 'Paris office' },
+          { id: LONDON_PERSON_ID, jobTitle: 'London office' },
+        ],
+      }),
+    );
 
-    for (const { id, jobTitle } of people) {
-      await global.testDataSource.query(
-        `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle") VALUES ($1, $2)`,
-        [id, jobTitle],
-      );
-    }
+    expect(createPeopleResponse.body.errors).toBeUndefined();
 
     const { data } = await createOneRole({
       expectToFail: false,
@@ -154,7 +157,7 @@ describe('querying many records through access groups (integration)', () => {
 
     await global.testDataSource.query(
       `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
-      [people.map(({ id }) => id)],
+      [TEST_PERSON_IDS],
     );
 
     await global.testDataSource.query(
@@ -164,18 +167,18 @@ describe('querying many records through access groups (integration)', () => {
   });
 
   it('should return the records the rule reaches', async () => {
-    expect(await findPersonIdsAsMember()).toEqual([parisPersonId()]);
+    expect(await findPersonIdsAsMember()).toEqual([PARIS_PERSON_ID]);
   });
 
   it('should read the stored groups rather than the rule', async () => {
     const [{ accessGroupIds }] = await global.testDataSource.query(
       `SELECT "_accessGroupIds" AS "accessGroupIds" FROM ${PERSON_TABLE} WHERE "id" = $1`,
-      [parisPersonId()],
+      [PARIS_PERSON_ID],
     );
 
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = '{}' WHERE "id" = $1`,
-      [parisPersonId()],
+      [PARIS_PERSON_ID],
     );
 
     try {
@@ -183,12 +186,12 @@ describe('querying many records through access groups (integration)', () => {
 
       await setAccessGroupsEnabled(false);
 
-      expect(await findPersonIdsAsMember()).toEqual([parisPersonId()]);
+      expect(await findPersonIdsAsMember()).toEqual([PARIS_PERSON_ID]);
     } finally {
       await setAccessGroupsEnabled(true);
       await global.testDataSource.query(
         `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = $1 WHERE "id" = $2`,
-        [accessGroupIds, parisPersonId()],
+        [accessGroupIds, PARIS_PERSON_ID],
       );
     }
   });
