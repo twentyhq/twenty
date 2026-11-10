@@ -6,6 +6,7 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -505,7 +506,7 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       (roleId, isMatching) => {
         const filter = build([roleId]);
 
-        if (filter === null) {
+        if (!isDefined(filter)) {
           throw new Error(`Expected a filter for role ${roleId}`);
         }
 
