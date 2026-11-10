@@ -10,6 +10,8 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
+import { MAX_RECORDS_DELETED_OR_RESTORED_AT_ONCE } from 'src/engine/twenty-orm/constants/max-records-deleted-or-restored-at-once.constant';
+import { TwentyOrmExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -91,9 +93,11 @@ const ROLE_ID = 'role-id';
 const buildRepository = ({
   shouldBypassPermissionChecks = true,
   shouldSkipEventEmission,
+  selectedRows = [],
 }: {
   shouldBypassPermissionChecks?: boolean;
   shouldSkipEventEmission: boolean;
+  selectedRows?: { id: string }[];
 }) => {
   const executedStatements: CompiledStatement[] = [];
 
@@ -118,6 +122,12 @@ const buildRepository = ({
         buildAccessSQLConditionWithoutRowLevelPermissionsAndInheritanceOrThrow:
           jest.fn().mockResolvedValue(true),
         buildDegradedSQLCondition: jest.fn(),
+        filterGrantedRecordIds: jest
+          .fn()
+          .mockImplementation(
+            async ({ recordIds }: { recordIds: string[] }) =>
+              new Set(recordIds),
+          ),
         assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
         assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
       },
@@ -150,7 +160,7 @@ const buildRepository = ({
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);
 
-        return [];
+        return statement.text.startsWith('SELECT') ? selectedRows : [];
       },
     },
     permissionsPrincipals: {
@@ -246,7 +256,7 @@ describe('WorkspaceRepository mutations', () => {
   });
 
   describe('on a permission-scoped repository that skips events', () => {
-    it('should read the before-image before an update', async () => {
+    it('should check the written ids, then read the before-image, before an update', async () => {
       const { repository, getExecutedStatementKinds } = buildRepository({
         shouldBypassPermissionChecks: false,
         shouldSkipEventEmission: true,
@@ -254,10 +264,14 @@ describe('WorkspaceRepository mutations', () => {
 
       await repository.update({ id: 'delivery-id' }, { state: 'SENT' });
 
-      expect(getExecutedStatementKinds()).toEqual(['SELECT', 'UPDATE']);
+      expect(getExecutedStatementKinds()).toEqual([
+        'SELECT',
+        'SELECT',
+        'UPDATE',
+      ]);
     });
 
-    it('should read the before-image before a delete', async () => {
+    it('should check the written ids, then read the before-image, before a delete', async () => {
       const { repository, getExecutedStatementKinds } = buildRepository({
         shouldBypassPermissionChecks: false,
         shouldSkipEventEmission: true,
@@ -265,7 +279,27 @@ describe('WorkspaceRepository mutations', () => {
 
       await repository.delete({ id: 'delivery-id' });
 
-      expect(getExecutedStatementKinds()).toEqual(['SELECT', 'DELETE']);
+      expect(getExecutedStatementKinds()).toEqual([
+        'SELECT',
+        'SELECT',
+        'DELETE',
+      ]);
+    });
+
+    it('should refuse to delete more records than the deletion cap', async () => {
+      const { repository, getExecutedStatementKinds } = buildRepository({
+        shouldBypassPermissionChecks: false,
+        shouldSkipEventEmission: true,
+        selectedRows: Array.from(
+          { length: MAX_RECORDS_DELETED_OR_RESTORED_AT_ONCE + 1 },
+          (_, index) => ({ id: `delivery-${index}` }),
+        ),
+      });
+
+      await expect(repository.delete({ state: 'SENT' })).rejects.toMatchObject({
+        code: TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE_OR_RESTORE,
+      });
+      expect(getExecutedStatementKinds()).toEqual(['SELECT']);
     });
   });
 });

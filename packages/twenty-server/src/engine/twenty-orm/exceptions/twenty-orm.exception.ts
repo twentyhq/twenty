@@ -29,6 +29,7 @@ export enum TwentyOrmExceptionCode {
   TRANSIENT_DATABASE_ERROR = 'TRANSIENT_DATABASE_ERROR',
   DUPLICATE_ENTRY_DETECTED = 'DUPLICATE_ENTRY_DETECTED',
   TOO_MANY_RECORDS_TO_UPDATE = 'TOO_MANY_RECORDS_TO_UPDATE',
+  TOO_MANY_RECORDS_TO_DELETE_OR_RESTORE = 'TOO_MANY_RECORDS_TO_DELETE_OR_RESTORE',
   INVALID_INPUT = 'INVALID_INPUT',
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
@@ -80,6 +81,8 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
       return DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
       return msg`Too many records to update at once.`;
+    case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE_OR_RESTORE:
+      return msg`Too many records to delete or restore at once.`;
     case TwentyOrmExceptionCode.INVALID_INPUT:
       return INVALID_INPUT_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE:

@@ -385,7 +385,7 @@ export class RecordPermissionsReadService {
     });
   }
 
-  // TODO: remove once writes, joins and RLS on limiting roles no longer render RLS in the query
+  // TODO: remove once joins and RLS on limiting roles no longer render RLS in the query
   async buildDegradedSQLCondition({
     tableAlias,
     ...question
