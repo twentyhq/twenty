@@ -144,9 +144,9 @@ export class AgentChatResolver {
       nullable: true,
     })
     mentionedWorkspaceMemberIds: string[] | null,
-    // The channel a new chat is created in; ignored for an existing chat
+    // First message only: null files the chat in no channel, omitted keeps its channel
     @Args('channelId', { type: () => UUIDScalarType, nullable: true })
-    channelId: string | null,
+    channelId: string | null | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -164,7 +164,7 @@ export class AgentChatResolver {
   ): Promise<SendChatMessageResultDTO> {
     const result = await this.memberMessageSenderService.sendMemberMessage({
       actor: { workspaceId: workspace.id, workspaceMemberId, userWorkspaceId },
-      target: { threadId, channelId: channelId ?? undefined },
+      target: { threadId, channelId },
       message: {
         id: messageId,
         text,
@@ -181,6 +181,15 @@ export class AgentChatResolver {
       },
       execution: { modelId, browsingContext: browsingContext ?? null },
     });
+
+    if (isDefined(result.streamId) && isDefined(result.turnId)) {
+      tagAiChatStreamScope({
+        streamId: result.streamId,
+        turnId: result.turnId,
+        threadId,
+        workspaceId: workspace.id,
+      });
+    }
 
     return {
       messageId: result.messageId,
