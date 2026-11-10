@@ -155,17 +155,22 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
             )),
       );
 
-    // Field widgets keep their field id in their configuration, out of reach of foreign keys.
+    // Field, chart and filter configurations hold field ids under many keys, out of reach of foreign keys.
     const pageLayoutWidgetsToDelete = Object.values(
       flatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (widget) =>
-          isDefined(widget.configuration) &&
-          'fieldMetadataId' in widget.configuration &&
-          deletedFieldIds.has(widget.configuration.fieldMetadataId),
-      );
+      .filter((widget) => {
+        if (!isDefined(widget.configuration)) {
+          return false;
+        }
+
+        const serializedConfiguration = JSON.stringify(widget.configuration);
+
+        return [...deletedFieldIds].some((fieldId) =>
+          serializedConfiguration.includes(fieldId),
+        );
+      });
 
     const hasDeletions =
       objectsToDelete.length +
