@@ -14,6 +14,7 @@ import { type AddAgentChatThreadSubscriptionsCommand } from 'src/database/comman
 import { type AddAgentChatThreadAssigneeCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791385745099-add-agent-chat-thread-assignee.command';
 import { type UnfollowChatsMembersOnlyReadCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791728623417-unfollow-chats-members-only-read.command';
 import { type AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792686629823-add-agent-chat-channels.command';
+import { type BackfillFieldMetadataOptionsCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1794142104606-backfill-field-metadata-options.command';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -437,6 +438,14 @@ describe('versioned agent history upgrade (integration)', () => {
         buildSystemAuthContext(WORKSPACE_ID),
       );
     }
+    await getAppProviderByClassName<BackfillFieldMetadataOptionsCommand>(
+      'BackfillFieldMetadataOptionsCommand',
+    ).runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      index: 0,
+      total: 1,
+      options: {},
+    });
     const runner = dataSource.createQueryRunner();
     try {
       await new DropCoreAgentHistoryTablesFastInstanceCommand().up(runner);
