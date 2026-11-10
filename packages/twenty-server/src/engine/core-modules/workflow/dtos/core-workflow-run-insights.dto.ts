@@ -1,41 +1,8 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-
-@ObjectType('CoreWorkflowDailyRunCount')
-export class CoreWorkflowDailyRunCountDTO {
-  @Field(() => String, {
-    description: 'Day in the requested time zone, as YYYY-MM-DD',
-  })
-  day: string;
-
-  @Field(() => Int)
-  completedRunCount: number;
-
-  @Field(() => Int)
-  failedRunCount: number;
-
-  @Field(() => Int, {
-    description:
-      'Runs neither completed nor failed, such as running or stopped',
-  })
-  otherRunCount: number;
-}
-
-@ObjectType('CoreWorkflowFailedRun')
-export class CoreWorkflowFailedRunDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
-
-  @Field(() => String, { nullable: true })
-  name: string | null;
-
-  @Field(() => String)
-  createdAt: string;
-
-  @Field(() => String, { nullable: true })
-  errorMessage: string | null;
-}
+import { CoreWorkflowDailyRunCountDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-daily-run-count.dto';
+import { CoreWorkflowFailedRunDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-failed-run.dto';
 
 @ObjectType('CoreWorkflowRunInsights')
 export class CoreWorkflowRunInsightsDTO {
