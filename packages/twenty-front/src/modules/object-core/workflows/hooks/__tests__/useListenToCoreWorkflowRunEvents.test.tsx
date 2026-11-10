@@ -1,8 +1,14 @@
 import { act, renderHook } from '@testing-library/react';
 
+import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { useListenToCoreWorkflowRunEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowRunEvents';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const browserEventHandlers: ((detail: unknown) => void)[] = [];
+type BrowserEventHandler = (
+  detail: ObjectRecordOperationBrowserEventDetail,
+) => void;
+
+const browserEventHandlers: BrowserEventHandler[] = [];
 
 jest.mock(
   '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent',
@@ -10,7 +16,7 @@ jest.mock(
     useListenToObjectRecordOperationBrowserEvent: ({
       onObjectRecordOperationBrowserEvent,
     }: {
-      onObjectRecordOperationBrowserEvent: (detail: unknown) => void;
+      onObjectRecordOperationBrowserEvent: BrowserEventHandler;
     }) => {
       browserEventHandlers.push(onObjectRecordOperationBrowserEvent);
     },
@@ -49,10 +55,14 @@ describe('useListenToCoreWorkflowRunEvents', () => {
     );
 
     const handleBrowserEvent = browserEventHandlers.at(-1);
+    const runDeletedEvent: ObjectRecordOperationBrowserEventDetail = {
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('workflowRun'),
+      operation: { type: 'delete-one', deletedRecordId: 'workflow-run-id' },
+    };
 
     act(() => {
-      handleBrowserEvent?.({ operation: { type: 'update-one' } });
-      handleBrowserEvent?.({ operation: { type: 'update-one' } });
+      handleBrowserEvent?.(runDeletedEvent);
+      handleBrowserEvent?.(runDeletedEvent);
       jest.runAllTimers();
     });
 
