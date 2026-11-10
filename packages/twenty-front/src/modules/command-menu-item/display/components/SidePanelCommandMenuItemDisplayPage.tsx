@@ -66,6 +66,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const {
     coreObjectCommandIds,
+    coreObjectSectionContext,
     coreSelectionCommandIds,
     coreSelectionSectionContext,
   } = useCoreObjectsCommands();
@@ -73,7 +74,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const selectionSectionContext = useCommandMenuItemSelectionSectionContext();
   const currentViewSectionContext =
     useCommandMenuItemCurrentViewSectionContext();
-  const objectSectionContext = useCommandMenuItemObjectSectionContext();
+  const metadataObjectSectionContext = useCommandMenuItemObjectSectionContext();
+  const objectSectionContext =
+    coreObjectSectionContext ?? metadataObjectSectionContext;
   const workspaceSectionContext = useCommandMenuItemWorkspaceSectionContext();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
