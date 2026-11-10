@@ -66,6 +66,8 @@ Puntos clave:
 * `prompt` es el mensaje del sistema que define el comportamiento del agente.
 * `description` (opcional) proporciona contexto sobre lo que hace el agente.
 * `icon` (opcional) establece el icono mostrado en la interfaz de usuario.
+* `avatarColor` (opcional) establece el color del avatar del agente: `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple` o `gray`. Omítelo para obtener un color seleccionado a partir del ID del agente.
+* `avatarShape` (opcional) establece la forma del avatar del agente: `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem` o `hexagon`. El valor predeterminado es `circle`.
 * `modelId` (opcional) reemplaza el modelo de IA predeterminado usado por el agente.
 * `responseFormat` (opcional) establece la estructura de salida predeterminada del agente. De forma predeterminada es `{ type: 'text' }` para texto de formato libre. Usa `{ type: 'json', schema }` para forzar una salida JSON estructurada. Una llamada a `runAgent()` o un paso de IA de un flujo de trabajo puede solicitar una estructura diferente, que tiene prioridad.
 * `roleUniversalIdentifier` (opcional) vincula el agente a un rol que define tu aplicación. Ese rol no debe otorgar más que el rol de la aplicación, o la compilación falla; consulta [Roles de agente](/es/developers/extend/apps/config/roles#agent-roles).

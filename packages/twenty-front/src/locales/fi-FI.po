@@ -762,7 +762,7 @@ msgstr "{deletedCount, plural, one {Onnistuneesti poistettu {deletedCount} työ}
 #. js-lingui-id: ANUXpJ
 #: src/modules/object-core/agents/hooks/useGetCoreAgentTriggerDescription.ts
 msgid "{details} · Paused"
-msgstr ""
+msgstr "{details} · Keskeytetty"
 
 #. js-lingui-id: miXj9r
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
@@ -1059,6 +1059,11 @@ msgstr "{queuedMessage}, ohitetaan {skipReasons}"
 #. js-lingui-id: SmbuF4
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
+msgstr "{readOnlyFieldCount, plural, one {# kenttää ei voi muokata} other {# kenttää ei voi muokata}}"
+
+#. js-lingui-id: ociapy
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
 msgstr ""
 
 #. js-lingui-id: N7gP92
@@ -1285,7 +1290,7 @@ msgstr "{unlistedCount, plural, one {Yksikään luettelossa oleva sovellus ei va
 #. js-lingui-id: rU6wAU
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{unreadableFieldCount, plural, one {Can't see # field} other {Can't see # fields}}"
-msgstr ""
+msgstr "{unreadableFieldCount, plural, one {# kenttää ei voi nähdä} other {# kenttää ei voi nähdä}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -2656,7 +2661,7 @@ msgstr "Lisää aihe"
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Add trigger"
-msgstr ""
+msgstr "Lisää laukaisin"
 
 #. js-lingui-id: 4D/zWv
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -2963,12 +2968,12 @@ msgstr "Agentin määritys"
 #. js-lingui-id: tIhTfo
 #: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
 msgid "Agent name cannot be empty"
-msgstr ""
+msgstr "Agentin nimi ei saa olla tyhjä"
 
 #. js-lingui-id: VY/7j2
 #: src/modules/object-core/agents/hooks/useRenameCoreAgent.ts
 msgid "Agent name must contain letters or numbers"
-msgstr ""
+msgstr "Agentin nimessä on oltava kirjaimia tai numeroita"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -3432,7 +3437,7 @@ msgstr "kaikki tietueet"
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "All records"
-msgstr ""
+msgstr "Kaikki tietueet"
 
 #. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -4814,7 +4819,7 @@ msgstr "Automaatio ja tekoäly"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 msgid "Automations"
-msgstr ""
+msgstr "Automaatiot"
 
 #. js-lingui-id: j4VsTZ
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -4939,6 +4944,16 @@ msgstr "Taustavärit"
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
 msgid "Backspace"
 msgstr "Askelpalautin"
+
+#. js-lingui-id: M2cci0
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Backup codes"
+msgstr ""
+
+#. js-lingui-id: 6kNBNT
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Backup codes copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -5655,7 +5670,7 @@ msgstr "Et voi skannata? Kopioi"
 #. js-lingui-id: ztvhPH
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Can't see"
-msgstr ""
+msgstr "Ei voi nähdä"
 
 #. js-lingui-id: RtHGDr
 #: src/modules/ai/constants/DataResidencyConfig.ts
@@ -5712,7 +5727,7 @@ msgstr "Peruuta krediittipaketin vaihto?"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
 msgid "Cancel Edition"
-msgstr ""
+msgstr "Peruuta muokkaus"
 
 #. js-lingui-id: D14fs0
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -5944,7 +5959,7 @@ msgstr "Vaihda vastuuhenkilöä"
 #. js-lingui-id: VyTYmS
 #: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 msgid "Change avatar"
-msgstr ""
+msgstr "Vaihda avatar"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7731,6 +7746,7 @@ msgstr "Kopioi Cloudflare-asetuskehotteen AI-koodaustyökalullesi"
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Copy"
@@ -8283,7 +8299,7 @@ msgstr "Luo työtila"
 #: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Create Agent"
-msgstr ""
+msgstr "Luo agentti"
 
 #. js-lingui-id: bFIJZx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -9172,7 +9188,7 @@ msgstr "Data"
 #. js-lingui-id: PDNS5Z
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Data access"
-msgstr ""
+msgstr "Tietojen käyttöoikeus"
 
 #. js-lingui-id: nxnCld
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -9634,7 +9650,7 @@ msgstr "Poistetaanko {fieldLabel}-kenttä?"
 #. js-lingui-id: 2zz1P3
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete {numberOfCoreAgents} agents?"
-msgstr ""
+msgstr "Poistetaanko {numberOfCoreAgents} agenttia?"
 
 #. js-lingui-id: DKQlby
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -9704,7 +9720,7 @@ msgstr "Poistetaanko tili ja synkronoidut tiedot?"
 #. js-lingui-id: 3F2bUD
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agent"
-msgstr ""
+msgstr "Poista agentti"
 
 #. js-lingui-id: YMNj8z
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
@@ -9717,22 +9733,22 @@ msgstr "Poista agentti"
 #. js-lingui-id: 7j7Dud
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agent?"
-msgstr ""
+msgstr "Poista agentti?"
 
 #. js-lingui-id: 3TMVdm
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agents"
-msgstr ""
+msgstr "Poista agentit"
 
 #. js-lingui-id: 76cXD3
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Delete Agents"
-msgstr ""
+msgstr "Poista agentit"
 
 #. js-lingui-id: k2+blJ
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Delete all records"
-msgstr ""
+msgstr "Poista kaikki tietueet"
 
 #. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -10103,7 +10119,7 @@ msgstr "tuhota"
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy"
-msgstr ""
+msgstr "Tuhota"
 
 #. js-lingui-id: vI0W/N
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
@@ -10118,7 +10134,7 @@ msgstr "Tuhoa {objectLabelPlural}"
 #. js-lingui-id: ud791S
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
-msgstr ""
+msgstr "Tuhoa kaikki tietueet"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -10543,6 +10559,7 @@ msgstr "Vaihda kuukausilaskutukseen"
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Download"
 msgstr "Lataa"
@@ -10850,7 +10867,7 @@ msgstr "Muokkaa"
 #. js-lingui-id: Fw7UIN
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Edit {label}, {description}"
-msgstr ""
+msgstr "Muokkaa {label}, {description}"
 
 #. js-lingui-id: fGxkii
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
@@ -10866,7 +10883,7 @@ msgstr "Muokkaa {objectLabelPlural}"
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Edit access"
-msgstr ""
+msgstr "Muokkaa käyttöoikeutta"
 
 #. js-lingui-id: 9B436y
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -10884,7 +10901,7 @@ msgstr "Muokkaustoiminnot"
 #. js-lingui-id: Q0ytOP
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Edit all records"
-msgstr ""
+msgstr "Muokkaa kaikkia tietueita"
 
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -11037,7 +11054,7 @@ msgstr "Muokkaa tätä HTML:ää lohkon asetuspaneelissa."
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Edit tools"
-msgstr ""
+msgstr "Muokkaa työkaluja"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -11785,6 +11802,11 @@ msgstr "Syötä luku, joka on suurempi kuin 1"
 msgid "Enter offset"
 msgstr "Syötä siirtymä"
 
+#. js-lingui-id: lRIswr
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
+msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
+msgstr ""
+
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line"
@@ -11837,11 +11859,6 @@ msgstr "Anna tiedot yhteyden luomiseksi"
 msgid "Enter the message to post"
 msgstr "Kirjoita lähetettävä viesti"
 
-#. js-lingui-id: lZC0Js
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
-msgstr "Syötä työtilan ylläpitäjältä saamasi palautuskoodi. Nykyinen tämän työtilan todentamissovelluksesi poistetaan."
-
 #. js-lingui-id: tEWpbi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
@@ -11882,7 +11899,7 @@ msgstr "Syötä tekstisi"
 
 #. js-lingui-id: GDMzJS
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
-#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationOtpConfirmationDialog.tsx
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Syötä vahvistukseksi kaksivaiheisen todennuksen koodisi."
 
@@ -12825,7 +12842,7 @@ msgstr "Työnkulun luominen epäonnistui"
 #. js-lingui-id: qzWRef
 #: src/modules/object-core/agents/hooks/useDeleteSelectedCoreAgents.ts
 msgid "Failed to delete {deletionErrorCount} of {selectedCoreAgentCount} agents"
-msgstr ""
+msgstr "Agentteja ei voitu poistaa: {deletionErrorCount} / {selectedCoreAgentCount}"
 
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -12916,6 +12933,11 @@ msgstr "Logon latauksen viimeistely epäonnistui"
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to generate a recovery code."
 msgstr "Palautuskoodin luominen epäonnistui."
+
+#. js-lingui-id: 3YKuoA
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Failed to generate backup codes."
+msgstr ""
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -13616,7 +13638,7 @@ msgstr "Suodata"
 #. js-lingui-id: ndNAzG
 #: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
 msgid "Filter agents"
-msgstr ""
+msgstr "Suodata agentteja"
 
 #. js-lingui-id: q5TuAU
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -14274,16 +14296,32 @@ msgstr "Luo palautuskoodi"
 msgid "Generate a signed copy in one click"
 msgstr "Luo allekirjoitettu kopio yhdellä napsautuksella"
 
+#. js-lingui-id: yf0GMx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate backup codes"
+msgstr ""
+
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate code"
 msgstr "Luo koodi"
+
+#. js-lingui-id: c63Wy6
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate codes"
+msgstr ""
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Generate DPA"
 msgstr "Luo DPA-sopimus"
+
+#. js-lingui-id: P2msE+
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate new codes"
+msgstr ""
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -15889,7 +15927,7 @@ msgstr "Ohjeet ja työkalut, joita agentit voivat käyttää"
 #. js-lingui-id: oVi2Tk
 #: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
 msgid "Instructions cannot be empty"
-msgstr ""
+msgstr "Ohjeet eivät saa olla tyhjät"
 
 #. js-lingui-id: 77QeTr
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -16058,10 +16096,10 @@ msgstr "Virheellinen minuuttiarvo \"{newMinute}\". Sen tulee olla kokonaisluku, 
 msgid "Invalid number"
 msgstr "Virheellinen numero"
 
-#. js-lingui-id: Mwwd+k
+#. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Invalid or expired recovery code."
-msgstr "Virheellinen tai vanhentunut palautuskoodi."
+msgid "Invalid or expired code."
+msgstr ""
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -17735,10 +17773,10 @@ msgstr "Hae"
 msgid "loop"
 msgstr "silmukka"
 
-#. js-lingui-id: B3teiJ
+#. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a recovery code"
-msgstr "Kadotitko todentamissovelluksesi? Käytä palautuskoodia"
+msgid "Lost your authenticator? Use a backup or recovery code"
+msgstr ""
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19206,6 +19244,11 @@ msgstr "Uusi AI-tarjoaja"
 msgid "New Approved Access Domain"
 msgstr "Uusi Hyväksytty Pääsytunnusalue"
 
+#. js-lingui-id: pQIH+r
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "New backup codes replace your current ones, which stop working."
+msgstr ""
+
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
@@ -20095,7 +20138,7 @@ msgstr "Ei muistiinpanoja"
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "No objects match your search"
-msgstr ""
+msgstr "Mikään kohde ei vastaa hakua"
 
 #. js-lingui-id: XIpopT
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
@@ -20366,7 +20409,7 @@ msgstr "Kohteita ei ole saatavilla"
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
-msgstr ""
+msgstr "Mikään työkalu ei vastaa hakua"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -21561,7 +21604,7 @@ msgstr "Valinnainen — käyttää IAM-roolia, jos jätetään tyhjäksi"
 #. js-lingui-id: X8Kmj8
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "Optional · A short summary of what this agent does"
-msgstr ""
+msgstr "Valinnainen · Lyhyt yhteenveto siitä, mitä tämä agentti tekee"
 
 #. js-lingui-id: BVmWQT
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -23548,12 +23591,12 @@ msgstr "Tietue poistetaan"
 #. js-lingui-id: B6/jGB
 #: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
 msgid "Record is permanently deleted"
-msgstr ""
+msgstr "Tietue poistetaan pysyvästi"
 
 #. js-lingui-id: 72O3vf
 #: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
 msgid "Record is restored"
-msgstr ""
+msgstr "Tietue palautetaan"
 
 #. js-lingui-id: rdLUKj
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -23625,7 +23668,7 @@ msgstr "Tietuetaso"
 #. js-lingui-id: VQ4KjL
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Record-level filter"
-msgstr ""
+msgstr "Tietuetason suodatin"
 
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
@@ -23690,7 +23733,7 @@ msgstr "Valitut tietueet"
 #. js-lingui-id: TZIC1Z
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Records this agent can see and change"
-msgstr ""
+msgstr "Tietueet, jotka tämä agentti voi nähdä ja joita se voi muuttaa"
 
 #. js-lingui-id: sE6EHz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -23970,7 +24013,7 @@ msgstr "Poista {label}"
 #. js-lingui-id: elnmVe
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Remove {label}, {description}"
-msgstr ""
+msgstr "Poista {label}, {description}"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOriginsTable.tsx
@@ -23980,7 +24023,7 @@ msgstr "Poista {origin}"
 #. js-lingui-id: wzdVhz
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Remove {toolName}"
-msgstr ""
+msgstr "Poista {toolName}"
 
 #. js-lingui-id: kL4wuJ
 #: src/modules/object-record/record-sharing/components/RecordSharingAccessLevelOptions.tsx
@@ -23990,12 +24033,12 @@ msgstr "Poista käyttöoikeus"
 #. js-lingui-id: wf5QIp
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Remove access to {objectLabel}"
-msgstr ""
+msgstr "Poista kohteen {objectLabel} käyttöoikeus"
 
 #. js-lingui-id: EK2N/p
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Remove access to all records"
-msgstr ""
+msgstr "Poista kaikkien tietueiden käyttöoikeus"
 
 #. js-lingui-id: VjbCv0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -25045,7 +25088,7 @@ msgstr "Säästä 25 % vuosilaskutuksella"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
 msgid "Save Agent"
-msgstr ""
+msgstr "Tallenna agentti"
 
 #. js-lingui-id: 8tM8+a
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -25072,6 +25115,11 @@ msgstr "Tallenna tai peruuta kojelaudan muutokset ennen asettelun muokkaamista."
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Save settings"
 msgstr "Tallenna asetukset"
+
+#. js-lingui-id: /hNRXq
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
+msgstr ""
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -25560,7 +25608,7 @@ msgstr "Hae vaiheita ja kenttiä"
 #. js-lingui-id: mW8qA2
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "Search tools"
-msgstr ""
+msgstr "Etsi työkaluja"
 
 #. js-lingui-id: rws5EE
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
@@ -25763,7 +25811,7 @@ msgstr "Näytä kaikki tähän kalenteritapahtumaan liitetyt puhelutallenteet"
 #. js-lingui-id: B5odfQ
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "See all records"
-msgstr ""
+msgstr "Näytä kaikki tietueet"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -25816,12 +25864,12 @@ msgstr "Näytä tietueet kaikista objekteista"
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Runs"
-msgstr ""
+msgstr "Näytä suoritukset"
 
 #. js-lingui-id: dKYXK6
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 msgid "See Settings"
-msgstr ""
+msgstr "Näytä asetukset"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26645,7 +26693,7 @@ msgstr "Asetukset, joita useimpien työtilojen ei tarvitse koskaan muuttaa"
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Settings permission"
-msgstr ""
+msgstr "Asetusten käyttöoikeus"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -29034,7 +29082,7 @@ msgstr "Tätä toimintoa ei voi peruuttaa. Tämä poistaa koko tilisi pysyvästi
 #. js-lingui-id: bWmXw/
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
 msgid "This action cannot be undone. This will permanently delete your agent."
-msgstr ""
+msgstr "Tätä toimintoa ei voi peruuttaa. Tämä poistaa agenttisi pysyvästi."
 
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -29075,37 +29123,37 @@ msgstr "Tämä osoite on jo varattu"
 #. js-lingui-id: Wg5iFS
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "This agent can't see any records yet."
-msgstr ""
+msgstr "Tämä agentti ei voi vielä nähdä tietueita."
 
 #. js-lingui-id: zJHUio
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "This agent can't use any tools yet."
-msgstr ""
+msgstr "Tämä agentti ei voi vielä käyttää työkaluja."
 
 #. js-lingui-id: N5v8kc
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "This agent comes from an app, so its access can't be changed here."
-msgstr ""
+msgstr "Tämä agentti on peräisin sovelluksesta, joten sen käyttöoikeutta ei voi muuttaa täällä."
 
 #. js-lingui-id: EVX1ND
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
-msgstr ""
+msgstr "Tämä agentti on peräisin sovelluksesta, joten sen työkaluja ei voi muuttaa täällä."
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "This agent only runs when a workflow, an app or the API calls it."
-msgstr ""
+msgstr "Tämä agentti toimii vain, kun työnkulku, sovellus tai API kutsuu sitä."
 
 #. js-lingui-id: RKKH61
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "This agent shares its role with other members or agents. Change its access in Settings > Roles."
-msgstr ""
+msgstr "Tämä agentti jakaa roolinsa muiden jäsenten tai agenttien kanssa. Muuta sen käyttöoikeutta kohdassa Asetukset > Roolit."
 
 #. js-lingui-id: YMrA7j
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
-msgstr ""
+msgstr "Tämä agentti jakaa roolinsa muiden jäsenten tai agenttien kanssa. Muuta sen työkaluja kohdassa Asetukset > Roolit."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
@@ -29366,7 +29414,7 @@ msgstr "Tämä poistaa pysyvästi seuraavat kohteet sekä kaikki niiden synkrono
 #. js-lingui-id: YMiCUw
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "This permanently deletes these {numberOfCoreAgents} agents. This action cannot be undone."
-msgstr ""
+msgstr "Tämä poistaa nämä {numberOfCoreAgents} agenttia pysyvästi. Tätä toimintoa ei voi peruuttaa."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29376,7 +29424,7 @@ msgstr "Tämä poistaa pysyvästi nämä {numberOfCoreWorkflows} työnkulkua ja 
 #. js-lingui-id: KNcaaQ
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "This permanently deletes this agent. This action cannot be undone."
-msgstr ""
+msgstr "Tämä poistaa tämän agentin pysyvästi. Tätä toimintoa ei voi peruuttaa."
 
 #. js-lingui-id: riRzbk
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -31490,10 +31538,15 @@ msgstr "Käyttöjakso"
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "Käytä ‘{trimmedSidePanelSearch}’ kanssa..."
 
-#. js-lingui-id: bmkeQS
+#. js-lingui-id: jFGgyP
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
+msgstr ""
+
+#. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
-msgid "Use a recovery code"
-msgstr "Käytä palautuskoodia"
+msgid "Use a backup or recovery code"
+msgstr ""
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
@@ -32509,7 +32562,7 @@ msgstr "Mitä {applicationName} lisää työtilaasi"
 #. js-lingui-id: 1rpyKy
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "What AI model should your agent run on"
-msgstr ""
+msgstr "Mitä AI-mallia agenttisi tulisi käyttää"
 
 #. js-lingui-id: Itn+J7
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
@@ -32544,7 +32597,7 @@ msgstr "Mitä pitäisi luokitella?"
 #. js-lingui-id: Z1117Y
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "What should the agent do every time it runs?"
-msgstr ""
+msgstr "Mitä agentin pitäisi tehdä jokaisella suorituskerralla?"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -32560,7 +32613,7 @@ msgstr "Mitä tämä API voi tehdä: Valitse käyttäjän rooli määrittääkse
 #. js-lingui-id: w7CKq8
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "What tools can this agent use for its mission"
-msgstr ""
+msgstr "Mitä työkaluja tämä agentti voi käyttää tehtävässään"
 
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -32605,7 +32658,7 @@ msgstr "Milloin agentin pitäisi pysähtyä ja kysyä sinulta? Esimerkiksi ennen
 #. js-lingui-id: vn42KP
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "When should this agent run on its own"
-msgstr ""
+msgstr "Milloin tämän agentin pitäisi toimia itsenäisesti"
 
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
@@ -33162,7 +33215,7 @@ msgstr "Kirjoita ja poista {target}"
 #. js-lingui-id: qJSzDh
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "Write some instructions"
-msgstr ""
+msgstr "Kirjoita ohjeita"
 
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/AiChatApprovalEmailReview.tsx

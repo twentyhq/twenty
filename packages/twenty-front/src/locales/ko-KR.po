@@ -762,7 +762,7 @@ msgstr "{deletedCount, plural, other {{deletedCount}개의 작업이 성공적�
 #. js-lingui-id: ANUXpJ
 #: src/modules/object-core/agents/hooks/useGetCoreAgentTriggerDescription.ts
 msgid "{details} · Paused"
-msgstr ""
+msgstr "{details} · 일시 중지됨"
 
 #. js-lingui-id: miXj9r
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
@@ -1059,6 +1059,11 @@ msgstr "{queuedMessage}, {skipReasons} 제외"
 #. js-lingui-id: SmbuF4
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
+msgstr "{readOnlyFieldCount, plural, other {#개 필드를 편집할 수 없음}}"
+
+#. js-lingui-id: ociapy
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
 msgstr ""
 
 #. js-lingui-id: N7gP92
@@ -1285,7 +1290,7 @@ msgstr "{unlistedCount, plural, other {등록된 애플리케이션과 일치하
 #. js-lingui-id: rU6wAU
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{unreadableFieldCount, plural, one {Can't see # field} other {Can't see # fields}}"
-msgstr ""
+msgstr "{unreadableFieldCount, plural, other {#개 필드를 볼 수 없음}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -2656,7 +2661,7 @@ msgstr "주제 추가"
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Add trigger"
-msgstr ""
+msgstr "트리거 추가"
 
 #. js-lingui-id: 4D/zWv
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -2963,12 +2968,12 @@ msgstr "에이전트 구성"
 #. js-lingui-id: tIhTfo
 #: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
 msgid "Agent name cannot be empty"
-msgstr ""
+msgstr "에이전트 이름은 비워 둘 수 없습니다"
 
 #. js-lingui-id: VY/7j2
 #: src/modules/object-core/agents/hooks/useRenameCoreAgent.ts
 msgid "Agent name must contain letters or numbers"
-msgstr ""
+msgstr "에이전트 이름에는 문자 또는 숫자가 포함되어야 합니다"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -3432,7 +3437,7 @@ msgstr "모든 레코드"
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "All records"
-msgstr ""
+msgstr "모든 레코드"
 
 #. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -4814,7 +4819,7 @@ msgstr "자동화 및 AI"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 msgid "Automations"
-msgstr ""
+msgstr "자동화"
 
 #. js-lingui-id: j4VsTZ
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -4939,6 +4944,16 @@ msgstr "배경색"
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
 msgid "Backspace"
 msgstr "백스페이스"
+
+#. js-lingui-id: M2cci0
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Backup codes"
+msgstr ""
+
+#. js-lingui-id: 6kNBNT
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Backup codes copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -5655,7 +5670,7 @@ msgstr "스캔이 불가능합니까?"
 #. js-lingui-id: ztvhPH
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Can't see"
-msgstr ""
+msgstr "볼 수 없음"
 
 #. js-lingui-id: RtHGDr
 #: src/modules/ai/constants/DataResidencyConfig.ts
@@ -5712,7 +5727,7 @@ msgstr "크레딧 팩 전환을 취소하시겠습니까?"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
 msgid "Cancel Edition"
-msgstr ""
+msgstr "편집 취소"
 
 #. js-lingui-id: D14fs0
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -5944,7 +5959,7 @@ msgstr "담당자 변경"
 #. js-lingui-id: VyTYmS
 #: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 msgid "Change avatar"
-msgstr ""
+msgstr "아바타 변경"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7731,6 +7746,7 @@ msgstr "AI 코딩 도구용 Cloudflare 설정 프롬프트를 복사합니다"
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Copy"
@@ -8283,7 +8299,7 @@ msgstr "워크스페이스 만들기"
 #: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Create Agent"
-msgstr ""
+msgstr "에이전트 생성"
 
 #. js-lingui-id: bFIJZx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -9172,7 +9188,7 @@ msgstr "데이터"
 #. js-lingui-id: PDNS5Z
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Data access"
-msgstr ""
+msgstr "데이터 액세스"
 
 #. js-lingui-id: nxnCld
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -9634,7 +9650,7 @@ msgstr "{fieldLabel} 필드를 삭제하시겠습니까?"
 #. js-lingui-id: 2zz1P3
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete {numberOfCoreAgents} agents?"
-msgstr ""
+msgstr "에이전트 {numberOfCoreAgents}개를 삭제하시겠습니까?"
 
 #. js-lingui-id: DKQlby
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -9704,7 +9720,7 @@ msgstr "계정 및 동기화된 데이터를 삭제하시겠습니까?"
 #. js-lingui-id: 3F2bUD
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agent"
-msgstr ""
+msgstr "에이전트 삭제"
 
 #. js-lingui-id: YMNj8z
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
@@ -9717,22 +9733,22 @@ msgstr "에이전트 삭제"
 #. js-lingui-id: 7j7Dud
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agent?"
-msgstr ""
+msgstr "에이전트 삭제?"
 
 #. js-lingui-id: 3TMVdm
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agents"
-msgstr ""
+msgstr "에이전트 삭제"
 
 #. js-lingui-id: 76cXD3
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Delete Agents"
-msgstr ""
+msgstr "에이전트 삭제"
 
 #. js-lingui-id: k2+blJ
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Delete all records"
-msgstr ""
+msgstr "모든 레코드 삭제"
 
 #. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -10103,7 +10119,7 @@ msgstr "파기"
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy"
-msgstr ""
+msgstr "파기"
 
 #. js-lingui-id: vI0W/N
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
@@ -10118,7 +10134,7 @@ msgstr "{objectLabelPlural} 파기"
 #. js-lingui-id: ud791S
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
-msgstr ""
+msgstr "모든 레코드 파기"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -10543,6 +10559,7 @@ msgstr "월간으로 다운그레이드"
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Download"
 msgstr "다운로드"
@@ -10850,7 +10867,7 @@ msgstr "편집"
 #. js-lingui-id: Fw7UIN
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Edit {label}, {description}"
-msgstr ""
+msgstr "{label}, {description} 편집"
 
 #. js-lingui-id: fGxkii
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
@@ -10866,7 +10883,7 @@ msgstr "{objectLabelPlural} 편집"
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Edit access"
-msgstr ""
+msgstr "액세스 편집"
 
 #. js-lingui-id: 9B436y
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -10884,7 +10901,7 @@ msgstr "편집 작업"
 #. js-lingui-id: Q0ytOP
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Edit all records"
-msgstr ""
+msgstr "모든 레코드 편집"
 
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -11037,7 +11054,7 @@ msgstr "블록 설정 패널에서 이 HTML을 편집하세요."
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Edit tools"
-msgstr ""
+msgstr "도구 편집"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -11785,6 +11802,11 @@ msgstr "1보다 큰 숫자를 입력하세요"
 msgid "Enter offset"
 msgstr "오프셋 입력"
 
+#. js-lingui-id: lRIswr
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
+msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
+msgstr ""
+
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line"
@@ -11837,11 +11859,6 @@ msgstr "연결 설정을 위한 정보를 입력하세요"
 msgid "Enter the message to post"
 msgstr "게시할 메시지 입력"
 
-#. js-lingui-id: lZC0Js
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
-msgstr "작업공간 관리자가 제공한 복구 코드를 입력하세요. 이 작업공간의 현재 인증 앱이 제거됩니다."
-
 #. js-lingui-id: tEWpbi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
@@ -11882,7 +11899,7 @@ msgstr "텍스트를 입력하세요"
 
 #. js-lingui-id: GDMzJS
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
-#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationOtpConfirmationDialog.tsx
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "확인을 위해 2단계 인증 코드를 입력하세요."
 
@@ -12825,7 +12842,7 @@ msgstr "워크플로를 생성하지 못했습니다"
 #. js-lingui-id: qzWRef
 #: src/modules/object-core/agents/hooks/useDeleteSelectedCoreAgents.ts
 msgid "Failed to delete {deletionErrorCount} of {selectedCoreAgentCount} agents"
-msgstr ""
+msgstr "에이전트 {selectedCoreAgentCount}개 중 {deletionErrorCount}개를 삭제하지 못했습니다"
 
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -12916,6 +12933,11 @@ msgstr "로고 업로드 완료 처리에 실패했습니다"
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to generate a recovery code."
 msgstr "복구 코드를 생성하지 못했습니다."
+
+#. js-lingui-id: 3YKuoA
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Failed to generate backup codes."
+msgstr ""
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -13616,7 +13638,7 @@ msgstr "필터"
 #. js-lingui-id: ndNAzG
 #: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
 msgid "Filter agents"
-msgstr ""
+msgstr "에이전트 필터"
 
 #. js-lingui-id: q5TuAU
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -14274,16 +14296,32 @@ msgstr "복구 코드 생성"
 msgid "Generate a signed copy in one click"
 msgstr "클릭 한 번으로 서명된 사본 생성"
 
+#. js-lingui-id: yf0GMx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate backup codes"
+msgstr ""
+
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate code"
 msgstr "코드 생성"
+
+#. js-lingui-id: c63Wy6
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate codes"
+msgstr ""
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Generate DPA"
 msgstr "DPA 생성"
+
+#. js-lingui-id: P2msE+
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate new codes"
+msgstr ""
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -15889,7 +15927,7 @@ msgstr "에이전트가 사용할 수 있는 지침 및 도구"
 #. js-lingui-id: oVi2Tk
 #: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
 msgid "Instructions cannot be empty"
-msgstr ""
+msgstr "지침은 비워 둘 수 없습니다"
 
 #. js-lingui-id: 77QeTr
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -16058,10 +16096,10 @@ msgstr "잘못된 분 값 \"{newMinute}\"입니다. 1보다 큰 정수여야 합
 msgid "Invalid number"
 msgstr "유효하지 않은 숫자입니다"
 
-#. js-lingui-id: Mwwd+k
+#. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Invalid or expired recovery code."
-msgstr "유효하지 않거나 만료된 복구 코드입니다."
+msgid "Invalid or expired code."
+msgstr ""
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -17735,10 +17773,10 @@ msgstr "조회"
 msgid "loop"
 msgstr "반복"
 
-#. js-lingui-id: B3teiJ
+#. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a recovery code"
-msgstr "인증 앱을 분실했나요? 복구 코드를 사용하세요"
+msgid "Lost your authenticator? Use a backup or recovery code"
+msgstr ""
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19206,6 +19244,11 @@ msgstr "새 AI 공급자"
 msgid "New Approved Access Domain"
 msgstr "새 승인된 액세스 도메인"
 
+#. js-lingui-id: pQIH+r
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "New backup codes replace your current ones, which stop working."
+msgstr ""
+
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
@@ -20095,7 +20138,7 @@ msgstr "메모 없음"
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "No objects match your search"
-msgstr ""
+msgstr "검색 조건에 맞는 객체 없음"
 
 #. js-lingui-id: XIpopT
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
@@ -20366,7 +20409,7 @@ msgstr "사용 가능한 대상이 없습니다"
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
-msgstr ""
+msgstr "검색 조건에 맞는 도구 없음"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -21561,7 +21604,7 @@ msgstr "선택 사항 — 비워 두면 IAM 역할을 사용합니다"
 #. js-lingui-id: X8Kmj8
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "Optional · A short summary of what this agent does"
-msgstr ""
+msgstr "선택 사항 · 이 에이전트가 수행하는 작업에 대한 짧은 요약"
 
 #. js-lingui-id: BVmWQT
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -23548,12 +23591,12 @@ msgstr "레코드 삭제됨"
 #. js-lingui-id: B6/jGB
 #: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
 msgid "Record is permanently deleted"
-msgstr ""
+msgstr "레코드가 영구적으로 삭제됨"
 
 #. js-lingui-id: 72O3vf
 #: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
 msgid "Record is restored"
-msgstr ""
+msgstr "레코드 복원됨"
 
 #. js-lingui-id: rdLUKj
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -23625,7 +23668,7 @@ msgstr "레코드 수준"
 #. js-lingui-id: VQ4KjL
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Record-level filter"
-msgstr ""
+msgstr "레코드 수준 필터"
 
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
@@ -23690,7 +23733,7 @@ msgstr "레코드 선택됨"
 #. js-lingui-id: TZIC1Z
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Records this agent can see and change"
-msgstr ""
+msgstr "이 에이전트가 볼 수 있고 변경할 수 있는 레코드"
 
 #. js-lingui-id: sE6EHz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -23970,7 +24013,7 @@ msgstr "{label} 제거"
 #. js-lingui-id: elnmVe
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Remove {label}, {description}"
-msgstr ""
+msgstr "{label}, {description} 제거"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOriginsTable.tsx
@@ -23980,7 +24023,7 @@ msgstr "{origin} 제거"
 #. js-lingui-id: wzdVhz
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Remove {toolName}"
-msgstr ""
+msgstr "{toolName} 제거"
 
 #. js-lingui-id: kL4wuJ
 #: src/modules/object-record/record-sharing/components/RecordSharingAccessLevelOptions.tsx
@@ -23990,12 +24033,12 @@ msgstr "액세스 제거"
 #. js-lingui-id: wf5QIp
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Remove access to {objectLabel}"
-msgstr ""
+msgstr "{objectLabel}에 대한 액세스 제거"
 
 #. js-lingui-id: EK2N/p
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Remove access to all records"
-msgstr ""
+msgstr "모든 레코드에 대한 액세스 제거"
 
 #. js-lingui-id: VjbCv0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -25045,7 +25088,7 @@ msgstr "연간 청구 시 25% 절약"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
 msgid "Save Agent"
-msgstr ""
+msgstr "에이전트 저장"
 
 #. js-lingui-id: 8tM8+a
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -25072,6 +25115,11 @@ msgstr "레이아웃을 편집하기 전에 대시보드 변경 사항을 저장
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Save settings"
 msgstr "설정 저장"
+
+#. js-lingui-id: /hNRXq
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
+msgstr ""
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -25560,7 +25608,7 @@ msgstr "단계 및 필드 검색"
 #. js-lingui-id: mW8qA2
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "Search tools"
-msgstr ""
+msgstr "도구 검색"
 
 #. js-lingui-id: rws5EE
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
@@ -25763,7 +25811,7 @@ msgstr "이 캘린더 일정에 연결된 모든 통화 녹음 보기"
 #. js-lingui-id: B5odfQ
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "See all records"
-msgstr ""
+msgstr "모든 레코드 보기"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -25816,12 +25864,12 @@ msgstr "모든 객체의 기록 보기"
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Runs"
-msgstr ""
+msgstr "실행 보기"
 
 #. js-lingui-id: dKYXK6
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 msgid "See Settings"
-msgstr ""
+msgstr "설정 보기"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26645,7 +26693,7 @@ msgstr "대부분의 워크스페이스에서 변경할 필요가 없는 설정"
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Settings permission"
-msgstr ""
+msgstr "설정 권한"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -29034,7 +29082,7 @@ msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 계정 전체
 #. js-lingui-id: bWmXw/
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
 msgid "This action cannot be undone. This will permanently delete your agent."
-msgstr ""
+msgstr "이 작업은 취소할 수 없습니다. 에이전트가 영구적으로 삭제됩니다."
 
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -29075,37 +29123,37 @@ msgstr "이 주소는 이미 사용 중입니다"
 #. js-lingui-id: Wg5iFS
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "This agent can't see any records yet."
-msgstr ""
+msgstr "이 에이전트는 아직 어떤 레코드도 볼 수 없습니다."
 
 #. js-lingui-id: zJHUio
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "This agent can't use any tools yet."
-msgstr ""
+msgstr "이 에이전트는 아직 어떤 도구도 사용할 수 없습니다."
 
 #. js-lingui-id: N5v8kc
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "This agent comes from an app, so its access can't be changed here."
-msgstr ""
+msgstr "이 에이전트는 앱에서 제공되므로 여기에서 액세스를 변경할 수 없습니다."
 
 #. js-lingui-id: EVX1ND
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
-msgstr ""
+msgstr "이 에이전트는 앱에서 제공되므로 여기에서 도구를 변경할 수 없습니다."
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "This agent only runs when a workflow, an app or the API calls it."
-msgstr ""
+msgstr "이 에이전트는 워크플로, 앱 또는 API가 호출할 때만 실행됩니다."
 
 #. js-lingui-id: RKKH61
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "This agent shares its role with other members or agents. Change its access in Settings > Roles."
-msgstr ""
+msgstr "이 에이전트는 다른 멤버 또는 에이전트와 역할을 공유합니다. 설정 > 역할에서 액세스를 변경하세요."
 
 #. js-lingui-id: YMrA7j
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
-msgstr ""
+msgstr "이 에이전트는 다른 멤버 또는 에이전트와 역할을 공유합니다. 설정 > 역할에서 도구를 변경하세요."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
@@ -29366,7 +29414,7 @@ msgstr "이 작업을 수행하면 다음 항목과 해당 항목의 동기화�
 #. js-lingui-id: YMiCUw
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "This permanently deletes these {numberOfCoreAgents} agents. This action cannot be undone."
-msgstr ""
+msgstr "에이전트 {numberOfCoreAgents}개가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29376,7 +29424,7 @@ msgstr "이 {numberOfCoreWorkflows}개의 워크플로우와 모든 실행 기�
 #. js-lingui-id: KNcaaQ
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "This permanently deletes this agent. This action cannot be undone."
-msgstr ""
+msgstr "이 에이전트가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다."
 
 #. js-lingui-id: riRzbk
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -31490,10 +31538,15 @@ msgstr "사용 기간"
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "‘{trimmedSidePanelSearch}’을(를) 다음과 함께 사용..."
 
-#. js-lingui-id: bmkeQS
+#. js-lingui-id: jFGgyP
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
+msgstr ""
+
+#. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
-msgid "Use a recovery code"
-msgstr "복구 코드 사용"
+msgid "Use a backup or recovery code"
+msgstr ""
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
@@ -32509,7 +32562,7 @@ msgstr "{applicationName}이 워크스페이스에 추가하는 항목"
 #. js-lingui-id: 1rpyKy
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "What AI model should your agent run on"
-msgstr ""
+msgstr "에이전트는 어떤 AI 모델에서 실행되어야 하나요"
 
 #. js-lingui-id: Itn+J7
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
@@ -32544,7 +32597,7 @@ msgstr "무엇을 분류해야 하나요?"
 #. js-lingui-id: Z1117Y
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "What should the agent do every time it runs?"
-msgstr ""
+msgstr "에이전트는 실행될 때마다 무엇을 해야 하나요?"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -32560,7 +32613,7 @@ msgstr "이 API가 할 수 있는 것: 사용자의 권한을 정의하기 위�
 #. js-lingui-id: w7CKq8
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "What tools can this agent use for its mission"
-msgstr ""
+msgstr "이 에이전트는 미션을 위해 어떤 도구를 사용할 수 있나요"
 
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -32605,7 +32658,7 @@ msgstr "에이전트가 언제 멈추고 물어봐야 하나요? 예: 이메일�
 #. js-lingui-id: vn42KP
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "When should this agent run on its own"
-msgstr ""
+msgstr "이 에이전트는 언제 자체적으로 실행되어야 하나요"
 
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
@@ -33162,7 +33215,7 @@ msgstr "{target} 쓰기 및 삭제"
 #. js-lingui-id: qJSzDh
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "Write some instructions"
-msgstr ""
+msgstr "지침을 작성하세요"
 
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/AiChatApprovalEmailReview.tsx

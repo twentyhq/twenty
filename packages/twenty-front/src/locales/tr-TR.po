@@ -762,7 +762,7 @@ msgstr "{deletedCount, plural, one {{deletedCount} iş başarıyla silindi} othe
 #. js-lingui-id: ANUXpJ
 #: src/modules/object-core/agents/hooks/useGetCoreAgentTriggerDescription.ts
 msgid "{details} · Paused"
-msgstr ""
+msgstr "{details} · Duraklatıldı"
 
 #. js-lingui-id: miXj9r
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
@@ -1059,6 +1059,11 @@ msgstr "{queuedMessage}, {skipReasons} atlanıyor"
 #. js-lingui-id: SmbuF4
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
+msgstr "{readOnlyFieldCount, plural, one {# alan düzenlenemez} other {# alan düzenlenemez}}"
+
+#. js-lingui-id: ociapy
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
 msgstr ""
 
 #. js-lingui-id: N7gP92
@@ -1285,7 +1290,7 @@ msgstr "{unlistedCount, plural, one {Listelenen hiçbir uygulama eşleşmiyor. #
 #. js-lingui-id: rU6wAU
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{unreadableFieldCount, plural, one {Can't see # field} other {Can't see # fields}}"
-msgstr ""
+msgstr "{unreadableFieldCount, plural, one {# alan görüntülenemez} other {# alan görüntülenemez}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -2656,7 +2661,7 @@ msgstr "Konu ekle"
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Add trigger"
-msgstr ""
+msgstr "Tetikleyici ekle"
 
 #. js-lingui-id: 4D/zWv
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -2963,12 +2968,12 @@ msgstr "Ajan yapılandırması"
 #. js-lingui-id: tIhTfo
 #: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
 msgid "Agent name cannot be empty"
-msgstr ""
+msgstr "Temsilci adı boş olamaz"
 
 #. js-lingui-id: VY/7j2
 #: src/modules/object-core/agents/hooks/useRenameCoreAgent.ts
 msgid "Agent name must contain letters or numbers"
-msgstr ""
+msgstr "Temsilci adı harf veya sayı içermelidir"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/object-core/AgentCoreShowPage.tsx
@@ -3432,7 +3437,7 @@ msgstr "tüm kayıtlar"
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "All records"
-msgstr ""
+msgstr "Tüm kayıtlar"
 
 #. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -4814,7 +4819,7 @@ msgstr "Otomasyon ve yapay zeka"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 msgid "Automations"
-msgstr ""
+msgstr "Otomasyonlar"
 
 #. js-lingui-id: j4VsTZ
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -4939,6 +4944,16 @@ msgstr "Arka Plan Renkleri"
 #: src/modules/ui/navigation/hooks/useShortcutAccessibleKeyLabels.ts
 msgid "Backspace"
 msgstr "Geri Al"
+
+#. js-lingui-id: M2cci0
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Backup codes"
+msgstr ""
+
+#. js-lingui-id: 6kNBNT
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Backup codes copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -5655,7 +5670,7 @@ msgstr "Tarayamaz mısınız? Kopyalayın."
 #. js-lingui-id: ztvhPH
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Can't see"
-msgstr ""
+msgstr "Göremez"
 
 #. js-lingui-id: RtHGDr
 #: src/modules/ai/constants/DataResidencyConfig.ts
@@ -5712,7 +5727,7 @@ msgstr "Kredi paketi değişikliği iptal edilsin mi?"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
 msgid "Cancel Edition"
-msgstr ""
+msgstr "Sürümü İptal Et"
 
 #. js-lingui-id: D14fs0
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -5944,7 +5959,7 @@ msgstr "Atanan kişiyi değiştir"
 #. js-lingui-id: VyTYmS
 #: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 msgid "Change avatar"
-msgstr ""
+msgstr "Avatarı değiştir"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7731,6 +7746,7 @@ msgstr "Yapay zekâ kodlama aracınız için bir Cloudflare kurulum istemini kop
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Copy"
@@ -8283,7 +8299,7 @@ msgstr "Çalışma Alanı Oluştur"
 #: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "Create Agent"
-msgstr ""
+msgstr "Temsilci oluştur"
 
 #. js-lingui-id: bFIJZx
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -9172,7 +9188,7 @@ msgstr "Veri"
 #. js-lingui-id: PDNS5Z
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Data access"
-msgstr ""
+msgstr "Veri erişimi"
 
 #. js-lingui-id: nxnCld
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -9634,7 +9650,7 @@ msgstr "{fieldLabel} alanı silinsin mi?"
 #. js-lingui-id: 2zz1P3
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete {numberOfCoreAgents} agents?"
-msgstr ""
+msgstr "{numberOfCoreAgents} temsilci silinsin mi?"
 
 #. js-lingui-id: DKQlby
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -9704,7 +9720,7 @@ msgstr "Hesabı ve senkronize edilmiş verileri sil?"
 #. js-lingui-id: 3F2bUD
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agent"
-msgstr ""
+msgstr "Temsilciyi sil"
 
 #. js-lingui-id: YMNj8z
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
@@ -9717,22 +9733,22 @@ msgstr "Temsilciyi Sil"
 #. js-lingui-id: 7j7Dud
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agent?"
-msgstr ""
+msgstr "Temsilci silinsin mi?"
 
 #. js-lingui-id: 3TMVdm
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "Delete agents"
-msgstr ""
+msgstr "Temsilcileri sil"
 
 #. js-lingui-id: 76cXD3
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Delete Agents"
-msgstr ""
+msgstr "Temsilcileri Sil"
 
 #. js-lingui-id: k2+blJ
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Delete all records"
-msgstr ""
+msgstr "Tüm kayıtları sil"
 
 #. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -10103,7 +10119,7 @@ msgstr "yok Et"
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy"
-msgstr ""
+msgstr "Yok Et"
 
 #. js-lingui-id: vI0W/N
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
@@ -10118,7 +10134,7 @@ msgstr "{objectLabelPlural} Yok Et"
 #. js-lingui-id: ud791S
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
-msgstr ""
+msgstr "Tüm kayıtları yok et"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -10543,6 +10559,7 @@ msgstr "Aylık faturalamaya düşür"
 #: src/modules/page-layout/widgets/field/components/FieldWidgetFilesPreview.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementRow.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Download"
 msgstr "İndir"
@@ -10850,7 +10867,7 @@ msgstr "Düzenle"
 #. js-lingui-id: Fw7UIN
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Edit {label}, {description}"
-msgstr ""
+msgstr "{label}, {description} öğesini düzenle"
 
 #. js-lingui-id: fGxkii
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
@@ -10866,7 +10883,7 @@ msgstr "{objectLabelPlural} Düzenle"
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Edit access"
-msgstr ""
+msgstr "Erişimi düzenle"
 
 #. js-lingui-id: 9B436y
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
@@ -10884,7 +10901,7 @@ msgstr "İşlemleri düzenle"
 #. js-lingui-id: Q0ytOP
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Edit all records"
-msgstr ""
+msgstr "Tüm kayıtları düzenle"
 
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -11037,7 +11054,7 @@ msgstr "Bu HTML'yi blok ayarları panelinde düzenleyin."
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Edit tools"
-msgstr ""
+msgstr "Araçları düzenle"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -11785,6 +11802,11 @@ msgstr "1'den büyük bir sayı giriniz"
 msgid "Enter offset"
 msgstr "Ofset girin"
 
+#. js-lingui-id: lRIswr
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
+msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
+msgstr ""
+
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line"
@@ -11837,11 +11859,6 @@ msgstr "Bağlantıyı ayarlamak için bilgileri girin"
 msgid "Enter the message to post"
 msgstr "Gönderilecek mesajı girin"
 
-#. js-lingui-id: lZC0Js
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Enter the recovery code a workspace admin gave you. Your current authenticator for this workspace will be removed."
-msgstr "Bir çalışma alanı yöneticisinin size verdiği kurtarma kodunu girin. Bu çalışma alanı için mevcut kimlik doğrulayıcınız kaldırılacak."
-
 #. js-lingui-id: tEWpbi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
@@ -11882,7 +11899,7 @@ msgstr "Metninizi girin"
 
 #. js-lingui-id: GDMzJS
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
-#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationOtpConfirmationDialog.tsx
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Onaylamak için iki faktörlü kimlik doğrulama kodunuzu girin."
 
@@ -12825,7 +12842,7 @@ msgstr "İş akışı oluşturulamadı"
 #. js-lingui-id: qzWRef
 #: src/modules/object-core/agents/hooks/useDeleteSelectedCoreAgents.ts
 msgid "Failed to delete {deletionErrorCount} of {selectedCoreAgentCount} agents"
-msgstr ""
+msgstr "{selectedCoreAgentCount} temsilciden {deletionErrorCount} tanesi silinemedi"
 
 #. js-lingui-id: AXveCw
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -12916,6 +12933,11 @@ msgstr "Logo yükleme tamamlanamadı"
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Failed to generate a recovery code."
 msgstr "Kurtarma kodu oluşturulamadı."
+
+#. js-lingui-id: 3YKuoA
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Failed to generate backup codes."
+msgstr ""
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -13616,7 +13638,7 @@ msgstr "Filtre"
 #. js-lingui-id: ndNAzG
 #: src/modules/object-core/commands/hooks/useCoreAgentsIndexCommands.ts
 msgid "Filter agents"
-msgstr ""
+msgstr "Temsilcileri filtrele"
 
 #. js-lingui-id: q5TuAU
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -14274,16 +14296,32 @@ msgstr "Bir kurtarma kodu oluştur"
 msgid "Generate a signed copy in one click"
 msgstr "Tek tıklamayla imzalı bir kopya oluşturun"
 
+#. js-lingui-id: yf0GMx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate backup codes"
+msgstr ""
+
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Generate code"
 msgstr "Kod oluştur"
+
+#. js-lingui-id: c63Wy6
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate codes"
+msgstr ""
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "Generate DPA"
 msgstr "DPA oluştur"
+
+#. js-lingui-id: P2msE+
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Generate new codes"
+msgstr ""
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -15889,7 +15927,7 @@ msgstr "Aracıların kullanabileceği talimatlar ve araçlar"
 #. js-lingui-id: oVi2Tk
 #: src/modules/object-core/agents/utils/getCoreAgentDraftError.ts
 msgid "Instructions cannot be empty"
-msgstr ""
+msgstr "Talimatlar boş olamaz"
 
 #. js-lingui-id: 77QeTr
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -16058,10 +16096,10 @@ msgstr "Geçersiz dakika değeri \"{newMinute}\". 1'den büyük bir tamsayı olm
 msgid "Invalid number"
 msgstr "Geçersiz sayı"
 
-#. js-lingui-id: Mwwd+k
+#. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-msgid "Invalid or expired recovery code."
-msgstr "Geçersiz veya süresi dolmuş kurtarma kodu."
+msgid "Invalid or expired code."
+msgstr ""
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -17735,10 +17773,10 @@ msgstr "Ara"
 msgid "loop"
 msgstr "döngü"
 
-#. js-lingui-id: B3teiJ
+#. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-msgid "Lost your authenticator? Use a recovery code"
-msgstr "Kimlik doğrulayıcınızı mı kaybettiniz? Kurtarma kodu kullanın"
+msgid "Lost your authenticator? Use a backup or recovery code"
+msgstr ""
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19206,6 +19244,11 @@ msgstr "Yeni Yapay Zeka Sağlayıcısı"
 msgid "New Approved Access Domain"
 msgstr "Yeni Onaylanmış Erişim Alanı"
 
+#. js-lingui-id: pQIH+r
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "New backup codes replace your current ones, which stop working."
+msgstr ""
+
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
 msgid "New calendar event"
@@ -20095,7 +20138,7 @@ msgstr "Not yok"
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "No objects match your search"
-msgstr ""
+msgstr "Aramanızla eşleşen nesne yok"
 
 #. js-lingui-id: XIpopT
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
@@ -20366,7 +20409,7 @@ msgstr "Hedef yok"
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
-msgstr ""
+msgstr "Aramanızla eşleşen araç yok"
 
 #. js-lingui-id: t0t36i
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -21561,7 +21604,7 @@ msgstr "İsteğe bağlı — boş bırakılırsa IAM rolü kullanılır"
 #. js-lingui-id: X8Kmj8
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "Optional · A short summary of what this agent does"
-msgstr ""
+msgstr "İsteğe bağlı · Bu temsilcinin ne yaptığının kısa özeti"
 
 #. js-lingui-id: BVmWQT
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -23548,12 +23591,12 @@ msgstr "Kayıt silindi"
 #. js-lingui-id: B6/jGB
 #: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
 msgid "Record is permanently deleted"
-msgstr ""
+msgstr "Kayıt kalıcı olarak silindi"
 
 #. js-lingui-id: 72O3vf
 #: src/modules/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents.ts
 msgid "Record is restored"
-msgstr ""
+msgstr "Kayıt geri yüklendi"
 
 #. js-lingui-id: rdLUKj
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
@@ -23625,7 +23668,7 @@ msgstr "Kayıt düzeyi"
 #. js-lingui-id: VQ4KjL
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Record-level filter"
-msgstr ""
+msgstr "Kayıt düzeyi filtresi"
 
 #. js-lingui-id: jdetKb
 #: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
@@ -23690,7 +23733,7 @@ msgstr "Kayıt Seçildi"
 #. js-lingui-id: TZIC1Z
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Records this agent can see and change"
-msgstr ""
+msgstr "Bu temsilcinin görebileceği ve değiştirebileceği kayıtlar"
 
 #. js-lingui-id: sE6EHz
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -23970,7 +24013,7 @@ msgstr "{label} öğesini kaldır"
 #. js-lingui-id: elnmVe
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "Remove {label}, {description}"
-msgstr ""
+msgstr "{label}, {description} öğesini kaldır"
 
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOriginsTable.tsx
@@ -23980,7 +24023,7 @@ msgstr "{origin} öğesini kaldır"
 #. js-lingui-id: wzdVhz
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Remove {toolName}"
-msgstr ""
+msgstr "{toolName} öğesini kaldır"
 
 #. js-lingui-id: kL4wuJ
 #: src/modules/object-record/record-sharing/components/RecordSharingAccessLevelOptions.tsx
@@ -23990,12 +24033,12 @@ msgstr "Erişimi kaldır"
 #. js-lingui-id: wf5QIp
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Remove access to {objectLabel}"
-msgstr ""
+msgstr "{objectLabel} için erişimi kaldır"
 
 #. js-lingui-id: EK2N/p
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Remove access to all records"
-msgstr ""
+msgstr "Tüm kayıtlara erişimi kaldır"
 
 #. js-lingui-id: VjbCv0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -25045,7 +25088,7 @@ msgstr "Yıllık faturalandırıldığında %25 tasarruf edin"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentEditionCommands.ts
 msgid "Save Agent"
-msgstr ""
+msgstr "Temsilciyi kaydet"
 
 #. js-lingui-id: 8tM8+a
 #: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
@@ -25072,6 +25115,11 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Save settings"
 msgstr "Ayarları kaydet"
+
+#. js-lingui-id: /hNRXq
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
+msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
+msgstr ""
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -25560,7 +25608,7 @@ msgstr "Adımları ve alanları ara"
 #. js-lingui-id: mW8qA2
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "Search tools"
-msgstr ""
+msgstr "Araç ara"
 
 #. js-lingui-id: rws5EE
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
@@ -25763,7 +25811,7 @@ msgstr "Bu takvim etkinliğine bağlı tüm çağrı kayıtlarını görüntüle
 #. js-lingui-id: B5odfQ
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "See all records"
-msgstr ""
+msgstr "Tüm kayıtları görüntüle"
 
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -25816,12 +25864,12 @@ msgstr "Tüm Nesnelerdeki Kayıtları Görüntüle"
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Runs"
-msgstr ""
+msgstr "Çalıştırmaları görüntüle"
 
 #. js-lingui-id: dKYXK6
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 msgid "See Settings"
-msgstr ""
+msgstr "Ayarları görüntüle"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26645,7 +26693,7 @@ msgstr "Çoğu çalışma alanının asla değiştirmesi gerekmeyen ayarlar"
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "Settings permission"
-msgstr ""
+msgstr "Ayarlar izni"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -29034,7 +29082,7 @@ msgstr "Bu işlem geri alınamaz. Bu, tüm hesabınızı kalıcı olarak silecek
 #. js-lingui-id: bWmXw/
 #: src/modules/object-core/agents/components/CoreAgentDeleteConfirmationModal.tsx
 msgid "This action cannot be undone. This will permanently delete your agent."
-msgstr ""
+msgstr "Bu işlem geri alınamaz. Bu, temsilcinizi kalıcı olarak silecek."
 
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -29075,37 +29123,37 @@ msgstr "Bu adres zaten alınmış"
 #. js-lingui-id: Wg5iFS
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "This agent can't see any records yet."
-msgstr ""
+msgstr "Bu temsilci henüz hiçbir kaydı göremiyor."
 
 #. js-lingui-id: zJHUio
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "This agent can't use any tools yet."
-msgstr ""
+msgstr "Bu temsilci henüz hiçbir aracı kullanamıyor."
 
 #. js-lingui-id: N5v8kc
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "This agent comes from an app, so its access can't be changed here."
-msgstr ""
+msgstr "Bu temsilci bir uygulamadan geliyor, bu nedenle erişimi burada değiştirilemez."
 
 #. js-lingui-id: EVX1ND
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
-msgstr ""
+msgstr "Bu temsilci bir uygulamadan geliyor, bu nedenle araçları burada değiştirilemez."
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "This agent only runs when a workflow, an app or the API calls it."
-msgstr ""
+msgstr "Bu temsilci yalnızca bir iş akışı, bir uygulama veya API onu çağırdığında çalışır."
 
 #. js-lingui-id: RKKH61
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "This agent shares its role with other members or agents. Change its access in Settings > Roles."
-msgstr ""
+msgstr "Bu temsilci rolünü diğer üyeler veya temsilcilerle paylaşıyor. Erişimini Ayarlar > Roller bölümünden değiştirin."
 
 #. js-lingui-id: YMrA7j
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
-msgstr ""
+msgstr "Bu temsilci rolünü diğer üyeler veya temsilcilerle paylaşıyor. Araçlarını Ayarlar > Roller bölümünden değiştirin."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
@@ -29366,7 +29414,7 @@ msgstr "Bu işlem aşağıdakileri ve bunların senkronize edilmiş tüm e-posta
 #. js-lingui-id: YMiCUw
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "This permanently deletes these {numberOfCoreAgents} agents. This action cannot be undone."
-msgstr ""
+msgstr "Bu, {numberOfCoreAgents} temsilciyi kalıcı olarak siler. Bu işlem geri alınamaz."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -29376,7 +29424,7 @@ msgstr "Bu {numberOfCoreWorkflows} iş akışını ve tüm çalıştırma geçmi
 #. js-lingui-id: KNcaaQ
 #: src/modules/object-core/agents/utils/getDeleteCoreAgentsConfirmationContent.ts
 msgid "This permanently deletes this agent. This action cannot be undone."
-msgstr ""
+msgstr "Bu, bu temsilciyi kalıcı olarak siler. Bu işlem geri alınamaz."
 
 #. js-lingui-id: riRzbk
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -31490,10 +31538,15 @@ msgstr "Kullanım dönemi"
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "‘{trimmedSidePanelSearch}’ ile kullan..."
 
-#. js-lingui-id: bmkeQS
+#. js-lingui-id: jFGgyP
+#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
+msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
+msgstr ""
+
+#. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
-msgid "Use a recovery code"
-msgstr "Kurtarma kodu kullan"
+msgid "Use a backup or recovery code"
+msgstr ""
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
@@ -32509,7 +32562,7 @@ msgstr "{applicationName} uygulamasının çalışma alanınıza ekledikleri"
 #. js-lingui-id: 1rpyKy
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "What AI model should your agent run on"
-msgstr ""
+msgstr "Temsilciniz hangi yapay zeka modeliyle çalışmalı"
 
 #. js-lingui-id: Itn+J7
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
@@ -32544,7 +32597,7 @@ msgstr "Ne sınıflandırılmalı?"
 #. js-lingui-id: Z1117Y
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "What should the agent do every time it runs?"
-msgstr ""
+msgstr "Temsilci her çalıştığında ne yapmalı?"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -32560,7 +32613,7 @@ msgstr "Bu API'nin yapabilecekleri: İzinlerini tanımlamak için bir kullanıc�
 #. js-lingui-id: w7CKq8
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
 msgid "What tools can this agent use for its mission"
-msgstr ""
+msgstr "Bu temsilci görevi için hangi araçları kullanabilir"
 
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
@@ -32605,7 +32658,7 @@ msgstr "Temsilci ne zaman durup size sormalı? Örneğin, herhangi bir e-posta g
 #. js-lingui-id: vn42KP
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "When should this agent run on its own"
-msgstr ""
+msgstr "Bu temsilci ne zaman kendi başına çalışmalı"
 
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
@@ -33162,7 +33215,7 @@ msgstr "{target} yaz ve sil"
 #. js-lingui-id: qJSzDh
 #: src/modules/object-core/agents/components/CoreAgentSettingsContent.tsx
 msgid "Write some instructions"
-msgstr ""
+msgstr "Talimatlar yazın"
 
 #. js-lingui-id: P28Nzv
 #: src/modules/ai/components/AiChatApprovalEmailReview.tsx
