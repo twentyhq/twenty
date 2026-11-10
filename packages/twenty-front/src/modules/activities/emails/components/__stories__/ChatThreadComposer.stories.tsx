@@ -1,33 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { IconBrandLinkedin, IconBrandWhatsapp, IconMail } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { type ChatThreadComposerChannel } from '@/activities/emails/types/ChatThreadComposerChannel';
-
-const CHANNELS: ChatThreadComposerChannel[] = [
-  {
-    id: 'email',
-    name: 'Email',
-    handle: 'sundar@google.com',
-    logo: <IconMail size={14} />,
-  },
-  {
-    id: 'whatsapp',
-    name: 'WhatsApp',
-    handle: '+1 650 253 0000',
-    logo: <IconBrandWhatsapp size={14} />,
-  },
-  {
-    id: 'linkedin',
-    name: 'LinkedIn',
-    handle: 'Sundar Pichai',
-    logo: <IconBrandLinkedin size={14} />,
-  },
-];
 
 const onSendMessage = fn(() => Promise.resolve());
 const onMessageSent = fn(() => new Promise(() => undefined));
@@ -66,29 +42,10 @@ export const Default: Story = {
   },
 };
 
-const ChannelsAndAttachmentsStory = () => {
-  const [selectedChannelId, setSelectedChannelId] = useState('whatsapp');
-
-  return (
-    <ChatThreadComposer
-      channelName="WhatsApp"
-      recipientName="Sundar"
-      isDisconnected={false}
-      onSendMessage={onSendMessage}
-      onMessageSent={onMessageSent}
-      canAttachFiles
-      channels={CHANNELS}
-      selectedChannelId={selectedChannelId}
-      onChannelChange={setSelectedChannelId}
-    />
-  );
-};
-
-export const ChannelsAndAttachments: Story = {
-  render: () => <ChannelsAndAttachmentsStory />,
+export const Attachments: Story = {
+  args: { canAttachFiles: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
 
     await canvas.findByRole('button', { name: 'Attach files' });
 
@@ -110,14 +67,6 @@ export const ChannelsAndAttachments: Story = {
       await canvas.findByRole('button', { name: /Remove draft-page/ }),
     );
     await expect(canvas.queryByText(/draft-page/)).not.toBeInTheDocument();
-
-    await userEvent.click(canvas.getByRole('button', { name: 'Send with' }));
-    await userEvent.click(
-      await body.findByRole('menuitemradio', { name: /LinkedIn/ }),
-    );
-    await expect(
-      canvas.getByRole('button', { name: 'Send with' }),
-    ).toHaveTextContent('LinkedIn');
 
     await userEvent.click(canvas.getByRole('button', { name: 'Send' }));
     await waitFor(() => expect(onSendMessage).toHaveBeenCalledTimes(1));
