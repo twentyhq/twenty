@@ -87,6 +87,10 @@ export type ViewOverrides = {
 @Index('IDX_VIEW_CREATED_BY_USER_WORKSPACE', ['createdByUserWorkspaceId'])
 @Index('IDX_VIEW_OWNER_USER_WORKSPACE', ['ownerUserWorkspaceId'])
 @Check(
+  'CHK_VIEW_OWNER_PRIVATE_ONLY',
+  `("ownerUserWorkspaceId" IS NULL OR "visibility" = 'UNLISTED')`,
+)
+@Check(
   'CHK_VIEW_CALENDAR_INTEGRITY',
   `("type" NOT IN ('CALENDAR', 'CALENDAR_WIDGET') OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
 )
