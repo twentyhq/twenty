@@ -155,7 +155,7 @@ describe('ClientIdMetadataDocumentService', () => {
     await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
   });
 
-  it.each([408, 425, 429])(
+  it.each([301, 302, 307, 308, 408, 425, 429])(
     'keeps serving the last document while its host answers %i',
     async (status) => {
       await service.findDocument(DOCUMENT_URL);

@@ -144,9 +144,11 @@ export class ClientIdMetadataDocumentService {
         `Failed to fetch client ID metadata document ${clientIdMetadataDocumentUrl}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
+      // Redirects are never followed, but a moved or temporarily redirected document is not withdrawn
       const isWithdrawn =
         isAxiosError(error) &&
         isDefined(error.response) &&
+        error.response.status >= 400 &&
         error.response.status < 500 &&
         !CLIENT_ID_METADATA_DOCUMENT_TRANSIENT_CLIENT_ERROR_STATUS_CODES.includes(
           error.response.status,
