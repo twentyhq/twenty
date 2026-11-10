@@ -5,7 +5,14 @@ import { isDefined } from 'twenty-shared/utils';
 export const withRowLevelPermissionRuleGrants = (
   role: RoleWithPartialMembers,
 ): RoleWithPartialMembers => {
-  const rules = role.rowLevelPermissionRules ?? [];
+  const filteredObjectMetadataIds = new Set(
+    (role.rowLevelPermissionPredicates ?? []).map(
+      ({ objectMetadataId }) => objectMetadataId,
+    ),
+  );
+  const rules = (role.rowLevelPermissionRules ?? []).filter(
+    ({ objectMetadataId }) => filteredObjectMetadataIds.has(objectMetadataId),
+  );
 
   if (rules.length === 0) {
     return role;
