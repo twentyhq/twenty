@@ -7,9 +7,9 @@ import {
   type ConnectionProviderManifest,
   type CustomConnectionProviderConfig,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
-const SUPPORTED_TYPES = ['oauth', 'custom'] as const;
+const SUPPORTED_TYPES = ['oauth', 'oauth-discovery', 'custom'] as const;
 
 type ConnectionProviderLogicFunctionKey = Extract<
   keyof ConnectionProviderManifest,
@@ -151,6 +151,15 @@ export const defineConnectionProvider: DefineEntity<
         errors.push('OAuth connection provider must declare a scopes array');
       }
     }
+  }
+
+  if (
+    config.type === 'oauth-discovery' &&
+    !isHttpUrl(config.oauthDiscovery?.resourceUrl ?? '')
+  ) {
+    errors.push(
+      "Connection provider with type 'oauth-discovery' must declare oauthDiscovery.resourceUrl as an HTTP or HTTPS URL",
+    );
   }
 
   if (config.type === 'custom') {

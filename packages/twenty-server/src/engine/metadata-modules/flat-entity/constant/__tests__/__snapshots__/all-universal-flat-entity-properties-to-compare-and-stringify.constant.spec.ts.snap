@@ -92,6 +92,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "scope",
       "oauthConfig",
       "customConfig",
+      "oauthDiscoveryConfig",
       "identifyAccountLogicFunctionUniversalIdentifier",
       "onConnectLogicFunctionUniversalIdentifier",
       "onDisconnectLogicFunctionUniversalIdentifier",
@@ -99,6 +100,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToStringify": [
       "oauthConfig",
       "customConfig",
+      "oauthDiscoveryConfig",
     ],
   },
   "fieldMetadata": {
