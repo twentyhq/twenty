@@ -22,4 +22,8 @@ export class ApplicationRegistrationSummaryDTO {
   @IsString()
   @Field(() => String, { nullable: true })
   logoUrl?: string | null;
+
+  // The app whose OAuth identity this client was verified against
+  @Field(() => String, { nullable: true })
+  oAuthIdentityUniversalIdentifier: string | null;
 }

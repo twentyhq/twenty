@@ -48,7 +48,10 @@ const meta: Meta<PageDecoratorArgs> = {
             data: {
               currentUser: {
                 ...mockedOnboardingUserData(OnboardingStatus.COMPLETED),
-                currentWorkspace: {
+                // The page reloads the current user, which would replace the workspace each story seeds
+                currentWorkspace: jotaiStore.get(
+                  currentWorkspaceState.atom,
+                ) ?? {
                   ...mockCurrentWorkspace,
                   billingSubscriptions: [],
                 },

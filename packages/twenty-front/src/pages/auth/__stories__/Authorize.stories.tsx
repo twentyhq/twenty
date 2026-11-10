@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { within } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { AppPath } from 'twenty-shared/types';
 import { Authorize } from '~/pages/auth/Authorize';
@@ -15,6 +15,7 @@ import { getOperationName } from '~/utils/getOperationName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { CHATGPT_CONNECTABLE_APP } from '@/settings/app-preferences/testing/connectableAppFixtures';
 import { FindApplicationRegistrationByClientIdDocument } from '~/generated-metadata/graphql';
 
 const MOCKED_REDIRECT_URL = 'https://chatgpt.com/connector';
@@ -26,6 +27,8 @@ const buildHandlers = (
     logoUrl: string | null;
     oAuthScopes: string[];
     websiteUrl: string | null;
+    oAuthIdentityUniversalIdentifier?: string | null;
+    claimsVerifiedClientName?: boolean;
   } | null,
 ) => [
   graphql.query(
@@ -36,6 +39,8 @@ const buildHandlers = (
           findApplicationRegistrationByClientId: application
             ? {
                 __typename: 'PublicApplicationRegistration',
+                oAuthIdentityUniversalIdentifier: null,
+                claimsVerifiedClientName: false,
                 ...application,
               }
             : null,
@@ -96,6 +101,7 @@ export const Default: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
+        oAuthIdentityUniversalIdentifier: CHATGPT_CONNECTABLE_APP.id,
       }),
     },
   },
@@ -105,6 +111,40 @@ export const Default: Story = {
       timeout: 5000,
     });
     await canvas.findByText('chatgpt.com');
+    await canvas.findByText('Verified by Twenty as the official ChatGPT');
+  },
+};
+
+export const UnverifiedClientBorrowingAKnownName: Story = {
+  args: {
+    searchParams: {
+      client_id: 'self-named-claude-client-id',
+      redirect_uri: 'https://claude-connector.example.com/callback',
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: buildHandlers({
+        id: 'application-id-self-named-claude',
+        name: 'Claude',
+        logoUrl: null,
+        oAuthScopes: ['api', 'profile'],
+        websiteUrl: null,
+        claimsVerifiedClientName: true,
+      }),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText('Connect Claude to your account', undefined, {
+      timeout: 5000,
+    });
+    await canvas.findByText(
+      'This app calls itself Claude, but Twenty could not confirm it is. Only continue if you started this connection from Claude.',
+    );
+    expect(
+      canvas.queryByText('Verified by Twenty as the official Claude'),
+    ).not.toBeInTheDocument();
   },
 };
 
@@ -198,5 +238,45 @@ export const WithClaudeInWorkspace: Story = {
     await canvas.findByText('Connect Claude to Acme', undefined, {
       timeout: 5000,
     });
+  },
+};
+
+export const WhenTheClientLookupFails: Story = {
+  args: {
+    searchParams: {
+      client_id: 'https://client.example.com/oauth/metadata.json',
+      redirect_uri: MOCKED_REDIRECT_URL,
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query(
+          getOperationName(FindApplicationRegistrationByClientIdDocument) ?? '',
+          () =>
+            HttpResponse.json({
+              data: null,
+              errors: [
+                {
+                  message: 'Limit reached (60 tokens per 3600000 ms)',
+                  extensions: { code: 'LIMIT_REACHED' },
+                },
+              ],
+            }),
+        ),
+        ...buildHandlers(null),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText(
+      'Unable to load application details. Please try again later.',
+      undefined,
+      { timeout: 5000 },
+    );
+    expect(
+      canvas.queryByText(`Navigated to ${AppPath.NotFound}`),
+    ).not.toBeInTheDocument();
   },
 };

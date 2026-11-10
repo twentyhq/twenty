@@ -9,7 +9,6 @@ import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
 import {
   type ApplicationBilling,
-  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   type Manifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
@@ -24,11 +23,10 @@ import {
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
-import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { getApplicationOAuthIdentity } from 'src/engine/core-modules/application/application-oauth-identity/utils/get-application-oauth-identity.util';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import {
   ApplicationRegistrationVersionService,
@@ -36,6 +34,8 @@ import {
 } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
+import { isReservedApplicationRegistrationUniversalIdentifier } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/utils/is-reserved-application-registration-universal-identifier.util';
+import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT } from 'src/engine/core-modules/application/application-registration/constants/application-registration-without-manifest-select.constant';
@@ -52,7 +52,6 @@ import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/ap
 import { type ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
-import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import {
   type UpdateApplicationRegistrationInput,
   type UpdateApplicationRegistrationPayload,
@@ -65,10 +64,6 @@ import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/applica
 import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
 import { sortApplicationRegistrationsForAdmin } from 'src/engine/core-modules/application/application-registration/utils/sort-application-registrations-for-admin.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
 import {
   UPGRADE_APPLICATIONS_JOB_NAME,
   type UpgradeApplicationsJobData,
@@ -118,7 +113,17 @@ export type ApplicationRegistrationCatalogCard = {
   category: string | null;
   logoUrl: string | null;
   requiredServerVersionRange: string | null;
+  connectUrl: string | null;
 };
+
+// An app with an OAuth identity acts for the member, so it asks for what the member can grant
+const getCatalogOAuthScopes = (
+  params: Pick<
+    UpsertApplicationRegistrationFromCatalogParams,
+    'sourceType' | 'sourcePackage' | 'manifest'
+  >,
+): string[] =>
+  isDefined(getApplicationOAuthIdentity(params)) ? [...ALL_OAUTH_SCOPES] : [];
 
 @Injectable()
 export class ApplicationRegistrationService {
@@ -139,13 +144,13 @@ export class ApplicationRegistrationService {
     private readonly fileStorageService: FileStorageService,
     private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly cacheLockService: CacheLockService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly applicationRegistrationSeedingService: ApplicationRegistrationSeedingService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -248,14 +253,7 @@ export class ApplicationRegistrationService {
   }
 
   private async invalidateMarketplaceAppsCache(): Promise<void> {
-    try {
-      await this.coreEntityCacheService.invalidate(
-        'marketplaceCatalog',
-        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
-      );
-    } catch (error) {
-      this.logger.error('Failed to invalidate marketplace apps cache', error);
-    }
+    await this.applicationRegistrationSeedingService.invalidateCatalogCaches();
   }
 
   emitRegistrationPublishMetric({
@@ -452,46 +450,6 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findOneByClientId(
-    clientId: string,
-  ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientId },
-    });
-  }
-
-  async findPublicByClientId(
-    clientId: string,
-  ): Promise<PublicApplicationRegistrationDTO | null> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientId },
-      select: [
-        'id',
-        'name',
-        'logo',
-        'logoFileId',
-        'sourceType',
-        'sourcePackage',
-        'latestAvailableVersion',
-        'websiteUrl',
-        'oAuthScopes',
-      ],
-    });
-
-    if (!registration) {
-      return null;
-    }
-
-    return {
-      id: registration.id,
-      name: registration.name,
-      logoUrl:
-        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
-      websiteUrl: registration.websiteUrl,
-      oAuthScopes: registration.oAuthScopes,
-    };
-  }
-
   async createWithClientSecret({
     input,
     ownerWorkspaceId,
@@ -541,8 +499,9 @@ export class ApplicationRegistrationService {
 
     if (
       isDefined(existingByUid) ||
-      fields.universalIdentifier.toLowerCase() ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+      isReservedApplicationRegistrationUniversalIdentifier(
+        fields.universalIdentifier,
+      )
     ) {
       throw new ApplicationRegistrationException(
         `Universal identifier ${fields.universalIdentifier} is already claimed`,
@@ -683,6 +642,7 @@ export class ApplicationRegistrationService {
         | 'tarballFileId'
         | 'isListed'
         | 'ownerWorkspaceId'
+        | 'oAuthScopes'
       >
     >;
   }): Promise<{
@@ -1006,6 +966,7 @@ export class ApplicationRegistrationService {
       additionalFields: {
         name: params.name,
         sourcePackage: params.sourcePackage,
+        oAuthScopes: getCatalogOAuthScopes(params),
       },
     });
 
@@ -1043,7 +1004,7 @@ export class ApplicationRegistrationService {
       ...fromManifestApplicationToDisplayFields(params.manifest.application),
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
-      oAuthScopes: [],
+      oAuthScopes: getCatalogOAuthScopes(params),
       ownerWorkspaceId: null,
     });
 
@@ -1066,52 +1027,15 @@ export class ApplicationRegistrationService {
   }
 
   async findOrCreateCliRegistration(): Promise<ApplicationRegistrationEntity> {
-    const existing =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-      );
-
-    if (isDefined(existing)) {
-      return existing;
-    }
-
-    const insertResult = await this.applicationRegistrationRepository
-      .createQueryBuilder()
-      .insert()
-      .into(ApplicationRegistrationEntity)
-      .values({
+    return this.applicationRegistrationSeedingService.findOrCreateOAuthOnlyRegistration(
+      {
         universalIdentifier:
           TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
         name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
-        oAuthClientId: v4(),
-        oAuthClientSecretHash: null,
         oAuthRedirectUris: [],
         oAuthScopes: TWENTY_CLI_APPLICATION_REGISTRATION.oAuthScopes,
-        ownerWorkspaceId: null,
-        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-        createdByUserId: null,
-      })
-      .orIgnore()
-      .returning('id')
-      .execute();
-
-    if (insertResult.raw.length > 0) {
-      await this.invalidateMarketplaceAppsCache();
-    }
-
-    const registration =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-      );
-
-    if (!isDefined(registration)) {
-      throw new ApplicationException(
-        'Failed to create the Twenty CLI application registration',
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    return registration;
+      },
+    );
   }
 
   async findManyCatalogCards(): Promise<ApplicationRegistrationCatalogCard[]> {
@@ -1149,6 +1073,7 @@ export class ApplicationRegistrationService {
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       requiredServerVersionRange:
         registration.manifest?.application?.requiredServerVersionRange ?? null,
+      connectUrl: getApplicationOAuthIdentity(registration)?.connectUrl ?? null,
     }));
   }
 
@@ -1484,7 +1409,12 @@ export class ApplicationRegistrationService {
       params.applicationRegistrationId,
     );
 
-    if (isDefined(registration.ownerWorkspaceId)) {
+    if (
+      isDefined(registration.ownerWorkspaceId) ||
+      isReservedApplicationRegistrationUniversalIdentifier(
+        registration.universalIdentifier,
+      )
+    ) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,

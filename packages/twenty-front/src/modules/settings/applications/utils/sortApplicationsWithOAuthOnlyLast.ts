@@ -1,24 +1,19 @@
 import {
-  type ApplicationRegistrationSummary,
+  type Application,
   ApplicationRegistrationSourceType,
 } from '~/generated-metadata/graphql';
 
 export const sortApplicationsWithOAuthOnlyLast = <
-  TApplication extends {
-    applicationRegistration?: Pick<
-      ApplicationRegistrationSummary,
-      'sourceType'
-    > | null;
-  },
+  TApplication extends Partial<Pick<Application, 'sourceType'>>,
 >(
   applications: TApplication[],
 ): TApplication[] =>
   [...applications].sort((firstApplication, secondApplication) => {
     const isFirstApplicationOAuthOnly =
-      firstApplication.applicationRegistration?.sourceType ===
+      firstApplication.sourceType ===
       ApplicationRegistrationSourceType.OAUTH_ONLY;
     const isSecondApplicationOAuthOnly =
-      secondApplication.applicationRegistration?.sourceType ===
+      secondApplication.sourceType ===
       ApplicationRegistrationSourceType.OAUTH_ONLY;
 
     if (isFirstApplicationOAuthOnly === isSecondApplicationOAuthOnly) {

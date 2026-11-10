@@ -57,6 +57,7 @@ export type {
   ApplicationHealthCheckResult,
 } from './applicationHealthType';
 export { isApplicationHealthCheckResult } from './applicationHealthType';
+export type { ApplicationOAuthIdentity } from './applicationOAuthIdentityType';
 export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
@@ -100,6 +101,8 @@ export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from './constants/GettingStartedAppUniversalIdentifiers';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
+export { OAUTH_IDENTITY_MCP_SERVER_URL_PLACEHOLDER } from './constants/OAuthIdentityMcpServerUrlPlaceholder';
+export { OAUTH_IDENTITY_REDIRECT_URI_WILDCARD_SEGMENT } from './constants/OAuthIdentityRedirectUriWildcardSegment';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { RESERVED_SETTINGS_MENU_ITEM_SLUGS } from './constants/ReservedSettingsMenuItemSlugs';
 export { SETTINGS_GENERAL_TAB_ID } from './constants/SettingsGeneralTabId';
@@ -332,6 +335,7 @@ export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionS
 export { hasRunAgentMessageContentOrAttachments } from './utils/hasRunAgentMessageContentOrAttachments';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
+export { isRedirectUriAllowedByOAuthIdentity } from './utils/isRedirectUriAllowedByOAuthIdentity';
 export { isReservedSettingsMenuItemSlug } from './utils/isReservedSettingsMenuItemSlug';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
@@ -341,6 +345,7 @@ export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontC
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
+export { validateApplicationOAuthIdentity } from './utils/validateApplicationOAuthIdentity';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {
   ViewManifestFilterValue,

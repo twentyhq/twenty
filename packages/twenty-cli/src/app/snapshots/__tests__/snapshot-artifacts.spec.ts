@@ -49,6 +49,7 @@ const FIXTURES = [
   'function-execute-app',
   'shared-dependencies-app',
   'invalid-app',
+  'oauth-identity-app',
 ];
 const json = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
 const hash = (bytes: Buffer | string) =>

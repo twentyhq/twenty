@@ -1,6 +1,8 @@
 import { HttpResponse, graphql } from 'msw';
 import { fn } from 'storybook/test';
 
+import { CONNECTABLE_APPS_GRAPHQL_HANDLER } from '@/settings/app-preferences/testing/connectableAppsGraphqlHandler';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
@@ -15,6 +17,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import {
   mockCurrentWorkspace,
+  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
@@ -289,7 +292,47 @@ export const deleteConnectedAccount = fn();
 export const disconnectConnectedAccount = fn();
 export const myApplicationPreferencesRequested = fn();
 
+const ACCOUNT_GROUPS_WORKSPACE = {
+  ...mockCurrentWorkspace,
+  installedApplications: [
+    {
+      id: FATHOM_APPLICATION_ID,
+      universalIdentifier: FATHOM_APPLICATION_ID,
+      name: 'Fathom',
+      description: 'Records, transcribes and summarizes your meetings.',
+      logoUrl: null,
+      createdAt: '2024-01-01T00:00:00.000Z',
+    },
+    {
+      id: GRANOLA_APPLICATION_ID,
+      universalIdentifier: GRANOLA_APPLICATION_ID,
+      name: 'Granola',
+      description: 'Takes notes during your calls.',
+      logoUrl: null,
+      createdAt: '2024-01-01T00:00:00.000Z',
+    },
+  ],
+  featureFlags: [
+    {
+      key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+      value: true,
+    },
+  ],
+};
+
 export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
+  // The page reloads the current user, which would replace the seeded workspace and drop its flags
+  graphql.query('GetCurrentUser', () =>
+    HttpResponse.json({
+      data: {
+        currentUser: {
+          ...mockedUserData,
+          currentWorkspace: ACCOUNT_GROUPS_WORKSPACE,
+        },
+      },
+    }),
+  ),
+  CONNECTABLE_APPS_GRAPHQL_HANDLER,
   graphql.query('MyConnectedAccounts', () =>
     HttpResponse.json({
       data: {
@@ -375,35 +418,19 @@ export const seedAccountGroupsStory = async () => {
   jotaiStore.set(isMicrosoftCalendarEnabledState.atom, true);
   jotaiStore.set(isImapSmtpCaldavEnabledState.atom, false);
 
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    installedApplications: [
-      {
-        id: FATHOM_APPLICATION_ID,
-        universalIdentifier: FATHOM_APPLICATION_ID,
-        name: 'Fathom',
-        description: 'Records, transcribes and summarizes your meetings.',
-        logoUrl: null,
-        createdAt: '2024-01-01T00:00:00.000Z',
-      },
-      {
-        id: GRANOLA_APPLICATION_ID,
-        universalIdentifier: GRANOLA_APPLICATION_ID,
-        name: 'Granola',
-        description: 'Takes notes during your calls.',
-        logoUrl: null,
-        createdAt: '2024-01-01T00:00:00.000Z',
-      },
-    ],
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-        value: true,
-      },
-    ],
-  });
+  jotaiStore.set(currentWorkspaceState.atom, ACCOUNT_GROUPS_WORKSPACE);
   jotaiStore.set(currentWorkspaceMemberState.atom, {
     ...mockedWorkspaceMemberData,
     userWorkspaceId: MY_USER_WORKSPACE_ID,
   });
+  jotaiStore.set(
+    currentUserWorkspaceState.atom,
+    mockedUserData.currentUserWorkspace,
+  );
 };
+
+export const removeConnectedAccountsPermission = () =>
+  jotaiStore.set(currentUserWorkspaceState.atom, {
+    ...mockedUserData.currentUserWorkspace,
+    permissionFlags: [],
+  });

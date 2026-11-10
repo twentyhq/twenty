@@ -12,4 +12,5 @@ export type ApplicationWithoutRelation = Pick<
   | 'applicationRegistration'
   | 'defaultRoleId'
   | 'grantRoleId'
->;
+> &
+  Partial<Pick<Application, 'sourceType'>>;

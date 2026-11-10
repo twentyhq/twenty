@@ -18,4 +18,12 @@ export class PublicApplicationRegistrationDTO {
 
   @Field(() => [String])
   oAuthScopes: string[];
+
+  // The app whose OAuth identity this client was verified against
+  @Field(() => String, { nullable: true })
+  oAuthIdentityUniversalIdentifier: string | null;
+
+  // An unverified client named like a verified app, which a consent screen should flag
+  @Field(() => Boolean)
+  claimsVerifiedClientName: boolean;
 }

@@ -40,6 +40,12 @@ export class MarketplaceAppDetailDTO {
   @Field(() => ApplicationRegistrationSourceType)
   sourceType: ApplicationRegistrationSourceType;
 
+  // Set only for an app with an OAuth identity; `{mcpServerUrl}` is left for the client to fill
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  connectUrl?: string;
+
   @IsOptional()
   @IsString()
   @Field({ nullable: true })

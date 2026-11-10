@@ -109,9 +109,12 @@ export class SecureHttpClientService {
     config?: SecureHttpClientConfig,
     context?: OutboundRequestContext,
   ): AxiosInstance {
+    const { publicHostsOnly, ...clientConfig } = config ?? {};
+
     const client = createSsrfSafeAxiosClient({
-      config,
-      allowedInternalHosts: this.getAllowedInternalHosts(),
+      config: clientConfig,
+      allowedInternalHosts:
+        publicHostsOnly === true ? [] : this.getAllowedInternalHosts(),
     });
 
     if (isDefined(context)) {

@@ -1,6 +1,8 @@
 // Universal identifiers of the first-party apps in packages/twenty-apps/public.
 export const TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS = {
+  CHATGPT: '6e58bb83-49dc-4d4d-ae82-662890eda505',
   CALL_RECORDER: '8da4b8b5-5edf-4880-b51f-ab6e679ec617',
+  CLAUDE: '3e0bda4b-fb1d-42bd-bab3-03b66698e6ff',
   EXA: '2b7f4a2e-9c4b-4a11-b63c-2e5e7d3f5a9a',
   FATHOM: 'c5fb24b3-15b0-48fb-a9b5-f182ba231e6c',
   GRANOLA: 'ffcc3979-0ee6-4d7d-912b-c12997d9f0f4',

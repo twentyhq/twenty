@@ -41,4 +41,12 @@ export const MARKETPLACE_FEATURED_APPLICATIONS: {
     sourcePackage: '@twentyhq/fathom',
     position: 7,
   },
+  {
+    universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CLAUDE,
+    sourcePackage: '@twentyhq/claude',
+  },
+  {
+    universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CHATGPT,
+    sourcePackage: '@twentyhq/chatgpt',
+  },
 ];
