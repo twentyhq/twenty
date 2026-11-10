@@ -3,6 +3,7 @@ import { Field, HideField, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsIn,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -10,6 +11,12 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
+import {
+  AI_CHAT_ASSISTANT_AVATAR_COLORS,
+  AI_CHAT_ASSISTANT_AVATAR_SHAPES,
+  type AiChatAssistantAvatarColor,
+  type AiChatAssistantAvatarShape,
+} from 'twenty-shared/ai';
 import { type AgentTrigger } from 'twenty-shared/application';
 import GraphQLJSON from 'graphql-type-json';
 
@@ -36,6 +43,16 @@ export class CreateAgentInput {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
+
+  @IsIn(AI_CHAT_ASSISTANT_AVATAR_COLORS)
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  avatarColor?: AiChatAssistantAvatarColor | null;
+
+  @IsIn(AI_CHAT_ASSISTANT_AVATAR_SHAPES)
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  avatarShape?: AiChatAssistantAvatarShape | null;
 
   @IsString()
   @IsOptional()

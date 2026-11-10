@@ -152,6 +152,12 @@ export default {
             "applicationId": [
                 550
             ],
+            "avatarColor": [
+                1
+            ],
+            "avatarShape": [
+                1
+            ],
             "createdAt": [
                 221
             ],
@@ -3401,6 +3407,12 @@ export default {
             ]
         },
         "CreateAgentInput": {
+            "avatarColor": [
+                1
+            ],
+            "avatarShape": [
+                1
+            ],
             "description": [
                 1
             ],
@@ -3870,6 +3882,9 @@ export default {
             "agentChatChannelId": [
                 550
             ],
+            "agentId": [
+                550
+            ],
             "color": [
                 1
             ],
@@ -3910,6 +3925,9 @@ export default {
                 550
             ],
             "viewId": [
+                550
+            ],
+            "workflowId": [
                 550
             ],
             "__typename": [
@@ -10141,6 +10159,9 @@ export default {
             "agentChatChannelId": [
                 550
             ],
+            "agentId": [
+                550
+            ],
             "applicationId": [
                 550
             ],
@@ -10193,6 +10214,9 @@ export default {
                 550
             ],
             "viewId": [
+                550
+            ],
+            "workflowId": [
                 550
             ],
             "__typename": [
@@ -14003,6 +14027,12 @@ export default {
             ]
         },
         "UpdateAgentInput": {
+            "avatarColor": [
+                1
+            ],
+            "avatarShape": [
+                1
+            ],
             "description": [
                 1
             ],

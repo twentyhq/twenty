@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -28,12 +28,20 @@ const StyledBar = styled.div`
   width: 100%;
 `;
 
+const StyledIdentifier = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
 type CoreObjectIdentifierBarProps = {
   isReadOnly?: boolean;
   recordId: string;
   name: string | null | undefined;
   namePlaceholder: string;
   onRename: (name: string) => Promise<boolean>;
+  avatar?: ReactNode;
 };
 
 export const CoreObjectIdentifierBar = ({
@@ -42,6 +50,7 @@ export const CoreObjectIdentifierBar = ({
   namePlaceholder,
   onRename,
   isReadOnly = false,
+  avatar,
 }: CoreObjectIdentifierBarProps) => {
   const [editedName, setEditedName] = useState<string>();
   const allowRequestsToTwentyIcons = useAtomStateValue(
@@ -66,37 +75,44 @@ export const CoreObjectIdentifierBar = ({
     }
   };
 
+  const recordAvatar = isDefined(avatar)
+    ? undefined
+    : {
+        src: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
+        colorSeed: recordId,
+        name: recordIdentifier?.name ?? '',
+        shape: recordIdentifier?.avatarShape ?? 'circle',
+      };
+
   return (
     <StyledBar>
-      <HeaderIdentifier
-        fontSize="lg"
-        avatar={{
-          src: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
-          colorSeed: recordId,
-          name: recordIdentifier?.name ?? '',
-          shape: recordIdentifier?.avatarShape ?? 'circle',
-        }}
-        title={
-          <TitleInput
-            instanceId={`core-object-name-${recordId}`}
-            sizeVariant="sm"
-            disabled={isReadOnly}
-            value={editedName ?? name ?? ''}
-            placeholder={namePlaceholder}
-            textColor={
-              isNonEmptyString(editedName ?? name)
-                ? undefined
-                : themeCssVariables.font.color.tertiary
-            }
-            onChange={setEditedName}
-            onEnter={saveName}
-            onEscape={() => setEditedName(undefined)}
-            onClickOutside={saveName}
-            onTab={saveName}
-            onShiftTab={saveName}
-          />
-        }
-      />
+      <StyledIdentifier>
+        {avatar}
+        <HeaderIdentifier
+          fontSize="lg"
+          avatar={recordAvatar}
+          title={
+            <TitleInput
+              instanceId={`core-object-name-${recordId}`}
+              sizeVariant="sm"
+              disabled={isReadOnly}
+              value={editedName ?? name ?? ''}
+              placeholder={namePlaceholder}
+              textColor={
+                isNonEmptyString(editedName ?? name)
+                  ? undefined
+                  : themeCssVariables.font.color.tertiary
+              }
+              onChange={setEditedName}
+              onEnter={saveName}
+              onEscape={() => setEditedName(undefined)}
+              onClickOutside={saveName}
+              onTab={saveName}
+              onShiftTab={saveName}
+            />
+          }
+        />
+      </StyledIdentifier>
       <RecordIdentifierBarCreatedAt objectRecordId={recordId} />
     </StyledBar>
   );
