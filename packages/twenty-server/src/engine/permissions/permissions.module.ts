@@ -7,9 +7,8 @@ import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/
 import { RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
 import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
-import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { RecordSharingReadService } from 'src/engine/permissions/internal/record-share/services/record-sharing-read.service';
+import { RecordSharingReadService } from 'src/engine/permissions/record-share/services/record-sharing-read.service';
 import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
@@ -35,7 +34,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordEventPermissionsReadService,
     RecordFieldPermissionsReadService,
     RecordPermissionsReadService,
-    RecordPermissionsOnlyRoleReadService,
     RecordSharingPermissionsService,
     RecordSharingReadService,
     RolePermissionsService,
@@ -47,7 +45,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordEventPermissionsReadService,
     RecordFieldPermissionsReadService,
     RecordPermissionsReadService,
-    RecordPermissionsOnlyRoleReadService,
     RecordSharingPermissionsService,
     RecordSharingReadService,
     RolePermissionsService,

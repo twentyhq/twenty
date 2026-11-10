@@ -1,3 +1,4 @@
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconTrash } from 'twenty-ui/icon';
 
@@ -18,6 +19,7 @@ import { useDeleteSelectedCoreWorkflows } from '@/object-core/workflows/hooks/us
 import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { getDeleteCoreWorkflowsConfirmationContent } from '@/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -40,6 +42,8 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
     shouldDisplayCoreWorkflowFiltersCommand,
     coreWorkflowsDeleteCommandLabel,
     shouldDisplayCoreWorkflowsDeleteCommand,
+    selectedCoreWorkflowIds,
+    isOnCoreWorkflowShowPage,
   } = useCoreObjectsCommands();
 
   const {
@@ -53,8 +57,9 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
   const { openCoreWorkflowFiltersSidePanel } =
     useOpenCoreWorkflowFiltersSidePanel();
 
-  const { deleteSelectedCoreWorkflows, selectedCoreWorkflowIds } =
-    useDeleteSelectedCoreWorkflows();
+  const { deleteSelectedCoreWorkflows } = useDeleteSelectedCoreWorkflows();
+
+  const navigate = useNavigateApp();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -64,9 +69,16 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
     openDialog(CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID);
   };
 
-  const handleConfirmDeleteSelectedCoreWorkflows = () => {
+  const handleConfirmDeleteSelectedCoreWorkflows = async () => {
     closeSidePanelMenu();
-    void deleteSelectedCoreWorkflows();
+
+    const wereCoreWorkflowsDeleted = await deleteSelectedCoreWorkflows(
+      selectedCoreWorkflowIds,
+    );
+
+    if (wereCoreWorkflowsDeleted && isOnCoreWorkflowShowPage) {
+      navigate(AppPath.WorkflowIndexPage);
+    }
   };
 
   const deleteConfirmationContent = getDeleteCoreWorkflowsConfirmationContent(

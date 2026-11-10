@@ -581,36 +581,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  targetWorkflow: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.MORPH_RELATION,
-      morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
-      fieldName: 'targetWorkflow',
-      label: i18nLabel(
-        msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconTimelineEvent',
-      isNullable: true,
-      isUIEditable: false,
-      isSystemSideEffect: true,
-      targetObjectName: 'workflow',
-      targetFieldName: 'timelineActivities',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'targetWorkflowId',
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   targetWorkflowVersion: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

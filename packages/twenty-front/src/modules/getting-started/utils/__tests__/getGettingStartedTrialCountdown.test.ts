@@ -3,11 +3,6 @@ import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const NOW = new Date('2026-03-01T12:00:00.000Z');
 
-const TRIAL_PERIODS = [
-  { duration: 30, isCreditCardRequired: true },
-  { duration: 14, isCreditCardRequired: false },
-];
-
 describe('getGettingStartedTrialCountdown', () => {
   it.each([
     {
@@ -19,11 +14,10 @@ describe('getGettingStartedTrialCountdown', () => {
         trialEnd: null,
         isCountdownVisible: false,
         daysLeft: 0,
-        trialDays: 0,
       },
     },
     {
-      description: 'counts the days left against the no-card trial duration',
+      description: 'counts the days left until the trial ends',
       subscriptionStatus: SubscriptionStatus.Trialing,
       currentPeriodEnd: '2026-03-11T12:00:00.000Z',
       hasPaymentMethod: false,
@@ -31,7 +25,6 @@ describe('getGettingStartedTrialCountdown', () => {
         trialEnd: new Date('2026-03-11T12:00:00.000Z'),
         isCountdownVisible: true,
         daysLeft: 10,
-        trialDays: 14,
       },
     },
     {
@@ -44,7 +37,6 @@ describe('getGettingStartedTrialCountdown', () => {
         trialEnd: new Date('2026-02-27T12:00:00.000Z'),
         isCountdownVisible: false,
         daysLeft: 0,
-        trialDays: 14,
       },
     },
   ])(
@@ -55,7 +47,6 @@ describe('getGettingStartedTrialCountdown', () => {
           subscriptionStatus,
           currentPeriodEnd,
           hasPaymentMethod,
-          trialPeriods: TRIAL_PERIODS,
           now: NOW,
         }),
       ).toEqual(expected);

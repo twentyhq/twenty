@@ -39,16 +39,11 @@ export const CreateNewRecordCommand = () => {
   }
 
   const commandType = getRecordCreationCommandType({
-    objectNameSingular: objectMetadataItem.nameSingular,
     contextObjectMetadataId: contextObjectMetadataItem?.id,
     recordIndexId,
     hasAnySoftDeleteFilterOnView,
     creationTargetObjectMetadataId,
   });
-
-  if (commandType === 'workflow') {
-    return <HeadlessEngineCommandWrapperEffect execute={createCoreWorkflow} />;
-  }
 
   return commandType === 'global' ? (
     <CreateGlobalRecordCommand objectMetadataItem={objectMetadataItem} />
