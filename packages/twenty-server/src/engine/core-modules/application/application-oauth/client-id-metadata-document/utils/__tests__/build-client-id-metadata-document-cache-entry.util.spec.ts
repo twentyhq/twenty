@@ -66,7 +66,7 @@ describe('buildClientIdMetadataDocumentCacheEntry', () => {
       }),
     ).toEqual({
       entry: { document: null, checkedAt: now, fetchedAt: null },
-      ttlMs: CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs,
+      ttlMs: CLIENT_ID_METADATA_DOCUMENT_LIMITS.unreachableRetryAfterMs,
     });
   });
 
@@ -79,7 +79,7 @@ describe('buildClientIdMetadataDocumentCacheEntry', () => {
       }),
     ).toEqual({
       entry: { document: null, checkedAt: FETCHED_AT, fetchedAt: null },
-      ttlMs: CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs,
+      ttlMs: CLIENT_ID_METADATA_DOCUMENT_LIMITS.unreachableRetryAfterMs,
     });
   });
 
