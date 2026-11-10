@@ -17,6 +17,8 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
@@ -692,6 +694,44 @@ describe('useAgentChat', () => {
         recipientWorkspaceMemberIds: [],
       }),
     );
+  });
+
+  it('keeps the quote after a failed send so the retry still sends it', async () => {
+    const quotedMessageIdAtom = agentChatQuotedMessageIdFamilyState.atomFamily({
+      threadId: THREAD_ID,
+    });
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Yes'),
+      },
+      sendChatMessageOutcomes: ['failed', 'sent'],
+      isAiChatInboxEnabled: true,
+    });
+    jotaiStore.set(
+      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [
+        {
+          id: 'quoted-message',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Can you take Stripe?' }],
+        },
+      ],
+    );
+    jotaiStore.set(quotedMessageIdAtom, 'quoted-message');
+
+    await send(result);
+
+    expect(jotaiStore.get(quotedMessageIdAtom)).toBe('quoted-message');
+
+    await send(result);
+
+    expect(sentMessageVariables.mock.calls[1][0].text).toBe(
+      sentMessageVariables.mock.calls[0][0].text,
+    );
+    expect(sentMessageVariables.mock.calls[1][0].text).toContain(
+      'Can you take Stripe?',
+    );
+    expect(jotaiStore.get(quotedMessageIdAtom)).toBeNull();
   });
 
   it('keeps recipient editing locked until the send settles and unlocks a retry', async () => {
