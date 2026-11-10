@@ -11,12 +11,14 @@ export class LogicFunctionExecutionThrottleService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async throttleOrThrow(workspaceId: string): Promise<void> {
-    await this.throttlerService.tokenBucketThrottleOrThrow(
+  async consumeToken(workspaceId: string): Promise<boolean> {
+    const admittedCount = await this.throttlerService.tokenBucketConsumeUpTo(
       `${workspaceId}-logic-function-execution`,
       1,
       this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT'),
       this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_TTL'),
     );
+
+    return admittedCount === 1;
   }
 }

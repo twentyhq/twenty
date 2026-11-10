@@ -7,10 +7,6 @@ import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/log
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import {
-  ThrottlerException,
-  ThrottlerExceptionCode,
-} from 'src/engine/core-modules/throttler/throttler.exception';
 import { buildInvalidToolArgumentsOutput } from 'src/engine/core-modules/tool-provider/utils/build-invalid-tool-arguments-output.util';
 import { HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/tool/tools/http-tool/constants/http-tool-max-payload-size-bytes.constant';
 import { HTTP_TOOL_TIMEOUT_MS } from 'src/engine/core-modules/tool/tools/http-tool/constants/http-tool-timeout-ms.constant';
@@ -54,7 +50,12 @@ export class HttpTool implements Tool {
 
     const input = parsedInput.data;
 
-    if (await this.isExecutionThrottled(context.workspaceId)) {
+    const hasExecutionToken =
+      await this.logicFunctionExecutionThrottleService.consumeToken(
+        context.workspaceId,
+      );
+
+    if (!hasExecutionToken) {
       return {
         success: false,
         message: `HTTP ${input.method} request to ${input.url} failed`,
@@ -109,24 +110,5 @@ export class HttpTool implements Tool {
     });
 
     return toolOutput;
-  }
-
-  private async isExecutionThrottled(workspaceId: string): Promise<boolean> {
-    try {
-      await this.logicFunctionExecutionThrottleService.throttleOrThrow(
-        workspaceId,
-      );
-
-      return false;
-    } catch (error) {
-      if (
-        error instanceof ThrottlerException &&
-        error.code === ThrottlerExceptionCode.LIMIT_REACHED
-      ) {
-        return true;
-      }
-
-      throw error;
-    }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type MessageDescriptor } from '@lingui/core';
@@ -50,8 +50,8 @@ import { buildWorkflowCodeStepFlatLogicFunction } from 'src/engine/core-modules/
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import {
-  ThrottlerException,
   ThrottlerExceptionCode,
+  getThrottlerExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
@@ -409,24 +409,20 @@ export class LogicFunctionExecutorService {
   }
 
   private async throttleExecution(workspaceId: string) {
-    try {
-      await this.logicFunctionExecutionThrottleService.throttleOrThrow(
+    const hasExecutionToken =
+      await this.logicFunctionExecutionThrottleService.consumeToken(
         workspaceId,
       );
-    } catch (error) {
-      if (
-        !(error instanceof ThrottlerException) ||
-        error.code !== ThrottlerExceptionCode.LIMIT_REACHED
-      ) {
-        throw error;
-      }
 
+    if (!hasExecutionToken) {
       throw new LogicFunctionExecutionException(
         'Logic function execution rate limit exceeded',
         LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
         {
-          userFriendlyMessage: error.userFriendlyMessage,
-          statusCode: error.statusCode,
+          userFriendlyMessage: getThrottlerExceptionUserFriendlyMessage(
+            ThrottlerExceptionCode.LIMIT_REACHED,
+          ),
+          statusCode: HttpStatus.TOO_MANY_REQUESTS,
         },
       );
     }
