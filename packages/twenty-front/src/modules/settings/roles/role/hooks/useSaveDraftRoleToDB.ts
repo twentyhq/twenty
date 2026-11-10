@@ -222,23 +222,32 @@ export const useSaveDraftRoleToDB = ({
                   objectPermission.canDestroyObjectRecords,
               })),
             ...objectMetadataIdsToResolve.map((objectMetadataId) => {
-              const isFilteredByRules =
-                rowLevelPermissionObjectMetadataIds.has(objectMetadataId);
-              const objectRecordsGrant = resolveSettingsRoleObjectRecordsGrant({
-                role: settingsDraftRole,
-                objectMetadataId,
-              });
+              if (rowLevelPermissionObjectMetadataIds.has(objectMetadataId)) {
+                return {
+                  objectMetadataId,
+                  canReadObjectRecords: false,
+                  canUpdateObjectRecords: false,
+                  canSoftDeleteObjectRecords: false,
+                  canDestroyObjectRecords: false,
+                };
+              }
+
+              const objectPermission =
+                settingsDraftRole.objectPermissions?.find(
+                  (draftObjectPermission) =>
+                    draftObjectPermission.objectMetadataId === objectMetadataId,
+                );
 
               return {
                 objectMetadataId,
                 canReadObjectRecords:
-                  !isFilteredByRules && objectRecordsGrant.canReadRecords,
+                  objectPermission?.canReadObjectRecords ?? null,
                 canUpdateObjectRecords:
-                  !isFilteredByRules && objectRecordsGrant.canUpdateRecords,
+                  objectPermission?.canUpdateObjectRecords ?? null,
                 canSoftDeleteObjectRecords:
-                  !isFilteredByRules && objectRecordsGrant.canSoftDeleteRecords,
+                  objectPermission?.canSoftDeleteObjectRecords ?? null,
                 canDestroyObjectRecords:
-                  !isFilteredByRules && objectRecordsGrant.canDestroyRecords,
+                  objectPermission?.canDestroyObjectRecords ?? null,
               };
             }),
           ],
