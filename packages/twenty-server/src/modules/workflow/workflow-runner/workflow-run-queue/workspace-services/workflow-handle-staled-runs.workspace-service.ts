@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
-import { type FindOptionsWhere } from 'typeorm';
+import { type FindOptionsWhere, In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -79,8 +79,12 @@ export class WorkflowHandleStaledRunsWorkspaceService {
         offset < lostRunIds.length;
         offset += QUERY_MAX_RECORDS
       ) {
+        // A run may have started since its id was read, so the stale filter is checked again.
         await workflowRunRepository.update(
-          lostRunIds.slice(offset, offset + QUERY_MAX_RECORDS),
+          {
+            ...getStaledRunsFindOptions(),
+            id: In(lostRunIds.slice(offset, offset + QUERY_MAX_RECORDS)),
+          },
           {
             enqueuedAt: null,
             status: WorkflowRunStatus.NOT_STARTED,
