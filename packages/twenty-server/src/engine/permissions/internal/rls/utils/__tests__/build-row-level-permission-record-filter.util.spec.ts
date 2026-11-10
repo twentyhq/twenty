@@ -16,6 +16,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
+import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 import {
   buildRecordFilterForRole,
@@ -486,11 +487,32 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       );
     });
 
-    it('should keep the other branches of an OR group it cannot satisfy', () => {
+    it('should leave a never-matching branch in an OR group so the others still match', () => {
       expect(build([OR_GROUP_ROLE_ID])).toEqual({
-        or: [{ name: { ilike: '%shared-with-everyone%' } }],
+        or: [
+          { name: { ilike: '%shared-with-everyone%' } },
+          UNSATISFIABLE_RECORD_FILTER,
+        ],
       });
     });
+
+    it.each([
+      [OR_GROUP_ROLE_ID, true],
+      [AND_GROUP_ROLE_ID, false],
+      [NESTED_GROUP_ROLE_ID, false],
+    ])(
+      'should evaluate the never-matching branch of %s as false',
+      (roleId, isMatching) => {
+        expect(
+          isRecordMatchingFilter({
+            record: { name: 'shared-with-everyone', deletedAt: null },
+            filter: build([roleId]) ?? {},
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+          }),
+        ).toBe(isMatching);
+      },
+    );
 
     it('should keep both branches of an OR group once the member carries the value', () => {
       expect(
@@ -503,20 +525,33 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       });
     });
 
-    it('should match nothing when an AND group holds a branch it cannot satisfy', () => {
-      expect(build([AND_GROUP_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
-    });
-
-    it('should drop a nested AND branch it cannot satisfy and keep its sibling', () => {
-      expect(build([NESTED_GROUP_ROLE_ID])).toEqual({
-        or: [{ name: { ilike: '%kept-branch%' } }],
+    it('should leave a never-matching branch in an AND group so the group matches nothing', () => {
+      expect(build([AND_GROUP_ROLE_ID])).toEqual({
+        and: [
+          { name: { ilike: '%shared-with-everyone%' } },
+          UNSATISFIABLE_RECORD_FILTER,
+        ],
       });
     });
 
-    it('should match nothing when no branch of an OR group can be satisfied', () => {
-      expect(build([OR_GROUP_ONLY_MEMBER_ROLE_ID])).toEqual(
-        UNSATISFIABLE_RECORD_FILTER,
-      );
+    it('should keep the sibling of a nested AND branch that matches nothing', () => {
+      expect(build([NESTED_GROUP_ROLE_ID])).toEqual({
+        or: [
+          { name: { ilike: '%kept-branch%' } },
+          {
+            and: [
+              { name: { ilike: '%denied-branch%' } },
+              UNSATISFIABLE_RECORD_FILTER,
+            ],
+          },
+        ],
+      });
+    });
+
+    it('should match nothing when every branch of an OR group matches nothing', () => {
+      expect(build([OR_GROUP_ONLY_MEMBER_ROLE_ID])).toEqual({
+        or: [UNSATISFIABLE_RECORD_FILTER, UNSATISFIABLE_RECORD_FILTER],
+      });
     });
 
     it('should keep matching nothing when the other role restricts', () => {
@@ -564,6 +599,17 @@ describe('buildRecordFilterForRole with access group member values', () => {
       buildForAccessGroup({
         roleId: TEAM_BOUND_ROLE_ID,
         memberFieldValues: { [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: 'OPEN' },
+      }),
+    ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it('should keep only the member values that are options of the target field', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: TEAM_BOUND_ROLE_ID,
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: ['OPEN', 'SALES'],
+        },
       }),
     ).toEqual({ status: { in: ['OPEN'] } });
   });
