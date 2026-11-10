@@ -3,7 +3,6 @@ import {
   type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 
-// Record defaults only follow from row level rules when exactly one of them lets the user create
 export const findSingleCreateRowLevelPermissionRule = (
   objectRecordsPermissions: ObjectRecordsPermissions,
 ): RowLevelRecordsPermissions | undefined => {

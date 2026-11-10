@@ -59,7 +59,6 @@ export const buildRlsRulesRecordFilter = ({
   });
 };
 
-// Null when the principals reach every record for the operation, or have no rule on the object
 export const resolveRlsRuleRecordFilter = ({
   operationType,
   ...args

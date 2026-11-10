@@ -70,7 +70,6 @@ export class RecordFieldPermissionsReadService {
     return rlsRuleFields.map(
       ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
         fieldMetadataIds,
-        // An RLS rule whose filter compiles to nothing matches every record
         sqlCondition: renderRowLevelPermissionFilterToSql({
           recordFilter: buildRlsRulesRecordFilter({
             principals,

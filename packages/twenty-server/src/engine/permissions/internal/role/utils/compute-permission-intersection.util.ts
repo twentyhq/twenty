@@ -58,7 +58,6 @@ const intersectObjectRecordsPermissions = (
     }),
   };
 
-  // Each rule keeps an operation only if every other role reaches all records for it
   const rowLevelRecordsPermissions = objectRecordsPermissionsPerRole.flatMap(
     (objectRecordsPermissions, roleIndex) => {
       const otherRolesObjectRecordsPermissions =
