@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { ContextStorePageType } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { getSelectedRecordsCountLabel } from '@/command-menu-item/utils/getSelectedRecordsCountLabel';
@@ -41,14 +41,22 @@ export const useCoreObjectsCommands = () => {
   const { coreAgentsObjectSectionContext, coreAgentSelectionSectionContext } =
     useCoreAgentSectionContexts();
 
-  const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
-    selection: coreWorkflowsSelection,
-    currentFilterSettings: coreWorkflowsFilterSettings,
-  });
-
   const isOnCoreWorkflowsIndex =
     commandMenuContextApi.pageType === ContextStorePageType.Index &&
     commandMenuContextApi.coreObjectName === 'workflow';
+
+  const isOnCoreWorkflowShowPage =
+    commandMenuContextApi.pageType === ContextStorePageType.Record &&
+    commandMenuContextApi.coreObjectName === 'workflow';
+
+  const selectedCoreWorkflowIds = isOnCoreWorkflowShowPage
+    ? commandMenuContextApi.selectedRecords
+        .map(({ id }) => id)
+        .filter(isDefined)
+    : getSelectedCoreWorkflowRowIds({
+        selection: coreWorkflowsSelection,
+        currentFilterSettings: coreWorkflowsFilterSettings,
+      });
 
   const matchesSidePanelSearch = (label: string) =>
     isMatchingSidePanelSearch({ label, sidePanelSearch });
@@ -66,7 +74,7 @@ export const useCoreObjectsCommands = () => {
       : t`Delete Workflows`;
 
   const shouldDisplayCoreWorkflowsDeleteCommand =
-    isOnCoreWorkflowsIndex &&
+    (isOnCoreWorkflowsIndex || isOnCoreWorkflowShowPage) &&
     !isInPreviewMode &&
     isNonEmptyArray(selectedCoreWorkflowIds) &&
     canManageWorkflows &&
@@ -110,5 +118,7 @@ export const useCoreObjectsCommands = () => {
     shouldDisplayCoreWorkflowFiltersCommand,
     coreWorkflowsDeleteCommandLabel,
     shouldDisplayCoreWorkflowsDeleteCommand,
+    selectedCoreWorkflowIds,
+    isOnCoreWorkflowShowPage,
   };
 };
