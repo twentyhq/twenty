@@ -5,30 +5,30 @@ import IORedis from 'ioredis';
 import { v4 as generateUuid } from 'uuid';
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
-import { type QueueJobMaxRate } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobLimiter } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-type MaxRateTestJobData = { label: string };
+type LimiterTestJobData = { label: string };
 
 const QUEUE = MessageQueue.workflowQueue;
-const JOB_NAME = 'MaxRateTestJob';
-const MAX_RATE: QueueJobMaxRate = {
-  key: 'workflow:max-rate-test',
+const JOB_NAME = 'LimiterTestJob';
+const LIMITER: QueueJobLimiter = {
+  key: 'workflow:limiter-test',
   max: 2,
   durationMs: 2_000,
 };
-const INTERVAL_MS = MAX_RATE.durationMs / MAX_RATE.max;
+const INTERVAL_MS = LIMITER.durationMs / LIMITER.max;
 // Redis TIME and the enqueue round trips drift the delays by a few ms.
 const TOLERANCE_MS = 150;
 
-describe('BullMQDriver maxRate (integration)', () => {
+describe('BullMQDriver limiter (integration)', () => {
   let connection: IORedis;
   let driver: BullMQDriver;
-  let inspectionQueue: Queue<MaxRateTestJobData>;
+  let inspectionQueue: Queue<LimiterTestJobData>;
 
   const readDelayByLabel = async () => {
-    const jobs: Job<MaxRateTestJobData>[] = await inspectionQueue.getJobs([
+    const jobs: Job<LimiterTestJobData>[] = await inspectionQueue.getJobs([
       'prioritized',
       'waiting',
       'delayed',
@@ -52,13 +52,13 @@ describe('BullMQDriver maxRate (integration)', () => {
     jobIds?: string[];
     delay?: number;
   }) =>
-    driver.bulkAdd<MaxRateTestJobData>(
+    driver.bulkAdd<LimiterTestJobData>(
       QUEUE,
       JOB_NAME,
       labels.map((label, index) => ({
         data: { label },
         jobId: jobIds?.[index],
-        maxRate: MAX_RATE,
+        limiter: LIMITER,
         workspaceId,
         applicationUniversalIdentifier,
       })),
@@ -73,7 +73,7 @@ describe('BullMQDriver maxRate (integration)', () => {
       { maxRetriesPerRequest: null },
     );
 
-    const options = { connection, prefix: `max-rate-${generateUuid()}` };
+    const options = { connection, prefix: `limiter-${generateUuid()}` };
 
     inspectionQueue = new Queue(QUEUE, options);
     driver = new BullMQDriver(
@@ -83,7 +83,7 @@ describe('BullMQDriver maxRate (integration)', () => {
         incrementCounterForEvent: jest.fn().mockResolvedValue(undefined),
       } as never,
       {
-        get: (key: string) => key === 'IS_WORKER_GROUP_MAX_RATE_ENABLED',
+        get: (key: string) => key === 'IS_WORKER_GROUP_LIMITER_ENABLED',
       } as never,
       new EventEmitter2(),
     );
@@ -200,7 +200,7 @@ describe('BullMQDriver maxRate (integration)', () => {
     expect(delayByLabel.F1).toBeLessThanOrEqual(INTERVAL_MS);
   });
 
-  it('runs the paced jobs no faster than maxRate allows', async () => {
+  it('runs the paced jobs no faster than the limiter allows', async () => {
     const startedAtByLabel: Record<string, number> = {};
     const labels = ['H1', 'H2', 'H3', 'H4'];
     let resolveAllStarted: () => void = () => {};
@@ -209,7 +209,7 @@ describe('BullMQDriver maxRate (integration)', () => {
     });
 
     // Started before enqueueing so worker startup cannot shift the first jobs.
-    driver.work<MaxRateTestJobData>(
+    driver.work<LimiterTestJobData>(
       QUEUE,
       async (job) => {
         startedAtByLabel[job.data.label] = Date.now() - enqueuedAt;
