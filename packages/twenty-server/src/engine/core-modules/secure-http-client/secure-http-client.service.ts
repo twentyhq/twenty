@@ -8,7 +8,6 @@ import axios, {
   type AxiosInstance,
   type CreateAxiosDefaults,
   type InternalAxiosRequestConfig,
-  isAxiosError,
 } from 'axios';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,12 +15,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { type OutboundRequestOutcome } from 'src/engine/core-modules/secure-http-client/outbound-request-outcome.type';
+import { type OutboundRequestOutcomeDetails } from 'src/engine/core-modules/secure-http-client/outbound-request-outcome-details.type';
 import { type SecureHttpClientConfig } from 'src/engine/core-modules/secure-http-client/secure-http-client-config.type';
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 import { createSsrfSafeAxiosClient } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-axios-client.util';
-import { findOutboundRequestBlockedError } from 'src/engine/core-modules/secure-http-client/utils/find-outbound-request-blocked-error.util';
-import { getOutboundRequestOutcome } from 'src/engine/core-modules/secure-http-client/utils/get-outbound-request-outcome.util';
+import { describeOutboundRequestError } from 'src/engine/core-modules/secure-http-client/utils/describe-outbound-request-error.util';
 import { redactOutboundRequestUrl } from 'src/engine/core-modules/secure-http-client/utils/redact-outbound-request-url.util';
 import { ALLOW_ALL_INTERNAL_HOSTS } from 'src/engine/core-modules/secure-http-client/constants/allow-all-internal-hosts.constant';
 import { normalizeAllowedInternalHost } from 'src/engine/core-modules/secure-http-client/utils/normalize-allowed-internal-host.util';
@@ -29,7 +27,6 @@ import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { type OutboundRequestContext } from './outbound-request-context.type';
-import { type OutboundRequestSource } from './outbound-request-source.type';
 
 type LogAttributes = Record<string, string | number | undefined>;
 
@@ -51,14 +48,41 @@ const getContextLogAttributes = (
   workflowStep: context.workflowStepId,
 });
 
-const parseRequestUrl = (
-  requestConfig: InternalAxiosRequestConfig,
-): URL | undefined => {
+const getRequestUri = (requestConfig: InternalAxiosRequestConfig): string => {
   try {
-    return new URL(axios.getUri(requestConfig));
+    return axios.getUri(requestConfig);
+  } catch {
+    return '';
+  }
+};
+
+const parseUrl = (url: string): URL | undefined => {
+  try {
+    return new URL(url);
   } catch {
     return undefined;
   }
+};
+
+const buildRequestLogAttributes = ({
+  method,
+  url,
+  context,
+}: {
+  method: string;
+  url: string;
+  context: OutboundRequestContext;
+}): LogAttributes => {
+  const requestUrl = parseUrl(url);
+
+  return {
+    method,
+    host: requestUrl?.hostname,
+    url: isDefined(requestUrl)
+      ? redactOutboundRequestUrl(requestUrl)
+      : undefined,
+    ...getContextLogAttributes(context),
+  };
 };
 
 @Injectable()
@@ -100,6 +124,37 @@ export class SecureHttpClientService {
     return client;
   }
 
+  // For requests that may run outside this process (the HTTP egress Lambda), so they log the same lines as the adapter.
+  recordRequest({
+    method,
+    url,
+    context,
+  }: {
+    method: string;
+    url: string;
+    context: OutboundRequestContext;
+  }): void {
+    this.logRequest(buildRequestLogAttributes({ method, url, context }));
+  }
+
+  recordRequestOutcome({
+    method,
+    url,
+    context,
+    outcomeDetails,
+  }: {
+    method: string;
+    url: string;
+    context: OutboundRequestContext;
+    outcomeDetails: OutboundRequestOutcomeDetails;
+  }): void {
+    this.recordOutcome({
+      context,
+      outcomeDetails,
+      requestAttributes: buildRequestLogAttributes({ method, url, context }),
+    });
+  }
+
   // An adapter rather than interceptors: retries get one line per attempt and protocol refusals are logged too
   private buildLoggingAdapter({
     adapter,
@@ -108,20 +163,14 @@ export class SecureHttpClientService {
     adapter: AxiosAdapter;
     context: OutboundRequestContext;
   }): AxiosAdapter {
-    return async (requestConfig) => {
-      const requestUrl = parseRequestUrl(requestConfig);
-      const requestAttributes: LogAttributes = {
+    return async (requestConfig: InternalAxiosRequestConfig) => {
+      const requestAttributes = buildRequestLogAttributes({
         method: requestConfig.method?.toUpperCase() ?? 'GET',
-        host: requestUrl?.hostname,
-        url: isDefined(requestUrl)
-          ? redactOutboundRequestUrl(requestUrl)
-          : undefined,
-        ...getContextLogAttributes(context),
-      };
+        url: getRequestUri(requestConfig),
+        context,
+      });
 
-      this.logger.log(
-        `Outbound HTTP request: ${formatLogAttributes(requestAttributes)}`,
-      );
+      this.logRequest(requestAttributes);
 
       const startedAt = Date.now();
 
@@ -129,8 +178,8 @@ export class SecureHttpClientService {
         const response = await adapter(requestConfig);
 
         this.recordOutcome({
-          source: context.source,
-          outcomeAttributes: {
+          context,
+          outcomeDetails: {
             outcome: 'success',
             status: response.status,
             durationMs: Date.now() - startedAt,
@@ -140,24 +189,11 @@ export class SecureHttpClientService {
 
         return response;
       } catch (error) {
-        const outcome = getOutboundRequestOutcome(error);
-
         this.recordOutcome({
-          source: context.source,
-          outcomeAttributes: {
-            outcome,
-            status: isAxiosError(error) ? error.response?.status : undefined,
+          context,
+          outcomeDetails: {
+            ...describeOutboundRequestError(error),
             durationMs: Date.now() - startedAt,
-            errorCode:
-              isAxiosError(error) && !isDefined(error.response)
-                ? error.code
-                : undefined,
-            reason:
-              outcome === 'blocked'
-                ? JSON.stringify(
-                    findOutboundRequestBlockedError(error)?.message,
-                  )
-                : undefined,
           },
           requestAttributes,
         });
@@ -167,21 +203,29 @@ export class SecureHttpClientService {
     };
   }
 
+  private logRequest(requestAttributes: LogAttributes): void {
+    this.logger.log(
+      `Outbound HTTP request: ${formatLogAttributes(requestAttributes)}`,
+    );
+  }
+
   private recordOutcome({
-    source,
-    outcomeAttributes,
+    context,
+    outcomeDetails: { outcome, status, durationMs, errorCode, reason },
     requestAttributes,
   }: {
-    source: OutboundRequestSource;
-    outcomeAttributes: LogAttributes & { outcome: OutboundRequestOutcome };
+    context: OutboundRequestContext;
+    outcomeDetails: OutboundRequestOutcomeDetails;
     requestAttributes: LogAttributes;
   }): void {
-    const { outcome } = outcomeAttributes;
-
-    this.outboundRequestCounter.add(1, { source, outcome });
+    this.outboundRequestCounter.add(1, { source: context.source, outcome });
 
     const message = `Outbound HTTP outcome: ${formatLogAttributes({
-      ...outcomeAttributes,
+      outcome,
+      status,
+      durationMs,
+      errorCode,
+      reason: isDefined(reason) ? JSON.stringify(reason) : undefined,
       ...requestAttributes,
     })}`;
 

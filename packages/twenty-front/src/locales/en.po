@@ -7351,6 +7351,11 @@ msgstr "Confirm upgrade"
 msgid "Confirming your payment"
 msgstr "Confirming your payment"
 
+#. js-lingui-id: jtSEaa
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to {workspaceName}"
+msgstr "Connect {appName} to {workspaceName}"
+
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to your account"
@@ -15153,6 +15158,11 @@ msgstr "HTTP Request"
 msgid "HTTP request failed"
 msgstr "HTTP request failed"
 
+#. js-lingui-id: 82OlFB
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "HTTP requests in the logic function runtime"
+msgstr "HTTP requests in the logic function runtime"
+
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -19441,6 +19451,7 @@ msgstr "Newsletters"
 
 #. js-lingui-id: hXzOVo
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+#: src/modules/getting-started/components/GettingStartedStepCard.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetLegend.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
@@ -22125,6 +22136,7 @@ msgid "Path"
 msgstr "Path"
 
 #. js-lingui-id: IgrLD/
+#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -22534,6 +22546,7 @@ msgid "Plans"
 msgstr "Plans"
 
 #. js-lingui-id: T91vKp
+#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "Play"
@@ -26393,6 +26406,11 @@ msgstr "Send Test Email"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/SendChatMessageAction.ts
 msgid "Send to Inbox"
 msgstr "Send to Inbox"
+
+#. js-lingui-id: 69d0/t
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
+msgstr "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
