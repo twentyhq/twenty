@@ -29,7 +29,12 @@ describe('resolveObjectSharing', () => {
       canSetRecordPrivacy: true,
       isPrivateByDefault: false,
       canShareBeyondRole: true,
-      operationTypesGrantedBeyondRole: ['read', 'update', 'softDelete', 'destroy'],
+      operationTypesGrantedBeyondRole: [
+        'read',
+        'update',
+        'softDelete',
+        'destroy',
+      ],
     });
   });
 
