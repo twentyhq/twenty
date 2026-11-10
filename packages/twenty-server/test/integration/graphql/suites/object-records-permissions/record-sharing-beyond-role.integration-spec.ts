@@ -395,6 +395,7 @@ describe('Records shared beyond the role that can access their object', () => {
         gqlFields: 'id',
         recordId: SHARED_RECORD_ID,
       }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
     expect(restored.body.errors).toBeUndefined();
