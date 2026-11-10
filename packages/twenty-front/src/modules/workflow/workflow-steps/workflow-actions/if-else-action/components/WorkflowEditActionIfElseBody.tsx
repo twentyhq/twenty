@@ -14,13 +14,10 @@ import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/Fil
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { useDeleteWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionStep';
 import { WorkflowIfElseBranchEditor } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowIfElseBranchEditor';
-import { calculateElseIfBranchPosition } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/calculateElseIfBranchPosition';
-import { calculateExistingBranchPositions } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/calculateExistingBranchPositions';
 import { createElseIfBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/createElseIfBranch';
 import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel';
 import { getBranchesToDelete } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchesToDelete';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
-import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,7 +60,6 @@ export const WorkflowEditActionIfElseBody = ({
   const { createStep } = useCreateStep();
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
-  const { updateWorkflowVersionPosition } = useTidyUpWorkflowVersion();
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
   const flow = useAtomComponentStateValue(flowComponentState);
@@ -175,37 +171,12 @@ export const WorkflowEditActionIfElseBody = ({
 
     const { filterGroup, filter, branchId, filterGroupId } =
       createElseIfBranch();
-    const totalBranches = branches.length + 1;
-    const elseIfBranchIndex = branches.length - 1;
-    const ifElseStepPosition = action.position ?? { x: 0, y: 0 };
-
     const workflowVersionId = await getUpdatableWorkflowVersion();
-
-    const existingBranchPositions = calculateExistingBranchPositions({
-      branches,
-      elseIfBranchIndex,
-      totalBranches,
-      ifElseStepPosition,
-    });
-
-    const newEmptyNodePosition = calculateElseIfBranchPosition(
-      elseIfBranchIndex,
-      totalBranches,
-      ifElseStepPosition,
-    );
-
-    if (existingBranchPositions.length > 0) {
-      await updateWorkflowVersionPosition(
-        workflowVersionId,
-        existingBranchPositions,
-      );
-    }
 
     const emptyNode = await createStep({
       newStepType: 'EMPTY',
       parentStepId: undefined,
       nextStepId: undefined,
-      position: newEmptyNodePosition,
       shouldSelectNode: false,
       workflowVersionId,
     });

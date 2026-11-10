@@ -19,7 +19,6 @@ jest.mock(
 
 const baseNodeData = {
   hasNextStepIds: false,
-  position: { x: 0, y: 0 },
   stepId: '',
 };
 

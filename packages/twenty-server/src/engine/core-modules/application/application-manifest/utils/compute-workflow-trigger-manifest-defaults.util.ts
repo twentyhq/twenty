@@ -4,8 +4,6 @@ import { WORKFLOW_TRIGGER_DEFAULT_NAMES } from 'twenty-shared/workflow';
 
 import { assertNever } from 'src/utils/assert';
 
-export const DEFAULT_WORKFLOW_TRIGGER_POSITION = { x: 0, y: 0 };
-
 export const computeWorkflowTriggerManifestDefaults = (
   trigger: WorkflowTriggerManifest,
 ): { name: string; outputSchema: Record<string, unknown> } => {

@@ -1,3 +1,4 @@
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
@@ -14,7 +15,9 @@ import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { getDisplayedWorkflowDiagram } from '@/workflow/workflow-diagram/utils/getDisplayedWorkflowDiagram';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
+import { isWorkflowLayoutManual } from '@/workflow/workflow-diagram/utils/isWorkflowLayoutManual';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
@@ -25,6 +28,7 @@ import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
 import { useUpdateTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateTrigger';
+import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import {
   addEdge,
   ReactFlowProvider,
@@ -32,6 +36,7 @@ import {
   type OnNodeDrag,
   type OnReconnect,
 } from '@xyflow/react';
+import { useStore } from 'jotai';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -48,6 +53,10 @@ export const WorkflowDiagramCanvasEditable = () => {
   const setWorkflowDiagram = useSetAtomComponentState(
     workflowDiagramComponentState,
   );
+  const workflowDiagramCallbackState = useAtomComponentStateCallbackState(
+    workflowDiagramComponentState,
+  );
+  const store = useStore();
 
   const setWorkflowDiagramRightClickMenuPosition = useSetAtomComponentState(
     workflowDiagramRightClickMenuPositionState,
@@ -64,6 +73,8 @@ export const WorkflowDiagramCanvasEditable = () => {
   const { updateStep, updateStepNow } = useUpdateStep();
 
   const { updateTrigger } = useUpdateTrigger();
+
+  const { updateWorkflowVersionPositions } = useTidyUpWorkflowVersion();
 
   const { startNodeCreation } = useStartNodeCreation();
 
@@ -180,7 +191,40 @@ export const WorkflowDiagramCanvasEditable = () => {
     return reconnection;
   };
 
+  const persistAutomaticLayoutWithDraggedNode = (
+    draggedNode: WorkflowDiagramNode,
+  ) => {
+    const workflowDiagram = store.get(workflowDiagramCallbackState);
+
+    if (!isDefined(workflowDiagram)) {
+      return;
+    }
+
+    const displayedWorkflowDiagram = getDisplayedWorkflowDiagram({
+      diagram: workflowDiagram,
+      flow,
+    });
+
+    const nodes = displayedWorkflowDiagram.nodes.map((node) =>
+      node.id === draggedNode.id
+        ? { ...node, position: draggedNode.position }
+        : node,
+    );
+
+    setWorkflowDiagram({ ...displayedWorkflowDiagram, nodes });
+
+    void updateWorkflowVersionPositions(
+      nodes.map(({ id, position }) => ({ id, position })),
+    );
+  };
+
   const onNodeDragStop: OnNodeDrag<WorkflowDiagramNode> = async (_, node) => {
+    if (isDefined(flow) && !isWorkflowLayoutManual(flow)) {
+      persistAutomaticLayoutWithDraggedNode(node);
+
+      return;
+    }
+
     const stepToUpdate = flow?.steps?.find((step) => step.id === node.id);
 
     if (isDefined(stepToUpdate)) {

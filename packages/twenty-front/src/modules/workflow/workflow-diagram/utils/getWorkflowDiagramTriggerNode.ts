@@ -70,14 +70,7 @@ export const getWorkflowDiagramTriggerNode = ({
       stepId: 'trigger',
       hasNextStepIds:
         isDefined(trigger.nextStepIds) && trigger.nextStepIds.length > 0,
-      position: trigger.position ?? {
-        x: 0,
-        y: 0,
-      },
     } satisfies WorkflowDiagramStepNodeData,
-    position: trigger.position ?? {
-      x: 0,
-      y: 0,
-    },
+    position: trigger.position ?? { x: 0, y: 0 },
   };
 };

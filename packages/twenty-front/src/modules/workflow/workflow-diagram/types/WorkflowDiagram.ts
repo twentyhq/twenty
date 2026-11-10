@@ -57,10 +57,6 @@ export type WorkflowDiagramStepNodeData =
       stepId: string;
       defaultHandleOptions?: WorkflowDiagramNodeDefaultHandleOptions;
       rightHandleOptions?: WorkflowDiagramNodeRightHandleOptions;
-      position: {
-        x: number;
-        y: number;
-      };
     }
   | {
       nodeType: 'action';
@@ -73,10 +69,6 @@ export type WorkflowDiagramStepNodeData =
       stepId: string;
       defaultHandleOptions?: WorkflowDiagramNodeDefaultHandleOptions;
       rightHandleOptions?: WorkflowDiagramNodeRightHandleOptions;
-      position: {
-        x: number;
-        y: number;
-      };
     };
 
 export type WorkflowRunDiagramStepNodeData = Exclude<
@@ -88,10 +80,6 @@ export type WorkflowRunDiagramStepNodeData = Exclude<
 
 export type WorkflowDiagramEmptyTriggerNodeData = {
   nodeType: 'empty-trigger';
-  position: {
-    x: number;
-    y: number;
-  };
 };
 
 export type WorkflowDiagramNodeData =

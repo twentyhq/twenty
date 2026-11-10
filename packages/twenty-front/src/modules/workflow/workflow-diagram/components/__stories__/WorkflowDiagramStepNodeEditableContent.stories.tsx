@@ -60,10 +60,6 @@ const ALL_STEPS = [
     name: 'Record is Created',
     hasNextStepIds: true,
     stepId: 'trigger',
-    position: {
-      x: 0,
-      y: 0,
-    },
   },
   {
     nodeType: 'trigger',
@@ -71,10 +67,6 @@ const ALL_STEPS = [
     name: 'Manual',
     hasNextStepIds: true,
     stepId: 'step1',
-    position: {
-      x: 0,
-      y: 150,
-    },
   },
   {
     nodeType: 'action',
@@ -82,10 +74,6 @@ const ALL_STEPS = [
     name: 'Create Record',
     hasNextStepIds: true,
     stepId: 'step2',
-    position: {
-      x: 0,
-      y: 300,
-    },
   },
   {
     nodeType: 'action',
@@ -93,10 +81,6 @@ const ALL_STEPS = [
     name: 'Update Record',
     hasNextStepIds: true,
     stepId: 'step3',
-    position: {
-      x: 0,
-      y: 450,
-    },
   },
   {
     nodeType: 'action',
@@ -104,10 +88,6 @@ const ALL_STEPS = [
     name: 'Delete Record',
     hasNextStepIds: true,
     stepId: 'step4',
-    position: {
-      x: 0,
-      y: 600,
-    },
   },
   {
     nodeType: 'action',
@@ -115,10 +95,6 @@ const ALL_STEPS = [
     name: 'Send Email',
     hasNextStepIds: true,
     stepId: 'step5',
-    position: {
-      x: 0,
-      y: 750,
-    },
   },
   {
     nodeType: 'action',
@@ -126,10 +102,6 @@ const ALL_STEPS = [
     name: 'Code',
     hasNextStepIds: true,
     stepId: 'step6',
-    position: {
-      x: 0,
-      y: 900,
-    },
   },
   {
     nodeType: 'action',
@@ -137,10 +109,6 @@ const ALL_STEPS = [
     name: 'HTTP Request',
     hasNextStepIds: true,
     stepId: 'step7',
-    position: {
-      x: 0,
-      y: 1050,
-    },
   },
 ] satisfies WorkflowDiagramStepNodeData[];
 

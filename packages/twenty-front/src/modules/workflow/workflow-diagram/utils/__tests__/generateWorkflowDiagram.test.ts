@@ -102,10 +102,6 @@ describe('generateWorkflowDiagram', () => {
         name: step.name,
         hasNextStepIds: step.id !== 'step2',
         stepId: step.id,
-        position: {
-          x: 0,
-          y: 150 * (index + 1),
-        },
       });
     }
   });

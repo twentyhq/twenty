@@ -144,14 +144,6 @@ export const createCreateWorkflowVersionStepTool = (
         },
       });
 
-      await deps.coreWorkflowVersionMutationService.autoLayoutCoreWorkflowVersion(
-        {
-          workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          coreWorkflowVersionId,
-        },
-      );
-
       return enrichResultWithNextStep({
         result,
         stepType: parameters.stepType,

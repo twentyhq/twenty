@@ -1,5 +1,4 @@
 import { isDefined } from 'twenty-shared/utils';
-import { IF_ELSE_BRANCH_POSITION_OFFSETS } from 'twenty-shared/workflow';
 import { type EntityManager } from 'typeorm';
 import { v5 } from 'uuid';
 
@@ -388,10 +387,6 @@ export const prefillWorkflows = async (
       name: 'Is this a personal email?',
       type: 'CODE',
       valid: false,
-      position: {
-        x: 0,
-        y: 130,
-      },
       settings: {
         input: {
           code: IS_PERSONAL_EMAIL_CODE_STEP_SOURCE,
@@ -424,10 +419,6 @@ export const prefillWorkflows = async (
       name: 'If business email',
       type: 'FILTER',
       valid: false,
-      position: {
-        x: 0,
-        y: 260,
-      },
       settings: {
         input: {
           stepFilters: [
@@ -468,10 +459,6 @@ export const prefillWorkflows = async (
       name: 'Extract domain from email',
       type: 'CODE',
       valid: false,
-      position: {
-        x: 0,
-        y: 390,
-      },
       settings: {
         input: {
           code: EXTRACT_DOMAIN_CODE_STEP_SOURCE,
@@ -512,10 +499,6 @@ export const prefillWorkflows = async (
       name: 'Search Company',
       type: 'FIND_RECORDS',
       valid: false,
-      position: {
-        x: 0,
-        y: 520,
-      },
       settings: {
         input: {
           limit: 25,
@@ -557,10 +540,6 @@ export const prefillWorkflows = async (
       name: 'Find exact company match',
       type: 'CODE',
       valid: false,
-      position: {
-        x: 0,
-        y: 650,
-      },
       settings: {
         input: {
           code: FIND_MATCHING_COMPANY_BY_DOMAIN_CODE_STEP_SOURCE,
@@ -600,10 +579,6 @@ export const prefillWorkflows = async (
       name: 'If a company already exists',
       type: 'IF_ELSE',
       valid: false,
-      position: {
-        x: 0,
-        y: 780,
-      },
       settings: {
         input: {
           branches: [
@@ -654,10 +629,6 @@ export const prefillWorkflows = async (
       name: 'Attach person to existing company',
       type: 'UPDATE_RECORD',
       valid: false,
-      position: {
-        x: IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
-        y: 910,
-      },
       settings: {
         input: {
           objectName: 'person',
@@ -684,10 +655,6 @@ export const prefillWorkflows = async (
       name: 'Create a new company',
       type: 'CREATE_RECORD',
       valid: false,
-      position: {
-        x: IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
-        y: 910,
-      },
       settings: {
         input: {
           objectName: 'company',
@@ -718,10 +685,6 @@ export const prefillWorkflows = async (
       name: 'Attach person to this company',
       type: 'UPDATE_RECORD',
       valid: false,
-      position: {
-        x: IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
-        y: 1040,
-      },
       settings: {
         input: {
           objectName: 'person',

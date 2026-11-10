@@ -18,16 +18,12 @@ import { v4 } from 'uuid';
 export const generateNodesAndEdgesForDefaultNode = ({
   step,
   steps,
-  xPos,
-  yPos,
   nodes,
   edges,
   workflowContext,
 }: {
   step: WorkflowStep;
   steps: WorkflowStep[];
-  yPos: number;
-  xPos: number;
   nodes: readonly WorkflowDiagramNode[];
   edges: readonly WorkflowDiagramEdge[];
   workflowContext: WorkflowContext;
@@ -54,15 +50,8 @@ export const generateNodesAndEdgesForDefaultNode = ({
       hasNextStepIds:
         isDefined(step.nextStepIds) && step.nextStepIds.length > 0,
       stepId: step.id,
-      position: step.position ?? {
-        x: xPos,
-        y: yPos,
-      },
     } satisfies WorkflowDiagramStepNodeData,
-    position: step.position ?? {
-      x: xPos,
-      y: yPos,
-    },
+    position: step.position ?? { x: 0, y: 0 },
   });
 
   if (isNonEmptyArray(step.nextStepIds)) {

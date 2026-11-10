@@ -1,4 +1,5 @@
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { UpdateCoreWorkflowVersionPositionsDocument } from '~/generated/graphql';
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -8,10 +9,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
+import { applyPositionsToFlow } from '@/workflow/utils/applyPositionsToFlow';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 
 export const useTidyUpWorkflowVersion = (instanceId?: string) => {
   const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(instanceId);
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow(instanceId);
   const apolloCoreClient = useApolloCoreClient();
   const [mutateCore] = useMutation(UpdateCoreWorkflowVersionPositionsDocument, {
     client: apolloCoreClient,
@@ -19,11 +23,17 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
 
   const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
 
-  const updateWorkflowVersionPosition = async (
-    workflowVersionId: string,
+  const updateWorkflowVersionPositions = async (
     positions: { id: string; position: { x: number; y: number } }[],
   ) => {
+    // Written before any await so the diagram switches to these positions in the same render
+    setFlow((currentFlow) =>
+      applyPositionsToFlow({ flow: currentFlow, positions }),
+    );
+
     await savePendingWorkflowFlow();
+
+    const workflowVersionId = await getUpdatableWorkflowVersion();
 
     await mutateCore({
       variables: {
@@ -31,60 +41,30 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
       },
     });
 
-    setFlow((currentFlow) => {
-      if (!isDefined(currentFlow)) {
-        return currentFlow;
-      }
-
-      const triggerPositionInFlow = positions.find(
-        (position) => position.id === 'trigger',
-      );
-
-      return {
-        ...currentFlow,
-        workflowVersionId,
-        trigger:
-          isDefined(triggerPositionInFlow) && isDefined(currentFlow.trigger)
-            ? {
-                ...currentFlow.trigger,
-                position: triggerPositionInFlow.position,
-              }
-            : currentFlow.trigger,
-        steps:
-          currentFlow.steps?.map((step) => {
-            const stepPosition = positions.find(
-              (position) => position.id === step.id,
-            );
-
-            return isDefined(stepPosition)
-              ? { ...step, position: stepPosition.position }
-              : step;
-          }) ?? null,
-      };
-    });
+    setFlow((currentFlow) =>
+      isDefined(currentFlow)
+        ? applyPositionsToFlow({
+            flow: { ...currentFlow, workflowVersionId },
+            positions,
+          })
+        : currentFlow,
+    );
 
     await invalidateCoreWorkflowVersions(apolloCoreClient);
   };
 
-  const tidyUpWorkflowVersion = async (
-    workflowVersionId: string,
-    workflowDiagram: WorkflowDiagram,
-  ) => {
-    if (!isDefined(workflowDiagram)) {
-      return;
-    }
-
+  const tidyUpWorkflowVersion = async (workflowDiagram: WorkflowDiagram) => {
     const tidiedUpDiagram = getOrganizedDiagram(workflowDiagram);
 
-    const positions = tidiedUpDiagram.nodes.map((node) => ({
-      id: node.id,
-      position: node.position,
-    }));
-
-    await updateWorkflowVersionPosition(workflowVersionId, positions);
+    await updateWorkflowVersionPositions(
+      tidiedUpDiagram.nodes.map((node) => ({
+        id: node.id,
+        position: node.position,
+      })),
+    );
 
     return tidiedUpDiagram;
   };
 
-  return { tidyUpWorkflowVersion, updateWorkflowVersionPosition };
+  return { tidyUpWorkflowVersion, updateWorkflowVersionPositions };
 };

@@ -22,16 +22,12 @@ import { v4 } from 'uuid';
 export const generateNodesAndEdgesForIfElseNode = ({
   step,
   steps,
-  xPos,
-  yPos,
   nodes,
   edges,
   workflowContext,
 }: {
   step: WorkflowIfElseAction;
   steps: WorkflowStep[];
-  yPos: number;
-  xPos: number;
   nodes: readonly WorkflowDiagramNode[];
   edges: readonly WorkflowDiagramEdge[];
   workflowContext: WorkflowContext;
@@ -54,15 +50,8 @@ export const generateNodesAndEdgesForIfElseNode = ({
       name: getWorkflowStepDisplayName({ name: step.name, type: step.type }),
       hasNextStepIds: true,
       stepId: step.id,
-      position: step.position ?? {
-        x: xPos,
-        y: yPos,
-      },
     } satisfies WorkflowDiagramStepNodeData,
-    position: step.position ?? {
-      x: xPos,
-      y: yPos,
-    },
+    position: step.position ?? { x: 0, y: 0 },
   };
 
   updatedNodes.push(ifElseNode);

@@ -33,7 +33,6 @@ export const useCreateStep = () => {
     newStepType,
     parentStepId,
     nextStepId,
-    position,
     connectionOptions,
     shouldSelectNode = true,
     workflowVersionId: providedWorkflowVersionId,
@@ -42,7 +41,6 @@ export const useCreateStep = () => {
     newStepType: WorkflowActionType;
     parentStepId: string | undefined;
     nextStepId: string | undefined;
-    position?: { x: number; y: number };
     connectionOptions?: WorkflowStepConnectionOptions;
     shouldSelectNode?: boolean;
     workflowVersionId?: string;
@@ -66,7 +64,6 @@ export const useCreateStep = () => {
           stepType: newStepType,
           parentStepId,
           nextStepId,
-          position,
           parentStepConnectionOptions: connectionOptions,
           defaultSettings,
         })
