@@ -1,0 +1,2 @@
+export const ADD_MESSAGING_PROVIDER_CAN_SEND_ATTACHMENTS_UPGRADE_COMMAND_NAME =
+  '2.58.0_AddMessagingProviderCanSendAttachmentsFastInstanceCommand_1794310968652';

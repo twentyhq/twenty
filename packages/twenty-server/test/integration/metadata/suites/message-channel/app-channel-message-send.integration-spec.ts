@@ -7,12 +7,16 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
+import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { extractPathAndQueryFromUrl } from 'test/integration/metadata/suites/file/utils/file-by-id-url-helpers.util';
+import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type MarkerServer } from 'test/integration/types/marker-server.type';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { startMarkerServer } from 'test/integration/utils/start-marker-server.util';
 import { type SendAppMessagePayload } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   ConnectedAccountProvider,
   MessageChannelVisibility,
@@ -31,6 +35,9 @@ const SENDING_PROVIDER_IDENTIFIER = v4();
 const SILENT_PROVIDER_IDENTIFIER = v4();
 const SEND_MESSAGE_IDENTIFIER = v4();
 const MESSAGING_PROVIDER_IDENTIFIER = v4();
+const TEXT_ONLY_MESSAGING_PROVIDER_IDENTIFIER = v4();
+
+const ATTACHMENT_CONTENT = ONE_BY_ONE_TRANSPARENT_PNG;
 
 const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
@@ -69,6 +76,7 @@ const GET_MESSAGE_THREAD_CHANNEL_QUERY = gql`
   query GetMessageThreadChannel($messageThreadId: UUID!) {
     getMessageThreadChannel(messageThreadId: $messageThreadId) {
       conversationStyle
+      canSendAttachments
     }
   }
 `;
@@ -201,12 +209,51 @@ describe('sendAppChannelMessage (e2e)', () => {
     messageChannelId: string;
     messageThreadId: string;
     text: string;
+    attachments?: { fileId: string; label: string }[];
     idempotencyKey?: string;
   }) =>
     makeMetadataApiRequest({
       query: SEND_MESSAGE_MUTATION,
       variables: { input: { ...input, idempotencyKey } },
     });
+
+  const uploadedFileIds: string[] = [];
+
+  const uploadAttachment = async (): Promise<string> => {
+    const [field] = await globalThis.testDataSource.query(
+      `SELECT id FROM core."fieldMetadata"
+         WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+      [
+        SEED_APPLE_WORKSPACE_ID,
+        STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
+      ],
+    );
+    const uploadedFile = await uploadFileWithDirectUpload({
+      filename: 'photo.png',
+      content: ATTACHMENT_CONTENT,
+      fileFolder: 'FilesField',
+      fieldMetadataId: field.id,
+    });
+
+    uploadedFileIds.push(uploadedFile.id);
+
+    return uploadedFile.id;
+  };
+
+  const findStoredAttachmentFileIds = async (
+    messageId: string,
+  ): Promise<string[]> => {
+    const attachments: { file: { fileId: string }[] | null }[] =
+      await globalThis.testDataSource.query(
+        `SELECT file FROM "${WORKSPACE_SCHEMA}"."attachment"
+           WHERE "targetMessageId" = $1 AND "deletedAt" IS NULL`,
+        [messageId],
+      );
+
+    return attachments.flatMap(({ file }) =>
+      (file ?? []).map(({ fileId }) => fileId),
+    );
+  };
 
   const insertConnection = async (connectionProviderId: string) => {
     const id = v4();
@@ -313,6 +360,18 @@ describe('sendAppChannelMessage (e2e)', () => {
                 universalIdentifier: SEND_MESSAGE_IDENTIFIER,
               },
               conversationStyle: 'chat',
+              canSendAttachments: true,
+            },
+            {
+              universalIdentifier: TEXT_ONLY_MESSAGING_PROVIDER_IDENTIFIER,
+              name: 'text-only-messaging',
+              displayName: 'Text Only Messages',
+              connectionProvider: {
+                universalIdentifier: SENDING_PROVIDER_IDENTIFIER,
+              },
+              sendMessageLogicFunction: {
+                universalIdentifier: SEND_MESSAGE_IDENTIFIER,
+              },
             },
           ],
         },
@@ -365,6 +424,11 @@ describe('sendAppChannelMessage (e2e)', () => {
       ),
     ];
 
+    await globalThis.testDataSource.query(
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."attachment" WHERE "targetMessageId" = ANY($1)`,
+      [messageIds],
+    );
+
     for (const table of [
       'messageChannelMessageAssociation',
       'messageParticipant',
@@ -393,6 +457,10 @@ describe('sendAppChannelMessage (e2e)', () => {
   });
 
   afterAll(async () => {
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE id = ANY($1)`,
+      [uploadedFileIds],
+    );
     await globalThis.testDataSource.query(
       `DELETE FROM core."connectedAccount" WHERE "applicationId" = $1`,
       [applicationDbId],
@@ -457,7 +525,92 @@ describe('sendAppChannelMessage (e2e)', () => {
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.getMessageThreadChannel).toEqual({
       conversationStyle: 'chat',
+      canSendAttachments: true,
     });
+  });
+
+  it('sends a reply made only of files once and stores them on the recorded message', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+    const fileId = await uploadAttachment();
+    const reply = {
+      messageChannelId,
+      messageThreadId,
+      text: '',
+      attachments: [{ fileId, label: 'photo.png' }],
+      idempotencyKey: v4(),
+    };
+
+    const response = await send(reply);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const { messageId } = response.body.data.sendAppChannelMessage;
+    const [sendExecution] = readSendExecutions();
+
+    expect(sendExecution.attachments).toEqual([
+      {
+        filename: 'photo.png',
+        mimeType: expect.any(String),
+        size: ATTACHMENT_CONTENT.byteLength,
+        url: expect.stringContaining(fileId),
+      },
+    ]);
+
+    const download = await fetch(
+      `http://localhost:${APP_PORT}${extractPathAndQueryFromUrl(sendExecution.attachments[0].url)}`,
+    );
+
+    expect(Buffer.from(await download.arrayBuffer())).toEqual(
+      ATTACHMENT_CONTENT,
+    );
+    expect(await findStoredAttachmentFileIds(messageId)).toEqual([fileId]);
+
+    const retryResponse = await send(reply);
+
+    expect(retryResponse.body.errors).toBeUndefined();
+    expect(retryResponse.body.data.sendAppChannelMessage.messageId).toBe(
+      messageId,
+    );
+    expect(readSendExecutions()).toHaveLength(1);
+    expect(await findStoredAttachmentFileIds(messageId)).toEqual([fileId]);
+  });
+
+  it('refuses files on a messaging provider that does not send attachments', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier:
+        TEXT_ONLY_MESSAGING_PROVIDER_IDENTIFIER,
+    });
+    const fileId = await uploadAttachment();
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'See attached',
+      attachments: [{ fileId, label: 'photo.png' }],
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(readSendExecutions()).toEqual([]);
+  });
+
+  it('refuses a reply with neither text nor files', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      text: ' ',
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(readSendExecutions()).toEqual([]);
   });
 
   it('keeps one message when the app later ingests the reply it sent', async () => {

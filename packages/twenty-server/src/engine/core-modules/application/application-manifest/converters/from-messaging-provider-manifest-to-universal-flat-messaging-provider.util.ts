@@ -21,6 +21,7 @@ export const fromMessagingProviderManifestToUniversalFlatMessagingProvider = ({
     messagingProviderManifest.sendMessageLogicFunction?.universalIdentifier ??
     null,
   conversationStyle: messagingProviderManifest.conversationStyle ?? null,
+  canSendAttachments: messagingProviderManifest.canSendAttachments ?? false,
   createdAt: now,
   updatedAt: now,
 });

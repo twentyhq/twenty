@@ -8,7 +8,7 @@ import {
 
 import { LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinOutgoingAttachment } from 'src/logic-functions/types/linkedin-outgoing-attachment.type';
-import { downloadLinkedinOutgoingAttachment } from 'src/logic-functions/utils/download-linkedin-outgoing-attachment.util';
+import { downloadLinkedinOutgoingAttachments } from 'src/logic-functions/utils/download-linkedin-outgoing-attachments.util';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
 
 // the pinned twenty-sdk does not type `attachments` yet, and older servers do not send it
@@ -35,9 +35,7 @@ export const linkedinSendMessageHandler = async ({
     accountId: unipileAccountId,
     chatId: threadExternalId,
     text,
-    attachments: await Promise.all(
-      attachments.map(downloadLinkedinOutgoingAttachment),
-    ),
+    attachments: await downloadLinkedinOutgoingAttachments(attachments),
   });
 
   return { externalId };

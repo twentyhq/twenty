@@ -228,11 +228,6 @@ export class ApplicationMessageSendService {
     attachments: AppMessageAttachmentInput[];
     deliveryKey: string;
   }): Promise<AppMessageDelivery> {
-    const outgoingAttachments = await this.buildOutgoingAttachments({
-      workspaceId,
-      attachments,
-    });
-
     const sender =
       await this.messagingProviderMessageSenderService.resolveSenderOrThrow({
         messagingProviderUniversalIdentifier:
@@ -241,6 +236,21 @@ export class ApplicationMessageSendService {
         messageChannelId: messageChannel.id,
         workspaceId,
       });
+
+    if (
+      attachments.length > 0 &&
+      !sender.messagingProvider.canSendAttachments
+    ) {
+      throw new MessageChannelException(
+        `Messaging provider ${sender.messagingProvider.id} cannot send attachments`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    const outgoingAttachments = await this.buildOutgoingAttachments({
+      workspaceId,
+      attachments,
+    });
 
     const conversation = await this.findConversation({
       workspaceId,

@@ -7,6 +7,7 @@ export const getMessageThreadChannel = gql`
       provider
       applicationId
       conversationStyle
+      canSendAttachments
     }
   }
 `;

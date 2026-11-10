@@ -6,7 +6,10 @@ import {
   LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-export default defineMessagingProvider({
+// the pinned twenty-sdk does not type `canSendAttachments` yet
+const linkedinMessagingProvider: Parameters<
+  typeof defineMessagingProvider
+>[0] & { canSendAttachments: boolean } = {
   universalIdentifier: LINKEDIN_MESSAGING_PROVIDER_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-messaging',
   displayName: 'LinkedIn Messages',
@@ -16,4 +19,7 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
   },
-});
+  canSendAttachments: true,
+};
+
+export default defineMessagingProvider(linkedinMessagingProvider);

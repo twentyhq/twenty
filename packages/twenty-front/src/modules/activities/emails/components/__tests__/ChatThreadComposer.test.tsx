@@ -18,7 +18,7 @@ const mockDraftAttachments = jest.fn(() => [] as unknown[]);
 
 jest.mock('@/activities/emails/hooks/useChatThreadDraftAttachments', () => ({
   useChatThreadDraftAttachments: () => ({
-    canAttachFiles: true,
+    canUploadAttachments: true,
     uploadingFiles: [],
     draftAttachments: mockDraftAttachments(),
     attachFiles: jest.fn(),
@@ -61,6 +61,7 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
+          canSendAttachments
           onMessageSent={jest.fn().mockResolvedValue(undefined)}
         />
       </I18nProvider>,
@@ -96,6 +97,7 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
+          canSendAttachments
           onMessageSent={onMessageSent}
         />
       </I18nProvider>,
@@ -131,6 +133,7 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
+          canSendAttachments
           onMessageSent={onMessageSent}
         />
       </I18nProvider>,

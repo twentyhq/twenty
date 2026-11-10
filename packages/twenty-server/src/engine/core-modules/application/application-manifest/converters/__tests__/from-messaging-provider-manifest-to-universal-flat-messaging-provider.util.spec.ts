@@ -32,4 +32,19 @@ describe('fromMessagingProviderManifestToUniversalFlatMessagingProvider', () => 
       }).conversationStyle,
     ).toBe('chat');
   });
+
+  it('keeps attachment sending off unless the manifest opts in', () => {
+    const convert = (canSendAttachments?: boolean) =>
+      fromMessagingProviderManifestToUniversalFlatMessagingProvider({
+        messagingProviderManifest: {
+          ...MESSAGING_PROVIDER_MANIFEST,
+          canSendAttachments,
+        },
+        applicationUniversalIdentifier: 'application-universal-identifier',
+        now: '2026-11-09T00:00:00.000Z',
+      }).canSendAttachments;
+
+    expect(convert()).toBe(false);
+    expect(convert(true)).toBe(true);
+  });
 });

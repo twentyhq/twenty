@@ -55,6 +55,13 @@ describe('defineMessagingProvider', () => {
     ).toBe(true);
   });
 
+  it('accepts a provider that sends attachments', () => {
+    expect(
+      defineMessagingProvider({ ...baseValidConfig, canSendAttachments: true })
+        .success,
+    ).toBe(true);
+  });
+
   it('rejects an unknown conversation style', () => {
     const result = defineMessagingProvider({
       ...baseValidConfig,

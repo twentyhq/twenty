@@ -78,6 +78,7 @@ type ChatThreadComposerProps = {
   channelName: string;
   recipientName: string | null;
   isDisconnected: boolean;
+  canSendAttachments: boolean;
   onMessageSent: () => Promise<unknown>;
 };
 
@@ -87,12 +88,13 @@ export const ChatThreadComposer = ({
   channelName,
   recipientName,
   isDisconnected,
+  canSendAttachments,
   onMessageSent,
 }: ChatThreadComposerProps) => {
   const { t } = useLingui();
   const { sendAppChannelMessage } = useSendAppChannelMessage();
   const {
-    canAttachFiles,
+    canUploadAttachments,
     uploadingFiles,
     draftAttachments,
     attachFiles,
@@ -101,6 +103,7 @@ export const ChatThreadComposer = ({
     clearDraftAttachments,
     openAttachmentPicker,
   } = useChatThreadDraftAttachments();
+  const canAttachFiles = canSendAttachments && canUploadAttachments;
   const [draft, setDraft] = useState('');
   const [pendingMessages, setPendingMessages] = useState<PendingChatMessage[]>(
     [],

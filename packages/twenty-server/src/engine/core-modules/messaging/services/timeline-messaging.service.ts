@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type MessagingProviderConversationStyle } from 'twenty-shared/application';
 import {
   MessageChannelVisibility,
   MessageParticipantRole,
@@ -19,6 +18,7 @@ import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/t
 import { getEffectiveMessageChannelVisibility } from 'src/engine/core-modules/messaging/utils/get-effective-message-channel-visibility.util';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type FlatMessagingProvider } from 'src/engine/metadata-modules/flat-messaging-provider/types/flat-messaging-provider.type';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
@@ -454,13 +454,18 @@ export class TimelineMessagingService {
     return threadChannelByThreadId[messageThreadId] ?? null;
   }
 
-  private async findConversationStyleByMessagingProviderUniversalIdentifier({
+  private async findMessagingProviderByUniversalIdentifier({
     workspaceId,
     messagingProviderUniversalIdentifiers,
   }: {
     workspaceId: string;
     messagingProviderUniversalIdentifiers: string[];
-  }): Promise<Map<string, MessagingProviderConversationStyle | null>> {
+  }): Promise<
+    Map<
+      string,
+      Pick<FlatMessagingProvider, 'conversationStyle' | 'canSendAttachments'>
+    >
+  > {
     if (messagingProviderUniversalIdentifiers.length === 0) {
       return new Map();
     }
@@ -471,11 +476,14 @@ export class TimelineMessagingService {
       ]);
 
     return new Map(
-      messagingProviderUniversalIdentifiers.map((universalIdentifier) => [
-        universalIdentifier,
-        flatMessagingProviderMaps.byUniversalIdentifier[universalIdentifier]
-          ?.conversationStyle ?? null,
-      ]),
+      messagingProviderUniversalIdentifiers.flatMap((universalIdentifier) => {
+        const messagingProvider =
+          flatMessagingProviderMaps.byUniversalIdentifier[universalIdentifier];
+
+        return isDefined(messagingProvider)
+          ? [[universalIdentifier, messagingProvider]]
+          : [];
+      }),
     );
   }
 
@@ -538,8 +546,8 @@ export class TimelineMessagingService {
         },
       });
 
-      const conversationStyleByMessagingProviderUniversalIdentifier =
-        await this.findConversationStyleByMessagingProviderUniversalIdentifier({
+      const messagingProviderByUniversalIdentifier =
+        await this.findMessagingProviderByUniversalIdentifier({
           workspaceId,
           messagingProviderUniversalIdentifiers: messageChannels
             .map((channel) => channel.messagingProviderUniversalIdentifier)
@@ -582,13 +590,13 @@ export class TimelineMessagingService {
             return [];
           }
 
-          const conversationStyle = isDefined(
+          const messagingProvider = isDefined(
             channel.messagingProviderUniversalIdentifier,
           )
-            ? (conversationStyleByMessagingProviderUniversalIdentifier.get(
+            ? messagingProviderByUniversalIdentifier.get(
                 channel.messagingProviderUniversalIdentifier,
-              ) ?? null)
-            : null;
+              )
+            : undefined;
 
           return [
             [
@@ -597,7 +605,9 @@ export class TimelineMessagingService {
                 type: channel.type,
                 provider: connectedAccount.provider,
                 applicationId: connectedAccount.applicationId ?? null,
-                conversationStyle,
+                conversationStyle: messagingProvider?.conversationStyle ?? null,
+                canSendAttachments:
+                  messagingProvider?.canSendAttachments ?? false,
               },
             ],
           ];

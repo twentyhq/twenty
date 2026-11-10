@@ -39,6 +39,7 @@ type ChatThreadWidgetContentProps = {
   loading: boolean;
   onFetchMoreMessages: () => void;
   messageChannelId: string | null;
+  canSendAttachments: boolean;
   onMessageSent: () => Promise<unknown>;
 };
 
@@ -48,6 +49,7 @@ export const ChatThreadWidgetContent = ({
   loading,
   onFetchMoreMessages,
   messageChannelId,
+  canSendAttachments,
   onMessageSent,
 }: ChatThreadWidgetContentProps) => {
   const { messageChannel, connectedAccount } =
@@ -129,6 +131,7 @@ export const ChatThreadWidgetContent = ({
                   : null
               }
               isDisconnected={isDisconnected}
+              canSendAttachments={canSendAttachments}
               onMessageSent={onMessageSent}
             />
           )}

@@ -89,7 +89,38 @@ describe('linkedinSendMessageHandler', () => {
     });
   });
 
-  it('sends nothing when an attachment is over the size limit', async () => {
+  it('sends nothing when the attachments total more than LinkedIn accepts', async () => {
+    await expect(
+      linkedinSendMessageHandler({
+        ...PAYLOAD,
+        attachments: [
+          {
+            filename: 'part-1.mp4',
+            mimeType: 'video/mp4',
+            size: 12 * 1000 * 1000,
+            url: 'https://twenty.test/file/files-field/file-2?token=signed',
+          },
+          {
+            filename: 'part-2.mp4',
+            mimeType: 'video/mp4',
+            size: 8 * 1000 * 1000 + 1,
+            url: 'https://twenty.test/file/files-field/file-3?token=signed',
+          },
+        ],
+      }),
+    ).rejects.toThrow(
+      'Attachments total 20000001 bytes, more than the 20000000 bytes LinkedIn accepts in one message',
+    );
+
+    expect(mocks.fetch).not.toHaveBeenCalled();
+    expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing when the downloaded files exceed the size they declared', async () => {
+    mocks.fetch.mockResolvedValue(
+      new Response(Buffer.alloc(20 * 1000 * 1000 + 1)),
+    );
+
     await expect(
       linkedinSendMessageHandler({
         ...PAYLOAD,
@@ -97,14 +128,13 @@ describe('linkedinSendMessageHandler', () => {
           {
             filename: 'movie.mp4',
             mimeType: 'video/mp4',
-            size: 26 * 1024 * 1024,
+            size: 11,
             url: 'https://twenty.test/file/files-field/file-2?token=signed',
           },
         ],
       }),
-    ).rejects.toThrow('Attachment movie.mp4 is larger than 26214400 bytes');
+    ).rejects.toThrow('more than the 20000000 bytes LinkedIn accepts');
 
-    expect(mocks.fetch).not.toHaveBeenCalled();
     expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
   });
 

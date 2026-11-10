@@ -24,6 +24,7 @@ export const timelineThreadFragment = gql`
       provider
       applicationId
       conversationStyle
+      canSendAttachments
     }
   }
   ${participantFragment}

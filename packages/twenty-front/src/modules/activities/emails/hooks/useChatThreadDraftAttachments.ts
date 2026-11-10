@@ -123,7 +123,7 @@ export const useChatThreadDraftAttachments = () => {
     );
 
   return {
-    canAttachFiles:
+    canUploadAttachments:
       isMessageAttachmentEnabled && isDefined(attachmentFileFieldMetadataId),
     uploadingFiles: uploads.map(({ file }) => file),
     draftAttachments,

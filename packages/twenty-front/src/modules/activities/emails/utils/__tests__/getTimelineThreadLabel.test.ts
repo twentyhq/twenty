@@ -42,6 +42,7 @@ describe('getTimelineThreadLabel', () => {
           provider: 'app',
           applicationId: null,
           conversationStyle: 'chat',
+          canSendAttachments: false,
         },
       }),
     ).toBe('Conversation');

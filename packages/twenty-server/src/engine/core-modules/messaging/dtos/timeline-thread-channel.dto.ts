@@ -18,4 +18,7 @@ export class TimelineThreadChannelDTO {
 
   @Field(() => String, { nullable: true })
   conversationStyle: MessagingProviderConversationStyle | null;
+
+  @Field()
+  canSendAttachments: boolean;
 }

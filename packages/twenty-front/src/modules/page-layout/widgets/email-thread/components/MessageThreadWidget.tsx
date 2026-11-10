@@ -89,6 +89,7 @@ export const MessageThreadWidget = ({
         loading={isFetchingMoreMessages}
         onFetchMoreMessages={fetchMoreMessages}
         messageChannelId={lastMessageChannelId}
+        canSendAttachments={messageThreadChannel?.canSendAttachments ?? false}
         onMessageSent={refetchMessages}
       />
     );
