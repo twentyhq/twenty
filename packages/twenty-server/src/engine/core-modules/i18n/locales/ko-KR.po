@@ -2002,6 +2002,11 @@ msgstr "본문은 객체여야 합니다"
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "위젯 \"{widgetTitle}\"의 본문은 객체여야 합니다"
 
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr "15분 상담 전화를 예약하시면 워크스페이스를 프로덕션 준비 상태로 만드는 데 도움을 드리겠습니다."
+
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
@@ -2447,6 +2452,11 @@ msgstr "통화 녹음"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "통화 녹음"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr "통화 요청됨"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3568,6 +3578,7 @@ msgid "Conversations"
 msgstr "대화"
 
 #. js-lingui-id: X/ryFh
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6159,6 +6170,11 @@ msgstr "엔진 컴포넌트 키가 {engineComponentKey}인 경우 frontComponent
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "engineComponentKey가 TRIGGER_WORKFLOW_VERSION인 경우 frontComponentId를 설정하면 안 됩니다"
+
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr "프런트엔드 구성 요소 빌더 요청이 6MiB 제한을 초과했습니다. 앱 종속성 또는 생성된 SDK 크기를 줄이세요."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9013,6 +9029,11 @@ msgstr "메시징 공급자의 연결 공급자는 변경할 수 없습니다"
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "생성 후에는 메시징 공급자의 연결 공급자를 변경할 수 없습니다. 새 universalIdentifier로 새 메시징 공급자를 선언하세요"
 
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr "메시징 제공업체 conversationStyle \"{conversationStyle}\"은 지원되지 않음"
+
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
@@ -11389,6 +11410,7 @@ msgid "Recurring Event ID"
 msgstr "반복 이벤트 ID"
 
 #. js-lingui-id: zEHtXk
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13325,6 +13347,11 @@ msgstr "위젯 복제를 위한 탭을 찾을 수 없음."
 msgid "Tailor your workspace"
 msgstr "워크스페이스 맞춤 설정"
 
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr "저희 팀과 상담해 보세요"
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
@@ -13682,6 +13709,11 @@ msgstr "애플리케이션이 요청한 권한이 변경되었습니다. 승인�
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
 msgstr "워크스페이스가 활성화되기 전에 어시스턴트 프로필을 업데이트할 수 없습니다."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr "첨부 파일이 너무 커서 하나의 이메일로 보낼 수 없습니다."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14900,6 +14932,11 @@ msgstr "이 구성원은 이중 인증을 설정하지 않았으므로 복구할
 msgid "This message channel cannot send messages."
 msgstr "이 메시지 채널은 메시지를 보낼 수 없습니다."
 
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr "이 메시징 제공업체의 대화 스타일은 지원되지 않습니다."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -15283,6 +15320,11 @@ msgstr "이 작업공간이 레코드 한도에 도달했습니다."
 msgid "This workspace has reached its storage limit."
 msgstr "이 작업공간이 저장소 한도에 도달했습니다."
 
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr "이 워크스페이스에서 모든 시트를 사용했습니다. 워크스페이스 관리자에게 문의하여 더 추가하세요."
+
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
@@ -15589,6 +15631,11 @@ msgstr "관리자 후보가 너무 많이 발견되었습니다."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "참석자가 너무 많습니다: {attendeeCount}. 허용되는 최대 수는 {MAX_EMAIL_RECIPIENTS}명입니다."
+
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr "너무 많은 파일이 열려 있습니다. 잠시 후 다시 시도하세요."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
@@ -17027,6 +17074,11 @@ msgstr "이메일 계정에 로그인할 수 없습니다. 이메일 주소와 �
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "이메일 계정에 연결하는데 문제가 발생했습니다. 설정을 확인하고 다시 시도하십시오."
+
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr "이메일로 시간을 확인해 드리겠습니다."
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

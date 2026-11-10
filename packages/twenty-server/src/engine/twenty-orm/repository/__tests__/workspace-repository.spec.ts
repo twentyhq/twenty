@@ -114,13 +114,18 @@ const buildRepository = ({
         buildManyRecordsAccessCondition: jest.fn().mockResolvedValue(true),
         assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
         assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
-        recomputeRecordAccessGroupIdsOfRecords: jest.fn(),
+      },
+      recordPermissionsOnlyRls: {
         findRlsRuleUnreadableFieldsByRole: jest.fn().mockResolvedValue([]),
         buildRlsRuleSqlConditionOrThrow: jest.fn(),
-        isRecomputingRecordAccessGroupIdsOnWrite: jest
-          .fn()
-          .mockReturnValue(false),
       },
+      recordAccessGroupWrite: {
+        isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
+        isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
+        findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
+        recomputeAfterWrite: jest.fn().mockResolvedValue([]),
+      },
+      recordAccessGroupQueue: { queueRecompute: jest.fn() },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
         acquireRecordStock: jest.fn(),

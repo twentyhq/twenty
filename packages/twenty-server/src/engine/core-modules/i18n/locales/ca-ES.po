@@ -2002,6 +2002,11 @@ msgstr "El cos ha de ser un objecte"
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "El cos ha de ser un objecte per al giny \"{widgetTitle}\""
 
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr "Reserva una trucada de 15 minuts i t'ajudarem a tenir el teu espai de treball llest per a producció."
+
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
@@ -2447,6 +2452,11 @@ msgstr "Gravacions de trucades"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Gravacions de trucades"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr "Trucada sol·licitada"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3568,6 +3578,7 @@ msgid "Conversations"
 msgstr "Converses"
 
 #. js-lingui-id: X/ryFh
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6159,6 +6170,11 @@ msgstr "frontComponentId no s'ha d'establir per a la clau del component del moto
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "frontComponentId no s'ha d'establir quan engineComponentKey és TRIGGER_WORKFLOW_VERSION"
+
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr "La sol·licitud del constructor de components del frontend supera el límit de 6 MiB. Reduïu les dependències de l'aplicació o la mida de l'SDK generat."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9013,6 +9029,11 @@ msgstr "No es pot canviar el proveïdor de connexió del proveïdor de missatger
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "No es pot canviar el proveïdor de connexió del proveïdor de missatgeria després de crear-lo: declara un proveïdor de missatgeria nou amb un universalIdentifier nou"
 
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr "No s'admet l'estil de conversa \"{conversationStyle}\" del proveïdor de missatgeria"
+
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
@@ -11389,6 +11410,7 @@ msgid "Recurring Event ID"
 msgstr "ID d'esdeveniment recurrent"
 
 #. js-lingui-id: zEHtXk
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13325,6 +13347,11 @@ msgstr "No s'ha trobat cap pestanya per duplicar el giny."
 msgid "Tailor your workspace"
 msgstr "Personalitza el teu espai de treball"
 
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr "Parla amb el nostre equip"
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
@@ -13682,6 +13709,11 @@ msgstr "Els permisos sol·licitats per l'aplicació han canviat. Reviseu-los de 
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
 msgstr "El perfil de l'assistent no es pot actualitzar abans que l'espai de treball estigui activat."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr "Els fitxers adjunts són massa grans per enviar-los en un sol correu electrònic."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14900,6 +14932,11 @@ msgstr "Aquest membre no ha configurat l'autenticació de dos factors, per tant 
 msgid "This message channel cannot send messages."
 msgstr "Aquest canal de missatges no pot enviar missatges."
 
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr "L'estil de conversa d'aquest proveïdor de missatgeria no s'admet."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -15283,6 +15320,11 @@ msgstr "Aquest espai de treball ha assolit el límit de registres."
 msgid "This workspace has reached its storage limit."
 msgstr "Aquest espai de treball ha assolit el límit d'emmagatzematge."
 
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr "Aquest espai de treball ha utilitzat totes les seves places. Contacteu amb l'administrador de l'espai de treball per afegir-ne més."
+
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
@@ -15589,6 +15631,11 @@ msgstr "S'han trobat massa candidats a administrador."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Hi ha massa assistents: {attendeeCount}. El màxim permès és {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr "S'estan obrint massa fitxers. Torneu-ho a provar d'aquí a un minut."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
@@ -17027,6 +17074,11 @@ msgstr "No hem pogut iniciar sessió al teu compte de correu electrònic. Si us 
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Hem tingut un problema amb la connexió al teu compte de correu. Si us plau, comprova la configuració i torna-ho a intentar."
+
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr "Confirmarem l'hora per correu electrònic."
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

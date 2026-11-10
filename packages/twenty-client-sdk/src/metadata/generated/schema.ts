@@ -142,10 +142,12 @@ export interface AgentMessage {
     agentId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     id: Scalars['UUID']
+    isBuiltInAssistant: Scalars['Boolean']
     parts: AgentMessagePart[]
     processedAt?: Scalars['DateTime']
     reactions: AgentMessageReactionSummary[]
     role: Scalars['String']
+    senderApplicationId?: Scalars['UUID']
     senderUserWorkspaceId?: Scalars['UUID']
     senderWorkspaceMemberId?: Scalars['UUID']
     status: Scalars['String']
@@ -366,6 +368,7 @@ export interface Application {
     availablePackages: Scalars['JSON']
     canBeUninstalled: Scalars['Boolean']
     commandMenuItems: CommandMenuItem[]
+    content?: ApplicationContent
     createdAt: Scalars['DateTime']
     defaultLogicFunctionRole?: Role
     defaultRoleId?: Scalars['String']
@@ -454,6 +457,47 @@ export interface ApplicationConnectionProviderOAuthConfig {
     isClientCredentialsConfigured: Scalars['Boolean']
     scopes: Scalars['String'][]
     __typename: 'ApplicationConnectionProviderOAuthConfig'
+}
+
+export interface ApplicationContent {
+    agents: ApplicationContentItem[]
+    commandMenuItems: ApplicationContentItem[]
+    connectionProviders: ApplicationContentItem[]
+    fields: ApplicationContentItem[]
+    frontComponents: ApplicationContentItem[]
+    indexes: ApplicationContentItem[]
+    logicFunctions: ApplicationContentItem[]
+    navigationMenuItems: ApplicationContentItem[]
+    objects: ApplicationContentItem[]
+    pageLayoutTabs: ApplicationContentItem[]
+    pageLayouts: ApplicationContentItem[]
+    permissionFlags: ApplicationContentItem[]
+    publicAssets: ApplicationContentItem[]
+    roles: ApplicationContentItem[]
+    skills: ApplicationContentItem[]
+    translations: ApplicationContentItem[]
+    viewFields: ApplicationContentItem[]
+    views: ApplicationContentItem[]
+    workflows: ApplicationContentItem[]
+    __typename: 'ApplicationContent'
+}
+
+export interface ApplicationContentItem {
+    color?: Scalars['String']
+    count?: Scalars['Int']
+    description?: Scalars['String']
+    fieldUniversalIdentifier?: Scalars['String']
+    icon?: Scalars['String']
+    id?: Scalars['String']
+    label: Scalars['String']
+    objectUniversalIdentifier?: Scalars['String']
+    parentLabel?: Scalars['String']
+    parentUniversalIdentifier?: Scalars['String']
+    position?: Scalars['Float']
+    tag?: Scalars['String']
+    timeoutSeconds?: Scalars['Int']
+    universalIdentifier: Scalars['String']
+    __typename: 'ApplicationContentItem'
 }
 
 export interface ApplicationExport {
@@ -1571,7 +1615,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1783,7 +1827,7 @@ export interface GettingStartedProgress {
     __typename: 'GettingStartedProgress'
 }
 
-export type GettingStartedStepActionKey = 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MODEL' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
+export type GettingStartedStepActionKey = 'BOOK_CALL' | 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MODEL' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
 
 export interface GettingStartedStepDefinition {
     actionKey: GettingStartedStepActionKey
@@ -2102,6 +2146,7 @@ export interface MarketplaceAppDetail {
     author?: Scalars['String']
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
+    content?: ApplicationContent
     defaultRoleUniversalIdentifier?: Scalars['String']
     description?: Scalars['String']
     emailSupport?: Scalars['String']
@@ -4080,6 +4125,7 @@ export interface View {
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn: ViewOpenRecordIn
     position: Scalars['Float']
+    shouldDisplayGroupsAsTabs?: Scalars['Boolean']
     shouldHideEmptyGroups: Scalars['Boolean']
     type: ViewType
     universalIdentifier: Scalars['UUID']
@@ -4562,10 +4608,12 @@ export interface AgentMessageGenqlSelection{
     agentId?: boolean | number
     createdAt?: boolean | number
     id?: boolean | number
+    isBuiltInAssistant?: boolean | number
     parts?: AgentMessagePartGenqlSelection
     processedAt?: boolean | number
     reactions?: AgentMessageReactionSummaryGenqlSelection
     role?: boolean | number
+    senderApplicationId?: boolean | number
     senderUserWorkspaceId?: boolean | number
     senderWorkspaceMemberId?: boolean | number
     status?: boolean | number
@@ -4801,6 +4849,7 @@ export interface ApplicationGenqlSelection{
     availablePackages?: boolean | number
     canBeUninstalled?: boolean | number
     commandMenuItems?: CommandMenuItemGenqlSelection
+    content?: ApplicationContentGenqlSelection
     createdAt?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     defaultRoleId?: boolean | number
@@ -4893,6 +4942,49 @@ export interface ApplicationConnectionProviderGenqlSelection{
 export interface ApplicationConnectionProviderOAuthConfigGenqlSelection{
     isClientCredentialsConfigured?: boolean | number
     scopes?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationContentGenqlSelection{
+    agents?: ApplicationContentItemGenqlSelection
+    commandMenuItems?: ApplicationContentItemGenqlSelection
+    connectionProviders?: ApplicationContentItemGenqlSelection
+    fields?: ApplicationContentItemGenqlSelection
+    frontComponents?: ApplicationContentItemGenqlSelection
+    indexes?: ApplicationContentItemGenqlSelection
+    logicFunctions?: ApplicationContentItemGenqlSelection
+    navigationMenuItems?: ApplicationContentItemGenqlSelection
+    objects?: ApplicationContentItemGenqlSelection
+    pageLayoutTabs?: ApplicationContentItemGenqlSelection
+    pageLayouts?: ApplicationContentItemGenqlSelection
+    permissionFlags?: ApplicationContentItemGenqlSelection
+    publicAssets?: ApplicationContentItemGenqlSelection
+    roles?: ApplicationContentItemGenqlSelection
+    skills?: ApplicationContentItemGenqlSelection
+    translations?: ApplicationContentItemGenqlSelection
+    viewFields?: ApplicationContentItemGenqlSelection
+    views?: ApplicationContentItemGenqlSelection
+    workflows?: ApplicationContentItemGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationContentItemGenqlSelection{
+    color?: boolean | number
+    count?: boolean | number
+    description?: boolean | number
+    fieldUniversalIdentifier?: boolean | number
+    icon?: boolean | number
+    id?: boolean | number
+    label?: boolean | number
+    objectUniversalIdentifier?: boolean | number
+    parentLabel?: boolean | number
+    parentUniversalIdentifier?: boolean | number
+    position?: boolean | number
+    tag?: boolean | number
+    timeoutSeconds?: boolean | number
+    universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5944,7 +6036,7 @@ export interface CreateViewGroupInput {fieldValue: Scalars['String'],id?: (Scala
 
 export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
@@ -6838,6 +6930,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     author?: boolean | number
     billsCredits?: boolean | number
     category?: boolean | number
+    content?: ApplicationContentGenqlSelection
     defaultRoleUniversalIdentifier?: boolean | number
     description?: boolean | number
     emailSupport?: boolean | number
@@ -7922,7 +8015,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -8827,7 +8920,7 @@ export interface UpdateViewGroupInputUpdates {fieldMetadataId?: (Scalars['UUID']
 
 export interface UpdateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface UpdateViewSortInput {
 /** The id of the view sort to update */
@@ -9201,6 +9294,7 @@ export interface ViewGenqlSelection{
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn?: boolean | number
     position?: boolean | number
+    shouldDisplayGroupsAsTabs?: boolean | number
     shouldHideEmptyGroups?: boolean | number
     type?: boolean | number
     universalIdentifier?: boolean | number
@@ -9824,6 +9918,22 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationConnectionProviderOAuthConfig = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProviderOAuthConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProviderOAuthConfig"')
       return ApplicationConnectionProviderOAuthConfig_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationContent_possibleTypes: string[] = ['ApplicationContent']
+    export const isApplicationContent = (obj?: { __typename?: any } | null): obj is ApplicationContent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationContent"')
+      return ApplicationContent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationContentItem_possibleTypes: string[] = ['ApplicationContentItem']
+    export const isApplicationContentItem = (obj?: { __typename?: any } | null): obj is ApplicationContentItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationContentItem"')
+      return ApplicationContentItem_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -12888,6 +12998,7 @@ export const enumFeatureFlagKey = {
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
    IS_PRIVATE_RECORDS_ENABLED: 'IS_PRIVATE_RECORDS_ENABLED' as const,
+   IS_RECORD_GROUP_TABS_ENABLED: 'IS_RECORD_GROUP_TABS_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RELATED_RECORD_PATHS_ENABLED: 'IS_RELATED_RECORD_PATHS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
@@ -12950,6 +13061,7 @@ export const enumFileFolder = {
 }
 
 export const enumGettingStartedStepActionKey = {
+   BOOK_CALL: 'BOOK_CALL' as const,
    CONNECT_MAILBOX: 'CONNECT_MAILBOX' as const,
    CUSTOMIZE_DATA_MODEL: 'CUSTOMIZE_DATA_MODEL' as const,
    FOLLOW_UP_DEALS: 'FOLLOW_UP_DEALS' as const,

@@ -14,8 +14,8 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
-import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
+import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
+import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -126,11 +126,11 @@ describe('querying many records through access groups (integration)', () => {
       },
     });
     await setAccessGroupsEnabled(true);
-    await getAppProviderByClassName<AccessGroupService>(
-      'AccessGroupService',
+    await getAppProviderByClassName<AccessGroupSyncService>(
+      'AccessGroupSyncService',
     ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
-    await getAppProviderByClassName<RecordAccessGroupService>(
-      'RecordAccessGroupService',
+    await getAppProviderByClassName<RecordAccessGroupComputationService>(
+      'RecordAccessGroupComputationService',
     ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,

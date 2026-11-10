@@ -15,9 +15,9 @@ export const createTestOidcIdentityProvider = async ({
     token,
     input: {
       name: 'SSO integration test identity provider',
-      issuer: testIdentityProvider.issuer,
-      clientID: testIdentityProvider.clientId,
-      clientSecret: clientSecret ?? testIdentityProvider.clientSecret,
+      issuer: testIdentityProvider.oidc.issuer,
+      clientID: testIdentityProvider.oidc.clientId,
+      clientSecret: clientSecret ?? testIdentityProvider.oidc.clientSecret,
     },
   });
 

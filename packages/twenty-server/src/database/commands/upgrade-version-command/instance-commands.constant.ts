@@ -292,7 +292,10 @@ import { MakeFieldMetadataOptionValueUniqueDeferredFastInstanceCommand } from 's
 import { AddAiDataPolicyToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-slow-1793907961109-add-ai-data-policy-to-workspace';
 import { AddCanCreatePermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1793995650464-add-can-create-permissions';
 import { AddRlsRuleFieldPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1794155686000-add-rls-rule-field-permissions';
-import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1794194869000-add-oauth-discovery-to-connection-provider';
+import { AddMessagingProviderConversationStyleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794225486244-add-messaging-provider-conversation-style';
+import { AddViewShouldDisplayGroupsAsTabsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794238559013-add-view-should-display-groups-as-tabs';
+import { AddRemoteOriginToFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794243399000-add-remote-origin-to-file';
+import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794281638000-add-oauth-discovery-to-connection-provider';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -587,5 +590,8 @@ export const INSTANCE_COMMANDS = [
   AddAiDataPolicyToWorkspaceSlowInstanceCommand,
   AddCanCreatePermissionsFastInstanceCommand,
   AddRlsRuleFieldPermissionsFastInstanceCommand,
+  AddMessagingProviderConversationStyleFastInstanceCommand,
+  AddViewShouldDisplayGroupsAsTabsFastInstanceCommand,
+  AddRemoteOriginToFileFastInstanceCommand,
   AddOauthDiscoveryToConnectionProviderFastInstanceCommand,
 ];

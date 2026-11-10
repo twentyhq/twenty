@@ -46,6 +46,7 @@ type BuildRecordFilterForRoleArgs = {
   roleId: string;
   workspaceMember?: RowLevelPermissionWorkspaceMember;
   memberFieldValues?: RowLevelPermissionMemberFieldValues;
+  isRelationHopEnabled: boolean;
 };
 
 const resolveBoundPredicateValue = ({
@@ -134,6 +135,7 @@ export const buildRecordFilterForRole = ({
   roleId,
   workspaceMember,
   memberFieldValues,
+  isRelationHopEnabled,
 }: BuildRecordFilterForRoleArgs): RecordGqlOperationFilter | null => {
   const predicates = Object.values(
     flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
@@ -166,7 +168,14 @@ export const buildRecordFilterForRole = ({
       );
     }
 
-    if (isDefined(predicate.relationFieldMetadataId)) {
+    const predicateRelationFieldMetadataId = isRelationHopEnabled
+      ? predicate.relationFieldMetadataId
+      : undefined;
+
+    if (
+      isDefined(predicate.relationFieldMetadataId) &&
+      !isDefined(predicateRelationFieldMetadataId)
+    ) {
       unsatisfiableRecordFilterIds.add(predicate.id);
     }
 
@@ -213,7 +222,11 @@ export const buildRecordFilterForRole = ({
 
     recordFilters.push({
       id: predicate.id,
-      fieldMetadataId: predicate.fieldMetadataId,
+      fieldMetadataId:
+        predicateRelationFieldMetadataId ?? predicate.fieldMetadataId,
+      relationTargetFieldMetadataId: isDefined(predicateRelationFieldMetadataId)
+        ? predicate.fieldMetadataId
+        : undefined,
       value: convertViewFilterValueToString(predicateValue),
       operand,
       recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,

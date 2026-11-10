@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type MessagingProviderConversationStyle } from 'twenty-shared/application';
 import {
   MessageChannelVisibility,
   MessageParticipantRole,
@@ -12,13 +13,14 @@ import { In, type Repository } from 'typeorm';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type TimelineThreadChannelDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-channel.dto';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { getEffectiveMessageChannelVisibility } from 'src/engine/core-modules/messaging/utils/get-effective-message-channel-visibility.util';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -43,8 +45,9 @@ export class TimelineMessagingService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileUrlService: FileUrlService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
   public async getAndCountMessageThreads(
@@ -431,7 +434,7 @@ export class TimelineMessagingService {
     workspaceId: string;
   }): Promise<TimelineThreadChannelDTO | null> {
     const recordsPermissions =
-      await this.recordPermissionsService.findRecordsActions({
+      await this.recordPermissionsReadService.findRecordsActions({
         authContext: getWorkspaceAuthContext(),
         objectNameSingular: 'messageThread',
         recordIds: [messageThreadId],
@@ -449,6 +452,31 @@ export class TimelineMessagingService {
       });
 
     return threadChannelByThreadId[messageThreadId] ?? null;
+  }
+
+  private async findConversationStyleByMessagingProviderUniversalIdentifier({
+    workspaceId,
+    messagingProviderUniversalIdentifiers,
+  }: {
+    workspaceId: string;
+    messagingProviderUniversalIdentifiers: string[];
+  }): Promise<Map<string, MessagingProviderConversationStyle | null>> {
+    if (messagingProviderUniversalIdentifiers.length === 0) {
+      return new Map();
+    }
+
+    const { flatMessagingProviderMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatMessagingProviderMaps',
+      ]);
+
+    return new Map(
+      messagingProviderUniversalIdentifiers.map((universalIdentifier) => [
+        universalIdentifier,
+        flatMessagingProviderMaps.byUniversalIdentifier[universalIdentifier]
+          ?.conversationStyle ?? null,
+      ]),
+    );
   }
 
   public async getThreadVisibilityAndChannelByThreadId({
@@ -506,8 +534,17 @@ export class TimelineMessagingService {
           visibility: true,
           connectedAccountId: true,
           type: true,
+          messagingProviderUniversalIdentifier: true,
         },
       });
+
+      const conversationStyleByMessagingProviderUniversalIdentifier =
+        await this.findConversationStyleByMessagingProviderUniversalIdentifier({
+          workspaceId,
+          messagingProviderUniversalIdentifiers: messageChannels
+            .map((channel) => channel.messagingProviderUniversalIdentifier)
+            .filter(isDefined),
+        });
 
       const allConnectedAccountIds = [
         ...new Set(
@@ -545,6 +582,14 @@ export class TimelineMessagingService {
             return [];
           }
 
+          const conversationStyle = isDefined(
+            channel.messagingProviderUniversalIdentifier,
+          )
+            ? (conversationStyleByMessagingProviderUniversalIdentifier.get(
+                channel.messagingProviderUniversalIdentifier,
+              ) ?? null)
+            : null;
+
           return [
             [
               channel.id,
@@ -552,6 +597,7 @@ export class TimelineMessagingService {
                 type: channel.type,
                 provider: connectedAccount.provider,
                 applicationId: connectedAccount.applicationId ?? null,
+                conversationStyle,
               },
             ],
           ];

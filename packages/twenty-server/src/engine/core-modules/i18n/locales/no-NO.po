@@ -2002,6 +2002,11 @@ msgstr "Brødtekst må være et objekt"
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Brødtekst må være et objekt for widgeten \"{widgetTitle}\""
 
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr "Bestill en 15-minutters samtale, så hjelper vi deg med å få arbeidsområdet ditt klart for produksjon."
+
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
@@ -2447,6 +2452,11 @@ msgstr "Samtaleopptak"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Samtaleopptak"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr "Samtale forespurt"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3568,6 +3578,7 @@ msgid "Conversations"
 msgstr "Samtaler"
 
 #. js-lingui-id: X/ryFh
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6159,6 +6170,11 @@ msgstr "frontComponentId må ikke angis for motorkomponentnøkkel {engineCompone
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "frontComponentId må ikke angis når engineComponentKey er TRIGGER_WORKFLOW_VERSION"
+
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr "Forespørselen til frontend-komponentbyggeren overskrider grensen på 6 MiB. Reduser appavhengighetene eller størrelsen på den genererte SDK-en."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9013,6 +9029,11 @@ msgstr "Tilkoblingsleverandøren for meldingsleverandøren kan ikke endres"
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "Tilkoblingsleverandøren for meldingsleverandøren kan ikke endres etter opprettelse: deklarer en ny meldingsleverandør med en ny universalIdentifier"
 
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr "Meldingsleverandørens samtalestil \"{conversationStyle}\" støttes ikke"
+
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
@@ -11389,6 +11410,7 @@ msgid "Recurring Event ID"
 msgstr "ID for gjentakende hendelse"
 
 #. js-lingui-id: zEHtXk
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13325,6 +13347,11 @@ msgstr "Fane ikke funnet for duplisering av widget."
 msgid "Tailor your workspace"
 msgstr "Tilpass arbeidsområdet ditt"
 
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr "Snakk med teamet vårt"
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
@@ -13682,6 +13709,11 @@ msgstr "Applikasjonens forespurte tillatelser er endret. Gå gjennom dem på nyt
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
 msgstr "Assistentprofilen kan ikke oppdateres før arbeidsområdet er aktivert."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr "Vedleggene er for store til å sendes i én e-post."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14900,6 +14932,11 @@ msgstr "Dette medlemmet har ikke konfigurert tofaktorautentisering, så det er i
 msgid "This message channel cannot send messages."
 msgstr "Denne meldingskanalen kan ikke sende meldinger."
 
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr "Denne meldingsleverandørens samtalestil støttes ikke."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -15283,6 +15320,11 @@ msgstr "Dette arbeidsområdet har nådd grensen for oppføringer."
 msgid "This workspace has reached its storage limit."
 msgstr "Dette arbeidsområdet har nådd lagringsgrensen."
 
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr "Dette arbeidsområdet har brukt opp alle setene sine. Kontakt arbeidsområdets administrator for å legge til flere."
+
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
@@ -15589,6 +15631,11 @@ msgstr "For mange administratorkandidater funnet."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "For mange deltakere: {attendeeCount}. Maksimalt tillatt antall er {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr "For mange filer åpnes. Prøv igjen om ett minutt."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
@@ -17027,6 +17074,11 @@ msgstr "Vi kunne ikke logge inn på e-postkontoen din. Vennligst sjekk e-postadr
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Vi opplevde et problem med å koble til e-postkontoen din. Vennligst sjekk innstillingene dine og prøv igjen."
+
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr "Vi bekrefter tidspunktet på e-post."
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

@@ -2002,6 +2002,11 @@ msgstr "Il corpo deve essere un oggetto"
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Il corpo deve essere un oggetto per il widget \"{widgetTitle}\""
 
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr "Prenota una chiamata di 15 minuti e ti aiuteremo a preparare il tuo spazio di lavoro per la produzione."
+
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Boom"
@@ -2447,6 +2452,11 @@ msgstr "Registrazioni delle chiamate"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Registrazioni delle chiamate"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr "Chiamata richiesta"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3568,6 +3578,7 @@ msgid "Conversations"
 msgstr "Conversazioni"
 
 #. js-lingui-id: X/ryFh
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6159,6 +6170,11 @@ msgstr "frontComponentId non deve essere impostato per la chiave del componente 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "frontComponentId non deve essere impostato quando engineComponentKey è TRIGGER_WORKFLOW_VERSION"
+
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr "La richiesta del generatore di componenti frontend supera il limite di 6 MiB. Riduci le dipendenze dell'app o la dimensione dell'SDK generato."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9013,6 +9029,11 @@ msgstr "Il provider di connessione del provider di messaggistica non può essere
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "Il provider di connessione del provider di messaggistica non può essere modificato dopo la creazione: dichiara un nuovo provider di messaggistica con un nuovo universalIdentifier"
 
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr "Lo stile di conversazione conversationStyle \"{conversationStyle}\" del provider di messaggistica non è supportato"
+
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
@@ -11389,6 +11410,7 @@ msgid "Recurring Event ID"
 msgstr "ID evento ricorrente"
 
 #. js-lingui-id: zEHtXk
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13325,6 +13347,11 @@ msgstr "Scheda non trovata per la duplicazione del widget."
 msgid "Tailor your workspace"
 msgstr "Personalizza il tuo spazio di lavoro"
 
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr "Parla con il nostro team"
+
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
@@ -13682,6 +13709,11 @@ msgstr "Le autorizzazioni richieste dall'applicazione sono cambiate. Riesaminale
 #: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 msgid "The assistant profile cannot be updated before the workspace is activated."
 msgstr "Il profilo dell'assistente non può essere aggiornato prima che lo spazio di lavoro sia attivato."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr "Gli allegati sono troppo grandi per essere inviati in un'unica e-mail."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -14900,6 +14932,11 @@ msgstr "Questo membro non ha configurato l'autenticazione a due fattori, quindi 
 msgid "This message channel cannot send messages."
 msgstr "Questo canale di messaggi non può inviare messaggi."
 
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr "Lo stile di conversazione di questo provider di messaggistica non è supportato."
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -15283,6 +15320,11 @@ msgstr "Questo spazio di lavoro ha raggiunto il limite di record."
 msgid "This workspace has reached its storage limit."
 msgstr "Questo spazio di lavoro ha raggiunto il limite di archiviazione."
 
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr "Questa area di lavoro ha utilizzato tutte le sue postazioni. Contatta l'amministratore dell'area di lavoro per aggiungerne altre."
+
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
@@ -15589,6 +15631,11 @@ msgstr "Trovati troppi candidati amministratori."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Troppi partecipanti: {attendeeCount}. Il massimo consentito è {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr "Sono stati aperti troppi file. Riprova tra un minuto."
 
 #. js-lingui-id: M59lHq
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
@@ -17027,6 +17074,11 @@ msgstr "Non siamo riusciti a effettuare l'accesso al tuo account email. Si prega
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Abbiamo riscontrato un problema nella connessione al tuo account email. Si prega di controllare le impostazioni e riprovare."
+
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr "Confermeremo l'orario via email."
 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts

@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
-import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-denied-to-principals.util';
+import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/combine/utils/is-object-operation-denied-to-principals.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -16,13 +16,15 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/workflow/common/constants/legacy-workspace-workflow-object-universal-identifiers.constant';
 
 const PERSON_ID = 'person-id';
 const COMPANY_ID = 'company-id';
 const WORKFLOW_ID = 'workflow-id';
+const WORKFLOW_RUN_ID = 'workflow-run-id';
 const CAMPAIGN_ID = 'campaign-id';
-const WORKFLOW_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.workflow.universalIdentifier;
+const WORKFLOW_RUN_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.workflowRun.universalIdentifier;
 const EMAIL_FIELD_ID = 'email-field-id';
 
 const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
@@ -31,7 +33,8 @@ const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
 for (const [id, universalIdentifier, isSystem] of [
   [PERSON_ID, 'person', false],
   [COMPANY_ID, 'company', false],
-  [WORKFLOW_ID, WORKFLOW_UNIVERSAL_IDENTIFIER, false],
+  [WORKFLOW_ID, LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER, false],
+  [WORKFLOW_RUN_ID, WORKFLOW_RUN_UNIVERSAL_IDENTIFIER, false],
   [CAMPAIGN_ID, 'campaign', true],
 ] as const) {
   flatObjectMetadataMaps.byUniversalIdentifier[universalIdentifier] =
@@ -176,54 +179,69 @@ describe('resolveAiRunPermissionScope', () => {
     },
   );
 
-  describe('on the workflow objects, which the workflows flag grants', () => {
-    const WORKFLOWS_FLAG = SystemPermissionFlag[PermissionFlagType.WORKFLOWS];
+  describe.each([
+    {
+      objectName: 'legacy workflow',
+      objectId: WORKFLOW_ID,
+      objectUniversalIdentifier:
+        LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
+    },
+    {
+      objectName: 'workflowRun',
+      objectId: WORKFLOW_RUN_ID,
+      objectUniversalIdentifier: WORKFLOW_RUN_UNIVERSAL_IDENTIFIER,
+    },
+  ])(
+    'on the $objectName object, which the workflows flag grants',
+    ({ objectId, objectUniversalIdentifier }) => {
+      const WORKFLOWS_FLAG = SystemPermissionFlag[PermissionFlagType.WORKFLOWS];
 
-    it('grants every action with the flag', () => {
-      expect(
-        resolve({ permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG] })
-          .recordsPermissions.objects[WORKFLOW_ID],
-      ).toMatchObject({
-        canCreateAllRecords: true,
-        canReadAllRecords: true,
-        canUpdateAllRecords: true,
-        canDestroyAllRecords: true,
+      it('grants every action with the flag', () => {
+        expect(
+          resolve({ permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG] })
+            .recordsPermissions.objects[objectId],
+        ).toMatchObject({
+          canCreateAllRecords: true,
+          canReadAllRecords: true,
+          canUpdateAllRecords: true,
+          canDestroyAllRecords: true,
+        });
       });
-    });
 
-    it('lets an explicit deny narrow what the flag grants', () => {
-      expect(
-        resolve({
-          permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG],
-          objectPermissions: [
-            {
-              objectUniversalIdentifier: WORKFLOW_UNIVERSAL_IDENTIFIER,
-              canUpdateObjectRecords: false,
-              canDestroyObjectRecords: false,
-            },
-          ],
-        }).recordsPermissions.objects[WORKFLOW_ID],
-      ).toMatchObject({
-        canCreateAllRecords: false,
-        canReadAllRecords: true,
-        canUpdateAllRecords: false,
-        canDestroyAllRecords: false,
+      it('lets an explicit deny narrow what the flag grants', () => {
+        expect(
+          resolve({
+            permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG],
+            objectPermissions: [
+              {
+                objectUniversalIdentifier,
+                canUpdateObjectRecords: false,
+                canDestroyObjectRecords: false,
+              },
+            ],
+          }).recordsPermissions.objects[objectId],
+        ).toMatchObject({
+          canCreateAllRecords: false,
+          canReadAllRecords: true,
+          canUpdateAllRecords: false,
+          canDestroyAllRecords: false,
+        });
       });
-    });
 
-    it('never lets an explicit grant stand in for the flag', () => {
-      expect(
-        resolve({
-          objectPermissions: [
-            {
-              objectUniversalIdentifier: WORKFLOW_UNIVERSAL_IDENTIFIER,
-              canReadObjectRecords: true,
-            },
-          ],
-        }).recordsPermissions.objects[WORKFLOW_ID]?.canReadAllRecords,
-      ).toBe(false);
-    });
-  });
+      it('never lets an explicit grant stand in for the flag', () => {
+        expect(
+          resolve({
+            objectPermissions: [
+              {
+                objectUniversalIdentifier,
+                canReadObjectRecords: true,
+              },
+            ],
+          }).recordsPermissions.objects[objectId]?.canReadAllRecords,
+        ).toBe(false);
+      });
+    },
+  );
 
   it('refuses a scope that lists an object twice', () => {
     expect(() =>

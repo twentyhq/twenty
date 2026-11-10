@@ -34,8 +34,10 @@ const eventSinksProvider = {
 
     const configuredSinkNames = twentyConfigService.get('EVENT_SINKS');
 
+    const knownSinkNames: readonly string[] = KNOWN_SINK_NAMES;
+
     const unknownSinkNames = configuredSinkNames.filter(
-      (name) => !KNOWN_SINK_NAMES.includes(name.toLowerCase() as never),
+      (name) => !knownSinkNames.includes(name.toLowerCase()),
     );
 
     if (unknownSinkNames.length > 0) {

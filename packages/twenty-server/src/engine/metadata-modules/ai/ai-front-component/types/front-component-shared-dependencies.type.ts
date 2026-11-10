@@ -3,5 +3,6 @@ import { type SharedDependenciesBuildContext } from 'twenty-shared/front-compone
 export type FrontComponentSharedDependencies =
   SharedDependenciesBuildContext & {
     source: string;
+    typeReferences: string;
     checksum: string;
   };

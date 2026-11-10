@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
@@ -23,7 +23,7 @@ export class AgentChatChannelAccessService {
     private readonly channelMetadataService: AgentChatChannelMetadataService,
     private readonly rolePermissionsService: RolePermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
   async findCallerAccessibleChannels(
@@ -68,7 +68,7 @@ export class AgentChatChannelAccessService {
     authContext: AgentInboxCallerAuthContext,
   ): Promise<FlatRole | undefined> {
     const [principals, { flatRoleMaps }] = await Promise.all([
-      this.principalPermissionsService.resolvePermissionsPrincipals({
+      this.principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext,
       }),
       this.workspaceCacheService.getOrRecompute(authContext.workspace.id, [

@@ -10,13 +10,11 @@ import {
 import { collectDueRecurringCharges } from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // Manifest-declared flat and per-seat fees, raised once per billing period through the app-charge usage path
 // so they appear in Usage by App and on the credit meter
@@ -29,7 +27,7 @@ export class ApplicationRecurringChargeService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly billingSeatService: BillingSeatService,
   ) {}
 
   async chargeDueRecurringCharges(workspaceId: string): Promise<number> {
@@ -87,7 +85,7 @@ export class ApplicationRecurringChargeService {
     const workspaceMemberCount = dueCharges.some(
       ({ charge }) => charge.per === 'WORKSPACE_MEMBER',
     )
-      ? await this.countWorkspaceMembers(workspaceId)
+      ? await this.billingSeatService.countWorkspaceMembers(workspaceId)
       : 0;
 
     const { events, rejectedCharges: overCapCharges } =
@@ -122,22 +120,5 @@ export class ApplicationRecurringChargeService {
         `Refused recurring charge "${chargeKey}" from application ${applicationId} in workspace ${workspaceId}: ${reason}`,
       );
     }
-  }
-
-  private async countWorkspaceMembers(workspaceId: string): Promise<number> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-          );
-
-        return workspaceMemberRepository.count();
-      },
-      authContext,
-      { lite: true },
-    );
   }
 }
