@@ -298,10 +298,11 @@ export class LambdaToolFunctionsService {
         await this.awsClient.clearFunctionCache(functionName);
       }
 
+      // A request timeout comes back from the Lambda in time, so the client giving up means the invoke itself stalled.
       return buildHttpEgressUnavailableResponse({
         request,
         startedAt,
-        isTimeout: error instanceof Error && error.name === 'TimeoutError',
+        isTimeout: false,
         reason: error instanceof Error ? error.message : String(error),
       });
     }

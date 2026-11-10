@@ -353,6 +353,24 @@ describe('LambdaDriver', () => {
       ).toHaveLength(1);
     });
 
+    it('reports a stalled invoke as unavailable rather than a request timeout', async () => {
+      egressInvokeError = Object.assign(
+        new Error('The operation was aborted due to timeout'),
+        { name: 'TimeoutError' },
+      );
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toMatchObject({
+        toolOutput: {
+          success: false,
+          error:
+            'Outbound HTTP requests are temporarily unavailable. Try again later.',
+        },
+        outcomeDetails: { errorCode: 'EGRESS_UNAVAILABLE' },
+      });
+    });
+
     it('reports a Lambda timeout as a request timeout', async () => {
       egressInvokeOutput = {
         FunctionError: 'Unhandled',
