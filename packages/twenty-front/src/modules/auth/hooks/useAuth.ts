@@ -671,13 +671,15 @@ export const useAuth = () => {
           );
         }
 
-        if (isDefined(redemption.provisioningUri)) {
-          return { provisioningUri: redemption.provisioningUri };
+        if (!isDefined(redemption.provisioningUri)) {
+          await handleLoadWorkspaceAfterAuthentication();
         }
 
-        await handleLoadWorkspaceAfterAuthentication();
-
-        return { provisioningUri: null };
+        return {
+          provisioningUri: redemption.provisioningUri ?? null,
+          isTwoFactorAuthenticationReset:
+            redemption.isTwoFactorAuthenticationReset,
+        };
       },
       [
         getAuthTokensFromTwoFactorAuthenticationRecoveryCode,

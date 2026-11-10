@@ -3595,6 +3595,7 @@ type Mutation {
   generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
   generatePlaygroundToken: AuthToken!
   generateTransientToken: TransientToken!
+  generateTwoFactorAuthenticationBackupCodes(otp: String): TwoFactorAuthenticationBackupCodes!
   generateTwoFactorAuthenticationRecoveryCode(otp: String, userId: UUID!): TwoFactorAuthenticationRecoveryCode!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   getAuthTokensFromOTP(captchaToken: String, loginToken: String!, origin: String!, otp: String!): AuthTokens!
@@ -4449,6 +4450,7 @@ type Query {
   skill(id: UUID!): Skill
   skills: [Skill!]!
   timelineActivityTypes: [TimelineActivityType!]!
+  twoFactorAuthenticationBackupCodeStatus: TwoFactorAuthenticationBackupCodeStatus!
   twoFactorAuthenticationRecoveryStatus(userId: UUID!): TwoFactorAuthenticationRecoveryStatus!
   unsubscribeTopics: [UnsubscribeTopic!]!
   usageLimits: [UsageLimit!]!
@@ -5150,6 +5152,14 @@ type TriggerUpgradeApplicationResult {
   jobId: String!
 }
 
+type TwoFactorAuthenticationBackupCodeStatus {
+  remainingBackupCodeCount: Int!
+}
+
+type TwoFactorAuthenticationBackupCodes {
+  backupCodes: [String!]!
+}
+
 type TwoFactorAuthenticationMethodSummary {
   status: String!
   strategy: String!
@@ -5162,6 +5172,7 @@ type TwoFactorAuthenticationRecoveryCode {
 }
 
 type TwoFactorAuthenticationRecoveryCodeRedemption {
+  isTwoFactorAuthenticationReset: Boolean!
   provisioningUri: String
   tokens: AuthTokenPair
 }
@@ -6194,6 +6205,7 @@ type VerifyEmailAndGetLoginToken {
 }
 
 type VerifyTwoFactorAuthenticationMethod {
+  backupCodes: [String!]
   success: Boolean!
 }
 
