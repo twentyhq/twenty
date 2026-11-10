@@ -80,6 +80,10 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.objectPermission.create,
     ...aggregatedOrchestratorActionsReport.objectPermission.update,
 
+    // Field permissions and predicate groups point to rules, so rules exist before either is written
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.create,
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.update,
+
     ...aggregatedOrchestratorActionsReport.fieldPermission.delete,
     ...aggregatedOrchestratorActionsReport.fieldPermission.create,
     ...aggregatedOrchestratorActionsReport.fieldPermission.update,
@@ -137,9 +141,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.update,
     // Items CASCADE on their folder, so one moved out of a dropped folder must be repointed before that folder goes
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
-
-    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.create,
-    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.update,
 
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .create,
