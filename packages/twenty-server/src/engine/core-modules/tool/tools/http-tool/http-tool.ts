@@ -5,7 +5,6 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { executeHttpEgressRequestInProcess } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/execute-http-egress-request-in-process.util';
 import { consumeLogicFunctionExecutionToken } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/consume-logic-function-execution-token.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import {
@@ -18,6 +17,7 @@ import { HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/tool/t
 import { HTTP_TOOL_TIMEOUT_MS } from 'src/engine/core-modules/tool/tools/http-tool/constants/http-tool-timeout-ms.constant';
 import { HttpRequestInputZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
 import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
+import { executeHttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/utils/execute-http-egress-request.util';
 import { normalizeHttpRequestHeaderValues } from 'src/engine/core-modules/tool/tools/http-tool/utils/normalize-http-request-header-values.util';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -95,10 +95,12 @@ export class HttpTool implements Tool {
         .executeHttpRequest(request);
     }
 
-    return executeHttpEgressRequestInProcess({
+    const { toolOutput } = await executeHttpEgressRequest(
       request,
-      secureHttpClientService: this.secureHttpClientService,
-    });
+      this.secureHttpClientService.getHttpClient(undefined, request.context),
+    );
+
+    return toolOutput;
   }
 
   private async isExecutionThrottled(workspaceId: string): Promise<boolean> {
