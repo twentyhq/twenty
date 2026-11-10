@@ -4,7 +4,7 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useQuery } from '@apollo/client/react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useMatches } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
@@ -88,13 +88,24 @@ const setupMockUseQuery = (result?: { data?: unknown; loading?: boolean }) => {
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
+  useMatches: jest.fn(),
 }));
 
 const setupMockUseLocation = (
   loc: AppPath,
   objectNamePlural?: string,
   pageLayoutId?: string,
+  isMatchedByDedicatedRoute = false,
 ) => {
+  jest.mocked(useMatches).mockReturnValue([
+    {
+      params:
+        loc === AppPath.RecordIndexPage && !isMatchedByDedicatedRoute
+          ? { objectNamePlural: objectNamePlural ?? 'default-object' }
+          : {},
+    },
+  ] as unknown as ReturnType<typeof useMatches>);
+
   const pathname =
     loc === AppPath.RecordIndexPage
       ? getAppPath(AppPath.RecordIndexPage, {
@@ -145,6 +156,7 @@ const testCases: {
   res: string | undefined;
   isOnAWorkspace?: boolean;
   objectNamePluralFromParams?: string;
+  isMatchedByDedicatedRoute?: boolean;
   objectNamePluralFromMetadata?: string;
   verifyEmailRedirectPath?: string;
   returnToPath?: string;
@@ -366,7 +378,7 @@ const testCases: {
   { loc: AppPath.RecordIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'existing-object', objectNamePluralFromMetadata: 'existing-object' },
   { loc: AppPath.RecordIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: AppPath.NotFound, objectNamePluralFromParams: 'non-existing-object', objectNamePluralFromMetadata: 'existing-object' },
   { loc: AppPath.RecordIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'non-existing-object', objectNamePluralFromMetadata: 'existing-object', isMinimalMetadataReady: false },
-  { loc: AppPath.RecordIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'workflows', objectNamePluralFromMetadata: 'existing-object' },
+  { loc: AppPath.RecordIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, objectNamePluralFromParams: 'workflows', isMatchedByDedicatedRoute: true, objectNamePluralFromMetadata: 'existing-object' },
 
   { loc: AppPath.RecordShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.RecordShowPage, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
@@ -509,6 +521,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       isLogged,
       isOnAWorkspace,
       objectNamePluralFromParams,
+      isMatchedByDedicatedRoute,
       objectNamePluralFromMetadata,
       verifyEmailRedirectPath,
       returnToPath,
@@ -527,7 +540,12 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockIsLogged(isLogged);
       setupMockIsOnAWorkspace(isOnAWorkspace ?? true);
       setupMockUseQuery(useQueryResult);
-      setupMockUseLocation(loc, objectNamePluralFromParams, pageLayoutId);
+      setupMockUseLocation(
+        loc,
+        objectNamePluralFromParams,
+        pageLayoutId,
+        isMatchedByDedicatedRoute,
+      );
       setupMockState(
         objectNamePluralFromMetadata ??
           (loc === AppPath.RecordIndexPage ? 'default-object' : undefined),
@@ -552,7 +570,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
               .length) +
           ['nonExistingObjectInParam', 'existingObjectInParam:false'].length +
           ['nonExistingObjectInParam:metadataNotReady'].length +
-          ['legacyWorkflowsIndexInParam'].length +
+          ['dedicatedObjectsRoute'].length +
           ['caseWithRedirectionToVerifyEmailRedirectPath', 'caseWithout']
             .length +
           [

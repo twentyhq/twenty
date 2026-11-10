@@ -10,7 +10,6 @@ import { useShouldOpenGettingStarted } from '@/getting-started/hooks/useShouldOp
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { StandardObjectNamePlural } from '@/object-metadata/types/StandardObjectNamePlural';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -18,7 +17,7 @@ import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsW
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { matchPath, useLocation } from 'react-router-dom';
+import { matchPath, useLocation, useMatches } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -59,9 +58,8 @@ export const usePageChangeEffectNavigateLocation = () => {
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
 
-  const objectNamePlural =
-    matchPath(AppPath.RecordIndexPage, location.pathname)?.params
-      .objectNamePlural ?? '';
+  // Read from the matched route so a dedicated route under /objects (such as a redirect) is never an unknown object.
+  const objectNamePlural = useMatches().at(-1)?.params.objectNamePlural ?? '';
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
@@ -215,17 +213,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     return getSettingsPath(SettingsPath.LegalDpa);
   }
 
-  // The /objects/workflows route redirects on its own; keep it out of the NotFound check.
-  if (
-    isMatchingLocation(location, AppPath.RecordIndexPage) &&
-    objectNamePlural === StandardObjectNamePlural.Workflow
-  ) {
-    return undefined;
-  }
-
   if (
     isMinimalMetadataReady &&
     isMatchingLocation(location, AppPath.RecordIndexPage) &&
+    isNonEmptyString(objectNamePlural) &&
     !isDefined(objectMetadataItem)
   ) {
     return AppPath.NotFound;
