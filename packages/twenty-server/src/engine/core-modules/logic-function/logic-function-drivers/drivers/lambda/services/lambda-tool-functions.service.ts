@@ -1,6 +1,5 @@
 import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import {
-  type Architecture,
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
   InvokeCommand,
@@ -335,7 +334,6 @@ export class LambdaToolFunctionsService {
         await fs.writeFile(join(directory, 'index.js'), handlerCode);
       },
       withCommonLayer: false,
-      architecture: 'arm64',
     });
 
     return functionName;
@@ -442,14 +440,12 @@ export class LambdaToolFunctionsService {
     timeoutSeconds,
     copyFiles,
     withCommonLayer = true,
-    architecture,
   }: {
     functionName: string;
     memoryMb: number;
     timeoutSeconds: number;
     copyFiles: (directory: string) => Promise<void>;
     withCommonLayer?: boolean;
-    architecture?: Architecture;
   }): Promise<void> {
     const existingFunction = await this.awsClient.getFunction(functionName);
 
@@ -502,7 +498,6 @@ export class LambdaToolFunctionsService {
             Timeout: timeoutSeconds,
             MemorySize: memoryMb,
             EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
-            ...(isDefined(architecture) && { Architectures: [architecture] }),
           };
 
           await lambdaClient.send(new CreateFunctionCommand(params));
