@@ -272,6 +272,10 @@ describe('Related record path metadata', () => {
     expect(JSON.stringify(secondResponse.body.errors)).toContain(
       'This related record path already exists',
     );
+
+    await deleteRelatedRecordPath(
+      firstResponse.body.data.createRelatedRecordPath.id,
+    );
   });
 
   it('should save only one of two identical paths created at the same time', async () => {

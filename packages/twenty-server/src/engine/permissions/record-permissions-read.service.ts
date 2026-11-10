@@ -39,9 +39,9 @@ import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/internal/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/combine/utils/is-object-operation-denied-to-principals.util';
-import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
+import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
 import { buildRelatedRecordPathsSQLCondition } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-paths-sql-condition.util';
 import { buildPermissionsSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-sql-condition.util';
 import {
@@ -637,6 +637,12 @@ export class RecordPermissionsReadService {
 
     if (
       operationType === 'create' ||
+      isObjectOperationDisabledToPrincipals({
+        principals,
+        metadataMaps,
+        flatObjectMetadata,
+        operationType,
+      }) ||
       metadataMaps.featureFlagsMap[
         FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED
       ] !== true
