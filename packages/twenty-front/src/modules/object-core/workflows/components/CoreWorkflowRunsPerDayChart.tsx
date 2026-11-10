@@ -49,7 +49,7 @@ export const CoreWorkflowRunsPerDayChart = ({
           series={[
             { key: 'completed', label: t`Completed`, color: 'green' },
             { key: 'failed', label: t`Failed`, color: 'red' },
-            { key: 'other', label: t`In progress`, color: 'gray' },
+            { key: 'other', label: t`Other`, color: 'gray' },
           ]}
           colorMode="automaticPalette"
           groupMode="stacked"
