@@ -8,7 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { resolveApplicationGrantedRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-granted-role-id.util';
+import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import {
@@ -129,7 +129,7 @@ export class ApplicationResolver {
 
   // The role the application runs with, see twentyhq/core-team-issues#3146
   @ResolveField(() => UUIDScalarType, { nullable: true })
-  async grantedRoleId(
+  async grantRoleId(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
@@ -146,7 +146,7 @@ export class ApplicationResolver {
     }
 
     return (
-      resolveApplicationGrantedRoleId({
+      resolveApplicationGrantRoleId({
         flatApplication,
         workspaceId,
         workspaceCustomApplicationId,

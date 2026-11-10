@@ -16,7 +16,7 @@ export const FIND_MANY_APPLICATIONS = gql`
         sourceType
       }
       defaultRoleId
-      grantedRoleId
+      grantRoleId
     }
   }
 `;

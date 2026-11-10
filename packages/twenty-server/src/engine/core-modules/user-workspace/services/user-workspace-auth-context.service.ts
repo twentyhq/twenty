@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { resolveApplicationGrantedRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-granted-role-id.util';
+import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
 import {
   AuthException,
   AuthExceptionCode,
@@ -165,7 +165,7 @@ export class UserWorkspaceAuthContextService {
         !isDefined(application) ||
         (!isOAuthOnlyApplication(application) &&
           !isDefined(
-            resolveApplicationGrantedRoleId({
+            resolveApplicationGrantRoleId({
               flatApplication: application,
               workspaceId,
               workspaceCustomApplicationId:

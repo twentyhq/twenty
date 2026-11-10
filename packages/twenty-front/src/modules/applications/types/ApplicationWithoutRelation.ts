@@ -11,5 +11,5 @@ export type ApplicationWithoutRelation = Pick<
   | 'applicationRegistrationId'
   | 'applicationRegistration'
   | 'defaultRoleId'
-  | 'grantedRoleId'
+  | 'grantRoleId'
 >;

@@ -66,7 +66,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { resolveApplicationGrantedRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-granted-role-id.util';
+import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
 import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
@@ -672,9 +672,9 @@ export class RecordExportWorkspaceService {
     return computeRecordExportPermissionsHash({
       permissionsHash,
       application,
-      grantedRoleId:
+      grantRoleId:
         isDefined(application) && isDefined(workspace)
-          ? resolveApplicationGrantedRoleId({
+          ? resolveApplicationGrantRoleId({
               flatApplication: application,
               workspaceId,
               workspaceCustomApplicationId:

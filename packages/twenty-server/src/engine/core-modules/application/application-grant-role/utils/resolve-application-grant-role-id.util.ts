@@ -6,10 +6,10 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 
-const logger = new Logger('ResolveApplicationGrantedRoleId');
+const logger = new Logger('ResolveApplicationGrantRoleId');
 
 // The role an application runs with: its grant, see twentyhq/core-team-issues#3146
-export const resolveApplicationGrantedRoleId = ({
+export const resolveApplicationGrantRoleId = ({
   flatApplication,
   workspaceId,
   workspaceCustomApplicationId,

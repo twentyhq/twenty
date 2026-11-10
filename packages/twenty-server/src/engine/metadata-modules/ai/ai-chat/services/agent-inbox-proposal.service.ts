@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ProposeToolCallToolInput } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationGrantedRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-granted-role.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -19,7 +19,7 @@ import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent
 export class AgentInboxProposalService {
   constructor(
     private readonly toolRegistryService: ToolRegistryService,
-    private readonly applicationGrantedRoleService: ApplicationGrantedRoleService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   async resolveApplicationProposal({
@@ -36,13 +36,13 @@ export class AgentInboxProposalService {
     }
 
     const authContext = workspaceAuthContextStorage.getStore();
-    const grantedRoleId =
-      await this.applicationGrantedRoleService.findGrantedRoleId({
+    const grantRoleId =
+      await this.applicationGrantRoleLookupService.findGrantRoleId({
         workspaceId,
         flatApplication: application,
       });
 
-    if (!isDefined(authContext) || !isDefined(grantedRoleId)) {
+    if (!isDefined(authContext) || !isDefined(grantRoleId)) {
       return {
         error: `The application needs a default role to propose "${input.toolName}".`,
       };

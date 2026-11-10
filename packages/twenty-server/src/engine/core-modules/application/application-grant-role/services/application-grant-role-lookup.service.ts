@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { resolveApplicationGrantedRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-granted-role-id.util';
+import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class ApplicationGrantedRoleService {
+export class ApplicationGrantRoleLookupService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
-  async findGrantedRoleId({
+  async findGrantRoleId({
     workspaceId,
     flatApplication,
   }: {
@@ -31,7 +31,7 @@ export class ApplicationGrantedRoleService {
         'flatRoleTargetByApplicationIdMaps',
       ]);
 
-    return resolveApplicationGrantedRoleId({
+    return resolveApplicationGrantRoleId({
       flatApplication,
       workspaceId,
       workspaceCustomApplicationId: workspace?.workspaceCustomApplicationId,

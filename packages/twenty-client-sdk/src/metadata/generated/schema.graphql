@@ -493,8 +493,8 @@ type Application {
   defaultRoleId: String
   description: String
   frontComponents: [FrontComponent!]!
+  grantRoleId: UUID
   grantedIframeMediaPermissions: [IframeMediaPermission!]!
-  grantedRoleId: UUID
   healthCheckLogicFunctionId: UUID
   id: UUID!
   isUninstallBlockedByOtherWorkspaceInstallations: Boolean!

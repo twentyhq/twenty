@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { resolveApplicationGrantedRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-granted-role-id.util';
+import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
 
 const APPLICATION_ID = 'application-id';
 const WORKSPACE_ID = 'workspace-id';
@@ -18,7 +18,7 @@ const resolve = ({
   sourceType?: ApplicationRegistrationSourceType;
   grantRoleId?: string;
 }) =>
-  resolveApplicationGrantedRoleId({
+  resolveApplicationGrantRoleId({
     flatApplication: { id: applicationId, defaultRoleId, sourceType },
     workspaceId: WORKSPACE_ID,
     workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
@@ -28,7 +28,7 @@ const resolve = ({
         : { [applicationId]: { roleId: grantRoleId } },
   });
 
-describe('resolveApplicationGrantedRoleId', () => {
+describe('resolveApplicationGrantRoleId', () => {
   let warnSpy: jest.SpyInstance;
 
   beforeEach(() => {

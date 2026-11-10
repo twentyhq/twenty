@@ -1,4 +1,4 @@
-import { resolveApplicationGrantedRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-granted-role-id.util';
+import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
@@ -23,7 +23,7 @@ export const resolveApplicationRoleId = ({
     return application.defaultRoleId ?? userRoleId;
   }
 
-  return resolveApplicationGrantedRoleId({
+  return resolveApplicationGrantRoleId({
     flatApplication: application,
     workspaceId,
     workspaceCustomApplicationId,

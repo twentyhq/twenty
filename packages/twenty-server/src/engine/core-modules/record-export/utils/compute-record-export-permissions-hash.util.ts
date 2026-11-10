@@ -7,13 +7,13 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 export const computeRecordExportPermissionsHash = ({
   permissionsHash,
   application,
-  grantedRoleId,
+  grantRoleId,
 }: {
   permissionsHash: string;
   application:
     | Pick<FlatApplication, 'id' | 'defaultRoleId' | 'deletedAt'>
     | undefined;
-  grantedRoleId?: string;
+  grantRoleId?: string;
 }): string =>
   createHash('sha256')
     .update(
@@ -24,7 +24,7 @@ export const computeRecordExportPermissionsHash = ({
               id: application.id,
               defaultRoleId: application.defaultRoleId,
               deletedAt: application.deletedAt,
-              grantedRoleId: grantedRoleId ?? null,
+              grantRoleId: grantRoleId ?? null,
             }
           : null,
       }),

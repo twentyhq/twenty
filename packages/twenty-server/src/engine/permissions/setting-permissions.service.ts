@@ -18,14 +18,14 @@ import { PrincipalPermissionsReadService } from 'src/engine/permissions/principa
 import { findUserWorkspaceFlatRoleOrThrow } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { ApplicationGrantedRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-granted-role.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role-lookup.service';
 
 @Injectable()
 export class SettingPermissionsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
-    private readonly applicationGrantedRoleService: ApplicationGrantedRoleService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -184,15 +184,15 @@ export class SettingPermissionsService {
       applicationId,
       flatApplicationMaps,
     });
-    const grantedRoleId = isDefined(application)
-      ? await this.applicationGrantedRoleService.findGrantedRoleId({
+    const grantRoleId = isDefined(application)
+      ? await this.applicationGrantRoleLookupService.findGrantRoleId({
           workspaceId,
           flatApplication: application,
         })
       : undefined;
 
     return this.isPermissionFlagGrantedToRoles({
-      roleIds: [grantedRoleId],
+      roleIds: [grantRoleId],
       permissionFlag,
       flatRoleMaps,
       flatRolePermissionFlagMaps,

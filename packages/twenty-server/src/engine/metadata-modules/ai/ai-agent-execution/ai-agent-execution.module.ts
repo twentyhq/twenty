@@ -1,4 +1,4 @@
-import { ApplicationGrantedRoleModule } from 'src/engine/core-modules/application/application-grant-role/application-granted-role.module';
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role/application-grant-role-lookup.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -53,7 +53,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 
 @Module({
   imports: [
-    ApplicationGrantedRoleModule,
+    ApplicationGrantRoleLookupModule,
     AgentChatThreadLifecycleModule,
     AgentChatStreamStateModule,
     AgentChatThreadModule,
