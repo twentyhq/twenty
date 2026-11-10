@@ -2,14 +2,18 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
+import { type EmailAttachment, FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
+import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
+import { useAttachChatFiles } from '@/activities/emails/hooks/useAttachChatFiles';
 import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconButton } from 'twenty-ui/components/input';
-import { IconArrowUp } from 'twenty-ui/icon';
+import { IconButton, LightIconButton } from 'twenty-ui/components/input';
+import { IconArrowUp, IconPaperclip } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -64,6 +68,10 @@ const StyledFooter = styled.div`
   justify-content: flex-end;
 `;
 
+const StyledAttachButtonContainer = styled.div`
+  margin-right: auto;
+`;
+
 type ChatThreadComposerProps = {
   messageThreadId: string;
   messageChannelId: string;
@@ -84,6 +92,15 @@ export const ChatThreadComposer = ({
   const { t } = useLingui();
   const { sendAppChannelMessage } = useSendAppChannelMessage();
   const [draft, setDraft] = useState('');
+  const [draftAttachments, setDraftAttachments] = useState<EmailAttachment[]>(
+    [],
+  );
+  const { openAttachmentPicker, isUploadingAttachments } = useAttachChatFiles({
+    onFilesAttached: setDraftAttachments,
+  });
+  const isMessageAttachmentEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+  );
   const [pendingMessages, setPendingMessages] = useState<PendingChatMessage[]>(
     [],
   );
@@ -108,6 +125,7 @@ export const ChatThreadComposer = ({
         messageChannelId,
         messageThreadId,
         text: pendingMessage.text,
+        attachments: pendingMessage.attachments,
         idempotencyKey: pendingMessage.id,
       });
     } catch {
@@ -135,16 +153,20 @@ export const ChatThreadComposer = ({
     setPendingMessageStatus(pendingMessage.id, 'sent');
   };
 
-  const handleSubmit = () => {
-    const text = draft.trim();
+  const canSubmit =
+    !isDisconnected &&
+    !isUploadingAttachments &&
+    (isNonEmptyString(draft.trim()) || draftAttachments.length > 0);
 
-    if (!isNonEmptyString(text) || isDisconnected) {
+  const handleSubmit = () => {
+    if (!canSubmit) {
       return;
     }
 
     const pendingMessage: PendingChatMessage = {
       id: v4(),
-      text,
+      text: draft.trim(),
+      attachments: draftAttachments,
       status: 'sending',
     };
 
@@ -153,6 +175,7 @@ export const ChatThreadComposer = ({
       pendingMessage,
     ]);
     setDraft('');
+    setDraftAttachments([]);
     send(pendingMessage);
   };
 
@@ -198,14 +221,31 @@ export const ChatThreadComposer = ({
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={handleKeyDown}
         />
+        {draftAttachments.length > 0 && (
+          <EmailAttachmentsField
+            files={draftAttachments}
+            onChange={setDraftAttachments}
+          />
+        )}
         <StyledFooter>
+          {isMessageAttachmentEnabled && (
+            <StyledAttachButtonContainer>
+              <LightIconButton
+                aria-label={t`Attach files`}
+                disabled={isDisconnected}
+                onClick={openAttachmentPicker}
+              >
+                <IconPaperclip />
+              </LightIconButton>
+            </StyledAttachButtonContainer>
+          )}
           <IconButton
             variant="solid"
             color="accent"
             shape="round"
             size="sm"
             aria-label={t`Send`}
-            disabled={isDisconnected || !isNonEmptyString(draft.trim())}
+            disabled={!canSubmit}
             onClick={handleSubmit}
           >
             <IconArrowUp />

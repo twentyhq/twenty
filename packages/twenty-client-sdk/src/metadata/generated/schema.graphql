@@ -4813,6 +4813,7 @@ type SearchField {
 }
 
 input SendAppChannelMessageInput {
+  attachments: [AppMessageAttachmentInput!]
   idempotencyKey: UUID!
   messageChannelId: UUID!
   messageThreadId: UUID!

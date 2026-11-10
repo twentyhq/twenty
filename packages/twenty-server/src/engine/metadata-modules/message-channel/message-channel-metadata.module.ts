@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -35,6 +36,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       ConnectedAccountEntity,
     ]),
     CacheLockModule,
+    FileUrlModule,
     PermissionsModule,
     ConnectedAccountMetadataModule,
     MessagingImportManagerModule,

@@ -277,7 +277,9 @@ export const linkedinSendMessageHandler = async ({
 
 The payload carries the `messagingProviderName`, the conversation's `threadExternalId` as you ingested it, the `text`, the `idempotencyKey`, and the `recipients`: the participants of the thread's latest message other than the channel's own handle, so someone who only took part in an earlier exchange is not messaged. Prefer the provider's own conversation over `recipients` when its API sends to a conversation id. Return the provider's id for the sent message as `externalId`.
 
-Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
+A reply can carry files. The payload then has `attachments`, each with a `filename`, a `mimeType`, a `size` in bytes and a signed `url` to download the content from during the send; `text` is empty when the member sent files alone. A function that does not read `attachments` delivers the text without them, so send them or throw when your provider cannot.
+
+Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients and files, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
 
 The function runs inside the `sendAppChannelMessage` request. If it throws or returns no `externalId`, the mutation fails and nothing is recorded.
 

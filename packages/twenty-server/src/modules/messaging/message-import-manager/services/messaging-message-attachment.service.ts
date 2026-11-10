@@ -93,7 +93,7 @@ export class MessagingMessageAttachmentService {
       return;
     }
 
-    await this.assertFilesAreAttachableOrThrow({
+    await this.findAttachableFilesOrThrow({
       workspaceId,
       fileIds: attachmentsToCreate.flatMap(({ file }) =>
         file.map(({ fileId }) => fileId),
@@ -209,27 +209,34 @@ export class MessagingMessageAttachmentService {
     );
   }
 
-  private async assertFilesAreAttachableOrThrow({
+  async findAttachableFilesOrThrow({
     workspaceId,
     fileIds,
   }: {
     workspaceId: string;
     fileIds: string[];
-  }): Promise<void> {
+  }): Promise<Pick<FileEntity, 'id' | 'mimeType' | 'size'>[]> {
     const repeatedFileIds = fileIds.filter(
       (fileId, index) => fileIds.indexOf(fileId) !== index,
     );
 
     if (repeatedFileIds.length > 0) {
       throw new MessageChannelException(
-        `File(s) attached to more than one message in the same batch: ${[...new Set(repeatedFileIds)].join(', ')}`,
+        `File(s) attached more than once: ${[...new Set(repeatedFileIds)].join(', ')}`,
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
 
     const files = await this.fileRepository.find(workspaceId, {
       where: { id: In(fileIds) },
-      select: { id: true, path: true, status: true, settings: true },
+      select: {
+        id: true,
+        path: true,
+        status: true,
+        settings: true,
+        mimeType: true,
+        size: true,
+      },
     });
     const fileById = new Map(files.map((file) => [file.id, file]));
 
@@ -250,5 +257,7 @@ export class MessagingMessageAttachmentService {
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
+
+    return fileIds.map((fileId) => fileById.get(fileId)).filter(isDefined);
   }
 }

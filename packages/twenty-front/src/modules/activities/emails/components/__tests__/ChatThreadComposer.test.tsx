@@ -2,8 +2,11 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Dispatch, type SetStateAction } from 'react';
+import { type EmailAttachment } from 'twenty-shared/types';
 
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mockSendAppChannelMessage = jest.fn();
 
@@ -13,7 +16,88 @@ jest.mock('@/activities/emails/hooks/useSendAppChannelMessage', () => ({
   }),
 }));
 
+let mockAttachedFiles: EmailAttachment[] = [];
+
+jest.mock('@/activities/emails/hooks/useAttachChatFiles', () => ({
+  useAttachChatFiles: ({
+    onFilesAttached,
+  }: {
+    onFilesAttached: Dispatch<SetStateAction<EmailAttachment[]>>;
+  }) => ({
+    openAttachmentPicker: () =>
+      onFilesAttached((files) => [...files, ...mockAttachedFiles]),
+    isUploadingAttachments: false,
+  }),
+}));
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => true,
+}));
+
+const renderComposer = (onMessageSent: () => Promise<unknown>) =>
+  render(
+    <I18nProvider i18n={i18n}>
+      <ChatThreadComposer
+        messageThreadId="thread-id"
+        messageChannelId="channel-id"
+        channelName="LinkedIn"
+        recipientName="Ada"
+        isDisconnected={false}
+        onMessageSent={onMessageSent}
+      />
+    </I18nProvider>,
+    { wrapper: getJestMetadataAndApolloMocksWrapper({}) },
+  );
+
 describe('ChatThreadComposer', () => {
+  beforeEach(() => {
+    mockSendAppChannelMessage.mockReset();
+    mockAttachedFiles = [];
+  });
+
+  it('sends attached files without requiring a text', async () => {
+    mockSendAppChannelMessage.mockResolvedValueOnce(undefined);
+    mockAttachedFiles = [{ id: 'file-id', name: 'quote.pdf' }];
+
+    renderComposer(jest.fn().mockResolvedValue(undefined));
+
+    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Attach files' }));
+
+    expect(screen.getByText('quote.pdf')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    await waitFor(() =>
+      expect(mockSendAppChannelMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          text: '',
+          attachments: [{ id: 'file-id', name: 'quote.pdf' }],
+        }),
+      ),
+    );
+  });
+
+  it('sends without a file removed from the draft', async () => {
+    mockSendAppChannelMessage.mockResolvedValueOnce(undefined);
+    mockAttachedFiles = [{ id: 'file-id', name: 'quote.pdf' }];
+
+    renderComposer(jest.fn().mockResolvedValue(undefined));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Attach files' }));
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Remove quote.pdf' }),
+    );
+    await userEvent.type(screen.getByRole('textbox'), 'Hello{Enter}');
+
+    await waitFor(() =>
+      expect(mockSendAppChannelMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ text: 'Hello', attachments: [] }),
+      ),
+    );
+  });
+
   it('retries a failed message with the same idempotency key', async () => {
     mockSendAppChannelMessage
       .mockRejectedValueOnce(new Error('Network error'))
@@ -21,18 +105,7 @@ describe('ChatThreadComposer', () => {
 
     const onMessageSent = jest.fn().mockResolvedValue(undefined);
 
-    render(
-      <I18nProvider i18n={i18n}>
-        <ChatThreadComposer
-          messageThreadId="thread-id"
-          messageChannelId="channel-id"
-          channelName="LinkedIn"
-          recipientName="Ada"
-          isDisconnected={false}
-          onMessageSent={onMessageSent}
-        />
-      </I18nProvider>,
-    );
+    renderComposer(onMessageSent);
 
     await userEvent.type(screen.getByRole('textbox'), 'Hello{Enter}');
     await userEvent.click(await screen.findByRole('button', { name: 'Retry' }));
@@ -56,18 +129,7 @@ describe('ChatThreadComposer', () => {
         }),
     );
 
-    render(
-      <I18nProvider i18n={i18n}>
-        <ChatThreadComposer
-          messageThreadId="thread-id"
-          messageChannelId="channel-id"
-          channelName="LinkedIn"
-          recipientName="Ada"
-          isDisconnected={false}
-          onMessageSent={onMessageSent}
-        />
-      </I18nProvider>,
-    );
+    renderComposer(onMessageSent);
 
     await userEvent.type(screen.getByRole('textbox'), 'Hello{Enter}');
     await waitFor(() => expect(onMessageSent).toHaveBeenCalledTimes(1));

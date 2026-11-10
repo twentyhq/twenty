@@ -123,6 +123,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessagingSaveMessagesAndEnqueueContactCreationService,
     MessagingMessagesImportService,
     MessagingMessageListFetchService,
+    MessagingMessageAttachmentService,
   ],
 })
 export class MessagingImportManagerModule {}

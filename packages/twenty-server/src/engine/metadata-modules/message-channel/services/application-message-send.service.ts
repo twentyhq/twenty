@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
+import { type SendAppMessageAttachment } from 'twenty-shared/application';
 import {
+  FeatureFlagKey,
+  FileFolder,
   MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
@@ -12,7 +16,10 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { type AppMessageAttachmentInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { type SendAppChannelMessageOutput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.output';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -31,6 +38,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { MessagingMessageAttachmentService } from 'src/modules/messaging/message-import-manager/services/messaging-message-attachment.service';
 
 const CONVERSATION_LOOKUP_MESSAGE_LIMIT = 50;
 
@@ -44,6 +52,7 @@ type SendArgs = {
   messageChannelId: string;
   messageThreadId: string;
   text: string;
+  attachments: AppMessageAttachmentInput[];
   idempotencyKey: string;
 };
 
@@ -55,6 +64,7 @@ type Conversation = {
 type AppMessageDelivery = Conversation & {
   externalId: string;
   text: string;
+  attachments: AppMessageAttachmentInput[];
   sentAt: string;
 };
 
@@ -71,6 +81,9 @@ export class ApplicationMessageSendService {
     private readonly cacheLockService: CacheLockService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorageService: CacheStorageService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly fileUrlService: FileUrlService,
+    private readonly messagingMessageAttachmentService: MessagingMessageAttachmentService,
   ) {}
 
   async send({
@@ -79,8 +92,16 @@ export class ApplicationMessageSendService {
     messageChannelId,
     messageThreadId,
     text,
+    attachments,
     idempotencyKey,
   }: SendArgs): Promise<SendAppChannelMessageOutput> {
+    if (!isNonEmptyString(text.trim()) && !isNonEmptyArray(attachments)) {
+      throw new MessageChannelException(
+        'A message needs a text or at least one attachment',
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
     const messageChannel = await this.messageChannelRepository.findOne({
       where: {
         id: messageChannelId,
@@ -143,6 +164,7 @@ export class ApplicationMessageSendService {
             messageThreadId,
             idempotencyKey,
             text,
+            attachments,
             deliveryKey,
           }));
 
@@ -158,6 +180,7 @@ export class ApplicationMessageSendService {
               externalId: delivery.externalId,
               threadExternalId: delivery.threadExternalId,
               text: delivery.text,
+              attachments: delivery.attachments,
               receivedAt: new Date(delivery.sentAt),
               participants: [
                 {
@@ -196,6 +219,7 @@ export class ApplicationMessageSendService {
     messageThreadId,
     idempotencyKey,
     text,
+    attachments,
     deliveryKey,
   }: {
     workspaceId: string;
@@ -205,6 +229,7 @@ export class ApplicationMessageSendService {
     messageThreadId: string;
     idempotencyKey: string;
     text: string;
+    attachments: AppMessageAttachmentInput[];
     deliveryKey: string;
   }): Promise<AppMessageDelivery> {
     const sender =
@@ -231,6 +256,10 @@ export class ApplicationMessageSendService {
           messageChannelId: messageChannel.id,
           threadExternalId: conversation.threadExternalId,
           text,
+          attachments: await this.buildPayloadAttachmentsOrThrow({
+            workspaceId,
+            attachments,
+          }),
           idempotencyKey,
           recipients: conversation.recipients.map(
             ({ handle, displayName }) => ({
@@ -245,6 +274,7 @@ export class ApplicationMessageSendService {
       externalId: sentMessage.externalId,
       threadExternalId: conversation.threadExternalId,
       text,
+      attachments,
       sentAt: sentMessage.sentAt ?? new Date().toISOString(),
       recipients: conversation.recipients,
     };
@@ -256,6 +286,51 @@ export class ApplicationMessageSendService {
     );
 
     return delivery;
+  }
+
+  // checked before sending: once the provider has delivered, a rejected file could no longer be reported
+  private async buildPayloadAttachmentsOrThrow({
+    workspaceId,
+    attachments,
+  }: {
+    workspaceId: string;
+    attachments: AppMessageAttachmentInput[];
+  }): Promise<SendAppMessageAttachment[]> {
+    if (!isNonEmptyArray(attachments)) {
+      return [];
+    }
+
+    const isMessageAttachmentEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+        workspaceId,
+      );
+
+    if (!isMessageAttachmentEnabled) {
+      throw new MessageChannelException(
+        'Message attachments are unavailable until this workspace finishes upgrading',
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    const files =
+      await this.messagingMessageAttachmentService.findAttachableFilesOrThrow({
+        workspaceId,
+        fileIds: attachments.map(({ fileId }) => fileId),
+      });
+
+    return Promise.all(
+      files.map(async ({ id, mimeType, size }, index) => ({
+        filename: attachments[index].label,
+        mimeType,
+        size,
+        url: await this.fileUrlService.signFileByIdUrl({
+          fileId: id,
+          workspaceId,
+          fileFolder: FileFolder.FilesField,
+        }),
+      })),
+    );
   }
 
   private async findConversation({

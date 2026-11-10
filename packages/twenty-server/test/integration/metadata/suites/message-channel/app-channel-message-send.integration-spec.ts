@@ -8,11 +8,14 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
+import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type MarkerServer } from 'test/integration/types/marker-server.type';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { startMarkerServer } from 'test/integration/utils/start-marker-server.util';
 import { type SendAppMessagePayload } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   ConnectedAccountProvider,
   MessageChannelVisibility,
@@ -89,6 +92,28 @@ describe('sendAppChannelMessage (e2e)', () => {
   let applicationDbId: string;
   let sendingConnectionId: string;
   let silentConnectionId: string;
+  const uploadedFileIds: string[] = [];
+
+  const uploadMessageAttachment = async (): Promise<string> => {
+    const [field] = await globalThis.testDataSource.query(
+      `SELECT id FROM core."fieldMetadata"
+         WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+      [
+        SEED_APPLE_WORKSPACE_ID,
+        STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
+      ],
+    );
+    const uploadedFile = await uploadFileWithDirectUpload({
+      filename: 'photo.png',
+      content: ONE_BY_ONE_TRANSPARENT_PNG,
+      fileFolder: 'FilesField',
+      fieldMetadataId: field.id,
+    });
+
+    uploadedFileIds.push(uploadedFile.id);
+
+    return uploadedFile.id;
+  };
 
   const readSendExecutions = (): SendAppMessagePayload[] => {
     if (!markerServer.hasMarker(sendExecutionsUrl)) {
@@ -201,6 +226,7 @@ describe('sendAppChannelMessage (e2e)', () => {
     messageChannelId: string;
     messageThreadId: string;
     text: string;
+    attachments?: { fileId: string; label: string }[];
     idempotencyKey?: string;
   }) =>
     makeMetadataApiRequest({
@@ -365,6 +391,11 @@ describe('sendAppChannelMessage (e2e)', () => {
       ),
     ];
 
+    await globalThis.testDataSource.query(
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."attachment" WHERE "targetMessageId" = ANY($1)`,
+      [messageIds],
+    );
+
     for (const table of [
       'messageChannelMessageAssociation',
       'messageParticipant',
@@ -393,6 +424,10 @@ describe('sendAppChannelMessage (e2e)', () => {
   });
 
   afterAll(async () => {
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE id = ANY($1)`,
+      [uploadedFileIds],
+    );
     await globalThis.testDataSource.query(
       `DELETE FROM core."connectedAccount" WHERE "applicationId" = $1`,
       [applicationDbId],
@@ -441,6 +476,82 @@ describe('sendAppChannelMessage (e2e)', () => {
       direction: MessageDirection.OUTGOING,
       messageExternalId: 'sent:Tuesday works',
     });
+  });
+
+  it('hands attachments to the app and stores them on the recorded reply', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+    const fileId = await uploadMessageAttachment();
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      text: '',
+      attachments: [{ fileId, label: 'photo.png' }],
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(readSendExecutions()).toEqual([
+      expect.objectContaining({
+        text: '',
+        attachments: [
+          {
+            filename: 'photo.png',
+            mimeType: 'image/png',
+            size: ONE_BY_ONE_TRANSPARENT_PNG.length,
+            url: expect.stringContaining(`/file/files-field/${fileId}?token=`),
+          },
+        ],
+      }),
+    ]);
+
+    const storedAttachments = await globalThis.testDataSource.query(
+      `SELECT name, file FROM "${WORKSPACE_SCHEMA}"."attachment"
+        WHERE "targetMessageId" = $1 AND "deletedAt" IS NULL`,
+      [response.body.data.sendAppChannelMessage.messageId],
+    );
+
+    expect(storedAttachments).toEqual([
+      {
+        name: 'photo.png',
+        file: [expect.objectContaining({ fileId, label: 'photo.png' })],
+      },
+    ]);
+  });
+
+  it('refuses a message with neither text nor attachment without calling the app', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      text: ' ',
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(readSendExecutions()).toEqual([]);
+  });
+
+  it('refuses a file that is not a pending attachment upload without calling the app', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'Here it is',
+      attachments: [{ fileId: v4(), label: 'photo.png' }],
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(readSendExecutions()).toEqual([]);
   });
 
   it('lays out the thread in the conversation style its messaging provider declares', async () => {

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
@@ -38,6 +38,10 @@ describe('linkedinSendMessageHandler', () => {
     mocks.sendUnipileChatMessage.mockResolvedValue('message-1');
   });
 
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('replies in the Unipile chat of the thread and returns the sent message id', async () => {
     await expect(linkedinSendMessageHandler(PAYLOAD)).resolves.toEqual({
       externalId: 'message-1',
@@ -50,7 +54,90 @@ describe('linkedinSendMessageHandler', () => {
       accountId: 'acc_1',
       chatId: 'chat-1',
       text: 'Thanks, talk soon',
+      attachments: [],
     });
+  });
+
+  it('sends the files attached in Twenty along with the reply', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(Buffer.from('pdf-content')));
+
+    vi.stubGlobal('fetch', fetchMock);
+
+    await linkedinSendMessageHandler({
+      ...PAYLOAD,
+      text: '',
+      attachments: [
+        {
+          filename: 'quote.pdf',
+          mimeType: 'application/pdf',
+          size: 11,
+          url: 'https://twenty.example.com/file/files-field/file-1?token=t',
+        },
+      ],
+    });
+
+    expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+      'https://twenty.example.com/file/files-field/file-1?token=t',
+      { signal: expect.any(AbortSignal) },
+    );
+    expect(mocks.sendUnipileChatMessage).toHaveBeenCalledExactlyOnceWith({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      text: '',
+      attachments: [
+        {
+          filename: 'quote.pdf',
+          contentType: 'application/pdf',
+          content: Buffer.from('pdf-content'),
+        },
+      ],
+    });
+  });
+
+  it('sends nothing when an attached file cannot be downloaded', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(new Response(null, { status: 403 })),
+    );
+
+    await expect(
+      linkedinSendMessageHandler({
+        ...PAYLOAD,
+        attachments: [
+          {
+            filename: 'quote.pdf',
+            mimeType: 'application/pdf',
+            size: 11,
+            url: 'https://twenty.example.com/file/files-field/file-1?token=t',
+          },
+        ],
+      }),
+    ).rejects.toThrow('Download of attachment quote.pdf failed with status 403');
+    expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing when the attached files exceed the LinkedIn size limit', async () => {
+    const fetchMock = vi.fn();
+
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      linkedinSendMessageHandler({
+        ...PAYLOAD,
+        attachments: [
+          {
+            filename: 'movie.mp4',
+            mimeType: 'video/mp4',
+            size: 26 * 1024 * 1024,
+            url: 'https://twenty.example.com/file/files-field/file-1?token=t',
+          },
+        ],
+      }),
+    ).rejects.toThrow('Attachments are larger than 26214400 bytes in total');
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
   });
 
   it('refuses to send through a connection without a Unipile account', async () => {
