@@ -267,7 +267,6 @@ export const buildRecordFilterForRule = ({
   );
 };
 
-// A record is reachable through any of the rules, so their filters are ORed
 export const buildRowLevelPermissionRecordFilter = ({
   rowLevelPermissionRules,
   ...buildRecordFilterForRuleArgs
