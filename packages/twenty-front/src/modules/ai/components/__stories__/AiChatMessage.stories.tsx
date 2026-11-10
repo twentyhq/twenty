@@ -7,7 +7,7 @@ import {
 } from '@storybook/react-vite';
 import { Suspense, useEffect } from 'react';
 import { graphql, HttpResponse } from 'msw';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   AgentChatThreadConversationType,
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
@@ -36,6 +36,8 @@ import {
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatReferenceMarker';
 
+import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -563,6 +565,64 @@ export const ConversationWithCodeExecution: Story = {
 
 export const UserMessage: Story = {
   render: () => <AiChatMessage messageId={mockUserMessage.id} />,
+};
+
+export const OwnMessageActions: Story = {
+  args: { messageId: mockUserMessage.id, onEdit: fn(), onDelete: fn() },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const threadId = jotaiStore.get(currentAiChatThreadState.atom);
+    assertIsDefinedOrThrow(threadId);
+    const objectMetadataItemsAtom = metadataStoreState.atomFamily(
+      'objectMetadataItems',
+    );
+    const previousObjectMetadataItems = jotaiStore.get(objectMetadataItemsAtom);
+
+    setAgentChatThreadPermissions({
+      store: jotaiStore,
+      threadId,
+      permissions: {
+        canRead: true,
+        canUpdate: true,
+        canDelete: false,
+        canSoftDelete: false,
+      },
+    });
+
+    try {
+      const editButton = await canvas.findByRole('button', {
+        name: 'Edit message',
+      });
+
+      editButton.focus();
+      await userEvent.click(editButton);
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Delete message' }),
+      );
+
+      await expect(args.onEdit).toHaveBeenCalledWith(mockUserMessage.id);
+      await expect(args.onDelete).toHaveBeenCalledWith(mockUserMessage.id);
+    } finally {
+      jotaiStore.set(objectMetadataItemsAtom, previousObjectMetadataItems);
+    }
+  },
+};
+
+export const TeammateMessageHasNoOwnActions: Story = {
+  parameters: { isInboxEnabled: true },
+  args: {
+    messageId: mockTeammateMessage.id,
+    onEdit: fn(),
+    onDelete: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByRole('button', { name: 'Copy to Clipboard' });
+    await expect(
+      canvas.queryByRole('button', { name: 'Edit message' }),
+    ).not.toBeInTheDocument();
+  },
 };
 
 export const LongUserMessage: Story = {
