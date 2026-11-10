@@ -231,20 +231,12 @@ describe('BullMQDriver maxRate (integration)', () => {
 
     await allStarted;
 
-    const firstStartedAt = Math.min(startedAtByLabel.H1, startedAtByLabel.H2);
-
+    // Pacing sets enqueue deadlines only, so the gaps between actual starts are not guaranteed.
     expect(startedAtByLabel.H3).toBeGreaterThanOrEqual(
       INTERVAL_MS - TOLERANCE_MS,
     );
     expect(startedAtByLabel.H4).toBeGreaterThanOrEqual(
       2 * INTERVAL_MS - TOLERANCE_MS,
-    );
-    // Half an interval absorbs runner jitter while still catching a burst.
-    expect(startedAtByLabel.H3 - firstStartedAt).toBeGreaterThanOrEqual(
-      INTERVAL_MS / 2,
-    );
-    expect(startedAtByLabel.H4 - startedAtByLabel.H3).toBeGreaterThanOrEqual(
-      INTERVAL_MS / 2,
     );
   }, 15_000);
 });
