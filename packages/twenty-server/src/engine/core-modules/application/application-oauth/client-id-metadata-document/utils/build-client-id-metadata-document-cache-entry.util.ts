@@ -44,11 +44,21 @@ export const buildClientIdMetadataDocumentCacheEntry = ({
 }): { entry: CachedClientIdMetadataDocument; ttlMs: number } => {
   const entry = buildEntry({ fetchResult, cachedEntry, now });
 
+  if (isDefined(entry.fetchedAt)) {
+    return {
+      entry,
+      ttlMs:
+        CLIENT_ID_METADATA_DOCUMENT_LIMITS.staleCacheTtlMs -
+        (now - entry.fetchedAt),
+    };
+  }
+
+  // An outage is worth retrying soon; a rejected document is not
   return {
     entry,
-    ttlMs: isDefined(entry.fetchedAt)
-      ? CLIENT_ID_METADATA_DOCUMENT_LIMITS.staleCacheTtlMs -
-        (now - entry.fetchedAt)
-      : CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs,
+    ttlMs:
+      fetchResult.status === 'unreachable'
+        ? CLIENT_ID_METADATA_DOCUMENT_LIMITS.unreachableRetryAfterMs
+        : CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs,
   };
 };
