@@ -14,7 +14,9 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import {
+  AggregateOperations,
   BarChartLayout,
+  GraphOrderBy,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
@@ -33,13 +35,24 @@ const TAB_LIST_INSTANCE_ID = getTabListInstanceIdFromPageLayoutId(
   PAGE_LAYOUT_TEST_INSTANCE_ID,
 );
 
+const FIELD_SELECTION = {
+  objectMetadataId: 'object-1',
+  aggregateFieldMetadataId: 'field-1',
+  aggregateOperation: AggregateOperations.SUM,
+  groupByFieldMetadataId: 'field-2',
+  groupByOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
+};
+
 const makeBarChartWidget = (id: string, layout: BarChartLayout) =>
   buildDraftPageLayoutWidget({
     id,
     pageLayoutTabId: 'tab-1',
     title: id,
     type: WidgetType.GRAPH,
-    configuration: { ...buildDefaultBarChartConfiguration({}), layout },
+    configuration: {
+      ...buildDefaultBarChartConfiguration({ fieldSelection: FIELD_SELECTION }),
+      layout,
+    },
     position: {
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
@@ -101,11 +114,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     act(() => {
       result.current.createPageLayoutGraphWidget({
-        fieldSelection: {
-          objectMetadataId: 'object-1',
-          groupByFieldMetadataIdX: 'field-2',
-          aggregateFieldMetadataId: 'field-1',
-        },
+        fieldSelection: FIELD_SELECTION,
       });
     });
 
@@ -138,7 +147,9 @@ describe('useCreatePageLayoutGraphWidget', () => {
     const { result } = renderCreateGraphHook(store);
 
     act(() => {
-      result.current.createPageLayoutGraphWidget({});
+      result.current.createPageLayoutGraphWidget({
+        fieldSelection: FIELD_SELECTION,
+      });
     });
 
     const widgets = store.get(getDraftAtom()).tabs[0].widgets;
@@ -146,7 +157,6 @@ describe('useCreatePageLayoutGraphWidget', () => {
     expect(widgets).toHaveLength(3);
     expect(widgets[2]).toMatchObject({
       title: 'Vertical Bar Chart 2',
-      objectMetadataId: null,
     });
   });
 });

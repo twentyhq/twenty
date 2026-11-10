@@ -52,6 +52,14 @@ type UpdatePageLayoutWithTabsParams = {
   input: UpdatePageLayoutWithTabsInput;
 };
 
+// buildUpdatedFlatPageLayoutWidget writes null for these when the input omits them
+const FLAT_PAGE_LAYOUT_WIDGET_PROPERTIES_CLEARED_WHEN_OMITTED: (keyof FlatPageLayoutWidget &
+  keyof UpdatePageLayoutWidgetWithIdInput)[] = [
+  'objectMetadataId',
+  'position',
+  'configuration',
+];
+
 @Injectable()
 export class PageLayoutUpdateService {
   private readonly logger = new Logger(PageLayoutUpdateService.name);
@@ -602,6 +610,8 @@ export class PageLayoutUpdateService {
       existingObjects: resolvedExistingWidgets,
       receivedObjects: widgets,
       propertiesToCompare: FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
+      propertiesClearedWhenOmitted:
+        FLAT_PAGE_LAYOUT_WIDGET_PROPERTIES_CLEARED_WHEN_OMITTED,
       isEntityIncluded: (entity) => entity.isActive,
     });
 

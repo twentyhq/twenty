@@ -1,10 +1,11 @@
+import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 export const getConfigurationTypeFromGraphType = (
   graphType: GraphType,
-): WidgetConfigurationType => {
+): ChartConfiguration['configurationType'] => {
   switch (graphType) {
     case GraphType.VERTICAL_BAR:
     case GraphType.HORIZONTAL_BAR:

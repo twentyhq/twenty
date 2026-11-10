@@ -4,9 +4,11 @@ import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import {
+  AggregateOperations,
   PageLayoutTabLayoutMode,
   PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -85,6 +87,53 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
     expect(result.tabs[0].widgets).toHaveLength(2);
     expect(result.tabs[0].widgets.map((w) => w.id)).toEqual(['w1', 'w2']);
+  });
+
+  it('should send configurations as held in state, without typenames', () => {
+    const chartWidget = makeWidget({
+      id: 'w1',
+      type: WidgetType.GRAPH,
+      configuration: {
+        __typename: 'AggregateChartConfiguration',
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldMetadataId: 'field-1',
+        aggregateOperation: AggregateOperations.COUNT,
+        ratioAggregateConfig: {
+          __typename: 'RatioAggregateConfig',
+          fieldMetadataId: 'field-2',
+          optionValue: 'WON',
+        },
+      },
+    });
+    const fieldsWidget = makeWidget({
+      id: 'w2',
+      configuration: {
+        __typename: 'FieldsConfiguration',
+        configurationType: WidgetConfigurationType.FIELDS,
+        viewId: null,
+      },
+    });
+    const draft = makeDraft([makeTab('tab-1', [chartWidget, fieldsWidget])]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(
+      result.tabs[0].widgets.map((widget) => widget.configuration),
+    ).toEqual([
+      {
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldMetadataId: 'field-1',
+        aggregateOperation: AggregateOperations.COUNT,
+        ratioAggregateConfig: {
+          fieldMetadataId: 'field-2',
+          optionValue: 'WON',
+        },
+      },
+      {
+        configurationType: WidgetConfigurationType.FIELDS,
+        viewId: null,
+      },
+    ]);
   });
 
   it('should map position correctly', () => {

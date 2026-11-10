@@ -12,7 +12,9 @@ describe('buildDefaultBarChartConfiguration', () => {
     const configuration = buildDefaultBarChartConfiguration({
       fieldSelection: {
         aggregateFieldMetadataId: 'field-1',
-        groupByFieldMetadataIdX: 'field-2',
+        aggregateOperation: AggregateOperations.COUNT,
+        groupByFieldMetadataId: 'field-2',
+        groupByOrderBy: GraphOrderBy.FIELD_ASC,
       },
       timezone: 'Europe/Paris',
       firstDayOfTheWeek: 1,
@@ -27,20 +29,11 @@ describe('buildDefaultBarChartConfiguration', () => {
       color: 'auto',
       primaryAxisGroupByFieldMetadataId: 'field-2',
       aggregateFieldMetadataId: 'field-1',
-      aggregateOperation: AggregateOperations.SUM,
-      primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
+      aggregateOperation: AggregateOperations.COUNT,
+      primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
       axisNameDisplay: AxisNameDisplay.NONE,
       timezone: 'Europe/Paris',
       firstDayOfTheWeek: 1,
-    });
-  });
-
-  it('should leave the field metadata ids empty without a field selection', () => {
-    const configuration = buildDefaultBarChartConfiguration({});
-
-    expect(configuration).toMatchObject({
-      primaryAxisGroupByFieldMetadataId: '',
-      aggregateFieldMetadataId: '',
     });
   });
 });

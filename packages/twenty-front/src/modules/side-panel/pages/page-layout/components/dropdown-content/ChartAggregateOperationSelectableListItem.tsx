@@ -56,7 +56,7 @@ export const ChartAggregateOperationSelectableListItem = ({
       configToUpdate: {
         aggregateFieldMetadataId: currentFieldMetadataId,
         aggregateOperation,
-        ratioAggregateConfig: null,
+        ratioAggregateConfig: undefined,
       },
     });
   };

@@ -35,8 +35,8 @@ export const buildChartGroupByFieldConfigUpdate = <
   const isPieChartGroupBy = fieldMetadataIdKey === 'groupByFieldMetadataId';
 
   const baseConfig = {
-    [fieldMetadataIdKey]: fieldId,
-    [subFieldNameKey]: subFieldName,
+    [fieldMetadataIdKey]: fieldId ?? undefined,
+    [subFieldNameKey]: subFieldName ?? undefined,
   };
 
   const isBarChart = isWidgetConfigurationOfType(
@@ -103,10 +103,10 @@ export const buildChartGroupByFieldConfigUpdate = <
 
     return {
       ...baseConfig,
-      primaryAxisOrderBy: isDefined(fieldId) ? defaultOrderBy : null,
+      primaryAxisOrderBy: isDefined(fieldId) ? defaultOrderBy : undefined,
       primaryAxisDateGranularity: isDefined(fieldId)
         ? (existingDateGranularity ?? ObjectRecordGroupByDateGranularity.DAY)
-        : null,
+        : undefined,
       ...(shouldResetCumulative ? { isCumulative: false } : {}),
       ...(shouldDisableSplitMultiValueFields
         ? { splitMultiValueFields: false }
@@ -121,10 +121,10 @@ export const buildChartGroupByFieldConfigUpdate = <
 
     return {
       ...baseConfig,
-      orderBy: isDefined(fieldId) ? defaultOrderBy : null,
+      orderBy: isDefined(fieldId) ? defaultOrderBy : undefined,
       dateGranularity: isDefined(fieldId)
         ? (existingDateGranularity ?? ObjectRecordGroupByDateGranularity.DAY)
-        : null,
+        : undefined,
     };
   }
 
@@ -139,14 +139,14 @@ export const buildChartGroupByFieldConfigUpdate = <
 
     return {
       ...baseConfig,
-      secondaryAxisOrderBy: isDefined(fieldId) ? defaultOrderBy : null,
+      secondaryAxisOrderBy: isDefined(fieldId) ? defaultOrderBy : undefined,
       secondaryAxisGroupByDateGranularity: isDefined(fieldId)
         ? (configuration.secondaryAxisGroupByDateGranularity ??
           ObjectRecordGroupByDateGranularity.DAY)
-        : null,
+        : undefined,
       groupMode: isDefined(fieldId)
         ? (configuration.groupMode ?? BarChartGroupMode.STACKED)
-        : null,
+        : undefined,
       ...(shouldDisableSplitMultiValueFields
         ? { splitMultiValueFields: false }
         : {}),
@@ -160,12 +160,14 @@ export const buildChartGroupByFieldConfigUpdate = <
 
     return {
       ...baseConfig,
-      secondaryAxisOrderBy: isDefined(fieldId) ? defaultOrderBy : null,
+      secondaryAxisOrderBy: isDefined(fieldId) ? defaultOrderBy : undefined,
       secondaryAxisGroupByDateGranularity: isDefined(fieldId)
         ? (configuration.secondaryAxisGroupByDateGranularity ??
           ObjectRecordGroupByDateGranularity.DAY)
-        : null,
-      isStacked: isDefined(fieldId) ? (configuration.isStacked ?? true) : null,
+        : undefined,
+      isStacked: isDefined(fieldId)
+        ? (configuration.isStacked ?? true)
+        : undefined,
       ...(shouldDisableSplitMultiValueFields
         ? { splitMultiValueFields: false }
         : {}),

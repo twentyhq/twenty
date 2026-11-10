@@ -8,11 +8,11 @@ import { CHART_SETTINGS_HEADINGS } from '@/side-panel/pages/page-layout/constant
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
-import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useGetConfigToUpdateAfterGraphTypeChange } from '@/side-panel/pages/page-layout/hooks/useUpdateGraphTypeConfig';
+import { useGetConfigurationAfterGraphTypeChange } from '@/side-panel/pages/page-layout/hooks/useUpdateGraphTypeConfig';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { shouldHideChartSetting } from '@/side-panel/pages/page-layout/utils/shouldHideChartSetting';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
@@ -36,8 +36,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { t } = useLingui();
   const { updateSidePanelPageInfo } = useUpdateSidePanelPageInfo();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
-  const { updateCurrentWidgetConfig } =
-    useUpdateCurrentWidgetConfig(pageLayoutId);
+  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
   const { objectMetadataItems } = useObjectMetadataItems();
 
   assertChartWidgetOrThrow(widget);
@@ -49,8 +48,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     configuration,
   });
 
-  const { getConfigToUpdateAfterGraphTypeChange } =
-    useGetConfigToUpdateAfterGraphTypeChange({
+  const { getConfigurationAfterGraphTypeChange } =
+    useGetConfigurationAfterGraphTypeChange({
       pageLayoutId,
       widget,
     });
@@ -62,10 +61,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     useAtomComponentState(hasWidgetTooManyGroupsComponentState);
 
   const handleGraphTypeChange = (graphType: GraphType) => {
-    const configToUpdate = getConfigToUpdateAfterGraphTypeChange(graphType);
-
-    updateCurrentWidgetConfig({
-      configToUpdate,
+    updatePageLayoutWidget(widget.id, {
+      configuration: getConfigurationAfterGraphTypeChange(graphType),
     });
 
     updateSidePanelPageInfo({

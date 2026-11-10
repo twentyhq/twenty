@@ -6,7 +6,6 @@ import {
   makeDraft,
   makeTab,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
-import { buildDefaultBarChartConfiguration } from '@/page-layout/utils/buildDefaultBarChartConfiguration';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { act, renderHook } from '@testing-library/react';
@@ -18,6 +17,7 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { TEST_BAR_CHART_CONFIGURATION } from '~/testing/mock-data/widget-configurations';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -149,7 +149,7 @@ describe('useCreatePageLayoutWidget', () => {
       result.current.createPageLayoutWidget({
         type: WidgetType.GRAPH,
         title: 'Vertical Bar Chart 1',
-        configuration: buildDefaultBarChartConfiguration({}),
+        configuration: TEST_BAR_CHART_CONFIGURATION,
       });
     });
 
