@@ -1,9 +1,8 @@
+import { CHAT_REFERENCE_UUID_REGEX } from '@/ai/constants/chat-reference-uuid-regex.const';
 import { isDefined } from '@/utils/validation/isDefined';
-import { isValidUuid } from '@/utils/validation/isValidUuid';
 
-const RECORD_REFERENCE_PATTERN = /\[\[record:([^:\]]+):([^:\]]+):/g;
+const RECORD_REFERENCE_PATTERN = /\[\[(?:record:)?([^:[\]]+):([^:[\]]+):/g;
 
-// Reads back the references written by formatRecordReference
 export const extractRecordReferenceIds = ({
   text,
   objectNameSingular,
@@ -19,7 +18,7 @@ export const extractRecordReferenceIds = ({
     if (
       referenceObjectName === objectNameSingular &&
       isDefined(recordId) &&
-      isValidUuid(recordId)
+      CHAT_REFERENCE_UUID_REGEX.test(recordId)
     ) {
       recordIds.add(recordId);
     }

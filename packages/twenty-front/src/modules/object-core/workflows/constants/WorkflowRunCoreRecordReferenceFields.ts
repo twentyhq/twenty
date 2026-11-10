@@ -7,7 +7,7 @@ export const WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS: CoreRecordReferenceField
   [
     {
       objectNameSingular: StandardObjectNameSingular.WorkflowRun,
-      fieldName: 'workflow',
+      fieldName: 'coreWorkflowId',
       coreRecordIdFieldName: 'coreWorkflowId',
       CoreRecordDisplay: CoreWorkflowChip,
     },

@@ -24,7 +24,7 @@ export const buildDeleteRecordSharesQueryOrThrow = ({
   recordShareTableExpression: string;
   criteria: RecordShareCriteria;
 }): RecordPermissionQuery => {
-  const conditions = [
+  const sqlConditions = [
     isDefined(ids) && `"id" = ANY(:ids)`,
     isDefined(objectMetadataId) && `"objectMetadataId" = :objectMetadataId`,
     isDefined(recordIds) && `"recordId" = ANY(:recordIds)`,
@@ -32,9 +32,9 @@ export const buildDeleteRecordSharesQueryOrThrow = ({
     isDefined(principalType) && `"principalType" = :principalType`,
     isDefined(rowCause) && `"rowCause" = :rowCause`,
     isDefined(sourceId) && `"sourceId" = :sourceId`,
-  ].filter((condition) => condition !== false);
+  ].filter((sqlCondition) => sqlCondition !== false);
 
-  if (conditions.length === 0) {
+  if (sqlConditions.length === 0) {
     throw new RecordShareException(
       'Deleting record shares requires at least one criterion',
       RecordShareExceptionCode.INVALID_SHARE_WITH,
@@ -42,7 +42,7 @@ export const buildDeleteRecordSharesQueryOrThrow = ({
   }
 
   return {
-    sql: `DELETE FROM ${recordShareTableExpression} WHERE ${conditions.join(' AND ')} AND "deletedAt" IS NULL`,
+    sql: `DELETE FROM ${recordShareTableExpression} WHERE ${sqlConditions.join(' AND ')} AND "deletedAt" IS NULL`,
     parameters: {
       ...(isDefined(ids) && { ids }),
       ...(isDefined(objectMetadataId) && { objectMetadataId }),

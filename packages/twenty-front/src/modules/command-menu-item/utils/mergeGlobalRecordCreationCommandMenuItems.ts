@@ -2,6 +2,9 @@ import { type CommandMenuItemDefinition } from '@/command-menu-item/types/Comman
 import { isDefined } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
+const isCreationCommand = (item: CommandMenuItemDefinition) =>
+  item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD;
+
 export const mergeGlobalRecordCreationCommandMenuItems = ({
   commandMenuItems,
   globalRecordCreationCommandMenuItems,
@@ -13,9 +16,21 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
   shouldDisplayGlobalRecordCreationCommands: boolean;
   contextObjectMetadataId?: string;
 }): CommandMenuItemDefinition[] => {
-  const sortedCommandMenuItems = [...commandMenuItems].sort(
-    (firstItem, secondItem) => firstItem.position - secondItem.position,
+  // Workspaces not yet upgraded to 2.58 have no core workflow create item; the legacy one stands in until then.
+  const hasCoreObjectCreationCommand = commandMenuItems.some(
+    (item) =>
+      isCreationCommand(item) && isDefined(item.availabilityCoreObjectName),
   );
+
+  const sortedCommandMenuItems = [...commandMenuItems]
+    .filter(
+      (item) =>
+        !hasCoreObjectCreationCommand ||
+        !isCreationCommand(item) ||
+        isDefined(item.availabilityCoreObjectName) ||
+        isDefined(item.availabilityObjectMetadataId),
+    )
+    .sort((firstItem, secondItem) => firstItem.position - secondItem.position);
 
   if (!shouldDisplayGlobalRecordCreationCommands) {
     return sortedCommandMenuItems;
@@ -28,9 +43,7 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
     );
 
   const isPinnedContextualCreationCommand = (item: CommandMenuItemDefinition) =>
-    hasCurrentObjectCreationCommand &&
-    item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
-    item.isPinned;
+    hasCurrentObjectCreationCommand && isCreationCommand(item) && item.isPinned;
 
   const hasPinnedContextualCreationCommand = sortedCommandMenuItems.some(
     isPinnedContextualCreationCommand,
@@ -40,12 +53,13 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
     ...sortedCommandMenuItems.filter(
       (item) =>
         isPinnedContextualCreationCommand(item) ||
-        (item.engineComponentKey !== EngineComponentKey.CREATE_NEW_RECORD &&
+        isDefined(item.availabilityCoreObjectName) ||
+        (!isCreationCommand(item) &&
           item.engineComponentKey !== EngineComponentKey.NAVIGATION),
     ),
     ...globalRecordCreationCommandMenuItems.filter(
       (item) =>
-        !hasPinnedContextualCreationCommand ||
+        !(hasPinnedContextualCreationCommand || hasCoreObjectCreationCommand) ||
         item.creationTargetObjectMetadataId !== contextObjectMetadataId,
     ),
     ...sortedCommandMenuItems.filter(

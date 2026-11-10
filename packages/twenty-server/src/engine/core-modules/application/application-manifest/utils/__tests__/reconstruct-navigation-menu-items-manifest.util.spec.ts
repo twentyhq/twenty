@@ -68,6 +68,8 @@ const buildFlatNavigationMenuItem = ({
   targetObjectMetadataId: null,
   pageLayoutId: null,
   agentChatChannelId: null,
+  workflowId: null,
+  agentId: null,
   ...flatNavigationMenuItemProperties,
 });
 
@@ -230,6 +232,35 @@ describe('reconstructNavigationMenuItemsManifest', () => {
       status: ApplicationExportCoverageStatus.EXCLUDED,
       reason: 'navigation item pinned to a record',
     });
+  });
+
+  it('should exclude items pinned to a workflow or an agent', () => {
+    const { navigationMenuItems, coverage } = reconstruct([
+      buildFlatNavigationMenuItem({
+        universalIdentifier: 'workflow-item',
+        type: NavigationMenuItemType.WORKFLOW,
+        workflowId: 'workflow-id',
+      }),
+      buildFlatNavigationMenuItem({
+        universalIdentifier: 'agent-item',
+        type: NavigationMenuItemType.AGENT,
+        agentId: 'agent-id',
+      }),
+    ]);
+
+    expect(navigationMenuItems).toEqual([]);
+    expect(
+      ['workflow-item', 'agent-item'].map((universalIdentifier) =>
+        statusOf(coverage, universalIdentifier),
+      ),
+    ).toEqual(
+      ['workflow-item', 'agent-item'].map((universalIdentifier) => ({
+        metadataName: 'navigationMenuItem',
+        universalIdentifier,
+        status: ApplicationExportCoverageStatus.EXCLUDED,
+        reason: 'navigation item pinned to a workflow or an agent',
+      })),
+    );
   });
 
   it('should refuse an item whose target cannot be resolved', () => {

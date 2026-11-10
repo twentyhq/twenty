@@ -36,8 +36,13 @@ export const reconstructNavigationMenuItemsManifest = ({
   for (const flatNavigationMenuItem of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatNavigationMenuItemMaps,
   )) {
-    const { universalIdentifier, userWorkspaceId, targetRecordId } =
-      flatNavigationMenuItem;
+    const {
+      universalIdentifier,
+      userWorkspaceId,
+      targetRecordId,
+      workflowId,
+      agentId,
+    } = flatNavigationMenuItem;
 
     if (isDefined(userWorkspaceId)) {
       coverage.push({
@@ -55,6 +60,16 @@ export const reconstructNavigationMenuItemsManifest = ({
         universalIdentifier,
         status: ApplicationExportCoverageStatus.EXCLUDED,
         reason: 'navigation item pinned to a record',
+      });
+      continue;
+    }
+
+    if (isDefined(workflowId) || isDefined(agentId)) {
+      coverage.push({
+        metadataName: 'navigationMenuItem',
+        universalIdentifier,
+        status: ApplicationExportCoverageStatus.EXCLUDED,
+        reason: 'navigation item pinned to a workflow or an agent',
       });
       continue;
     }

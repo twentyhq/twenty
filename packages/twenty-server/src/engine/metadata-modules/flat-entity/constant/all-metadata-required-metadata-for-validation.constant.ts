@@ -77,6 +77,8 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     view: true,
     pageLayout: true,
     agentChatChannel: true,
+    workflow: true,
+    agent: true,
   },
   rolePermissionFlag: {
     permissionFlag: true,

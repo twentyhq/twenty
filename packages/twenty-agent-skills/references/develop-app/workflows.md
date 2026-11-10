@@ -46,6 +46,7 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 
 - `SEND_CHAT_MESSAGE` posts `title` and `text` to the inbox of `workspaceMemberId`, optionally with a `toolCall` the member approves before the run goes on, and an optional `conversation`.
 - Member ids only exist in one workspace: in app code, pass a variable such as `{{trigger.properties.after.assigneeId}}`.
+- Member mentions in `text`, such as those in a note body passed as `{{trigger.properties.after.bodyV2.markdown}}`, notify those members, as in `sendInboxMessage` (see `logic.md`).
 
 ## Manual Record Trigger
 
