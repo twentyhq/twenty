@@ -95,3 +95,26 @@ export const NoRecipients: Story = {
     await expect(onSendMessage).not.toHaveBeenCalled();
   },
 };
+
+export const FailedSendWithoutRecipients: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const recipients = await canvas.findByRole('group', { name: 'Recipients' });
+
+    onSendMessage.mockImplementationOnce(() => Promise.reject(new Error()));
+    await userEvent.type(canvas.getByRole('textbox'), 'Hello{Enter}');
+    await canvas.findByText('Sending failed');
+
+    for (const name of ['Sundar Pichai', 'Thomas Kurian']) {
+      const recipientRemoval = within(recipients).getByRole('button', {
+        name: `Remove ${name}`,
+      });
+
+      recipientRemoval.focus();
+      await userEvent.click(recipientRemoval);
+    }
+
+    await expect(canvas.getByRole('button', { name: 'Retry' })).toBeDisabled();
+    await expect(onSendMessage).toHaveBeenCalledTimes(1);
+  },
+};

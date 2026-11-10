@@ -196,6 +196,7 @@ export const ChatThreadComposer = ({
             <ChatThreadPendingMessage
               key={pendingMessage.id}
               pendingMessage={pendingMessage}
+              isRetryDisabled={isSendDisabled}
               onRetry={send}
               onDiscard={({ id }) => setPendingMessageStatus(id, null)}
             />
