@@ -1,4 +1,4 @@
-import { parseDataFromContentType } from '@/workflow/utils/parseDataFromContentType';
+import { parseDataFromContentType } from 'src/engine/core-modules/tool/tools/http-tool/utils/parse-data-from-content-type.util';
 
 describe('parseDataFromContentType', () => {
   describe('application/json', () => {
