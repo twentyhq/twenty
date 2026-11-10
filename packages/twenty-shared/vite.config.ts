@@ -11,26 +11,14 @@ const moduleEntries = Object.keys((packageJson as any).exports || {})
 
 const entries = ['src/index.ts', ...moduleEntries];
 
-const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
-  if (!chunk.isEntry) {
-    throw new Error(
-      `Should never occurs, encountered a non entry chunk ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
-  if (splitFaceModuleId === undefined) {
-    throw new Error(
-      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
-  if (moduleDirectory === 'src') {
-    return `${chunk.name}.${extension}`;
-  }
-  return `${moduleDirectory}.${extension}`;
-};
+// Bundled packages would otherwise land in dist/node_modules, which tooling
+// skips, and ?source modules in files whose `?` Node reads as a URL query.
+const getOutputFileName =
+  (extension: 'cjs' | 'mjs') =>
+  ({ name }: { name: string }) =>
+    `${name
+      .replace(/^(?:.*\/)?node_modules\//, 'vendor/')
+      .replace(/\.tsx?\?source$/, '.source')}.${extension}`;
 
 export default defineConfig(() => {
   return {
@@ -60,13 +48,17 @@ export default defineConfig(() => {
         output: [
           {
             format: 'es',
-            entryFileNames: (chunk) => entryFileNames(chunk, 'mjs'),
+            preserveModules: true,
+            preserveModulesRoot: 'src',
+            entryFileNames: getOutputFileName('mjs'),
           },
           {
             format: 'cjs',
             esModule: true,
             exports: 'named',
-            entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),
+            preserveModules: true,
+            preserveModulesRoot: 'src',
+            entryFileNames: getOutputFileName('cjs'),
           },
         ],
       },
