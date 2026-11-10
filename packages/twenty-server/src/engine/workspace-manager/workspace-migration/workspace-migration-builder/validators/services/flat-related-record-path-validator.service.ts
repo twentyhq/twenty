@@ -8,7 +8,12 @@ import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { MAX_RELATED_RECORD_PATH_CHAIN_HOP_COUNT } from 'src/engine/metadata-modules/related-record-path/constants/max-related-record-path-chain-hop-count.constant';
 import { RelatedRecordPathExceptionCode } from 'src/engine/metadata-modules/related-record-path/related-record-path.exception';
+import {
+  findRelatedRecordPathChainError,
+  type RelatedRecordPathEdge,
+} from 'src/engine/metadata-modules/related-record-path/utils/find-related-record-path-chain-error.util';
 import { getRelatedRecordPathFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/related-record-path/utils/get-related-record-path-field-metadata-universal-identifiers.util';
 import { type UniversalFlatRelatedRecordPath } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-related-record-path.type';
 import {
@@ -39,6 +44,45 @@ const buildInvalidInputError = ({
   message,
   userFriendlyMessage,
 });
+
+const buildRelatedRecordPathEdge = ({
+  universalFlatRelatedRecordPath,
+  flatFieldMetadataMaps,
+}: {
+  universalFlatRelatedRecordPath: UniversalFlatRelatedRecordPath;
+  flatFieldMetadataMaps: RelatedRecordPathRelatedMaps['flatFieldMetadataMaps'];
+}): RelatedRecordPathEdge | undefined => {
+  const fieldMetadataUniversalIdentifiers =
+    getRelatedRecordPathFieldMetadataUniversalIdentifiers(
+      universalFlatRelatedRecordPath,
+    );
+  const lastFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier:
+      fieldMetadataUniversalIdentifiers[
+        fieldMetadataUniversalIdentifiers.length - 1
+      ],
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
+
+  if (
+    !isDefined(lastFlatFieldMetadata) ||
+    !isMorphOrRelationUniversalFlatFieldMetadata(lastFlatFieldMetadata) ||
+    !isDefined(
+      lastFlatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+    )
+  ) {
+    return undefined;
+  }
+
+  return {
+    sourceObjectMetadataUniversalIdentifier:
+      universalFlatRelatedRecordPath.objectMetadataUniversalIdentifier,
+    targetObjectMetadataUniversalIdentifier:
+      lastFlatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+    hopCount: fieldMetadataUniversalIdentifiers.length,
+    isInherent: universalFlatRelatedRecordPath.isInherent,
+  };
+};
 
 const buildNotFoundError = (): FlatEntityValidationError => ({
   code: RelatedRecordPathExceptionCode.RELATED_RECORD_PATH_NOT_FOUND,
@@ -193,6 +237,48 @@ export class FlatRelatedRecordPathValidatorService {
         buildInvalidInputError({
           message: t`This related record path already exists`,
           userFriendlyMessage: msg`This related record path already exists`,
+        }),
+      ];
+    }
+
+    const chainError = findRelatedRecordPathChainError({
+      relatedRecordPathEdges: [
+        ...Object.values(
+          flatRelatedRecordPathMaps.byUniversalIdentifier,
+        ).filter(
+          (otherFlatRelatedRecordPath) =>
+            isDefined(otherFlatRelatedRecordPath) &&
+            otherFlatRelatedRecordPath.universalIdentifier !==
+              universalFlatRelatedRecordPath.universalIdentifier,
+        ),
+        universalFlatRelatedRecordPath,
+      ]
+        .filter(isDefined)
+        .map((flatRelatedRecordPath) =>
+          buildRelatedRecordPathEdge({
+            universalFlatRelatedRecordPath: flatRelatedRecordPath,
+            flatFieldMetadataMaps,
+          }),
+        )
+        .filter(isDefined),
+    });
+
+    if (chainError === 'CYCLE') {
+      return [
+        buildInvalidInputError({
+          message: t`Inherent related record paths cannot form a cycle`,
+          userFriendlyMessage: msg`Inherent related record paths cannot form a cycle`,
+        }),
+      ];
+    }
+
+    if (chainError === 'TOO_MANY_HOPS') {
+      const maxHopCount = MAX_RELATED_RECORD_PATH_CHAIN_HOP_COUNT;
+
+      return [
+        buildInvalidInputError({
+          message: t`Related record paths chained through inherent paths cannot exceed ${maxHopCount} relations`,
+          userFriendlyMessage: msg`Related record paths chained through inherent paths cannot exceed ${maxHopCount} relations`,
         }),
       ];
     }

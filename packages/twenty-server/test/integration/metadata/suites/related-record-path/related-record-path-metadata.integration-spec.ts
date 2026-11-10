@@ -311,6 +311,29 @@ describe('Related record path metadata', () => {
     );
   });
 
+  it('should reject inherent paths that form a cycle', async () => {
+    const projectToTasksResponse = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+      isInherent: true,
+    });
+
+    expect(projectToTasksResponse.body.errors).toBeUndefined();
+
+    const taskToProjectResponse = await createRelatedRecordPath({
+      objectMetadataId: taskObjectMetadataId,
+      firstFieldMetadataId: taskProjectFieldMetadataId,
+      isInherent: true,
+    });
+
+    expect(JSON.stringify(taskToProjectResponse.body.errors)).toContain(
+      'Inherent related record paths cannot form a cycle',
+    );
+
+    await deleteRelatedRecordPath(
+      projectToTasksResponse.body.data.createRelatedRecordPath.id,
+    );
+  });
+
   it('should reject a field that does not belong to the object reached so far', async () => {
     const response = await createPath({
       firstFieldMetadataId: taskAssigneeFieldMetadataId,
