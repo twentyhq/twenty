@@ -12,7 +12,10 @@ import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { UpdateCoreWorkflowVersionPositionsDocument } from '~/generated/graphql';
 
-type NodePositionUpdate = { id: string; position: { x: number; y: number } };
+type NodePositionUpdate = {
+  id: string;
+  position: { x: number; y: number } | null;
+};
 
 export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
   const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(instanceId);
@@ -70,7 +73,13 @@ export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
 
     // Written before any await so the diagram switches to these positions in the same render
     setFlow((currentFlow) =>
-      applyPositionsToFlow({ flow: currentFlow, positions }),
+      applyPositionsToFlow({
+        flow: currentFlow,
+        positions: positions.map(({ id, position }) => ({
+          id,
+          position: position ?? undefined,
+        })),
+      }),
     );
 
     await savePositions(positions).catch((error: unknown) => {

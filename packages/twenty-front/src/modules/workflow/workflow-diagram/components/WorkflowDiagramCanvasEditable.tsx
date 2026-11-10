@@ -17,7 +17,7 @@ import {
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getDisplayedWorkflowDiagram } from '@/workflow/workflow-diagram/utils/getDisplayedWorkflowDiagram';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
-import { isWorkflowLayoutManual } from '@/workflow/workflow-diagram/utils/isWorkflowLayoutManual';
+import { hasUnpositionedWorkflowNode } from '@/workflow/workflow-diagram/utils/hasUnpositionedWorkflowNode';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
@@ -193,7 +193,7 @@ export const WorkflowDiagramCanvasEditable = () => {
     return reconnection;
   };
 
-  const persistAutomaticLayoutWithDraggedNode = (
+  const persistDisplayedLayoutWithDraggedNode = (
     draggedNode: WorkflowDiagramNode,
   ) => {
     const workflowDiagram = store.get(workflowDiagramCallbackState);
@@ -221,8 +221,8 @@ export const WorkflowDiagramCanvasEditable = () => {
   };
 
   const onNodeDragStop: OnNodeDrag<WorkflowDiagramNode> = async (_, node) => {
-    if (isDefined(flow) && !isWorkflowLayoutManual(flow)) {
-      persistAutomaticLayoutWithDraggedNode(node);
+    if (isDefined(flow) && hasUnpositionedWorkflowNode(flow)) {
+      persistDisplayedLayoutWithDraggedNode(node);
 
       return;
     }

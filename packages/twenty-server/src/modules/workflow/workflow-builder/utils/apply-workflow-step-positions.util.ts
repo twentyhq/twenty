@@ -18,20 +18,19 @@ export const applyWorkflowStepPositions = ({
     positions.map(({ id, position }) => [id, position]),
   );
 
-  const triggerPosition = positionById.get(TRIGGER_STEP_ID);
-
   return {
     trigger:
-      isDefined(trigger) && isDefined(triggerPosition)
-        ? { ...trigger, position: triggerPosition }
+      isDefined(trigger) && positionById.has(TRIGGER_STEP_ID)
+        ? {
+            ...trigger,
+            position: positionById.get(TRIGGER_STEP_ID) ?? undefined,
+          }
         : trigger,
     steps:
-      steps?.map((step) => {
-        const stepPosition = positionById.get(step.id);
-
-        return isDefined(stepPosition)
-          ? { ...step, position: stepPosition }
-          : step;
-      }) ?? null,
+      steps?.map((step) =>
+        positionById.has(step.id)
+          ? { ...step, position: positionById.get(step.id) ?? undefined }
+          : step,
+      ) ?? null,
   };
 };

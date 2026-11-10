@@ -2,11 +2,13 @@ import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/Workflow
 import { getDisplayedWorkflowDiagram } from '@/workflow/workflow-diagram/utils/getDisplayedWorkflowDiagram';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
-const STORED_POSITION = { x: 999, y: 999 };
+const TRIGGER_POSITION = { x: 500, y: 100 };
+const IF_BRANCH_POSITION = { x: 300, y: 400 };
+const PLACEHOLDER_POSITION = { x: 0, y: 0 };
 
-const buildNode = (id: string) => ({
+const buildNode = (id: string, position: { x: number; y: number }) => ({
   id,
-  position: STORED_POSITION,
+  position,
   data: {
     nodeType: 'action' as const,
     actionType: 'CODE' as const,
@@ -16,27 +18,23 @@ const buildNode = (id: string) => ({
   },
 });
 
+const buildEdge = (source: string, target: string) => ({
+  id: `${source}-to-${target}`,
+  source,
+  sourceHandle: 'source',
+  target,
+  targetHandle: 'target',
+});
+
 const diagram: WorkflowDiagram = {
   nodes: [
-    buildNode(TRIGGER_STEP_ID),
-    buildNode('if-branch'),
-    buildNode('else-branch'),
+    buildNode(TRIGGER_STEP_ID, TRIGGER_POSITION),
+    buildNode('if-branch', IF_BRANCH_POSITION),
+    buildNode('else-branch', PLACEHOLDER_POSITION),
   ],
   edges: [
-    {
-      id: 'trigger-to-if',
-      source: TRIGGER_STEP_ID,
-      sourceHandle: 'source',
-      target: 'if-branch',
-      targetHandle: 'target',
-    },
-    {
-      id: 'trigger-to-else',
-      source: TRIGGER_STEP_ID,
-      sourceHandle: 'source',
-      target: 'else-branch',
-      targetHandle: 'target',
-    },
+    buildEdge(TRIGGER_STEP_ID, 'if-branch'),
+    buildEdge(TRIGGER_STEP_ID, 'else-branch'),
   ],
 };
 
@@ -46,19 +44,22 @@ describe('getDisplayedWorkflowDiagram', () => {
       getDisplayedWorkflowDiagram({
         diagram,
         flow: {
-          trigger: { position: STORED_POSITION },
-          steps: [{ position: STORED_POSITION }, { position: STORED_POSITION }],
+          trigger: { position: TRIGGER_POSITION },
+          steps: [
+            { id: 'if-branch', position: IF_BRANCH_POSITION },
+            { id: 'else-branch', position: PLACEHOLDER_POSITION },
+          ],
         },
       }),
     ).toBe(diagram);
   });
 
-  it('lays the diagram out when a node has no stored position', () => {
+  it('lays the whole diagram out when no node has a stored position', () => {
     const { nodes } = getDisplayedWorkflowDiagram({
       diagram,
       flow: {
-        trigger: { position: STORED_POSITION },
-        steps: [{ position: STORED_POSITION }, { position: undefined }],
+        trigger: { position: undefined },
+        steps: [{ id: 'if-branch' }, { id: 'else-branch' }],
       },
     });
 
@@ -71,18 +72,100 @@ describe('getDisplayedWorkflowDiagram', () => {
     expect(elseBranch.position.x).toBeGreaterThan(trigger.position.x);
   });
 
-  it('leaves a node being dragged where the user holds it', () => {
+  it('places only the unpositioned node, next to its parent', () => {
     const { nodes } = getDisplayedWorkflowDiagram({
-      diagram: {
-        ...diagram,
-        nodes: diagram.nodes.map((node) =>
-          node.id === 'if-branch' ? { ...node, dragging: true } : node,
-        ),
+      diagram,
+      flow: {
+        trigger: { position: TRIGGER_POSITION },
+        steps: [
+          { id: 'if-branch', position: IF_BRANCH_POSITION },
+          { id: 'else-branch' },
+        ],
       },
-      flow: { trigger: { position: undefined }, steps: [] },
     });
 
-    expect(nodes[1].position).toEqual(STORED_POSITION);
-    expect(nodes[2].position).not.toEqual(STORED_POSITION);
+    const [trigger, ifBranch, elseBranch] = nodes;
+
+    expect(trigger.position).toEqual(TRIGGER_POSITION);
+    expect(ifBranch.position).toEqual(IF_BRANCH_POSITION);
+    expect(elseBranch.position.y).toBeGreaterThan(TRIGGER_POSITION.y);
+    expect(elseBranch.position.x).toBeGreaterThan(TRIGGER_POSITION.x);
+  });
+
+  it('places a chain of unpositioned nodes from the closest positioned one', () => {
+    const { nodes } = getDisplayedWorkflowDiagram({
+      diagram: {
+        nodes: [
+          buildNode(TRIGGER_STEP_ID, TRIGGER_POSITION),
+          buildNode('first', PLACEHOLDER_POSITION),
+          buildNode('second', PLACEHOLDER_POSITION),
+        ],
+        edges: [
+          buildEdge(TRIGGER_STEP_ID, 'first'),
+          buildEdge('first', 'second'),
+        ],
+      },
+      flow: {
+        trigger: { position: TRIGGER_POSITION },
+        steps: [{ id: 'first' }, { id: 'second' }],
+      },
+    });
+
+    const [trigger, first, second] = nodes;
+
+    expect(first.position.x).toBe(trigger.position.x);
+    expect(second.position.x).toBe(trigger.position.x);
+    expect(first.position.y).toBeGreaterThan(trigger.position.y);
+    expect(second.position.y).toBeGreaterThan(first.position.y);
+  });
+
+  it('places a node with no positioned neighbour from another positioned node', () => {
+    const { nodes } = getDisplayedWorkflowDiagram({
+      diagram: {
+        nodes: [
+          buildNode(TRIGGER_STEP_ID, TRIGGER_POSITION),
+          buildNode('detached', PLACEHOLDER_POSITION),
+        ],
+        edges: [],
+      },
+      flow: {
+        trigger: { position: TRIGGER_POSITION },
+        steps: [{ id: 'detached' }],
+      },
+    });
+
+    expect(nodes[1].position).not.toEqual(PLACEHOLDER_POSITION);
+  });
+
+  it('leaves a node being dragged where the user holds it', () => {
+    const draggedDiagram = {
+      ...diagram,
+      nodes: diagram.nodes.map((node) =>
+        node.id === 'else-branch' ? { ...node, dragging: true } : node,
+      ),
+    };
+
+    expect(
+      getDisplayedWorkflowDiagram({
+        diagram: draggedDiagram,
+        flow: {
+          trigger: { position: undefined },
+          steps: [{ id: 'if-branch' }, { id: 'else-branch' }],
+        },
+      }).nodes[2].position,
+    ).toEqual(PLACEHOLDER_POSITION);
+
+    expect(
+      getDisplayedWorkflowDiagram({
+        diagram: draggedDiagram,
+        flow: {
+          trigger: { position: TRIGGER_POSITION },
+          steps: [
+            { id: 'if-branch', position: IF_BRANCH_POSITION },
+            { id: 'else-branch' },
+          ],
+        },
+      }).nodes[2].position,
+    ).toEqual(PLACEHOLDER_POSITION);
   });
 });

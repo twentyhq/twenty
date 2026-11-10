@@ -3,39 +3,34 @@ import { isWorkflowLayoutManual } from '@/workflow/workflow-diagram/utils/isWork
 const POSITION = { x: 10, y: 20 };
 
 describe('isWorkflowLayoutManual', () => {
-  it('returns true when the trigger and every step have a position', () => {
-    expect(
-      isWorkflowLayoutManual({
-        trigger: { position: POSITION },
-        steps: [{ position: POSITION }, { position: POSITION }],
-      }),
-    ).toBe(true);
-  });
-
-  it('returns false as soon as one step has no position', () => {
-    expect(
-      isWorkflowLayoutManual({
-        trigger: { position: POSITION },
-        steps: [{ position: POSITION }, { position: undefined }],
-      }),
-    ).toBe(false);
-  });
-
-  it('returns false when the trigger has no position', () => {
+  it('returns false when no node has a position', () => {
     expect(
       isWorkflowLayoutManual({
         trigger: { position: undefined },
-        steps: [{ position: POSITION }],
+        steps: [{ id: 'first' }, { id: 'second', position: null }],
       }),
     ).toBe(false);
   });
 
-  it('ignores a missing trigger', () => {
+  it('returns true as soon as one step has a position', () => {
     expect(
       isWorkflowLayoutManual({
-        trigger: null,
-        steps: [{ position: POSITION }],
+        trigger: { position: undefined },
+        steps: [{ id: 'first', position: POSITION }, { id: 'second' }],
       }),
     ).toBe(true);
+  });
+
+  it('returns true when only the trigger has a position', () => {
+    expect(
+      isWorkflowLayoutManual({
+        trigger: { position: POSITION },
+        steps: [{ id: 'first' }],
+      }),
+    ).toBe(true);
+  });
+
+  it('returns false for a missing flow', () => {
+    expect(isWorkflowLayoutManual(undefined)).toBe(false);
   });
 });

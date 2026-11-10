@@ -1,32 +1,12 @@
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { computeWorkflowDiagramLayoutPositions } from '@/workflow/workflow-diagram/utils/computeWorkflowDiagramLayoutPositions';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  computeWorkflowLayout,
-  TRIGGER_STEP_ID,
-  WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
-} from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const getOrganizedDiagram = (
   diagram: WorkflowDiagram,
 ): WorkflowDiagram => {
-  const positions = computeWorkflowLayout({
-    nodes: diagram.nodes.map((node) => ({
-      id: node.id,
-      width:
-        node.measured?.width ?? WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS.width,
-      height:
-        node.measured?.height ??
-        WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS.height,
-    })),
-    edges: diagram.edges.map((edge) => ({
-      source: edge.source,
-      target: edge.target,
-    })),
-  });
-
-  const positionByNodeId = new Map(
-    positions.map((position) => [position.id, position.centerPosition]),
-  );
+  const positionByNodeId = computeWorkflowDiagramLayoutPositions(diagram);
 
   // Keeps the trigger in place when a new branch widens the layout, so the viewport does not jump
   const horizontalOffset = positionByNodeId.get(TRIGGER_STEP_ID)?.x ?? 0;

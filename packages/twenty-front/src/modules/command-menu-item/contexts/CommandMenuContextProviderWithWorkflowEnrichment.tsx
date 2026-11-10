@@ -1,6 +1,7 @@
 import { isThirdPartyApplication } from '@/applications/utils/isThirdPartyApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isWorkflowLayoutManual } from '@/workflow/workflow-diagram/utils/isWorkflowLayoutManual';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -57,7 +58,12 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
 
       return {
         ...record,
-        currentVersion: workflowWithCurrentVersion.currentVersion,
+        currentVersion: {
+          ...workflowWithCurrentVersion.currentVersion,
+          hasManualLayout: isWorkflowLayoutManual(
+            workflowWithCurrentVersion.currentVersion,
+          ),
+        },
         versions: workflowWithCurrentVersion.versions,
         statuses: workflowWithCurrentVersion.statuses,
         lastPublishedVersionId:
