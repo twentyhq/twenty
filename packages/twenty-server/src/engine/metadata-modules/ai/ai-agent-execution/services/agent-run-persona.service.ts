@@ -19,7 +19,7 @@ import {
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
+import { resolveRuntimeLimitingRole } from 'src/engine/permissions/role/utils/resolve-runtime-limiting-role.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -121,7 +121,7 @@ export class AgentRunPersonaService {
     return buildAgentRunAuthContext({
       authContext,
       agentId: agentId ?? undefined,
-      aiRunScope: resolveAiRunPermissionScope({
+      runtimeLimitingRole: resolveRuntimeLimitingRole({
         scope,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

@@ -34,6 +34,7 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
+import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatReferenceMarker';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
@@ -370,6 +371,13 @@ Before changing anything, list what you plan to do and ask me to confirm. Keep f
   ],
 };
 
+const MEMBER_MENTION = `[[record:workspaceMember:${mockedWorkspaceMemberData.id}:Charles Test]]`;
+const ESCAPED_MEMBER_MENTION = MEMBER_MENTION.replaceAll('[', '\\[').replaceAll(
+  ']',
+  '\\]',
+);
+const ENCODED_PROTECTED_CHAT_REFERENCE_MARKER = `&#x${PROTECTED_CHAT_REFERENCE_MARKER.charCodeAt(0).toString(16)};`;
+
 const MOCK_CONFIGURED_ASSISTANT_PROFILE: AiChatAssistantProfile = {
   ...DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   displayName: 'Scout',
@@ -390,13 +398,25 @@ const mockAssistantMentionMessage: ExtendedUIMessage = {
   parts: [
     {
       type: 'text',
-      text: `Ask ${ASSISTANT_MENTION} and ${RENAMED_ASSISTANT_MENTION} to review [[record:workspaceMember:${mockedWorkspaceMemberData.id}:Charles Test]].
+      text: `Ask ${ASSISTANT_MENTION} and ${RENAMED_ASSISTANT_MENTION} to review ${MEMBER_MENTION}.
 
 Legacy text: @Ada wrote this.
 
 \`\`\`text
 ${ASSISTANT_MENTION}
-\`\`\``,
+\`\`\`
+
+Write \`${MEMBER_MENTION}\` to mention a member:
+
+- In a code block:
+
+  \`\`\`
+  ${MEMBER_MENTION}
+  \`\`\`
+
+${ESCAPED_MEMBER_MENTION}
+
+${ENCODED_PROTECTED_CHAT_REFERENCE_MARKER}${ESCAPED_MEMBER_MENTION}`,
     },
   ],
   metadata: {
@@ -596,6 +616,7 @@ export const AssistantMentions: Story = {
 
     await waitFor(() => expect(canvas.getAllByText('@Scout')).toHaveLength(2));
     await expect(canvas.getByText('Charles Test')).toBeVisible();
+    await expect(canvas.getAllByText(MEMBER_MENTION)).toHaveLength(3);
     await expect(
       canvas.getByText('Legacy text: @Ada wrote this.'),
     ).toBeVisible();

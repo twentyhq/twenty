@@ -6,6 +6,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
@@ -20,6 +21,7 @@ import { ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME } from 'src/database/com
 import { ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-workflow-visibility-upgrade-command-name.constant';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'workflow', schema: 'core' })
@@ -96,6 +98,13 @@ export class WorkflowEntity extends SyncableEntity {
     foreignKeyConstraintName: 'FK_WORKFLOW_CREATED_BY_USER_WORKSPACE',
   })
   createdBy: Relation<UserWorkspaceEntity> | null;
+
+  @OneToMany(
+    () => NavigationMenuItemEntity,
+    (navigationMenuItem: NavigationMenuItemEntity) =>
+      navigationMenuItem.workflow,
+  )
+  navigationMenuItems: Relation<NavigationMenuItemEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

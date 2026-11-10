@@ -5,15 +5,22 @@ import { recordShowPageWidgetHeaderCommandMenuItemsState } from '@/command-menu-
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordShowCommandMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  const contextStoreCurrentCoreObjectName = useAtomComponentStateValue(
+    contextStoreCurrentCoreObjectNameComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
@@ -44,23 +51,25 @@ export const RecordShowCommandMenu = () => {
 
   return (
     <>
-      {hasSelectedRecord && contextStoreCurrentObjectMetadataItemId && (
-        <>
-          <CommandMenuContextProvider
-            displayType="button"
-            containerType={CommandMenuItemContainerType.ShowPageHeader}
-            isInPreviewMode={isLayoutCustomizationModeEnabled}
-          >
-            <PinnedCommandMenuItemButtons
-              hiddenEngineComponentKey={replacedEngineComponentKey}
+      {hasSelectedRecord &&
+        (isDefined(contextStoreCurrentObjectMetadataItemId) ||
+          isDefined(contextStoreCurrentCoreObjectName)) && (
+          <>
+            <CommandMenuContextProvider
+              displayType="button"
+              containerType={CommandMenuItemContainerType.ShowPageHeader}
+              isInPreviewMode={isLayoutCustomizationModeEnabled}
+            >
+              <PinnedCommandMenuItemButtons
+                hiddenEngineComponentKey={replacedEngineComponentKey}
+              />
+            </CommandMenuContextProvider>
+            <WidgetCommandMenuItemButtons
+              commandMenuItems={widgetCommandMenuItems}
             />
-          </CommandMenuContextProvider>
-          <WidgetCommandMenuItemButtons
-            commandMenuItems={widgetCommandMenuItems}
-          />
-          <CommandMenuItemEditButton />
-        </>
-      )}
+            <CommandMenuItemEditButton />
+          </>
+        )}
     </>
   );
 };
