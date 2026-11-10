@@ -12,7 +12,13 @@ export const resolvePermissionsRowLevelPermissionSqlCondition = ({
   request,
   rlsRuleFilter,
 }: {
-  request: PermissionsRowAccessSqlRequest;
+  request: Pick<
+    PermissionsRowAccessSqlRequest,
+    | 'tableAlias'
+    | 'callerAccessGroupCompactIds'
+    | 'flatObjectMetadata'
+    | 'metadataMaps'
+  >;
   rlsRuleFilter: RecordGqlOperationFilter;
 }): SqlCondition | undefined => {
   if (isDefined(request.callerAccessGroupCompactIds)) {

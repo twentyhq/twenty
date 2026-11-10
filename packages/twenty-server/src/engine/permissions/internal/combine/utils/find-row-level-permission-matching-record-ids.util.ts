@@ -9,7 +9,10 @@ export const findRowLevelPermissionMatchingRecordIds = async ({
   request,
   rlsRuleFilter,
 }: {
-  request: PermissionsRowAccessEvaluationRequest;
+  request: Pick<
+    PermissionsRowAccessEvaluationRequest,
+    'records' | 'flatObjectMetadata' | 'metadataMaps' | 'context'
+  >;
   rlsRuleFilter: RecordGqlOperationFilter;
 }): Promise<string[]> => {
   const matchingRecords = await findRecordsMatchingRecordFilter({
