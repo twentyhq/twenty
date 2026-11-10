@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import {
-  type QueueJobMaxRate,
+  type QueueJobLimiter,
   type QueueJobScope,
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
@@ -316,7 +316,7 @@ type ScenarioJobScope = {
 type EnqueueInput = { label: string } & ScenarioJobScope &
   Pick<
     QueueJobSettings,
-    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'maxRate'
+    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'limiter'
   >;
 
 const buildScenarioJobScope = ({
@@ -335,8 +335,8 @@ const buildScenarioJobScope = ({
 };
 
 export const createFairnessHarness = async ({
-  isGroupMaxRateEnabled = false,
-}: { isGroupMaxRateEnabled?: boolean } = {}) => {
+  isGroupLimiterEnabled = false,
+}: { isGroupLimiterEnabled?: boolean } = {}) => {
   const redis: Redis = new RedisMock();
 
   await redis.flushall();
@@ -351,8 +351,8 @@ export const createFairnessHarness = async ({
     metricsService as never,
     {
       get: (key: string) =>
-        key === 'IS_WORKER_GROUP_MAX_RATE_ENABLED'
-          ? isGroupMaxRateEnabled
+        key === 'IS_WORKER_GROUP_LIMITER_ENABLED'
+          ? isGroupLimiterEnabled
           : undefined,
     } as never,
     { emit: jest.fn() } as never,
@@ -452,7 +452,7 @@ export const createFairnessHarness = async ({
       labels,
       workspaceId,
       applicationUniversalIdentifier,
-      maxRate,
+      limiter,
       delay,
       jobIds,
     }: {
@@ -460,7 +460,7 @@ export const createFairnessHarness = async ({
       jobIds?: string[];
       workspaceId: string;
       applicationUniversalIdentifier?: string;
-      maxRate?: QueueJobMaxRate;
+      limiter?: QueueJobLimiter;
       delay?: number;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
@@ -469,7 +469,7 @@ export const createFairnessHarness = async ({
         labels.map((label, index) => ({
           data: { label, workspaceId },
           jobId: jobIds?.[index],
-          maxRate,
+          limiter,
           ...buildScenarioJobScope({
             workspaceId,
             applicationUniversalIdentifier,

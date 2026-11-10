@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { GroupRatePacer } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type MessageQueueMaxRate } from 'src/engine/core-modules/message-queue/types/message-queue-max-rate.type';
+import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/types/message-queue-limiter.type';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const QUEUE = MessageQueue.logicFunctionQueue;
@@ -16,16 +16,16 @@ const APPLICATION_LIMITS = {
   application: { max: 3, durationMs: 3_000 },
 };
 
-const withMaxRates = (
-  limits: Record<string, MessageQueueMaxRate>,
+const withLimiters = (
+  limits: Record<string, MessageQueueLimiter>,
   requests: { groupKeys: string[]; jobCount: number }[],
 ) =>
   requests.map(({ groupKeys, jobCount }) => ({
     jobCount,
-    maxRates: groupKeys.flatMap((groupKey) => {
-      const maxRate = limits[groupKey.split(':')[0]];
+    limiters: groupKeys.flatMap((groupKey) => {
+      const limiter = limits[groupKey.split(':')[0]];
 
-      return isDefined(maxRate) ? [{ groupKey, maxRate }] : [];
+      return isDefined(limiter) ? [{ groupKey, limiter }] : [];
     }),
   }));
 
@@ -83,7 +83,7 @@ describe('GroupRatePacer', () => {
 
     const delays = await pacer.computeDelays({
       queueName: QUEUE,
-      requests: withMaxRates(APPLICATION_LIMITS, [
+      requests: withLimiters(APPLICATION_LIMITS, [
         { groupKeys: ['workspace:A'], jobCount: 2 },
       ]),
     });
@@ -97,7 +97,7 @@ describe('GroupRatePacer', () => {
 
     const delays = await pacer.computeDelays({
       queueName: QUEUE,
-      requests: withMaxRates(APPLICATION_LIMITS, [
+      requests: withLimiters(APPLICATION_LIMITS, [
         { groupKeys: ['application:H'], jobCount: 5 },
       ]),
     });
@@ -109,7 +109,7 @@ describe('GroupRatePacer', () => {
     const { pacer } = await createPacer();
     const request = {
       queueName: QUEUE,
-      requests: withMaxRates(APPLICATION_LIMITS, [
+      requests: withLimiters(APPLICATION_LIMITS, [
         { groupKeys: ['application:H'], jobCount: 3 },
       ]),
     };
@@ -123,7 +123,7 @@ describe('GroupRatePacer', () => {
     const { pacer } = await createPacer();
     const request = {
       queueName: QUEUE,
-      requests: withMaxRates(APPLICATION_LIMITS, [
+      requests: withLimiters(APPLICATION_LIMITS, [
         { groupKeys: ['application:H'], jobCount: 3 },
       ]),
     };
@@ -143,14 +143,14 @@ describe('GroupRatePacer', () => {
 
     await pacer.computeDelays({
       queueName: QUEUE,
-      requests: withMaxRates(groupRateLimits, [
+      requests: withLimiters(groupRateLimits, [
         { groupKeys: ['application:H'], jobCount: 1 },
       ]),
     });
 
     const delays = await pacer.computeDelays({
       queueName: QUEUE,
-      requests: withMaxRates(groupRateLimits, [
+      requests: withLimiters(groupRateLimits, [
         { groupKeys: ['workspace:A', 'application:H'], jobCount: 1 },
         { groupKeys: ['workspace:A', 'application:Q'], jobCount: 1 },
       ]),
@@ -164,7 +164,7 @@ describe('GroupRatePacer', () => {
 
     await pacer.computeDelays({
       queueName: QUEUE,
-      requests: withMaxRates(APPLICATION_LIMITS, [
+      requests: withLimiters(APPLICATION_LIMITS, [
         { groupKeys: ['application:H'], jobCount: 5 },
       ]),
     });
@@ -182,7 +182,7 @@ describe('GroupRatePacer', () => {
 
     const delays = await pacer.computeDelays({
       queueName: QUEUE,
-      requests: withMaxRates(APPLICATION_LIMITS, [
+      requests: withLimiters(APPLICATION_LIMITS, [
         { groupKeys: ['application:H'], jobCount: 1 },
       ]),
     });

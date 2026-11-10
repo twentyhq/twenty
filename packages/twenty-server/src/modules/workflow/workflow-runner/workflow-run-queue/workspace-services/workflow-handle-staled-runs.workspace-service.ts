@@ -67,9 +67,9 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           WorkflowRunWorkspaceEntity,
         );
 
-      // maxRate pacing can hold a run past the threshold, so only runs without a job are lost.
+      // limiter pacing can hold a run past the threshold, so only runs without a job are lost.
       const lostRunIds = this.twentyConfigService.get(
-        'IS_WORKER_GROUP_MAX_RATE_ENABLED',
+        'IS_WORKER_GROUP_LIMITER_ENABLED',
       )
         ? await this.filterRunsWithoutInFlightJob(staledRunIds)
         : staledRunIds;

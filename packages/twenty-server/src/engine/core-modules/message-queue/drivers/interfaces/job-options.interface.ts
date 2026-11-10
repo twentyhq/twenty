@@ -1,4 +1,4 @@
-import { type MessageQueueMaxRate } from 'src/engine/core-modules/message-queue/types/message-queue-max-rate.type';
+import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/types/message-queue-limiter.type';
 
 export type QueueJobBackoffOptions = {
   strategy: 'fixed' | 'exponential';
@@ -42,7 +42,7 @@ export type QueueJobScope =
   | WorkspaceQueueJobScope
   | ApplicationQueueJobScope;
 
-export type QueueJobMaxRate = { key: string } & MessageQueueMaxRate;
+export type QueueJobLimiter = { key: string } & MessageQueueLimiter;
 
 export type QueueJobSettings = {
   id?: string;
@@ -54,7 +54,7 @@ export type QueueJobSettings = {
   deduplication?: QueueJobDeduplicationOptions;
   broadcastTo?: QueueJobRecipient;
   groupKeys?: string[];
-  maxRate?: QueueJobMaxRate;
+  limiter?: QueueJobLimiter;
 };
 
 export type QueueJobOptions = QueueJobSettings & QueueJobScope;

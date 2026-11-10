@@ -5,17 +5,17 @@ import { type RedisClient } from 'bullmq';
 import { GROUP_RATE_PACE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pace-script.constant';
 import { runRedisScript } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type MessageQueueMaxRate } from 'src/engine/core-modules/message-queue/types/message-queue-max-rate.type';
+import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/types/message-queue-limiter.type';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
-export type GroupMaxRate = {
+export type GroupLimiter = {
   groupKey: string;
-  maxRate: MessageQueueMaxRate;
+  limiter: MessageQueueLimiter;
 };
 
 export type GroupRatePaceRequest = {
-  maxRates: GroupMaxRate[];
+  limiters: GroupLimiter[];
   jobCount: number;
 };
 
@@ -45,19 +45,19 @@ export class GroupRatePacer {
     requests: GroupRatePaceRequest[];
     notBeforeDelayMs?: number;
   }): Promise<number[][] | undefined> {
-    const pacedKeysByRequest = requests.map(({ maxRates }) =>
-      maxRates.flatMap(({ groupKey, maxRate }): PacedGroupKey[] => {
-        if (maxRate.max <= 0) {
+    const pacedKeysByRequest = requests.map(({ limiters }) =>
+      limiters.flatMap(({ groupKey, limiter }): PacedGroupKey[] => {
+        if (limiter.max <= 0) {
           return [];
         }
 
-        const intervalMs = maxRate.durationMs / maxRate.max;
+        const intervalMs = limiter.durationMs / limiter.max;
 
         return [
           {
             groupKey,
             intervalMs,
-            toleranceMs: Math.max(0, maxRate.max - 1) * intervalMs,
+            toleranceMs: Math.max(0, limiter.max - 1) * intervalMs,
           },
         ];
       }),

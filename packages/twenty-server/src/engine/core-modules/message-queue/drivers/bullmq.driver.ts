@@ -119,8 +119,8 @@ export class BullMQDriver
         this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
-      isGroupMaxRateEnabled: () =>
-        twentyConfigService.get('IS_WORKER_GROUP_MAX_RATE_ENABLED'),
+      isGroupLimiterEnabled: () =>
+        twentyConfigService.get('IS_WORKER_GROUP_LIMITER_ENABLED'),
     });
     this.jobSizeLimiter = new JobSizeLimiter(
       metricsService,
@@ -675,7 +675,7 @@ export class BullMQDriver
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: [options],
-      maxRates: [options.maxRate],
+      limiters: [options.limiter],
       additionalGroupKeys: options.groupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
@@ -914,7 +914,7 @@ export class BullMQDriver
 
   private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
     return this.queueMap[queueName].getRanges(
-      this.fairQueueScheduler.isGroupMaxRateEnabled()
+      this.fairQueueScheduler.isGroupLimiterEnabled()
         ? ['waiting', 'paused', 'prioritized', 'delayed']
         : ['waiting', 'paused', 'prioritized'],
       0,
@@ -981,11 +981,11 @@ export class BullMQDriver
     });
 
     // BullMQ ignores a re-added job id, so it must not take a pacing slot.
-    const existingPacedJobIds = this.fairQueueScheduler.isGroupMaxRateEnabled()
+    const existingPacedJobIds = this.fairQueueScheduler.isGroupLimiterEnabled()
       ? await this.findExistingJobIds({
           queueName,
           jobIds: jobsToAdd.flatMap((job) =>
-            isDefined(job.jobId) && isDefined(job.maxRate ?? options?.maxRate)
+            isDefined(job.jobId) && isDefined(job.limiter ?? options?.limiter)
               ? [job.jobId]
               : [],
           ),
@@ -995,10 +995,10 @@ export class BullMQDriver
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: jobsToAdd,
-      maxRates: jobsToAdd.map((job) =>
+      limiters: jobsToAdd.map((job) =>
         isDefined(job.jobId) && existingPacedJobIds.has(job.jobId)
           ? undefined
-          : (job.maxRate ?? options?.maxRate),
+          : (job.limiter ?? options?.limiter),
       ),
       additionalGroupKeys: options?.groupKeys,
       delay: options?.delay,

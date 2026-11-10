@@ -9,18 +9,18 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 
 const WORKSPACE_ID = 'workspace-id';
 
-const MAX_RATE = { max: 100, durationMs: 60_000 };
+const LIMITER = { max: 100, durationMs: 60_000 };
 
 const WORKFLOWS = {
   'workflow-a': {
     id: 'workflow-a',
     applicationId: 'application-a',
-    maxRate: MAX_RATE,
+    jobConfig: { limiter: LIMITER },
   },
   'workflow-b': {
     id: 'workflow-b',
     applicationId: 'application-b',
-    maxRate: MAX_RATE,
+    jobConfig: { limiter: LIMITER },
   },
 };
 
@@ -127,7 +127,7 @@ const buildService = (triggerType: WorkflowTriggerType) => {
 };
 
 describe('CoreWorkflowRunnerService', () => {
-  it('scopes the run job of each workflow to the application owning it, with the maxRate of the workflow', async () => {
+  it('scopes the run job of each workflow to the application owning it, with the limiter of the workflow', async () => {
     const { runBothWorkflows, messageQueueService } = buildService(
       WorkflowTriggerType.MANUAL,
     );
@@ -143,7 +143,7 @@ describe('CoreWorkflowRunnerService', () => {
           doNotCheckDuplicatesBasedOnPrefix: true,
           workspaceId: WORKSPACE_ID,
           applicationUniversalIdentifier: 'application-a-universal-id',
-          maxRate: { key: 'workflow:workflow-a', ...MAX_RATE },
+          limiter: { key: 'workflow:workflow-a', ...LIMITER },
         },
       ],
       [
@@ -154,7 +154,7 @@ describe('CoreWorkflowRunnerService', () => {
           doNotCheckDuplicatesBasedOnPrefix: true,
           workspaceId: WORKSPACE_ID,
           applicationUniversalIdentifier: 'application-b-universal-id',
-          maxRate: { key: 'workflow:workflow-b', ...MAX_RATE },
+          limiter: { key: 'workflow:workflow-b', ...LIMITER },
         },
       ],
     ]);
