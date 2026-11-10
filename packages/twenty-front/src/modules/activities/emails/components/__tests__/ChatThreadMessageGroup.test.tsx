@@ -61,6 +61,25 @@ describe('ChatThreadMessageGroup', () => {
     expect(screen.getByText('See you tomorrow')).toBeInTheDocument();
   });
 
+  it('shows the time of outgoing messages only', () => {
+    const message = buildMessage({ receivedAt: '2026-11-07T10:07:00.000Z' });
+    const { rerender } = renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{ id: 'group-id', isOutgoing: true, messages: [message] }}
+      />,
+    );
+
+    expect(screen.getByText(/10:07/)).toBeInTheDocument();
+
+    rerender(
+      <ChatThreadMessageGroup
+        group={{ id: 'group-id', isOutgoing: false, messages: [message] }}
+      />,
+    );
+
+    expect(screen.queryByText(/10:07/)).not.toBeInTheDocument();
+  });
+
   it('renders image, video and audio attachments as media', () => {
     renderWithProviders(
       <ChatThreadMessageGroup
