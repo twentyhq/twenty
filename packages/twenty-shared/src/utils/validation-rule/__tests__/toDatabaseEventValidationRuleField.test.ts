@@ -43,14 +43,18 @@ describe('toDatabaseEventValidationRuleField', () => {
     ).toBeUndefined();
   });
 
-  it('leaves out a morph relation, whose join columns are per target', () => {
+  it('reads a morph target through its own join column', () => {
     expect(
       toDatabaseEventValidationRuleField({
-        name: 'target',
+        name: 'targetCompany',
         type: FieldMetadataType.MORPH_RELATION,
-        universalIdentifier: 'target-id',
+        universalIdentifier: 'target-company-id',
         relationType: RelationType.MANY_TO_ONE,
       }),
-    ).toBeUndefined();
+    ).toEqual({
+      name: 'targetCompanyId',
+      type: FieldMetadataType.UUID,
+      universalIdentifier: 'target-company-id',
+    });
   });
 });
