@@ -197,7 +197,6 @@ export const AiChatAssistantMessageRenderer = ({
     !hasError &&
     !shouldHideThinkingSteps &&
     !hasSucceededCompleteWorkspaceSetupToolPart;
-  // An empty step group the first step lands in, so its row updates in place instead of replacing a loader
   const renderItems: AssistantMessageRenderItem[] = isAwaitingFirstStep
     ? [{ type: 'thinking-steps', parts: [] }]
     : visibleRenderItems;

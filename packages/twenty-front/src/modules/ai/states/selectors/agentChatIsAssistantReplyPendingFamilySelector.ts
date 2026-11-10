@@ -4,7 +4,6 @@ import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatI
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-// The send mutation returns once the server has decided whether the assistant replies
 export const agentChatIsAssistantReplyPendingFamilySelector =
   createAtomFamilySelector<boolean, string | null>({
     key: 'agentChatIsAssistantReplyPendingFamilySelector',
