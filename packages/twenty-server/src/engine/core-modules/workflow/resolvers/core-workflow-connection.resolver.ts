@@ -11,7 +11,6 @@ export class CoreWorkflowConnectionResolver {
     private readonly coreWorkflowRunSummaryService: CoreWorkflowRunSummaryService,
   ) {}
 
-  // Resolved per page so only the rows a client loads are summarized, in one query
   @ResolveField(() => [CoreWorkflowRunSummaryDTO])
   async runSummaries(
     @Parent() connection: CoreWorkflowConnectionDTO,
