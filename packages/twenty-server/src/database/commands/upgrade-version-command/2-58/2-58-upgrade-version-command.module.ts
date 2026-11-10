@@ -5,6 +5,7 @@ import { DropCodeStepLogicFunctionsCommand } from 'src/database/commands/upgrade
 import { AddCoreWorkflowMetadataCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794269047171-add-core-workflow-metadata.command';
 import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794298481339-drop-workspace-workflow-object.command';
 import { RecomputeFieldMetadataMapsForRowLevelPermissionPredicatesCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794335924429-recompute-field-metadata-maps-for-row-level-permission-predicates.command';
+import { BackfillRowLevelPermissionRulesCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794337540466-backfill-row-level-permission-rules.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -21,6 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddCoreWorkflowMetadataCommand,
     DropWorkspaceWorkflowObjectCommand,
     RecomputeFieldMetadataMapsForRowLevelPermissionPredicatesCommand,
+    BackfillRowLevelPermissionRulesCommand,
   ],
 })
 export class V2_58_UpgradeVersionCommandModule {}
