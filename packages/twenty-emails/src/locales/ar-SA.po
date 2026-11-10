@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): يرجى التحقق من هذا �
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "تم استخدام رمز احتياطي لتسجيل الدخول إلى {workspaceDisplayName}. الرموز الاحتياطية المتبقية: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "بعد ذلك، سيتم حذف مساحة العمل وكل بيانا�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "تم استخدام رمز احتياطي"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "مرحبًا {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "إذا لم تكن أنت، فغيّر كلمة المرور وأنشئ رموزًا احتياطية جديدة ضمن الإعدادات، الملف الشخصي، المصادقة الثنائية."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "إذا لم تكن أنت، فغيّر كلمة المرور وأنشئ رموزًا احتياطية جديدة."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "إدارة الاشتراك"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "تم إنشاء رموز احتياطية جديدة"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "تم إنشاء رموز احتياطية جديدة لحسابك في {workspaceDisplayName}. لم تعد رموزك الاحتياطية السابقة تعمل."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "شكراً لتسجيلك لحساب على Twenty! قبل أن نبدأ
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "تمت إزالة تطبيق المصادقة لحسابك في {workspaceDisplayName} من الإعدادات. لم تعد رموزك الاحتياطية لمساحة العمل هذه تعمل."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "تم إصدار رمز استرداد المصادقة الثنائية"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "تمت إزالة المصادقة الثنائية"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "شعار مساحة العمل"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "يمكنك إنشاء رموز احتياطية جديدة ضمن الإعدادات، الملف الشخصي، المصادقة الثنائية."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
