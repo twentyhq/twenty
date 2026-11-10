@@ -44,7 +44,14 @@ export const keepWorkspaceOwnedProperties = <
     const keptProperties = Object.fromEntries(
       workspaceOwnedProperties
         .map((property) => [property, fromFlatEntity[property]])
-        .filter(([, value]) => value !== undefined),
+        .filter(
+          ([property, value]) =>
+            isDefined(value) ||
+            (metadataName === 'view' &&
+              (property === 'createdByUserWorkspaceId' ||
+                property === 'ownerUserWorkspaceId') &&
+              value === null),
+        ),
     );
 
     byUniversalIdentifier[universalIdentifier] = {

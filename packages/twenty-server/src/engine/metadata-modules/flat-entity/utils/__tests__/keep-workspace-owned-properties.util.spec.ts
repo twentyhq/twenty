@@ -134,6 +134,34 @@ describe('keepWorkspaceOwnedProperties', () => {
     );
   });
 
+  it('should keep the shipped icon when an agent chat channel has none', () => {
+    const shippedChannel = {
+      universalIdentifier: 'channel-universal-identifier',
+      icon: 'IconMessages',
+    };
+
+    const result = keepWorkspaceOwnedProperties({
+      metadataName: 'agentChatChannel',
+      fromFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'channel-universal-identifier': {
+            ...shippedChannel,
+            icon: null,
+          },
+        },
+      },
+      toFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'channel-universal-identifier': shippedChannel,
+        },
+      },
+    });
+
+    expect(
+      result.byUniversalIdentifier['channel-universal-identifier'],
+    ).toEqual(shippedChannel);
+  });
+
   it('should return the standard entities untouched for a metadata without workspace-owned properties', () => {
     const toFlatEntityMaps = {
       byUniversalIdentifier: {
