@@ -13,10 +13,12 @@ import {
   findValidationRulesReadingField,
   updateValidationRule,
 } from 'test/integration/metadata/suites/validation-rule/utils/validation-rule-api.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const OBJECT_NAME_SINGULAR = 'validationRuleLifecycleGadget';
@@ -167,6 +169,12 @@ describe('Validation rules should follow the fields they read', () => {
       message: 'Add employees',
     });
     const standardFieldRuleId = response.body.data.createValidationRule.id;
+    // Deactivating the field deletes its view fields and reactivating does not bring them back.
+    const standardFieldViewFields: object[] =
+      await globalThis.testDataSource.query(
+        `SELECT * FROM core."viewField" WHERE "fieldMetadataId" = $1`,
+        [standardFieldId],
+      );
 
     try {
       expect(await findValidationRulesReadingField(standardFieldId)).toEqual([
@@ -209,6 +217,22 @@ describe('Validation rules should follow the fields they read', () => {
         },
         gqlFields: 'id',
       });
+      await globalThis.testDataSource.query(
+        `DELETE FROM core."viewField" WHERE "fieldMetadataId" = $1`,
+        [standardFieldId],
+      );
+      await globalThis.testDataSource.query(
+        `INSERT INTO core."viewField" SELECT * FROM jsonb_populate_recordset(NULL::core."viewField", $1::jsonb)`,
+        [JSON.stringify(standardFieldViewFields)],
+      );
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'flatViewFieldMaps',
+        'flatViewMaps',
+        'flatFieldMetadataMaps',
+        'flatFieldMetadataMapsOrm',
+      ]);
       await deleteValidationRule(standardFieldRuleId);
     }
   }, 60000);
