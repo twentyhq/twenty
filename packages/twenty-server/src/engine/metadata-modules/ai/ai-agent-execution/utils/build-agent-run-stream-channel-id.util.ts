@@ -1,6 +1,6 @@
 import { v5 } from 'uuid';
 
-import { AGENT_RUN_STREAM_CHANNEL_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-stream-channel-id-namespace.const';
+import { AGENT_RUN_STREAM_CHANNEL_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-stream-channel-id-namespace.constant';
 import { type AgentRunStreamOwner } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-stream-owner.type';
 
 // a token without a member can never stand for one, so its channels are named apart from every member's
