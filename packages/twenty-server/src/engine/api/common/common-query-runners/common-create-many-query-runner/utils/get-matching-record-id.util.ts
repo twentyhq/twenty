@@ -10,43 +10,59 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
+const findMostRecentlyDeletedRecord = (
+  records: PartialObjectRecordWithId[],
+): PartialObjectRecordWithId | undefined =>
+  [...records].sort(
+    (recordA, recordB) =>
+      new Date(recordB.deletedAt ?? 0).getTime() -
+      new Date(recordA.deletedAt ?? 0).getTime(),
+  )[0];
+
 export const getMatchingRecordId = (
   record: Partial<ObjectRecord>,
   conflictingFieldGroups: ConflictingFieldGroup[],
   existingRecords: PartialObjectRecordWithId[],
 ): string | undefined => {
-  const matchingRecordIds = conflictingFieldGroups.reduce<string[]>(
-    (acc, fieldGroup) => {
-      const requestFieldValues = fieldGroup.conflictingProperties.map(
-        (conflictingProperty) => ({
-          conflictingProperty,
-          value: getValueFromPath(record, conflictingProperty.fullPath),
-        }),
-      );
+  const matchingRecordIds: string[] = [];
+  const restorableRecords: PartialObjectRecordWithId[] = [];
 
-      if (requestFieldValues.some(({ value }) => !isDefined(value))) {
-        return acc;
-      }
+  for (const fieldGroup of conflictingFieldGroups) {
+    const requestFieldValues = fieldGroup.conflictingProperties.map(
+      (conflictingProperty) => ({
+        conflictingProperty,
+        value: getValueFromPath(record, conflictingProperty.fullPath),
+      }),
+    );
 
-      const matchingRecord = existingRecords.find((existingRecord) =>
-        requestFieldValues.every(({ conflictingProperty, value }) => {
-          const existingFieldValue = getValueFromPath(
-            existingRecord,
-            conflictingProperty.fullPath,
-          );
+    if (requestFieldValues.some(({ value }) => !isDefined(value))) {
+      continue;
+    }
 
-          return isDefined(existingFieldValue) && existingFieldValue === value;
-        }),
-      );
+    const matchingRecords = existingRecords.filter((existingRecord) =>
+      requestFieldValues.every(({ conflictingProperty, value }) => {
+        const existingFieldValue = getValueFromPath(
+          existingRecord,
+          conflictingProperty.fullPath,
+        );
 
-      if (isDefined(matchingRecord)) {
-        acc.push(matchingRecord.id);
-      }
+        return isDefined(existingFieldValue) && existingFieldValue === value;
+      }),
+    );
 
-      return acc;
-    },
-    [],
-  );
+    const matchingRecord =
+      fieldGroup.ignoresDeletedRecords === true
+        ? matchingRecords.find(
+            (existingRecord) => !isDefined(existingRecord.deletedAt),
+          )
+        : matchingRecords[0];
+
+    if (isDefined(matchingRecord)) {
+      matchingRecordIds.push(matchingRecord.id);
+    } else {
+      restorableRecords.push(...matchingRecords);
+    }
+  }
 
   if ([...new Set(matchingRecordIds)].length > 1) {
     const conflictingFieldsValues = conflictingFieldGroups
@@ -82,5 +98,7 @@ export const getMatchingRecordId = (
     );
   }
 
-  return matchingRecordIds[0];
+  return (
+    matchingRecordIds[0] ?? findMostRecentlyDeletedRecord(restorableRecords)?.id
+  );
 };

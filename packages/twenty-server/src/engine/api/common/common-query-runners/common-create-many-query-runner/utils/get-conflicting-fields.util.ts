@@ -19,6 +19,7 @@ import {
   type FlatIndexMetadata,
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE } from 'src/engine/metadata-modules/index-metadata/constants/non-deleted-records-index-where-clause.constant';
 
 const computeConflictingPropertiesForIndexField = ({
   flatFieldMetadata,
@@ -162,9 +163,14 @@ export const getConflictingFields = (
       continue;
     }
 
+    const ignoresDeletedRecords =
+      flatIndexMetadata.indexWhereClause ===
+      NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE;
+
     conflictingFieldGroups.push({
       baseFields: indexConflictingFields.baseFields,
       conflictingProperties: indexConflictingFields.conflictingProperties,
+      ...(ignoresDeletedRecords ? { ignoresDeletedRecords } : {}),
     });
   }
 

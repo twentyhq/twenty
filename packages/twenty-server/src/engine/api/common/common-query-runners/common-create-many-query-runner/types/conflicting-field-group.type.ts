@@ -8,4 +8,5 @@ export type ConflictingProperty = {
 export type ConflictingFieldGroup = {
   baseFields: string[];
   conflictingProperties: ConflictingProperty[];
+  ignoresDeletedRecords?: boolean;
 };

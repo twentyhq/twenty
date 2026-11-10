@@ -1,4 +1,5 @@
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE } from 'src/engine/metadata-modules/index-metadata/constants/non-deleted-records-index-where-clause.constant';
 import { IndexType } from 'twenty-shared/types';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import {
@@ -36,6 +37,7 @@ export const buildCompanyStandardFlatIndexMetadatas = ({
       indexName: 'domainNameUniqueIndex',
       relatedFieldNames: ['domainName'],
       isUnique: true,
+      indexWhereClause: NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE,
       hasDeterministicUniversalIdentifier: true,
     },
     standardObjectMetadataRelatedEntityIds,

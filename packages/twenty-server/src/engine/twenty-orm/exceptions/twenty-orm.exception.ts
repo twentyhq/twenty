@@ -103,6 +103,8 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
 };
 
 export class TwentyOrmException extends CustomException<TwentyOrmExceptionCode> {
+  conflictingRecord?: { id: string; objectNameSingular: string };
+
   constructor(
     message: string,
     code: TwentyOrmExceptionCode,

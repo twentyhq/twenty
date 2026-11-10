@@ -11,6 +11,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
+import { NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE } from 'src/engine/metadata-modules/index-metadata/constants/non-deleted-records-index-where-clause.constant';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
@@ -30,7 +31,7 @@ const computeSystemUniqueIndexUniversalIdentifier = (
     } as UniversalFlatObjectMetadata,
     orderedIndexColumnNames: [UNIQUE_FIELD_NAME],
     isUnique: true,
-    indexWhereClause: null,
+    indexWhereClause: NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE,
   });
 
   return getIndexUniversalIdentifier({

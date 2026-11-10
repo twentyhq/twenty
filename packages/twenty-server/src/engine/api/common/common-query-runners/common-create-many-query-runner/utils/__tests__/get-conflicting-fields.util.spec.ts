@@ -46,11 +46,13 @@ describe('getConflictingFields', () => {
     name,
     isUnique,
     fields,
+    indexWhereClause = null,
   }: {
     id: string;
     name: string;
     isUnique: boolean;
     fields: MockIndexField[];
+    indexWhereClause?: string | null;
   }): FlatIndexMetadata =>
     getFlatIndexMetadataMock({
       id,
@@ -61,7 +63,7 @@ describe('getConflictingFields', () => {
       applicationUniversalIdentifier: 'application-id',
       workspaceId,
       isUnique,
-      indexWhereClause: null,
+      indexWhereClause,
       flatIndexFieldMetadatas: fields.map((field, index) => ({
         id: `${id}-field-${index}`,
         universalIdentifier: `${id}-field-${index}`,
@@ -386,6 +388,37 @@ describe('getConflictingFields', () => {
         },
       ]),
     );
+  });
+
+  it('flags the conflict of a unique index limited to non-deleted records', () => {
+    const fields = [idField, uniqueTextField];
+    const index = createMockIndex({
+      id: 'unique-text-index',
+      name: 'uniqueTextUniqueIndex',
+      isUnique: true,
+      fields: [{ fieldMetadataId: uniqueTextField.id }],
+      indexWhereClause: '"deletedAt" IS NULL',
+    });
+
+    const result = getConflictingFields(
+      buildFlatObjectMetadata(fields, [index.id]),
+      buildFlatFieldMetadataMaps(fields),
+      buildFlatIndexMaps([index]),
+    );
+
+    expect(result).toEqual([
+      {
+        baseFields: ['id'],
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
+      },
+      {
+        baseFields: ['uniqueText'],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
+        ignoresDeletedRecords: true,
+      },
+    ]);
   });
 
   it('resolves relation fields to their join column in a composite unique index', () => {

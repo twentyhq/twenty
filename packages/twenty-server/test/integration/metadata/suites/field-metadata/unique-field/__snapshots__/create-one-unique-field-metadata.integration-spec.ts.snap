@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`failing createOne unique field metadata should fail for composite type without unique subfields (FULL_NAME) 1`] = `
 {
@@ -15,7 +15,7 @@ exports[`failing createOne unique field metadata should fail for composite type 
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "IDX_UNIQUE_98d410e804d758f9bcceb154dde",
+            "name": "IDX_UNIQUE_bc547a6d21781de850d61c9e279",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "index",
@@ -51,7 +51,7 @@ exports[`failing createOne unique field metadata should fail when field has cust
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "IDX_UNIQUE_a1b02809c523cdc853d35fbc413",
+            "name": "IDX_UNIQUE_6aa900db1d7e4d9886689a0bedc",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "index",

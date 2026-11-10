@@ -24,6 +24,10 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-mess
 import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-entry.util';
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
+import {
+  describeDuplicateEntry,
+  type DuplicateEntryDescription,
+} from 'src/engine/api/common/common-query-runners/utils/describe-duplicate-entry.util';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
@@ -64,10 +68,12 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { isDuplicateEntryError } from 'src/engine/twenty-orm/utils/is-duplicate-entry-error.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
@@ -189,6 +195,69 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
+  private async describeDuplicateEntryError(
+    error: unknown,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void> {
+    if (!isDuplicateEntryError(error)) {
+      return;
+    }
+
+    const flatIndexMaps =
+      queryRunnerContext.flatIndexMaps ??
+      (
+        await this.workspaceCacheService.getOrRecompute(
+          queryRunnerContext.authContext.workspace.id,
+          ['flatIndexMaps'],
+        )
+      ).flatIndexMaps;
+
+    const duplicateEntryDescription = describeDuplicateEntry({
+      duplicateEntryCause: 'cause' in error ? error.cause : undefined,
+      isRestore:
+        this.operationName === CommonQueryNames.RESTORE_ONE ||
+        this.operationName === CommonQueryNames.RESTORE_MANY,
+      flatIndexMaps,
+      flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(duplicateEntryDescription)) {
+      return;
+    }
+
+    error.userFriendlyMessage = duplicateEntryDescription.userFriendlyMessage;
+    error.conflictingRecord = await this.findConflictingRecord(
+      duplicateEntryDescription,
+    );
+  }
+
+  private async findConflictingRecord({
+    flatObjectMetadata,
+    duplicateColumn,
+  }: DuplicateEntryDescription): Promise<
+    TwentyOrmException['conflictingRecord']
+  > {
+    if (!isDefined(duplicateColumn)) {
+      return undefined;
+    }
+
+    const conflictingRecord = await this.workspaceOrmManager
+      .getRepository<ObjectRecord>(flatObjectMetadata.nameSingular)
+      .createQueryBuilder(flatObjectMetadata.nameSingular)
+      .where({ [duplicateColumn.name]: duplicateColumn.value })
+      .setFindOptions({ select: { id: true } })
+      .getOne<ObjectRecord>()
+      .catch(() => undefined);
+
+    return isDefined(conflictingRecord)
+      ? {
+          id: conflictingRecord.id,
+          objectNameSingular: flatObjectMetadata.nameSingular,
+        }
+      : undefined;
+  }
+
   protected abstract run(
     args: CommonExtendedInput<Args>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
@@ -299,7 +368,11 @@ export abstract class CommonBaseQueryRunnerService<
         ...extendedQueryRunnerContext,
         commonQueryParser,
       },
-    );
+    ).catch(async (error: unknown) => {
+      await this.describeDuplicateEntryError(error, queryRunnerContext);
+
+      throw error;
+    });
 
     return this.enrichResultsWithGettersAndHooks({
       results,

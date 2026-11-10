@@ -207,4 +207,70 @@ describe('getMatchingRecordId', () => {
       );
     }
   });
+
+  describe('with unique fields that ignore deleted records', () => {
+    const olderDeletedRecord: PartialObjectRecordWithId = {
+      id: 'olderDeletedRecordId',
+      uniqueText: 'alpha',
+      deletedAt: '2026-01-01T00:00:00.000Z',
+    };
+    const newerDeletedRecord: PartialObjectRecordWithId = {
+      id: 'newerDeletedRecordId',
+      uniqueText: 'alpha',
+      deletedAt: '2026-02-01T00:00:00.000Z',
+    };
+    const liveRecord: PartialObjectRecordWithId = {
+      id: 'liveRecordId',
+      uniqueText: 'alpha',
+      deletedAt: null,
+    };
+    const otherLiveRecord: PartialObjectRecordWithId = {
+      id: 'otherLiveRecordId',
+      otherUniqueText: 'beta',
+      deletedAt: null,
+    };
+
+    const uniqueTextGroup: ConflictingFieldGroup = {
+      baseFields: ['uniqueText'],
+      conflictingProperties: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
+      ignoresDeletedRecords: true,
+    };
+    const otherUniqueTextGroup: ConflictingFieldGroup = {
+      baseFields: ['otherUniqueText'],
+      conflictingProperties: [
+        { fullPath: 'otherUniqueText', column: 'otherUniqueText' },
+      ],
+      ignoresDeletedRecords: true,
+    };
+
+    it('matches the live record rather than a deleted one holding the same value', () => {
+      const id = getMatchingRecordId(
+        { uniqueText: 'alpha' },
+        [uniqueTextGroup],
+        [olderDeletedRecord, liveRecord],
+      );
+
+      expect(id).toBe('liveRecordId');
+    });
+
+    it('matches the most recently deleted record when no live record holds the value', () => {
+      const id = getMatchingRecordId(
+        { uniqueText: 'alpha' },
+        [uniqueTextGroup],
+        [olderDeletedRecord, newerDeletedRecord],
+      );
+
+      expect(id).toBe('newerDeletedRecordId');
+    });
+
+    it('matches the live record of another unique field rather than a deleted record', () => {
+      const id = getMatchingRecordId(
+        { uniqueText: 'alpha', otherUniqueText: 'beta' },
+        [uniqueTextGroup, otherUniqueTextGroup],
+        [olderDeletedRecord, otherLiveRecord],
+      );
+
+      expect(id).toBe('otherLiveRecordId');
+    });
+  });
 });

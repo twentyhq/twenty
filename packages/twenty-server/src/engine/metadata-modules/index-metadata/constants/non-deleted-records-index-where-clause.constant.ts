@@ -1,0 +1,1 @@
+export const NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE = '"deletedAt" IS NULL';

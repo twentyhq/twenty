@@ -185,13 +185,18 @@ export class MatchParticipantService<
         ...new Set(participants.map((participant) => participant.handle)),
       ].filter(isDefined);
 
-      const people = await this.buildPersonQueryBuilder({
+      const matchedPeople = await this.buildPersonQueryBuilder({
         queryBuilder: personRepository.createQueryBuilder('person'),
         personHandleField,
         handles: uniqueParticipantsHandles,
       })
         .orderBy('person.createdAt', 'ASC')
         .getMany<PersonWorkspaceEntity>();
+
+      const people = [
+        ...matchedPeople.filter((person) => !isDefined(person.deletedAt)),
+        ...matchedPeople.filter((person) => isDefined(person.deletedAt)),
+      ];
 
       const workspaceMembers = shouldMatchWithWorkspaceMember
         ? await workspaceMemberRepository.find({
