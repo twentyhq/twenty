@@ -960,16 +960,19 @@ export class BullMQDriver
       queueName,
       includeDelayed: false,
     });
-    const delayedJobIds = jobs.some(isPacedJobById)
-      ? await this.queueMap[queueName].getRanges(['delayed'], 0, -1)
-      : [];
+    const waitingOrDelayedJobIds = jobs.some(isPacedJobById)
+      ? [
+          ...waitingJobIds,
+          ...(await this.queueMap[queueName].getRanges(['delayed'], 0, -1)),
+        ]
+      : waitingJobIds;
 
     return jobs.filter(
       (job) =>
         !isDefined(job.jobId) ||
         !isQueueJobIdAlreadyWaiting({
           waitingJobIds: isPacedJobById(job)
-            ? [...waitingJobIds, ...delayedJobIds]
+            ? waitingOrDelayedJobIds
             : waitingJobIds,
           jobIdOrPrefix: job.jobId,
         }),
