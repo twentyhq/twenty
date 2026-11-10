@@ -435,19 +435,15 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       fieldName: 'coreWorkflowId',
       type: FieldMetadataType.UUID,
       label: i18nLabel(
-        msg({
-          message: `Core workflow id`,
-          context: 'fieldMetadata.label',
-        }),
+        msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
-          message: `Reference to the core workflow row`,
+          message: `Workflow linked to the run.`,
           context: 'fieldMetadata.description',
         }),
       ),
       icon: 'IconSettingsAutomation',
-      isSystem: true,
       isNullable: true,
       isUIEditable: false,
     },
