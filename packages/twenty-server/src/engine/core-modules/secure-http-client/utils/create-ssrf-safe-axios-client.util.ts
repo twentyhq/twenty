@@ -4,7 +4,7 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios';
 import axiosRetry from 'axios-retry';
-import { isDefined } from 'twenty-shared/utils';
+import { isNumber } from '@sniptt/guards';
 
 import { ALLOW_ALL_INTERNAL_HOSTS } from 'src/engine/core-modules/secure-http-client/constants/allow-all-internal-hosts.constant';
 import { OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-max-payload-size-bytes.constant';
@@ -85,7 +85,7 @@ export const createSsrfSafeAxiosClient = ({
     return requestConfig;
   });
 
-  if (isDefined(retries) && retries > 0) {
+  if (isNumber(retries) && retries > 0) {
     axiosRetry(client, {
       retries,
       shouldResetTimeout,
