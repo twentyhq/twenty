@@ -5,7 +5,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { type CoreWorkflowRecentRun } from '@/object-core/workflows/types/CoreWorkflowRecentRun';
+import { type CoreWorkflowRunListItem } from '@/object-core/workflows/types/CoreWorkflowRunListItem';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
@@ -27,7 +27,9 @@ const StyledRunBar = styled.span<{ barColor: string }>`
 `;
 
 type CoreWorkflowRecentRunsCellProps = {
-  recentRuns: CoreWorkflowRecentRun[] | null;
+  recentRuns:
+    | Pick<CoreWorkflowRunListItem, 'id' | 'status' | 'createdAt'>[]
+    | null;
 };
 
 export const CoreWorkflowRecentRunsCell = ({

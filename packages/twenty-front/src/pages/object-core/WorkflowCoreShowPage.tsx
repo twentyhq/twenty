@@ -5,13 +5,24 @@ import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIden
 import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCoreWorkflow';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import {
+  IconSettingsAutomation,
+  IconTerminal,
+  IconVersions,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { CoreWorkflowRunsTab } from '@/object-core/workflows/components/CoreWorkflowRunsTab';
+import { CoreWorkflowVersionsTab } from '@/object-core/workflows/components/CoreWorkflowVersionsTab';
+import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
@@ -39,6 +50,12 @@ const StyledContainer = styled.div`
 
 const StyledUntitled = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledTabContent = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 `;
 
 const CoreWorkflowShowContent = ({
@@ -79,6 +96,18 @@ const CoreWorkflowShowContent = ({
     : currentVersion;
   const isReadOnlyVersion =
     isApplicationManaged || isDefined(requestedVersionId);
+  const tabListComponentInstanceId = `${CORE_WORKFLOW_SHOW_PAGE_TABS.COMPONENT_INSTANCE_ID_PREFIX}-${coreWorkflowId}`;
+  const activeTabId = useAtomComponentStateValue(
+    activeTabIdComponentState,
+    tabListComponentInstanceId,
+  );
+  const versionLabelById = useMemo(
+    () =>
+      new Map(
+        versions.coreWorkflowVersions.map(({ id, label }) => [id, label]),
+      ),
+    [versions.coreWorkflowVersions],
+  );
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
     currentName: record?.name,
@@ -170,7 +199,41 @@ const CoreWorkflowShowContent = ({
             onRename={renameWorkflow}
             isReadOnly={isApplicationManaged}
           />
-          {isDefined(selectedVersion) ? (
+          <TabList
+            aria-label={t`Workflow sections`}
+            componentInstanceId={tabListComponentInstanceId}
+            tabs={[
+              {
+                id: CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW,
+                title: t`Flow`,
+                Icon: IconSettingsAutomation,
+              },
+              {
+                id: CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.RUNS,
+                title: t`Runs`,
+                Icon: IconTerminal,
+              },
+              {
+                id: CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.VERSIONS,
+                title: t`Versions`,
+                Icon: IconVersions,
+              },
+            ]}
+          />
+          {activeTabId === CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.RUNS ? (
+            <StyledTabContent>
+              <CoreWorkflowRunsTab
+                coreWorkflowId={coreWorkflowId}
+                versionLabelById={versionLabelById}
+              />
+            </StyledTabContent>
+          ) : activeTabId === CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.VERSIONS ? (
+            <StyledTabContent>
+              <CoreWorkflowVersionsTab
+                coreWorkflowVersions={versions.coreWorkflowVersions}
+              />
+            </StyledTabContent>
+          ) : isDefined(selectedVersion) ? (
             <CoreWorkflowEditor
               key={selectedVersion.id}
               coreWorkflowId={coreWorkflowId}

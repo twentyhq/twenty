@@ -7,7 +7,7 @@ import { CoreAgentRunSource } from '@/object-core/agents/components/CoreAgentRun
 import { CoreAgentRunStatus } from '@/object-core/agents/components/CoreAgentRunStatus';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
-import { handleCoreAgentRunToggleKeyDown } from '@/object-core/agents/utils/handleCoreAgentRunToggleKeyDown';
+import { handleCoreObjectTableRowKeyDown } from '@/object-core/utils/handleCoreObjectTableRowKeyDown';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatDuration } from '~/utils/format/formatDuration';
@@ -48,7 +48,7 @@ export const CoreAgentRunRow = ({
         gridTemplateColumns={CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS}
         isExpanded={isExpanded}
         onClick={onToggle}
-        onKeyDown={handleCoreAgentRunToggleKeyDown(onToggle)}
+        onKeyDown={handleCoreObjectTableRowKeyDown(onToggle)}
         role="button"
         tabIndex={0}
         ariaExpanded={isExpanded}
