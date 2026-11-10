@@ -22,6 +22,7 @@ import { v4 } from 'uuid';
 
 import {
   type QueueCronJobOptions,
+  type QueueJobLimiter,
   type QueueJobOptions,
   type QueueJobRecipient,
   type QueueJobScope,
@@ -653,7 +654,10 @@ export class BullMQDriver
     }
 
     if (options.id && !options.doNotCheckDuplicatesBasedOnPrefix) {
-      const waitingJobIds = await this.getWaitingJobIds(queueName);
+      const waitingJobIds = await this.getWaitingJobIds({
+        queueName,
+        includeDelayed: this.isPacedJob(options.limiter),
+      });
 
       if (
         isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: options.id })
@@ -912,9 +916,22 @@ export class BullMQDriver
     });
   }
 
-  private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
+  // A paced job waits in the delayed set, so only paced jobs dedupe against it.
+  private isPacedJob(limiter: QueueJobLimiter | undefined): boolean {
+    return (
+      isDefined(limiter) && this.fairQueueScheduler.isGroupLimiterEnabled()
+    );
+  }
+
+  private async getWaitingJobIds({
+    queueName,
+    includeDelayed,
+  }: {
+    queueName: MessageQueue;
+    includeDelayed: boolean;
+  }): Promise<string[]> {
     return this.queueMap[queueName].getRanges(
-      this.fairQueueScheduler.isGroupLimiterEnabled()
+      includeDelayed
         ? ['waiting', 'paused', 'prioritized', 'delayed']
         : ['waiting', 'paused', 'prioritized'],
       0,
@@ -924,17 +941,38 @@ export class BullMQDriver
 
   private async filterOutAlreadyWaitingJobs<
     TJob extends QueueJobToAdd<MessageQueueJobData>,
-  >(queueName: MessageQueue, jobs: TJob[]): Promise<TJob[]> {
+  >({
+    queueName,
+    jobs,
+    defaultLimiter,
+  }: {
+    queueName: MessageQueue;
+    jobs: TJob[];
+    defaultLimiter: QueueJobLimiter | undefined;
+  }): Promise<TJob[]> {
     if (!jobs.some((job) => isDefined(job.jobId))) {
       return jobs;
     }
 
-    const waitingJobIds = await this.getWaitingJobIds(queueName);
+    const isPacedJobById = (job: TJob) =>
+      isDefined(job.jobId) && this.isPacedJob(job.limiter ?? defaultLimiter);
+    const waitingJobIds = await this.getWaitingJobIds({
+      queueName,
+      includeDelayed: false,
+    });
+    const delayedJobIds = jobs.some(isPacedJobById)
+      ? await this.queueMap[queueName].getRanges(['delayed'], 0, -1)
+      : [];
 
     return jobs.filter(
-      ({ jobId }) =>
-        !isDefined(jobId) ||
-        !isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: jobId }),
+      (job) =>
+        !isDefined(job.jobId) ||
+        !isQueueJobIdAlreadyWaiting({
+          waitingJobIds: isPacedJobById(job)
+            ? [...waitingJobIds, ...delayedJobIds]
+            : waitingJobIds,
+          jobIdOrPrefix: job.jobId,
+        }),
     );
   }
 
@@ -953,7 +991,11 @@ export class BullMQDriver
     const indexedJobs = jobs.map((job, inputIndex) => ({ ...job, inputIndex }));
     const jobsToAdd = options?.doNotCheckDuplicatesBasedOnPrefix
       ? indexedJobs
-      : await this.filterOutAlreadyWaitingJobs(queueName, indexedJobs);
+      : await this.filterOutAlreadyWaitingJobs({
+          queueName,
+          jobs: indexedJobs,
+          defaultLimiter: options?.limiter,
+        });
 
     if (jobsToAdd.length === 0) {
       return { jobs: [], availableBytes: null };

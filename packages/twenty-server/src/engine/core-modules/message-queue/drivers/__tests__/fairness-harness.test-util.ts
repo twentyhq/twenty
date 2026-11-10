@@ -235,7 +235,12 @@ jest.mock('bullmq', () => ({
 
       return storedJobs;
     },
-    getRanges: async () => mockBullMQ.jobs.map((job) => job.id),
+    getRanges: async (states: string[]) =>
+      mockBullMQ.jobs
+        .filter((job) =>
+          states.includes(job.isPromoted ? 'waiting' : 'delayed'),
+        )
+        .map((job) => job.id),
     upsertJobScheduler: async (
       _schedulerId: string,
       _repeat: unknown,

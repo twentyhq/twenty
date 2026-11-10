@@ -122,6 +122,26 @@ describe('BullMQDriver limiter', () => {
     expect(harness.readDelay({ label: 'F1' })).toBeLessThanOrEqual(1_000);
   });
 
+  it('only dedupes paced jobs against the delayed set', async () => {
+    const harness = await createFairnessHarness({
+      isGroupLimiterEnabled: true,
+    });
+    const scope = { workspaceId: 'A', applicationUniversalIdentifier: 'H' };
+
+    await harness.enqueue({ label: 'D1', id: 'job', delay: 5_000, ...scope });
+    await harness.enqueue({ label: 'D2', id: 'job', delay: 5_000, ...scope });
+    await harness.enqueue({
+      label: 'P1',
+      id: 'job',
+      delay: 5_000,
+      limiter: LIMITER,
+      ...scope,
+    });
+
+    expect(harness.readDelay({ label: 'D2' })).toBe(5_000);
+    expect(harness.readDelay({ label: 'P1' })).toBeUndefined();
+  });
+
   it('never paces the urgent lane', async () => {
     const harness = await createFairnessHarness({
       isGroupLimiterEnabled: true,

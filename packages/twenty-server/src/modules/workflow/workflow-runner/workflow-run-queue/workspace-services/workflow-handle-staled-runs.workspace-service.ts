@@ -24,7 +24,7 @@ import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workf
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
-import { hasInFlightRunWorkflowJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/has-in-flight-run-workflow-job.util';
+import { buildInFlightWorkflowRunIds } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/build-in-flight-workflow-run-ids.util';
 import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
 import { getStuckRunningRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-find-options.util';
 import { getStuckRunningRunsMonitorCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-monitor-cache-key.util';
@@ -137,11 +137,12 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       return;
     }
 
-    const inFlightJobs =
-      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
+    const inFlightWorkflowRunIds = buildInFlightWorkflowRunIds(
+      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>(),
+    );
 
     const hasInFlightJob = (workflowRunId: string) =>
-      hasInFlightRunWorkflowJob({ inFlightJobs, workflowRunId });
+      inFlightWorkflowRunIds.has(workflowRunId);
 
     const stillFlaggedRuns: Record<string, string> = {};
 
@@ -270,12 +271,12 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   private async filterRunsWithoutInFlightJob(
     workflowRunIds: string[],
   ): Promise<string[]> {
-    const inFlightJobs =
-      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
+    const inFlightWorkflowRunIds = buildInFlightWorkflowRunIds(
+      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>(),
+    );
 
     return workflowRunIds.filter(
-      (workflowRunId) =>
-        !hasInFlightRunWorkflowJob({ inFlightJobs, workflowRunId }),
+      (workflowRunId) => !inFlightWorkflowRunIds.has(workflowRunId),
     );
   }
 
