@@ -37,7 +37,7 @@ import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/a
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -50,7 +50,7 @@ export class DatabaseToolProvider implements ToolProvider {
   constructor(
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
-    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly i18nService: I18nService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
@@ -201,10 +201,10 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const [unreadableFieldMetadataIds, nonUpdatableFieldMetadataIds] =
         await Promise.all([
-          this.recordPermissionsOnlyRoleReadService.findUnreadableFields(
+          this.recordFieldPermissionsReadService.findUnreadableFields(
             objectQuestion,
           ),
-          this.recordPermissionsOnlyRoleReadService.findUneditableFields(
+          this.recordFieldPermissionsReadService.findUneditableFields(
             objectQuestion,
           ),
         ]);

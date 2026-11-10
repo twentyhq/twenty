@@ -1790,15 +1790,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
+    const updatesQuestion = {
+      principals: this.resolvePermissionsPrincipalsOrThrow(),
+      objectMetadataId: this.options.flatObjectMetadata.id,
+      updates,
+      formatRecords: (rawRecords: ObjectRecord[]) =>
+        this.formatResult<ObjectRecord[]>(rawRecords),
+      transactionScope: this.buildRecordPermissionTransactionScope(),
+    };
+
+    await this.options.internalContext.recordFieldPermissions.assertUpdatedColumnsAreEditableOrThrow(
+      updatesQuestion,
+    );
     await this.options.internalContext.recordPermissions.assertUpdatesKeepRecordAccessOrThrow(
-      {
-        principals: this.resolvePermissionsPrincipalsOrThrow(),
-        objectMetadataId: this.options.flatObjectMetadata.id,
-        updates,
-        formatRecords: (rawRecords) =>
-          this.formatResult<ObjectRecord[]>(rawRecords),
-        transactionScope: this.buildRecordPermissionTransactionScope(),
-      },
+      updatesQuestion,
     );
   }
 
@@ -1911,7 +1916,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       const principals = this.resolvePermissionsPrincipalsOrThrow();
       const rlsRuleUnreadableFieldsByRole =
-        await this.options.internalContext.recordPermissionsOnlyRls.findRlsRuleUnreadableFieldsByRole(
+        await this.options.internalContext.recordFieldPermissions.findRlsRuleUnreadableFieldsByRole(
           { principals, objectMetadataId: tableShape.objectMetadataId },
         );
 
@@ -1940,7 +1945,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             )
             .map(([columnName]) => columnName),
           condition:
-            await this.options.internalContext.recordPermissionsOnlyRls.buildRlsRuleSqlConditionOrThrow(
+            await this.options.internalContext.recordFieldPermissions.buildRlsRuleSqlConditionOrThrow(
               {
                 principals,
                 objectMetadataId: tableShape.objectMetadataId,

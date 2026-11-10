@@ -11,10 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { composeRecordFieldMetadataIds } from 'src/engine/permissions/internal/masking/utils/compose-record-field-metadata-ids.util';
-import { resolveRlsRuleFields } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-fields.util';
 import { findPrincipalsRoleIdsWithRlsRule } from 'src/engine/permissions/internal/rls/utils/find-principals-role-ids-with-rls-rule.util';
-import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -373,15 +370,6 @@ export class RecordPermissionsReadService {
       return;
     }
 
-    await this.assertUpdatedColumnsAreEditableOrThrow({
-      principals,
-      metadataMaps,
-      flatObjectMetadata,
-      updates,
-      formatRecords,
-      transactionScope,
-    });
-
     const context = this.buildWriteRowAccessEvaluationContext({
       workspaceId: principals.workspaceId,
       flatObjectMetadata,
@@ -426,67 +414,6 @@ export class RecordPermissionsReadService {
         'Updated record does not satisfy row-level security constraints of your current role',
         PermissionsExceptionCode.RLS_VALIDATION_FAILED,
       );
-    }
-  }
-
-  private async assertUpdatedColumnsAreEditableOrThrow({
-    principals,
-    metadataMaps,
-    flatObjectMetadata,
-    updates,
-    formatRecords,
-    transactionScope,
-  }: {
-    principals: PermissionsPrincipalsWithRolesContext;
-    metadataMaps: PermissionsMetadataMaps;
-    flatObjectMetadata: FlatObjectMetadata;
-    updates: {
-      rawRecordBefore: ObjectRecord;
-      setColumns: Record<string, unknown>;
-    }[];
-    formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
-    transactionScope: RecordPermissionTransactionScope;
-  }): Promise<void> {
-    const columnNameToFieldMetadataId = getColumnNameToFieldMetadataIdMap(
-      flatObjectMetadata,
-      metadataMaps.flatFieldMetadataMaps,
-    );
-
-    const rlsRuleFields = await resolveRlsRuleFields({
-      principals,
-      metadataMaps,
-      flatObjectMetadata,
-      fieldList: 'uneditableFields',
-      records: formatRecords(
-        updates.map(({ rawRecordBefore }) => rawRecordBefore),
-      ),
-      findRelationJoinValues: this.buildFindRelationJoinValues({
-        workspaceId: principals.workspaceId,
-        transactionScope,
-      }),
-    });
-
-    for (const { rawRecordBefore, setColumns } of updates) {
-      const uneditableFieldMetadataIds = composeRecordFieldMetadataIds({
-        flatObjectMetadata,
-        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-        objectFieldMetadataIds: [],
-        records: formatRecords([rawRecordBefore]),
-        rlsRuleFields,
-      });
-
-      if (
-        Object.keys(setColumns).some((columnName) =>
-          uneditableFieldMetadataIds.has(
-            columnNameToFieldMetadataId[columnName],
-          ),
-        )
-      ) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
     }
   }
 

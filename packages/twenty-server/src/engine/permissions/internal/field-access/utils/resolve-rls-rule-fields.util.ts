@@ -5,8 +5,8 @@ import {
   type PermissionsMetadataMaps,
   type RowAccessEvaluationContext,
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { type RlsRuleFields } from 'src/engine/permissions/internal/masking/types/rls-rule-fields.type';
-import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/masking/utils/find-rls-rule-fields-by-role.util';
+import { type RlsRuleFields } from 'src/engine/permissions/internal/field-access/types/rls-rule-fields.type';
+import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields-by-role.util';
 import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
