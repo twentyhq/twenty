@@ -47,16 +47,16 @@ export const CoreWorkflowOverviewTab = ({
   const { insights, loading, error } =
     useCoreWorkflowRunInsights(coreWorkflowId);
 
-  if (!isDefined(insights)) {
-    if (loading) {
-      return (
-        <StyledOverview>
-          <SkeletonLine height={96} />
-          <SkeletonLine height={280} />
-        </StyledOverview>
-      );
-    }
+  if (!isDefined(insights) && loading) {
+    return (
+      <StyledOverview>
+        <SkeletonLine height={96} />
+        <SkeletonLine height={280} />
+      </StyledOverview>
+    );
+  }
 
+  if (!isDefined(insights)) {
     return (
       <EmptyState.Root>
         <AnimatedPlaceholder

@@ -86,6 +86,7 @@ const CoreWorkflowShowContent = ({
     useCoreWorkflowShowPageActiveTab({
       coreWorkflowId,
       isPublished: isDefined(coreWorkflow?.lastPublishedCoreWorkflowVersionId),
+      isVersionRequested: isDefined(requestedVersionId),
     });
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
