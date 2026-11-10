@@ -10,9 +10,9 @@ export const useFindManyMcpServers = () => {
     FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
   );
 
-  const { data, loading } = useQuery(FindManyMcpServersDocument, {
+  const { data, loading, error } = useQuery(FindManyMcpServersDocument, {
     skip: !isMcpServersEnabled,
   });
 
-  return { mcpServers: data?.mcpServers ?? [], loading };
+  return { mcpServers: data?.mcpServers ?? [], loading, error };
 };

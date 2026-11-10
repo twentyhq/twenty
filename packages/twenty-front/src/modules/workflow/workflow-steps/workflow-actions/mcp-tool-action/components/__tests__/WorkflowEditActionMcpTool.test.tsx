@@ -7,28 +7,36 @@ import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { type FunctionInput } from 'twenty-shared/workflow';
 
+const mockUseFindManyMcpServers = jest.fn();
+
 jest.mock('@/mcp-servers/hooks/useFindManyMcpServers', () => ({
-  useFindManyMcpServers: () => ({
-    loading: false,
-    mcpServers: [
+  useFindManyMcpServers: () => mockUseFindManyMcpServers(),
+}));
+
+const MCP_SERVERS = [
+  {
+    id: 'mcp-server-id',
+    tools: [
       {
-        id: 'mcp-server-id',
-        tools: [
-          {
-            name: 'search_docs',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                query: { type: 'string' },
-                cursor: { type: 'string' },
-              },
-            },
+        name: 'search_docs',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: { type: 'string' },
+            cursor: { type: 'string' },
           },
-        ],
+        },
       },
     ],
-  }),
-}));
+  },
+];
+
+beforeEach(() => {
+  mockUseFindManyMcpServers.mockReturnValue({
+    loading: false,
+    mcpServers: MCP_SERVERS,
+  });
+});
 jest.mock('@/workflow/workflow-steps/components/WorkflowStepFooter', () => ({
   WorkflowStepFooter: () => null,
 }));
@@ -115,5 +123,24 @@ describe('WorkflowEditActionMcpTool', () => {
     );
 
     expect(screen.getByText('Tool not found')).toBeVisible();
+  });
+
+  it('reports a failed server fetch instead of a missing tool', () => {
+    mockUseFindManyMcpServers.mockReturnValue({
+      loading: false,
+      mcpServers: [],
+      error: new Error('Forbidden'),
+    });
+
+    render(
+      <WorkflowEditActionMcpTool
+        action={buildStep('search_docs')}
+        actionOptions={{ readonly: true }}
+      />,
+      { wrapper },
+    );
+
+    expect(screen.getByText('MCP servers unavailable')).toBeVisible();
+    expect(screen.queryByText('Tool not found')).not.toBeInTheDocument();
   });
 });

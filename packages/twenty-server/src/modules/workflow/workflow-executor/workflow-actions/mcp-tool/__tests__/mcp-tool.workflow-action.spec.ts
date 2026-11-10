@@ -4,6 +4,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { McpServerToolCallService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-call.service';
+import { type McpServerToolInputSchema } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-tool.type';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -14,6 +15,8 @@ import { McpToolWorkflowAction } from 'src/modules/workflow/workflow-executor/wo
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const WORKSPACE_ID = 'workspace-id';
+
+const SEARCH_DOCS_INPUT_SCHEMA: McpServerToolInputSchema = { type: 'object' };
 
 const MCP_SERVER = {
   id: 'mcp-server-id',
@@ -28,7 +31,7 @@ const MCP_SERVER = {
     {
       name: 'search_docs',
       description: null,
-      inputSchema: { type: 'object' },
+      inputSchema: SEARCH_DOCS_INPUT_SCHEMA,
       annotations: null,
     },
   ],
@@ -137,6 +140,45 @@ describe('McpToolWorkflowAction', () => {
       userWorkspaceId: 'user-workspace-id',
     });
     expect(output).toEqual({ result: { total: 2 } });
+  });
+
+  it('keeps an untouched nested object the tool schema requires', async () => {
+    const { action, callTool } = await setup({
+      ...MCP_SERVER,
+      tools: [
+        {
+          ...MCP_SERVER.tools[0],
+          inputSchema: { type: 'object', required: ['filter'] },
+        },
+      ],
+    });
+
+    await action.execute(buildInput());
+
+    expect(callTool).toHaveBeenCalledWith(
+      expect.objectContaining({
+        toolArguments: { query: 'invoices', tags: [], note: '', filter: {} },
+      }),
+    );
+  });
+
+  it('refuses a tool input that does not resolve to an object', async () => {
+    const { action, callTool } = await setup();
+    const input = buildInput();
+    const [step] = input.steps;
+
+    if (step.type !== WorkflowActionType.MCP_TOOL) {
+      throw new Error('Expected an MCP tool step');
+    }
+
+    step.settings.input.toolInput =
+      '{{trigger.query}}' as unknown as typeof step.settings.input.toolInput;
+
+    await expect(action.execute(input)).rejects.toMatchObject({
+      code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      message: 'Tool input of search_docs must resolve to an object',
+    });
+    expect(callTool).not.toHaveBeenCalled();
   });
 
   it('returns the tool failure as the step error', async () => {

@@ -6,17 +6,16 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
+import { useMcpToolStepForm } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useMcpToolStepForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isObject } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
 import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { Callout } from 'twenty-ui/components/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useDebouncedCallback } from 'use-debounce';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -41,8 +40,14 @@ export const WorkflowEditActionMcpTool = ({
   actionOptions,
 }: WorkflowEditActionMcpToolProps) => {
   const { t } = useLingui();
-  const { mcpServers, loading } = useFindManyMcpServers();
-  const [settings, setSettings] = useState(action.settings);
+  const { mcpServers, loading, error } = useFindManyMcpServers();
+  const { settings, updateSettings } = useMcpToolStepForm({
+    action,
+    readonly: actionOptions.readonly,
+    onActionUpdate: actionOptions.readonly
+      ? undefined
+      : actionOptions.onActionUpdate,
+  });
 
   const { mcpServerId, toolName } = settings.input;
   const tool = mcpServers
@@ -60,30 +65,6 @@ export const WorkflowEditActionMcpTool = ({
         oldInput: settings.input.toolInput,
       })
     : settings.input.toolInput;
-
-  const saveAction = useDebouncedCallback(
-    (updatedSettings: WorkflowMcpToolAction['settings']) => {
-      if (actionOptions.readonly) {
-        return;
-      }
-
-      actionOptions.onActionUpdate({ ...action, settings: updatedSettings });
-    },
-    500,
-  );
-
-  useEffect(() => {
-    return () => {
-      saveAction.flush();
-    };
-  }, [saveAction]);
-
-  const updateSettings = (
-    updatedSettings: WorkflowMcpToolAction['settings'],
-  ) => {
-    setSettings(updatedSettings);
-    saveAction(updatedSettings);
-  };
 
   const handleInputChange = (value: unknown, path: string[]) => {
     updateSettings({
@@ -111,7 +92,14 @@ export const WorkflowEditActionMcpTool = ({
     <>
       <WorkflowStepBody>
         <StyledContainer>
-          {!isDefined(tool) && (
+          {isDefined(error) && (
+            <Callout
+              status="error"
+              title={t`MCP servers unavailable`}
+              description={t`The MCP servers could not be loaded, so this step cannot be edited right now.`}
+            />
+          )}
+          {!isDefined(error) && !isDefined(tool) && (
             <Callout
               status="warning"
               title={t`Tool not found`}

@@ -68,7 +68,11 @@ export class McpToolWorkflowAction implements WorkflowAction {
       );
     }
 
-    if (!mcpServer.tools.some((tool) => tool.name === toolName)) {
+    const tool = mcpServer.tools.find(
+      (candidate) => candidate.name === toolName,
+    );
+
+    if (!isDefined(tool)) {
       throw new WorkflowStepExecutorException(
         `MCP server ${mcpServer.label} no longer offers the tool ${toolName}`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
@@ -86,14 +90,22 @@ export class McpToolWorkflowAction implements WorkflowAction {
       },
     );
 
-    const filledToolInput = removeNullToolArguments(
-      resolveInput(toolInput, context),
-    );
+    const toolArguments = removeNullToolArguments({
+      value: resolveInput(toolInput, context),
+      schema: tool.inputSchema,
+    });
+
+    if (!isPlainObject(toolArguments)) {
+      throw new WorkflowStepExecutorException(
+        `Tool input of ${toolName} must resolve to an object`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     const { output } = await this.mcpServerToolCallService.callTool({
       mcpServer,
       toolName,
-      toolArguments: isPlainObject(filledToolInput) ? filledToolInput : {},
+      toolArguments,
       userWorkspaceId: getUserFromAuthContext(authContext).userWorkspaceId,
     });
 
