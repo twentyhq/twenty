@@ -2892,7 +2892,7 @@ export interface ObjectRecordsPermissions {
     objectMetadataId: Scalars['UUID']
     /** @deprecated Use unreadableFields and uneditableFields */
     restrictedFields: Scalars['JSON']
-    rowLevelRecordsPermissions?: RowLevelRecordsPermissions
+    rowLevelRecordsPermissions?: RowLevelRecordsPermissions[]
     uneditableFields: Scalars['UUID'][]
     unreadableFields: Scalars['UUID'][]
     __typename: 'ObjectRecordsPermissions'
@@ -3465,6 +3465,7 @@ export interface Role {
     rowLevelPermissionFieldPermissions?: FieldPermission[]
     rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroup[]
     rowLevelPermissionPredicates?: RowLevelPermissionPredicate[]
+    rowLevelPermissionRules?: RowLevelPermissionRule[]
     universalIdentifier?: Scalars['UUID']
     workspaceMembers: WorkspaceMember[]
     __typename: 'Role'
@@ -3516,6 +3517,17 @@ export type RowLevelPermissionPredicateGroupLogicalOperator = 'AND' | 'OR'
 
 export type RowLevelPermissionPredicateOperand = 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'GREATER_THAN_OR_EQUAL' | 'IS' | 'IS_AFTER' | 'IS_BEFORE' | 'IS_EMPTY' | 'IS_IN_FUTURE' | 'IS_IN_PAST' | 'IS_NOT' | 'IS_NOT_EMPTY' | 'IS_NOT_NULL' | 'IS_RELATIVE' | 'IS_TODAY' | 'LESS_THAN_OR_EQUAL' | 'VECTOR_SEARCH'
 
+export interface RowLevelPermissionRule {
+    canCreateRecords: Scalars['Boolean']
+    canDestroyRecords: Scalars['Boolean']
+    canReadRecords: Scalars['Boolean']
+    canSoftDeleteRecords: Scalars['Boolean']
+    canUpdateRecords: Scalars['Boolean']
+    id: Scalars['UUID']
+    objectMetadataId: Scalars['UUID']
+    __typename: 'RowLevelPermissionRule'
+}
+
 export interface RowLevelRecordsPermissions {
     canCreateRecords: Scalars['Boolean']
     canDestroyRecords: Scalars['Boolean']
@@ -3524,8 +3536,9 @@ export interface RowLevelRecordsPermissions {
     canUpdateRecords: Scalars['Boolean']
     predicateGroups: RowLevelPermissionPredicateGroup[]
     predicates: RowLevelPermissionPredicate[]
-    uneditableFields?: Scalars['UUID'][]
-    unreadableFields?: Scalars['UUID'][]
+    ruleId: Scalars['UUID']
+    uneditableFields: Scalars['UUID'][]
+    unreadableFields: Scalars['UUID'][]
     __typename: 'RowLevelRecordsPermissions'
 }
 
@@ -8327,6 +8340,7 @@ export interface RoleGenqlSelection{
     rowLevelPermissionFieldPermissions?: FieldPermissionGenqlSelection
     rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     rowLevelPermissionPredicates?: RowLevelPermissionPredicateGenqlSelection
+    rowLevelPermissionRules?: RowLevelPermissionRuleGenqlSelection
     universalIdentifier?: boolean | number
     workspaceMembers?: WorkspaceMemberGenqlSelection
     __typename?: boolean | number
@@ -8383,6 +8397,18 @@ export interface RowLevelPermissionPredicateGroupInput {canDestroyRecords?: (Sca
 
 export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
+export interface RowLevelPermissionRuleGenqlSelection{
+    canCreateRecords?: boolean | number
+    canDestroyRecords?: boolean | number
+    canReadRecords?: boolean | number
+    canSoftDeleteRecords?: boolean | number
+    canUpdateRecords?: boolean | number
+    id?: boolean | number
+    objectMetadataId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface RowLevelRecordsPermissionsGenqlSelection{
     canCreateRecords?: boolean | number
     canDestroyRecords?: boolean | number
@@ -8391,6 +8417,7 @@ export interface RowLevelRecordsPermissionsGenqlSelection{
     canUpdateRecords?: boolean | number
     predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     predicates?: RowLevelPermissionPredicateGenqlSelection
+    ruleId?: boolean | number
     uneditableFields?: boolean | number
     unreadableFields?: boolean | number
     __typename?: boolean | number
@@ -9009,7 +9036,7 @@ export interface UpsertObjectPermissionsInput {objectPermissions: ObjectPermissi
 
 export interface UpsertPermissionFlagsInput {permissionFlagKeys: Scalars['String'][],roleId: Scalars['UUID']}
 
-export interface UpsertRowLevelPermissionPredicatesInput {objectMetadataId: Scalars['UUID'],predicateGroups: RowLevelPermissionPredicateGroupInput[],predicates: RowLevelPermissionPredicateInput[],roleId: Scalars['UUID']}
+export interface UpsertRowLevelPermissionPredicatesInput {canCreateRecords?: (Scalars['Boolean'] | null),canDestroyRecords?: (Scalars['Boolean'] | null),canReadRecords?: (Scalars['Boolean'] | null),canSoftDeleteRecords?: (Scalars['Boolean'] | null),canUpdateRecords?: (Scalars['Boolean'] | null),objectMetadataId: Scalars['UUID'],predicateGroups: RowLevelPermissionPredicateGroupInput[],predicates: RowLevelPermissionPredicateInput[],roleId: Scalars['UUID']}
 
 export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
     predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
@@ -11920,6 +11947,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isRowLevelPermissionPredicateGroup = (obj?: { __typename?: any } | null): obj is RowLevelPermissionPredicateGroup => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelPermissionPredicateGroup"')
       return RowLevelPermissionPredicateGroup_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RowLevelPermissionRule_possibleTypes: string[] = ['RowLevelPermissionRule']
+    export const isRowLevelPermissionRule = (obj?: { __typename?: any } | null): obj is RowLevelPermissionRule => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRowLevelPermissionRule"')
+      return RowLevelPermissionRule_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -218,17 +218,20 @@ describe('computePrincipalsRecordsPermissions', () => {
           [OBJECT_ID]: {
             ...readAllRecords,
             canReadAllRecords: false,
-            rowLevelRecordsPermissions: {
-              canCreateRecords: false,
-              canReadRecords: true,
-              canUpdateRecords: false,
-              canSoftDeleteRecords: false,
-              canDestroyRecords: false,
-              predicates: [],
-              predicateGroups: [],
-              unreadableFields: ['rule-hidden-field-id'],
-              uneditableFields: [],
-            },
+            rowLevelRecordsPermissions: [
+              {
+                ruleId: 'rule-id',
+                canCreateRecords: false,
+                canReadRecords: true,
+                canUpdateRecords: false,
+                canSoftDeleteRecords: false,
+                canDestroyRecords: false,
+                predicates: [],
+                predicateGroups: [],
+                unreadableFields: ['rule-hidden-field-id'],
+                uneditableFields: [],
+              },
+            ],
           },
         }),
       },
@@ -760,15 +763,20 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
         canDestroyAllRecords: false,
         unreadableFields: [],
         uneditableFields: [],
-        rowLevelRecordsPermissions: {
-          canCreateRecords: true,
-          canReadRecords: true,
-          canUpdateRecords: true,
-          canSoftDeleteRecords: true,
-          canDestroyRecords: true,
-          predicates: [USER_PREDICATE],
-          predicateGroups: [],
-        },
+        rowLevelRecordsPermissions: [
+          {
+            ruleId: 'rule-id',
+            canCreateRecords: true,
+            canReadRecords: true,
+            canUpdateRecords: true,
+            canSoftDeleteRecords: true,
+            canDestroyRecords: true,
+            predicates: [USER_PREDICATE],
+            predicateGroups: [],
+            unreadableFields: [],
+            uneditableFields: [],
+          },
+        ],
       },
     }),
   };
@@ -870,9 +878,11 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
       scopeObjectPermissions: FULL_ACCESS,
     });
 
-    expect(invoicePermissions?.rowLevelRecordsPermissions?.predicates).toEqual([
-      USER_PREDICATE,
-    ]);
+    expect(
+      invoicePermissions?.rowLevelRecordsPermissions?.map(
+        ({ predicates }) => predicates,
+      ),
+    ).toEqual([[USER_PREDICATE]]);
   });
 
   it('adds the field restrictions of the scope', () => {
