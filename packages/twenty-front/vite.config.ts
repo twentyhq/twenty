@@ -15,8 +15,12 @@ import {
 } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
-import { createWywProfilingPlugin } from 'twenty-shared/vite';
+import {
+  createWywProfilingPlugin,
+  getTwentySharedOptimizeDepsInclude,
+} from 'twenty-shared/vite';
 
+import twentySharedPackageJson from '../twenty-shared/package.json';
 import {
   API_PROXY_PATHS,
   buildApiProxyMatcher,
@@ -218,20 +222,7 @@ export default defineConfig(({ mode }) => {
         '@tiptap/pm/tables',
         '@calcom/embed-react',
         // Linked packages aren't pre-bundled, and twenty-shared ships one file per module.
-        'twenty-shared/ai',
-        'twenty-shared/application',
-        'twenty-shared/constants',
-        'twenty-shared/i18n',
-        'twenty-shared/logic-function',
-        'twenty-shared/markdown',
-        'twenty-shared/metadata',
-        'twenty-shared/testing',
-        'twenty-shared/timeline',
-        'twenty-shared/translations',
-        'twenty-shared/types',
-        'twenty-shared/utils',
-        'twenty-shared/workflow',
-        'twenty-shared/workspace',
+        ...getTwentySharedOptimizeDepsInclude(twentySharedPackageJson.exports),
       ],
     },
 

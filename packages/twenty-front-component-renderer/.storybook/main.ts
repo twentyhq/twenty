@@ -1,7 +1,9 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getTwentySharedOptimizeDepsInclude } from 'twenty-shared/vite';
 
+import twentySharedPackageJson from '../../twenty-shared/package.json';
 import { createAvatarImageFixturePlugin } from '../scripts/front-component-stories/createAvatarImageFixturePlugin';
 
 const dirname =
@@ -71,10 +73,9 @@ const config: StorybookConfig = {
           'react-dom/client',
           'react/jsx-runtime',
           // Linked packages aren't pre-bundled, and twenty-shared ships one file per module.
-          'twenty-shared/application',
-          'twenty-shared/constants',
-          'twenty-shared/types',
-          'twenty-shared/utils',
+          ...getTwentySharedOptimizeDepsInclude(
+            twentySharedPackageJson.exports,
+          ),
         ],
       },
     };
