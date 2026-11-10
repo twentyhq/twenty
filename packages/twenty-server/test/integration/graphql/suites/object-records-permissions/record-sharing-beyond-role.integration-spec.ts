@@ -16,6 +16,7 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
+import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -324,7 +325,7 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should let an edit grant edit, but never delete or manage access', async () => {
     await setShare({
       principal: JONY,
-      accessLevel: RecordShareAccessLevel.FULL,
+      accessLevel: RecordShareAccessLevel.READ_WRITE,
     });
 
     expect((await renameAsJony('Edited by Jony')).body.errors).toBeUndefined();
@@ -358,6 +359,45 @@ describe('Records shared beyond the role that can access their object', () => {
       permissions: { canRead: true, canUpdate: true, canDelete: false },
       shares: [],
     });
+  });
+
+  it('should let a full access grant delete the record', async () => {
+    await setShare({
+      principal: JONY,
+      accessLevel: RecordShareAccessLevel.FULL,
+    });
+
+    const sharing = await makeMetadataApiRequest(
+      { query: READ_SHARING, variables: { target: target() } },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(sharing.body.data.recordSharing.permissions).toEqual({
+      canRead: true,
+      canUpdate: true,
+      canDelete: true,
+    });
+
+    const deleted = await makeGraphqlApiRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: OBJECT_NAME,
+        gqlFields: 'id',
+        recordId: SHARED_RECORD_ID,
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(deleted.body.errors).toBeUndefined();
+
+    const restored = await makeGraphqlApiRequest(
+      restoreOneOperationFactory({
+        objectMetadataSingularName: OBJECT_NAME,
+        gqlFields: 'id',
+        recordId: SHARED_RECORD_ID,
+      }),
+    );
+
+    expect(restored.body.errors).toBeUndefined();
   });
 
   it('should not let a record that follows its roles reach beyond the role', async () => {
@@ -457,7 +497,7 @@ describe('Records shared beyond the role that can access their object', () => {
     }
   });
 
-  it('should refuse a merge that would leave a shared record the role cannot delete', async () => {
+  it('should refuse a merge that would delete a record shared for editing only', async () => {
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
@@ -482,7 +522,7 @@ describe('Records shared beyond the role that can access their object', () => {
     try {
       await setShare({
         principal: JONY,
-        accessLevel: RecordShareAccessLevel.FULL,
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
       });
 
       const merged = await makeGraphqlApiRequest(

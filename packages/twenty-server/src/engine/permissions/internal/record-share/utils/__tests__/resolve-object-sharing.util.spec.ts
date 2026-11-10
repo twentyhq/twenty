@@ -29,7 +29,7 @@ describe('resolveObjectSharing', () => {
       canSetRecordPrivacy: true,
       isPrivateByDefault: false,
       canShareBeyondRole: true,
-      operationTypesGrantedBeyondRole: ['read', 'update'],
+      operationTypesGrantedBeyondRole: ['read', 'update', 'softDelete', 'destroy'],
     });
   });
 
@@ -54,7 +54,7 @@ describe('resolveObjectSharing', () => {
         },
         featureFlagsMap: RECORD_SHARING,
       }).operationTypesGrantedBeyondRole,
-    ).toEqual(['read']);
+    ).toEqual(['read', 'softDelete', 'destroy']);
   });
 
   it('should not share beyond the role when the object disables every operation a share could grant', () => {
@@ -65,6 +65,8 @@ describe('resolveObjectSharing', () => {
           disabledObjectPermissionActions: [
             'canReadObjectRecords',
             'canUpdateObjectRecords',
+            'canSoftDeleteObjectRecords',
+            'canDestroyObjectRecords',
           ],
         },
         featureFlagsMap: RECORD_SHARING,
