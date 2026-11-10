@@ -1,3 +1,4 @@
+import { validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util';
 import { validateNavigationMenuItemPageLayoutReferenceCrossEntity } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util';
 import { validateObjectMetadataCrossEntity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-cross-entity.util';
 import { validatePermissionFlagNotInUseCrossEntity } from 'src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util';
@@ -40,6 +41,13 @@ export const crossEntityTransversalValidation = ({
       orchestratorActionsReport.permissionFlag.delete,
   });
 
+  const { fieldMetadata } =
+    validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity({
+      optimisticUniversalFlatMaps,
+      deletedFieldMetadataActions:
+        orchestratorActionsReport.fieldMetadata.delete,
+    });
+
   const { navigationMenuItem } =
     validateNavigationMenuItemPageLayoutReferenceCrossEntity({
       optimisticUniversalFlatMaps,
@@ -50,6 +58,7 @@ export const crossEntityTransversalValidation = ({
   crossEntityFailureReport.viewField.push(...viewField);
   crossEntityFailureReport.permissionFlag.push(...permissionFlag);
   crossEntityFailureReport.navigationMenuItem.push(...navigationMenuItem);
+  crossEntityFailureReport.fieldMetadata.push(...fieldMetadata);
 
   validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation({
     optimisticUniversalFlatMaps,

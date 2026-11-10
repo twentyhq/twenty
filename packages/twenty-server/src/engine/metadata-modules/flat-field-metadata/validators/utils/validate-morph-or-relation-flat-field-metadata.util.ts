@@ -22,13 +22,13 @@ type ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs = Omit<
 
 export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
   flatEntityToValidate: universalFlatFieldMetadata,
-  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
-  },
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   update,
   buildOptions,
 }: ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs): FlatFieldMetadataValidationError[] => {
+  const { flatFieldMetadataMaps } =
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
+
   const errors: FlatFieldMetadataValidationError[] = [];
 
   const fromFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
@@ -71,10 +71,7 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
       ...validateMorphOrRelationFlatFieldJoinColumName({
         buildOptions,
         universalFlatFieldMetadata,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-          flatFieldMetadataMaps,
-          flatObjectMetadataMaps,
-        },
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
       }),
     );
   }
@@ -90,16 +87,16 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
 
 export const validateMorphOrRelationFlatFieldMetadata = ({
   flatEntityToValidate: universalFlatFieldMetadataToValidate,
-  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
-  },
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   update,
   remainingFlatEntityMapsToValidate,
   buildOptions,
   workspaceId,
   additionalCacheDataMaps,
 }: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): FlatFieldMetadataValidationError[] => {
+  const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
+
   const {
     relationTargetFieldMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier,
@@ -212,10 +209,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     errors.push(
       ...validateMorphOrRelationFlatFieldMetadataUpdates({
         flatEntityToValidate: universalFlatFieldMetadataToValidate,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-          flatFieldMetadataMaps,
-          flatObjectMetadataMaps,
-        },
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         remainingFlatEntityMapsToValidate,
         workspaceId,
         update,
@@ -228,10 +222,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
       ...validateMorphOrRelationFlatFieldJoinColumName({
         buildOptions,
         universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-          flatFieldMetadataMaps,
-          flatObjectMetadataMaps,
-        },
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
       }),
       ...validateMorphOrRelationFlatFieldOnDelete({
         universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
