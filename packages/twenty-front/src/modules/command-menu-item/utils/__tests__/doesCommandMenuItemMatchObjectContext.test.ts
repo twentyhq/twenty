@@ -3,7 +3,8 @@ import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const buildCommandMenuItem = (
   availabilityType: CommandMenuItemAvailabilityType,
-) => ({ availabilityType });
+  availabilityCoreObjectName: 'workflow' | null = null,
+) => ({ availabilityType, availabilityCoreObjectName });
 
 describe('doesCommandMenuItemMatchObjectContext', () => {
   it('should hide an object command on a page without an object', () => {
@@ -26,6 +27,15 @@ describe('doesCommandMenuItemMatchObjectContext', () => {
 
   it('should keep a global command on a page without an object', () => {
     const item = buildCommandMenuItem(CommandMenuItemAvailabilityType.GLOBAL);
+
+    expect(doesCommandMenuItemMatchObjectContext(undefined)(item)).toBe(true);
+  });
+
+  it('should keep a core object command on a page without an object', () => {
+    const item = buildCommandMenuItem(
+      CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+      'workflow',
+    );
 
     expect(doesCommandMenuItemMatchObjectContext(undefined)(item)).toBe(true);
   });
