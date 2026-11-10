@@ -97,6 +97,31 @@ export const SidebarSelectionAndCollapse: Story = {
   },
 };
 
+export const ShowMoreDirectMessages: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.queryByRole('button', { name: 'Lucas' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Show more' }));
+    await expect(
+      await canvas.findByRole('button', { name: 'Lucas' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Former member' }),
+    ).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Show less' }));
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('button', { name: 'Lucas' }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const SearchAndKeyboardSelection: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
