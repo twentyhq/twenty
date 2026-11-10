@@ -493,8 +493,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       },
     });
 
+    // Live records first so an upsert never restores a deleted record over a live one
     return (await queryBuilder
       .withDeleted()
+      .orderBy(
+        `${flatObjectMetadata.nameSingular}.deletedAt`,
+        'DESC',
+        'NULLS FIRST',
+      )
       .setFindOptions({
         select: selectOptions,
       })

@@ -24,6 +24,7 @@ export const buildWorkspaceMemberStandardFlatIndexMetadatas = ({
       indexName: 'userEmailUniqueIndex',
       relatedFieldNames: ['userEmail'],
       isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL',
       hasDeterministicUniversalIdentifier: true,
     },
     standardObjectMetadataRelatedEntityIds,

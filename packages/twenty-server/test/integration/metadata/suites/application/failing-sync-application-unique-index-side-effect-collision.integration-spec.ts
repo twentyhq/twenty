@@ -30,7 +30,7 @@ const computeSystemUniqueIndexUniversalIdentifier = (
     } as UniversalFlatObjectMetadata,
     orderedIndexColumnNames: [UNIQUE_FIELD_NAME],
     isUnique: true,
-    indexWhereClause: null,
+    indexWhereClause: '"deletedAt" IS NULL',
   });
 
   return getIndexUniversalIdentifier({

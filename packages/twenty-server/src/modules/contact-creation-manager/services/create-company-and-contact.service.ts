@@ -102,7 +102,8 @@ export class CreateCompanyAndPersonService {
       });
 
       const alreadyCreatedPeople = await queryBuilder
-        .orderBy('person.createdAt', 'ASC')
+        .orderBy('person.deletedAt', 'ASC', 'NULLS FIRST')
+        .addOrderBy('person.createdAt', 'ASC')
         .withDeleted()
         .getMany<PersonWorkspaceEntity>();
 
