@@ -21,4 +21,32 @@ export const METADATA_RESPONSE_CACHE_APPROVED_REQUESTS: Record<
       variables: { viewTypes: ['TABLE', 'KANBAN', 'CALENDAR', 'LIST'] },
     },
   ],
+  FindSharedViews: [
+    {
+      documentFingerprint:
+        '7ceeb919ce7e1863fe622165b74a45da0089498aa53aed7e04cc5cbb8fb26a00',
+      variables: {
+        viewTypes: ['TABLE', 'KANBAN', 'CALENDAR', 'LIST'],
+      },
+    },
+    {
+      documentFingerprint:
+        '7ceeb919ce7e1863fe622165b74a45da0089498aa53aed7e04cc5cbb8fb26a00',
+      variables: {
+        viewTypes: ['FIELDS_WIDGET'],
+      },
+    },
+    {
+      documentFingerprint:
+        '7ceeb919ce7e1863fe622165b74a45da0089498aa53aed7e04cc5cbb8fb26a00',
+      variables: {
+        viewTypes: [
+          'TABLE_WIDGET',
+          'KANBAN_WIDGET',
+          'LIST_WIDGET',
+          'CALENDAR_WIDGET',
+        ],
+      },
+    },
+  ],
 };

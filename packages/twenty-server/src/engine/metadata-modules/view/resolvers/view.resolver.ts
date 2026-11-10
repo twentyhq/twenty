@@ -37,6 +37,8 @@ import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/cr
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { UpsertViewWidgetInput } from 'src/engine/metadata-modules/view/dtos/inputs/upsert-view-widget.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { ViewFamilyDTO } from 'src/engine/metadata-modules/view/dtos/view-family.dto';
+import { ViewFamilyReadService } from 'src/engine/metadata-modules/view/services/view-family-read.service';
 import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
@@ -55,6 +57,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 export class ViewResolver {
   constructor(
     private readonly viewService: ViewService,
+    private readonly viewFamilyReadService: ViewFamilyReadService,
     private readonly viewWidgetUpsertService: ViewWidgetUpsertService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
@@ -156,6 +159,36 @@ export class ViewResolver {
     }
 
     return this.viewService.findByWorkspaceId(workspace.id, viewTypes);
+  }
+
+  @Query(() => ViewFamilyDTO)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), CustomPermissionGuard)
+  @AllowSuspendedWorkspace()
+  async getSharedViews(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('viewTypes', { type: () => [ViewType], nullable: true })
+    viewTypes?: ViewType[],
+  ): Promise<ViewFamilyDTO> {
+    return this.viewFamilyReadService.findViewFamily({
+      workspaceId: workspace.id,
+      viewTypes,
+      audience: 'shared',
+    });
+  }
+
+  @Query(() => ViewFamilyDTO)
+  @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY), CustomPermissionGuard)
+  @AllowSuspendedWorkspace()
+  async getMyPrivateViews(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('viewTypes', { type: () => [ViewType], nullable: true })
+    viewTypes?: ViewType[],
+  ): Promise<ViewFamilyDTO> {
+    return this.viewFamilyReadService.findViewFamily({
+      workspaceId: workspace.id,
+      viewTypes,
+      audience: 'private',
+    });
   }
 
   @Query(() => ViewDTO, { nullable: true })

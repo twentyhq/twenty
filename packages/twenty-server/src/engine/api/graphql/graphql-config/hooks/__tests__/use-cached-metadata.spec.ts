@@ -29,6 +29,14 @@ const fingerprintOf = (query: string) =>
     .update(print(parse(query)))
     .digest('hex');
 
+const parseOrUndefined = (query: string) => {
+  try {
+    return parse(query);
+  } catch {
+    return undefined;
+  }
+};
+
 const ACCESS_POLICY = {} as AccessPolicy;
 
 const DEPENDENCY_HASHES = {
@@ -106,6 +114,7 @@ describe('useCachedMetadata', () => {
           admissionDependencies,
         },
       },
+      operationsToPin: new Set(['FindMyPrivateViews']),
       dependencyHashesGetter,
       assertAccessPolicySatisfied,
       assertCacheAdmission,
@@ -131,7 +140,11 @@ describe('useCachedMetadata', () => {
       let executeFn: (executeArgs: unknown) => unknown = () => execute();
 
       void plugin.onExecute?.({
-        args: { contextValue: serverContext },
+        args: {
+          contextValue: serverContext,
+          document: parseOrUndefined(request.body.query),
+          operationName: request.body.operationName,
+        },
         executeFn,
         setExecuteFn: (wrappedExecuteFn: typeof executeFn) => {
           executeFn = wrappedExecuteFn;
@@ -287,6 +300,64 @@ describe('useCachedMetadata', () => {
     expect(cacheSetter).not.toHaveBeenCalled();
   });
 
+  it('never stores a response whose nested related metadata moved past the key', async () => {
+    const cacheSetter = jest.fn();
+    const plugin = createPlugin({
+      cacheSetter,
+      dependencyHashesGetter: jest.fn().mockResolvedValue({
+        combinedHash: 'dependency-hash',
+        sourceHashes: {
+          flatViewMaps: 'view-generation-1',
+          flatObjectMetadataMaps: 'object-generation-1',
+        },
+      }),
+    });
+
+    await runRequest({
+      plugin,
+      request: createRequest(),
+      execute: () => {
+        const workspacePins = getActiveWorkspaceCachePins('workspace-id');
+
+        workspacePins?.set('flatViewMaps', {
+          data: {} as never,
+          hash: 'view-generation-1',
+        });
+        workspacePins?.set('flatObjectMetadataMaps', {
+          data: {} as never,
+          hash: 'object-generation-2',
+        });
+      },
+    });
+
+    expect(cacheSetter).not.toHaveBeenCalled();
+  });
+
+  it('keys responses by the full dependency vector, not only view generations', async () => {
+    const cacheSetter = jest.fn();
+    const dependencyHashesGetter = jest
+      .fn()
+      .mockResolvedValueOnce({
+        combinedHash: 'vector-before-label-change',
+        sourceHashes: {},
+      })
+      .mockResolvedValueOnce({
+        combinedHash: 'vector-after-label-change',
+        sourceHashes: {},
+      });
+    const plugin = createPlugin({ cacheSetter, dependencyHashesGetter });
+
+    await runRequest({ plugin, request: createRequest() });
+    await runRequest({ plugin, request: createRequest() });
+
+    const [firstKey, secondKey] = cacheSetter.mock.calls.map(
+      ([cacheKey]) => cacheKey,
+    );
+
+    expect(firstKey).toContain('vector-before-label-change');
+    expect(secondKey).toContain('vector-after-label-change');
+  });
+
   it('never stores a response that consumed an undeclared dependency', async () => {
     const cacheSetter = jest.fn();
     const plugin = createPlugin({ cacheSetter });
@@ -321,6 +392,51 @@ describe('useCachedMetadata', () => {
         body: {
           operationName: 'DeleteView',
           query: 'mutation DeleteView { deleteView(id: "view-id") }',
+        },
+      }),
+      execute: () => {
+        hasPinScopeDuringExecution = isDefined(
+          getActiveWorkspaceCachePins('workspace-id'),
+        );
+      },
+    });
+
+    expect(hasPinScopeDuringExecution).toBe(false);
+  });
+
+  it('opens a pin scope for a pinned query that is never cached', async () => {
+    const plugin = createPlugin();
+    let hasPinScopeDuringExecution = false;
+
+    await runRequest({
+      plugin,
+      request: createRequest({
+        body: {
+          operationName: 'FindMyPrivateViews',
+          query:
+            'query FindMyPrivateViews { getMyPrivateViews { familyVersion } }',
+        },
+      }),
+      execute: () => {
+        hasPinScopeDuringExecution = isDefined(
+          getActiveWorkspaceCachePins('workspace-id'),
+        );
+      },
+    });
+
+    expect(hasPinScopeDuringExecution).toBe(true);
+  });
+
+  it('opens no pin scope for a mutation named like a pinned query', async () => {
+    const plugin = createPlugin();
+    let hasPinScopeDuringExecution = true;
+
+    await runRequest({
+      plugin,
+      request: createRequest({
+        body: {
+          operationName: 'FindMyPrivateViews',
+          query: 'mutation FindMyPrivateViews { deleteView(id: "view-id") }',
         },
       }),
       execute: () => {

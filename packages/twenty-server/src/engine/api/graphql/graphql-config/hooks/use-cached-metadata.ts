@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node';
 import { type Request } from 'express';
+import { getOperationAST } from 'graphql';
 import { type Plugin } from 'graphql-yoga';
 import { type MetadataResponseCacheApprovedRequest } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -69,6 +70,7 @@ export type CacheMetadataPluginConfig = {
   // oxlint-disable-next-line typescript/no-explicit-any
   cacheSetter: (key: string, value: any) => Promise<void>;
   operationsToCache: Record<string, CachedOperationConfig>;
+  operationsToPin: ReadonlySet<string>;
   dependencyHashesGetter: (
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
@@ -317,7 +319,25 @@ export function useCachedMetadata(
     onExecute: ({ args, executeFn, setExecuteFn }) => {
       const request = args.contextValue.req;
 
-      if (!isDefined(request) || !requestCacheEntries.has(request)) {
+      if (!isDefined(request)) {
+        return;
+      }
+
+      const isPinnedQuery = () => {
+        if (!isDefined(args.document)) {
+          return false;
+        }
+
+        const operation = getOperationAST(args.document, args.operationName);
+
+        return (
+          operation?.operation === 'query' &&
+          isDefined(operation.name) &&
+          config.operationsToPin.has(operation.name.value)
+        );
+      };
+
+      if (!requestCacheEntries.has(request) && !isPinnedQuery()) {
         return;
       }
 

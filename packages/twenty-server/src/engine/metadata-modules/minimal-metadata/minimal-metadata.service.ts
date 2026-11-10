@@ -18,6 +18,8 @@ import { getWorkspaceCustomApplicationUniversalIdentifierOrThrow } from 'src/eng
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { VIEW_FAMILY_CACHE_KEY_NAMES } from 'src/engine/metadata-modules/view/constants/view-family-cache-key-names.constant';
+import { computeViewFamilyVersion } from 'src/engine/metadata-modules/view/utils/compute-view-family-version.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -72,12 +74,27 @@ export class MinimalMetadataService {
         flatApplicationMaps,
       });
 
+    const viewFamilyKeyNames: ReadonlySet<string> = new Set(
+      VIEW_FAMILY_CACHE_KEY_NAMES,
+    );
+    const viewFamilyVersion = VIEW_FAMILY_CACHE_KEY_NAMES.every((cacheKey) =>
+      isDefined(cacheHashes[cacheKey]),
+    )
+      ? computeViewFamilyVersion(cacheHashes)
+      : undefined;
+
     const collectionHashes: CollectionHashDTO[] = Object.entries(cacheHashes)
       .map(([cacheKey, hash]) => {
         const metadataName = flatMapsKeyToMetadataName(cacheKey);
 
         if (!isDefined(metadataName) || !isDefined(hash)) {
           return undefined;
+        }
+
+        if (viewFamilyKeyNames.has(cacheKey)) {
+          return isDefined(viewFamilyVersion)
+            ? { collectionName: metadataName, hash: viewFamilyVersion }
+            : undefined;
         }
 
         return { collectionName: metadataName, hash };

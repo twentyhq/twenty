@@ -14,6 +14,8 @@ import { ViewController } from 'src/engine/metadata-modules/view/controllers/vie
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
+import { ViewFamilyReadService } from 'src/engine/metadata-modules/view/services/view-family-read.service';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -28,12 +30,14 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceCacheModule,
   ],
   controllers: [ViewController],
   providers: [
     CompleteViewUpsertService,
     ViewResolver,
     ViewQueryParamsService,
+    ViewFamilyReadService,
     ViewWidgetUpsertService,
     provideWorkspaceScopedRepository(ViewEntity),
   ],

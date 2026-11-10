@@ -6,6 +6,7 @@ import { ApiPath } from 'twenty-shared/types';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { METADATA_GRAPHQL_OPERATIONS_TO_CACHE } from 'src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-cache.constant';
+import { METADATA_GRAPHQL_OPERATIONS_TO_PIN } from 'src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-pin.constant';
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 import { createMetadataCacheAdmissionAsserter } from 'src/engine/api/graphql/graphql-config/utils/create-metadata-cache-admission-asserter.util';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
@@ -70,6 +71,7 @@ export const metadataModuleFactory = async (
             ),
           ),
         operationsToCache: METADATA_GRAPHQL_OPERATIONS_TO_CACHE,
+        operationsToPin: METADATA_GRAPHQL_OPERATIONS_TO_PIN,
         dependencyHashesGetter:
           workspaceCacheService.getOrRecomputeDependencyHashes.bind(
             workspaceCacheService,
