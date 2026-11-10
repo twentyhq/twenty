@@ -31,7 +31,8 @@ const EXCLUDED_MODEL_PREFIXES = [
 
 const EXCLUDED_MODEL_SUFFIXES = ['-audio-preview', '-realtime-preview'];
 
-const LONG_CONTEXT_THRESHOLD_TOKENS = 200000;
+// models.dev's deprecated context_over_200k carries no threshold of its own
+const LEGACY_LONG_CONTEXT_THRESHOLD_TOKENS = 200000;
 
 const isLanguageModel = (modelId: string): boolean => {
   const lowerId = modelId.toLowerCase();
@@ -67,7 +68,12 @@ const extractCost = ({
   model.cachedInputCostPerMillionTokens = cost.cache_read;
   model.cacheCreationCostPerMillionTokens = cost.cache_write;
 
-  const longContextCost = cost.context_over_200k;
+  // The catalog holds one long-context tier, so price from the first threshold crossed
+  const contextTier = (cost.tiers ?? [])
+    .filter((costTier) => costTier.tier.type === 'context')
+    .sort((left, right) => left.tier.size - right.tier.size)[0];
+
+  const longContextCost = contextTier ?? cost.context_over_200k;
 
   if (!isDefined(longContextCost?.input)) {
     return;
@@ -77,7 +83,8 @@ const extractCost = ({
     inputCostPerMillionTokens: longContextCost.input,
     outputCostPerMillionTokens:
       longContextCost.output ?? model.outputCostPerMillionTokens ?? 0,
-    thresholdTokens: LONG_CONTEXT_THRESHOLD_TOKENS,
+    thresholdTokens:
+      contextTier?.tier.size ?? LEGACY_LONG_CONTEXT_THRESHOLD_TOKENS,
     cachedInputCostPerMillionTokens: longContextCost.cache_read,
     cacheCreationCostPerMillionTokens: longContextCost.cache_write,
   };
