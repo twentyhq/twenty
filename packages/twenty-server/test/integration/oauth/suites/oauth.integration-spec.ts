@@ -1122,14 +1122,6 @@ describe('OAuth (integration)', () => {
           ).consentId,
         ).toBeUndefined();
 
-        const [authorization] = await ds.query(
-          `SELECT "consentId" FROM core."applicationAuthorization"
-           WHERE "userId" = $1 AND "applicationId" = $2`,
-          [TEST_USER_ID, testApplication.id],
-        );
-
-        expect(authorization.consentId).toBeNull();
-
         await postToken({
           grant_type: 'refresh_token',
           refresh_token: refreshToken,

@@ -10,7 +10,6 @@ import { type ApplicationAuthorizationDTO } from 'src/engine/core-modules/applic
 import { toApplicationAuthorizationDto } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
 import { ApplicationOAuthIdentityInstallService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity-install.service';
 import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
-import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 
 @Injectable()
 export class ApplicationAuthorizationService {
@@ -51,11 +50,6 @@ export class ApplicationAuthorizationService {
     scopes: string[];
   }): Promise<string | undefined> {
     const now = new Date();
-    const isConsentIdAvailable = !UpgradeAwareRepositoryState.getInstance()
-      .getHiddenColumnPropertyNames(ApplicationAuthorizationEntity)
-      .has('consentId');
-    // Before the column's upgrade runs, tokens carry no consentId and the iat check alone applies
-    const consentId = isConsentIdAvailable ? v4() : undefined;
 
     await this.applicationAuthorizationRepository.upsert(
       {
@@ -65,7 +59,7 @@ export class ApplicationAuthorizationService {
         applicationId,
         scopes,
         lastAuthorizedAt: now,
-        ...(isDefined(consentId) ? { consentId } : {}),
+        consentId: v4(),
         lastUsedAt: now,
         revokedAt: null,
       },
@@ -75,7 +69,15 @@ export class ApplicationAuthorizationService {
       },
     );
 
-    return consentId;
+    // Read back rather than trust the generated value: the column is dropped from writes until its upgrade runs
+    const authorization = await this.applicationAuthorizationRepository.findOne(
+      {
+        select: ['id', 'consentId'],
+        where: { userId, applicationId },
+      },
+    );
+
+    return authorization?.consentId ?? undefined;
   }
 
   // Scopes and consent time stay null: pre-table refresh tokens carry neither, and today's declared scopes prove nothing.
