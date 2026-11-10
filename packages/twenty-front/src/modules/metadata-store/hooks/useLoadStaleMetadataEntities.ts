@@ -1,4 +1,8 @@
+import { FIELDS_WIDGET_VIEW_TYPES } from '@/metadata-store/constants/FieldsWidgetViewTypes';
 import { INDEX_VIEW_TYPES } from '@/metadata-store/constants/IndexViewTypes';
+import { VIEW_FAMILY_ENTITY_KEYS } from '@/metadata-store/constants/ViewFamilyEntityKeys';
+import { WIDGET_VIEW_TYPES } from '@/metadata-store/constants/WidgetViewTypes';
+import { useLoadViewFamily } from '@/metadata-store/hooks/useLoadViewFamily';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { splitObjectMetadataGqlResponse } from '@/metadata-store/utils/splitObjectMetadataGqlResponse';
@@ -20,7 +24,6 @@ import {
   FindManyLogicFunctionsDocument,
   FindManyNavigationMenuItemsDocument,
   type ObjectMetadataItemsQuery,
-  ViewType,
 } from '~/generated-metadata/graphql';
 
 const OBJECTS_GROUP_KEYS: MetadataEntityKey[] = [
@@ -29,28 +32,10 @@ const OBJECTS_GROUP_KEYS: MetadataEntityKey[] = [
   'indexMetadataItems',
 ];
 
-const VIEWS_GROUP_KEYS: MetadataEntityKey[] = [
-  'views',
-  'viewFields',
-  'viewFilters',
-  'viewSorts',
-  'viewGroups',
-  'viewFilterGroups',
-  'viewFieldGroups',
-];
-
 const PAGE_LAYOUTS_GROUP_KEYS: MetadataEntityKey[] = [
   'pageLayouts',
   'pageLayoutTabs',
   'pageLayoutWidgets',
-];
-
-const FIELDS_WIDGET_VIEW_TYPES = [ViewType.FIELDS_WIDGET];
-const WIDGET_VIEW_TYPES = [
-  ViewType.TABLE_WIDGET,
-  ViewType.KANBAN_WIDGET,
-  ViewType.LIST_WIDGET,
-  ViewType.CALENDAR_WIDGET,
 ];
 
 const hasOverlap = (
@@ -61,6 +46,7 @@ const hasOverlap = (
 export const useLoadStaleMetadataEntities = () => {
   const client = useApolloClient();
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { loadViewFamily, isSplitModeActive } = useLoadViewFamily();
 
   const loadStaleMetadataEntities = useCallback(
     async (staleEntityKeys: MetadataEntityKey[]) => {
@@ -88,7 +74,12 @@ export const useLoadStaleMetadataEntities = () => {
         );
       }
 
-      if (hasOverlap(staleEntityKeys, VIEWS_GROUP_KEYS)) {
+      if (
+        hasOverlap(staleEntityKeys, VIEW_FAMILY_ENTITY_KEYS) &&
+        isSplitModeActive()
+      ) {
+        fetchPromises.push(loadViewFamily());
+      } else if (hasOverlap(staleEntityKeys, VIEW_FAMILY_ENTITY_KEYS)) {
         fetchPromises.push(
           Promise.all([
             client.query({
@@ -258,7 +249,7 @@ export const useLoadStaleMetadataEntities = () => {
         throw firstRejectedFetch.reason;
       }
     },
-    [client, replaceDraft, applyChanges],
+    [client, replaceDraft, applyChanges, loadViewFamily, isSplitModeActive],
   );
 
   return { loadStaleMetadataEntities };

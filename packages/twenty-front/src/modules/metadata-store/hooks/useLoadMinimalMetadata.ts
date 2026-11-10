@@ -1,3 +1,4 @@
+import { VIEW_FAMILY_ENTITY_KEYS } from '@/metadata-store/constants/ViewFamilyEntityKeys';
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
 import {
   ALL_METADATA_ENTITY_KEYS,
@@ -6,7 +7,10 @@ import {
 } from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type FlatView } from '@/metadata-store/types/FlatView';
+import { viewFamilyHintState } from '@/metadata-store/states/viewFamilyHintState';
 import { type FindMinimalMetadataQuery } from '@/metadata-store/types/MinimalMetadata';
+import { getViewFamilyHintFromCollectionHashes } from '@/metadata-store/utils/getViewFamilyHintFromCollectionHashes';
+import { isViewFamilySplitModeActive } from '@/metadata-store/utils/isViewFamilySplitModeActive';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
@@ -30,6 +34,15 @@ export const useLoadMinimalMetadata = () => {
     const { objectMetadataItems, views, collectionHashes } =
       result.data.minimalMetadata;
 
+    const isSplitModeActive = isViewFamilySplitModeActive(store);
+
+    if (isSplitModeActive) {
+      store.set(
+        viewFamilyHintState.atom,
+        getViewFamilyHintFromCollectionHashes(collectionHashes),
+      );
+    }
+
     const staleEntityKeys: MetadataEntityKey[] = [];
 
     const entityKeysWithServerHash = new Set<MetadataEntityKey>();
@@ -48,6 +61,10 @@ export const useLoadMinimalMetadata = () => {
 
         if (entry.currentCollectionHash !== hash) {
           staleEntityKeys.push(entityKey);
+        }
+
+        if (isSplitModeActive && VIEW_FAMILY_ENTITY_KEYS.includes(entityKey)) {
+          continue;
         }
 
         store.set(metadataStoreState.atomFamily(entityKey), (prev) => ({
@@ -102,7 +119,9 @@ export const useLoadMinimalMetadata = () => {
         ...prev,
         current: views as unknown as FlatView[],
         status: 'up-to-date',
-        currentCollectionHash: prev.draftCollectionHash,
+        currentCollectionHash: isSplitModeActive
+          ? undefined
+          : prev.draftCollectionHash,
         draftCollectionHash: undefined,
       }));
     }

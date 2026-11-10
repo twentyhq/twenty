@@ -12,6 +12,8 @@ import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/
 import { filterMorphRelationDuplicateFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/filter-morph-relation-duplicate-field-metadata-events.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
+import { VIEW_FAMILY_METADATA_NAMES } from 'src/engine/subscriptions/view-family-event/constants/view-family-metadata-names.constant';
+import { buildViewFamilyBroadcastEvents } from 'src/engine/subscriptions/view-family-event/utils/build-view-family-broadcast-events.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 type BroadcastEventRecord = {
@@ -44,6 +46,12 @@ export class MetadataEventPublisher {
       return;
     }
 
+    if (VIEW_FAMILY_METADATA_NAMES.has(metadataEventBatch.metadataName)) {
+      await this.publishViewFamilyEvents(metadataEventBatch);
+
+      return;
+    }
+
     const enrichedBatch =
       await this.enrichMetadataEventBatch(metadataEventBatch);
 
@@ -70,6 +78,47 @@ export class MetadataEventPublisher {
             getRequiredPermissionFlagForBroadcastEntityName(event.metadataName),
         };
       }),
+    });
+  }
+
+  private async publishViewFamilyEvents({
+    metadataName,
+    workspaceId,
+    events,
+  }: MetadataEventBatch): Promise<void> {
+    const flatViewMaps =
+      metadataName === 'view'
+        ? undefined
+        : (
+            await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+              { workspaceId, flatMapsKeys: ['flatViewMaps'] },
+            )
+          ).flatViewMaps;
+
+    const broadcastEvents = buildViewFamilyBroadcastEvents({
+      metadataName,
+      events,
+      findParentView: (viewId) =>
+        isDefined(flatViewMaps)
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityMaps: flatViewMaps,
+              flatEntityId: viewId,
+            })
+          : undefined,
+    });
+
+    await this.workspaceEventBroadcaster.broadcast({
+      workspaceId,
+      events: broadcastEvents.map((broadcastEvent) => ({
+        ...broadcastEvent,
+        properties: pickBroadcastEventProperties({
+          entityName: broadcastEvent.entityName,
+          properties: broadcastEvent.properties,
+        }),
+        requiredPermissionFlag: getRequiredPermissionFlagForBroadcastEntityName(
+          broadcastEvent.entityName,
+        ),
+      })),
     });
   }
 

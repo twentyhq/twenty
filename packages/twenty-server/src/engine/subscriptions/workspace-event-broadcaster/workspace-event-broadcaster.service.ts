@@ -70,7 +70,11 @@ export class WorkspaceEventBroadcaster {
           // to every stream. Events with the field are user-scoped; only delivered
           // to streams whose authContext.userWorkspaceId is in the list.
           if (!isDefined(event.recipientUserWorkspaceIds)) {
-            return true;
+            return (
+              !isDefined(streamUserWorkspaceId) ||
+              !isDefined(event.excludedUserWorkspaceIds) ||
+              !event.excludedUserWorkspaceIds.includes(streamUserWorkspaceId)
+            );
           }
 
           return (
