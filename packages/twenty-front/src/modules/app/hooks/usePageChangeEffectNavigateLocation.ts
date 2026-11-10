@@ -58,7 +58,6 @@ export const usePageChangeEffectNavigateLocation = () => {
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
 
-  // Read from the matched route so a dedicated route under /objects (such as a redirect) is never an unknown object.
   const objectNamePlural = useMatches().at(-1)?.params.objectNamePlural ?? '';
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const objectMetadataItem = objectMetadataItems?.find(
