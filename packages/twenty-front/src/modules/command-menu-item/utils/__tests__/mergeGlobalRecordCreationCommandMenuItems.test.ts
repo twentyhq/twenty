@@ -193,3 +193,69 @@ it('does not pin creation outside an object context', () => {
     }),
   ).toEqual([pageCommand, ...globalCreationCommands]);
 });
+
+it('keeps creation commands scoped to a core object, which global creation cannot replace', () => {
+  const createWorkflowCommand = {
+    ...legacyCreationCommand,
+    id: 'create-workflow',
+    availabilityCoreObjectName: 'workflow',
+    position: 1,
+  };
+
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [createWorkflowCommand, pageCommand],
+      globalRecordCreationCommandMenuItems,
+      shouldDisplayGlobalRecordCreationCommands: true,
+    }),
+  ).toEqual([
+    createWorkflowCommand,
+    pageCommand,
+    ...globalRecordCreationCommandMenuItems,
+  ]);
+});
+
+it('replaces the legacy workflow creation with the core one once both exist', () => {
+  const createCoreWorkflowCommand = {
+    ...pinnedCreationCommand,
+    id: 'create-core-workflow',
+    availabilityCoreObjectName: 'workflow',
+  };
+
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [pinnedCreationCommand, createCoreWorkflowCommand],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: true,
+      contextObjectMetadataId: 'company',
+    }),
+  ).toEqual([createCoreWorkflowCommand, taskCreationCommand]);
+});
+
+it('keeps the legacy workflow creation until the core one exists', () => {
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [pinnedCreationCommand],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: true,
+      contextObjectMetadataId: 'company',
+    }),
+  ).toEqual([pinnedCreationCommand, taskCreationCommand]);
+});
+
+it('replaces the legacy workflow creation with the core one when global creation is disabled', () => {
+  const createCoreWorkflowCommand = {
+    ...pinnedCreationCommand,
+    id: 'create-core-workflow',
+    availabilityCoreObjectName: 'workflow',
+  };
+
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [pinnedCreationCommand, createCoreWorkflowCommand],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: false,
+      contextObjectMetadataId: 'company',
+    }),
+  ).toEqual([createCoreWorkflowCommand]);
+});

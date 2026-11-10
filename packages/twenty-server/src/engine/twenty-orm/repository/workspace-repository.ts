@@ -31,7 +31,7 @@ import {
 import uniqBy from 'lodash.uniqby';
 import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
@@ -1911,7 +1911,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       const principals = this.resolvePermissionsPrincipalsOrThrow();
       const rlsRuleUnreadableFieldsByRole =
-        await this.options.internalContext.recordPermissionsOnlyRls.findRlsRuleUnreadableFieldsByRole(
+        await this.options.internalContext.recordFieldPermissions.findRlsRuleUnreadableFieldsByRole(
           { principals, objectMetadataId: tableShape.objectMetadataId },
         );
 
@@ -1940,7 +1940,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             )
             .map(([columnName]) => columnName),
           condition:
-            await this.options.internalContext.recordPermissionsOnlyRls.buildRlsRuleSqlConditionOrThrow(
+            await this.options.internalContext.recordFieldPermissions.buildRlsRuleSQLConditionOrThrow(
               {
                 principals,
                 objectMetadataId: tableShape.objectMetadataId,
@@ -2079,7 +2079,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     isMainAlias: boolean;
     flatObjectMetadata: FlatObjectMetadata;
     operationType: ObjectRecordsOperationType;
-  }): Promise<SqlCondition | boolean> {
+  }): Promise<SQLCondition | boolean> {
     if (isMainAlias) {
       await this.options.internalContext.recordPermissions.assertCanRunOperationOrThrow(
         {
@@ -2091,7 +2091,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    return this.options.internalContext.recordPermissions.buildManyRecordsAccessCondition(
+    return this.options.internalContext.recordPermissions.buildManyRecordsAccessSQLCondition(
       {
         principals: this.resolvePermissionsPrincipalsOrThrow(),
         objectMetadataId: flatObjectMetadata.id,

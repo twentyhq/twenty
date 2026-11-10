@@ -7,9 +7,9 @@ import { areRecordGrantsHeldToRowLevelPermissions } from 'src/engine/permissions
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-access-outcome.util';
 import { findRecordIdsGrantedByCreator } from 'src/engine/permissions/internal/private-record/utils/find-record-ids-granted-by-creator.util';
 import { findRecordIdsGrantedByShare } from 'src/engine/permissions/internal/record-share/utils/find-record-ids-granted-by-share.util';
-import { findRecordIdsGrantedByRls } from 'src/engine/permissions/internal/combine/utils/find-record-ids-granted-by-rls.util';
+import { findRecordIdsGrantedByRole } from 'src/engine/permissions/internal/combine/utils/find-record-ids-granted-by-role.util';
 import { findRowLevelPermissionMatchingRecordIds } from 'src/engine/permissions/internal/combine/utils/find-row-level-permission-matching-record-ids.util';
-import { findRecordIdsGrantedByAllRecords } from 'src/engine/permissions/internal/combine/utils/find-record-ids-granted-by-all-records.util';
+import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-level-permission-filter.util';
 
 export const findGrantedRecordIds = async (
   request: PermissionsRowAccessEvaluationRequest,
@@ -25,19 +25,17 @@ export const findGrantedRecordIds = async (
     return new Set(records.map((record) => record.id));
   }
 
-  const rowLevelPermissionMatchingRecordIds =
-    await findRowLevelPermissionMatchingRecordIds(request);
-  const roleGrantedRecordIds = new Set([
-    ...(await findRecordIdsGrantedByAllRecords(request)),
-    ...(await findRecordIdsGrantedByRls({
-      ...request,
-      matchingRecordIds: rowLevelPermissionMatchingRecordIds,
-    })),
-  ]);
+  const rlsRuleFilter = resolvePermissionsRowLevelPermissionFilter(request);
+  const rlsRuleMatchingRecordIds = isDefined(rlsRuleFilter)
+    ? await findRowLevelPermissionMatchingRecordIds({ request, rlsRuleFilter })
+    : undefined;
+  const roleGrantedRecordIds = new Set(
+    await findRecordIdsGrantedByRole({ request, rlsRuleMatchingRecordIds }),
+  );
   const recordGrantCandidateIds =
     areRecordGrantsHeldToRowLevelPermissions(request) &&
-    isDefined(rowLevelPermissionMatchingRecordIds)
-      ? new Set(rowLevelPermissionMatchingRecordIds)
+    isDefined(rlsRuleMatchingRecordIds)
+      ? new Set(rlsRuleMatchingRecordIds)
       : undefined;
   const remainingRecords = records.filter(
     (record) =>

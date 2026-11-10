@@ -3,7 +3,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsAiAssistantAvatarOptionPreview } from '~/pages/settings/ai/components/SettingsAiAssistantAvatarOptionPreview';
 import { SETTINGS_AI_ASSISTANT_COLOR_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantColorLabels';
 import { SETTINGS_AI_ASSISTANT_FACE_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantFaceLabels';
-import { SETTINGS_AI_ASSISTANT_SHAPE_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantShapeLabels';
+import { AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS } from '@/ai/constants/AiChatAssistantAvatarShapeLabels';
 import {
   AI_CHAT_ASSISTANT_AVATAR_COLORS,
   AI_CHAT_ASSISTANT_AVATAR_FACES,
@@ -34,7 +34,7 @@ export const SettingsAiAssistantAvatarMenuPage = ({
   const optionsByAttribute = {
     avatarShape: AI_CHAT_ASSISTANT_AVATAR_SHAPES.map((shape) => ({
       key: shape,
-      label: t(SETTINGS_AI_ASSISTANT_SHAPE_LABELS[shape]),
+      label: t(AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS[shape]),
       profile: { ...value, avatarShape: shape },
       patch: { avatarShape: shape },
     })),

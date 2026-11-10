@@ -136,10 +136,7 @@ export const useAiChatEditor = () => {
 
   // Extension storage avoids stale closures without a ref.
   if (isDefined(editor)) {
-    const storage = editor.extensionStorage as unknown as Record<
-      string,
-      unknown
-    >;
+    const storage = editor.extensionStorage;
     const mentionStorage = storage['mention-suggestion'] as {
       searchMentionRecords: typeof searchMentionRecords;
       searchWorkspaceMembers: typeof searchWorkspaceMembers;

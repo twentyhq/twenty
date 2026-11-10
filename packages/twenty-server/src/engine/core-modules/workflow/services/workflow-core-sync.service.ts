@@ -16,6 +16,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -109,9 +110,12 @@ export class WorkflowCoreSyncService {
       return;
     }
 
-    const { flatWorkflowMaps } =
+    const { flatWorkflowMaps, flatNavigationMenuItemMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
+        {
+          workspaceId,
+          flatMapsKeys: ['flatWorkflowMaps', 'flatNavigationMenuItemMaps'],
+        },
       );
 
     const resolvedFlatWorkflows = persistedCoreWorkflowIds.map(
@@ -136,6 +140,14 @@ export class WorkflowCoreSyncService {
 
     const flatWorkflowsToDelete = resolvedFlatWorkflows.filter(isDefined);
 
+    const flatNavigationMenuItemsToDelete = flatWorkflowsToDelete.flatMap(
+      (flatWorkflow) =>
+        findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatWorkflow.navigationMenuItemIds,
+          flatEntityMaps: flatNavigationMenuItemMaps,
+        }),
+    );
+
     await this.runCoreWorkflowMigration({
       workspaceId,
       failureMessage:
@@ -144,6 +156,11 @@ export class WorkflowCoreSyncService {
         workflow: {
           flatEntityToCreate: [],
           flatEntityToDelete: flatWorkflowsToDelete,
+          flatEntityToUpdate: [],
+        },
+        navigationMenuItem: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: flatNavigationMenuItemsToDelete,
           flatEntityToUpdate: [],
         },
       },

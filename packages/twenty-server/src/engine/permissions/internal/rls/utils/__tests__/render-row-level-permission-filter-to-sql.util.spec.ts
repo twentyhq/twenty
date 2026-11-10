@@ -101,7 +101,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     ).toBeNull();
   });
 
-  it('renders the unsatisfiable filter as a condition no row meets', () => {
+  it('renders the unsatisfiable filter as a sqlCondition no row meets', () => {
     expect(
       renderRowLevelPermissionFilterToSql({
         ...baseArgs,
@@ -110,7 +110,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     ).toEqual({ sql: 'NOT (1=1)', parameters: {} });
   });
 
-  it('renders a single field condition referencing the join alias', () => {
+  it('renders a single field sqlCondition referencing the join alias', () => {
     const result = renderRowLevelPermissionFilterToSql({
       ...baseArgs,
       recordFilter: { name: { ilike: '%Visible%' } },
@@ -191,7 +191,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     );
   });
 
-  it('renders a not group over a join column condition', () => {
+  it('renders a not group over a join column sqlCondition', () => {
     const result = renderRowLevelPermissionFilterToSql({
       ...baseArgs,
       recordFilter: { not: { accountOwnerId: { in: ['id-1'] } } },
@@ -226,7 +226,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     );
   });
 
-  it('renders a composite sub field condition with the flattened column name', () => {
+  it('renders a composite sub field sqlCondition with the flattened column name', () => {
     const result = renderRowLevelPermissionFilterToSql({
       ...baseArgs,
       recordFilter: { annualRecurringRevenue: { amountMicros: { gte: 1000 } } },
@@ -291,7 +291,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     } as FlatObjectMetadata;
     const fields = [...companyFields, relationField];
 
-    const condition = renderRowLevelPermissionFilterToSql({
+    const sqlCondition = renderRowLevelPermissionFilterToSql({
       recordFilter: { accountOwner: { name: { eq: 'x' } } },
       tableAlias: 'company',
       objectMetadata: {
@@ -320,11 +320,11 @@ describe('renderRowLevelPermissionFilterToSql', () => {
       },
     });
 
-    expect(condition?.sql).toContain('EXISTS (SELECT 1 FROM');
-    expect(condition?.sql).toContain(
+    expect(sqlCondition?.sql).toContain('EXISTS (SELECT 1 FROM');
+    expect(sqlCondition?.sql).toContain(
       '"company_accountOwner"."id" = "company"."accountOwnerId"',
     );
-    expect(condition?.sql).toContain(
+    expect(sqlCondition?.sql).toContain(
       '"company_accountOwner"."deletedAt" IS NULL',
     );
   });

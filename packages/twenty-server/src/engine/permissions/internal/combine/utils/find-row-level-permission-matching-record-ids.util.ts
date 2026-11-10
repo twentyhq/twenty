@@ -1,30 +1,28 @@
 /* @license Enterprise */
 
-import { isDefined } from 'twenty-shared/utils';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { findRecordsMatchingRecordFilter } from 'src/engine/permissions/internal/rls/utils/find-records-matching-record-filter.util';
-import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-level-permission-filter.util';
 
 export const findRowLevelPermissionMatchingRecordIds = async ({
-  records,
-  context,
-  ...request
-}: PermissionsRowAccessEvaluationRequest): Promise<string[] | undefined> => {
-  const recordFilter = resolvePermissionsRowLevelPermissionFilter(request);
-
-  if (!isDefined(recordFilter)) {
-    return undefined;
-  }
-
+  request,
+  rlsRuleFilter,
+}: {
+  request: Pick<
+    PermissionsRowAccessEvaluationRequest,
+    'records' | 'flatObjectMetadata' | 'metadataMaps' | 'context'
+  >;
+  rlsRuleFilter: RecordGqlOperationFilter;
+}): Promise<string[]> => {
   const matchingRecords = await findRecordsMatchingRecordFilter({
-    records,
-    recordFilter,
+    records: request.records,
+    recordFilter: rlsRuleFilter,
     flatObjectMetadata: request.flatObjectMetadata,
     metadataMaps: request.metadataMaps,
-    findRelationJoinValues: context.findRelationJoinValues,
+    findRelationJoinValues: request.context.findRelationJoinValues,
     shouldIgnoreSoftDeleteDefaultFilter:
-      context.shouldIgnoreSoftDeleteDefaultFilter,
+      request.context.shouldIgnoreSoftDeleteDefaultFilter,
   });
 
   return matchingRecords.map((record) => record.id);
