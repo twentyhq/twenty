@@ -882,6 +882,14 @@ const mockImageFilePart: AgentChatFileUIPart = {
   url: IMAGE_URL_MOCK,
 };
 
+const mockSecondImageFilePart: AgentChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-team',
+  filename: 'team.png',
+  mediaType: 'image/png',
+  url: IMAGE_URL_MOCK,
+};
+
 const mockBrokenImageFilePart: AgentChatFileUIPart = {
   type: 'file',
   fileId: 'file-broken',
@@ -898,12 +906,27 @@ const mockPdfFilePart: AgentChatFileUIPart = {
   url: 'https://example.com/brief.pdf',
 };
 
-const mockUserMessageWithAttachments: ExtendedUIMessage = {
-  id: 'msg-user-attachments',
+const mockUserMessageWithImage: ExtendedUIMessage = {
+  id: 'msg-user-image',
   role: 'user',
   parts: [
     { type: 'text', text: 'Here is the dashboard and the brief.' },
     mockImageFilePart,
+    mockPdfFilePart,
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+};
+
+const mockUserMessageWithImages: ExtendedUIMessage = {
+  id: 'msg-user-images',
+  role: 'user',
+  parts: [
+    { type: 'text', text: 'Screenshots from the review.' },
+    mockImageFilePart,
+    mockSecondImageFilePart,
     mockBrokenImageFilePart,
     mockPdfFilePart,
   ],
@@ -913,12 +936,12 @@ const mockUserMessageWithAttachments: ExtendedUIMessage = {
   },
 };
 
-export const UserMessageWithAttachments: Story = {
+export const UserMessageWithImage: Story = {
   parameters: {
     isInboxEnabled: true,
-    messages: [mockUserMessageWithAttachments],
+    messages: [mockUserMessageWithImage],
   },
-  render: () => <AiChatMessage messageId={mockUserMessageWithAttachments.id} />,
+  render: () => <AiChatMessage messageId={mockUserMessageWithImage.id} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -926,9 +949,32 @@ export const UserMessageWithAttachments: Story = {
       await canvas.findByRole('img', { name: 'dashboard.png' }),
     ).toBeVisible();
     await expect(canvas.getByText('brief.pdf')).toBeVisible();
-    await waitFor(() => expect(canvas.getByText('broken.png')).toBeVisible());
+  },
+};
+
+export const UserMessageWithImages: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessageWithImages],
+  },
+  render: () => <AiChatMessage messageId={mockUserMessageWithImages.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
     await expect(
-      canvas.queryByRole('img', { name: 'broken.png' }),
-    ).not.toBeInTheDocument();
+      await canvas.findByRole('button', { name: 'dashboard.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'team.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'broken.png' }),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('img', { name: 'broken.png' }),
+      ).not.toBeInTheDocument(),
+    );
+    await expect(canvas.getByText('brief.pdf')).toBeVisible();
   },
 };

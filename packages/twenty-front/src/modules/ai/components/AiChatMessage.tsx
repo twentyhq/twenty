@@ -9,13 +9,14 @@ import { type ReactNode } from 'react';
 
 import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { getAgentChatFilePartFieldFilesValue } from '@/ai/utils/getAgentChatFilePartFieldFilesValue';
+import { getAgentChatAttachmentGroups } from '@/ai/utils/getAgentChatAttachmentGroups';
 
 import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
+import { ChatMessageImageGrid } from '@/chat/components/ChatMessageImageGrid';
 import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
@@ -151,7 +152,9 @@ export const AiChatMessage = ({
   const shouldShowError =
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
-  const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
+  const { gridImages, standaloneAttachments } = getAgentChatAttachmentGroups(
+    agentChatMessage.parts.filter(isExtendedFileUIPart),
+  );
   const messageText =
     agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
   const messageContent = (
@@ -207,13 +210,18 @@ export const AiChatMessage = ({
           ) : (
             <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
           )}
-          {isNonEmptyArray(fileParts) && (
+          {isNonEmptyArray(gridImages) && (
             <StyledFilesContainer>
-              {fileParts.map((filePart) => (
+              <ChatMessageImageGrid files={gridImages} />
+            </StyledFilesContainer>
+          )}
+          {isNonEmptyArray(standaloneAttachments) && (
+            <StyledFilesContainer>
+              {standaloneAttachments.map((attachment) => (
                 // TODO: Refactor AgentChat and Message component lib
                 <ChatThreadMessageAttachment
-                  key={filePart.fileId}
-                  file={getAgentChatFilePartFieldFilesValue(filePart)}
+                  key={attachment.fileId}
+                  file={attachment}
                 />
               ))}
             </StyledFilesContainer>
