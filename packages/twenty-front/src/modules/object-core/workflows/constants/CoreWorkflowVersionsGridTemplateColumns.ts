@@ -1,2 +1,0 @@
-export const CORE_WORKFLOW_VERSIONS_GRID_TEMPLATE_COLUMNS =
-  'minmax(160px, 1fr) 140px 200px';

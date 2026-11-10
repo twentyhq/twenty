@@ -3,7 +3,6 @@ import { type ReactNode, useMemo } from 'react';
 
 import { CoreWorkflowOverviewTab } from '@/object-core/workflows/components/CoreWorkflowOverviewTab';
 import { CoreWorkflowRunsTab } from '@/object-core/workflows/components/CoreWorkflowRunsTab';
-import { CoreWorkflowVersionsTab } from '@/object-core/workflows/components/CoreWorkflowVersionsTab';
 import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
 import { type CoreWorkflowShowPageTabId } from '@/object-core/workflows/types/CoreWorkflowShowPageTabId';
 import { type GetCoreWorkflowVersionsQuery } from '~/generated/graphql';
@@ -47,14 +46,6 @@ export const CoreWorkflowShowPageActiveTab = ({
           coreWorkflowId={coreWorkflowId}
           versionLabelById={versionLabelById}
         />
-      </StyledTabContent>
-    );
-  }
-
-  if (activeTabId === CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.VERSIONS) {
-    return (
-      <StyledTabContent>
-        <CoreWorkflowVersionsTab coreWorkflowVersions={coreWorkflowVersions} />
       </StyledTabContent>
     );
   }

@@ -4,6 +4,5 @@ export const CORE_WORKFLOW_SHOW_PAGE_TABS = {
     OVERVIEW: 'overview',
     FLOW: 'flow',
     RUNS: 'runs',
-    VERSIONS: 'versions',
   },
 } as const;
