@@ -49,6 +49,7 @@ export const crossEntityTransversalValidation = ({
   const { fieldMetadata } =
     validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity({
       fromFlatFieldMetadataMaps,
+      optimisticUniversalFlatMaps,
       orchestratorActionsReport,
     });
 

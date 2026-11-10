@@ -6,6 +6,7 @@ import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
@@ -13,14 +14,22 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 export const validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity =
   ({
     fromFlatFieldMetadataMaps,
+    optimisticUniversalFlatMaps,
     orchestratorActionsReport,
   }: {
     fromFlatFieldMetadataMaps:
       | MetadataUniversalFlatEntityMaps<'fieldMetadata'>
       | undefined;
+    optimisticUniversalFlatMaps: Pick<
+      AllUniversalFlatEntityMaps,
+      'flatRowLevelPermissionPredicateMaps'
+    >;
     orchestratorActionsReport: Pick<
       OrchestratorActionsReport,
-      'fieldMetadata' | 'rowLevelPermissionPredicate' | 'objectMetadata'
+      | 'fieldMetadata'
+      | 'rowLevelPermissionPredicate'
+      | 'role'
+      | 'objectMetadata'
     >;
   }): Pick<OrchestratorFailureReport, 'fieldMetadata'> => {
     const validationErrors: Pick<OrchestratorFailureReport, 'fieldMetadata'> = {
@@ -38,6 +47,11 @@ export const validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntit
 
     const deletedPredicateUniversalIdentifiers = new Set(
       orchestratorActionsReport.rowLevelPermissionPredicate.delete.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
+    );
+    const deletedRoleUniversalIdentifiers = new Set(
+      orchestratorActionsReport.role.delete.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
     );
@@ -67,12 +81,30 @@ export const validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntit
           ...fromFlatFieldMetadata.rowLevelPermissionPredicateUniversalIdentifiers,
           ...fromFlatFieldMetadata.relationRowLevelPermissionPredicateUniversalIdentifiers,
           ...fromFlatFieldMetadata.workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers,
-        ].filter(
-          (predicateUniversalIdentifier) =>
-            !deletedPredicateUniversalIdentifiers.has(
+        ].filter((predicateUniversalIdentifier) => {
+          if (
+            deletedPredicateUniversalIdentifiers.has(
               predicateUniversalIdentifier,
-            ),
-        ),
+            )
+          ) {
+            return false;
+          }
+
+          // Predicates of a deleted role or object go with it through the database
+          const predicate =
+            optimisticUniversalFlatMaps.flatRowLevelPermissionPredicateMaps
+              .byUniversalIdentifier[predicateUniversalIdentifier];
+
+          return !(
+            isDefined(predicate) &&
+            (deletedRoleUniversalIdentifiers.has(
+              predicate.roleUniversalIdentifier,
+            ) ||
+              deletedObjectUniversalIdentifiers.has(
+                predicate.objectMetadataUniversalIdentifier,
+              ))
+          );
+        }),
       ).size;
 
       if (survivingPredicateCount === 0) {

@@ -18,8 +18,7 @@ type Assertions = [
   // FieldMetadataEntity OneToMany relations (all targets):
   // - indexFieldMetadatas, fieldPermissions, viewFields, viewFilters,
   // - kanbanAggregateOperationViews, calendarViews, calendarEndViews, mainGroupByFieldMetadataViews,
-  // - viewSorts, searchFieldMetadatas, fieldMetadataOptions
-  // - rowLevelPermissionPredicates, relationRowLevelPermissionPredicates, workspaceMemberRowLevelPermissionPredicates
+  // - viewSorts, searchFieldMetadatas
   Expect<
     Equal<
       FieldMetadataOneToManyRelations,
