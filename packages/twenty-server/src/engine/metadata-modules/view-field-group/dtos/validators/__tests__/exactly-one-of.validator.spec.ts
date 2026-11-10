@@ -1,10 +1,13 @@
-import { validateSync } from 'class-validator';
+import { IsOptional, validateSync } from 'class-validator';
 
 import { ExactlyOneOf } from 'src/engine/metadata-modules/view-field-group/dtos/validators/exactly-one-of.validator';
 
 @ExactlyOneOf(['text', 'email'])
 class ReplyInput {
+  @IsOptional()
   text?: string;
+
+  @IsOptional()
   email?: { subject: string };
 }
 

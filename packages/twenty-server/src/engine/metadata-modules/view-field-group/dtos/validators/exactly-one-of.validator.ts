@@ -32,7 +32,8 @@ export const ExactlyOneOf = (
   return (target) => {
     registerDecorator({
       target,
-      propertyName: properties[0],
+      // a property of its own, so @IsOptional() on the listed ones does not skip it
+      propertyName: properties.join('|'),
       options: validationOptions,
       constraints: [properties],
       validator: ExactlyOneOfConstraint,
