@@ -66,7 +66,7 @@ export const SettingsAppPreferencesConnectionsTab = ({
               <>
                 <SettingsAppPreferencesConnectionsTable
                   applicationId={applicationId}
-                  providerName={provider.name}
+                  connectionProvider={provider}
                   connections={providerConnections}
                   canStartAuthorization={canStartAuthorization}
                   isLoading={loading}
@@ -75,7 +75,7 @@ export const SettingsAppPreferencesConnectionsTab = ({
                 {canStartAuthorization && (
                   <SettingsApplicationAddConnectionButton
                     applicationId={applicationId}
-                    providerName={provider.name}
+                    connectionProvider={provider}
                     redirectLocation={postConnectPath}
                   />
                 )}

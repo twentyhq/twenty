@@ -17,4 +17,5 @@ export type ConnectionProviderManifest = ConnectionProviderManifestBase &
   (
     | { type: 'oauth'; oauth: OAuthConnectionProviderConfig }
     | { type: 'custom'; custom: CustomConnectionProviderConfig }
+    | { type: 'apiKey' }
   );

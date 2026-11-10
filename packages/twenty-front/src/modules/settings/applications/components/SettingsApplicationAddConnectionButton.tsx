@@ -1,4 +1,6 @@
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
+import { SettingsApplicationApiKeyConnectionDialog } from '@/settings/applications/components/SettingsApplicationApiKeyConnectionDialog';
+import { useStartApplicationConnection } from '@/settings/applications/hooks/useStartApplicationConnection';
+import { type ConnectableApplicationConnectionProvider } from '@/settings/applications/types/ConnectableApplicationConnectionProvider';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
@@ -13,17 +15,17 @@ const StyledFooter = styled.div`
 
 type SettingsApplicationAddConnectionButtonProps = {
   applicationId: string;
-  providerName: string;
+  connectionProvider: ConnectableApplicationConnectionProvider;
   redirectLocation?: string;
 };
 
 export const SettingsApplicationAddConnectionButton = ({
   applicationId,
-  providerName,
+  connectionProvider,
   redirectLocation,
 }: SettingsApplicationAddConnectionButtonProps) => {
   const { t } = useLingui();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
+  const { startApplicationConnection } = useStartApplicationConnection();
 
   return (
     <StyledFooter>
@@ -31,14 +33,18 @@ export const SettingsApplicationAddConnectionButton = ({
         startIcon={<IconPlus />}
         size="sm"
         onClick={() =>
-          triggerAppOAuth({
+          startApplicationConnection({
             applicationId,
-            providerName,
+            connectionProvider,
             redirectLocation,
           })
         }
         variant="outline"
       >{t`Add connection`}</Button>
+      <SettingsApplicationApiKeyConnectionDialog
+        applicationId={applicationId}
+        connectionProvider={connectionProvider}
+      />
     </StyledFooter>
   );
 };

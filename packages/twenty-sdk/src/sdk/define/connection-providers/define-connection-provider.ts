@@ -9,7 +9,7 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-const SUPPORTED_TYPES = ['oauth', 'custom'] as const;
+const SUPPORTED_TYPES = ['oauth', 'custom', 'apiKey'] as const;
 
 type ConnectionProviderLogicFunctionKey = Extract<
   keyof ConnectionProviderManifest,

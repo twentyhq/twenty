@@ -116,6 +116,24 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
     });
   });
 
+  it('stores an apiKey provider without any sub-config', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: {
+          universalIdentifier: PROVIDER_UID,
+          name: 'acme',
+          displayName: 'Acme',
+          type: 'apiKey',
+        },
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.type).toBe('apiKey');
+    expect(result.oauthConfig).toBeNull();
+    expect(result.customConfig).toBeNull();
+  });
+
   it('resolves the identifyAccountLogicFunction universalIdentifier into the flat field when provided', () => {
     const identifyAccountLogicFunctionUniversalIdentifier =
       'e3e3e3e3-e3e3-4e3e-e3e3-e3e3e3e3e3e3';

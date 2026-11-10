@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppConnectionAccessService } from 'src/engine/core-modules/application/connection-provider/app-connection-access.service';
+import { ApplicationApiKeyConnectionResolver } from 'src/engine/core-modules/application/connection-provider/application-api-key-connection.resolver';
 import { ApplicationConnectionProviderResolver } from 'src/engine/core-modules/application/connection-provider/application-connection-provider.resolver';
+import { ConnectionProviderApiKeyFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-api-key-flow.service';
 import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
 import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
@@ -56,8 +58,10 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ConnectionProviderConnectedAccountService,
     ConnectionProviderOAuthFlowService,
     ConnectionProviderCustomFlowService,
+    ConnectionProviderApiKeyFlowService,
     ConnectionProviderLifecycleHookService,
     ApplicationConnectionProviderResolver,
+    ApplicationApiKeyConnectionResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [

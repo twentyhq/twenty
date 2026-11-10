@@ -202,4 +202,21 @@ describe('defineConnectionProvider', () => {
       ).toBe(true);
     });
   });
+
+  describe('apiKey type', () => {
+    it('returns success without a sub-config block', () => {
+      const result = defineConnectionProvider({
+        universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3ecccc',
+        name: 'acme',
+        displayName: 'Acme',
+        type: 'apiKey',
+        identifyAccountLogicFunction: {
+          universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991063',
+        },
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+  });
 });

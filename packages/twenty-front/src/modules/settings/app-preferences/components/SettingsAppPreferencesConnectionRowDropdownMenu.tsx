@@ -1,7 +1,9 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAppPreferencesRemoveConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog';
 import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
+import { SettingsApplicationApiKeyConnectionDialog } from '@/settings/applications/components/SettingsApplicationApiKeyConnectionDialog';
+import { useStartApplicationConnection } from '@/settings/applications/hooks/useStartApplicationConnection';
+import { type ConnectableApplicationConnectionProvider } from '@/settings/applications/types/ConnectableApplicationConnectionProvider';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -13,7 +15,7 @@ import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
 
 type SettingsAppPreferencesConnectionRowDropdownMenuProps = {
   applicationId: string;
-  providerName: string;
+  connectionProvider: ConnectableApplicationConnectionProvider;
   connection: ConnectedAccount;
   canStartAuthorization: boolean;
   reconnectRedirectLocation: string;
@@ -21,13 +23,13 @@ type SettingsAppPreferencesConnectionRowDropdownMenuProps = {
 
 export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
   applicationId,
-  providerName,
+  connectionProvider,
   connection,
   canStartAuthorization,
   reconnectRedirectLocation,
 }: SettingsAppPreferencesConnectionRowDropdownMenuProps) => {
   const { t } = useLingui();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
+  const { startApplicationConnection } = useStartApplicationConnection();
   const { openDialog } = useDialog();
   const removeDialogId = `remove-app-connection-modal-${connection.id}`;
 
@@ -51,9 +53,9 @@ export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
                 <Dropdown.ActionItem
                   startIcon={<IconRefresh />}
                   onClick={() =>
-                    triggerAppOAuth({
+                    startApplicationConnection({
                       applicationId,
-                      providerName,
+                      connectionProvider,
                       reconnectingConnectedAccountId: connection.id,
                       redirectLocation: reconnectRedirectLocation,
                     })
@@ -68,6 +70,11 @@ export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
           </Dropdown.Section>
         </DropdownContent>
       </DropdownRoot>
+      <SettingsApplicationApiKeyConnectionDialog
+        applicationId={applicationId}
+        connectionProvider={connectionProvider}
+        reconnectingConnectedAccountId={connection.id}
+      />
       <SettingsAppPreferencesRemoveConnectionDialog
         dialogId={removeDialogId}
         connectedAccountId={connection.id}

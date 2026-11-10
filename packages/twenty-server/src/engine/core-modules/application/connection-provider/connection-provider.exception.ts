@@ -43,6 +43,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`We could not identify the account you authorized. Please try again.`;
     case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
       return msg`You authorized a different account than the one this connection belongs to.`;
+    case ConnectionProviderExceptionCode.INVALID_API_KEY:
+      return msg`The API key was rejected. Check it and try again.`;
     case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_NOT_FOUND:
       return msg`The logic function that starts the connection was not found.`;
     case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED:

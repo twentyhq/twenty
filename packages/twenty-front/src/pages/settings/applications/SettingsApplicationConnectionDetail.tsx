@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
@@ -36,7 +36,8 @@ import {
   useApplicationConnectedAccounts,
 } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { SettingsSyncFailedStatus } from '@/settings/applications/components/SettingsSyncFailedStatus';
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
+import { SettingsApplicationApiKeyConnectionDialog } from '@/settings/applications/components/SettingsApplicationApiKeyConnectionDialog';
+import { useStartApplicationConnection } from '@/settings/applications/hooks/useStartApplicationConnection';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 
 const DETAIL_GRID_TEMPLATE = '220px 1fr';
@@ -86,7 +87,7 @@ export const SettingsApplicationConnectionDetail = () => {
 
   const navigate = useNavigateSettings();
   const { openDialog } = useDialog();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
+  const { startApplicationConnection } = useStartApplicationConnection();
   const { connectionProviders, loading: providersLoading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts, loading: accountsLoading } =
@@ -155,9 +156,9 @@ export const SettingsApplicationConnectionDetail = () => {
       return;
     }
 
-    triggerAppOAuth({
+    startApplicationConnection({
       applicationId,
-      providerName: provider.name,
+      connectionProvider: provider,
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
@@ -349,6 +350,13 @@ export const SettingsApplicationConnectionDetail = () => {
             <SettingsApplicationConnectionMessageFolders
               connectedAccountId={connection.id}
             />
+            {isDefined(provider) && (
+              <SettingsApplicationApiKeyConnectionDialog
+                applicationId={applicationId}
+                connectionProvider={provider}
+                reconnectingConnectedAccountId={connection.id}
+              />
+            )}
             <ConfirmationDialog
               dialogId={removeDialogId}
               title={t`Remove connection?`}

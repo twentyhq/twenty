@@ -47,6 +47,13 @@ jest.mock('@/settings/applications/hooks/useTriggerAppOAuth', () => ({
   })),
 }));
 
+jest.mock(
+  '@/settings/applications/components/SettingsApplicationApiKeyConnectionDialog',
+  () => ({
+    SettingsApplicationApiKeyConnectionDialog: () => null,
+  }),
+);
+
 jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: jest.fn(() => jest.fn()),
 }));
@@ -213,6 +220,34 @@ describe('SettingsApplicationConnectionDetail', () => {
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
     expect(mockOpenModal).toHaveBeenCalledWith(
       'remove-application-connection-modal-account-1',
+    );
+  });
+
+  it('opens the API key dialog instead of redirecting when reconnecting an API key connection', () => {
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      connectionProviders: [
+        {
+          id: 'provider-1',
+          applicationId: 'app-1',
+          type: 'apiKey',
+          name: 'acme',
+          displayName: 'Acme',
+          scope: 'WORKSPACE',
+          logoUrl: null,
+          oauth: null,
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    renderDetailPage();
+
+    fireEvent.click(screen.getByText('Reconnect'));
+
+    expect(mockTriggerAppOAuth).not.toHaveBeenCalled();
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      'application-api-key-connection-reconnect-account-1',
     );
   });
 });
