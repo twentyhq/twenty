@@ -148,7 +148,7 @@ describe('Application grant on dev sync', () => {
     });
   });
 
-  it('creates a grant owned by the workspace custom application, equal to the requested role', async () => {
+  it('creates a grant owned by the workspace custom application, equal to the requested role without its RLS', async () => {
     await syncRequestedRole(INITIAL_REQUESTED_ROLE);
 
     const { applicationId, grant } = await findUpsertedApplicationGrantRole();
@@ -173,13 +173,17 @@ describe('Application grant on dev sync', () => {
 
     const grantSnapshot = await findRolePermissionSnapshot(grant!.role.id);
 
-    expect(grantSnapshot).toEqual(
-      await findRolePermissionSnapshot(requestedRoleId),
-    );
+    const requestedSnapshot = await findRolePermissionSnapshot(requestedRoleId);
+
+    expect(requestedSnapshot.rowLevelPermissionPredicates).toHaveLength(1);
+    expect(grantSnapshot).toEqual({
+      ...requestedSnapshot,
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
+    });
     expect(grantSnapshot.objectPermissions).toHaveLength(1);
     expect(grantSnapshot.fieldPermissions).toHaveLength(1);
     expect(grantSnapshot.permissionFlags).toHaveLength(1);
-    expect(grantSnapshot.rowLevelPermissionPredicates).toHaveLength(1);
   }, 60000);
 
   it('rewrites the same grant when the requested role changes', async () => {
@@ -199,9 +203,11 @@ describe('Application grant on dev sync', () => {
 
     const grantSnapshot = await findRolePermissionSnapshot(grant!.role.id);
 
-    expect(grantSnapshot).toEqual(
-      await findRolePermissionSnapshot(requestedRoleId),
-    );
+    expect(grantSnapshot).toEqual({
+      ...(await findRolePermissionSnapshot(requestedRoleId)),
+      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicateGroups: [],
+    });
     expect(grantSnapshot.switches.canAccessAllTools).toBe(true);
     expect(grantSnapshot.fieldPermissions).toEqual([]);
     expect(grantSnapshot.permissionFlags).toEqual([]);
