@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useCallback, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
@@ -5,11 +6,11 @@ import { type EmailAttachment } from 'twenty-shared/types';
 import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
 import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
-import { type PendingAppSend } from '@/activities/emails/types/PendingAppSend';
-import { getAppSendIdempotencyKey } from '@/activities/emails/utils/getAppSendIdempotencyKey';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
+import { v4 } from 'uuid';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
@@ -90,9 +91,10 @@ export const useEmailComposerState = ({
   const { sendAppChannelMessage } = useSendAppChannelMessage();
   const [isSendingThroughApp, setIsSendingThroughApp] = useState(false);
   const { enqueueToast } = useToast();
-  const [pendingAppSend, setPendingAppSend] = useState<PendingAppSend | null>(
-    null,
-  );
+  const [pendingAppSend, setPendingAppSend] = useState<{
+    emailKey: string;
+    idempotencyKey: string;
+  } | null>(null);
   const loading = isSendingEmail || isSendingThroughApp;
 
   const recipientCount = to.length + cc.length + bcc.length;
@@ -131,14 +133,15 @@ export const useEmailComposerState = ({
         bcc: serializedBcc || undefined,
         subject,
         body,
-        inReplyTo: defaultInReplyTo,
+        inReplyTo: defaultInReplyTo || undefined,
       };
       const emailKey = JSON.stringify(email);
 
-      const idempotencyKey = getAppSendIdempotencyKey({
-        pendingAppSend,
-        emailKey,
-      });
+      // a retry of the same email reuses its key so the server does not deliver it twice
+      const idempotencyKey =
+        pendingAppSend?.emailKey === emailKey
+          ? pendingAppSend.idempotencyKey
+          : v4();
 
       setPendingAppSend({ emailKey, idempotencyKey });
 
@@ -152,10 +155,12 @@ export const useEmailComposerState = ({
 
         setPendingAppSend(null);
         onSent?.(sentMessage?.messageThreadId ?? null);
-      } catch {
+      } catch (error) {
         enqueueToast({
           status: 'error',
-          children: t`Failed to send email`,
+          children: CombinedGraphQLErrors.is(error)
+            ? getErrorMessageFromApolloError(error)
+            : t`Failed to send email`,
         });
       } finally {
         setIsSendingThroughApp(false);

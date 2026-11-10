@@ -21,6 +21,7 @@ import {
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { MAX_APP_MESSAGE_TEXT_LENGTH } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -574,7 +575,45 @@ describe('sendAppChannelMessage (e2e)', () => {
       email: { to: CONTACT_EMAIL, subject: 'Re: Next week', body: 'Hi' },
     });
 
-    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors?.[0]?.message).toContain(
+      'Exactly one of the following properties must be provided: text, email',
+    );
+    expect(readSendExecutions()).toEqual([]);
+  });
+
+  it('refuses a reply that is neither a text nor an email', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({ messageChannelId, messageThreadId });
+
+    expect(response.body.errors?.[0]?.message).toContain(
+      'Exactly one of the following properties must be provided: text, email',
+    );
+    expect(readSendExecutions()).toEqual([]);
+  });
+
+  it('refuses an email-style reply whose body is longer than a message text can be', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: EMAIL_MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      email: {
+        to: CONTACT_EMAIL,
+        subject: 'Re: Next week',
+        body: 'a'.repeat(MAX_APP_MESSAGE_TEXT_LENGTH + 1),
+      },
+    });
+
+    expect(response.body.errors?.[0]?.message).toBe(
+      `Email body is longer than ${MAX_APP_MESSAGE_TEXT_LENGTH} characters`,
+    );
     expect(readSendExecutions()).toEqual([]);
   });
 

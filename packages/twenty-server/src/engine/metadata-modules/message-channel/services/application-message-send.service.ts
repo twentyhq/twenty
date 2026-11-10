@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type SendAppMessageEmail } from 'twenty-shared/application';
 import {
   MessageChannelType,
   MessageParticipantRole,
@@ -12,6 +13,7 @@ import {
 } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { MAX_APP_MESSAGE_TEXT_LENGTH } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -63,18 +65,18 @@ type Conversation = {
   recipients: AppMessageReplyRecipient[];
 };
 
-type AppMessageEmailContent = {
-  subject: string;
-  html: string;
-  cc: AppMessageReplyRecipient[];
-  bcc: AppMessageReplyRecipient[];
-  inReplyTo: string | null;
-};
-
-type AppMessageContent = {
+type ValidatedAppReply = {
   text: string;
-  to: AppMessageReplyRecipient[] | null;
-  email: AppMessageEmailContent | null;
+  recipients: {
+    to: AppMessageReplyRecipient[];
+    cc: AppMessageReplyRecipient[];
+    bcc: AppMessageReplyRecipient[];
+  } | null;
+  email:
+    | (Pick<SendAppMessageEmail, 'subject' | 'html'> & {
+        inReplyToHeaderMessageId: string | null;
+      })
+    | null;
 };
 
 type AppMessageDelivery = Conversation & {
@@ -110,7 +112,7 @@ export class ApplicationMessageSendService {
     email,
     idempotencyKey,
   }: SendArgs): Promise<SendAppChannelMessageOutput> {
-    const content = await this.buildContentOrThrow({ text, email });
+    const reply = await this.validateReplyOrThrow({ text, email });
 
     const messageChannel = await this.messageChannelRepository.findOne({
       where: {
@@ -173,7 +175,7 @@ export class ApplicationMessageSendService {
             connectedAccountId: connectedAccount.id,
             messageThreadId,
             idempotencyKey,
-            content,
+            reply,
             deliveryKey,
           }));
 
@@ -235,7 +237,7 @@ export class ApplicationMessageSendService {
     connectedAccountId,
     messageThreadId,
     idempotencyKey,
-    content,
+    reply,
     deliveryKey,
   }: {
     workspaceId: string;
@@ -244,7 +246,7 @@ export class ApplicationMessageSendService {
     connectedAccountId: string;
     messageThreadId: string;
     idempotencyKey: string;
-    content: AppMessageContent;
+    reply: ValidatedAppReply;
     deliveryKey: string;
   }): Promise<AppMessageDelivery> {
     const sender =
@@ -258,7 +260,7 @@ export class ApplicationMessageSendService {
 
     const isEmailStyle = sender.messagingProvider.conversationStyle === 'email';
 
-    if (isEmailStyle !== isDefined(content.email)) {
+    if (isEmailStyle !== isDefined(reply.email)) {
       throw new MessageChannelException(
         isEmailStyle
           ? `Messaging provider ${sender.messagingProvider.id} sends email-style replies: send an email`
@@ -273,11 +275,16 @@ export class ApplicationMessageSendService {
       messageThreadId,
     });
 
-    const recipients = isDefined(content.to)
-      ? withKnownParticipantIdentities({
-          recipients: content.to,
-          knownParticipants: conversation.recipients,
-        })
+    const withConversationIdentities = (
+      replyRecipients: AppMessageReplyRecipient[],
+    ) =>
+      withKnownParticipantIdentities({
+        recipients: replyRecipients,
+        knownParticipants: conversation.recipients,
+      });
+
+    const recipients = isDefined(reply.recipients)
+      ? withConversationIdentities(reply.recipients.to)
       : conversation.recipients;
 
     if (recipients.length === 0) {
@@ -287,26 +294,17 @@ export class ApplicationMessageSendService {
       );
     }
 
-    const email = isDefined(content.email)
-      ? {
-          ...content.email,
-          cc: withKnownParticipantIdentities({
-            recipients: content.email.cc,
-            knownParticipants: conversation.recipients,
-          }),
-          bcc: withKnownParticipantIdentities({
-            recipients: content.email.bcc,
-            knownParticipants: conversation.recipients,
-          }),
-        }
-      : null;
+    const cc = withConversationIdentities(reply.recipients?.cc ?? []);
+    const bcc = withConversationIdentities(reply.recipients?.bcc ?? []);
 
-    const inReplyToExternalId = isDefined(email?.inReplyTo)
+    const inReplyToHeaderMessageId = reply.email?.inReplyToHeaderMessageId;
+
+    const inReplyToExternalId = isDefined(inReplyToHeaderMessageId)
       ? await this.findMessageExternalId({
           workspaceId,
           messageChannelId: messageChannel.id,
           messageThreadId,
-          headerMessageId: email.inReplyTo,
+          headerMessageId: inReplyToHeaderMessageId,
         })
       : null;
 
@@ -323,7 +321,7 @@ export class ApplicationMessageSendService {
       connectedAccountId,
       messageChannelId: messageChannel.id,
       threadExternalId: conversation.threadExternalId,
-      text: content.text,
+      text: reply.text,
       idempotencyKey,
       recipients: recipients.map(toSendAppMessageRecipient),
     };
@@ -332,15 +330,15 @@ export class ApplicationMessageSendService {
       await this.messagingProviderMessageSenderService.sendOrThrow({
         sender,
         workspaceId,
-        payload: isDefined(email)
+        payload: isDefined(reply.email)
           ? {
               ...payloadBase,
               conversationStyle: 'email',
               email: {
-                subject: email.subject,
-                html: email.html,
-                cc: email.cc.map(toSendAppMessageRecipient),
-                bcc: email.bcc.map(toSendAppMessageRecipient),
+                subject: reply.email.subject,
+                html: reply.email.html,
+                cc: cc.map(toSendAppMessageRecipient),
+                bcc: bcc.map(toSendAppMessageRecipient),
                 inReplyToExternalId,
               },
             }
@@ -350,12 +348,12 @@ export class ApplicationMessageSendService {
     const delivery: AppMessageDelivery = {
       externalId: sentMessage.externalId,
       threadExternalId: conversation.threadExternalId,
-      text: content.text,
+      text: reply.text,
       sentAt: sentMessage.sentAt ?? new Date().toISOString(),
       recipients,
-      subject: email?.subject ?? null,
-      cc: email?.cc ?? [],
-      bcc: email?.bcc ?? [],
+      subject: reply.email?.subject ?? null,
+      cc,
+      bcc,
     };
 
     await this.cacheStorageService.set(
@@ -479,22 +477,15 @@ export class ApplicationMessageSendService {
     return conversation;
   }
 
-  private async buildContentOrThrow({
+  private async validateReplyOrThrow({
     text,
     email,
   }: {
     text?: string;
     email?: SendAppChannelMessageEmailInput;
-  }): Promise<AppMessageContent> {
-    if (isDefined(text) === isDefined(email)) {
-      throw new MessageChannelException(
-        'Send either a text or an email, not both',
-        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
-      );
-    }
-
+  }): Promise<ValidatedAppReply> {
     if (!isDefined(email)) {
-      return { text: text ?? '', to: null, email: null };
+      return { text: text ?? '', recipients: null, email: null };
     }
 
     const bodyConversionResult = convertEmailBodyToEmailDocument(email.body);
@@ -509,6 +500,13 @@ export class ApplicationMessageSendService {
     const { html, plainText } = await compileOutboundEmailContent(
       bodyConversionResult.document,
     );
+
+    if (plainText.length > MAX_APP_MESSAGE_TEXT_LENGTH) {
+      throw new MessageChannelException(
+        `Email body is longer than ${MAX_APP_MESSAGE_TEXT_LENGTH} characters`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
 
     const handles = {
       to: parseCommaSeparatedEmails(email.to),
@@ -531,13 +529,15 @@ export class ApplicationMessageSendService {
 
     return {
       text: plainText,
-      to: toRecipients(handles.to),
+      recipients: {
+        to: toRecipients(handles.to),
+        cc: toRecipients(handles.cc),
+        bcc: toRecipients(handles.bcc),
+      },
       email: {
         subject: await sanitizeOutboundEmailSubject(email.subject),
         html,
-        cc: toRecipients(handles.cc),
-        bcc: toRecipients(handles.bcc),
-        inReplyTo: email.inReplyTo ?? null,
+        inReplyToHeaderMessageId: email.inReplyTo ?? null,
       },
     };
   }

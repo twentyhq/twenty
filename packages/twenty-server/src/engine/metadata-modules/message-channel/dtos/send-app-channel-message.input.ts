@@ -12,6 +12,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MAX_APP_MESSAGE_TEXT_LENGTH } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
+import { ExactlyOneOf } from 'src/engine/metadata-modules/view-field-group/dtos/validators/exactly-one-of.validator';
 
 @InputType('SendAppChannelMessageEmailInput')
 export class SendAppChannelMessageEmailInput {
@@ -46,6 +47,7 @@ export class SendAppChannelMessageEmailInput {
 }
 
 @InputType('SendAppChannelMessageInput')
+@ExactlyOneOf(['text', 'email'])
 export class SendAppChannelMessageInput {
   @Field(() => UUIDScalarType)
   @IsUUID()

@@ -9,7 +9,7 @@ import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEm
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
-import { getAppReplyTarget } from '@/page-layout/widgets/email-thread/utils/getAppReplyTarget';
+import { getAppReplyTarget } from '@/activities/emails/utils/getAppReplyTarget';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,

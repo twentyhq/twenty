@@ -295,6 +295,40 @@ describe('useEmailComposerState', () => {
     expect(onSent).toHaveBeenCalledTimes(1);
   });
 
+  it('shows the server message when an app reply is refused', async () => {
+    const onSent = jest.fn();
+
+    const { result } = renderAppComposerState({
+      mocks: [
+        {
+          request: buildSendAppChannelMessageRequest(() => true),
+          result: {
+            errors: [
+              {
+                message: 'Invalid email recipients',
+                extensions: {
+                  userFriendlyMessage: 'Invalid email addresses: ada@lovelace',
+                },
+              },
+            ],
+          },
+        },
+      ],
+      onSent,
+    });
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      status: 'error',
+      children: 'Invalid email addresses: ada@lovelace',
+    });
+  });
+
   it('sends with the picked account instead of the app when the sender changes', async () => {
     const onSent = jest.fn();
 

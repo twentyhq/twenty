@@ -20,7 +20,6 @@ type SendAppMessagePayloadBase = {
   threadExternalId: string;
   text: string;
   idempotencyKey: string;
-  // the To recipients: the conversation's latest participants, or the ones picked in the email composer
   recipients: SendAppMessageRecipient[];
 };
 

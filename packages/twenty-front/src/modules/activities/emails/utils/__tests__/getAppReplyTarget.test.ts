@@ -1,4 +1,4 @@
-import { getAppReplyTarget } from '@/page-layout/widgets/email-thread/utils/getAppReplyTarget';
+import { getAppReplyTarget } from '@/activities/emails/utils/getAppReplyTarget';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 const APP_REPLY_CONTEXT = {
