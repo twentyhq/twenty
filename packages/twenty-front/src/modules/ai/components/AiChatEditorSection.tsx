@@ -99,6 +99,7 @@ const StyledEditorWrapper = styled.div<{
     border: none;
     box-shadow: none;
     color: ${themeCssVariables.font.color.primary};
+    cursor: text;
     font-family: inherit;
     font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};

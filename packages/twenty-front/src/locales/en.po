@@ -23275,6 +23275,11 @@ msgstr "Reacted with {emoji}"
 msgid "Reacting with {emoji}"
 msgstr "Reacting with {emoji}"
 
+#. js-lingui-id: cQlPDN
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Read"
+msgstr "Read"
+
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read {target}"
@@ -26418,6 +26423,11 @@ msgstr "Send workflow HTTP requests, test requests and the AI agent HTTP tool th
 msgid "Sender name"
 msgstr "Sender name"
 
+#. js-lingui-id: 9bG48P
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Sending"
+msgstr "Sending"
+
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Sending domain"
@@ -26455,6 +26465,7 @@ msgid "Sending..."
 msgstr "Sending..."
 
 #. js-lingui-id: h69WC6
+#: src/modules/chat/components/ChatMessageReceipt.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Sent"

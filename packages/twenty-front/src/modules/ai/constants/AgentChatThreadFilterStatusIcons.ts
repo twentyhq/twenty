@@ -1,7 +1,7 @@
 import {
   type IconComponent,
   IconAt,
-  IconCheck,
+  IconCircleCheck,
   IconCircleDashed,
   IconHandClick,
   IconUserCircle,
@@ -23,5 +23,5 @@ export const AGENT_CHAT_THREAD_FILTER_STATUS_ICONS: Record<
   assignedToAnyone: IconUsers,
   unassigned: IconUserOff,
   snoozed: IconZzz,
-  done: IconCheck,
+  done: IconCircleCheck,
 };
