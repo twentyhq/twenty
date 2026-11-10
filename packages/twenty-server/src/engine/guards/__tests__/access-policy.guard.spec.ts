@@ -29,6 +29,8 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { ApplicationGrantedRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-granted-role.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const user = { id: 'user-id' };
@@ -939,6 +941,9 @@ describe('AccessPolicyGuard', () => {
         flatRoleTargetByAgentIdMaps: {
           'agent-id': { roleId: 'agent-role-id' },
         },
+        flatRoleTargetByApplicationIdMaps: {
+          'application-id': { roleId: 'role-id' },
+        },
         flatApplicationMaps: {
           byId: {
             'application-id': {
@@ -993,9 +998,14 @@ describe('AccessPolicyGuard', () => {
         providers: [
           SettingPermissionsService,
           PrincipalPermissionsReadService,
+          ApplicationGrantedRoleService,
           {
             provide: WorkspaceCacheService,
             useValue: mockWorkspaceCacheService,
+          },
+          {
+            provide: CoreEntityCacheService,
+            useValue: { get: jest.fn().mockResolvedValue(activeWorkspace) },
           },
         ],
       }).compile();

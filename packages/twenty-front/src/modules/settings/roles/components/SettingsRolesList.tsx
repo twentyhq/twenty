@@ -75,20 +75,34 @@ export const SettingsRolesList = () => {
       currentWorkspace,
     );
 
-  const installedApplicationByDefaultRoleId = new Map(
+  const installedApplicationByGrantedRoleId = new Map(
     installedApplications
-      .filter((application) => isDefined(application.defaultRoleId))
-      .map((application) => [application.defaultRoleId, application]),
+      .filter((application) => isDefined(application.grantedRoleId))
+      .map((application) => [application.grantedRoleId, application]),
   );
 
-  // Admin is the standard application's default role but stays a member role
+  // An application runs with its grant, a copy of the role it requests
+  const requestedOnlyRoleIds = new Set(
+    installedApplications
+      .filter(
+        (application) =>
+          isDefined(application.defaultRoleId) &&
+          application.defaultRoleId !== application.grantedRoleId,
+      )
+      .map((application) => application.defaultRoleId),
+  );
+
+  // Admin is the standard application's requested role but stays a member role
   const isApplicationRole = (role: RoleWithPartialMembers) =>
     !role.canBeAssignedToUsers &&
-    installedApplicationByDefaultRoleId.has(role.id);
+    installedApplicationByGrantedRoleId.has(role.id);
+
+  const isRequestedOnlyRole = (role: RoleWithPartialMembers) =>
+    !role.canBeAssignedToUsers && requestedOnlyRoleIds.has(role.id);
 
   const getApplicationName = (role: RoleWithPartialMembers) =>
     isApplicationRole(role)
-      ? (installedApplicationByDefaultRoleId.get(role.id)?.name ?? '')
+      ? (installedApplicationByGrantedRoleId.get(role.id)?.name ?? '')
       : '';
 
   const sortedSettingsAllRoles = [...settingsAllRoles].sort(
@@ -98,6 +112,10 @@ export const SettingsRolesList = () => {
   );
 
   const filteredRoles = sortedSettingsAllRoles.filter((role) => {
+    if (isRequestedOnlyRole(role)) {
+      return false;
+    }
+
     const matchesType = isApplicationRole(role)
       ? showApplicationRoles
       : role.canBeAssignedToUsers ||

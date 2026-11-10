@@ -46,6 +46,8 @@ const buildRoleMaps = (
   userWorkspaceRoleMap: {},
   apiKeyRoleMap: {},
   flatRoleTargetByAgentIdMaps: {},
+  flatRoleTargetByApplicationIdMaps: {},
+  workspaceCustomApplicationId: 'workspace-custom-application-id',
   flatApplicationMaps,
 });
 
@@ -88,7 +90,6 @@ const computeForPrincipals = (principals: PrincipalsWithRoles) =>
     rolesPermissions,
     flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
     flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-    flatApplicationMaps: { byId: {} },
   });
 
 const buildMemberAuthContext = ({
@@ -141,7 +142,6 @@ const computeForAuthContext = ({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: roleMaps.flatApplicationMaps,
       })
     : NO_ROLE_RECORDS_PERMISSIONS;
 };
@@ -690,7 +690,6 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
         rolesPermissions: disabledActionRolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        flatApplicationMaps,
       }).objects[INVOICE_ID];
 
       expect(invoicePermissions?.canDestroyAllRecords).toBe(canDestroy);
@@ -702,6 +701,66 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
       ).toBe(false);
     },
   );
+
+  describe('once the owning application runs with its grant', () => {
+    const grantRolesPermissions = {
+      ...disabledActionRolesPermissions,
+      'owning-application-grant-role-id': buildRoleRecordsPermissions({
+        [INVOICE_ID]: FULL_ACCESS,
+      }),
+    };
+
+    const computeInvoicePermissions = (authContext: PermissionsAuthContext) => {
+      const principals = resolvePermissionsPrincipalsWithRoles({
+        authContext,
+        roleMaps: {
+          ...buildRoleMaps(flatApplicationMaps),
+          flatRoleTargetByApplicationIdMaps: {
+            'owning-application-id': {
+              roleId: 'owning-application-grant-role-id',
+            },
+          },
+          flatWorkspaceMemberMaps: {
+            byId: { 'member-id': { userId: 'user-id' } },
+            userWorkspaceIdByUserId: { 'user-id': 'user-workspace-id' },
+          },
+          userWorkspaceRoleMap: {
+            'user-workspace-id': 'owning-application-role-id',
+          },
+        },
+      });
+
+      return isDefined(principals)
+        ? computePrincipalsRecordsPermissions({
+            principals,
+            rolesPermissions: grantRolesPermissions,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }).objects[INVOICE_ID]
+        : undefined;
+    };
+
+    it('keeps its rights on its own objects through the grant', () => {
+      expect(
+        computeInvoicePermissions({
+          type: 'application',
+          workspace: { id: 'workspace-id' },
+          application: { id: 'owning-application-id' },
+        })?.canDestroyAllRecords,
+      ).toBe(true);
+    });
+
+    it('still gives no owner rights to a member holding its requested role', () => {
+      expect(
+        computeInvoicePermissions(
+          buildMemberAuthContext({
+            workspaceMemberId: 'member-id',
+            applicationId: 'owning-application-id',
+          }),
+        )?.canDestroyAllRecords,
+      ).toBe(false);
+    });
+  });
 
   it('should keep the label identifier readable and restrict the inverse of a relation or morph relation', () => {
     const COMPANY_ID = 'company-id';
@@ -778,7 +837,6 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
       },
       flatObjectMetadataMaps: objectMaps,
       flatFieldMetadataMaps: fieldMaps,
-      flatApplicationMaps,
     });
 
     expect(objects[INVOICE_ID]?.unreadableFields).not.toContain(
@@ -871,7 +929,6 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
           rolesPermissions: rolesPermissionsWithPredicate,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          flatApplicationMaps,
         }).objects[INVOICE_ID]
       : undefined;
   };

@@ -66,6 +66,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { resolveApplicationGrantedRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-granted-role-id.util';
 import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
@@ -657,13 +658,31 @@ export class RecordExportWorkspaceService {
       return permissionsHash;
     }
 
-    const { flatApplicationMaps } =
+    const { flatApplicationMaps, flatRoleTargetByApplicationIdMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
+        'flatRoleTargetByApplicationIdMaps',
       ]);
     const application = flatApplicationMaps.byId[applicationId];
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
 
-    return computeRecordExportPermissionsHash({ permissionsHash, application });
+    return computeRecordExportPermissionsHash({
+      permissionsHash,
+      application,
+      grantedRoleId:
+        isDefined(application) && isDefined(workspace)
+          ? resolveApplicationGrantedRoleId({
+              flatApplication: application,
+              workspaceId,
+              workspaceCustomApplicationId:
+                workspace.workspaceCustomApplicationId,
+              flatRoleTargetByApplicationIdMaps,
+            })
+          : undefined,
+    });
   }
 
   async assertPermissionsUnchanged(

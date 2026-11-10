@@ -8,6 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { resolveApplicationGrantedRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-granted-role-id.util';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import {
@@ -124,6 +125,34 @@ export class ApplicationResolver {
       workspaceId: workspace.id,
       applicationId: application.id,
     });
+  }
+
+  // The role the application runs with, see twentyhq/core-team-issues#3146
+  @ResolveField(() => UUIDScalarType, { nullable: true })
+  async grantedRoleId(
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+  ): Promise<string | null> {
+    const { flatApplicationMaps, flatRoleTargetByApplicationIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+        'flatRoleTargetByApplicationIdMaps',
+      ]);
+    const flatApplication = flatApplicationMaps.byId[application.id];
+
+    if (!isDefined(flatApplication)) {
+      return null;
+    }
+
+    return (
+      resolveApplicationGrantedRoleId({
+        flatApplication,
+        workspaceId,
+        workspaceCustomApplicationId,
+        flatRoleTargetByApplicationIdMaps,
+      }) ?? null
+    );
   }
 
   @ResolveField(() => Boolean)

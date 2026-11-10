@@ -540,6 +540,7 @@ export type Application = {
   description?: Maybe<Scalars['String']['output']>;
   frontComponents: Array<FrontComponent>;
   grantedIframeMediaPermissions: Array<IframeMediaPermission>;
+  grantedRoleId?: Maybe<Scalars['UUID']['output']>;
   healthCheckLogicFunctionId?: Maybe<Scalars['UUID']['output']>;
   id: Scalars['UUID']['output'];
   isUninstallBlockedByOtherWorkspaceInstallations: Scalars['Boolean']['output'];

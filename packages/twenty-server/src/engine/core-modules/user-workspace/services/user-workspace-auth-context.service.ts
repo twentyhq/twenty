@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { resolveApplicationGrantedRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-granted-role-id.util';
 import {
   AuthException,
   AuthExceptionCode,
@@ -135,28 +136,6 @@ export class UserWorkspaceAuthContextService {
       requestContext.userWorkspaceId === userWorkspaceId
         ? requestContext
         : undefined;
-    let application =
-      applicationId === undefined
-        ? matchingUserContext?.application
-        : undefined;
-    if (isDefined(applicationId)) {
-      const { flatApplicationMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatApplicationMaps',
-        ]);
-      application = flatApplicationMaps.byId[applicationId];
-      // OAuth-only applications have no role and act with the member's role
-      if (
-        !isDefined(application) ||
-        (!isDefined(application.defaultRoleId) &&
-          !isOAuthOnlyApplication(application))
-      ) {
-        throw new AuthException(
-          'Application no longer has access',
-          AuthExceptionCode.UNAUTHENTICATED,
-        );
-      }
-    }
     const workspace = await this.coreEntityCacheService.get(
       'workspaceEntity',
       workspaceId,
@@ -169,6 +148,38 @@ export class UserWorkspaceAuthContextService {
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
       ),
     );
+
+    let application =
+      applicationId === undefined
+        ? matchingUserContext?.application
+        : undefined;
+    if (isDefined(applicationId)) {
+      const { flatApplicationMaps, flatRoleTargetByApplicationIdMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatApplicationMaps',
+          'flatRoleTargetByApplicationIdMaps',
+        ]);
+      application = flatApplicationMaps.byId[applicationId];
+      // OAuth-only applications have no role and act with the member's role
+      if (
+        !isDefined(application) ||
+        (!isOAuthOnlyApplication(application) &&
+          !isDefined(
+            resolveApplicationGrantedRoleId({
+              flatApplication: application,
+              workspaceId,
+              workspaceCustomApplicationId:
+                workspace.workspaceCustomApplicationId,
+              flatRoleTargetByApplicationIdMaps,
+            }),
+          ))
+      ) {
+        throw new AuthException(
+          'Application no longer has access',
+          AuthExceptionCode.UNAUTHENTICATED,
+        );
+      }
+    }
 
     return buildUserAuthContext({
       workspace,

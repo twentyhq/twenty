@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/internal/principal/types/application-default-role-maps.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { getPermissionsPrincipalsActingApplicationId } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-acting-application-id.util';
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
@@ -16,12 +15,34 @@ import { toLimitingRoleRecordsPermissions } from 'src/engine/permissions/interna
 import { restrictRecordsPermissionsToRuntimeLimitingRole } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-runtime-limiting-role.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
+const getPermissionsPrincipalsApplicationRoleId = ({
+  principals: { mainPrincipal, applicationPrincipal },
+  applicationId,
+}: {
+  principals: Pick<
+    PermissionsPrincipalsWithRolesContext,
+    'mainPrincipal' | 'applicationPrincipal'
+  >;
+  applicationId: string;
+}): string | undefined => {
+  if (
+    mainPrincipal.type === 'application' &&
+    mainPrincipal.applicationId === applicationId
+  ) {
+    return mainPrincipal.roleId;
+  }
+
+  return applicationPrincipal.type === 'application' &&
+    applicationPrincipal.applicationId === applicationId
+    ? applicationPrincipal.roleId
+    : undefined;
+};
+
 export const computePrincipalsRecordsPermissions = ({
   principals,
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-  flatApplicationMaps,
 }: {
   principals: Pick<
     PermissionsPrincipalsWithRolesContext,
@@ -33,14 +54,16 @@ export const computePrincipalsRecordsPermissions = ({
   rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): RoleRecordsPermissions => {
   const actingApplicationId = getPermissionsPrincipalsActingApplicationId({
     principals,
   });
 
   const actingApplicationRoleId = isDefined(actingApplicationId)
-    ? flatApplicationMaps.byId[actingApplicationId]?.defaultRoleId
+    ? getPermissionsPrincipalsApplicationRoleId({
+        principals,
+        applicationId: actingApplicationId,
+      })
     : undefined;
 
   const restrictToDisabledActions = ({
