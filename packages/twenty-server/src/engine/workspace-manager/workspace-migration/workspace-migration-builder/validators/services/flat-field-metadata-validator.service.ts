@@ -34,18 +34,16 @@ export class FlatFieldMetadataValidatorService {
   validateFlatFieldMetadataUpdate({
     universalIdentifier,
     flatEntityUpdate,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
     workspaceId,
     buildOptions,
     additionalCacheDataMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<'fieldMetadata', 'update'> {
-    const {
-      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
-
     const existingFlatFieldMetadataToUpdate =
       findFlatEntityByUniversalIdentifier({
         universalIdentifier,
@@ -256,7 +254,10 @@ export class FlatFieldMetadataValidatorService {
       this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
           update: flatEntityUpdate,
-          optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+            flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+            flatObjectMetadataMaps,
+          },
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
           remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
@@ -381,7 +382,10 @@ export class FlatFieldMetadataValidatorService {
 
   validateFlatFieldMetadataCreation({
     flatEntityToValidate: flatFieldMetadataToValidate,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
@@ -389,11 +393,6 @@ export class FlatFieldMetadataValidatorService {
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<'fieldMetadata', 'create'> {
-    const {
-      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
-
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier: flatFieldMetadataToValidate.universalIdentifier,
@@ -497,7 +496,10 @@ export class FlatFieldMetadataValidatorService {
     validationResult.errors.push(
       ...this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+            flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+            flatObjectMetadataMaps,
+          },
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
           workspaceId,

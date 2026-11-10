@@ -99,7 +99,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   }
 
   public async validateBuildAndRunWorkspaceMigrationFromTo(
-    args: Omit<WorkspaceMigrationOrchestratorBuildArgs, 'buildOptions'> & {
+    args: Omit<
+      WorkspaceMigrationOrchestratorBuildArgs,
+      'buildOptions' | 'workspaceRowLevelPermissionFlatEntityMaps'
+    > & {
       buildOptions: WorkspaceMigrationBuilderOptions;
       idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
       dryRun?: boolean;
@@ -123,16 +126,25 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         { workspaceId: buildArgs.workspaceId },
       );
 
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(buildArgs.workspaceId, [
-        'flatApplicationMaps',
-      ]);
+    const {
+      flatApplicationMaps,
+      flatRowLevelPermissionPredicateMaps,
+      flatRoleMaps,
+    } = await this.workspaceCacheService.getOrRecompute(buildArgs.workspaceId, [
+      'flatApplicationMaps',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRoleMaps',
+    ]);
 
     const buildStart = performance.now();
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService
         .buildWorkspaceMigration({
           ...buildArgs,
+          workspaceRowLevelPermissionFlatEntityMaps: {
+            flatRowLevelPermissionPredicateMaps,
+            flatRoleMaps,
+          },
           buildOptions: {
             ...buildArgs.buildOptions,
             workspaceCustomApplicationUniversalIdentifier:

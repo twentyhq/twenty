@@ -19,8 +19,6 @@ export type MetadataRelatedMetadataNameForValidation<
 export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   fieldMetadata: {
     objectMetadata: true,
-    role: true,
-    rowLevelPermissionPredicate: true,
   },
   objectMetadata: {
     fieldMetadata: true,

@@ -399,6 +399,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     fromToAllFlatEntityMaps,
     dependencyAllFlatEntityMaps,
     additionalCacheDataMaps,
+    workspaceRowLevelPermissionFlatEntityMaps,
   }: WorkspaceMigrationOrchestratorBuildArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
@@ -438,6 +439,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
       orchestratorActionsReport,
       preDeletionFlatViewFieldMaps,
+      workspaceRowLevelPermissionFlatEntityMaps,
     });
 
     mergeOrchestratorFailureReports({

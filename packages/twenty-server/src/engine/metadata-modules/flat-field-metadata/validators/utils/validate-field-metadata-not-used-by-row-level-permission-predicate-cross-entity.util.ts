@@ -2,76 +2,118 @@ import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import {
+  type OrchestratorActionsReport,
+  type OrchestratorFailureReport,
+} from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { type WorkspaceRowLevelPermissionFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-row-level-permission-flat-entity-maps.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
-import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
-import { type UniversalDeleteFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
-const getReferencedFieldUniversalIdentifiers = (
-  predicate: UniversalFlatRowLevelPermissionPredicate,
-): (string | null)[] => [
-  predicate.fieldMetadataUniversalIdentifier,
-  predicate.workspaceMemberFieldMetadataUniversalIdentifier,
-  predicate.relationFieldMetadataUniversalIdentifier,
-];
+type RowLevelPermissionPredicateReferences = Pick<
+  FlatRowLevelPermissionPredicate,
+  | 'universalIdentifier'
+  | 'roleUniversalIdentifier'
+  | 'objectMetadataUniversalIdentifier'
+  | 'fieldMetadataUniversalIdentifier'
+  | 'workspaceMemberFieldMetadataUniversalIdentifier'
+  | 'relationFieldMetadataUniversalIdentifier'
+  | 'deletedAt'
+>;
 
-// The database cascades or nulls these references, which silently lifts the role's row restriction
+const toUniversalIdentifierSet = (
+  actions: { universalIdentifier: string }[],
+): Set<string> =>
+  new Set(actions.map(({ universalIdentifier }) => universalIdentifier));
+
+// Rules of any application can use the field, while the migration maps only hold the applications it touches
 export const validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity =
   ({
+    workspaceRowLevelPermissionFlatEntityMaps,
     optimisticUniversalFlatMaps,
-    deletedFieldMetadataActions,
+    orchestratorActionsReport,
   }: {
+    workspaceRowLevelPermissionFlatEntityMaps: WorkspaceRowLevelPermissionFlatEntityMaps;
     optimisticUniversalFlatMaps: Pick<
       AllUniversalFlatEntityMaps,
-      | 'flatRowLevelPermissionPredicateMaps'
-      | 'flatObjectMetadataMaps'
-      | 'flatRoleMaps'
+      'flatRowLevelPermissionPredicateMaps'
     >;
-    deletedFieldMetadataActions: UniversalDeleteFieldAction[];
+    orchestratorActionsReport: Pick<
+      OrchestratorActionsReport,
+      | 'fieldMetadata'
+      | 'rowLevelPermissionPredicate'
+      | 'role'
+      | 'objectMetadata'
+    >;
   }): Pick<OrchestratorFailureReport, 'fieldMetadata'> => {
     const validationErrors: Pick<OrchestratorFailureReport, 'fieldMetadata'> = {
       fieldMetadata: [],
     };
 
-    if (deletedFieldMetadataActions.length === 0) {
+    const deletedFieldActions = orchestratorActionsReport.fieldMetadata.delete;
+
+    if (deletedFieldActions.length === 0) {
       return validationErrors;
     }
 
-    const deletedFieldUniversalIdentifiers = new Set(
-      deletedFieldMetadataActions.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
+    const deletedFieldUniversalIdentifiers =
+      toUniversalIdentifierSet(deletedFieldActions);
+    const deletedPredicateUniversalIdentifiers = toUniversalIdentifierSet(
+      orchestratorActionsReport.rowLevelPermissionPredicate.delete,
     );
+    const deletedRoleUniversalIdentifiers = toUniversalIdentifierSet(
+      orchestratorActionsReport.role.delete,
+    );
+    const deletedObjectUniversalIdentifiers = toUniversalIdentifierSet(
+      orchestratorActionsReport.objectMetadata.delete,
+    );
+
+    const survivingPredicates = new Map<
+      string,
+      RowLevelPermissionPredicateReferences
+    >();
+
+    for (const predicate of [
+      ...Object.values(
+        workspaceRowLevelPermissionFlatEntityMaps
+          .flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
+      ),
+      ...Object.values(
+        optimisticUniversalFlatMaps.flatRowLevelPermissionPredicateMaps
+          .byUniversalIdentifier,
+      ),
+    ]) {
+      if (
+        !isDefined(predicate) ||
+        isDefined(predicate.deletedAt) ||
+        deletedPredicateUniversalIdentifiers.has(
+          predicate.universalIdentifier,
+        ) ||
+        deletedRoleUniversalIdentifiers.has(
+          predicate.roleUniversalIdentifier,
+        ) ||
+        deletedObjectUniversalIdentifiers.has(
+          predicate.objectMetadataUniversalIdentifier,
+        )
+      ) {
+        continue;
+      }
+
+      survivingPredicates.set(predicate.universalIdentifier, predicate);
+    }
 
     const roleLabelsByDeletedFieldUniversalIdentifier = new Map<
       string,
       Set<string>
     >();
 
-    for (const predicate of Object.values(
-      optimisticUniversalFlatMaps.flatRowLevelPermissionPredicateMaps
-        .byUniversalIdentifier,
-    )) {
-      if (!isDefined(predicate) || isDefined(predicate.deletedAt)) {
-        continue;
-      }
-
-      const role =
-        optimisticUniversalFlatMaps.flatRoleMaps.byUniversalIdentifier[
-          predicate.roleUniversalIdentifier
-        ];
-      const objectMetadata =
-        optimisticUniversalFlatMaps.flatObjectMetadataMaps
-          .byUniversalIdentifier[predicate.objectMetadataUniversalIdentifier];
-
-      if (!isDefined(role) || !isDefined(objectMetadata)) {
-        continue;
-      }
-
-      for (const fieldUniversalIdentifier of getReferencedFieldUniversalIdentifiers(
-        predicate,
-      )) {
+    for (const predicate of survivingPredicates.values()) {
+      for (const fieldUniversalIdentifier of [
+        predicate.fieldMetadataUniversalIdentifier,
+        predicate.workspaceMemberFieldMetadataUniversalIdentifier,
+        predicate.relationFieldMetadataUniversalIdentifier,
+      ]) {
         if (
           !isDefined(fieldUniversalIdentifier) ||
           !deletedFieldUniversalIdentifiers.has(fieldUniversalIdentifier)
@@ -84,7 +126,11 @@ export const validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntit
             fieldUniversalIdentifier,
           ) ?? new Set<string>();
 
-        roleLabels.add(role.label);
+        roleLabels.add(
+          workspaceRowLevelPermissionFlatEntityMaps.flatRoleMaps
+            .byUniversalIdentifier[predicate.roleUniversalIdentifier]?.label ??
+            predicate.roleUniversalIdentifier,
+        );
         roleLabelsByDeletedFieldUniversalIdentifier.set(
           fieldUniversalIdentifier,
           roleLabels,
@@ -92,7 +138,7 @@ export const validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntit
       }
     }
 
-    for (const deleteAction of deletedFieldMetadataActions) {
+    for (const deleteAction of deletedFieldActions) {
       const roleLabels = roleLabelsByDeletedFieldUniversalIdentifier.get(
         deleteAction.universalIdentifier,
       );

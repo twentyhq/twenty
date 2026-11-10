@@ -6,6 +6,7 @@ import {
   type WorkspaceMigrationActionType,
 } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { type WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
+import { type WorkspaceRowLevelPermissionFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-row-level-permission-flat-entity-maps.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
@@ -24,6 +25,7 @@ export type WorkspaceMigrationOrchestratorBuildArgs = {
   additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
   // Must contain the flat entity maps of the current application and of the applications it depends on
   dependencyAllFlatEntityMaps?: Partial<AllUniversalFlatEntityMaps>;
+  workspaceRowLevelPermissionFlatEntityMaps: WorkspaceRowLevelPermissionFlatEntityMaps;
 };
 
 export type OrchestratorFailureReport = {
