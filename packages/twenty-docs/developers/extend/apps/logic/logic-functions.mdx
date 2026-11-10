@@ -443,7 +443,7 @@ For permanent deletes, use `.destroyed`.
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `eventName`     | Event to listen on, such as `person.updated`. Supports `*` for the object name, the operation, or both.                                                                  |
 | `updatedFields` | Optional list of field names. On `.updated` and `.upserted` events, only changes touching one of them trigger the function.                                              |
-| `condition`     | Optional [rule expression](/user-guide/data-model/capabilities/validation-rules#write-a-condition) the record must meet, such as `stage == 'CUSTOMER'`. `previous.<field>` reads the record before an update. |
+| `condition`     | Optional [rule expression](/user-guide/data-model/capabilities/validation-rules#write-a-condition) the record must meet, such as `stage == 'CUSTOMER'`. `previous.<field>` reads the record before an update. It reads the record's own fields; a many-to-one relation is its id field (`companyId`), not `company.name`. |
 | `batchMode`     | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
 
 Created event example:
