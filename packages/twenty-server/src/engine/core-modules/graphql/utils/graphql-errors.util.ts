@@ -42,6 +42,12 @@ type RestrictedGraphQLErrorExtensions = {
   subCode?: string;
 };
 
+type UserInputErrorExtensions = RestrictedGraphQLErrorExtensions & {
+  isExpected?: boolean;
+  conflictingRecordId?: string;
+  conflictingObjectNameSingular?: string;
+};
+
 export class BaseGraphQLError extends GraphQLError {
   // oxlint-disable-next-line typescript/no-explicit-any
   public extensions: Record<string, any>;
@@ -178,14 +184,11 @@ export class ForbiddenError extends BaseGraphQLError {
 export class UserInputError extends BaseGraphQLError {
   constructor(exception: CustomException);
 
-  constructor(
-    message: string,
-    extensions?: RestrictedGraphQLErrorExtensions & { isExpected?: boolean },
-  );
+  constructor(message: string, extensions?: UserInputErrorExtensions);
 
   constructor(
     messageOrException: string | CustomException,
-    extensions?: RestrictedGraphQLErrorExtensions & { isExpected?: boolean },
+    extensions?: UserInputErrorExtensions,
   ) {
     super(messageOrException, ErrorCode.BAD_USER_INPUT, extensions);
     Object.defineProperty(this, 'name', { value: 'UserInputError' });

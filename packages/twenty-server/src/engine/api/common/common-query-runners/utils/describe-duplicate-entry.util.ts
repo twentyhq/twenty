@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,10 +12,13 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 const SINGLE_COLUMN_DUPLICATE_KEY_DETAIL_PATTERN =
   /^Key \("?([A-Za-z0-9_]+)"?\)=\((.+)\) already exists\.$/;
 
-const getStringProperty = (
-  value: unknown,
-  property: string,
-): string | undefined => {
+const getStringProperty = ({
+  value,
+  property,
+}: {
+  value: unknown;
+  property: string;
+}): string | undefined => {
   if (!isObject(value) || !(property in value)) {
     return undefined;
   }
@@ -28,20 +30,19 @@ const getStringProperty = (
 
 export const describeDuplicateEntry = ({
   duplicateEntryCause,
-  isRestore,
   flatIndexMaps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-  unreadableFieldMetadataIds,
 }: {
   duplicateEntryCause: unknown;
-  isRestore: boolean;
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  unreadableFieldMetadataIds: Set<string>;
 }): DuplicateEntryDescription | undefined => {
-  const constraintName = getStringProperty(duplicateEntryCause, 'constraint');
+  const constraintName = getStringProperty({
+    value: duplicateEntryCause,
+    property: 'constraint',
+  });
 
   if (!isDefined(constraintName)) {
     return undefined;
@@ -60,9 +61,7 @@ export const describeDuplicateEntry = ({
     flatEntityMaps: flatObjectMetadataMaps,
   });
 
-  const indexedFlatFieldMetadatas = [
-    ...flatIndexMetadata.flatIndexFieldMetadatas,
-  ]
+  const flatFieldMetadatas = [...flatIndexMetadata.flatIndexFieldMetadatas]
     .sort((indexFieldA, indexFieldB) => indexFieldA.order - indexFieldB.order)
     .map((indexField) =>
       findFlatEntityByIdInFlatEntityMaps({
@@ -72,42 +71,27 @@ export const describeDuplicateEntry = ({
     )
     .filter(isDefined);
 
-  if (
-    !isDefined(flatObjectMetadata) ||
-    indexedFlatFieldMetadatas.length === 0
-  ) {
+  if (!isDefined(flatObjectMetadata) || flatFieldMetadatas.length === 0) {
     return undefined;
   }
 
   const [, duplicateColumnName, duplicateColumnValue] =
-    getStringProperty(duplicateEntryCause, 'detail')?.match(
-      SINGLE_COLUMN_DUPLICATE_KEY_DETAIL_PATTERN,
-    ) ?? [];
-  const canExposeDuplicateValue = !indexedFlatFieldMetadatas.some(
-    (flatFieldMetadata) =>
-      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
-      unreadableFieldMetadataIds.has(flatFieldMetadata.id),
-  );
-  const duplicateColumn =
-    canExposeDuplicateValue &&
-    isDefined(duplicateColumnName) &&
-    isDefined(duplicateColumnValue)
-      ? { name: duplicateColumnName, value: duplicateColumnValue }
-      : undefined;
+    getStringProperty({
+      value: duplicateEntryCause,
+      property: 'detail',
+    })?.match(SINGLE_COLUMN_DUPLICATE_KEY_DETAIL_PATTERN) ?? [];
 
-  const objectLabel = flatObjectMetadata.labelSingular;
-  const fieldLabels = indexedFlatFieldMetadatas
-    .map((flatFieldMetadata) => flatFieldMetadata.label)
-    .join(', ');
-  const conflictingFields = isDefined(duplicateColumn)
-    ? `${fieldLabels} (${duplicateColumn.value})`
-    : fieldLabels;
+  if (
+    !isDefined(duplicateColumnName) ||
+    !isDefined(duplicateColumnValue) ||
+    flatFieldMetadatas.some(isMorphOrRelationFlatFieldMetadata)
+  ) {
+    return { flatObjectMetadata, flatFieldMetadatas };
+  }
 
   return {
-    userFriendlyMessage: isRestore
-      ? msg`Cannot restore: another ${objectLabel} already has the same ${conflictingFields}.`
-      : msg`Another ${objectLabel} already has the same ${conflictingFields}.`,
     flatObjectMetadata,
-    duplicateColumn,
+    flatFieldMetadatas,
+    duplicateColumn: { name: duplicateColumnName, value: duplicateColumnValue },
   };
 };

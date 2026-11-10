@@ -25,6 +25,7 @@ import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/co
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { type DuplicateEntryDescription } from 'src/engine/api/common/common-query-runners/types/duplicate-entry-description.type';
+import { buildDuplicateEntryUserFriendlyMessage } from 'src/engine/api/common/common-query-runners/utils/build-duplicate-entry-user-friendly-message.util';
 import { describeDuplicateEntry } from 'src/engine/api/common/common-query-runners/utils/describe-duplicate-entry.util';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
@@ -198,48 +199,67 @@ export abstract class CommonBaseQueryRunnerService<
     queryRunnerContext,
   }: {
     error: unknown;
-    queryRunnerContext: CommonBaseQueryRunnerContext;
+    queryRunnerContext: Pick<
+      CommonBaseQueryRunnerContext,
+      | 'authContext'
+      | 'flatIndexMaps'
+      | 'flatObjectMetadataMaps'
+      | 'flatFieldMetadataMaps'
+    >;
   }): Promise<void> {
     if (!isDuplicateEntryError(error)) {
       return;
     }
 
+    const workspaceId = queryRunnerContext.authContext.workspace.id;
     const flatIndexMaps =
       queryRunnerContext.flatIndexMaps ??
       (
-        await this.workspaceCacheService.getOrRecompute(
-          queryRunnerContext.authContext.workspace.id,
-          ['flatIndexMaps'],
-        )
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatIndexMaps',
+        ])
       ).flatIndexMaps;
 
     const duplicateEntryDescription = describeDuplicateEntry({
       duplicateEntryCause: 'cause' in error ? error.cause : undefined,
-      isRestore:
-        this.operationName === CommonQueryNames.RESTORE_ONE ||
-        this.operationName === CommonQueryNames.RESTORE_MANY,
       flatIndexMaps,
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-      unreadableFieldMetadataIds:
-        await this.findFieldMetadataIdsHiddenFromCaller(
-          queryRunnerContext.flatObjectMetadata,
-        ),
     });
 
     if (!isDefined(duplicateEntryDescription)) {
       return;
     }
 
-    error.userFriendlyMessage = duplicateEntryDescription.userFriendlyMessage;
+    const { flatObjectMetadata, flatFieldMetadatas } =
+      duplicateEntryDescription;
+    const hiddenFieldMetadataIds =
+      await this.findFieldMetadataIdsHiddenFromCaller(flatObjectMetadata);
+    const duplicateColumn = flatFieldMetadatas.some((flatFieldMetadata) =>
+      hiddenFieldMetadataIds.has(flatFieldMetadata.id),
+    )
+      ? undefined
+      : duplicateEntryDescription.duplicateColumn;
+
+    error.userFriendlyMessage = buildDuplicateEntryUserFriendlyMessage({
+      objectLabel: flatObjectMetadata.labelSingular,
+      fieldLabels: flatFieldMetadatas.map(
+        (flatFieldMetadata) => flatFieldMetadata.label,
+      ),
+      duplicateValue: duplicateColumn?.value,
+      isRestore:
+        this.operationName === CommonQueryNames.RESTORE_ONE ||
+        this.operationName === CommonQueryNames.RESTORE_MANY,
+    });
     error.conflictingRecord = await this.findConflictingRecord({
-      ...duplicateEntryDescription,
-      workspaceId: queryRunnerContext.authContext.workspace.id,
+      flatObjectMetadata,
+      duplicateColumn,
+      workspaceId,
     });
   }
 
   private async findFieldMetadataIdsHiddenFromCaller(
-    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'nameSingular'>,
   ): Promise<Set<string>> {
     const question = {
       principals: getWorkspaceContext().permissionsPrincipals,

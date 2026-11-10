@@ -7,18 +7,19 @@ import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty
 export const twentyOrmGraphqlApiExceptionHandler = (
   error: TwentyOrmException,
 ) => {
-  if (isTwentyOrmUserInputError(error)) {
-    throw new UserInputError(error.message, {
-      userFriendlyMessage: error.userFriendlyMessage,
-      ...(isDefined(error.conflictingRecord)
-        ? {
-            conflictingRecordId: error.conflictingRecord.id,
-            conflictingObjectNameSingular:
-              error.conflictingRecord.objectNameSingular,
-          }
-        : {}),
-    });
+  if (!isTwentyOrmUserInputError(error)) {
+    throw error;
   }
 
-  throw error;
+  const { userFriendlyMessage, conflictingRecord } = error;
+
+  if (!isDefined(conflictingRecord)) {
+    throw new UserInputError(error.message, { userFriendlyMessage });
+  }
+
+  throw new UserInputError(error.message, {
+    userFriendlyMessage,
+    conflictingRecordId: conflictingRecord.id,
+    conflictingObjectNameSingular: conflictingRecord.objectNameSingular,
+  });
 };
