@@ -4,7 +4,7 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 const STORED_POSITION = { x: 999, y: 999 };
 
-const buildNode = (id: string, extra: object = {}) => ({
+const buildNode = (id: string) => ({
   id,
   position: STORED_POSITION,
   data: {
@@ -14,7 +14,6 @@ const buildNode = (id: string, extra: object = {}) => ({
     hasNextStepIds: false,
     stepId: id,
   },
-  ...extra,
 });
 
 const diagram: WorkflowDiagram = {
