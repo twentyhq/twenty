@@ -15,7 +15,10 @@ export class CoreWorkflowDailyRunCountDTO {
   @Field(() => Int)
   failedRunCount: number;
 
-  @Field(() => Int, { description: 'Runs neither completed nor failed yet' })
+  @Field(() => Int, {
+    description:
+      'Runs neither completed nor failed, such as running or stopped',
+  })
   otherRunCount: number;
 }
 

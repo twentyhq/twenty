@@ -86,7 +86,7 @@ export type CoreWorkflowDailyRunCount = {
   /** Day in the requested time zone, as YYYY-MM-DD */
   day: Scalars['String']['output'];
   failedRunCount: Scalars['Int']['output'];
-  /** Runs neither completed nor failed yet */
+  /** Runs neither completed nor failed, such as running or stopped */
   otherRunCount: Scalars['Int']['output'];
 };
 
