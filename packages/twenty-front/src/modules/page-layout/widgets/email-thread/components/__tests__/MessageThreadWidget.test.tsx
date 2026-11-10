@@ -102,7 +102,7 @@ describe('MessageThreadWidget', () => {
     expect(mockUseSubscribeToMessageThreadMessages).toHaveBeenCalledTimes(1);
     expect(mockUseSubscribeToMessageThreadMessages).toHaveBeenCalledWith({
       messageThreadId: 'thread-id',
-      loadedMessageCount: 1,
+      loadedMessageIds: ['message-id'],
       refetchMessages: mockRefetchMessages,
     });
   });

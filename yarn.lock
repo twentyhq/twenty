@@ -46446,6 +46446,7 @@ __metadata:
     libphonenumber-js: "npm:^1.10.26"
     lodash.camelcase: "npm:^4.3.0"
     lodash.escaperegexp: "npm:^4.1.2"
+    marked: "npm:^17.0.1"
     microdiff: "npm:^1.3.2"
     prettier: "npm:^3.1.1"
     qs: "npm:^6.15.2"

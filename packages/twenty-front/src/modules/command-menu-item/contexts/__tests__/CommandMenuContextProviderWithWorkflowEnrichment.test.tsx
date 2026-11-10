@@ -132,6 +132,7 @@ const renderWorkflowCommands = (applicationId: string) => {
         numberOfSelectedRecords: 1,
         selectedRecords: [{ id: 'workflow' }],
         objectMetadataItem: {
+          id: 'workflow-object',
           nameSingular: StandardObjectNameSingular.Workflow,
         },
       }}
