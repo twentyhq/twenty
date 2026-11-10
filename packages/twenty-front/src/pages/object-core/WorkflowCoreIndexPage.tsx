@@ -34,7 +34,7 @@ import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 
-const getCoreWorkflowLink = (workflow: CoreWorkflowTableRow) =>
+const getCoreWorkflowLink = (workflow: Pick<CoreWorkflowTableRow, 'id'>) =>
   getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
 const WorkflowCoreIndexContent = () => {
