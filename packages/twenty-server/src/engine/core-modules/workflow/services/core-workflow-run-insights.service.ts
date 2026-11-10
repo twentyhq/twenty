@@ -95,7 +95,8 @@ export class CoreWorkflowRunInsightsService {
         });
 
     // Calendar days in the reader's time zone, so the totals add up to the daily bars
-    const windowStartPredicate = `${column('createdAt')} >= (DATE_TRUNC('day', NOW() AT TIME ZONE :timeZone) - MAKE_INTERVAL(days => :lastDayOffset)) AT TIME ZONE :timeZone`;
+    const windowFirstLocalDay = `DATE_TRUNC('day', NOW() AT TIME ZONE :timeZone) - MAKE_INTERVAL(days => :lastDayOffset)`;
+    const windowStartPredicate = `${column('createdAt')} >= (${windowFirstLocalDay}) AT TIME ZONE :timeZone`;
 
     const totalsQueryBuilder = buildWorkflowRunsQueryBuilder()
       .addSelect('COUNT(*)', 'runCount')
@@ -152,7 +153,7 @@ export class CoreWorkflowRunInsightsService {
           COUNT("dailyRun"."id") FILTER (WHERE "dailyRun"."status" = :failedStatus) AS "failedRunCount",
           COUNT("dailyRun"."id") FILTER (WHERE "dailyRun"."status" NOT IN (:completedStatus, :failedStatus)) AS "otherRunCount"
         FROM GENERATE_SERIES(
-          DATE_TRUNC('day', NOW() AT TIME ZONE :timeZone) - MAKE_INTERVAL(days => :lastDayOffset),
+          ${windowFirstLocalDay},
           DATE_TRUNC('day', NOW() AT TIME ZONE :timeZone),
           INTERVAL '1 day'
         ) AS "calendarDay"("day")

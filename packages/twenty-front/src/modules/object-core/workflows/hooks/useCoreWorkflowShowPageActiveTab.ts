@@ -16,11 +16,13 @@ const RUN_TAB_IDS: CoreWorkflowShowPageTabId[] = [
 type UseCoreWorkflowShowPageActiveTabArgs = {
   coreWorkflowId: string;
   isPublished: boolean;
+  isVersionRequested: boolean;
 };
 
 export const useCoreWorkflowShowPageActiveTab = ({
   coreWorkflowId,
   isPublished,
+  isVersionRequested,
 }: UseCoreWorkflowShowPageActiveTabArgs) => {
   const location = useLocation();
 
@@ -36,9 +38,9 @@ export const useCoreWorkflowShowPageActiveTab = ({
     operationType: 'read',
   });
 
-  // A draft has no runs to show yet, so it opens on its flow
+  // Drafts have no runs yet and a requested version is opened to see its flow
   const defaultTabId =
-    isPublished && canReadWorkflowRuns
+    isPublished && canReadWorkflowRuns && !isVersionRequested
       ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW
       : CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW;
 
