@@ -111,7 +111,13 @@ const buildRepository = ({
       recordPermissions: {
         isReadDisabled: jest.fn().mockResolvedValue(false),
         assertCanRunOperationOrThrow: jest.fn(),
-        buildManyRecordsAccessSQLCondition: jest.fn().mockResolvedValue(true),
+        findRecordsAccessSQLConditionStrategy: jest
+          .fn()
+          .mockResolvedValue('withoutRowLevelPermissionsAndInheritance'),
+        buildAccessGroupsSQLCondition: jest.fn(),
+        buildAccessSQLConditionWithoutRowLevelPermissionsAndInheritanceOrThrow:
+          jest.fn().mockResolvedValue(true),
+        buildDegradedSQLCondition: jest.fn(),
         assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
         assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
       },

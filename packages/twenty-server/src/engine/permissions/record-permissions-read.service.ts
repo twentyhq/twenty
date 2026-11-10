@@ -21,7 +21,7 @@ import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/inte
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
-import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
+import { resolveRecordsAccessSQLConditionStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-records-access-sql-condition-strategy.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
@@ -36,6 +36,7 @@ import {
   type ObjectOperationQuestion,
   type ObjectQuestion,
 } from 'src/engine/permissions/types/record-permissions-question.type';
+import { type RecordsAccessSQLConditionStrategy } from 'src/engine/permissions/types/records-access-sql-condition-strategy.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
@@ -315,38 +316,104 @@ export class RecordPermissionsReadService {
     });
   }
 
-  async buildManyRecordsAccessSQLCondition({
+  async findRecordsAccessSQLConditionStrategy(
+    question: RecordOperationQuestion,
+  ): Promise<RecordsAccessSQLConditionStrategy> {
+    return resolveRecordsAccessSQLConditionStrategy(
+      await this.findObjectAccessRequestOrThrow(question),
+    );
+  }
+
+  async buildAccessGroupsSQLCondition({
     tableAlias,
     ...question
   }: RecordOperationQuestion & {
     tableAlias: string;
   }): Promise<SQLCondition | boolean> {
-    const { principals } = question;
     const objectAccessRequest =
       await this.findObjectAccessRequestOrThrow(question);
 
+    if (
+      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest) !==
+      'accessGroups'
+    ) {
+      throw new PermissionsException(
+        `Access groups do not cover ${objectAccessRequest.operationType} on ${objectAccessRequest.flatObjectMetadata.nameSingular}`,
+        PermissionsExceptionCode.RECORD_PERMISSION_QUERY_INVALID,
+      );
+    }
+
+    return this.buildRecordsAccessSQLCondition({
+      objectAccessRequest,
+      tableAlias,
+      callerAccessGroupCompactIds:
+        await this.accessGroupReadService.findCallerCompactIds({
+          principals: objectAccessRequest.principals,
+          objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+          operationType: objectAccessRequest.operationType,
+        }),
+    });
+  }
+
+  async buildAccessSQLConditionWithoutRowLevelPermissionsAndInheritanceOrThrow({
+    tableAlias,
+    ...question
+  }: RecordOperationQuestion & {
+    tableAlias: string;
+  }): Promise<SQLCondition | boolean> {
+    const objectAccessRequest =
+      await this.findObjectAccessRequestOrThrow(question);
+
+    if (
+      isNonEmptyArray(
+        findPrincipalsRoleIdsWithRlsRule({
+          principals: objectAccessRequest.principals,
+          metadataMaps: objectAccessRequest.metadataMaps,
+          objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+        }),
+      )
+    ) {
+      throw new PermissionsException(
+        `An RLS rule applies to ${objectAccessRequest.flatObjectMetadata.nameSingular}`,
+        PermissionsExceptionCode.RECORD_PERMISSION_QUERY_INVALID,
+      );
+    }
+
+    return this.buildRecordsAccessSQLCondition({
+      objectAccessRequest,
+      tableAlias,
+    });
+  }
+
+  // TODO: remove once writes, joins and RLS on limiting roles no longer render RLS in the query
+  async buildDegradedSQLCondition({
+    tableAlias,
+    ...question
+  }: RecordOperationQuestion & {
+    tableAlias: string;
+  }): Promise<SQLCondition | boolean> {
+    return this.buildRecordsAccessSQLCondition({
+      objectAccessRequest: await this.findObjectAccessRequestOrThrow(question),
+      tableAlias,
+    });
+  }
+
+  private buildRecordsAccessSQLCondition({
+    objectAccessRequest,
+    tableAlias,
+    callerAccessGroupCompactIds,
+  }: {
+    objectAccessRequest: PermissionsObjectAccessRequest;
+    tableAlias: string;
+    callerAccessGroupCompactIds?: number[];
+  }): SQLCondition | boolean {
     return buildPermissionsSQLCondition({
       ...objectAccessRequest,
       tableAlias,
       recordShareTableExpression: buildRecordShareTableExpression({
-        workspaceId: principals.workspaceId,
+        workspaceId: objectAccessRequest.principals.workspaceId,
       }),
-      callerAccessGroupCompactIds:
-        await this.findCallerAccessGroupCompactIds(objectAccessRequest),
-    });
-  }
-
-  private async findCallerAccessGroupCompactIds(
-    objectAccessRequest: PermissionsObjectAccessRequest,
-  ): Promise<number[] | undefined> {
-    if (resolveManyRecordsStrategy(objectAccessRequest) !== 'accessGroups') {
-      return undefined;
-    }
-
-    return this.accessGroupReadService.findCallerCompactIds({
-      principals: objectAccessRequest.principals,
-      objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
-      operationType: objectAccessRequest.operationType,
+      callerAccessGroupCompactIds,
     });
   }
 
