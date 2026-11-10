@@ -12,7 +12,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.58.0', 1794326338171)
+@RegisteredWorkspaceCommand('2.58.0', 1794334493981)
 @Command({
   name: 'upgrade:2-58:show-tidy-up-workflow-on-manual-layout',
   description:

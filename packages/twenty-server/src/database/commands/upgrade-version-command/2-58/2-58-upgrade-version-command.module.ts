@@ -4,7 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { DropCodeStepLogicFunctionsCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794234108117-drop-code-step-logic-functions.command';
 import { AddCoreWorkflowMetadataCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794269047171-add-core-workflow-metadata.command';
 import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794298481339-drop-workspace-workflow-object.command';
-import { ShowTidyUpWorkflowOnManualLayoutCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794326338171-show-tidy-up-workflow-on-manual-layout.command';
+import { ShowTidyUpWorkflowOnManualLayoutCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794334493981-show-tidy-up-workflow-on-manual-layout.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
