@@ -6,27 +6,20 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { findWorkspaceMemberBoundPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-bound-predicates.util';
+import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export const isWorkspaceMemberUpdateAffectingAccessGroups = ({
   updatedFields,
-  flatRowLevelPermissionPredicateMaps,
+  rolesPermissions,
   flatFieldMetadataMaps,
 }: {
   updatedFields: string[];
-  flatRowLevelPermissionPredicateMaps: Pick<
-    FlatRowLevelPermissionPredicateMaps,
-    'byUniversalIdentifier'
-  >;
+  rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): boolean =>
-  Object.values(flatRowLevelPermissionPredicateMaps.byUniversalIdentifier)
-    .filter(isDefined)
-    .some(({ workspaceMemberFieldMetadataId, deletedAt }) => {
-      if (isDefined(deletedAt) || !isDefined(workspaceMemberFieldMetadataId)) {
-        return false;
-      }
-
+  findWorkspaceMemberBoundPredicates(rolesPermissions).some(
+    ({ workspaceMemberFieldMetadataId }) => {
       const name = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: workspaceMemberFieldMetadataId,
         flatEntityMaps: flatFieldMetadataMaps,
@@ -39,4 +32,5 @@ export const isWorkspaceMemberUpdateAffectingAccessGroups = ({
             computeMorphOrRelationFieldJoinColumnName({ name }),
           ))
       );
-    });
+    },
+  );

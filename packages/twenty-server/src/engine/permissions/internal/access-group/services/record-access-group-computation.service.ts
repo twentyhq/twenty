@@ -309,8 +309,6 @@ export class RecordAccessGroupComputationService {
       'featureFlagsMap',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
       'rolesPermissions',
     ]);
   }
