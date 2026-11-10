@@ -11352,7 +11352,7 @@ msgid "Record ID"
 msgstr "معرّف السجل"
 
 #. js-lingui-id: kC4rhG
-#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
 msgid "Record not found"
 msgstr "السجل غير موجود"
 
@@ -14489,12 +14489,12 @@ msgid "The workspace member who last updated the record"
 msgstr "عضو مساحة العمل الذي قام بتحديث السجل آخر مرة"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "لا يمكن لدورهم الوصول إلى هذه السجلات، ولا تتم مشاركة هذا الكائن إلا مع الأدوار التي يمكنها الوصول إليها."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "لا يمكن لدورهم رؤية هذا السجل، ولا تتم مشاركة هذا الكائن إلا مع الأشخاص الذين يمكنهم رؤيته."
 

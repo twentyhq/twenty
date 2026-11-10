@@ -11352,7 +11352,7 @@ msgid "Record ID"
 msgstr "Rekordazonosító"
 
 #. js-lingui-id: kC4rhG
-#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
 msgid "Record not found"
 msgstr "Rekord nem található"
 
@@ -14489,12 +14489,12 @@ msgid "The workspace member who last updated the record"
 msgstr "A munkaterület azon tagja, aki utoljára frissítette a rekordot"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "A szerepkörük nem férhet hozzá ezekhez a rekordokhoz, és ez az objektum csak olyan szerepkörökkel van megosztva, amelyek hozzáférhetnek."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "A szerepkörük nem láthatja ezt a rekordot, és ez az objektum csak olyan személyekkel van megosztva, akik láthatják."
 
