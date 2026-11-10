@@ -7,7 +7,6 @@ import {
   type InvokeCommandOutput,
   LogType,
   PublishLayerVersionCommand,
-  PutFunctionConcurrencyCommand,
   UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { msg } from '@lingui/core/macro';
@@ -33,7 +32,6 @@ import {
   HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
   HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES,
   HTTP_EGRESS_LAMBDA_MEMORY_MB,
-  HTTP_EGRESS_LAMBDA_RESERVED_CONCURRENCY,
   HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
   YARN_INSTALL_FUNCTION_NAME_PREFIX,
@@ -327,7 +325,6 @@ export class LambdaToolFunctionsService {
         handlerCode,
         String(HTTP_EGRESS_LAMBDA_MEMORY_MB),
         String(HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS),
-        String(HTTP_EGRESS_LAMBDA_RESERVED_CONCURRENCY),
       ],
     });
 
@@ -341,7 +338,6 @@ export class LambdaToolFunctionsService {
       withCommonLayer: false,
       architecture: 'arm64',
       ephemeralStorageMb: HTTP_EGRESS_LAMBDA_EPHEMERAL_STORAGE_MB,
-      reservedConcurrency: HTTP_EGRESS_LAMBDA_RESERVED_CONCURRENCY,
     });
 
     return functionName;
@@ -450,7 +446,6 @@ export class LambdaToolFunctionsService {
     withCommonLayer = true,
     architecture,
     ephemeralStorageMb = LAMBDA_EPHEMERAL_STORAGE_MB,
-    reservedConcurrency,
   }: {
     functionName: string;
     memoryMb: number;
@@ -459,7 +454,6 @@ export class LambdaToolFunctionsService {
     withCommonLayer?: boolean;
     architecture?: Architecture;
     ephemeralStorageMb?: number;
-    reservedConcurrency?: number;
   }): Promise<void> {
     const existingFunction = await this.awsClient.getFunction(functionName);
 
@@ -516,15 +510,6 @@ export class LambdaToolFunctionsService {
           };
 
           await lambdaClient.send(new CreateFunctionCommand(params));
-
-          if (isDefined(reservedConcurrency)) {
-            await lambdaClient.send(
-              new PutFunctionConcurrencyCommand({
-                FunctionName: functionName,
-                ReservedConcurrentExecutions: reservedConcurrency,
-              }),
-            );
-          }
         } finally {
           await temporaryDirManager.clean();
         }

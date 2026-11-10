@@ -1,8 +1,4 @@
-import {
-  CreateFunctionCommand,
-  InvokeCommand,
-  PutFunctionConcurrencyCommand,
-} from '@aws-sdk/client-lambda';
+import { CreateFunctionCommand, InvokeCommand } from '@aws-sdk/client-lambda';
 
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
@@ -68,15 +64,12 @@ describe('LambdaToolFunctionsService.executeHttpRequest', () => {
     );
   });
 
-  it('creates the egress function without layers, on arm64, with reserved concurrency', async () => {
+  it('creates the egress function without layers, on arm64', async () => {
     await service.executeHttpRequest(HTTP_EGRESS_REQUEST);
 
     const createCommand = managementSend.mock.calls
       .map(([command]) => command)
       .find((command) => command instanceof CreateFunctionCommand);
-    const concurrencyCommand = managementSend.mock.calls
-      .map(([command]) => command)
-      .find((command) => command instanceof PutFunctionConcurrencyCommand);
 
     expect(createCommand?.input).toMatchObject({
       FunctionName: expect.stringMatching(/^twenty-http-egress/),
@@ -86,10 +79,6 @@ describe('LambdaToolFunctionsService.executeHttpRequest', () => {
       Timeout: 35,
       EphemeralStorage: { Size: 512 },
       Role: 'arn:aws:iam::123456789012:role/execution',
-    });
-    expect(concurrencyCommand?.input).toEqual({
-      FunctionName: createCommand?.input.FunctionName,
-      ReservedConcurrentExecutions: 100,
     });
   });
 
