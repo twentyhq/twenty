@@ -43,11 +43,11 @@ const flatFieldMetadataMaps = [
 const buildObjectRecordsPermissions = ({
   roleId,
   value,
-  unreadableFields,
+  rlsRuleUnreadableFields,
 }: {
   roleId: string;
   value: string;
-  unreadableFields: string[];
+  rlsRuleUnreadableFields: string[];
 }): ObjectRecordsPermissions => ({
   canCreateAllRecords: false,
   canReadAllRecords: false,
@@ -78,8 +78,8 @@ const buildObjectRecordsPermissions = ({
         workspaceMemberSubFieldName: null,
       },
     ],
-    unreadableFields,
-    uneditableFields: unreadableFields,
+    unreadableFields: rlsRuleUnreadableFields,
+    uneditableFields: rlsRuleUnreadableFields,
   },
 });
 
@@ -115,7 +115,7 @@ describe('resolveRlsRuleFields', () => {
               [OBJECT_METADATA_ID]: buildObjectRecordsPermissions({
                 roleId: MEMBER_ROLE_ID,
                 value: 'member-invoice',
-                unreadableFields: ['secret-field-id'],
+                rlsRuleUnreadableFields: ['secret-field-id'],
               }),
             },
           },
@@ -125,7 +125,7 @@ describe('resolveRlsRuleFields', () => {
               [OBJECT_METADATA_ID]: buildObjectRecordsPermissions({
                 roleId: AGENT_ROLE_ID,
                 value: 'agent-invoice',
-                unreadableFields: ['amount-field-id'],
+                rlsRuleUnreadableFields: ['amount-field-id'],
               }),
             },
           },
