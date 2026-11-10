@@ -18,6 +18,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
+import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -78,6 +79,7 @@ export const AiChatTab = () => {
         <>
           <AiChatNewThreadRecipientBar />
           <AiChatTabMessageList />
+          <AiChatTypingParticipants />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={currentAiChatThread} />
         </>

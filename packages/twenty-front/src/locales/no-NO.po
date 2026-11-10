@@ -16494,7 +16494,7 @@ msgstr "Fortsett å spore åpningene og klikkene mine"
 #: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
 #: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
 msgid "Keep Twenty"
-msgstr ""
+msgstr "Behold Twenty"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
