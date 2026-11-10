@@ -17,7 +17,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
-import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
+import { type RuntimeLimitingRole } from 'src/engine/permissions/principal/types/runtime-limiting-role.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 // a flag decides objects such as workflows regardless of their object permission, so a scope's explicit deny is applied after
@@ -61,8 +61,6 @@ const narrowRecordsPermissionsToExplicitDenies = ({
         objectPermission.canDestroyObjectRecords !== false,
       unreadableFields: grantedObjectRecordsPermissions.unreadableFields,
       uneditableFields: grantedObjectRecordsPermissions.uneditableFields,
-      rowLevelRecordsPermissions:
-        grantedObjectRecordsPermissions.rowLevelRecordsPermissions,
     };
   }
 
@@ -75,7 +73,7 @@ const narrowRecordsPermissionsToExplicitDenies = ({
   };
 };
 
-export const resolveAiRunPermissionScope = ({
+export const resolveRuntimeLimitingRole = ({
   scope,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -89,7 +87,7 @@ export const resolveAiRunPermissionScope = ({
     FlatEntityMaps<FlatFieldMetadata>,
     'byUniversalIdentifier'
   >;
-}): AiRunPermissionScope => {
+}): RuntimeLimitingRole => {
   if (hasAiRunScopeRepeatedEntries(scope)) {
     throw new PermissionsException(
       'An AI run scope lists an object or field more than once',

@@ -105,7 +105,7 @@ describe('resolveRecordsAccessSQLConditionStrategy', () => {
     ).toBe('withoutRowLevelPermissions');
   });
 
-  it('should stay degraded when an application role also has an RLS rule on the object', () => {
+  it('should ignore an RLS rule on an application role', () => {
     const request = buildRequest({ objectRecordsPermissions: withRlsRule });
 
     expect(
@@ -130,6 +130,6 @@ describe('resolveRecordsAccessSQLConditionStrategy', () => {
           },
         },
       }),
-    ).toBe('degradedRead');
+    ).toBe('accessGroups');
   });
 });
