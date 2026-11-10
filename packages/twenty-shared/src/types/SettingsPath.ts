@@ -62,6 +62,8 @@ export enum SettingsPath {
   AiNewSkill = 'ai/new-skill',
   AiSkillDetail = 'ai/skills/:skillId',
   AiToolDetail = 'ai/tools/:toolIdentifier',
+  AiNewMcpServer = 'ai/new-mcp-server',
+  AiMcpServerDetail = 'ai/mcp-servers/:mcpServerId',
   Applications = 'applications',
   ApplicationDetail = 'applications/:applicationId',
   ApplicationConnectionDetail = 'applications/:applicationId/connections/:connectedAccountId',

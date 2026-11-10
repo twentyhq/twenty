@@ -13,6 +13,8 @@ import {
   GOOGLE_ACCOUNT_ID,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccountsConfiguration',
@@ -35,6 +37,24 @@ const meta: Meta<PageDecoratorArgs> = {
               startChannelSync: {
                 __typename: 'ChannelSyncSuccess',
                 success: true,
+              },
+            },
+          }),
+        ),
+        graphql.query('GetCurrentUser', () =>
+          HttpResponse.json({
+            data: {
+              currentUser: {
+                ...mockedUserData,
+                currentWorkspace: {
+                  ...mockedUserData.currentWorkspace,
+                  featureFlags: [
+                    {
+                      key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+                      value: true,
+                    },
+                  ],
+                },
               },
             },
           }),
