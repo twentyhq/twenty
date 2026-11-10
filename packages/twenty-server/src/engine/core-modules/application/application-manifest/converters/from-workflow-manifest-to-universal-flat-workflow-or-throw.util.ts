@@ -143,6 +143,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
       ? (existingWorkflow?.lastPublishedVersionId ?? null)
       : null,
     lastPublishedCoreWorkflowVersionId: versionId,
+    navigationMenuItemUniversalIdentifiers: [],
     createdAt: existingWorkflow?.createdAt ?? now,
     updatedAt: now,
     versionDefinitionHash: isDefined(keptActiveVersion)

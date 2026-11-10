@@ -122,6 +122,11 @@ const routeObjects: WorkspaceRouteObject[] = [
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
   {
+    path: AppPath.WorkflowIndexPage,
+    element: null,
+    handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+  },
+  {
     path: AppPath.WorkflowCoreShowPage,
     element: null,
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
@@ -133,6 +138,11 @@ const routeObjects: WorkspaceRouteObject[] = [
   },
   {
     path: AppPath.AgentIndexPage,
+    element: null,
+    handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+  },
+  {
+    path: AppPath.AgentShowPage,
     element: null,
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
@@ -206,6 +216,22 @@ describe('RouteContextStoreProvider', () => {
     );
   });
 
+  it('provides workflow index context on the core workflows page', () => {
+    renderAt('/workflows', <MainSurfaceRoutes />);
+
+    const routeContextStore = screen.getByTestId('route-context-store');
+
+    expect(routeContextStore).toHaveAttribute(
+      'data-object-metadata-id',
+      'workflow-object',
+    );
+    expect(routeContextStore).toHaveAttribute(
+      'data-is-record-index-page',
+      'true',
+    );
+    expect(routeContextStore).not.toHaveAttribute('data-view-id');
+  });
+
   it('provides workflow context on the core workflow show page', () => {
     renderAt('/workflow/core-workflow-id', <MainSurfaceRoutes />);
 
@@ -226,10 +252,9 @@ describe('RouteContextStoreProvider', () => {
     ).toHaveAttribute('data-core-object-name', 'workflow');
   });
 
-  it('clears the core object on pages without a context store', () => {
+  it('clears the core object on agent pages', () => {
     renderAt('/agents', <MainSurfaceRoutes />);
 
-    expect(screen.queryByTestId('route-context-store')).not.toBeInTheDocument();
     expect(
       screen.getByTestId('route-context-store-core-object-name'),
     ).toHaveAttribute('data-core-object-name', 'none');
@@ -250,6 +275,21 @@ describe('RouteContextStoreProvider', () => {
     );
     expect(routeContextStore).not.toHaveAttribute('data-view-id');
   });
+
+  it.each(['/agents', '/agent/agent-id'])(
+    'clears the object on %s so the previous page object does not linger',
+    (agentPath) => {
+      renderAt(agentPath, <MainSurfaceRoutes />);
+
+      const routeContextStore = screen.getByTestId('route-context-store');
+
+      expect(routeContextStore).not.toHaveAttribute('data-object-metadata-id');
+      expect(routeContextStore).toHaveAttribute(
+        'data-is-record-index-page',
+        'false',
+      );
+    },
+  );
 
   it('resolves the object on settings object pages', () => {
     renderAt(
