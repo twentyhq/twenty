@@ -20,7 +20,6 @@ import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/
 import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
 import {
   type RecordSharingDTO,
   type RecordSharingGrantDTO,
@@ -49,7 +48,6 @@ export class RecordSharingReadService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
-    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
@@ -191,18 +189,16 @@ export class RecordSharingReadService {
       sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordPermissionsOnlyRoleReadService.canRoleAccessSomeRecords(
-        {
-          principals:
-            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
-              {
-                authContext: args.authContext,
-              },
-            ),
-          objectMetadataId: sharingObject.flatObjectMetadata.id,
-          operationType: 'update',
-        },
-      ))
+      (await this.recordPermissionsReadService.canRoleAccessSomeRecords({
+        principals:
+          await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+            {
+              authContext: args.authContext,
+            },
+          ),
+        objectMetadataId: sharingObject.flatObjectMetadata.id,
+        operationType: 'update',
+      }))
     );
   }
 

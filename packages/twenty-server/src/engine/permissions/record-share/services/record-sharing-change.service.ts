@@ -7,26 +7,16 @@ import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
-import { RecordSharingReadService } from 'src/engine/permissions/internal/record-share/services/record-sharing-read.service';
+import { RecordSharingReadService } from 'src/engine/permissions/record-share/services/record-sharing-read.service';
 import { RecordShareRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-share.repository';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
-import {
-  type RecordSharingObject,
-  resolveRecordSharingObjectOrThrow,
-} from 'src/engine/permissions/internal/record-share/utils/resolve-record-sharing-object-or-throw.util';
+import { resolveRecordSharingObjectOrThrow } from 'src/engine/permissions/internal/record-share/utils/resolve-record-sharing-object-or-throw.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-repository/utils/to-permissions-exception.util';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
+import { type RecordSharingChange } from 'src/engine/permissions/record-share/types/record-sharing-change.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-export type RecordSharingChange = {
-  workspaceId: string;
-  transactionScope: RecordPermissionTransactionScope;
-  sharingObject: RecordSharingObject;
-  creatorWorkspaceMemberId: string | undefined;
-};
 
 @Injectable()
 export class RecordSharingChangeService {
@@ -36,7 +26,6 @@ export class RecordSharingChangeService {
     private readonly recordShareRepository: RecordShareRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
-    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
     private readonly recordSharingReadService: RecordSharingReadService,
   ) {}
 
@@ -89,7 +78,7 @@ export class RecordSharingChangeService {
               },
             );
           const isWritable =
-            await this.recordPermissionsReadService.canAccessKnownRecords({
+            await this.recordPermissionsReadService.canAccessRecords({
               operationType: 'update',
               principals,
               objectMetadataId: args.objectMetadataId,
@@ -99,13 +88,11 @@ export class RecordSharingChangeService {
 
           if (
             !isWritable ||
-            !(await this.recordPermissionsOnlyRoleReadService.canRoleAccessSomeRecords(
-              {
-                operationType: 'update',
-                principals,
-                objectMetadataId: args.objectMetadataId,
-              },
-            ))
+            !(await this.recordPermissionsReadService.canRoleAccessSomeRecords({
+              operationType: 'update',
+              principals,
+              objectMetadataId: args.objectMetadataId,
+            }))
           ) {
             throw new NotFoundError('Record not found');
           }

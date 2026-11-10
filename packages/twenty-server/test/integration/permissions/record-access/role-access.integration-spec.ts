@@ -7,7 +7,6 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { type RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
 
 const REACHES_EVERY_OPERATION: PermissionTestExpectedAnswers = {
   findRecordsActions: {
@@ -277,13 +276,13 @@ describePermissionTestWorkspace({
           );
 
         expect(
-          await recordPermissionsReadService.canAccessKnownRecords({
+          await recordPermissionsReadService.canAccessRecords({
             ...recordsQuestion,
             operationType: 'read',
           }),
         ).toBe(true);
         expect(
-          await recordPermissionsReadService.canAccessKnownRecords({
+          await recordPermissionsReadService.canAccessRecords({
             ...recordsQuestion,
             operationType: 'update',
           }),
@@ -296,8 +295,8 @@ describePermissionTestWorkspace({
         const { workspaceId, roleIds, objectMetadataId } = findWorkspace();
 
         const roleIdsUnableToRead =
-          await getAppProviderByClassName<RecordPermissionsOnlyRoleReadService>(
-            'RecordPermissionsOnlyRoleReadService',
+          await getAppProviderByClassName<RecordPermissionsReadService>(
+            'RecordPermissionsReadService',
           ).filterRoleIdsWithoutReadAccess({
             workspaceId,
             roleIds: [roleIds.none, roleIds.rowLevel, roleIds.allRecords],
