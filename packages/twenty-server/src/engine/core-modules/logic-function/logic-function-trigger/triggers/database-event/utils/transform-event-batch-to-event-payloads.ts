@@ -23,7 +23,10 @@ export const transformEventBatchToEventPayloads = ({
     'id' | 'workspaceId' | 'databaseEventTriggerSettings'
   >[];
   conditionFields?: ValidationRuleFieldDescriptor[];
-  onConditionError?: (logicFunctionId: string, errorMessage: string) => void;
+  onConditionError?: (conditionError: {
+    logicFunctionId: string;
+    errorMessage: string;
+  }) => void;
 }): LogicFunctionTriggerJobData[] => {
   const result: LogicFunctionTriggerJobData[] = [];
   const { events, ...batchEventInfo } = workspaceEventBatch;
@@ -41,7 +44,10 @@ export const transformEventBatchToEventPayloads = ({
       });
 
     if (isDefined(conditionErrorMessage)) {
-      onConditionError?.(logicFunction.id, conditionErrorMessage);
+      onConditionError?.({
+        logicFunctionId: logicFunction.id,
+        errorMessage: conditionErrorMessage,
+      });
     }
 
     if (triggerSettings?.batchMode !== true) {

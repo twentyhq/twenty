@@ -141,4 +141,21 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
     expect(result.events).toEqual([]);
     expect(result.conditionErrorMessage).toEqual(expect.any(String));
   });
+
+  it('should not match a record whose condition field the trigger cannot see', () => {
+    const withCompany = buildEvent({ after: { stage: 'NEW' } }, 'hidden');
+
+    expect(
+      filterEventsMatchingDatabaseEventTrigger({
+        events: [withCompany],
+        eventName: 'opportunity.created',
+        condition: 'not isDefined(companyId)',
+        fields: FIELDS,
+      }),
+    ).toEqual({
+      events: [],
+      conditionErrorMessage:
+        'The condition reads a field this trigger cannot see',
+    });
+  });
 });

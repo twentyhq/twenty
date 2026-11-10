@@ -118,7 +118,7 @@ export class CallDatabaseEventTriggerJobsJob {
           events: readableEvents,
         },
         conditionFields,
-        onConditionError: (logicFunctionId, errorMessage) =>
+        onConditionError: ({ logicFunctionId, errorMessage }) =>
           this.logger.warn(
             `Condition of logic function ${logicFunctionId} in workspace ${workspaceEventBatch.workspaceId} failed to evaluate: ${errorMessage}`,
           ),

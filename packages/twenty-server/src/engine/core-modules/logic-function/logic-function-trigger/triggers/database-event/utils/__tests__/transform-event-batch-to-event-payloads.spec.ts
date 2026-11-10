@@ -875,10 +875,11 @@ describe('transformEventBatchToEventPayloads', () => {
       });
 
       expect(result).toEqual([]);
-      expect(onConditionError).toHaveBeenCalledWith(
-        'function-1',
-        expect.any(String),
-      );
+      expect(onConditionError).toHaveBeenCalledTimes(1);
+      expect(onConditionError).toHaveBeenCalledWith({
+        logicFunctionId: 'function-1',
+        errorMessage: expect.any(String),
+      });
     });
   });
 });
