@@ -6,7 +6,7 @@ import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
-import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
+import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
 import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 

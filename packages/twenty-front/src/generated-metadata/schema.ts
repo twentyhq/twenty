@@ -30,6 +30,8 @@ export type AddQuerySubscriptionInput = {
 export type Agent = {
   __typename?: 'Agent';
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  avatarColor?: Maybe<Scalars['String']['output']>;
+  avatarShape?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
@@ -929,6 +931,11 @@ export type ApprovedAccessDomain = {
   isValidated: Scalars['Boolean']['output'];
 };
 
+export type ArchiveInboxThreadInput = {
+  threadId: Scalars['UUID']['input'];
+  workspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+};
+
 export type AuthBypassProviders = {
   __typename?: 'AuthBypassProviders';
   google: Scalars['Boolean']['output'];
@@ -1673,6 +1680,8 @@ export type CreateAgentChatChannelInput = {
 };
 
 export type CreateAgentInput = {
+  avatarColor?: InputMaybe<Scalars['String']['input']>;
+  avatarShape?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
@@ -1860,6 +1869,7 @@ export type CreateMessageSuppressionInput = {
 
 export type CreateNavigationMenuItemInput = {
   agentChatChannelId?: InputMaybe<Scalars['UUID']['input']>;
+  agentId?: InputMaybe<Scalars['UUID']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
   folderId?: InputMaybe<Scalars['UUID']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
@@ -1874,6 +1884,7 @@ export type CreateNavigationMenuItemInput = {
   type: NavigationMenuItemType;
   userWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
   viewId?: InputMaybe<Scalars['UUID']['input']>;
+  workflowId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type CreateObjectInput = {
@@ -2573,6 +2584,7 @@ export enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
+  IS_HTTP_EGRESS_LAMBDA_ENABLED = 'IS_HTTP_EGRESS_LAMBDA_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
@@ -3645,6 +3657,7 @@ export type Mutation = {
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   approveApplicationIframeMediaPermissions: Application;
+  archiveInboxThread: Scalars['Boolean']['output'];
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3784,6 +3797,7 @@ export type Mutation = {
   generateFrontComponentApplicationTokenPair: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
   generateTransientToken: TransientToken;
+  generateTwoFactorAuthenticationBackupCodes: TwoFactorAuthenticationBackupCodes;
   generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
@@ -3978,6 +3992,11 @@ export type MutationAddQueryToEventStreamArgs = {
 export type MutationApproveApplicationIframeMediaPermissionsArgs = {
   applicationId: Scalars['UUID']['input'];
   approvedIframeMediaPermissions: Array<IframeMediaPermissionInput>;
+};
+
+
+export type MutationArchiveInboxThreadArgs = {
+  input: ArchiveInboxThreadInput;
 };
 
 
@@ -4648,6 +4667,11 @@ export type MutationGenerateApiKeyTokenArgs = {
 
 export type MutationGenerateFrontComponentApplicationTokenPairArgs = {
   applicationId: Scalars['UUID']['input'];
+};
+
+
+export type MutationGenerateTwoFactorAuthenticationBackupCodesArgs = {
+  otp?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -5496,6 +5520,7 @@ export type NativeModelCapabilities = {
 export type NavigationMenuItem = {
   __typename?: 'NavigationMenuItem';
   agentChatChannelId?: Maybe<Scalars['UUID']['output']>;
+  agentId?: Maybe<Scalars['UUID']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
@@ -5514,9 +5539,11 @@ export type NavigationMenuItem = {
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
+  workflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export enum NavigationMenuItemType {
+  AGENT = 'AGENT',
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
@@ -5524,7 +5551,8 @@ export enum NavigationMenuItemType {
   OBJECT = 'OBJECT',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
-  VIEW = 'VIEW'
+  VIEW = 'VIEW',
+  WORKFLOW = 'WORKFLOW'
 }
 
 export type NotesConfiguration = {
@@ -6198,6 +6226,7 @@ export type Query = {
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
+  twoFactorAuthenticationBackupCodeStatus: TwoFactorAuthenticationBackupCodeStatus;
   twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus;
   unsubscribeTopics: Array<UnsubscribeTopic>;
   usageLimits: Array<UsageLimit>;
@@ -7129,11 +7158,21 @@ export type SearchField = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type SendAppChannelMessageEmailInput = {
+  bcc?: InputMaybe<Scalars['String']['input']>;
+  body: Scalars['String']['input'];
+  cc?: InputMaybe<Scalars['String']['input']>;
+  inReplyTo?: InputMaybe<Scalars['String']['input']>;
+  subject: Scalars['String']['input'];
+  to: Scalars['String']['input'];
+};
+
 export type SendAppChannelMessageInput = {
+  email?: InputMaybe<SendAppChannelMessageEmailInput>;
   idempotencyKey: Scalars['UUID']['input'];
   messageChannelId: Scalars['UUID']['input'];
   messageThreadId: Scalars['UUID']['input'];
-  text: Scalars['String']['input'];
+  text?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SendAppChannelMessageOutput = {
@@ -7531,6 +7570,16 @@ export type TriggerUpgradeApplicationResult = {
   jobId: Scalars['String']['output'];
 };
 
+export type TwoFactorAuthenticationBackupCodeStatus = {
+  __typename?: 'TwoFactorAuthenticationBackupCodeStatus';
+  remainingBackupCodeCount: Scalars['Int']['output'];
+};
+
+export type TwoFactorAuthenticationBackupCodes = {
+  __typename?: 'TwoFactorAuthenticationBackupCodes';
+  backupCodes: Array<Scalars['String']['output']>;
+};
+
 export type TwoFactorAuthenticationMethodSummary = {
   __typename?: 'TwoFactorAuthenticationMethodSummary';
   status: Scalars['String']['output'];
@@ -7546,6 +7595,7 @@ export type TwoFactorAuthenticationRecoveryCode = {
 
 export type TwoFactorAuthenticationRecoveryCodeRedemption = {
   __typename?: 'TwoFactorAuthenticationRecoveryCodeRedemption';
+  isTwoFactorAuthenticationReset: Scalars['Boolean']['output'];
   provisioningUri?: Maybe<Scalars['String']['output']>;
   tokens?: Maybe<AuthTokenPair>;
 };
@@ -7604,6 +7654,8 @@ export type UpdateAgentChatChannelInput = {
 };
 
 export type UpdateAgentInput = {
+  avatarColor?: InputMaybe<Scalars['String']['input']>;
+  avatarShape?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['UUID']['input'];
@@ -8555,6 +8607,7 @@ export type VerifyEmailAndGetLoginToken = {
 
 export type VerifyTwoFactorAuthenticationMethod = {
   __typename?: 'VerifyTwoFactorAuthenticationMethod';
+  backupCodes?: Maybe<Array<Scalars['String']['output']>>;
   success: Scalars['Boolean']['output'];
 };
 

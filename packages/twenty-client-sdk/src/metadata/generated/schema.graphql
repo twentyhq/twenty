@@ -13,6 +13,8 @@ input AddQuerySubscriptionInput {
 
 type Agent {
   applicationId: UUID
+  avatarColor: String
+  avatarShape: String
   createdAt: DateTime!
   description: String
   icon: String
@@ -850,6 +852,11 @@ type ApprovedAccessDomain {
   isValidated: Boolean!
 }
 
+input ArchiveInboxThreadInput {
+  threadId: UUID!
+  workspaceMemberIds: [UUID!]
+}
+
 type AuthBypassProviders {
   google: Boolean!
   microsoft: Boolean!
@@ -1549,6 +1556,8 @@ input CreateAgentChatChannelInput {
 }
 
 input CreateAgentInput {
+  avatarColor: String
+  avatarShape: String
   description: String
   icon: String
   label: String!
@@ -1732,6 +1741,7 @@ input CreateMessageSuppressionInput {
 
 input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
+  agentId: UUID
   color: String
   folderId: UUID
   icon: String
@@ -1746,6 +1756,7 @@ input CreateNavigationMenuItemInput {
   type: NavigationMenuItemType!
   userWorkspaceId: UUID
   viewId: UUID
+  workflowId: UUID
 }
 
 input CreateObjectInput {
@@ -2434,6 +2445,7 @@ enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_HTTP_EGRESS_LAMBDA_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
@@ -3451,6 +3463,7 @@ type Mutation {
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
+  archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
@@ -3589,6 +3602,7 @@ type Mutation {
   generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
   generatePlaygroundToken: AuthToken!
   generateTransientToken: TransientToken!
+  generateTwoFactorAuthenticationBackupCodes(otp: String): TwoFactorAuthenticationBackupCodes!
   generateTwoFactorAuthenticationRecoveryCode(otp: String, userId: UUID!): TwoFactorAuthenticationRecoveryCode!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   getAuthTokensFromOTP(captchaToken: String, loginToken: String!, origin: String!, otp: String!): AuthTokens!
@@ -3756,6 +3770,7 @@ type NativeModelCapabilities {
 
 type NavigationMenuItem {
   agentChatChannelId: UUID
+  agentId: UUID
   applicationId: UUID
   color: String
   createdAt: DateTime!
@@ -3774,9 +3789,11 @@ type NavigationMenuItem {
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
+  workflowId: UUID
 }
 
 enum NavigationMenuItemType {
+  AGENT
   AGENT_CHAT_CHANNEL
   FOLDER
   LINK
@@ -3785,6 +3802,7 @@ enum NavigationMenuItemType {
   PAGE_LAYOUT
   RECORD
   VIEW
+  WORKFLOW
 }
 
 type NotesConfiguration {
@@ -4439,6 +4457,7 @@ type Query {
   skill(id: UUID!): Skill
   skills: [Skill!]!
   timelineActivityTypes: [TimelineActivityType!]!
+  twoFactorAuthenticationBackupCodeStatus: TwoFactorAuthenticationBackupCodeStatus!
   twoFactorAuthenticationRecoveryStatus(userId: UUID!): TwoFactorAuthenticationRecoveryStatus!
   unsubscribeTopics: [UnsubscribeTopic!]!
   usageLimits: [UsageLimit!]!
@@ -4800,11 +4819,21 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+input SendAppChannelMessageEmailInput {
+  bcc: String
+  body: String!
+  cc: String
+  inReplyTo: String
+  subject: String!
+  to: String!
+}
+
 input SendAppChannelMessageInput {
+  email: SendAppChannelMessageEmailInput
   idempotencyKey: UUID!
   messageChannelId: UUID!
   messageThreadId: UUID!
-  text: String!
+  text: String
 }
 
 type SendAppChannelMessageOutput {
@@ -5140,6 +5169,14 @@ type TriggerUpgradeApplicationResult {
   jobId: String!
 }
 
+type TwoFactorAuthenticationBackupCodeStatus {
+  remainingBackupCodeCount: Int!
+}
+
+type TwoFactorAuthenticationBackupCodes {
+  backupCodes: [String!]!
+}
+
 type TwoFactorAuthenticationMethodSummary {
   status: String!
   strategy: String!
@@ -5152,6 +5189,7 @@ type TwoFactorAuthenticationRecoveryCode {
 }
 
 type TwoFactorAuthenticationRecoveryCodeRedemption {
+  isTwoFactorAuthenticationReset: Boolean!
   provisioningUri: String
   tokens: AuthTokenPair
 }
@@ -5211,6 +5249,8 @@ input UpdateAgentChatChannelInput {
 }
 
 input UpdateAgentInput {
+  avatarColor: String
+  avatarShape: String
   description: String
   icon: String
   id: UUID!
@@ -6182,6 +6222,7 @@ type VerifyEmailAndGetLoginToken {
 }
 
 type VerifyTwoFactorAuthenticationMethod {
+  backupCodes: [String!]
   success: Boolean!
 }
 

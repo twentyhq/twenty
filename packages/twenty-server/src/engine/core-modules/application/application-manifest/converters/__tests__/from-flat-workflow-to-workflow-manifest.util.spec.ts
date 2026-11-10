@@ -311,6 +311,7 @@ const syncWorkflow = (manifest: WorkflowManifest) => {
     ...workflow,
     workspaceId: 'workspace-id',
     applicationId: 'application-id',
+    navigationMenuItemIds: [],
   };
   // Stored versions come back from jsonb, which drops undefined values and reorders keys.
   const flatWorkflowVersion: FlatWorkflowVersion = JSON.parse(

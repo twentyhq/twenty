@@ -74,6 +74,7 @@ export {
 } from './applicationVariablesType';
 export type { AppMessageChannel } from './appMessageChannelType';
 export type { AppMessageFolder } from './appMessageFolderType';
+export type { ArchiveInboxThreadInput } from './archiveInboxThreadInputType';
 export type { AssetManifest } from './assetManifestType';
 export type {
   BillableOperationManifest,
@@ -274,6 +275,7 @@ export type {
 } from './runAgentType';
 export type {
   SendAppMessageRecipient,
+  SendAppMessageEmail,
   SendAppMessagePayload,
   SendAppMessageResult,
 } from './sendAppMessageType';

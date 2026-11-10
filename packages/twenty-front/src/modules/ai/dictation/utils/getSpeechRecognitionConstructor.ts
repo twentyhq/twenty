@@ -1,17 +1,14 @@
 import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognitionConstructor';
 
-type SpeechRecognitionWindow = {
-  SpeechRecognition?: WebSpeechRecognitionConstructor;
-  webkitSpeechRecognition?: WebSpeechRecognitionConstructor;
-};
+declare global {
+  interface Window {
+    SpeechRecognition?: WebSpeechRecognitionConstructor;
+    webkitSpeechRecognition?: WebSpeechRecognitionConstructor;
+  }
+}
 
 export const getSpeechRecognitionConstructor = ():
   | WebSpeechRecognitionConstructor
   | undefined => {
-  const speechRecognitionWindow = window as unknown as SpeechRecognitionWindow;
-
-  return (
-    speechRecognitionWindow.SpeechRecognition ??
-    speechRecognitionWindow.webkitSpeechRecognition
-  );
+  return window.SpeechRecognition ?? window.webkitSpeechRecognition;
 };

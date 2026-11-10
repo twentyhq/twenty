@@ -509,17 +509,24 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
     );
   });
 
-  it('should apply the agent role row-level rules to MCP tools for a member run', async () => {
+  it('should ignore the agent role row-level rules on MCP tools for a member run', async () => {
     const sandboxToken = await captureSandboxTokenForAgentRun({
       globalTestContext,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
     expect(
-      await findCompanyIdsThroughMcp({
-        globalTestContext,
-        token: sandboxToken,
-      }),
-    ).toEqual([globalTestContext.visibleCompanyId]);
+      (
+        await findCompanyIdsThroughMcp({
+          globalTestContext,
+          token: sandboxToken,
+        })
+      ).sort(),
+    ).toEqual(
+      [
+        globalTestContext.hiddenCompanyId,
+        globalTestContext.visibleCompanyId,
+      ].sort(),
+    );
   });
 });

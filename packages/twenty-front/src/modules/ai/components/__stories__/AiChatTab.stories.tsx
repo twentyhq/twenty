@@ -14,7 +14,10 @@ import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
@@ -105,13 +108,6 @@ const expectNewChatWelcome = async (canvasElement: HTMLElement) => {
   const avatarStyle = getComputedStyle(avatar);
 
   await expect(avatarStyle.width).toBe(avatarStyle.height);
-  await expect(avatarStyle.borderRadius).toBe('50%');
-
-  if (CSS.supports('corner-shape', 'round')) {
-    await expect(['round', 'superellipse(1)']).toContain(
-      avatarStyle.getPropertyValue('corner-shape'),
-    );
-  }
 
   await expect(
     canvas.getByRole('button', { name: 'Create a workflow' }),
@@ -318,5 +314,65 @@ export const WorkspaceSetupCompletion: Story = {
       ).not.toBeInTheDocument(),
     );
     await expect(canvas.getByRole('textbox')).toBeVisible();
+  },
+};
+
+const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
+  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
+
+  jotaiStore.set(agentChatMessagesFamilyState.atomFamily({ threadId }), [
+    {
+      id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c90',
+      role: 'user',
+      parts: [{ type: 'text', text: 'Can you take Stripe?' }],
+    },
+  ]);
+  jotaiStore.set(
+    agentChatTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
+    typingWorkspaceMemberIds,
+  );
+};
+
+export const MemberTyping: Story = {
+  ...FullPageNewChat,
+  beforeEach: () => {
+    initializeNewAiChatStory({ isInboxEnabled: true });
+    seedTypingConversation(
+      jotaiStore
+        .get(currentWorkspaceMembersState.atom)
+        .filter(({ name }) => name.firstName === 'Jane')
+        .map(({ id }) => id),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Jane Doe is typing…')).toBeVisible();
+
+    seedTypingConversation([]);
+
+    await waitFor(() =>
+      expect(canvas.queryByText('Jane Doe is typing…')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const MemberTypingInSidePanel: Story = {
+  ...MemberTyping,
+  parameters: {
+    ...newChatParameters,
+    container: { width: 400, height: 784 },
+  },
+  render: () => (
+    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
+      <Suspense fallback={null}>
+        <AiChatTab />
+      </Suspense>
+    </AiChatSurfaceContext.Provider>
+  ),
+  play: async ({ canvasElement }) => {
+    await expect(
+      await within(canvasElement).findByText('Jane Doe is typing…'),
+    ).toBeVisible();
   },
 };

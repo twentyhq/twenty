@@ -2,122 +2,240 @@ import * as http from 'http';
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import axios, { type AxiosInstance, type CreateAxiosDefaults } from 'axios';
-import axiosRetry from 'axios-retry';
-import { isNonEmptyString } from '@sniptt/guards';
+import { type Counter } from '@opentelemetry/api';
+import axios, {
+  type AxiosAdapter,
+  type AxiosInstance,
+  type CreateAxiosDefaults,
+  type InternalAxiosRequestConfig,
+} from 'axios';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { type OutboundRequestOutcomeDetails } from 'src/engine/core-modules/secure-http-client/outbound-request-outcome-details.type';
+import { type SecureHttpClientConfig } from 'src/engine/core-modules/secure-http-client/secure-http-client-config.type';
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
+import { createSsrfSafeAxiosClient } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-axios-client.util';
+import { describeOutboundRequestError } from 'src/engine/core-modules/secure-http-client/utils/describe-outbound-request-error.util';
+import { redactOutboundRequestUrl } from 'src/engine/core-modules/secure-http-client/utils/redact-outbound-request-url.util';
 import { ALLOW_ALL_INTERNAL_HOSTS } from 'src/engine/core-modules/secure-http-client/constants/allow-all-internal-hosts.constant';
-import { OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-max-payload-size-bytes.constant';
-import { OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-timeout-ms.constant';
 import { normalizeAllowedInternalHost } from 'src/engine/core-modules/secure-http-client/utils/normalize-allowed-internal-host.util';
 import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { type OutboundRequestContext } from './outbound-request-context.type';
 
-const MAX_REDIRECTS = 5;
-const ALLOWED_PROTOCOLS = new Set(['http:', 'https:']);
+type LogAttributes = Record<string, string | number | undefined>;
 
-type SecureHttpClientConfig = CreateAxiosDefaults & {
-  retries?: number;
-  shouldResetTimeout?: boolean;
+const formatLogAttributes = (attributes: LogAttributes): string =>
+  Object.entries(attributes)
+    .filter(([, value]) => isNumber(value) || isNonEmptyString(value))
+    .map(([key, value]) => `${key}=${value}`)
+    .join(' ');
+
+const getContextLogAttributes = (
+  context: OutboundRequestContext,
+): LogAttributes => ({
+  workspace: context.workspaceId,
+  source: context.source,
+  user: context.userId,
+  userWorkspace: context.userWorkspaceId,
+  workspaceMember: context.workspaceMemberId,
+  workflowRun: context.workflowRunId,
+  workflowStep: context.workflowStepId,
+});
+
+const getRequestUri = (requestConfig: InternalAxiosRequestConfig): string => {
+  try {
+    return axios.getUri(requestConfig);
+  } catch {
+    return '';
+  }
+};
+
+const parseUrl = (url: string): URL | undefined => {
+  try {
+    return new URL(url);
+  } catch {
+    return undefined;
+  }
+};
+
+const buildRequestLogAttributes = ({
+  method,
+  url,
+  context,
+}: {
+  method: string;
+  url: string;
+  context: OutboundRequestContext;
+}): LogAttributes => {
+  const requestUrl = parseUrl(url);
+
+  return {
+    method,
+    host: requestUrl?.hostname,
+    url: isDefined(requestUrl)
+      ? redactOutboundRequestUrl(requestUrl)
+      : undefined,
+    ...getContextLogAttributes(context),
+  };
 };
 
 @Injectable()
 export class SecureHttpClientService {
   private readonly logger = new Logger(SecureHttpClientService.name);
+  private readonly outboundRequestCounter: Counter;
   private hasWarnedAboutDeprecatedSafeModeFlag = false;
 
-  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+  constructor(
+    private readonly twentyConfigService: TwentyConfigService,
+    metricsService: MetricsService,
+  ) {
+    this.outboundRequestCounter = metricsService
+      .getMeter()
+      .createCounter('twenty_outbound_http_requests', {
+        description:
+          'Outbound HTTP requests made on behalf of a workspace, by source and outcome',
+      });
+  }
 
   // SSRF protection is enforced at connection level by validating resolved IPs, which also covers redirects.
-  // With a context, outbound requests are logged with workspace/user info for GuardDuty correlation.
+  // With a context, each attempt is logged before it is sent and again with its outcome.
   getHttpClient(
     config?: SecureHttpClientConfig,
     context?: OutboundRequestContext,
   ): AxiosInstance {
-    const { retries, shouldResetTimeout, ...axiosConfig } = config ?? {};
-
-    const allowedInternalHosts = this.getAllowedInternalHosts();
-    const isSafeModeEnabled = this.isSafeModeEnabled(allowedInternalHosts);
-
-    const boundedAxiosConfig: CreateAxiosDefaults = {
-      ...axiosConfig,
-      maxContentLength:
-        axiosConfig.maxContentLength ??
-        OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES,
-      maxBodyLength:
-        axiosConfig.maxBodyLength ??
-        OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES,
-    };
-
-    const client = isSafeModeEnabled
-      ? axios.create({
-          ...boundedAxiosConfig,
-          httpAgent: createSsrfSafeAgent('http', allowedInternalHosts),
-          httpsAgent: createSsrfSafeAgent('https', allowedInternalHosts),
-          maxRedirects: Math.min(
-            axiosConfig.maxRedirects ?? MAX_REDIRECTS,
-            MAX_REDIRECTS,
-          ),
-        })
-      : axios.create(boundedAxiosConfig);
-
-    client.interceptors.request.use((requestConfig) => {
-      requestConfig.signal = AbortSignal.timeout(
-        requestConfig.timeout || OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS,
-      );
-
-      return requestConfig;
+    const client = createSsrfSafeAxiosClient({
+      config,
+      allowedInternalHosts: this.getAllowedInternalHosts(),
     });
 
-    if (isDefined(retries) && retries > 0) {
-      axiosRetry(client, {
-        retries,
-        shouldResetTimeout,
-        retryCondition: (error) =>
-          axiosRetry.isNetworkOrIdempotentRequestError(error) &&
-          error.code !== 'ECONNABORTED' &&
-          error.code !== 'ETIMEDOUT' &&
-          error.code !== 'ERR_CANCELED',
-      });
-    }
-
-    if (isSafeModeEnabled) {
-      client.interceptors.request.use((requestConfig) => {
-        const url = requestConfig.url || requestConfig.baseURL;
-
-        if (url) {
-          const parsed = new URL(url, requestConfig.baseURL);
-
-          if (!ALLOWED_PROTOCOLS.has(parsed.protocol)) {
-            throw new Error(
-              `Protocol ${parsed.protocol} is not allowed. Only HTTP and HTTPS are permitted.`,
-            );
-          }
-        }
-
-        return requestConfig;
-      });
-    }
-
-    if (context) {
-      client.interceptors.request.use((requestConfig) => {
-        this.logger.log(
-          `Outbound HTTP request: ${requestConfig.method?.toUpperCase()} ${requestConfig.url} ` +
-            `[workspace=${context.workspaceId}, source=${context.source}` +
-            `${context.userId ? `, user=${context.userId}` : ''}]`,
-        );
-
-        return requestConfig;
+    if (isDefined(context)) {
+      client.defaults.adapter = this.buildLoggingAdapter({
+        adapter: axios.getAdapter(client.defaults.adapter),
+        context,
       });
     }
 
     return client;
+  }
+
+  // For requests that may run outside this process (the HTTP egress Lambda), so they log the same lines as the adapter.
+  recordRequest({
+    method,
+    url,
+    context,
+  }: {
+    method: string;
+    url: string;
+    context: OutboundRequestContext;
+  }): void {
+    this.logRequest(buildRequestLogAttributes({ method, url, context }));
+  }
+
+  recordRequestOutcome({
+    method,
+    url,
+    context,
+    outcomeDetails,
+  }: {
+    method: string;
+    url: string;
+    context: OutboundRequestContext;
+    outcomeDetails: OutboundRequestOutcomeDetails;
+  }): void {
+    this.recordOutcome({
+      context,
+      outcomeDetails,
+      requestAttributes: buildRequestLogAttributes({ method, url, context }),
+    });
+  }
+
+  // An adapter rather than interceptors: retries get one line per attempt and protocol refusals are logged too
+  private buildLoggingAdapter({
+    adapter,
+    context,
+  }: {
+    adapter: AxiosAdapter;
+    context: OutboundRequestContext;
+  }): AxiosAdapter {
+    return async (requestConfig: InternalAxiosRequestConfig) => {
+      const requestAttributes = buildRequestLogAttributes({
+        method: requestConfig.method?.toUpperCase() ?? 'GET',
+        url: getRequestUri(requestConfig),
+        context,
+      });
+
+      this.logRequest(requestAttributes);
+
+      const startedAt = Date.now();
+
+      try {
+        const response = await adapter(requestConfig);
+
+        this.recordOutcome({
+          context,
+          outcomeDetails: {
+            outcome: 'success',
+            status: response.status,
+            durationMs: Date.now() - startedAt,
+          },
+          requestAttributes,
+        });
+
+        return response;
+      } catch (error) {
+        this.recordOutcome({
+          context,
+          outcomeDetails: {
+            ...describeOutboundRequestError(error),
+            durationMs: Date.now() - startedAt,
+          },
+          requestAttributes,
+        });
+
+        throw error;
+      }
+    };
+  }
+
+  private logRequest(requestAttributes: LogAttributes): void {
+    this.logger.log(
+      `Outbound HTTP request: ${formatLogAttributes(requestAttributes)}`,
+    );
+  }
+
+  private recordOutcome({
+    context,
+    outcomeDetails: { outcome, status, durationMs, errorCode, reason },
+    requestAttributes,
+  }: {
+    context: OutboundRequestContext;
+    outcomeDetails: OutboundRequestOutcomeDetails;
+    requestAttributes: LogAttributes;
+  }): void {
+    this.outboundRequestCounter.add(1, { source: context.source, outcome });
+
+    const message = `Outbound HTTP outcome: ${formatLogAttributes({
+      outcome,
+      status,
+      durationMs,
+      errorCode,
+      reason: isDefined(reason) ? JSON.stringify(reason) : undefined,
+      ...requestAttributes,
+    })}`;
+
+    if (outcome === 'blocked') {
+      this.logger.warn(message);
+
+      return;
+    }
+
+    this.logger.log(message);
   }
 
   // Not SSRF-protected: trusted internal URLs only.

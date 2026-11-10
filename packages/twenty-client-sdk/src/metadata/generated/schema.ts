@@ -16,6 +16,8 @@ export type Scalars = {
 
 export interface Agent {
     applicationId?: Scalars['UUID']
+    avatarColor?: Scalars['String']
+    avatarShape?: Scalars['String']
     createdAt: Scalars['DateTime']
     description?: Scalars['String']
     icon?: Scalars['String']
@@ -1615,7 +1617,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_HTTP_EGRESS_LAMBDA_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2406,6 +2408,7 @@ export interface Mutation {
     addAgentChatMessageReaction: AgentMessageReactionSummary[]
     addQueryToEventStream: Scalars['Boolean']
     approveApplicationIframeMediaPermissions: Application
+    archiveInboxThread: Scalars['Boolean']
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
     assignRoleToApiKey: Scalars['Boolean']
@@ -2545,6 +2548,7 @@ export interface Mutation {
     generateFrontComponentApplicationTokenPair: ApplicationTokenPair
     generatePlaygroundToken: AuthToken
     generateTransientToken: TransientToken
+    generateTwoFactorAuthenticationBackupCodes: TwoFactorAuthenticationBackupCodes
     generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode
     getAuthTokensFromLoginToken: AuthTokens
     getAuthTokensFromOTP: AuthTokens
@@ -2723,6 +2727,7 @@ export interface NativeModelCapabilities {
 
 export interface NavigationMenuItem {
     agentChatChannelId?: Scalars['UUID']
+    agentId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     color?: Scalars['String']
     createdAt: Scalars['DateTime']
@@ -2741,10 +2746,11 @@ export interface NavigationMenuItem {
     updatedAt: Scalars['DateTime']
     userWorkspaceId?: Scalars['UUID']
     viewId?: Scalars['UUID']
+    workflowId?: Scalars['UUID']
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW'
+export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'VIEW' | 'WORKFLOW'
 
 export interface NotesConfiguration {
     configurationType: WidgetConfigurationType
@@ -3303,6 +3309,7 @@ export interface Query {
     skill?: Skill
     skills: Skill[]
     timelineActivityTypes: TimelineActivityType[]
+    twoFactorAuthenticationBackupCodeStatus: TwoFactorAuthenticationBackupCodeStatus
     twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus
     unsubscribeTopics: UnsubscribeTopic[]
     usageLimits: UsageLimit[]
@@ -3812,6 +3819,16 @@ export interface TriggerUpgradeApplicationResult {
     __typename: 'TriggerUpgradeApplicationResult'
 }
 
+export interface TwoFactorAuthenticationBackupCodeStatus {
+    remainingBackupCodeCount: Scalars['Int']
+    __typename: 'TwoFactorAuthenticationBackupCodeStatus'
+}
+
+export interface TwoFactorAuthenticationBackupCodes {
+    backupCodes: Scalars['String'][]
+    __typename: 'TwoFactorAuthenticationBackupCodes'
+}
+
 export interface TwoFactorAuthenticationMethodSummary {
     status: Scalars['String']
     strategy: Scalars['String']
@@ -3826,6 +3843,7 @@ export interface TwoFactorAuthenticationRecoveryCode {
 }
 
 export interface TwoFactorAuthenticationRecoveryCodeRedemption {
+    isTwoFactorAuthenticationReset: Scalars['Boolean']
     provisioningUri?: Scalars['String']
     tokens?: AuthTokenPair
     __typename: 'TwoFactorAuthenticationRecoveryCodeRedemption'
@@ -4087,6 +4105,7 @@ export interface VerifyEmailAndGetLoginToken {
 }
 
 export interface VerifyTwoFactorAuthenticationMethod {
+    backupCodes?: Scalars['String'][]
     success: Scalars['Boolean']
     __typename: 'VerifyTwoFactorAuthenticationMethod'
 }
@@ -4476,6 +4495,8 @@ export interface AddQuerySubscriptionInput {eventStreamId: Scalars['String'],ope
 
 export interface AgentGenqlSelection{
     applicationId?: boolean | number
+    avatarColor?: boolean | number
+    avatarShape?: boolean | number
     createdAt?: boolean | number
     description?: boolean | number
     icon?: boolean | number
@@ -5247,6 +5268,8 @@ export interface ApprovedAccessDomainGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ArchiveInboxThreadInput {threadId: Scalars['UUID'],workspaceMemberIds?: (Scalars['UUID'][] | null)}
+
 export interface AuthBypassProvidersGenqlSelection{
     google?: boolean | number
     microsoft?: boolean | number
@@ -5924,7 +5947,7 @@ export interface ConnectionParametersInput {connectionSecurity?: (EmailConnectio
 
 export interface CreateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),name: Scalars['String'],roleIds: Scalars['UUID'][]}
 
-export interface CreateAgentInput {description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),label: Scalars['String'],modelConfiguration?: (Scalars['JSON'] | null),modelId: Scalars['String'],name?: (Scalars['String'] | null),prompt: Scalars['String'],responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
+export interface CreateAgentInput {avatarColor?: (Scalars['String'] | null),avatarShape?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),label: Scalars['String'],modelConfiguration?: (Scalars['JSON'] | null),modelId: Scalars['String'],name?: (Scalars['String'] | null),prompt: Scalars['String'],responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
 
 export interface CreateApiKeyInput {expiresAt: Scalars['String'],name: Scalars['String'],revokedAt?: (Scalars['String'] | null),roleId: Scalars['UUID']}
 
@@ -5987,7 +6010,7 @@ export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] |
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
-export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null)}
+export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),agentId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),workflowId?: (Scalars['UUID'] | null)}
 
 export interface CreateObjectInput {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),labelPlural: Scalars['String'],labelSingular: Scalars['String'],namePlural: Scalars['String'],nameSingular: Scalars['String'],primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null)}
 
@@ -7180,6 +7203,7 @@ export interface MutationGenqlSelection{
     addAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     approveApplicationIframeMediaPermissions?: (ApplicationGenqlSelection & { __args: {applicationId: Scalars['UUID'], approvedIframeMediaPermissions: IframeMediaPermissionInput[]} })
+    archiveInboxThread?: { __args: {input: ArchiveInboxThreadInput} }
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
@@ -7319,6 +7343,7 @@ export interface MutationGenqlSelection{
     generateFrontComponentApplicationTokenPair?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     generatePlaygroundToken?: AuthTokenGenqlSelection
     generateTransientToken?: TransientTokenGenqlSelection
+    generateTwoFactorAuthenticationBackupCodes?: (TwoFactorAuthenticationBackupCodesGenqlSelection & { __args?: {otp?: (Scalars['String'] | null)} })
     generateTwoFactorAuthenticationRecoveryCode?: (TwoFactorAuthenticationRecoveryCodeGenqlSelection & { __args: {otp?: (Scalars['String'] | null), userId: Scalars['UUID']} })
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     getAuthTokensFromOTP?: (AuthTokensGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), loginToken: Scalars['String'], origin: Scalars['String'], otp: Scalars['String']} })
@@ -7499,6 +7524,7 @@ export interface NativeModelCapabilitiesGenqlSelection{
 
 export interface NavigationMenuItemGenqlSelection{
     agentChatChannelId?: boolean | number
+    agentId?: boolean | number
     applicationId?: boolean | number
     color?: boolean | number
     createdAt?: boolean | number
@@ -7517,6 +7543,7 @@ export interface NavigationMenuItemGenqlSelection{
     updatedAt?: boolean | number
     userWorkspaceId?: boolean | number
     viewId?: boolean | number
+    workflowId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8130,6 +8157,7 @@ export interface QueryGenqlSelection{
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     skills?: SkillGenqlSelection
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
+    twoFactorAuthenticationBackupCodeStatus?: TwoFactorAuthenticationBackupCodeStatusGenqlSelection
     twoFactorAuthenticationRecoveryStatus?: (TwoFactorAuthenticationRecoveryStatusGenqlSelection & { __args: {userId: Scalars['UUID']} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     usageLimits?: UsageLimitGenqlSelection
@@ -8426,7 +8454,9 @@ export interface SearchFieldGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface SendAppChannelMessageInput {idempotencyKey: Scalars['UUID'],messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID'],text: Scalars['String']}
+export interface SendAppChannelMessageEmailInput {bcc?: (Scalars['String'] | null),body: Scalars['String'],cc?: (Scalars['String'] | null),inReplyTo?: (Scalars['String'] | null),subject: Scalars['String'],to: Scalars['String']}
+
+export interface SendAppChannelMessageInput {email?: (SendAppChannelMessageEmailInput | null),idempotencyKey: Scalars['UUID'],messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID'],text?: (Scalars['String'] | null)}
 
 export interface SendAppChannelMessageOutputGenqlSelection{
     messageId?: boolean | number
@@ -8727,6 +8757,18 @@ export interface TriggerUpgradeApplicationResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TwoFactorAuthenticationBackupCodeStatusGenqlSelection{
+    remainingBackupCodeCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TwoFactorAuthenticationBackupCodesGenqlSelection{
+    backupCodes?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface TwoFactorAuthenticationMethodSummaryGenqlSelection{
     status?: boolean | number
     strategy?: boolean | number
@@ -8743,6 +8785,7 @@ export interface TwoFactorAuthenticationRecoveryCodeGenqlSelection{
 }
 
 export interface TwoFactorAuthenticationRecoveryCodeRedemptionGenqlSelection{
+    isTwoFactorAuthenticationReset?: boolean | number
     provisioningUri?: boolean | number
     tokens?: AuthTokenPairGenqlSelection
     __typename?: boolean | number
@@ -8772,7 +8815,7 @@ export interface UnsubscribeTopicGenqlSelection{
 
 export interface UpdateAgentChatChannelInput {color?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),roleIds?: (Scalars['UUID'][] | null)}
 
-export interface UpdateAgentInput {description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),modelConfiguration?: (Scalars['JSON'] | null),modelId?: (Scalars['String'] | null),name?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
+export interface UpdateAgentInput {avatarColor?: (Scalars['String'] | null),avatarShape?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),modelConfiguration?: (Scalars['JSON'] | null),modelId?: (Scalars['String'] | null),name?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),roleId?: (Scalars['UUID'] | null),triggers?: (Scalars['JSON'][] | null)}
 
 export interface UpdateApiKeyInput {expiresAt?: (Scalars['String'] | null),id: Scalars['UUID'],name?: (Scalars['String'] | null),revokedAt?: (Scalars['String'] | null)}
 
@@ -9253,6 +9296,7 @@ export interface VerifyEmailAndGetLoginTokenGenqlSelection{
 }
 
 export interface VerifyTwoFactorAuthenticationMethodGenqlSelection{
+    backupCodes?: boolean | number
     success?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -12176,6 +12220,22 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const TwoFactorAuthenticationBackupCodeStatus_possibleTypes: string[] = ['TwoFactorAuthenticationBackupCodeStatus']
+    export const isTwoFactorAuthenticationBackupCodeStatus = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationBackupCodeStatus => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationBackupCodeStatus"')
+      return TwoFactorAuthenticationBackupCodeStatus_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationBackupCodes_possibleTypes: string[] = ['TwoFactorAuthenticationBackupCodes']
+    export const isTwoFactorAuthenticationBackupCodes = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationBackupCodes => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationBackupCodes"')
+      return TwoFactorAuthenticationBackupCodes_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const TwoFactorAuthenticationMethodSummary_possibleTypes: string[] = ['TwoFactorAuthenticationMethodSummary']
     export const isTwoFactorAuthenticationMethodSummary = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationMethodSummary => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationMethodSummary"')
@@ -12993,6 +13053,7 @@ export const enumFeatureFlagKey = {
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
+   IS_HTTP_EGRESS_LAMBDA_ENABLED: 'IS_HTTP_EGRESS_LAMBDA_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
    IS_PRIVATE_RECORDS_ENABLED: 'IS_PRIVATE_RECORDS_ENABLED' as const,
@@ -13212,6 +13273,7 @@ export const enumModelFamily = {
 }
 
 export const enumNavigationMenuItemType = {
+   AGENT: 'AGENT' as const,
    AGENT_CHAT_CHANNEL: 'AGENT_CHAT_CHANNEL' as const,
    FOLDER: 'FOLDER' as const,
    LINK: 'LINK' as const,
@@ -13219,7 +13281,8 @@ export const enumNavigationMenuItemType = {
    OBJECT: 'OBJECT' as const,
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
    RECORD: 'RECORD' as const,
-   VIEW: 'VIEW' as const
+   VIEW: 'VIEW' as const,
+   WORKFLOW: 'WORKFLOW' as const
 }
 
 export const enumObjectOpenRecordIn = {

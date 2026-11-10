@@ -12,6 +12,7 @@ import {
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { removeAgentChatSnoozeEndJobs } from 'test/integration/utils/remove-agent-chat-snooze-end-jobs.util';
@@ -54,6 +55,10 @@ const MOVE_AND_MARK_THREAD_DONE = parse(
 
 const MARK_THREAD_DONE = parse(
   `mutation MarkThreadDone($threadId: UUID!) { markAgentChatThreadAsDoneInChannel(threadId: $threadId) }`,
+);
+
+const ARCHIVE_INBOX_THREAD = parse(
+  `mutation ArchiveInboxThread($input: ArchiveInboxThreadInput!) { archiveInboxThread(input: $input) }`,
 );
 
 const SNOOZE_THREAD = parse(
@@ -386,6 +391,59 @@ describe('Inbox channels for applications', () => {
     expect(await readThreadChannelState(threadId)).toEqual({
       channelId: destinationChannelId,
       channelArchivedAt: null,
+      channelSnoozedUntil: null,
+    });
+    expect(await readThreadParticipants(threadId)).toEqual(participantsBefore);
+  });
+
+  it('marks a channel conversation done through archiveInboxThread when no member is named', async () => {
+    const channelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), roleIds: [channelReader.roleId] },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+    const threadId = await createThreadInChannel(channelId);
+    const participantsBefore = await readThreadParticipants(threadId);
+
+    assertGraphQLSuccessfulResponse(
+      await makeMetadataApiRequest(
+        { query: ARCHIVE_INBOX_THREAD, variables: { input: { threadId } } },
+        channelReader.token,
+      ),
+    );
+    expect(await readThreadChannelState(threadId)).toEqual({
+      channelId,
+      channelArchivedAt: expect.anything(),
+      channelSnoozedUntil: null,
+    });
+    expect(await readThreadParticipants(threadId)).toEqual(participantsBefore);
+  });
+
+  it('leaves the member inbox alone when the application token carries a member', async () => {
+    const channelId = await createChannelOrThrow({
+      input: { name: buildChannelName(), roleIds: [channelReader.roleId] },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+    const threadId = await createThreadInChannel(channelId);
+    const participantsBefore = await readThreadParticipants(threadId);
+    const memberApplicationToken = (
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: channelReader.application.id,
+      })
+    ).applicationAccessToken.token;
+
+    expect(participantsBefore).toEqual([
+      expect.objectContaining({ isSubscribed: true, archivedAt: null }),
+    ]);
+
+    assertGraphQLSuccessfulResponse(
+      await makeMetadataApiRequest(
+        { query: ARCHIVE_INBOX_THREAD, variables: { input: { threadId } } },
+        memberApplicationToken,
+      ),
+    );
+    expect(await readThreadChannelState(threadId)).toEqual({
+      channelId,
+      channelArchivedAt: expect.anything(),
       channelSnoozedUntil: null,
     });
     expect(await readThreadParticipants(threadId)).toEqual(participantsBefore);

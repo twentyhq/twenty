@@ -40,7 +40,7 @@ Key points:
 - `workspaceMemberIds` lists the members who receive the conversation, at least one. The first member of a new conversation owns it, and the others follow it as participants. A later send under the same key that lists new members adds them; members it leaves out keep the conversation.
 - `threadKey` picks the conversation for this app, shared by every member it is sent to. A new key starts a conversation titled `title`; a key you used before adds the message to that conversation.
 - `idempotencyKey` identifies the message within the conversation. Sending again with the same keys writes nothing new, so retries and concurrent runs never duplicate a message.
-- `text` is markdown, and can carry [mentions and record references](#mentions-and-record-references).
+- `text` is markdown, and can carry [mentions and record references](#mentions-and-record-references). A member it mentions is notified, even when they are not in `workspaceMemberIds`.
 - `toolCall` (optional) ends the message on one of:
   - a call the member answers, which pauses the conversation: `ask_question` (one multiple-choice question), `request_form` (fields to fill in) or `propose_tool_call` (a call to approve). Its `input` takes the `toolName`, the `arguments` you would call the tool with and a one-sentence `summary`. The tool must be one your app's default role could run itself, such as `create_one_person` or `update_one_opportunity` (with the record `id`); an email (`send_email` or `draft_email`, with `recipients`, `subject` and a `body` in HTML) needs no permission of your app. The member reviews the call in the same card as a call the assistant proposes, edits it if they want, and the approved call runs with their own access;
   - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered by its front component with the `input` and `output` you pass. It does not pause the conversation.
@@ -71,6 +71,7 @@ import {
 } from 'twenty-sdk/logic-function';
 
 const ownerMention = await inboxMention({ workspaceMemberId: owner.id });
+const managerMention = await inboxMention({ workspaceMemberId: manager.id });
 
 const dealReference = await inboxReferenceRecord({
   objectNameSingular: 'opportunity',
@@ -78,18 +79,20 @@ const dealReference = await inboxReferenceRecord({
 });
 
 await sendInboxMessage({
-  workspaceMemberIds: [owner.id],
+  workspaceMemberIds: [owner.id, salesOps.id],
   threadKey: `idle-deal-${opportunity.id}`,
   idempotencyKey: `idle-deal-${opportunity.id}-${weekNumber}`,
   title: `${opportunity.name} is idle`,
-  text: `${ownerMention}, ${dealReference} has had no activity for two weeks.`,
+  text: `${ownerMention}, ${dealReference} has had no activity for two weeks. ${managerMention}, can you help?`,
 });
 ```
 
 - `inboxMention({ workspaceMemberId })` writes a mention of a workspace member, and `inboxReferenceRecord({ objectNameSingular, recordId })` a chip that links to any record.
 - Both read the label the chip shows, as the composer does: the member's full name, or their email when the name is empty, and the record's label identifier, such as a company name. Brackets become parentheses and line breaks become spaces, so the chip always renders.
 - They read with the same access as the rest of the call, so that access needs to reach the member or record. A record reference makes two requests, one for the object's label field and one for the record.
-- A mention only renders. It does not add the member to the conversation or notify them, so list everyone who should receive the message in `workspaceMemberIds`.
+- A mentioned member gets the conversation in their inbox, unread, with a mention to resolve, as when a teammate mentions them. They don't need to be in `workspaceMemberIds`, and the member who owns the conversation can be mentioned too. A mentioned member who cannot have the conversation, for example without the `AI` permission, is skipped and the message is still sent.
+- Mentions notify once, when the message is first written: sending it again with the same keys notifies no one, even with a different `text`, and a new `idempotencyKey` mentions again.
+- Only a complete mention notifies. One in inline code or a code block, one whose brackets are escaped (`\[\[`), and a typed `@name` notify no one. A record reference never notifies, and never shares the record.
 - `INBOX_ASSISTANT_MENTION` writes the composer's canonical assistant reference. The inbox displays it as `@Ada`; its stable identity is separate from its label. This reference alone does not request an assistant reply from an application message.
 
 ## Attaching records to a conversation
@@ -121,5 +124,29 @@ await attachRecordToInboxThread({
 - Both are idempotent: attaching a record twice keeps a single link, and detaching a record that is not attached changes nothing.
 - The call runs with the same access as [sending a message](#who-sends-the-message), which needs the `AI` permission. A member must be able to edit the conversation, and your application can act on a conversation it wrote in itself or one its default role was granted; otherwise the call fails with `THREAD_NOT_FOUND`.
 - The record must be readable with that access, or the call fails with `RECORD_NOT_FOUND`.
+
+## Archiving a conversation
+
+`archiveInboxThread()` archives a conversation your application wrote, for the members you name, as if each of them had archived it from their inbox. Use it when the work behind a message got done somewhere else: the email you proposed was sent from Gmail, the meeting you asked about was approved in the calendar.
+
+```ts src/logic-functions/on-email-sent-archive-thread.ts
+import { archiveInboxThread } from 'twenty-sdk/logic-function';
+
+await archiveInboxThread({
+  threadId,
+  workspaceMemberIds: [owner.id],
+});
+```
+
+- Only your application can call it, on a conversation it wrote in itself or one its default role was granted; otherwise the call fails with `THREAD_NOT_FOUND`. Members archive from their own inbox.
+- Every member you name must be able to read the conversation. If one cannot, the call fails with `THREAD_NOT_FOUND` and archives it for nobody.
+- A new message in the conversation brings it back to the inbox, as it does after a member archives it.
+- A member who stopped following the conversation is skipped, so it stays out of their inbox.
+
+Leave out `workspaceMemberIds` to mark a conversation done in its channel instead, as a member does from the channel view. Members' own inboxes are left as they are, and a conversation that is in no channel fails with `CHAT_THREAD_NOT_IN_CHANNEL`.
+
+```ts
+await archiveInboxThread({ threadId });
+```
 
 <PageBanner illustration="card-page-inbox" />

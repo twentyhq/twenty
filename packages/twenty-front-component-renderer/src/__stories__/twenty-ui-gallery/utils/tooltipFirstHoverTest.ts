@@ -4,7 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+import {
+  INTERACTION_TIMEOUT,
+  MOUNT_TIMEOUT,
+} from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectPopupAttachedToAnchor } from '@/__stories__/twenty-ui-gallery/utils/expectPopupAttachedToAnchor';
 
@@ -40,12 +43,33 @@ export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
       timeout: INTERACTION_TIMEOUT,
     });
 
+  // The sandbox can still be attaching its listeners, or finishing the last close, when a
+  // hover lands on a busy runner, and that hover is lost: each one is retried until it opens
+  const hoverUntilTooltipOpens = async (hoverTarget: Element) => {
+    const deadline = Date.now() + MOUNT_TIMEOUT;
+
+    for (;;) {
+      await user.hover(hoverTarget);
+
+      try {
+        await expectTooltipOpen();
+
+        return;
+      } catch (error) {
+        if (Date.now() > deadline) {
+          throw error;
+        }
+      }
+
+      await user.unhover(hoverTarget);
+    }
+  };
+
   expect(page.queryByRole('tooltip')).not.toBeInTheDocument();
   await waitForSandboxRoundTrip();
 
   for (const hoverTarget of [trigger, icon, icon]) {
-    await user.hover(hoverTarget);
-    await expectTooltipOpen();
+    await hoverUntilTooltipOpens(hoverTarget);
     await user.unhover(hoverTarget);
     await expectTooltipClosed();
   }

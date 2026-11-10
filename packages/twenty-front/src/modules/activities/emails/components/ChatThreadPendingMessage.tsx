@@ -2,7 +2,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
+import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
+import { StyledChatMessageBubbleContent } from '@/chat/components/StyledChatMessageBubbleContent';
+import { StyledChatMessageMeta } from '@/chat/components/StyledChatMessageMeta';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
@@ -43,7 +46,14 @@ export const ChatThreadPendingMessage = ({
         isUser
         isDimmed={pendingMessage.status === 'sending'}
       >
-        {pendingMessage.text}
+        <StyledChatMessageBubbleContent>
+          {pendingMessage.text}
+          {pendingMessage.status !== 'failed' && (
+            <StyledChatMessageMeta>
+              <ChatMessageReceipt status={pendingMessage.status} />
+            </StyledChatMessageMeta>
+          )}
+        </StyledChatMessageBubbleContent>
       </StyledPendingBubble>
       {pendingMessage.status === 'failed' && (
         <StyledFailedRow>

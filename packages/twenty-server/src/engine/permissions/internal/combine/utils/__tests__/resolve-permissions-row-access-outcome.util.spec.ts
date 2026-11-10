@@ -91,8 +91,6 @@ const resolveOutcome = ({
           },
         },
       },
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
@@ -166,7 +164,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       canReadObjectRecords: boolean;
     }): PermissionsPrincipalsWithRolesContext => ({
       ...readOnlyPrincipals,
-      aiRunScope: {
+      runtimeLimitingRole: {
         recordsPermissions: {
           ...NO_ROLE_RECORDS_PERMISSIONS,
           objects: {

@@ -7,19 +7,17 @@ import {
   type RecordShareAccessLevel,
   type ObjectRecord,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { composeRecordFieldMetadataIds } from 'src/engine/permissions/internal/masking/utils/compose-record-field-metadata-ids.util';
-import { resolveRlsRuleFiltersByRole } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-filters-by-role.util';
-import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
-import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
+import { assertUpdatedColumnsAreEditableOrThrow } from 'src/engine/permissions/internal/field-access/utils/assert-updated-columns-are-editable-or-throw.util';
+import { isMainRoleRestrictedByRlsRule } from 'src/engine/permissions/internal/rls/utils/is-main-role-restricted-by-rls-rule.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
-import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
+import { resolveRecordsAccessSQLConditionStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-records-access-sql-condition-strategy.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
@@ -34,15 +32,16 @@ import {
   type ObjectOperationQuestion,
   type ObjectQuestion,
 } from 'src/engine/permissions/types/record-permissions-question.type';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/internal/record-share/utils/resolve-permissions-share-grant.util';
-import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-denied-to-principals.util';
+import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/combine/utils/is-object-operation-denied-to-principals.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
-import { buildPermissionsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-condition.util';
+import { buildPermissionsSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-sql-condition.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -168,9 +167,46 @@ export class RecordPermissionsReadService {
     );
   }
 
-  async canAccessKnownRecords(
-    question: RecordsOperationQuestion,
+  async canRoleAccessSomeRecords(
+    question: ObjectOperationQuestion,
   ): Promise<boolean> {
+    const request = await this.findObjectAccessRequest(question);
+
+    return isDefined(request) && isRolePermittingOperation(request);
+  }
+
+  async filterRoleIdsWithoutReadAccess({
+    workspaceId,
+    roleIds,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    roleIds: string[];
+    objectMetadataId: string;
+  }): Promise<Set<string>> {
+    const metadataMaps = await this.permissionsMetadataMapsService.load({
+      workspaceId,
+    });
+
+    return new Set(
+      roleIds.filter(
+        (roleId) =>
+          !canReachSomeRecords({
+            objectRecordsPermissions:
+              getPermissionsPrincipalsRecordsPermissions({
+                principals: buildRolePermissionsPrincipals({
+                  workspaceId,
+                  roleId,
+                }),
+                metadataMaps,
+              }).objects[objectMetadataId],
+            operationType: 'read',
+          }),
+      ),
+    );
+  }
+
+  async canAccessRecords(question: RecordsOperationQuestion): Promise<boolean> {
     const grantedRecordIds = await this.findGrantedRecordIds(question);
 
     return (
@@ -181,7 +217,7 @@ export class RecordPermissionsReadService {
     );
   }
 
-  async filterAccessibleKnownRecordIds(
+  async filterGrantedRecordIds(
     request: RecordsOperationQuestion,
   ): Promise<Set<string>> {
     const readRequest = await this.findObjectAccessRequest({
@@ -275,38 +311,68 @@ export class RecordPermissionsReadService {
     });
   }
 
-  async buildManyRecordsAccessCondition({
+  async buildReadRecordsAccessSQLCondition({
     tableAlias,
     ...question
-  }: RecordOperationQuestion & {
+  }: Omit<RecordOperationQuestion, 'operationType'> & {
     tableAlias: string;
-  }): Promise<SqlCondition | boolean> {
-    const { principals } = question;
-    const objectAccessRequest =
-      await this.findObjectAccessRequestOrThrow(question);
+  }): Promise<SQLCondition | boolean> {
+    const objectAccessRequest = await this.findObjectAccessRequestOrThrow({
+      ...question,
+      operationType: 'read',
+    });
 
-    return buildPermissionsCondition({
-      ...objectAccessRequest,
+    if (
+      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest) !==
+      'accessGroups'
+    ) {
+      return this.buildRecordsAccessSQLCondition({
+        objectAccessRequest,
+        tableAlias,
+      });
+    }
+
+    return this.buildRecordsAccessSQLCondition({
+      objectAccessRequest,
       tableAlias,
-      recordShareTableExpression: buildRecordShareTableExpression({
-        workspaceId: principals.workspaceId,
-      }),
       callerAccessGroupCompactIds:
-        await this.findCallerAccessGroupCompactIds(objectAccessRequest),
+        await this.accessGroupReadService.findCallerCompactIds({
+          principals: objectAccessRequest.principals,
+          objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+          operationType: 'read',
+        }),
     });
   }
 
-  private async findCallerAccessGroupCompactIds(
-    objectAccessRequest: PermissionsObjectAccessRequest,
-  ): Promise<number[] | undefined> {
-    if (resolveManyRecordsStrategy(objectAccessRequest) !== 'accessGroups') {
-      return undefined;
-    }
+  async buildWriteRecordsAccessSQLCondition({
+    tableAlias,
+    ...question
+  }: RecordOperationQuestion & {
+    operationType: Exclude<ObjectRecordsOperationType, 'read'>;
+    tableAlias: string;
+  }): Promise<SQLCondition | boolean> {
+    return this.buildRecordsAccessSQLCondition({
+      objectAccessRequest: await this.findObjectAccessRequestOrThrow(question),
+      tableAlias,
+    });
+  }
 
-    return this.accessGroupReadService.findCallerCompactIds({
-      principals: objectAccessRequest.principals,
-      objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
-      operationType: objectAccessRequest.operationType,
+  private buildRecordsAccessSQLCondition({
+    objectAccessRequest,
+    tableAlias,
+    callerAccessGroupCompactIds,
+  }: {
+    objectAccessRequest: PermissionsObjectAccessRequest;
+    tableAlias: string;
+    callerAccessGroupCompactIds?: number[];
+  }): SQLCondition | boolean {
+    return buildPermissionsSQLCondition({
+      ...objectAccessRequest,
+      tableAlias,
+      recordShareTableExpression: buildRecordShareTableExpression({
+        workspaceId: objectAccessRequest.principals.workspaceId,
+      }),
+      callerAccessGroupCompactIds,
     });
   }
 
@@ -364,24 +430,25 @@ export class RecordPermissionsReadService {
       });
 
     if (
-      !isDefined(
-        resolveRlsRuleRecordFilter({
-          principals,
-          metadataMaps,
-          flatObjectMetadata,
-        }),
-      )
+      !isMainRoleRestrictedByRlsRule({
+        principals,
+        metadataMaps,
+        objectMetadataId,
+      })
     ) {
       return;
     }
 
-    await this.assertUpdatedColumnsAreEditableOrThrow({
+    await assertUpdatedColumnsAreEditableOrThrow({
       principals,
       metadataMaps,
       flatObjectMetadata,
       updates,
       formatRecords,
-      transactionScope,
+      findRelationJoinValues: this.buildFindRelationJoinValues({
+        workspaceId: principals.workspaceId,
+        transactionScope,
+      }),
     });
 
     const context = this.buildWriteRowAccessEvaluationContext({
@@ -431,69 +498,6 @@ export class RecordPermissionsReadService {
     }
   }
 
-  private async assertUpdatedColumnsAreEditableOrThrow({
-    principals,
-    metadataMaps,
-    flatObjectMetadata,
-    updates,
-    formatRecords,
-    transactionScope,
-  }: {
-    principals: PermissionsPrincipalsWithRolesContext;
-    metadataMaps: PermissionsMetadataMaps;
-    flatObjectMetadata: FlatObjectMetadata;
-    updates: {
-      rawRecordBefore: ObjectRecord;
-      setColumns: Record<string, unknown>;
-    }[];
-    formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
-    transactionScope: RecordPermissionTransactionScope;
-  }): Promise<void> {
-    const columnNameToFieldMetadataId = getColumnNameToFieldMetadataIdMap(
-      flatObjectMetadata,
-      metadataMaps.flatFieldMetadataMaps,
-    );
-
-    const rlsRuleFilterByRoleId = await resolveRlsRuleFiltersByRole({
-      principals,
-      metadataMaps,
-      flatObjectMetadata,
-      fieldList: 'uneditableFields',
-      records: formatRecords(
-        updates.map(({ rawRecordBefore }) => rawRecordBefore),
-      ),
-      findRelationJoinValues: this.buildFindRelationJoinValues({
-        workspaceId: principals.workspaceId,
-        transactionScope,
-      }),
-    });
-
-    for (const { rawRecordBefore, setColumns } of updates) {
-      const uneditableFieldMetadataIds = composeRecordFieldMetadataIds({
-        principals,
-        metadataMaps,
-        flatObjectMetadata,
-        fieldList: 'uneditableFields',
-        objectFieldMetadataIds: [],
-        records: formatRecords([rawRecordBefore]),
-        rlsRuleFilterByRoleId,
-      });
-
-      if (
-        Object.keys(setColumns).some((columnName) =>
-          uneditableFieldMetadataIds.has(
-            columnNameToFieldMetadataId[columnName],
-          ),
-        )
-      ) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
-    }
-  }
-
   private async findGrantedRecordIds({
     principals,
     objectMetadataId,
@@ -520,7 +524,7 @@ export class RecordPermissionsReadService {
       return new Set();
     }
 
-    const condition = this.buildSelectableRecordsCondition({
+    const sqlCondition = this.buildSelectableRecordsSQLCondition({
       principals: request.principals,
       metadataMaps: request.metadataMaps,
       flatObjectMetadata: request.flatObjectMetadata,
@@ -528,17 +532,19 @@ export class RecordPermissionsReadService {
       hypotheticalRecordShareAccessLevel,
     });
 
-    if (condition === false) {
+    if (sqlCondition === false) {
       return new Set();
     }
 
-    return this.recordPermissionReadRepository.findRecordIdsMatchingCondition({
-      workspaceId: principals.workspaceId,
-      flatObjectMetadata: request.flatObjectMetadata,
-      recordIds: uniqueRecordIds,
-      condition,
-      transactionScope,
-    });
+    return this.recordPermissionReadRepository.findRecordIdsMatchingSQLCondition(
+      {
+        workspaceId: principals.workspaceId,
+        flatObjectMetadata: request.flatObjectMetadata,
+        recordIds: uniqueRecordIds,
+        sqlCondition,
+        transactionScope,
+      },
+    );
   }
 
   private async findGrantedRecordIdsByOperationType({
@@ -583,9 +589,9 @@ export class RecordPermissionsReadService {
       return new Map();
     }
 
-    const conditions = operationTypes.map((operationType) =>
+    const sqlConditions = operationTypes.map((operationType) =>
       isDefined(principals)
-        ? this.buildSelectableRecordsCondition({
+        ? this.buildSelectableRecordsSQLCondition({
             principals,
             metadataMaps,
             flatObjectMetadata,
@@ -593,13 +599,13 @@ export class RecordPermissionsReadService {
           })
         : true,
     );
-    const recordIdsByCondition =
-      await this.recordPermissionReadRepository.findRecordIdsMatchingConditions(
+    const recordIdsBySQLCondition =
+      await this.recordPermissionReadRepository.findRecordIdsMatchingSQLConditions(
         {
           workspaceId,
           flatObjectMetadata,
           recordIds,
-          conditions,
+          sqlConditions,
           transactionScope,
         },
       );
@@ -607,12 +613,12 @@ export class RecordPermissionsReadService {
     return new Map(
       operationTypes.map((operationType, index) => [
         operationType,
-        recordIdsByCondition[index],
+        recordIdsBySQLCondition[index],
       ]),
     );
   }
 
-  private buildSelectableRecordsCondition({
+  private buildSelectableRecordsSQLCondition({
     principals,
     metadataMaps,
     flatObjectMetadata,
@@ -624,7 +630,7 @@ export class RecordPermissionsReadService {
     flatObjectMetadata: FlatObjectMetadata;
     operationType: ObjectRecordsOperationType;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
-  }): SqlCondition | boolean {
+  }): SQLCondition | boolean {
     try {
       validateOperationIsPermittedOrThrow({
         entityName: flatObjectMetadata.nameSingular,
@@ -652,7 +658,7 @@ export class RecordPermissionsReadService {
       throw error;
     }
 
-    return buildPermissionsCondition({
+    return buildPermissionsSQLCondition({
       principals,
       metadataMaps,
       flatObjectMetadata,

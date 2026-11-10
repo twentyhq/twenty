@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   listUnipileChatMessagesPage: vi.fn(),
   getUnipileChat: vi.fn(),
   ingestLinkedinMessages: vi.fn(),
+  setLinkedinAccountOwnerAvatar: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -41,6 +42,13 @@ vi.mock('src/unipile/utils/get-unipile-chat.util', () => ({
 vi.mock('src/logic-functions/utils/ingest-linkedin-messages.util', () => ({
   ingestLinkedinMessages: mocks.ingestLinkedinMessages,
 }));
+
+vi.mock(
+  'src/logic-functions/utils/set-linkedin-account-owner-avatar.util',
+  () => ({
+    setLinkedinAccountOwnerAvatar: mocks.setLinkedinAccountOwnerAvatar,
+  }),
+);
 
 const { UnipileRateLimitError } =
   await import('src/unipile/utils/request-unipile.util');
@@ -165,6 +173,30 @@ describe('linkedinImportHistoryHandler', () => {
       expect.stringMatching(
         /chunk 2: 2 chats .*1 conversations imported, 12 messages, 1 people matched, 1 people created, 2 attachments, skipped 1 without contact/,
       ),
+    );
+  });
+
+  it('sets the account owner avatar on the first chunk only', async () => {
+    await linkedinImportHistoryHandler(PAYLOAD);
+
+    expect(mocks.setLinkedinAccountOwnerAvatar).not.toHaveBeenCalled();
+
+    mocks.kvStore.set(PROGRESS_KEY, {
+      completedChunkCount: 0,
+      completedConversationCount: 0,
+      importedConversationCount: 0,
+      currentChunkProcessedCount: 0,
+    });
+    mocks.kvStore.set(getChatsKey(0), [LISTED_CHAT_WITH_ATTENDEE]);
+    mocks.ingestLinkedinMessages.mockReset().mockResolvedValue(IMPORTED);
+
+    await linkedinImportHistoryHandler({ ...PAYLOAD, chunkIndex: 0 });
+
+    expect(mocks.setLinkedinAccountOwnerAvatar).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        unipileAccountId: 'acc_1',
+        channelHandle: 'linkedin.com/in/me',
+      }),
     );
   });
 

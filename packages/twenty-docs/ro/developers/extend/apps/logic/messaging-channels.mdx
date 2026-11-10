@@ -232,8 +232,11 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   },
+  conversationStyle: 'chat',
 });
 ```
+
+`conversationStyle` stabilește modul în care Twenty afișează conversațiile furnizorului: `'chat'` afișează bule de mesaje grupate după expeditor, ca într-o aplicație de mesagerie, iar `'email'` afișează aspectul firului de e-mail. Fără aceasta, canalele aplicației păstrează aspectul de chat. Necesită `"engines": { "twenty": ">=2.58.0" }`.
 
 Asociați un canal cu acesta atunci când creați canalul sau ulterior cu `updateMessageChannel` (transmiterea valorii `null` anulează asocierea):
 
@@ -250,7 +253,7 @@ await createMessageChannel({
 
 Furnizorul de mesagerie trebuie să aparțină aplicației dvs. și să utilizeze furnizorul de conexiune al contului canalului; furnizorul său de conexiune nu se poate modifica după prima sincronizare. Modificarea funcției de trimitere într-o versiune ulterioară se aplică fiecărui canal asociat cu furnizorul.
 
-Răspunsurile sunt trimise cu mutația `sendAppChannelMessage`, care primește canalul, firul de discuție, textul și o cheie `idempotencyKey` (un UUID pe care clientul îl generează pentru fiecare răspuns și îl reutilizează când reîncearcă trimiterea), apoi execută funcția furnizorului:
+Răspunsurile sunt trimise cu mutația `sendAppChannelMessage`, care primește canalul, firul, fie `text`, fie, pentru furnizorii al căror `conversationStyle` este `'email'`, un bloc `email` (`to`, `cc`, `bcc`, `subject`, corpul cu text îmbogățit `body`, `inReplyTo`) și o `idempotencyKey` (un UUID pe care clientul îl generează pentru fiecare răspuns și îl reutilizează atunci când îl reîncearcă) și apelează funcția furnizorului:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
@@ -273,6 +276,8 @@ export const linkedinSendMessageHandler = async ({
 ```
 
 Sarcina utilă conține `messagingProviderName`, `threadExternalId` al conversației, așa cum a fost ingerat, `text`, `idempotencyKey` și `recipients`: participanții la cel mai recent mesaj al firului de discuție, în afară de identificatorul propriu al canalului, astfel încât o persoană care a participat doar la un schimb anterior de mesaje nu primește un mesaj. Preferați conversația proprie a furnizorului în locul `recipients` atunci când API-ul său trimite către un ID de conversație. returnează ID-ul furnizorului pentru mesajul trimis ca `externalId`.
+
+`conversationStyle` al încărcăturii utile corespunde celui al furnizorului (`'chat'` atunci când acesta nu declară niciunul). Cu `'email'` (de exemplu, o aplicație care sincronizează Outlook sau Gmail), membrii răspund în schimb cu editorul de e-mail, iar încărcătura utilă include și un bloc `email`: `subject`, corpul cu text îmbogățit compilat în `html`, destinatarii `cc` și `bcc` și `inReplyToExternalId`, `externalId` al mesajului la care se răspunde atunci când Twenty îl cunoaște. `recipients` sunt apoi adresele `To` selectate de membru, iar `text` este versiunea în text simplu a corpului. Atașamentele nu sunt încă trimise. Necesită `"engines": { "twenty": ">=2.58.0" }`.
 
 Twenty înregistrează apoi răspunsul în firul de discuție ca mesaj trimis de la canal, cu aceiași destinatari, astfel încât acesta apare imediat. Când webhook-ul dvs. livrează ulterior același mesaj, ingerarea acestuia cu acel `externalId` nu modifică nimic.
 

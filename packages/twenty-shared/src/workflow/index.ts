@@ -178,7 +178,6 @@ export { isObjectSyncedFromConnectedAccounts } from './utils/isObjectSyncedFromC
 export { isStandaloneVariableString } from './utils/isStandaloneVariableString';
 export { isWorkflowAiAgentGenerateStep } from './utils/isWorkflowAiAgentGenerateStep';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
-export { parseDataFromContentType } from './utils/parseDataFromContentType';
 export {
   needsEscaping,
   escapePathSegment,
