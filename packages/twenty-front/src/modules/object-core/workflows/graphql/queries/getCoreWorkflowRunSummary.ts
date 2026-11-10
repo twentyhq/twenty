@@ -6,6 +6,11 @@ export const GET_CORE_WORKFLOW_RUN_SUMMARY = gql`
       coreWorkflowId
       runCountLast14Days
       isRunCountLowerBound
+      recentRuns {
+        id
+        status
+        createdAt
+      }
     }
   }
 `;

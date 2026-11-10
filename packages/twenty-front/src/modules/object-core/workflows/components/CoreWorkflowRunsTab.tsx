@@ -37,8 +37,6 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 import { formatDuration } from '~/utils/format/formatDuration';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-const RECENT_RUNS_IN_SUMMARY = 10;
-
 const StyledSummary = styled.div`
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -146,7 +144,7 @@ export const CoreWorkflowRunsTab = ({
       <StyledSummary>
         <StyledSummaryStrip>
           <CoreWorkflowRecentRunsCell
-            recentRuns={runs.slice(0, RECENT_RUNS_IN_SUMMARY)}
+            recentRuns={runSummary?.recentRuns ?? null}
           />
         </StyledSummaryStrip>
         {isDefined(runSummary) && (
