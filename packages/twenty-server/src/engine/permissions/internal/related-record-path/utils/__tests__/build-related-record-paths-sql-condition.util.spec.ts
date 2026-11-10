@@ -154,9 +154,11 @@ const buildEntrySQLConditionFrom =
 const buildAttachmentCondition = ({
   paths,
   entryByObject,
+  disabledObjectNames = [],
 }: {
   paths: FlatRelatedRecordPath[];
   entryByObject: Record<string, boolean | 'owned'>;
+  disabledObjectNames?: string[];
 }) =>
   buildRelatedRecordPathsSQLCondition({
     workspaceId: WORKSPACE_ID,
@@ -164,6 +166,8 @@ const buildAttachmentCondition = ({
     tableAlias: 'attachment',
     metadataMaps: buildMetadataMaps(paths),
     buildEntrySQLCondition: buildEntrySQLConditionFrom(entryByObject),
+    isObjectOperationDisabled: (flatObjectMetadata) =>
+      disabledObjectNames.includes(flatObjectMetadata.nameSingular),
   });
 
 describe('buildRelatedRecordPathsSQLCondition', () => {
@@ -268,6 +272,24 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
     expect(condition.sql.match(/EXISTS/g)).toHaveLength(2);
   });
 
+  it('does not pass access through an object whose operation is disabled', () => {
+    expect(
+      buildAttachmentCondition({
+        paths: [
+          companyAttachmentsPath,
+          buildPath({
+            id: 'opportunityCompanyPath',
+            objectMetadataId: 'opportunity',
+            firstFieldMetadataId: 'opportunityCompany',
+            isInherent: true,
+          }),
+        ],
+        entryByObject: { opportunity: 'owned' },
+        disabledObjectNames: ['company'],
+      }),
+    ).toBe(false);
+  });
+
   it('ignores paths through inactive fields', () => {
     const metadataMaps = buildMetadataMaps([companyAttachmentsPath]);
 
@@ -283,6 +305,7 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
         buildEntrySQLCondition: buildEntrySQLConditionFrom({
           company: true,
         }),
+        isObjectOperationDisabled: () => false,
       }),
     ).toBe(false);
   });

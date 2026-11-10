@@ -231,7 +231,10 @@ export class RecordPermissionsReadService {
     if (
       !isDefined(readRequest) ||
       (!isObjectOperationDisabledToPrincipals(readRequest) &&
-        isObjectOperationDeniedToPrincipals(readRequest))
+        isObjectOperationDeniedToPrincipals(readRequest) &&
+        readRequest.metadataMaps.featureFlagsMap[
+          FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED
+        ] !== true)
     ) {
       return new Set();
     }
@@ -637,12 +640,6 @@ export class RecordPermissionsReadService {
 
     if (
       operationType === 'create' ||
-      isObjectOperationDisabledToPrincipals({
-        principals,
-        metadataMaps,
-        flatObjectMetadata,
-        operationType,
-      }) ||
       metadataMaps.featureFlagsMap[
         FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED
       ] !== true
@@ -672,6 +669,13 @@ export class RecordPermissionsReadService {
             entry.flatObjectMetadata.id === flatObjectMetadata.id
               ? hypotheticalRecordShareAccessLevel
               : undefined,
+        }),
+      isObjectOperationDisabled: (sourceFlatObjectMetadata) =>
+        isObjectOperationDisabledToPrincipals({
+          principals,
+          metadataMaps,
+          flatObjectMetadata: sourceFlatObjectMetadata,
+          operationType,
         }),
     });
   }

@@ -113,12 +113,16 @@ export const buildRelatedRecordPathsSQLCondition = ({
   tableAlias,
   metadataMaps,
   buildEntrySQLCondition,
+  isObjectOperationDisabled,
 }: {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
   tableAlias: string;
   metadataMaps: PermissionsMetadataMaps;
   buildEntrySQLCondition: BuildEntrySQLCondition;
+  isObjectOperationDisabled: (
+    flatObjectMetadata: FlatObjectMetadata,
+  ) => boolean;
 }): SQLCondition | boolean => {
   const incomingPathsByTargetObjectMetadataId = new Map<
     string,
@@ -215,7 +219,8 @@ export const buildRelatedRecordPathsSQLCondition = ({
 
     if (
       entrySQLCondition === true ||
-      visitedObjectMetadataIds.has(flatObjectMetadata.id)
+      visitedObjectMetadataIds.has(flatObjectMetadata.id) ||
+      isObjectOperationDisabled(flatObjectMetadata)
     ) {
       return entrySQLCondition;
     }
