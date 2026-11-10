@@ -63,6 +63,17 @@ export class ConnectedAccountRefreshTokensService {
       return this.getExistingEncryptedTokens(connectedAccount, workspaceId);
     }
 
+    this.logger.debug(
+      `Access token expired for connected account ${connectedAccount.id} in workspace ${workspaceId}, refreshing...`,
+    );
+
+    return this.refreshAndSaveTokens(connectedAccount, workspaceId);
+  }
+
+  async refreshAndSaveTokens(
+    connectedAccount: ConnectedAccountEntity,
+    workspaceId: string,
+  ): Promise<ConnectedAccountTokens> {
     const encryptedRefreshToken = connectedAccount.refreshToken;
 
     if (!isDefined(encryptedRefreshToken)) {
@@ -71,10 +82,6 @@ export class ConnectedAccountRefreshTokensService {
         ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
       );
     }
-
-    this.logger.debug(
-      `Access token expired for connected account ${connectedAccount.id} in workspace ${workspaceId}, refreshing...`,
-    );
 
     return this.performRefreshAndSave(
       connectedAccount,

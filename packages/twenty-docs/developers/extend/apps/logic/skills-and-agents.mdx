@@ -172,7 +172,7 @@ export default defineMcpServer({
 Key points:
 - `name` is snake_case (lowercase letters, digits and underscores, starting with a letter, at most 32 characters) and unique in the workspace. It prefixes the server's tool names.
 - `url` must be an HTTP or HTTPS URL.
-- `connectionProvider` (optional) references a [connection provider](/developers/extend/apps/logic/connections) declared by the same app. Calls send that connection's access token as a Bearer token. Omit it for a public server.
+- `connectionProvider` (optional) references a [connection provider](/developers/extend/apps/logic/connections) declared by the same app. Calls send that connection's access token as a Bearer token. Omit it for a public server. A server that publishes its own OAuth settings takes an `oauth-discovery` provider whose `resourceUrl` is the server URL (Twenty 2.58.0 or later).
 - The URL cannot change in a later version while a connection provider is linked, so tokens are never sent to another host.
 - Workspaces can deactivate the server; a later app version keeps that choice.
 - Requires `"engines": { "twenty": ">=2.53.0" }`.

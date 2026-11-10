@@ -5,7 +5,8 @@ import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/m
 
 export const fromFlatMcpServerToMcpServerDto = (
   flatMcpServer: FlatMcpServer,
-): McpServerDTO => ({
+  // The sign-in scope lives on the connection provider, which this flat entity does not carry
+): Omit<McpServerDTO, 'signInScope'> => ({
   id: flatMcpServer.id,
   name: flatMcpServer.name,
   label: flatMcpServer.label,

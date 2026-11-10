@@ -8,6 +8,7 @@ const MCP_SERVER_FIELDS = `
   label
   url
   connectionProviderId
+  signInScope
   isActive
   tools {
     name
@@ -66,6 +67,7 @@ export type McpServerInput = {
   url: string;
   connectionProviderId?: string | null;
   isActive?: boolean;
+  signInScope?: 'USER' | 'WORKSPACE';
 };
 
 export const createMcpServer = (input: McpServerInput) =>
@@ -103,3 +105,34 @@ export const getMcpServer = (id: string) =>
     query: GET_MCP_SERVER_QUERY,
     variables: { id },
   });
+
+const MY_CONNECTED_ACCOUNTS_QUERY = gql`
+  query MyConnectedAccounts {
+    myConnectedAccounts {
+      id
+      handle
+      provider
+      scope
+      userWorkspaceId
+      connectionProviderId
+      authFailedAt
+    }
+  }
+`;
+
+const DELETE_CONNECTED_ACCOUNT_MUTATION = gql`
+  mutation DeleteConnectedAccount($id: UUID!) {
+    deleteConnectedAccount(id: $id) {
+      id
+    }
+  }
+`;
+
+export const getMyConnectedAccounts = (token?: string) =>
+  makeMetadataApiRequest({ query: MY_CONNECTED_ACCOUNTS_QUERY }, token);
+
+export const deleteConnectedAccount = (id: string, token?: string) =>
+  makeMetadataApiRequest(
+    { query: DELETE_CONNECTED_ACCOUNT_MUTATION, variables: { id } },
+    token,
+  );

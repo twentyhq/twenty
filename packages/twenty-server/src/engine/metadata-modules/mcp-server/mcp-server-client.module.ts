@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
@@ -18,6 +19,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     ConnectedAccountTokenEncryptionModule,
     RefreshTokensManagerModule,
     SecureHttpClientModule,
+    CacheLockModule,
     TypeOrmModule.forFeature([McpServerEntity, ConnectedAccountEntity]),
   ],
   providers: [
