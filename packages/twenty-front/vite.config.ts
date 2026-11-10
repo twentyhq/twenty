@@ -217,8 +217,7 @@ export default defineConfig(({ mode }) => {
         'd3-shape',
         '@tiptap/pm/tables',
         '@calcom/embed-react',
-        // Linked workspace packages aren't pre-bundled by default, and
-        // twenty-shared ships one file per module.
+        // Linked packages aren't pre-bundled, and twenty-shared ships one file per module.
         'twenty-shared/ai',
         'twenty-shared/application',
         'twenty-shared/constants',
