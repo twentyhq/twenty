@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/primitives';
 
 import {
   type CopyToClipboardFunction,

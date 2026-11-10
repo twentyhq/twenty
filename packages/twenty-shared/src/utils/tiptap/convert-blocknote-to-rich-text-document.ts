@@ -1,7 +1,7 @@
 import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
 
 import { parseJson } from '@/utils/parseJson';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { isPlainObject } from '@/primitives/isPlainObject';
 import { isDefined } from '@/utils/validation';
 
 import { type RichTextColor } from './rich-text-color.type';

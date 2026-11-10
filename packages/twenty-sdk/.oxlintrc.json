@@ -71,6 +71,11 @@
                 "name": "twenty-shared/application",
                 "allowTypeImports": true,
                 "message": "This code ships inside every app bundle, and twenty-shared/application builds workflow schemas when it loads. Import runtime values from twenty-shared/application-runtime; type imports are fine."
+              },
+              {
+                "name": "twenty-shared/utils",
+                "allowTypeImports": true,
+                "message": "This code ships inside every app bundle, and twenty-shared/utils pulls in zod, transliteration and libphonenumber-js. Import runtime helpers from twenty-shared/primitives; type imports are fine."
               }
             ]
           }

@@ -1,6 +1,6 @@
 import { isArray, isNonEmptyString, isObject, isString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/primitives';
 
 import { getApplicationApiConfigOrThrow } from '@/sdk/logic-function/utils/get-application-api-config-or-throw.util';
 

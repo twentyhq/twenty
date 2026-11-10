@@ -1,4 +1,4 @@
-import { isDefined } from '../utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const PLACEHOLDER_REGEX = /\{(\w+)\}/g;
 

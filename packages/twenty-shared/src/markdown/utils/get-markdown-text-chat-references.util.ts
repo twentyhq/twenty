@@ -1,5 +1,5 @@
 import { CHAT_REFERENCE_BODY_PATTERN } from '@/ai/constants/chat-reference-body-pattern.const';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 import { Lexer, type Token } from 'marked';
 
 type MarkdownTextChatReference = {

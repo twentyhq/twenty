@@ -1,5 +1,5 @@
 import { CONNECTION_SCOPE_BY_LEGACY_VISIBILITY } from 'twenty-shared/application-runtime';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/primitives';
 
 import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
 import {

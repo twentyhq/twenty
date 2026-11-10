@@ -1,6 +1,6 @@
 import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from '../constants/agent-chat-assistant-mention-object-name-singular.const';
 import { CHAT_REFERENCE_BODY_PATTERN } from '../constants/chat-reference-body-pattern.const';
-import { isDefined } from '../../utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 type ParsedAgentChatAssistantReferenceBody = {
   kind: 'record';

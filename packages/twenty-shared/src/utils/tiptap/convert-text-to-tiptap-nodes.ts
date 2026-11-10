@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { isNonEmptyArray } from '@/primitives/isNonEmptyArray';
 
 import { type TipTapMark } from './tiptap-mark-types';
 import { type TipTapNode } from './tiptap-node';

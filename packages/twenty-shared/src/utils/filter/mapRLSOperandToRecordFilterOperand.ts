@@ -2,7 +2,7 @@ import {
   RecordFilterOperand,
   RowLevelPermissionPredicateOperand,
 } from '@/types';
-import { assertUnreachable } from '@/utils/assertUnreachable';
+import { assertUnreachable } from '@/primitives/assertUnreachable';
 
 export const mapRLSOperandToRecordFilterOperand = (
   operand: RowLevelPermissionPredicateOperand,

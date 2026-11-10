@@ -1,7 +1,7 @@
 import { type AgentMessageRow } from '@/ai/types/AgentMessageRow';
 import { type ExtendedUIMessage } from '@/ai/types/ExtendedUIMessage';
 import { mapAgentMessagePartToUIMessagePart } from '@/ai/utils/map-agent-message-part-to-ui-message-part.util';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export const mapAgentMessagesToUIMessages = (
   messages: AgentMessageRow[],

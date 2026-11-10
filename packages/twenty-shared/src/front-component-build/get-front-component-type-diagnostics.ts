@@ -1,6 +1,6 @@
 import { posix } from 'node:path';
 import ts from 'typescript';
-import { isDefined } from '../utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export const getFrontComponentTypeDiagnostics = ({
   source,

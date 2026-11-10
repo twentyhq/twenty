@@ -19,6 +19,7 @@ jobs:
       files: |
         packages/twenty-sdk/**
         packages/twenty-client-sdk/**
+        packages/twenty-shared/**
         packages/twenty-server/**
         packages/twenty-ui/**
         .github/workflows/ci-sdk.yaml

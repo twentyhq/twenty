@@ -1,5 +1,5 @@
-import { capitalize } from '../utils/strings/capitalize';
-import { isDefined } from '../utils/validation/isDefined';
+import { capitalize } from '@/primitives/capitalize';
+import { isDefined } from '@/primitives/isDefined';
 
 export const METADATA_LABEL_PLACEHOLDER_NAMES = [
   'objectLabel',

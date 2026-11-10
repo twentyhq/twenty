@@ -1,6 +1,6 @@
 import { slugify } from 'transliteration';
 
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const SUBDOMAIN_MIN_LENGTH = 1;
 const SUBDOMAIN_MAX_LENGTH = 30;

@@ -2,7 +2,7 @@ import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
 import { isRecordObjectSchema } from '@/logic-function/is-record-object-schema';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 type ResolveObjectLabel = (
   objectUniversalIdentifier: string,

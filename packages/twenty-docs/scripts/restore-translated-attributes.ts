@@ -15,7 +15,7 @@ import remarkParse from 'remark-parse';
 import { type Processor, unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
-import { isDefined } from '../../twenty-shared/src/utils/validation/isDefined';
+import { isDefined } from '../../twenty-shared/src/primitives/isDefined';
 import {
   DEFAULT_LANGUAGE,
   SUPPORTED_LANGUAGES,

@@ -2,8 +2,8 @@ import {
   type RoleManifest,
   type RowLevelPermissionPredicateGroupManifest,
 } from '@/application/roleManifestType';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isPlainObject } from '@/primitives/isPlainObject';
+import { isDefined } from '@/primitives/isDefined';
 
 const stringifyWithSortedKeys = (value: unknown): string =>
   JSON.stringify(value, (_key, nestedValue) =>

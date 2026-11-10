@@ -1,4 +1,4 @@
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
   /import\s*\{\s*define(?:Settings)?FrontComponent\s*(?:,\s*)?\}\s*from\s*['"][^'"]+['"];?\n?/g;

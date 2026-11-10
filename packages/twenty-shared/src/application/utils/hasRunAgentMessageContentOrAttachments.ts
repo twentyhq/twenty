@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type RunAgentMessage } from '@/application/runAgentType';
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { isNonEmptyArray } from '@/primitives/isNonEmptyArray';
 
 export const hasRunAgentMessageContentOrAttachments = ({
   content,

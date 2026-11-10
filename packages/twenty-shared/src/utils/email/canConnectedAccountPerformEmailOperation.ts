@@ -3,9 +3,9 @@ import {
   type ConnectedAccountEmailFields,
   EmailOperation,
 } from '@/types';
-import { assertUnreachable } from '@/utils/assertUnreachable';
+import { assertUnreachable } from '@/primitives/assertUnreachable';
 import { getEmailProvidersForOperation } from '@/utils/email/getEmailProvidersForOperation';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export const canConnectedAccountPerformEmailOperation = ({
   connectedAccount,

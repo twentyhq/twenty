@@ -1,7 +1,7 @@
 import { type ObjectRecordsOperationType } from '@/types/ObjectRecordsOperationType';
 import { type ObjectRecordsPermissions } from '@/types/ObjectRecordsPermissions';
-import { assertUnreachable } from '@/utils/assertUnreachable';
-import { isDefined } from '@/utils/validation/isDefined';
+import { assertUnreachable } from '@/primitives/assertUnreachable';
+import { isDefined } from '@/primitives/isDefined';
 
 export const canReachAllRecords = ({
   objectRecordsPermissions,

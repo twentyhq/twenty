@@ -1,5 +1,5 @@
 import { type ArrayFilter } from '@/types';
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { isNonEmptyArray } from '@/primitives/isNonEmptyArray';
 import { convertLikePatternToRegexOrThrow } from '@/utils/filter/utils/convertLikePatternToRegexOrThrow';
 
 export const isMatchingArrayFilter = ({

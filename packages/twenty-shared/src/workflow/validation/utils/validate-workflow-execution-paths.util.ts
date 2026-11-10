@@ -1,4 +1,4 @@
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import { isIteratorStepInput } from '@/workflow/validation/guards/isIteratorStepInput';
 import {

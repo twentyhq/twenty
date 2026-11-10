@@ -1,4 +1,4 @@
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { isNonEmptyArray } from '@/primitives/isNonEmptyArray';
 
 describe('isNonEmptyArray', () => {
   it('should return false for empty, null and undefined arrays', () => {

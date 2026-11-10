@@ -1,6 +1,6 @@
 /** @jest-environment node */
 
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 import { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from '@/workflow/constants/WorkflowAiAgentStepConfigIssueMessages';
 
 import {

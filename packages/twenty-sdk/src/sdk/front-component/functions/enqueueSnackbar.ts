@@ -1,5 +1,5 @@
 import { type EnqueueSnackbarParams } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/primitives';
 
 import {
   frontComponentHostCommunicationApi,

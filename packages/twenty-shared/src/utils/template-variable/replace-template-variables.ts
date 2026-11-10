@@ -1,4 +1,4 @@
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 import { parseTemplateVariableWithFallback } from './parse-template-variable-with-fallback';
 import { TEMPLATE_VARIABLE_PATTERN } from './template-variable-pattern';

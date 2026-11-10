@@ -5,7 +5,7 @@ import {
   type ViewFilterOperand,
 } from '@/types';
 import { isRecordFilterOperandExpectingValue } from '@/utils/filter/isRecordFilterOperandExpectingValue';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 import {
   COMPOSITE_SUB_FIELD_VALUE_SCHEMAS,
   FILTER_VALUE_SCHEMAS_MAP,

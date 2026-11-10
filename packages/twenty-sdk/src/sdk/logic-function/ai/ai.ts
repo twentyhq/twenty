@@ -8,7 +8,7 @@ import {
   type GenerateResult,
   type RunAgentMessage,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/primitives';
 
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
 import { streamAgentChatEvents } from '@/sdk/logic-function/utils/stream-agent-chat-events.util';

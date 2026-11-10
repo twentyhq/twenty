@@ -1,7 +1,7 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type z } from 'zod';
 
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 // blank strings are what the builder stores when unset
 export const hasWorkflowAiAgentConfig = <TShape extends z.ZodRawShape>(

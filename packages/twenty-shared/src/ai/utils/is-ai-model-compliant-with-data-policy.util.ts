@@ -1,4 +1,4 @@
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 import { DATA_RESIDENCIES_BY_REGION } from '../constants/data-residencies-by-region.const';
 import { type DataResidency } from '../constants/data-residency.const';

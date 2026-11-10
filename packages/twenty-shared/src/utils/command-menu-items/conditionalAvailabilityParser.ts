@@ -1,7 +1,7 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
-import { isDefined } from '../validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 import { safeGetNestedProperty } from './safeGetNestedProperty';
 

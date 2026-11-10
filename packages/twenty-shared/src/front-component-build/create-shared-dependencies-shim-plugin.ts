@@ -1,7 +1,7 @@
 import { type SharedDependenciesBuildContext } from '@/front-component-build/shared-dependencies-build-context.type';
 import { getSharedDependenciesShimSource } from '@/front-component-build/get-shared-dependencies-shim-source';
 import type * as esbuild from 'esbuild';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const SHARED_DEPENDENCIES_SHIM_NAMESPACE = 'twenty-shared-dependencies-shim';
 

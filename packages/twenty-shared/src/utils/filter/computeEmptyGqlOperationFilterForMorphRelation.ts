@@ -3,7 +3,7 @@ import {
   type RecordGqlOperationFilter,
   type RelationFilter,
 } from '@/types';
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { isNonEmptyArray } from '@/primitives/isNonEmptyArray';
 import { computeMorphRelationJoinColumnNames } from '@/utils/filter/computeMorphRelationJoinColumnNames';
 import { type FieldShared } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 

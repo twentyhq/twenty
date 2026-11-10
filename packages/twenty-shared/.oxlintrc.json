@@ -67,6 +67,28 @@
       "rules": {
         "twenty/max-consts-per-file": ["error", { "max": 1 }]
       }
+    },
+    {
+      "files": ["src/primitives/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "*",
+                  "!@sniptt/guards",
+                  "!./*",
+                  "!../*",
+                  "!@/primitives/*"
+                ],
+                "message": "twenty-shared/primitives ships in every app bundle, so it must stay dependency-free. Only @sniptt/guards and files in this folder can be imported."
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }

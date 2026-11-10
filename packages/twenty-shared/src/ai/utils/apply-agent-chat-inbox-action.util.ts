@@ -1,7 +1,7 @@
 import { type AgentChatInboxAction } from '@/ai/types/AgentChatInboxAction';
 import { type AgentChatInboxState } from '@/ai/types/AgentChatInboxState';
 import { getAgentChatMentionsResolvedAt } from '@/ai/utils/get-agent-chat-mentions-resolved-at.util';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 // What a chat without the member's row reads as: one they can open but do
 // not follow, since only taking part in it or filing it follows a chat

@@ -1,5 +1,5 @@
 import { FirstDayOfTheWeek } from '@/types';
-import { assertUnreachable } from '@/utils/assertUnreachable';
+import { assertUnreachable } from '@/primitives/assertUnreachable';
 import { type FirstDayOfTheWeekSchema } from '@/utils/filter/dates/utils/firstDayOfWeekSchema';
 
 export const getFirstDayOfTheWeekAsISONumber = (

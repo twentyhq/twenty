@@ -5,8 +5,8 @@ import {
   workflowStepFilterManifestSchema,
 } from '@/application/workflowStepManifestType';
 import { ViewFilterOperand } from '@/types/ViewFilterOperand';
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isNonEmptyArray } from '@/primitives/isNonEmptyArray';
+import { isDefined } from '@/primitives/isDefined';
 import { workflowCronTriggerSchema } from '@/workflow/schemas/cron-trigger-schema';
 import { stepFilterGroupSchema } from '@/workflow/schemas/step-filter-group-schema';
 import { workflowWebhookTriggerSchema } from '@/workflow/schemas/webhook-trigger-schema';

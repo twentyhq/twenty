@@ -1,6 +1,6 @@
 import { isObject, isString } from '@sniptt/guards';
 
-import { isDefined } from '../validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const BLOCKED_PROPERTY_NAMES = new Set([
   '__proto__',

@@ -1,5 +1,5 @@
 import { type ValidationRuleExpressionToken } from '@/types/ValidationRuleExpressionToken';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const PATH_PATTERN = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*/;
 const NUMBER_PATTERN = /^\d+(?:\.\d+)?/;

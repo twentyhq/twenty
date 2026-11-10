@@ -1,4 +1,4 @@
-export * from './isDefined';
+export * from '@/primitives/isDefined';
 export * from './assertIsDefinedOrThrow';
 export * from './isValidLocale';
 export * from './isValidTwentySubdomain';

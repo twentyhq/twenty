@@ -1,5 +1,5 @@
 import { validationRuleNullPlaceholders } from '@/utils/validation-rule/validationRuleValueRegistry';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export const isValidationRuleValueDefined = (
   value: unknown,

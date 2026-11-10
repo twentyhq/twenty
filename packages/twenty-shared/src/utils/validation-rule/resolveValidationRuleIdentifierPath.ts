@@ -7,7 +7,7 @@ import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 type ValidationRuleIdentifierPathError = {
   errorMessage: string;

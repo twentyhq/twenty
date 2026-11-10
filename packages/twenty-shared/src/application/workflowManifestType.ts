@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 import { validateWorkflowVariableReferences } from '@/workflow/validation/utils/validate-workflow-variable-references.util';
 

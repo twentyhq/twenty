@@ -1,7 +1,7 @@
 import { isString } from '@sniptt/guards';
 
 import { parseJson } from '@/utils/parseJson';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { isPlainObject } from '@/primitives/isPlainObject';
 
 import { convertStringBodyToEmailDocument } from './convert-string-body-to-email-document';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from './email-document-schema-version';

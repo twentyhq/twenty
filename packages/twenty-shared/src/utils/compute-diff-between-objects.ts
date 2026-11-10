@@ -1,6 +1,6 @@
 import { isDefined } from '@/utils/validation';
 
-import { fastDeepEqual } from './json/fast-deep-equal';
+import { fastDeepEqual } from '@/primitives/fast-deep-equal';
 
 type Diff<T extends { id: string }> = {
   toCreate: T[];

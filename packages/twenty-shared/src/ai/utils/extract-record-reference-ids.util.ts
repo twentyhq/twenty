@@ -1,5 +1,5 @@
 import { CHAT_REFERENCE_UUID_REGEX } from '@/ai/constants/chat-reference-uuid-regex.const';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const RECORD_REFERENCE_PATTERN = /\[\[(?:record:)?([^:[\]]+):([^:[\]]+):/g;
 

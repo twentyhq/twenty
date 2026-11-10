@@ -1,7 +1,7 @@
 import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
 import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const UNKNOWN_CHARACTER_PATTERN = /Unknown character "(.+)"/;
 const UNEXPECTED_TOKEN_PATTERN = /^unexpected T[A-Z]+: (.+)$/;

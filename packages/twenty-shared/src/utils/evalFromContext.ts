@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 // Resolves one `{{ path }}` token without Handlebars, which is CommonJS and cannot be tree-shaken from browser bundles.
 // Reproduces its `{{{ json <path> }}}` quirks on purpose since in-flight workflows rely on them: own properties only,

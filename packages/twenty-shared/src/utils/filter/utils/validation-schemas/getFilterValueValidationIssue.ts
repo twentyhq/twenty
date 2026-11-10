@@ -8,7 +8,7 @@ import { convertViewFilterValueToString } from '@/utils/filter/utils/convertView
 import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
 import { FILTER_VALUE_FORMAT_HINTS } from '@/utils/filter/utils/validation-schemas/filterValueSchemasMap';
 import { getFilterValueSchema } from '@/utils/filter/utils/validation-schemas/getFilterValueSchema';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export type FilterValueValidationIssue = {
   stringifiedValue: string;

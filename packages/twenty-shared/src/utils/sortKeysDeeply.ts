@@ -1,4 +1,4 @@
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const isLiteralObject = (value: unknown): value is Record<string, unknown> =>
   isDefined(value) && Object.getPrototypeOf(value) === Object.prototype;

@@ -1,8 +1,8 @@
 import { VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE } from '@/constants/ValidationRuleEmptinessSubfieldsByCompositeType';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
-import { isNonEmptyString } from '@/utils/typeguard/isNonEmptyString';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isNonEmptyString } from '@/primitives/isNonEmptyString';
+import { isPlainObject } from '@/primitives/isPlainObject';
+import { isDefined } from '@/primitives/isDefined';
 import {
   validationRuleCompositeFieldTypeByValue,
   validationRuleNullPlaceholders,

@@ -4,8 +4,8 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type RecordExportColumn } from '@/types/RecordExportColumn';
 import { formatValueForCSV } from '@/utils/csv/formatValueForCSV';
 import { sanitizeValueForCSVExport } from '@/utils/csv/sanitizeValueForCSVExport';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isPlainObject } from '@/primitives/isPlainObject';
+import { isDefined } from '@/primitives/isDefined';
 
 export const formatRecordExportRow = ({
   columns,

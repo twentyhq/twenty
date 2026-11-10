@@ -14,10 +14,10 @@ import {
   PageLayoutType,
   PageLayoutWidgetVerticalListHeightBehavior,
 } from '@/types';
-import { assertUnreachable } from '@/utils/assertUnreachable';
+import { assertUnreachable } from '@/primitives/assertUnreachable';
 import { getPageLayoutWidgetHeightBehavior } from '@/utils/pageLayout/getPageLayoutWidgetHeightBehavior';
-import { isDefined } from '@/utils/validation/isDefined';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { isDefined } from '@/primitives/isDefined';
+import { isPlainObject } from '@/primitives/isPlainObject';
 
 export const normalizePageLayoutTabManifest = ({
   pageLayoutTabManifest,

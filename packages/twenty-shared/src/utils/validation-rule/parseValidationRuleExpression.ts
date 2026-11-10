@@ -1,6 +1,6 @@
 import { type Expression } from 'expr-eval-fork';
 
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 import { validationRuleParser } from '@/utils/validation-rule/validationRuleParser';
 
 const PARSED_EXPRESSION_CACHE_MAX_SIZE = 500;

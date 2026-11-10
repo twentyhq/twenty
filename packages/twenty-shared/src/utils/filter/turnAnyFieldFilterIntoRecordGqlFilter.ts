@@ -10,7 +10,7 @@ import {
   filterSelectOptionsOfFieldMetadataItem,
   type RecordFilter,
 } from '@/utils';
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { isNonEmptyArray } from '@/primitives/isNonEmptyArray';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { createAnyFieldRecordFilterBaseProperties } from '@/utils/filter/utils/createAnyFieldRecordFilterBaseProperties';
 import { isDefined } from '@/utils/validation';

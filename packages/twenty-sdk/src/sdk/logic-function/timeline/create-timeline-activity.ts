@@ -1,6 +1,6 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { RestApiClient } from 'twenty-client-sdk/rest';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/primitives';
 import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 
 type CreateTimelineActivityBaseInput = {

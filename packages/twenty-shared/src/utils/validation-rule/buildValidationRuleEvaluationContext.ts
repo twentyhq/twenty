@@ -3,8 +3,8 @@ import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from '@/constants/ValidationRu
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isPlainObject } from '@/primitives/isPlainObject';
+import { isDefined } from '@/primitives/isDefined';
 import { getValidationRulePreviousValueFieldPath } from '@/utils/validation-rule/getValidationRulePreviousValueFieldPath';
 import {
   validationRuleCompositeFieldTypeByValue,

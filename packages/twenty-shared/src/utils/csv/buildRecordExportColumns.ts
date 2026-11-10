@@ -4,7 +4,7 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type RecordExportColumn } from '@/types/RecordExportColumn';
 import { RelationType } from '@/types/RelationType';
 import { computeRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const FIELD_SUB_FIELD_LABELS: Partial<
   Record<FieldMetadataType, Record<string, string>>

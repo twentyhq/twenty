@@ -11,7 +11,7 @@ import {
   type FieldShared,
   turnRecordFilterIntoRecordGqlOperationFilter,
 } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export const computeRecordGqlOperationFilter = ({
   fieldMetadataItems,

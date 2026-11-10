@@ -18,7 +18,7 @@ import {
 } from 'typescript';
 
 import { type InputJsonSchema } from '@/logic-function';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const TWENTY_RECORD_TYPE_NAME = 'TwentyRecord';
 

@@ -1,8 +1,8 @@
 import { type ObjectRecordsOperationType } from '@/types/ObjectRecordsOperationType';
 import { type ObjectRecordsPermissions } from '@/types/ObjectRecordsPermissions';
-import { assertUnreachable } from '@/utils/assertUnreachable';
+import { assertUnreachable } from '@/primitives/assertUnreachable';
 import { canReachAllRecords } from '@/utils/canReachAllRecords';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const canReachRowLevelRecords = ({
   rowLevelRecordsPermissions,

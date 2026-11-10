@@ -1,4 +1,4 @@
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 // Select and rating columns are Postgres enums: the server compares them by
 // enum definition order, which is the option position, not lexical order.

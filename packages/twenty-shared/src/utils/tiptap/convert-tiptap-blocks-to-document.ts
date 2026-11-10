@@ -1,4 +1,4 @@
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { isPlainObject } from '@/primitives/isPlainObject';
 
 import { isTipTapNode } from './parse-tiptap-json-document';
 import { type TipTapDocument } from './tiptap-document';

@@ -2,7 +2,7 @@ import {
   type RunAgentInput,
   type RunAgentResult,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/primitives';
 
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
 import { toRunAgentMessages } from '@/sdk/logic-function/utils/to-run-agent-messages.util';

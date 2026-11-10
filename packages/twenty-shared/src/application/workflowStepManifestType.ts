@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 import { workflowCodeActionInputSchema } from '@/workflow/schemas/code-action-settings-schema';
 import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';

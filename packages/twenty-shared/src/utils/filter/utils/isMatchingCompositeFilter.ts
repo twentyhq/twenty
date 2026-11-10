@@ -1,5 +1,5 @@
 import { type IsFilter } from '@/types';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export type CompositeSubFieldMatcher = ({
   subFieldFilter,

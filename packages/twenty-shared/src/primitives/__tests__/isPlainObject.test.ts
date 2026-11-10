@@ -1,4 +1,4 @@
-import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { isPlainObject } from '@/primitives/isPlainObject';
 
 describe('isPlainObject', () => {
   it('should return true for plain objects', () => {

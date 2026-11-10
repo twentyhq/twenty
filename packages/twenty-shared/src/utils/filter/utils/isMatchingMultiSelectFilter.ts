@@ -1,5 +1,5 @@
 import { type MultiSelectFilter } from '@/types';
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { isNonEmptyArray } from '@/primitives/isNonEmptyArray';
 
 export const isMatchingMultiSelectFilter = ({
   multiSelectFilter,

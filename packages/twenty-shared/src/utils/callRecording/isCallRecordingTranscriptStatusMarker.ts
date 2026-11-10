@@ -1,7 +1,7 @@
 import { isArray, isObject, isString } from '@sniptt/guards';
 
 import { type CallRecordingTranscriptStatusMarker } from '@/types/CallRecordingTranscript';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export const isCallRecordingTranscriptStatusMarker = (
   transcript: unknown,

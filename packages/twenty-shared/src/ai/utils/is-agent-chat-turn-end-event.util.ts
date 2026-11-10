@@ -1,5 +1,5 @@
 import { type AgentChatSubscriptionEvent } from '@/ai/types/AgentChatSubscriptionEvent';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 // one stream runs at a time on a channel, so a stream error ends the turn streaming on it
 export const isAgentChatTurnEndEvent = (

@@ -3,7 +3,7 @@ import {
   type AppLocale,
 } from '@/translations/constants/AppLocales';
 import { SOURCE_LOCALE } from '@/translations/constants/SourceLocale';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 import { isValidLocale } from '@/utils/validation/isValidLocale';
 
 // Maps language codes to full locale keys in APP_LOCALES

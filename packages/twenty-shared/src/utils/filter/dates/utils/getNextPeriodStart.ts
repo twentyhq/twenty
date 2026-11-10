@@ -1,5 +1,5 @@
 import { type Nullable } from '@/types';
-import { assertUnreachable } from '@/utils/assertUnreachable';
+import { assertUnreachable } from '@/primitives/assertUnreachable';
 import { type DateTimePeriod } from '@/utils/filter/dates/types/DateTimePeriod';
 import { type FirstDayOfTheWeekSchema } from '@/utils/filter/dates/utils/firstDayOfWeekSchema';
 import { getPeriodStart } from '@/utils/filter/dates/utils/getPeriodStart';

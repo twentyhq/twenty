@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import { init, parse } from 'cjs-module-lexer';
 import * as esbuild from 'esbuild';
 import ts from 'typescript';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 import { getCommonFrontComponentBuildOptions } from './get-common-front-component-build-options';
 import { createJsxRuntimeRemoteWrapperPlugin } from './jsx-runtime-remote-wrapper-plugin';

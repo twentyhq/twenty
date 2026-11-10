@@ -1,6 +1,6 @@
 import { EMAIL_DRAFTING_PROVIDERS, EMAIL_SENDING_PROVIDERS } from '@/constants';
 import { type ConnectedAccountProvider, EmailOperation } from '@/types';
-import { assertUnreachable } from '@/utils/assertUnreachable';
+import { assertUnreachable } from '@/primitives/assertUnreachable';
 
 export const getEmailProvidersForOperation = (
   operation: EmailOperation,

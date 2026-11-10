@@ -1,5 +1,5 @@
 import { type AiRunScope } from '@/ai/types/AiRunScope';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const hasRepeatedKey = (keys: string[]): boolean =>
   new Set(keys).size !== keys.length;

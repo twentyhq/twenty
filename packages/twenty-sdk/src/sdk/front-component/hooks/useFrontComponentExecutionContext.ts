@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
+import { fastDeepEqual } from 'twenty-shared/primitives';
 import {
   getFrontComponentExecutionContext,
   subscribeToFrontComponentExecutionContext,
   unsubscribeFromFrontComponentExecutionContext,
 } from '../context/frontComponentContext';
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
-import { isContextValueEqual } from '../utils/isContextValueEqual';
 
 export const useFrontComponentExecutionContext = <T>(
   selector: (context: FrontComponentExecutionContext) => T,
@@ -20,10 +20,10 @@ export const useFrontComponentExecutionContext = <T>(
     const onContextChange = () => {
       const newSelectedValue = selector(getFrontComponentExecutionContext());
 
-      const hasSelectedValueChanged = !isContextValueEqual({
-        previousValue: previousSelectedValueRef.current,
-        nextValue: newSelectedValue,
-      });
+      const hasSelectedValueChanged = !fastDeepEqual(
+        newSelectedValue,
+        previousSelectedValueRef.current,
+      );
 
       if (hasSelectedValueChanged) {
         previousSelectedValueRef.current = newSelectedValue;

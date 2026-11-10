@@ -2,7 +2,7 @@ import { type ReasoningUIPart } from 'ai';
 
 import { type ExtendedFileUIPart } from '@/ai/types/DataMessagePart';
 import { type ExtendedUIMessagePart } from '@/ai/types/ExtendedUIMessagePart';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export type AgentMessagePartRow = {
   type: string;

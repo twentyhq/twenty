@@ -3,7 +3,7 @@ import {
   getOrderByForFieldMetadataType,
   type OrderByFieldMetadata,
 } from '@/utils/sort/getOrderByForFieldMetadataType';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export const getOrderByForRelationField = ({
   field,

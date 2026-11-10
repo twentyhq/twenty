@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import type * as esbuild from 'esbuild';
 
 import { CustomError } from '@/utils/errors/CustomError';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 const buildStyleInjectionModule = (cssText: string): string =>
   `if (typeof document !== 'undefined') {

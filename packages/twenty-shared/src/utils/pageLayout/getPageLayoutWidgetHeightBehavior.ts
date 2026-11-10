@@ -2,7 +2,7 @@ import {
   PageLayoutWidgetVerticalListHeightBehavior,
   WidgetType,
 } from '@/types';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export const getPageLayoutWidgetHeightBehavior = ({
   widgetType,

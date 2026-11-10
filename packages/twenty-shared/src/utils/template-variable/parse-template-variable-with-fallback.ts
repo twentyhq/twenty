@@ -1,5 +1,5 @@
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isNonEmptyArray } from '@/primitives/isNonEmptyArray';
+import { isDefined } from '@/primitives/isDefined';
 
 import { type TemplateVariableWithFallback } from './template-variable-with-fallback';
 

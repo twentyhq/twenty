@@ -1,6 +1,6 @@
 import { type RichTextFilter } from '@/types';
 import { convertLikePatternToRegexOrThrow } from '@/utils/filter/utils/convertLikePatternToRegexOrThrow';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from '@/primitives/isDefined';
 
 export const isMatchingRichTextFilter = ({
   richTextFilter,
