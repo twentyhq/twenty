@@ -86,7 +86,6 @@ export class ConnectedAccountMetadataService {
         scope: true,
         userWorkspaceId: true,
         connectionParameters: true,
-        scopes: true,
       },
     });
 

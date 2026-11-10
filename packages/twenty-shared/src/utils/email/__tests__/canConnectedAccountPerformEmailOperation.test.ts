@@ -9,7 +9,6 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       const connectedAccount = {
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
         connectionParameters: { SMTP: connectionParameters },
-        scopes: null,
       };
 
       expect(
@@ -30,7 +29,6 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       const connectedAccount = {
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
         connectionParameters: { IMAP: connectionParameters },
-        scopes: null,
       };
 
       expect(
@@ -54,7 +52,6 @@ describe('canConnectedAccountPerformEmailOperation', () => {
           IMAP: connectionParameters,
           SMTP: connectionParameters,
         },
-        scopes: null,
       };
 
       expect(
@@ -75,7 +72,6 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       const connectedAccount = {
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
         connectionParameters: null,
-        scopes: null,
       };
 
       expect(
@@ -96,7 +92,6 @@ describe('canConnectedAccountPerformEmailOperation', () => {
       const connectedAccount = {
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
         connectionParameters: {},
-        scopes: null,
       };
 
       expect(
@@ -114,59 +109,31 @@ describe('canConnectedAccountPerformEmailOperation', () => {
     });
   });
 
-  describe('Google and Microsoft, where capability depends on the granted scopes', () => {
-    it.each([
-      [
-        ConnectedAccountProvider.GOOGLE,
-        ['email', 'https://www.googleapis.com/auth/gmail.send'],
-      ],
-      [ConnectedAccountProvider.MICROSOFT, ['User.Read', 'Mail.Send']],
-      [ConnectedAccountProvider.GOOGLE, null],
-      [ConnectedAccountProvider.MICROSOFT, null],
-    ])('lets %s send and draft with the scopes %j', (provider, scopes) => {
-      const connectedAccount = { provider, scopes };
-
-      expect(
-        canConnectedAccountPerformEmailOperation({
-          connectedAccount,
-          operation: EmailOperation.SEND,
-        }),
-      ).toBe(true);
-      expect(
-        canConnectedAccountPerformEmailOperation({
-          connectedAccount,
-          operation: EmailOperation.DRAFT,
-        }),
-      ).toBe(true);
-    });
-
-    it.each([
-      [ConnectedAccountProvider.GOOGLE, ['email', 'profile']],
-      [ConnectedAccountProvider.MICROSOFT, ['User.Read']],
-    ])('refuses a %s account stored by an SSO sign-in', (provider, scopes) => {
-      const connectedAccount = { provider, scopes };
-
-      expect(
-        canConnectedAccountPerformEmailOperation({
-          connectedAccount,
-          operation: EmailOperation.SEND,
-        }),
-      ).toBe(false);
-      expect(
-        canConnectedAccountPerformEmailOperation({
-          connectedAccount,
-          operation: EmailOperation.DRAFT,
-        }),
-      ).toBe(false);
-    });
-  });
-
   describe('providers whose capability does not depend on configuration', () => {
+    it('lets Google send and draft', () => {
+      const connectedAccount = {
+        provider: ConnectedAccountProvider.GOOGLE,
+        connectionParameters: null,
+      };
+
+      expect(
+        canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation: EmailOperation.SEND,
+        }),
+      ).toBe(true);
+      expect(
+        canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation: EmailOperation.DRAFT,
+        }),
+      ).toBe(true);
+    });
+
     it('lets an email group send but never draft', () => {
       const connectedAccount = {
         provider: ConnectedAccountProvider.EMAIL_GROUP,
         connectionParameters: null,
-        scopes: null,
       };
 
       expect(
@@ -194,7 +161,6 @@ describe('canConnectedAccountPerformEmailOperation', () => {
             connectedAccount: {
               provider,
               connectionParameters: { SMTP: connectionParameters },
-              scopes: null,
             },
             operation: EmailOperation.SEND,
           }),

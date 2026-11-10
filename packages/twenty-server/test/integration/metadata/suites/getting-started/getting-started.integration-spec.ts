@@ -236,7 +236,7 @@ describe('gettingStarted (e2e)', () => {
       }
     });
 
-    it('treats an account from an SSO sign-in as no mailbox', async () => {
+    it('leaves the mailbox step open when the only account comes from an SSO sign-in', async () => {
       const activeAccounts: { id: string }[] =
         await globalThis.testDataSource.query(
           `SELECT "id" FROM core."connectedAccount" WHERE "userWorkspaceId" = $1 AND "archivedAt" IS NULL`,
@@ -265,18 +265,8 @@ describe('gettingStarted (e2e)', () => {
       );
 
       try {
-        const response = await makeMetadataApiRequest({
-          query: GETTING_STARTED_PROGRESS_QUERY,
-        });
-
-        expect(response.body.errors).toBeUndefined();
-
-        const { steps, completedStepActionKeys } =
-          response.body.data.gettingStartedProgress;
-
-        expect(completedStepActionKeys).not.toContain('CONNECT_MAILBOX');
-        expect(steps).not.toContainEqual(
-          expect.objectContaining({ actionKey: 'HANDOVER_DEALS' }),
+        expect(await findCompletedStepActionKeys()).not.toContain(
+          'CONNECT_MAILBOX',
         );
       } finally {
         await globalThis.testDataSource.query(

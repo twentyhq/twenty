@@ -3,4 +3,4 @@ import { type ConnectedAccountWithoutCredentials } from 'src/engine/metadata-mod
 
 export type ConnectedAccountUsableByCaller =
   ConnectedAccountWithoutCredentials &
-    Pick<ConnectedAccountEntity, 'connectionParameters' | 'scopes'>;
+    Pick<ConnectedAccountEntity, 'connectionParameters'>;

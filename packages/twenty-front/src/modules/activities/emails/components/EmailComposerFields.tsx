@@ -89,12 +89,7 @@ export const EmailComposerFields = ({
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: Pick<
       ConnectedAccount,
-      | 'id'
-      | 'handle'
-      | 'handleAliases'
-      | 'provider'
-      | 'connectionParameters'
-      | 'scopes'
+      'id' | 'handle' | 'handleAliases' | 'provider' | 'connectionParameters'
     >[];
   }>(GET_MY_CONNECTED_ACCOUNTS);
 

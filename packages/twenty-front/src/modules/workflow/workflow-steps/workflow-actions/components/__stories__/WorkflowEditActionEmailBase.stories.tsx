@@ -27,7 +27,7 @@ const mockedConnectedAccounts = [
     authFailedAt: null,
     authFailedReason: null,
     archivedAt: null,
-    scopes: ['email', 'https://www.googleapis.com/auth/gmail.send'],
+    scopes: ['email', 'calendar'],
     handleAliases: ['sales@apple.dev'],
     lastSignedInAt: null,
     userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
