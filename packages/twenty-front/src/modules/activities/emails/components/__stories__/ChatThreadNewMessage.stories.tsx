@@ -98,3 +98,26 @@ export const Default: Story = {
     );
   },
 };
+
+export const NoRecipients: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const recipients = await canvas.findByRole('group', { name: 'Recipients' });
+
+    for (const name of ['Sundar Pichai', 'Thomas Kurian']) {
+      const recipientRemoval = within(recipients).getByRole('button', {
+        name: `Remove ${name}`,
+      });
+
+      recipientRemoval.focus();
+      await userEvent.click(recipientRemoval);
+    }
+
+    const textbox = canvas.getByRole('textbox');
+
+    await userEvent.type(textbox, 'Hello{Enter}');
+    await expect(canvas.getByRole('button', { name: 'Send' })).toBeDisabled();
+    await expect(textbox).toHaveValue('Hello');
+    await expect(onSendMessage).not.toHaveBeenCalled();
+  },
+};

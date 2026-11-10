@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { FormFieldRow } from 'twenty-ui/components/input';
 import { IconUsers } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -77,6 +78,7 @@ export const ChatThreadNewMessage = ({
         channelName={selectedChannel?.name ?? ''}
         recipientName={firstRecipient?.name ?? null}
         isDisconnected={false}
+        isSendDisabled={!isNonEmptyArray(recipients)}
         onSendMessage={onSendMessage}
         onMessageSent={onMessageSent}
         canAttachFiles={canAttachFiles}

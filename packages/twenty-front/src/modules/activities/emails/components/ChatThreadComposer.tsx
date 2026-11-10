@@ -74,6 +74,7 @@ type ChatThreadComposerProps = {
   channelName: string;
   recipientName: string | null;
   isDisconnected: boolean;
+  isSendDisabled?: boolean;
   onSendMessage: (pendingMessage: PendingChatMessage) => Promise<unknown>;
   onMessageSent: () => Promise<unknown>;
   canAttachFiles?: boolean;
@@ -86,6 +87,7 @@ export const ChatThreadComposer = ({
   channelName,
   recipientName,
   isDisconnected,
+  isSendDisabled = false,
   onSendMessage,
   onMessageSent,
   canAttachFiles = false,
@@ -103,7 +105,9 @@ export const ChatThreadComposer = ({
 
   const text = draft.trim();
   const canSend =
-    !isDisconnected && (isNonEmptyString(text) || isNonEmptyArray(files));
+    !isDisconnected &&
+    !isSendDisabled &&
+    (isNonEmptyString(text) || isNonEmptyArray(files));
 
   const setPendingMessageStatus = (
     id: string,
