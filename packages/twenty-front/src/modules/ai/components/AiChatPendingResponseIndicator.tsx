@@ -4,9 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { agentChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/agentChatIsAssistantReplyPendingFamilySelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledPendingResponseWrapper = styled.div`
@@ -19,9 +20,9 @@ export const AiChatPendingResponseIndicator = () => {
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
-  const agentChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
-    agentChatIsAwaitingFirstChunkFamilyState,
-    { threadId: agentChatDisplayedThread },
+  const agentChatIsAssistantReplyPending = useAtomFamilySelectorValue(
+    agentChatIsAssistantReplyPendingFamilySelector,
+    agentChatDisplayedThread,
   );
   const agentChatIsStreaming = useAtomFamilyStateValue(
     agentChatIsStreamingFamilyState,
@@ -32,7 +33,7 @@ export const AiChatPendingResponseIndicator = () => {
   });
 
   const shouldRender =
-    agentChatIsAwaitingFirstChunk &&
+    agentChatIsAssistantReplyPending &&
     !agentChatIsStreaming &&
     !isDefined(agentChatError);
 
