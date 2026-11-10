@@ -6,7 +6,7 @@ import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-c
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
 import { Injectable } from '@nestjs/common';
-import { isNonEmptyString, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
@@ -14,15 +14,13 @@ import {
   isNonEmptyArray,
 } from 'twenty-shared/utils';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { AgentChatMemberMessagePartsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-parts.service';
+import { AgentChatMemberMessageReplayService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-replay.service';
 import { AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatStreamClaimService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-claim.service';
@@ -33,33 +31,16 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation.type';
-import { type AgentChatMemberMessageActor } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-actor.type';
 import { type AgentChatMemberMessageResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-result.type';
 import { type AgentChatMemberMessageSendArguments } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-member-message-send-arguments.type';
 import { type AgentChatPreparedMemberMessage } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-prepared-member-message.type';
 import { isAgentChatDirectMessageAddressedWithinPair } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-direct-message-addressed-within-pair.util';
-import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
-import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
-import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-
-type AssistantReplyPolicyInput = {
-  actor: Pick<AgentChatMemberMessageActor, 'workspaceId' | 'userWorkspaceId'>;
-  thread: Pick<
-    AgentChatThreadWorkspaceEntity,
-    'id' | 'pendingQuestionMessageId'
-  >;
-  participation: Pick<AgentChatAssistantParticipation, 'replyDecision'>;
-  isInboxEnabled: boolean;
-  isDirectMessage: boolean;
-  text: string;
-};
 
 @Injectable()
 export class AgentChatMemberMessageSenderService {
@@ -77,11 +58,10 @@ export class AgentChatMemberMessageSenderService {
     private readonly runSuspensionService: AgentRunSuspensionService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly memberMessagePartsService: AgentChatMemberMessagePartsService,
     private readonly replyPolicyService: AgentChatReplyPolicyService,
     private readonly agentChatService: AgentChatService,
-    private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly memberMessageReplayService: AgentChatMemberMessageReplayService,
   ) {}
 
   async sendMemberMessage({
@@ -137,9 +117,10 @@ export class AgentChatMemberMessageSenderService {
       threadId: target.threadId,
       excludedMessage: storedMessage ?? undefined,
     }));
-    let thread = await this.chatThreadService.getWritableThread(threadAccess);
+    const writableThread =
+      await this.chatThreadService.getWritableThread(threadAccess);
     const isDirectMessage =
-      thread.conversationType ===
+      writableThread.conversationType ===
       AgentChatThreadConversationType.DIRECT_MESSAGE;
     const messageAddressing = { ...addressing };
 
@@ -156,7 +137,7 @@ export class AgentChatMemberMessageSenderService {
 
       if (
         !isAgentChatDirectMessageAddressedWithinPair({
-          thread,
+          thread: writableThread,
           senderWorkspaceMemberId: actor.workspaceMemberId,
           addressedWorkspaceMemberIds: [
             ...addressing.mentionedWorkspaceMemberIds,
@@ -175,20 +156,21 @@ export class AgentChatMemberMessageSenderService {
       }
 
       messageAddressing.initialRecipientWorkspaceMemberIds = [
-        thread.directMessageFirstWorkspaceMemberId,
-        thread.directMessageSecondWorkspaceMemberId,
+        writableThread.directMessageFirstWorkspaceMemberId,
+        writableThread.directMessageSecondWorkspaceMemberId,
       ]
         .filter(isDefined)
         .filter((memberId) => memberId !== actor.workspaceMemberId);
     }
 
-    if (isInitialMessage && !isUndefined(target.channelId)) {
-      thread = await this.chatThreadService.moveOwnThreadToChannel({
-        ...threadAccess,
-        thread,
-        channelId: target.channelId,
-      });
-    }
+    const thread =
+      isInitialMessage && !isUndefined(target.channelId)
+        ? await this.chatThreadService.moveOwnThreadToChannel({
+            ...threadAccess,
+            thread: writableThread,
+            channelId: target.channelId,
+          })
+        : writableThread;
 
     const participation =
       createdThread?.participation ??
@@ -205,7 +187,7 @@ export class AgentChatMemberMessageSenderService {
           messageAddressing.initialRecipientWorkspaceMemberIds,
         isReplyRequested: assistant.isReplyRequested,
       }));
-    const assistantReplyPolicyInput = {
+    const assistantReplyPolicyArgs = {
       actor,
       thread,
       participation,
@@ -215,8 +197,8 @@ export class AgentChatMemberMessageSenderService {
     };
 
     if (isDefined(storedMessage)) {
-      return this.replayStoredMessage({
-        ...assistantReplyPolicyInput,
+      return this.memberMessageReplayService.replayStoredMessage({
+        ...assistantReplyPolicyArgs,
         storedMessage,
         execution,
         addressing: {
@@ -231,10 +213,16 @@ export class AgentChatMemberMessageSenderService {
 
     const replyDecision = participation.replyDecision;
     const shouldGenerateAssistantReply =
-      await this.shouldGenerateAssistantReply(assistantReplyPolicyInput);
+      await this.replyPolicyService.shouldGenerateAssistantReply(
+        assistantReplyPolicyArgs,
+      );
 
     if (shouldGenerateAssistantReply) {
-      await this.getWorkspaceReadyForAgentTurnOrThrow({ actor, execution });
+      await this.turnPreflightService.getWorkspaceReadyForAgentTurnOrThrow({
+        workspaceId: actor.workspaceId,
+        userWorkspaceId: actor.userWorkspaceId,
+        modelId: execution.modelId,
+      });
     }
 
     if (isDefined(thread.deletedAt) && isDirectMessage) {
@@ -302,140 +290,7 @@ export class AgentChatMemberMessageSenderService {
       );
     }
 
-    if (isDefined(result.streamId) && isDefined(result.turnId)) {
-      tagAiChatStreamScope({
-        ...threadAccess,
-        streamId: result.streamId,
-        turnId: result.turnId,
-      });
-    }
-
     return result;
-  }
-
-  private async shouldGenerateAssistantReply({
-    actor,
-    thread,
-    participation,
-    isInboxEnabled,
-    isDirectMessage,
-    text,
-  }: AssistantReplyPolicyInput): Promise<boolean> {
-    if (!isInboxEnabled && !isDirectMessage) {
-      return true;
-    }
-
-    return this.replyPolicyService.shouldReply({
-      decision: participation.replyDecision,
-      threadId: thread.id,
-      pendingQuestionMessageId: thread.pendingQuestionMessageId,
-      workspaceId: actor.workspaceId,
-      userWorkspaceId: actor.userWorkspaceId,
-      text,
-    });
-  }
-
-  private async getWorkspaceReadyForAgentTurnOrThrow({
-    actor,
-    execution,
-  }: Pick<
-    AgentChatMemberMessageSendArguments,
-    'actor' | 'execution'
-  >): Promise<FlatWorkspace> {
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      actor.workspaceId,
-    );
-
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-    await this.turnPreflightService.assertCanRunAgentTurn({
-      workspace,
-      userWorkspaceId: actor.userWorkspaceId,
-      modelId: execution.modelId,
-    });
-
-    return workspace;
-  }
-
-  private async replayStoredMessage({
-    storedMessage,
-    execution,
-    addressing,
-    ...assistantReplyPolicyInput
-  }: AssistantReplyPolicyInput &
-    Pick<
-      AgentChatMemberMessageSendArguments,
-      'actor' | 'execution' | 'addressing'
-    > & {
-      thread: AgentChatThreadWorkspaceEntity;
-      participation: AgentChatAssistantParticipation;
-      storedMessage: AgentMessageWorkspaceEntity;
-    }): Promise<AgentChatMemberMessageResult> {
-    const { actor, thread, participation } = assistantReplyPolicyInput;
-
-    if (participation.isInitialMessage) {
-      await this.assistantParticipationService.persistAssistantParticipation({
-        workspaceId: actor.workspaceId,
-        thread,
-        participation,
-      });
-    }
-
-    const storedResult = {
-      messageId: storedMessage.id,
-      isQueued: storedMessage.status === AgentMessageStatus.QUEUED,
-      delivery: await this.inboxDeliveryService.deliverMessageToInboxes({
-        workspaceId: actor.workspaceId,
-        workspaceMemberId: actor.workspaceMemberId,
-        threadId: thread.id,
-        messageId: storedMessage.id,
-        ...addressing,
-      }),
-    };
-    const storedTurn = isDefined(storedMessage.turnId)
-      ? await this.turnRecorderService.findTurn({
-          workspaceId: actor.workspaceId,
-          turnId: storedMessage.turnId,
-        })
-      : null;
-
-    if (
-      storedTurn?.status === AgentTurnStatus.RUNNING &&
-      isNonEmptyString(thread.activeStreamId)
-    ) {
-      return {
-        ...storedResult,
-        streamId: thread.activeStreamId,
-        turnId: storedTurn.id,
-      };
-    }
-
-    if (
-      !participation.isInitialMessage ||
-      storedTurn?.status !== AgentTurnStatus.FAILED ||
-      !(await this.shouldGenerateAssistantReply(assistantReplyPolicyInput))
-    ) {
-      return storedResult;
-    }
-
-    const restartedTurn = await this.chatStreamingService.retryLastFailedTurn({
-      threadId: thread.id,
-      userWorkspaceId: actor.userWorkspaceId,
-      workspaceMemberId: actor.workspaceMemberId,
-      workspace: await this.getWorkspaceReadyForAgentTurnOrThrow({
-        actor,
-        execution,
-      }),
-      modelId: execution.modelId,
-      browsingContext: execution.browsingContext,
-    });
-
-    return {
-      ...storedResult,
-      streamId: restartedTurn.streamId,
-      turnId: restartedTurn.turnId,
-    };
   }
 
   private async sendMessageWithAssistantReply({

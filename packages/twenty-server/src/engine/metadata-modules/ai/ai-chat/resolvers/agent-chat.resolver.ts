@@ -182,6 +182,15 @@ export class AgentChatResolver {
       execution: { modelId, browsingContext: browsingContext ?? null },
     });
 
+    if (isDefined(result.streamId) && isDefined(result.turnId)) {
+      tagAiChatStreamScope({
+        streamId: result.streamId,
+        turnId: result.turnId,
+        threadId,
+        workspaceId: workspace.id,
+      });
+    }
+
     return {
       messageId: result.messageId,
       queued: result.isQueued,
