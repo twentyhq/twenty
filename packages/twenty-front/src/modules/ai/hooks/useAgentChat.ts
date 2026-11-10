@@ -39,6 +39,10 @@ import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
+import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { prependAgentChatQuoteToText } from '@/ai/utils/prependAgentChatQuoteToText';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -120,13 +124,34 @@ export const useAgentChat = () => {
         : undefined;
     const serializedContentToSend =
       store.get(agentChatDraftsByThreadIdState.atom)[threadId] ?? '';
-    const contentToSend = tipTapDocumentToMarkdown(
-      serializedContentToSend,
-    ).trim();
+    const draftText = tipTapDocumentToMarkdown(serializedContentToSend).trim();
 
-    if (contentToSend === '') {
+    if (draftText === '') {
       return;
     }
+
+    const quotedMessageIdAtom = agentChatQuotedMessageIdFamilyState.atomFamily({
+      threadId,
+    });
+    const quotedMessageId = store.get(quotedMessageIdAtom);
+    const quotedMessage = store
+      .get(agentChatMessagesFamilyState.atomFamily({ threadId }))
+      .find(({ id }) => id === quotedMessageId);
+    const contentToSend = isDefined(quotedMessage)
+      ? prependAgentChatQuoteToText({
+          text: draftText,
+          authorName: getAgentChatSenderLabel({
+            sender: store
+              .get(currentWorkspaceMembersState.atom)
+              .find(
+                ({ id }) =>
+                  id === quotedMessage.metadata?.senderWorkspaceMemberId,
+              ),
+            isCurrentWorkspaceMember: false,
+          }),
+          excerpt: getAgentChatMessageQuoteExcerpt(quotedMessage),
+        })
+      : draftText;
 
     const currentWorkspaceMemberId = store.get(
       currentWorkspaceMemberState.atom,
@@ -198,6 +223,7 @@ export const useAgentChat = () => {
       ...prev,
       [threadId]: '',
     }));
+    store.set(quotedMessageIdAtom, null);
 
     dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
       content: '',

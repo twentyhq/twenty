@@ -376,3 +376,44 @@ export const MemberTypingInSidePanel: Story = {
     ).toBeVisible();
   },
 };
+
+export const ReplyToTeammate: Story = {
+  ...FullPageNewChat,
+  beforeEach: () => {
+    initializeNewAiChatStory({ isInboxEnabled: true });
+
+    const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
+    const teammate = jotaiStore
+      .get(currentWorkspaceMembersState.atom)
+      .find(({ name }) => name.firstName === 'Jane');
+
+    jotaiStore.set(agentChatMessagesFamilyState.atomFamily({ threadId }), [
+      {
+        id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c91',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: 'On it. Their procurement asked for a security review.',
+          },
+        ],
+        metadata: { senderWorkspaceMemberId: teammate?.id },
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const reply = await canvas.findByRole('button', { name: 'Reply' });
+
+    reply.focus();
+    await userEvent.click(reply);
+    await expect(
+      await canvas.findByRole('button', { name: 'View original message' }),
+    ).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Remove quote' }));
+    await expect(
+      canvas.queryByRole('button', { name: 'View original message' }),
+    ).not.toBeInTheDocument();
+  },
+};

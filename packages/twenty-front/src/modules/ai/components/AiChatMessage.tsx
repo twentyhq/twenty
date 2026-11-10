@@ -9,6 +9,11 @@ import { type ReactNode } from 'react';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
+import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
+import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconArrowBackUp } from 'twenty-ui/icon';
 
 import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
@@ -126,6 +131,12 @@ export const AiChatMessage = ({
     currentAiChatThread,
   );
 
+  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
+  const setAgentChatQuotedMessageId = useSetAtomFamilyState(
+    agentChatQuotedMessageIdFamilyState,
+    { threadId: currentAiChatThread },
+  );
+
   if (
     !isDefined(agentChatMessage) ||
     (isSilentAgentChatMessage(agentChatMessage) && !isDefined(error))
@@ -143,6 +154,12 @@ export const AiChatMessage = ({
     isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
   });
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
+  const canReply =
+    isAiChatInboxEnabled &&
+    isUser &&
+    isDefined(sender) &&
+    !isOwnMessage &&
+    !isReadOnly;
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
   const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
   const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
@@ -176,7 +193,10 @@ export const AiChatMessage = ({
           hasStartMarker
         >{t`New`}</LabeledSeparator>
       )}
-      <StyledChatMessageRow isRightAligned={isRightAligned}>
+      <StyledChatMessageRow
+        isRightAligned={isRightAligned}
+        data-agent-chat-message-id={messageId}
+      >
         {hasHeader && (
           <AiChatMessageAuthorHeader
             metadata={agentChatMessage.metadata}
@@ -233,6 +253,14 @@ export const AiChatMessage = ({
                 !isLastMessageStreaming && (
                   <AiChatMessageReactionPicker messageId={messageId} />
                 )}
+              {canReply && (
+                <LightIconButton
+                  aria-label={t`Reply`}
+                  onClick={() => setAgentChatQuotedMessageId(messageId)}
+                >
+                  <IconArrowBackUp />
+                </LightIconButton>
+              )}
               <LightCopyIconButton copyText={messageText} />
             </StyledChatMessageActions>
           </StyledChatMessageFooter>
