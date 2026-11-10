@@ -135,6 +135,10 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
       )
       .filter(isDefined);
     const deletedObjectIds = new Set(objectsToDelete.map(({ id }) => id));
+    const legacyWorkflowObject = objectsToDelete.find(
+      ({ universalIdentifier }) =>
+        universalIdentifier === LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
+    );
 
     const fieldsToDelete = Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
@@ -287,10 +291,7 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     const legacyDataSummary = await this.summarizeLegacyData({
       workspaceId,
       dataSource,
-      workflowObject: objectsToDelete.find(
-        ({ universalIdentifier }) =>
-          universalIdentifier === LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
-      ),
+      workflowObject: legacyWorkflowObject,
       hasWorkflowAutomatedTriggerObject: objectsToDelete.some(
         ({ universalIdentifier }) =>
           universalIdentifier ===
@@ -323,11 +324,6 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
 
     const applicationUniversalIdentifier =
       twentyStandardFlatApplication.universalIdentifier;
-
-    const legacyWorkflowObject = objectsToDelete.find(
-      ({ universalIdentifier }) =>
-        universalIdentifier === LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
-    );
 
     if (isDefined(legacyWorkflowObject)) {
       await this.moveNavigationMenuItemsToWorkflowsNativePage({
