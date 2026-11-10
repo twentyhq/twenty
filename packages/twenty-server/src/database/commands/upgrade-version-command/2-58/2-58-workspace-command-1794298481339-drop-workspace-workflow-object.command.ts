@@ -5,25 +5,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import {
-  CREATE_CORE_WORKFLOW_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   LEGACY_WORKFLOW_AUTOMATED_TRIGGER_OBJECT_UNIVERSAL_IDENTIFIER,
   LEGACY_WORKFLOW_ID_INDEX_UNIVERSAL_IDENTIFIERS,
   LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
   LEGACY_WORKFLOW_RELATION_FIELD_UNIVERSAL_IDENTIFIERS,
-  WORKFLOW_RUN_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER,
-  WORKFLOW_VERSION_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
 } from 'src/database/commands/upgrade-version-command/2-58/constants/legacy-workspace-workflow-universal-identifiers.constant';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -78,7 +71,7 @@ const DUPLICATE_LEGACY_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY = `
       )
   )`;
 
-@RegisteredWorkspaceCommand('2.58.0', 1794268355866)
+@RegisteredWorkspaceCommand('2.58.0', 1794298481339)
 @Command({
   name: 'upgrade:2-58:drop-workspace-workflow-object',
   description:
@@ -112,17 +105,11 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
       flatFieldMetadataMaps,
       flatIndexMaps,
       flatPageLayoutWidgetMaps,
-      flatViewFieldMaps,
-      flatViewMaps,
-      flatCommandMenuItemMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatIndexMaps',
       'flatPageLayoutWidgetMaps',
-      'flatViewFieldMaps',
-      'flatViewMaps',
-      'flatCommandMenuItemMaps',
     ]);
 
     const objectsToDelete = [
@@ -180,111 +167,13 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
           deletedFieldIds.has(widget.configuration.fieldMetadataId),
       );
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
-
-    const coreWorkflowIdField =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        WORKFLOW_RUN_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER
-      ];
-    const standardCoreWorkflowIdField =
-      standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        WORKFLOW_RUN_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER
-      ];
-    const fieldsToUpdate =
-      isDefined(coreWorkflowIdField) &&
-      isDefined(standardCoreWorkflowIdField) &&
-      coreWorkflowIdField.isSystem
-        ? [
-            {
-              ...coreWorkflowIdField,
-              isSystem: standardCoreWorkflowIdField.isSystem,
-              label: standardCoreWorkflowIdField.label,
-              description: standardCoreWorkflowIdField.description,
-            },
-          ]
-        : [];
-
-    const viewFieldsToCreate = isDefined(coreWorkflowIdField)
-      ? getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
-          standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
-          existingFlatEntityMaps: flatViewFieldMaps,
-          universalIdentifiers: Object.values(
-            standardAllFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
-          )
-            .filter(isDefined)
-            .filter(
-              ({ fieldMetadataUniversalIdentifier, viewUniversalIdentifier }) =>
-                fieldMetadataUniversalIdentifier ===
-                  WORKFLOW_RUN_CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER &&
-                isDefined(
-                  flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
-                ),
-            )
-            .map(({ universalIdentifier }) => universalIdentifier),
-        })
-      : [];
-
-    const commandMenuItemsToUpdate =
-      WORKFLOW_VERSION_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.flatMap(
-        (universalIdentifier) => {
-          const commandMenuItem =
-            flatCommandMenuItemMaps.byUniversalIdentifier[universalIdentifier];
-          const standardCommandMenuItem =
-            standardAllFlatEntityMaps.flatCommandMenuItemMaps
-              .byUniversalIdentifier[universalIdentifier];
-
-          if (
-            !isDefined(commandMenuItem) ||
-            !isDefined(standardCommandMenuItem) ||
-            commandMenuItem.conditionalAvailabilityExpression ===
-              standardCommandMenuItem.conditionalAvailabilityExpression
-          ) {
-            return [];
-          }
-
-          return [
-            {
-              ...commandMenuItem,
-              conditionalAvailabilityExpression:
-                standardCommandMenuItem.conditionalAvailabilityExpression,
-            },
-          ];
-        },
-      );
-
-    const commandMenuItemsToCreate =
-      getStandardFlatEntitiesToCreateOrThrow<FlatCommandMenuItem>({
-        standardFlatEntityMaps:
-          standardAllFlatEntityMaps.flatCommandMenuItemMaps,
-        existingFlatEntityMaps: flatCommandMenuItemMaps,
-        universalIdentifiers: [
-          CREATE_CORE_WORKFLOW_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
-        ],
-      });
-
     const hasDeletions =
       objectsToDelete.length +
         fieldsToDelete.length +
         indexesToDelete.length +
         pageLayoutWidgetsToDelete.length >
       0;
-    const hasUpdates =
-      fieldsToUpdate.length +
-        viewFieldsToCreate.length +
-        commandMenuItemsToCreate.length +
-        commandMenuItemsToUpdate.length >
-      0;
-
-    if (!hasDeletions && !hasUpdates) {
+    if (!hasDeletions) {
       return;
     }
 
@@ -312,15 +201,19 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
     });
 
     const plan = `${objectsToDelete.length} object(s), ${fieldsToDelete.length} field(s), ${indexesToDelete.length} index(es), ${pageLayoutWidgetsToDelete.length} widget(s) holding ${legacyDataSummary}`;
-    const metadataChanges = `${fieldsToUpdate.length + commandMenuItemsToUpdate.length} metadata item(s) to update and ${viewFieldsToCreate.length + commandMenuItemsToCreate.length} to create`;
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would drop ${plan}; ${metadataChanges} for workspace ${workspaceId}`,
+        `[DRY RUN] Would drop ${plan} for workspace ${workspaceId}`,
       );
 
       return;
     }
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
     const applicationUniversalIdentifier =
       twentyStandardFlatApplication.universalIdentifier;
@@ -333,78 +226,34 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
       });
     }
 
-    if (hasDeletions) {
-      await this.runMigrationOrThrow({
-        workspaceId,
-        applicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          pageLayoutWidget: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: pageLayoutWidgetsToDelete,
-            flatEntityToUpdate: [],
-          },
-          index: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: indexesToDelete,
-            flatEntityToUpdate: [],
-          },
-          fieldMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: fieldsToDelete,
-            flatEntityToUpdate: [],
-          },
-          objectMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: objectsToDelete,
-            flatEntityToUpdate: [],
-          },
+    await this.runMigrationOrThrow({
+      workspaceId,
+      applicationUniversalIdentifier,
+      allFlatEntityOperationByMetadataName: {
+        pageLayoutWidget: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: pageLayoutWidgetsToDelete,
+          flatEntityToUpdate: [],
         },
-      });
-    }
-
-    // isSystem is not updatable through a metadata migration
-    for (const field of fieldsToUpdate) {
-      await dataSource.query(
-        `UPDATE core."fieldMetadata"
-         SET "isSystem" = $1, label = $2, description = $3, "updatedAt" = NOW()
-         WHERE "workspaceId" = $4 AND id = $5`,
-        [field.isSystem, field.label, field.description, workspaceId, field.id],
-      );
-    }
-
-    if (fieldsToUpdate.length > 0) {
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-    }
-
-    if (
-      viewFieldsToCreate.length +
-        commandMenuItemsToCreate.length +
-        commandMenuItemsToUpdate.length >
-      0
-    ) {
-      await this.runMigrationOrThrow({
-        workspaceId,
-        applicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          viewField: {
-            flatEntityToCreate: viewFieldsToCreate,
-            flatEntityToDelete: [],
-            flatEntityToUpdate: [],
-          },
-          commandMenuItem: {
-            flatEntityToCreate: commandMenuItemsToCreate,
-            flatEntityToDelete: [],
-            flatEntityToUpdate: commandMenuItemsToUpdate,
-          },
+        index: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: indexesToDelete,
+          flatEntityToUpdate: [],
         },
-      });
-    }
+        fieldMetadata: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: fieldsToDelete,
+          flatEntityToUpdate: [],
+        },
+        objectMetadata: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: objectsToDelete,
+          flatEntityToUpdate: [],
+        },
+      },
+    });
 
-    this.logger.log(
-      `Dropped ${plan}; applied ${metadataChanges} for workspace ${workspaceId}`,
-    );
+    this.logger.log(`Dropped ${plan} for workspace ${workspaceId}`);
   }
 
   // Items added since the 2.56 conversion would otherwise cascade away with the object.
