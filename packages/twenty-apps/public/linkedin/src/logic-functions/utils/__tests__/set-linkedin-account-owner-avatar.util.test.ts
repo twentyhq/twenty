@@ -47,14 +47,16 @@ describe('setLinkedinAccountOwnerAvatar', () => {
   it('sets the LinkedIn picture on the person linked to the account owner', async () => {
     await setLinkedinAccountOwnerAvatar(INPUT);
 
-    expect(mocks.findPersonIdsByLinkedinHandle).toHaveBeenCalledWith(
+    expect(mocks.findPersonIdsByLinkedinHandle).toHaveBeenCalledExactlyOnceWith(
       INPUT.channelHandle,
     );
-    expect(mocks.getUnipileUser).toHaveBeenCalledWith({
+    expect(mocks.getUnipileUser).toHaveBeenCalledExactlyOnceWith({
       accountId: 'acc_1',
       userId: 'me',
     });
-    expect(mocks.setMissingLinkedinPersonAvatars).toHaveBeenCalledWith({
+    expect(
+      mocks.setMissingLinkedinPersonAvatars,
+    ).toHaveBeenCalledExactlyOnceWith({
       avatars: [
         { personId: 'owner-id', pictureUrl: 'https://media.licdn.com/me.jpg' },
       ],
