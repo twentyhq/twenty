@@ -11,7 +11,6 @@ export const getGettingStartedStepSelection = ({
 }): {
   selectedStepActionKey: GettingStartedStepActionKey;
   nextStep: GettingStartedStepActionKey;
-  stepAfterSkip: GettingStartedStepActionKey;
 } => {
   const firstRemainingStep = stepActionKeys.find(
     (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
@@ -26,14 +25,9 @@ export const getGettingStartedStepSelection = ({
     ].find(
       (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
     ) ?? displayedStep;
-  const isDisplayedStepCompleted =
-    completedStepActionKeys.includes(displayedStep);
 
   return {
     selectedStepActionKey: displayedStep,
     nextStep,
-    stepAfterSkip: isDisplayedStepCompleted
-      ? (firstRemainingStep ?? nextStep)
-      : nextStep,
   };
 };

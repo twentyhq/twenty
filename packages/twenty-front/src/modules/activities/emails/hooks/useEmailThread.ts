@@ -193,6 +193,7 @@ export const useEmailThread = (threadId: string | null) => {
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
+    messageChannelHandle,
     loading: replyConnectedAccountLoading,
   } = useReplyConnectedAccount(lastMessageChannelId);
 
@@ -219,6 +220,7 @@ export const useEmailThread = (threadId: string | null) => {
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
+    messageChannelHandle,
     threadLoading: threadRecordLoading || messagesLoading,
     isFetchingMoreMessages: isFetchingMoreRecords,
     messageChannelLoading,

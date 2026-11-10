@@ -16,21 +16,9 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
   shouldDisplayGlobalRecordCreationCommands: boolean;
   contextObjectMetadataId?: string;
 }): CommandMenuItemDefinition[] => {
-  // Workspaces not yet upgraded to 2.58 have no core workflow create item; the legacy one stands in until then.
-  const hasCoreObjectCreationCommand = commandMenuItems.some(
-    (item) =>
-      isCreationCommand(item) && isDefined(item.availabilityCoreObjectName),
+  const sortedCommandMenuItems = [...commandMenuItems].sort(
+    (firstItem, secondItem) => firstItem.position - secondItem.position,
   );
-
-  const sortedCommandMenuItems = [...commandMenuItems]
-    .filter(
-      (item) =>
-        !hasCoreObjectCreationCommand ||
-        !isCreationCommand(item) ||
-        isDefined(item.availabilityCoreObjectName) ||
-        isDefined(item.availabilityObjectMetadataId),
-    )
-    .sort((firstItem, secondItem) => firstItem.position - secondItem.position);
 
   if (!shouldDisplayGlobalRecordCreationCommands) {
     return sortedCommandMenuItems;
@@ -59,7 +47,7 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
     ),
     ...globalRecordCreationCommandMenuItems.filter(
       (item) =>
-        !(hasPinnedContextualCreationCommand || hasCoreObjectCreationCommand) ||
+        !hasPinnedContextualCreationCommand ||
         item.creationTargetObjectMetadataId !== contextObjectMetadataId,
     ),
     ...sortedCommandMenuItems.filter(
