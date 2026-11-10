@@ -2,9 +2,9 @@ import { msg } from '@lingui/core/macro';
 import {
   IconBolt,
   IconCalendarTime,
-  IconNumber9,
   IconShare,
   IconStatusChange,
+  IconSum,
   IconTerminal,
   IconTextSize,
 } from 'twenty-ui/icon';
@@ -79,7 +79,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflowTabl
     {
       fieldName: 'runCountLast14Days',
       fieldLabel: msg`Runs · 14d`,
-      FieldIcon: IconNumber9,
+      FieldIcon: IconSum,
       align: 'right',
       gridTrack: '100px',
       renderCell: (workflow) => (
@@ -106,6 +106,11 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflowTabl
       fieldType: 'string',
       align: 'left',
       gridTrack: '150px',
-      renderCell: (workflow) => <DateTimeDisplay value={workflow.updatedAt} />,
+      renderCell: (workflow) => (
+        <DateTimeDisplay
+          value={workflow.updatedAt}
+          dateFieldSettings={{ displayFormat: FieldDateDisplayFormat.RELATIVE }}
+        />
+      ),
     },
   ];
