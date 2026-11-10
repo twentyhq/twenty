@@ -70,6 +70,12 @@ const config: StorybookConfig = {
           '@remote-dom/react',
           'react-dom/client',
           'react/jsx-runtime',
+          // Linked workspace packages aren't pre-bundled by default, and
+          // twenty-shared ships one file per module.
+          'twenty-shared/application',
+          'twenty-shared/constants',
+          'twenty-shared/types',
+          'twenty-shared/utils',
         ],
       },
     };

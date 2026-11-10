@@ -1,7 +1,6 @@
 import path from 'path';
 import { type PackageJson } from 'type-fest';
-import { PER_MODULE_EXPORT_CONDITION } from 'twenty-shared/vite';
-import { defaultClientConditions, defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 
 import packageJson from './package.json';
 
@@ -10,7 +9,6 @@ export default defineConfig(() => {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-sdk-utils',
     resolve: {
-      conditions: [PER_MODULE_EXPORT_CONDITION, ...defaultClientConditions],
       tsconfigPaths: true,
       alias: {
         '@/': path.resolve(__dirname, 'src') + '/',
