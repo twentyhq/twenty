@@ -1,3 +1,4 @@
+import { AUTOMATICALLY_LAID_OUT_NODE_PLACEHOLDER_POSITION } from '@/workflow/workflow-diagram/constants/AutomaticallyLaidOutNodePlaceholderPosition';
 import {
   type WorkflowIteratorAction,
   type WorkflowStep,
@@ -60,7 +61,7 @@ export const generateNodesAndEdgesForIteratorNode = ({
         id: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
       },
     } satisfies WorkflowDiagramStepNodeData,
-    position: step.position ?? { x: 0, y: 0 },
+    position: step.position ?? AUTOMATICALLY_LAID_OUT_NODE_PLACEHOLDER_POSITION,
   };
 
   updatedNodes.push(iteratorNode);

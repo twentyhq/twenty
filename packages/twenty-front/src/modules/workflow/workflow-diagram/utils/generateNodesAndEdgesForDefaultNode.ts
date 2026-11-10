@@ -1,3 +1,4 @@
+import { AUTOMATICALLY_LAID_OUT_NODE_PLACEHOLDER_POSITION } from '@/workflow/workflow-diagram/constants/AutomaticallyLaidOutNodePlaceholderPosition';
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
@@ -51,7 +52,7 @@ export const generateNodesAndEdgesForDefaultNode = ({
         isDefined(step.nextStepIds) && step.nextStepIds.length > 0,
       stepId: step.id,
     } satisfies WorkflowDiagramStepNodeData,
-    position: step.position ?? { x: 0, y: 0 },
+    position: step.position ?? AUTOMATICALLY_LAID_OUT_NODE_PLACEHOLDER_POSITION,
   });
 
   if (isNonEmptyArray(step.nextStepIds)) {
