@@ -11352,7 +11352,7 @@ msgid "Record ID"
 msgstr "레코드 ID"
 
 #. js-lingui-id: kC4rhG
-#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
 msgid "Record not found"
 msgstr "레코드를 찾을 수 없음"
 
@@ -14489,12 +14489,12 @@ msgid "The workspace member who last updated the record"
 msgstr "레코드를 마지막으로 업데이트한 워크스페이스 구성원"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "해당 역할은 이 레코드에 액세스할 수 없으며, 이 객체는 액세스할 수 있는 역할하고만 공유됩니다."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "해당 역할은 이 레코드를 볼 수 없으며, 이 객체는 볼 수 있는 사용자하고만 공유됩니다."
 

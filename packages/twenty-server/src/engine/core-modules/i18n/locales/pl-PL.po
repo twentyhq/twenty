@@ -11352,7 +11352,7 @@ msgid "Record ID"
 msgstr "Identyfikator rekordu"
 
 #. js-lingui-id: kC4rhG
-#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
 msgid "Record not found"
 msgstr "Nie znaleziono rekordu"
 
@@ -14489,12 +14489,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Członek przestrzeni roboczej, który jako ostatni zaktualizował rekord"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Ich rola nie ma dostępu do tych rekordów, a ten obiekt jest udostępniany tylko rolom, które go mają."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Ich rola nie może zobaczyć tego rekordu, a ten obiekt jest udostępniany tylko osobom, które mogą go zobaczyć."
 

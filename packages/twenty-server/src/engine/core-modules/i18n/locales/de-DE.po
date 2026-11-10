@@ -11352,7 +11352,7 @@ msgid "Record ID"
 msgstr "Datensatz-ID"
 
 #. js-lingui-id: kC4rhG
-#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
 msgid "Record not found"
 msgstr "Datensatz nicht gefunden"
 
@@ -14489,12 +14489,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Das Mitglied des Arbeitsbereichs, das den Datensatz zuletzt aktualisiert hat"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Ihre Rolle kann nicht auf diese Datensätze zugreifen, und dieses Objekt wird nur mit Rollen geteilt, die dies können."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Ihre Rolle kann diesen Datensatz nicht sehen, und dieses Objekt wird nur mit Personen geteilt, die dies können."
 

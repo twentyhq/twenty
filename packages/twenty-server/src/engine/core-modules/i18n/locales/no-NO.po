@@ -11352,7 +11352,7 @@ msgid "Record ID"
 msgstr "Oppførings-ID"
 
 #. js-lingui-id: kC4rhG
-#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
 msgid "Record not found"
 msgstr "Oppføring ikke funnet"
 
@@ -14489,12 +14489,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Medlemmet i arbeidsområdet som sist oppdaterte oppføringen"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Rollen deres har ikke tilgang til disse postene, og dette objektet deles bare med roller som har det."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Rollen deres kan ikke se denne posten, og dette objektet deles bare med personer som kan det."
 

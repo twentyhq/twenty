@@ -11352,7 +11352,7 @@ msgid "Record ID"
 msgstr "ID запису"
 
 #. js-lingui-id: kC4rhG
-#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
 msgid "Record not found"
 msgstr "Запис не знайдено"
 
@@ -14489,12 +14489,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Учасник робочого простору, який востаннє оновив запис"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Їхня роль не має доступу до цих записів, а цей об'єкт доступний лише ролям, які мають такий доступ."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Їхня роль не може бачити цей запис, а цей об'єкт доступний лише особам, які можуть його бачити."
 

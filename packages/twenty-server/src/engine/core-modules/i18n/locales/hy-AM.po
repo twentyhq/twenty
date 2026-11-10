@@ -11352,7 +11352,7 @@ msgid "Record ID"
 msgstr "Գրառման ID"
 
 #. js-lingui-id: kC4rhG
-#: src/engine/permissions/internal/private-record/services/private-record-write.service.ts
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
 msgid "Record not found"
 msgstr "Գրառումը չի գտնվել"
 
@@ -14489,12 +14489,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Աշխատանքային տարածքի այն անդամը, ով վերջինը թարմացրել է գրառումը"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Նրանց դերը չի կարող մուտք գործել այս գրառումներին, և այս օբյեկտը համօգտագործված է միայն այն դերերի հետ, որոնք կարող են։"
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Նրանց դերը չի կարող տեսնել այս գրառումը, և այս օբյեկտը համօգտագործված է միայն այն մարդկանց հետ, որոնք կարող են։"
 
