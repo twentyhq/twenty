@@ -52,8 +52,7 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
         : themeCssVariables.border.color.light};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]}
-    ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[4]};
   transition:
     background calc(${themeCssVariables.animation.duration.normal} * 1s)
       ease-out,
@@ -66,7 +65,6 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
 
   &:last-child {
     border-bottom: 0;
-    padding-bottom: ${themeCssVariables.spacing[4]};
   }
 `;
 
@@ -99,20 +97,19 @@ const StyledDoneIcon = styled.span`
   }
 `;
 
-const StyledHeadingContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
-
 const StyledTitle = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+`;
+
+const StyledTitleRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
 `;
 
 const StyledHeadingActions = styled.div`
@@ -183,8 +180,8 @@ export const GettingStartedStepCard = ({
             }
           />
         )}
-        <StyledHeadingContent>
-          <StyledTitle>
+        <StyledTitle>
+          <StyledTitleRow>
             <Heading size="lg">
               <GettingStartedRollingText
                 text={
@@ -192,29 +189,29 @@ export const GettingStartedStepCard = ({
                 }
               />
             </Heading>
-            <StyledDescription>
-              {isDefined(DoneDescription) ? (
-                <DoneDescription description={description} />
-              ) : (
-                description
+            <StyledHeadingActions>
+              {isCompleted && (
+                <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
               )}
-            </StyledDescription>
-          </StyledTitle>
-          <StyledHeadingActions>
-            {isCompleted && (
-              <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
+              {isDefined(nextStepActionKey) && (
+                <Button
+                  size="sm"
+                  disabled={isSelectingStep}
+                  onClick={() => onSelectStep(nextStepActionKey)}
+                >
+                  {t`Next`}
+                </Button>
+              )}
+            </StyledHeadingActions>
+          </StyledTitleRow>
+          <StyledDescription>
+            {isDefined(DoneDescription) ? (
+              <DoneDescription description={description} />
+            ) : (
+              description
             )}
-            {isDefined(nextStepActionKey) && (
-              <Button
-                size="sm"
-                disabled={isSelectingStep}
-                onClick={() => onSelectStep(nextStepActionKey)}
-              >
-                {t`Next`}
-              </Button>
-            )}
-          </StyledHeadingActions>
-        </StyledHeadingContent>
+          </StyledDescription>
+        </StyledTitle>
       </StyledHeading>
       {!isCompleted && (
         <StyledBody>
