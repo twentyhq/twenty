@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -115,11 +116,17 @@ type InstallWhere = {
   applicationRegistration?: { sourceType: ApplicationRegistrationSourceType };
 };
 
-const matchesWhere = (install: TestInstall, where: InstallWhere) =>
-  (where.id === undefined || install.id === where.id) &&
-  (where.universalIdentifier === undefined ||
+const matchesWhere = ({
+  install,
+  where,
+}: {
+  install: TestInstall;
+  where: InstallWhere;
+}) =>
+  (!isDefined(where.id) || install.id === where.id) &&
+  (!isDefined(where.universalIdentifier) ||
     install.universalIdentifier === where.universalIdentifier) &&
-  (where.applicationRegistration === undefined ||
+  (!isDefined(where.applicationRegistration) ||
     install.applicationRegistration.sourceType ===
       where.applicationRegistration.sourceType);
 
@@ -151,13 +158,16 @@ describe('ApplicationOAuthIdentityInstallService', () => {
               _workspaceId: string,
               { where }: { where: InstallWhere },
             ) =>
-              installs.find((install) => matchesWhere(install, where)) ?? null,
+              installs.find((install) => matchesWhere({ install, where })) ??
+              null,
             find: async (
               _workspaceId: string,
               { where }: { where: InstallWhere[] },
             ) =>
               installs.filter((install) =>
-                where.some((condition) => matchesWhere(install, condition)),
+                where.some((condition) =>
+                  matchesWhere({ install, where: condition }),
+                ),
               ),
           },
         },

@@ -14,34 +14,28 @@ export class MoveClaudeAndChatGptToTheirAppPackagesSlowInstanceCommand
   implements SlowInstanceCommand
 {
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    for (const [universalIdentifier, sourcePackage] of Object.entries(
-      SOURCE_PACKAGE_BY_UNIVERSAL_IDENTIFIER,
-    )) {
-      await dataSource.query(
-        `UPDATE "core"."applicationRegistration"
-        SET "sourceType" = 'npm', "sourcePackage" = $2
-        WHERE "universalIdentifier" = $1
-          AND "sourceType" = 'oauth-only'
-          AND "workspaceId" IS NULL`,
-        [universalIdentifier, sourcePackage],
-      );
-    }
+    await dataSource.query(
+      `UPDATE "core"."applicationRegistration" registration
+      SET "sourceType" = 'npm', "sourcePackage" = package."sourcePackage"
+      FROM jsonb_each_text($1::jsonb) AS package("universalIdentifier", "sourcePackage")
+      WHERE registration."universalIdentifier" = package."universalIdentifier"::uuid
+        AND registration."sourceType" = 'oauth-only'
+        AND registration."workspaceId" IS NULL`,
+      [JSON.stringify(SOURCE_PACKAGE_BY_UNIVERSAL_IDENTIFIER)],
+    );
   }
 
   public async up(_queryRunner: QueryRunner): Promise<void> {}
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    for (const [universalIdentifier, sourcePackage] of Object.entries(
-      SOURCE_PACKAGE_BY_UNIVERSAL_IDENTIFIER,
-    )) {
-      await queryRunner.query(
-        `UPDATE "core"."applicationRegistration"
-        SET "sourceType" = 'oauth-only', "sourcePackage" = NULL
-        WHERE "universalIdentifier" = $1
-          AND "sourceType" = 'npm'
-          AND "sourcePackage" = $2`,
-        [universalIdentifier, sourcePackage],
-      );
-    }
+    await queryRunner.query(
+      `UPDATE "core"."applicationRegistration" registration
+      SET "sourceType" = 'oauth-only', "sourcePackage" = NULL
+      FROM jsonb_each_text($1::jsonb) AS package("universalIdentifier", "sourcePackage")
+      WHERE registration."universalIdentifier" = package."universalIdentifier"::uuid
+        AND registration."sourceType" = 'npm'
+        AND registration."sourcePackage" = package."sourcePackage"`,
+      [JSON.stringify(SOURCE_PACKAGE_BY_UNIVERSAL_IDENTIFIER)],
+    );
   }
 }

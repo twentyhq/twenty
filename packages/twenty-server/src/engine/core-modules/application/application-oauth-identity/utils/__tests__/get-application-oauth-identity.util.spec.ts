@@ -1,5 +1,3 @@
-import { type Manifest } from 'twenty-shared/application';
-
 import { getApplicationOAuthIdentity } from 'src/engine/core-modules/application/application-oauth-identity/utils/get-application-oauth-identity.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
@@ -19,7 +17,7 @@ const buildRegistration = ({
 } = {}) => ({
   sourceType,
   sourcePackage,
-  manifest: { application: { oAuthIdentity } } as Manifest,
+  manifest: { application: { oAuthIdentity } },
 });
 
 describe('getApplicationOAuthIdentity', () => {
