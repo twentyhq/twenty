@@ -5,7 +5,22 @@ export const toApplicationAuthorizationDto = ({
   authorization,
   oAuthIdentityUniversalIdentifier,
 }: {
-  authorization: ApplicationAuthorizationEntity;
+  authorization: Pick<
+    ApplicationAuthorizationEntity,
+    | 'id'
+    | 'applicationId'
+    | 'workspaceId'
+    | 'userId'
+    | 'scopes'
+    | 'lastAuthorizedAt'
+    | 'lastUsedAt'
+    | 'createdAt'
+  > & {
+    application: Pick<
+      ApplicationAuthorizationEntity['application'],
+      'name' | 'universalIdentifier'
+    >;
+  };
   oAuthIdentityUniversalIdentifier: string | null;
 }): ApplicationAuthorizationDTO => ({
   id: authorization.id,
