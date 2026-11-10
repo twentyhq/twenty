@@ -7,6 +7,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-reply-decision.enum';
+import { type AgentChatAssistantReplyPolicyArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-policy-args.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { AiEvaluationService } from 'src/engine/metadata-modules/ai/ai-evaluation/services/ai-evaluation.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
@@ -24,6 +25,28 @@ export class AgentChatReplyPolicyService {
     private readonly aiEvaluationService: AiEvaluationService,
     private readonly conversationReaderService: AgentConversationReaderService,
   ) {}
+
+  async shouldGenerateAssistantReply({
+    actor,
+    thread,
+    participation,
+    isInboxEnabled,
+    isDirectMessage,
+    text,
+  }: AgentChatAssistantReplyPolicyArgs): Promise<boolean> {
+    if (!isInboxEnabled && !isDirectMessage) {
+      return true;
+    }
+
+    return this.shouldReply({
+      decision: participation.replyDecision,
+      threadId: thread.id,
+      pendingQuestionMessageId: thread.pendingQuestionMessageId,
+      workspaceId: actor.workspaceId,
+      userWorkspaceId: actor.userWorkspaceId,
+      text,
+    });
+  }
 
   async shouldReply({
     decision,

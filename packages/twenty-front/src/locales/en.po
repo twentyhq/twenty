@@ -7351,6 +7351,11 @@ msgstr "Confirm upgrade"
 msgid "Confirming your payment"
 msgstr "Confirming your payment"
 
+#. js-lingui-id: jtSEaa
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to {workspaceName}"
+msgstr "Connect {appName} to {workspaceName}"
+
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to your account"
@@ -15152,6 +15157,11 @@ msgstr "HTTP Request"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest.ts
 msgid "HTTP request failed"
 msgstr "HTTP request failed"
+
+#. js-lingui-id: 82OlFB
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "HTTP requests in the logic function runtime"
+msgstr "HTTP requests in the logic function runtime"
 
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -23265,6 +23275,11 @@ msgstr "Reacted with {emoji}"
 msgid "Reacting with {emoji}"
 msgstr "Reacting with {emoji}"
 
+#. js-lingui-id: cQlPDN
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Read"
+msgstr "Read"
+
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read {target}"
@@ -26397,11 +26412,21 @@ msgstr "Send Test Email"
 msgid "Send to Inbox"
 msgstr "Send to Inbox"
 
+#. js-lingui-id: 69d0/t
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
+msgstr "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
+
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Sender name"
 msgstr "Sender name"
+
+#. js-lingui-id: 9bG48P
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Sending"
+msgstr "Sending"
 
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -26440,6 +26465,7 @@ msgid "Sending..."
 msgstr "Sending..."
 
 #. js-lingui-id: h69WC6
+#: src/modules/chat/components/ChatMessageReceipt.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Sent"
