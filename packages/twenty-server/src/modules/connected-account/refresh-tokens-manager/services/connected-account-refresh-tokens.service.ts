@@ -7,6 +7,7 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -33,6 +34,9 @@ export type ConnectedAccountEncryptedTokens = {
 
 export type ConnectedAccountTokens = ConnectedAccountEncryptedTokens;
 
+// Waiters outlast a refresh that discovers the authorization server and then exchanges the token, 15 s each.
+const REFRESH_LOCK_OPTIONS = { ms: 250, maxRetries: 120 };
+
 @Injectable()
 export class ConnectedAccountRefreshTokensService {
   private readonly logger = new Logger(
@@ -44,6 +48,7 @@ export class ConnectedAccountRefreshTokensService {
     private readonly microsoftApiRefreshAccessTokenService: MicrosoftApiRefreshAccessTokenService,
     private readonly appOAuthRefreshAccessTokenService: AppOAuthRefreshAccessTokenService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
+    private readonly cacheLockService: CacheLockService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
@@ -70,23 +75,46 @@ export class ConnectedAccountRefreshTokensService {
     return this.refreshAndSaveTokens(connectedAccount, workspaceId);
   }
 
+  // Refresh tokens rotate: a refresh that lost the race reuses the winner's tokens instead of burning the consumed one.
   async refreshAndSaveTokens(
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
   ): Promise<ConnectedAccountTokens> {
-    const encryptedRefreshToken = connectedAccount.refreshToken;
+    return this.cacheLockService.withLock(
+      async () => {
+        const latestConnectedAccount =
+          (await this.connectedAccountRepository.findOneBy({
+            id: connectedAccount.id,
+            workspaceId,
+          })) ?? connectedAccount;
 
-    if (!isDefined(encryptedRefreshToken)) {
-      throw new ConnectedAccountRefreshAccessTokenException(
-        `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
-        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
-      );
-    }
+        if (
+          latestConnectedAccount.lastCredentialsRefreshedAt?.getTime() !==
+          connectedAccount.lastCredentialsRefreshedAt?.getTime()
+        ) {
+          return this.getExistingEncryptedTokens(
+            latestConnectedAccount,
+            workspaceId,
+          );
+        }
 
-    return this.performRefreshAndSave(
-      connectedAccount,
-      encryptedRefreshToken,
-      workspaceId,
+        const encryptedRefreshToken = latestConnectedAccount.refreshToken;
+
+        if (!isDefined(encryptedRefreshToken)) {
+          throw new ConnectedAccountRefreshAccessTokenException(
+            `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+            ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
+          );
+        }
+
+        return this.performRefreshAndSave(
+          latestConnectedAccount,
+          encryptedRefreshToken,
+          workspaceId,
+        );
+      },
+      `connected-account-refresh:${workspaceId}:${connectedAccount.id}`,
+      REFRESH_LOCK_OPTIONS,
     );
   }
 

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import {
@@ -12,37 +11,22 @@ import {
   type Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
 
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { buildSecureFetchLike } from 'src/engine/core-modules/secure-http-client/utils/build-secure-fetch-like.util';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
-import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import {
   McpServerException,
   McpServerExceptionCode,
 } from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
-import {
-  ConnectedAccountRefreshAccessTokenException,
-  ConnectedAccountRefreshAccessTokenExceptionCode,
-} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
-import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import { McpServerConnectedAccountService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-connected-account.service';
+import { type McpServerTarget } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-target.type';
 
 const MCP_CLIENT_INFO = { name: 'twenty', version: '1.0.0' };
 const LIST_TOOLS_TIMEOUT_MS = 20_000;
 const CALL_TOOL_TIMEOUT_MS = 60_000;
 const LIST_TOOLS_MAX_PAGES = 10;
 const SIGN_IN_PROBE_TIMEOUT_MS = 5_000;
-// Waiters outlast a refresh that discovers the authorization server and then exchanges the token, 15 s each.
-const CONNECTED_ACCOUNT_REFRESH_LOCK_OPTIONS = { ms: 250, maxRetries: 120 };
-const UNRECOVERABLE_REFRESH_CODES: ConnectedAccountRefreshAccessTokenExceptionCode[] =
-  [
-    ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
-    ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
-  ];
 
 const isUnauthorizedError = (error: unknown): boolean =>
   error instanceof StreamableHTTPError && error.code === 401;
@@ -54,20 +38,11 @@ const buildSignInRequiredException = (): McpServerException =>
     McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
   );
 
-type McpServerTarget = Pick<
-  FlatMcpServer,
-  'url' | 'connectionProviderId' | 'workspaceId'
-> & { userWorkspaceId?: string };
-
 @Injectable()
 export class McpServerClientService {
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
-    private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
-    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
-    private readonly cacheLockService: CacheLockService,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly mcpServerConnectedAccountService: McpServerConnectedAccountService,
   ) {}
 
   // One deadline spans the handshake and every page: the sync runs inside a mutation.
@@ -122,12 +97,17 @@ export class McpServerClientService {
     }) => Promise<TResult>;
   }): Promise<TResult> {
     const { workspaceId } = target;
-    const connectedAccount = await this.findConnectedAccountOrThrow(target);
+    const connectedAccount =
+      await this.mcpServerConnectedAccountService.findConnectedAccountOrThrow(
+        target,
+      );
     const accessToken = isDefined(connectedAccount)
-      ? await this.resolveAccessTokenOrMarkAuthFailed({
-          connectedAccount,
-          workspaceId,
-        })
+      ? await this.mcpServerConnectedAccountService.resolveAccessTokenOrMarkAuthFailed(
+          {
+            connectedAccount,
+            workspaceId,
+          },
+        )
       : undefined;
 
     try {
@@ -143,11 +123,14 @@ export class McpServerClientService {
     }
 
     // The server may stop honoring a token before its assumed expiry; one refresh tells a stale token from a revoked account.
-    const refreshedAccessToken = await this.resolveAccessTokenOrMarkAuthFailed({
-      connectedAccount,
-      workspaceId,
-      shouldForceRefresh: true,
-    });
+    const refreshedAccessToken =
+      await this.mcpServerConnectedAccountService.resolveAccessTokenOrMarkAuthFailed(
+        {
+          connectedAccount,
+          workspaceId,
+          shouldForceRefresh: true,
+        },
+      );
 
     try {
       return await this.connectAndRun({
@@ -162,11 +145,13 @@ export class McpServerClientService {
       }
 
       // A revoked token would otherwise keep being picked ahead of a fresh connection
-      await this.markConnectedAccountAuthFailed({
-        connectedAccountId: connectedAccount.id,
-        workspaceId,
-        reason: 'The MCP server rejected the access token',
-      });
+      await this.mcpServerConnectedAccountService.markConnectedAccountAuthFailed(
+        {
+          connectedAccountId: connectedAccount.id,
+          workspaceId,
+          reason: 'The MCP server rejected the access token',
+        },
+      );
 
       throw buildSignInRequiredException();
     }
@@ -242,33 +227,19 @@ export class McpServerClientService {
     return [...page.tools, ...nextPages];
   }
 
-  // An unauthenticated request answered with 401 means the server wants its own sign-in.
   async requiresSignIn({
     url,
     workspaceId,
   }: Pick<McpServerTarget, 'url' | 'workspaceId'>): Promise<boolean> {
-    const fetchFn = this.buildFetch({
-      workspaceId,
-      timeoutMs: SIGN_IN_PROBE_TIMEOUT_MS,
+    const { isSignInRequired } = await probeProtectedResource({
+      resourceUrl: url,
+      fetchFunction: this.buildFetch({
+        workspaceId,
+        timeoutMs: SIGN_IN_PROBE_TIMEOUT_MS,
+      }),
     });
 
-    try {
-      const response = await fetchFn(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/event-stream',
-        },
-        body: JSON.stringify({ jsonrpc: '2.0', id: 0, method: 'ping' }),
-      });
-
-      await response.body?.cancel().catch(() => undefined);
-
-      return response.status === 401;
-    } catch {
-      return false;
-    }
->>>>>>> 52481aa5b83 (Sign in to MCP servers through an oauth-discovery connection provider)
+    return isSignInRequired;
   }
 
   private buildFetch({
@@ -287,167 +258,11 @@ export class McpServerClientService {
   async canCallerConnect(target: McpServerTarget): Promise<boolean> {
     return (
       !isDefined(target.connectionProviderId) ||
-      isDefined(await this.findUsableConnectedAccount(target))
-    );
-  }
-
-  private async findUsableConnectedAccount({
-    connectionProviderId,
-    workspaceId,
-    userWorkspaceId,
-  }: McpServerTarget): Promise<ConnectedAccountEntity | null> {
-    if (!isDefined(connectionProviderId)) {
-      return null;
-    }
-
-    const baseWhere = {
-      workspaceId,
-      connectionProviderId,
-      archivedAt: IsNull(),
-      authFailedAt: IsNull(),
-    };
-
-    const connectedAccounts = await this.connectedAccountRepository.find({
-      where: isDefined(userWorkspaceId)
-        ? buildConnectedAccountUsableByCallerWhere({
-            baseWhere,
-            userWorkspaceId,
-          })
-        : { ...baseWhere, scope: 'WORKSPACE' },
-      order: { createdAt: 'ASC' },
-    });
-
-    return (
-      connectedAccounts.find(
-        (connectedAccount) =>
-          connectedAccount.userWorkspaceId === userWorkspaceId,
-      ) ??
-      connectedAccounts[0] ??
-      null
-    );
-  }
-
-  private async findConnectedAccountOrThrow(
-    target: McpServerTarget,
-  ): Promise<ConnectedAccountEntity | null> {
-    const { connectionProviderId, workspaceId } = target;
-
-    if (!isDefined(connectionProviderId)) {
-      return null;
-    }
-
-    const connectedAccount = await this.findUsableConnectedAccount(target);
-
-    if (!isDefined(connectedAccount)) {
-      throw new McpServerException(
-        `No connected account usable by the caller for provider ${connectionProviderId} in workspace ${workspaceId}`,
-        McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
-      );
-    }
-
-    return connectedAccount;
-  }
-
-  private async markConnectedAccountAuthFailed({
-    connectedAccountId,
-    workspaceId,
-    reason,
-  }: {
-    connectedAccountId: string;
-    workspaceId: string;
-    reason: string;
-  }): Promise<void> {
-    await this.connectedAccountRepository.update(
-      { id: connectedAccountId, workspaceId },
-      { authFailedAt: new Date(), authFailedReason: reason },
-    );
-  }
-
-  // No app logic reports failures for these accounts, so a rejected refresh is flagged here
-  // and the member is asked to sign in again instead of the account being retried forever.
-  private async resolveAccessTokenOrMarkAuthFailed({
-    connectedAccount,
-    workspaceId,
-    shouldForceRefresh = false,
-  }: {
-    connectedAccount: ConnectedAccountEntity;
-    workspaceId: string;
-    shouldForceRefresh?: boolean;
-  }): Promise<string> {
-    const { accessToken } =
-      !shouldForceRefresh &&
-      (await this.connectedAccountRefreshTokensService.isAccessTokenStillValid(
-        connectedAccount,
-      ))
-        ? await this.connectedAccountRefreshTokensService.resolveTokens(
-            connectedAccount,
-            workspaceId,
-          )
-        : await this.refreshTokensOrMarkAuthFailed({
-            connectedAccount,
-            workspaceId,
-            shouldForceRefresh,
-          });
-
-    return this.connectedAccountTokenEncryptionService.decrypt({
-      ciphertext: accessToken,
-      workspaceId,
-    });
-  }
-
-  // Refresh tokens rotate: the later of two concurrent refreshes must reuse the first one's tokens, not burn the consumed one.
-  private async refreshTokensOrMarkAuthFailed({
-    connectedAccount,
-    workspaceId,
-    shouldForceRefresh,
-  }: {
-    connectedAccount: ConnectedAccountEntity;
-    workspaceId: string;
-    shouldForceRefresh: boolean;
-  }) {
-    return this.cacheLockService.withLock(
-      async () => {
-        const latestConnectedAccount =
-          (await this.connectedAccountRepository.findOneBy({
-            id: connectedAccount.id,
-            workspaceId,
-          })) ?? connectedAccount;
-        const isAlreadyRefreshed =
-          latestConnectedAccount.lastCredentialsRefreshedAt?.getTime() !==
-          connectedAccount.lastCredentialsRefreshedAt?.getTime();
-
-        try {
-          return shouldForceRefresh && !isAlreadyRefreshed
-            ? await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
-                latestConnectedAccount,
-                workspaceId,
-              )
-            : await this.connectedAccountRefreshTokensService.resolveTokens(
-                latestConnectedAccount,
-                workspaceId,
-              );
-        } catch (error) {
-          if (
-            !(error instanceof ConnectedAccountRefreshAccessTokenException) ||
-            !UNRECOVERABLE_REFRESH_CODES.includes(error.code)
-          ) {
-            throw error;
-          }
-
-          await this.markConnectedAccountAuthFailed({
-            connectedAccountId: connectedAccount.id,
-            workspaceId,
-            reason: error.message,
-          });
-
-          throw new McpServerException(
-            'The connected account for this MCP server was signed out. Sign in again to use it.',
-            McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
-          );
-        }
-      },
-      `mcp-server-connected-account-refresh:${workspaceId}:${connectedAccount.id}`,
-      CONNECTED_ACCOUNT_REFRESH_LOCK_OPTIONS,
+      isDefined(
+        await this.mcpServerConnectedAccountService.findUsableConnectedAccount(
+          target,
+        ),
+      )
     );
   }
 }

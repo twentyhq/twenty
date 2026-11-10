@@ -129,15 +129,13 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // A write after shutdown must find no client: a closed one reopens a keep-alive socket that outlives the app.
   async onModuleDestroy() {
-    const clients = [this.mainClient, ...this.clients.values()];
+    if (this.mainClient) {
+      await this.mainClient.close();
+    }
 
-    this.mainClient = undefined;
-    this.clients.clear();
-
-    for (const client of clients) {
-      await client?.close();
+    for (const [, client] of this.clients) {
+      await client.close();
     }
   }
 

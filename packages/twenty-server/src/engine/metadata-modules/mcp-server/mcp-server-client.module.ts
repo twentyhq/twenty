@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { McpServerEntity } from 'src/engine/metadata-modules/mcp-server/entities/mcp-server.entity';
 import { McpServerClientService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-client.service';
+import { McpServerConnectedAccountService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-connected-account.service';
 import { McpServerToolCallService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-call.service';
 import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -19,12 +19,12 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     ConnectedAccountTokenEncryptionModule,
     RefreshTokensManagerModule,
     SecureHttpClientModule,
-    CacheLockModule,
     TypeOrmModule.forFeature([McpServerEntity, ConnectedAccountEntity]),
   ],
   providers: [
     provideWorkspaceScopedRepository(McpServerEntity),
     McpServerClientService,
+    McpServerConnectedAccountService,
     McpServerToolSyncService,
     McpServerToolCallService,
   ],
