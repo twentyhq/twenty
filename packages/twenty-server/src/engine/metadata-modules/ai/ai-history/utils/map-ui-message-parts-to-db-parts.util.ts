@@ -3,6 +3,7 @@ import {
   isExtendedFileUIPart,
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
@@ -77,8 +78,8 @@ export const mapUIMessagePartsToDBParts = (
               ...basePart,
               toolName: getToolName(part),
               toolCallId: part.toolCallId,
-              // A nullish input yields an invalid tool_use block (#21695).
-              toolInput: part.input ?? {},
+              // A nullish or malformed input yields an invalid tool_use block (#21695).
+              toolInput: isPlainObject(part.input) ? part.input : {},
               toolOutput: part.output,
               errorMessage: part.errorText,
               state: part.state,
