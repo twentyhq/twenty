@@ -7,16 +7,12 @@ import {
   type RecordShareAccessLevel,
   type ObjectRecord,
 } from 'twenty-shared/types';
-import {
-  canReachSomeRecords,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { assertUpdatedColumnsAreEditableOrThrow } from 'src/engine/permissions/internal/field-access/utils/assert-updated-columns-are-editable-or-throw.util';
-import { findPrincipalsRoleIdsWithRlsRule } from 'src/engine/permissions/internal/rls/utils/find-principals-role-ids-with-rls-rule.util';
+import { isMainRoleRestrictedByRlsRule } from 'src/engine/permissions/internal/rls/utils/is-main-role-restricted-by-rls-rule.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -434,13 +430,11 @@ export class RecordPermissionsReadService {
       });
 
     if (
-      !isNonEmptyArray(
-        findPrincipalsRoleIdsWithRlsRule({
-          principals,
-          metadataMaps,
-          objectMetadataId,
-        }),
-      )
+      !isMainRoleRestrictedByRlsRule({
+        principals,
+        metadataMaps,
+        objectMetadataId,
+      })
     ) {
       return;
     }

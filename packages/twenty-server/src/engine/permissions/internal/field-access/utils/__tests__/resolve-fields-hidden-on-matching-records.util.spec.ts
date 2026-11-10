@@ -84,7 +84,7 @@ const buildObjectRecordsPermissions = ({
 });
 
 describe('resolveFieldsHiddenOnMatchingRecords', () => {
-  it('should pair the fields each role hides with the filter of that role', async () => {
+  it('should take the hidden fields and filter of the main role only', async () => {
     const fieldsHiddenOnMatchingRecords =
       await resolveFieldsHiddenOnMatchingRecords({
         principals: {
@@ -138,18 +138,11 @@ describe('resolveFieldsHiddenOnMatchingRecords', () => {
         findRelationJoinValues: jest.fn(),
       });
 
-    expect(fieldsHiddenOnMatchingRecords).toEqual(
-      expect.arrayContaining([
-        {
-          fieldMetadataIds: ['secret-field-id'],
-          recordFilter: { name: { eq: 'member-invoice' } },
-        },
-        {
-          fieldMetadataIds: ['amount-field-id'],
-          recordFilter: { name: { eq: 'agent-invoice' } },
-        },
-      ]),
-    );
-    expect(fieldsHiddenOnMatchingRecords).toHaveLength(2);
+    expect(fieldsHiddenOnMatchingRecords).toEqual([
+      {
+        fieldMetadataIds: ['secret-field-id'],
+        recordFilter: { name: { eq: 'member-invoice' } },
+      },
+    ]);
   });
 });
