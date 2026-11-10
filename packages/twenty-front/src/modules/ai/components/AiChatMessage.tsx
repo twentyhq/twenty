@@ -246,6 +246,7 @@ export const AiChatMessage = ({
               {canManageMessage && isDefined(onEdit) && (
                 <LightIconButton
                   aria-label={t`Edit message`}
+                  tooltip={t`Edit message`}
                   onClick={() => onEdit(messageId)}
                 >
                   <IconEdit />
@@ -254,6 +255,7 @@ export const AiChatMessage = ({
               {canManageMessage && isDefined(onDelete) && (
                 <LightIconButton
                   aria-label={t`Delete message`}
+                  tooltip={t`Delete message`}
                   onClick={() => onDelete(messageId)}
                 >
                   <IconTrash />
