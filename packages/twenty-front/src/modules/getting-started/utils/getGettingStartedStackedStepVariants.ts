@@ -7,23 +7,32 @@ export const getGettingStartedStackedStepVariants = ({
   actionKey,
   depth,
   slotOffset,
-  depthScale,
+  depthShrinkRatio,
 }: {
   actionKey: GettingStartedStepActionKey;
   depth: number;
   slotOffset: number;
-  depthScale: number;
+  depthShrinkRatio: number;
 }): Variants => {
+  const getWidthRatio = (stackDepth: number) =>
+    1 - stackDepth * depthShrinkRatio;
   const getHiddenTarget = (isAtFront: boolean) =>
     isAtFront
-      ? { opacity: 0, y: slotOffset * depth, scale: 1 + depthScale * depth }
-      : { opacity: 0, y: -slotOffset, scale: 1 - depthScale };
+      ? { opacity: 0, y: slotOffset * depth, scale: 1 / getWidthRatio(depth) }
+      : {
+          opacity: 0,
+          y: -slotOffset,
+          scale: getWidthRatio(depth + 1) / getWidthRatio(depth),
+        };
 
   return {
     hidden: ({
       previousSelectedStepActionKey,
       isBackward,
-    }: GettingStartedStackTransition) =>
+    }: Pick<
+      GettingStartedStackTransition,
+      'previousSelectedStepActionKey' | 'isBackward'
+    >) =>
       getHiddenTarget(
         isBackward && actionKey === previousSelectedStepActionKey,
       ),
@@ -31,7 +40,9 @@ export const getGettingStartedStackedStepVariants = ({
     exit: ({
       selectedStepActionKey,
       isBackward,
-    }: GettingStartedStackTransition) =>
-      getHiddenTarget(!isBackward && actionKey === selectedStepActionKey),
+    }: Pick<
+      GettingStartedStackTransition,
+      'selectedStepActionKey' | 'isBackward'
+    >) => getHiddenTarget(!isBackward && actionKey === selectedStepActionKey),
   };
 };

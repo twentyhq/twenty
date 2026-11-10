@@ -6,22 +6,24 @@ import { type GettingStartedStepActionKey } from '~/generated-metadata/graphql';
 export const getGettingStartedSelectedStepVariants = ({
   actionKey,
   slotOffset,
-  depthScale,
+  depthShrinkRatio,
 }: {
   actionKey: GettingStartedStepActionKey;
   slotOffset: number;
-  depthScale: number;
+  depthShrinkRatio: number;
 }): Variants => {
+  const getWidthRatio = (stackDepth: number) =>
+    1 - stackDepth * depthShrinkRatio;
   const frontTarget = {
     opacity: 0,
     y: slotOffset,
-    scale: 1 + depthScale,
+    scale: 1 / getWidthRatio(1),
     zIndex: 1,
   };
-  const getStackedTarget = (depth: number) => ({
+  const getStackedTarget = (stackDepth: number) => ({
     opacity: 0,
-    y: -slotOffset * depth,
-    scale: 1 - depthScale * depth,
+    y: -slotOffset * stackDepth,
+    scale: getWidthRatio(stackDepth),
     zIndex: 0,
   });
 
@@ -29,14 +31,19 @@ export const getGettingStartedSelectedStepVariants = ({
     hidden: ({
       previousStackedStepActionKeys,
       isBackward,
-    }: GettingStartedStackTransition) =>
+    }: Pick<
+      GettingStartedStackTransition,
+      'previousStackedStepActionKeys' | 'isBackward'
+    >) =>
       isBackward
         ? frontTarget
         : getStackedTarget(
             Math.max(previousStackedStepActionKeys.indexOf(actionKey) + 1, 1),
           ),
     visible: { opacity: 1, y: 0, scale: 1 },
-    exit: ({ isBackward }: GettingStartedStackTransition) =>
+    exit: ({
+      isBackward,
+    }: Pick<GettingStartedStackTransition, 'isBackward'>) =>
       isBackward ? getStackedTarget(1) : frontTarget,
   };
 };

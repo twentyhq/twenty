@@ -1,6 +1,6 @@
 import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
-import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
 import { GETTING_STARTED_STACKED_STEP_COLOR_BY_DEPTH } from '@/getting-started/constants/GettingStartedStackedStepColorByDepth';
+import { GETTING_STARTED_STACKED_STEP_DIMENSIONS } from '@/getting-started/constants/GettingStartedStackedStepDimensions';
 import { GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH } from '@/getting-started/constants/GettingStartedStepTicksMinContainerWidth';
 import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
@@ -133,14 +133,15 @@ const StyledStackedStepBase = styled.button<{ depth: number }>`
   flex-shrink: 0;
   font: inherit;
   gap: ${themeCssVariables.spacing[2]};
-  height: ${themeCssVariables.spacing[11]};
-  margin: 0 auto calc(-1 * ${themeCssVariables.spacing['1.5']});
-  padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing['1.5']};
+  height: ${GETTING_STARTED_STACKED_STEP_DIMENSIONS.height}px;
+  margin: 0 auto -${GETTING_STARTED_STACKED_STEP_DIMENSIONS.overlap}px;
+  padding: 0 ${themeCssVariables.spacing[4]}
+    ${GETTING_STARTED_STACKED_STEP_DIMENSIONS.overlap}px;
   transition:
     color calc(${themeCssVariables.animation.duration.normal} * 1s) ease-out,
     width calc(${themeCssVariables.animation.duration.normal} * 1s) ease-out;
   width: ${({ depth }) =>
-    `calc(100% - ${depth} * ${themeCssVariables.spacing[8]})`};
+    `${(1 - depth * GETTING_STARTED_STACKED_STEP_DIMENSIONS.depthShrinkRatio) * 100}%`};
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -187,15 +188,13 @@ export const GettingStartedStepStack = ({
     ease: EASE_OUT,
     opacity: { duration: theme.animation.duration.fast, ease: EASE_OUT },
   };
-  const stackedStepHeight = theme.spacingMultiplicator * 11;
-  const stackedStepOverlap = theme.spacingMultiplicator * 1.5;
-  const stackedStepWidthStep = theme.spacingMultiplicator * 8;
   const slotOffset = shouldReduceMotion
     ? 0
-    : stackedStepHeight - stackedStepOverlap;
-  const depthScale = shouldReduceMotion
+    : GETTING_STARTED_STACKED_STEP_DIMENSIONS.height -
+      GETTING_STARTED_STACKED_STEP_DIMENSIONS.overlap;
+  const depthShrinkRatio = shouldReduceMotion
     ? 0
-    : stackedStepWidthStep / GETTING_STARTED_CONTENT_MAX_WIDTH;
+    : GETTING_STARTED_STACKED_STEP_DIMENSIONS.depthShrinkRatio;
 
   const selectedStepIndex = steps.findIndex(
     ({ actionKey }) => actionKey === selectedStepActionKey,
@@ -259,7 +258,7 @@ export const GettingStartedStepStack = ({
                 actionKey,
                 depth,
                 slotOffset,
-                depthScale,
+                depthShrinkRatio,
               })}
               initial="hidden"
               animate="visible"
@@ -346,7 +345,7 @@ export const GettingStartedStepStack = ({
             variants={getGettingStartedSelectedStepVariants({
               actionKey: selectedStepActionKey,
               slotOffset,
-              depthScale,
+              depthShrinkRatio,
             })}
             initial="hidden"
             animate="visible"
