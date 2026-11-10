@@ -3,6 +3,7 @@ import { Command } from 'nest-commander';
 import { getIndexUniversalIdentifier } from 'twenty-shared/application';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
+import { type DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -13,11 +14,21 @@ import { generateDeterministicIndexForFlatFieldMetadataOrThrow } from 'src/engin
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { isPrimaryKeyFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-primary-key-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
+import { computeFlatIndexFieldColumnNames } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
+import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
+
+type IndexToBuild = {
+  flatIndexMetadata: UniversalFlatIndexMetadata;
+  tableName: string;
+  columns: string[];
+};
 
 type IndexOperations = {
   flatEntityToCreate: UniversalFlatIndexMetadata[];
@@ -35,14 +46,22 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super(workspaceIteratorService);
   }
 
   override async runOnWorkspace({
     workspaceId,
+    dataSource,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
+    if (!isDefined(dataSource)) {
+      this.logger.log(`No data source for workspace ${workspaceId}, skipping`);
+
+      return;
+    }
+
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -50,6 +69,7 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
         'flatIndexMaps',
       ]);
 
+    const indexesToBuild: IndexToBuild[] = [];
     const indexOperationsByApplicationUniversalIdentifier = new Map<
       string,
       IndexOperations
@@ -100,9 +120,6 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
         continue;
       }
 
-      // Only indexes owned by the field's isUnique flag carry this identifier.
-      // Unique indexes declared on their own (dedupe hashes, provider ids)
-      // have a declared one and keep covering deleted records.
       const isOwnedByUniqueField =
         legacyFlatIndexMetadata.universalIdentifier ===
         getIndexUniversalIdentifier({
@@ -136,7 +153,27 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
         getIndexOperations(
           replacementFlatIndexMetadata.applicationUniversalIdentifier,
         ).flatEntityToCreate.push(replacementFlatIndexMetadata);
+        indexesToBuild.push({
+          flatIndexMetadata: replacementFlatIndexMetadata,
+          tableName: getWorkspaceSchemaContextForMigration({
+            workspaceId,
+            objectMetadata: flatObjectMetadata,
+          }).tableName,
+          columns: computeFlatIndexFieldColumnNames({
+            flatIndexFieldMetadatas:
+              legacyFlatIndexMetadata.flatIndexFieldMetadatas,
+            flatFieldMetadataMaps,
+          }),
+        });
       }
+    }
+
+    if (!options.dryRun) {
+      await this.buildIndexesConcurrently({
+        workspaceId,
+        dataSource,
+        indexesToBuild,
+      });
     }
 
     for (const [
@@ -167,7 +204,6 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
         },
       };
 
-      // Twenty standard metadata must not go through the side-effect engine, see docs/UPGRADE_COMMANDS.md
       const result =
         applicationUniversalIdentifier ===
         TWENTY_STANDARD_APPLICATION.universalIdentifier
@@ -190,6 +226,65 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
       this.logger.log(
         `Replaced unique field indexes for workspace ${workspaceId}: ${indexNames}`,
       );
+    }
+  }
+
+  private async buildIndexesConcurrently({
+    workspaceId,
+    dataSource,
+    indexesToBuild,
+  }: {
+    workspaceId: string;
+    dataSource: DataSource;
+    indexesToBuild: IndexToBuild[];
+  }): Promise<void> {
+    if (indexesToBuild.length === 0) {
+      return;
+    }
+
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const queryRunner = dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+
+    try {
+      const invalidIndexes: { name: string }[] = await queryRunner.query(
+        `SELECT c.relname AS name
+         FROM pg_index i
+         JOIN pg_class c ON c.oid = i.indexrelid
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = $1 AND c.relname = ANY($2) AND NOT i.indisvalid`,
+        [
+          schemaName,
+          indexesToBuild.map(({ flatIndexMetadata }) => flatIndexMetadata.name),
+        ],
+      );
+
+      for (const { name } of invalidIndexes) {
+        await this.workspaceSchemaManagerService.indexManager.dropIndex({
+          queryRunner,
+          schemaName,
+          indexName: name,
+        });
+      }
+
+      for (const { flatIndexMetadata, tableName, columns } of indexesToBuild) {
+        await this.workspaceSchemaManagerService.indexManager.createIndex({
+          queryRunner,
+          schemaName,
+          tableName,
+          index: {
+            name: flatIndexMetadata.name,
+            columns,
+            isUnique: flatIndexMetadata.isUnique,
+            type: flatIndexMetadata.indexType,
+            where: flatIndexMetadata.indexWhereClause ?? undefined,
+          },
+          concurrently: true,
+        });
+      }
+    } finally {
+      await queryRunner.release();
     }
   }
 }

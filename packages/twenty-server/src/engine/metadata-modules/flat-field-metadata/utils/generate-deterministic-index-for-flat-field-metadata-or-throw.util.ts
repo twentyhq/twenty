@@ -32,7 +32,6 @@ export const generateDeterministicIndexForFlatFieldMetadataOrThrow = ({
         },
       ],
       indexType: IndexType.BTREE,
-      // Partial so a soft-deleted record does not keep its value reserved
       indexWhereClause: isUnique ? '"deletedAt" IS NULL' : null,
       isUnique,
       isSystemSideEffect: true,

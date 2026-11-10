@@ -237,8 +237,6 @@ export class CreateCompanyAndPersonService {
         continue;
       }
 
-      // Restoring a deleted person whose email a live person now holds fails the
-      // whole batch, so retry one by one to only lose the conflicting contact
       for (const contact of contactsBatch) {
         await createCompaniesAndPeopleIgnoringDuplicates([contact]);
       }

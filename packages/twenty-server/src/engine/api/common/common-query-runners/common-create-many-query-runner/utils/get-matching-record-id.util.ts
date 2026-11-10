@@ -15,38 +15,44 @@ export const getMatchingRecordId = (
   conflictingFieldGroups: ConflictingFieldGroup[],
   existingRecords: PartialObjectRecordWithId[],
 ): string | undefined => {
-  const matchingRecordIds = conflictingFieldGroups.reduce<string[]>(
-    (acc, fieldGroup) => {
-      const requestFieldValues = fieldGroup.conflictingProperties.map(
-        (conflictingProperty) => ({
-          conflictingProperty,
-          value: getValueFromPath(record, conflictingProperty.fullPath),
-        }),
-      );
+  const matchingRecords = conflictingFieldGroups.reduce<
+    PartialObjectRecordWithId[]
+  >((acc, fieldGroup) => {
+    const requestFieldValues = fieldGroup.conflictingProperties.map(
+      (conflictingProperty) => ({
+        conflictingProperty,
+        value: getValueFromPath(record, conflictingProperty.fullPath),
+      }),
+    );
 
-      if (requestFieldValues.some(({ value }) => !isDefined(value))) {
-        return acc;
-      }
-
-      const matchingRecord = existingRecords.find((existingRecord) =>
-        requestFieldValues.every(({ conflictingProperty, value }) => {
-          const existingFieldValue = getValueFromPath(
-            existingRecord,
-            conflictingProperty.fullPath,
-          );
-
-          return isDefined(existingFieldValue) && existingFieldValue === value;
-        }),
-      );
-
-      if (isDefined(matchingRecord)) {
-        acc.push(matchingRecord.id);
-      }
-
+    if (requestFieldValues.some(({ value }) => !isDefined(value))) {
       return acc;
-    },
-    [],
+    }
+
+    const matchingRecord = existingRecords.find((existingRecord) =>
+      requestFieldValues.every(({ conflictingProperty, value }) => {
+        const existingFieldValue = getValueFromPath(
+          existingRecord,
+          conflictingProperty.fullPath,
+        );
+
+        return isDefined(existingFieldValue) && existingFieldValue === value;
+      }),
+    );
+
+    if (isDefined(matchingRecord)) {
+      acc.push(matchingRecord);
+    }
+
+    return acc;
+  }, []);
+
+  const liveMatchingRecords = matchingRecords.filter(
+    (matchingRecord) => !isDefined(matchingRecord.deletedAt),
   );
+  const matchingRecordIds = (
+    liveMatchingRecords.length > 0 ? liveMatchingRecords : matchingRecords
+  ).map((matchingRecord) => matchingRecord.id);
 
   if ([...new Set(matchingRecordIds)].length > 1) {
     const conflictingFieldsValues = conflictingFieldGroups

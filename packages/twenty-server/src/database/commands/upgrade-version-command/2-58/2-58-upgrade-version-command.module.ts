@@ -6,6 +6,7 @@ import { AddCoreWorkflowMetadataCommand } from 'src/database/commands/upgrade-ve
 import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794298481339-drop-workspace-workflow-object.command';
 import { ExcludeDeletedRecordsFromUniqueFieldIndexesCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794325816486-exclude-deleted-records-from-unique-field-indexes.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -15,6 +16,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
+    WorkspaceSchemaManagerModule,
   ],
   providers: [
     DropCodeStepLogicFunctionsCommand,
