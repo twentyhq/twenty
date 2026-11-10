@@ -19,6 +19,7 @@ import {
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
 import { FileRemoteContentService } from 'src/engine/core-modules/file/file-remote-content/services/file-remote-content.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
@@ -39,6 +40,7 @@ export class FileService {
     private readonly fileStorageService: FileStorageService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileRemoteContentService: FileRemoteContentService,
+    private readonly fileUrlService: FileUrlService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
@@ -112,6 +114,27 @@ export class FileService {
     return allowedFileFolders.includes(fileFolder as FileFolder) ? file : null;
   }
 
+  async getFileBySignedUrl({
+    fileUrl,
+    workspaceId,
+  }: {
+    fileUrl: string;
+    workspaceId: string;
+  }): Promise<FileEntity | null> {
+    const signedFile = await this.fileUrlService.resolveSignedFileUrl({
+      fileUrl,
+      workspaceId,
+    });
+
+    return isDefined(signedFile)
+      ? this.getFileById({
+          fileId: signedFile.fileId,
+          workspaceId,
+          allowedFileFolders: [signedFile.fileFolder],
+        })
+      : null;
+  }
+
   async getFileStreamById({
     fileId,
     workspaceId,
@@ -127,10 +150,16 @@ export class FileService {
       allowedFileFolders,
     });
 
-    if (file === null) {
-      return null;
-    }
+    return file === null ? null : this.getFileStream({ file, workspaceId });
+  }
 
+  async getFileStream({
+    file,
+    workspaceId,
+  }: {
+    file: FileEntity;
+    workspaceId: string;
+  }): Promise<{ stream: Readable; mimeType: string } | null> {
     const [fileFolder] = file.path.split('/');
 
     if (file.status === FILE_STATUS.REMOTE) {

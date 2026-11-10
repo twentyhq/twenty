@@ -5,9 +5,7 @@ import { basename } from 'path';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/tool/constants/ai-readable-file-folders.constant';
 import { ReadFileInputZodSchema } from 'src/engine/core-modules/tool/tools/read-file-tool/read-file-tool.schema';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -22,10 +20,7 @@ export class ReadFileTool implements Tool {
     'Read a PDF or an image attached to a record, such as a files field or an email attachment. Pass the signed url returned with the record. The content of the file is added to the conversation right after this call. For other file types, pass the url to code_interpreter instead.';
   inputSchema = ReadFileInputZodSchema;
 
-  constructor(
-    private readonly fileUrlService: FileUrlService,
-    private readonly fileService: FileService,
-  ) {}
+  constructor(private readonly fileService: FileService) {}
 
   async execute(
     parameters: ToolInput,
@@ -43,31 +38,17 @@ export class ReadFileTool implements Tool {
 
     const { url, filename: requestedFilename } = parseResult.data;
 
-    const fileId = await this.fileUrlService.getFileIdFromSignedFileUrl({
+    const file = await this.fileService.getFileBySignedUrl({
       fileUrl: url,
       workspaceId: context.workspaceId,
-    });
-
-    if (!isDefined(fileId)) {
-      return {
-        success: false,
-        message: FAILURE_MESSAGE,
-        error:
-          'This is not a valid file link, or it expired. Fetch the record again to get a fresh link.',
-      };
-    }
-
-    const file = await this.fileService.getFileById({
-      fileId,
-      workspaceId: context.workspaceId,
-      allowedFileFolders: AI_READABLE_FILE_FOLDERS,
     });
 
     if (!isDefined(file)) {
       return {
         success: false,
         message: FAILURE_MESSAGE,
-        error: 'This file no longer exists, or it cannot be read here.',
+        error:
+          'This file link is not valid or it expired, or the file no longer exists. Fetch the record again to get a fresh link.',
       };
     }
 

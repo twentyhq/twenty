@@ -1,15 +1,24 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { SUPPORTED_FILE_FOLDERS } from 'src/engine/core-modules/file/constants/supported-file-folders.constant';
+import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { type SupportedFileFolder } from 'src/engine/core-modules/file/types/supported-file-folder.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { isWorkspaceSuspended } from 'src/engine/core-modules/workspace/utils/is-workspace-suspended.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+
+const FILE_FOLDERS_SERVED_WHEN_SUSPENDED: SupportedFileFolder[] = [
+  FileFolder.CorePicture,
+  FileFolder.WorkspaceDataExport,
+];
 
 @Injectable()
 export class FileUrlService {
@@ -18,6 +27,7 @@ export class FileUrlService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async signWorkspaceLogoUrl(
@@ -87,13 +97,44 @@ export class FileUrlService {
     return signing;
   }
 
-  async getFileIdFromSignedFileUrl({
+  async verifyFileToken({
+    fileToken,
+    fileId,
+    fileFolder,
+  }: {
+    fileToken: string | null;
+    fileId: string;
+    fileFolder: string;
+  }): Promise<string | null> {
+    if (!this.isSupportedFileFolder(fileFolder) || !fileToken) {
+      return null;
+    }
+
+    const payload: FileTokenJwtPayload | null = await this.jwtWrapperService
+      .verifyJwtToken(fileToken, {
+        ignoreExpiration: fileFolderConfigs[fileFolder].ignoreExpirationToken,
+      })
+      .catch(() => null);
+
+    if (!payload?.workspaceId || payload.fileId !== fileId) {
+      return null;
+    }
+
+    const isServable = await this.isFileFolderServable(
+      fileFolder,
+      payload.workspaceId,
+    );
+
+    return isServable ? payload.workspaceId : null;
+  }
+
+  async resolveSignedFileUrl({
     fileUrl,
     workspaceId,
   }: {
     fileUrl: string;
     workspaceId: string;
-  }): Promise<string | null> {
+  }): Promise<{ fileId: string; fileFolder: FileFolder } | null> {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
     if (!fileUrl.startsWith(`${serverUrl}/file/`) || !URL.canParse(fileUrl)) {
@@ -101,23 +142,39 @@ export class FileUrlService {
     }
 
     const { pathname, searchParams } = new URL(fileUrl);
-    const fileId = pathname.split('/').pop();
-    const token = searchParams.get('token');
+    const [fileFolder, fileId] = pathname.split('/').slice(-2);
 
-    if (!isNonEmptyString(token)) {
-      return null;
+    const tokenWorkspaceId = await this.verifyFileToken({
+      fileToken: searchParams.get('token'),
+      fileId,
+      fileFolder,
+    });
+
+    return tokenWorkspaceId === workspaceId
+      ? { fileId, fileFolder: fileFolder as FileFolder }
+      : null;
+  }
+
+  private isSupportedFileFolder(
+    fileFolder: string,
+  ): fileFolder is SupportedFileFolder {
+    return SUPPORTED_FILE_FOLDERS.includes(fileFolder as SupportedFileFolder);
+  }
+
+  private async isFileFolderServable(
+    fileFolder: SupportedFileFolder,
+    workspaceId: string,
+  ): Promise<boolean> {
+    if (FILE_FOLDERS_SERVED_WHEN_SUSPENDED.includes(fileFolder)) {
+      return true;
     }
 
-    const payload: FileTokenJwtPayload | null = await this.jwtWrapperService
-      .verifyJwtToken(token)
-      .catch(() => null);
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
 
-    const isTokenForThisFile =
-      payload?.type === JwtTokenTypeEnum.FILE &&
-      payload.fileId === fileId &&
-      payload.workspaceId === workspaceId;
-
-    return isTokenForThisFile ? fileId : null;
+    return !isWorkspaceSuspended(workspace);
   }
 
   private async buildSignedFileUrl({

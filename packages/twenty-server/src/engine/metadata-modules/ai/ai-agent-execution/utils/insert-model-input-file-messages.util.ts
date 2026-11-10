@@ -4,14 +4,14 @@ import {
   type TextPart,
   type ToolModelMessage,
 } from 'ai';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isHttpUrl, isNonEmptyArray } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ModelInputFile } from 'src/engine/core-modules/tool/types/model-input-file.type';
 
 const TOOL_OUTPUT_WITH_MODEL_INPUT_FILE_SCHEMA = z.object({
   modelInputFile: z.object({
-    url: z.string(),
+    url: z.string().refine(isHttpUrl),
     filename: z.string(),
     mediaType: z.string(),
   }),

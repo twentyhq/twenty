@@ -3,9 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/tool/constants/ai-readable-file-folders.constant';
 import { type AgentRunFileLoader } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-file-loader.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -13,10 +11,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export class AgentFileLoaderService {
   private readonly logger = new Logger(AgentFileLoaderService.name);
 
-  constructor(
-    private readonly fileUrlService: FileUrlService,
-    private readonly fileService: FileService,
-  ) {}
+  constructor(private readonly fileService: FileService) {}
 
   createRunFileLoader({
     workspaceId,
@@ -32,7 +27,8 @@ export class AgentFileLoaderService {
       this.loadOnce({
         cache: filesByUrl,
         key: url,
-        load: () => this.findFileBySignedUrl({ url, workspaceId }),
+        load: () =>
+          this.fileService.getFileBySignedUrl({ fileUrl: url, workspaceId }),
       });
 
     return {
@@ -79,27 +75,6 @@ export class AgentFileLoaderService {
     return valueLoad;
   }
 
-  private async findFileBySignedUrl({
-    url,
-    workspaceId,
-  }: {
-    url: string;
-    workspaceId: string;
-  }): Promise<FileEntity | null> {
-    const fileId = await this.fileUrlService.getFileIdFromSignedFileUrl({
-      fileUrl: url,
-      workspaceId,
-    });
-
-    return isDefined(fileId)
-      ? this.fileService.getFileById({
-          fileId,
-          workspaceId,
-          allowedFileFolders: AI_READABLE_FILE_FOLDERS,
-        })
-      : null;
-  }
-
   private async readFileBytes({
     file,
     workspaceId,
@@ -110,10 +85,9 @@ export class AgentFileLoaderService {
     maxFileSizeBytes: number;
   }): Promise<Buffer | null> {
     try {
-      const fileContent = await this.fileService.getFileStreamById({
-        fileId: file.id,
+      const fileContent = await this.fileService.getFileStream({
+        file,
         workspaceId,
-        allowedFileFolders: AI_READABLE_FILE_FOLDERS,
       });
 
       return isDefined(fileContent)

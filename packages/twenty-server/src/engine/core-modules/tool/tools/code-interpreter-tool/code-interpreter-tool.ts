@@ -30,10 +30,10 @@ import {
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { truncateCodeInterpreterOutput } from 'src/engine/core-modules/code-interpreter/utils/truncate-code-interpreter-output.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { AI_READABLE_FILE_FOLDERS } from 'src/engine/core-modules/tool/constants/ai-readable-file-folders.constant';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
 import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.constant';
 import {
@@ -322,17 +322,14 @@ export class CodeInterpreterTool implements Tool {
     workspaceId: string;
   }): Promise<InputFile | null> {
     try {
-      const fileSource = await this.resolveInputFileSource({
-        file,
-        workspaceId,
-      });
+      const storedFile = await this.findStoredInputFile({ file, workspaceId });
 
-      if (!isDefined(fileSource)) {
+      if (!isDefined(storedFile)) {
         return null;
       }
 
-      const fileContent = await this.fileService.getFileStreamById({
-        ...fileSource,
+      const fileContent = await this.fileService.getFileStream({
+        file: storedFile,
         workspaceId,
       });
 
@@ -355,26 +352,26 @@ export class CodeInterpreterTool implements Tool {
     }
   }
 
-  private async resolveInputFileSource({
+  private async findStoredInputFile({
     file,
     workspaceId,
   }: {
     file: CodeInterpreterFileInput;
     workspaceId: string;
-  }): Promise<{ fileId: string; allowedFileFolders: FileFolder[] } | null> {
+  }): Promise<FileEntity | null> {
     if (isDefined(file.url)) {
-      const fileId = await this.fileUrlService.getFileIdFromSignedFileUrl({
+      return this.fileService.getFileBySignedUrl({
         fileUrl: file.url,
         workspaceId,
       });
-
-      return isDefined(fileId)
-        ? { fileId, allowedFileFolders: AI_READABLE_FILE_FOLDERS }
-        : null;
     }
 
     return isDefined(file.fileId)
-      ? { fileId: file.fileId, allowedFileFolders: [FileFolder.AgentChat] }
+      ? this.fileService.getFileById({
+          fileId: file.fileId,
+          workspaceId,
+          allowedFileFolders: [FileFolder.AgentChat],
+        })
       : null;
   }
 
