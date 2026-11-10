@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Si us plau, valida aquest domini pe
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "S'ha utilitzat un codi de còpia de seguretat per iniciar la sessió a {workspaceDisplayName}. Codis de còpia de seguretat restants: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Després d'això, l'espai de treball i totes les seves dades se suprimir
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "S'ha utilitzat un codi de còpia de seguretat"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Hola {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Si no heu estat vós, canvieu la contrasenya i genereu codis de còpia de seguretat nous a Configuració, Perfil, Autenticació de dos factors."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Si no heu estat vós, canvieu la contrasenya i genereu codis de còpia de seguretat nous."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Gestiona la subscripció"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "S'han generat codis de còpia de seguretat nous"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "S'han generat codis de còpia de seguretat nous per al vostre compte a {workspaceDisplayName}. Els codis de còpia de seguretat anteriors ja no funcionen."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Gràcies per registrar-te a Twenty! Abans de començar, només necessite
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "L'autenticador del vostre compte a {workspaceDisplayName} s'ha eliminat de Configuració. Els codis de còpia de seguretat d'aquest espai de treball ja no funcionen."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Codi de recuperació de l'autenticació de dos factors emès"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "S'ha eliminat l'autenticació de dos factors"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Logotip de l'espai de treball"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Podeu generar codis de còpia de seguretat nous a Configuració, Perfil, Autenticació de dos factors."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
