@@ -71,31 +71,31 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
   {
     objectName: 'company',
     fieldNames: ['noteTargets', 'note'],
-    isInherent: false,
+    isInherent: true,
   },
   {
     objectName: 'company',
     fieldNames: ['taskTargets', 'task'],
-    isInherent: false,
+    isInherent: true,
   },
   {
     objectName: 'opportunity',
     fieldNames: ['noteTargets', 'note'],
-    isInherent: false,
+    isInherent: true,
   },
   {
     objectName: 'opportunity',
     fieldNames: ['taskTargets', 'task'],
-    isInherent: false,
+    isInherent: true,
   },
   {
     objectName: 'person',
     fieldNames: ['noteTargets', 'note'],
-    isInherent: false,
+    isInherent: true,
   },
   {
     objectName: 'person',
     fieldNames: ['taskTargets', 'task'],
-    isInherent: false,
+    isInherent: true,
   },
 ];

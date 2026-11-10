@@ -6,6 +6,7 @@ import { AddCoreWorkflowMetadataCommand } from 'src/database/commands/upgrade-ve
 import { DropWorkspaceWorkflowObjectCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794298481339-drop-workspace-workflow-object.command';
 import { RecomputeFieldMetadataMapsForRowLevelPermissionPredicatesCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794335924429-recompute-field-metadata-maps-for-row-level-permission-predicates.command';
 import { BackfillRowLevelPermissionRulesCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794337540466-backfill-row-level-permission-rules.command';
+import { AlignStandardRelatedRecordPathsInherentFlagCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794354007923-align-standard-related-record-paths-inherent-flag.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DropWorkspaceWorkflowObjectCommand,
     RecomputeFieldMetadataMapsForRowLevelPermissionPredicatesCommand,
     BackfillRowLevelPermissionRulesCommand,
+    AlignStandardRelatedRecordPathsInherentFlagCommand,
   ],
 })
 export class V2_58_UpgradeVersionCommandModule {}
