@@ -40,10 +40,7 @@ export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
 
     setFlow((currentFlow) =>
       isDefined(currentFlow)
-        ? applyPositionsToFlow({
-            flow: { ...currentFlow, workflowVersionId },
-            positions,
-          })
+        ? { ...currentFlow, workflowVersionId }
         : currentFlow,
     );
 
