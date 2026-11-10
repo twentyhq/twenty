@@ -8,6 +8,7 @@ import {
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -40,11 +41,6 @@ type SqlRenderingContext = {
   collectedParameters: ObjectLiteral;
 };
 
-type RenderedSqlCondition = {
-  sql: string;
-  parameters: ObjectLiteral;
-};
-
 export const renderRowLevelPermissionFilterToSql = ({
   recordFilter,
   tableAlias,
@@ -57,7 +53,7 @@ export const renderRowLevelPermissionFilterToSql = ({
   objectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-}): RenderedSqlCondition | null => {
+}): SQLCondition | null => {
   const { fieldIdByName, fieldIdByJoinColumnName } =
     buildFieldMapsFromFlatObjectMetadata(flatFieldMetadataMaps, objectMetadata);
 
@@ -84,13 +80,13 @@ const renderFilterAsConjunction = (
   filter: RecordGqlOperationFilter,
   context: SqlRenderingContext,
 ): string => {
-  const conditions = Object.entries(filter)
+  const sqlConditions = Object.entries(filter)
     .map(([filterKey, filterValue]) =>
       renderFilterEntry(filterKey, filterValue, context),
     )
     .filter(isNonEmptyString);
 
-  return joinConditions(conditions, 'AND');
+  return joinSQLConditions(sqlConditions, 'AND');
 };
 
 const renderFilterEntry = (
@@ -112,19 +108,19 @@ const renderFilterEntry = (
         context,
       );
     case 'not': {
-      const negatedCondition = renderFilterAsConjunction(
+      const negatedSQLCondition = renderFilterAsConjunction(
         filterValue as RecordGqlOperationFilter,
         context,
       );
 
-      const conditionToNegate = isNonEmptyString(negatedCondition)
-        ? negatedCondition
+      const sqlConditionToNegate = isNonEmptyString(negatedSQLCondition)
+        ? negatedSQLCondition
         : ALWAYS_TRUE_CONDITION;
 
-      return `NOT (${conditionToNegate})`;
+      return `NOT (${sqlConditionToNegate})`;
     }
     default:
-      return renderFieldCondition(filterKey, filterValue, context);
+      return renderFieldSQLCondition(filterKey, filterValue, context);
   }
 };
 
@@ -135,37 +131,37 @@ const renderLogicalGroup = (
 ): string => {
   const filterList = Array.isArray(filters) ? filters : [filters];
 
-  const conditions = filterList.map((filter) => {
-    const renderedCondition = renderFilterAsConjunction(filter, context);
+  const sqlConditions = filterList.map((filter) => {
+    const renderedSQLCondition = renderFilterAsConjunction(filter, context);
 
-    return isNonEmptyString(renderedCondition)
-      ? renderedCondition
+    return isNonEmptyString(renderedSQLCondition)
+      ? renderedSQLCondition
       : ALWAYS_TRUE_CONDITION;
   });
 
-  if (conditions.length === 0) {
+  if (sqlConditions.length === 0) {
     return ALWAYS_TRUE_CONDITION;
   }
 
-  return `(${conditions.join(` ${logicalOperator} `)})`;
+  return `(${sqlConditions.join(` ${logicalOperator} `)})`;
 };
 
-const joinConditions = (
-  conditions: string[],
+const joinSQLConditions = (
+  sqlConditions: string[],
   logicalOperator: 'AND' | 'OR',
 ): string => {
-  if (conditions.length === 0) {
+  if (sqlConditions.length === 0) {
     return '';
   }
 
-  if (conditions.length === 1) {
-    return conditions[0];
+  if (sqlConditions.length === 1) {
+    return sqlConditions[0];
   }
 
-  return `(${conditions.join(` ${logicalOperator} `)})`;
+  return `(${sqlConditions.join(` ${logicalOperator} `)})`;
 };
 
-const renderRelationCondition = ({
+const renderRelationSQLCondition = ({
   relationFieldMetadata,
   targetFilter,
   context,
@@ -195,7 +191,7 @@ const renderRelationCondition = ({
     { relationFieldMetadata, flatFieldMetadataMaps },
   );
   const targetTableAlias = `${tableAlias}_${relationFieldMetadata.name}`;
-  const targetCondition = renderFilterAsConjunction(targetFilter, {
+  const targetSQLCondition = renderFilterAsConjunction(targetFilter, {
     ...context,
     tableAlias: targetTableAlias,
     ...buildFieldMapsFromFlatObjectMetadata(
@@ -208,10 +204,10 @@ const renderRelationCondition = ({
   return `EXISTS (SELECT 1 FROM ${buildWorkspaceTableExpression({
     workspaceId,
     tableName: computeObjectTargetTable(targetFlatObjectMetadata),
-  })} AS ${quotedTargetTableAlias} WHERE ${quotedTargetTableAlias}.${escapeIdentifier(targetColumnName)} = ${escapeIdentifier(tableAlias)}.${escapeIdentifier(sourceColumnName)} AND ${quotedTargetTableAlias}."deletedAt" IS NULL AND (${targetCondition || ALWAYS_TRUE_CONDITION}))`;
+  })} AS ${quotedTargetTableAlias} WHERE ${quotedTargetTableAlias}.${escapeIdentifier(targetColumnName)} = ${escapeIdentifier(tableAlias)}.${escapeIdentifier(sourceColumnName)} AND ${quotedTargetTableAlias}."deletedAt" IS NULL AND (${targetSQLCondition || ALWAYS_TRUE_CONDITION}))`;
 };
 
-const renderFieldCondition = (
+const renderFieldSQLCondition = (
   fieldNameOrJoinColumnName: string,
   filterValue: unknown,
   context: SqlRenderingContext,
@@ -242,7 +238,7 @@ const renderFieldCondition = (
     isReferencedByFieldName &&
     isMorphOrRelationFlatFieldMetadata(fieldMetadata)
   ) {
-    return renderRelationCondition({
+    return renderRelationSQLCondition({
       relationFieldMetadata: fieldMetadata,
       targetFilter: filterValue as RecordGqlOperationFilter,
       context,
@@ -250,10 +246,14 @@ const renderFieldCondition = (
   }
 
   if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-    return renderCompositeFieldCondition(fieldMetadata, filterValue, context);
+    return renderCompositeFieldSQLCondition(
+      fieldMetadata,
+      filterValue,
+      context,
+    );
   }
 
-  const operatorConditions = Object.entries(
+  const operatorSQLConditions = Object.entries(
     filterValue as Record<string, unknown>,
   ).map(([operator, operatorValue]) => {
     assertArrayOperatorValueIsNonEmptyArrayOrThrow({
@@ -275,10 +275,10 @@ const renderFieldCondition = (
     return `(${sql})`;
   });
 
-  return joinConditions(operatorConditions, 'AND');
+  return joinSQLConditions(operatorSQLConditions, 'AND');
 };
 
-const renderCompositeFieldCondition = (
+const renderCompositeFieldSQLCondition = (
   fieldMetadata: OrmFlatFieldMetadata,
   filterValue: unknown,
   context: SqlRenderingContext,
@@ -294,7 +294,7 @@ const renderCompositeFieldCondition = (
     );
   }
 
-  const conditions = Object.entries(
+  const sqlConditions = Object.entries(
     filterValue as Record<string, Record<string, unknown>>,
   ).flatMap(([subFieldName, subFieldFilter]) => {
     // An absent sub-field filter is no constraint, as for the in-memory matcher
@@ -335,5 +335,5 @@ const renderCompositeFieldCondition = (
     });
   });
 
-  return joinConditions(conditions, 'AND');
+  return joinSQLConditions(sqlConditions, 'AND');
 };

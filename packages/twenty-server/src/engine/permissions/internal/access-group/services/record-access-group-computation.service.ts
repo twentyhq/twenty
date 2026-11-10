@@ -19,7 +19,7 @@ import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/p
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
-import { buildRecordAccessGroupConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-conditions.util';
+import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
@@ -123,7 +123,7 @@ export class RecordAccessGroupComputationService {
     await this.recordAccessGroupRepository.updateRecordAccessGroupIds({
       workspaceId,
       flatObjectMetadata,
-      recordAccessGroupConditions: buildRecordAccessGroupConditions({
+      recordAccessGroupSQLConditions: buildRecordAccessGroupSQLConditions({
         flatObjectMetadata,
         metadataMaps,
         accessGroups: await this.findObjectAccessGroups({

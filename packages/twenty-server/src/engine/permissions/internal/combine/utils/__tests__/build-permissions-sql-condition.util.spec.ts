@@ -15,8 +15,8 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { buildPermissionsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-condition.util';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { buildPermissionsSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-sql-condition.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
@@ -88,13 +88,13 @@ const metadataMaps: PermissionsMetadataMaps = {
   },
   featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
 };
-const buildCondition = (
+const buildSQLCondition = (
   request: Omit<
-    Parameters<typeof buildPermissionsCondition>[0],
+    Parameters<typeof buildPermissionsSQLCondition>[0],
     'recordShareTableExpression'
   >,
 ) =>
-  buildPermissionsCondition({
+  buildPermissionsSQLCondition({
     ...request,
     recordShareTableExpression: '"workspace"."recordShare"',
   });
@@ -106,16 +106,18 @@ const sharingMetadataMaps = {
   },
 };
 
-const buildConditionOutcome = (
-  args: Parameters<typeof buildCondition>[0],
-): { kind: 'open' | 'denied' } | { kind: 'gated'; condition: SqlCondition } => {
-  const condition = buildCondition(args);
+const buildSQLConditionOutcome = (
+  args: Parameters<typeof buildSQLCondition>[0],
+):
+  | { kind: 'open' | 'denied' }
+  | { kind: 'gated'; sqlCondition: SQLCondition } => {
+  const sqlCondition = buildSQLCondition(args);
 
-  if (typeof condition === 'boolean') {
-    return { kind: condition ? 'open' : 'denied' };
+  if (typeof sqlCondition === 'boolean') {
+    return { kind: sqlCondition ? 'open' : 'denied' };
   }
 
-  return { kind: 'gated', condition };
+  return { kind: 'gated', sqlCondition };
 };
 
 const readEverything: PermissionsPrincipalsWithRolesContext = {
@@ -161,7 +163,7 @@ const build = ({
   flatObjectMetadata: FlatObjectMetadata;
   policyMetadataMaps?: typeof metadataMaps;
 }) =>
-  buildConditionOutcome({
+  buildSQLConditionOutcome({
     principals,
     metadataMaps: policyMetadataMaps,
     tableAlias: flatObjectMetadata.nameSingular,
@@ -182,10 +184,10 @@ const gatedSql = ({
 
   expect(policy.kind).toBe('gated');
 
-  return policy.kind === 'gated' ? policy.condition.sql : '';
+  return policy.kind === 'gated' ? policy.sqlCondition.sql : '';
 };
 
-describe('buildPermissionsCondition', () => {
+describe('buildPermissionsSQLCondition', () => {
   beforeEach(() => {
     (renderRowLevelPermissionFilterToSql as jest.Mock).mockImplementation(
       ({ tableAlias }: { tableAlias: string }) => ({
@@ -212,8 +214,8 @@ describe('buildPermissionsCondition', () => {
     ).toMatchObject({ kind: 'gated' });
   });
 
-  it('keeps private conditions without a share block when only private records are on', () => {
-    const policy = buildConditionOutcome({
+  it('keeps private sqlConditions without a share block when only private records are on', () => {
+    const policy = buildSQLConditionOutcome({
       principals: readEverything,
       metadataMaps,
       tableAlias: 'company',
@@ -223,18 +225,18 @@ describe('buildPermissionsCondition', () => {
 
     expect(policy).toMatchObject({
       kind: 'gated',
-      condition: { sql: expect.stringContaining('_isPrivate') },
+      sqlCondition: { sql: expect.stringContaining('_isPrivate') },
     });
-    expect(policy.kind === 'gated' ? policy.condition.sql : '').not.toContain(
-      'recordShare',
-    );
+    expect(
+      policy.kind === 'gated' ? policy.sqlCondition.sql : '',
+    ).not.toContain('recordShare');
   });
 
   it('adds nothing for private records and shares with both flags off', () => {
     const company = buildObject({ id: 'company' });
 
     expect(
-      buildCondition({
+      buildSQLCondition({
         principals: readEverything,
         metadataMaps: { ...metadataMaps, featureFlagsMap: {} },
         tableAlias: 'company',
@@ -246,7 +248,7 @@ describe('buildPermissionsCondition', () => {
 
   it('keeps private records to their creator and shares once record sharing is enabled', () => {
     const company = buildObject({ id: 'company' });
-    const policy = buildConditionOutcome({
+    const policy = buildSQLConditionOutcome({
       principals: readEverything,
       metadataMaps: sharingMetadataMaps,
       tableAlias: 'company',
@@ -258,10 +260,10 @@ describe('buildPermissionsCondition', () => {
     if (policy.kind !== 'gated') {
       throw new Error('Expected a privacy gate');
     }
-    expect(policy.condition.sql).toContain(
+    expect(policy.sqlCondition.sql).toContain(
       '("company"."_isPrivate" = FALSE) OR',
     );
-    expect(policy.condition.sql).toContain('"workspace"."recordShare"');
+    expect(policy.sqlCondition.sql).toContain('"workspace"."recordShare"');
   });
 
   it('gates every object on private records once they are enabled, without record sharing', () => {
@@ -275,7 +277,7 @@ describe('buildPermissionsCondition', () => {
 
   it('gates a system object on private records too', () => {
     expect(
-      buildConditionOutcome({
+      buildSQLConditionOutcome({
         principals: readEverything,
         metadataMaps: sharingMetadataMaps,
         tableAlias: 'note',
@@ -287,7 +289,7 @@ describe('buildPermissionsCondition', () => {
 
   it('leaves an object open to inserts when record sharing is enabled', () => {
     expect(
-      buildConditionOutcome({
+      buildSQLConditionOutcome({
         principals: readEverything,
         metadataMaps: sharingMetadataMaps,
         tableAlias: 'note',
@@ -303,7 +305,7 @@ describe('buildPermissionsCondition', () => {
       principals: PermissionsPrincipalsWithRolesContext,
       operationType: 'read' | 'update' | 'destroy' = 'read',
     ) =>
-      buildConditionOutcome({
+      buildSQLConditionOutcome({
         principals,
         metadataMaps: sharingMetadataMaps,
         tableAlias: 'company',
@@ -332,10 +334,10 @@ describe('buildPermissionsCondition', () => {
       if (policy.kind !== 'gated') {
         throw new Error('Expected a grant gate');
       }
-      expect(policy.condition.sql).toMatch(
+      expect(policy.sqlCondition.sql).toMatch(
         /^"company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId" FROM "workspace"."recordShare"/,
       );
-      expect(Object.values(policy.condition.parameters)).toContainEqual([
+      expect(Object.values(policy.sqlCondition.parameters)).toContainEqual([
         'member-1',
         'role-2',
         'role-3',
@@ -348,7 +350,7 @@ describe('buildPermissionsCondition', () => {
       if (policy.kind !== 'gated') {
         throw new Error('Expected a grant gate');
       }
-      expect(Object.values(policy.condition.parameters)).toEqual(
+      expect(Object.values(policy.sqlCondition.parameters)).toEqual(
         expect.arrayContaining([
           ['member-1', 'role-2', 'role-3'],
           [RecordShareAccessLevel.READ_WRITE, RecordShareAccessLevel.FULL],
@@ -362,13 +364,13 @@ describe('buildPermissionsCondition', () => {
       if (policy.kind !== 'gated') {
         throw new Error('Expected a grant gate');
       }
-      expect(Object.values(policy.condition.parameters)).toContainEqual([
+      expect(Object.values(policy.sqlCondition.parameters)).toContainEqual([
         'member-1',
         ROLE_WITHOUT_PERMISSION_ID,
       ]);
-      expect(Object.values(policy.condition.parameters).flat()).not.toContain(
-        EVERYONE_PRINCIPAL_ID,
-      );
+      expect(
+        Object.values(policy.sqlCondition.parameters).flat(),
+      ).not.toContain(EVERYONE_PRINCIPAL_ID);
     });
 
     it('keeps deletion with the role', () => {
@@ -384,7 +386,7 @@ describe('buildPermissionsCondition', () => {
       if (policy.kind !== 'gated') {
         throw new Error('Expected a grant gate');
       }
-      expect(policy.condition.sql).toMatch(
+      expect(policy.sqlCondition.sql).toMatch(
         /^\(\(\("company"."title" = :restricted\) AND \("company"."_isPrivate" = FALSE\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
       );
     });
@@ -411,20 +413,20 @@ describe('buildPermissionsCondition', () => {
   });
 
   it('opens private records only to shares naming the member or their roles', () => {
-    const condition = buildCondition({
+    const sqlCondition = buildSQLCondition({
       principals: readEverything,
       metadataMaps,
       flatObjectMetadata: person,
       operationType: 'read',
     });
 
-    if (typeof condition === 'boolean') {
-      throw new Error('Expected a share condition');
+    if (typeof sqlCondition === 'boolean') {
+      throw new Error('Expected a share sqlCondition');
     }
-    expect(condition.sql).toContain(
+    expect(sqlCondition.sql).toContain(
       '("person"."_isPrivate" = TRUE) AND (EXISTS',
     );
-    expect(Object.values(condition.parameters)).toContainEqual([
+    expect(Object.values(sqlCondition.parameters)).toContainEqual([
       'member-1',
       'role-1',
     ]);
@@ -444,7 +446,7 @@ describe('buildPermissionsCondition', () => {
 
   it('checks the role rule through the caller access groups when given', () => {
     (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
-    const policy = buildConditionOutcome({
+    const policy = buildSQLConditionOutcome({
       principals: readEverything,
       metadataMaps,
       tableAlias: 'person',
@@ -456,11 +458,13 @@ describe('buildPermissionsCondition', () => {
     if (policy.kind !== 'gated') {
       throw new Error('Expected a grant gate');
     }
-    expect(policy.condition.sql).toContain(
+    expect(policy.sqlCondition.sql).toContain(
       '"person"."_accessGroupIds" && CAST(',
     );
-    expect(policy.condition.sql).not.toContain('"person"."title"');
-    expect(Object.values(policy.condition.parameters)).toContainEqual([42, 43]);
+    expect(policy.sqlCondition.sql).not.toContain('"person"."title"');
+    expect(Object.values(policy.sqlCondition.parameters)).toContainEqual([
+      42, 43,
+    ]);
   });
 
   it('keeps the role rule when the object is not listed through access groups', () => {
@@ -472,7 +476,7 @@ describe('buildPermissionsCondition', () => {
   });
 
   it('keeps private records gated regardless of the sharing UI flag', () => {
-    const policy = buildConditionOutcome({
+    const policy = buildSQLConditionOutcome({
       principals: readEverything,
       metadataMaps,
       tableAlias: 'person',
@@ -483,8 +487,8 @@ describe('buildPermissionsCondition', () => {
     if (policy.kind !== 'gated') {
       throw new Error('Expected a grant gate');
     }
-    expect(policy.condition.sql).toContain('recordShare');
-    expect(policy.condition.sql).not.toContain('rowCause');
+    expect(policy.sqlCondition.sql).toContain('recordShare');
+    expect(policy.sqlCondition.sql).not.toContain('rowCause');
   });
   describe('with a prospective named share', () => {
     const prospectiveShareArguments = {
@@ -494,13 +498,13 @@ describe('buildPermissionsCondition', () => {
       flatObjectMetadata: person,
       operationType: 'update',
       hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
-    } satisfies Parameters<typeof buildConditionOutcome>[0];
+    } satisfies Parameters<typeof buildSQLConditionOutcome>[0];
 
     it('requires an edit-level share to preview update access', () => {
-      expect(buildConditionOutcome(prospectiveShareArguments)).toEqual({
+      expect(buildSQLConditionOutcome(prospectiveShareArguments)).toEqual({
         kind: 'open',
       });
-      const readOnly = buildConditionOutcome({
+      const readOnly = buildSQLConditionOutcome({
         ...prospectiveShareArguments,
         hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ,
       });
@@ -510,7 +514,7 @@ describe('buildPermissionsCondition', () => {
 
     it('preserves the member-bound row filter when sharing cannot reach beyond the role', () => {
       (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
-      const policy = buildConditionOutcome({
+      const policy = buildSQLConditionOutcome({
         ...prospectiveShareArguments,
         operationType: 'softDelete',
         hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.FULL,
@@ -520,20 +524,20 @@ describe('buildPermissionsCondition', () => {
 
       expect(policy).toMatchObject({
         kind: 'gated',
-        condition: {
+        sqlCondition: {
           sql: expect.stringContaining('"note"."title" = :restricted'),
         },
       });
       expect(
         policy.kind === 'gated'
-          ? policy.condition.sql.match(/"note"\."title" = :restricted/g)
+          ? policy.sqlCondition.sql.match(/"note"\."title" = :restricted/g)
           : [],
       ).toHaveLength(2);
     });
 
     it('preserves a disabled edit action', () => {
       expect(
-        buildConditionOutcome({
+        buildSQLConditionOutcome({
           ...prospectiveShareArguments,
           flatObjectMetadata: {
             ...person,
@@ -547,7 +551,7 @@ describe('buildPermissionsCondition', () => {
 
     it('honors ownership for an object that disables editing', () => {
       expect(
-        buildConditionOutcome({
+        buildSQLConditionOutcome({
           ...prospectiveShareArguments,
           principals: owningApplication,
           flatObjectMetadata: {
@@ -562,7 +566,7 @@ describe('buildPermissionsCondition', () => {
 
     it('does not use a prospective share to bypass a disabled read action', () => {
       expect(
-        buildConditionOutcome({
+        buildSQLConditionOutcome({
           ...prospectiveShareArguments,
           operationType: 'read',
           flatObjectMetadata: {
@@ -575,14 +579,14 @@ describe('buildPermissionsCondition', () => {
 
     it('reaches beyond missing role access only when record sharing is enabled', () => {
       expect(
-        buildConditionOutcome({
+        buildSQLConditionOutcome({
           ...prospectiveShareArguments,
           metadataMaps,
           principals: withoutObjectPermission,
         }),
       ).toEqual({ kind: 'denied' });
       expect(
-        buildConditionOutcome({
+        buildSQLConditionOutcome({
           ...prospectiveShareArguments,
           principals: withoutObjectPermission,
         }),
@@ -613,7 +617,7 @@ describe('buildPermissionsCondition', () => {
     const buildForCreator = (
       principals: PermissionsPrincipalsWithRolesContext,
     ) =>
-      buildConditionOutcome({
+      buildSQLConditionOutcome({
         principals,
         metadataMaps: creatorMetadataMaps,
         tableAlias: 'company',
@@ -627,10 +631,12 @@ describe('buildPermissionsCondition', () => {
       if (policy.kind !== 'gated') {
         throw new Error('Expected a privacy gate');
       }
-      expect(policy.condition.sql).toMatch(
+      expect(policy.sqlCondition.sql).toMatch(
         /^\(\("company"."_isPrivate" = FALSE\) OR \("company"."id" = ANY\(ARRAY\(.*\)\)\) OR \(\("company"."_isPrivate" = TRUE\) AND \("company"."createdByWorkspaceMemberId" = :recordCreatedByWorkspaceMemberId_[0-9a-f]{10}\)\)\)$/,
       );
-      expect(Object.values(policy.condition.parameters)).toContain('member-1');
+      expect(Object.values(policy.sqlCondition.parameters)).toContain(
+        'member-1',
+      );
     });
 
     it('lets the creator of a private record in whatever their role', () => {
@@ -639,7 +645,7 @@ describe('buildPermissionsCondition', () => {
       if (policy.kind !== 'gated') {
         throw new Error('Expected a grant gate');
       }
-      expect(policy.condition.sql).toContain(
+      expect(policy.sqlCondition.sql).toContain(
         '("company"."_isPrivate" = TRUE) AND ("company"."createdByWorkspaceMemberId" = :',
       );
     });

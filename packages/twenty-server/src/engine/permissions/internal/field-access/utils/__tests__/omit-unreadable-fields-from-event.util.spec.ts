@@ -11,7 +11,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { omitUnreadableFieldsFromEvent } from 'src/engine/permissions/internal/masking/utils/omit-unreadable-fields-from-event.util';
+import { omitUnreadableFieldsFromEvent } from 'src/engine/permissions/internal/field-access/utils/omit-unreadable-fields-from-event.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_METADATA_ID = 'company-object-id';
@@ -117,15 +117,6 @@ const omit = ({
 }) =>
   omitUnreadableFieldsFromEvent({
     event,
-    principals: {
-      workspaceId: 'workspace-id',
-      mainPrincipal: {
-        type: 'workspaceMember',
-        roleId: 'role-id',
-        workspaceMemberId: 'member-id',
-      },
-      applicationPrincipal: { type: 'customApplication' },
-    },
     objectMetadata: getFlatObjectMetadataMock({
       id: OBJECT_METADATA_ID,
       universalIdentifier: OBJECT_METADATA_ID,
@@ -133,7 +124,7 @@ const omit = ({
     }),
     recordsPermissions: buildRecordsPermissions(unreadableFields),
     recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
-    rlsRuleFilterByRoleId: new Map(),
+    fieldsHiddenOnMatchingRecords: [],
     metadataMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),

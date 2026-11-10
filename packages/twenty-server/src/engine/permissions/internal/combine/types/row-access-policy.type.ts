@@ -12,7 +12,7 @@ import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/internal
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export type PermissionsMetadataMaps = {
@@ -53,7 +53,7 @@ export type RowAccessEvaluationContext = {
     targetFlatObjectMetadata: FlatObjectMetadata;
     targetColumnName: string;
     tableAlias: string;
-    condition: SqlCondition | null;
+    sqlCondition: SQLCondition | null;
     joinValues: string[];
   }) => Promise<string[]>;
 };

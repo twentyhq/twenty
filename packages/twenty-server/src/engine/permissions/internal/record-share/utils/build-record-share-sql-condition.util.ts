@@ -8,7 +8,7 @@ import { type ObjectLiteral } from 'typeorm';
 import { buildPostgresSafeAlias } from 'src/engine/workspace-query-executor/utils/build-postgres-safe-alias.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-export const buildRecordShareCondition = ({
+export const buildRecordShareSQLCondition = ({
   tableAlias,
   recordShareTableExpression,
   objectMetadataId,
@@ -33,7 +33,7 @@ export const buildRecordShareCondition = ({
   );
 
   const recordId = `${escapeIdentifier(tableAlias)}."id"`;
-  const grantConditions = [
+  const grantSQLConditions = [
     `${recordShareAlias}."objectMetadataId" = :${objectMetadataIdParameterName}`,
     `${recordShareAlias}."principalId" = ANY(:${principalIdsParameterName})`,
     `${recordShareAlias}."accessLevel" IN (:...${accessLevelsParameterName})`,
@@ -45,8 +45,8 @@ export const buildRecordShareCondition = ({
     // Uncorrelated, Postgres reads the grants once and can OR them with an
     // indexed row filter instead of probing the share table for every row
     sql: isUncorrelated
-      ? `${recordId} = ANY(ARRAY(SELECT ${recordShareAlias}."recordId" ${fromRecordShares} WHERE ${grantConditions.join(' AND ')}))`
-      : `EXISTS (SELECT 1 ${fromRecordShares} WHERE ${[`${recordShareAlias}."recordId" = ${recordId}`, ...grantConditions].join(' AND ')})`,
+      ? `${recordId} = ANY(ARRAY(SELECT ${recordShareAlias}."recordId" ${fromRecordShares} WHERE ${grantSQLConditions.join(' AND ')}))`
+      : `EXISTS (SELECT 1 ${fromRecordShares} WHERE ${[`${recordShareAlias}."recordId" = ${recordId}`, ...grantSQLConditions].join(' AND ')})`,
     parameters: {
       [objectMetadataIdParameterName]: objectMetadataId,
       [principalIdsParameterName]: principalIds,

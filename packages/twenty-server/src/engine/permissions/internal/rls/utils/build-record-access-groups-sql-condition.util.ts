@@ -3,16 +3,16 @@
 import { randomBytes } from 'node:crypto';
 
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-export const buildRecordAccessGroupsCondition = ({
+export const buildRecordAccessGroupsSQLCondition = ({
   tableAlias,
   callerAccessGroupCompactIds,
 }: {
   tableAlias: string;
   callerAccessGroupCompactIds: number[];
-}): SqlCondition => {
+}): SQLCondition => {
   const parameterName = `callerAccessGroupCompactIds_${randomBytes(5).toString('hex')}`;
 
   return {
