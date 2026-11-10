@@ -1,10 +1,10 @@
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTidyUp = () => {
-  const [workflowDiagram, setWorkflowDiagram] = useAtomComponentState(
+  const workflowDiagram = useAtomComponentStateValue(
     workflowDiagramComponentState,
   );
 
@@ -15,7 +15,7 @@ export const useTidyUp = () => {
       return;
     }
 
-    setWorkflowDiagram(await tidyUpWorkflowVersion(workflowDiagram));
+    await tidyUpWorkflowVersion(workflowDiagram);
   };
 
   return { tidyUp };

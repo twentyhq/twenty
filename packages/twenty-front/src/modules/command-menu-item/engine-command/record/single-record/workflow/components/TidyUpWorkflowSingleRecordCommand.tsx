@@ -33,10 +33,7 @@ export const TidyUpWorkflowSingleRecordCommand = () => {
       return;
     }
 
-    store.set(
-      workflowDiagramAtom,
-      await tidyUpWorkflowVersion(workflowDiagram),
-    );
+    await tidyUpWorkflowVersion(workflowDiagram);
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
