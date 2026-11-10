@@ -16,6 +16,7 @@ import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { type ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
 import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -534,6 +535,47 @@ describe('OAuth identity apps (integration)', () => {
       expect(refreshResponse.status).toBe(200);
     });
 
+    it('should keep refreshing a connection made before the vendor app matched its document', async () => {
+      const applicationOAuthIdentityService =
+        getAppProviderByClassName<ApplicationOAuthIdentityService>(
+          'ApplicationOAuthIdentityService',
+        );
+      const vendorMatchSpy = jest
+        .spyOn(
+          applicationOAuthIdentityService,
+          'findRegistrationByClientIdMetadataDocument',
+        )
+        .mockResolvedValue(null);
+
+      let refreshToken: string;
+
+      try {
+        const code = await authorizeAsMember({
+          clientId: CHATGPT_DOCUMENT.clientId,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          redirectUrl: CHATGPT_PLATFORM_CALLBACK,
+        });
+
+        const exchangeResponse = await exchangeCode({
+          clientId: CHATGPT_DOCUMENT.clientId,
+          code,
+          redirectUri: CHATGPT_PLATFORM_CALLBACK,
+        });
+
+        expect(exchangeResponse.status).toBe(200);
+        refreshToken = exchangeResponse.body.refresh_token;
+      } finally {
+        vendorMatchSpy.mockRestore();
+      }
+
+      const refreshResponse = await refresh({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        refreshToken,
+      });
+
+      expect(refreshResponse.status).toBe(200);
+    });
+
     it('should reject a vendor callback that the document does not list', async () => {
       const response = await requestAuthorization({
         clientId: CHATGPT_DOCUMENT.clientId,
@@ -645,6 +687,19 @@ describe('OAuth identity apps (integration)', () => {
           oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
           claimsVerifiedClientName: false,
         });
+      });
+
+      it('should spend the same fetch allowance when a member authorizes a document URL', async () => {
+        await exhaustFetchRateLimitWithLookups();
+
+        const throttledResponse = await requestAuthorization({
+          clientId: buildUnreachableDocumentUrl(),
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        });
+
+        expect(throttledResponse.body.errors?.[0]?.extensions?.subCode).toBe(
+          'LIMIT_REACHED',
+        );
       });
 
       it('should spend the same fetch allowance on the token, revoke and introspect endpoints', async () => {

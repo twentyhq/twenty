@@ -392,13 +392,16 @@ export class OAuthService {
         payload.workspaceId,
         {
           where: { id: payload.applicationId },
+          relations: { applicationRegistration: true },
         },
       );
 
-      if (
-        !application ||
-        application.applicationRegistrationId !== applicationRegistration.id
-      ) {
+      // A client that connected before its vendor app existed keeps tokens bound to its own registration
+      const isIssuedToClient =
+        application?.applicationRegistrationId === applicationRegistration.id ||
+        application?.applicationRegistration?.oAuthClientId === clientId;
+
+      if (!isDefined(application) || !isIssuedToClient) {
         return this.errorResponse(
           'invalid_grant',
           'Refresh token was not issued to this client',
