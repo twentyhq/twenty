@@ -6,6 +6,8 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { createApiKeyWithFieldPermission } from 'test/integration/permissions/utils/create-api-key-with-field-permission.util';
+import { deleteApiKeysWithObjectRecordGrants } from 'test/integration/permissions/utils/delete-api-keys-with-object-record-grants.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const OBJECT_SINGULAR = 'uniqueDeletedTestObject';
@@ -46,14 +48,21 @@ const deleteRecord = (id: string) =>
     }),
   );
 
-const restoreRecords = (ids: string[]) =>
+const restoreRecords = (
+  ids: string[],
+  {
+    gqlFields = GQL_FIELDS,
+    token,
+  }: { gqlFields?: string; token?: string } = {},
+) =>
   makeGraphqlApiRequest(
     restoreManyOperationFactory({
       objectMetadataSingularName: OBJECT_SINGULAR,
       objectMetadataPluralName: OBJECT_PLURAL,
-      gqlFields: GQL_FIELDS,
+      gqlFields,
       filter: { id: { in: ids } },
     }),
+    token,
   );
 
 describe('unique field with deleted records', () => {
@@ -153,5 +162,32 @@ describe('unique field with deleted records', () => {
     expect(restoreResponse.body.data.restoreUniqueDeletedTestObjects).toEqual([
       { id: deletedRecord.id, reference: 'restored', deletedAt: null },
     ]);
+  });
+
+  it('keeps the value and the live record out of the error for a caller who cannot read the field', async () => {
+    const deletedRecord = await createRecordOrThrow('unreadable');
+
+    await deleteRecord(deletedRecord.id);
+    await createRecordOrThrow('unreadable');
+
+    const readRestrictedApiKey = await createApiKeyWithFieldPermission({
+      objectNameSingular: OBJECT_SINGULAR,
+      fieldName: 'reference',
+      canReadFieldValue: false,
+    });
+
+    const refusedRestoreResponse = await restoreRecords([deletedRecord.id], {
+      gqlFields: 'id',
+      token: readRestrictedApiKey.token,
+    });
+
+    await deleteApiKeysWithObjectRecordGrants([readRestrictedApiKey]);
+
+    const { extensions } = refusedRestoreResponse.body.errors[0];
+
+    expect(extensions.userFriendlyMessage).toBe(
+      'Cannot restore: another Invoice already has the same Reference.',
+    );
+    expect(extensions.conflictingRecordId).toBeUndefined();
   });
 });
