@@ -5,7 +5,9 @@ import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-la
 import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { type UpdateOnePageLayoutWithTabsAndWidgetsFactoryInput } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets-query-factory.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
@@ -21,8 +23,11 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { type UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const MOCK_IFRAME_CONFIGURATION = {
   configurationType: WidgetConfigurationType.IFRAME,
@@ -413,5 +418,86 @@ describe('Page layout with tabs update should succeed', () => {
         input: { idToDelete: aggregateFieldMetadataId },
       });
     }
+  });
+
+  it('should save layout tabs and widgets when an unchanged stored widget holds settings of another chart type', async () => {
+    const pieChartConfiguration = {
+      configurationType: WidgetConfigurationType.PIE_CHART,
+      aggregateFieldMetadataId: testFieldMetadataIds.fieldMetadataId1,
+      aggregateOperation: AggregateOperations.COUNT,
+      groupByFieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
+    } satisfies AllPageLayoutWidgetConfiguration;
+    const storedPieChartConfiguration = {
+      ...pieChartConfiguration,
+      layout: 'VERTICAL',
+      rangeMin: null,
+    } as AllPageLayoutWidgetConfiguration;
+    const pieChartWidget = {
+      id: v4(),
+      pageLayoutTabId: testTabId1,
+      title: 'Pie Chart Widget',
+      type: WidgetType.GRAPH,
+      objectMetadataId: testFieldMetadataIds.objectMetadataId,
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID as const,
+        row: 0,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 1,
+      },
+    };
+    const iframeWidget = {
+      id: v4(),
+      pageLayoutTabId: testTabId1,
+      title: 'Iframe Widget',
+      type: WidgetType.IFRAME,
+      objectMetadataId: null,
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID as const,
+        row: 1,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 1,
+      },
+      configuration: MOCK_IFRAME_CONFIGURATION,
+    };
+
+    const buildInput = (
+      widgets: UpdatePageLayoutWidgetWithIdInput[],
+    ): UpdateOnePageLayoutWithTabsAndWidgetsFactoryInput => ({
+      id: testPageLayoutId,
+      name: 'Original Page Layout',
+      type: PageLayoutType.RECORD_PAGE,
+      objectMetadataId: null,
+      tabs: [{ id: testTabId1, title: 'Tab 1', position: 0, widgets }],
+    });
+
+    await updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: false,
+      input: buildInput([
+        { ...pieChartWidget, configuration: pieChartConfiguration },
+      ]),
+    });
+
+    // Written around the validation, like rows stored before it was enforced
+    await global.testDataSource.query(
+      `UPDATE core."pageLayoutWidget" SET configuration = $1 WHERE id = $2`,
+      [JSON.stringify(storedPieChartConfiguration), pieChartWidget.id],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'flatPageLayoutWidgetMaps',
+    ]);
+
+    const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: false,
+      input: buildInput([
+        { ...pieChartWidget, configuration: storedPieChartConfiguration },
+        iframeWidget,
+      ]),
+    });
+
+    expect(errors).toBeUndefined();
   });
 });

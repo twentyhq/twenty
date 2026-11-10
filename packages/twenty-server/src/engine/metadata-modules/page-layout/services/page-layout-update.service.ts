@@ -24,9 +24,11 @@ import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layou
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
+import { WIDGET_CONFIGURATION_INPUT_DTO_BY_TYPE } from 'src/engine/metadata-modules/page-layout-widget/constants/widget-configuration-input-dto-by-type.constant';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
+import { validateWidgetConfigurationInputOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input-or-throw.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
@@ -615,6 +617,14 @@ export class PageLayoutUpdateService {
       isEntityIncluded: (entity) => entity.isActive,
     });
 
+    for (const widgetInput of [
+      ...entitiesToCreate,
+      ...entitiesToUpdate,
+      ...entitiesToRestoreAndUpdate,
+    ]) {
+      this.validateWrittenWidgetConfigurationOrThrow(widgetInput);
+    }
+
     const now = new Date();
 
     const widgetsToCreate: FlatPageLayoutWidget[] = entitiesToCreate.map(
@@ -893,6 +903,24 @@ export class PageLayoutUpdateService {
     return idsToRemove.filter(
       (widgetId) => !widgetIdsAcrossAllTabs.has(widgetId),
     );
+  }
+
+  // Record page widget types the widget API refuses (FIELDS, TIMELINE, …) have no input DTO and are saved as sent
+  private validateWrittenWidgetConfigurationOrThrow(
+    widgetInput: UpdatePageLayoutWidgetWithIdInput,
+  ): void {
+    const configurationType = widgetInput.configuration?.configurationType;
+
+    if (
+      !isDefined(configurationType) ||
+      !isDefined(WIDGET_CONFIGURATION_INPUT_DTO_BY_TYPE[configurationType])
+    ) {
+      return;
+    }
+
+    validateWidgetConfigurationInputOrThrow({
+      configuration: widgetInput.configuration,
+    });
   }
 
   private validateConfigurationFieldReferences({

@@ -69,6 +69,101 @@ describe('Page layout with tabs update should fail', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
+  describe('widget configuration validation failures', () => {
+    let testFieldMetadataIds: TestFieldMetadataIds;
+    let testPageLayoutId: string;
+    let testPageLayoutTabId: string;
+
+    beforeAll(async () => {
+      testFieldMetadataIds = await fetchTestFieldMetadataIds();
+    });
+
+    beforeEach(async () => {
+      const { data: layoutData } = await createOnePageLayout({
+        expectToFail: false,
+        input: {
+          name: 'Invalid Widget Configuration Layout',
+          type: PageLayoutType.RECORD_PAGE,
+        },
+      });
+
+      testPageLayoutId = layoutData.createPageLayout.id;
+
+      const { data: tabData } = await createOnePageLayoutTab({
+        expectToFail: false,
+        input: {
+          title: 'Invalid Widget Configuration Tab',
+          pageLayoutId: testPageLayoutId,
+        },
+      });
+
+      testPageLayoutTabId = tabData.createPageLayoutTab.id;
+    });
+
+    afterEach(async () => {
+      await destroyOnePageLayout({
+        expectToFail: false,
+        input: { id: testPageLayoutId },
+      });
+    });
+
+    it('when updating a widget with settings of another chart type', async () => {
+      const chartWidgetId = v4();
+      const chartConfiguration = {
+        configurationType: WidgetConfigurationType.PIE_CHART,
+        aggregateFieldMetadataId: testFieldMetadataIds.fieldMetadataId1,
+        aggregateOperation: AggregateOperations.COUNT,
+        groupByFieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
+      } satisfies AllPageLayoutWidgetConfiguration;
+
+      const buildInput = (configuration: AllPageLayoutWidgetConfiguration) => ({
+        id: testPageLayoutId,
+        name: 'Invalid Widget Configuration Layout',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: null,
+        tabs: [
+          {
+            id: testPageLayoutTabId,
+            title: 'Invalid Widget Configuration Tab',
+            position: 0,
+            widgets: [
+              {
+                id: chartWidgetId,
+                pageLayoutTabId: testPageLayoutTabId,
+                title: 'Pie Chart Widget',
+                type: WidgetType.GRAPH,
+                objectMetadataId: testFieldMetadataIds.objectMetadataId,
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID as const,
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                configuration,
+              },
+            ],
+          },
+        ],
+      });
+
+      await updateOnePageLayoutWithTabsAndWidgets({
+        expectToFail: false,
+        input: buildInput(chartConfiguration),
+      });
+
+      const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
+        expectToFail: true,
+        input: buildInput({
+          ...chartConfiguration,
+          layout: 'VERTICAL',
+        } as AllPageLayoutWidgetConfiguration),
+      });
+
+      expectOneNotInternalServerErrorSnapshot({ errors });
+    });
+  });
+
   describe('chart filter validation failures', () => {
     let testFieldMetadataIds: TestFieldMetadataIds;
     let testPageLayoutId: string | undefined;
