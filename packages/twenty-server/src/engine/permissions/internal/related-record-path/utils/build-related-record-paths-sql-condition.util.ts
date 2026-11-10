@@ -6,7 +6,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
-import { MAX_RELATED_RECORD_PATH_CHAIN_HOP_COUNT } from 'src/engine/metadata-modules/related-record-path/constants/max-related-record-path-chain-hop-count.constant';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
@@ -153,11 +152,11 @@ export const buildRelatedRecordPathsSQLCondition = ({
   const buildPathSQLCondition = ({
     resolvedPath,
     targetTableAlias,
-    remainingHopCount,
+    visitedObjectMetadataIds,
   }: {
     resolvedPath: ResolvedRelatedRecordPath;
     targetTableAlias: string;
-    remainingHopCount: number;
+    visitedObjectMetadataIds: Set<string>;
   }): SQLCondition | boolean => {
     const hopTableAliases = resolvedPath.hops.map(buildNextTableAlias);
     const sourceTableAlias = hopTableAliases[0];
@@ -165,7 +164,7 @@ export const buildRelatedRecordPathsSQLCondition = ({
       ? buildReadableSQLCondition({
           flatObjectMetadata: resolvedPath.sourceFlatObjectMetadata,
           tableAlias: sourceTableAlias,
-          remainingHopCount: remainingHopCount - resolvedPath.hops.length,
+          visitedObjectMetadataIds,
         })
       : buildEntrySQLCondition({
           flatObjectMetadata: resolvedPath.sourceFlatObjectMetadata,
@@ -203,40 +202,46 @@ export const buildRelatedRecordPathsSQLCondition = ({
   const buildReadableSQLCondition = ({
     flatObjectMetadata,
     tableAlias,
-    remainingHopCount,
+    visitedObjectMetadataIds,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
     tableAlias: string;
-    remainingHopCount: number;
+    visitedObjectMetadataIds: Set<string>;
   }): SQLCondition | boolean => {
     const entrySQLCondition = buildEntrySQLCondition({
       flatObjectMetadata,
       tableAlias,
     });
 
-    if (entrySQLCondition === true) {
-      return true;
+    if (
+      entrySQLCondition === true ||
+      visitedObjectMetadataIds.has(flatObjectMetadata.id)
+    ) {
+      return entrySQLCondition;
     }
+
+    const nextVisitedObjectMetadataIds = new Set([
+      ...visitedObjectMetadataIds,
+      flatObjectMetadata.id,
+    ]);
 
     return combineWithOr([
       entrySQLCondition,
       ...(
         incomingPathsByTargetObjectMetadataId.get(flatObjectMetadata.id) ?? []
-      )
-        .filter(({ hops }) => hops.length <= remainingHopCount)
-        .map((resolvedPath) =>
-          buildPathSQLCondition({
-            resolvedPath,
-            targetTableAlias: tableAlias,
-            remainingHopCount,
-          }),
-        ),
+      ).map((resolvedPath) =>
+        buildPathSQLCondition({
+          resolvedPath,
+          targetTableAlias: tableAlias,
+          visitedObjectMetadataIds: nextVisitedObjectMetadataIds,
+        }),
+      ),
     ]);
   };
 
   return buildReadableSQLCondition({
     flatObjectMetadata,
     tableAlias,
-    remainingHopCount: MAX_RELATED_RECORD_PATH_CHAIN_HOP_COUNT,
+    visitedObjectMetadataIds: new Set(),
   });
 };

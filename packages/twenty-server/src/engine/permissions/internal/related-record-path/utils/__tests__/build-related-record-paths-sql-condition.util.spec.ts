@@ -103,6 +103,13 @@ const fields = [
     joinColumnName: 'targetCompanyId',
   }),
   buildRelationField({
+    id: 'companyOpportunities',
+    objectMetadataId: 'company',
+    relationTargetObjectMetadataId: 'opportunity',
+    relationType: RelationType.ONE_TO_MANY,
+    relationTargetFieldMetadataId: 'opportunityCompany',
+  }),
+  buildRelationField({
     id: 'opportunityCompany',
     objectMetadataId: 'opportunity',
     relationTargetObjectMetadataId: 'company',
@@ -236,6 +243,29 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
         entryByObject: { opportunity: 'owned' },
       }),
     ).toBe(false);
+  });
+
+  it('stops on inherent paths saved as a cycle', () => {
+    const condition = buildAttachmentCondition({
+      paths: [
+        companyAttachmentsPath,
+        buildPath({
+          id: 'opportunityCompanyPath',
+          objectMetadataId: 'opportunity',
+          firstFieldMetadataId: 'opportunityCompany',
+          isInherent: true,
+        }),
+        buildPath({
+          id: 'companyOpportunitiesPath',
+          objectMetadataId: 'company',
+          firstFieldMetadataId: 'companyOpportunities',
+          isInherent: true,
+        }),
+      ],
+      entryByObject: { opportunity: 'owned' },
+    }) as SQLCondition;
+
+    expect(condition.sql.match(/EXISTS/g)).toHaveLength(2);
   });
 
   it('ignores paths through inactive fields', () => {
