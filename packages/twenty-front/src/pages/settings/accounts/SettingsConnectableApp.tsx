@@ -1,6 +1,7 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { SettingsConnectableAppConnectionsSection } from '@/settings/app-preferences/components/SettingsConnectableAppConnectionsSection';
 import { useConnectableApps } from '@/settings/app-preferences/hooks/useConnectableApps';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -14,10 +15,19 @@ import { Section } from 'twenty-ui/components/layout';
 export const SettingsConnectableApp = () => {
   const { t } = useLingui();
   const { applicationId } = useParams<{ applicationId: string }>();
-  const { connectableApps, isLoading } = useConnectableApps();
+  const {
+    connectableApps,
+    isLoading,
+    hasConnectableAppsLoadError,
+    refetchConnectableApps,
+  } = useConnectableApps();
   const connectableApp = connectableApps.find(({ id }) => id === applicationId);
 
-  if (!isDefined(connectableApp) && !isLoading) {
+  if (
+    !isDefined(connectableApp) &&
+    !isLoading &&
+    !hasConnectableAppsLoadError
+  ) {
     return (
       <Navigate to={getSettingsPath(SettingsPath.AppPreferences)} replace />
     );
@@ -64,6 +74,11 @@ export const SettingsConnectableApp = () => {
               connectableApp={connectableApp}
             />
           </>
+        ) : hasConnectableAppsLoadError && !isLoading ? (
+          <SettingsApplicationLoadErrorBanner
+            message={t`This app could not be loaded. Check your connection and try again.`}
+            onRetry={refetchConnectableApps}
+          />
         ) : (
           <SettingsSectionSkeletonLoader />
         )}
