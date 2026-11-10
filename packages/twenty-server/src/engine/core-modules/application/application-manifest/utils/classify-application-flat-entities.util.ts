@@ -83,6 +83,7 @@ const classifyFlatEntity = ({
           }
         : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'searchFieldMetadata':
+    case 'rowLevelPermissionRule':
       return { status: ApplicationExportCoverageStatus.ENGINE_DERIVED };
     case 'workflowVersion':
       return {

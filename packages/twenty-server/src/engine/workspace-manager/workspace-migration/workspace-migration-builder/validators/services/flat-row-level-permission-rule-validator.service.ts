@@ -14,10 +14,8 @@ import {
   type FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 
 type RuleRelatedFlatEntityMaps = UniversalFlatEntityValidationArgs<
   typeof ALL_METADATA_NAME.rowLevelPermissionRule
@@ -28,7 +26,6 @@ export class FlatRowLevelPermissionRuleValidatorService {
   validateFlatRowLevelPermissionRuleCreation({
     flatEntityToValidate: flatRuleToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionRule
   >): FailedFlatEntityValidation<'rowLevelPermissionRule', 'create'> {
@@ -58,7 +55,6 @@ export class FlatRowLevelPermissionRuleValidatorService {
       ...this.getRoleAndObjectErrors({
         flatRule: flatRuleToValidate,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-        buildOptions,
       }),
     );
 
@@ -100,7 +96,6 @@ export class FlatRowLevelPermissionRuleValidatorService {
     universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionRule
   >): FailedFlatEntityValidation<'rowLevelPermissionRule', 'update'> {
@@ -130,7 +125,6 @@ export class FlatRowLevelPermissionRuleValidatorService {
       ...this.getRoleAndObjectErrors({
         flatRule: { ...existingRule, ...flatEntityUpdate },
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-        buildOptions,
       }),
     );
 
@@ -143,14 +137,12 @@ export class FlatRowLevelPermissionRuleValidatorService {
       flatRoleMaps,
       flatObjectMetadataMaps,
     },
-    buildOptions,
   }: {
     flatRule: Pick<
       UniversalFlatRowLevelPermissionRule,
       'roleUniversalIdentifier' | 'objectMetadataUniversalIdentifier'
     >;
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: RuleRelatedFlatEntityMaps;
-    buildOptions: WorkspaceMigrationBuilderOptions;
   }): FlatEntityValidationError[] {
     const errors: FlatEntityValidationError[] = [];
 
@@ -159,16 +151,13 @@ export class FlatRowLevelPermissionRuleValidatorService {
       flatEntityMaps: flatRoleMaps,
     });
 
+    // Rules are written with their predicates and groups, which already reject a non-editable role
     if (!isDefined(role)) {
       errors.push({
         code: RowLevelPermissionRuleExceptionCode.ROLE_NOT_FOUND,
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else {
-      errors.push(
-        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
-      );
     }
 
     const objectMetadata = findFlatEntityByUniversalIdentifier({
