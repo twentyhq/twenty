@@ -33,7 +33,6 @@ import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-fie
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
-import { MAX_RECORDS_DELETED_OR_RESTORED_AT_ONCE } from 'src/engine/twenty-orm/constants/max-records-deleted-or-restored-at-once.constant';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
@@ -227,11 +226,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  // The written records themselves are checked by id in performMutation
   async applyWriteRowLevelPermissions(
     queryBuilder: WorkspaceSelectQueryBuilder,
+    kind: MutationKind,
   ): Promise<void> {
-    await this.applyJoinAliasesRowLevelPermissions(queryBuilder);
+    await this.applyRowLevelPermissionPredicates(
+      queryBuilder,
+      OPERATION_TYPE_BY_MUTATION_KIND[kind],
+    );
   }
 
   get internalContext(): WorkspaceInternalContext {
@@ -1224,6 +1226,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         id: input.id,
       });
 
+      await this.applyRowLevelPermissionPredicates(
+        selectQueryBuilder,
+        'update',
+      );
+
       const result = await this.morphAndExecute({
         selectQueryBuilder,
         kind: 'update',
@@ -1483,15 +1490,18 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return new Set(ids);
     }
 
-    return this.options.internalContext.recordPermissions.filterGrantedRecordIds(
-      {
-        principals: this.resolvePermissionsPrincipalsOrThrow(),
-        objectMetadataId: this.options.flatObjectMetadata.id,
-        operationType,
-        recordIds: ids,
-        transactionScope: this.buildRecordPermissionTransactionScope(),
-      },
-    );
+    const queryBuilder = this.createQueryBuilder()
+      .where({ id: In(ids) })
+      .withDeleted();
+
+    await this.applyRowLevelPermissionPredicates(queryBuilder, operationType);
+    queryBuilder.select(['id']);
+
+    const rows = await queryBuilder.getMany<ObjectRecord>({
+      noFormatting: true,
+    });
+
+    return new Set(rows.map((row) => String(row.id)));
   }
 
   async runMutation(args: {
@@ -1516,59 +1526,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           writtenRecordsValidator,
         }),
     });
-  }
-
-  // Writes find their records first and check those ids, so RLS is only evaluated on the records written
-  private async restrictMutationToWritableRecords({
-    selectQueryBuilder,
-    kind,
-  }: {
-    selectQueryBuilder: WorkspaceSelectQueryBuilder;
-    kind: MutationKind;
-  }): Promise<void> {
-    if (
-      this.options.shouldBypassPermissionChecks ||
-      !selectQueryBuilder.markRowLevelPermissionApplied(
-        selectQueryBuilder.alias,
-      )
-    ) {
-      return;
-    }
-
-    const candidateRecordIds = (
-      await selectQueryBuilder
-        .clone()
-        .select(['id'])
-        .getMany<ObjectRecord>({ noFormatting: true })
-    ).map((record) => String(record.id));
-
-    if (
-      kind !== 'update' &&
-      candidateRecordIds.length > MAX_RECORDS_DELETED_OR_RESTORED_AT_ONCE
-    ) {
-      throw new TwentyOrmException(
-        `Cannot delete or restore more than ${MAX_RECORDS_DELETED_OR_RESTORED_AT_ONCE} records at once`,
-        TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE_OR_RESTORE,
-        {
-          userFriendlyMessage: msg`You can only delete or restore up to ${MAX_RECORDS_DELETED_OR_RESTORED_AT_ONCE} records at once.`,
-        },
-      );
-    }
-
-    const writableRecordIds = [
-      ...(await this.resolveWritableRecordIds({
-        ids: candidateRecordIds,
-        operationType: OPERATION_TYPE_BY_MUTATION_KIND[kind],
-      })),
-    ];
-
-    if (writableRecordIds.length === 0) {
-      selectQueryBuilder.andWhere(ALWAYS_FALSE_CONDITION);
-
-      return;
-    }
-
-    selectQueryBuilder.andWhere({ id: In(writableRecordIds) });
   }
 
   private async performMutation({
@@ -1597,10 +1554,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (!rowLevelPermissionsApplied) {
-      await this.applyJoinAliasesRowLevelPermissions(selectQueryBuilder);
+      await this.applyRowLevelPermissionPredicates(
+        selectQueryBuilder,
+        OPERATION_TYPE_BY_MUTATION_KIND[kind],
+      );
     }
-
-    await this.restrictMutationToWritableRecords({ selectQueryBuilder, kind });
 
     const canSkipBeforeImage =
       this.options.shouldBypassPermissionChecks &&
@@ -2035,6 +1993,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private async applyRowLevelPermissionPredicates(
     queryBuilder: WorkspaceSelectQueryBuilder,
+    operationType: ObjectRecordsOperationType = 'read',
   ): Promise<void> {
     if (this.options.shouldBypassPermissionChecks) {
       return;
@@ -2044,18 +2003,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       queryBuilder,
       alias: queryBuilder.alias,
       flatObjectMetadata: this.options.flatObjectMetadata,
-      operationType: 'read',
+      operationType,
     });
-
-    await this.applyJoinAliasesRowLevelPermissions(queryBuilder);
-  }
-
-  private async applyJoinAliasesRowLevelPermissions(
-    queryBuilder: WorkspaceSelectQueryBuilder,
-  ): Promise<void> {
-    if (this.options.shouldBypassPermissionChecks) {
-      return;
-    }
 
     for (const joinAlias of queryBuilder.getJoinAliases()) {
       const joinedTableShape = queryBuilder.getJoinedTableShape(joinAlias.name);

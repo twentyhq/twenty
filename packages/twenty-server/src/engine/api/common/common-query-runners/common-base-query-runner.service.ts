@@ -464,6 +464,7 @@ export abstract class CommonBaseQueryRunnerService<
         alias,
         filter,
         commonQueryParser,
+        kind,
       });
 
     return writeRepository.runMutation({

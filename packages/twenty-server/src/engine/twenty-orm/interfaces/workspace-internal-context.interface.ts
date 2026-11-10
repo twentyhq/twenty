@@ -35,7 +35,6 @@ export interface WorkspaceInternalContext {
     | 'buildAccessGroupsSQLCondition'
     | 'buildAccessSQLConditionWithoutRowLevelPermissionsAndInheritanceOrThrow'
     | 'buildDegradedSQLCondition'
-    | 'filterGrantedRecordIds'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
   >;
