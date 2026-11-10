@@ -5,10 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
+import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 import {
-  buildRecordFilterForRole,
   buildRowLevelPermissionRecordFilter,
+  type RowLevelPermissionRule,
 } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
 import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
 import { resolveRowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-workspace-member.util';
@@ -25,27 +25,40 @@ export const resolveRlsRuleRecordFilter = ({
   flatObjectMetadata: FlatObjectMetadata;
   roleId?: string;
 }): RecordGqlOperationFilter | null => {
-  const buildArgs = {
-    flatRowLevelPermissionPredicateMaps:
-      metadataMaps.flatRowLevelPermissionPredicateMaps,
-    flatRowLevelPermissionPredicateGroupMaps:
-      metadataMaps.flatRowLevelPermissionPredicateGroupMaps,
+  const rowLevelPermissionRules: RowLevelPermissionRule[] = [
+    roleId ?? principals.mainPrincipal.roleId,
+  ]
+    .map(
+      (principalRoleId) =>
+        metadataMaps.rolesPermissions[principalRoleId]?.objects[
+          flatObjectMetadata.id
+        ]?.rowLevelRecordsPermissions,
+    )
+    .filter(isDefined);
+
+  if (rowLevelPermissionRules.length === 0) {
+    return null;
+  }
+
+  const workspaceMember = resolveRowLevelPermissionWorkspaceMember({
+    principals,
+    metadataMaps,
+  });
+
+  return buildRowLevelPermissionRecordFilter({
+    rowLevelPermissionRules,
+    memberFieldValues: buildMemberFieldValuesOrThrow({
+      workspaceMember,
+      predicates: rowLevelPermissionRules.flatMap(
+        ({ predicates }) => predicates,
+      ),
+      flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    }),
+    currentWorkspaceMemberId: workspaceMember?.id,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-    objectMetadata: flatObjectMetadata,
     isRelationHopEnabled: isRowLevelPermissionRelationHopEnabled(
       metadataMaps.featureFlagsMap,
     ),
-    workspaceMember: resolveRowLevelPermissionWorkspaceMember({
-      principals,
-      metadataMaps,
-    }),
-  };
-
-  return isDefined(roleId)
-    ? buildRecordFilterForRole({ ...buildArgs, roleId })
-    : buildRowLevelPermissionRecordFilter({
-        ...buildArgs,
-        roleIds: getPermissionsPrincipalsRoleIds(principals),
-      });
+  });
 };

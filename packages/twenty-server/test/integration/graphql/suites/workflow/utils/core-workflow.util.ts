@@ -116,14 +116,6 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
     [coreWorkflowId, workspaceWorkflowId],
   );
 
-  if (withWorkspaceRecords) {
-    await global.testDataSource.query(
-      `INSERT INTO "${workspaceSchema}"."workflow" (id, name, "coreWorkflowId")
-       SELECT $1, name, id FROM core."workflow" WHERE id = $2`,
-      [workspaceWorkflowId, coreWorkflowId],
-    );
-  }
-
   const coreVersions: {
     id: string;
     status: string;
@@ -146,11 +138,10 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
 
     if (withWorkspaceRecords) {
       await global.testDataSource.query(
-        `INSERT INTO "${workspaceSchema}"."workflowVersion" (id, "workflowId", name, status, trigger, steps, "coreWorkflowVersionId")
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        `INSERT INTO "${workspaceSchema}"."workflowVersion" (id, name, status, trigger, steps, "coreWorkflowVersionId")
+         VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           workspaceWorkflowVersionId,
-          workspaceWorkflowId,
           `v${workspaceWorkflowVersionIds.length + 1}`,
           coreVersion.status,
           isDefined(coreVersion.triggers?.[0])
@@ -176,19 +167,15 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
 };
 
 export const deleteLegacyWorkspaceWorkflowRecords = async ({
-  workspaceWorkflowId,
+  workspaceWorkflowVersionIds,
 }: {
-  workspaceWorkflowId: string;
+  workspaceWorkflowVersionIds: string[];
 }): Promise<void> => {
   const workspaceSchema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
   await global.testDataSource.query(
-    `DELETE FROM "${workspaceSchema}"."workflowVersion" WHERE "workflowId" = $1`,
-    [workspaceWorkflowId],
-  );
-  await global.testDataSource.query(
-    `DELETE FROM "${workspaceSchema}"."workflow" WHERE id = $1`,
-    [workspaceWorkflowId],
+    `DELETE FROM "${workspaceSchema}"."workflowVersion" WHERE id = ANY($1::uuid[])`,
+    [workspaceWorkflowVersionIds],
   );
 };
 

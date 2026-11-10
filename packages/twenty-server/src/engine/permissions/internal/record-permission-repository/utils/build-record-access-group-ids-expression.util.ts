@@ -2,21 +2,21 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RecordAccessGroupCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-condition.type';
+import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
 
 export const buildRecordAccessGroupIdsExpression = ({
-  recordAccessGroupConditions,
+  recordAccessGroupSQLConditions,
 }: {
-  recordAccessGroupConditions: RecordAccessGroupCondition[];
+  recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
 }): string => {
-  if (recordAccessGroupConditions.length === 0) {
+  if (recordAccessGroupSQLConditions.length === 0) {
     return `CAST('{}' AS integer[])`;
   }
 
-  const compactIdCases = recordAccessGroupConditions.map(
-    ({ compactId, condition }) =>
-      isDefined(condition)
-        ? `CASE WHEN (${condition.sql}) THEN ${compactId} END`
+  const compactIdCases = recordAccessGroupSQLConditions.map(
+    ({ compactId, sqlCondition }) =>
+      isDefined(sqlCondition)
+        ? `CASE WHEN (${sqlCondition.sql}) THEN ${compactId} END`
         : `${compactId}`,
   );
 

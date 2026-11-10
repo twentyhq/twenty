@@ -99,9 +99,9 @@ export class AccessGroupSyncListener {
       return;
     }
 
-    const { flatRowLevelPermissionPredicateMaps, flatFieldMetadataMaps } =
+    const { rolesPermissions, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatRowLevelPermissionPredicateMaps',
+        'rolesPermissions',
         'flatFieldMetadataMaps',
       ]);
 
@@ -110,7 +110,7 @@ export class AccessGroupSyncListener {
         updatedFields: events.flatMap(
           ({ properties }) => properties.updatedFields,
         ),
-        flatRowLevelPermissionPredicateMaps,
+        rolesPermissions,
         flatFieldMetadataMaps,
       })
     ) {

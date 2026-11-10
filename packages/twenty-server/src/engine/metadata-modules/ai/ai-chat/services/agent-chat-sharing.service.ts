@@ -400,11 +400,11 @@ export class AgentChatSharingService {
               transactionScope,
             };
             const [canReadThread, canUpdateThread] = await Promise.all([
-              this.recordPermissionsReadService.canAccessKnownRecords({
+              this.recordPermissionsReadService.canAccessRecords({
                 ...question,
                 operationType: 'read',
               }),
-              this.recordPermissionsReadService.canAccessKnownRecords({
+              this.recordPermissionsReadService.canAccessRecords({
                 ...question,
                 operationType: 'update',
               }),
@@ -820,7 +820,7 @@ export class AgentChatSharingService {
     const { permissionsPrincipals, objectIdByNameSingular } =
       getWorkspaceContext();
 
-    return this.recordPermissionsReadService.filterAccessibleKnownRecordIds({
+    return this.recordPermissionsReadService.filterGrantedRecordIds({
       principals: permissionsPrincipals,
       objectMetadataId: objectIdByNameSingular.agentChatThread,
       recordIds: threadIds,

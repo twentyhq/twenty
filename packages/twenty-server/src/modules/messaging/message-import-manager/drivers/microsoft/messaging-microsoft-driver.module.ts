@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
+import { MicrosoftFetchMessageAttachmentService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-message-attachment.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
 import { MicrosoftMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-messages-import-error-handler.service';
@@ -18,11 +19,13 @@ import { MicrosoftGetMessageListService } from './services/microsoft-get-message
     MicrosoftNetworkErrorHandler,
     MicrosoftMessageListFetchErrorHandler,
     MicrosoftMessagesImportErrorHandler,
+    MicrosoftFetchMessageAttachmentService,
   ],
   exports: [
     MicrosoftGetMessageListService,
     MicrosoftGetMessagesService,
     MicrosoftMessageListFetchErrorHandler,
+    MicrosoftFetchMessageAttachmentService,
   ],
 })
 export class MessagingMicrosoftDriverModule {}

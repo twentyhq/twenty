@@ -1,5 +1,6 @@
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
   defineApplicationRole,
 } from 'twenty-sdk/define';
 
@@ -9,7 +10,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'LinkedIn function role',
   description:
-    'Matches LinkedIn participants to People by profile link or name, creates People for new contacts and reads company names to tell namesakes apart.',
+    'Matches LinkedIn participants to People by profile link or name, creates People for new contacts, sets their LinkedIn profile picture when missing and reads company names to tell namesakes apart.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -37,5 +38,5 @@ export default defineApplicationRole({
     },
   ],
   fieldPermissions: [],
-  permissionFlagUniversalIdentifiers: [],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
 });

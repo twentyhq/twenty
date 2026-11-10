@@ -17,9 +17,7 @@ export type Message = Omit<
   | 'messageCampaignId'
   | 'attachments'
 > & {
-  attachments: {
-    filename: string;
-  }[];
+  attachments: MessageAttachmentMetadata[];
   externalId: string;
   messageThreadExternalId: string;
   direction: MessageDirection;
@@ -33,6 +31,14 @@ export type Message = Omit<
 export type MessageAttachmentFile = {
   fileId: string;
   label: string;
+};
+
+export type MessageAttachmentMetadata = {
+  externalId: string;
+  filename: string;
+  size: number;
+  contentType: string;
+  isInline: boolean;
 };
 
 export type MessageHeader = {

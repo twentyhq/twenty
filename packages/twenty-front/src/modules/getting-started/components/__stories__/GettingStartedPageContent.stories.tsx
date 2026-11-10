@@ -320,6 +320,59 @@ export const DoneStepWithoutThread: Story = {
   },
 };
 
+const COMPLETED_NEXT_STEP_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] =
+  {
+    ...TRIAL_PROGRESS,
+    completedStepActionKeys: [
+      GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.HANDOVER_DEALS,
+    ],
+    selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+  };
+
+export const CompletedNextStep: Story = {
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: {
+          data: { gettingStartedProgress: COMPLETED_NEXT_STEP_PROGRESS },
+        },
+      },
+      {
+        request: { query: UpdateGettingStartedDocument, variables: () => true },
+        maxUsageCount: Infinity,
+        result: ({ input }: UpdateGettingStartedMutationVariables) => ({
+          data: {
+            updateGettingStarted: {
+              ...COMPLETED_NEXT_STEP_PROGRESS,
+              selectedStepActionKey: input.selectedStepActionKey ?? null,
+            },
+          },
+        }),
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      within(
+        await canvas.findByRole('navigation', {
+          name: 'Getting started steps',
+        }),
+      ).getByRole('button', { name: 'Next step' }),
+    );
+    const handoverStepCard = await canvas.findByRole('region', {
+      name: 'Handover ready',
+    });
+
+    await waitFor(() => expect(handoverStepCard).toBeVisible());
+  },
+};
+
 const FOLLOW_UP_DEALS_CHAT_THREAD_ID = '20202020-3a7e-4c1d-8b2f-5e9d0c6a1b47';
 
 const DONE_STEP_CHAT_THREADS = [

@@ -290,17 +290,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   }),
-  workflowRecordPage: buildStandardObjectRecordPageLayout({
-    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
-    tabs: {
-      flow: {
-        title: 'Flow',
-        widgets: {
-          workflow: 'Flow',
-        },
-      },
-    },
-  }),
   workflowVersionRecordPage: buildStandardObjectRecordPageLayout({
     objectUniversalIdentifier:
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
@@ -309,7 +298,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         title: 'Home',
         widgets: {
           fields: 'Fields',
-          workflow: 'Workflow',
         },
       },
       flow: {
@@ -328,7 +316,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         title: 'Home',
         widgets: {
           fields: 'Fields',
-          workflow: 'Workflow',
         },
       },
       flow: {
@@ -508,24 +495,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
   messageParticipantRecordPage: buildStandardObjectRecordPageLayout({
     objectUniversalIdentifier:
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant,
-    tabs: {
-      home: {
-        title: 'Home',
-        widgets: {
-          fields: 'Fields',
-        },
-      },
-      timeline: {
-        title: 'Timeline',
-        widgets: {
-          timeline: 'Timeline',
-        },
-      },
-    },
-  }),
-  workflowAutomatedTriggerRecordPage: buildStandardObjectRecordPageLayout({
-    objectUniversalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
     tabs: {
       home: {
         title: 'Home',
