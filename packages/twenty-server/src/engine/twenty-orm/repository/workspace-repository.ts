@@ -2086,14 +2086,23 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    return this.options.internalContext.recordPermissions.buildManyRecordsAccessSQLCondition(
-      {
-        principals: this.resolvePermissionsPrincipalsOrThrow(),
+    const { recordPermissions } = this.options.internalContext;
+    const principals = this.resolvePermissionsPrincipalsOrThrow();
+
+    if (operationType === 'read') {
+      return recordPermissions.buildReadRecordsAccessSQLCondition({
+        principals,
         objectMetadataId: flatObjectMetadata.id,
-        operationType,
         tableAlias: alias,
-      },
-    );
+      });
+    }
+
+    return recordPermissions.buildWriteRecordsAccessSQLCondition({
+      principals,
+      objectMetadataId: flatObjectMetadata.id,
+      operationType,
+      tableAlias: alias,
+    });
   }
 
   async isReadDisabled(): Promise<boolean> {
