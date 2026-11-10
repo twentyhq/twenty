@@ -25,7 +25,7 @@ export const useListenToCoreWorkflowRunEvents = ({
 
   // Runs change step by step while they execute, so bursts of events collapse into one refetch
   const onRunsChangedDebounced = useDebouncedCallback(
-    onRunsChanged,
+    () => onRunsChanged(),
     RUN_EVENTS_REFETCH_DEBOUNCE_IN_MS,
   );
 
