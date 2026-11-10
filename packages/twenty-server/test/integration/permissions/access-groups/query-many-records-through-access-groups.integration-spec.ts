@@ -26,11 +26,11 @@ const PERSON_TABLE = `${SCHEMA}."person"`;
 
 describe('querying many records through access groups (integration)', () => {
   let objectMetadataId: string;
-  let originalPeople: { id: string; jobTitle: string }[];
+  let people: { id: string; jobTitle: string }[];
   let originalMemberRoleId: string;
   let roleId: string;
 
-  const parisPersonId = () => originalPeople[0].id;
+  const parisPersonId = () => people[0].id;
 
   const findPersonIdsAsMember = async (): Promise<string[]> => {
     const response = await makeGraphqlApiRequest(
@@ -38,7 +38,7 @@ describe('querying many records through access groups (integration)', () => {
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
         gqlFields: 'id',
-        filter: { id: { in: originalPeople.map(({ id }) => id) } },
+        filter: { id: { in: people.map(({ id }) => id) } },
       }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
@@ -67,13 +67,17 @@ describe('querying many records through access groups (integration)', () => {
       [objectMetadataId],
     );
 
-    originalPeople = await global.testDataSource.query(
-      `SELECT "id", "jobTitle" FROM ${PERSON_TABLE} WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 2`,
-    );
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = CASE "id" WHEN $1 THEN 'Paris office' ELSE 'London office' END WHERE "id" = ANY($2)`,
-      [parisPersonId(), originalPeople.map(({ id }) => id)],
-    );
+    people = [
+      { id: v4(), jobTitle: 'Paris office' },
+      { id: v4(), jobTitle: 'London office' },
+    ];
+
+    for (const { id, jobTitle } of people) {
+      await global.testDataSource.query(
+        `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle") VALUES ($1, $2)`,
+        [id, jobTitle],
+      );
+    }
 
     const { data } = await createOneRole({
       expectToFail: false,
@@ -148,12 +152,10 @@ describe('querying many records through access groups (integration)', () => {
     });
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
 
-    for (const { id, jobTitle } of originalPeople) {
-      await global.testDataSource.query(
-        `UPDATE ${PERSON_TABLE} SET "jobTitle" = $1 WHERE "id" = $2`,
-        [jobTitle, id],
-      );
-    }
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
+      [people.map(({ id }) => id)],
+    );
 
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
