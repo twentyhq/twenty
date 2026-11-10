@@ -86,8 +86,6 @@ const metadataMaps: PermissionsMetadataMaps = {
       },
     },
   },
-  flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-  flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
   featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
 };
 const buildCondition = (

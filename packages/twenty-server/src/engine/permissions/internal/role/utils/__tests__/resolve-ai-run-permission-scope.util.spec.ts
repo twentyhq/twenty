@@ -338,9 +338,6 @@ describe('resolveAiRunPermissionScope', () => {
               },
             },
             flatApplicationMaps: { byId: {} },
-            flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-            flatRowLevelPermissionPredicateGroupMaps:
-              createEmptyFlatEntityMaps(),
             featureFlagsMap: {},
           },
           flatObjectMetadata: flatObjectMetadataMaps.byUniversalIdentifier

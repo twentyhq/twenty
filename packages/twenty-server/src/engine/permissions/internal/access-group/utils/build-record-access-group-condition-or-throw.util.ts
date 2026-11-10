@@ -23,10 +23,13 @@ export const buildRecordAccessGroupConditionOrThrow = ({
   metadataMaps: RecordAccessGroupConditionMetadataMaps;
 }): SqlCondition | null => {
   const recordFilter = buildRecordFilterForRole({
-    ...metadataMaps,
-    objectMetadata: flatObjectMetadata,
-    roleId: accessGroup.roleId,
-    memberFieldValues: accessGroup.memberFieldValues ?? undefined,
+    rowLevelPermissionRule:
+      metadataMaps.rolesPermissions[accessGroup.roleId]?.objects[
+        flatObjectMetadata.id
+      ]?.rowLevelRecordsPermissions,
+    memberFieldValues: accessGroup.memberFieldValues ?? {},
+    flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     isRelationHopEnabled: isRowLevelPermissionRelationHopEnabled(
       metadataMaps.featureFlagsMap,
     ),
