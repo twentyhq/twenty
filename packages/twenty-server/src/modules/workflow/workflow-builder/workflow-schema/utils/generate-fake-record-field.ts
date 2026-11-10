@@ -36,8 +36,9 @@ export const generateFakeRecordField = ({
       icon: icon,
       label: label,
       fieldMetadataId,
-      value: compositeType.properties.reduce((acc, property) => {
-        // @ts-expect-error legacy noImplicitAny
+      value: compositeType.properties.reduce<
+        Record<string, Leaf & { fieldMetadataId: string }>
+      >((acc, property) => {
         acc[property.name] = {
           isLeaf: true,
           type: property.type,
