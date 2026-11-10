@@ -114,7 +114,7 @@ describe('Field deletion used by a row-level permission predicate', () => {
     });
 
     expect(JSON.stringify(errors)).toContain(
-      `is used by row-level permission rules of roles: ${ROLE_LABEL}`,
+      'is used by 1 row-level permission predicate',
     );
 
     await upsertRowLevelPermissionPredicates({

@@ -10,7 +10,8 @@ type FieldMetadataRelatedProperties =
 type Assertions = [
   // FieldMetadataEntity has both ManyToOne and OneToMany relations
   // ManyToOne: object, workspace, application, relationTargetFieldMetadata, relationTargetObjectMetadata
-  // OneToMany: indexFieldMetadatas, fieldPermissions, viewFields, viewFilters, kanbanAggregateOperationViews, calendarViews, calendarEndViews, mainGroupByFieldMetadataViews, viewSorts, searchFieldMetadatas, fieldMetadataOptions
+  // OneToMany: indexFieldMetadatas, fieldPermissions, viewFields, viewFilters, kanbanAggregateOperationViews, calendarViews, calendarEndViews, mainGroupByFieldMetadataViews, viewSorts, searchFieldMetadatas, fieldMetadataOptions,
+  // rowLevelPermissionPredicates, relationRowLevelPermissionPredicates, workspaceMemberRowLevelPermissionPredicates
   Expect<
     Equal<
       FieldMetadataRelatedProperties,
@@ -30,6 +31,9 @@ type Assertions = [
       | 'viewSorts'
       | 'searchFieldMetadatas'
       | 'fieldMetadataOptions'
+      | 'rowLevelPermissionPredicates'
+      | 'relationRowLevelPermissionPredicates'
+      | 'workspaceMemberRowLevelPermissionPredicates'
     >
   >,
 ];

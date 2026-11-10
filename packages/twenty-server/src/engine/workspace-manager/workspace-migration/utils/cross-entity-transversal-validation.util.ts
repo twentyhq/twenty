@@ -8,7 +8,7 @@ import {
   type OrchestratorFailureReport,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
-import { type WorkspaceRowLevelPermissionFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-row-level-permission-flat-entity-maps.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
@@ -18,12 +18,14 @@ export const crossEntityTransversalValidation = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
   preDeletionFlatViewFieldMaps,
-  workspaceRowLevelPermissionFlatEntityMaps,
+  fromFlatFieldMetadataMaps,
 }: {
   optimisticUniversalFlatMaps: AllUniversalFlatEntityMaps;
   orchestratorActionsReport: OrchestratorActionsReport;
   preDeletionFlatViewFieldMaps: UniversalFlatEntityMaps<UniversalFlatViewField>;
-  workspaceRowLevelPermissionFlatEntityMaps: WorkspaceRowLevelPermissionFlatEntityMaps;
+  fromFlatFieldMetadataMaps:
+    | MetadataUniversalFlatEntityMaps<'fieldMetadata'>
+    | undefined;
 }): OrchestratorFailureReport => {
   const crossEntityFailureReport = EMPTY_ORCHESTRATOR_FAILURE_REPORT();
 
@@ -46,8 +48,7 @@ export const crossEntityTransversalValidation = ({
 
   const { fieldMetadata } =
     validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity({
-      workspaceRowLevelPermissionFlatEntityMaps,
-      optimisticUniversalFlatMaps,
+      fromFlatFieldMetadataMaps,
       orchestratorActionsReport,
     });
 
