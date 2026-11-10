@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type CoreWorkflowRunSummaryDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-summary.dto';
+import { buildCoreWorkflowRunCountWindowPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-run-count-window-predicate.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -10,8 +11,6 @@ import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/sta
 import { NUMBER_OF_WORKFLOW_RUNS_TO_KEEP } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/number-of-workflow-runs-to-keep';
 
 const RECENT_RUNS_LIMIT = 10;
-
-const RUN_COUNT_WINDOW_IN_DAYS = 14;
 
 const WORKFLOW_RUN_ALIAS = 'workflowRun';
 
@@ -76,12 +75,13 @@ export class CoreWorkflowRunSummaryService {
       .addSelect(column('status'), 'status')
       .addSelect(column('createdAt'), 'createdAt');
 
+    const runCountWindow = buildCoreWorkflowRunCountWindowPredicate(
+      column('createdAt'),
+    );
+
     const runCountQueryBuilder = buildRequestedWorkflowRunsQueryBuilder()
       .addSelect('COUNT(*)', 'runCount')
-      .andWhere(
-        `${column('createdAt')} >= NOW() - MAKE_INTERVAL(days => :runCountWindowInDays)`,
-        { runCountWindowInDays: RUN_COUNT_WINDOW_IN_DAYS },
-      );
+      .andWhere(runCountWindow.predicate, runCountWindow.parameters);
 
     await recentRunsQueryBuilder.applyRowLevelPermissions();
     await runCountQueryBuilder.applyRowLevelPermissions();
