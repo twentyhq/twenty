@@ -88,6 +88,10 @@ export const ChatThreadMessageVoiceNote = ({
         onDurationChange={(event) =>
           setDurationSeconds(event.currentTarget.duration)
         }
+        onEmptied={() => {
+          setIsPlaying(false);
+          setCurrentTimeSeconds(0);
+        }}
         onError={onError}
       />
       <LightIconButton

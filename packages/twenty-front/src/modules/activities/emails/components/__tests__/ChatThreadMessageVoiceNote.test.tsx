@@ -17,7 +17,7 @@ const renderVoiceNote = (onError = jest.fn()) =>
   );
 
 describe('ChatThreadMessageVoiceNote', () => {
-  it('shows the pause action once the voice note plays', async () => {
+  it('shows the pause action while the voice note plays and resets when its source reloads', async () => {
     const user = userEvent.setup();
     const play = jest
       .spyOn(HTMLMediaElement.prototype, 'play')
@@ -32,6 +32,10 @@ describe('ChatThreadMessageVoiceNote', () => {
     fireEvent.play(screen.getByLabelText('voice-note.m4a'));
 
     expect(screen.getByRole('button', { name: 'Pause' })).toBeVisible();
+
+    fireEvent.emptied(screen.getByLabelText('voice-note.m4a'));
+
+    expect(screen.getByRole('button', { name: 'Play' })).toBeVisible();
   });
 
   it('reports a playback the browser refuses', async () => {
