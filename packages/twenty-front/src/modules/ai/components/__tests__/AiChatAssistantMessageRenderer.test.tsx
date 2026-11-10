@@ -434,10 +434,9 @@ describe('AiChatAssistantMessageRenderer', () => {
   });
 
   it('should show the thinking row before the first step of a streaming message arrives', () => {
-    renderAssistantRenderer(
-      [{ type: 'step-start' }] as ExtendedUIMessagePart[],
-      { isLastMessageStreaming: true },
-    );
+    const messageParts: ExtendedUIMessagePart[] = [{ type: 'step-start' }];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
 
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
       'thinking-0-trailing-while-streaming',
@@ -445,25 +444,22 @@ describe('AiChatAssistantMessageRenderer', () => {
   });
 
   it('should keep the same thinking row when the first reasoning arrives', () => {
-    const { rerender } = renderAssistantRenderer(
-      [{ type: 'step-start' }] as ExtendedUIMessagePart[],
-      { isLastMessageStreaming: true },
-    );
+    const partsBeforeFirstStep: ExtendedUIMessagePart[] = [
+      { type: 'step-start' },
+    ];
+    const partsWithFirstReasoning: ExtendedUIMessagePart[] = [
+      { type: 'step-start' },
+      { type: 'reasoning', text: 'Weighing options', state: 'streaming' },
+    ];
+    const { rerender } = renderAssistantRenderer(partsBeforeFirstStep, {
+      isLastMessageStreaming: true,
+    });
     const thinkingRow = screen.getByTestId('thinking-steps-display');
 
     rerender(
       <ThemeProvider colorScheme="light">
         <AiChatAssistantMessageRenderer
-          messageParts={
-            [
-              { type: 'step-start' },
-              {
-                type: 'reasoning',
-                text: 'Weighing options',
-                state: 'streaming',
-              },
-            ] as ExtendedUIMessagePart[]
-          }
+          messageParts={partsWithFirstReasoning}
           isLastMessageStreaming
         />
       </ThemeProvider>,
