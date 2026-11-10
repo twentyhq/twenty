@@ -194,7 +194,7 @@ export const WorkflowDiagramCanvasEditable = () => {
   };
 
   const persistDisplayedLayoutWithDraggedNode = (
-    draggedNode: WorkflowDiagramNode,
+    draggedNode: Pick<WorkflowDiagramNode, 'id' | 'position'>,
   ) => {
     const workflowDiagram = store.get(workflowDiagramCallbackState);
 

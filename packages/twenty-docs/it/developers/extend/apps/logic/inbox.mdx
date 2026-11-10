@@ -125,4 +125,28 @@ await attachRecordToInboxThread({
 * La chiamata viene eseguita con lo stesso accesso dell'[invio di un messaggio](#who-sends-the-message), che richiede l'autorizzazione `AI`. Un membro deve poter modificare la conversazione e l'applicazione può agire su una conversazione che ha scritto essa stessa o su una a cui è stato concesso il relativo ruolo predefinito; in caso contrario, la chiamata non riesce con `THREAD_NOT_FOUND`.
 * Il record deve essere leggibile con tale accesso, altrimenti la chiamata non riesce con `RECORD_NOT_FOUND`.
 
+## Archiviare una conversazione
+
+`archiveInboxThread()` archivia una conversazione scritta dalla tua applicazione, per i membri da te indicati, come se ciascuno di loro l'avesse archiviata dalla propria posta in arrivo. Usalo quando il lavoro relativo a un messaggio è stato completato altrove: l'email che hai proposto è stata inviata da Gmail, la riunione di cui hai chiesto è stata approvata nel calendario.
+
+```ts src/logic-functions/on-email-sent-archive-thread.ts
+import { archiveInboxThread } from 'twenty-sdk/logic-function';
+
+await archiveInboxThread({
+  threadId,
+  workspaceMemberIds: [owner.id],
+});
+```
+
+* Solo la tua applicazione può chiamarlo, su una conversazione che ha creato essa stessa o a cui è stato assegnato il suo ruolo predefinito; altrimenti la chiamata non riesce e restituisce `THREAD_NOT_FOUND`. I membri archiviano dalla propria posta in arrivo.
+* Ogni membro specificato deve poter leggere la conversazione. Se uno non può farlo, la chiamata non riesce con `THREAD_NOT_FOUND` e la archivia per nessuno.
+* Un nuovo messaggio nella conversazione la riporta nella posta in arrivo, come avviene dopo che un membro la archivia.
+* Un membro che ha smesso di seguire la conversazione viene ignorato, quindi questa rimane fuori dalla sua posta in arrivo.
+
+Ometti `workspaceMemberIds` per contrassegnare invece una conversazione come completata nel suo canale, come fa un membro dalla visualizzazione del canale. Le caselle di posta in arrivo dei membri rimangono invariate e una conversazione che non è in alcun canale non riesce con `CHAT_THREAD_NOT_IN_CHANNEL`.
+
+```ts
+await archiveInboxThread({ threadId });
+```
+
 <PageBanner illustration="card-page-inbox" />

@@ -24879,6 +24879,11 @@ msgstr "Berechtigungsprädikat auf Zeilenebene"
 msgid "row level permission predicate group"
 msgstr "Gruppe von Berechtigungsprädikaten auf Zeilenebene"
 
+#. js-lingui-id: JWZ1ef
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission rule"
+msgstr ""
+
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Row-level permissions"

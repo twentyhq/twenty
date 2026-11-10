@@ -42,8 +42,8 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "workflow",
   "agentChatChannel",
   "view",
-  "fieldMetadata",
   "role",
+  "fieldMetadata",
   "objectMetadata",
 ]
 `;
