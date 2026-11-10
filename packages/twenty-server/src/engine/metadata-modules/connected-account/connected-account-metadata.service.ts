@@ -322,7 +322,6 @@ export class ConnectedAccountMetadataService {
     });
   }
 
-  // SSO sign-in also stores a connected account, but without any channel.
   async hasOwnMailOrCalendarAccount({
     workspaceId,
     userWorkspaceId,
