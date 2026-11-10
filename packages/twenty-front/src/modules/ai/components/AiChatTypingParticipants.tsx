@@ -6,6 +6,7 @@ import { AiChatTypingIndicator } from '@/ai/components/AiChatTypingIndicator';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -20,6 +21,7 @@ const StyledContainer = styled(StyledAiChatContentContainer)`
 
 export const AiChatTypingParticipants = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -41,7 +43,7 @@ export const AiChatTypingParticipants = () => {
       avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
     }));
 
-  if (!isNonEmptyArray(participants)) {
+  if (!agentChatHasMessage || !isNonEmptyArray(participants)) {
     return null;
   }
 

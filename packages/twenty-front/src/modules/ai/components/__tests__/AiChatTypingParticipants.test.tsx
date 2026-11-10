@@ -5,6 +5,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -54,6 +56,17 @@ describe('AiChatTypingParticipants', () => {
     resetJotaiStore();
 
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
+    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(
+      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [
+        {
+          id: 'message-id',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Hello' }],
+        },
+      ],
+    );
     jotaiStore.set(
       currentWorkspaceMemberState.atom,
       buildWorkspaceMember(CURRENT_MEMBER_ID, 'Thomas'),

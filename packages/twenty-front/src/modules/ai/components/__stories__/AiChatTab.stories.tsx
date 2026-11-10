@@ -14,6 +14,7 @@ import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
 import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -316,19 +317,27 @@ export const WorkspaceSetupCompletion: Story = {
   },
 };
 
-const setTypingWorkspaceMemberIds = (workspaceMemberIds: string[]) =>
+const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
+  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
+
+  jotaiStore.set(agentChatMessagesFamilyState.atomFamily({ threadId }), [
+    {
+      id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c90',
+      role: 'user',
+      parts: [{ type: 'text', text: 'Can you take Stripe?' }],
+    },
+  ]);
   jotaiStore.set(
-    agentChatTypingWorkspaceMemberIdsFamilyState.atomFamily({
-      threadId: jotaiStore.get(newAiChatThreadIdState.atom),
-    }),
-    workspaceMemberIds,
+    agentChatTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
+    typingWorkspaceMemberIds,
   );
+};
 
 export const MemberTyping: Story = {
   ...FullPageNewChat,
   beforeEach: () => {
     initializeNewAiChatStory({ isInboxEnabled: true });
-    setTypingWorkspaceMemberIds(
+    seedTypingConversation(
       jotaiStore
         .get(currentWorkspaceMembersState.atom)
         .filter(({ name }) => name.firstName === 'Jane')
@@ -340,7 +349,7 @@ export const MemberTyping: Story = {
 
     await expect(await canvas.findByText('Jane Doe is typing…')).toBeVisible();
 
-    setTypingWorkspaceMemberIds([]);
+    seedTypingConversation([]);
 
     await waitFor(() =>
       expect(canvas.queryByText('Jane Doe is typing…')).not.toBeInTheDocument(),
