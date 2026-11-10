@@ -93,11 +93,12 @@ export const CoreWorkflowShowPageTabs = ({
   });
 
   const tabIdFromHash = getCoreWorkflowShowPageTabIdFromHash(location.hash);
-  const activeTabId =
+  const isLinkedToUnreadableRuns =
     tabIdFromHash === CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.RUNS &&
-    !canReadWorkflowRuns
-      ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW
-      : tabIdFromHash;
+    !canReadWorkflowRuns;
+  const activeTabId = isLinkedToUnreadableRuns
+    ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW
+    : tabIdFromHash;
 
   return (
     <>
