@@ -931,6 +931,11 @@ export type ApprovedAccessDomain = {
   isValidated: Scalars['Boolean']['output'];
 };
 
+export type ArchiveInboxThreadInput = {
+  threadId: Scalars['UUID']['input'];
+  workspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+};
+
 export type AuthBypassProviders = {
   __typename?: 'AuthBypassProviders';
   google: Scalars['Boolean']['output'];
@@ -3651,6 +3656,7 @@ export type Mutation = {
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   approveApplicationIframeMediaPermissions: Application;
+  archiveInboxThread: Scalars['Boolean']['output'];
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3985,6 +3991,11 @@ export type MutationAddQueryToEventStreamArgs = {
 export type MutationApproveApplicationIframeMediaPermissionsArgs = {
   applicationId: Scalars['UUID']['input'];
   approvedIframeMediaPermissions: Array<IframeMediaPermissionInput>;
+};
+
+
+export type MutationArchiveInboxThreadArgs = {
+  input: ArchiveInboxThreadInput;
 };
 
 
