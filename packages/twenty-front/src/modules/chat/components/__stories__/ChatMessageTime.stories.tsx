@@ -7,7 +7,13 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const setFormatPreferences = (timeZone: string, timeFormat: TimeFormat) =>
+const setFormatPreferences = ({
+  timeZone,
+  timeFormat,
+}: {
+  timeZone: string;
+  timeFormat: TimeFormat;
+}) =>
   jotaiStore.set(
     workspaceMemberFormatPreferencesState.atom,
     (formatPreferences) => ({ ...formatPreferences, timeZone, timeFormat }),
@@ -25,7 +31,10 @@ type Story = StoryObj<typeof ChatMessageTime>;
 
 export const Hour24InParis: Story = {
   beforeEach: () => {
-    setFormatPreferences('Europe/Paris', TimeFormat.HOUR_24);
+    setFormatPreferences({
+      timeZone: 'Europe/Paris',
+      timeFormat: TimeFormat.HOUR_24,
+    });
   },
   play: async ({ canvasElement }) => {
     await expect(await within(canvasElement).findByText('15:07')).toBeVisible();
@@ -34,7 +43,10 @@ export const Hour24InParis: Story = {
 
 export const Hour12InNewYork: Story = {
   beforeEach: () => {
-    setFormatPreferences('America/New_York', TimeFormat.HOUR_12);
+    setFormatPreferences({
+      timeZone: 'America/New_York',
+      timeFormat: TimeFormat.HOUR_12,
+    });
   },
   play: async ({ canvasElement }) => {
     await expect(

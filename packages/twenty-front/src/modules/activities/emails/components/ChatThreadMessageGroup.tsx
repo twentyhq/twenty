@@ -6,6 +6,7 @@ import { ChatThreadMessageAttachment } from '@/activities/emails/components/Chat
 import { ChatThreadMessageSenderHeader } from '@/activities/emails/components/ChatThreadMessageSenderHeader';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGroup';
+import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
@@ -107,9 +108,12 @@ export const ChatThreadMessageGroup = ({
                       {message.text}
                     </Linkify>
                   </StyledMessageText>
-                  {isOutgoing && isDefined(message.receivedAt) && (
+                  {isOutgoing && (
                     <StyledChatMessageMeta>
-                      <ChatMessageTime date={message.receivedAt} />
+                      {isDefined(message.receivedAt) && (
+                        <ChatMessageTime date={message.receivedAt} />
+                      )}
+                      <ChatMessageReceipt status="sent" />
                     </StyledChatMessageMeta>
                   )}
                 </StyledChatMessageBubbleContent>
