@@ -7,13 +7,21 @@ import {
 } from 'twenty-sdk/logic-function';
 
 import { LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { type LinkedinOutgoingAttachment } from 'src/logic-functions/types/linkedin-outgoing-attachment.type';
+import { downloadLinkedinOutgoingAttachment } from 'src/logic-functions/utils/download-linkedin-outgoing-attachment.util';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
+
+// the pinned twenty-sdk does not type `attachments` yet, and older servers do not send it
+type LinkedinSendMessagePayload = SendAppMessagePayload & {
+  attachments?: LinkedinOutgoingAttachment[];
+};
 
 export const linkedinSendMessageHandler = async ({
   connectedAccountId,
   threadExternalId,
   text,
-}: SendAppMessagePayload): Promise<SendAppMessageResult> => {
+  attachments = [],
+}: LinkedinSendMessagePayload): Promise<SendAppMessageResult> => {
   const connection = await getConnection(connectedAccountId);
   const unipileAccountId = connection.externalAccountId;
 
@@ -27,6 +35,9 @@ export const linkedinSendMessageHandler = async ({
     accountId: unipileAccountId,
     chatId: threadExternalId,
     text,
+    attachments: await Promise.all(
+      attachments.map(downloadLinkedinOutgoingAttachment),
+    ),
   });
 
   return { externalId };
@@ -36,7 +47,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-send-message',
   description:
-    'Sends a reply written in Twenty to its LinkedIn conversation through Unipile.',
-  timeoutSeconds: 20,
+    'Sends a reply written in Twenty, with its attachments, to its LinkedIn conversation through Unipile.',
+  timeoutSeconds: 60,
   handler: linkedinSendMessageHandler,
 });

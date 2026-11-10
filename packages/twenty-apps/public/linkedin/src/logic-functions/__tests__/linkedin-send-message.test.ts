@@ -3,7 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
   sendUnipileChatMessage: vi.fn(),
+  fetch: vi.fn(),
 }));
+
+vi.stubGlobal('fetch', mocks.fetch);
 
 vi.mock('twenty-sdk/logic-function', () => ({
   getConnection: mocks.getConnection,
@@ -50,7 +53,81 @@ describe('linkedinSendMessageHandler', () => {
       accountId: 'acc_1',
       chatId: 'chat-1',
       text: 'Thanks, talk soon',
+      attachments: [],
     });
+  });
+
+  it('downloads the attachments from Twenty and sends them with the reply', async () => {
+    mocks.fetch.mockResolvedValue(new Response('pdf-content'));
+
+    await linkedinSendMessageHandler({
+      ...PAYLOAD,
+      attachments: [
+        {
+          filename: 'offer.pdf',
+          mimeType: 'application/pdf',
+          size: 11,
+          url: 'https://twenty.test/file/files-field/file-1?token=signed',
+        },
+      ],
+    });
+
+    expect(mocks.fetch).toHaveBeenCalledExactlyOnceWith(
+      'https://twenty.test/file/files-field/file-1?token=signed',
+    );
+    expect(mocks.sendUnipileChatMessage).toHaveBeenCalledExactlyOnceWith({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      text: 'Thanks, talk soon',
+      attachments: [
+        {
+          filename: 'offer.pdf',
+          content_type: 'application/pdf',
+          content: Buffer.from('pdf-content').toString('base64'),
+        },
+      ],
+    });
+  });
+
+  it('sends nothing when an attachment is over the size limit', async () => {
+    await expect(
+      linkedinSendMessageHandler({
+        ...PAYLOAD,
+        attachments: [
+          {
+            filename: 'movie.mp4',
+            mimeType: 'video/mp4',
+            size: 26 * 1024 * 1024,
+            url: 'https://twenty.test/file/files-field/file-2?token=signed',
+          },
+        ],
+      }),
+    ).rejects.toThrow('Attachment movie.mp4 is larger than 26214400 bytes');
+
+    expect(mocks.fetch).not.toHaveBeenCalled();
+    expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing when an attachment cannot be downloaded', async () => {
+    mocks.fetch.mockResolvedValue(new Response(null, { status: 403 }));
+
+    await expect(
+      linkedinSendMessageHandler({
+        ...PAYLOAD,
+        attachments: [
+          {
+            filename: 'offer.pdf',
+            mimeType: 'application/pdf',
+            size: 11,
+            url: 'https://twenty.test/file/files-field/file-1?token=expired',
+          },
+        ],
+      }),
+    ).rejects.toThrow(
+      'Attachment offer.pdf could not be downloaded from Twenty (403)',
+    );
+
+    expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
   });
 
   it('refuses to send through a connection without a Unipile account', async () => {

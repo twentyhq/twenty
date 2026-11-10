@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type SendAppMessageAttachment } from 'twenty-shared/application';
 import {
+  FileFolder,
   MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
@@ -12,7 +14,9 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { type AppMessageAttachmentInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { type SendAppChannelMessageOutput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.output';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -31,6 +35,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { MessagingMessageAttachmentService } from 'src/modules/messaging/message-import-manager/services/messaging-message-attachment.service';
 
 const CONVERSATION_LOOKUP_MESSAGE_LIMIT = 50;
 
@@ -44,6 +49,7 @@ type SendArgs = {
   messageChannelId: string;
   messageThreadId: string;
   text: string;
+  attachments: AppMessageAttachmentInput[];
   idempotencyKey: string;
 };
 
@@ -55,6 +61,7 @@ type Conversation = {
 type AppMessageDelivery = Conversation & {
   externalId: string;
   text: string;
+  attachments: AppMessageAttachmentInput[];
   sentAt: string;
 };
 
@@ -69,6 +76,8 @@ export class ApplicationMessageSendService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
+    private readonly messagingMessageAttachmentService: MessagingMessageAttachmentService,
+    private readonly fileUrlService: FileUrlService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
@@ -79,8 +88,16 @@ export class ApplicationMessageSendService {
     messageChannelId,
     messageThreadId,
     text,
+    attachments,
     idempotencyKey,
   }: SendArgs): Promise<SendAppChannelMessageOutput> {
+    if (text.trim().length === 0 && attachments.length === 0) {
+      throw new MessageChannelException(
+        'A message needs a text or at least one attachment',
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
     const messageChannel = await this.messageChannelRepository.findOne({
       where: {
         id: messageChannelId,
@@ -143,6 +160,7 @@ export class ApplicationMessageSendService {
             messageThreadId,
             idempotencyKey,
             text,
+            attachments,
             deliveryKey,
           }));
 
@@ -158,6 +176,7 @@ export class ApplicationMessageSendService {
               externalId: delivery.externalId,
               threadExternalId: delivery.threadExternalId,
               text: delivery.text,
+              attachments: delivery.attachments,
               receivedAt: new Date(delivery.sentAt),
               participants: [
                 {
@@ -196,6 +215,7 @@ export class ApplicationMessageSendService {
     messageThreadId,
     idempotencyKey,
     text,
+    attachments,
     deliveryKey,
   }: {
     workspaceId: string;
@@ -205,8 +225,14 @@ export class ApplicationMessageSendService {
     messageThreadId: string;
     idempotencyKey: string;
     text: string;
+    attachments: AppMessageAttachmentInput[];
     deliveryKey: string;
   }): Promise<AppMessageDelivery> {
+    const outgoingAttachments = await this.buildOutgoingAttachments({
+      workspaceId,
+      attachments,
+    });
+
     const sender =
       await this.messagingProviderMessageSenderService.resolveSenderOrThrow({
         messagingProviderUniversalIdentifier:
@@ -231,6 +257,7 @@ export class ApplicationMessageSendService {
           messageChannelId: messageChannel.id,
           threadExternalId: conversation.threadExternalId,
           text,
+          attachments: outgoingAttachments,
           idempotencyKey,
           recipients: conversation.recipients.map(
             ({ handle, displayName }) => ({
@@ -245,6 +272,7 @@ export class ApplicationMessageSendService {
       externalId: sentMessage.externalId,
       threadExternalId: conversation.threadExternalId,
       text,
+      attachments,
       sentAt: sentMessage.sentAt ?? new Date().toISOString(),
       recipients: conversation.recipients,
     };
@@ -256,6 +284,46 @@ export class ApplicationMessageSendService {
     );
 
     return delivery;
+  }
+
+  private async buildOutgoingAttachments({
+    workspaceId,
+    attachments,
+  }: {
+    workspaceId: string;
+    attachments: AppMessageAttachmentInput[];
+  }): Promise<SendAppMessageAttachment[]> {
+    if (attachments.length === 0) {
+      return [];
+    }
+
+    await this.messagingMessageAttachmentService.assertMessageAttachmentsAreEnabledOrThrow(
+      workspaceId,
+    );
+
+    const files =
+      await this.messagingMessageAttachmentService.findAttachableFilesOrThrow({
+        workspaceId,
+        fileIds: attachments.map(({ fileId }) => fileId),
+      });
+    const fileById = new Map(files.map((file) => [file.id, file]));
+
+    return Promise.all(
+      attachments.map(async ({ fileId, label }) => {
+        const file = fileById.get(fileId);
+
+        return {
+          filename: label,
+          mimeType: file?.mimeType ?? 'application/octet-stream',
+          size: file?.size ?? 0,
+          url: await this.fileUrlService.signFileByIdUrl({
+            fileId,
+            workspaceId,
+            fileFolder: FileFolder.FilesField,
+          }),
+        };
+      }),
+    );
   }
 
   private async findConversation({

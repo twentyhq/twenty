@@ -56,6 +56,7 @@ export type {
   ConnectionCallbackResult,
   IdentifyAccountPayload,
   IdentifyAccountResult,
+  SendAppMessageAttachment,
   SendAppMessagePayload,
   SendAppMessageRecipient,
   SendAppMessageResult,

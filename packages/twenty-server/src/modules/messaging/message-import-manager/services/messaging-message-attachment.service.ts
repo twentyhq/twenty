@@ -54,19 +54,7 @@ export class MessagingMessageAttachmentService {
       return;
     }
 
-    const isMessageAttachmentEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
-        workspaceId,
-      );
-
-    // rejecting lets the app retry instead of losing the files
-    if (!isMessageAttachmentEnabled) {
-      throw new MessageChannelException(
-        'Message attachments are unavailable until this workspace finishes upgrading',
-        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
-      );
-    }
+    await this.assertMessageAttachmentsAreEnabledOrThrow(workspaceId);
 
     const attachmentRepository =
       transactionScope.getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
@@ -93,7 +81,7 @@ export class MessagingMessageAttachmentService {
       return;
     }
 
-    await this.assertFilesAreAttachableOrThrow({
+    await this.findAttachableFilesOrThrow({
       workspaceId,
       fileIds: attachmentsToCreate.flatMap(({ file }) =>
         file.map(({ fileId }) => fileId),
@@ -209,13 +197,31 @@ export class MessagingMessageAttachmentService {
     );
   }
 
-  private async assertFilesAreAttachableOrThrow({
+  // rejecting lets the caller retry instead of losing the files
+  async assertMessageAttachmentsAreEnabledOrThrow(
+    workspaceId: string,
+  ): Promise<void> {
+    const isMessageAttachmentEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+        workspaceId,
+      );
+
+    if (!isMessageAttachmentEnabled) {
+      throw new MessageChannelException(
+        'Message attachments are unavailable until this workspace finishes upgrading',
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+  }
+
+  async findAttachableFilesOrThrow({
     workspaceId,
     fileIds,
   }: {
     workspaceId: string;
     fileIds: string[];
-  }): Promise<void> {
+  }): Promise<Pick<FileEntity, 'id' | 'mimeType' | 'size'>[]> {
     const repeatedFileIds = fileIds.filter(
       (fileId, index) => fileIds.indexOf(fileId) !== index,
     );
@@ -229,7 +235,14 @@ export class MessagingMessageAttachmentService {
 
     const files = await this.fileRepository.find(workspaceId, {
       where: { id: In(fileIds) },
-      select: { id: true, path: true, status: true, settings: true },
+      select: {
+        id: true,
+        path: true,
+        status: true,
+        settings: true,
+        mimeType: true,
+        size: true,
+      },
     });
     const fileById = new Map(files.map((file) => [file.id, file]));
 
@@ -250,5 +263,7 @@ export class MessagingMessageAttachmentService {
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
+
+    return files;
   }
 }

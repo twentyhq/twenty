@@ -13,7 +13,74 @@ jest.mock('@/activities/emails/hooks/useSendAppChannelMessage', () => ({
   }),
 }));
 
+const mockClearDraftAttachments = jest.fn();
+const mockDraftAttachments = jest.fn(() => [] as unknown[]);
+
+jest.mock('@/activities/emails/hooks/useChatThreadDraftAttachments', () => ({
+  useChatThreadDraftAttachments: () => ({
+    canAttachFiles: true,
+    uploadingFiles: [],
+    draftAttachments: mockDraftAttachments(),
+    attachFiles: jest.fn(),
+    cancelUpload: jest.fn(),
+    removeDraftAttachment: jest.fn(),
+    clearDraftAttachments: mockClearDraftAttachments,
+    openAttachmentPicker: jest.fn(),
+  }),
+}));
+
+jest.mock('@/ai/components/internal/AgentChatFilePreview', () => ({
+  AgentChatFilePreview: ({ file }: { file: { filename: string } }) => (
+    <span>{file.filename}</span>
+  ),
+}));
+
 describe('ChatThreadComposer', () => {
+  afterEach(() => {
+    mockSendAppChannelMessage.mockReset();
+    mockDraftAttachments.mockReturnValue([]);
+  });
+
+  it('sends the uploaded attachments without any text', async () => {
+    mockSendAppChannelMessage.mockResolvedValueOnce(undefined);
+    mockDraftAttachments.mockReturnValue([
+      {
+        type: 'file',
+        fileId: 'file-id',
+        filename: 'offer.pdf',
+        mediaType: 'application/pdf',
+        url: 'https://twenty.test/offer.pdf',
+      },
+    ]);
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadComposer
+          messageThreadId="thread-id"
+          messageChannelId="channel-id"
+          channelName="LinkedIn"
+          recipientName="Ada"
+          isDisconnected={false}
+          onMessageSent={jest.fn().mockResolvedValue(undefined)}
+        />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByText('offer.pdf')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    await waitFor(() =>
+      expect(mockSendAppChannelMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          text: '',
+          attachments: [{ fileId: 'file-id', label: 'offer.pdf' }],
+        }),
+      ),
+    );
+    expect(mockClearDraftAttachments).toHaveBeenCalledTimes(1);
+  });
+
   it('retries a failed message with the same idempotency key', async () => {
     mockSendAppChannelMessage
       .mockRejectedValueOnce(new Error('Network error'))

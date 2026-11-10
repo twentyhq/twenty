@@ -1,15 +1,17 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, useState } from 'react';
+import { type ClipboardEvent, type KeyboardEvent, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { v4 } from 'uuid';
 
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
+import { useChatThreadDraftAttachments } from '@/activities/emails/hooks/useChatThreadDraftAttachments';
 import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
+import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconButton } from 'twenty-ui/components/input';
-import { IconArrowUp } from 'twenty-ui/icon';
+import { IconArrowUp, IconPaperclip } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -58,10 +60,16 @@ const StyledTextarea = styled(TextareaAutosize)`
   }
 `;
 
+const StyledDraftAttachments = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledFooter = styled.div`
   align-items: center;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 `;
 
 type ChatThreadComposerProps = {
@@ -83,6 +91,16 @@ export const ChatThreadComposer = ({
 }: ChatThreadComposerProps) => {
   const { t } = useLingui();
   const { sendAppChannelMessage } = useSendAppChannelMessage();
+  const {
+    canAttachFiles,
+    uploadingFiles,
+    draftAttachments,
+    attachFiles,
+    cancelUpload,
+    removeDraftAttachment,
+    clearDraftAttachments,
+    openAttachmentPicker,
+  } = useChatThreadDraftAttachments();
   const [draft, setDraft] = useState('');
   const [pendingMessages, setPendingMessages] = useState<PendingChatMessage[]>(
     [],
@@ -108,6 +126,10 @@ export const ChatThreadComposer = ({
         messageChannelId,
         messageThreadId,
         text: pendingMessage.text,
+        attachments: pendingMessage.attachments.map(({ fileId, filename }) => ({
+          fileId,
+          label: filename,
+        })),
         idempotencyKey: pendingMessage.id,
       });
     } catch {
@@ -135,16 +157,21 @@ export const ChatThreadComposer = ({
     setPendingMessageStatus(pendingMessage.id, 'sent');
   };
 
-  const handleSubmit = () => {
-    const text = draft.trim();
+  const text = draft.trim();
+  const canSubmit =
+    !isDisconnected &&
+    uploadingFiles.length === 0 &&
+    (isNonEmptyString(text) || draftAttachments.length > 0);
 
-    if (!isNonEmptyString(text) || isDisconnected) {
+  const handleSubmit = () => {
+    if (!canSubmit) {
       return;
     }
 
     const pendingMessage: PendingChatMessage = {
       id: v4(),
       text,
+      attachments: draftAttachments,
       status: 'sending',
     };
 
@@ -153,7 +180,19 @@ export const ChatThreadComposer = ({
       pendingMessage,
     ]);
     setDraft('');
+    clearDraftAttachments();
     send(pendingMessage);
+  };
+
+  const handlePaste = (event: ClipboardEvent<HTMLTextAreaElement>) => {
+    const pastedFiles = Array.from(event.clipboardData.files);
+
+    if (!canAttachFiles || pastedFiles.length === 0) {
+      return;
+    }
+
+    event.preventDefault();
+    attachFiles(pastedFiles);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -188,6 +227,25 @@ export const ChatThreadComposer = ({
         </StyledPendingMessages>
       )}
       <StyledInputBox>
+        {(uploadingFiles.length > 0 || draftAttachments.length > 0) && (
+          <StyledDraftAttachments>
+            {uploadingFiles.map((file, index) => (
+              <AgentChatFilePreview
+                key={`${index}-${file.name}`}
+                file={file}
+                onRemove={() => cancelUpload(file)}
+                isUploading
+              />
+            ))}
+            {draftAttachments.map((draftAttachment) => (
+              <AgentChatFilePreview
+                key={draftAttachment.fileId}
+                file={draftAttachment}
+                onRemove={() => removeDraftAttachment(draftAttachment.fileId)}
+              />
+            ))}
+          </StyledDraftAttachments>
+        )}
         <StyledTextarea
           aria-label={t`Message`}
           placeholder={getPlaceholder()}
@@ -197,15 +255,29 @@ export const ChatThreadComposer = ({
           disabled={isDisconnected}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
         />
         <StyledFooter>
+          <div>
+            {canAttachFiles && (
+              <IconButton
+                variant="ghost"
+                size="sm"
+                aria-label={t`Attach files`}
+                disabled={isDisconnected}
+                onClick={openAttachmentPicker}
+              >
+                <IconPaperclip />
+              </IconButton>
+            )}
+          </div>
           <IconButton
             variant="solid"
             color="accent"
             shape="round"
             size="sm"
             aria-label={t`Send`}
-            disabled={isDisconnected || !isNonEmptyString(draft.trim())}
+            disabled={!canSubmit}
             onClick={handleSubmit}
           >
             <IconArrowUp />

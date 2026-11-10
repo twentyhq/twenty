@@ -121,6 +121,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MessagingRelaunchFailedMessageChannelsCronCommand,
     MessagingProcessGroupEmailActionsService,
     MessagingSaveMessagesAndEnqueueContactCreationService,
+    MessagingMessageAttachmentService,
     MessagingMessagesImportService,
     MessagingMessageListFetchService,
   ],

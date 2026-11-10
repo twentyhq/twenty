@@ -7147,6 +7147,7 @@ export type SearchField = {
 };
 
 export type SendAppChannelMessageInput = {
+  attachments?: InputMaybe<Array<AppMessageAttachmentInput>>;
   idempotencyKey: Scalars['UUID']['input'];
   messageChannelId: Scalars['UUID']['input'];
   messageThreadId: Scalars['UUID']['input'];

@@ -4,6 +4,7 @@ import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/
 import { SEND_APP_CHANNEL_MESSAGE } from '@/activities/emails/graphql/mutations/sendAppChannelMessage';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
+  type AppMessageAttachmentInput,
   type SendAppChannelMessageMutation,
   type SendAppChannelMessageMutationVariables,
 } from '~/generated-metadata/graphql';
@@ -19,16 +20,24 @@ export const useSendAppChannelMessage = () => {
     messageChannelId,
     messageThreadId,
     text,
+    attachments,
     idempotencyKey,
   }: {
     messageChannelId: string;
     messageThreadId: string;
     text: string;
+    attachments: AppMessageAttachmentInput[];
     idempotencyKey: string;
   }) => {
     await sendAppChannelMessageMutation({
       variables: {
-        input: { messageChannelId, messageThreadId, text, idempotencyKey },
+        input: {
+          messageChannelId,
+          messageThreadId,
+          text,
+          attachments,
+          idempotencyKey,
+        },
       },
     });
 

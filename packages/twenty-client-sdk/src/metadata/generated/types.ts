@@ -13109,6 +13109,9 @@ export default {
             ]
         },
         "SendAppChannelMessageInput": {
+            "attachments": [
+                49
+            ],
             "idempotencyKey": [
                 552
             ],

@@ -45,6 +45,34 @@ describe('sendUnipileChatMessage', () => {
     });
   });
 
+  it('sends the attachments along with the text', async () => {
+    mocks.sendMessage.mockResolvedValue({
+      data: { object: 'MessageSent', message_id: 'message-1' },
+    });
+
+    const attachments = [
+      {
+        filename: 'offer.pdf',
+        content_type: 'application/pdf',
+        content: 'cGRm',
+      },
+    ];
+
+    await sendUnipileChatMessage({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      text: '',
+      attachments,
+    });
+
+    expect(mocks.sendMessage).toHaveBeenCalledExactlyOnceWith({
+      auth: 'key',
+      throwOnError: true,
+      path: { account_id: 'acc_1', chat_id: 'chat-1' },
+      body: { text: '', attachments },
+    });
+  });
+
   it('returns the first id when Unipile reports several', async () => {
     mocks.sendMessage.mockResolvedValue({
       data: { object: 'MessageSent', message_id: ['message-1', 'message-2'] },
