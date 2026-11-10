@@ -7,7 +7,6 @@ import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
-import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import {
   RecordShareException,
@@ -29,7 +28,6 @@ export class RecordSharePrincipalService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
-    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
@@ -76,13 +74,11 @@ export class RecordSharePrincipalService {
       userWorkspaceRoleMap,
     });
     const roleIdsUnableToReadObject =
-      await this.recordPermissionsOnlyRoleReadService.filterRoleIdsWithoutReadAccess(
-        {
-          workspaceId,
-          roleIds: roleIds.filter(isDefined),
-          objectMetadataId: flatObjectMetadata.id,
-        },
-      );
+      await this.recordPermissionsReadService.filterRoleIdsWithoutReadAccess({
+        workspaceId,
+        roleIds: roleIds.filter(isDefined),
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
@@ -107,8 +103,8 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant =
-        await this.recordPermissionsReadService.canAccessKnownRecords({
+      const hasGrant = await this.recordPermissionsReadService.canAccessRecords(
+        {
           operationType: 'read',
           principals:
             await this.principalPermissionsReadService.resolvePermissionsPrincipals(
@@ -123,7 +119,8 @@ export class RecordSharePrincipalService {
           objectMetadataId: flatObjectMetadata.id,
           recordIds,
           transactionScope,
-        });
+        },
+      );
 
       if (!hasGrant) {
         throw new RecordShareException(

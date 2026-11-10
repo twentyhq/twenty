@@ -1909,13 +1909,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
-      const principals = this.resolvePermissionsPrincipalsOrThrow();
-      const rlsRuleUnreadableFieldsByRole =
-        await this.options.internalContext.recordFieldPermissions.findRlsRuleUnreadableFieldsByRole(
-          { principals, objectMetadataId: tableShape.objectMetadataId },
+      const fieldsHiddenOnMatchingRecords =
+        await this.options.internalContext.recordFieldPermissions.findFieldsHiddenOnMatchingRecords(
+          {
+            principals: this.resolvePermissionsPrincipalsOrThrow(),
+            objectMetadataId: tableShape.objectMetadataId,
+            tableAlias: alias,
+          },
         );
 
-      if (!isNonEmptyArray(rlsRuleUnreadableFieldsByRole)) {
+      if (!isNonEmptyArray(fieldsHiddenOnMatchingRecords)) {
         continue;
       }
 
@@ -1929,9 +1932,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
 
       for (const {
-        roleId,
         fieldMetadataIds,
-      } of rlsRuleUnreadableFieldsByRole) {
+        sqlCondition,
+      } of fieldsHiddenOnMatchingRecords) {
         queryBuilder.nullifyColumnsWhen({
           alias,
           columnNames: columnEntries
@@ -1939,15 +1942,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               fieldMetadataIds.includes(fieldMetadataId),
             )
             .map(([columnName]) => columnName),
-          condition:
-            await this.options.internalContext.recordFieldPermissions.buildRlsRuleSQLConditionOrThrow(
-              {
-                principals,
-                objectMetadataId: tableShape.objectMetadataId,
-                roleId,
-                tableAlias: alias,
-              },
-            ),
+          condition: sqlCondition,
         });
       }
     }

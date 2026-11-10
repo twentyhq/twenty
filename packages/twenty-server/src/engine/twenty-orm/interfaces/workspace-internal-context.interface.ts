@@ -37,7 +37,7 @@ export interface WorkspaceInternalContext {
   >;
   recordFieldPermissions: Pick<
     RecordFieldPermissionsReadService,
-    'findRlsRuleUnreadableFieldsByRole' | 'buildRlsRuleSQLConditionOrThrow'
+    'findFieldsHiddenOnMatchingRecords'
   >;
   recordAccessGroupWrite: Pick<
     RecordAccessGroupWriteService,
