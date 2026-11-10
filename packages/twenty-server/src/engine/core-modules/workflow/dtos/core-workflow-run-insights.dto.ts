@@ -44,13 +44,12 @@ export class CoreWorkflowRunInsightsDTO {
 
   @Field(() => Int, {
     description:
-      'Runs over the last 14 calendar days in the requested time zone',
+      'Runs over the last 14 days, the same window as the workflows list run count',
   })
   runCount: number;
 
   @Field(() => Int, {
-    description:
-      'Failed runs over the last 14 calendar days in the requested time zone',
+    description: 'Failed runs over the same 14 days',
   })
   failedRunCount: number;
 
@@ -62,16 +61,13 @@ export class CoreWorkflowRunInsightsDTO {
 
   @Field(() => Float, {
     nullable: true,
-    description:
-      'Average duration of completed runs over the same 14 calendar days',
+    description: 'Average duration of completed runs over the same 14 days',
   })
   averageDurationInMs: number | null;
 
-  @Field(() => String, { nullable: true })
-  lastFailedRunAt: string | null;
-
   @Field(() => [CoreWorkflowDailyRunCountDTO], {
-    description: 'One entry per day of the last 14 days, oldest first',
+    description:
+      'One entry per calendar day of the last 14 days in the requested time zone, oldest first',
   })
   dailyRunCounts: CoreWorkflowDailyRunCountDTO[];
 

@@ -11,7 +11,6 @@ export const GET_CORE_WORKFLOW_RUN_INSIGHTS = gql`
       failedRunCount
       isRunCountLowerBound
       averageDurationInMs
-      lastFailedRunAt
       dailyRunCounts {
         day
         completedRunCount
