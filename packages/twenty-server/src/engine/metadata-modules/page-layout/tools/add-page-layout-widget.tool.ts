@@ -1,20 +1,19 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { PAGE_LAYOUT_TOOL_ACCESS_POLICY } from 'src/engine/metadata-modules/page-layout/tools/constants/page-layout-tool-access-policy.constant';
+import { PageLayoutToolService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service';
+import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import {
-  type PageLayoutWidgetPosition,
-  type WidgetType,
-} from 'twenty-shared/types';
 import {
   widgetPositionSchema,
   widgetConfigurationSchema,
   widgetTypeSchema,
 } from 'src/engine/metadata-modules/page-layout/tools/schemas/widget.schema';
-import {
-  type PageLayoutToolContext,
-  type PageLayoutToolDependencies,
-} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
-import { type WidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-configuration-input.type';
 import { resolveWidgetFieldNamesToIds } from 'src/engine/metadata-modules/page-layout/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
 
 const addPageLayoutWidgetSchema = z.object({
@@ -42,20 +41,8 @@ const addPageLayoutWidgetSchema = z.object({
   configuration: widgetConfigurationSchema,
 });
 
-export const createAddPageLayoutWidgetTool = ({
-  deps,
-  context,
-}: {
-  deps: {
-    pageLayoutToolService: PageLayoutToolDependencies['pageLayoutToolService'];
-    pageLayoutWidgetService: Pick<
-      PageLayoutToolDependencies['pageLayoutWidgetService'],
-      'create'
-    >;
-  };
-  context: PageLayoutToolContext;
-}) => ({
-  name: 'add_page_layout_widget' as const,
+@DefineTool({
+  name: 'add_page_layout_widget',
   description: `Add a widget to an existing page-layout tab (dashboard or record page).
 
 Use get_dashboard or list_record_page_layouts first to get pageLayoutTabId, layoutMode and existing widget positions. Match the tab's layoutMode: GRID uses row/column/spans, VERTICAL_LIST uses index. Record-page changes affect the shared layout for that object, not only the currently open record.
@@ -68,36 +55,52 @@ For RECORD_TABLE widgets: create a dedicated view first with upsert_complete_vie
 For FRONT_COMPONENT widgets: pass configuration { configurationType: "FRONT_COMPONENT", frontComponentId } for an existing saved component that is available on the target page layout and object (see list_front_components). This places the component without changing its source or registration. Only place it when the user asks for it on this page layout.
 
 See create_complete_dashboard for full configuration examples.`,
-  inputSchema: addPageLayoutWidgetSchema,
-  execute: async (parameters: {
-    pageLayoutTabId: string;
-    title: string;
-    type: WidgetType;
-    position: PageLayoutWidgetPosition;
-    objectMetadataId?: string;
-    objectName?: string;
-    configuration?: WidgetConfigurationInput;
-  }) => {
+  category: ToolCategory.PAGE_LAYOUT,
+  accessPolicy: PAGE_LAYOUT_TOOL_ACCESS_POLICY,
+  icon: 'IconAppWindow',
+})
+export class AddPageLayoutWidgetTool extends BaseTool<
+  typeof addPageLayoutWidgetSchema
+> {
+  readonly inputSchema = addPageLayoutWidgetSchema;
+
+  constructor(
+    private readonly pageLayoutToolService: PageLayoutToolService,
+    private readonly pageLayoutWidgetService: PageLayoutWidgetService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<typeof addPageLayoutWidgetSchema>): Promise<ToolOutput> {
     try {
-      await deps.pageLayoutToolService.assertFrontComponentWidgetAvailableOnPageLayoutOrThrow(
+      await this.pageLayoutToolService.assertFrontComponentWidgetAvailableOnPageLayoutOrThrow(
         {
           configuration: parameters.configuration,
           pageLayoutTabId: parameters.pageLayoutTabId,
           position: parameters.position,
-          context,
+          context: {
+            workspaceId: context.workspaceId,
+            callingApplication: context.application,
+            workspaceCustomApplicationId:
+              context.authContext?.workspace.workspaceCustomApplicationId ??
+              undefined,
+          },
         },
       );
 
       const identifierMaps =
-        await deps.pageLayoutToolService.computePageLayoutIdentifierMaps(
-          context,
-        );
+        await this.pageLayoutToolService.computePageLayoutIdentifierMaps({
+          workspaceId: context.workspaceId,
+        });
       const widgetWithMetadataIds = resolveWidgetFieldNamesToIds(
         parameters,
         identifierMaps,
       );
 
-      const widget = await deps.pageLayoutWidgetService.create({
+      const widget = await this.pageLayoutWidgetService.create({
         input: {
           ...widgetWithMetadataIds,
           pageLayoutTabId: parameters.pageLayoutTabId,
@@ -123,5 +126,5 @@ See create_complete_dashboard for full configuration examples.`,
         error: error.message,
       };
     }
-  },
-});
+  }
+}

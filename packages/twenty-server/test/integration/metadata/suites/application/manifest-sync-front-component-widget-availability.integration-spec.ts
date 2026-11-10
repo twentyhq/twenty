@@ -1,3 +1,5 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -22,6 +24,7 @@ import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
+import { type SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -331,6 +334,71 @@ describe('Manifest sync - front component widgetAvailability', () => {
       await destroyOnePageLayout({ input: { id: pageLayoutId } });
     });
 
+    it('exposes each page-layout tool once alongside the existing dashboard tools', async () => {
+      const catalog = await getAppProviderByClassName<ToolRegistryService>(
+        'ToolRegistryService',
+      ).getCatalog(
+        {
+          ...context,
+          authContext: await resolveWorkspaceMemberAuthContext({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          }),
+        },
+        { categories: [ToolCategory.PAGE_LAYOUT] },
+      );
+      expect(catalog.map(({ name }) => name).sort()).toEqual([
+        'add_page_layout_tab',
+        'add_page_layout_widget',
+        'create_complete_dashboard',
+        'delete_page_layout_widget',
+        'get_dashboard',
+        'list_dashboards',
+        'list_record_page_layouts',
+        'place_front_component',
+        'update_page_layout_widget',
+      ]);
+    });
+
+    it('does not execute placement without layout permission', async () => {
+      const permissions = getAppProviderByClassName<SettingPermissionsService>(
+        'SettingPermissionsService',
+      );
+      const hasPermissionFlag = permissions.hasPermissionFlag.bind(permissions);
+      const permissionCheck = jest
+        .spyOn(permissions, 'hasPermissionFlag')
+        .mockImplementation((input) =>
+          input.permissionFlag === PermissionFlagType.LAYOUTS
+            ? Promise.resolve(false)
+            : hasPermissionFlag(input),
+        );
+      try {
+        expect(
+          await executeTool({
+            name: 'place_front_component',
+            arguments: {
+              frontComponentId: uuidv4(),
+              pageLayoutTabId,
+              title: 'Forbidden',
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                index: 0,
+              },
+            },
+          }),
+        ).toMatchObject({
+          success: false,
+          message: 'Tool "place_front_component" not found',
+        });
+        const { data } = await findPageLayoutWidgets({
+          input: { pageLayoutTabId },
+        });
+        expect(data.getPageLayoutWidgets).toHaveLength(0);
+      } finally {
+        permissionCheck.mockRestore();
+      }
+    });
+
     it.each(['company', 'companies'])(
       'finds the record layout using %s',
       async (objectName) => {
@@ -384,6 +452,28 @@ describe('Manifest sync - front component widgetAvailability', () => {
         expectToFail: false,
       });
       const frontComponent = await findFrontComponent();
+      const { data: otherTabData } = await createOnePageLayoutTab({
+        input: {
+          pageLayoutId,
+          title: 'Other tab',
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        },
+      });
+      const otherTabId = otherTabData.createPageLayoutTab.id;
+      expect(
+        await executeTool({
+          name: 'place_front_component',
+          arguments: {
+            frontComponentId: frontComponent?.id,
+            pageLayoutTabId: otherTabId,
+            title: 'Other tab widget',
+            position: {
+              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+              index: 0,
+            },
+          },
+        }),
+      ).toMatchObject({ success: true });
       for (const title of ['First', 'Inserted']) {
         expect(
           await executeTool({
@@ -416,6 +506,15 @@ describe('Manifest sync - front component widgetAvailability', () => {
         ]),
       );
       expect(data.getPageLayoutWidgets).toHaveLength(2);
+      const { data: otherTabWidgets } = await findPageLayoutWidgets({
+        input: { pageLayoutTabId: otherTabId },
+      });
+      expect(otherTabWidgets.getPageLayoutWidgets).toEqual([
+        expect.objectContaining({
+          title: 'Other tab widget',
+          position: expect.objectContaining({ index: 0 }),
+        }),
+      ]);
     });
 
     it.each([

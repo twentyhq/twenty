@@ -1,37 +1,34 @@
 import { isDefined } from 'twenty-shared/utils';
 import { Inject, Injectable, Optional } from '@nestjs/common';
-
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { ToolCategory } from 'twenty-shared/ai';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-
-import { PAGE_LAYOUT_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/page-layout-tool-service.token';
-import { ToolCategory } from 'twenty-shared/ai';
+import { DASHBOARD_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/dashboard-tool-service.token';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
-import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
-import type { PageLayoutToolService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service';
+import type { DashboardToolWorkspaceService } from 'src/modules/dashboard/tools/services/dashboard-tool.workspace-service';
 
 @Injectable()
-export class PageLayoutToolProvider implements ToolProvider {
+export class DashboardToolProvider implements ToolProvider {
   readonly category = ToolCategory.PAGE_LAYOUT;
 
   constructor(
     @Optional()
-    @Inject(PAGE_LAYOUT_TOOL_SERVICE_TOKEN)
-    private readonly pageLayoutToolService: PageLayoutToolService | null,
+    @Inject(DASHBOARD_TOOL_SERVICE_TOKEN)
+    private readonly dashboardToolService: DashboardToolWorkspaceService | null,
     private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
-    if (!isDefined(this.pageLayoutToolService)) {
+    if (!this.dashboardToolService) {
       return false;
     }
 
@@ -47,7 +44,7 @@ export class PageLayoutToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const toolSet = await this.buildToolSet(context);
 
-    if (!isDefined(toolSet)) {
+    if (!toolSet) {
       return [];
     }
 
@@ -64,8 +61,10 @@ export class PageLayoutToolProvider implements ToolProvider {
   ): Promise<ToolOutput> {
     const toolSet = await this.buildToolSet(context);
 
-    if (!isDefined(toolSet)) {
-      return buildToolNotAvailableOutput(toolName);
+    if (!toolSet) {
+      throw new Error(
+        `Dashboard tool service is not available (tool: ${toolName})`,
+      );
     }
 
     return executeToolFromToolSet(
@@ -79,14 +78,11 @@ export class PageLayoutToolProvider implements ToolProvider {
   private async buildToolSet(
     context: ToolProviderContext,
   ): Promise<ToolSet | null> {
-    if (
-      !isDefined(this.pageLayoutToolService) ||
-      !isDefined(context.authContext)
-    ) {
+    if (!this.dashboardToolService || !isDefined(context.authContext)) {
       return null;
     }
 
-    return this.pageLayoutToolService.generatePageLayoutTools({
+    return this.dashboardToolService.generateDashboardTools({
       workspaceId: context.workspaceId,
       authContext: context.authContext,
       callingApplication: context.application,

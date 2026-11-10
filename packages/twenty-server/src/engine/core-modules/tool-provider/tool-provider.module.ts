@@ -9,7 +9,7 @@ import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
-import { PageLayoutToolProvider } from 'src/engine/core-modules/tool-provider/providers/page-layout-tool.provider';
+import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { McpToolProvider } from 'src/engine/core-modules/tool-provider/providers/mcp-tool.provider';
@@ -68,7 +68,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     RecordFilesResolverService,
     provideWorkspaceScopedRepository(FileEntity),
     ActionToolProvider,
-    PageLayoutToolProvider,
+    DashboardToolProvider,
     FrontComponentToolProvider,
     DatabaseToolProvider,
     LogicFunctionToolProvider,
@@ -81,7 +81,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider: DatabaseToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
         workflowProvider: WorkflowToolProvider,
-        pageLayoutProvider: PageLayoutToolProvider,
+        dashboardProvider: DashboardToolProvider,
         frontComponentProvider: FrontComponentToolProvider,
         mcpProvider: McpToolProvider,
       ) => [
@@ -89,7 +89,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider,
         logicFunctionProvider,
         workflowProvider,
-        pageLayoutProvider,
+        dashboardProvider,
         frontComponentProvider,
         mcpProvider,
       ],
@@ -98,7 +98,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         DatabaseToolProvider,
         LogicFunctionToolProvider,
         WorkflowToolProvider,
-        PageLayoutToolProvider,
+        DashboardToolProvider,
         FrontComponentToolProvider,
         McpToolProvider,
       ],

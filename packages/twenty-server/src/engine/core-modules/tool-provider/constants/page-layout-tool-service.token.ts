@@ -1,3 +1,0 @@
-export const PAGE_LAYOUT_TOOL_SERVICE_TOKEN = Symbol(
-  'PAGE_LAYOUT_TOOL_SERVICE',
-);

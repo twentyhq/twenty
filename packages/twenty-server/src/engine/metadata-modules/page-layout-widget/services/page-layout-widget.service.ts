@@ -312,15 +312,18 @@ export class PageLayoutWidgetService {
       flatPageLayoutWidgetToCreate.position?.layoutMode ===
       PageLayoutTabLayoutMode.VERTICAL_LIST
     ) {
-      const siblings = Object.values(
-        flatPageLayoutWidgetMaps.byUniversalIdentifier,
-      )
+      const parentTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: createInput.pageLayoutTabId,
+        flatEntityMaps: flatPageLayoutTabMaps,
+      });
+      const siblings = parentTab.widgetUniversalIdentifiers
+        .map(
+          (universalIdentifier) =>
+            flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier],
+        )
         .filter(isDefined)
         .filter((widget) => !isDefined(widget.deletedAt))
-        .map(fromFlatPageLayoutWidgetToPageLayoutWidgetDto)
-        .filter(
-          (widget) => widget.pageLayoutTabId === createInput.pageLayoutTabId,
-        );
+        .map(fromFlatPageLayoutWidgetToPageLayoutWidgetDto);
       const positions = getVerticalListWidgetInsertionPositions({
         widgets: siblings,
         widgetToCreate: {
