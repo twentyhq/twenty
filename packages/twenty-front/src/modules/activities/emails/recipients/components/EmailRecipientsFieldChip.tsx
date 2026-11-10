@@ -17,7 +17,7 @@ type EmailRecipientsFieldChipProps = {
   recipient: EmailRecipient;
   resolution: EmailRecipientResolution | undefined;
   isInvalid: boolean;
-  selected: boolean;
+  isSelected: boolean;
   isFlashing: boolean;
   onEdit: () => void;
   onRemove: () => void;
@@ -30,7 +30,7 @@ export const EmailRecipientsFieldChip = ({
   recipient,
   resolution,
   isInvalid,
-  selected,
+  isSelected,
   isFlashing,
   onEdit,
   onRemove,
@@ -50,7 +50,7 @@ export const EmailRecipientsFieldChip = ({
               : formatEmailRecipient(recipient)
           }
           isInvalid={isInvalid}
-          selected={selected}
+          isSelected={isSelected}
           isFlashing={isFlashing}
           onDoubleClick={onEdit}
           onRemove={(event) => {

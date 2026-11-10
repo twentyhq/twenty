@@ -8,6 +8,7 @@ import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { AiChatQueuedMessageList } from '@/ai/components/AiChatQueuedMessageList';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
+import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
@@ -25,7 +26,7 @@ const StyledQueueContainer = styled(StyledAiChatContentContainer)<{
   padding: 0
     ${({ hasPageContentInset }) =>
       hasPageContentInset
-        ? themeCssVariables.spacing[11]
+        ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
         : themeCssVariables.spacing[4]};
 `;
 

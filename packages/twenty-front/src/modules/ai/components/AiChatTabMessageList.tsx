@@ -11,6 +11,7 @@ import { AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai
 import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
 import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { getAiChatScrollWrapperInstanceId } from '@/ai/utils/getAiChatScrollWrapperInstanceId';
@@ -48,7 +49,7 @@ const StyledMessageListContent = styled(StyledAiChatContentContainer)<{
   gap: ${themeCssVariables.spacing[2]};
   padding: ${({ hasPageContentInset }) =>
     hasPageContentInset
-      ? `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[11]} 0`
+      ? `${themeCssVariables.spacing[4]} ${AI_CHAT_PAGE_CONTENT_INLINE_PADDING} 0`
       : themeCssVariables.spacing[4]};
 `;
 

@@ -111,7 +111,11 @@ export const AiChatToolCallApprovalEmailCard = ({
 
   return (
     <AiChatToolCallApprovalCardLayout
-      title={proposal.toolLabel}
+      title={
+        proposal.toolName === EMAIL_TOOL_NAMES.draft
+          ? t`Draft email`
+          : t`Send email`
+      }
       Icon={IconMail}
       approval={approval}
       actions={

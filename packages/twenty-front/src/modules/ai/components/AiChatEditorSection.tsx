@@ -27,6 +27,7 @@ import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatS
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
+import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
@@ -63,7 +64,7 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
   }};
   padding-inline: ${({ isCentered, hasPageContentInset }) =>
     hasPageContentInset && !isCentered
-      ? themeCssVariables.spacing[11]
+      ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
       : themeCssVariables.spacing[4]};
 `;
 

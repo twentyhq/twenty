@@ -51,6 +51,10 @@ const StyledContainer = styled.span`
     box-shadow: 0 0 0 1px ${themeCssVariables.color.red5};
   }
 
+  &[data-invalid='true'][data-selected='true'] {
+    box-shadow: 0 0 0 1px ${themeCssVariables.color.red};
+  }
+
   &:hover ${StyledRemove}, &:focus-within ${StyledRemove} {
     opacity: 1;
     pointer-events: auto;
@@ -77,7 +81,7 @@ type EmailRecipientChipProps = {
   title: string;
   chipId?: string;
   isInvalid?: boolean;
-  selected?: boolean;
+  isSelected?: boolean;
   isFlashing?: boolean;
   onDoubleClick?: () => void;
   onRemove?: (event: MouseEvent) => void;
@@ -90,7 +94,7 @@ export const EmailRecipientChip = ({
   title,
   chipId,
   isInvalid = false,
-  selected = false,
+  isSelected = false,
   isFlashing = false,
   onDoubleClick,
   onRemove,
@@ -117,7 +121,7 @@ export const EmailRecipientChip = ({
     <StyledContainer
       id={chipId}
       title={title}
-      data-selected={selected}
+      data-selected={isSelected}
       data-invalid={isInvalid}
       data-flashing={isFlashing}
       onDoubleClick={onDoubleClick}
