@@ -1,5 +1,6 @@
 import { getWorkspaceApplicationStatusesById } from '@/settings/applications/utils/getWorkspaceApplicationStatusesById';
 import {
+  type Application,
   ApplicationRegistrationSourceType,
   type ApplicationRegistrationSummary,
   type ApplicationVariable,
@@ -9,7 +10,8 @@ import {
 const APPLICATION_ID = 'acme-application-id';
 
 type ApplicationRegistrationOverrides = Partial<
-  Pick<ApplicationRegistrationSummary, 'sourceType' | 'latestAvailableVersion'>
+  Pick<Application, 'sourceType'> &
+    Pick<ApplicationRegistrationSummary, 'latestAvailableVersion'>
 >;
 
 const buildVariable = (
@@ -35,7 +37,8 @@ const buildApplication = ({
 }: ApplicationRegistrationOverrides = {}) => ({
   id: APPLICATION_ID,
   version: '1.0.0',
-  applicationRegistration: { sourceType, latestAvailableVersion },
+  sourceType,
+  applicationRegistration: { latestAvailableVersion },
 });
 
 const getStatusesById = ({

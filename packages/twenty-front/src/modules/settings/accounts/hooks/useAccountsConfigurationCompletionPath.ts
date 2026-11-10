@@ -11,7 +11,7 @@ export const useAccountsConfigurationCompletionPath = (
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
-  const { accounts } = useMyConnectedAccounts();
+  const { accounts, hasLoaded } = useMyConnectedAccounts();
 
   const connectedAccount = accounts.find(
     (account) => account.id === connectedAccountId,
@@ -22,6 +22,10 @@ export const useAccountsConfigurationCompletionPath = (
 
   if (!isAppPreferencesEnabled) {
     return getSettingsPath(SettingsPath.Accounts);
+  }
+
+  if (!hasLoaded) {
+    return undefined;
   }
 
   if (isDefined(builtInAccountApp)) {

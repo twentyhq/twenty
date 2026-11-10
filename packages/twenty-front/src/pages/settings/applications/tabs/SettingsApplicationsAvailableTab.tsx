@@ -16,10 +16,13 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconEyeOff } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { isConnectableApp } from '@/settings/app-preferences/utils/isConnectableApp';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { filterMarketplaceApps } from '~/pages/settings/applications/utils/filterMarketplaceApps';
 import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -64,10 +67,20 @@ export const SettingsApplicationsAvailableTab = () => {
     refetch,
   } = useMarketplaceApps();
 
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
+
+  const availableMarketplaceApps = isAppPreferencesEnabled
+    ? marketplaceApps
+    : marketplaceApps.filter(
+        (marketplaceApp) => !isConnectableApp(marketplaceApp),
+      );
+
   const hasSearchTerm = searchTerm.trim().length > 0;
 
   const textFilteredApplications = filterMarketplaceApps({
-    marketplaceApps,
+    marketplaceApps: availableMarketplaceApps,
     searchTerm,
   });
 

@@ -8,6 +8,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import {
+  ApplicationRegistrationSourceType,
   type ApproveApplicationIframeMediaPermissionsMutation,
   type ApproveApplicationIframeMediaPermissionsMutationVariables,
   type FindOneApplicationQuery,
@@ -35,6 +36,7 @@ const REFRESHED_APPLICATION: FindOneApplicationQuery['findOneApplication'] = {
   logoUrl: null,
   version: '1.1.0',
   universalIdentifier: APPLICATION_ID,
+  sourceType: ApplicationRegistrationSourceType.NPM,
   applicationRegistrationId: null,
   applicationRegistration: null,
   canBeUninstalled: true,

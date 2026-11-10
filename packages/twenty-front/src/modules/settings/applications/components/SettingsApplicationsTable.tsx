@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
+import { type BuiltInApp } from '@/settings/app-preferences/types/BuiltInApp';
+import { type ConnectableApp } from '@/settings/app-preferences/types/ConnectableApp';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationsTableApplicationRow } from '@/settings/applications/components/SettingsApplicationsTableApplicationRow';
 import { type SettingsApplicationsTableApplication } from '@/settings/applications/types/SettingsApplicationsTableApplication';
@@ -36,7 +37,8 @@ type SettingsApplicationsTableProps = {
   title: string;
   description: string;
   applications: SettingsApplicationsTableApplication[];
-  builtInAccountApps: BuiltInAccountApp[];
+  builtInApps: BuiltInApp[];
+  connectableApps?: ConnectableApp[];
   middleColumn: SettingsApplicationTableRowMiddleColumn;
   isLoading?: boolean;
   isLoadingStatuses?: boolean;
@@ -62,7 +64,8 @@ export const SettingsApplicationsTable = ({
   title,
   description,
   applications,
-  builtInAccountApps,
+  builtInApps,
+  connectableApps = [],
   linkTarget,
   middleColumn,
   statusesById,
@@ -78,7 +81,8 @@ export const SettingsApplicationsTable = ({
 
   const rowItems = getSettingsApplicationsTableRowItems({
     applications,
-    builtInAccountApps,
+    builtInApps,
+    connectableApps,
     currentWorkspace,
   });
 

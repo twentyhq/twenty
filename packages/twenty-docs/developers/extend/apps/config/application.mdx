@@ -225,6 +225,34 @@ The role declared with [`defineApplicationRole()`](/developers/extend/apps/confi
 
 When you scaffold a new app, the CLI creates a starter role file at `src/roles/default-role.ts`. See [Roles & Permissions](/developers/extend/apps/config/roles) for the full reference.
 
+## OAuth identity
+
+Some apps list an external client that members connect to Twenty themselves, such as an AI assistant. Such an app declares an `oAuthIdentity` and ships no code:
+
+```ts
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'Claude',
+  description: 'Work with your Twenty workspace from Claude.',
+  oAuthIdentity: {
+    redirectUris: ['https://claude.ai/api/mcp/auth_callback'],
+    clientIdMetadataDocumentHostnames: ['claude.ai'],
+    connectUrl: 'https://claude.ai/customize/connectors?connectorUrl={mcpServerUrl}',
+  },
+});
+```
+
+| Field | Description |
+|-------|-------------|
+| `redirectUris` | The client's HTTPS callbacks. A `*` path segment matches any one segment, for clients that use one callback per connection |
+| `clientIdMetadataDocumentHostnames` | Hosts whose [client ID metadata documents](https://datatracker.ietf.org/doc/draft-ietf-oauth-client-id-metadata-document/) identify this client. Each must be the host of one of `redirectUris` |
+| `connectUrl` | Where a member starts connecting. `{mcpServerUrl}` is replaced by the server's MCP endpoint |
+
+Twenty recognizes the client by these callbacks: when it registers itself or presents a metadata document, it gets this app instead of a client of its own, and the consent screen shows it as verified. Each member connects with their own account, and the client acts with that member's permissions.
+
+- The server only honors an OAuth identity on an app Twenty publishes, so another package cannot claim a client's callbacks.
+- An app with an OAuth identity cannot ship objects, fields, logic functions, front components, roles or any other entity, and it declares no [role](/developers/extend/apps/config/roles): the manifest build fails otherwise. Its first connection installs it, and it never needs an upgrade.
+
 ## Marketplace metadata
 
 If you plan to [publish your app](/developers/extend/apps/operations/publishing), these optional fields control how it appears in the marketplace:

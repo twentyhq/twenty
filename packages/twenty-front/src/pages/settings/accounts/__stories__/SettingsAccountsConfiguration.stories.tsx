@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -53,12 +53,21 @@ export const FinishedSetupOpensTheAppPage: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Next' }, { timeout: 3000 }),
+    const nextButton = await canvas.findByRole(
+      'button',
+      { name: 'Next' },
+      { timeout: 3000 },
     );
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Finish Setup' }),
-    );
+
+    await waitFor(() => expect(nextButton).toBeEnabled());
+    await userEvent.click(nextButton);
+
+    const finishSetupButton = await canvas.findByRole('button', {
+      name: 'Finish Setup',
+    });
+
+    await waitFor(() => expect(finishSetupButton).toBeEnabled());
+    await userEvent.click(finishSetupButton);
 
     expect(
       await canvas.findByText('Navigated to /settings/app-preferences/google'),

@@ -1,4 +1,5 @@
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
+import { OAUTH_SCOPE_LABELS } from '@/auth/constants/OAuthScopeLabels';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
@@ -10,7 +11,9 @@ import { AppConnectionHeader } from '@/applications/components/AppConnectionHead
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { getKnownOAuthClientLogoUrl } from '@/applications/utils/getKnownOAuthClientLogoUrl';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { AuthorizeClientIdentityNotice } from '@/applications/components/AuthorizeClientIdentityNotice';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -21,6 +24,7 @@ import {
   IconDatabase,
   IconUserCircle,
 } from 'twenty-ui/icon';
+import { MainButton } from 'twenty-ui/components/input';
 import { Heading } from 'twenty-ui/primitives/typography';
 import {
   useTheme,
@@ -165,11 +169,6 @@ export const Authorize = () => {
   const { redirect } = useRedirect();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const oauthScopeLabels: { [scope: string]: string | undefined } = {
-    api: t`Access your workspace data`,
-    profile: t`Read your profile`,
-  };
-
   // Support both camelCase (legacy) and standard OAuth snake_case params
   const clientId = searchParam.get('client_id') ?? searchParam.get('clientId');
   const codeChallenge =
@@ -196,7 +195,7 @@ export const Authorize = () => {
   const shouldRedirectToNotFound =
     !isDefined(clientId) ||
     !isDefined(redirectUrl) ||
-    (!loading && !isDefined(applicationRegistration));
+    (!loading && !isDefined(queryError) && !isDefined(applicationRegistration));
 
   useEffect(() => {
     if (shouldRedirectToNotFound) {
@@ -282,6 +281,12 @@ export const Authorize = () => {
             <StyledErrorText>
               {t`Unable to load application details. Please try again later.`}
             </StyledErrorText>
+            <NavigationButton
+              buttonComponent={MainButton}
+              to={AppPath.Index}
+              fullWidth
+              variant="outline"
+            >{t`Cancel`}</NavigationButton>
           </StyledAuthContent>
         </StyledCardWrapper>
       </StyledAuthContent>
@@ -322,6 +327,15 @@ export const Authorize = () => {
               <Trans>Connect {appName} to your account</Trans>
             )}
           </StyledOAuthTitle>
+          <AuthorizeClientIdentityNotice
+            appName={appName}
+            isVerified={isDefined(
+              applicationRegistration.oAuthIdentityUniversalIdentifier,
+            )}
+            claimsVerifiedClientName={
+              applicationRegistration.claimsVerifiedClientName
+            }
+          />
           {requestedScopes.length > 0 && (
             <StyledPermissionSection>
               <StyledPermissionIntro>
@@ -330,6 +344,7 @@ export const Authorize = () => {
               <StyledScopeList>
                 {requestedScopes.map((scope) => {
                   const ScopeIcon = OAUTH_SCOPE_ICONS[scope] ?? IconDatabase;
+                  const scopeLabel = OAUTH_SCOPE_LABELS[scope];
 
                   return (
                     <StyledScopeItem key={scope}>
@@ -339,7 +354,9 @@ export const Authorize = () => {
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledScopeIcon>
-                      <span>{oauthScopeLabels[scope] ?? scope}</span>
+                      <span>
+                        {isDefined(scopeLabel) ? t(scopeLabel) : scope}
+                      </span>
                     </StyledScopeItem>
                   );
                 })}
