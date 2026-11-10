@@ -9,6 +9,7 @@ import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/ge
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import { useAccountsConfigurationCompletionPath } from '@/settings/accounts/hooks/useAccountsConfigurationCompletionPath';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { StartChannelSyncDocument } from '~/generated-metadata/graphql';
@@ -67,7 +68,7 @@ export const SettingsAccountsConfiguration = () => {
   };
 
   const handleAddAccount = async () => {
-    if (!connectedAccountId || !isDefined(completionPath)) {
+    if (!isNonEmptyString(connectedAccountId) || !isDefined(completionPath)) {
       return;
     }
 
