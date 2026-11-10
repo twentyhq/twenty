@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { type ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
-import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { VIEW_FAMILY_CACHE_KEY_NAMES } from 'src/engine/metadata-modules/view/constants/view-family-cache-key-names.constant';
 import { type ViewFamilyDTO } from 'src/engine/metadata-modules/view/dtos/view-family.dto';
 import { type ViewFamilyAudience } from 'src/engine/metadata-modules/view/types/view-family-audience.type';
@@ -43,11 +42,18 @@ export class ViewFamilyReadService {
       ...VIEW_FAMILY_CACHE_KEY_NAMES,
     ]);
 
-    const canReadView =
-      await this.metadataReadPermissionsService.getViewReadPredicate({
-        workspaceId,
-        authContext: workspaceAuthContextStorage.getStore(),
-      });
+    const readContext = {
+      workspaceId,
+      authContext: workspaceAuthContextStorage.getStore(),
+    };
+    const isInAudience =
+      audience === 'shared'
+        ? await this.metadataReadPermissionsService.getSharedViewReadPredicate(
+            readContext,
+          )
+        : await this.metadataReadPermissionsService.getOwnPrivateViewReadPredicate(
+            readContext,
+          );
 
     const views = Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -58,17 +64,7 @@ export class ViewFamilyReadService {
           viewTypes.length === 0 ||
           viewTypes.includes(flatView.type),
       )
-      .filter(canReadView)
-      .filter((flatView) => {
-        const isShared =
-          resolveEffectiveFlatEntityProperty({
-            metadataName: 'view',
-            flatEntity: flatView,
-            property: 'visibility',
-          }) === ViewVisibility.WORKSPACE;
-
-        return audience === 'shared' ? isShared : !isShared;
-      })
+      .filter(isInAudience)
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))
       .map(fromFlatViewToViewDto);
 
