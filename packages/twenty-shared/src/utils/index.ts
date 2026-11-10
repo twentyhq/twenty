@@ -382,6 +382,10 @@ export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleVa
 export { parseValidationRuleExpression } from './validation-rule/parseValidationRuleExpression';
 export { resolveValidationRuleIdentifierPath } from './validation-rule/resolveValidationRuleIdentifierPath';
 export { tokenizeValidationRuleExpression } from './validation-rule/tokenizeValidationRuleExpression';
+export {
+  runWithValidationRuleNow,
+  getValidationRuleNowInUtc,
+} from './validation-rule/validationRuleEvaluationClock';
 export { validationRuleParser } from './validation-rule/validationRuleParser';
 export {
   validationRuleNullPlaceholders,
