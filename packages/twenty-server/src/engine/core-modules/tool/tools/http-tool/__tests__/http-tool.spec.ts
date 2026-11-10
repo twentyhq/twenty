@@ -20,13 +20,18 @@ describe('HttpTool', () => {
     });
     const getHttpClient = jest.fn().mockReturnValue(httpClient);
     const throttleOrThrow = jest.fn().mockResolvedValue(undefined);
-    const executeHttpRequest = jest
-      .fn()
-      .mockResolvedValue({ success: true, message: 'from driver' });
+    const executeHttpRequest = jest.fn().mockResolvedValue({
+      toolOutput: { success: true, message: 'from driver' },
+      outcomeDetails: { outcome: 'success', status: 200, durationMs: 1 },
+    });
 
     return {
       httpTool: new HttpTool(
-        { getHttpClient } as unknown as SecureHttpClientService,
+        {
+          getHttpClient,
+          recordRequest: jest.fn(),
+          recordRequestOutcome: jest.fn(),
+        } as unknown as SecureHttpClientService,
         { throttleOrThrow } as unknown as LogicFunctionExecutionThrottleService,
         {
           isFeatureEnabled: jest

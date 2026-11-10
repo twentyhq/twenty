@@ -5,7 +5,7 @@ import {
 import { executeHttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/utils/execute-http-egress-request.util';
 import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -57,12 +57,12 @@ export class DisabledDriver implements LogicFunctionDriver {
   }
 
   // Disabling logic functions must not disable workflow HTTP steps.
-  async executeHttpRequest(request: HttpEgressRequest): Promise<ToolOutput> {
-    const { toolOutput } = await executeHttpEgressRequest(
+  async executeHttpRequest(
+    request: HttpEgressRequest,
+  ): Promise<HttpEgressResponse> {
+    return executeHttpEgressRequest(
       request,
-      this.secureHttpClientService.getHttpClient(undefined, request.context),
+      this.secureHttpClientService.getHttpClient(),
     );
-
-    return toolOutput;
   }
 }

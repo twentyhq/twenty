@@ -86,16 +86,27 @@ export class HttpTool implements Tool {
         context.workspaceId,
       );
 
-    if (isLogicFunctionRuntimeEnabled) {
-      return this.logicFunctionDriverFactory
-        .getCurrentDriver()
-        .executeHttpRequest(request);
-    }
+    const loggedRequest = {
+      method: input.method,
+      url: input.url,
+      context: request.context,
+    };
 
-    const { toolOutput } = await executeHttpEgressRequest(
-      request,
-      this.secureHttpClientService.getHttpClient(undefined, request.context),
-    );
+    this.secureHttpClientService.recordRequest(loggedRequest);
+
+    const { toolOutput, outcomeDetails } = isLogicFunctionRuntimeEnabled
+      ? await this.logicFunctionDriverFactory
+          .getCurrentDriver()
+          .executeHttpRequest(request)
+      : await executeHttpEgressRequest(
+          request,
+          this.secureHttpClientService.getHttpClient(),
+        );
+
+    this.secureHttpClientService.recordRequestOutcome({
+      ...loggedRequest,
+      outcomeDetails,
+    });
 
     return toolOutput;
   }

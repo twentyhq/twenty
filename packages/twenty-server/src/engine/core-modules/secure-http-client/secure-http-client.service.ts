@@ -124,8 +124,20 @@ export class SecureHttpClientService {
     return client;
   }
 
-  // The HTTP egress Lambda sends requests outside this process; logging its result here keeps one log format for both paths.
-  recordRemoteRequestOutcome({
+  // For requests that may run outside this process (the HTTP egress Lambda), so they log the same lines as the adapter.
+  recordRequest({
+    method,
+    url,
+    context,
+  }: {
+    method: string;
+    url: string;
+    context: OutboundRequestContext;
+  }): void {
+    this.logRequest(buildRequestLogAttributes({ method, url, context }));
+  }
+
+  recordRequestOutcome({
     method,
     url,
     context,
@@ -139,10 +151,7 @@ export class SecureHttpClientService {
     this.recordOutcome({
       context,
       outcomeDetails,
-      requestAttributes: {
-        ...buildRequestLogAttributes({ method, url, context }),
-        via: 'lambda',
-      },
+      requestAttributes: buildRequestLogAttributes({ method, url, context }),
     });
   }
 
@@ -161,9 +170,7 @@ export class SecureHttpClientService {
         context,
       });
 
-      this.logger.log(
-        `Outbound HTTP request: ${formatLogAttributes(requestAttributes)}`,
-      );
+      this.logRequest(requestAttributes);
 
       const startedAt = Date.now();
 
@@ -194,6 +201,12 @@ export class SecureHttpClientService {
         throw error;
       }
     };
+  }
+
+  private logRequest(requestAttributes: LogAttributes): void {
+    this.logger.log(
+      `Outbound HTTP request: ${formatLogAttributes(requestAttributes)}`,
+    );
   }
 
   private recordOutcome({

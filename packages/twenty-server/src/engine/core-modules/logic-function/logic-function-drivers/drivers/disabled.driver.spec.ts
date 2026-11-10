@@ -22,20 +22,17 @@ describe('DisabledDriver', () => {
       headers: {},
     });
     const getHttpClient = jest.fn().mockReturnValue(httpClient);
-    const context = {
-      workspaceId: 'workspace-id',
-      source: 'workflow-http' as const,
-    };
-
     const output = await new DisabledDriver({
       getHttpClient,
     } as unknown as SecureHttpClientService).executeHttpRequest({
       input: { url: 'https://api.example.com', method: 'GET' },
       limits: { timeoutMs: 30_000, maxPayloadSizeBytes: 1024 },
-      context,
+      context: { workspaceId: 'workspace-id', source: 'workflow-http' },
     });
 
-    expect(output).toMatchObject({ success: true, result: { ok: true } });
-    expect(getHttpClient).toHaveBeenCalledWith(undefined, context);
+    expect(output.toolOutput).toMatchObject({
+      success: true,
+      result: { ok: true },
+    });
   });
 });

@@ -79,7 +79,6 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           coreEntityCacheService: this.coreEntityCacheService,
           ...getLambdaConnectionOptions(this.twentyConfigService),
           sdkClientArchiveService: this.sdkClientArchiveService,
-          secureHttpClientService: this.secureHttpClientService,
         });
       }
 
