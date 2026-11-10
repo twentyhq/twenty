@@ -121,6 +121,10 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     role: true,
     objectMetadata: true,
   },
+  rowLevelPermissionRule: {
+    role: true,
+    objectMetadata: true,
+  },
   frontComponent: {
     objectMetadata: true,
   },
