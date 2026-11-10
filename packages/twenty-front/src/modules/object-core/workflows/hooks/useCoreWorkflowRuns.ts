@@ -38,7 +38,7 @@ export const useCoreWorkflowRuns = (coreWorkflowId: string) => {
   });
 
   useListenToCoreWorkflowRunEvents({
-    coreWorkflowId,
+    coreWorkflowIds: [coreWorkflowId],
     queryId: `core-workflow-runs-${coreWorkflowId}`,
     onRunsChanged: refetchRuns,
   });
