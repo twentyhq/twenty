@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
   type DatabaseEventTriggerManifestSettings,
   type DatabaseEventTriggerSettings,
@@ -20,7 +20,13 @@ import { toDatabaseEventTriggerConditionField } from 'src/engine/workspace-event
 
 const ANY_OBJECT = '*';
 
-const throwInvalidTrigger = (subject: string, reason: string): never => {
+const throwInvalidTrigger = ({
+  subject,
+  reason,
+}: {
+  subject: string;
+  reason: string;
+}): never => {
   throw new ApplicationException(
     `${subject}: ${reason}`,
     ApplicationExceptionCode.INVALID_INPUT,
@@ -42,11 +48,14 @@ const assertConditionCompilesOrThrow = ({
   subject: string;
 }) => {
   if (!isDefined(objectUniversalIdentifier)) {
-    throwInvalidTrigger(subject, 'a condition needs a trigger on one object');
+    return throwInvalidTrigger({
+      subject,
+      reason: 'a condition needs a trigger on one object',
+    });
   }
 
   const fields = resolver
-    .listObjectFields(objectUniversalIdentifier as string)
+    .listObjectFields(objectUniversalIdentifier)
     .map(toDatabaseEventTriggerConditionField)
     .filter(isDefined);
   const compilation = compileValidationRuleExpression({
@@ -55,11 +64,28 @@ const assertConditionCompilesOrThrow = ({
   });
 
   if (!compilation.isValid) {
-    throwInvalidTrigger(
+    throwInvalidTrigger({
       subject,
-      `condition "${condition}" is invalid: ${compilation.errorMessage}`,
-    );
+      reason: `condition "${condition}" is invalid: ${compilation.errorMessage}`,
+    });
   }
+};
+
+// Settings come from JavaScript apps too, where a condition may not be text
+const readConditionOrThrow = ({
+  condition,
+  subject,
+}: {
+  condition: unknown;
+  subject: string;
+}): string | undefined => {
+  if (!isDefined(condition) || condition === '') {
+    return undefined;
+  }
+
+  return isString(condition)
+    ? condition
+    : throwInvalidTrigger({ subject, reason: 'the condition must be text' });
 };
 
 // Object and field universal identifiers become the event name and field names events carry
@@ -72,12 +98,17 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   resolver: DatabaseEventTriggerManifestResolver;
   subject: string;
 }): DatabaseEventTriggerSettings => {
+  const condition = readConditionOrThrow({
+    condition: settings.condition,
+    subject,
+  });
+
   if (!isObjectDatabaseEventTriggerManifestSettings(settings)) {
-    if (isNonEmptyString(settings.condition)) {
+    if (isNonEmptyString(condition)) {
       const [objectNameSingular] = settings.eventName.split('.');
 
       assertConditionCompilesOrThrow({
-        condition: settings.condition,
+        condition,
         objectUniversalIdentifier:
           objectNameSingular === ANY_OBJECT
             ? undefined
@@ -96,7 +127,6 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
     objectUniversalIdentifier,
     action,
     fieldUniversalIdentifiers,
-    condition,
     batchMode,
   } = settings;
 
@@ -105,7 +135,10 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
     : ANY_OBJECT;
 
   if (!isDefined(objectNameSingular)) {
-    throwInvalidTrigger(subject, `unknown object ${objectUniversalIdentifier}`);
+    throwInvalidTrigger({
+      subject,
+      reason: `unknown object ${objectUniversalIdentifier}`,
+    });
   }
 
   const updatedFields = fieldUniversalIdentifiers?.map(
@@ -116,20 +149,20 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
         !isDefined(field) ||
         field.objectUniversalIdentifier !== objectUniversalIdentifier
       ) {
-        return throwInvalidTrigger(
+        return throwInvalidTrigger({
           subject,
-          `field ${fieldUniversalIdentifier} is not on the trigger's object`,
-        );
+          reason: `field ${fieldUniversalIdentifier} is not on the trigger's object`,
+        });
       }
 
       const watchedFieldName = computeWorkflowWatchedFieldName(field);
 
       return isDefined(watchedFieldName)
         ? watchedFieldName
-        : throwInvalidTrigger(
+        : throwInvalidTrigger({
             subject,
-            `${field.name} cannot be watched, only relations to a single record change on update`,
-          );
+            reason: `${field.name} cannot be watched, only relations to a single record change on update`,
+          });
     },
   );
 
@@ -150,13 +183,13 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   };
 };
 
-// Only resolved settings are stored; converters reached without a resolver get those
 export const toStoredDatabaseEventTriggerSettingsOrThrow = (
   settings: DatabaseEventTriggerManifestSettings,
 ): DatabaseEventTriggerSettings =>
   isObjectDatabaseEventTriggerManifestSettings(settings)
-    ? throwInvalidTrigger(
-        'Database event trigger',
-        'object and action settings must be resolved before they are stored',
-      )
+    ? throwInvalidTrigger({
+        subject: 'Database event trigger',
+        reason:
+          'object and action settings must be resolved before they are stored',
+      })
     : settings;

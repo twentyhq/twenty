@@ -4,6 +4,7 @@ import {
   type DatabaseEventTriggerManifestSettings,
   isObjectDatabaseEventTriggerManifestSettings,
 } from 'twenty-shared/application';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { validate as uuidValidate } from 'uuid';
 
 const DATABASE_EVENT_TRIGGER_ACTIONS: DatabaseEventTriggerManifestAction[] = [
@@ -20,12 +21,12 @@ export const getDatabaseEventTriggerSettingsErrors = ({
   settings,
   subject,
   eventNamePattern,
-  requiresObject = false,
+  isObjectRequired = false,
 }: {
   settings: DatabaseEventTriggerManifestSettings;
   subject: string;
   eventNamePattern?: RegExp;
-  requiresObject?: boolean;
+  isObjectRequired?: boolean;
 }): string[] => {
   if (!isObjectDatabaseEventTriggerManifestSettings(settings)) {
     const { eventName } = settings;
@@ -51,10 +52,10 @@ export const getDatabaseEventTriggerSettingsErrors = ({
 
   if (
     !DATABASE_EVENT_TRIGGER_ACTIONS.includes(action) ||
-    (requiresObject && action === '*')
+    (isObjectRequired && action === '*')
   ) {
     errors.push(
-      `${subject} action '${action}' must be one of: ${DATABASE_EVENT_TRIGGER_ACTIONS.filter((validAction) => !requiresObject || validAction !== '*').join(', ')}`,
+      `${subject} action '${action}' must be one of: ${DATABASE_EVENT_TRIGGER_ACTIONS.filter((validAction) => !isObjectRequired || validAction !== '*').join(', ')}`,
     );
   }
 
@@ -63,9 +64,9 @@ export const getDatabaseEventTriggerSettingsErrors = ({
       errors.push(`${subject} objectUniversalIdentifier must be a valid UUID`);
     }
   } else if (
-    requiresObject ||
+    isObjectRequired ||
     isNonEmptyString(condition) ||
-    (fieldUniversalIdentifiers?.length ?? 0) > 0
+    isNonEmptyArray(fieldUniversalIdentifiers)
   ) {
     errors.push(
       `${subject} needs an objectUniversalIdentifier to watch fields or check a condition`,

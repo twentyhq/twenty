@@ -110,7 +110,7 @@ export default defineAgent({
 });
 ```
 
-A `DATABASE_EVENT` trigger takes the same settings as a [logic function's database event trigger](/developers/extend/apps/logic/logic-functions#database-event-payloads), except that it needs one object and one action. `instructions` (optional) are added to the agent's prompt for the runs the trigger starts.
+A `DATABASE_EVENT` trigger takes the same settings as a [logic function's database event trigger](/developers/extend/apps/logic/logic-functions#database-event-trigger-payload), except that it needs one object and one action. `instructions` (optional) are added to the agent's prompt for the runs the trigger starts.
 
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
 

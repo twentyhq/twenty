@@ -3,6 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type DatabaseEventTriggerManifestField = {
   universalIdentifier: string;
@@ -11,6 +13,13 @@ type DatabaseEventTriggerManifestField = {
   objectUniversalIdentifier: string;
   universalSettings: FlatFieldMetadata['universalSettings'];
 };
+
+type FieldReadProperty =
+  | 'universalIdentifier'
+  | 'name'
+  | 'type'
+  | 'objectMetadataUniversalIdentifier'
+  | 'universalSettings';
 
 const readRelationType = (
   universalSettings: FlatFieldMetadata['universalSettings'],
@@ -31,8 +40,36 @@ export const buildDatabaseEventTriggerManifestResolver = ({
     manifestFlatEntityMaps.flatObjectMetadataMaps,
     existingFlatEntityMaps.flatObjectMetadataMaps,
   ];
-  const fieldMaps = [
+  // System fields of a new object (id, createdAt...) are only added once it is created
+  const reservedFieldsOfNewObjects: Record<string, UniversalFlatFieldMetadata> =
+    Object.fromEntries(
+      Object.values(
+        manifestFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .filter(
+          (flatObjectMetadata) =>
+            !isDefined(
+              existingFlatEntityMaps.flatObjectMetadataMaps
+                .byUniversalIdentifier[flatObjectMetadata.universalIdentifier],
+            ),
+        )
+        .flatMap((flatObjectMetadata) =>
+          Object.values(
+            buildReservedSystemFlatFieldMetadatasForCustomObject({
+              flatObjectMetadata,
+            }),
+          ),
+        )
+        .map((field) => [field.universalIdentifier, field]),
+    );
+  const fieldMaps: {
+    byUniversalIdentifier: Partial<
+      Record<string, Pick<UniversalFlatFieldMetadata, FieldReadProperty>>
+    >;
+  }[] = [
     manifestFlatEntityMaps.flatFieldMetadataMaps,
+    { byUniversalIdentifier: reservedFieldsOfNewObjects },
     existingFlatEntityMaps.flatFieldMetadataMaps,
   ];
 
@@ -52,7 +89,7 @@ export const buildDatabaseEventTriggerManifestResolver = ({
       ?.universalIdentifier;
 
   const toField = (
-    field: AllFlatEntityMaps['flatFieldMetadataMaps']['byUniversalIdentifier'][string],
+    field: Pick<UniversalFlatFieldMetadata, FieldReadProperty> | undefined,
   ): DatabaseEventTriggerManifestField | undefined =>
     isDefined(field)
       ? {

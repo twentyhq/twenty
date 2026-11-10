@@ -158,7 +158,7 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
           settings: trigger.settings,
           subject: `Agent '${config.name}' trigger`,
           eventNamePattern: AGENT_TRIGGER_EVENT_NAME_PATTERN,
-          requiresObject: true,
+          isObjectRequired: true,
         }),
       );
     }

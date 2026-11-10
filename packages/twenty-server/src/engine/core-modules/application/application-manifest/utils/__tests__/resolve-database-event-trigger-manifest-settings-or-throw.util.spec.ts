@@ -58,6 +58,7 @@ const buildResolver = () => {
 
   manifest.flatObjectMetadataMaps.byUniversalIdentifier[SIGNAL] = {
     universalIdentifier: SIGNAL,
+    applicationUniversalIdentifier: '77777777-7777-4777-8777-777777777777',
     nameSingular: 'signal',
   } as FlatObjectMetadata;
   addField(manifest, {
@@ -172,6 +173,31 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     ],
   ])('rejects %s', (_, settings, error) => {
     expect(() => resolve(settings)).toThrow(error);
+  });
+});
+
+describe('resolveDatabaseEventTriggerManifestSettingsOrThrow built-in fields', () => {
+  it('reads the system fields of an object the application creates', () => {
+    expect(
+      resolve({
+        objectUniversalIdentifier: SIGNAL,
+        action: 'created',
+        condition: 'isDefined(createdAt)',
+      }),
+    ).toEqual({
+      eventName: 'signal.created',
+      condition: 'isDefined(createdAt)',
+    });
+  });
+
+  it('rejects a condition that is not text', () => {
+    expect(() =>
+      resolve({
+        objectUniversalIdentifier: SIGNAL,
+        action: 'created',
+        condition: false as unknown as string,
+      }),
+    ).toThrow(/the condition must be text/);
   });
 });
 
