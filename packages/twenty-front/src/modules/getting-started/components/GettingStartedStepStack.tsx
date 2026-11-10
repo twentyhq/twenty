@@ -360,6 +360,7 @@ export const GettingStartedStepStack = ({
               isJustCompleted={
                 gettingStartedJustCompletedStep === selectedStepActionKey
               }
+              nextStepActionKey={nextStepActionKey}
             />
           </StyledActiveStepCard>
         </AnimatePresence>

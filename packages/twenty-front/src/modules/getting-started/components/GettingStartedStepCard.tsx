@@ -1,6 +1,7 @@
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
 import { GettingStartedStepDoneButton } from '@/getting-started/components/GettingStartedStepDoneButton';
+import { GettingStartedStepNextButton } from '@/getting-started/components/GettingStartedStepNextButton';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneActions';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneDescriptions';
 import { styled } from '@linaria/react';
@@ -11,7 +12,10 @@ import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';
 
-import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
+import {
+  type GettingStartedStepActionKey,
+  type GettingStartedStepDefinition,
+} from '~/generated-metadata/graphql';
 
 const StyledCard = styled.section<{ isCompleted: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -110,6 +114,12 @@ const StyledTitle = styled.div`
   min-width: 0;
 `;
 
+const StyledHeadingActions = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   line-height: ${themeCssVariables.text.lineHeight.lg};
@@ -124,12 +134,14 @@ type GettingStartedStepCardProps = {
   stepDefinition: GettingStartedStepDefinition;
   isCompleted: boolean;
   isJustCompleted: boolean;
+  nextStepActionKey: GettingStartedStepActionKey | undefined;
 };
 
 export const GettingStartedStepCard = ({
   stepDefinition,
   isCompleted,
   isJustCompleted,
+  nextStepActionKey,
 }: GettingStartedStepCardProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -182,9 +194,16 @@ export const GettingStartedStepCard = ({
               )}
             </StyledDescription>
           </StyledTitle>
-          {isCompleted && (
-            <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
-          )}
+          <StyledHeadingActions>
+            {isCompleted && (
+              <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
+            )}
+            {isDefined(nextStepActionKey) && (
+              <GettingStartedStepNextButton
+                nextStepActionKey={nextStepActionKey}
+              />
+            )}
+          </StyledHeadingActions>
         </StyledHeadingContent>
       </StyledHeading>
       {!isCompleted && (
