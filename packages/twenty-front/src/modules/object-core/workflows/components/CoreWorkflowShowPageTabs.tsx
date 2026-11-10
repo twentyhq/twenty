@@ -3,6 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { canReachSomeRecords } from 'twenty-shared/utils';
 import {
   IconSettingsAutomation,
   IconTerminal,
@@ -14,6 +16,8 @@ import { CoreWorkflowVersionsTab } from '@/object-core/workflows/components/Core
 import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
 import { type CoreWorkflowShowPageTabId } from '@/object-core/workflows/types/CoreWorkflowShowPageTabId';
 import { getCoreWorkflowShowPageTabIdFromHash } from '@/object-core/workflows/utils/getCoreWorkflowShowPageTabIdFromHash';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { type GetCoreWorkflowVersionsQuery } from '~/generated/graphql';
 
@@ -80,7 +84,24 @@ export const CoreWorkflowShowPageTabs = ({
     : location.key;
   const tabListComponentInstanceId = `${CORE_WORKFLOW_SHOW_PAGE_TABS.COMPONENT_INSTANCE_ID_PREFIX}-${coreWorkflowId}-${tabListInstanceSuffix}`;
 
-  const activeTabId = getCoreWorkflowShowPageTabIdFromHash(location.hash);
+  const { objectMetadataItem: workflowRunObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: StandardObjectNameSingular.WorkflowRun,
+    });
+  const workflowRunPermissions = useObjectPermissionsForObject(
+    workflowRunObjectMetadataItem.id,
+  );
+  const canReadWorkflowRuns = canReachSomeRecords({
+    objectRecordsPermissions: workflowRunPermissions,
+    operationType: 'read',
+  });
+
+  const tabIdFromHash = getCoreWorkflowShowPageTabIdFromHash(location.hash);
+  const activeTabId =
+    tabIdFromHash === CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.RUNS &&
+    !canReadWorkflowRuns
+      ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW
+      : tabIdFromHash;
 
   return (
     <>
@@ -97,6 +118,7 @@ export const CoreWorkflowShowPageTabs = ({
             id: CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.RUNS,
             title: t`Runs`,
             Icon: IconTerminal,
+            hide: !canReadWorkflowRuns,
           },
           {
             id: CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.VERSIONS,
