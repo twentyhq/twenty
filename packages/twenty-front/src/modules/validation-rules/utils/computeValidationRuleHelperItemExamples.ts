@@ -170,6 +170,24 @@ const computeFunctionExamples = ({
         ? [doNotTranslate(`arrayLength(${field.path}) > 0`)]
         : [];
     }
+    case 'daysSince': {
+      const field = findFieldOfTypes(rootFields, DATE_TYPES);
+
+      return isDefined(field)
+        ? [doNotTranslate(`daysSince(${field.path}) <= 30`)]
+        : [];
+    }
+    case 'isInRelativeDateRange': {
+      const field = findFieldOfTypes(rootFields, DATE_TYPES);
+
+      return isDefined(field)
+        ? [
+            doNotTranslate(
+              `isInRelativeDateRange(${field.path}, "PAST", 7, "DAY")`,
+            ),
+          ]
+        : [];
+    }
     default:
       return [];
   }
