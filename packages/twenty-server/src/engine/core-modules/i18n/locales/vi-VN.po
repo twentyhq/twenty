@@ -5503,6 +5503,11 @@ msgstr "Trường \"{workspaceMemberFieldName}\" không phải là trường c�
 msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
 msgstr "Trường {0}.{fieldName} không khả dụng. Hãy chọn các trường cấp cao nhất có thể truy cập."
 
+#. js-lingui-id: T0uER/
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
+msgstr ""
+
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
@@ -11605,6 +11610,11 @@ msgstr "Đối tượng từ xa chưa được hỗ trợ"
 msgctxt "commandMenuItem.label"
 msgid "Remove from Favorites"
 msgstr "Loại bỏ khỏi mục yêu thích"
+
+#. js-lingui-id: 60CVOK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Remove the row-level permission rules that use this field before deleting it"
+msgstr ""
 
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
