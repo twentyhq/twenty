@@ -7,8 +7,9 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
+import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
+import { getAgentChatFilePartFieldFilesValue } from '@/ai/utils/getAgentChatFilePartFieldFilesValue';
 
 import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
@@ -208,8 +209,11 @@ export const AiChatMessage = ({
           )}
           {isNonEmptyArray(fileParts) && (
             <StyledFilesContainer>
-              {fileParts.map((file) => (
-                <AgentChatFilePreview key={file.filename} file={file} />
+              {fileParts.map((filePart) => (
+                <ChatThreadMessageAttachment
+                  key={filePart.fileId}
+                  file={getAgentChatFilePartFieldFilesValue(filePart)}
+                />
               ))}
             </StyledFilesContainer>
           )}

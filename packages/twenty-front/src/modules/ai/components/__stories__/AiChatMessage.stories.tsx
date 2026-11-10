@@ -35,6 +35,7 @@ import {
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatReferenceMarker';
+import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
@@ -870,5 +871,64 @@ export const AgentLookupFailure: Story = {
     ).toBeVisible();
     expect(body.getAllByText('Failed to load agent details.')).toHaveLength(1);
     expect(canvas.getAllByText('Agent')).toHaveLength(2);
+  },
+};
+
+const mockImageFilePart: AgentChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-dashboard',
+  filename: 'dashboard.png',
+  mediaType: 'image/png',
+  url: IMAGE_URL_MOCK,
+};
+
+const mockBrokenImageFilePart: AgentChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-broken',
+  filename: 'broken.png',
+  mediaType: 'image/png',
+  url: 'data:image/png;base64,broken',
+};
+
+const mockPdfFilePart: AgentChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-brief',
+  filename: 'brief.pdf',
+  mediaType: 'application/pdf',
+  url: 'https://example.com/brief.pdf',
+};
+
+const mockUserMessageWithAttachments: ExtendedUIMessage = {
+  id: 'msg-user-attachments',
+  role: 'user',
+  parts: [
+    { type: 'text', text: 'Here is the dashboard and the brief.' },
+    mockImageFilePart,
+    mockBrokenImageFilePart,
+    mockPdfFilePart,
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+};
+
+export const UserMessageWithAttachments: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessageWithAttachments],
+  },
+  render: () => <AiChatMessage messageId={mockUserMessageWithAttachments.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('img', { name: 'dashboard.png' }),
+    ).toBeVisible();
+    await expect(canvas.getByText('brief.pdf')).toBeVisible();
+    await waitFor(() => expect(canvas.getByText('broken.png')).toBeVisible());
+    await expect(
+      canvas.queryByRole('img', { name: 'broken.png' }),
+    ).not.toBeInTheDocument();
   },
 };
