@@ -1,13 +1,12 @@
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { type LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
 import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
-import { type ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('HttpTool', () => {
   const buildHttpTool = ({
@@ -20,7 +19,7 @@ describe('HttpTool', () => {
       headers: {},
     });
     const getHttpClient = jest.fn().mockReturnValue(httpClient);
-    const tokenBucketThrottleOrThrow = jest.fn().mockResolvedValue(undefined);
+    const throttleOrThrow = jest.fn().mockResolvedValue(undefined);
     const executeHttpRequest = jest
       .fn()
       .mockResolvedValue({ success: true, message: 'from driver' });
@@ -28,14 +27,7 @@ describe('HttpTool', () => {
     return {
       httpTool: new HttpTool(
         { getHttpClient } as unknown as SecureHttpClientService,
-        { tokenBucketThrottleOrThrow } as unknown as ThrottlerService,
-        {
-          get: (key: string) =>
-            ({
-              LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT: 1000,
-              LOGIC_FUNCTION_EXEC_THROTTLE_TTL: 60_000,
-            })[key],
-        } as unknown as TwentyConfigService,
+        { throttleOrThrow } as unknown as LogicFunctionExecutionThrottleService,
         {
           isFeatureEnabled: jest
             .fn()
@@ -47,32 +39,26 @@ describe('HttpTool', () => {
       ),
       getHttpClient,
       httpClient,
-      tokenBucketThrottleOrThrow,
+      throttleOrThrow,
       executeHttpRequest,
     };
   };
 
   it('spends a token from the logic function execution bucket', async () => {
-    const { httpTool, tokenBucketThrottleOrThrow } = buildHttpTool();
+    const { httpTool, throttleOrThrow } = buildHttpTool();
 
     await httpTool.execute(
       { url: 'https://api.example.com', method: 'GET' },
       { workspaceId: 'workspace-id' },
     );
 
-    expect(tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
-      'workspace-id-logic-function-execution',
-      1,
-      1000,
-      60_000,
-    );
+    expect(throttleOrThrow).toHaveBeenCalledWith('workspace-id');
   });
 
   it('refuses the request once the workspace bucket is empty', async () => {
-    const { httpTool, tokenBucketThrottleOrThrow, httpClient } =
-      buildHttpTool();
+    const { httpTool, throttleOrThrow, httpClient } = buildHttpTool();
 
-    tokenBucketThrottleOrThrow.mockRejectedValue(
+    throttleOrThrow.mockRejectedValue(
       new ThrottlerException(
         'Limit reached',
         ThrottlerExceptionCode.LIMIT_REACHED,

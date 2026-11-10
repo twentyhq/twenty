@@ -42,7 +42,7 @@ import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-log
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { consumeLogicFunctionExecutionToken } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/consume-logic-function-execution-token.util';
+import { LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
@@ -53,7 +53,6 @@ import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
@@ -122,7 +121,7 @@ export class LogicFunctionExecutorService {
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly logicFunctionPrebuiltWarmUpService: LogicFunctionPrebuiltWarmUpService,
-    private readonly throttlerService: ThrottlerService,
+    private readonly logicFunctionExecutionThrottleService: LogicFunctionExecutionThrottleService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
@@ -411,11 +410,9 @@ export class LogicFunctionExecutorService {
 
   private async throttleExecution(workspaceId: string) {
     try {
-      await consumeLogicFunctionExecutionToken({
-        throttlerService: this.throttlerService,
-        twentyConfigService: this.twentyConfigService,
+      await this.logicFunctionExecutionThrottleService.throttleOrThrow(
         workspaceId,
-      });
+      );
     } catch (error) {
       if (
         !(error instanceof ThrottlerException) ||

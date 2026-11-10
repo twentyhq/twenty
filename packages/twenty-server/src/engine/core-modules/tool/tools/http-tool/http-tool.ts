@@ -5,13 +5,12 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { consumeLogicFunctionExecutionToken } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/consume-logic-function-execution-token.util';
+import { LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { buildInvalidToolArgumentsOutput } from 'src/engine/core-modules/tool-provider/utils/build-invalid-tool-arguments-output.util';
 import { HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/tool/tools/http-tool/constants/http-tool-max-payload-size-bytes.constant';
 import { HTTP_TOOL_TIMEOUT_MS } from 'src/engine/core-modules/tool/tools/http-tool/constants/http-tool-timeout-ms.constant';
@@ -23,7 +22,6 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class HttpTool implements Tool {
@@ -33,8 +31,7 @@ export class HttpTool implements Tool {
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
-    private readonly throttlerService: ThrottlerService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly logicFunctionExecutionThrottleService: LogicFunctionExecutionThrottleService,
     private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
@@ -105,11 +102,9 @@ export class HttpTool implements Tool {
 
   private async isExecutionThrottled(workspaceId: string): Promise<boolean> {
     try {
-      await consumeLogicFunctionExecutionToken({
-        throttlerService: this.throttlerService,
-        twentyConfigService: this.twentyConfigService,
+      await this.logicFunctionExecutionThrottleService.throttleOrThrow(
         workspaceId,
-      });
+      );
 
       return false;
     } catch (error) {
