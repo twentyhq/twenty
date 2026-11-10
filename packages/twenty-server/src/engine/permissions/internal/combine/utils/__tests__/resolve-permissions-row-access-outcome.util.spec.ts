@@ -25,11 +25,13 @@ const flatObjectMetadata = {
 };
 
 const readOnlyPermissions: ObjectRecordsPermissions = {
+  canCreateAllRecords: false,
   canReadAllRecords: true,
   canUpdateAllRecords: false,
   canSoftDeleteAllRecords: false,
   canDestroyAllRecords: false,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const readOnlyPrincipals: PermissionsPrincipalsWithRolesContext = {
@@ -54,7 +56,7 @@ const owningApplicationPrincipals: PermissionsPrincipalsWithRolesContext = {
 
 const resolveOutcome = ({
   principals = readOnlyPrincipals,
-  operationType = 'select',
+  operationType = 'read',
   featureFlagKeys = [],
   disabledObjectPermissionActions = [],
   hypotheticalRecordShareAccessLevel,
@@ -89,8 +91,6 @@ const resolveOutcome = ({
           },
         },
       },
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
@@ -121,7 +121,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     ).toBe(false);
     expect(
       resolveOutcome({
-        operationType: 'delete',
+        operationType: 'destroy',
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
     ).toBe(false);
@@ -164,7 +164,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       canReadObjectRecords: boolean;
     }): PermissionsPrincipalsWithRolesContext => ({
       ...readOnlyPrincipals,
-      aiRunScope: {
+      runtimeLimitingRole: {
         recordsPermissions: {
           ...NO_ROLE_RECORDS_PERMISSIONS,
           objects: {

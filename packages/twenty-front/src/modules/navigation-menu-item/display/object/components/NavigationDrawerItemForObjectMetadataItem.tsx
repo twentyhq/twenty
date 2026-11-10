@@ -7,7 +7,6 @@ import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { getObjectDrawerItemNavigationPath } from '@/navigation-menu-item/display/object/utils/getObjectDrawerItemNavigationPath';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
-import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -70,7 +69,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       objectPermissionsByObjectMetadataId,
       objectMetadataItem.id,
     ),
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const { getIcon } = useIcons();
@@ -165,20 +164,11 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         )
       : () => <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />;
 
-  const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({
-    navigationMenuItemType: navigationMenuItem?.type,
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
-
-  const objectSecondaryLabel = isViewWithResolvedView
+  const secondaryLabel = isViewWithResolvedView
     ? objectMetadataItem.labelPlural
     : isRecord
       ? objectMetadataItem.labelSingular
       : undefined;
-
-  const secondaryLabel = isCoreWorkflowsIndexItem
-    ? t`System`
-    : objectSecondaryLabel;
 
   const showInaccessibleLock =
     isLayoutCustomizationModeEnabled && !canReadSomeRecords;

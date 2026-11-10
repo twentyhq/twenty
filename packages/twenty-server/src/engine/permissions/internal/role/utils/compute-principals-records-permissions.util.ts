@@ -12,7 +12,8 @@ import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { computePermissionIntersection } from 'src/engine/permissions/internal/role/utils/compute-permission-intersection.util';
 import { restrictRecordsPermissionsToDisabledActions } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-disabled-actions.util';
-import { restrictRecordsPermissionsToScope } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-scope.util';
+import { toLimitingRoleRecordsPermissions } from 'src/engine/permissions/internal/role/utils/to-limiting-role-records-permissions.util';
+import { restrictRecordsPermissionsToRuntimeLimitingRole } from 'src/engine/permissions/internal/role/utils/restrict-records-permissions-to-runtime-limiting-role.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export const computePrincipalsRecordsPermissions = ({
@@ -27,7 +28,7 @@ export const computePrincipalsRecordsPermissions = ({
     | 'mainPrincipal'
     | 'limitingPrincipal'
     | 'applicationPrincipal'
-    | 'aiRunScope'
+    | 'runtimeLimitingRole'
   >;
   rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -51,17 +52,20 @@ export const computePrincipalsRecordsPermissions = ({
   const recordsPermissionsPerRole = roleIds.map((roleId) => {
     const roleRecordsPermissions = rolesPermissions[roleId];
 
-    return isDefined(roleRecordsPermissions)
-      ? restrictRecordsPermissionsToDisabledActions({
-          recordsPermissions: roleRecordsPermissions,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          actingApplicationId:
-            roleId === actingApplicationRoleId
-              ? actingApplicationId
-              : undefined,
-        })
-      : undefined;
+    if (!isDefined(roleRecordsPermissions)) {
+      return undefined;
+    }
+
+    return restrictRecordsPermissionsToDisabledActions({
+      recordsPermissions:
+        roleId === principals.mainPrincipal.roleId
+          ? roleRecordsPermissions
+          : toLimitingRoleRecordsPermissions(roleRecordsPermissions),
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      actingApplicationId:
+        roleId === actingApplicationRoleId ? actingApplicationId : undefined,
+    });
   });
 
   if (!recordsPermissionsPerRole.every(isDefined)) {
@@ -72,10 +76,10 @@ export const computePrincipalsRecordsPermissions = ({
     recordsPermissionsPerRole,
   );
 
-  return isDefined(principals.aiRunScope)
-    ? restrictRecordsPermissionsToScope({
+  return isDefined(principals.runtimeLimitingRole)
+    ? restrictRecordsPermissionsToRuntimeLimitingRole({
         recordsPermissions,
-        aiRunScope: principals.aiRunScope,
+        runtimeLimitingRole: principals.runtimeLimitingRole,
       })
     : recordsPermissions;
 };

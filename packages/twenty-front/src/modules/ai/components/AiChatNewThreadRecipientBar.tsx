@@ -10,7 +10,7 @@ import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { AiChatNewThreadRecipientChip } from '@/ai/components/AiChatNewThreadRecipientChip';
 import { AiChatNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
-import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
+import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
@@ -34,6 +34,7 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const AiChatNewThreadRecipientBar = () => {
   const { t } = useLingui();
+  const { displayName: assistantName } = useAiChatAssistantProfile();
   const theme = useTheme();
   const dropdownInstanceId = useId();
   const recipientRowRef = useRef<HTMLDivElement>(null);
@@ -84,7 +85,7 @@ export const AiChatNewThreadRecipientBar = () => {
     >
       {recipients.isAssistantParticipant && (
         <AiChatNewThreadRecipientChip
-          label={AGENT_CHAT_ASSISTANT_NAME}
+          label={assistantName}
           avatar={<AiChatAssistantAvatar />}
           disabled={agentChatIsSendingMessage}
           onRemove={() => {

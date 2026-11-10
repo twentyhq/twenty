@@ -16,6 +16,8 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     color
     pageLayoutId
     agentChatChannelId
+    workflowId
+    agentId
     position
     applicationId
     createdAt

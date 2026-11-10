@@ -3,6 +3,7 @@ import { useRef } from 'react';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
 import { RecordTableContent } from '@/object-record/record-table/components/RecordTableContent';
@@ -58,6 +59,12 @@ export const RecordTable = () => {
     recordTableId,
   );
 
+  // The group tabs render inside the table body, so it stays mounted for them
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+    recordTableId,
+  );
+
   const { resetRecordSelection } = useResetRecordSelection(recordTableId);
 
   const recordTableIsEmpty =
@@ -80,7 +87,7 @@ export const RecordTable = () => {
     <>
       {canReachSomeRecords({
         objectRecordsPermissions: objectPermissions,
-        operationType: 'select',
+        operationType: 'read',
       }) && (
         <>
           <RecordTableBodyEffectsWrapper
@@ -94,6 +101,7 @@ export const RecordTable = () => {
       {isRecordTableInitialLoading &&
       isEmpty(visibleRecordFields) ? null : recordTableIsEmpty &&
         !hasRecordGroups &&
+        !isRecordGroupTabsDisplayed &&
         !isRecordTableEmptyStateHidden ? (
         <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (

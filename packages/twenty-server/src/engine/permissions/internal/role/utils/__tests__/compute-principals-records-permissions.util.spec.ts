@@ -16,7 +16,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
+import { type RuntimeLimitingRole } from 'src/engine/permissions/principal/types/runtime-limiting-role.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import {
   type PermissionsPrincipalsRoleMaps,
@@ -55,21 +55,25 @@ const buildRoleRecordsPermissions = (
 
 const agentRolePermissions = buildRoleRecordsPermissions({
   [OBJECT_ID]: {
+    canCreateAllRecords: false,
     canReadAllRecords: true,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
-    restrictedFields: {},
+    unreadableFields: [],
+    uneditableFields: [],
   },
 });
 
 const defaultRolePermissions = buildRoleRecordsPermissions({
   [OBJECT_ID]: {
+    canCreateAllRecords: false,
     canReadAllRecords: false,
     canUpdateAllRecords: false,
     canSoftDeleteAllRecords: false,
     canDestroyAllRecords: false,
-    restrictedFields: {},
+    unreadableFields: [],
+    uneditableFields: [],
   },
 });
 
@@ -106,17 +110,17 @@ const buildMemberAuthContext = ({
 const buildApiKeyAuthContext = ({
   apiKeyId,
   agentId,
-  aiRunScope,
+  runtimeLimitingRole,
 }: {
   apiKeyId: string;
   agentId?: string;
-  aiRunScope?: AiRunPermissionScope;
+  runtimeLimitingRole?: RuntimeLimitingRole;
 }): PermissionsAuthContext => ({
   type: 'apiKey',
   workspace: { id: 'workspace-id' },
   apiKey: { id: apiKeyId },
   ...(isDefined(agentId) ? { agentId } : {}),
-  ...(isDefined(aiRunScope) ? { aiRunScope } : {}),
+  ...(isDefined(runtimeLimitingRole) ? { runtimeLimitingRole } : {}),
 });
 
 const computeForAuthContext = ({
@@ -183,6 +187,57 @@ describe('computePrincipalsRecordsPermissions', () => {
         applicationPrincipal: { type: 'customApplication' },
       }),
     ).toEqual(defaultRolePermissions);
+  });
+
+  it('should mask with the object access of a limiting role, ignoring its RLS rule', () => {
+    const readAllRecords: ObjectRecordsPermissions = {
+      canCreateAllRecords: false,
+      canReadAllRecords: true,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+      unreadableFields: [],
+      uneditableFields: [],
+    };
+
+    const recordsPermissions = computePrincipalsRecordsPermissions({
+      principals: {
+        mainPrincipal: { type: 'role', roleId: 'main-role-id' },
+        limitingPrincipal: {
+          type: 'agent',
+          agentId: 'agent-id',
+          roleId: 'rls-agent-role-id',
+        },
+        applicationPrincipal: { type: 'customApplication' },
+      },
+      rolesPermissions: {
+        'main-role-id': buildRoleRecordsPermissions({
+          [OBJECT_ID]: readAllRecords,
+        }),
+        'rls-agent-role-id': buildRoleRecordsPermissions({
+          [OBJECT_ID]: {
+            ...readAllRecords,
+            canReadAllRecords: false,
+            rowLevelRecordsPermissions: {
+              canCreateRecords: false,
+              canReadRecords: true,
+              canUpdateRecords: false,
+              canSoftDeleteRecords: false,
+              canDestroyRecords: false,
+              predicates: [],
+              predicateGroups: [],
+              unreadableFields: ['rule-hidden-field-id'],
+              uneditableFields: [],
+            },
+          },
+        }),
+      },
+      flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+      flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
+      flatApplicationMaps: { byId: {} },
+    });
+
+    expect(recordsPermissions.objects[OBJECT_ID]).toEqual(readAllRecords);
   });
 
   it('should not grant a permission that only one of the roles allows', () => {
@@ -385,11 +440,13 @@ const INVOICE_ID = 'invoice-id';
 const AMOUNT_FIELD_ID = 'amount-field-id';
 
 const FULL_ACCESS: ObjectRecordsPermissions = {
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
@@ -580,12 +637,11 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
 
       expect(invoicePermissions?.canDestroyAllRecords).toBe(canDestroy);
       expect(
-        invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]?.canUpdate ===
-          false,
+        invoicePermissions?.uneditableFields.includes(AMOUNT_FIELD_ID),
       ).toBe(!canDestroy);
       expect(
-        invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]?.canRead,
-      ).not.toBe(false);
+        invoicePermissions?.unreadableFields.includes(AMOUNT_FIELD_ID),
+      ).toBe(false);
     },
   );
 
@@ -667,17 +723,15 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
       flatApplicationMaps,
     });
 
-    expect(
-      objects[INVOICE_ID]?.restrictedFields['invoice-name-field-id']?.canRead,
-    ).not.toBe(false);
-    expect(
-      objects[COMPANY_ID]?.restrictedFields['company-invoices-field-id']
-        ?.canRead,
-    ).toBe(false);
-    expect(
-      objects[COMPANY_ID]?.restrictedFields['company-paid-invoices-field-id']
-        ?.canRead,
-    ).toBe(false);
+    expect(objects[INVOICE_ID]?.unreadableFields).not.toContain(
+      'invoice-name-field-id',
+    );
+    expect(objects[COMPANY_ID]?.unreadableFields).toContain(
+      'company-invoices-field-id',
+    );
+    expect(objects[COMPANY_ID]?.unreadableFields).toContain(
+      'company-paid-invoices-field-id',
+    );
   });
 });
 
@@ -699,12 +753,15 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     ...disabledActionRolesPermissions,
     'user-role-id': buildRoleRecordsPermissions({
       [INVOICE_ID]: {
+        canCreateAllRecords: false,
         canReadAllRecords: false,
         canUpdateAllRecords: false,
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
-        restrictedFields: {},
+        unreadableFields: [],
+        uneditableFields: [],
         rowLevelRecordsPermissions: {
+          canCreateRecords: true,
           canReadRecords: true,
           canUpdateRecords: true,
           canSoftDeleteRecords: true,
@@ -728,7 +785,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     const principals = resolvePermissionsPrincipalsWithRoles({
       authContext: buildApiKeyAuthContext({
         apiKeyId,
-        aiRunScope: hasScope
+        runtimeLimitingRole: hasScope
           ? {
               recordsPermissions: buildRoleRecordsPermissions(
                 isDefined(scopeObjectPermissions)
@@ -767,7 +824,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     expect(
       canReachSomeRecords({
         objectRecordsPermissions: invoicePermissions,
-        operationType: 'select',
+        operationType: 'read',
       }),
     ).toBe(true);
     expect(
@@ -786,7 +843,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     expect(
       canReachSomeRecords({
         objectRecordsPermissions: invoicePermissions,
-        operationType: 'delete',
+        operationType: 'destroy',
       }),
     ).toBe(false);
   });
@@ -797,7 +854,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     expect(
       canReachSomeRecords({
         objectRecordsPermissions: invoicePermissions,
-        operationType: 'select',
+        operationType: 'read',
       }),
     ).toBe(false);
     expect(
@@ -822,16 +879,13 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     const invoicePermissions = compute({
       scopeObjectPermissions: {
         ...FULL_ACCESS,
-        restrictedFields: {
-          [AMOUNT_FIELD_ID]: { canRead: false, canUpdate: false },
-        },
+        unreadableFields: [AMOUNT_FIELD_ID],
+        uneditableFields: [AMOUNT_FIELD_ID],
       },
     });
 
-    expect(invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]).toEqual({
-      canRead: false,
-      canUpdate: false,
-    });
+    expect(invoicePermissions?.unreadableFields).toContain(AMOUNT_FIELD_ID);
+    expect(invoicePermissions?.uneditableFields).toContain(AMOUNT_FIELD_ID);
   });
 
   describe('inserting a record that sets the predicate field', () => {
@@ -841,7 +895,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     ) =>
       validateOperationIsPermittedOrThrow({
         entityName: 'invoice',
-        operationType: 'insert',
+        operationType: 'create',
         recordsPermissions: buildRoleRecordsPermissions(
           isDefined(invoicePermissions)
             ? { [INVOICE_ID]: invoicePermissions }
@@ -874,9 +928,8 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
           compute({
             scopeObjectPermissions: {
               ...FULL_ACCESS,
-              restrictedFields: {
-                [AMOUNT_FIELD_ID]: { canRead: null, canUpdate: false },
-              },
+              unreadableFields: [],
+              uneditableFields: [AMOUNT_FIELD_ID],
             },
           }),
         ),

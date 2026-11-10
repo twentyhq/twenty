@@ -13,15 +13,17 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 
 @Injectable()
 export class CommonSelectFieldsBuilder {
   constructor(
-    private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
   ) {}
 
   // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
@@ -40,9 +42,11 @@ export class CommonSelectFieldsBuilder {
     unreadableFieldMetadataIds: Set<string>;
   }> {
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipalsOrThrow({
-        authContext,
-      });
+      await this.principalPermissionsReadService.resolvePermissionsPrincipalsOrThrow(
+        {
+          authContext,
+        },
+      );
 
     const flatObjectMetadatas = shouldIncludeRelationTargets
       ? Object.values(flatObjectMetadataMaps.byUniversalIdentifier).filter(
@@ -51,8 +55,8 @@ export class CommonSelectFieldsBuilder {
       : [];
     const readableFlags = await Promise.all(
       flatObjectMetadatas.map((relationTargetObjectMetadata) =>
-        this.recordPermissionsService.hasAccessToSomeRecords({
-          operationType: 'select',
+        this.recordPermissionsReadService.canAccessSomeRecords({
+          operationType: 'read',
           principals,
           objectMetadataId: relationTargetObjectMetadata.id,
         }),
@@ -67,7 +71,7 @@ export class CommonSelectFieldsBuilder {
     const unreadableFieldMetadataIdsPerObject = await Promise.all(
       [...new Set([objectMetadataId, ...readableObjectMetadataIds])].map(
         (selectedObjectMetadataId) =>
-          this.recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow({
+          this.recordFieldPermissionsReadService.findUnreadableFields({
             principals,
             objectMetadataId: selectedObjectMetadataId,
           }),
@@ -180,7 +184,9 @@ export class CommonSelectFieldsBuilder {
     objectNameSingular: string;
     fieldNamesFromDepth: ReadonlySet<string>;
   }): ReadonlySet<string> | undefined {
-    if (!isDefined(requestedFields)) return undefined;
+    if (!isDefined(requestedFields)) {
+      return undefined;
+    }
 
     if (requestedFields.size === 0) {
       throw new CommonSelectFieldsException(

@@ -5,10 +5,8 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
-import {
-  currentWorkspaceState,
-  type CurrentWorkspace,
-} from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 jest.mock('@/ai/components/AgentChatMessagesFetchEffect', () => ({
@@ -47,8 +45,9 @@ describe('AgentChatRuntimeEffects', () => {
 
   it('should not run the chat runtime for a suspended workspace', () => {
     jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
       activationStatus: WorkspaceActivationStatus.SUSPENDED,
-    } as CurrentWorkspace);
+    });
 
     renderRuntimeEffects();
 

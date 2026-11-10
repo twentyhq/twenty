@@ -12,11 +12,13 @@ const INVERSE_FIELD_METADATA_ID = 'inverse-field-metadata-id';
 const buildObjectPermissions = (
   overrides: Partial<ObjectRecordsPermissions> = {},
 ): ObjectRecordsPermissions => ({
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
   ...overrides,
 });
 
@@ -75,7 +77,8 @@ describe('isRecordFieldReadOnly', () => {
         ...baseParams,
         objectPermissionsByObjectMetadataId: {
           [OBJECT_METADATA_ID]: buildObjectPermissions({
-            restrictedFields: { [FIELD_METADATA_ID]: { canUpdate: false } },
+            unreadableFields: [],
+            uneditableFields: [FIELD_METADATA_ID],
           }),
         },
       }),
@@ -143,9 +146,8 @@ describe('isRecordFieldReadOnly', () => {
         objectPermissionsByObjectMetadataId: {
           ...baseParams.objectPermissionsByObjectMetadataId,
           [TARGET_OBJECT_METADATA_ID]: buildObjectPermissions({
-            restrictedFields: {
-              [INVERSE_FIELD_METADATA_ID]: { canUpdate: false },
-            },
+            unreadableFields: [],
+            uneditableFields: [INVERSE_FIELD_METADATA_ID],
           }),
         },
       }),

@@ -8,6 +8,7 @@ import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
@@ -35,6 +36,7 @@ import { useLingui } from '@lingui/react/macro';
 
 export const useAiChatEditor = () => {
   const { t } = useLingui();
+  const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const aiModels = useAtomStateValue(aiModelsState);
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
@@ -134,10 +136,7 @@ export const useAiChatEditor = () => {
 
   // Extension storage avoids stale closures without a ref.
   if (isDefined(editor)) {
-    const storage = editor.extensionStorage as unknown as Record<
-      string,
-      unknown
-    >;
+    const storage = editor.extensionStorage;
     const mentionStorage = storage['mention-suggestion'] as {
       searchMentionRecords: typeof searchMentionRecords;
       searchWorkspaceMembers: typeof searchWorkspaceMembers;
@@ -161,6 +160,7 @@ export const useAiChatEditor = () => {
       return [
         ...getAgentChatAssistantMentionSearchResults({
           query,
+          assistantDisplayName,
           objectLabelSingular: t`Assistant`,
           objectLabelPlural: t`Teammates`,
         }),

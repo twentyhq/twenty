@@ -12,6 +12,7 @@ import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/provid
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
+import { McpToolProvider } from 'src/engine/core-modules/tool-provider/providers/mcp-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
@@ -21,6 +22,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AgentToolsModule } from 'src/engine/metadata-modules/ai/ai-agent/tools/agent-tools.module';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { McpServerClientModule } from 'src/engine/metadata-modules/mcp-server/mcp-server-client.module';
 import { NavigationMenuItemToolsModule } from 'src/engine/metadata-modules/navigation-menu-item/tools/navigation-menu-item-tools.module';
 import { MetadataToolsModule } from 'src/engine/metadata-modules/object-metadata/tools/metadata-tools.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
@@ -51,6 +53,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ViewToolsModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    McpServerClientModule,
     NavigationMenuItemToolsModule,
     WebhookToolsModule,
     RoleToolsModule,
@@ -70,6 +73,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     FrontComponentToolProvider,
     DatabaseToolProvider,
     LogicFunctionToolProvider,
+    McpToolProvider,
     WorkflowToolProvider,
     {
       provide: TOOL_PROVIDERS,
@@ -80,6 +84,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
         frontComponentProvider: FrontComponentToolProvider,
+        mcpProvider: McpToolProvider,
       ) => [
         actionProvider,
         databaseProvider,
@@ -87,6 +92,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         workflowProvider,
         dashboardProvider,
         frontComponentProvider,
+        mcpProvider,
       ],
       inject: [
         ActionToolProvider,
@@ -95,6 +101,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         WorkflowToolProvider,
         DashboardToolProvider,
         FrontComponentToolProvider,
+        McpToolProvider,
       ],
     },
     ToolRegistryService,

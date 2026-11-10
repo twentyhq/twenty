@@ -232,8 +232,11 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   },
+  conversationStyle: 'chat',
 });
 ```
+
+`conversationStyle` imposta il modo in cui Twenty dispone le conversazioni del provider: `'chat'` mostra bolle di messaggi raggruppate per mittente, come un'app di messaggistica, e `'email'` mostra il layout del thread email. Senza di esso, i canali dell'app mantengono il layout della chat. Richiede `"engines": { "twenty": ">=2.58.0" }`.
 
 Associalo a un canale quando crei il canale o in seguito con `updateMessageChannel` (il passaggio di `null` annulla l'associazione):
 

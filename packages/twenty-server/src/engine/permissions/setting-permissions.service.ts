@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
+import { followUpdateWhenCreatePermissionIsDisabled } from 'src/engine/permissions/internal/role/utils/follow-update-when-create-permission-is-disabled.util';
 import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/compute-principals-records-permissions.util';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -13,7 +14,7 @@ import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { findUserWorkspaceFlatRoleOrThrow } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -22,7 +23,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class SettingPermissionsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -33,6 +34,7 @@ export class SettingPermissionsService {
     workspaceId: string;
   }): Promise<UserWorkspacePermissions> {
     const {
+      featureFlagsMap,
       userWorkspaceRoleMap,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
@@ -41,6 +43,7 @@ export class SettingPermissionsService {
       flatFieldMetadataMaps,
       flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'featureFlagsMap',
       'userWorkspaceRoleMap',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
@@ -69,15 +72,18 @@ export class SettingPermissionsService {
 
     return {
       permissionFlags,
-      recordsPermissions: computePrincipalsRecordsPermissions({
-        principals: buildRolePermissionsPrincipals({
-          workspaceId,
-          roleId: flatRole.id,
+      recordsPermissions: followUpdateWhenCreatePermissionIsDisabled({
+        recordsPermissions: computePrincipalsRecordsPermissions({
+          principals: buildRolePermissionsPrincipals({
+            workspaceId,
+            roleId: flatRole.id,
+          }),
+          rolesPermissions,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          flatApplicationMaps,
         }),
-        rolesPermissions,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        flatApplicationMaps,
+        featureFlagsMap,
       }),
     };
   }
@@ -108,7 +114,7 @@ export class SettingPermissionsService {
     }
 
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipals({
+      await this.principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext,
       });
 
@@ -122,11 +128,11 @@ export class SettingPermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    const { aiRunScope } = principals;
+    const { runtimeLimitingRole } = principals;
 
     return (
-      (!isDefined(aiRunScope) ||
-        (aiRunScope.permissionFlags[permissionFlag] ?? false)) &&
+      (!isDefined(runtimeLimitingRole) ||
+        (runtimeLimitingRole.permissionFlags[permissionFlag] ?? false)) &&
       this.isPermissionFlagGrantedToRoles({
         roleIds: getPermissionsPrincipalsRoleIds(principals),
         permissionFlag,

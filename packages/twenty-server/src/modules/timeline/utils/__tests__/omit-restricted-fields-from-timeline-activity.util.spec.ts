@@ -71,20 +71,21 @@ const flatFieldMetadataMaps = [
 const buildObjectRecordsPermissions = (
   overrides: Partial<ObjectRecordsPermissions>,
 ): ObjectRecordsPermissions => ({
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
   ...overrides,
 });
 
 const PERSON_JOB_TITLE_DENIED: Pick<RoleRecordsPermissions, 'objects'> = {
   objects: {
     [PERSON_OBJECT.id]: buildObjectRecordsPermissions({
-      restrictedFields: {
-        'person-job-title-field-id': { canRead: false, canUpdate: false },
-      },
+      unreadableFields: ['person-job-title-field-id'],
+      uneditableFields: ['person-job-title-field-id'],
     }),
     [NOTE_OBJECT.id]: buildObjectRecordsPermissions({}),
   },

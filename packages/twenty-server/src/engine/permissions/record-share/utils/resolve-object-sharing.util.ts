@@ -18,12 +18,13 @@ const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
   operationType: ObjectRecordsOperationType;
   objectPermissionAction: ObjectPermissionAction;
 }[] = [
-  { operationType: 'select', objectPermissionAction: 'canReadObjectRecords' },
+  { operationType: 'read', objectPermissionAction: 'canReadObjectRecords' },
   { operationType: 'update', objectPermissionAction: 'canUpdateObjectRecords' },
 ];
 
 export type ObjectSharing = {
   isShareable: boolean;
+  canSetRecordPrivacy: boolean;
   isPrivateByDefault: boolean;
   canShareBeyondRole: boolean;
   operationTypesGrantedBeyondRole: ObjectRecordsOperationType[];
@@ -58,6 +59,9 @@ export const resolveObjectSharing = ({
 
   return {
     isShareable,
+    canSetRecordPrivacy:
+      isShareable ||
+      (featureFlagsMap[FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED] ?? false),
     isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
     canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
     operationTypesGrantedBeyondRole,

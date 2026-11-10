@@ -86,11 +86,13 @@ describe('buildFullSystemPrompt', () => {
     expect(buildPrompt(false)).not.toContain('## Custom frontend components');
   });
 
-  it('should inline referenced skills after the skill catalog', () => {
+  it('should inline referenced skills for the configured assistant', () => {
+    const assistantDisplayName = 'Scout "CRM"';
     const prompt = buildFullSystemPrompt({
       toolCatalog: [],
       skillCatalog: [],
       referencedSkills: [REFERENCED_SKILL],
+      assistantDisplayName,
       preloadedTools: [],
       userWorkspaceId: USER_WORKSPACE_ID,
       workspaceId: EVEN_WORKSPACE_ID,
@@ -98,6 +100,9 @@ describe('buildFullSystemPrompt', () => {
 
     expect(prompt).toContain('## Referenced Skills (already loaded)');
     expect(prompt).toContain('Always create a trigger first.');
+    expect(prompt).toContain(
+      `Your display name in this workspace is ${JSON.stringify(assistantDisplayName)}.`,
+    );
   });
 
   it('should omit the referenced skills section when nothing is referenced', () => {
@@ -169,9 +174,9 @@ describe('buildFullSystemPrompt', () => {
       '## Attaching this conversation to records',
     );
     expect(buildPromptWithAttachment(false)).not.toContain(
-      'attach_conversation_to_record',
+      'attach_conversation_to_records',
     );
-    expect(buildPrompt(false)).not.toContain('attach_conversation_to_record');
+    expect(buildPrompt(false)).not.toContain('attach_conversation_to_records');
   });
 
   it('should end by scoping actions to the current participant', () => {

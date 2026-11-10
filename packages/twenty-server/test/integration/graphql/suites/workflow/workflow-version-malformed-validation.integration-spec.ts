@@ -35,13 +35,16 @@ const updateStepResponse = (
 describe('Workflow version malformed validation (e2e)', () => {
   let coreWorkflowId: string;
   let coreWorkflowVersionId: string;
-  let workspaceWorkflowId: string;
   let workspaceWorkflowVersionId: string;
   let createRecordStep: {
     id: string;
     settings: { input: Record<string, unknown> };
   };
   let sendEmailStep: {
+    id: string;
+    settings: { input: Record<string, unknown> };
+  };
+  let findRecordsStep: {
     id: string;
     settings: { input: Record<string, unknown> };
   };
@@ -76,18 +79,25 @@ describe('Workflow version malformed validation (e2e)', () => {
       position: { x: 400, y: 0 },
     });
 
+    findRecordsStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'FIND_RECORDS',
+      position: { x: 600, y: 0 },
+    });
+
     const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
       coreWorkflowId,
       withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowId = legacyIds.workspaceWorkflowId;
     workspaceWorkflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
   });
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
+    await deleteLegacyWorkspaceWorkflowRecords({
+      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
+    });
   });
 
   const sendEmailStepWithBody = (body: string) => ({
@@ -158,6 +168,26 @@ describe('Workflow version malformed validation (e2e)', () => {
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
     expect(response.body.errors[0].message).toContain('does not exist');
+  });
+
+  const findRecordsStepWithOrderBy = (orderBy: Record<string, unknown>) => ({
+    ...findRecordsStep,
+    settings: {
+      ...findRecordsStep.settings,
+      input: { objectName: 'company', limit: 1, orderBy },
+    },
+  });
+
+  it('rejects a find records sort written as a GraphQL order', async () => {
+    const response = await updateStepResponse(
+      coreWorkflowVersionId,
+      findRecordsStepWithOrderBy({
+        gqlOperationOrderBy: [{ name: 'DescNullsLast' }],
+      }),
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
   });
 
   it('accepts a valid rich text object', async () => {

@@ -7,7 +7,7 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Any, IsNull } from 'typeorm';
+import { Any, In, IsNull } from 'typeorm';
 
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -28,6 +28,7 @@ import { MessagingMessageAttachmentService } from 'src/modules/messaging/message
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
+import { type MessageFolderLinkUpdate } from 'src/modules/messaging/message-import-manager/types/message-folder-link-update.type';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
@@ -52,12 +53,14 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     messageChannel,
     connectedAccount,
     workspaceId,
+    folderLinkUpdate,
     personHandleField,
   }: {
     messagesToSave: MessageWithParticipants[];
     messageChannel: MessageChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
+    folderLinkUpdate: MessageFolderLinkUpdate;
     personHandleField?: PersonHandleField;
   }): Promise<
     | {
@@ -76,6 +79,8 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             messageExternalIdsAndIdsMap,
             messageExternalIdToMessageChannelMessageAssociationIdMap,
             messageExternalIdToMessageThreadIdMap,
+            refetchedMessageChannelMessageAssociationIds,
+            sentDraftMessageIds,
           } = await this.messageService.saveMessagesWithinTransaction(
             messagesToSave,
             messageChannel.id,
@@ -83,12 +88,71 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             workspaceId,
           );
 
+          const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
+            messagesToSave.flatMap((message) => {
+              const messageFolderIds = message.messageFolderIds ?? [];
+
+              if (messageFolderIds.length === 0) {
+                return [];
+              }
+
+              const associationId =
+                messageExternalIdToMessageChannelMessageAssociationIdMap.get(
+                  message.externalId,
+                );
+
+              if (!isDefined(associationId)) {
+                return [];
+              }
+
+              return [
+                {
+                  messageChannelMessageAssociationId: associationId,
+                  messageFolderIds,
+                },
+              ];
+            });
+
+          const movedAssociationIds = new Set(
+            await this.messageFolderAssociationService.saveMessageFolderAssociations(
+              folderAssociations,
+              workspaceId,
+              transactionScope,
+              folderLinkUpdate === 'replace'
+                ? refetchedMessageChannelMessageAssociationIds
+                : [],
+            ),
+          );
+
+          const sentDraftMessageIdsSet = new Set(sentDraftMessageIds);
+
+          if (sentDraftMessageIds.length > 0) {
+            await transactionScope
+              .getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
+                'messageParticipant',
+                { shouldSkipEventEmission: true },
+              )
+              .delete({ messageId: In(sentDraftMessageIds) });
+          }
+
           const participantsWithMessageId: (ParticipantWithMessageId & {
             shouldCreateContact: boolean;
           })[] = messagesToSave.flatMap((message) => {
             const messageId = messageExternalIdsAndIdsMap.get(
               message.externalId,
             );
+            const associationId =
+              messageExternalIdToMessageChannelMessageAssociationIdMap.get(
+                message.externalId,
+              );
+
+            if (
+              isDefined(associationId) &&
+              movedAssociationIds.has(associationId) &&
+              !(isDefined(messageId) && sentDraftMessageIdsSet.has(messageId))
+            ) {
+              return [];
+            }
 
             return messageId
               ? message.participants.map((participant: Participant) => {
@@ -146,37 +210,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               },
             );
 
-          const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
-            messagesToSave.flatMap((message) => {
-              const messageFolderIds = message.messageFolderIds ?? [];
-
-              if (messageFolderIds.length === 0) {
-                return [];
-              }
-
-              const associationId =
-                messageExternalIdToMessageChannelMessageAssociationIdMap.get(
-                  message.externalId,
-                );
-
-              if (!isDefined(associationId)) {
-                return [];
-              }
-
-              return [
-                {
-                  messageChannelMessageAssociationId: associationId,
-                  messageFolderIds,
-                },
-              ];
-            });
-
-          await this.messageFolderAssociationService.saveMessageFolderAssociations(
-            folderAssociations,
-            workspaceId,
-            transactionScope,
-          );
-
           await this.messageAttachmentService.saveMessageAttachments({
             messageAttachmentFiles: messagesToSave.flatMap((message) => {
               const messageId = messageExternalIdsAndIdsMap.get(
@@ -187,6 +220,37 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 isNonEmptyArray(message.attachmentFiles)
                 ? [{ messageId, attachmentFiles: message.attachmentFiles }]
                 : [];
+            }),
+            workspaceId,
+            transactionScope,
+          });
+
+          await this.messageAttachmentService.saveMessageRemoteAttachments({
+            messageAttachments: messagesToSave.flatMap((message) => {
+              const messageId = messageExternalIdsAndIdsMap.get(
+                message.externalId,
+              );
+
+              const messageChannelMessageAssociationId =
+                messageExternalIdToMessageChannelMessageAssociationIdMap.get(
+                  message.externalId,
+                );
+
+              if (
+                !isDefined(messageId) ||
+                !isDefined(messageChannelMessageAssociationId) ||
+                !isNonEmptyArray(message.attachments)
+              ) {
+                return [];
+              }
+
+              return [
+                {
+                  messageId,
+                  messageChannelMessageAssociationId,
+                  attachments: message.attachments,
+                },
+              ];
             }),
             workspaceId,
             transactionScope,

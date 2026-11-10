@@ -1,4 +1,4 @@
-import { type PermissionFlagType } from 'twenty-shared/constants';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -36,6 +36,14 @@ export const isNavigationMenuItemReadable = ({
     return true;
   }
 
+  if (itemType === NavigationMenuItemType.WORKFLOW) {
+    return permissionFlagMap[PermissionFlagType.WORKFLOWS] ?? false;
+  }
+
+  if (itemType === NavigationMenuItemType.AGENT) {
+    return permissionFlagMap[PermissionFlagType.AI] ?? false;
+  }
+
   if (itemType === NavigationMenuItemType.NATIVE_PAGE) {
     return hasNativePagePermission({ item, permissionFlagMap });
   }
@@ -58,7 +66,7 @@ export const isNavigationMenuItemReadable = ({
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,
         ),
-        operationType: 'select',
+        operationType: 'read',
       })
     );
   }

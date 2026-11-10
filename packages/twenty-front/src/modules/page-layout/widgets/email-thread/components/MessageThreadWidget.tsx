@@ -33,12 +33,13 @@ export const MessageThreadWidget = ({
     fetchMoreMessages,
     refetchMessages,
     threadLoading,
+    isFetchingMoreMessages,
     lastMessageChannelId,
   } = useEmailThread(targetRecord.id);
 
   useSubscribeToMessageThreadMessages({
     messageThreadId: targetRecord.id,
-    loadedMessageCount: messages.length,
+    loadedMessageIds: messages.map(({ id }) => id),
     refetchMessages,
   });
 
@@ -85,7 +86,7 @@ export const MessageThreadWidget = ({
       <ChatThreadWidgetContent
         messageThreadId={thread.id}
         messages={messages}
-        loading={threadLoading}
+        loading={isFetchingMoreMessages}
         onFetchMoreMessages={fetchMoreMessages}
         messageChannelId={lastMessageChannelId}
         onMessageSent={refetchMessages}
@@ -99,6 +100,7 @@ export const MessageThreadWidget = ({
       lastMessage={lastMessage}
       loading={threadLoading}
       onFetchMoreMessages={fetchMoreMessages}
+      messageChannelId={lastMessageChannelId}
     />
   );
 };

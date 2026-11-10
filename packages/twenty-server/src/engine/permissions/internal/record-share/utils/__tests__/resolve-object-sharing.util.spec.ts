@@ -26,9 +26,10 @@ describe('resolveObjectSharing', () => {
       }),
     ).toEqual({
       isShareable: true,
+      canSetRecordPrivacy: true,
       isPrivateByDefault: false,
       canShareBeyondRole: true,
-      operationTypesGrantedBeyondRole: ['select', 'update'],
+      operationTypesGrantedBeyondRole: ['read', 'update'],
     });
   });
 
@@ -37,6 +38,7 @@ describe('resolveObjectSharing', () => {
       resolveObjectSharing({ flatObjectMetadata: OBJECT, featureFlagsMap: {} }),
     ).toEqual({
       isShareable: false,
+      canSetRecordPrivacy: false,
       isPrivateByDefault: false,
       canShareBeyondRole: false,
       operationTypesGrantedBeyondRole: [],
@@ -52,7 +54,7 @@ describe('resolveObjectSharing', () => {
         },
         featureFlagsMap: RECORD_SHARING,
       }).operationTypesGrantedBeyondRole,
-    ).toEqual(['select']);
+    ).toEqual(['read']);
   });
 
   it('should not share beyond the role when the object disables every operation a share could grant', () => {
@@ -87,4 +89,17 @@ describe('resolveObjectSharing', () => {
       ).toMatchObject({ isShareable, isPrivateByDefault: true });
     },
   );
+
+  it('should let records be made private with private records on and sharing off', () => {
+    const { isShareable, canSetRecordPrivacy } = resolveObjectSharing({
+      flatObjectMetadata: {
+        universalIdentifier: 'ordinary-object',
+        disabledObjectPermissionActions: [],
+      },
+      featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
+    });
+
+    expect(isShareable).toBe(false);
+    expect(canSetRecordPrivacy).toBe(true);
+  });
 });

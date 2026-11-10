@@ -24,7 +24,6 @@ const DELAY_DURATION_SECONDS = 20;
 describe('Parallel branch leaf resume workflow (e2e)', () => {
   let coreWorkflowId: string | null = null;
   let coreWorkflowVersionId: string | null = null;
-  let workspaceWorkflowId: string | null = null;
   let formStepId: string | null = null;
   let delayStepId: string | null = null;
   let sendEmailStepId: string | null = null;
@@ -37,7 +36,6 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
 
     coreWorkflowId = coreWorkflow.coreWorkflowId;
     coreWorkflowVersionId = coreWorkflow.coreWorkflowVersionId;
-    workspaceWorkflowId = coreWorkflow.workspaceWorkflowId;
 
     await updateCoreWorkflowVersionTrigger({
       coreWorkflowVersionId,
@@ -147,11 +145,10 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
 
     // Inserted directly so no start job is enqueued and the manual handle is the only driver.
     await global.testDataSource.query(
-      `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, state, position, "enqueuedAt")
-       VALUES ($1, 'Parallel branch leaf resume run', $2, $3, $4, $5, 'ENQUEUED', $6, 0, now())`,
+      `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, state, position, "enqueuedAt")
+       VALUES ($1, 'Parallel branch leaf resume run', $2, $3, $4, 'ENQUEUED', $5, 0, now())`,
       [
         createdWorkflowRunId,
-        workspaceWorkflowId,
         workspaceWorkflowVersionId,
         coreWorkflowId,
         coreWorkflowVersionId,

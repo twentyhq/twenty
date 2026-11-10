@@ -20,13 +20,13 @@ import {
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 
 jest.mock(
-  'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util',
+  'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util',
 );
 
 const MEMBER_ID = 'member-1';
@@ -92,11 +92,13 @@ const privateRecordStates = new Map<string, PrivateRecordState>([
 ]);
 
 const fullAccess: ObjectRecordsPermissions = {
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
@@ -127,11 +129,12 @@ const deniedPrincipals: PermissionsPrincipalsWithRolesContext = {
 
 const filterByStatus = (status: string) =>
   jest
-    .mocked(resolveRowLevelPermissionRecordFilter)
+    .mocked(resolveRlsRuleRecordFilter)
     .mockReturnValue({ status: { eq: status } });
 
 const buildContext = (): RowAccessEvaluationContext => ({
   shouldIgnoreSoftDeleteDefaultFilter: false,
+  findRelationJoinValues: jest.fn().mockResolvedValue([]),
   fetchRecordShares: jest.fn(async ({ recordIds }) =>
     recordShares.filter((recordShare) =>
       recordIds.includes(recordShare.recordId),
@@ -142,7 +145,7 @@ const buildContext = (): RowAccessEvaluationContext => ({
 
 const findGranted = ({
   principals,
-  featureFlagKeys = [],
+  featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED],
   context = buildContext(),
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
@@ -161,21 +164,19 @@ const findGranted = ({
         },
       },
       flatApplicationMaps: { byId: {} },
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
     },
     flatObjectMetadata,
-    operationType: 'select',
+    operationType: 'read',
     records,
     context,
   });
 
 describe('findGrantedRecordIds', () => {
   beforeEach(() => {
-    jest.mocked(resolveRowLevelPermissionRecordFilter).mockReturnValue(null);
+    jest.mocked(resolveRlsRuleRecordFilter).mockReturnValue(null);
   });
 
   it('grants no record to a role without access', async () => {

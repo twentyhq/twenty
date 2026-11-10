@@ -3,7 +3,7 @@
 exports[`what an agent turn offers the model (integration) offers a chat turn the assistant tools 1`] = `
 [
   "ask_question",
-  "attach_conversation_to_record",
+  "attach_conversation_to_records",
   "execute_tool",
   "learn_tools",
   "load_skills",

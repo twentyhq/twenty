@@ -15,7 +15,6 @@ import {
 
 export const ssoGraphqlApiExceptionHandler = (exception: SsoException) => {
   switch (exception.code) {
-    case SsoExceptionCode.USER_NOT_FOUND:
     case SsoExceptionCode.IDENTITY_PROVIDER_NOT_FOUND:
       throw new NotFoundError(exception);
     case SsoExceptionCode.IDENTITY_PROVIDER_ALREADY_EXISTS:

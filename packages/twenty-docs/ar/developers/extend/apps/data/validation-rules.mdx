@@ -56,6 +56,7 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 
 * تقرأ `field('name')` حقلاً، وتقرأ `field('company.employees')` حقلاً عبر علاقة متعدد إلى واحد.
 * `now` هو التاريخ والوقت الحاليان.
+* تقرأ `previous('stage')` القيمة المخزنة قبل التحديث، لتقييد الانتقالات. تكون فارغة عند إنشاء سجل، وتقرأ حقول السجل نفسه، وليس الحقول عبر علاقة.
 * تجمع `and` و`or` و`not` الشروط.
 * تقارن `eq` و`notEq` و`gt` و`gte` و`lt` و`lte` القيم.
 * تحسب `add` و`subtract` و`multiply` و`divide` القيم.
@@ -68,7 +69,12 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 expression: 'amount > 0 and isNonEmptyString(reference)',
 ```
 
-تستخدم السلاسل النصية `and` و`or` و`not` و`==` و`!=` و`\<` و`\<=` و`>` و`>=` و`+` و`-` و`*` و`/` و`in [...]`، وليس `&&` أو `||`. يوضع النص بين علامتي اقتباس مفردتين أو مزدوجتين.
+تستخدم السلاسل النصية `and` و`or` و`not` و`==` و`!=` و`\<` و`\<=` و`>` و`>=` و`+` و`-` و`*` و`/` و`in [...]`، وليس `&&` أو `||`. يوضع النص بين علامتي اقتباس مفردتين أو مزدوجتين. تُكتب قيمة سابقة `previous.stage`:
+
+```ts
+// A proposal only follows a meeting
+expression: 'stage != "PROPOSAL" or previous.stage in ["MEETING", "PROPOSAL"]',
+```
 
 يمكن للقاعدة قراءة الحقول التي تعلنها، و[حقول النظام](/ar/developers/extend/apps/data/system-fields) التي يوفرها Twenty، مثل `createdAt`. تتحقق واجهة سطر الأوامر CLI من التعبيرات مقارنةً بكائنات تطبيقك نفسها. بالنسبة إلى كائن خارج تطبيقك، لا تتحقق إلا من البنية النحوية، ويتحقق الخادم من الحقول وقت المزامنة.
 

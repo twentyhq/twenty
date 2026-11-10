@@ -35,7 +35,6 @@ describe('2-57 workspace command - drop undeclared keys from create and upsert r
   let command: DropUndeclaredKeysFromCreateAndUpsertRecordsCommand;
   let coreWorkflowId: string;
   let coreWorkflowVersionId: string;
-  let workspaceWorkflowId: string;
   let workspaceWorkflowVersionId: string;
   let legacySteps: RecordStep[];
 
@@ -136,7 +135,6 @@ describe('2-57 workspace command - drop undeclared keys from create and upsert r
     );
 
     ({
-      workspaceWorkflowId,
       workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
     } = await linkCoreWorkflowToLegacyWorkspaceIds({
       coreWorkflowId,
@@ -151,7 +149,9 @@ describe('2-57 workspace command - drop undeclared keys from create and upsert r
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
+    await deleteLegacyWorkspaceWorkflowRecords({
+      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
+    });
   });
 
   it('drops undeclared keys from create and upsert record steps only, the same in core and the workspace', async () => {

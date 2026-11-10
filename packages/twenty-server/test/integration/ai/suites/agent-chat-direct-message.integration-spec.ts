@@ -10,7 +10,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
-import { type RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { type RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -208,6 +208,7 @@ describe('Private text direct messages', () => {
       workspaceId: context.workspaceId,
       threadId: threadId.toUpperCase(),
       turnId,
+      agentId: null,
       id: randomUUID().toUpperCase(),
     };
 
@@ -266,17 +267,17 @@ describe('Private text direct messages', () => {
       status: AgentTurnStatus.COMPLETED,
     });
     const recordsBefore = await readContentRecords(threadId);
-    const recordSharingWriteService =
-      getAppProviderByClassName<RecordSharingWriteService>(
-        'RecordSharingWriteService',
+    const recordShareSystemWriteService =
+      getAppProviderByClassName<RecordShareSystemWriteService>(
+        'RecordShareSystemWriteService',
       );
     const sharingFailure = new Error('Part sharing failed');
     const insertRecordShares =
-      recordSharingWriteService.insertRecordShares.bind(
-        recordSharingWriteService,
+      recordShareSystemWriteService.insertRecordShares.bind(
+        recordShareSystemWriteService,
       );
     const insertShares = jest
-      .spyOn(recordSharingWriteService, 'insertRecordShares')
+      .spyOn(recordShareSystemWriteService, 'insertRecordShares')
       .mockImplementationOnce(insertRecordShares)
       .mockRejectedValueOnce(sharingFailure);
     const messageId = randomUUID();
