@@ -28,7 +28,7 @@ import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AGENT_RUN_STOPPED_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-stopped-error.constant';
-import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.const';
+import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.constant';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-job-scope.service';
@@ -1127,6 +1127,7 @@ export class AgentRunnerService {
         claim: stream?.claim ?? null,
         streamChannelId,
         turnId,
+        agentId: persona.agentId,
         abortSignal,
         startTurn: () => this.agentRunTurnService.startTurn(turnInput),
         completeTurn: async (streamed) => {

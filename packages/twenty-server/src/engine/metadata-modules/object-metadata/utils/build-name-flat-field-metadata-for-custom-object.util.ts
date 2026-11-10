@@ -60,5 +60,6 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     universalSettings: null,
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    fieldMetadataOptionUniversalIdentifiers: [],
   };
 };

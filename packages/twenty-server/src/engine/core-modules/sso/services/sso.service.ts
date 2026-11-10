@@ -17,8 +17,12 @@ import {
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { CONSUMED_SAML_ASSERTION_CACHE_KEY_PREFIX } from 'src/engine/core-modules/sso/constants/consumed-saml-assertion-cache-key-prefix.constant';
 import {
   SsoException,
   SsoExceptionCode,
@@ -48,6 +52,8 @@ export class SsoService {
     private readonly billingService: BillingService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly secureHttpClientService: SecureHttpClientService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineAuthSession)
+    private readonly cacheStorage: CacheStorageService,
   ) {
     Issuer[custom.http_options] = this.oidcHttpOptions;
   }
@@ -112,12 +118,12 @@ export class SsoService {
       };
     } catch (err) {
       if (err instanceof SsoException) {
-        return err;
+        throw err;
       }
 
       this.exceptionHandlerService.captureExceptions([err]);
 
-      return new SsoException(
+      throw new SsoException(
         'Unknown SSO configuration error',
         SsoExceptionCode.UNKNOWN_SSO_CONFIGURATION_ERROR,
       );
@@ -183,6 +189,22 @@ export class SsoService {
       where: { id: identityProviderId },
       relations: { workspace: true },
     })) as (SsoConfiguration & WorkspaceSsoIdentityProviderEntity) | null;
+  }
+
+  async consumeSamlAssertion({
+    identityProviderId,
+    assertionId,
+    validUntil,
+  }: {
+    identityProviderId: string;
+    assertionId: string;
+    validUntil: Date;
+  }): Promise<boolean> {
+    return this.cacheStorage.setIfAbsent(
+      `${CONSUMED_SAML_ASSERTION_CACHE_KEY_PREFIX}:${identityProviderId}:${assertionId}`,
+      true,
+      Math.max(validUntil.getTime() - Date.now(), 1),
+    );
   }
 
   buildCallbackUrl(
@@ -278,7 +300,7 @@ export class SsoService {
     if (!identityProvider) {
       throw new SsoException(
         'Identity Provider not found',
-        SsoExceptionCode.USER_NOT_FOUND,
+        SsoExceptionCode.IDENTITY_PROVIDER_NOT_FOUND,
       );
     }
 

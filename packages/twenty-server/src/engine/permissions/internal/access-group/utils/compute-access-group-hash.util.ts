@@ -1,0 +1,100 @@
+/* @license Enterprise */
+
+import { createHash } from 'crypto';
+
+import {
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
+  type RowLevelRecordsPermissions,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
+
+const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
+  entries.map((entry) => JSON.stringify(entry)).sort();
+
+const buildPredicateGroupContent = ({
+  parentPredicateGroupId,
+  predicates,
+  predicateGroups,
+  isRelationHopEnabled,
+}: {
+  parentPredicateGroupId: string | null;
+  predicates: RowLevelPermissionPredicate[];
+  predicateGroups: RowLevelPermissionPredicateGroup[];
+  isRelationHopEnabled: boolean;
+}): { predicates: string[]; predicateGroups: string[] } => ({
+  predicates: sortByContent(
+    predicates
+      .filter(
+        ({ rowLevelPermissionPredicateGroupId }) =>
+          (rowLevelPermissionPredicateGroupId ?? null) ===
+          parentPredicateGroupId,
+      )
+      .map((predicate) => [
+        ...(isDefined(predicate.relationFieldMetadataId)
+          ? [predicate.relationFieldMetadataId, isRelationHopEnabled]
+          : []),
+        predicate.fieldMetadataId,
+        predicate.subFieldName,
+        predicate.operand,
+        predicate.value,
+        predicate.workspaceMemberFieldMetadataId,
+        predicate.workspaceMemberSubFieldName,
+      ]),
+  ),
+  predicateGroups: sortByContent(
+    predicateGroups
+      .filter(
+        ({ parentRowLevelPermissionPredicateGroupId }) =>
+          (parentRowLevelPermissionPredicateGroupId ?? null) ===
+          parentPredicateGroupId,
+      )
+      .map((predicateGroup) => [
+        predicateGroup.logicalOperator,
+        buildPredicateGroupContent({
+          parentPredicateGroupId: predicateGroup.id,
+          predicates,
+          predicateGroups,
+          isRelationHopEnabled,
+        }),
+      ]),
+  ),
+});
+
+export const computeAccessGroupHash = ({
+  roleId,
+  objectMetadataId,
+  rowLevelRecordsPermissions,
+  rowLevelPermissionPredicateGroupId,
+  memberFieldValues,
+  isRelationHopEnabled,
+}: {
+  roleId: string;
+  objectMetadataId: string;
+  rowLevelRecordsPermissions: RowLevelRecordsPermissions | null | undefined;
+  rowLevelPermissionPredicateGroupId: string | null;
+  memberFieldValues: RowLevelPermissionMemberFieldValues | null;
+  isRelationHopEnabled: boolean;
+}): string =>
+  createHash('sha256')
+    .update(
+      JSON.stringify([
+        roleId,
+        objectMetadataId,
+        isDefined(rowLevelRecordsPermissions)
+          ? buildPredicateGroupContent({
+              parentPredicateGroupId: null,
+              predicates: rowLevelRecordsPermissions.predicates,
+              predicateGroups: rowLevelRecordsPermissions.predicateGroups,
+              isRelationHopEnabled,
+            })
+          : null,
+        rowLevelPermissionPredicateGroupId,
+        Object.entries(memberFieldValues ?? {}).sort(
+          ([firstKey], [secondKey]) => firstKey.localeCompare(secondKey),
+        ),
+      ]),
+    )
+    .digest('hex');

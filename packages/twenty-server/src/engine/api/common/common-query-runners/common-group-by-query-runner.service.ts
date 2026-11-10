@@ -5,7 +5,6 @@ import {
   type ObjectRecord,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
-  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
@@ -95,7 +94,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const readRepository = this.getReadRepository(queryRunnerContext);
 
-    let queryBuilder = readRepository.createQueryBuilder(objectAlias);
+    const queryBuilder = readRepository.createQueryBuilder(objectAlias);
 
     const groupByFields =
       this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
@@ -111,7 +110,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectAlias,
     });
 
-    let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
+    const appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
 
     await this.addFiltersToQueryBuilder({
       args,
@@ -201,7 +200,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    restrictedFields,
+    unreadableFieldMetadataIds,
     appliedFilters,
     workspaceId,
   }: {
@@ -209,7 +208,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    restrictedFields: RestrictedFieldsPermissions;
+    unreadableFieldMetadataIds: Set<string>;
     appliedFilters: ObjectRecordFilter;
     workspaceId: string;
   }): Promise<ObjectRecordFilter> {
@@ -265,7 +264,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadata,
       flatFieldMetadataMaps,
     )
-      .filter((field) => restrictedFields[field.id]?.canRead !== false)
+      .filter((field) => !unreadableFieldMetadataIds.has(field.id))
       .map((field) => ({
         id: field.id,
         name: field.name,
@@ -342,8 +341,8 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        restrictedFields:
-          await this.recordPermissionsService.findRestrictedFields({
+        unreadableFieldMetadataIds:
+          await this.recordFieldPermissionsReadService.findUnreadableFields({
             principals: permissionsPrincipals,
             objectMetadataId: flatObjectMetadata.id,
           }),

@@ -135,6 +135,7 @@ export { filterOutInvalidRecordFilters } from './filter/filterOutInvalidRecordFi
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
 export { isRecordFilterOperandExpectingValue } from './filter/isRecordFilterOperandExpectingValue';
 export { isRecordFilterValueValid } from './filter/isRecordFilterValueValid';
+export { mapRLSOperandToRecordFilterOperand } from './filter/mapRLSOperandToRecordFilterOperand';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
   RecordFilter,
@@ -367,8 +368,10 @@ export { buildValidationRuleEvaluationContext } from './validation-rule/buildVal
 export { compileValidationRuleExpression } from './validation-rule/compileValidationRuleExpression';
 export { createValidationRuleEvaluator } from './validation-rule/createValidationRuleEvaluator';
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
+export { getValidationRulePreviousValueFieldPath } from './validation-rule/getValidationRulePreviousValueFieldPath';
 export { getValidationRuleSyntaxError } from './validation-rule/getValidationRuleSyntaxError';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
+export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';
 export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
 export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleValueEmpty';

@@ -1,5 +1,7 @@
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
+import { GettingStartedStepDoneButton } from '@/getting-started/components/GettingStartedStepDoneButton';
+import { GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneActions';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneDescriptions';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,6 +22,8 @@ const StyledCard = styled.section<{ isCompleted: boolean }>`
         : themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.lg};
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   transition: border-color
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease-out;
@@ -54,6 +58,11 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
+
+  &:last-child {
+    border-bottom: 0;
+    padding-bottom: ${themeCssVariables.spacing[4]};
+  }
 `;
 
 const StyledDoneIcon = styled.span`
@@ -85,6 +94,14 @@ const StyledDoneIcon = styled.span`
   }
 `;
 
+const StyledHeadingContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+`;
+
 const StyledTitle = styled.div`
   display: flex;
   flex: 1;
@@ -99,6 +116,7 @@ const StyledDescription = styled.span`
 `;
 
 const StyledBody = styled.div`
+  overflow-y: auto;
   padding: ${themeCssVariables.spacing[5]} ${themeCssVariables.spacing[6]};
 `;
 
@@ -123,6 +141,9 @@ export const GettingStartedStepCard = ({
   const description = isCompleted
     ? stepDefinition.doneDescription
     : stepDefinition.description;
+  const DoneAction = isCompleted
+    ? GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS[stepDefinition.actionKey]
+    : undefined;
 
   return (
     <StyledCard
@@ -144,29 +165,38 @@ export const GettingStartedStepCard = ({
             }
           />
         )}
-        <StyledTitle>
-          <Heading size="lg">
-            <GettingStartedRollingText
-              text={
-                isCompleted ? stepDefinition.doneTitle : stepDefinition.title
-              }
-            />
-          </Heading>
-          <StyledDescription>
-            {isDefined(DoneDescription) ? (
-              <DoneDescription description={description} />
-            ) : (
-              description
-            )}
-          </StyledDescription>
-        </StyledTitle>
+        <StyledHeadingContent>
+          <StyledTitle>
+            <Heading size="lg">
+              <GettingStartedRollingText
+                text={
+                  isCompleted ? stepDefinition.doneTitle : stepDefinition.title
+                }
+              />
+            </Heading>
+            <StyledDescription>
+              {isDefined(DoneDescription) ? (
+                <DoneDescription description={description} />
+              ) : (
+                description
+              )}
+            </StyledDescription>
+          </StyledTitle>
+          {isCompleted && (
+            <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
+          )}
+        </StyledHeadingContent>
       </StyledHeading>
-      <StyledBody>
-        <GettingStartedStepAction
-          stepDefinition={stepDefinition}
-          isCompleted={isCompleted}
-        />
-      </StyledBody>
+      {!isCompleted && (
+        <StyledBody>
+          <GettingStartedStepAction stepDefinition={stepDefinition} />
+        </StyledBody>
+      )}
+      {isDefined(DoneAction) && (
+        <StyledBody>
+          <DoneAction />
+        </StyledBody>
+      )}
     </StyledCard>
   );
 };

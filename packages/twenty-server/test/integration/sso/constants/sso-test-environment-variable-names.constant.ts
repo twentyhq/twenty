@@ -1,0 +1,15 @@
+export const SSO_TEST_ENVIRONMENT_VARIABLE_NAMES = {
+  oidcIssuer: 'SSO_TEST_OIDC_ISSUER',
+  oidcClientId: 'SSO_TEST_OIDC_CLIENT_ID',
+  oidcClientSecret: 'SSO_TEST_OIDC_CLIENT_SECRET',
+  samlIdentityProviderId: 'SSO_TEST_SAML_IDENTITY_PROVIDER_ID',
+  samlSsoUrl: 'SSO_TEST_SAML_SSO_URL',
+  samlIssuer: 'SSO_TEST_SAML_ISSUER',
+  samlCertificate: 'SSO_TEST_SAML_CERTIFICATE',
+  memberUsername: 'SSO_TEST_USERNAME',
+  memberPassword: 'SSO_TEST_PASSWORD',
+  nonMemberUsername: 'SSO_TEST_NON_MEMBER_USERNAME',
+  nonMemberPassword: 'SSO_TEST_NON_MEMBER_PASSWORD',
+  newcomerUsername: 'SSO_TEST_NEWCOMER_USERNAME',
+  newcomerPassword: 'SSO_TEST_NEWCOMER_PASSWORD',
+} as const;

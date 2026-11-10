@@ -142,6 +142,20 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'agentChatChannelUniversalIdentifier',
     },
+    workflow: {
+      metadataName: 'workflow',
+      foreignKey: 'workflowId',
+      inverseOneToManyProperty: 'navigationMenuItems',
+      isNullable: true,
+      universalForeignKey: 'workflowUniversalIdentifier',
+    },
+    agent: {
+      metadataName: 'agent',
+      foreignKey: 'agentId',
+      inverseOneToManyProperty: 'navigationMenuItems',
+      isNullable: true,
+      universalForeignKey: 'agentUniversalIdentifier',
+    },
   },
   fieldMetadata: {
     object: {
@@ -402,6 +416,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
     },
+    rowLevelPermissionPredicateGroup: {
+      metadataName: 'rowLevelPermissionPredicateGroup',
+      foreignKey: 'rowLevelPermissionPredicateGroupId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey:
+        'rowLevelPermissionPredicateGroupUniversalIdentifier',
+    },
   },
   pageLayout: {
     workspace: null,
@@ -637,7 +659,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     fieldMetadata: {
       metadataName: 'fieldMetadata',
       foreignKey: 'fieldMetadataId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'fieldMetadataOptions',
       isNullable: false,
       universalForeignKey: 'fieldMetadataUniversalIdentifier',
     },

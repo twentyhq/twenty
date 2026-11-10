@@ -910,6 +910,7 @@ export type TimelineThread = {
 export type TimelineThreadChannel = {
   __typename?: 'TimelineThreadChannel';
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  conversationStyle?: Maybe<Scalars['String']['output']>;
   provider: Scalars['String']['output'];
   type: MessageChannelType;
 };

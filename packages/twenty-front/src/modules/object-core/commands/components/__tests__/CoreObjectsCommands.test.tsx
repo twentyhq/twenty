@@ -4,6 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -11,7 +12,9 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 
 const mockDeleteSelectedCoreWorkflows = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
+const mockNavigate = jest.fn();
 let mockSelectedCoreWorkflowIds: string[] = [];
+let mockIsOnCoreWorkflowShowPage = false;
 
 jest.mock('@/object-core/commands/hooks/useCoreObjectsCommands', () => ({
   useCoreObjectsCommands: () => ({
@@ -19,7 +22,13 @@ jest.mock('@/object-core/commands/hooks/useCoreObjectsCommands', () => ({
     shouldDisplayCoreWorkflowFiltersCommand: false,
     coreWorkflowsDeleteCommandLabel: 'Delete Workflows',
     shouldDisplayCoreWorkflowsDeleteCommand: true,
+    selectedCoreWorkflowIds: mockSelectedCoreWorkflowIds,
+    isOnCoreWorkflowShowPage: mockIsOnCoreWorkflowShowPage,
   }),
+}));
+
+jest.mock('~/hooks/useNavigateApp', () => ({
+  useNavigateApp: () => mockNavigate,
 }));
 
 jest.mock(
@@ -27,7 +36,6 @@ jest.mock(
   () => ({
     useDeleteSelectedCoreWorkflows: () => ({
       deleteSelectedCoreWorkflows: mockDeleteSelectedCoreWorkflows,
-      selectedCoreWorkflowIds: mockSelectedCoreWorkflowIds,
     }),
   }),
 );
@@ -70,6 +78,7 @@ const renderSelectionCommands = () => {
 beforeEach(() => {
   jest.clearAllMocks();
   mockSelectedCoreWorkflowIds = ['workflow-1'];
+  mockIsOnCoreWorkflowShowPage = false;
   mockDeleteSelectedCoreWorkflows.mockResolvedValue(true);
 });
 
@@ -134,7 +143,27 @@ it('closes the side panel and deletes the selection once confirmed', async () =>
 
   expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
   expect(mockDeleteSelectedCoreWorkflows).toHaveBeenCalledTimes(1);
-  expect(mockDeleteSelectedCoreWorkflows).toHaveBeenCalledWith();
+  expect(mockDeleteSelectedCoreWorkflows).toHaveBeenCalledWith([
+    'workflow-1',
+    'workflow-2',
+  ]);
+  expect(mockNavigate).not.toHaveBeenCalled();
+});
+
+it('goes back to the workflows list after deleting from the workflow page', async () => {
+  mockIsOnCoreWorkflowShowPage = true;
+
+  renderSelectionCommands();
+
+  await userEvent.click(screen.getByText('Delete Workflows'));
+  await userEvent.click(
+    await screen.findByRole('button', { name: 'Delete workflow' }),
+  );
+
+  await waitFor(() =>
+    expect(mockNavigate).toHaveBeenCalledWith(AppPath.WorkflowIndexPage),
+  );
+  expect(mockDeleteSelectedCoreWorkflows).toHaveBeenCalledWith(['workflow-1']);
 });
 
 it('does not reopen the confirmation when the side panel closes while it is open', async () => {

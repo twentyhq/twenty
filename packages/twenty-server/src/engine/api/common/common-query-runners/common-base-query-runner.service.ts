@@ -72,7 +72,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 
 @Injectable()
 export abstract class CommonBaseQueryRunnerService<
@@ -116,7 +116,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService;
   @Inject()
-  protected readonly recordPermissionsService: RecordPermissionsService;
+  protected readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService;
 
   protected abstract readonly operationName: CommonQueryNames;
 

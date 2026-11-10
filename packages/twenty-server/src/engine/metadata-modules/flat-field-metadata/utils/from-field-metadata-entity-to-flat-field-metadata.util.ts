@@ -105,6 +105,12 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
       ) ?? [],
     searchFieldMetadataIds:
       fieldMetadataEntity.searchFieldMetadatas?.map(({ id }) => id) ?? [],
+    fieldMetadataOptionIds:
+      fieldMetadataEntity.fieldMetadataOptions?.map(({ id }) => id) ?? [],
+    fieldMetadataOptionUniversalIdentifiers:
+      fieldMetadataEntity.fieldMetadataOptions?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     searchFieldMetadataUniversalIdentifiers:
       fieldMetadataEntity.searchFieldMetadatas?.map(
         ({ universalIdentifier }) => universalIdentifier,

@@ -29,10 +29,10 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-excluded-tool-names.const';
-import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
-import { PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/preloaded-agent-registry-tool-categories.const';
-import { SCOPED_AGENT_RUN_ACTION_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/scoped-agent-run-action-tool-names.const';
+import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-excluded-tool-names.constant';
+import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.constant';
+import { PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/preloaded-agent-registry-tool-categories.constant';
+import { SCOPED_AGENT_RUN_ACTION_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/scoped-agent-run-action-tool-names.constant';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { type AgentRegistryAccess } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-toolset.service';
@@ -55,7 +55,6 @@ import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { type AgentTurnUsageStep } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { type AgentTurnStreamSource } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -329,12 +328,7 @@ export class AgentRunTurnService {
 
       void this.aiBillingService.calculateAndBillUsage({
         modelId: registeredModel.modelId,
-        billingInput: {
-          usage: structuredResult.usage,
-          cacheCreationTokens: extractCacheCreationTokensFromSteps(
-            structuredResult.steps,
-          ),
-        },
+        billingInput: { usage: structuredResult.usage },
         workspaceId,
         operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
         spenders,
@@ -362,7 +356,7 @@ export class AgentRunTurnService {
     return {
       result,
       usage,
-      cacheCreationTokens: extractCacheCreationTokensFromSteps(steps),
+      cacheCreationTokens: usage.inputTokenDetails?.cacheWriteTokens ?? 0,
       nativeWebSearchCallCount,
       stopReason,
       // out of credits fails the execution even if it asked something, so it is never left waiting for an answer

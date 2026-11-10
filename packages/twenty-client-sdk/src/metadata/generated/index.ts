@@ -189,7 +189,7 @@ const hasAuthenticationErrorInGraphqlPayload = (
 };
 
 const defaultOptions: MetadataApiClientOptions = {
-  url: `${process.env.TWENTY_API_URL}/metadata`,
+  url: `${process.env.TWENTY_INTERNAL_API_URL || process.env.TWENTY_API_URL}/metadata`,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -18,9 +18,11 @@ import {
   FilesFieldException,
   FilesFieldExceptionCode,
 } from 'src/engine/core-modules/file/files-field/files-field.exception';
+import { buildRemoteFileExtension } from 'src/engine/core-modules/file/files-field/utils/build-remote-file-extension.util';
+import { type FileRemoteOrigin } from 'src/engine/core-modules/file/types/file-remote-origin.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
-import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -112,6 +114,66 @@ export class FilesFieldService {
         fileFolder: FileFolder.FilesField,
       }),
     };
+  }
+
+  async createRemoteFiles({
+    workspaceId,
+    fieldMetadataUniversalIdentifier,
+    files,
+  }: {
+    workspaceId: string;
+    fieldMetadataUniversalIdentifier: string;
+    files: (Pick<FileEntity, 'size' | 'mimeType'> & {
+      filename: string;
+      remoteOrigin: FileRemoteOrigin;
+    })[];
+  }): Promise<{ fileId: string; label: string }[]> {
+    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
+      workspaceId,
+      {
+        select: ['applicationId', 'universalIdentifier'],
+        where: { universalIdentifier: fieldMetadataUniversalIdentifier },
+      },
+    );
+
+    const application = await this.applicationRepository.findOneOrFail(
+      workspaceId,
+      {
+        select: ['universalIdentifier'],
+        where: { id: fieldMetadata.applicationId },
+      },
+    );
+
+    const settings = {
+      isTemporaryFile: true,
+      toDelete: false,
+    };
+
+    const remoteFiles = files.map(
+      ({ filename, size, mimeType, remoteOrigin }) => {
+        const id = v4();
+
+        return {
+          id,
+          label: filename,
+          resourcePath: `${fieldMetadata.universalIdentifier}/${id}.${buildRemoteFileExtension(filename)}`,
+          size,
+          mimeType,
+          settings,
+          remoteOrigin,
+        };
+      },
+    );
+
+    await this.fileStorageService.createRemoteFiles({
+      workspaceId,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      applicationId: fieldMetadata.applicationId,
+      fileFolder: FileFolder.FilesField,
+      files: remoteFiles,
+    });
+
+    return remoteFiles.map(({ id, label }) => ({ fileId: id, label }));
   }
 
   async copyFileIntoFilesField({

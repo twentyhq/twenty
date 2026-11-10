@@ -445,6 +445,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    shouldDisplayGroupsAsTabs: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     kanbanColumnWidth: {
       toCompare: true,
       toStringify: false,
@@ -866,6 +872,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    canCreateAllObjectRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     canUpdateAllObjectRecords: {
       toCompare: true,
       toStringify: false,
@@ -968,6 +979,18 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    avatarColor: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    avatarShape: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -1475,6 +1498,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'agentChatChannelUniversalIdentifier',
     },
+    workflowId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'workflowUniversalIdentifier',
+    },
+    agentId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'agentUniversalIdentifier',
+    },
   },
   rolePermissionFlag: {
     permissionFlagId: {
@@ -1556,6 +1589,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'fieldMetadataUniversalIdentifier',
     },
+    rowLevelPermissionPredicateGroupId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'rowLevelPermissionPredicateGroupUniversalIdentifier',
+    },
     canReadFieldValue: {
       toCompare: true,
       toStringify: false,
@@ -1589,6 +1627,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
     canReadObjectRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canCreateObjectRecords: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -1699,6 +1742,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     canReadRecords: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canCreateRecords: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -2096,6 +2144,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     sendMessageLogicFunctionUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    conversationStyle: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

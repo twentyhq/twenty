@@ -1,91 +1,96 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Fragment } from 'react';
 import { Section } from 'twenty-ui/components/layout';
 import {
   IconBell,
   IconBrandGithub,
+  IconCloud,
   IconCpu,
   IconDatabase,
-  IconExternalLink,
   IconHistory,
   IconLock,
   IconMap,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
-import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
+import {
+  StyledSettingsBillingCard,
+  StyledSettingsBillingCardFieldList,
+  StyledSettingsBillingCardFieldListWithDivider,
+  StyledSettingsBillingCardGridBody,
+  StyledSettingsBillingCardHeader,
+  StyledSettingsBillingCardTitle,
+  StyledSettingsBillingCardTitleLabel,
+} from '@/settings/billing/components/internal/SettingsBillingCard';
+import { BillingFieldRow } from '@/settings/billing/components/internal/SettingsBillingCardField';
+import { SettingsPrivacyCompliance } from '@/settings/privacy/components/SettingsPrivacyCompliance';
 import { TWENTY_REPOSITORY_URL } from '@/settings/privacy/constants/TwentyRepositoryUrl';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
+const StyledContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+`;
+
 export const SettingsPrivacySafeguards = () => {
   const { t } = useLingui();
-
-  const safeguards = [
-    {
-      Icon: IconLock,
-      title: t`Encrypted everywhere`,
-      description: t`Data is encrypted in transit and at rest, with keys rotated regularly`,
-    },
-    {
-      Icon: IconDatabase,
-      title: t`Isolated workspace`,
-      description: t`Each workspace has its own database schema`,
-    },
-    {
-      Icon: IconCpu,
-      title: t`No training on your data`,
-      description: t`No AI provider trains on your data, and neither does Twenty`,
-    },
-    {
-      Icon: IconHistory,
-      title: t`Daily backups`,
-      description: t`Encrypted daily snapshots, kept 30 days`,
-    },
-    {
-      Icon: IconBell,
-      title: t`Breach notification`,
-      description: t`We notify you within 72 hours, as set out in the DPA`,
-    },
-    {
-      Icon: IconMap,
-      title: t`Hosting`,
-      description: t`Workspaces run on AWS in Frankfurt, Germany`,
-    },
-  ];
+  const theme = useTheme();
 
   return (
     <Section.Root>
       <Section.Header
         title={t`How your data is protected`}
-        description={t`The safeguards behind every Twenty Cloud workspace.`}
+        description={t`Safeguards, audits and the agreements that cover your data.`}
       />
-      <Card.Root>
-        {safeguards.map(({ Icon, title, description }) => (
-          <Fragment key={title}>
-            <SettingsOptionCardContentButton
-              Icon={Icon}
-              title={title}
-              description={description}
-            />
-            <SettingsCardSeparator />
-          </Fragment>
-        ))}
-        <SettingsOptionCardContentButton
-          Icon={IconBrandGithub}
-          title={t`Open source`}
-          description={t`Every line of code is public, so you can audit it yourself`}
-          Button={
+      <StyledContent>
+        <StyledSettingsBillingCard>
+          <StyledSettingsBillingCardHeader>
+            <StyledSettingsBillingCardTitle>
+              <IconCloud
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.md}
+                color={theme.color.blue}
+              />
+              <StyledSettingsBillingCardTitleLabel>{t`Twenty Cloud`}</StyledSettingsBillingCardTitleLabel>
+            </StyledSettingsBillingCardTitle>
             <Button
               size="sm"
               variant="outline"
-              startIcon={<IconExternalLink />}
+              startIcon={<IconBrandGithub />}
               onClick={() => openUrlInNewTab(TWENTY_REPOSITORY_URL)}
-            >{t`GitHub`}</Button>
-          }
-        />
-      </Card.Root>
+            >
+              {t`Source code`}
+            </Button>
+          </StyledSettingsBillingCardHeader>
+          <StyledSettingsBillingCardGridBody>
+            <StyledSettingsBillingCardFieldList>
+              <BillingFieldRow Icon={IconLock} label={t`Encryption`}>
+                {t`In transit and at rest`}
+              </BillingFieldRow>
+              <BillingFieldRow Icon={IconDatabase} label={t`Isolation`}>
+                {t`Own database schema`}
+              </BillingFieldRow>
+              <BillingFieldRow Icon={IconCpu} label={t`AI training`}>
+                {t`Never, by Twenty or providers`}
+              </BillingFieldRow>
+            </StyledSettingsBillingCardFieldList>
+            <StyledSettingsBillingCardFieldListWithDivider>
+              <BillingFieldRow Icon={IconHistory} label={t`Backups`}>
+                {t`Daily, kept 30 days`}
+              </BillingFieldRow>
+              <BillingFieldRow Icon={IconBell} label={t`Breaches`}>
+                {t`Notified within 72 hours`}
+              </BillingFieldRow>
+              <BillingFieldRow Icon={IconMap} label={t`Hosting`}>
+                {t`AWS, Frankfurt, Germany`}
+              </BillingFieldRow>
+            </StyledSettingsBillingCardFieldListWithDivider>
+          </StyledSettingsBillingCardGridBody>
+        </StyledSettingsBillingCard>
+        <SettingsPrivacyCompliance />
+      </StyledContent>
     </Section.Root>
   );
 };

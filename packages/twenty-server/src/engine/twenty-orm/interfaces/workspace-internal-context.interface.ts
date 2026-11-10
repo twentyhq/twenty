@@ -1,4 +1,6 @@
-import { type RecordRepositoryPermissionsService } from 'src/engine/permissions/record-repository-permissions.service';
+import { type RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
+import { type RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type DataSource } from 'typeorm';
 import { type FeatureFlagKey } from 'twenty-shared/types';
@@ -25,15 +27,27 @@ export interface WorkspaceInternalContext {
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;
   permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
   recordReadRestrictions: RecordReadRestrictions;
-  recordRepositoryPermissions: Pick<
-    RecordRepositoryPermissionsService,
-    | 'isOperationDisabled'
-    | 'assertObjectOperationAccessibleOrThrow'
-    | 'assertColumnsReadableAndUpdatableOrThrow'
-    | 'buildRecordsAccessCondition'
+  recordPermissions: Pick<
+    RecordPermissionsReadService,
+    | 'isReadDisabled'
+    | 'assertCanRunOperationOrThrow'
+    | 'buildReadRecordsAccessSQLCondition'
+    | 'buildWriteRecordsAccessSQLCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
   >;
+  recordFieldPermissions: Pick<
+    RecordFieldPermissionsReadService,
+    'findFieldsHiddenOnMatchingRecords'
+  >;
+  recordAccessGroupWrite: Pick<
+    RecordAccessGroupWriteService,
+    | 'isWriteTransactionRequired'
+    | 'isRecordsBeforeWriteRequired'
+    | 'findRelatedRecordsBeforeDelete'
+    | 'recomputeAfterWrite'
+  >;
+  recordAccessGroupQueue: Pick<RecordAccessGroupWriteService, 'queueRecompute'>;
   recordStock: Pick<
     WorkspaceRecordStockService,
     'assertRecordStockAvailable' | 'acquireRecordStock' | 'releaseRecordStock'

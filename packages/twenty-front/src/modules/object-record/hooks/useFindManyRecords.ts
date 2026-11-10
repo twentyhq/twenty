@@ -90,7 +90,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const hasReadPermission = canReachSomeRecords({
     objectRecordsPermissions: objectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const { data, loading, error, fetchMore, refetch } =

@@ -5,6 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import {
   computePlanWorkspaceCreditsMicro,
   type PlanWorkspaceCreditsMicro,
@@ -26,10 +27,12 @@ export class ResourceCreditService {
     workspaceId,
     subscriptionId,
     boundary,
+    interval,
   }: {
     workspaceId: string;
     subscriptionId: string;
     boundary: Date;
+    interval: SubscriptionInterval;
   }): Promise<PlanWorkspaceCreditsMicro | null> {
     const subscription = await this.billingSubscriptionRepository.findOne(
       workspaceId,
@@ -54,7 +57,7 @@ export class ResourceCreditService {
 
     const planWorkspaceCredits = computePlanWorkspaceCreditsMicro({
       billingSubscriptionItems: subscription.billingSubscriptionItems,
-      interval: subscription.interval,
+      interval,
       seats: closingPeriodMaxSeats,
     });
 
