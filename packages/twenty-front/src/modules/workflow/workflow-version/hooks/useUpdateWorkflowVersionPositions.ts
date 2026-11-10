@@ -9,7 +9,6 @@ import { applyPositionsToFlow } from '@/workflow/utils/applyPositionsToFlow';
 import { getFlowPositions } from '@/workflow/utils/getFlowPositions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
 import { UpdateCoreWorkflowVersionPositionsDocument } from '~/generated/graphql';
 
 export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
@@ -47,9 +46,8 @@ export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
   const updateWorkflowVersionPositions = async (
     positions: { id: string; position: { x: number; y: number } }[],
   ) => {
-    const positionsBeforeUpdate = getFlowPositions(
-      store.get(flowCallbackState),
-    );
+    const flowBeforeUpdate = store.get(flowCallbackState);
+    const positionsBeforeUpdate = getFlowPositions(flowBeforeUpdate);
 
     // Written before any await so the diagram switches to these positions in the same render
     setFlow((currentFlow) =>
@@ -69,11 +67,12 @@ export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
       },
     );
 
-    setFlow((currentFlow) =>
-      isDefined(currentFlow)
-        ? { ...currentFlow, workflowVersionId }
-        : currentFlow,
-    );
+    // A draft created by the save is seeded from the server, which drops the optimistic positions
+    if (workflowVersionId !== flowBeforeUpdate?.workflowVersionId) {
+      setFlow((currentFlow) =>
+        applyPositionsToFlow({ flow: currentFlow, positions }),
+      );
+    }
 
     await invalidateCoreWorkflowVersions(apolloCoreClient);
   };
