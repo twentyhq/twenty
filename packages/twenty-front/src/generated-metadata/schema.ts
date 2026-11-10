@@ -237,7 +237,6 @@ export type AgentMessageReactionSummary = {
 
 export type AgentRun = {
   __typename?: 'AgentRun';
-  /** Whether the requesting member can open the conversation */
   canReadThread: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   creatorName: Scalars['String']['output'];

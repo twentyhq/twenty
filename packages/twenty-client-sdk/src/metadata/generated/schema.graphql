@@ -206,7 +206,6 @@ type AgentMessageReactionSummary {
 }
 
 type AgentRun {
-  """Whether the requesting member can open the conversation"""
   canReadThread: Boolean!
   createdAt: DateTime!
   creatorName: String!
