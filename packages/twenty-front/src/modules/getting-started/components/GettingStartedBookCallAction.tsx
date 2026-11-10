@@ -1,6 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { GettingStartedBookCallSummary } from '@/getting-started/components/GettingStartedBookCallSummary';
+import { GETTING_STARTED_BOOK_CALL_CALENDAR_MIN_VIEWPORT_HEIGHT } from '@/getting-started/constants/GettingStartedBookCallCalendarMinViewportHeight';
 import { GettingStartedBookCallSlotsLoadEffect } from '@/getting-started/effect-components/GettingStartedBookCallSlotsLoadEffect';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { gettingStartedBookCallSlotsByDayState } from '@/getting-started/states/gettingStartedBookCallSlotsByDayState';
@@ -31,7 +32,8 @@ const StyledPreview = styled.div`
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   overflow: hidden;
 
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
+  @media (max-width: ${MOBILE_VIEWPORT}px),
+    (max-height: ${GETTING_STARTED_BOOK_CALL_CALENDAR_MIN_VIEWPORT_HEIGHT}px) {
     grid-template-columns: minmax(0, 1fr);
   }
 `;
@@ -48,6 +50,16 @@ const StyledInfoColumn = styled.div`
     border-bottom: 1px solid ${themeCssVariables.border.color.light};
     border-right: none;
   }
+
+  @media (max-height: ${GETTING_STARTED_BOOK_CALL_CALENDAR_MIN_VIEWPORT_HEIGHT}px) {
+    align-items: flex-end;
+    border: none;
+    flex-direction: row;
+  }
+`;
+
+const StyledPickATime = styled.div`
+  flex-shrink: 0;
 `;
 
 const StyledCalendarColumn = styled.div`
@@ -55,6 +67,10 @@ const StyledCalendarColumn = styled.div`
   display: flex;
   justify-content: center;
   padding: ${themeCssVariables.spacing[4]};
+
+  @media (max-height: ${GETTING_STARTED_BOOK_CALL_CALENDAR_MIN_VIEWPORT_HEIGHT}px) {
+    display: none;
+  }
 `;
 
 const StyledBookingPage = styled.div`
@@ -114,15 +130,17 @@ export const GettingStartedBookCallAction = () => {
       <StyledPreview>
         <StyledInfoColumn>
           <GettingStartedBookCallSummary />
-          <Button
-            variant="solid"
-            color="accent"
-            fullWidth
-            endIcon={<IconArrowRight />}
-            onClick={() => setOpenedBookingPage({})}
-          >
-            {t`Pick a time`}
-          </Button>
+          <StyledPickATime>
+            <Button
+              variant="solid"
+              color="accent"
+              fullWidth
+              endIcon={<IconArrowRight />}
+              onClick={() => setOpenedBookingPage({})}
+            >
+              {t`Pick a time`}
+            </Button>
+          </StyledPickATime>
         </StyledInfoColumn>
         <StyledCalendarColumn>
           <DatePicker
