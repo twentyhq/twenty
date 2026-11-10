@@ -216,6 +216,10 @@ export class AgentFilePartService {
       });
     }
 
+    if (!canSendSignedUrls && limits.mimeTypesRequiringUrl.has(mediaType)) {
+      return buildFilePlaceholder({ part, reason: 'unavailable' });
+    }
+
     if (
       file.size > limits.maxFileSizeBytes ||
       file.size > budget.remainingSizeBytes ||
@@ -226,11 +230,6 @@ export class AgentFilePartService {
 
     budget.remainingSizeBytes -= file.size;
     budget.remainingFileCount -= 1;
-
-    if (!canSendSignedUrls && limits.mimeTypesRequiringUrl.has(mediaType)) {
-      return buildFilePlaceholder({ part, reason: 'unavailable' });
-    }
-
     budget.urlsToKeepLoaded.add(url);
 
     return { ...part, mediaType };
