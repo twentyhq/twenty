@@ -66,6 +66,29 @@ describe('defineLogicFunction', () => {
     expect(result.success).toBe(true);
   });
 
+  it('should error on trigger settings of the wrong type', () => {
+    // Manifests are often plain JavaScript, so nothing typed these values
+    const databaseEventTriggerSettings = JSON.parse(
+      '{"action":"updated","objectUniversalIdentifier":"9d3a2f8e-5c1b-4e7a-8f6d-2b4c1a9e7d35","fieldUniversalIdentifiers":"name","condition":true,"batchMode":"yes"}',
+    );
+
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Record Updated',
+      handler: mockHandler,
+      databaseEventTriggerSettings,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        'Database event trigger fieldUniversalIdentifiers must be a list of valid UUIDs',
+        'Database event trigger condition must be text',
+        'Database event trigger batchMode must be true or false',
+      ]),
+    );
+  });
+
   it('should error when a condition has no object to read', () => {
     const result = defineLogicFunction({
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
