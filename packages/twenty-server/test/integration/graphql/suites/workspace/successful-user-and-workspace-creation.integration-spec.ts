@@ -271,11 +271,6 @@ describe('Successful user and workspace creation', () => {
     });
 
     expect(errors).toBeDefined();
-
-    // This workspace was never actually activated (no tenant schema/metadata),
-    // so the standard deleteUser teardown cannot operate on it. Skip the
-    // afterEach cleanup; the integration test database is reset per run.
-    createdUserAccessToken = undefined;
   });
 
   it('should be idempotent when re-activating an already-active workspace', async () => {

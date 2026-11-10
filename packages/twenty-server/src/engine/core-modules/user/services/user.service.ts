@@ -327,6 +327,16 @@ export class UserService {
     actingUserWorkspaceId?: string,
   ) {
     const workspaceId = userWorkspace.workspaceId;
+
+    const workspace =
+      await this.workspaceService.findOneWorkspaceById(workspaceId);
+
+    if (isDefined(workspace) && !isWorkspaceProvisioned(workspace)) {
+      await this.workspaceService.deleteWorkspace(workspaceId, true);
+
+      return;
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     const workspaceMembers =
