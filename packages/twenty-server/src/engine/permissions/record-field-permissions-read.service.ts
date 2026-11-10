@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -40,17 +40,18 @@ export class RecordFieldPermissionsReadService {
     });
   }
 
-  async findRlsRuleUnreadableFieldsByRole({
+  async findFieldsHiddenOnMatchingRecords({
     principals,
     objectMetadataId,
-  }: ObjectQuestion): Promise<
-    { roleId: string; fieldMetadataIds: string[] }[]
+    tableAlias,
+  }: ObjectQuestion & { tableAlias: string }): Promise<
+    { fieldMetadataIds: string[]; sqlCondition: SQLCondition }[]
   > {
     if (!isDefined(principals)) {
       return [];
     }
 
-    return findRlsRuleFieldsByRole({
+    const rlsRuleFieldsByRole = findRlsRuleFieldsByRole({
       principals,
       metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
         { principals },
@@ -58,25 +59,18 @@ export class RecordFieldPermissionsReadService {
       objectMetadataId,
       fieldList: 'unreadableFields',
     });
-  }
 
-  async buildRlsRuleSQLConditionOrThrow({
-    principals,
-    objectMetadataId,
-    roleId,
-    tableAlias,
-  }: {
-    principals: PermissionsPrincipalsWithRolesContext;
-    objectMetadataId: string;
-    roleId: string;
-    tableAlias: string;
-  }): Promise<SQLCondition> {
+    if (!isNonEmptyArray(rlsRuleFieldsByRole)) {
+      return [];
+    }
+
     const { metadataMaps, flatObjectMetadata } =
       await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
 
-    // An RLS rule whose filter compiles to nothing matches every record
-    return (
-      renderRowLevelPermissionFilterToSql({
+    return rlsRuleFieldsByRole.map(({ roleId, fieldMetadataIds }) => ({
+      fieldMetadataIds,
+      // An RLS rule whose filter compiles to nothing matches every record
+      sqlCondition: renderRowLevelPermissionFilterToSql({
         recordFilter:
           resolveRlsRuleRecordFilter({
             principals,
@@ -88,8 +82,8 @@ export class RecordFieldPermissionsReadService {
         objectMetadata: flatObjectMetadata,
         flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
         flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-      }) ?? { sql: 'TRUE', parameters: {} }
-    );
+      }) ?? { sql: 'TRUE', parameters: {} },
+    }));
   }
 
   private async findObjectFieldMetadataIds({

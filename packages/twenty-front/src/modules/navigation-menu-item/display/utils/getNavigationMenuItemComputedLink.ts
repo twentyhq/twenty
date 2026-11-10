@@ -1,4 +1,5 @@
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
+import { getAutomationNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/automation/utils/getAutomationNavigationMenuItemComputedLink';
 import { getObjectNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemComputedLink';
 import { getPageLayoutNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/page-layout/utils/getPageLayoutNavigationMenuItemComputedLink';
 import { getRecordNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/record/utils/getRecordNavigationMenuItemComputedLink';
@@ -46,6 +47,9 @@ export const getNavigationMenuItemComputedLink = ({
       return getRecordNavigationMenuItemComputedLink(item, objectMetadataItems);
     case NavigationMenuItemType.PAGE_LAYOUT:
       return getPageLayoutNavigationMenuItemComputedLink(item);
+    case NavigationMenuItemType.WORKFLOW:
+    case NavigationMenuItemType.AGENT:
+      return getAutomationNavigationMenuItemComputedLink(item);
     case NavigationMenuItemType.NATIVE_PAGE:
       return getNativePageNavigationMenuItemConfig(item)?.path ?? '';
     default:

@@ -7,7 +7,11 @@ import {
   type RecordShareAccessLevel,
   type ObjectRecord,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  canReachSomeRecords,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -34,6 +38,7 @@ import {
 } from 'src/engine/permissions/types/record-permissions-question.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/internal/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/combine/utils/is-object-operation-denied-to-principals.util';
@@ -166,9 +171,46 @@ export class RecordPermissionsReadService {
     );
   }
 
-  async canAccessKnownRecords(
-    question: RecordsOperationQuestion,
+  async canRoleAccessSomeRecords(
+    question: ObjectOperationQuestion,
   ): Promise<boolean> {
+    const request = await this.findObjectAccessRequest(question);
+
+    return isDefined(request) && isRolePermittingOperation(request);
+  }
+
+  async filterRoleIdsWithoutReadAccess({
+    workspaceId,
+    roleIds,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    roleIds: string[];
+    objectMetadataId: string;
+  }): Promise<Set<string>> {
+    const metadataMaps = await this.permissionsMetadataMapsService.load({
+      workspaceId,
+    });
+
+    return new Set(
+      roleIds.filter(
+        (roleId) =>
+          !canReachSomeRecords({
+            objectRecordsPermissions:
+              getPermissionsPrincipalsRecordsPermissions({
+                principals: buildRolePermissionsPrincipals({
+                  workspaceId,
+                  roleId,
+                }),
+                metadataMaps,
+              }).objects[objectMetadataId],
+            operationType: 'read',
+          }),
+      ),
+    );
+  }
+
+  async canAccessRecords(question: RecordsOperationQuestion): Promise<boolean> {
     const grantedRecordIds = await this.findGrantedRecordIds(question);
 
     return (
@@ -179,7 +221,7 @@ export class RecordPermissionsReadService {
     );
   }
 
-  async filterAccessibleKnownRecordIds(
+  async filterGrantedRecordIds(
     request: RecordsOperationQuestion,
   ): Promise<Set<string>> {
     const readRequest = await this.findObjectAccessRequest({
