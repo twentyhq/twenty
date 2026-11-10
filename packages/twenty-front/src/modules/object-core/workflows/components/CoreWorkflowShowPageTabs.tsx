@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -11,9 +12,9 @@ import {
 import { CoreWorkflowRunsTab } from '@/object-core/workflows/components/CoreWorkflowRunsTab';
 import { CoreWorkflowVersionsTab } from '@/object-core/workflows/components/CoreWorkflowVersionsTab';
 import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
+import { type CoreWorkflowShowPageTabId } from '@/object-core/workflows/types/CoreWorkflowShowPageTabId';
+import { getCoreWorkflowShowPageTabIdFromHash } from '@/object-core/workflows/utils/getCoreWorkflowShowPageTabIdFromHash';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type GetCoreWorkflowVersionsQuery } from '~/generated/graphql';
 
 const StyledTabContent = styled.div`
@@ -29,7 +30,7 @@ type CoreWorkflowShowPageTabsProps = {
 };
 
 type CoreWorkflowShowPageActiveTabProps = CoreWorkflowShowPageTabsProps & {
-  activeTabId: string | null;
+  activeTabId: CoreWorkflowShowPageTabId;
 };
 
 const CoreWorkflowShowPageActiveTab = ({
@@ -73,13 +74,13 @@ export const CoreWorkflowShowPageTabs = ({
   const { t } = useLingui();
   const location = useLocation();
 
-  // Keyed on the location so a navigation without a tab hash opens Flow instead of the last tab
-  const tabListComponentInstanceId = `${CORE_WORKFLOW_SHOW_PAGE_TABS.COMPONENT_INSTANCE_ID_PREFIX}-${coreWorkflowId}-${location.key}`;
+  // TabList keeps its last tab when the URL has no hash, so a hash-less visit gets a fresh instance that opens Flow
+  const tabListInstanceSuffix = isNonEmptyString(location.hash)
+    ? 'linked-tab'
+    : location.key;
+  const tabListComponentInstanceId = `${CORE_WORKFLOW_SHOW_PAGE_TABS.COMPONENT_INSTANCE_ID_PREFIX}-${coreWorkflowId}-${tabListInstanceSuffix}`;
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    tabListComponentInstanceId,
-  );
+  const activeTabId = getCoreWorkflowShowPageTabIdFromHash(location.hash);
 
   return (
     <>

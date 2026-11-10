@@ -67,14 +67,8 @@ export const CoreWorkflowRunsTab = ({
 }: CoreWorkflowRunsTabProps) => {
   const { t } = useLingui();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const {
-    runs,
-    runCountLast14Days,
-    loading,
-    error,
-    hasNextPage,
-    fetchMoreRuns,
-  } = useCoreWorkflowRuns(coreWorkflowId);
+  const { runs, runSummary, loading, error, hasNextPage, fetchMoreRuns } =
+    useCoreWorkflowRuns(coreWorkflowId);
 
   const header = (
     <TableRow gridTemplateColumns={CORE_WORKFLOW_RUNS_GRID_TEMPLATE_COLUMNS}>
@@ -150,12 +144,17 @@ export const CoreWorkflowRunsTab = ({
             recentRuns={runs.slice(0, RECENT_RUNS_IN_SUMMARY)}
           />
         </StyledSummaryStrip>
-        {isDefined(runCountLast14Days) && (
+        {isDefined(runSummary) && (
           <span>
-            {plural(runCountLast14Days, {
-              one: '# run',
-              other: '# runs',
-            })}{' '}
+            {runSummary.isRunCountLowerBound
+              ? plural(runSummary.runCountLast14Days, {
+                  one: '#+ run',
+                  other: '#+ runs',
+                })
+              : plural(runSummary.runCountLast14Days, {
+                  one: '# run',
+                  other: '# runs',
+                })}{' '}
             <StyledSummaryQualifier>{t`in the last 14 days`}</StyledSummaryQualifier>
           </span>
         )}

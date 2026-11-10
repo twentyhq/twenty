@@ -617,6 +617,7 @@ export type Query = {
   __typename?: 'Query';
   coreWorkflow?: Maybe<CoreWorkflowDto>;
   coreWorkflowById?: Maybe<CoreWorkflowDto>;
+  coreWorkflowRunSummary?: Maybe<CoreWorkflowRunSummary>;
   coreWorkflowVersion?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersionById?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersions: Array<CoreWorkflowVersionDto>;
@@ -655,6 +656,11 @@ export type QueryCoreWorkflowArgs = {
 
 
 export type QueryCoreWorkflowByIdArgs = {
+  coreWorkflowId: Scalars['UUID']['input'];
+};
+
+
+export type QueryCoreWorkflowRunSummaryArgs = {
   coreWorkflowId: Scalars['UUID']['input'];
 };
 
