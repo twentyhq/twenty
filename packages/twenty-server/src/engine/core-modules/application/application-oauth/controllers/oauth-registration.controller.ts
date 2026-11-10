@@ -172,6 +172,8 @@ export class OAuthRegistrationController {
         ),
         grantTypes,
         responseTypes,
+        // Read-back only serves registrations this endpoint created; the app's own callbacks are not the client's
+        isReadBackSupported: false,
       });
     }
 

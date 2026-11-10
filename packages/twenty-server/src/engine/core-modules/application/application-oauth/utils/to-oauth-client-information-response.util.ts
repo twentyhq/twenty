@@ -9,6 +9,7 @@ export const toOAuthClientInformationResponse = ({
   scopes = registration.oAuthScopes,
   grantTypes = ['authorization_code', 'refresh_token'],
   responseTypes = ['code'],
+  isReadBackSupported = true,
 }: {
   registration: Pick<
     ApplicationRegistrationEntity,
@@ -19,6 +20,7 @@ export const toOAuthClientInformationResponse = ({
   scopes?: string[];
   grantTypes?: string[];
   responseTypes?: string[];
+  isReadBackSupported?: boolean;
 }) => ({
   client_id: registration.oAuthClientId,
   client_name: registration.name,
@@ -28,5 +30,9 @@ export const toOAuthClientInformationResponse = ({
   token_endpoint_auth_method: 'none',
   scope: scopes.join(' '),
   client_id_issued_at: Math.floor(registration.createdAt.getTime() / 1000),
-  registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${registration.oAuthClientId}`,
+  ...(isReadBackSupported
+    ? {
+        registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${registration.oAuthClientId}`,
+      }
+    : {}),
 });

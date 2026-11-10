@@ -112,7 +112,7 @@ const findApplicationRegistrationByClientIdQuery = gql`
     findApplicationRegistrationByClientId(clientId: $clientId) {
       name
       oAuthIdentityUniversalIdentifier
-      claimsVerifiedClientName
+      isClaimingVerifiedClientName
     }
   }
 `;
@@ -298,6 +298,7 @@ describe('OAuth identity apps (integration)', () => {
 
       expect(secondRegistration.body.client_id).toBe(claudeClientId);
       expect(secondRegistration.body.client_name).toBe('Claude');
+      expect(secondRegistration.body.registration_client_uri).toBeUndefined();
 
       const [claudeAppRegistration] = await ds.query(
         `SELECT "oAuthClientId", "sourceType" FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
@@ -318,6 +319,13 @@ describe('OAuth identity apps (integration)', () => {
 
       expect(response.body.client_id).not.toBe(claudeClientId);
       expect(response.body.client_name).toBe('Claude');
+
+      const readBack = await request(response.body.registration_client_uri).get(
+        '',
+      );
+
+      expect(readBack.status).toBe(200);
+      expect(readBack.body.client_id).toBe(response.body.client_id);
     });
 
     it("should accept a per-connection ChatGPT callback on the ChatGPT app's client", async () => {
@@ -599,7 +607,7 @@ describe('OAuth identity apps (integration)', () => {
       expect(response.body.data.findApplicationRegistrationByClientId).toEqual({
         name: 'Claude',
         oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
-        claimsVerifiedClientName: false,
+        isClaimingVerifiedClientName: false,
       });
     });
 
@@ -619,7 +627,7 @@ describe('OAuth identity apps (integration)', () => {
       expect(response.body.data.findApplicationRegistrationByClientId).toEqual({
         name: 'Claude',
         oAuthIdentityUniversalIdentifier: null,
-        claimsVerifiedClientName: true,
+        isClaimingVerifiedClientName: true,
       });
     });
 
@@ -685,7 +693,7 @@ describe('OAuth identity apps (integration)', () => {
         ).toEqual({
           name: 'Claude',
           oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
-          claimsVerifiedClientName: false,
+          isClaimingVerifiedClientName: false,
         });
       });
 
