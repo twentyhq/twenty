@@ -12,6 +12,7 @@ import {
 } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
+import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
@@ -352,6 +353,37 @@ describe('useAgentChat', () => {
 
     expect(sentMessageVariables).toHaveBeenCalledTimes(2);
     expect(sentMessageVariables.mock.calls[1][0].messageId).not.toBe(
+      sentMessageVariables.mock.calls[0][0].messageId,
+    );
+  });
+
+  it('keeps the first message id when the draft is saved differently but sends the same text', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['failed', 'sent'],
+    });
+
+    await send(result);
+
+    act(() => {
+      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+        ...drafts,
+        [THREAD_ID]: serializeJsonContentAsAdvancedTextEditorDocument({
+          type: 'doc',
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] },
+            { type: 'paragraph' },
+          ],
+        }),
+      }));
+    });
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledTimes(2);
+    expect(sentMessageVariables.mock.calls[1][0].messageId).toBe(
       sentMessageVariables.mock.calls[0][0].messageId,
     );
   });

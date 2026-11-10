@@ -222,7 +222,7 @@ export const useAgentChat = () => {
       ? store.get(unconfirmedFirstMessageAtom)
       : null;
     const messageId =
-      unconfirmedFirstMessage?.serializedContent === serializedContentToSend &&
+      unconfirmedFirstMessage?.text === contentToSend &&
       isDeeplyEqual(unconfirmedFirstMessage.fileIds, fileIds)
         ? unconfirmedFirstMessage.messageId
         : v4();
@@ -377,7 +377,7 @@ export const useAgentChat = () => {
       if (isNewChat) {
         store.set(unconfirmedFirstMessageAtom, {
           messageId,
-          serializedContent: serializedContentToSend,
+          text: contentToSend,
           fileIds,
         });
       }

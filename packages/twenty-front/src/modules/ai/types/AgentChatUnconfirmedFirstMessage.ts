@@ -1,5 +1,5 @@
 export type AgentChatUnconfirmedFirstMessage = {
   messageId: string;
-  serializedContent: string;
+  text: string;
   fileIds: string[];
 };
