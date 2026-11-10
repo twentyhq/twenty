@@ -7,7 +7,6 @@ export const workflowRunSchema = z.looseObject({
   __typename: z.literal('WorkflowRun'),
   id: z.string(),
   workflowVersionId: z.string().nullable(),
-  workflowId: z.string().nullable(),
   coreWorkflowVersionId: z.string().nullable().optional(),
   coreWorkflowId: z.string().nullable().optional(),
   state: workflowRunStateSchema.nullable(),

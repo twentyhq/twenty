@@ -78,11 +78,9 @@ export const RouteContextStoreProvider = () => {
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = routeParams?.objectNamePlural;
-  const objectNameSingular = isCoreWorkflowPage
-    ? StandardObjectNameSingular.Workflow
-    : isAiChatPage
-      ? StandardObjectNameSingular.AgentChatThread
-      : routeParams?.objectNameSingular;
+  const objectNameSingular = isAiChatPage
+    ? StandardObjectNameSingular.AgentChatThread
+    : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
