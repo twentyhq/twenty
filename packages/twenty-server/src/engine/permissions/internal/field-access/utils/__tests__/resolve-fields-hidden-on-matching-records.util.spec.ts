@@ -9,7 +9,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
-import { resolveRlsRuleFields } from 'src/engine/permissions/internal/field-access/utils/resolve-rls-rule-fields.util';
+import { resolveFieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-fields-hidden-on-matching-records.util';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
 const MEMBER_ROLE_ID = 'member-role-id';
@@ -83,74 +83,73 @@ const buildObjectRecordsPermissions = ({
   },
 });
 
-describe('resolveRlsRuleFields', () => {
-  it('should pair each role hidden fields with the filter of that role', async () => {
-    const rlsRuleFields = await resolveRlsRuleFields({
-      principals: {
-        workspaceId: 'workspace-id',
-        mainPrincipal: {
-          type: 'workspaceMember',
-          roleId: MEMBER_ROLE_ID,
-          workspaceMemberId: 'member-id',
+describe('resolveFieldsHiddenOnMatchingRecords', () => {
+  it('should pair the fields each role hides with the filter of that role', async () => {
+    const fieldsHiddenOnMatchingRecords =
+      await resolveFieldsHiddenOnMatchingRecords({
+        principals: {
+          workspaceId: 'workspace-id',
+          mainPrincipal: {
+            type: 'workspaceMember',
+            roleId: MEMBER_ROLE_ID,
+            workspaceMemberId: 'member-id',
+          },
+          limitingPrincipal: {
+            type: 'agent',
+            agentId: 'agent-id',
+            roleId: AGENT_ROLE_ID,
+          },
+          applicationPrincipal: { type: 'customApplication' },
         },
-        limitingPrincipal: {
-          type: 'agent',
-          agentId: 'agent-id',
-          roleId: AGENT_ROLE_ID,
-        },
-        applicationPrincipal: { type: 'customApplication' },
-      },
-      metadataMaps: {
-        flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: invoice,
-          flatEntityMaps: createEmptyFlatEntityMaps(),
-        }),
-        flatFieldMetadataMaps,
-        flatApplicationMaps: { byId: {} },
-        featureFlagsMap: {},
-        rolesPermissions: {
-          [MEMBER_ROLE_ID]: {
-            ...NO_ROLE_RECORDS_PERMISSIONS,
-            objects: {
-              [OBJECT_METADATA_ID]: buildObjectRecordsPermissions({
-                roleId: MEMBER_ROLE_ID,
-                value: 'member-invoice',
-                rlsRuleUnreadableFields: ['secret-field-id'],
-              }),
+        metadataMaps: {
+          flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: invoice,
+            flatEntityMaps: createEmptyFlatEntityMaps(),
+          }),
+          flatFieldMetadataMaps,
+          flatApplicationMaps: { byId: {} },
+          featureFlagsMap: {},
+          rolesPermissions: {
+            [MEMBER_ROLE_ID]: {
+              ...NO_ROLE_RECORDS_PERMISSIONS,
+              objects: {
+                [OBJECT_METADATA_ID]: buildObjectRecordsPermissions({
+                  roleId: MEMBER_ROLE_ID,
+                  value: 'member-invoice',
+                  rlsRuleUnreadableFields: ['secret-field-id'],
+                }),
+              },
+            },
+            [AGENT_ROLE_ID]: {
+              ...NO_ROLE_RECORDS_PERMISSIONS,
+              objects: {
+                [OBJECT_METADATA_ID]: buildObjectRecordsPermissions({
+                  roleId: AGENT_ROLE_ID,
+                  value: 'agent-invoice',
+                  rlsRuleUnreadableFields: ['amount-field-id'],
+                }),
+              },
             },
           },
-          [AGENT_ROLE_ID]: {
-            ...NO_ROLE_RECORDS_PERMISSIONS,
-            objects: {
-              [OBJECT_METADATA_ID]: buildObjectRecordsPermissions({
-                roleId: AGENT_ROLE_ID,
-                value: 'agent-invoice',
-                rlsRuleUnreadableFields: ['amount-field-id'],
-              }),
-            },
-          },
         },
-      },
-      flatObjectMetadata: invoice,
-      fieldList: 'unreadableFields',
-      records: [],
-      findRelationJoinValues: jest.fn(),
-    });
+        flatObjectMetadata: invoice,
+        fieldList: 'unreadableFields',
+        records: [],
+        findRelationJoinValues: jest.fn(),
+      });
 
-    expect(rlsRuleFields).toEqual(
+    expect(fieldsHiddenOnMatchingRecords).toEqual(
       expect.arrayContaining([
         {
-          roleId: MEMBER_ROLE_ID,
           fieldMetadataIds: ['secret-field-id'],
           recordFilter: { name: { eq: 'member-invoice' } },
         },
         {
-          roleId: AGENT_ROLE_ID,
           fieldMetadataIds: ['amount-field-id'],
           recordFilter: { name: { eq: 'agent-invoice' } },
         },
       ]),
     );
-    expect(rlsRuleFields).toHaveLength(2);
+    expect(fieldsHiddenOnMatchingRecords).toHaveLength(2);
   });
 });

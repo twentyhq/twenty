@@ -94,15 +94,15 @@ describe('resolveManyRecordsStrategy', () => {
       resolveManyRecordsStrategy(
         buildRequest({ objectRecordsPermissions: withRlsRule, ...overrides }),
       ),
-    ).toBe('degradedCondition');
+    ).toBe('degradedSQLCondition');
   });
 
-  it('should use the plain condition when no role has an RLS rule on the object', () => {
+  it('should use the plain sqlCondition when no role has an RLS rule on the object', () => {
     expect(
       resolveManyRecordsStrategy(
         buildRequest({ objectRecordsPermissions: allRecords }),
       ),
-    ).toBe('plainCondition');
+    ).toBe('plainSQLCondition');
   });
 
   it('should stay degraded when an application role also has an RLS rule on the object', () => {
@@ -130,6 +130,6 @@ describe('resolveManyRecordsStrategy', () => {
           },
         },
       }),
-    ).toBe('degradedCondition');
+    ).toBe('degradedSQLCondition');
   });
 });

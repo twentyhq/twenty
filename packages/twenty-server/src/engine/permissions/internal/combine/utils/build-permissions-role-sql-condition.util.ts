@@ -5,38 +5,38 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { areRoleGrantsLimitedToPublicRecords } from 'src/engine/permissions/internal/combine/utils/are-role-grants-limited-to-public-records.util';
-import { buildRecordPrivacyCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-condition.util';
-import { combineSqlConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
+import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
+import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
-export const buildPermissionsRoleCondition = ({
+export const buildPermissionsRoleSQLCondition = ({
   request,
   rlsRuleFilter,
-  rlsRuleCondition,
+  rlsRuleSQLCondition,
 }: {
   request: PermissionsRowAccessSqlRequest;
   rlsRuleFilter: RecordGqlOperationFilter | undefined;
-  rlsRuleCondition: SqlCondition | undefined;
-}): SqlCondition | boolean => {
+  rlsRuleSQLCondition: SQLCondition | undefined;
+}): SQLCondition | boolean => {
   if (!isRolePermittingOperation(request)) {
     return false;
   }
 
-  if (isDefined(rlsRuleFilter) && !isDefined(rlsRuleCondition)) {
+  if (isDefined(rlsRuleFilter) && !isDefined(rlsRuleSQLCondition)) {
     return false;
   }
 
   if (!areRoleGrantsLimitedToPublicRecords(request)) {
-    return rlsRuleCondition ?? true;
+    return rlsRuleSQLCondition ?? true;
   }
 
-  const publicRecordsCondition = buildRecordPrivacyCondition({
+  const publicRecordsSQLCondition = buildRecordPrivacySQLCondition({
     tableAlias: request.tableAlias,
     isPrivate: false,
   });
 
-  return isDefined(rlsRuleCondition)
-    ? combineSqlConditions([rlsRuleCondition, publicRecordsCondition])
-    : publicRecordsCondition;
+  return isDefined(rlsRuleSQLCondition)
+    ? combineSQLConditions([rlsRuleSQLCondition, publicRecordsSQLCondition])
+    : publicRecordsSQLCondition;
 };

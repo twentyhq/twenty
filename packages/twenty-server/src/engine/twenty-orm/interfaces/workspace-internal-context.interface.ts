@@ -31,14 +31,14 @@ export interface WorkspaceInternalContext {
     RecordPermissionsReadService,
     | 'isReadDisabled'
     | 'assertCanRunOperationOrThrow'
-    | 'buildManyRecordsAccessCondition'
+    | 'buildManyRecordsAccessSQLCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
   >;
   recordFieldPermissions: Pick<
     RecordFieldPermissionsReadService,
     | 'findRlsRuleUnreadableFieldsByRole'
-    | 'buildRlsRuleSqlConditionOrThrow'
+    | 'buildRlsRuleSQLConditionOrThrow'
     | 'assertUpdatedColumnsAreEditableOrThrow'
   >;
   recordAccessGroupWrite: Pick<

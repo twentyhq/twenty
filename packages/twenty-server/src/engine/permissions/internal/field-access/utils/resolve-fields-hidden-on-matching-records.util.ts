@@ -5,13 +5,13 @@ import {
   type PermissionsMetadataMaps,
   type RowAccessEvaluationContext,
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { type RlsRuleFields } from 'src/engine/permissions/internal/field-access/types/rls-rule-fields.type';
-import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields-by-role.util';
+import { type FieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/fields-hidden-on-matching-records.type';
+import { findFieldsHiddenOnMatchingRecordsByRole } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields-by-role.util';
 import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
-export const resolveRlsRuleFields = async ({
+export const resolveFieldsHiddenOnMatchingRecords = async ({
   principals,
   metadataMaps,
   flatObjectMetadata,
@@ -25,9 +25,9 @@ export const resolveRlsRuleFields = async ({
   fieldList: 'unreadableFields' | 'uneditableFields';
   records: object[];
   findRelationJoinValues: RowAccessEvaluationContext['findRelationJoinValues'];
-}): Promise<RlsRuleFields[]> =>
+}): Promise<FieldsHiddenOnMatchingRecords[]> =>
   Promise.all(
-    findRlsRuleFieldsByRole({
+    findFieldsHiddenOnMatchingRecordsByRole({
       principals,
       metadataMaps,
       objectMetadataId: flatObjectMetadata.id,
@@ -41,7 +41,6 @@ export const resolveRlsRuleFields = async ({
       });
 
       return {
-        roleId,
         fieldMetadataIds,
         recordFilter: isDefined(recordFilter)
           ? await resolveRelationsInRecordFilter({
@@ -51,7 +50,7 @@ export const resolveRlsRuleFields = async ({
               metadataMaps,
               findRelationJoinValues,
             })
-          : null,
+          : {},
       };
     }),
   );

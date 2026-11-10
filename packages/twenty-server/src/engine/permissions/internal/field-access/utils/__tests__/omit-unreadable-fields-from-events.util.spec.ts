@@ -9,11 +9,10 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { omitUnreadableFieldsFromEvents } from 'src/engine/permissions/internal/field-access/utils/omit-unreadable-fields-from-events.util';
-import { type RlsRuleFields } from 'src/engine/permissions/internal/field-access/types/rls-rule-fields.type';
+import { type FieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/fields-hidden-on-matching-records.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
-const ROLE_ID = 'role-id';
 
 const invoice = getFlatObjectMetadataMock({
   id: OBJECT_METADATA_ID,
@@ -81,17 +80,17 @@ const buildUpdateEvent = ({
 const filter = ({
   events,
   recordsPermissions,
-  rlsRuleFields = [],
+  fieldsHiddenOnMatchingRecords = [],
 }: {
   events: ObjectRecordUpdateEvent[];
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
-  rlsRuleFields?: RlsRuleFields[];
+  fieldsHiddenOnMatchingRecords?: FieldsHiddenOnMatchingRecords[];
 }) =>
   omitUnreadableFieldsFromEvents<ObjectRecordUpdateEvent>({
     events,
     objectMetadata: invoice,
     recordsPermissions,
-    rlsRuleFields,
+    fieldsHiddenOnMatchingRecords,
     metadataMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -147,9 +146,8 @@ describe('omitUnreadableFieldsFromEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      rlsRuleFields: [
+      fieldsHiddenOnMatchingRecords: [
         {
-          roleId: ROLE_ID,
           fieldMetadataIds: ['secret-field-id'],
           recordFilter: { name: { eq: 'New' } },
         },
@@ -177,9 +175,8 @@ describe('omitUnreadableFieldsFromEvents', () => {
           },
         },
       },
-      rlsRuleFields: [
+      fieldsHiddenOnMatchingRecords: [
         {
-          roleId: ROLE_ID,
           fieldMetadataIds: ['secret-field-id'],
           recordFilter: { name: { eq: 'New' } },
         },
@@ -198,9 +195,8 @@ describe('omitUnreadableFieldsFromEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      rlsRuleFields: [
+      fieldsHiddenOnMatchingRecords: [
         {
-          roleId: ROLE_ID,
           fieldMetadataIds: ['secret-field-id'],
           recordFilter: { name: { eq: 'Another' } },
         },

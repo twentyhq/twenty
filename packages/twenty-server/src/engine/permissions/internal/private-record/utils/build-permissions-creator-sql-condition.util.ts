@@ -3,27 +3,27 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { combineSqlConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
-import { buildRecordCreatedByCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-created-by-condition.util';
-import { buildRecordPrivacyCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-condition.util';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
+import { buildRecordCreatedBySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-created-by-sql-condition.util';
+import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
 import { resolvePermissionsCreatorWorkspaceMemberId } from 'src/engine/permissions/internal/private-record/utils/resolve-permissions-creator-workspace-member-id.util';
 
-export const buildPermissionsCreatorCondition = (
+export const buildPermissionsCreatorSQLCondition = (
   request: PermissionsRowAccessSqlRequest,
-): SqlCondition | undefined => {
+): SQLCondition | undefined => {
   const workspaceMemberId = resolvePermissionsCreatorWorkspaceMemberId(request);
 
   if (!isDefined(workspaceMemberId)) {
     return undefined;
   }
 
-  return combineSqlConditions([
-    buildRecordPrivacyCondition({
+  return combineSQLConditions([
+    buildRecordPrivacySQLCondition({
       tableAlias: request.tableAlias,
       isPrivate: true,
     }),
-    buildRecordCreatedByCondition({
+    buildRecordCreatedBySQLCondition({
       tableAlias: request.tableAlias,
       workspaceMemberId,
     }),

@@ -16,7 +16,7 @@ import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { omitUnreadableFieldsFromEvents } from 'src/engine/permissions/internal/field-access/utils/omit-unreadable-fields-from-events.util';
-import { resolveRlsRuleFields } from 'src/engine/permissions/internal/field-access/utils/resolve-rls-rule-fields.util';
+import { resolveFieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-fields-hidden-on-matching-records.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -78,18 +78,20 @@ export class RecordEventPermissionsReadService {
     );
 
     return omitUnreadableFieldsFromEvents({
-      rlsRuleFields: await resolveRlsRuleFields({
-        principals,
-        metadataMaps,
-        flatObjectMetadata: eventBatch.objectMetadata,
-        fieldList: 'unreadableFields',
-        records: resolveEventRecordSnapshots(readableEvents),
-        findRelationJoinValues: (args) =>
-          this.recordPermissionReadRepository.findRelationJoinValues({
-            ...args,
-            workspaceId: eventBatch.workspaceId,
-          }),
-      }),
+      fieldsHiddenOnMatchingRecords: await resolveFieldsHiddenOnMatchingRecords(
+        {
+          principals,
+          metadataMaps,
+          flatObjectMetadata: eventBatch.objectMetadata,
+          fieldList: 'unreadableFields',
+          records: resolveEventRecordSnapshots(readableEvents),
+          findRelationJoinValues: (args) =>
+            this.recordPermissionReadRepository.findRelationJoinValues({
+              ...args,
+              workspaceId: eventBatch.workspaceId,
+            }),
+        },
+      ),
       events: readableEvents,
       objectMetadata: eventBatch.objectMetadata,
       recordsPermissions: getPermissionsPrincipalsRecordsPermissions({

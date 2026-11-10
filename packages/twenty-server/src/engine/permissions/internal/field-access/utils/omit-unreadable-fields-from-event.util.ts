@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { type RlsRuleFields } from 'src/engine/permissions/internal/field-access/types/rls-rule-fields.type';
+import { type FieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/fields-hidden-on-matching-records.type';
 import { composeRecordFieldMetadataIds } from 'src/engine/permissions/internal/field-access/utils/compose-record-field-metadata-ids.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
@@ -43,14 +43,14 @@ export const omitUnreadableFieldsFromEvent = <
   recordsPermissions,
   recordReadRestrictions,
   metadataMaps,
-  rlsRuleFields,
+  fieldsHiddenOnMatchingRecords,
 }: {
   event: TEvent;
   objectMetadata: FlatObjectMetadata;
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   recordReadRestrictions: RecordReadRestrictions;
   metadataMaps: PermissionsMetadataMaps;
-  rlsRuleFields: RlsRuleFields[];
+  fieldsHiddenOnMatchingRecords: FieldsHiddenOnMatchingRecords[];
 }): TEvent => {
   const { properties } = event;
   const unreadableFieldNames = new Set(
@@ -65,7 +65,7 @@ export const omitUnreadableFieldsFromEvent = <
           'before' in properties ? properties.before : undefined,
           'after' in properties ? properties.after : undefined,
         ].filter(isDefined),
-        rlsRuleFields,
+        fieldsHiddenOnMatchingRecords,
       }),
     ].flatMap((fieldMetadataId) => {
       const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({

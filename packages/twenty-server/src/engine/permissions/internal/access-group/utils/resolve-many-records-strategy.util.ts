@@ -19,7 +19,7 @@ export const resolveManyRecordsStrategy = ({
   });
 
   if (roleIdsWithRlsRule.length === 0) {
-    return 'plainCondition';
+    return 'plainSQLCondition';
   }
 
   if (
@@ -28,14 +28,14 @@ export const resolveManyRecordsStrategy = ({
       featureFlagsMap: metadataMaps.featureFlagsMap,
     })
   ) {
-    return 'degradedCondition';
+    return 'degradedSQLCondition';
   }
 
   if (
     roleIdsWithRlsRule.length > 1 ||
     roleIdsWithRlsRule[0] !== principals.mainPrincipal.roleId
   ) {
-    return 'degradedCondition';
+    return 'degradedSQLCondition';
   }
 
   return 'accessGroups';

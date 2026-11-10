@@ -120,7 +120,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         recordPermissions: {} as never,
         recordFieldPermissions: {
           findRlsRuleUnreadableFieldsByRole: jest.fn(),
-          buildRlsRuleSqlConditionOrThrow: jest.fn(),
+          buildRlsRuleSQLConditionOrThrow: jest.fn(),
           assertUpdatedColumnsAreEditableOrThrow: jest.fn(),
         },
         recordAccessGroupWrite: {

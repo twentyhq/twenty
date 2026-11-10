@@ -7,7 +7,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
-export type RecordAccessGroupConditionMetadataMaps = {
+export type RecordAccessGroupSQLConditionMetadataMaps = {
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;

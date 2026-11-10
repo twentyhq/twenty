@@ -111,13 +111,13 @@ const buildRepository = ({
       recordPermissions: {
         isReadDisabled: jest.fn().mockResolvedValue(false),
         assertCanRunOperationOrThrow: jest.fn(),
-        buildManyRecordsAccessCondition: jest.fn().mockResolvedValue(true),
+        buildManyRecordsAccessSQLCondition: jest.fn().mockResolvedValue(true),
         assertCreatedRecordsMatchRowLevelPermissionsOrThrow: jest.fn(),
         assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
       },
       recordFieldPermissions: {
         findRlsRuleUnreadableFieldsByRole: jest.fn().mockResolvedValue([]),
-        buildRlsRuleSqlConditionOrThrow: jest.fn(),
+        buildRlsRuleSQLConditionOrThrow: jest.fn(),
         assertUpdatedColumnsAreEditableOrThrow: jest.fn(),
       },
       recordAccessGroupWrite: {

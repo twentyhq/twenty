@@ -2,7 +2,7 @@
 
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { buildRecordShareCondition } from 'src/engine/permissions/internal/record-share/utils/build-record-share-condition.util';
+import { buildRecordShareSQLCondition } from 'src/engine/permissions/internal/record-share/utils/build-record-share-sql-condition.util';
 import { compileNamedParameters } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 
 const OBJECT_METADATA_ID = 'object-metadata-1';
@@ -13,7 +13,7 @@ const ACCESS_LEVELS = [
 ];
 
 const build = () =>
-  buildRecordShareCondition({
+  buildRecordShareSQLCondition({
     tableAlias: 'company',
     recordShareTableExpression: '"workspace_abc"."recordShare"',
     objectMetadataId: OBJECT_METADATA_ID,
@@ -21,7 +21,7 @@ const build = () =>
     accessLevels: ACCESS_LEVELS,
   });
 
-describe('buildRecordShareCondition', () => {
+describe('buildRecordShareSQLCondition', () => {
   it('should render a correlated EXISTS on the record share table', () => {
     const { sql, parameters } = build();
     const parameterNames = Object.keys(parameters);
@@ -72,7 +72,7 @@ describe('buildRecordShareCondition', () => {
   });
 
   it('should escape the alias it derives', () => {
-    const { sql } = buildRecordShareCondition({
+    const { sql } = buildRecordShareSQLCondition({
       tableAlias: 'per"son',
       recordShareTableExpression: '"workspace_abc"."recordShare"',
       objectMetadataId: OBJECT_METADATA_ID,
@@ -85,7 +85,7 @@ describe('buildRecordShareCondition', () => {
   });
 
   it('should match the record id against the grants read once when uncorrelated', () => {
-    const { sql, parameters } = buildRecordShareCondition({
+    const { sql, parameters } = buildRecordShareSQLCondition({
       tableAlias: 'company',
       recordShareTableExpression: '"workspace_abc"."recordShare"',
       objectMetadataId: OBJECT_METADATA_ID,
@@ -109,7 +109,7 @@ describe('buildRecordShareCondition', () => {
     const tableAlias =
       'customLeafRecord_parentCollectionId_containerId_securityGroupId';
 
-    const { sql } = buildRecordShareCondition({
+    const { sql } = buildRecordShareSQLCondition({
       tableAlias,
       recordShareTableExpression: '"workspace_abc"."recordShare"',
       objectMetadataId: OBJECT_METADATA_ID,

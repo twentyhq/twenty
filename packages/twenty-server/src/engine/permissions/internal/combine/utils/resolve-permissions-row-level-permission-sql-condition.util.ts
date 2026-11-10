@@ -4,11 +4,11 @@ import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { buildRecordAccessGroupsCondition } from 'src/engine/permissions/internal/rls/utils/build-record-access-groups-condition.util';
+import { buildRecordAccessGroupsSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-record-access-groups-sql-condition.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
-export const resolvePermissionsRowLevelPermissionSqlCondition = ({
+export const resolvePermissionsRowLevelPermissionSQLCondition = ({
   request,
   rlsRuleFilter,
 }: {
@@ -20,9 +20,9 @@ export const resolvePermissionsRowLevelPermissionSqlCondition = ({
     | 'metadataMaps'
   >;
   rlsRuleFilter: RecordGqlOperationFilter;
-}): SqlCondition | undefined => {
+}): SQLCondition | undefined => {
   if (isDefined(request.callerAccessGroupCompactIds)) {
-    return buildRecordAccessGroupsCondition({
+    return buildRecordAccessGroupsSQLCondition({
       tableAlias: request.tableAlias,
       callerAccessGroupCompactIds: request.callerAccessGroupCompactIds,
     });

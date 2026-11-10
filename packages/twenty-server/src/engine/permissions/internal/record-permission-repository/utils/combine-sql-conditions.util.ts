@@ -1,18 +1,18 @@
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
-export const combineSqlConditions = (
-  conditions: SqlCondition[],
+export const combineSQLConditions = (
+  sqlConditions: SQLCondition[],
   operator: 'AND' | 'OR' = 'AND',
-): SqlCondition => {
-  const sql = conditions
-    .map((condition) => `(${condition.sql})`)
+): SQLCondition => {
+  const sql = sqlConditions
+    .map((sqlCondition) => `(${sqlCondition.sql})`)
     .join(` ${operator} `);
 
   return {
     sql: operator === 'OR' ? `(${sql})` : sql,
     parameters: Object.assign(
       {},
-      ...conditions.map((condition) => condition.parameters),
+      ...sqlConditions.map((sqlCondition) => sqlCondition.parameters),
     ),
   };
 };

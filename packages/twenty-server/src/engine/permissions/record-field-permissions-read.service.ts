@@ -11,8 +11,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { composeRecordFieldMetadataIds } from 'src/engine/permissions/internal/field-access/utils/compose-record-field-metadata-ids.util';
-import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields-by-role.util';
-import { resolveRlsRuleFields } from 'src/engine/permissions/internal/field-access/utils/resolve-rls-rule-fields.util';
+import { findFieldsHiddenOnMatchingRecordsByRole } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields-by-role.util';
+import { resolveFieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-fields-hidden-on-matching-records.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
@@ -24,7 +24,7 @@ import {
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { type ObjectQuestion } from 'src/engine/permissions/types/record-permissions-question.type';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
 @Injectable()
 export class RecordFieldPermissionsReadService {
@@ -57,7 +57,7 @@ export class RecordFieldPermissionsReadService {
       return [];
     }
 
-    return findRlsRuleFieldsByRole({
+    return findFieldsHiddenOnMatchingRecordsByRole({
       principals,
       metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
         { principals },
@@ -67,7 +67,7 @@ export class RecordFieldPermissionsReadService {
     });
   }
 
-  async buildRlsRuleSqlConditionOrThrow({
+  async buildRlsRuleSQLConditionOrThrow({
     principals,
     objectMetadataId,
     roleId,
@@ -77,7 +77,7 @@ export class RecordFieldPermissionsReadService {
     objectMetadataId: string;
     roleId: string;
     tableAlias: string;
-  }): Promise<SqlCondition> {
+  }): Promise<SQLCondition> {
     const { metadataMaps, flatObjectMetadata } =
       await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
 
@@ -118,23 +118,24 @@ export class RecordFieldPermissionsReadService {
     const { metadataMaps, flatObjectMetadata } =
       await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
 
-    const rlsRuleFields = await resolveRlsRuleFields({
-      principals,
-      metadataMaps,
-      flatObjectMetadata,
-      fieldList: 'uneditableFields',
-      records: formatRecords(
-        updates.map(({ rawRecordBefore }) => rawRecordBefore),
-      ),
-      findRelationJoinValues: (args) =>
-        this.recordPermissionReadRepository.findRelationJoinValues({
-          ...args,
-          workspaceId: principals.workspaceId,
-          transactionScope,
-        }),
-    });
+    const fieldsHiddenOnMatchingRecords =
+      await resolveFieldsHiddenOnMatchingRecords({
+        principals,
+        metadataMaps,
+        flatObjectMetadata,
+        fieldList: 'uneditableFields',
+        records: formatRecords(
+          updates.map(({ rawRecordBefore }) => rawRecordBefore),
+        ),
+        findRelationJoinValues: (args) =>
+          this.recordPermissionReadRepository.findRelationJoinValues({
+            ...args,
+            workspaceId: principals.workspaceId,
+            transactionScope,
+          }),
+      });
 
-    if (rlsRuleFields.length === 0) {
+    if (fieldsHiddenOnMatchingRecords.length === 0) {
       return;
     }
 
@@ -149,7 +150,7 @@ export class RecordFieldPermissionsReadService {
         flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
         objectFieldMetadataIds: [],
         records: formatRecords([rawRecordBefore]),
-        rlsRuleFields,
+        fieldsHiddenOnMatchingRecords,
       });
 
       if (
