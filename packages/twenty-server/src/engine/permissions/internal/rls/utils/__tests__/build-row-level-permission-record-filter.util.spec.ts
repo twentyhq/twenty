@@ -503,10 +503,16 @@ describe('buildRowLevelPermissionRecordFilter', () => {
     ])(
       'should evaluate the never-matching branch of %s as false',
       (roleId, isMatching) => {
+        const filter = build([roleId]);
+
+        if (filter === null) {
+          throw new Error(`Expected a filter for role ${roleId}`);
+        }
+
         expect(
           isRecordMatchingFilter({
             record: { name: 'shared-with-everyone', deletedAt: null },
-            filter: build([roleId]) ?? {},
+            filter,
             flatObjectMetadata,
             flatFieldMetadataMaps,
           }),
