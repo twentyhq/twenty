@@ -2086,31 +2086,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    const { recordPermissions } = this.options.internalContext;
-    const question = {
-      principals: this.resolvePermissionsPrincipalsOrThrow(),
-      objectMetadataId: flatObjectMetadata.id,
-      operationType,
-    };
-
-    switch (
-      await recordPermissions.findRecordsAccessSQLConditionStrategy(question)
-    ) {
-      case 'accessGroups':
-        return recordPermissions.buildAccessGroupsSQLCondition({
-          ...question,
-          tableAlias: alias,
-        });
-      case 'withoutRowLevelPermissionsAndInheritance':
-        return recordPermissions.buildAccessSQLConditionWithoutRowLevelPermissionsAndInheritanceOrThrow(
-          { ...question, tableAlias: alias },
-        );
-      case 'degraded':
-        return recordPermissions.buildDegradedSQLCondition({
-          ...question,
-          tableAlias: alias,
-        });
-    }
+    return this.options.internalContext.recordPermissions.buildRecordsAccessSQLCondition(
+      {
+        principals: this.resolvePermissionsPrincipalsOrThrow(),
+        objectMetadataId: flatObjectMetadata.id,
+        operationType,
+        tableAlias: alias,
+      },
+    );
   }
 
   async isReadDisabled(): Promise<boolean> {

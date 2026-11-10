@@ -36,7 +36,6 @@ import {
   type ObjectOperationQuestion,
   type ObjectQuestion,
 } from 'src/engine/permissions/types/record-permissions-question.type';
-import { type RecordsAccessSQLConditionStrategy } from 'src/engine/permissions/types/records-access-sql-condition-strategy.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
@@ -316,15 +315,7 @@ export class RecordPermissionsReadService {
     });
   }
 
-  async findRecordsAccessSQLConditionStrategy(
-    question: RecordOperationQuestion,
-  ): Promise<RecordsAccessSQLConditionStrategy> {
-    return resolveRecordsAccessSQLConditionStrategy(
-      await this.findObjectAccessRequestOrThrow(question),
-    );
-  }
-
-  async buildAccessGroupsSQLCondition({
+  async buildRecordsAccessSQLCondition({
     tableAlias,
     ...question
   }: RecordOperationQuestion & {
@@ -332,88 +323,23 @@ export class RecordPermissionsReadService {
   }): Promise<SQLCondition | boolean> {
     const objectAccessRequest =
       await this.findObjectAccessRequestOrThrow(question);
+    const strategy =
+      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest);
 
-    if (
-      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest) !==
-      'accessGroups'
-    ) {
-      throw new PermissionsException(
-        `Access groups do not cover ${objectAccessRequest.operationType} on ${objectAccessRequest.flatObjectMetadata.nameSingular}`,
-        PermissionsExceptionCode.RECORD_PERMISSION_QUERY_INVALID,
-      );
-    }
-
-    return this.buildRecordsAccessSQLCondition({
-      objectAccessRequest,
-      tableAlias,
-      callerAccessGroupCompactIds:
-        await this.accessGroupReadService.findCallerCompactIds({
-          principals: objectAccessRequest.principals,
-          objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
-          operationType: objectAccessRequest.operationType,
-        }),
-    });
-  }
-
-  async buildAccessSQLConditionWithoutRowLevelPermissionsAndInheritanceOrThrow({
-    tableAlias,
-    ...question
-  }: RecordOperationQuestion & {
-    tableAlias: string;
-  }): Promise<SQLCondition | boolean> {
-    const objectAccessRequest =
-      await this.findObjectAccessRequestOrThrow(question);
-
-    if (
-      isNonEmptyArray(
-        findPrincipalsRoleIdsWithRlsRule({
-          principals: objectAccessRequest.principals,
-          metadataMaps: objectAccessRequest.metadataMaps,
-          objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
-        }),
-      )
-    ) {
-      throw new PermissionsException(
-        `An RLS rule applies to ${objectAccessRequest.flatObjectMetadata.nameSingular}`,
-        PermissionsExceptionCode.RECORD_PERMISSION_QUERY_INVALID,
-      );
-    }
-
-    return this.buildRecordsAccessSQLCondition({
-      objectAccessRequest,
-      tableAlias,
-    });
-  }
-
-  // TODO: remove once writes, joins and RLS on limiting roles no longer render RLS in the query
-  async buildDegradedSQLCondition({
-    tableAlias,
-    ...question
-  }: RecordOperationQuestion & {
-    tableAlias: string;
-  }): Promise<SQLCondition | boolean> {
-    return this.buildRecordsAccessSQLCondition({
-      objectAccessRequest: await this.findObjectAccessRequestOrThrow(question),
-      tableAlias,
-    });
-  }
-
-  private buildRecordsAccessSQLCondition({
-    objectAccessRequest,
-    tableAlias,
-    callerAccessGroupCompactIds,
-  }: {
-    objectAccessRequest: PermissionsObjectAccessRequest;
-    tableAlias: string;
-    callerAccessGroupCompactIds?: number[];
-  }): SQLCondition | boolean {
     return buildPermissionsSQLCondition({
       ...objectAccessRequest,
       tableAlias,
       recordShareTableExpression: buildRecordShareTableExpression({
         workspaceId: objectAccessRequest.principals.workspaceId,
       }),
-      callerAccessGroupCompactIds,
+      callerAccessGroupCompactIds:
+        strategy === 'accessGroups'
+          ? await this.accessGroupReadService.findCallerCompactIds({
+              principals: objectAccessRequest.principals,
+              objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+              operationType: objectAccessRequest.operationType,
+            })
+          : undefined,
     });
   }
 

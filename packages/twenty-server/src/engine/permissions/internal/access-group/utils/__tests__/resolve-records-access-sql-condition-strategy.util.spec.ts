@@ -86,23 +86,34 @@ describe('resolveRecordsAccessSQLConditionStrategy', () => {
     ).toBe('accessGroups');
   });
 
-  it.each([
-    ['the flag is off', { isAccessGroupsEnabled: false }],
-    ['the operation is not a read', { operationType: 'update' as const }],
-  ])('should stay degraded when %s', (_, overrides) => {
+  it('should stay degraded when the flag is off', () => {
     expect(
       resolveRecordsAccessSQLConditionStrategy(
-        buildRequest({ objectRecordsPermissions: withRlsRule, ...overrides }),
+        buildRequest({
+          objectRecordsPermissions: withRlsRule,
+          isAccessGroupsEnabled: false,
+        }),
       ),
-    ).toBe('degraded');
+    ).toBe('degradedRead');
   });
 
-  it('should use the plain sqlCondition when no role has an RLS rule on the object', () => {
+  it('should keep the RLS condition in the statement of a write', () => {
+    expect(
+      resolveRecordsAccessSQLConditionStrategy(
+        buildRequest({
+          objectRecordsPermissions: withRlsRule,
+          operationType: 'update',
+        }),
+      ),
+    ).toBe('rowLevelPermissionsInWrite');
+  });
+
+  it('should use the condition without RLS when no role has an RLS rule on the object', () => {
     expect(
       resolveRecordsAccessSQLConditionStrategy(
         buildRequest({ objectRecordsPermissions: allRecords }),
       ),
-    ).toBe('withoutRowLevelPermissionsAndInheritance');
+    ).toBe('withoutRowLevelPermissions');
   });
 
   it('should stay degraded when an application role also has an RLS rule on the object', () => {
@@ -130,6 +141,6 @@ describe('resolveRecordsAccessSQLConditionStrategy', () => {
           },
         },
       }),
-    ).toBe('degraded');
+    ).toBe('degradedRead');
   });
 });

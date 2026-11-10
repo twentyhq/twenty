@@ -31,10 +31,7 @@ export interface WorkspaceInternalContext {
     RecordPermissionsReadService,
     | 'isReadDisabled'
     | 'assertCanRunOperationOrThrow'
-    | 'findRecordsAccessSQLConditionStrategy'
-    | 'buildAccessGroupsSQLCondition'
-    | 'buildAccessSQLConditionWithoutRowLevelPermissionsAndInheritanceOrThrow'
-    | 'buildDegradedSQLCondition'
+    | 'buildRecordsAccessSQLCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
   >;
