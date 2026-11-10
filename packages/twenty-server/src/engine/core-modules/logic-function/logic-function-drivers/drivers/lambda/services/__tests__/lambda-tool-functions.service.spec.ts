@@ -75,9 +75,8 @@ describe('LambdaToolFunctionsService.executeHttpRequest', () => {
       FunctionName: expect.stringMatching(/^twenty-http-egress/),
       Layers: [],
       Architectures: ['arm64'],
-      MemorySize: 256,
+      MemorySize: 512,
       Timeout: 35,
-      EphemeralStorage: { Size: 512 },
       Role: 'arn:aws:iam::123456789012:role/execution',
     });
   });

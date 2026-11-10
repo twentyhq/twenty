@@ -28,7 +28,6 @@ import {
   BUILDER_LAMBDA_TIMEOUT_SECONDS,
   COMMON_LAYER_NAME_PREFIX,
   HTTP_EGRESS_FUNCTION_NAME_PREFIX,
-  HTTP_EGRESS_LAMBDA_EPHEMERAL_STORAGE_MB,
   HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
   HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES,
   HTTP_EGRESS_LAMBDA_MEMORY_MB,
@@ -337,7 +336,6 @@ export class LambdaToolFunctionsService {
       },
       withCommonLayer: false,
       architecture: 'arm64',
-      ephemeralStorageMb: HTTP_EGRESS_LAMBDA_EPHEMERAL_STORAGE_MB,
     });
 
     return functionName;
@@ -445,7 +443,6 @@ export class LambdaToolFunctionsService {
     copyFiles,
     withCommonLayer = true,
     architecture,
-    ephemeralStorageMb = LAMBDA_EPHEMERAL_STORAGE_MB,
   }: {
     functionName: string;
     memoryMb: number;
@@ -453,7 +450,6 @@ export class LambdaToolFunctionsService {
     copyFiles: (directory: string) => Promise<void>;
     withCommonLayer?: boolean;
     architecture?: Architecture;
-    ephemeralStorageMb?: number;
   }): Promise<void> {
     const existingFunction = await this.awsClient.getFunction(functionName);
 
@@ -505,7 +501,7 @@ export class LambdaToolFunctionsService {
             Runtime: LogicFunctionRuntime.NODE22,
             Timeout: timeoutSeconds,
             MemorySize: memoryMb,
-            EphemeralStorage: { Size: ephemeralStorageMb },
+            EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
             ...(isDefined(architecture) && { Architectures: [architecture] }),
           };
 
