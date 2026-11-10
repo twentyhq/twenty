@@ -6696,6 +6696,18 @@ msgstr "Xuddi shu nomga ega indeks allaqachon mavjud"
 msgid "Index with same universal identifier already exists"
 msgstr "Xuddi shu universal identifikatorli indeks allaqachon mavjud"
 
+#. js-lingui-id: 5K0P9Y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot form a cycle"
+msgstr ""
+
+#. js-lingui-id: GdaBpX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot have more than two relations"
+msgstr ""
+
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
