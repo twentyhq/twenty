@@ -11135,11 +11135,11 @@ export default {
             ]
         },
         "PublicApplicationRegistration": {
-            "claimsVerifiedClientName": [
-                4
-            ],
             "id": [
                 556
+            ],
+            "isClaimingVerifiedClientName": [
+                4
             ],
             "logoUrl": [
                 1

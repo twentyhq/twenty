@@ -25,5 +25,5 @@ export class PublicApplicationRegistrationDTO {
 
   // An unverified client named like a verified app, which a consent screen should flag
   @Field(() => Boolean)
-  claimsVerifiedClientName: boolean;
+  isClaimingVerifiedClientName: boolean;
 }

@@ -27,13 +27,13 @@ const StyledWarningContainer = styled.div`
 type AuthorizeClientIdentityNoticeProps = {
   appName: string;
   isVerified: boolean;
-  claimsVerifiedClientName: boolean;
+  isClaimingVerifiedClientName: boolean;
 };
 
 export const AuthorizeClientIdentityNotice = ({
   appName,
   isVerified,
-  claimsVerifiedClientName,
+  isClaimingVerifiedClientName,
 }: AuthorizeClientIdentityNoticeProps) => {
   const theme = useTheme();
 
@@ -48,7 +48,7 @@ export const AuthorizeClientIdentityNotice = ({
     );
   }
 
-  if (!claimsVerifiedClientName) {
+  if (!isClaimingVerifiedClientName) {
     return null;
   }
 

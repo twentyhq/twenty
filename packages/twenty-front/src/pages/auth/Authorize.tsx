@@ -332,8 +332,8 @@ export const Authorize = () => {
             isVerified={isDefined(
               applicationRegistration.oAuthIdentityUniversalIdentifier,
             )}
-            claimsVerifiedClientName={
-              applicationRegistration.claimsVerifiedClientName
+            isClaimingVerifiedClientName={
+              applicationRegistration.isClaimingVerifiedClientName
             }
           />
           {requestedScopes.length > 0 && (

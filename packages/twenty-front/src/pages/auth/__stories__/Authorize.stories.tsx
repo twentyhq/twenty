@@ -28,7 +28,7 @@ const buildHandlers = (
     oAuthScopes: string[];
     websiteUrl: string | null;
     oAuthIdentityUniversalIdentifier?: string | null;
-    claimsVerifiedClientName?: boolean;
+    isClaimingVerifiedClientName?: boolean;
   } | null,
 ) => [
   graphql.query(
@@ -40,7 +40,7 @@ const buildHandlers = (
             ? {
                 __typename: 'PublicApplicationRegistration',
                 oAuthIdentityUniversalIdentifier: null,
-                claimsVerifiedClientName: false,
+                isClaimingVerifiedClientName: false,
                 ...application,
               }
             : null,
@@ -130,7 +130,7 @@ export const UnverifiedClientBorrowingAKnownName: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
-        claimsVerifiedClientName: true,
+        isClaimingVerifiedClientName: true,
       }),
     },
   },
