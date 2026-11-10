@@ -218,3 +218,24 @@ export const Deletions: Story = {
     ).toBeEnabled();
   },
 };
+
+export const UpdateClearingField: Story = {
+  beforeEach: () =>
+    seedPendingProposals([
+      {
+        ...RECORD_UPDATES[0],
+        arguments: { id: FIRST_PERSON.id, city: null },
+      },
+      {
+        ...RECORD_UPDATES[1],
+        arguments: { id: SECOND_PERSON.id, jobTitle: 'Manager' },
+      },
+    ]),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Manager')).toBeVisible();
+    await expect(canvas.getAllByText('Empty')).toHaveLength(1);
+    await expect(await canvas.findByText(FIRST_PERSON.city)).toBeVisible();
+  },
+};

@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { isString } from '@sniptt/guards';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -40,6 +41,7 @@ export const AiChatRecordApprovalReview = ({
   onSelectedToolCallIdsChange,
   disabled,
 }: AiChatRecordApprovalReviewProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { objectMetadataItem, fieldDefinitionsByArgumentName } =
@@ -122,12 +124,12 @@ export const AiChatRecordApprovalReview = ({
             };
           }
 
-          const fieldDefinition = fieldDefinitionsByArgumentName.get(columnId);
-          const value = proposal.arguments[columnId];
-
-          if (!isDefined(value)) {
+          if (!(columnId in proposal.arguments)) {
             return { value: null };
           }
+
+          const fieldDefinition = fieldDefinitionsByArgumentName.get(columnId);
+          const value = proposal.arguments[columnId];
 
           if (
             !isDefined(fieldDefinition) ||
@@ -143,12 +145,14 @@ export const AiChatRecordApprovalReview = ({
           }
 
           return {
-            value: (
+            value: isDefined(value) ? (
               <AiChatToolCallApprovalFieldDisplay
                 objectNameSingular={objectNameSingular}
                 recordId={toolCallId}
                 fieldDefinition={fieldDefinition}
               />
+            ) : (
+              <StyledRawValue>{t`Empty`}</StyledRawValue>
             ),
             previousValue: isDefined(proposal.recordId) ? (
               <AiChatToolCallApprovalFieldDisplay
