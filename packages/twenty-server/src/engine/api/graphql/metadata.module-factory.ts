@@ -23,6 +23,7 @@ import { type DataloaderService } from 'src/engine/dataloaders/dataloader.servic
 import { type AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { resolvePositiveTtlMs } from 'src/engine/workspace-cache/utils/resolve-positive-ttl-ms.util';
 import { ModulesModule } from 'src/modules/modules.module';
 
 export const metadataModuleFactory = async (
@@ -61,7 +62,9 @@ export const metadataModuleFactory = async (
           cacheStorageService.set(
             cacheKey,
             responseBody,
-            twentyConfigService.get('METADATA_RESPONSE_CACHE_TTL') * 1000,
+            resolvePositiveTtlMs(
+              twentyConfigService.get('METADATA_RESPONSE_CACHE_TTL'),
+            ),
           ),
         operationsToCache: METADATA_GRAPHQL_OPERATIONS_TO_CACHE,
         dependencyHashesGetter:

@@ -8,7 +8,6 @@ import { DiscoveryService, Reflector } from '@nestjs/core';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import * as Sentry from '@sentry/node';
-import crypto from 'crypto';
 
 import { DataSource } from 'typeorm';
 
@@ -64,6 +63,14 @@ import {
   serializeCacheBlob,
 } from 'src/engine/workspace-cache/utils/serialize-cache-blob.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
+import {
+  resolveMaxAgeBoundedTtlMs,
+  resolvePositiveTtlMs,
+} from 'src/engine/workspace-cache/utils/resolve-positive-ttl-ms.util';
+import {
+  createWorkspaceCacheGeneration,
+  isWorkspaceCacheGenerationExpired,
+} from 'src/engine/workspace-cache/utils/workspace-cache-generation.util';
 
 const LOCAL_TTL_MS = 100;
 const COMPLETED_LOAD_RETENTION_MS = 0;
@@ -543,8 +550,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const result: Partial<Record<WorkspaceCacheKeyName, string>> = {};
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
-      if (isDefined(hashes[index])) {
-        result[keyName] = hashes[index];
+      const hash = hashes[index];
+
+      if (
+        isDefined(hash) &&
+        !this.isExpiredVisibilityGeneration(keyName, hash)
+      ) {
+        result[keyName] = hash;
       }
     }
 
@@ -577,7 +589,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     const invalidatedKeys = cacheKeyNames.map((keyName) => ({
       keyName,
-      expectedHash: crypto.randomUUID(),
+      expectedHash: createWorkspaceCacheGeneration(),
     }));
 
     await this.cacheStorage.msetAndMdel({
@@ -616,11 +628,26 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return storageTtlSeconds * 1000;
     }
 
+    return resolveMaxAgeBoundedTtlMs({
+      storageTtlSeconds,
+      maxAgeSeconds: this.twentyConfigService.get(
+        'METADATA_VISIBILITY_CACHE_MAX_AGE',
+      ),
+    });
+  }
+
+  private isExpiredVisibilityGeneration(
+    keyName: WorkspaceCacheKeyName,
+    generation: string,
+  ): boolean {
     return (
-      Math.min(
-        storageTtlSeconds,
-        this.twentyConfigService.get('METADATA_VISIBILITY_CACHE_MAX_AGE'),
-      ) * 1000
+      METADATA_VISIBILITY_CACHE_KEY_NAMES.has(keyName) &&
+      isWorkspaceCacheGenerationExpired({
+        generation,
+        maxAgeMs: resolvePositiveTtlMs(
+          this.twentyConfigService.get('METADATA_VISIBILITY_CACHE_MAX_AGE'),
+        ),
+      })
     );
   }
 
@@ -652,7 +679,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const localKey = this.buildCacheKey(workspaceId, keyName);
       const cached = this.localCache.get(localKey);
 
-      if (isDefined(cached) && now - cached.lastHashCheckedAt < LOCAL_TTL_MS) {
+      if (
+        isDefined(cached) &&
+        now - cached.lastHashCheckedAt < LOCAL_TTL_MS &&
+        !this.isExpiredVisibilityGeneration(keyName, cached.latestHash)
+      ) {
         freshKeys.push(keyName);
       } else {
         staleKeys.push(keyName);
@@ -693,15 +724,24 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const localKey = this.buildCacheKey(workspaceId, keyName);
       const localEntry = this.localCache.get(localKey);
 
+      const isRedisGenerationExpired =
+        isDefined(redisHash) &&
+        this.isExpiredVisibilityGeneration(keyName, redisHash);
+
       if (
         isDefined(localEntry) &&
         isDefined(redisHash) &&
+        !isRedisGenerationExpired &&
         localEntry.latestHash === redisHash
       ) {
         localEntry.lastHashCheckedAt = Date.now();
         validKeys.push(keyName);
       } else if (this.localDataOnlyKeys.has(keyName)) {
-        keysNeedingRecompute.push({ keyName, expectedHash: redisHash });
+        keysNeedingRecompute.push({
+          keyName,
+          expectedHash: redisHash,
+          shouldStartNewGeneration: isRedisGenerationExpired,
+        });
       } else {
         keysNeedingDataFromRedis.push(keyName);
       }
@@ -742,7 +782,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const rawData = allValues[index * 2] as CacheDataType | undefined;
       const hash = allValues[index * 2 + 1] as string | undefined;
 
-      if (isDefined(rawData) && isDefined(hash)) {
+      if (
+        isDefined(rawData) &&
+        isDefined(hash) &&
+        !this.isExpiredVisibilityGeneration(keyName, hash)
+      ) {
         let data: CacheDataType;
 
         try {
@@ -836,7 +880,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           expectedHash,
           hashToPublish:
             shouldStartNewGeneration === true || !isDefined(expectedHash)
-              ? crypto.randomUUID()
+              ? createWorkspaceCacheGeneration()
               : expectedHash,
         };
       } finally {

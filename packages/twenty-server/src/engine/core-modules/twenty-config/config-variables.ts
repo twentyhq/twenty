@@ -12,6 +12,7 @@ import {
   IsString,
   IsUrl,
   Max,
+  Min,
   ValidateIf,
   type ValidationError,
   validateSync,
@@ -1562,6 +1563,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
+  @Min(1)
   METADATA_VISIBILITY_CACHE_MAX_AGE: number = 3600;
 
   @ConfigVariablesMetadata({
@@ -1571,6 +1573,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
+  @Min(1)
   METADATA_RESPONSE_CACHE_TTL: number = 3600;
 
   @ConfigVariablesMetadata({
