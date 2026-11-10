@@ -309,6 +309,29 @@ describe('LambdaDriver', () => {
       });
     });
 
+    it('refuses a request too large for an invoke without invoking', async () => {
+      const output = await driver.executeHttpRequest({
+        ...HTTP_EGRESS_REQUEST,
+        input: {
+          url: 'https://api.example.com/items',
+          method: 'POST',
+          body: 'x'.repeat(6 * 1024 * 1024),
+        },
+      });
+
+      expect(output).toMatchObject({
+        toolOutput: {
+          success: false,
+          error: 'The request is too large to send',
+        },
+        outcomeDetails: {
+          outcome: 'other-error',
+          errorCode: 'REQUEST_TOO_LARGE',
+        },
+      });
+      expect(commands).not.toContain('InvokeCommand');
+    });
+
     it('reports an unavailable egress without retrying the invoke', async () => {
       egressInvokeError = new Error('Service unavailable');
 

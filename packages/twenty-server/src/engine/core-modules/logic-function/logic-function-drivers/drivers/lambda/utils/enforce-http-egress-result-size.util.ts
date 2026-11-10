@@ -1,4 +1,4 @@
-import { HTTP_EGRESS_LAMBDA_MAX_RESULT_BYTES } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { HTTP_EGRESS_LAMBDA_MAX_INVOKE_PAYLOAD_BYTES } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
 import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
 
@@ -9,7 +9,7 @@ export const enforceHttpEgressResultSize = (
 ): HttpEgressResponse => {
   if (
     Buffer.byteLength(JSON.stringify(response)) <=
-    HTTP_EGRESS_LAMBDA_MAX_RESULT_BYTES
+    HTTP_EGRESS_LAMBDA_MAX_INVOKE_PAYLOAD_BYTES
   ) {
     return response;
   }

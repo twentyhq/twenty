@@ -28,6 +28,7 @@ import {
   COMMON_LAYER_NAME_PREFIX,
   HTTP_EGRESS_FUNCTION_NAME_PREFIX,
   HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
+  HTTP_EGRESS_LAMBDA_MAX_INVOKE_PAYLOAD_BYTES,
   HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES,
   HTTP_EGRESS_LAMBDA_MEMORY_MB,
   HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS,
@@ -46,6 +47,7 @@ import {
   type YarnInstallLambdaResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { buildHttpEgressHandlerBundle } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-handler-bundle.util';
+import { buildHttpEgressRequestTooLargeResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-request-too-large-response.util';
 import { buildHttpEgressUnavailableResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-unavailable-response.util';
 import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
@@ -263,6 +265,14 @@ export class LambdaToolFunctionsService {
       },
     };
 
+    const payload = JSON.stringify(lambdaRequest);
+
+    if (
+      Buffer.byteLength(payload) > HTTP_EGRESS_LAMBDA_MAX_INVOKE_PAYLOAD_BYTES
+    ) {
+      return buildHttpEgressRequestTooLargeResponse({ request, startedAt });
+    }
+
     let functionName: string | undefined;
     let result: InvokeCommandOutput;
 
@@ -273,7 +283,7 @@ export class LambdaToolFunctionsService {
       result = await lambdaClient.send(
         new InvokeCommand({
           FunctionName: functionName,
-          Payload: JSON.stringify(lambdaRequest),
+          Payload: payload,
         }),
         {
           abortSignal: AbortSignal.timeout(
@@ -294,18 +304,18 @@ export class LambdaToolFunctionsService {
       });
     }
 
-    const payload = result.Payload?.transformToString();
+    const resultPayload = result.Payload?.transformToString();
 
-    if (isDefined(result.FunctionError) || !isNonEmptyString(payload)) {
+    if (isDefined(result.FunctionError) || !isNonEmptyString(resultPayload)) {
       return buildHttpEgressUnavailableResponse({
         request,
         startedAt,
-        isTimeout: payload?.includes('Task timed out') ?? false,
-        reason: payload ?? result.FunctionError,
+        isTimeout: resultPayload?.includes('Task timed out') ?? false,
+        reason: resultPayload ?? result.FunctionError,
       });
     }
 
-    return JSON.parse(payload) as HttpEgressResponse;
+    return JSON.parse(resultPayload) as HttpEgressResponse;
   }
 
   private async ensureHttpEgressLambdaIsActive(): Promise<string> {
