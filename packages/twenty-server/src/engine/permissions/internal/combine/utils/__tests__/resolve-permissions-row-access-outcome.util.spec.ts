@@ -164,7 +164,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       canReadObjectRecords: boolean;
     }): PermissionsPrincipalsWithRolesContext => ({
       ...readOnlyPrincipals,
-      aiRunScope: {
+      runtimeLimitingRole: {
         recordsPermissions: {
           ...NO_ROLE_RECORDS_PERMISSIONS,
           objects: {

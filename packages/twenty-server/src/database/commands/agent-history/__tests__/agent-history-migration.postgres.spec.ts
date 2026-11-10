@@ -119,8 +119,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         eventEmitterService: { emitDatabaseBatchEvent },
         recordPermissions: {} as never,
         recordFieldPermissions: {
-          findRlsRuleUnreadableFieldsByRole: jest.fn(),
-          buildRlsRuleSQLConditionOrThrow: jest.fn(),
+          findFieldsHiddenOnMatchingRecords: jest.fn(),
         },
         recordAccessGroupWrite: {
           isWriteTransactionRequired: jest.fn().mockResolvedValue(false),

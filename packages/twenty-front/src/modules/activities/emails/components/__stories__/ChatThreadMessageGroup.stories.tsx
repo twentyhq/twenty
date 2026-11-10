@@ -1,0 +1,81 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
+import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { MOCK_CALL_RECORDING_AUDIO_DATA_URI } from '@/page-layout/widgets/call-recording-transcript/components/__stories__/mockCallRecordingAudio';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+
+const buildVoiceNoteMessage = (url: string) =>
+  ({
+    id: 'message-id',
+    text: '',
+    receivedAt: '2026-11-07T10:52:00.000Z',
+    subject: '',
+    headerMessageId: 'app:application-id:channel-id:external-id',
+    messageThreadId: 'thread-id',
+    isDraft: false,
+    messageParticipants: [],
+    attachments: [
+      {
+        id: 'attachment-id',
+        file: [
+          {
+            fileId: 'voice-note-file-id',
+            label: 'voice-note.wav',
+            extension: 'wav',
+            url,
+          },
+        ],
+      },
+    ],
+  }) as unknown as EmailThreadMessageWithSender;
+
+const meta: Meta<typeof ChatThreadMessageGroup> = {
+  title: 'Modules/Activities/Emails/ChatThreadMessageGroup',
+  component: ChatThreadMessageGroup,
+  decorators: [MemoryRouterDecorator, ComponentDecorator, ToastDecorator],
+  parameters: { container: { width: 400 } },
+};
+
+export default meta;
+type Story = StoryObj<typeof ChatThreadMessageGroup>;
+
+export const VoiceNote: Story = {
+  args: {
+    group: {
+      id: 'group-id',
+      isOutgoing: false,
+      messages: [buildVoiceNoteMessage(MOCK_CALL_RECORDING_AUDIO_DATA_URI)],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByRole('button', { name: 'Play' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Pause' }));
+    await expect(
+      await canvas.findByRole('button', { name: 'Play' }),
+    ).toBeVisible();
+  },
+};
+
+export const UnplayableVoiceNote: Story = {
+  args: {
+    group: {
+      id: 'group-id',
+      isOutgoing: false,
+      messages: [buildVoiceNoteMessage('data:audio/wav,not-a-recording')],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('voice-note.wav')).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Play' }),
+    ).not.toBeInTheDocument();
+  },
+};

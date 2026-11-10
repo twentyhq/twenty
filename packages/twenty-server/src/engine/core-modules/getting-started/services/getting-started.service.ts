@@ -299,7 +299,10 @@ export class GettingStartedService {
   }): Promise<GettingStartedStepActionKey[]> {
     const [hasConnectedMailbox, hasInstalledFeaturedApp] = await Promise.all([
       stepActionKeys.includes(GettingStartedStepActionKey.CONNECT_MAILBOX)
-        ? this.hasOwnDraftingMailbox({ workspaceId, userWorkspaceId })
+        ? this.connectedAccountMetadataService.hasOwnMailOrCalendarAccount({
+            workspaceId,
+            userWorkspaceId,
+          })
         : false,
       stepActionKeys.includes(GettingStartedStepActionKey.INSTALL_APP)
         ? this.hasInstalledFeaturedApp(workspaceId)
@@ -330,25 +333,6 @@ export class GettingStartedService {
       });
 
     return mailboxes.find((mailbox) => mailbox.scope === 'USER');
-  }
-
-  private async hasOwnDraftingMailbox({
-    workspaceId,
-    userWorkspaceId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-  }): Promise<boolean> {
-    const mailboxes =
-      await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
-        workspaceId,
-        userWorkspaceId,
-        operation: EmailOperation.DRAFT,
-      });
-
-    return mailboxes.some(
-      (mailbox) => mailbox.userWorkspaceId === userWorkspaceId,
-    );
   }
 
   private hasInstalledFeaturedApp(workspaceId: string): Promise<boolean> {

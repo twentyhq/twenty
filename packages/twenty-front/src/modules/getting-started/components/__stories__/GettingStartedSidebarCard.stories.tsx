@@ -102,17 +102,20 @@ export default meta;
 
 type Story = StoryObj<typeof GettingStartedSidebarCard>;
 
-export const TrialCountdown: Story = {
+export const WithoutPaymentMethod: Story = {
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, buildTrialingWorkspace(false));
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findByText(/days left/)).toBeVisible();
     await expect(
-      canvas.getByRole('button', { name: 'Keep Pro' }),
+      await canvas.findByRole('button', { name: 'Keep Twenty' }),
     ).toBeVisible();
+    await expect(
+      canvas.getByRole('progressbar', { name: 'Getting started progress' }),
+    ).toBeVisible();
+    await expect(canvas.queryByText(/days left/)).not.toBeInTheDocument();
   },
 };
 

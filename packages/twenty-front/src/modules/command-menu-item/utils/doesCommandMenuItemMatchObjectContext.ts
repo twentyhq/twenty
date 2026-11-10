@@ -5,7 +5,14 @@ import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql
 
 export const doesCommandMenuItemMatchObjectContext =
   (objectMetadataItemId: unknown) =>
-  (item: Pick<CommandMenuItemFieldsFragment, 'availabilityType'>) =>
+  (
+    item: Pick<
+      CommandMenuItemFieldsFragment,
+      'availabilityType' | 'availabilityCoreObjectName'
+    >,
+  ) =>
     !COMMAND_MENU_ITEM_AVAILABILITY_TYPES_REQUIRING_RECORD_CONTEXT.has(
       item.availabilityType,
-    ) || isDefined(objectMetadataItemId);
+    ) ||
+    isDefined(objectMetadataItemId) ||
+    isDefined(item.availabilityCoreObjectName);

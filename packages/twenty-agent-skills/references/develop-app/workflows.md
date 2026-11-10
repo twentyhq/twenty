@@ -8,7 +8,7 @@ See `logic.md` for post-install hooks. See `app-structure.md` for source layout.
 
 Declare app workflows with `defineWorkflow` from `twenty-sdk/define`: one call per workflow, holding a trigger and its steps. Install creates it active; installing a new app version updates it in place. Users can't edit an installed workflow — they duplicate it.
 
-Workflows created at runtime through the workspace API are a `Workflow` plus at least one `WorkflowVersion`. Creating a `Workflow` auto-creates its draft `v1`; never create a `WorkflowVersion` directly.
+Workflows created at runtime go through the core workflow API (`createCoreWorkflow`, `coreWorkflows`, `coreWorkflowVersions`, …). There is no `Workflow` record in the workspace schema. `createCoreWorkflow` creates the workflow together with its draft first version.
 
 ## defineWorkflow
 
@@ -54,19 +54,19 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 - The selected record is the trigger payload — no wrapping `record` field.
 - Reference fields with `{{trigger.<field>}}`. Do not use `{{trigger.record.<field>}}`.
 
-## Lifecycle Through the Workspace API
+## Lifecycle Through the Core Workflow API
 
 Only for workflows created at runtime, e.g. from a post-install hook, instead of `defineWorkflow`. Always: create → configure draft → activate. Never publish a draft directly.
 
-1. Find or create the `Workflow` by stable name or slug. `createWorkflow` produces the draft `v1`.
-2. Set the trigger on the draft via `updateWorkflowVersion`.
-3. Add steps via the workflow-step mutations. `createWorkflowVersionStep` returns a `stepsDiff`, not the step — read the diff for the new step id, then call `updateWorkflowVersionStep` with the full payload.
-4. Activate via `activateWorkflowVersion`.
+1. Find the workflow by stable name with `coreWorkflows`, or create it with `createCoreWorkflow`, which produces the draft version.
+2. Set the trigger on the draft with `updateCoreWorkflowVersionTrigger`.
+3. Add steps with `createCoreWorkflowVersionStep`. It returns a `stepsDiff`, not the step: read the diff for the new step id, then call `updateCoreWorkflowVersionStep` with the full payload.
+4. Activate with `activateCoreWorkflowVersion`.
 
 Forbidden:
 
-- Do not write `Workflow.statuses` — it is computed from the active version's status.
-- Do not create `WorkflowVersion` rows directly.
+- Do not set a workflow's status. It follows its versions.
+- Do not create versions directly. Start a new draft from an existing version with `createDraftFromCoreWorkflowVersion`.
 
 ## Idempotency
 

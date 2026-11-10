@@ -56,16 +56,16 @@ export const describePermissionTestRecordAccess = ({
               recordIds: [recordId],
             })
           ).get(recordId),
-          canReadRecords:
-            await recordPermissionsReadService.canAccessKnownRecords({
-              ...recordsQuestion,
-              operationType: 'read',
-            }),
-          canUpdateRecords:
-            await recordPermissionsReadService.canAccessKnownRecords({
+          canReadRecords: await recordPermissionsReadService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'read',
+          }),
+          canUpdateRecords: await recordPermissionsReadService.canAccessRecords(
+            {
               ...recordsQuestion,
               operationType: 'update',
-            }),
+            },
+          ),
         }).toEqual(expected);
       });
     }
