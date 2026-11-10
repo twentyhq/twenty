@@ -18,6 +18,8 @@ import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { AccessPolicyModule } from 'src/engine/guards/access-policy/access-policy.module';
 import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engine.module';
+import { MetadataReadPermissionsService } from 'src/engine/permissions/metadata-permissions/services/metadata-read-permissions.service';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -33,6 +35,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
         I18nModule,
         WorkspaceCacheModule,
         AccessPolicyModule,
+        PermissionsModule,
       ],
       inject: [
         TwentyConfigService,
@@ -44,6 +47,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
         FeatureFlagService,
         WorkspaceCacheService,
         AccessPolicyService,
+        MetadataReadPermissionsService,
       ],
     }),
     MetadataEngineModule,

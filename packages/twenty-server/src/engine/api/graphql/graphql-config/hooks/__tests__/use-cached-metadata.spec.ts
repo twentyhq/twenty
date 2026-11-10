@@ -76,13 +76,17 @@ describe('useCachedMetadata', () => {
     cacheSetter = jest.fn(),
     dependencyHashesGetter = jest.fn().mockResolvedValue(DEPENDENCY_HASHES),
     assertAccessPolicySatisfied = jest.fn().mockResolvedValue(undefined),
+    assertCacheAdmission = jest.fn().mockResolvedValue(undefined),
     scope = 'userWorkspace',
+    admissionDependencies = ['flatRoleTargetMaps'],
   }: {
     cacheGetter?: jest.Mock;
     cacheSetter?: jest.Mock;
     dependencyHashesGetter?: jest.Mock;
     assertAccessPolicySatisfied?: jest.Mock;
+    assertCacheAdmission?: jest.Mock;
     scope?: CachedOperationConfig['scope'];
+    admissionDependencies?: CachedOperationConfig['admissionDependencies'];
   } = {}) =>
     useCachedMetadata({
       cacheGetter,
@@ -99,10 +103,12 @@ describe('useCachedMetadata', () => {
               variables: APPROVED_VARIABLES,
             },
           ],
+          admissionDependencies,
         },
       },
       dependencyHashesGetter,
       assertAccessPolicySatisfied,
+      assertCacheAdmission,
     });
 
   const runRequest = async ({
@@ -325,6 +331,110 @@ describe('useCachedMetadata', () => {
     });
 
     expect(hasPinScopeDuringExecution).toBe(false);
+  });
+
+  it('never serves a cached body when cache admission refuses the caller', async () => {
+    const cacheGetter = jest
+      .fn()
+      .mockResolvedValue({ data: { getViews: [{ id: 'view-id' }] } });
+    const assertCacheAdmission = jest
+      .fn()
+      .mockRejectedValue(new Error('role removed'));
+    const plugin = createPlugin({ cacheGetter, assertCacheAdmission });
+
+    const { endResponse } = await runRequest({
+      plugin,
+      request: createRequest(),
+    });
+
+    expect(assertCacheAdmission).toHaveBeenCalledWith({
+      operationName: 'FindAllViews',
+      request: expect.anything(),
+    });
+    expect(endResponse).not.toHaveBeenCalled();
+    expect(cacheGetter).not.toHaveBeenCalled();
+  });
+
+  it('serves the same cached body again once the caller is re-admitted', async () => {
+    const storedBodies = new Map<string, unknown>();
+    const cacheGetter = jest.fn(async (key: string) => storedBodies.get(key));
+    const cacheSetter = jest.fn(async (key: string, value: unknown) => {
+      storedBodies.set(key, value);
+    });
+    const assertCacheAdmission = jest
+      .fn()
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error('role removed'))
+      .mockResolvedValueOnce(undefined);
+    const plugin = createPlugin({
+      cacheGetter,
+      cacheSetter,
+      assertCacheAdmission,
+    });
+    const responseBody = { data: { getViews: [{ id: 'view-id' }] } };
+
+    await runRequest({ plugin, request: createRequest(), responseBody });
+    const refused = await runRequest({ plugin, request: createRequest() });
+    const readmitted = await runRequest({ plugin, request: createRequest() });
+
+    expect(cacheSetter).toHaveBeenCalledTimes(1);
+    expect(refused.endResponse).not.toHaveBeenCalled();
+    expect(readmitted.endResponse).toHaveBeenCalledTimes(1);
+    expect(await readmitted.response.json()).toEqual(responseBody);
+  });
+
+  it('skips cache admission for operations without admission dependencies', async () => {
+    const assertCacheAdmission = jest.fn();
+    const cacheSetter = jest.fn();
+    const plugin = createPlugin({
+      assertCacheAdmission,
+      cacheSetter,
+      admissionDependencies: [],
+    });
+
+    await runRequest({ plugin, request: createRequest() });
+
+    expect(assertCacheAdmission).not.toHaveBeenCalled();
+    expect(cacheSetter).toHaveBeenCalledTimes(1);
+  });
+
+  it('stores a response that consumed a listed admission dependency', async () => {
+    const cacheSetter = jest.fn();
+    const plugin = createPlugin({ cacheSetter });
+
+    await runRequest({
+      plugin,
+      request: createRequest(),
+      execute: () => {
+        getActiveWorkspaceCachePins('workspace-id')?.set('flatRoleTargetMaps', {
+          data: {} as never,
+          hash: 'role-generation',
+        });
+      },
+    });
+
+    expect(cacheSetter).toHaveBeenCalledTimes(1);
+  });
+
+  it('never lets an admission listing mask a payload dependency mismatch', async () => {
+    const cacheSetter = jest.fn();
+    const plugin = createPlugin({
+      cacheSetter,
+      admissionDependencies: ['flatViewMaps'],
+    });
+
+    await runRequest({
+      plugin,
+      request: createRequest(),
+      execute: () => {
+        getActiveWorkspaceCachePins('workspace-id')?.set('flatViewMaps', {
+          data: {} as never,
+          hash: 'view-generation-0',
+        });
+      },
+    });
+
+    expect(cacheSetter).not.toHaveBeenCalled();
   });
 
   it('shares cache entries across users for workspace-scoped operations', async () => {

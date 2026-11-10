@@ -30,6 +30,7 @@ export type CachedOperationConfig = {
   accessPolicy: AccessPolicy;
   isAllowedWhenWorkspaceSuspended: boolean;
   approvedRequests: MetadataResponseCacheApprovedRequest[];
+  admissionDependencies: WorkspaceCacheKeyName[];
 };
 
 type DependencyHashes = {
@@ -40,20 +41,27 @@ type DependencyHashes = {
 type RequestCacheEntry = {
   cacheKey: string;
   sourceHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+  admittedDependencies: WorkspaceCacheKeyName[];
 };
 
-const areConsumedHashesDeclaredAndMatching = ({
+const areConsumedHashesAllowed = ({
   consumedHashes,
   declaredHashes,
+  admittedDependencies,
 }: {
   consumedHashes: Partial<Record<string, string>>;
   declaredHashes: Partial<Record<string, string>>;
+  admittedDependencies: string[];
 }): boolean =>
-  Object.entries(consumedHashes).every(
-    ([cacheKeyName, consumedHash]) =>
-      isDefined(declaredHashes[cacheKeyName]) &&
-      declaredHashes[cacheKeyName] === consumedHash,
-  );
+  Object.entries(consumedHashes).every(([cacheKeyName, consumedHash]) => {
+    const declaredHash = declaredHashes[cacheKeyName];
+
+    if (isDefined(declaredHash)) {
+      return declaredHash === consumedHash;
+    }
+
+    return admittedDependencies.includes(cacheKeyName);
+  });
 
 export type CacheMetadataPluginConfig = {
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -67,6 +75,10 @@ export type CacheMetadataPluginConfig = {
   ) => Promise<DependencyHashes>;
   assertAccessPolicySatisfied: (args: {
     accessPolicy: AccessPolicy;
+    request: Request;
+  }) => Promise<void>;
+  assertCacheAdmission: (args: {
+    operationName: string;
     request: Request;
   }) => Promise<void>;
 };
@@ -99,6 +111,7 @@ export function useCachedMetadata(
     return {
       cacheKey: `${RESPONSE_CACHE_NAMESPACE}:${operationName}:${workspaceId}:${combinedHash}${userScopeSegment}:${request.locale}:${approvedRequest.documentFingerprint}:${approvedRequest.variablesFingerprint}`,
       sourceHashes,
+      admittedDependencies: operationConfig.admissionDependencies,
     };
   };
 
@@ -138,6 +151,10 @@ export function useCachedMetadata(
         accessPolicy: operationConfig.accessPolicy,
         request,
       });
+
+      if (operationConfig.admissionDependencies.length > 0) {
+        await config.assertCacheAdmission({ operationName, request });
+      }
     } catch {
       return undefined;
     }
@@ -340,9 +357,10 @@ export function useCachedMetadata(
         : {};
 
       if (
-        !areConsumedHashesDeclaredAndMatching({
+        !areConsumedHashesAllowed({
           consumedHashes: pinnedHashes,
           declaredHashes: requestCacheEntry.sourceHashes,
+          admittedDependencies: requestCacheEntry.admittedDependencies,
         })
       ) {
         return;

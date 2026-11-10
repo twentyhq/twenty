@@ -7,6 +7,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { METADATA_GRAPHQL_OPERATIONS_TO_CACHE } from 'src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-cache.constant';
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
+import { createMetadataCacheAdmissionAsserter } from 'src/engine/api/graphql/graphql-config/utils/create-metadata-cache-admission-asserter.util';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -21,6 +22,7 @@ import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.ser
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { type AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
+import { type MetadataReadPermissionsService } from 'src/engine/permissions/metadata-permissions/services/metadata-read-permissions.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { resolvePositiveTtlMs } from 'src/engine/workspace-cache/utils/resolve-positive-ttl-ms.util';
@@ -36,6 +38,7 @@ export const metadataModuleFactory = async (
   _featureFlagService: FeatureFlagService,
   workspaceCacheService: WorkspaceCacheService,
   accessPolicyService: AccessPolicyService,
+  metadataReadPermissionsService: MetadataReadPermissionsService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -75,6 +78,9 @@ export const metadataModuleFactory = async (
           accessPolicyService.assertRequestAccessPolicySatisfiedOrThrow.bind(
             accessPolicyService,
           ),
+        assertCacheAdmission: createMetadataCacheAdmissionAsserter(
+          metadataReadPermissionsService,
+        ),
       }),
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
         twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,

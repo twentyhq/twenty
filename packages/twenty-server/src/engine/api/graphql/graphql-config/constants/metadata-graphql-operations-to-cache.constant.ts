@@ -15,6 +15,7 @@ export const METADATA_GRAPHQL_OPERATIONS_TO_CACHE: Record<
     isAllowedWhenWorkspaceSuspended: true,
     approvedRequests:
       METADATA_RESPONSE_CACHE_APPROVED_REQUESTS.ObjectMetadataItems,
+    admissionDependencies: [],
     dependencies: [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
@@ -32,6 +33,7 @@ export const METADATA_GRAPHQL_OPERATIONS_TO_CACHE: Record<
       METADATA_RESPONSE_CACHE_APPROVED_REQUESTS[
         FIND_ALL_VIEWS_GRAPHQL_OPERATION
       ],
+    admissionDependencies: ['flatRoleTargetMaps', 'flatWorkspaceMemberMaps'],
     dependencies: [
       'flatViewMaps',
       'flatViewFieldMaps',
