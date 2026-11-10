@@ -2,41 +2,13 @@ import { testHttpRequest } from 'test/integration/graphql/suites/workflow/utils/
 import { type FlociLambdaDriver } from 'test/integration/logic-function-lambda/types/floci-lambda-driver.type';
 import { switchToFlociLambdaDriver } from 'test/integration/logic-function-lambda/utils/switch-to-floci-lambda-driver.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
-import {
-  type EachTestingContext,
-  eachTestingContextFilter,
-} from 'twenty-shared/testing';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { HTTP_EGRESS_FUNCTION_NAME_PREFIX } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 
 const LAMBDA_TEST_TIMEOUT_MS = 300_000;
 
-type BlockedAddressTestContext = {
-  url: string;
-  blockedIp: string;
-};
-
-const blockedAddressTestCases: EachTestingContext<BlockedAddressTestContext>[] =
-  [
-    {
-      title: 'the Lambda Runtime API on loopback',
-      context: {
-        url: 'http://127.0.0.1:9001/2018-06-01/runtime/invocation/next',
-        blockedIp: '127.0.0.1',
-      },
-    },
-    {
-      title: 'the cloud metadata address',
-      context: {
-        url: 'http://169.254.169.254/latest/meta-data/',
-        blockedIp: '169.254.169.254',
-      },
-    },
-  ];
-
-describe('HTTP requests on the Lambda driver (integration)', () => {
+describe('Outbound HTTP requests on the Lambda driver should succeed', () => {
   let flociLambdaDriver: FlociLambdaDriver;
 
   beforeAll(async () => {
@@ -47,19 +19,9 @@ describe('HTTP requests on the Lambda driver (integration)', () => {
       value: true,
       expectToFail: false,
     });
-    // Allowed for the server only: the Lambda must refuse it whatever the server allows.
-    await updateConfigVariable({
-      input: {
-        key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS',
-        value: ['127.0.0.1'],
-      },
-    });
   }, LAMBDA_TEST_TIMEOUT_MS);
 
   afterAll(async () => {
-    await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: [] },
-    });
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_HTTP_EGRESS_LAMBDA_ENABLED,
       value: false,
@@ -90,25 +52,5 @@ describe('HTTP requests on the Lambda driver (integration)', () => {
       ).toBe(true);
     },
     LAMBDA_TEST_TIMEOUT_MS,
-  );
-
-  describe.each(eachTestingContextFilter(blockedAddressTestCases))(
-    'with $title',
-    ({ context }) => {
-      it(
-        'should refuse the test request inside the Lambda',
-        async () => {
-          const { data } = await testHttpRequest({
-            input: { url: context.url, method: 'GET' },
-          });
-
-          expect(data.testHttpRequest).toMatchObject({
-            success: false,
-            error: `Request to internal IP address ${context.blockedIp} is not allowed.`,
-          });
-        },
-        LAMBDA_TEST_TIMEOUT_MS,
-      );
-    },
   );
 });
