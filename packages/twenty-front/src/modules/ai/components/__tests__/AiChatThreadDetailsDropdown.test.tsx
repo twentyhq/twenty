@@ -192,12 +192,14 @@ const renderDetails = async ({
   shouldOpenDetails = true,
   deletedAt = null,
   isSubscribed = false,
+  assigneeId = null,
 }: {
   permissions?: typeof EDITABLE_PERMISSIONS;
   isAiChatInboxEnabled?: boolean;
   shouldOpenDetails?: boolean;
   deletedAt?: string | null;
   isSubscribed?: boolean;
+  assigneeId?: string | null;
 } = {}) => {
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems: [
@@ -228,6 +230,7 @@ const renderDetails = async ({
         id: THREAD_ID,
         title: 'Pricing questions',
         deletedAt,
+        assigneeId,
         workspaceMemberId: OWNER_ID,
         writerWorkspaceMemberIds: [WRITER_ID, OWNER_ID],
       });
@@ -303,6 +306,15 @@ describe('AiChatThreadDetailsDropdown', () => {
       action: AgentChatInboxAction.UNSUBSCRIBE,
       isInChannel: false,
     });
+  });
+
+  it('does not let the assignee unfollow the conversation', async () => {
+    await renderDetails({ isSubscribed: true, assigneeId: FOLLOWER_ID });
+
+    expect(screen.getByText('Following')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Unfollow for me' }),
+    ).not.toBeInTheDocument();
   });
 
   it('opens the record picker on the linked records, searching the objects a conversation can be linked to', async () => {

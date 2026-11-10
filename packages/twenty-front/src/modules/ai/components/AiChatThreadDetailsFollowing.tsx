@@ -22,7 +22,7 @@ export const AiChatThreadDetailsFollowing = ({
     agentChatThreadRecordFamilySelector,
     threadId,
   );
-  const { isSubscribed } = useAtomFamilySelectorValue(
+  const { isSubscribed, isAssignedToMe } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
     threadId,
   );
@@ -32,6 +32,10 @@ export const AiChatThreadDetailsFollowing = ({
   if (!isDefined(currentWorkspaceMember)) {
     return null;
   }
+
+  const isAssigneeFollowing = isSubscribed && isAssignedToMe;
+  const canChangeFollowing =
+    !isDefined(thread?.deletedAt) && !isAssigneeFollowing;
 
   const handleFollowingChange = (isFollowing: boolean) =>
     executeAgentChatThreadInboxAction({
@@ -57,9 +61,7 @@ export const AiChatThreadDetailsFollowing = ({
       }
       isFollowing={isSubscribed}
       isSaving={isPending}
-      onFollowingChange={
-        isDefined(thread?.deletedAt) ? undefined : handleFollowingChange
-      }
+      onFollowingChange={canChangeFollowing ? handleFollowingChange : undefined}
     />
   );
 };
