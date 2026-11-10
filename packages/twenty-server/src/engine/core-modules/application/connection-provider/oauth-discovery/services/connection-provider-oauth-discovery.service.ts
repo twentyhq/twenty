@@ -104,12 +104,22 @@ export class ConnectionProviderOAuthDiscoveryService {
       ),
     };
 
-    if (isDefined(storedClient) || !canReuseConcurrentRegistration) {
-      await this.oauthClientService.saveClient(clientToSave);
-    } else if (
-      !(await this.oauthClientService.insertClientIfAbsent(clientToSave))
-    ) {
-      // Another member's first sign-in registered a client meanwhile: use it, so one client issues every token
+    // Another member's sign-in registered or replaced the client meanwhile: use theirs, so one client issues every token
+    const isClientSaved = isDefined(storedClient)
+      ? await this.oauthClientService.replaceClientIfUnchanged({
+          client: clientToSave,
+          expectedClientId: storedClient.clientInformation.client_id,
+        })
+      : await this.oauthClientService.insertClientIfAbsent(clientToSave);
+
+    if (!isClientSaved) {
+      if (!canReuseConcurrentRegistration) {
+        throw new ConnectionProviderException(
+          `OAuth client of connection provider ${provider.id} keeps changing: sign in again`,
+          ConnectionProviderExceptionCode.INVALID_REQUEST,
+        );
+      }
+
       return this.prepareAuthorization({
         provider,
         workspaceId,

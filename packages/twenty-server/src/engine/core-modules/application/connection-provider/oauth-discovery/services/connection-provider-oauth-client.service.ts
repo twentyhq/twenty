@@ -91,12 +91,24 @@ export class ConnectionProviderOAuthClientService {
     return storedClient;
   }
 
-  async saveClient(client: OAuthDiscoveryClientToSave): Promise<void> {
-    await this.oauthClientRepository.upsert(
+  // Returns false when another sign-in replaced the expected client meanwhile, which then stays
+  async replaceClientIfUnchanged({
+    client,
+    expectedClientId,
+  }: {
+    client: OAuthDiscoveryClientToSave;
+    expectedClientId: string;
+  }): Promise<boolean> {
+    const { affected } = await this.oauthClientRepository.update(
       client.workspaceId,
+      {
+        connectionProviderId: client.connectionProviderId,
+        clientId: expectedClientId,
+      },
       this.toRow(client),
-      ['connectionProviderId'],
     );
+
+    return isDefined(affected) && affected > 0;
   }
 
   // Returns false when the provider already has a client, which then stays
