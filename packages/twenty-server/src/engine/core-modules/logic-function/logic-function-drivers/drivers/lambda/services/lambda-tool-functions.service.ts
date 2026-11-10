@@ -86,7 +86,9 @@ export class LambdaToolFunctionsService {
   private commonLayerName: string | undefined;
   private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
-  private httpEgressHandlerCode: Promise<string> | undefined;
+  private httpEgressFunction:
+    | Promise<{ functionName: string; handlerCode: string }>
+    | undefined;
 
   constructor(
     private readonly options: Pick<
@@ -307,24 +309,26 @@ export class LambdaToolFunctionsService {
   }
 
   private async ensureHttpEgressLambdaIsActive(): Promise<string> {
-    this.httpEgressHandlerCode ??= buildHttpEgressHandlerBundle().catch(
-      (error) => {
-        this.httpEgressHandlerCode = undefined;
+    this.httpEgressFunction ??= buildHttpEgressHandlerBundle()
+      .then((handlerCode) => ({
+        handlerCode,
+        functionName: computeHashedLambdaResourceName({
+          resourceNamePrefix: HTTP_EGRESS_FUNCTION_NAME_PREFIX,
+          namespace: this.options.resourceNamespace,
+          contents: [
+            handlerCode,
+            String(HTTP_EGRESS_LAMBDA_MEMORY_MB),
+            String(HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS),
+          ],
+        }),
+      }))
+      .catch((error) => {
+        this.httpEgressFunction = undefined;
 
         throw error;
-      },
-    );
+      });
 
-    const handlerCode = await this.httpEgressHandlerCode;
-    const functionName = computeHashedLambdaResourceName({
-      resourceNamePrefix: HTTP_EGRESS_FUNCTION_NAME_PREFIX,
-      namespace: this.options.resourceNamespace,
-      contents: [
-        handlerCode,
-        String(HTTP_EGRESS_LAMBDA_MEMORY_MB),
-        String(HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS),
-      ],
-    });
+    const { functionName, handlerCode } = await this.httpEgressFunction;
 
     await this.ensureBuildToolLambdaIsActive({
       functionName,
