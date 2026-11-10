@@ -462,12 +462,12 @@ describe('LocalDriver.execute', () => {
         return builtHandlerPath;
       });
 
-    const serverConsoleError = console.error;
     const hostSideLines: string[] = [];
-
-    jest.spyOn(console, 'error').mockImplementation((...args) => {
-      hostSideLines.push(args.join(' '));
-    });
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation((...args) => {
+        hostSideLines.push(args.join(' '));
+      });
 
     const driver = new LocalDriver(driverOptions);
     const execution = driver.execute({
@@ -504,8 +504,6 @@ describe('LocalDriver.execute', () => {
       'server-side line from another workspace',
     );
     expect(hostSideLines).toEqual(['server-side line from another workspace']);
-
-    jest.restoreAllMocks();
-    expect(console.error).toBe(serverConsoleError);
+    expect(console.error).toBe(consoleErrorSpy);
   });
 });
