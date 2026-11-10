@@ -18,14 +18,16 @@ export const buildPermissionsCreatorSQLCondition = (
     return undefined;
   }
 
-  return combineSQLConditions([
-    buildRecordPrivacySQLCondition({
-      tableAlias: request.tableAlias,
-      isPrivate: true,
-    }),
-    buildRecordCreatedBySQLCondition({
-      tableAlias: request.tableAlias,
-      workspaceMemberId,
-    }),
-  ]);
+  return combineSQLConditions({
+    sqlConditions: [
+      buildRecordPrivacySQLCondition({
+        tableAlias: request.tableAlias,
+        isPrivate: true,
+      }),
+      buildRecordCreatedBySQLCondition({
+        tableAlias: request.tableAlias,
+        workspaceMemberId,
+      }),
+    ],
+  });
 };

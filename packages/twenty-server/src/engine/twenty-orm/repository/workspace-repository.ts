@@ -1790,20 +1790,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    const updatesQuestion = {
-      principals: this.resolvePermissionsPrincipalsOrThrow(),
-      objectMetadataId: this.options.flatObjectMetadata.id,
-      updates,
-      formatRecords: (rawRecords: ObjectRecord[]) =>
-        this.formatResult<ObjectRecord[]>(rawRecords),
-      transactionScope: this.buildRecordPermissionTransactionScope(),
-    };
-
-    await this.options.internalContext.recordFieldPermissions.assertUpdatedColumnsAreEditableOrThrow(
-      updatesQuestion,
-    );
     await this.options.internalContext.recordPermissions.assertUpdatesKeepRecordAccessOrThrow(
-      updatesQuestion,
+      {
+        principals: this.resolvePermissionsPrincipalsOrThrow(),
+        objectMetadataId: this.options.flatObjectMetadata.id,
+        updates,
+        formatRecords: (rawRecords) =>
+          this.formatResult<ObjectRecord[]>(rawRecords),
+        transactionScope: this.buildRecordPermissionTransactionScope(),
+      },
     );
   }
 

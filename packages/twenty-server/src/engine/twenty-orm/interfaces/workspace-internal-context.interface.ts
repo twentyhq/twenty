@@ -37,9 +37,7 @@ export interface WorkspaceInternalContext {
   >;
   recordFieldPermissions: Pick<
     RecordFieldPermissionsReadService,
-    | 'findRlsRuleUnreadableFieldsByRole'
-    | 'buildRlsRuleSQLConditionOrThrow'
-    | 'assertUpdatedColumnsAreEditableOrThrow'
+    'findRlsRuleUnreadableFieldsByRole' | 'buildRlsRuleSQLConditionOrThrow'
   >;
   recordAccessGroupWrite: Pick<
     RecordAccessGroupWriteService,

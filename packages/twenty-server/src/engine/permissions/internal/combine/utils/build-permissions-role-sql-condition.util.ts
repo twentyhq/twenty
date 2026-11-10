@@ -37,6 +37,8 @@ export const buildPermissionsRoleSQLCondition = ({
   });
 
   return isDefined(rlsRuleSQLCondition)
-    ? combineSQLConditions([rlsRuleSQLCondition, publicRecordsSQLCondition])
+    ? combineSQLConditions({
+        sqlConditions: [rlsRuleSQLCondition, publicRecordsSQLCondition],
+      })
     : publicRecordsSQLCondition;
 };

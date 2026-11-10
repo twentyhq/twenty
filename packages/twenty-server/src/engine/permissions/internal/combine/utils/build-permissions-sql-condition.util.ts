@@ -16,7 +16,7 @@ import { resolvePermissionsRowLevelPermissionSQLCondition } from 'src/engine/per
 const combineWithOr = (sqlConditions: SQLCondition[]): SQLCondition =>
   sqlConditions.length === 1
     ? sqlConditions[0]
-    : combineSQLConditions(sqlConditions, 'OR');
+    : combineSQLConditions({ sqlConditions, operator: 'OR' });
 
 export const buildPermissionsSQLCondition = ({
   tableAlias,
@@ -69,10 +69,12 @@ export const buildPermissionsSQLCondition = ({
   ) {
     return combineWithOr([
       ...roleSQLConditions,
-      combineSQLConditions([
-        rowLevelPermissionSQLCondition,
-        combineWithOr(recordSQLConditions),
-      ]),
+      combineSQLConditions({
+        sqlConditions: [
+          rowLevelPermissionSQLCondition,
+          combineWithOr(recordSQLConditions),
+        ],
+      }),
     ]);
   }
 

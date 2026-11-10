@@ -29,9 +29,11 @@ export const buildPermissionsShareSQLCondition = (
   });
 
   return shareGrant.isLimitedToPrivateRecords
-    ? combineSQLConditions([
-        buildRecordPrivacySQLCondition({ tableAlias, isPrivate: true }),
-        recordShareSQLCondition,
-      ])
+    ? combineSQLConditions({
+        sqlConditions: [
+          buildRecordPrivacySQLCondition({ tableAlias, isPrivate: true }),
+          recordShareSQLCondition,
+        ],
+      })
     : recordShareSQLCondition;
 };

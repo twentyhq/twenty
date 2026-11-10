@@ -1,9 +1,12 @@
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
-export const combineSQLConditions = (
-  sqlConditions: SQLCondition[],
-  operator: 'AND' | 'OR' = 'AND',
-): SQLCondition => {
+export const combineSQLConditions = ({
+  sqlConditions,
+  operator = 'AND',
+}: {
+  sqlConditions: SQLCondition[];
+  operator?: 'AND' | 'OR';
+}): SQLCondition => {
   const sql = sqlConditions
     .map((sqlCondition) => `(${sqlCondition.sql})`)
     .join(` ${operator} `);
