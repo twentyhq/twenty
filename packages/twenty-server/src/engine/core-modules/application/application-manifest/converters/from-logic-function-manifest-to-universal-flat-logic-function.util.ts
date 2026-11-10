@@ -96,7 +96,7 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     toolTriggerSettings: logicFunctionManifest.toolTriggerSettings ?? null,
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,
-    maxRate: null,
+    jobConfig: null,
     isBuildUpToDate: true,
     executionMode: resolveExecutionMode({
       logicFunctionManifest,

@@ -1,4 +1,4 @@
-export type MessageQueueMaxRate = {
+export type MessageQueueLimiter = {
   max: number;
   durationMs: number;
 };

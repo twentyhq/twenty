@@ -17,8 +17,8 @@ import {
   WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
 
-import { ADD_MAX_RATE_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-max-rate-to-workflow-and-logic-function-upgrade-command-name.constant';
-import { type MessageQueueMaxRate } from 'src/engine/core-modules/message-queue/types/message-queue-max-rate.type';
+import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
+import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -101,10 +101,10 @@ export class LogicFunctionEntity
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      ADD_MAX_RATE_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
+      ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: true, type: 'jsonb' })
-  maxRate: JsonbProperty<MessageQueueMaxRate> | null;
+  jobConfig: JsonbProperty<MessageQueueJobConfig> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -766,7 +766,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
-    maxRate: {
+    jobConfig: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
@@ -2465,7 +2465,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   workflow: {
-    maxRate: {
+    jobConfig: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,

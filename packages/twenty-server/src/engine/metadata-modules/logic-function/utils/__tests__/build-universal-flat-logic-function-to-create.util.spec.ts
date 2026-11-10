@@ -10,18 +10,18 @@ const REQUIRED_INPUT = {
 };
 
 describe('buildUniversalFlatLogicFunctionToCreate', () => {
-  it('keeps the maxRate it is given', () => {
+  it('keeps the jobConfig it is given', () => {
     expect(
       buildUniversalFlatLogicFunctionToCreate({
         ...REQUIRED_INPUT,
-        maxRate: { max: 10, durationMs: 1_000 },
-      }).maxRate,
-    ).toEqual({ max: 10, durationMs: 1_000 });
+        jobConfig: { limiter: { max: 10, durationMs: 1_000 } },
+      }).jobConfig,
+    ).toEqual({ limiter: { max: 10, durationMs: 1_000 } });
   });
 
-  it('leaves the maxRate empty by default', () => {
+  it('leaves the jobConfig empty by default', () => {
     expect(
-      buildUniversalFlatLogicFunctionToCreate(REQUIRED_INPUT).maxRate,
+      buildUniversalFlatLogicFunctionToCreate(REQUIRED_INPUT).jobConfig,
     ).toBeNull();
   });
 });

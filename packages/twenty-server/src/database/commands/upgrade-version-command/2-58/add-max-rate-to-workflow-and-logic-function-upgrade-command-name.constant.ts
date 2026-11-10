@@ -1,2 +1,0 @@
-export const ADD_MAX_RATE_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME =
-  '2.58.0_AddMaxRateToWorkflowAndLogicFunctionFastInstanceCommand_1794303196608';
