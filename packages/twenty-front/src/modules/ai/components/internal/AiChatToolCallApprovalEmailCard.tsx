@@ -8,7 +8,12 @@ import {
   isPlainObject,
   parseCanonicalTipTapJsonDocument,
 } from 'twenty-shared/utils';
-import { IconDeviceFloppy, IconSend, IconTrash } from 'twenty-ui/icon';
+import {
+  IconDeviceFloppy,
+  IconMail,
+  IconSend,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
@@ -106,8 +111,8 @@ export const AiChatToolCallApprovalEmailCard = ({
 
   return (
     <AiChatToolCallApprovalCardLayout
-      label={t`Review this email before it goes out`}
-      summary={proposal.summary}
+      title={proposal.toolLabel}
+      Icon={IconMail}
       approval={approval}
       actions={
         <>

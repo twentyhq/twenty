@@ -11,9 +11,16 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 const StyledHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[4]};
   margin-bottom: ${themeCssVariables.spacing[3]};
+  min-width: 0;
+`;
+
+const StyledAuthor = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;
 
@@ -37,20 +44,22 @@ export const ChatMessageHeader = ({
   return (
     <StyledHeader>
       {avatar}
-      <Text
-        render={<span />}
-        size="sm"
-        color="primary"
-        weight="medium"
-        truncate
-      >
-        {name}
-      </Text>
-      {isDefined(createdAt) && (
-        <Text render={<StyledTime />} size="sm" color="light">
-          {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
+      <StyledAuthor>
+        <Text
+          render={<span />}
+          size="sm"
+          color="primary"
+          weight="medium"
+          truncate
+        >
+          {name}
         </Text>
-      )}
+        {isDefined(createdAt) && (
+          <Text render={<StyledTime />} size="sm" color="light">
+            {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
+          </Text>
+        )}
+      </StyledAuthor>
     </StyledHeader>
   );
 };

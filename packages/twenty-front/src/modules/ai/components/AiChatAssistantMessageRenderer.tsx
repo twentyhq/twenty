@@ -35,7 +35,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledMessagePartsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const MessagePartRenderer = ({
