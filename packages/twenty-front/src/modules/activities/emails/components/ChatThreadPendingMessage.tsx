@@ -38,12 +38,14 @@ const StyledFailedRow = styled.div`
 
 type ChatThreadPendingMessageProps = {
   pendingMessage: PendingChatMessage;
+  isRetryDisabled?: boolean;
   onRetry: (pendingMessage: PendingChatMessage) => void;
   onDiscard: (pendingMessage: PendingChatMessage) => void;
 };
 
 export const ChatThreadPendingMessage = ({
   pendingMessage,
+  isRetryDisabled = false,
   onRetry,
   onDiscard,
 }: ChatThreadPendingMessageProps) => {
@@ -69,6 +71,7 @@ export const ChatThreadPendingMessage = ({
           {t`Sending failed`}
           <LightIconButton
             aria-label={t`Retry`}
+            disabled={isRetryDisabled}
             onClick={() => onRetry(pendingMessage)}
           >
             <IconRefresh />
