@@ -29,7 +29,6 @@ import {
   type TranspileParams,
   type TranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
-import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
@@ -267,99 +266,65 @@ export class LocalDriver implements LogicFunctionDriver {
             });
 
       let logs = '';
-      const consoleListener = new ConsoleListener();
 
-      consoleListener.intercept((type, args) => {
-        const formattedArgs = args.map((arg) => {
-          if (typeof arg === 'object' && arg !== null) {
-            const seen = new WeakSet();
-
-            return JSON.stringify(
-              arg,
-              (_key, value) => {
-                if (typeof value === 'object' && value !== null) {
-                  if (seen.has(value)) {
-                    return '[Circular]';
-                  }
-                  seen.add(value);
-                }
-
-                return value;
-              },
-              2,
-            );
-          }
-
-          return arg;
-        });
-
-        const formattedType = type === 'log' ? 'info' : type;
-
-        logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;
+      const runnerPath = await this.childProcessRunner.writeBootstrapRunner({
+        dir: sourceTemporaryDir,
+        builtFileAbsPath: inMemoryBuiltHandlerPath,
+        handlerName: flatLogicFunction.handlerName,
       });
 
-      try {
-        const runnerPath = await this.childProcessRunner.writeBootstrapRunner({
-          dir: sourceTemporaryDir,
-          builtFileAbsPath: inMemoryBuiltHandlerPath,
-          handlerName: flatLogicFunction.handlerName,
+      const { ok, result, errorType, error, stack, stdout, stderr } =
+        await this.childProcessRunner.runChildWithEnv({
+          runnerPath,
+          executionDirectory: sourceTemporaryDir,
+          flatApplication,
+          env: env ?? {},
+          payload,
+          context,
+          timeoutMs,
         });
 
-        const { ok, result, errorType, error, stack, stdout, stderr } =
-          await this.childProcessRunner.runChildWithEnv({
-            runnerPath,
-            executionDirectory: sourceTemporaryDir,
-            flatApplication,
-            env: env ?? {},
-            payload,
-            context,
-            timeoutMs,
-          });
+      if (stdout) {
+        logs +=
+          stdout
+            .split('\n')
+            .filter(Boolean)
+            .map((l) => `${new Date().toISOString()} INFO ${l}`)
+            .join('\n') + '\n';
+      }
+      if (stderr) {
+        logs +=
+          stderr
+            .split('\n')
+            .filter(Boolean)
+            .map((l) => `${new Date().toISOString()} ERROR ${l}`)
+            .join('\n') + '\n';
+      }
 
-        if (stdout) {
-          logs +=
-            stdout
-              .split('\n')
-              .filter(Boolean)
-              .map((l) => `${new Date().toISOString()} INFO ${l}`)
-              .join('\n') + '\n';
-        }
-        if (stderr) {
-          logs +=
-            stderr
-              .split('\n')
-              .filter(Boolean)
-              .map((l) => `${new Date().toISOString()} ERROR ${l}`)
-              .join('\n') + '\n';
-        }
+      const duration = Date.now() - startTime;
 
-        const duration = Date.now() - startTime;
-
-        if (ok) {
-          return {
-            data: (result ?? null) as object | null,
-            logs,
-            duration,
-            billedDurationMs: duration,
-            status: LogicFunctionExecutionStatus.SUCCESS,
-          };
-        }
-
+      if (ok) {
         return {
-          data: null,
+          data: (result ?? null) as object | null,
           logs,
           duration,
           billedDurationMs: duration,
-          error: {
-            errorType: errorType ?? 'UnhandledError',
-            errorMessage: error || 'Unknown error',
-            stackTrace: stack ? String(stack).split('\n') : [],
-          },
-          status: LogicFunctionExecutionStatus.ERROR,
+          status: LogicFunctionExecutionStatus.SUCCESS,
         };
-      } finally {
-        consoleListener.release();
       }
+
+      return {
+        data: null,
+        logs,
+        duration,
+        billedDurationMs: duration,
+        error: {
+          errorType: errorType ?? 'UnhandledError',
+          errorMessage: error || 'Unknown error',
+          stackTrace: stack ? String(stack).split('\n') : [],
+        },
+        status: LogicFunctionExecutionStatus.ERROR,
+      };
     } finally {
       await temporaryDirManager.clean();
     }

@@ -733,11 +733,6 @@ msgstr ""
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr ""
 
-#. js-lingui-id: Irx6Dx
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
-msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr ""
-
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
@@ -13073,6 +13068,7 @@ msgid "Failed to send campaign"
 msgstr ""
 
 #. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useEmailComposerState.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
@@ -14344,6 +14340,7 @@ msgstr ""
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
@@ -14351,6 +14348,7 @@ msgid "Getting started"
 msgstr ""
 
 #. js-lingui-id: YRBB4k
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
 msgstr ""
@@ -15508,11 +15506,6 @@ msgstr ""
 msgid "In {listName}"
 msgstr ""
 
-#. js-lingui-id: jS5U2e
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "In an hour"
-msgstr ""
-
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "In progress"
@@ -16436,11 +16429,6 @@ msgstr ""
 msgid "Kanban widget"
 msgstr ""
 
-#. js-lingui-id: uW9WOr
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep {planLabel}"
-msgstr ""
-
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
@@ -16461,9 +16449,10 @@ msgstr ""
 msgid "Keep tracking my opens and clicks"
 msgstr ""
 
-#. js-lingui-id: 9l8cs3
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep your plan"
+#. js-lingui-id: TOIQKe
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+msgid "Keep Twenty"
 msgstr ""
 
 #. js-lingui-id: 7sMeHQ
@@ -27234,6 +27223,7 @@ msgstr ""
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr ""
@@ -27254,7 +27244,6 @@ msgid "Snooze ended {eventTime}"
 msgstr ""
 
 #. js-lingui-id: oIDreL
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
@@ -29827,7 +29816,6 @@ msgstr ""
 
 #. js-lingui-id: BRMXj0
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr ""
@@ -30045,7 +30033,6 @@ msgid "Triage"
 msgstr ""
 
 #. js-lingui-id: lhkaAC
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -30903,11 +30890,6 @@ msgstr ""
 #. js-lingui-id: I9zMVO
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
-msgstr ""
-
-#. js-lingui-id: LRU2W5
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "Until the last 3 days"
 msgstr ""
 
 #. js-lingui-id: wja8aL

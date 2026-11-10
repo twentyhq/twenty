@@ -6963,7 +6963,7 @@ msgid "Invalid email address."
 msgstr "Adreça de correu electrònic no vàlida."
 
 #. js-lingui-id: e2K52e
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Invalid email addresses: {invalidEmailList}"
 msgstr "Adreces de correu electrònic no vàlides: {invalidEmailList}"
 
@@ -15567,7 +15567,7 @@ msgid "Too many people selected. Narrow your selection and try again."
 msgstr "S'han seleccionat massa persones. Redueix la selecció i torna-ho a provar."
 
 #. js-lingui-id: JS61oF
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Hi ha massa destinataris: {total}. El màxim permès és {MAX_EMAIL_RECIPIENTS}."
 

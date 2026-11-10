@@ -6963,7 +6963,7 @@ msgid "Invalid email address."
 msgstr "Indirizzo email non valido."
 
 #. js-lingui-id: e2K52e
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Invalid email addresses: {invalidEmailList}"
 msgstr "Indirizzi email non validi: {invalidEmailList}"
 
@@ -15567,7 +15567,7 @@ msgid "Too many people selected. Narrow your selection and try again."
 msgstr "Sono state selezionate troppe persone. Restringi la selezione e riprova."
 
 #. js-lingui-id: JS61oF
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Troppi destinatari: {total}. Il massimo consentito è {MAX_EMAIL_RECIPIENTS}."
 
