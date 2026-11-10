@@ -97,15 +97,22 @@ export class ConnectionProviderAuthorizationStateService {
     return verified;
   }
 
-  // Single use: a replayed callback finds nothing and fails
+  // Single use: the atomic claim lets only one of two concurrent callbacks through
   async consumeFlowSecretsOrThrow(
     flowSecretId: string,
   ): Promise<ConnectionProviderFlowSecrets> {
     const cacheKey = `${FLOW_SECRET_CACHE_KEY_PREFIX}:${flowSecretId}`;
     const flowSecrets =
       await this.cacheStorage.get<ConnectionProviderFlowSecrets>(cacheKey);
+    const isClaimed =
+      isDefined(flowSecrets) &&
+      (await this.cacheStorage.setIfAbsent(
+        `${cacheKey}:consumed`,
+        true,
+        FLOW_SECRET_TTL_MS,
+      ));
 
-    if (!isDefined(flowSecrets)) {
+    if (!isClaimed) {
       throw new ConnectionProviderException(
         'OAuth sign-in expired or was already completed',
         ConnectionProviderExceptionCode.INVALID_STATE,
