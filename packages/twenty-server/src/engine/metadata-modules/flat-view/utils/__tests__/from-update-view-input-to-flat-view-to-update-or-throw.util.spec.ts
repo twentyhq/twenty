@@ -8,6 +8,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -160,19 +162,29 @@ const updateView = ({
   groupingOverride,
   updateViewInput,
   existingTranslations,
+  existingProperties,
+  userWorkspaceId,
 }: {
   groupingOverride: string | null;
   updateViewInput: Omit<UpdateViewInput, 'id'>;
+  existingProperties?: Partial<
+    Pick<
+      FlatView,
+      'visibility' | 'ownerUserWorkspaceId' | 'createdByUserWorkspaceId'
+    >
+  >;
+  userWorkspaceId?: string;
   existingTranslations?: ViewOverrides['translations'];
 }) => {
   const existingViewGroups = getExistingViewGroups(groupingOverride);
-  const existingView = buildExistingFlatView({
-    groupingOverride,
-    existingTranslations,
-  });
+  const existingView = {
+    ...buildExistingFlatView({ groupingOverride, existingTranslations }),
+    ...existingProperties,
+  };
 
   return fromUpdateViewInputToFlatViewToUpdateOrThrow({
     updateViewInput: { id: VIEW_ID, ...updateViewInput },
+    userWorkspaceId,
     flatViewMaps: addFlatEntityToFlatEntityMapsOrThrow({
       flatEntity: existingView,
       flatEntityMaps: createEmptyFlatEntityMaps(),
@@ -381,5 +393,133 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
         }),
       ).toThrow('Cannot translate view properties: icon');
     });
+  });
+});
+
+describe('workspace view ownership storage', () => {
+  it('stores privacy in the base column and assigns the actor while preserving creator audit', () => {
+    const { flatViewToUpdate } = updateView({
+      groupingOverride: null,
+      updateViewInput: { visibility: ViewVisibility.UNLISTED },
+      existingProperties: { createdByUserWorkspaceId: 'creator' },
+      userWorkspaceId: 'actor',
+    });
+
+    expect(flatViewToUpdate).toMatchObject({
+      visibility: ViewVisibility.UNLISTED,
+      ownerUserWorkspaceId: 'actor',
+      createdByUserWorkspaceId: 'creator',
+    });
+    expect(
+      resolveEffectiveUniversalFlatEntity({
+        metadataName: 'view',
+        universalFlatEntity: flatViewToUpdate,
+      }).visibility,
+    ).toBe(ViewVisibility.UNLISTED);
+    expect(JSON.stringify(flatViewToUpdate.universalOverrides)).not.toContain(
+      'visibility',
+    );
+  });
+
+  it('clears ownership when publishing without rewriting creator audit', () => {
+    const { flatViewToUpdate } = updateView({
+      groupingOverride: null,
+      updateViewInput: { visibility: ViewVisibility.WORKSPACE },
+      existingProperties: {
+        visibility: ViewVisibility.UNLISTED,
+        ownerUserWorkspaceId: 'owner',
+        createdByUserWorkspaceId: 'creator',
+      },
+      userWorkspaceId: 'actor',
+    });
+
+    expect(flatViewToUpdate).toMatchObject({
+      visibility: ViewVisibility.WORKSPACE,
+      ownerUserWorkspaceId: null,
+      createdByUserWorkspaceId: 'creator',
+    });
+  });
+
+  it.each(['owner', null])(
+    'preserves existing private ownership %s on edits and repeated private visibility',
+    (ownerUserWorkspaceId) => {
+      for (const updateViewInput of [
+        { name: 'New name' },
+        { visibility: ViewVisibility.UNLISTED },
+      ]) {
+        const { flatViewToUpdate } = updateView({
+          groupingOverride: null,
+          updateViewInput,
+          existingProperties: {
+            visibility: ViewVisibility.UNLISTED,
+            ownerUserWorkspaceId,
+            createdByUserWorkspaceId: 'creator',
+          },
+          userWorkspaceId: 'actor',
+        });
+        expect(flatViewToUpdate.ownerUserWorkspaceId).toBe(
+          ownerUserWorkspaceId,
+        );
+        expect(flatViewToUpdate.createdByUserWorkspaceId).toBe('creator');
+      }
+    },
+  );
+
+  it('rejects narrowing without a member to own the private view', () => {
+    expect(() =>
+      updateView({
+        groupingOverride: null,
+        updateViewInput: { visibility: ViewVisibility.UNLISTED },
+      }),
+    ).toThrow('A private view requires an owner');
+  });
+
+  const createView = (
+    visibility: ViewVisibility,
+    createdByUserWorkspaceId?: string,
+  ) =>
+    fromCreateViewInputToFlatViewToCreate({
+      createViewInput: {
+        name: 'New view',
+        icon: 'IconTable',
+        objectMetadataId: OBJECT_METADATA_ID,
+        visibility,
+      },
+      createdByUserWorkspaceId,
+      flatApplication: {
+        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      } as FlatApplication,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps: {
+        ...createEmptyFlatEntityMaps(),
+        universalIdentifierById: { [OBJECT_METADATA_ID]: OBJECT_METADATA_ID },
+      },
+    });
+
+  it('assigns an owner only when creating a private view', () => {
+    expect(
+      createView(ViewVisibility.UNLISTED, 'creator').flatViewToCreate,
+    ).toMatchObject({
+      visibility: ViewVisibility.UNLISTED,
+      ownerUserWorkspaceId: 'creator',
+      createdByUserWorkspaceId: 'creator',
+    });
+    expect(
+      createView(ViewVisibility.WORKSPACE, 'creator').flatViewToCreate,
+    ).toMatchObject({
+      visibility: ViewVisibility.WORKSPACE,
+      ownerUserWorkspaceId: null,
+      createdByUserWorkspaceId: 'creator',
+    });
+  });
+
+  it('rejects private creation without a member owner', () => {
+    expect(() => createView(ViewVisibility.UNLISTED)).toThrow(
+      'A private view requires an owner',
+    );
+    expect(
+      createView(ViewVisibility.WORKSPACE).flatViewToCreate
+        .ownerUserWorkspaceId,
+    ).toBeNull();
   });
 });

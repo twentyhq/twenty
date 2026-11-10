@@ -8,7 +8,7 @@ describe('isViewVisibleToUser', () => {
       isViewVisibleToUser(
         {
           visibility: ViewVisibility.WORKSPACE,
-          createdByUserWorkspaceId: 'someone-else',
+          ownerUserWorkspaceId: 'someone-else',
         },
         'me',
       ),
@@ -17,7 +17,7 @@ describe('isViewVisibleToUser', () => {
       isViewVisibleToUser(
         {
           visibility: ViewVisibility.WORKSPACE,
-          createdByUserWorkspaceId: null,
+          ownerUserWorkspaceId: null,
         },
         undefined,
       ),
@@ -29,11 +29,25 @@ describe('isViewVisibleToUser', () => {
       isViewVisibleToUser(
         {
           visibility: ViewVisibility.UNLISTED,
-          createdByUserWorkspaceId: 'me',
+          ownerUserWorkspaceId: 'me',
         },
         'me',
       ),
     ).toBe(true);
+  });
+
+  it('does not use creator audit as private ownership', () => {
+    const view = {
+      visibility: ViewVisibility.UNLISTED,
+      ownerUserWorkspaceId: 'owner',
+      createdByUserWorkspaceId: 'creator',
+    };
+
+    expect(isViewVisibleToUser(view, 'owner')).toBe(true);
+    expect(isViewVisibleToUser(view, 'creator')).toBe(false);
+    expect(
+      isViewVisibleToUser({ ...view, ownerUserWorkspaceId: null }, 'creator'),
+    ).toBe(false);
   });
 
   it('denies an UNLISTED view to a non-owner', () => {
@@ -41,7 +55,7 @@ describe('isViewVisibleToUser', () => {
       isViewVisibleToUser(
         {
           visibility: ViewVisibility.UNLISTED,
-          createdByUserWorkspaceId: 'someone-else',
+          ownerUserWorkspaceId: 'someone-else',
         },
         'me',
       ),
@@ -51,7 +65,7 @@ describe('isViewVisibleToUser', () => {
   it('denies an UNLISTED view when there is no current identity', () => {
     expect(
       isViewVisibleToUser(
-        { visibility: ViewVisibility.UNLISTED, createdByUserWorkspaceId: 'me' },
+        { visibility: ViewVisibility.UNLISTED, ownerUserWorkspaceId: 'me' },
         undefined,
       ),
     ).toBe(false);
@@ -60,7 +74,7 @@ describe('isViewVisibleToUser', () => {
   it('denies an ownerless UNLISTED view to everyone', () => {
     expect(
       isViewVisibleToUser(
-        { visibility: ViewVisibility.UNLISTED, createdByUserWorkspaceId: null },
+        { visibility: ViewVisibility.UNLISTED, ownerUserWorkspaceId: null },
         'me',
       ),
     ).toBe(false);

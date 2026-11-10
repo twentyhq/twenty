@@ -15,6 +15,10 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
 import { validateViewGroupLoadLimitOrThrow } from 'src/engine/metadata-modules/flat-view/utils/validate-view-group-load-limit-or-throw.util';
+import {
+  ViewException,
+  ViewExceptionCode,
+} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
@@ -42,6 +46,18 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     );
 
   validateViewGroupLoadLimitOrThrow(createViewInput.groupLoadLimit);
+
+  const visibility = createViewInput.visibility ?? ViewVisibility.WORKSPACE;
+
+  if (
+    visibility === ViewVisibility.UNLISTED &&
+    !isDefined(createdByUserWorkspaceId)
+  ) {
+    throw new ViewException(
+      'A private view requires an owner',
+      ViewExceptionCode.INVALID_VIEW_DATA,
+    );
+  }
 
   const createdAt = new Date().toISOString();
   const viewId = createViewInput.id ?? v4();
@@ -95,8 +111,11 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
-    visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
-    ownerUserWorkspaceId: null,
+    visibility,
+    ownerUserWorkspaceId:
+      visibility === ViewVisibility.UNLISTED
+        ? (createdByUserWorkspaceId ?? null)
+        : null,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     isActive: true,
     isSystemSideEffect: false,

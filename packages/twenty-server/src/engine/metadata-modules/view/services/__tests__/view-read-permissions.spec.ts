@@ -7,6 +7,8 @@ import {
   type WorkspaceAuthContext,
   type UserWorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { MinimalMetadataService } from 'src/engine/metadata-modules/minimal-metadata/minimal-metadata.service';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -65,14 +67,16 @@ const makeMaps = <TEntity extends { id: string }>(entities: TEntity[]) => ({
 const makeView = (
   id: string,
   visibility: ViewVisibility,
-  createdByUserWorkspaceId: string | null = OWNER_ID,
+  ownerUserWorkspaceId: string | null = OWNER_ID,
 ) => ({
   id,
   universalIdentifier: id,
   workspaceId: WORKSPACE_ID,
   applicationId: APPLICATION_ID,
   visibility,
-  createdByUserWorkspaceId,
+  createdByUserWorkspaceId: 'other',
+  ownerUserWorkspaceId:
+    visibility === ViewVisibility.UNLISTED ? ownerUserWorkspaceId : null,
   deletedAt: null,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
@@ -174,6 +178,7 @@ describe('Metadata private reads', () => {
     module = await Test.createTestingModule({
       providers: [
         ViewService,
+        MinimalMetadataService,
         ...CHILD_SERVICES,
         NavigationMenuItemService,
         MetadataReadPermissionsService,
@@ -188,7 +193,17 @@ describe('Metadata private reads', () => {
           };
         }
         if (token === WorkspaceCacheService) {
-          return { getOrRecompute: jest.fn(async () => roleMaps) };
+          return {
+            getOrRecompute: jest.fn(async () => ({
+              ...maps,
+              ...roleMaps,
+              flatObjectMetadataMaps: makeMaps([]),
+            })),
+            getCacheHashes: jest.fn(async () => ({})),
+          };
+        }
+        if (token === I18nService) {
+          return { getI18nInstance: jest.fn() };
         }
         if (typeof token === 'string' && token.includes('Repository')) {
           return repository;
@@ -289,6 +304,14 @@ describe('Metadata private reads', () => {
             ({ id }) => id,
           ),
         ).toEqual(visibleIds);
+        const minimal = await module
+          .get(MinimalMetadataService)
+          .getMinimalMetadata({
+            workspaceId: WORKSPACE_ID,
+            workspaceCustomApplicationId: 'custom-application',
+            userWorkspaceId: OWNER_ID,
+          });
+        expect(minimal.views.map(({ id }) => id)).toEqual(visibleIds);
         const page = await viewService.findManyWithRelationsPaginated({
           workspaceId: WORKSPACE_ID,
           pagination: { limit: 1, direction: 'forward' },
@@ -504,31 +527,154 @@ describe('Metadata private reads', () => {
     );
   });
 
-  it('uses effective visibility when an application view has an override', async () => {
+  it('uses base visibility even when stale overrides remain', async () => {
     const sharedView = maps.flatViewMaps.byUniversalIdentifier[SHARED_VIEW_ID];
+    const privateView =
+      maps.flatViewMaps.byUniversalIdentifier[PRIVATE_VIEW_ID];
     sharedView.overrides = {
       '20202020-aaaa-4aaa-8aaa-000000000001': {
         visibility: ViewVisibility.UNLISTED,
       },
-    };
+    } as unknown as FlatView['overrides'];
+    privateView.overrides = {
+      '20202020-aaaa-4aaa-8aaa-000000000001': {
+        visibility: ViewVisibility.WORKSPACE,
+      },
+    } as unknown as FlatView['overrides'];
     try {
       await workspaceAuthContextStorage.run(otherMember, async () => {
         expect(
           await viewService.findById(SHARED_VIEW_ID, WORKSPACE_ID),
-        ).toBeNull();
+        ).toMatchObject({ visibility: ViewVisibility.WORKSPACE });
         expect(
-          await module
-            .get(ViewFieldService)
-            .findById(SHARED_VIEW_ID + '-child', WORKSPACE_ID),
+          await viewService.findById(PRIVATE_VIEW_ID, WORKSPACE_ID),
         ).toBeNull();
-      });
-      await workspaceAuthContextStorage.run(owner, async () => {
-        expect(
-          await viewService.findById(SHARED_VIEW_ID, WORKSPACE_ID),
-        ).toMatchObject({ visibility: ViewVisibility.UNLISTED });
       });
     } finally {
       sharedView.overrides = null;
+      privateView.overrides = null;
+    }
+  });
+
+  it.each([
+    ['owner', owner, [PRIVATE_VIEW_ID]],
+    ['creator', otherMember, []],
+    ['admin', admin, []],
+    ['API key', apiKey, []],
+    ['application', applicationContext, []],
+    ['owner through application', ownerThroughApplication, [PRIVATE_VIEW_ID]],
+    ['system', { type: 'system', workspace: owner.workspace }, []],
+  ] as const)(
+    'separates shared and own-private families for %s',
+    async (_name, authContext, privateIds) => {
+      const service = module.get(MetadataReadPermissionsService);
+      const context = { workspaceId: WORKSPACE_ID, authContext };
+      const shared = await service.getSharedViewReadPredicate(context);
+      const ownPrivate = await service.getOwnPrivateViewReadPredicate(context);
+      const flatViews = views as unknown as FlatView[];
+
+      expect(flatViews.filter(shared).map(({ id }) => id)).toEqual([
+        SHARED_VIEW_ID,
+      ]);
+      expect(flatViews.filter(ownPrivate).map(({ id }) => id)).toEqual(
+        privateIds,
+      );
+    },
+  );
+
+  it.each([
+    'getSharedViewReadPredicate',
+    'getOwnPrivateViewReadPredicate',
+  ] as const)(
+    '%s preserves authentication, workspace and application gates',
+    async (method) => {
+      const service = module.get(MetadataReadPermissionsService);
+      await expect(
+        service[method]({ workspaceId: WORKSPACE_ID, authContext: undefined }),
+      ).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
+      await expect(
+        service[method]({ workspaceId: 'other-workspace', authContext: owner }),
+      ).rejects.toMatchObject({
+        code: 'WORKSPACE_ID_ROLE_USER_WORKSPACE_MISMATCH',
+      });
+      await expect(
+        service[method]({
+          workspaceId: WORKSPACE_ID,
+          authContext: makeUserContext('removed'),
+        }),
+      ).rejects.toMatchObject({ code: 'PERMISSION_DENIED' });
+      const predicate = await service[method]({
+        workspaceId: WORKSPACE_ID,
+        authContext: {
+          ...owner,
+          application: { ...application, id: 'other-application' },
+        } as WorkspaceAuthContext,
+      });
+      expect((views as unknown as FlatView[]).filter(predicate)).toEqual([]);
+    },
+  );
+
+  it('rejects children linked from a root with a different actual parent', async () => {
+    const sharedView = maps.flatViewMaps.byUniversalIdentifier[SHARED_VIEW_ID];
+    const properties = [
+      'viewFieldIds',
+      'viewFieldGroupIds',
+      'viewFilterIds',
+      'viewFilterGroupIds',
+      'viewGroupIds',
+      'viewSortIds',
+    ] as const;
+    for (const property of properties) {
+      sharedView[property].push(PRIVATE_VIEW_ID + '-child');
+    }
+    try {
+      await workspaceAuthContextStorage.run(owner, async () => {
+        const view = await viewService.findByIdWithRelations(
+          SHARED_VIEW_ID,
+          WORKSPACE_ID,
+        );
+        for (const property of [
+          'viewFields',
+          'viewFieldGroups',
+          'viewFilters',
+          'viewFilterGroups',
+          'viewGroups',
+          'viewSorts',
+        ] as const) {
+          expect(view?.[property]?.map(({ id }) => id)).toEqual([
+            SHARED_VIEW_ID + '-child',
+          ]);
+        }
+      });
+    } finally {
+      for (const property of properties) {
+        sharedView[property].pop();
+      }
+    }
+  });
+
+  it('rejects children from another workspace in the relation assembly', async () => {
+    const sharedChild = children[1];
+    sharedChild.workspaceId = 'other-workspace';
+    try {
+      await workspaceAuthContextStorage.run(owner, async () => {
+        const view = await viewService.findByIdWithRelations(
+          SHARED_VIEW_ID,
+          WORKSPACE_ID,
+        );
+        for (const property of [
+          'viewFields',
+          'viewFieldGroups',
+          'viewFilters',
+          'viewFilterGroups',
+          'viewGroups',
+          'viewSorts',
+        ] as const) {
+          expect(view?.[property]).toEqual([]);
+        }
+      });
+    } finally {
+      sharedChild.workspaceId = WORKSPACE_ID;
     }
   });
 

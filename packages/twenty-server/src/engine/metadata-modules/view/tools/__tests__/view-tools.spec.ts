@@ -733,6 +733,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          ownerUserWorkspaceId: mockUserWorkspaceId,
           createdByUserWorkspaceId: mockUserWorkspaceId,
         };
         const updatedView = {
@@ -784,7 +785,8 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
-          createdByUserWorkspaceId: mockUserWorkspaceId,
+          ownerUserWorkspaceId: mockUserWorkspaceId,
+          createdByUserWorkspaceId: 'original-creator',
         };
 
         viewService.findByIdForPermissionCheck.mockResolvedValue(
@@ -812,6 +814,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          ownerUserWorkspaceId: 'other-user-workspace-id',
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -836,31 +839,35 @@ describe('View tools', () => {
         expect(result).toMatchObject({ name: 'Updated Name' });
       });
 
-      it('should reject updating another users unlisted view without the Views permission', async () => {
-        settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
+      it.each(['other-user-workspace-id', null])(
+        'rejects creator-only editing when the stored owner is %s and VIEWS is absent',
+        async (ownerUserWorkspaceId) => {
+          settingPermissionsService.hasPermissionFlag.mockResolvedValue(false);
 
-        const existingView = {
-          ...mockView,
-          visibility: ViewVisibility.UNLISTED,
-          createdByUserWorkspaceId: 'other-user-workspace-id',
-        };
+          const existingView = {
+            ...mockView,
+            visibility: ViewVisibility.UNLISTED,
+            ownerUserWorkspaceId,
+            createdByUserWorkspaceId: mockUserWorkspaceId,
+          };
 
-        viewService.findByIdForPermissionCheck.mockResolvedValue(
-          existingView as any,
-        );
+          viewService.findByIdForPermissionCheck.mockResolvedValue(
+            existingView as any,
+          );
 
-        const tools = buildViewTools({
-          workspaceId: mockWorkspaceId,
-          userWorkspaceId: mockUserWorkspaceId,
-        });
+          const tools = buildViewTools({
+            workspaceId: mockWorkspaceId,
+            userWorkspaceId: mockUserWorkspaceId,
+          });
 
-        await expect(
-          tools.update_view.execute({
-            id: mockViewId,
-            name: 'Updated Name',
-          }),
-        ).rejects.toThrow('You do not have permission to modify this view');
-      });
+          await expect(
+            tools.update_view.execute({
+              id: mockViewId,
+              name: 'Updated Name',
+            }),
+          ).rejects.toThrow('You do not have permission to modify this view');
+        },
+      );
 
       it('should throw error when view not found', async () => {
         viewService.findByIdForPermissionCheck.mockResolvedValue(null);
@@ -1146,6 +1153,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          ownerUserWorkspaceId: 'other-user-workspace-id',
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -1228,6 +1236,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          ownerUserWorkspaceId: 'other-user-workspace-id',
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -1253,6 +1262,7 @@ describe('View tools', () => {
         viewService.findByIdForPermissionCheck.mockResolvedValue({
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          ownerUserWorkspaceId: mockUserWorkspaceId,
           createdByUserWorkspaceId: mockUserWorkspaceId,
         } as any);
         viewSortService.updateOne.mockResolvedValue({
@@ -1293,6 +1303,7 @@ describe('View tools', () => {
         viewService.findByIdForPermissionCheck.mockResolvedValue({
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          ownerUserWorkspaceId: 'other-user-workspace-id',
           createdByUserWorkspaceId: 'other-user-workspace-id',
         } as any);
 
@@ -1341,6 +1352,7 @@ describe('View tools', () => {
                   ...mockView,
                   id: mockOtherUsersViewId,
                   visibility: ViewVisibility.UNLISTED,
+                  ownerUserWorkspaceId: 'other-user-workspace-id',
                   createdByUserWorkspaceId: 'other-user-workspace-id',
                 } as any),
         );

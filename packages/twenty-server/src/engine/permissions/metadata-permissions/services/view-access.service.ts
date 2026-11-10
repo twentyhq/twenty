@@ -140,14 +140,14 @@ export class ViewAccessService {
     accessContext,
     nextVisibility,
   }: {
-    view: Pick<ViewDTO, 'visibility' | 'createdByUserWorkspaceId'>;
+    view: Pick<ViewDTO, 'visibility' | 'ownerUserWorkspaceId'>;
     accessContext: ViewAccessContext;
     nextVisibility?: ViewVisibility;
   }): Promise<void> {
     const isOwnUnlistedView =
       view.visibility === ViewVisibility.UNLISTED &&
       isDefined(accessContext.userWorkspaceId) &&
-      view.createdByUserWorkspaceId === accessContext.userWorkspaceId;
+      view.ownerUserWorkspaceId === accessContext.userWorkspaceId;
 
     // Publishing an unlisted view creates a workspace view, so it needs VIEWS
     const isStayingUnlisted =

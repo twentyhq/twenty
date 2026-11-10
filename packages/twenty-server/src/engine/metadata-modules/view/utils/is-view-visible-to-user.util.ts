@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const isViewVisibleToUser = (
   view: {
     visibility: ViewVisibility;
-    createdByUserWorkspaceId?: string | null;
+    ownerUserWorkspaceId?: string | null;
   },
   userWorkspaceId?: string,
 ): boolean => {
@@ -15,6 +15,6 @@ export const isViewVisibleToUser = (
   return (
     view.visibility === ViewVisibility.UNLISTED &&
     isDefined(userWorkspaceId) &&
-    view.createdByUserWorkspaceId === userWorkspaceId
+    view.ownerUserWorkspaceId === userWorkspaceId
   );
 };

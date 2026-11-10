@@ -500,42 +500,72 @@ export class ViewService {
         flatEntityIds: flatView.viewFieldIds,
         flatEntityMaps: flatViewFieldMaps,
       })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .filter(
+          (flatEntity) =>
+            flatEntity.deletedAt === null &&
+            flatEntity.viewId === flatView.id &&
+            flatEntity.workspaceId === workspaceId,
+        )
         .map(fromFlatViewFieldToViewFieldDto);
 
       viewDto.viewFieldGroups = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewFieldGroupIds,
         flatEntityMaps: flatViewFieldGroupMaps,
       })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .filter(
+          (flatEntity) =>
+            flatEntity.deletedAt === null &&
+            flatEntity.viewId === flatView.id &&
+            flatEntity.workspaceId === workspaceId,
+        )
         .map(fromFlatViewFieldGroupToViewFieldGroupDto);
 
       viewDto.viewFilters = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewFilterIds,
         flatEntityMaps: flatViewFilterMaps,
       })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .filter(
+          (flatEntity) =>
+            flatEntity.deletedAt === null &&
+            flatEntity.viewId === flatView.id &&
+            flatEntity.workspaceId === workspaceId,
+        )
         .map(fromFlatViewFilterToViewFilterDto);
 
       viewDto.viewFilterGroups = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewFilterGroupIds,
         flatEntityMaps: flatViewFilterGroupMaps,
       })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .filter(
+          (flatEntity) =>
+            flatEntity.deletedAt === null &&
+            flatEntity.viewId === flatView.id &&
+            flatEntity.workspaceId === workspaceId,
+        )
         .map(fromFlatViewFilterGroupToViewFilterGroupDto);
 
       viewDto.viewSorts = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewSortIds,
         flatEntityMaps: flatViewSortMaps,
       })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .filter(
+          (flatEntity) =>
+            flatEntity.deletedAt === null &&
+            flatEntity.viewId === flatView.id &&
+            flatEntity.workspaceId === workspaceId,
+        )
         .map(fromFlatViewSortToViewSortDto);
 
       viewDto.viewGroups = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewGroupIds,
         flatEntityMaps: flatViewGroupMaps,
       })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .filter(
+          (flatEntity) =>
+            flatEntity.deletedAt === null &&
+            flatEntity.viewId === flatView.id &&
+            flatEntity.workspaceId === workspaceId,
+        )
         .map(fromFlatViewGroupToViewGroupDto);
 
       return viewDto;

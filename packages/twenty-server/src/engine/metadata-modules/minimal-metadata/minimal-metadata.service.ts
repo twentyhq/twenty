@@ -5,9 +5,10 @@ import {
   type AllMetadataName,
 } from 'twenty-shared/metadata';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { MetadataReadPermissionsService } from 'src/engine/permissions/metadata-permissions/services/metadata-read-permissions.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/collection-hash.dto';
@@ -40,12 +41,12 @@ export class MinimalMetadataService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly i18nService: I18nService,
+    private readonly metadataReadPermissionsService: MetadataReadPermissionsService,
   ) {}
 
   async getMinimalMetadata({
     workspaceId,
     workspaceCustomApplicationId,
-    userWorkspaceId,
     locale,
   }: {
     workspaceId: string;
@@ -53,6 +54,12 @@ export class MinimalMetadataService {
     userWorkspaceId?: string;
     locale?: string;
   }): Promise<MinimalMetadataDTO> {
+    const canReadView =
+      await this.metadataReadPermissionsService.getViewReadPredicate({
+        workspaceId,
+        authContext: workspaceAuthContextStorage.getStore(),
+      });
+
     const [
       { flatObjectMetadataMaps, flatViewMaps, flatApplicationMaps },
       cacheHashes,
@@ -161,15 +168,7 @@ export class MinimalMetadataService {
       flatViewMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((flatView) => flatView.workspaceId === workspaceId)
-      .filter((flatView) => flatView.deletedAt === null)
-      .filter(
-        (flatView) =>
-          flatView.visibility === ViewVisibility.WORKSPACE ||
-          (flatView.visibility === ViewVisibility.UNLISTED &&
-            isDefined(userWorkspaceId) &&
-            flatView.createdByUserWorkspaceId === userWorkspaceId),
-      )
+      .filter(canReadView)
       .map((flatView) => ({
         id: flatView.id,
         type: flatView.type,

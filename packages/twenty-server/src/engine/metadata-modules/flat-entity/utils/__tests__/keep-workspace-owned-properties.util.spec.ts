@@ -139,6 +139,31 @@ describe('keepWorkspaceOwnedProperties', () => {
     },
   );
 
+  it('preserves workspace visibility and owner together during application synchronization', () => {
+    const shippedView = {
+      name: 'Updated name',
+      visibility: 'WORKSPACE',
+      ownerUserWorkspaceId: null,
+    };
+    const workspaceView = {
+      name: 'Old name',
+      visibility: 'UNLISTED',
+      ownerUserWorkspaceId: 'owner',
+    };
+    const result = keepWorkspaceOwnedProperties({
+      metadataName: 'view',
+      fromFlatEntityMaps: { byUniversalIdentifier: { view: workspaceView } },
+      toFlatEntityMaps: { byUniversalIdentifier: { view: shippedView } },
+    });
+
+    expect(result.byUniversalIdentifier.view).toEqual({
+      ...shippedView,
+      visibility: 'UNLISTED',
+      ownerUserWorkspaceId: 'owner',
+    });
+    expect(shippedView.visibility).toBe('WORKSPACE');
+  });
+
   it('should keep the shipped icon when an agent chat channel has none', () => {
     const shippedChannel = {
       universalIdentifier: 'channel-universal-identifier',

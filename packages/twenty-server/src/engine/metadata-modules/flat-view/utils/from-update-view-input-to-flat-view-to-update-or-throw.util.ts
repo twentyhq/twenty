@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
+import { ViewVisibility } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -218,15 +219,17 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     flatViewToUpdate.universalOverrides = null;
   }
 
-  // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
-  // This prevents the view from disappearing for the user making the change
-  if (
-    isDefined(rawUpdateViewInput.visibility) &&
-    rawUpdateViewInput.visibility === 'UNLISTED' &&
-    existingFlatViewToUpdate.visibility === 'WORKSPACE' &&
-    isDefined(userWorkspaceId)
-  ) {
-    flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
+  if (flatViewToUpdate.visibility === ViewVisibility.WORKSPACE) {
+    flatViewToUpdate.ownerUserWorkspaceId = null;
+  } else if (existingFlatViewToUpdate.visibility === ViewVisibility.WORKSPACE) {
+    if (!isDefined(userWorkspaceId)) {
+      throw new ViewException(
+        'A private view requires an owner',
+        ViewExceptionCode.INVALID_VIEW_DATA,
+      );
+    }
+
+    flatViewToUpdate.ownerUserWorkspaceId = userWorkspaceId;
   }
 
   const effectiveExistingFlatView = resolveEffectiveFlatEntity({

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -10,7 +11,6 @@ import {
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import {
   PermissionsException,
@@ -37,17 +37,28 @@ export class MetadataReadPermissionsService {
       (access.isSystem
         ? view.deletedAt === null
         : isViewAvailableToUser({
-            flatView: {
-              deletedAt: view.deletedAt,
-              createdByUserWorkspaceId: view.createdByUserWorkspaceId,
-              visibility: resolveEffectiveFlatEntityProperty({
-                metadataName: 'view',
-                flatEntity: view,
-                property: 'visibility',
-              }),
-            },
+            flatView: view,
             userWorkspaceId: access.userWorkspaceId,
           }));
+  }
+
+  async getSharedViewReadPredicate(context: MetadataReadContext) {
+    const canReadView = await this.getViewReadPredicate(context);
+
+    return (view: FlatView): boolean =>
+      view.visibility === ViewVisibility.WORKSPACE && canReadView(view);
+  }
+
+  async getOwnPrivateViewReadPredicate(context: MetadataReadContext) {
+    const access = await this.resolveReadAccess(context);
+
+    return (view: FlatView): boolean =>
+      access.canReachMetadata(view) &&
+      view.visibility === ViewVisibility.UNLISTED &&
+      isViewAvailableToUser({
+        flatView: view,
+        userWorkspaceId: access.userWorkspaceId,
+      });
   }
 
   async getNavigationMenuItemReadPredicate(context: MetadataReadContext) {

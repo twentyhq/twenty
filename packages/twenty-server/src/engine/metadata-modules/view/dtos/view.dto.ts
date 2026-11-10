@@ -146,6 +146,9 @@ export class ViewDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   createdByUserWorkspaceId?: string | null;
 
+  @HideField()
+  ownerUserWorkspaceId?: string | null;
+
   @Field(() => Boolean, { nullable: false })
   isActive: boolean;
 

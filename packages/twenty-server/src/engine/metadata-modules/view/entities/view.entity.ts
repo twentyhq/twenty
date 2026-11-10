@@ -59,7 +59,6 @@ export type ViewOverrides = {
   calendarLayout?: ViewCalendarLayout | null;
   calendarFieldMetadataId?: SerializedRelation | null;
   calendarEndFieldMetadataId?: SerializedRelation | null;
-  visibility?: ViewVisibility;
   mainGroupByFieldMetadataId?: SerializedRelation | null;
   shouldHideEmptyGroups?: boolean;
   shouldDisplayGroupsAsTabs?: boolean;

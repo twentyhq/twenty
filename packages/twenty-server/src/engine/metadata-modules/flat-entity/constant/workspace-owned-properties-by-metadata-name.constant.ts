@@ -12,6 +12,6 @@ export const WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME: Partial<{
   mcpServer: ['isActive'],
   pageLayout: ['isFirstTabPinned'],
   role: ['canBeAssignedToApplications'],
-  view: ['createdByUserWorkspaceId', 'ownerUserWorkspaceId'],
+  view: ['createdByUserWorkspaceId', 'ownerUserWorkspaceId', 'visibility'],
   workflow: ['createdByUserWorkspaceId', 'workspaceWorkflowId', 'visibility'],
 };
