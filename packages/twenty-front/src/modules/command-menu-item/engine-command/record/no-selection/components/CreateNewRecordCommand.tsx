@@ -12,6 +12,7 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 export const CreateNewRecordCommand = () => {
   const {
     objectMetadataItem: contextObjectMetadataItem,
+    coreObjectName,
     recordIndexId,
     hasAnySoftDeleteFilterOnView,
     creationTargetObjectMetadataId,
@@ -23,6 +24,13 @@ export const CreateNewRecordCommand = () => {
       )
     : contextObjectMetadataItem;
   const { createCoreWorkflow } = useCreateCoreWorkflow();
+
+  if (
+    coreObjectName === 'workflow' &&
+    !isDefined(creationTargetObjectMetadataId)
+  ) {
+    return <HeadlessEngineCommandWrapperEffect execute={createCoreWorkflow} />;
+  }
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error(

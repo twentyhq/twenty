@@ -39,7 +39,7 @@ export const MessageThreadWidget = ({
 
   useSubscribeToMessageThreadMessages({
     messageThreadId: targetRecord.id,
-    loadedMessageCount: messages.length,
+    loadedMessageIds: messages.map(({ id }) => id),
     refetchMessages,
   });
 
