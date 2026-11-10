@@ -42,7 +42,6 @@ export const useGettingStartedTrial = () => {
     : undefined;
 
   return {
-    trialEnd,
     formattedTrialEnd:
       isCountdownVisible && isDefined(trialEnd)
         ? formatDateISOStringToCustomUnicodeFormat({
