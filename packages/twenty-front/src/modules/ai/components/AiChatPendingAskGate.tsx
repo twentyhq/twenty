@@ -5,8 +5,10 @@ import { CountPager } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
+import { AiChatRecordCreationApprovalDeck } from '@/ai/components/AiChatRecordCreationApprovalDeck';
 import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { isAgentChatPendingRecordCreation } from '@/ai/utils/isAgentChatPendingRecordCreation';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledGate = styled.div`
@@ -49,11 +51,34 @@ export const AiChatPendingAskGate = ({
     batchToolCallIds: [],
   });
 
+  const [answeringToolCallIds, setAnsweringToolCallIds] = useState<string[]>(
+    [],
+  );
+
   if (pendingToolCalls.length === 0) {
     return children;
   }
 
   const requestCount = pendingToolCalls.length;
+  const pendingRecordCreations = pendingToolCalls.filter(
+    isAgentChatPendingRecordCreation,
+  );
+  // the deck stays while its last calls are being answered, so they cannot be answered twice
+  const isReviewingRecordCreations =
+    pendingRecordCreations.length === requestCount &&
+    (requestCount > 1 ||
+      answeringToolCallIds.includes(pendingToolCalls[0].toolCallId));
+
+  if (isReviewingRecordCreations) {
+    return (
+      <AiChatRecordCreationApprovalDeck
+        recordCreations={pendingRecordCreations}
+        answeringToolCallIds={answeringToolCallIds}
+        onAnsweringToolCallIdsChange={setAnsweringToolCallIds}
+      />
+    );
+  }
+
   const selectedIndex = pendingToolCalls.findIndex(
     (pendingToolCall) => pendingToolCall.toolCallId === selection.toolCallId,
   );

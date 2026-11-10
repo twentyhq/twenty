@@ -3,9 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
-import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { AiChatToolCallApprovalFieldDisplay } from '@/ai/components/internal/AiChatToolCallApprovalFieldDisplay';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
@@ -52,21 +50,11 @@ export const AiChatToolCallApprovalCurrentValue = ({
       {isFieldValueEmpty({ fieldDefinition, fieldValue }) ? (
         t`Empty`
       ) : (
-        <FieldContextProvider
+        <AiChatToolCallApprovalFieldDisplay
           objectNameSingular={objectNameSingular}
-          objectRecordId={recordId}
-          fieldMetadataName={fieldName}
-          fieldPosition={0}
-          showLabel={false}
-        >
-          <RecordFieldComponentInstanceContext.Provider
-            value={{
-              instanceId: `ai-chat-tool-call-approval-${recordId}-${fieldName}`,
-            }}
-          >
-            <FieldDisplay />
-          </RecordFieldComponentInstanceContext.Provider>
-        </FieldContextProvider>
+          recordId={recordId}
+          fieldDefinition={fieldDefinition}
+        />
       )}
     </StyledCurrentValue>
   );
