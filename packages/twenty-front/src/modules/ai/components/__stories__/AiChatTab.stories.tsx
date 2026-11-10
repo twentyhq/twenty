@@ -15,6 +15,8 @@ import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
@@ -311,5 +313,50 @@ export const WorkspaceSetupCompletion: Story = {
       ).not.toBeInTheDocument(),
     );
     await expect(canvas.getByRole('textbox')).toBeVisible();
+  },
+};
+
+const setTypingWorkspaceMemberIds = (workspaceMemberIds: string[]) =>
+  jotaiStore.set(
+    agentChatTypingWorkspaceMemberIdsFamilyState.atomFamily({
+      threadId: jotaiStore.get(newAiChatThreadIdState.atom),
+    }),
+    workspaceMemberIds,
+  );
+
+export const MemberTyping: Story = {
+  ...FullPageNewChat,
+  beforeEach: () => {
+    initializeNewAiChatStory({ isInboxEnabled: true });
+    setTypingWorkspaceMemberIds(
+      jotaiStore
+        .get(currentWorkspaceMembersState.atom)
+        .filter(({ name }) => name.firstName === 'Jane')
+        .map(({ id }) => id),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Jane Doe is typing…')).toBeVisible();
+
+    setTypingWorkspaceMemberIds([]);
+
+    await waitFor(() =>
+      expect(canvas.queryByText('Jane Doe is typing…')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const MemberTypingInSidePanel: Story = {
+  ...MemberTyping,
+  parameters: {
+    ...newChatParameters,
+    container: { width: 400, height: 784 },
+  },
+  play: async ({ canvasElement }) => {
+    await expect(
+      await within(canvasElement).findByText('Jane Doe is typing…'),
+    ).toBeVisible();
   },
 };
