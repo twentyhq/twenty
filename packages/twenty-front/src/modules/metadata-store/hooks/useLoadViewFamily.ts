@@ -71,6 +71,7 @@ export const useLoadViewFamily = () => {
   }, [client]);
 
   const refreshViewFamilyHint = useCallback(async () => {
+    const refreshEpoch = store.get(viewFamilyLoadEpochState.atom);
     const result = await client.query<FindMinimalMetadataQuery>({
       query: FIND_MINIMAL_METADATA,
       fetchPolicy: 'network-only',
@@ -80,7 +81,9 @@ export const useLoadViewFamily = () => {
       result.data?.minimalMetadata.collectionHashes,
     );
 
-    store.set(viewFamilyHintState.atom, hint);
+    if (store.get(viewFamilyLoadEpochState.atom) === refreshEpoch) {
+      store.set(viewFamilyHintState.atom, hint);
+    }
 
     return hint;
   }, [client, store]);

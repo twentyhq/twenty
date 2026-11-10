@@ -6,6 +6,7 @@ import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadata
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { removedViewIdsState } from '@/metadata-store/states/removedViewIdsState';
+import { viewFamilyHintState } from '@/metadata-store/states/viewFamilyHintState';
 import { viewFamilyLoadEpochState } from '@/metadata-store/states/viewFamilyLoadEpochState';
 import { type FlatPageLayoutWidget } from '@/metadata-store/types/FlatPageLayoutWidget';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
@@ -100,6 +101,7 @@ export const MetadataStoreSSEEffect = () => {
 
     if (isSplitModeActive) {
       store.set(viewFamilyLoadEpochState.atom, (epoch) => epoch + 1);
+      store.set(viewFamilyHintState.atom, undefined);
     }
 
     const { operation } = eventDetail;
