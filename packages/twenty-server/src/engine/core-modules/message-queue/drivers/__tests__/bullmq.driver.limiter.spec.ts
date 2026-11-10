@@ -94,6 +94,7 @@ describe('BullMQDriver limiter', () => {
       isGroupLimiterEnabled: true,
     });
     const jobIds = ['job-1', 'job-2', 'job-3'];
+    const firstEnqueuedAt = Date.now();
 
     await harness.enqueueBulk({
       labels: buildLabels({ prefix: 'H', count: 3 }),
@@ -117,9 +118,13 @@ describe('BullMQDriver limiter', () => {
       limiter: LIMITER,
     });
 
+    // Redis TIME is the real clock, so the remaining delay shrinks while the test runs.
+    const elapsedMs = Date.now() - firstEnqueuedAt;
+    const freshJobDelay = harness.readDelay({ label: 'F1' }) ?? 0;
+
     expect(harness.readDelay({ label: 'H3' })).toBe(500);
-    expect(harness.readDelay({ label: 'F1' })).toBeGreaterThan(900);
-    expect(harness.readDelay({ label: 'F1' })).toBeLessThanOrEqual(1_000);
+    expect(freshJobDelay).toBeGreaterThan(900 - elapsedMs);
+    expect(freshJobDelay).toBeLessThanOrEqual(1_000);
   });
 
   it('only dedupes paced jobs against the delayed set', async () => {
