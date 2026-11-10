@@ -99,6 +99,41 @@ describe('keepWorkspaceOwnedProperties', () => {
     });
   });
 
+  it('should preserve an explicitly cleared workspace-owned value', () => {
+    const workspaceView = {
+      universalIdentifier: 'view-universal-identifier',
+      name: 'All Companies',
+      createdByUserWorkspaceId: null,
+    };
+    const shippedView = {
+      ...workspaceView,
+      name: 'Companies',
+      createdByUserWorkspaceId: 'application-default-user-workspace-id',
+    };
+
+    const result = keepWorkspaceOwnedProperties({
+      metadataName: 'view',
+      fromFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'view-universal-identifier': workspaceView,
+        },
+      },
+      toFlatEntityMaps: {
+        byUniversalIdentifier: {
+          'view-universal-identifier': shippedView,
+        },
+      },
+    });
+
+    expect(result.byUniversalIdentifier['view-universal-identifier']).toEqual({
+      ...shippedView,
+      createdByUserWorkspaceId: null,
+    });
+    expect(shippedView.createdByUserWorkspaceId).toBe(
+      'application-default-user-workspace-id',
+    );
+  });
+
   it('should return the standard entities untouched for a metadata without workspace-owned properties', () => {
     const toFlatEntityMaps = {
       byUniversalIdentifier: {
