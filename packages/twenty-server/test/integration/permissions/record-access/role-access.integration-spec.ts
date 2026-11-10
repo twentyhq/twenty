@@ -5,8 +5,8 @@ import {
 } from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 
 const REACHES_EVERY_OPERATION: PermissionTestExpectedAnswers = {
   findRecordsActions: {
@@ -258,8 +258,8 @@ describePermissionTestWorkspace({
           findWorkspace();
         const recordsQuestion = {
           principals:
-            await getAppProviderByClassName<PrincipalPermissionsService>(
-              'PrincipalPermissionsService',
+            await getAppProviderByClassName<PrincipalPermissionsReadService>(
+              'PrincipalPermissionsReadService',
             ).resolvePermissionsPrincipals({
               authContext: {
                 type: 'webhook',
@@ -270,19 +270,19 @@ describePermissionTestWorkspace({
           objectMetadataId,
           recordIds: [recordIds.insideEveryFilter],
         };
-        const recordPermissionsService =
-          getAppProviderByClassName<RecordPermissionsService>(
-            'RecordPermissionsService',
+        const recordPermissionsReadService =
+          getAppProviderByClassName<RecordPermissionsReadService>(
+            'RecordPermissionsReadService',
           );
 
         expect(
-          await recordPermissionsService.canAccessKnownRecords({
+          await recordPermissionsReadService.canAccessRecords({
             ...recordsQuestion,
             operationType: 'read',
           }),
         ).toBe(true);
         expect(
-          await recordPermissionsService.canAccessKnownRecords({
+          await recordPermissionsReadService.canAccessRecords({
             ...recordsQuestion,
             operationType: 'update',
           }),
@@ -295,8 +295,8 @@ describePermissionTestWorkspace({
         const { workspaceId, roleIds, objectMetadataId } = findWorkspace();
 
         const roleIdsUnableToRead =
-          await getAppProviderByClassName<RecordPermissionsService>(
-            'RecordPermissionsService',
+          await getAppProviderByClassName<RecordPermissionsReadService>(
+            'RecordPermissionsReadService',
           ).filterRoleIdsWithoutReadAccess({
             workspaceId,
             roleIds: [roleIds.none, roleIds.rowLevel, roleIds.allRecords],

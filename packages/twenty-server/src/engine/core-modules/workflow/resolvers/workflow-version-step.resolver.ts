@@ -26,6 +26,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-handle.dto';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -198,6 +199,9 @@ export class WorkflowVersionStepResolver {
   @UseGuards(AccessPolicyGuard(WORKFLOW_VERSION_STEP_ACCESS_POLICY))
   async testHttpRequest(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() { id: userId }: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @Args('input')
     { url, method, headers, body }: TestHttpRequestInput,
   ): Promise<TestHttpRequestDTO> {
@@ -208,7 +212,13 @@ export class WorkflowVersionStepResolver {
         headers,
         body,
       },
-      { workspaceId: workspace.id },
+      {
+        workspaceId: workspace.id,
+        userId,
+        userWorkspaceId,
+        workspaceMemberId,
+        outboundRequestSource: 'workflow-http-test',
+      },
     );
   }
 

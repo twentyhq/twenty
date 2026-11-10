@@ -21,6 +21,7 @@ type WorkflowActionStepType =
   | 'CREATE_RECORD'
   | 'UPDATE_RECORD'
   | 'CODE'
+  | 'HTTP_REQUEST'
   | 'MCP_TOOL';
 
 export type WorkflowActionStepRun = {

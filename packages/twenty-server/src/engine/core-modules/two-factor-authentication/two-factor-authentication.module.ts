@@ -6,6 +6,8 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { TwoFactorAuthenticationBackupCodeService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service';
+import { TwoFactorAuthenticationEmailService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service';
 import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -34,6 +36,8 @@ import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authe
   ],
   providers: [
     TwoFactorAuthenticationService,
+    TwoFactorAuthenticationBackupCodeService,
+    TwoFactorAuthenticationEmailService,
     TwoFactorAuthenticationRecoveryService,
     TwoFactorAuthenticationResolver,
     provideWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity),

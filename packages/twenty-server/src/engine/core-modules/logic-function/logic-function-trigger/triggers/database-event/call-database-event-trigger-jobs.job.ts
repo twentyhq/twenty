@@ -25,7 +25,7 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
+import { RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -39,7 +39,7 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
-    private readonly recordEventPermissionsService: RecordEventPermissionsService,
+    private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
@@ -93,7 +93,7 @@ export class CallDatabaseEventTriggerJobsJob {
       }
 
       const readableEvents =
-        await this.recordEventPermissionsService.filterReadableEvents({
+        await this.recordEventPermissionsReadService.filterReadableEvents({
           authContext: {
             type: 'application',
             workspace: { id: workspaceEventBatch.workspaceId },

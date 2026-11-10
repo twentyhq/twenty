@@ -255,6 +255,45 @@ describe('convertMarkdownToRichTextDocument', () => {
     ]);
   });
 
+  it('should turn inline br tags into hard breaks', () => {
+    expect(convert('A<br>B<BR/>C<br />D')).toEqual([
+      paragraph(
+        text('A'),
+        { type: 'hardBreak' },
+        text('B'),
+        { type: 'hardBreak' },
+        text('C'),
+        { type: 'hardBreak' },
+        text('D'),
+      ),
+    ]);
+  });
+
+  it('should keep a paragraph holding only a non-breaking space', () => {
+    expect(convert('A\n\n&nbsp;\n\nB')).toEqual([
+      paragraph(text('A')),
+      paragraph(text('\u00A0')),
+      paragraph(text('B')),
+    ]);
+  });
+
+  it('should keep an escaped non-breaking space entity as literal text', () => {
+    expect(convert('\\&nbsp;')).toEqual([paragraph(text('&nbsp;'))]);
+  });
+
+  it('should decode valid html entities in text', () => {
+    expect(convert('AT&T &amp; &#35; &notreal; &amp')).toEqual([
+      paragraph(text('AT&T & # &notreal; &amp')),
+    ]);
+  });
+
+  it('should keep html entities literal in code and raw html', () => {
+    expect(convert('`&amp;`\n\n<div>&amp;</div>')).toEqual([
+      paragraph(text('&amp;', [{ type: 'code' }])),
+      paragraph(text('<div>&amp;</div>')),
+    ]);
+  });
+
   it('should return a single empty paragraph for empty markdown', () => {
     expect(convert('')).toEqual([{ type: 'paragraph' }]);
   });

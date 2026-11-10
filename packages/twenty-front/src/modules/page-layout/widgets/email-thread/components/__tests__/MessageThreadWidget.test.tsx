@@ -34,7 +34,14 @@ jest.mock(
 
 jest.mock(
   '@/page-layout/widgets/email-thread/components/ChatThreadWidgetContent',
-  () => ({ ChatThreadWidgetContent: () => <div>Chat thread</div> }),
+  () => ({
+    ChatThreadWidgetContent: ({ loading }: { loading: boolean }) => (
+      <div>
+        Chat thread
+        {loading && <span>Loading more...</span>}
+      </div>
+    ),
+  }),
 );
 
 jest.mock(
@@ -49,18 +56,27 @@ const renderWidget = () =>
     </I18nProvider>,
   );
 
-const mockThread = ({ threadLoading = false } = {}) =>
+const mockThread = ({
+  threadLoading = false,
+  isFetchingMoreMessages = false,
+} = {}) =>
   mockUseEmailThread.mockReturnValue({
     thread: { id: 'thread-id' },
     messages: [{ id: 'message-id' }],
     fetchMoreMessages: jest.fn(),
     refetchMessages: mockRefetchMessages,
     threadLoading,
+    isFetchingMoreMessages,
   });
 
 const mockChannel = (type: MessageChannelType) =>
   mockUseMessageThreadChannel.mockReturnValue({
-    messageThreadChannel: { type, provider: 'app', applicationId: null },
+    messageThreadChannel: {
+      type,
+      provider: 'app',
+      applicationId: null,
+      conversationStyle: type === MessageChannelType.APP ? 'chat' : 'email',
+    },
     messageThreadChannelLoading: false,
   });
 
@@ -86,7 +102,7 @@ describe('MessageThreadWidget', () => {
     expect(mockUseSubscribeToMessageThreadMessages).toHaveBeenCalledTimes(1);
     expect(mockUseSubscribeToMessageThreadMessages).toHaveBeenCalledWith({
       messageThreadId: 'thread-id',
-      loadedMessageCount: 1,
+      loadedMessageIds: ['message-id'],
       refetchMessages: mockRefetchMessages,
     });
   });
@@ -110,5 +126,23 @@ describe('MessageThreadWidget', () => {
 
     expect(screen.getByText('Chat thread')).toBeInTheDocument();
     expect(screen.queryByText('Loading thread')).not.toBeInTheDocument();
+  });
+
+  it('does not show the fetch-more loader in a chat while messages are refetched', () => {
+    mockThread({ threadLoading: true });
+    mockChannel(MessageChannelType.APP);
+
+    renderWidget();
+
+    expect(screen.queryByText('Loading more...')).not.toBeInTheDocument();
+  });
+
+  it('shows the fetch-more loader in a chat while the next page loads', () => {
+    mockThread({ threadLoading: true, isFetchingMoreMessages: true });
+    mockChannel(MessageChannelType.APP);
+
+    renderWidget();
+
+    expect(screen.getByText('Loading more...')).toBeInTheDocument();
   });
 });

@@ -28,6 +28,7 @@ export const buildRoleAccessGroupsOrThrow = ({
   operationTypes = ALL_OPERATION_TYPES,
   workspaceMembers,
   flatFieldMetadataMaps,
+  isRelationHopEnabled,
 }: {
   roleId: string;
   objectMetadataId: string;
@@ -35,6 +36,7 @@ export const buildRoleAccessGroupsOrThrow = ({
   operationTypes?: ObjectRecordsOperationType[];
   workspaceMembers: RowLevelPermissionWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  isRelationHopEnabled: boolean;
 }): AccessGroupWithoutCompactId[] => {
   const isReachable = operationTypes.some((operationType) =>
     canReachSomeRecords({ objectRecordsPermissions, operationType }),
@@ -58,6 +60,7 @@ export const buildRoleAccessGroupsOrThrow = ({
         objectRecordsPermissions.rowLevelRecordsPermissions,
       rowLevelPermissionPredicateGroupId,
       memberFieldValues,
+      isRelationHopEnabled,
     }),
     roleId,
     objectMetadataId,

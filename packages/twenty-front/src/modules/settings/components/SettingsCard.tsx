@@ -1,12 +1,15 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { type ThemeColor, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
+
+import { SettingsCardIllustration } from '@/settings/components/SettingsCardIllustration';
 
 type SettingsCardProps = {
   description?: string;
@@ -14,6 +17,7 @@ type SettingsCardProps = {
   soon?: boolean;
   Icon: ReactNode;
   iconColor?: string;
+  illustrationColor?: ThemeColor;
   onClick?: () => void;
   to?: string;
   href?: string;
@@ -71,6 +75,24 @@ const StyledDescription = styled.span<{ disabled?: boolean }>`
   padding-left: ${themeCssVariables.spacing[7]};
 `;
 
+const StyledIllustratedLayout = styled.span`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledIllustratedText = styled.span`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
+const StyledIllustratedDescription = styled(StyledDescription)`
+  padding: 0;
+`;
+
 const StyledIconContainer = styled.span<{
   disabled?: boolean;
   iconColor?: string;
@@ -92,6 +114,7 @@ export const SettingsCard = ({
   disabled = soon,
   Icon,
   iconColor,
+  illustrationColor,
   onClick,
   to,
   href,
@@ -122,6 +145,43 @@ export const SettingsCard = ({
     return undefined;
   };
 
+  const titleAndActions = (
+    <>
+      <StyledTitle disabled={disabled}>
+        {title}
+        {soon && <Badge>{t`Soon`}</Badge>}
+      </StyledTitle>
+      {isDefined(Status) && Status}
+      <StyledIconChevronRightContainer>
+        <IconChevronRight size={theme.icon.size.sm} />
+      </StyledIconChevronRightContainer>
+    </>
+  );
+
+  if (isDefined(illustrationColor)) {
+    return (
+      <StyledCardWrapper disabled={disabled} className={className}>
+        <Card.Root fullWidth>
+          <Card.Content render={getContentOwner()}>
+            <StyledIllustratedLayout>
+              <SettingsCardIllustration color={illustrationColor}>
+                {Icon}
+              </SettingsCardIllustration>
+              <StyledIllustratedText>
+                <StyledHeader>{titleAndActions}</StyledHeader>
+                {isNonEmptyString(description) && (
+                  <StyledIllustratedDescription disabled={disabled}>
+                    {description}
+                  </StyledIllustratedDescription>
+                )}
+              </StyledIllustratedText>
+            </StyledIllustratedLayout>
+          </Card.Content>
+        </Card.Root>
+      </StyledCardWrapper>
+    );
+  }
+
   return (
     <StyledCardWrapper disabled={disabled} className={className}>
       <Card.Root fullWidth>
@@ -130,16 +190,9 @@ export const SettingsCard = ({
             <StyledIconContainer disabled={disabled} iconColor={iconColor}>
               {Icon}
             </StyledIconContainer>
-            <StyledTitle disabled={disabled}>
-              {title}
-              {soon && <Badge>{t`Soon`}</Badge>}
-            </StyledTitle>
-            {isDefined(Status) && Status}
-            <StyledIconChevronRightContainer>
-              <IconChevronRight size={theme.icon.size.sm} />
-            </StyledIconChevronRightContainer>
+            {titleAndActions}
           </StyledHeader>
-          {description && (
+          {isNonEmptyString(description) && (
             <StyledDescription disabled={disabled}>
               {description}
             </StyledDescription>

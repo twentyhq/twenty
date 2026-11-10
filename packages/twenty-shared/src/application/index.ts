@@ -212,6 +212,8 @@ export type {
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
 export type { McpServerManifest } from './mcpServerManifestType';
+export type { MessagingProviderConversationStyle } from './messagingProviderConversationStyleType';
+export { MESSAGING_PROVIDER_CONVERSATION_STYLES } from './messagingProviderConversationStyleType';
 export type { MessagingProviderManifest } from './messagingProviderManifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type {
@@ -332,6 +334,7 @@ export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontComponentSourcePath';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';

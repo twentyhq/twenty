@@ -1245,6 +1245,7 @@ exports[`Application export - data model exports the whole application as a stab
       "objectUniversalIdentifier": "<TICKET_OBJECT>",
       "openRecordIn": "SIDE_PANEL",
       "position": 1,
+      "shouldDisplayGroupsAsTabs": false,
       "shouldHideEmptyGroups": false,
       "sorts": [
         {

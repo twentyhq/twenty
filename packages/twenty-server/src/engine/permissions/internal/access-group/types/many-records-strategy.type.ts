@@ -1,4 +1,4 @@
 export type ManyRecordsStrategy =
   | 'accessGroups'
-  | 'plainCondition'
-  | 'degradedCondition';
+  | 'plainSQLCondition'
+  | 'degradedSQLCondition';

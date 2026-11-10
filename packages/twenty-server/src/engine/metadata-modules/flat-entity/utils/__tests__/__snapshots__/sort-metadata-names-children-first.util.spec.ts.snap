@@ -2,8 +2,8 @@
 
 exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with children first (most manyToOne relations first) 1`] = `
 [
-  "rowLevelPermissionPredicate",
   "navigationMenuItem",
+  "rowLevelPermissionPredicate",
   "commandMenuItem",
   "fieldPermission",
   "relatedRecordPath",
@@ -23,7 +23,6 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "rowLevelPermissionPredicateGroup",
   "settingsMenuItem",
   "viewGroup",
-  "agent",
   "applicationVariable",
   "connectionProvider",
   "frontComponent",
@@ -36,9 +35,10 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "viewFieldGroup",
   "viewFilterGroup",
   "webhook",
-  "workflow",
   "workflowVersion",
+  "agent",
   "permissionFlag",
+  "workflow",
   "agentChatChannel",
   "view",
   "fieldMetadata",

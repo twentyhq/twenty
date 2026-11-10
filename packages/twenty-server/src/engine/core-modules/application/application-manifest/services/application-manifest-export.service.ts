@@ -5,6 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatApplicationToApplicationManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-application-to-application-manifest.util';
+import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-export.service';
 import { type ApplicationExport } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { assertFlatApplicationIsExportable } from 'src/engine/core-modules/application/application-manifest/utils/assert-flat-application-is-exportable.util';
 import { classifyApplicationFlatEntities } from 'src/engine/core-modules/application/application-manifest/utils/classify-application-flat-entities.util';
@@ -50,6 +51,7 @@ const findUniversalIdentifierById = ({
 export class ApplicationManifestExportService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationFrontComponentExportService: ApplicationFrontComponentExportService,
     private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
@@ -61,10 +63,12 @@ export class ApplicationManifestExportService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldIncludeDependencies = false,
+    shouldIncludeSourceFiles = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldIncludeDependencies?: boolean;
+    shouldIncludeSourceFiles?: boolean;
   }): Promise<ApplicationExport> {
     const { flatApplicationMaps, ...allFlatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -131,12 +135,32 @@ export class ApplicationManifestExportService {
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
     });
+    const dependencyFiles = shouldIncludeDependencies
+      ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
+          { workspaceId, applicationUniversalIdentifier },
+        )
+      : [];
+    const {
+      frontComponents,
+      files: sourceFiles,
+      coverage: frontComponentsCoverage,
+    } = await this.applicationFrontComponentExportService.exportFrontComponents(
+      {
+        workspaceId,
+        applicationUniversalIdentifier,
+        applicationAllFlatEntityMaps,
+        shouldIncludeSourceFiles,
+      },
+    );
     const {
       pageLayouts,
       pageLayoutTabs,
       pageLayoutWidgets,
       coverage: pageLayoutsCoverage,
     } = reconstructPageLayoutsManifest({
+      exportedFrontComponentUniversalIdentifiers: new Set(
+        frontComponents.map(({ universalIdentifier }) => universalIdentifier),
+      ),
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
@@ -218,7 +242,7 @@ export class ApplicationManifestExportService {
       fields,
       indexes,
       logicFunctions: [],
-      frontComponents: [],
+      frontComponents,
       permissionFlags,
       roles,
       skills,
@@ -252,6 +276,7 @@ export class ApplicationManifestExportService {
         allFlatEntityMaps,
         reconstructedCoverage: [
           ...dataModelCoverage,
+          ...frontComponentsCoverage,
           ...rolesCoverage,
           ...viewsCoverage,
           ...pageLayoutsCoverage,
@@ -263,14 +288,10 @@ export class ApplicationManifestExportService {
           ...relatedRecordPathsCoverage,
         ],
       }),
-      files: shouldIncludeDependencies
-        ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
-            {
-              workspaceId,
-              applicationUniversalIdentifier,
-            },
-          )
-        : [],
+      files: [
+        ...(shouldIncludeDependencies ? dependencyFiles : []),
+        ...sourceFiles,
+      ],
     };
   }
 }

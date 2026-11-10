@@ -2,12 +2,20 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { RecordShareAccessLevel } from 'twenty-shared/types';
+import { msg } from '@lingui/core/macro';
+import {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { hasCreatedByField } from 'src/engine/permissions/internal/record-permission-repository/utils/has-created-by-field.util';
+import { type RecordSharingChange } from 'src/engine/permissions/record-share/types/record-sharing-change.type';
 import { PrivateRecordWriteService } from 'src/engine/permissions/internal/private-record/services/private-record-write.service';
-import { RecordSharePrincipalService } from 'src/engine/permissions/internal/record-share/services/record-share-principal.service';
+import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import {
   PermissionsException,
@@ -15,7 +23,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { RecordSharingChangeService } from 'src/engine/permissions/internal/record-share/services/record-sharing-change.service';
+import { RecordSharingChangeService } from 'src/engine/permissions/record-share/services/record-sharing-change.service';
 import { buildRecordShareInputsForCreatedRecords } from 'src/engine/permissions/internal/record-share/utils/build-record-share-inputs-for-created-records.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util';
@@ -113,7 +121,11 @@ export class RecordSharingWriteService {
   setRecordPrivacy(
     args: RecordSharingArgs & { isPrivate: boolean },
   ): Promise<RecordSharingDTO> {
-    return this.privateRecordWriteService.setRecordPrivacy(args);
+    return this.recordSharingChangeService.runChange({
+      args,
+      write: (change) => this.writeRecordPrivacy({ ...change, args }),
+      requiredCapability: 'canSetRecordPrivacy',
+    });
   }
 
   async assertShareWithOrThrow({
@@ -218,6 +230,90 @@ export class RecordSharingWriteService {
       canShareBeyondRole: objectSharing.canShareBeyondRole,
       principals: shareWith.map(resolveShareWithPrincipalOrThrow),
       recordIds,
+    });
+  }
+
+  private async writeRecordPrivacy({
+    workspaceId,
+    transactionScope,
+    sharingObject: { flatObjectMetadata, isShareable },
+    creatorWorkspaceMemberId,
+    args,
+  }: RecordSharingChange & {
+    args: RecordSharingArgs & { isPrivate: boolean };
+  }): Promise<void> {
+    const { isPrivate } = args;
+
+    if (
+      isPrivate &&
+      !isShareable &&
+      args.authContext.workspaceMemberId !== creatorWorkspaceMemberId
+    ) {
+      throw new NotFoundError('Record not found', {
+        userFriendlyMessage: msg`Record not found`,
+      });
+    }
+
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    await this.privateRecordWriteService.setPrivateOrThrow({
+      workspaceId,
+      objectMetadataId: flatObjectMetadata.id,
+      recordIds: [args.recordId],
+      isPrivate,
+      transactionScope,
+    });
+
+    if (!isPrivate) {
+      if (!hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps })) {
+        return;
+      }
+
+      await this.recordShareStorageService.deleteMatching({
+        workspaceId,
+        transactionScope,
+        criteria: {
+          objectMetadataId: args.objectMetadataId,
+          recordIds: [args.recordId],
+          rowCause: RecordShareRowCause.OWNER,
+        },
+      });
+
+      return;
+    }
+
+    await this.recordShareStorageService.deleteMatching({
+      workspaceId,
+      transactionScope,
+      criteria: {
+        objectMetadataId: args.objectMetadataId,
+        recordIds: [args.recordId],
+        principalType: RecordSharePrincipalType.EVERYONE,
+        rowCause: RecordShareRowCause.MANUAL,
+      },
+    });
+
+    if (args.authContext.workspaceMemberId === creatorWorkspaceMemberId) {
+      return;
+    }
+
+    await this.recordShareStorageService.insertMany({
+      workspaceId,
+      transactionScope,
+      recordShares: [
+        {
+          recordId: args.recordId,
+          objectMetadataId: args.objectMetadataId,
+          principalId: args.authContext.workspaceMemberId,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.OWNER,
+          sourceId: args.recordId,
+        },
+      ],
     });
   }
 }
