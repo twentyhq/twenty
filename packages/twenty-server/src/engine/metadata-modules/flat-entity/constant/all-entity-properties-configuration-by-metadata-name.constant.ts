@@ -766,6 +766,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
+    jobConfig: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -2460,6 +2465,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   workflow: {
+    jobConfig: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     versionDefinitionHash: {
       toCompare: true,
       toStringify: false,
