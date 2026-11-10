@@ -1,15 +1,22 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getTwentySharedOptimizeDepsInclude } from 'twenty-shared/vite';
 
-import twentySharedPackageJson from '../../twenty-shared/package.json';
 import { createAvatarImageFixturePlugin } from '../scripts/front-component-stories/createAvatarImageFixturePlugin';
 
 const dirname =
   typeof __dirname !== 'undefined'
     ? __dirname
     : path.dirname(fileURLToPath(import.meta.url));
+
+const twentySharedPackageJson = JSON.parse(
+  readFileSync(
+    path.resolve(dirname, '../../twenty-shared/package.json'),
+    'utf8',
+  ),
+);
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],

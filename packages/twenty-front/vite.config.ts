@@ -20,11 +20,17 @@ import {
   getTwentySharedOptimizeDepsInclude,
 } from 'twenty-shared/vite';
 
-import twentySharedPackageJson from '../twenty-shared/package.json';
 import {
   API_PROXY_PATHS,
   buildApiProxyMatcher,
 } from './src/config/apiProxyPrefixes';
+
+const twentySharedPackageJson = JSON.parse(
+  fs.readFileSync(
+    path.resolve(__dirname, '../twenty-shared/package.json'),
+    'utf8',
+  ),
+);
 
 const EMOJIBASE_DATA_FILE_NAMES = ['data.json', 'messages.json'];
 
