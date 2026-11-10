@@ -354,6 +354,13 @@ export const MemberTypingInSidePanel: Story = {
     ...newChatParameters,
     container: { width: 400, height: 784 },
   },
+  render: () => (
+    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
+      <Suspense fallback={null}>
+        <AiChatTab />
+      </Suspense>
+    </AiChatSurfaceContext.Provider>
+  ),
   play: async ({ canvasElement }) => {
     await expect(
       await within(canvasElement).findByText('Jane Doe is typing…'),
