@@ -4,7 +4,7 @@ import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/co
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
-export const findFieldsHiddenOnMatchingRecordsByRole = ({
+export const findRlsRuleFieldsByRole = ({
   principals,
   metadataMaps,
   objectMetadataId,

@@ -22,7 +22,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
+import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -1909,13 +1909,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
-      const principals = this.resolvePermissionsPrincipalsOrThrow();
-      const rlsRuleUnreadableFieldsByRole =
-        await this.options.internalContext.recordFieldPermissions.findRlsRuleUnreadableFieldsByRole(
-          { principals, objectMetadataId: tableShape.objectMetadataId },
+      const fieldsHiddenOnMatchingRecords =
+        await this.options.internalContext.recordFieldPermissions.findFieldsHiddenOnMatchingRecords(
+          {
+            principals: this.resolvePermissionsPrincipalsOrThrow(),
+            objectMetadataId: tableShape.objectMetadataId,
+            tableAlias: alias,
+          },
         );
 
-      if (!isNonEmptyArray(rlsRuleUnreadableFieldsByRole)) {
+      if (!isNonEmptyArray(fieldsHiddenOnMatchingRecords)) {
         continue;
       }
 
@@ -1929,9 +1932,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
 
       for (const {
-        roleId,
         fieldMetadataIds,
-      } of rlsRuleUnreadableFieldsByRole) {
+        sqlCondition,
+      } of fieldsHiddenOnMatchingRecords) {
         queryBuilder.nullifyColumnsWhen({
           alias,
           columnNames: columnEntries
@@ -1939,15 +1942,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               fieldMetadataIds.includes(fieldMetadataId),
             )
             .map(([columnName]) => columnName),
-          condition:
-            await this.options.internalContext.recordFieldPermissions.buildRlsRuleSQLConditionOrThrow(
-              {
-                principals,
-                objectMetadataId: tableShape.objectMetadataId,
-                roleId,
-                tableAlias: alias,
-              },
-            ),
+          condition: sqlCondition,
         });
       }
     }

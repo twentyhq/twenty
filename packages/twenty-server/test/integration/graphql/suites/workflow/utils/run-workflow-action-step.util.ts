@@ -20,7 +20,8 @@ type WorkflowActionStepType =
   | 'CREATE_CALENDAR_EVENT'
   | 'CREATE_RECORD'
   | 'UPDATE_RECORD'
-  | 'CODE';
+  | 'CODE'
+  | 'HTTP_REQUEST';
 
 export type WorkflowActionStepRun = {
   status?: WorkflowRunStatusType;

@@ -9,6 +9,7 @@ import {
   type ActionToolId,
 } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
 import { EMAIL_TOOL_APPROVALS } from 'src/engine/core-modules/tool-provider/constants/email-tool-approvals.constant';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -268,8 +269,13 @@ export class ActionToolProvider implements ToolProvider {
       workspaceId: context.workspaceId,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
+      workspaceMemberId:
+        isDefined(context.authContext) && isUserAuthContext(context.authContext)
+          ? context.authContext.workspaceMemberId
+          : undefined,
       agentId: context.agentId,
       threadId: context.threadId,
+      outboundRequestSource: 'ai-http-tool',
       authContext: context.authContext,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     });

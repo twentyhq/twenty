@@ -202,14 +202,9 @@ export const GettingStartedStepStack = ({
   );
   const selectedStepDefinition = steps[selectedStepIndex];
   const { previousStepActionKey, nextStepActionKey } =
-    getGettingStartedAdjacentSteps({
-      steps,
-      completedStepActionKeys,
-      selectedStepActionKey,
-    });
+    getGettingStartedAdjacentSteps({ steps, selectedStepActionKey });
   const stackedStepDefinitions = getGettingStartedStackedSteps({
     steps,
-    completedStepActionKeys,
     selectedStepActionKey,
   });
   const stackedStepActionKeys = stackedStepDefinitions.map(
