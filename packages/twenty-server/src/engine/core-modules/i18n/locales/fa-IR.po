@@ -6963,7 +6963,7 @@ msgid "Invalid email address."
 msgstr "نشانی ایمیل نامعتبر است."
 
 #. js-lingui-id: e2K52e
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Invalid email addresses: {invalidEmailList}"
 msgstr "نشانی‌های ایمیل نامعتبرند: {invalidEmailList}"
 
@@ -15567,7 +15567,7 @@ msgid "Too many people selected. Narrow your selection and try again."
 msgstr "افراد انتخاب‌شده بیش از حد هستند. انتخاب خود را محدود کنید و دوباره تلاش کنید."
 
 #. js-lingui-id: JS61oF
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "تعداد گیرندگان بیش از حد است: {total}. حداکثر مجاز {MAX_EMAIL_RECIPIENTS} است."
 
