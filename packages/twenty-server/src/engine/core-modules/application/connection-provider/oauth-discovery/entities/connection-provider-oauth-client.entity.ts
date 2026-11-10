@@ -19,7 +19,6 @@ import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
-// The OAuth client an 'oauth-discovery' connection provider found or registered: runtime state, not app metadata.
 @Entity({ name: 'connectionProviderOAuthClient', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName:

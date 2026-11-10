@@ -25,8 +25,7 @@ type OAuthDiscoveryClientProviderOptions = {
   now: Date;
 };
 
-// Lets the MCP SDK run discovery, client registration and the code exchange
-// while Twenty decides what is persisted, once the SDK is done.
+// The MCP SDK drives the flow; Twenty persists only what it settled on once a step succeeds.
 export class OAuthDiscoveryClientProvider implements OAuthClientProvider {
   authorizationUrl: URL | undefined;
   savedCodeVerifier: string | undefined;

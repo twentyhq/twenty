@@ -176,7 +176,9 @@ export class ConnectionProviderOAuthFlowService {
       ? await this.authorizationStateService.consumeFlowSecretsOrThrow(
           statePayload.flowSecretId,
         )
-      : null;
+      : isDefined(statePayload.codeVerifier)
+        ? { codeVerifier: statePayload.codeVerifier, oauthClientId: null }
+        : null;
 
     const tokenResponse = await this.exchangeCodeForTokens({
       provider,
