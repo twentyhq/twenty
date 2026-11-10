@@ -1,7 +1,6 @@
 import { isString } from '@sniptt/guards';
-import { Temporal } from 'temporal-polyfill';
-
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
+import { getValidationRuleNowInUtc } from '@/utils/validation-rule/validationRuleEvaluationClock';
 
 // Whole UTC calendar days from the date to today, negative for a future date
 export const computeValidationRuleDaysSince = (
@@ -12,7 +11,7 @@ export const computeValidationRuleDaysSince = (
   }
 
   try {
-    const today = Temporal.Now.zonedDateTimeISO('UTC').toPlainDate();
+    const today = getValidationRuleNowInUtc().toPlainDate();
 
     return parseToPlainDateOrThrow(value).until(today, { largestUnit: 'days' })
       .days;

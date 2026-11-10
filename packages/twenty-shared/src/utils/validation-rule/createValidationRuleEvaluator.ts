@@ -4,6 +4,7 @@ import { type ValidationRuleEvaluationResult } from '@/types/ValidationRuleEvalu
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { buildValidationRuleEvaluationContext } from '@/utils/validation-rule/buildValidationRuleEvaluationContext';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
+import { runWithValidationRuleNow } from '@/utils/validation-rule/validationRuleEvaluationClock';
 
 type ValidationRuleEvaluator = (params: {
   record: Record<string, unknown>;
@@ -36,14 +37,16 @@ export const createValidationRuleEvaluator = ({
 
   return ({ record, previousRecord, now }) => {
     try {
-      const result: unknown = parsedExpression.evaluate(
-        buildValidationRuleEvaluationContext({
-          record,
-          previousRecord,
-          fieldByName,
-          identifierPaths,
-          now,
-        }),
+      const result: unknown = runWithValidationRuleNow(now, () =>
+        parsedExpression.evaluate(
+          buildValidationRuleEvaluationContext({
+            record,
+            previousRecord,
+            fieldByName,
+            identifierPaths,
+            now,
+          }),
+        ),
       );
 
       if (typeof result !== 'boolean') {

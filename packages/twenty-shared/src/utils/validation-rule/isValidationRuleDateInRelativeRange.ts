@@ -3,6 +3,7 @@ import { Temporal } from 'temporal-polyfill';
 
 import { relativeDateFilterSchema } from '@/utils/filter/dates/utils/relativeDateFilterSchema';
 import { resolveRelativeDateTimeFilter } from '@/utils/filter/dates/utils/resolveRelativeDateTimeFilter';
+import { getValidationRuleNowInUtc } from '@/utils/validation-rule/validationRuleEvaluationClock';
 
 const parseToInstant = (value: string): Temporal.Instant | null => {
   try {
@@ -44,7 +45,7 @@ export const isValidationRuleDateInRelativeRange = (
 
   const { start, end } = resolveRelativeDateTimeFilter(
     relativeDateFilter.data,
-    Temporal.Now.zonedDateTimeISO('UTC'),
+    getValidationRuleNowInUtc(),
   );
 
   return (

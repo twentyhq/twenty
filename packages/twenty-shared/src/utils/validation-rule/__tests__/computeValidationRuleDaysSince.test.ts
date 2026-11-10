@@ -1,3 +1,5 @@
+import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { createValidationRuleEvaluator } from '@/utils/validation-rule/createValidationRuleEvaluator';
 import { computeValidationRuleDaysSince } from '@/utils/validation-rule/computeValidationRuleDaysSince';
 
 describe('computeValidationRuleDaysSince', () => {
@@ -26,5 +28,31 @@ describe('computeValidationRuleDaysSince', () => {
     expect(computeValidationRuleDaysSince(null)).toBeNull();
     expect(computeValidationRuleDaysSince(undefined)).toBeNull();
     expect(computeValidationRuleDaysSince('not a date')).toBeNull();
+  });
+});
+
+describe('daysSince in an expression', () => {
+  it('should count from the evaluation now, not the system clock', () => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-09-24T00:00:01.000Z'));
+
+    const evaluate = createValidationRuleEvaluator({
+      expression: 'daysSince(closeDate) == 0',
+      fields: [
+        {
+          name: 'closeDate',
+          type: FieldMetadataType.DATE,
+          universalIdentifier: 'close-date',
+        },
+      ],
+    });
+
+    expect(
+      evaluate({
+        record: { closeDate: '2026-09-23' },
+        now: '2026-09-23T23:59:59.000Z',
+      }),
+    ).toEqual({ status: 'passed' });
+
+    jest.useRealTimers();
   });
 });
