@@ -26,14 +26,15 @@ import {
   CORE_WORKFLOWS_TABLE_ID,
   useCoreWorkflows,
 } from '@/object-core/workflows/hooks/useCoreWorkflows';
-import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { type CoreWorkflowTableRow } from '@/object-core/workflows/types/CoreWorkflowTableRow';
+import { buildCoreWorkflowTableRows } from '@/object-core/workflows/utils/buildCoreWorkflowTableRows';
 import { CoreWorkflowsPermissionGate } from '@/object-core/workflows/components/CoreWorkflowsPermissionGate';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 
-const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
+const getCoreWorkflowLink = (workflow: CoreWorkflowTableRow) =>
   getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
 const WorkflowCoreIndexContent = () => {
@@ -44,6 +45,7 @@ const WorkflowCoreIndexContent = () => {
 
   const {
     coreWorkflows,
+    runSummaryByCoreWorkflowId,
     hasNextPage,
     loading,
     isInitialLoading,
@@ -65,6 +67,11 @@ const WorkflowCoreIndexContent = () => {
   } = useCoreWorkflowsSelection({ coreWorkflows });
 
   useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
+
+  const coreWorkflowTableRows = buildCoreWorkflowTableRows({
+    coreWorkflows: displayedCoreWorkflows,
+    runSummaryByCoreWorkflowId,
+  });
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
@@ -131,7 +138,7 @@ const WorkflowCoreIndexContent = () => {
       <CoreObjectTable
         tableId={tableId}
         columns={WORKFLOW_CORE_TABLE_COLUMNS}
-        items={displayedCoreWorkflows}
+        items={coreWorkflowTableRows}
         getItemKey={(workflow) => workflow.id}
         getItemLink={getCoreWorkflowLink}
         initialSort={CORE_WORKFLOWS_INITIAL_SORT}

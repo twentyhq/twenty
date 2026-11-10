@@ -21,6 +21,7 @@ const buildCoreWorkflow = (id: string, name: string): CoreWorkflow => ({
   updatedAt: '2026-10-01T10:00:00.000Z',
   __typename: 'CoreWorkflowDTO',
   workspaceWorkflowId: undefined,
+  trigger: null,
 });
 
 const renderEffect = (selectedCoreWorkflows: CoreWorkflow[]) => {

@@ -1,19 +1,26 @@
 import { msg } from '@lingui/core/macro';
 import {
+  IconBolt,
   IconCalendarTime,
+  IconNumber9,
   IconShare,
   IconStatusChange,
+  IconTerminal,
   IconTextSize,
 } from 'twenty-ui/icon';
 
 import { CoreWorkflowNameCell } from '@/object-core/workflows/components/CoreWorkflowNameCell';
+import { CoreWorkflowRecentRunsCell } from '@/object-core/workflows/components/CoreWorkflowRecentRunsCell';
+import { CoreWorkflowRunCountCell } from '@/object-core/workflows/components/CoreWorkflowRunCountCell';
 import { CoreWorkflowStatusesCell } from '@/object-core/workflows/components/CoreWorkflowStatusesCell';
+import { CoreWorkflowTriggerCell } from '@/object-core/workflows/components/CoreWorkflowTriggerCell';
 import { CoreWorkflowVisibilityCell } from '@/object-core/workflows/components/CoreWorkflowVisibilityCell';
 import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DateTimeDisplay } from '@/ui/field/display/components/DateTimeDisplay';
-import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { type CoreWorkflowTableRow } from '@/object-core/workflows/types/CoreWorkflowTableRow';
 
-export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] =
+export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflowTableRow>[] =
   [
     {
       fieldName: 'name',
@@ -34,6 +41,49 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
       gridTrack: '160px',
       renderCell: (workflow) => (
         <CoreWorkflowStatusesCell statuses={workflow.statuses} />
+      ),
+    },
+    {
+      fieldName: 'trigger',
+      fieldLabel: msg`Trigger`,
+      FieldIcon: IconBolt,
+      align: 'left',
+      gridTrack: '240px',
+      renderCell: (workflow) => (
+        <CoreWorkflowTriggerCell trigger={workflow.trigger} />
+      ),
+    },
+    {
+      fieldName: 'recentRuns',
+      fieldLabel: msg`Recent runs`,
+      FieldIcon: IconTerminal,
+      align: 'left',
+      gridTrack: '120px',
+      renderCell: (workflow) => (
+        <CoreWorkflowRecentRunsCell recentRuns={workflow.recentRuns} />
+      ),
+    },
+    {
+      fieldName: 'lastRunAt',
+      fieldLabel: msg`Last run`,
+      FieldIcon: IconCalendarTime,
+      align: 'left',
+      gridTrack: '130px',
+      renderCell: (workflow) => (
+        <DateTimeDisplay
+          value={workflow.lastRunAt}
+          dateFieldSettings={{ displayFormat: FieldDateDisplayFormat.RELATIVE }}
+        />
+      ),
+    },
+    {
+      fieldName: 'runCountLast14Days',
+      fieldLabel: msg`Runs · 14d`,
+      FieldIcon: IconNumber9,
+      align: 'right',
+      gridTrack: '100px',
+      renderCell: (workflow) => (
+        <CoreWorkflowRunCountCell runCount={workflow.runCountLast14Days} />
       ),
     },
     {

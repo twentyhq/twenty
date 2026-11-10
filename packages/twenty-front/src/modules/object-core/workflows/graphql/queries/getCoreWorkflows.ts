@@ -25,6 +25,10 @@ export const GET_CORE_WORKFLOWS = gql`
           visibility
           canChangeVisibility
           updatedAt
+          trigger {
+            type
+            databaseEventName
+          }
         }
         cursor
       }
@@ -33,6 +37,15 @@ export const GET_CORE_WORKFLOWS = gql`
         hasNextPage
       }
       totalCount
+      runSummaries {
+        coreWorkflowId
+        runCountLast14Days
+        recentRuns {
+          id
+          status
+          createdAt
+        }
+      }
     }
   }
 `;

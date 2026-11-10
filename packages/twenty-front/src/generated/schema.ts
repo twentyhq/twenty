@@ -60,6 +60,7 @@ export type CoreWorkflowConnection = {
   __typename?: 'CoreWorkflowConnection';
   edges: Array<CoreWorkflowEdge>;
   pageInfo: CoreWorkflowPageInfo;
+  runSummaries: Array<CoreWorkflowRunSummary>;
   totalCount: Scalars['Int']['output'];
 };
 
@@ -74,6 +75,8 @@ export type CoreWorkflowDto = {
   lastPublishedVersionId?: Maybe<Scalars['UUID']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   statuses: Array<CoreWorkflowStatus>;
+  /** Trigger of the published version, or of the latest version when none is published */
+  trigger?: Maybe<CoreWorkflowTriggerSummary>;
   updatedAt: Scalars['String']['output'];
   visibility: WorkflowVisibility;
   workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
@@ -140,11 +143,32 @@ export type CoreWorkflowPageInfo = {
   hasNextPage: Scalars['Boolean']['output'];
 };
 
+export type CoreWorkflowRecentRun = {
+  __typename?: 'CoreWorkflowRecentRun';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  status: WorkflowRunStatusEnum;
+};
+
+export type CoreWorkflowRunSummary = {
+  __typename?: 'CoreWorkflowRunSummary';
+  coreWorkflowId: Scalars['UUID']['output'];
+  /** Most recent runs first */
+  recentRuns: Array<CoreWorkflowRecentRun>;
+  runCountLast14Days: Scalars['Int']['output'];
+};
+
 export enum CoreWorkflowStatus {
   ACTIVE = 'ACTIVE',
   DEACTIVATED = 'DEACTIVATED',
   DRAFT = 'DRAFT'
 }
+
+export type CoreWorkflowTriggerSummary = {
+  __typename?: 'CoreWorkflowTriggerSummary';
+  databaseEventName?: Maybe<Scalars['String']['output']>;
+  type: Scalars['String']['output'];
+};
 
 export type CoreWorkflowVersionDto = {
   __typename?: 'CoreWorkflowVersionDTO';
