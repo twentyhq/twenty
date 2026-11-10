@@ -3,15 +3,13 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, type KeyboardEvent, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import { IconArrowUp, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
-import { ChatThreadComposerChannelPicker } from '@/activities/emails/components/ChatThreadComposerChannelPicker';
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
-import { type ChatThreadComposerChannel } from '@/activities/emails/types/ChatThreadComposerChannel';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
@@ -78,9 +76,6 @@ type ChatThreadComposerProps = {
   onSendMessage: (pendingMessage: PendingChatMessage) => Promise<unknown>;
   onMessageSent: () => Promise<unknown>;
   canAttachFiles?: boolean;
-  channels?: ChatThreadComposerChannel[];
-  selectedChannelId?: string;
-  onChannelChange?: (channelId: string) => void;
 };
 
 export const ChatThreadComposer = ({
@@ -91,9 +86,6 @@ export const ChatThreadComposer = ({
   onSendMessage,
   onMessageSent,
   canAttachFiles = false,
-  channels,
-  selectedChannelId,
-  onChannelChange,
 }: ChatThreadComposerProps) => {
   const { t } = useLingui();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -256,16 +248,6 @@ export const ChatThreadComposer = ({
                 </LightIconButton>
               </>
             )}
-            {isNonEmptyArray(channels) &&
-              isDefined(selectedChannelId) &&
-              isDefined(onChannelChange) && (
-                <ChatThreadComposerChannelPicker
-                  channels={channels}
-                  selectedChannelId={selectedChannelId}
-                  isDisabled={isDisconnected}
-                  onChannelChange={onChannelChange}
-                />
-              )}
           </StyledLeftActions>
           <IconButton
             variant="solid"
