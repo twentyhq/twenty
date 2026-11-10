@@ -12,7 +12,9 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CoreWorkflowShowPageTabs } from '@/object-core/workflows/components/CoreWorkflowShowPageTabs';
+import { CoreWorkflowShowPageActiveTab } from '@/object-core/workflows/components/CoreWorkflowShowPageActiveTab';
+import { CoreWorkflowShowPageTabList } from '@/object-core/workflows/components/CoreWorkflowShowPageTabList';
+import { useCoreWorkflowShowPageActiveTab } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageActiveTab';
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
@@ -80,6 +82,8 @@ const CoreWorkflowShowContent = ({
     : currentVersion;
   const isReadOnlyVersion =
     isApplicationManaged || isDefined(requestedVersionId);
+  const { activeTabId, canReadWorkflowRuns, tabListComponentInstanceId } =
+    useCoreWorkflowShowPageActiveTab(coreWorkflowId);
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
     currentName: record?.name,
@@ -170,8 +174,16 @@ const CoreWorkflowShowContent = ({
             namePlaceholder={t`Untitled`}
             onRename={renameWorkflow}
             isReadOnly={isApplicationManaged}
+            tabList={
+              <CoreWorkflowShowPageTabList
+                activeTabId={activeTabId}
+                canReadWorkflowRuns={canReadWorkflowRuns}
+                componentInstanceId={tabListComponentInstanceId}
+              />
+            }
           />
-          <CoreWorkflowShowPageTabs
+          <CoreWorkflowShowPageActiveTab
+            activeTabId={activeTabId}
             coreWorkflowId={coreWorkflowId}
             coreWorkflowVersions={versions.coreWorkflowVersions}
             flowTab={

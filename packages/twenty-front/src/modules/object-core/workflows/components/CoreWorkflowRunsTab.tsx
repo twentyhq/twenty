@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
@@ -17,11 +16,9 @@ import {
   CoreObjectTableRow,
 } from '@/object-core/components/CoreObjectTableRow';
 import { CoreObjectTableFetchMoreTrigger } from '@/object-core/components/CoreObjectTableFetchMoreTrigger';
-import { CoreWorkflowRecentRunsCell } from '@/object-core/workflows/components/CoreWorkflowRecentRunsCell';
 import { CORE_WORKFLOW_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/workflows/constants/CoreWorkflowRunsGridTemplateColumns';
 import { useCoreWorkflowRuns } from '@/object-core/workflows/hooks/useCoreWorkflowRuns';
 import { handleCoreObjectTableRowKeyDown } from '@/object-core/utils/handleCoreObjectTableRowKeyDown';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
@@ -35,25 +32,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { formatDuration } from '~/utils/format/formatDuration';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-
-const StyledSummary = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  height: ${themeCssVariables.spacing[10]};
-  padding: 0 ${themeCssVariables.spacing[3]};
-`;
-
-const StyledSummaryStrip = styled.div`
-  height: ${themeCssVariables.spacing[6]};
-`;
-
-const StyledSummaryQualifier = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
 
 type CoreWorkflowRunsTabProps = {
   coreWorkflowId: string;
@@ -66,8 +44,7 @@ export const CoreWorkflowRunsTab = ({
 }: CoreWorkflowRunsTabProps) => {
   const { t } = useLingui();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const { formatNumber } = useNumberFormat();
-  const { runs, runSummary, loading, error, hasNextPage, fetchMoreRuns } =
+  const { runs, loading, error, hasNextPage, fetchMoreRuns } =
     useCoreWorkflowRuns(coreWorkflowId);
 
   const header = (
@@ -134,32 +111,8 @@ export const CoreWorkflowRunsTab = ({
     );
   }
 
-  const lastRunRelativeDate = beautifyPastDateRelativeToNow(runs[0].createdAt);
-  const formattedRunCount = isDefined(runSummary)
-    ? `${formatNumber(runSummary.runCountLast14Days)}${runSummary.isRunCountLowerBound ? '+' : ''}`
-    : '';
-
   return (
     <>
-      <StyledSummary>
-        <StyledSummaryStrip>
-          <CoreWorkflowRecentRunsCell
-            recentRuns={runSummary?.recentRuns ?? null}
-          />
-        </StyledSummaryStrip>
-        {isDefined(runSummary) && (
-          <span>
-            {plural(runSummary.runCountLast14Days, {
-              one: `${formattedRunCount} run`,
-              other: `${formattedRunCount} runs`,
-            })}{' '}
-            <StyledSummaryQualifier>{t`in the last 14 days`}</StyledSummaryQualifier>
-          </span>
-        )}
-        <StyledSummaryQualifier>
-          {t`Last run ${lastRunRelativeDate}`}
-        </StyledSummaryQualifier>
-      </StyledSummary>
       <Table>
         {header}
         <CoreObjectTableBody>

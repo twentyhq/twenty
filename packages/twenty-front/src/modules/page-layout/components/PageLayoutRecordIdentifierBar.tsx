@@ -2,6 +2,7 @@ import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/compon
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
 import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
 import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constants/PageLayoutRecordIdentifierBarHeight';
+import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_TRACK } from '@/page-layout/constants/PageLayoutRecordIdentifierBarSideTrack';
 import { useOpenPageLayoutTabSettings } from '@/page-layout/hooks/useOpenPageLayoutTabSettings';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
@@ -10,14 +11,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconPinned } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-const SIDE_TRACK = doNotTranslate(
-  `min(${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px, calc(100% / 3))`,
-);
 
 // Equal side tracks center the tabs; their width ignores visible tabs so overflow can recover on resize.
 const StyledBar = styled.div<{
@@ -34,7 +30,7 @@ const StyledBar = styled.div<{
     hasPinnedTab
       ? `${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px minmax(0, 1fr)`
       : hasTabList
-        ? `${SIDE_TRACK} minmax(0, 1fr) ${SIDE_TRACK}`
+        ? `${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_TRACK} minmax(0, 1fr) ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_TRACK}`
         : 'minmax(0, 1fr) auto'};
   height: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
   width: 100%;
