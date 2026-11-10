@@ -204,19 +204,45 @@ describe('defineConnectionProvider', () => {
   });
 
   describe('apiKey type', () => {
+    const baseApiKeyConfig = {
+      universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3ecccc',
+      name: 'acme',
+      displayName: 'Acme',
+      type: 'apiKey' as const,
+      identifyAccountLogicFunction: {
+        universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991063',
+      },
+    };
+
     it('returns success without a sub-config block', () => {
-      const result = defineConnectionProvider({
-        universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3ecccc',
-        name: 'acme',
-        displayName: 'Acme',
-        type: 'apiKey',
-        identifyAccountLogicFunction: {
-          universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991063',
-        },
-      });
+      const result = defineConnectionProvider(baseApiKeyConfig);
 
       expect(result.success).toBe(true);
       expect(result.errors).toEqual([]);
+    });
+
+    it('requires an identifyAccountLogicFunction', () => {
+      const { identifyAccountLogicFunction: _, ...config } = baseApiKeyConfig;
+
+      const result = defineConnectionProvider(config);
+
+      expect(result.success).toBe(false);
+      expect(
+        result.errors.some((error) =>
+          error.includes('identifyAccountLogicFunction'),
+        ),
+      ).toBe(true);
+    });
+
+    it('rejects an oauth config block', () => {
+      const config = { ...baseApiKeyConfig, oauth: baseValidConfig.oauth };
+
+      const result = defineConnectionProvider(config);
+
+      expect(result.success).toBe(false);
+      expect(
+        result.errors.some((error) => error.includes('must not declare')),
+      ).toBe(true);
     });
   });
 });

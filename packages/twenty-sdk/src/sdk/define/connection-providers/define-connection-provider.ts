@@ -157,5 +157,18 @@ export const defineConnectionProvider: DefineEntity<
     errors.push(...getCustomConfigErrors(config.custom));
   }
 
+  if (config.type === 'apiKey') {
+    if ('oauth' in config || 'custom' in config) {
+      errors.push(
+        "Connection provider with type 'apiKey' must not declare an `oauth` or `custom` config block",
+      );
+    }
+    if (!isDefined(config.identifyAccountLogicFunction)) {
+      errors.push(
+        "Connection provider with type 'apiKey' must declare an identifyAccountLogicFunction that validates the key against the upstream API",
+      );
+    }
+  }
+
   return createValidationResult({ config, errors });
 };

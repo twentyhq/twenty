@@ -16,13 +16,16 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 const APPLICATION_IDENTIFIER = v4();
 const ROLE_IDENTIFIER = v4();
 const PROVIDER_IDENTIFIER = v4();
+const WORKSPACE_PROVIDER_IDENTIFIER = v4();
 const OAUTH_PROVIDER_IDENTIFIER = v4();
 const IDENTIFY_ACCOUNT_IDENTIFIER = v4();
-const VALID_API_KEY = 'acme-valid-key';
+const VALID_API_KEY = 'jane:valid';
 
+// Keys look like "<account>:<secret>"; only the "valid" secret is accepted.
 const IDENTIFY_ACCOUNT_SOURCE = `export const handler = ({ accessToken }) => {
-  if (accessToken !== ${JSON.stringify(VALID_API_KEY)}) throw new Error('401 Unauthorized');
-  return { externalAccountId: 'acme-user-42', handle: 'jane@acme.com' };
+  const [account, secret] = accessToken.split(':');
+  if (secret !== 'valid') throw new Error('401 Unauthorized');
+  return { externalAccountId: 'acme-' + account, handle: account + '@acme.com' };
 };`;
 
 const CONNECT_WITH_API_KEY_MUTATION = gql`
@@ -77,8 +80,8 @@ describe('app connection api key flow', () => {
 
   const readAccounts = (): Promise<ConnectedAccountEntity[]> =>
     globalThis.testDataSource.query(
-      'SELECT * FROM core."connectedAccount" WHERE "connectionProviderId" = $1 ORDER BY "createdAt", id',
-      [provider.id],
+      'SELECT * FROM core."connectedAccount" WHERE "applicationId" = $1 ORDER BY "createdAt", id',
+      [provider.applicationId],
     );
 
   beforeAll(async () => {
@@ -131,6 +134,16 @@ describe('app connection api key flow', () => {
               },
             },
             {
+              universalIdentifier: WORKSPACE_PROVIDER_IDENTIFIER,
+              name: 'acme-workspace',
+              displayName: 'Acme Workspace',
+              type: 'apiKey',
+              scope: 'WORKSPACE',
+              identifyAccountLogicFunction: {
+                universalIdentifier: IDENTIFY_ACCOUNT_IDENTIFIER,
+              },
+            },
+            {
               universalIdentifier: OAUTH_PROVIDER_IDENTIFIER,
               name: 'acme-oauth',
               displayName: 'Acme OAuth',
@@ -178,7 +191,7 @@ describe('app connection api key flow', () => {
   });
 
   it('saves a validated key and exposes it to the app', async () => {
-    const response = await connect({ apiKey: VALID_API_KEY });
+    const response = await connect({ apiKey: `  ${VALID_API_KEY}  ` });
 
     expect(response.body.errors).toBeUndefined();
 
@@ -188,7 +201,7 @@ describe('app connection api key flow', () => {
     expect(account).toMatchObject({
       id: connectedAccountId,
       handle: 'jane@acme.com',
-      externalAccountId: 'acme-user-42',
+      externalAccountId: 'acme-jane',
       refreshToken: null,
       scope: 'USER',
     });
@@ -216,7 +229,7 @@ describe('app connection api key flow', () => {
   });
 
   it('rejects a key that identifyAccount refuses and saves nothing', async () => {
-    const response = await connect({ apiKey: 'wrong-key' });
+    const response = await connect({ apiKey: 'jane:wrong' });
 
     expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
     expect(response.body.errors?.[0]?.extensions?.userFriendlyMessage).toBe(
@@ -250,6 +263,44 @@ describe('app connection api key flow', () => {
     expect(accounts[0].authFailedAt).toBeNull();
   });
 
+  it('refuses a reconnect with a key for a different account', async () => {
+    const first = await connect({ apiKey: VALID_API_KEY });
+    const connectedAccountId = first.body.data.connectApplicationWithApiKey;
+
+    const reconnect = await connect({
+      apiKey: 'john:valid',
+      reconnectingConnectedAccountId: connectedAccountId,
+    });
+
+    expect(reconnect.body.errors).toBeDefined();
+
+    const accounts = await readAccounts();
+
+    expect(accounts).toHaveLength(1);
+    expect(accounts[0].externalAccountId).toBe('acme-jane');
+  });
+
+  it('refuses a blank key', async () => {
+    const response = await connect({ apiKey: '   ' });
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+    expect(response.body.errors?.[0]?.extensions?.userFriendlyMessage).toBe(
+      'Enter an API key.',
+    );
+    expect(await readAccounts()).toEqual([]);
+  });
+
+  it('refuses a member without the Applications permission on a workspace provider', async () => {
+    const response = await connect({
+      apiKey: VALID_API_KEY,
+      providerName: 'acme-workspace',
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(await readAccounts()).toEqual([]);
+  });
+
   it('refuses application tokens', async () => {
     const { applicationAccessToken } =
       await generateAppleAdminApplicationTokenPair({
@@ -272,6 +323,9 @@ describe('app connection api key flow', () => {
     });
 
     expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+    expect(response.body.errors?.[0]?.extensions?.userFriendlyMessage).toBe(
+      'Acme OAuth does not accept API keys.',
+    );
     expect(await readAccounts()).toEqual([]);
   });
 

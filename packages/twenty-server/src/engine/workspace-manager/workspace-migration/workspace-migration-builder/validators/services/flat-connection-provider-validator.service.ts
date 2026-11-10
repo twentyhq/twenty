@@ -12,6 +12,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateConnectionProviderScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util';
+import { validateConnectionProviderTypeConfig } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-type-config.util';
 
 @Injectable()
 export class FlatConnectionProviderValidatorService {
@@ -52,55 +53,9 @@ export class FlatConnectionProviderValidatorService {
       ...validateConnectionProviderScope(flatConnectionProvider.scope),
     );
 
-    if (flatConnectionProvider.type === 'oauth') {
-      const oauthConfig = flatConnectionProvider.oauthConfig;
-
-      if (!isDefined(oauthConfig)) {
-        validationResult.errors.push({
-          code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
-          message: t`Connection provider with type 'oauth' is missing oauthConfig`,
-          userFriendlyMessage: msg`OAuth connection provider is missing its oauth config block`,
-        });
-      } else {
-        const requiredOAuthFields: Array<{
-          key: keyof typeof oauthConfig;
-          label: string;
-        }> = [
-          { key: 'authorizationEndpoint', label: 'authorizationEndpoint' },
-          { key: 'tokenEndpoint', label: 'tokenEndpoint' },
-          { key: 'clientIdVariable', label: 'clientIdVariable' },
-          { key: 'clientSecretVariable', label: 'clientSecretVariable' },
-        ];
-
-        for (const { key, label } of requiredOAuthFields) {
-          if (!isNonEmptyString(oauthConfig[key])) {
-            validationResult.errors.push({
-              code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
-              message: t`Connection provider oauthConfig.${label} is required`,
-              userFriendlyMessage: msg`OAuth ${label} is required`,
-            });
-          }
-        }
-      }
-    }
-
-    if (flatConnectionProvider.type === 'custom') {
-      const customConfig = flatConnectionProvider.customConfig;
-
-      if (
-        !isDefined(customConfig) ||
-        !isNonEmptyString(
-          customConfig.authorizeLogicFunctionUniversalIdentifier,
-        ) ||
-        !isNonEmptyString(customConfig.callbackLogicFunctionUniversalIdentifier)
-      ) {
-        validationResult.errors.push({
-          code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
-          message: t`Connection provider with type 'custom' must reference an authorize and a callback logic function`,
-          userFriendlyMessage: msg`Custom connection provider is missing its authorize or callback logic function`,
-        });
-      }
-    }
+    validationResult.errors.push(
+      ...validateConnectionProviderTypeConfig(flatConnectionProvider),
+    );
 
     const existingByName = Object.values(
       optimisticFlatConnectionProviderMaps.byUniversalIdentifier,
@@ -213,6 +168,27 @@ export class FlatConnectionProviderValidatorService {
         userFriendlyMessage: msg`Connection provider type cannot be changed`,
       });
     }
+
+    // Existing connections hold credentials shaped by the original type.
+    if (
+      isDefined(flatEntityUpdate.type) &&
+      flatEntityUpdate.type !== fromFlatConnectionProvider.type
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider type cannot be changed from ${fromFlatConnectionProvider.type} to ${flatEntityUpdate.type}`,
+        userFriendlyMessage: msg`A connection provider's type cannot be changed. Create a new connection provider instead.`,
+      });
+
+      return validationResult;
+    }
+
+    validationResult.errors.push(
+      ...validateConnectionProviderTypeConfig({
+        ...fromFlatConnectionProvider,
+        ...flatEntityUpdate,
+      }),
+    );
 
     return validationResult;
   }

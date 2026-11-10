@@ -4,7 +4,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Mutation } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -15,10 +15,12 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 // Connection permissions are checked per provider scope in assertCallerCanConnectOrThrow.
 @UseGuards(
@@ -36,6 +38,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
     },
     requiredPermissionFlags: [],
   }),
+  ApplicationTargetGuard,
 )
 @UseInterceptors(ConnectionProviderGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)
@@ -51,7 +54,12 @@ export class ApplicationApiKeyConnectionResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: UserEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args('input') input: ConnectApplicationWithApiKeyInput,
+    @ApplicationTargetArg<ConnectApplicationWithApiKeyInput>('input', {
+      kind: 'applicationId',
+      idKey: 'applicationId',
+      requireApplicationRegistrationOwnership: false,
+    })
+    input: ConnectApplicationWithApiKeyInput,
   ): Promise<string> {
     return this.apiKeyFlowService.connect({
       applicationId: input.applicationId,

@@ -211,22 +211,26 @@ export const SettingsApplicationConnectionDetail = () => {
           <Status color="green" weight="medium">{t`Connected`}</Status>
         ),
       },
-      {
-        key: 'scopes',
-        label: t`Granted OAuth scopes`,
-        value:
-          scopes.length > 0 ? (
-            <StyledScopeList>
-              {scopes.map((scope) => (
-                <Tag key={scope} color="gray">
-                  {scope}
-                </Tag>
-              ))}
-            </StyledScopeList>
-          ) : (
-            '-'
-          ),
-      },
+      ...(provider.type === 'apiKey'
+        ? []
+        : [
+            {
+              key: 'scopes',
+              label: t`Granted OAuth scopes`,
+              value:
+                scopes.length > 0 ? (
+                  <StyledScopeList>
+                    {scopes.map((scope) => (
+                      <Tag key={scope} color="gray">
+                        {scope}
+                      </Tag>
+                    ))}
+                  </StyledScopeList>
+                ) : (
+                  '-'
+                ),
+            },
+          ]),
       {
         key: 'lastSignedInAt',
         label: t`Last signed in`,
@@ -261,6 +265,8 @@ export const SettingsApplicationConnectionDetail = () => {
       },
     ];
   };
+
+  const isApiKeyProvider = provider?.type === 'apiKey';
 
   const detailRows =
     connection !== undefined && provider !== undefined
@@ -301,7 +307,11 @@ export const SettingsApplicationConnectionDetail = () => {
             <Section.Root>
               <Section.Header
                 title={connectionLabel}
-                description={t`Manage this application's OAuth connection.`}
+                description={
+                  isApiKeyProvider
+                    ? t`Manage this application's API key connection.`
+                    : t`Manage this application's OAuth connection.`
+                }
               />
               <StyledActions>
                 {connection.authFailedAt && (
@@ -323,7 +333,11 @@ export const SettingsApplicationConnectionDetail = () => {
             <Section.Root>
               <Section.Header
                 title={t`Details`}
-                description={t`OAuth credential metadata for this application connection`}
+                description={
+                  isApiKeyProvider
+                    ? t`API key credential metadata for this application connection`
+                    : t`OAuth credential metadata for this application connection`
+                }
               />
               <Table>
                 <TableRow gridTemplateColumns={DETAIL_GRID_TEMPLATE}>

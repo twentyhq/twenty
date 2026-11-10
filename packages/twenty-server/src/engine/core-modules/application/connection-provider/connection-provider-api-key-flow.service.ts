@@ -51,10 +51,25 @@ export class ConnectionProviderApiKeyFlowService {
       );
     }
 
+    const providerDisplayName = provider.displayName;
+
     if (provider.type !== 'apiKey') {
       throw new ConnectionProviderException(
         `Connection provider "${provider.name}" (id ${provider.id}) is not apiKey-typed`,
         ConnectionProviderExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`${providerDisplayName} does not accept API keys.`,
+        },
+      );
+    }
+
+    const parsedApiKey = plaintextStringSchema.min(1).safeParse(apiKey.trim());
+
+    if (!parsedApiKey.success) {
+      throw new ConnectionProviderException(
+        'API key must not be empty',
+        ConnectionProviderExceptionCode.INVALID_REQUEST,
+        { userFriendlyMessage: msg`Enter an API key.` },
       );
     }
 
@@ -67,15 +82,17 @@ export class ConnectionProviderApiKeyFlowService {
     });
 
     const identifiedAccount = await this.connectionProviderLifecycleHookService
-      .runIdentifyAccount({ provider, workspaceId, accessToken: apiKey })
+      .runIdentifyAccount({
+        provider,
+        workspaceId,
+        accessToken: parsedApiKey.data,
+      })
       .catch((error: unknown) => {
         if (
           error instanceof ConnectionProviderException &&
           error.code ===
             ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED
         ) {
-          const providerDisplayName = provider.displayName;
-
           throw new ConnectionProviderException(
             error.message,
             ConnectionProviderExceptionCode.INVALID_API_KEY,
@@ -91,7 +108,7 @@ export class ConnectionProviderApiKeyFlowService {
     const connectedAccount = await this.connectedAccountService.persist({
       provider,
       credentials: {
-        accessToken: plaintextStringSchema.parse(apiKey),
+        accessToken: parsedApiKey.data,
         refreshToken: null,
         scopes: null,
       },
