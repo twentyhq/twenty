@@ -11,8 +11,7 @@ const moduleEntries = Object.keys((packageJson as any).exports || {})
 
 const entries = ['src/index.ts', ...moduleEntries];
 
-// Bundled packages would otherwise land in dist/node_modules, which tooling
-// skips, and ?source modules in files whose `?` Node reads as a URL query.
+// Tooling skips dist/node_modules, and Node reads `?source` as a URL query.
 const getOutputFileName =
   (extension: 'cjs' | 'mjs') =>
   ({ name }: { name: string }) =>
