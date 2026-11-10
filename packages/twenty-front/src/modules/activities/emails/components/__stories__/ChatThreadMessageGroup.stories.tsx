@@ -123,10 +123,14 @@ export const Reactions: Story = {
 export const ReadOnlyReactions: Story = {
   args: { ...Reactions.args, onReactionToggle: undefined },
   play: async ({ canvasElement }) => {
+    const reaction = await within(canvasElement).findByRole('button', {
+      name: '👍 by Sundar Pichai and Thomas Kurian',
+    });
+
+    await expect(reaction).toBeDisabled();
+    await userEvent.hover(reaction.parentElement ?? reaction);
     await expect(
-      await within(canvasElement).findByRole('button', {
-        name: '👍 by Sundar Pichai and Thomas Kurian',
-      }),
-    ).toBeDisabled();
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Sundar Pichai and Thomas Kurian');
   },
 };

@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { ReactionButton } from 'twenty-ui/components/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type ChatMessageReaction } from '@/activities/emails/types/ChatMessageReaction';
@@ -11,6 +12,10 @@ const StyledReactions = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledReaction = styled.span`
+  display: inline-flex;
 `;
 
 type ChatThreadMessageReactionsProps = {
@@ -30,16 +35,18 @@ export const ChatThreadMessageReactions = ({
         const reactors = formatDisplayList(reactorNames);
 
         return (
-          <ReactionButton
-            key={emoji}
-            emoji={emoji}
-            count={count}
-            pressed={isOwn}
-            title={reactors}
-            aria-label={t`${emoji} by ${reactors}`}
-            disabled={!isDefined(onReactionToggle)}
-            onPressedChange={() => onReactionToggle?.(emoji)}
-          />
+          <Tooltip key={emoji} content={reactors}>
+            <StyledReaction>
+              <ReactionButton
+                emoji={emoji}
+                count={count}
+                pressed={isOwn}
+                aria-label={t`${emoji} by ${reactors}`}
+                disabled={!isDefined(onReactionToggle)}
+                onPressedChange={() => onReactionToggle?.(emoji)}
+              />
+            </StyledReaction>
+          </Tooltip>
         );
       })}
     </StyledReactions>
