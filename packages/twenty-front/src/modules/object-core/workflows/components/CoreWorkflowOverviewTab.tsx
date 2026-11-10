@@ -81,8 +81,10 @@ export const CoreWorkflowOverviewTab = ({
   } = insights;
 
   const lowerBoundSuffix = isRunCountLowerBound ? '+' : '';
-  const runsPerDay = formatNumber(runCount / dailyRunCounts.length, {
-    decimals: 0,
+  const averageRunsPerDay = runCount / dailyRunCounts.length;
+  // Low-volume workflows average under one run a day, which would round to 0
+  const runsPerDay = formatNumber(averageRunsPerDay, {
+    decimals: averageRunsPerDay < 10 ? 1 : 0,
   });
   const formattedRunCount = formatNumber(runCount);
   const formattedFailedRunCount = formatNumber(failedRunCount);
