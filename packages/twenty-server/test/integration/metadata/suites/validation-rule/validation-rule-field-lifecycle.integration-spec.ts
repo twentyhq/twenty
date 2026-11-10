@@ -3,6 +3,7 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -13,12 +14,10 @@ import {
   findValidationRulesReadingField,
   updateValidationRule,
 } from 'test/integration/metadata/suites/validation-rule/utils/validation-rule-api.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const OBJECT_NAME_SINGULAR = 'validationRuleLifecycleGadget';
@@ -150,41 +149,49 @@ describe('Validation rules should follow the fields they read', () => {
   });
 
   it('should disable the rule when the workspace deactivates a standard field through an override', async () => {
-    const rows: { id: string; objectMetadataId: string }[] =
-      await globalThis.testDataSource.query(
-        `SELECT field.id, field."objectMetadataId"
-         FROM core."fieldMetadata" field
-         JOIN core."objectMetadata" object ON object.id = field."objectMetadataId"
-         WHERE object."universalIdentifier" = $1
-           AND object."workspaceId" = $2
-           AND field.name = 'employees'`,
-        [STANDARD_OBJECTS.company.universalIdentifier, SEED_APPLE_WORKSPACE_ID],
-      );
-    const { id: standardFieldId, objectMetadataId: companyObjectMetadataId } =
-      rows[0];
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: 'id nameSingular',
+    });
+    const companyObject = objects.find(
+      ({ nameSingular }) => nameSingular === 'company',
+    );
+
+    jestExpectToBeDefined(companyObject);
+    const companyObjectMetadataId = companyObject.id;
+    const {
+      data: {
+        createOneField: { id: headcountFieldId },
+      },
+    } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        name: 'lifecycleHeadcount',
+        label: 'Lifecycle headcount',
+        type: FieldMetadataType.NUMBER,
+        objectMetadataId: companyObjectMetadataId,
+        isLabelSyncedWithName: false,
+      },
+      gqlFields: 'id',
+    });
     const response = await createValidationRule({
       objectMetadataId: companyObjectMetadataId,
       name: 'Company has employees',
-      expression: 'employees > 0',
+      expression: 'lifecycleHeadcount > 0',
       message: 'Add employees',
     });
     const standardFieldRuleId = response.body.data.createValidationRule.id;
-    // Deactivating the field deletes its view fields and reactivating does not bring them back.
-    const standardFieldViewFields: object[] =
-      await globalThis.testDataSource.query(
-        `SELECT * FROM core."viewField" WHERE "fieldMetadataId" = $1`,
-        [standardFieldId],
-      );
 
     try {
-      expect(await findValidationRulesReadingField(standardFieldId)).toEqual([
+      expect(await findValidationRulesReadingField(headcountFieldId)).toEqual([
         expect.objectContaining({ name: 'Company has employees' }),
       ]);
 
       await updateOneFieldMetadata({
         expectToFail: false,
         input: {
-          idToUpdate: standardFieldId,
+          idToUpdate: headcountFieldId,
           updatePayload: { isActive: false },
         },
         gqlFields: 'id',
@@ -197,7 +204,7 @@ describe('Validation rules should follow the fields they read', () => {
       expect(
         validationRules.find(({ id }) => id === standardFieldRuleId),
       ).toMatchObject({ isActive: false });
-      expect(await findValidationRulesReadingField(standardFieldId)).toEqual(
+      expect(await findValidationRulesReadingField(headcountFieldId)).toEqual(
         [],
       );
 
@@ -206,34 +213,22 @@ describe('Validation rules should follow the fields they read', () => {
       });
 
       expect(enableResponse.body.errors?.[0]?.message).toBe(
-        'Unknown field "employees"',
+        'Unknown field "lifecycleHeadcount"',
       );
     } finally {
+      await deleteValidationRule(standardFieldRuleId);
       await updateOneFieldMetadata({
         expectToFail: false,
         input: {
-          idToUpdate: standardFieldId,
-          updatePayload: { isActive: true },
+          idToUpdate: headcountFieldId,
+          updatePayload: { isActive: false },
         },
         gqlFields: 'id',
       });
-      await globalThis.testDataSource.query(
-        `DELETE FROM core."viewField" WHERE "fieldMetadataId" = $1`,
-        [standardFieldId],
-      );
-      await globalThis.testDataSource.query(
-        `INSERT INTO core."viewField" SELECT * FROM jsonb_populate_recordset(NULL::core."viewField", $1::jsonb)`,
-        [JSON.stringify(standardFieldViewFields)],
-      );
-      await getAppProviderByClassName<WorkspaceCacheService>(
-        'WorkspaceCacheService',
-      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'flatViewFieldMaps',
-        'flatViewMaps',
-        'flatFieldMetadataMaps',
-        'flatFieldMetadataMapsOrm',
-      ]);
-      await deleteValidationRule(standardFieldRuleId);
+      await deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: headcountFieldId },
+      });
     }
   }, 60000);
 
