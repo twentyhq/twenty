@@ -1,6 +1,5 @@
 import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
 import { useLingui } from '@lingui/react/macro';
-import { IconChevronRight } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { type GettingStartedStepActionKey } from '~/generated-metadata/graphql';
 
@@ -17,9 +16,7 @@ export const GettingStartedStepNextButton = ({
   return (
     <Button
       size="sm"
-      endIcon={<IconChevronRight />}
       loading={isSaving}
-      loadingPosition="end"
       onClick={() => selectGettingStartedStep(nextStepActionKey)}
     >
       {t`Next`}
