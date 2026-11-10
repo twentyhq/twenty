@@ -852,7 +852,9 @@ describe('transformEventBatchToEventPayloads', () => {
         conditionFields,
       });
 
-      expect(result.map(({ payload }) => payload.recordId)).toEqual(['large']);
+      expect(
+        result.map((r) => (r.payload as ObjectRecordEvent).recordId),
+      ).toEqual(['large']);
     });
 
     it('should report a condition that cannot be read and send nothing', () => {
