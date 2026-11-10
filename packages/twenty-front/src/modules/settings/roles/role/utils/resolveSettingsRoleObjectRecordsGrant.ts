@@ -17,14 +17,12 @@ export const resolveSettingsRoleObjectRecordsGrant = ({
   const objectPermission = role.objectPermissions?.find(
     (rolePermission) => rolePermission.objectMetadataId === objectMetadataId,
   );
-  const canUpdateRecords =
-    objectPermission?.canUpdateObjectRecords ?? role.canUpdateAllObjectRecords;
-
   return {
-    canCreateRecords: canUpdateRecords,
     canReadRecords:
       objectPermission?.canReadObjectRecords ?? role.canReadAllObjectRecords,
-    canUpdateRecords,
+    canUpdateRecords:
+      objectPermission?.canUpdateObjectRecords ??
+      role.canUpdateAllObjectRecords,
     canSoftDeleteRecords:
       objectPermission?.canSoftDeleteObjectRecords ??
       role.canSoftDeleteAllObjectRecords,

@@ -391,6 +391,14 @@ export const useSaveDraftRoleToDB = ({
         objectUsedGroupIds.has(group.id),
       );
 
+      const objectRecordsGrant = resolveSettingsRoleObjectRecordsGrant({
+        role: settingsDraftRole,
+        objectMetadataId,
+      });
+      const isRuleAlreadyPersisted = (
+        settingsPersistedRole?.rowLevelPermissionRules ?? []
+      ).some((rule) => rule.objectMetadataId === objectMetadataId);
+
       await upsertRowLevelPermissionPredicates({
         variables: {
           input: {
@@ -412,10 +420,11 @@ export const useSaveDraftRoleToDB = ({
               positionInRowLevelPermissionPredicateGroup:
                 predicate.positionInRowLevelPermissionPredicateGroup,
             })),
-            ...resolveSettingsRoleObjectRecordsGrant({
-              role: settingsDraftRole,
-              objectMetadataId,
-            }),
+            ...objectRecordsGrant,
+            // A new rule creates like it updates; an existing one keeps its own create grant
+            ...(isRuleAlreadyPersisted
+              ? {}
+              : { canCreateRecords: objectRecordsGrant.canUpdateRecords }),
             predicateGroups: objectPredicateGroups.map((group) => ({
               id: group.id,
               objectMetadataId,
