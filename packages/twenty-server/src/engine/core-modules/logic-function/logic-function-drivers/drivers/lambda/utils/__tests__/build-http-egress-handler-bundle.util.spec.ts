@@ -44,13 +44,13 @@ describe('buildHttpEgressHandlerBundle', () => {
     ['a private network address', 'http://10.0.0.1/'],
     ['a hex-encoded loopback address', 'http://0x7f000001/'],
   ])('blocks %s even though nothing is allowlisted', async (_label, url) => {
-    const { toolOutput, outcomeDetails } = await handler({
+    const { errorMessage, outcomeDetails } = await handler({
       input: { url, method: 'GET' },
       limits: { timeoutMs: 2_000, maxPayloadSizeBytes: 1024 },
       context: { workspaceId: 'workspace-id', source: 'workflow-http' },
     });
 
-    expect(toolOutput.success).toBe(false);
+    expect(errorMessage).toMatch(/is not allowed/);
     expect(outcomeDetails.outcome).toBe('blocked');
   });
 });

@@ -11,7 +11,6 @@ export const handler = async (
   const httpClient = createSsrfSafeAxiosClient({ allowedInternalHosts: [] });
 
   return enforceHttpEgressResultSize(
-    request,
     await executeHttpEgressRequest(request, httpClient),
   );
 };

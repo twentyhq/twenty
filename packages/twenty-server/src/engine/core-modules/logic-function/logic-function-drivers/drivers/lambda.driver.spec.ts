@@ -35,7 +35,10 @@ const HTTP_EGRESS_REQUEST = {
 };
 
 const HTTP_EGRESS_RESPONSE = {
-  toolOutput: { success: true, message: 'ok', result: { ok: true } },
+  status: 200,
+  statusText: 'OK',
+  headers: {},
+  body: { ok: true },
   outcomeDetails: { outcome: 'success', status: 200, durationMs: 12 },
 };
 
@@ -315,11 +318,8 @@ describe('LambdaDriver', () => {
       const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
 
       expect(output).toMatchObject({
-        toolOutput: {
-          success: false,
-          error:
-            'Outbound HTTP requests are temporarily unavailable. Try again later.',
-        },
+        errorMessage:
+          'Outbound HTTP requests are temporarily unavailable. Try again later.',
         outcomeDetails: {
           outcome: 'other-error',
           errorCode: 'EGRESS_UNAVAILABLE',
@@ -339,11 +339,8 @@ describe('LambdaDriver', () => {
       const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
 
       expect(output).toMatchObject({
-        toolOutput: {
-          success: false,
-          error:
-            'Outbound HTTP requests are temporarily unavailable. Try again later.',
-        },
+        errorMessage:
+          'Outbound HTTP requests are temporarily unavailable. Try again later.',
         outcomeDetails: { errorCode: 'EGRESS_UNAVAILABLE' },
       });
     });
@@ -362,7 +359,7 @@ describe('LambdaDriver', () => {
       const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
 
       expect(output).toMatchObject({
-        toolOutput: { success: false, error: 'Request timed out after 30s' },
+        errorMessage: 'Request timed out after 30s',
         outcomeDetails: { outcome: 'timeout' },
       });
     });

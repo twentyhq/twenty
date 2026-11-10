@@ -10,41 +10,34 @@ import { describeOutboundRequestError } from 'src/engine/core-modules/secure-htt
 import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
 import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
 import { parseDataFromContentType } from 'src/engine/core-modules/tool/tools/http-tool/utils/parse-data-from-content-type.util';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 const METHODS_WITH_BODY = ['POST', 'PUT', 'PATCH'];
 
-const buildErrorToolOutput = ({
+const describeHttpEgressError = ({
   error,
-  request: { input, limits },
+  limits,
 }: {
   error: unknown;
-  request: HttpEgressRequest;
-}): ToolOutput => {
-  const message = `HTTP ${input.method} request to ${input.url} failed`;
-
+  limits: HttpEgressRequest['limits'];
+}): Omit<HttpEgressResponse, 'outcomeDetails'> => {
   if (!isAxiosError(error)) {
     return {
-      success: false,
-      message,
-      error: error instanceof Error ? error.message : 'HTTP request failed',
+      errorMessage:
+        error instanceof Error ? error.message : 'HTTP request failed',
     };
   }
 
   const isTimeout =
     error.code === 'ERR_CANCELED' || error.code === 'ECONNABORTED';
-  const errorMessage = isTimeout
-    ? `Request timed out after ${limits.timeoutMs / 1_000}s`
-    : error.message;
 
   return {
-    success: false,
-    message,
-    error: error.response?.data || errorMessage || 'HTTP request failed',
     status: error.response?.status,
     statusText: error.response?.statusText,
     headers: error.response?.headers as Record<string, string> | undefined,
-    result: error.response?.data,
+    body: error.response?.data,
+    errorMessage: isTimeout
+      ? `Request timed out after ${limits.timeoutMs / 1_000}s`
+      : error.message,
   };
 };
 
@@ -84,14 +77,10 @@ export const executeHttpEgressRequest = async (
     const response = await httpClient(axiosConfig);
 
     return {
-      toolOutput: {
-        success: true,
-        message: `HTTP ${method} request to ${url} completed successfully`,
-        result: response.data,
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers as Record<string, string>,
-      },
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers as Record<string, string>,
+      body: response.data,
       outcomeDetails: {
         outcome: 'success',
         status: response.status,
@@ -100,7 +89,7 @@ export const executeHttpEgressRequest = async (
     };
   } catch (error) {
     return {
-      toolOutput: buildErrorToolOutput({ error, request }),
+      ...describeHttpEgressError({ error, limits: request.limits }),
       outcomeDetails: {
         ...describeOutboundRequestError(error),
         durationMs: Date.now() - startedAt,

@@ -30,9 +30,6 @@ describe('DisabledDriver', () => {
       context: { workspaceId: 'workspace-id', source: 'workflow-http' },
     });
 
-    expect(output.toolOutput).toMatchObject({
-      success: true,
-      result: { ok: true },
-    });
+    expect(output).toMatchObject({ status: 200, body: { ok: true } });
   });
 });

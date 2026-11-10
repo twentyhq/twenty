@@ -270,7 +270,7 @@ export class LambdaToolFunctionsService {
     if (
       Buffer.byteLength(payload) > HTTP_EGRESS_LAMBDA_MAX_INVOKE_PAYLOAD_BYTES
     ) {
-      return buildHttpEgressRequestTooLargeResponse({ request, startedAt });
+      return buildHttpEgressRequestTooLargeResponse(startedAt);
     }
 
     let functionName: string | undefined;

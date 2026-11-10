@@ -14,6 +14,7 @@ import { HTTP_TOOL_TIMEOUT_MS } from 'src/engine/core-modules/tool/tools/http-to
 import { HttpRequestInputZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
 import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
 import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
+import { buildHttpToolOutput } from 'src/engine/core-modules/tool/tools/http-tool/utils/build-http-tool-output.util';
 import { executeHttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/utils/execute-http-egress-request.util';
 import { normalizeHttpRequestHeaderValues } from 'src/engine/core-modules/tool/tools/http-tool/utils/normalize-http-request-header-values.util';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -93,9 +94,7 @@ export class HttpTool implements Tool {
     this.secureHttpClientService.recordRequest(loggedRequest);
 
     const startedAt = Date.now();
-    const { toolOutput, outcomeDetails } = await this.sendRequest(
-      request,
-    ).catch((error: unknown) => {
+    const response = await this.sendRequest(request).catch((error: unknown) => {
       this.logger.error(
         `HTTP request could not be sent for workspace ${context.workspaceId}`,
         error instanceof Error ? error.stack : String(error),
@@ -111,10 +110,10 @@ export class HttpTool implements Tool {
 
     this.secureHttpClientService.recordRequestOutcome({
       ...loggedRequest,
-      outcomeDetails,
+      outcomeDetails: response.outcomeDetails,
     });
 
-    return toolOutput;
+    return buildHttpToolOutput({ input, response });
   }
 
   private async sendRequest(

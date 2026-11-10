@@ -1,7 +1,11 @@
 import { type OutboundRequestOutcomeDetails } from 'src/engine/core-modules/secure-http-client/outbound-request-outcome-details.type';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
+// The HTTP response when one was received, the error message otherwise, and the outcome to log.
 export type HttpEgressResponse = {
-  toolOutput: ToolOutput;
+  status?: number;
+  statusText?: string;
+  headers?: Record<string, string>;
+  body?: unknown;
+  errorMessage?: string;
   outcomeDetails: OutboundRequestOutcomeDetails;
 };
