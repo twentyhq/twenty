@@ -19,6 +19,7 @@ export const useReplyContext = (
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
+    messageChannelHandle,
     messageChannelLoading,
     threadLoading,
   } = useEmailThread(threadId);
@@ -50,6 +51,7 @@ export const useReplyContext = (
         inReplyTo: '',
         connectedAccountId,
         connectedAccountProvider,
+        messageChannelHandle,
       };
     }
 
@@ -70,12 +72,14 @@ export const useReplyContext = (
       inReplyTo: lastSentMessage.headerMessageId ?? '',
       connectedAccountId,
       connectedAccountProvider,
+      messageChannelHandle,
     };
   }, [
     messages,
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
+    messageChannelHandle,
     messageChannelLoading,
     threadLoading,
   ]);

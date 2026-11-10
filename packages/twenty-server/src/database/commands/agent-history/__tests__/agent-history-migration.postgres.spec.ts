@@ -118,6 +118,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
         eventEmitterService: { emitDatabaseBatchEvent },
         recordPermissions: {} as never,
+        recordFieldPermissions: {
+          findFieldsHiddenOnMatchingRecords: jest.fn(),
+        },
+        recordAccessGroupWrite: {
+          isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
+          isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
+          findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
+          recomputeAfterWrite: jest.fn().mockResolvedValue([]),
+        },
+        recordAccessGroupQueue: { queueRecompute: jest.fn() },
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),
@@ -751,6 +761,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await Promise.all(
         ['First checkpoint', 'Second checkpoint'].map((text) =>
           conversationWriter.upsertAssistantMessage({
+            agentId: null,
             id: checkpointId,
             threadId: THREAD_ID,
             turnId: TURN_ID,

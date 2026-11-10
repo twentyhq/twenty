@@ -1199,6 +1199,7 @@ Puncte cheie:
   Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
 
 * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
+* `TWENTY_INTERNAL_API_URL`: adresa privată a Twenty. Numai funcțiile logice și numai atunci când operatorul setează `SERVER_INTERNAL_URL`, de exemplu, în spatele unui proxy de autentificare. Clienții îl folosesc automat, inclusiv `RestApiClient.resolveUrl`. Dacă apelezi API-ul direct, folosește-l când este setat și revino la `TWENTY_API_URL`. Construiește linkurile pe care le oferi browserelor sau altor servicii, precum URL-urile webhook, folosind `TWENTY_API_URL` sau `getServerRouteUrl`.
 * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă pentru accesul implicit: rolul unei persoane se intersectează cu cel al aplicației dvs. atunci când cineva se află în spatele execuției, iar rolul propriu al aplicației dvs. atunci când nu se află nimeni. Persoana este cea care a declanșat execuția într-o funcție logică sau cea care privește pagina într-o componentă front-end.
 * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată numai la rolul propriu al aplicației dvs. Numai funcții logice, injectată întotdeauna acolo și utilizată de `runAs: 'application'`.
 

@@ -49,7 +49,7 @@ const renderSettings = (
   );
 
 const editableInput = async () => {
-  const input = screen.getByRole('textbox', { name: 'Allowed origin' });
+  const input = screen.getByRole('textbox', { name: 'Website origin' });
   await waitFor(() => expect(input).toBeEnabled());
   return input;
 };
@@ -100,7 +100,7 @@ it.each(['button', 'Enter'])(
     if (method === 'Enter') {
       await user.keyboard('{Enter}');
     } else {
-      await user.click(screen.getByRole('button', { name: 'Add origin' }));
+      await user.click(screen.getByRole('button', { name: 'Add website' }));
     }
     await user.click(
       await screen.findByRole('button', {
@@ -121,7 +121,7 @@ it('explains invalid origins without sending a mutation', async () => {
   renderSettings();
   const user = userEvent.setup();
   await user.type(await editableInput(), 'https://portal.example.com/path');
-  await user.click(screen.getByRole('button', { name: 'Add origin' }));
+  await user.click(screen.getByRole('button', { name: 'Add website' }));
   expect(
     await screen.findByText(/without a path or wildcard/),
   ).toBeInTheDocument();
@@ -179,7 +179,7 @@ it('allows an addition when another administrator frees a slot in a full list', 
   ]);
   const user = userEvent.setup();
   await user.type(await editableInput(), newOrigin);
-  await user.click(screen.getByRole('button', { name: 'Add origin' }));
+  await user.click(screen.getByRole('button', { name: 'Add website' }));
   expect(
     await screen.findByRole('button', { name: `Remove ${newOrigin}` }),
   ).toBeInTheDocument();
@@ -212,7 +212,7 @@ it('keeps the saved list and input when the server rejects an addition at the li
   const user = userEvent.setup();
   const input = await editableInput();
   await user.type(input, newOrigin);
-  await user.click(screen.getByRole('button', { name: 'Add origin' }));
+  await user.click(screen.getByRole('button', { name: 'Add website' }));
   await waitFor(() => expect(enqueueToast).toHaveBeenCalled());
   expect(input).toHaveValue(newOrigin);
   expect(input).toBeEnabled();
@@ -227,7 +227,7 @@ it('keeps the saved list and input when the server rejects an addition at the li
 it('disables edits while the saved policy is unknown', () => {
   renderSettings();
   expect(
-    screen.getByRole('textbox', { name: 'Allowed origin' }),
+    screen.getByRole('textbox', { name: 'Website origin' }),
   ).toBeDisabled();
-  expect(screen.getByRole('button', { name: 'Add origin' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Add website' })).toBeDisabled();
 });

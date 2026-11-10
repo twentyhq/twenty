@@ -1,4 +1,6 @@
-import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { type RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
+import { type RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type DataSource } from 'typeorm';
 import { type FeatureFlagKey } from 'twenty-shared/types';
@@ -26,17 +28,26 @@ export interface WorkspaceInternalContext {
   permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;
   recordReadRestrictions: RecordReadRestrictions;
   recordPermissions: Pick<
-    RecordPermissionsService,
+    RecordPermissionsReadService,
     | 'isReadDisabled'
     | 'assertCanRunOperationOrThrow'
-    | 'buildManyRecordsAccessCondition'
+    | 'buildReadRecordsAccessSQLCondition'
+    | 'buildWriteRecordsAccessSQLCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
-    | 'recomputeRecordAccessGroupIdsOfRecords'
-    | 'isRecomputingRecordAccessGroupIdsOnWrite'
-    | 'findRlsRuleUnreadableFieldsByRole'
-    | 'buildRlsRuleSqlConditionOrThrow'
   >;
+  recordFieldPermissions: Pick<
+    RecordFieldPermissionsReadService,
+    'findFieldsHiddenOnMatchingRecords'
+  >;
+  recordAccessGroupWrite: Pick<
+    RecordAccessGroupWriteService,
+    | 'isWriteTransactionRequired'
+    | 'isRecordsBeforeWriteRequired'
+    | 'findRelatedRecordsBeforeDelete'
+    | 'recomputeAfterWrite'
+  >;
+  recordAccessGroupQueue: Pick<RecordAccessGroupWriteService, 'queueRecompute'>;
   recordStock: Pick<
     WorkspaceRecordStockService,
     'assertRecordStockAvailable' | 'acquireRecordStock' | 'releaseRecordStock'

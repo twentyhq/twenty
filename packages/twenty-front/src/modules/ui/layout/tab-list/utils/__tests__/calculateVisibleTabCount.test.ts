@@ -97,6 +97,19 @@ describe('calculateVisibleTabCount', () => {
     },
   );
 
+  it('fits both tabs when the row has no horizontal padding', () => {
+    expect(
+      calculateVisibleTabCount({
+        ...MEASUREMENTS,
+        containerWidth: 204,
+        horizontalPadding: 0,
+      }),
+    ).toBe(2);
+    expect(
+      calculateVisibleTabCount({ ...MEASUREMENTS, containerWidth: 204 }),
+    ).toBe(1);
+  });
+
   it('keeps tabs visible until a tab is measured', () => {
     expect(
       calculateVisibleTabCount({

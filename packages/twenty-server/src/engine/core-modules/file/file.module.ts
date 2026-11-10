@@ -10,6 +10,7 @@ import { FileEntity } from './entities/file.entity';
 import { FileCorePictureModule } from './file-core-picture/file-core-picture.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { FileUrlModule } from './file-url/file-url.module';
+import { FileRemoteContentModule } from './file-remote-content/file-remote-content.module';
 import { FileService } from './services/file.service';
 
 @Module({
@@ -19,6 +20,7 @@ import { FileService } from './services/file.service';
     FileUrlModule,
     FileCorePictureModule,
     FileUploadModule,
+    FileRemoteContentModule,
   ],
   providers: [
     FileService,

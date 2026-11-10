@@ -1,6 +1,7 @@
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { CORE_AGENT_DELETE_DIALOG_ID } from '@/object-core/agents/constants/CoreAgentDeleteDialogId';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
@@ -10,16 +11,12 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { DeleteOneAgentDocument } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
-
 type CoreAgentDeleteConfirmationModalProps = {
   agentId: string;
-  agentName: string;
 };
 
 export const CoreAgentDeleteConfirmationModal = ({
   agentId,
-  agentName,
 }: CoreAgentDeleteConfirmationModalProps) => {
   const { t } = useLingui();
   const { closeDialog } = useDialog();
@@ -34,7 +31,7 @@ export const CoreAgentDeleteConfirmationModal = ({
           input: { id: agentId },
         },
       });
-      closeDialog(DELETE_AGENT_MODAL_ID);
+      closeDialog(CORE_AGENT_DELETE_DIALOG_ID);
       navigate(AppPath.AgentIndexPage);
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
@@ -43,17 +40,9 @@ export const CoreAgentDeleteConfirmationModal = ({
 
   return (
     <ConfirmationDialog
-      confirmationValue={agentName}
-      confirmationPlaceholder={agentName}
-      dialogId={DELETE_AGENT_MODAL_ID}
+      dialogId={CORE_AGENT_DELETE_DIALOG_ID}
       title={t`Delete Agent`}
-      subtitle={
-        <Trans>
-          This action cannot be undone. This will permanently delete your agent.
-          <br />
-          Please type in the agent name to confirm.
-        </Trans>
-      }
+      subtitle={t`This action cannot be undone. This will permanently delete your agent.`}
       onConfirmClick={handleDelete}
       confirmButtonText={t`Delete Agent`}
     />

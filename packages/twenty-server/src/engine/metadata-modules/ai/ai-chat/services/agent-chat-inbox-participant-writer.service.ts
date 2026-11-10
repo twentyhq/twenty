@@ -40,11 +40,7 @@ export class AgentChatInboxParticipantWriterService {
     workspaceMemberIds: string[];
     reason: AgentChatInboxDeliveryReason;
   }): Promise<void> {
-    const participantWorkspaceMemberIds = [
-      ...new Set(workspaceMemberIds),
-    ].filter(
-      (workspaceMemberId) => workspaceMemberId !== access.workspaceMemberId,
-    );
+    const participantWorkspaceMemberIds = [...new Set(workspaceMemberIds)];
 
     if (!isNonEmptyArray(participantWorkspaceMemberIds)) {
       return;
@@ -52,7 +48,9 @@ export class AgentChatInboxParticipantWriterService {
 
     await this.assertCanDeliverToWorkspaceMembers({
       ...access,
-      memberIds: participantWorkspaceMemberIds,
+      memberIds: participantWorkspaceMemberIds.filter(
+        (workspaceMemberId) => workspaceMemberId !== access.workspaceMemberId,
+      ),
     });
 
     const { workspaceId, threadId } = access;

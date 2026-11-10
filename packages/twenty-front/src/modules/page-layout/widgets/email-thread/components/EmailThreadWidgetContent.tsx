@@ -9,6 +9,7 @@ import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEm
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
+import { getAppReplyTarget } from '@/activities/emails/utils/getAppReplyTarget';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,
@@ -22,6 +23,7 @@ type EmailThreadWidgetContentProps = {
   lastMessage: EmailThreadMessageWithSender;
   loading: boolean;
   onFetchMoreMessages: () => void;
+  messageChannelId: string | null;
 };
 
 export const EmailThreadWidgetContent = ({
@@ -29,6 +31,7 @@ export const EmailThreadWidgetContent = ({
   lastMessage,
   loading,
   onFetchMoreMessages,
+  messageChannelId,
 }: EmailThreadWidgetContentProps) => {
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
@@ -67,6 +70,12 @@ export const EmailThreadWidgetContent = ({
   );
 
   const canReply = isDefined(replyContext) && !replyContext.loading;
+
+  const appReplyTarget = getAppReplyTarget({
+    replyContext,
+    messageChannelId,
+    messageThreadId: targetRecord.id,
+  });
 
   const messagesCount = messages.length;
   const is5OrMoreMessages = messagesCount >= 5;
@@ -123,6 +132,7 @@ export const EmailThreadWidgetContent = ({
           isComposerOpen={isComposerOpen}
           setIsComposerOpen={handleComposerOpenChange}
           draftPrefill={draftPrefill}
+          appReplyTarget={appReplyTarget}
         />
       )}
     </StyledWidgetContentContainer>

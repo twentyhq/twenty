@@ -7,17 +7,25 @@ const isReservedMember = (name: string) =>
   isValidationRuleReservedName({ name, isMember: true });
 
 describe('isValidationRuleReservedName', () => {
-  it('should reserve now, functions, operators and constants as a root name', () => {
+  it('should reserve now, previous, functions, operators and constants as a root name', () => {
     expect(
-      ['now', 'isDefined', 'includes', 'not', 'and', 'or', 'in', 'true'].every(
-        isReservedRoot,
-      ),
+      [
+        'now',
+        'previous',
+        'isDefined',
+        'includes',
+        'not',
+        'and',
+        'or',
+        'in',
+        'true',
+      ].every(isReservedRoot),
     ).toBe(true);
   });
 
   it('should reserve only operators and constants after a dot', () => {
     expect(['and', 'abs', 'length', 'true'].every(isReservedMember)).toBe(true);
-    expect(['now', 'isDefined'].some(isReservedMember)).toBe(false);
+    expect(['now', 'previous', 'isDefined'].some(isReservedMember)).toBe(false);
   });
 
   it('should not reserve an ordinary field name', () => {

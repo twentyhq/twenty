@@ -14,7 +14,7 @@ import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { findUserWorkspaceFlatRoleOrThrow } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -23,7 +23,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class SettingPermissionsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -114,7 +114,7 @@ export class SettingPermissionsService {
     }
 
     const principals =
-      await this.principalPermissionsService.resolvePermissionsPrincipals({
+      await this.principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext,
       });
 
@@ -128,11 +128,11 @@ export class SettingPermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    const { aiRunScope } = principals;
+    const { runtimeLimitingRole } = principals;
 
     return (
-      (!isDefined(aiRunScope) ||
-        (aiRunScope.permissionFlags[permissionFlag] ?? false)) &&
+      (!isDefined(runtimeLimitingRole) ||
+        (runtimeLimitingRole.permissionFlags[permissionFlag] ?? false)) &&
       this.isPermissionFlagGrantedToRoles({
         roleIds: getPermissionsPrincipalsRoleIds(principals),
         permissionFlag,

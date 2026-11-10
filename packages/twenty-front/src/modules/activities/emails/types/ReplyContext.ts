@@ -11,6 +11,7 @@ export type ReplyContextReady = {
   inReplyTo: string;
   connectedAccountId: string;
   connectedAccountProvider: ConnectedAccountProvider;
+  messageChannelHandle: string | null;
 };
 
 export type ReplyContext = ReplyContextLoading | ReplyContextReady;

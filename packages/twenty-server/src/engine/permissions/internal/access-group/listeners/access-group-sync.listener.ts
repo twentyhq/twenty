@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { FEATURE_FLAG_DISABLED_EVENT } from 'src/engine/core-modules/feature-flag/constants/feature-flag-disabled-event.constant';
 import { FEATURE_FLAG_ENABLED_EVENT } from 'src/engine/core-modules/feature-flag/constants/feature-flag-enabled-event.constant';
 import { type FeatureFlagEnabledEvent } from 'src/engine/core-modules/feature-flag/types/feature-flag-enabled-event.type';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
@@ -48,7 +49,26 @@ export class AccessGroupSyncListener {
   }
 
   @OnCustomBatchEvent(FEATURE_FLAG_ENABLED_EVENT)
-  async handleFeatureFlagEnabled({
+  async handleFeatureFlagEnabled(
+    batch: Pick<
+      CustomWorkspaceEventBatch<FeatureFlagEnabledEvent>,
+      'workspaceId' | 'events'
+    >,
+  ): Promise<void> {
+    await this.scheduleSyncForFlagChange(batch);
+  }
+
+  @OnCustomBatchEvent(FEATURE_FLAG_DISABLED_EVENT)
+  async handleFeatureFlagDisabled(
+    batch: Pick<
+      CustomWorkspaceEventBatch<FeatureFlagEnabledEvent>,
+      'workspaceId' | 'events'
+    >,
+  ): Promise<void> {
+    await this.scheduleSyncForFlagChange(batch);
+  }
+
+  private async scheduleSyncForFlagChange({
     workspaceId,
     events,
   }: Pick<
@@ -79,9 +99,9 @@ export class AccessGroupSyncListener {
       return;
     }
 
-    const { flatRowLevelPermissionPredicateMaps, flatFieldMetadataMaps } =
+    const { rolesPermissions, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatRowLevelPermissionPredicateMaps',
+        'rolesPermissions',
         'flatFieldMetadataMaps',
       ]);
 
@@ -90,7 +110,7 @@ export class AccessGroupSyncListener {
         updatedFields: events.flatMap(
           ({ properties }) => properties.updatedFields,
         ),
-        flatRowLevelPermissionPredicateMaps,
+        rolesPermissions,
         flatFieldMetadataMaps,
       })
     ) {

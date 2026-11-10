@@ -17,15 +17,31 @@ export const isSsoTestIdentityProviderConfigured = () =>
   );
 
 export const getSsoTestIdentityProvider = () => ({
-  issuer: getRequiredEnvironmentVariable(
-    SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.issuer,
-  ),
-  clientId: getRequiredEnvironmentVariable(
-    SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.clientId,
-  ),
-  clientSecret: getRequiredEnvironmentVariable(
-    SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.clientSecret,
-  ),
+  oidc: {
+    issuer: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.oidcIssuer,
+    ),
+    clientId: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.oidcClientId,
+    ),
+    clientSecret: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.oidcClientSecret,
+    ),
+  },
+  saml: {
+    identityProviderId: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.samlIdentityProviderId,
+    ),
+    ssoUrl: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.samlSsoUrl,
+    ),
+    issuer: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.samlIssuer,
+    ),
+    certificate: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.samlCertificate,
+    ),
+  },
   member: {
     username: getRequiredEnvironmentVariable(
       SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.memberUsername,
@@ -40,6 +56,14 @@ export const getSsoTestIdentityProvider = () => ({
     ),
     password: getRequiredEnvironmentVariable(
       SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.nonMemberPassword,
+    ),
+  },
+  newcomer: {
+    username: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.newcomerUsername,
+    ),
+    password: getRequiredEnvironmentVariable(
+      SSO_TEST_ENVIRONMENT_VARIABLE_NAMES.newcomerPassword,
     ),
   },
 });

@@ -386,6 +386,30 @@ const SettingsAvailableApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsApplicationContent = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationContent').then(
+    (module) => ({
+      default: module.SettingsApplicationContent,
+    }),
+  ),
+);
+
+const SettingsAvailableApplicationResources = lazy(() =>
+  import('~/pages/settings/applications/SettingsAvailableApplicationResources').then(
+    (module) => ({
+      default: module.SettingsAvailableApplicationResources,
+    }),
+  ),
+);
+
+const SettingsApplicationContentTypeDetail = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationContentTypeDetail').then(
+    (module) => ({
+      default: module.SettingsApplicationContentTypeDetail,
+    }),
+  ),
+);
+
 const SettingsApplicationRegistrationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationRegistrationDetails').then(
     (module) => ({
@@ -1226,6 +1250,26 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.AvailableApplicationDetail}
         element={<SettingsAvailableApplicationDetails />}
+      />
+      <Route
+        path={SettingsPath.ApplicationContent}
+        element={<SettingsApplicationContent />}
+      />
+      <Route
+        path={SettingsPath.ApplicationContentTypeDetail}
+        element={<SettingsApplicationContentTypeDetail />}
+      />
+      <Route
+        path={SettingsPath.AvailableApplicationResources}
+        element={<SettingsAvailableApplicationResources />}
+      />
+      <Route
+        path={SettingsPath.AvailableApplicationContent}
+        element={<SettingsApplicationContent />}
+      />
+      <Route
+        path={SettingsPath.AvailableApplicationContentTypeDetail}
+        element={<SettingsApplicationContentTypeDetail />}
       />
       <Route
         path={SettingsPath.ApplicationLogicFunctionDetail}
