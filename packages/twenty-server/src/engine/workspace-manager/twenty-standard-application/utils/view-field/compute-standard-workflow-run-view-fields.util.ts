@@ -32,6 +32,18 @@ export const computeStandardWorkflowRunViewFields = (
         size: 150,
       },
     }),
+    allWorkflowRunsCoreWorkflowId: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'workflowRun',
+      context: {
+        viewName: 'allWorkflowRuns',
+        viewFieldName: 'coreWorkflowId',
+        fieldName: 'coreWorkflowId',
+        position: 1,
+        isVisible: true,
+        size: 150,
+      },
+    }),
     allWorkflowRunsStatus: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'workflowRun',
@@ -71,6 +83,20 @@ export const computeStandardWorkflowRunViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
+    workflowRunRecordPageFieldsCoreWorkflowId:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'workflowRun',
+        context: {
+          viewName: 'workflowRunRecordPageFields',
+          viewFieldName: 'coreWorkflowId',
+          fieldName: 'coreWorkflowId',
+          position: 2,
+          isVisible: true,
+          size: 150,
+          viewFieldGroupName: 'general',
+        },
+      }),
     workflowRunRecordPageFieldsWorkflowVersion:
       createStandardViewFieldFlatMetadata({
         ...args,
