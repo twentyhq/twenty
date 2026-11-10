@@ -54,14 +54,14 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
   margin-top: auto;
-  padding-block: ${({ isMobile, isCentered, hasPageContentInset }) => {
+  padding-block: ${({ isMobile, isCentered }) => {
     if (isMobile) {
       return '0';
     }
 
-    return hasPageContentInset && !isCentered
-      ? themeCssVariables.spacing[2]
-      : themeCssVariables.spacing[3];
+    return isCentered
+      ? themeCssVariables.spacing[3]
+      : themeCssVariables.spacing[2];
   }};
   padding-inline: ${({ isCentered, hasPageContentInset }) =>
     hasPageContentInset && !isCentered
@@ -69,23 +69,12 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
       : themeCssVariables.spacing[4]};
 `;
 
-const StyledInputBox = styled(StyledChatComposerBox)<{
-  isMobile: boolean;
-  isCentered: boolean;
-}>`
-  min-height: ${({ isMobile, isCentered }) => {
-    if (isMobile) {
-      return 'auto';
-    }
-
-    return isCentered ? themeCssVariables.spacing[20] : '140px';
-  }};
+const StyledInputBox = styled(StyledChatComposerBox)<{ isMobile: boolean }>`
+  min-height: ${({ isMobile }) =>
+    isMobile ? 'auto' : themeCssVariables.spacing[20]};
 `;
 
-const StyledEditorWrapper = styled.div<{
-  isMobile: boolean;
-  isCentered: boolean;
-}>`
+const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -102,15 +91,8 @@ const StyledEditorWrapper = styled.div<{
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
     max-height: ${({ isMobile }) => (isMobile ? '160px' : '320px')};
-    min-height: ${({ isMobile, isCentered }) => {
-      if (isMobile) {
-        return 'auto';
-      }
-
-      return isCentered
-        ? themeCssVariables.spacing[6]
-        : themeCssVariables.spacing[12];
-    }};
+    min-height: ${({ isMobile }) =>
+      isMobile ? 'auto' : themeCssVariables.spacing[6]};
     outline: none;
     overflow-y: auto;
     padding: 0;
@@ -181,8 +163,8 @@ const EditableAiChatEditorSection = () => {
   const [dictationInterimText, setDictationInterimText] = useState('');
 
   const composer = (
-    <StyledInputBox isMobile={isMobile} isCentered={isComposerCentered}>
-      <StyledEditorWrapper isMobile={isMobile} isCentered={isComposerCentered}>
+    <StyledInputBox isMobile={isMobile}>
+      <StyledEditorWrapper isMobile={isMobile}>
         <EditorContent editor={editor} />
       </StyledEditorWrapper>
       {!isDirectMessage && (
