@@ -24879,6 +24879,11 @@ msgstr "תנאי הרשאה ברמת השורה"
 msgid "row level permission predicate group"
 msgstr "קבוצת תנאי הרשאה ברמת השורה"
 
+#. js-lingui-id: JWZ1ef
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission rule"
+msgstr ""
+
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Row-level permissions"

@@ -54,9 +54,13 @@ export class RowLevelPermissionPredicateEntity
   @Column({ nullable: false, type: 'uuid' })
   fieldMetadataId: string;
 
-  @ManyToOne(() => FieldMetadataEntity, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.rowLevelPermissionPredicates,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'fieldMetadataId' })
   fieldMetadata: Relation<FieldMetadataEntity>;
 
@@ -67,9 +71,13 @@ export class RowLevelPermissionPredicateEntity
   @Column({ nullable: true, type: 'uuid' })
   relationFieldMetadataId: string | null;
 
-  @ManyToOne(() => FieldMetadataEntity, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.relationRowLevelPermissionPredicates,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'relationFieldMetadataId' })
   relationFieldMetadata: Relation<FieldMetadataEntity> | null;
 
@@ -102,9 +110,14 @@ export class RowLevelPermissionPredicateEntity
   @Column({ nullable: true, type: 'text', default: null })
   workspaceMemberSubFieldName: string | null;
 
-  @ManyToOne(() => FieldMetadataEntity, {
-    onDelete: 'SET NULL',
-  })
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) =>
+      fieldMetadata.workspaceMemberRowLevelPermissionPredicates,
+    {
+      onDelete: 'SET NULL',
+    },
+  )
   @JoinColumn({ name: 'workspaceMemberFieldMetadataId' })
   workspaceMemberFieldMetadata: Relation<FieldMetadataEntity> | null;
 
