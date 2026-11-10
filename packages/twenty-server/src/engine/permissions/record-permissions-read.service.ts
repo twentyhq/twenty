@@ -348,7 +348,6 @@ export class RecordPermissionsReadService {
     });
   }
 
-  // Access groups are recomputed in the background, so a write checks its RLS rules in its own statement
   async buildWriteRecordsAccessSQLCondition({
     tableAlias,
     ...question
