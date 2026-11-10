@@ -6,7 +6,6 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -20,7 +19,7 @@ import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 import {
-  buildRecordFilterForRole,
+  buildRecordFilterForRule,
   buildRowLevelPermissionRecordFilter,
 } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
 
@@ -343,16 +342,8 @@ const predicateGroups = [
 ];
 
 const findRule = (roleId: string) => {
-  const rolePredicates = predicates.filter(
-    (predicate) => predicate.roleId === roleId,
-  );
-
-  if (rolePredicates.length === 0) {
-    return undefined;
-  }
-
   return {
-    predicates: rolePredicates,
+    predicates: predicates.filter((predicate) => predicate.roleId === roleId),
     predicateGroups: predicateGroups.filter(
       (predicateGroup) => predicateGroup.roleId === roleId,
     ),
@@ -382,33 +373,45 @@ const build = (
   });
 
 describe('buildRowLevelPermissionRecordFilter', () => {
-  it('should return null when no role is given', () => {
-    expect(build([])).toBeNull();
+  it('should match nothing when no rule is given', () => {
+    expect(build([])).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });
 
-  it('should return null when the role has no predicates', () => {
-    expect(build([UNRESTRICTED_ROLE_ID])).toBeNull();
+  it('should match nothing when the only rule has no predicates', () => {
+    expect(build([UNRESTRICTED_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });
 
-  it('should return the role filter as-is for a single role', () => {
+  it('should return the rule filter as-is for a single rule', () => {
     expect(build([USER_ROLE_ID])).toEqual({
       name: { ilike: '%visible-to-user%' },
     });
   });
 
-  it('should keep the restriction when the other role is unrestricted', () => {
+  it('should ignore a rule without predicates next to another rule', () => {
     expect(build([USER_ROLE_ID, UNRESTRICTED_ROLE_ID])).toEqual({
       name: { ilike: '%visible-to-user%' },
     });
   });
 
-  it('should require both roles to be satisfied when both restrict', () => {
-    expect(build([USER_ROLE_ID, APPLICATION_ROLE_ID])).toEqual({
-      and: [
+  it('should match a record matching any of two rules', () => {
+    const filter = build([USER_ROLE_ID, APPLICATION_ROLE_ID]);
+    const isMatching = (name: string) =>
+      isRecordMatchingFilter({
+        record: { name, deletedAt: null },
+        filter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
+
+    expect(filter).toEqual({
+      or: [
         { name: { ilike: '%visible-to-user%' } },
         { name: { ilike: '%visible-to-application%' } },
       ],
     });
+    expect(isMatching('visible-to-user')).toBe(true);
+    expect(isMatching('visible-to-application')).toBe(true);
+    expect(isMatching('visible-to-nobody')).toBe(false);
   });
 
   it('should compile an IS operand on a text field to a case-sensitive exact match', () => {
@@ -438,9 +441,12 @@ describe('buildRowLevelPermissionRecordFilter', () => {
     },
   );
 
-  it('should enforce the root group of the first grouped predicate whatever the group order', () => {
+  it('should require every root group of a rule', () => {
     expect(build([TWO_ROOT_GROUPS_ROLE_ID])).toEqual({
-      and: [{ name: { ilike: '%from-root-b%' } }],
+      and: [
+        { and: [{ name: { ilike: '%from-root-a%' } }] },
+        { and: [{ name: { ilike: '%from-root-b%' } }] },
+      ],
     });
   });
 
@@ -482,7 +488,7 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       ).toEqual({ status: { in: ['OPEN'] } });
     });
 
-    it('should keep matching nothing when the other role is unrestricted', () => {
+    it('should keep matching nothing next to a rule without predicates', () => {
       expect(build([LOCALE_BOUND_ROLE_ID, UNRESTRICTED_ROLE_ID])).toEqual(
         UNSATISFIABLE_RECORD_FILTER,
       );
@@ -504,16 +510,10 @@ describe('buildRowLevelPermissionRecordFilter', () => {
     ])(
       'should evaluate the never-matching branch of %s as false',
       (roleId, isMatching) => {
-        const filter = build([roleId]);
-
-        if (!isDefined(filter)) {
-          throw new Error(`Expected a filter for role ${roleId}`);
-        }
-
         expect(
           isRecordMatchingFilter({
             record: { name: 'shared-with-everyone', deletedAt: null },
-            filter,
+            filter: build([roleId]),
             flatObjectMetadata,
             flatFieldMetadataMaps,
           }),
@@ -561,9 +561,9 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       });
     });
 
-    it('should keep matching nothing when the other role restricts', () => {
+    it('should still match through another rule when the member does not carry the value', () => {
       expect(build([LOCALE_BOUND_ROLE_ID, USER_ROLE_ID])).toEqual({
-        and: [
+        or: [
           UNSATISFIABLE_RECORD_FILTER,
           { name: { ilike: '%visible-to-user%' } },
         ],
@@ -572,7 +572,7 @@ describe('buildRowLevelPermissionRecordFilter', () => {
   });
 });
 
-describe('buildRecordFilterForRole with access group member values', () => {
+describe('buildRecordFilterForRule with access group member values', () => {
   const buildForAccessGroup = ({
     roleId,
     memberFieldValues,
@@ -580,7 +580,7 @@ describe('buildRecordFilterForRole with access group member values', () => {
     roleId: string;
     memberFieldValues: Record<string, string | string[] | null>;
   }) =>
-    buildRecordFilterForRole({
+    buildRecordFilterForRule({
       isRelationHopEnabled: false,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
