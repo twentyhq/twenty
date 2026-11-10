@@ -355,6 +355,14 @@ export class WorkflowExecutorWorkspaceService {
 
     const steps = workflowRun.state.flow.steps;
 
+    // A stop can end the run while this job sits between two steps; keep its status.
+    if (
+      workflowRun.status !== WorkflowRunStatus.RUNNING &&
+      workflowRun.status !== WorkflowRunStatus.STOPPING
+    ) {
+      return;
+    }
+
     if (workflowRun.status === WorkflowRunStatus.STOPPING) {
       if (!workflowHasRunningSteps({ stepInfos, steps })) {
         await this.workflowRunWorkspaceService.endWorkflowRun({

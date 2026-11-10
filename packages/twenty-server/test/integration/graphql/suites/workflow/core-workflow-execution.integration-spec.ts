@@ -772,7 +772,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
     });
 
-    it('takes a submission for each iteration of a form inside a loop', async () => {
+    const formLoopSteps = () => {
       const afterLoop = emptyStep();
       const form = formStep([]);
       const iterator: WorkflowAction = {
@@ -790,6 +790,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       form.nextStepIds = [iterator.id];
 
+      return { iterator, form, afterLoop };
+    };
+
+    it('takes a submission for each iteration of a form inside a loop', async () => {
+      const { iterator, form, afterLoop } = formLoopSteps();
       const fixture = await createFixture({
         mirrorless: true,
         steps: [iterator, form, afterLoop],
@@ -856,6 +861,32 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(run.status).toBe('STOPPED');
       expect(run.state.stepInfos[form.id].status).toBe('FAILED');
       expect(run.state.stepInfos[finalStep.id].status).toBe('NOT_STARTED');
+    });
+
+    it('stops a run waiting on a form inside a loop without parking it in STOPPING', async () => {
+      const { iterator, form, afterLoop } = formLoopSteps();
+      const fixture = await createFixture({
+        mirrorless: true,
+        steps: [iterator, form, afterLoop],
+      });
+      const runId = await runFixture(fixture);
+
+      await waitForStep(runId, form.id, 'PENDING');
+
+      const response = await workflowGraphqlRequest(
+        'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id status } }',
+        { id: runId },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.stopWorkflowRun.status).toBe('STOPPED');
+
+      const run = await getRun(runId);
+
+      expect(run.status).toBe('STOPPED');
+      expect(run.state.stepInfos[iterator.id].status).toBe('STOPPED');
+      expect(run.state.stepInfos[form.id].status).toBe('FAILED');
+      expect(run.state.stepInfos[afterLoop.id].status).toBe('NOT_STARTED');
     });
   });
 

@@ -253,15 +253,13 @@ export class WorkflowRunnerWorkspaceService {
       const steps = workflowRun.state.flow.steps;
 
       if (workflowHasRunningSteps({ stepInfos, steps })) {
-        const isStopping =
+        const stoppingStepInfos =
           await this.workflowRunWorkspaceService.markWorkflowRunAsStopping({
             workflowRunId,
             workspaceId,
           });
 
-        if (isStopping) {
-          newStatus = WorkflowRunStatus.STOPPING;
-        } else {
+        if (!isDefined(stoppingStepInfos)) {
           // The run changed before the lock was taken, so report what it is now.
           const currentWorkflowRun =
             await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -270,6 +268,18 @@ export class WorkflowRunnerWorkspaceService {
             });
 
           newStatus = currentWorkflowRun.status;
+        } else if (
+          workflowHasRunningSteps({ stepInfos: stoppingStepInfos, steps })
+        ) {
+          newStatus = WorkflowRunStatus.STOPPING;
+        } else {
+          // Only iterators were running: no step job is left to end the run.
+          await this.workflowRunWorkspaceService.endWorkflowRun({
+            workflowRunId,
+            workspaceId,
+            status: WorkflowRunStatus.STOPPED,
+          });
+          newStatus = WorkflowRunStatus.STOPPED;
         }
       } else {
         await this.workflowRunWorkspaceService.endWorkflowRun({

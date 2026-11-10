@@ -2,7 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import {
+  StepStatus,
+  type WorkflowRunStepInfo,
+  type WorkflowRunStepInfos,
+} from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
@@ -363,7 +367,7 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowRunId: string;
     workspaceId: string;
-  }): Promise<boolean> {
+  }): Promise<WorkflowRunStepInfos | undefined> {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
       workspaceId,
@@ -373,10 +377,18 @@ export class WorkflowRunWorkspaceService {
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
       !isDefined(workflowRunToUpdate.state)
     ) {
-      return false;
+      return undefined;
     }
 
     const { stepInfos, flow } = workflowRunToUpdate.state;
+
+    const stoppingStepInfos = {
+      ...stepInfos,
+      ...setAllIteratorsStepInfosAsStopped({
+        stepInfos,
+        steps: flow.steps,
+      }),
+    };
 
     await this.updateWorkflowRun({
       workflowRunId,
@@ -385,18 +397,12 @@ export class WorkflowRunWorkspaceService {
         status: WorkflowRunStatus.STOPPING,
         state: {
           ...workflowRunToUpdate.state,
-          stepInfos: {
-            ...stepInfos,
-            ...setAllIteratorsStepInfosAsStopped({
-              stepInfos,
-              steps: flow.steps,
-            }),
-          },
+          stepInfos: stoppingStepInfos,
         },
       },
     });
 
-    return true;
+    return stoppingStepInfos;
   }
 
   // Shares the step-info write lock so of two concurrent callers the second finds the step no longer PENDING.
