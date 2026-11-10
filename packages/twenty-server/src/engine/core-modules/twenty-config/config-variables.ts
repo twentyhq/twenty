@@ -1639,7 +1639,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Delay the jobs that carry a maxRate (workflows, logic functions) so that each one runs at most max times per durationMs, per workspace and application. Off: jobs are never delayed by their maxRate.',
+      'Delay the jobs that carry a maxRate (workflows, logic functions) at enqueue: a burst of max, then one every durationMs / max, per workspace and application. Execution starts are not rechecked, so a paused worker can run overdue jobs together. Off: jobs are never delayed by their maxRate.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
