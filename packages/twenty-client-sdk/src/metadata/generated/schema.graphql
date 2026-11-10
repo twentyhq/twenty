@@ -852,6 +852,11 @@ type ApprovedAccessDomain {
   isValidated: Boolean!
 }
 
+input ArchiveInboxThreadInput {
+  threadId: UUID!
+  workspaceMemberIds: [UUID!]
+}
+
 type AuthBypassProviders {
   google: Boolean!
   microsoft: Boolean!
@@ -2440,6 +2445,7 @@ enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_HTTP_EGRESS_LAMBDA_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
@@ -3457,6 +3463,7 @@ type Mutation {
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
+  archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
