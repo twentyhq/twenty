@@ -3,7 +3,7 @@ import { RelationType } from '@/types/RelationType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { computeRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
 
-// An event carries a relation as its join column (companyId), never the related record
+// Events carry a relation as its join column (companyId); morph join columns are per target, so they are left out
 export const toDatabaseEventValidationRuleField = ({
   name,
   type,
@@ -22,7 +22,10 @@ export const toDatabaseEventValidationRuleField = ({
     return { name, type, universalIdentifier };
   }
 
-  if (relationType !== RelationType.MANY_TO_ONE) {
+  if (
+    type === FieldMetadataType.MORPH_RELATION ||
+    relationType !== RelationType.MANY_TO_ONE
+  ) {
     return undefined;
   }
 

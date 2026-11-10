@@ -42,4 +42,15 @@ describe('toDatabaseEventValidationRuleField', () => {
       }),
     ).toBeUndefined();
   });
+
+  it('leaves out a morph relation, whose join columns are per target', () => {
+    expect(
+      toDatabaseEventValidationRuleField({
+        name: 'target',
+        type: FieldMetadataType.MORPH_RELATION,
+        universalIdentifier: 'target-id',
+        relationType: RelationType.MANY_TO_ONE,
+      }),
+    ).toBeUndefined();
+  });
 });

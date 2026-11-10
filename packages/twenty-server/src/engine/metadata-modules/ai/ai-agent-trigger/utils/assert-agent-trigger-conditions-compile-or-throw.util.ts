@@ -29,6 +29,15 @@ export const assertAgentTriggerConditionsCompileOrThrow = ({
     return;
   }
 
+  const flatObjectMetadataByNameSingular = new Map(
+    Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .map((flatObjectMetadata) => [
+        flatObjectMetadata.nameSingular,
+        flatObjectMetadata,
+      ]),
+  );
+
   for (const trigger of triggers) {
     if (
       !isPlainObject(trigger) ||
@@ -45,9 +54,8 @@ export const assertAgentTriggerConditionsCompileOrThrow = ({
     }
 
     const [objectNameSingular] = eventName.split('.');
-    const flatObjectMetadata = Object.values(
-      flatObjectMetadataMaps.byUniversalIdentifier,
-    ).find((object) => object?.nameSingular === objectNameSingular);
+    const flatObjectMetadata =
+      flatObjectMetadataByNameSingular.get(objectNameSingular);
 
     const compilation = isDefined(flatObjectMetadata)
       ? compileValidationRuleExpression({
