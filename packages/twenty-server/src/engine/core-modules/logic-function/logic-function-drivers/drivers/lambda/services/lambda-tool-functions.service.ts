@@ -12,6 +12,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as fs from 'fs/promises';
 import { join } from 'path';
+import { setTimeout } from 'timers/promises';
 import { isDefined } from 'twenty-shared/utils';
 
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
@@ -28,9 +29,11 @@ import {
   COMMON_LAYER_NAME_PREFIX,
   HTTP_EGRESS_FUNCTION_NAME_PREFIX,
   HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
+  HTTP_EGRESS_LAMBDA_MAX_INVOKE_ATTEMPTS,
   HTTP_EGRESS_LAMBDA_MAX_INVOKE_PAYLOAD_BYTES,
   HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES,
   HTTP_EGRESS_LAMBDA_MEMORY_MB,
+  HTTP_EGRESS_LAMBDA_RATE_LIMIT_RETRY_DELAY_MS,
   HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
   YARN_INSTALL_FUNCTION_NAME_PREFIX,
@@ -278,19 +281,13 @@ export class LambdaToolFunctionsService {
 
     try {
       functionName = await this.ensureHttpEgressLambdaIsActive();
-      const lambdaClient = await this.httpEgressAwsClient.getLambdaClient();
-
-      result = await lambdaClient.send(
-        new InvokeCommand({
-          FunctionName: functionName,
-          Payload: payload,
-        }),
-        {
-          abortSignal: AbortSignal.timeout(
-            request.limits.timeoutMs + HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
-          ),
-        },
-      );
+      result = await this.invokeHttpEgressLambda({
+        functionName,
+        payload,
+        abortSignal: AbortSignal.timeout(
+          request.limits.timeoutMs + HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
+        ),
+      });
     } catch (error) {
       if (isDefined(functionName)) {
         await this.awsClient.clearFunctionCache(functionName);
@@ -317,6 +314,49 @@ export class LambdaToolFunctionsService {
     }
 
     return JSON.parse(resultPayload) as HttpEgressResponse;
+  }
+
+  private async invokeHttpEgressLambda({
+    functionName,
+    payload,
+    abortSignal,
+    attempt = 1,
+  }: {
+    functionName: string;
+    payload: string;
+    abortSignal: AbortSignal;
+    attempt?: number;
+  }): Promise<InvokeCommandOutput> {
+    const lambdaClient = await this.httpEgressAwsClient.getLambdaClient();
+
+    try {
+      return await lambdaClient.send(
+        new InvokeCommand({ FunctionName: functionName, Payload: payload }),
+        { abortSignal },
+      );
+    } catch (error) {
+      // A rate-limited invoke never ran, so it is the only failure that can be retried without sending the request twice.
+      const isRateLimited =
+        error instanceof LogicFunctionException &&
+        error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED;
+
+      if (!isRateLimited || attempt >= HTTP_EGRESS_LAMBDA_MAX_INVOKE_ATTEMPTS) {
+        throw error;
+      }
+
+      await setTimeout(
+        attempt * HTTP_EGRESS_LAMBDA_RATE_LIMIT_RETRY_DELAY_MS,
+        undefined,
+        { signal: abortSignal },
+      );
+
+      return this.invokeHttpEgressLambda({
+        functionName,
+        payload,
+        abortSignal,
+        attempt: attempt + 1,
+      });
+    }
   }
 
   private async ensureHttpEgressLambdaIsActive(): Promise<string> {

@@ -11,6 +11,10 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 jest.mock(
   'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-builder-name.util',
@@ -42,6 +46,13 @@ const HTTP_EGRESS_RESPONSE = {
   outcomeDetails: { outcome: 'success', status: 200, durationMs: 12 },
 };
 
+// What the client's rate-limit middleware turns a TooManyRequestsException into.
+const buildRateLimitedError = () =>
+  new LogicFunctionException(
+    'Lambda rate limited InvokeCommand',
+    LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED,
+  );
+
 const buildInvokePayload = (body: string) =>
   Object.assign(Buffer.from(body), { transformToString: () => body });
 
@@ -66,7 +77,7 @@ describe('LambdaDriver', () => {
   let driver: LambdaDriver;
   let client: Lambda;
   let egressInvokeOutput: { Payload?: unknown; FunctionError?: string };
-  let egressInvokeError: Error | undefined;
+  let egressInvokeErrors: Error[];
 
   beforeEach(() => {
     state = 'Inactive';
@@ -77,7 +88,7 @@ describe('LambdaDriver', () => {
     egressInvokeOutput = {
       Payload: buildInvokePayload(JSON.stringify(HTTP_EGRESS_RESPONSE)),
     };
-    egressInvokeError = undefined;
+    egressInvokeErrors = [];
     client = new Lambda({ region: 'eu-west-1' });
     let isLocked = false;
     const cacheStorageService = jest.createMockFromModule<
@@ -126,6 +137,8 @@ describe('LambdaDriver', () => {
             functionNames.push(input.FunctionName);
 
             if (isDefined(payload.context)) {
+              const egressInvokeError = egressInvokeErrors.shift();
+
               if (isDefined(egressInvokeError)) {
                 throw egressInvokeError;
               }
@@ -313,7 +326,7 @@ describe('LambdaDriver', () => {
     });
 
     it('reports an unavailable egress without retrying the invoke', async () => {
-      egressInvokeError = new Error('Service unavailable');
+      egressInvokeErrors = [new Error('Service unavailable')];
 
       const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
 
@@ -330,11 +343,40 @@ describe('LambdaDriver', () => {
       ).toHaveLength(1);
     });
 
+    it('retries an invoke that Lambda rate limited, since it never ran', async () => {
+      egressInvokeErrors = [buildRateLimitedError()];
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toEqual(HTTP_EGRESS_RESPONSE);
+      expect(
+        commands.filter((command) => command === 'InvokeCommand'),
+      ).toHaveLength(2);
+    });
+
+    it('reports unavailable once rate-limited retries run out', async () => {
+      egressInvokeErrors = [
+        buildRateLimitedError(),
+        buildRateLimitedError(),
+        buildRateLimitedError(),
+      ];
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toMatchObject({
+        outcomeDetails: { errorCode: 'EGRESS_UNAVAILABLE' },
+      });
+      expect(
+        commands.filter((command) => command === 'InvokeCommand'),
+      ).toHaveLength(3);
+    });
+
     it('reports a stalled invoke as unavailable rather than a request timeout', async () => {
-      egressInvokeError = Object.assign(
-        new Error('The operation was aborted due to timeout'),
-        { name: 'TimeoutError' },
-      );
+      egressInvokeErrors = [
+        Object.assign(new Error('The operation was aborted due to timeout'), {
+          name: 'TimeoutError',
+        }),
+      ];
 
       const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
 
