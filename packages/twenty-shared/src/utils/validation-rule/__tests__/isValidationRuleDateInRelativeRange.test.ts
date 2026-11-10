@@ -68,4 +68,13 @@ describe('isValidationRuleDateInRelativeRange', () => {
       isValidationRuleDateInRelativeRange('2026-09-20', 'PAST', 0, 'DAY'),
     ).toBe(false);
   });
+
+  it('should not match when the amount is empty', () => {
+    expect(
+      isValidationRuleDateInRelativeRange('2026-09-20', 'PAST', null, 'DAY'),
+    ).toBe(false);
+    expect(
+      isValidationRuleDateInRelativeRange('2026-09-20', 'NEXT', null, 'DAY'),
+    ).toBe(false);
+  });
 });

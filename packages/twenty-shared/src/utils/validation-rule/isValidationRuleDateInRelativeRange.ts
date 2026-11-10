@@ -1,6 +1,8 @@
 import { isString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
 
+import { isDefined } from '@/utils/validation/isDefined';
+
 import { relativeDateFilterSchema } from '@/utils/filter/dates/utils/relativeDateFilterSchema';
 import { resolveRelativeDateTimeFilter } from '@/utils/filter/dates/utils/resolveRelativeDateTimeFilter';
 import { getValidationRuleNowInUtc } from '@/utils/validation-rule/validationRuleEvaluationClock';
@@ -28,7 +30,7 @@ export const isValidationRuleDateInRelativeRange = (
   amount: unknown,
   unit: unknown,
 ): boolean => {
-  if (!isString(value)) {
+  if (!isString(value) || (direction !== 'THIS' && !isDefined(amount))) {
     return false;
   }
 
