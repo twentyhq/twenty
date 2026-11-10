@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import {
+  computeMorphRelationGqlFieldJoinColumnName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -97,6 +98,52 @@ const buildScalarEditorFields = ({
   return [field, ...subfields];
 };
 
+// An event carries each morph target as its own join column (targetCompanyId)
+const buildMorphTargetIdEditorFields = ({
+  fieldMetadataItem,
+  objectMetadataItem,
+  objectMetadataItems,
+}: {
+  fieldMetadataItem: FieldMetadataItem;
+  objectMetadataItem: ValidationRuleEditorObject;
+  objectMetadataItems: ValidationRuleEditorObject[];
+}): ValidationRuleEditorField[] =>
+  (fieldMetadataItem.morphRelations ?? [])
+    .filter((morphRelation) => morphRelation.type === RelationType.MANY_TO_ONE)
+    .map((morphRelation) => {
+      const targetObjectMetadataItem = objectMetadataItems.find(
+        (candidate) => candidate.id === morphRelation.targetObjectMetadata.id,
+      );
+
+      return {
+        path: computeMorphRelationGqlFieldJoinColumnName({
+          fieldName: fieldMetadataItem.name,
+          relationType: morphRelation.type,
+          targetObjectMetadataNameSingular:
+            morphRelation.targetObjectMetadata.nameSingular,
+          targetObjectMetadataNamePlural:
+            morphRelation.targetObjectMetadata.namePlural,
+        }),
+        label:
+          targetObjectMetadataItem?.labelSingular ??
+          morphRelation.targetObjectMetadata.nameSingular,
+        parentLabel: fieldMetadataItem.label,
+        iconName:
+          [targetObjectMetadataItem?.icon, fieldMetadataItem.icon].find(
+            isNonEmptyString,
+          ) ?? DEFAULT_OBJECT_ICON,
+        type: FieldMetadataType.UUID,
+        objectLabelSingular: objectMetadataItem.labelSingular,
+        objectIconName: isNonEmptyString(objectMetadataItem.icon)
+          ? objectMetadataItem.icon
+          : DEFAULT_OBJECT_ICON,
+        selectOptionValues: [],
+        isSystem: fieldMetadataItem.isSystem ?? false,
+        hasMembers: false,
+        readsRelatedRecord: false,
+      };
+    });
+
 const buildCurrentValueEditorFields = ({
   objectMetadataItem,
   objectMetadataItems,
@@ -116,6 +163,17 @@ const buildCurrentValueEditorFields = ({
           pathPrefix: '',
           parentLabel: null,
           readsRelatedRecord: false,
+        });
+      }
+
+      if (
+        scope === 'databaseEvent' &&
+        fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
+      ) {
+        return buildMorphTargetIdEditorFields({
+          fieldMetadataItem,
+          objectMetadataItem,
+          objectMetadataItems,
         });
       }
 

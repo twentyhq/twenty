@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import { resolveValidationRuleIdentifierPath } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -182,6 +183,43 @@ describe('buildValidationRuleEditorFields', () => {
 
       expect(
         eventPaths.filter(
+          (path) =>
+            !resolveValidationRuleIdentifierPath({ path, fields: descriptors })
+              .isResolved,
+        ),
+      ).toEqual([]);
+    });
+  });
+
+  describe('for a database event on an object with morph relations', () => {
+    const objectWithMorphRelation = objectMetadataItems.find(({ fields }) =>
+      fields.some(
+        ({ type, isActive, morphRelations }) =>
+          type === FieldMetadataType.MORPH_RELATION &&
+          isActive &&
+          (morphRelations ?? []).length > 0,
+      ),
+    ) as EnrichedObjectMetadataItem;
+
+    const morphEditorFields = buildValidationRuleEditorFields({
+      objectMetadataItem: objectWithMorphRelation,
+      objectMetadataItems,
+      scope: 'databaseEvent',
+    });
+
+    it('should offer each morph target by its join column, as the compiler resolves it', () => {
+      const descriptors = buildValidationRuleFieldDescriptors({
+        objectMetadataItem: objectWithMorphRelation,
+        objectMetadataItems,
+        scope: 'databaseEvent',
+      });
+      const morphPaths = morphEditorFields
+        .map(({ path }) => path)
+        .filter((path) => /^target[A-Z].*Id$/.test(path));
+
+      expect(morphPaths.length).toBeGreaterThan(0);
+      expect(
+        morphPaths.filter(
           (path) =>
             !resolveValidationRuleIdentifierPath({ path, fields: descriptors })
               .isResolved,
