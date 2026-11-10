@@ -15,7 +15,7 @@ export const useCoreWorkflowVersionContent = ({
 }): WorkflowVersion | undefined => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data } = useQuery(GetCoreWorkflowVersionDocument, {
+  const { data, previousData } = useQuery(GetCoreWorkflowVersionDocument, {
     client: apolloCoreClient,
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -24,13 +24,14 @@ export const useCoreWorkflowVersionContent = ({
     skip: !isDefined(coreWorkflowVersionId) || !isDefined(coreWorkflowId),
   });
 
-  const coreWorkflowVersion = data?.coreWorkflowVersion;
+  // While the requested version loads, the previous one of the same workflow stays current, so the editor is never left without a version
+  const coreWorkflowVersion =
+    data?.coreWorkflowVersion ?? previousData?.coreWorkflowVersion;
 
   if (
     !isDefined(coreWorkflowVersion) ||
     !isDefined(coreWorkflowId) ||
     !isDefined(coreWorkflowVersionId) ||
-    coreWorkflowVersion.id !== coreWorkflowVersionId ||
     coreWorkflowVersion.coreWorkflowId !== coreWorkflowId
   ) {
     return undefined;

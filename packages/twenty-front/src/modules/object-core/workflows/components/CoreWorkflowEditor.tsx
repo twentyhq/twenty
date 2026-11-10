@@ -42,7 +42,10 @@ export const CoreWorkflowEditor = ({
     refetch: refetchCoreWorkflow,
   });
 
-  if (loading && !isDefined(coreWorkflowVersion)) {
+  const isVersionLoading = loading && !isDefined(coreWorkflowVersion);
+
+  // The editable editor stays mounted while a new current version loads, so creating a draft does not blank the canvas
+  if (isVersionLoading && readonly) {
     return null;
   }
   if (isDefined(error)) {
@@ -51,8 +54,9 @@ export const CoreWorkflowEditor = ({
     );
   }
   if (
-    !isDefined(coreWorkflowVersion) ||
-    coreWorkflowVersion.coreWorkflowId !== coreWorkflowId
+    !isVersionLoading &&
+    (!isDefined(coreWorkflowVersion) ||
+      coreWorkflowVersion.coreWorkflowId !== coreWorkflowId)
   ) {
     return (
       <WorkspaceRouteUnavailable>{t`Workflow version not found.`}</WorkspaceRouteUnavailable>
