@@ -509,6 +509,7 @@ type Application {
   runOnUserPreferences: Boolean!
   settingsCustomTabFrontComponentId: UUID
   settingsMenuItems: [SettingsMenuItem!]
+  sourceType: ApplicationRegistrationSourceType!
   universalIdentifier: String!
   version: String
   yarnLockChecksum: String
@@ -523,7 +524,9 @@ type ApplicationAuthorization {
   id: UUID!
   lastAuthorizedAt: DateTime
   lastUsedAt: DateTime!
+  oAuthIdentityUniversalIdentifier: String
   scopes: [String!]
+  userId: UUID!
   workspaceId: UUID!
 }
 
@@ -806,6 +809,7 @@ type ApplicationRegistrationSummary {
   id: UUID!
   latestAvailableVersion: String
   logoUrl: String
+  oAuthIdentityUniversalIdentifier: String
   sourceType: ApplicationRegistrationSourceType!
 }
 
@@ -3136,6 +3140,7 @@ type LoginToken {
 type MarketplaceApp {
   author: String!
   category: String!
+  connectUrl: String
   description: String!
   id: String!
   isListed: Boolean!
@@ -3149,6 +3154,7 @@ type MarketplaceAppDetail {
   author: String
   billsCredits: Boolean!
   category: String
+  connectUrl: String
   content: ApplicationContent
   defaultRoleUniversalIdentifier: String
   description: String
@@ -3650,6 +3656,7 @@ type Mutation {
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   revokeTwoFactorAuthenticationRecoveryCode(userId: UUID!): Boolean!
   revokeUserSession(userSessionId: UUID!): Boolean!
+  revokeWorkspaceApplicationMemberAccess(applicationId: UUID!, userId: UUID!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
@@ -4243,9 +4250,11 @@ type PreviewMessageCampaignSendOutputDTO {
 }
 
 type PublicApplicationRegistration {
+  claimsVerifiedClientName: Boolean!
   id: UUID!
   logoUrl: String
   name: String!
+  oAuthIdentityUniversalIdentifier: String
   oAuthScopes: [String!]!
   websiteUrl: String
 }
@@ -4474,6 +4483,7 @@ type Query {
   validationRulesReadingField(fieldMetadataId: UUID!): [ValidationRule!]!
   webhook(id: UUID!): Webhook
   webhooks: [Webhook!]!
+  workspaceApplicationAuthorizations(applicationId: UUID!): [ApplicationAuthorization!]!
 }
 
 type RatioAggregateConfig {
