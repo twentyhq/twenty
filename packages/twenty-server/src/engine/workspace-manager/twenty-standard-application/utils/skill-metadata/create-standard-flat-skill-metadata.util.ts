@@ -42,19 +42,27 @@ You help users create and manage automation workflows.
 - **Triggers**: DATABASE_EVENT, MANUAL, CRON, WEBHOOK
 - **Steps**: CREATE_RECORD, SEND_EMAIL, CODE, LOGIC_FUNCTION, PICK_RECORD, CLASSIFY, etc.
 - **Data flow**: Use {{stepId.fieldName}} to reference previous step outputs
-- **Relationships**: Use nested objects like {"company": {"id": "{{reference}}"}}
+- **Relationships**: Set a relation by its foreign key, e.g. {"companyId": "{{reference}}"}. In UPDATE_RECORD, list that same key (companyId) in fieldsToUpdate
 
-## Attaching Activities to Records (Target Objects)
+## Linking Emails, Events, Notes and Tasks to Records
 
-Emails, calendar events, notes and tasks are not linked to companies, people or opportunities by a foreign key on the activity itself — each attachment is its own join record:
+Emails, calendar events, notes and tasks have no company, person or opportunity field. Each link is a separate junction record:
 
-- Email thread → \`messageThreadTarget\` (a \`messageThread\` relation plus a morph relation to the attached record: \`targetCompany\`, \`targetPerson\`, \`targetOpportunity\`, ...)
-- Calendar event → \`calendarEventTarget\` (same pattern, with a \`calendarEvent\` relation)
-- Note → \`noteTarget\`, Task → \`taskTarget\` (same pattern, with \`note\` / \`task\` relations)
+| Linked item    | Junction object           | Parent key            |
+| -------------- | ------------------------- | --------------------- |
+| Email thread   | \`messageThreadTarget\`   | \`messageThreadId\`   |
+| Calendar event | \`calendarEventTarget\`   | \`calendarEventId\`   |
+| Note           | \`noteTarget\`            | \`noteId\`            |
+| Task           | \`taskTarget\`            | \`taskId\`            |
 
-To attach an activity in a workflow, use CREATE_RECORD on the target object, e.g. { "objectName": "messageThreadTarget", "objectRecord": { "messageThread": { "id": "..." }, "targetOpportunity": { "id": "..." } } }. One target record attaches to exactly one record; attaching the same thread to several records means one target record each.
+Each junction has one foreign key per linkable object: \`targetCompanyId\`, \`targetPersonId\`, \`targetOpportunityId\`. Set exactly one. Custom objects add a \`target<ObjectName>Id\` key on \`noteTarget\` and \`taskTarget\` only. Check the junction's metadata for exact field names.
 
-To react to an activity being attached, trigger on the target object, e.g. \`messageThreadTarget.created\` — the join record's foreign keys (e.g. \`messageThreadId\`, \`targetCompanyId\`) are available on {{trigger.properties.after}}. Custom objects get their own morph variant (\`target<ObjectName>\`) on \`noteTarget\` and \`taskTarget\` only; \`messageThreadTarget\` and \`calendarEventTarget\` do not get one automatically. Check the target object's metadata for exact field names.
+To link, use CREATE_RECORD on the junction. Linking to several records means one junction record each:
+{ "objectName": "noteTarget", "objectRecord": { "noteId": "...", "targetCompanyId": "..." } }
+
+To react to a link, trigger on \`<junction>.created\`. The same keys are on {{trigger.properties.after}}. Email and calendar sync also create \`messageThreadTarget\` and \`calendarEventTarget\` records automatically (\`isManuallyAssigned\` false), so filter on \`isManuallyAssigned\` when only links made by a user should count.
+
+Not to be confused with \`attachment\`, which stores files.
 
 ## CRON Trigger Settings Schema
 
