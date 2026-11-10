@@ -21,6 +21,7 @@ import { CoreWorkflowRecentRunsCell } from '@/object-core/workflows/components/C
 import { CORE_WORKFLOW_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/workflows/constants/CoreWorkflowRunsGridTemplateColumns';
 import { useCoreWorkflowRuns } from '@/object-core/workflows/hooks/useCoreWorkflowRuns';
 import { handleCoreObjectTableRowKeyDown } from '@/object-core/utils/handleCoreObjectTableRowKeyDown';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
@@ -67,6 +68,7 @@ export const CoreWorkflowRunsTab = ({
 }: CoreWorkflowRunsTabProps) => {
   const { t } = useLingui();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { formatNumber } = useNumberFormat();
   const { runs, runSummary, loading, error, hasNextPage, fetchMoreRuns } =
     useCoreWorkflowRuns(coreWorkflowId);
 
@@ -135,6 +137,9 @@ export const CoreWorkflowRunsTab = ({
   }
 
   const lastRunRelativeDate = beautifyPastDateRelativeToNow(runs[0].createdAt);
+  const formattedRunCount = isDefined(runSummary)
+    ? `${formatNumber(runSummary.runCountLast14Days)}${runSummary.isRunCountLowerBound ? '+' : ''}`
+    : '';
 
   return (
     <>
@@ -146,15 +151,10 @@ export const CoreWorkflowRunsTab = ({
         </StyledSummaryStrip>
         {isDefined(runSummary) && (
           <span>
-            {runSummary.isRunCountLowerBound
-              ? plural(runSummary.runCountLast14Days, {
-                  one: '#+ run',
-                  other: '#+ runs',
-                })
-              : plural(runSummary.runCountLast14Days, {
-                  one: '# run',
-                  other: '# runs',
-                })}{' '}
+            {plural(runSummary.runCountLast14Days, {
+              one: `${formattedRunCount} run`,
+              other: `${formattedRunCount} runs`,
+            })}{' '}
             <StyledSummaryQualifier>{t`in the last 14 days`}</StyledSummaryQualifier>
           </span>
         )}
