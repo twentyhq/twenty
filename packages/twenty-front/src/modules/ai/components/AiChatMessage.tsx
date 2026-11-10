@@ -7,6 +7,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
+// TODO: Refactor AgentChat and Message component lib
 import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { getAgentChatFilePartFieldFilesValue } from '@/ai/utils/getAgentChatFilePartFieldFilesValue';
