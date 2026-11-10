@@ -5,10 +5,10 @@ import { CountPager } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
-import { AiChatRecordCreationApprovalDeck } from '@/ai/components/AiChatRecordCreationApprovalDeck';
+import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
 import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { isAgentChatPendingRecordCreation } from '@/ai/utils/isAgentChatPendingRecordCreation';
+import { isAgentChatPendingRecordApproval } from '@/ai/utils/isAgentChatPendingRecordApproval';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledGate = styled.div`
@@ -60,19 +60,19 @@ export const AiChatPendingAskGate = ({
   }
 
   const requestCount = pendingToolCalls.length;
-  const pendingRecordCreations = pendingToolCalls.filter(
-    isAgentChatPendingRecordCreation,
+  const pendingRecordApprovals = pendingToolCalls.filter(
+    isAgentChatPendingRecordApproval,
   );
   // the deck stays while its last calls are being answered, so they cannot be answered twice
-  const isReviewingRecordCreations =
-    pendingRecordCreations.length === requestCount &&
+  const isReviewingRecordApprovals =
+    pendingRecordApprovals.length === requestCount &&
     (requestCount > 1 ||
       answeringToolCallIds.includes(pendingToolCalls[0].toolCallId));
 
-  if (isReviewingRecordCreations) {
+  if (isReviewingRecordApprovals) {
     return (
-      <AiChatRecordCreationApprovalDeck
-        recordCreations={pendingRecordCreations}
+      <AiChatRecordApprovalDeck
+        recordApprovals={pendingRecordApprovals}
         answeringToolCallIds={answeringToolCallIds}
         onAnsweringToolCallIdsChange={setAnsweringToolCallIds}
       />

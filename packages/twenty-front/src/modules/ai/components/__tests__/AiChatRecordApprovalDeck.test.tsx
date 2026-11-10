@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 
-import { AiChatRecordCreationApprovalDeck } from '@/ai/components/AiChatRecordCreationApprovalDeck';
-import { type AgentChatPendingRecordCreation } from '@/ai/types/AgentChatPendingRecordCreation';
+import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
+import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
 
 const answerAgentChatToolCall = jest.fn();
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
@@ -14,8 +14,8 @@ jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
 }));
 
 // the table needs workspace metadata, so a stub stands in for it
-jest.mock('@/ai/components/AiChatRecordCreationApprovalReview', () => ({
-  AiChatRecordCreationApprovalReview: ({
+jest.mock('@/ai/components/AiChatRecordApprovalReview', () => ({
+  AiChatRecordApprovalReview: ({
     onSelectedToolCallIdsChange,
   }: {
     onSelectedToolCallIdsChange: (toolCallIds: string[]) => void;
@@ -28,7 +28,7 @@ jest.mock('@/ai/components/AiChatRecordCreationApprovalReview', () => ({
 
 const buildRecordCreation = (
   firstName: string,
-): AgentChatPendingRecordCreation => ({
+): AgentChatPendingRecordApproval => ({
   toolCallId: firstName,
   proposal: {
     toolName: 'create_person',
@@ -48,8 +48,8 @@ const Deck = () => {
   );
 
   return (
-    <AiChatRecordCreationApprovalDeck
-      recordCreations={RECORD_CREATIONS}
+    <AiChatRecordApprovalDeck
+      recordApprovals={RECORD_CREATIONS}
       answeringToolCallIds={answeringToolCallIds}
       onAnsweringToolCallIdsChange={setAnsweringToolCallIds}
     />
@@ -71,7 +71,7 @@ const getAnswers = () =>
     response.decision,
   ]);
 
-describe('AiChatRecordCreationApprovalDeck', () => {
+describe('AiChatRecordApprovalDeck', () => {
   beforeEach(() => {
     answerAgentChatToolCall.mockReset().mockResolvedValue(true);
   });

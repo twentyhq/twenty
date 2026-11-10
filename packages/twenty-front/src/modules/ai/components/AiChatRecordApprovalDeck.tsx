@@ -5,23 +5,24 @@ import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme } from 'twenty-ui/theme';
 
 import { AiChatApprovalReviewDeck } from '@/ai/components/AiChatApprovalReviewDeck';
-import { AiChatRecordCreationApprovalReview } from '@/ai/components/AiChatRecordCreationApprovalReview';
+import { AiChatRecordApprovalReview } from '@/ai/components/AiChatRecordApprovalReview';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
-import { type AgentChatPendingRecordCreation } from '@/ai/types/AgentChatPendingRecordCreation';
+import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
+import { getAgentChatRecordApprovalGroupId } from '@/ai/utils/getAgentChatRecordApprovalGroupId';
 import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
-type AiChatRecordCreationApprovalDeckProps = {
-  recordCreations: AgentChatPendingRecordCreation[];
+type AiChatRecordApprovalDeckProps = {
+  recordApprovals: AgentChatPendingRecordApproval[];
   answeringToolCallIds: string[];
   onAnsweringToolCallIdsChange: (toolCallIds: string[]) => void;
 };
 
-export const AiChatRecordCreationApprovalDeck = ({
-  recordCreations,
+export const AiChatRecordApprovalDeck = ({
+  recordApprovals,
   answeringToolCallIds,
   onAnsweringToolCallIdsChange,
-}: AiChatRecordCreationApprovalDeckProps) => {
+}: AiChatRecordApprovalDeckProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -30,36 +31,35 @@ export const AiChatRecordCreationApprovalDeck = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [skippedToolCallIds, setSkippedToolCallIds] = useState<string[]>([]);
 
-  const objectNames = [
-    ...new Set(
-      recordCreations.map(({ proposal }) => proposal.objectNameSingular),
-    ),
+  const groupIds = [
+    ...new Set(recordApprovals.map(getAgentChatRecordApprovalGroupId)),
   ];
-  const isAnswering = recordCreations.some(({ toolCallId }) =>
+  const isAnswering = recordApprovals.some(({ toolCallId }) =>
     answeringToolCallIds.includes(toolCallId),
   );
 
-  const getObjectRecordCreations = (objectNameSingular: string) =>
-    recordCreations.filter(
-      ({ proposal }) => proposal.objectNameSingular === objectNameSingular,
+  const getGroupRecordApprovals = (groupId: string) =>
+    recordApprovals.filter(
+      (recordApproval) =>
+        getAgentChatRecordApprovalGroupId(recordApproval) === groupId,
     );
 
-  const answerRecordCreations = async ({
-    objectNamesToAnswer,
+  const answerRecordApprovals = async ({
+    groupIdsToAnswer,
     isDenied,
   }: {
-    objectNamesToAnswer: string[];
+    groupIdsToAnswer: string[];
     isDenied: boolean;
   }) => {
-    const recordCreationsToAnswer = objectNamesToAnswer.flatMap(
-      getObjectRecordCreations,
+    const recordApprovalsToAnswer = groupIdsToAnswer.flatMap(
+      getGroupRecordApprovals,
     );
 
     onAnsweringToolCallIdsChange(
-      recordCreationsToAnswer.map(({ toolCallId }) => toolCallId),
+      recordApprovalsToAnswer.map(({ toolCallId }) => toolCallId),
     );
 
-    for (const { toolCallId, proposal } of recordCreationsToAnswer) {
+    for (const { toolCallId, proposal } of recordApprovalsToAnswer) {
       const isApproved = !isDenied && !skippedToolCallIds.includes(toolCallId);
       const isAnswered = await answerAgentChatToolCall({
         toolCallId,
@@ -79,12 +79,13 @@ export const AiChatRecordCreationApprovalDeck = ({
     }
   };
 
-  const cards = objectNames.map((objectNameSingular) => {
-    const objectRecordCreations = getObjectRecordCreations(objectNameSingular);
+  const cards = groupIds.map((groupId) => {
+    const groupRecordApprovals = getGroupRecordApprovals(groupId);
+    const { template, objectNameSingular } = groupRecordApprovals[0].proposal;
     const objectMetadataItem = objectMetadataItems.find(
       ({ nameSingular }) => nameSingular === objectNameSingular,
     );
-    const toolCallIds = objectRecordCreations.map(
+    const toolCallIds = groupRecordApprovals.map(
       ({ toolCallId }) => toolCallId,
     );
     const selectedToolCallIds = toolCallIds.filter(
@@ -96,14 +97,31 @@ export const AiChatRecordCreationApprovalDeck = ({
       (recordCount === 1
         ? objectMetadataItem?.labelSingular
         : objectMetadataItem?.labelPlural) ?? objectNameSingular;
-    const title = t`Create ${recordCount} ${objectLabel}`;
+    const { operation, title, approveLabel } = {
+      recordCreate: {
+        operation: 'create' as const,
+        title: t`Create ${recordCount} ${objectLabel}`,
+        approveLabel: t`Create ${selectedCount}`,
+      },
+      recordUpdate: {
+        operation: 'update' as const,
+        title: t`Update ${recordCount} ${objectLabel}`,
+        approveLabel: t`Update ${selectedCount}`,
+      },
+      recordDelete: {
+        operation: 'delete' as const,
+        title: t`Delete ${recordCount} ${objectLabel}`,
+        approveLabel: t`Delete ${selectedCount}`,
+      },
+    }[template];
     const Icon = getIcon(objectMetadataItem?.icon);
 
     return {
-      id: objectNameSingular,
+      id: groupId,
       title,
       icon: <Icon size={theme.icon.size.md} />,
-      approveLabel: t`Create ${selectedCount}`,
+      approveLabel,
+      isDestructive: operation === 'delete',
       selectedCount,
       skippedCount: recordCount - selectedCount,
       status: toolCallIds.some((toolCallId) =>
@@ -112,10 +130,11 @@ export const AiChatRecordCreationApprovalDeck = ({
         ? ('running' as const)
         : ('pending' as const),
       content: (
-        <AiChatRecordCreationApprovalReview
+        <AiChatRecordApprovalReview
           objectNameSingular={objectNameSingular}
+          operation={operation}
           label={title}
-          recordCreations={objectRecordCreations}
+          recordApprovals={groupRecordApprovals}
           selectedToolCallIds={selectedToolCallIds}
           disabled={isAnswering}
           onSelectedToolCallIdsChange={(nextSelectedToolCallIds) =>
@@ -138,12 +157,12 @@ export const AiChatRecordCreationApprovalDeck = ({
       cards={cards}
       activeIndex={Math.min(activeIndex, cards.length - 1)}
       onActiveIndexChange={setActiveIndex}
-      onRequestApproval={(objectNamesToAnswer) =>
-        void answerRecordCreations({ objectNamesToAnswer, isDenied: false })
+      onRequestApproval={(groupIdsToAnswer) =>
+        void answerRecordApprovals({ groupIdsToAnswer, isDenied: false })
       }
-      onDeny={(objectNameSingular) =>
-        void answerRecordCreations({
-          objectNamesToAnswer: [objectNameSingular],
+      onDeny={(groupId) =>
+        void answerRecordApprovals({
+          groupIdsToAnswer: [groupId],
           isDenied: true,
         })
       }

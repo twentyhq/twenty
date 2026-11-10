@@ -11,6 +11,8 @@ import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -35,6 +37,60 @@ const buildRecordCreation = ({
   template: 'recordCreate',
   objectNameSingular,
 });
+
+const [FIRST_PERSON, SECOND_PERSON] = mockedPersonRecords;
+
+const RECORD_UPDATES = [FIRST_PERSON, SECOND_PERSON].map(
+  (person): ProposedToolCall => ({
+    toolName: 'update_person',
+    toolLabel: 'Update person',
+    summary: `${person.name.firstName} ${person.name.lastName}`,
+    arguments: { id: person.id, jobTitle: 'Head of Sales', city: 'Paris' },
+    template: 'recordUpdate',
+    objectNameSingular: 'person',
+    recordId: person.id,
+  }),
+);
+
+const RECORD_DELETIONS = [FIRST_PERSON, SECOND_PERSON].map(
+  (person): ProposedToolCall => ({
+    toolName: 'delete_person',
+    toolLabel: 'Delete person',
+    summary: `${person.name.firstName} ${person.name.lastName}`,
+    arguments: { id: person.id },
+    template: 'recordDelete',
+    objectNameSingular: 'person',
+    recordId: person.id,
+  }),
+);
+
+const seedPendingProposals = (proposals: ProposedToolCall[]) => {
+  const previousThread = jotaiStore.get(agentChatDisplayedThreadState.atom);
+  const messagesAtom = agentChatMessagesFamilyState.atomFamily({
+    threadId: THREAD_ID,
+  });
+  const previousMessages = jotaiStore.get(messagesAtom);
+
+  jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+  jotaiStore.set(messagesAtom, [
+    {
+      id: 'pending-record-approvals',
+      role: 'assistant',
+      parts: proposals.map((proposal, index): ExtendedUIMessagePart => ({
+        type: `tool-${PROPOSE_TOOL_CALL_TOOL_NAME}`,
+        toolCallId: `record-approval-${index}`,
+        state: 'output-available',
+        input: {},
+        output: { success: true, result: { status: 'pending', proposal } },
+      })),
+    },
+  ]);
+
+  return () => {
+    jotaiStore.set(agentChatDisplayedThreadState.atom, previousThread);
+    jotaiStore.set(messagesAtom, previousMessages);
+  };
+};
 
 const RECORD_CREATIONS = [
   buildRecordCreation({
@@ -77,7 +133,7 @@ const RECORD_CREATIONS = [
 ];
 
 const meta: Meta<typeof AiChatPendingAskGate> = {
-  title: 'Modules/AI/AiChatRecordCreationApprovalDeck',
+  title: 'Modules/AI/AiChatRecordApprovalDeck',
   component: AiChatPendingAskGate,
   decorators: [
     RootDecorator,
@@ -87,37 +143,9 @@ const meta: Meta<typeof AiChatPendingAskGate> = {
     MemoryRouterDecorator,
     ComponentDecorator,
   ],
-  parameters: { container: { width: 600 } },
+  parameters: { container: { width: 600 }, msw: graphqlMocks },
   args: { children: 'No pending requests' },
-  beforeEach: () => {
-    const previousThread = jotaiStore.get(agentChatDisplayedThreadState.atom);
-    const messagesAtom = agentChatMessagesFamilyState.atomFamily({
-      threadId: THREAD_ID,
-    });
-    const previousMessages = jotaiStore.get(messagesAtom);
-
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
-    jotaiStore.set(messagesAtom, [
-      {
-        id: 'pending-record-creations',
-        role: 'assistant',
-        parts: RECORD_CREATIONS.map(
-          (proposal, index): ExtendedUIMessagePart => ({
-            type: `tool-${PROPOSE_TOOL_CALL_TOOL_NAME}`,
-            toolCallId: `record-creation-${index}`,
-            state: 'output-available',
-            input: {},
-            output: { success: true, result: { status: 'pending', proposal } },
-          }),
-        ),
-      },
-    ]);
-
-    return () => {
-      jotaiStore.set(agentChatDisplayedThreadState.atom, previousThread);
-      jotaiStore.set(messagesAtom, previousMessages);
-    };
-  },
+  beforeEach: () => seedPendingProposals(RECORD_CREATIONS),
 };
 
 export default meta;
@@ -160,5 +188,33 @@ export const SecondObject: Story = {
 
     await expect(await canvas.findByText('Create 2 Companies')).toBeVisible();
     await expect(await canvas.findByText('Alphabet')).toBeVisible();
+  },
+};
+
+export const Updates: Story = {
+  beforeEach: () => seedPendingProposals(RECORD_UPDATES),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Update 2 People')).toBeVisible();
+    await expect(await canvas.findAllByText('Head of Sales')).toHaveLength(2);
+    await expect(
+      canvas.getByRole('button', { name: 'Update 2' }),
+    ).toBeEnabled();
+  },
+};
+
+export const Deletions: Story = {
+  beforeEach: () => seedPendingProposals(RECORD_DELETIONS),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Delete 2 People')).toBeVisible();
+    await expect(
+      await canvas.findByText(FIRST_PERSON.name.firstName, { exact: false }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Delete 2' }),
+    ).toBeEnabled();
   },
 };

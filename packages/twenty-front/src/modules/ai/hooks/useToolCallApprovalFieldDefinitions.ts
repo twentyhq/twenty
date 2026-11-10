@@ -40,5 +40,5 @@ export const useToolCallApprovalFieldDefinitions = (
     [objectMetadataItem],
   );
 
-  return { fieldDefinitionsByArgumentName };
+  return { objectMetadataItem, fieldDefinitionsByArgumentName };
 };
