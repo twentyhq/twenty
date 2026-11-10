@@ -9,6 +9,10 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
 import { getRelatedRecordPathFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/related-record-path/utils/get-related-record-path-field-metadata-universal-identifiers.util';
+import {
+  hasInherentRelatedRecordPathCycle,
+  type InherentRelatedRecordPathEdge,
+} from 'src/engine/metadata-modules/related-record-path/utils/has-inherent-related-record-path-cycle.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -60,30 +64,84 @@ export class AlignStandardRelatedRecordPathsInherentFlagCommand extends Provisio
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatRelatedRecordPathMaps } =
+    const { flatFieldMetadataMaps, flatRelatedRecordPathMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
         'flatRelatedRecordPathMaps',
       ]);
     const isInherentByStandardHopsKey = this.getIsInherentByStandardHopsKey();
+    const flatRelatedRecordPaths = Object.values(
+      flatRelatedRecordPathMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
-    const flatRelatedRecordPathsToUpdate: FlatRelatedRecordPath[] =
-      Object.values(flatRelatedRecordPathMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter(
-          (flatRelatedRecordPath) =>
-            flatRelatedRecordPath.applicationUniversalIdentifier ===
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        )
-        .flatMap((flatRelatedRecordPath) => {
-          const isInherent = isInherentByStandardHopsKey.get(
-            getHopsKey(flatRelatedRecordPath),
-          );
+    const findInherentEdge = (
+      flatRelatedRecordPath: FlatRelatedRecordPath,
+    ): InherentRelatedRecordPathEdge | undefined => {
+      const fieldMetadataUniversalIdentifiers =
+        getRelatedRecordPathFieldMetadataUniversalIdentifiers(
+          flatRelatedRecordPath,
+        );
+      const targetObjectMetadataUniversalIdentifier =
+        flatFieldMetadataMaps.byUniversalIdentifier[
+          fieldMetadataUniversalIdentifiers[
+            fieldMetadataUniversalIdentifiers.length - 1
+          ]
+        ]?.relationTargetObjectMetadataUniversalIdentifier;
 
-          return isDefined(isInherent) &&
-            isInherent !== flatRelatedRecordPath.isInherent
-            ? [{ ...flatRelatedRecordPath, isInherent }]
-            : [];
-        });
+      return isDefined(targetObjectMetadataUniversalIdentifier)
+        ? {
+            sourceObjectMetadataUniversalIdentifier:
+              flatRelatedRecordPath.objectMetadataUniversalIdentifier,
+            targetObjectMetadataUniversalIdentifier,
+          }
+        : undefined;
+    };
+
+    const inherentEdges = flatRelatedRecordPaths
+      .filter(({ isInherent }) => isInherent)
+      .map(findInherentEdge)
+      .filter(isDefined);
+    const flatRelatedRecordPathsToUpdate: FlatRelatedRecordPath[] = [];
+
+    for (const flatRelatedRecordPath of flatRelatedRecordPaths) {
+      const isInherent = isInherentByStandardHopsKey.get(
+        getHopsKey(flatRelatedRecordPath),
+      );
+
+      if (
+        flatRelatedRecordPath.applicationUniversalIdentifier !==
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER ||
+        !isDefined(isInherent) ||
+        isInherent === flatRelatedRecordPath.isInherent
+      ) {
+        continue;
+      }
+
+      const inherentEdge = findInherentEdge(flatRelatedRecordPath);
+
+      // a workspace's own inherent path may lead back to the source, which the validator would reject
+      if (
+        isInherent &&
+        isDefined(inherentEdge) &&
+        hasInherentRelatedRecordPathCycle({
+          inherentRelatedRecordPathEdges: [...inherentEdges, inherentEdge],
+        })
+      ) {
+        this.logger.warn(
+          `Workspace ${workspaceId}: leaving standard related record path ${flatRelatedRecordPath.universalIdentifier} regular, making it inherent would form a cycle`,
+        );
+        continue;
+      }
+
+      if (isInherent && isDefined(inherentEdge)) {
+        inherentEdges.push(inherentEdge);
+      }
+
+      flatRelatedRecordPathsToUpdate.push({
+        ...flatRelatedRecordPath,
+        isInherent,
+      });
+    }
 
     if (flatRelatedRecordPathsToUpdate.length === 0) {
       return;
