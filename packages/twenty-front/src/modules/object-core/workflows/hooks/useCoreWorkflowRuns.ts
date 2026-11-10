@@ -17,6 +17,11 @@ const RUN_EVENTS_REFETCH_DEBOUNCE_IN_MS = 1000;
 export const useCoreWorkflowRuns = (coreWorkflowId: string) => {
   const apolloCoreClient = useApolloCoreClient();
 
+  const runsFilter = useMemo(
+    () => ({ coreWorkflowId: { eq: coreWorkflowId } }),
+    [coreWorkflowId],
+  );
+
   const {
     objectMetadataItem,
     records,
@@ -27,7 +32,7 @@ export const useCoreWorkflowRuns = (coreWorkflowId: string) => {
     refetch: refetchRuns,
   } = useFindManyRecords<CoreWorkflowRunListItem>({
     objectNameSingular: StandardObjectNameSingular.WorkflowRun,
-    filter: { coreWorkflowId: { eq: coreWorkflowId } },
+    filter: runsFilter,
     orderBy: [{ createdAt: 'DescNullsLast' }],
     limit: RUNS_PAGE_SIZE,
     recordGqlFields: {
@@ -60,9 +65,9 @@ export const useCoreWorkflowRuns = (coreWorkflowId: string) => {
   const runsOperationSignature = useMemo(
     () => ({
       objectNameSingular: StandardObjectNameSingular.WorkflowRun,
-      variables: { filter: { coreWorkflowId: { eq: coreWorkflowId } } },
+      variables: { filter: runsFilter },
     }),
-    [coreWorkflowId],
+    [runsFilter],
   );
 
   useListenToEventsForQuery({
