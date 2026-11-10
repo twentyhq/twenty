@@ -1,5 +1,5 @@
 import { isAxiosError } from 'axios';
-import { isDefined } from 'twenty-shared/utils';
+import { isString, isUndefined } from '@sniptt/guards';
 
 import { type OutboundRequestOutcome } from 'src/engine/core-modules/secure-http-client/outbound-request-outcome.type';
 import { findOutboundRequestBlockedError } from 'src/engine/core-modules/secure-http-client/utils/find-outbound-request-blocked-error.util';
@@ -14,7 +14,7 @@ const TIMEOUT_ERROR_CODES = new Set([
 export const getOutboundRequestOutcome = (
   error: unknown,
 ): OutboundRequestOutcome => {
-  if (isDefined(findOutboundRequestBlockedError(error))) {
+  if (!isUndefined(findOutboundRequestBlockedError(error))) {
     return 'blocked';
   }
 
@@ -22,11 +22,11 @@ export const getOutboundRequestOutcome = (
     return 'other-error';
   }
 
-  if (isDefined(error.response)) {
+  if (!isUndefined(error.response)) {
     return 'http-error';
   }
 
-  if (isDefined(error.code) && TIMEOUT_ERROR_CODES.has(error.code)) {
+  if (isString(error.code) && TIMEOUT_ERROR_CODES.has(error.code)) {
     return 'timeout';
   }
 

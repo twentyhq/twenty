@@ -3,6 +3,7 @@ import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-
 import { AgentChatStreamClaimService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-claim.service';
 import { AgentChatMemberMessagePartsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-parts.service';
 import { AgentChatMemberMessageWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-writer.service';
+import { AgentChatMemberMessageReplayService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-replay.service';
 import { AgentChatMemberMessageSenderService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-member-message-sender.service';
 import { AiFrontComponentModule } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.module';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
@@ -99,6 +100,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     AgentInboxResolver,
     AgentInboxProposalService,
     AgentChatQueueService,
+    AgentChatMemberMessageReplayService,
     AgentChatMemberMessageSenderService,
     AgentChatMemberMessageWriterService,
     AgentChatMemberMessagePartsService,

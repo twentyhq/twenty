@@ -402,6 +402,7 @@ export enum AllMetadataName {
   roleTarget = 'roleTarget',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
+  rowLevelPermissionRule = 'rowLevelPermissionRule',
   searchFieldMetadata = 'searchFieldMetadata',
   settingsMenuItem = 'settingsMenuItem',
   skill = 'skill',
@@ -929,6 +930,11 @@ export type ApprovedAccessDomain = {
   domain: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   isValidated: Scalars['Boolean']['output'];
+};
+
+export type ArchiveInboxThreadInput = {
+  threadId: Scalars['UUID']['input'];
+  workspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
 };
 
 export type AuthBypassProviders = {
@@ -2579,6 +2585,7 @@ export enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
+  IS_HTTP_EGRESS_LAMBDA_ENABLED = 'IS_HTTP_EGRESS_LAMBDA_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
@@ -3651,6 +3658,7 @@ export type Mutation = {
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   approveApplicationIframeMediaPermissions: Application;
+  archiveInboxThread: Scalars['Boolean']['output'];
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3985,6 +3993,11 @@ export type MutationAddQueryToEventStreamArgs = {
 export type MutationApproveApplicationIframeMediaPermissionsArgs = {
   applicationId: Scalars['UUID']['input'];
   approvedIframeMediaPermissions: Array<IframeMediaPermissionInput>;
+};
+
+
+export type MutationArchiveInboxThreadArgs = {
+  input: ArchiveInboxThreadInput;
 };
 
 

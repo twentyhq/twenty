@@ -17,6 +17,17 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const STORY_TIME_ZONE = 'Europe/Paris';
 
+const VIEWPORT_OPTIONS = {
+  tallDesktop: {
+    name: 'Tall desktop',
+    styles: { width: '1200px', height: '1080px' },
+  },
+  shortDesktop: {
+    name: 'Short desktop',
+    styles: { width: '1200px', height: '780px' },
+  },
+};
+
 const StyledFrame = styled.div`
   padding: ${themeCssVariables.spacing[6]};
   width: 660px;
@@ -77,6 +88,7 @@ const meta: Meta<typeof GettingStartedBookCallAction> = {
     ComponentWithRouterDecorator,
   ],
   parameters: {
+    viewport: { options: VIEWPORT_OPTIONS },
     msw: {
       handlers: [
         http.get(`${CAL_API.url}/slots`, () =>
@@ -86,6 +98,7 @@ const meta: Meta<typeof GettingStartedBookCallAction> = {
       ],
     },
   },
+  globals: { viewport: { value: 'tallDesktop' } },
   beforeEach: () => {
     jotaiStore.set(calendarBookingPageIdState.atom, 'team/twenty/talk-to-us');
     jotaiStore.set(
@@ -130,6 +143,25 @@ export const OpenFromPickATime: Story = {
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Pick a time' }),
     );
+
+    await expect(
+      await body.findByRole('heading', { name: 'Talk to our team' }),
+    ).toBeInTheDocument();
+  },
+};
+
+export const ShortViewport: Story = {
+  globals: { viewport: { value: 'shortDesktop' } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await expect(await canvas.findByText('15 min')).toBeVisible();
+    await expect(
+      canvas.getByRole('group', { name: 'Choose a date', hidden: true }),
+    ).not.toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Pick a time' }));
 
     await expect(
       await body.findByRole('heading', { name: 'Talk to our team' }),

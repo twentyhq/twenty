@@ -292,7 +292,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'rowLevelPermissionRule' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -1617,7 +1617,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_HTTP_EGRESS_LAMBDA_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2408,6 +2408,7 @@ export interface Mutation {
     addAgentChatMessageReaction: AgentMessageReactionSummary[]
     addQueryToEventStream: Scalars['Boolean']
     approveApplicationIframeMediaPermissions: Application
+    archiveInboxThread: Scalars['Boolean']
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
     assignRoleToApiKey: Scalars['Boolean']
@@ -5267,6 +5268,8 @@ export interface ApprovedAccessDomainGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ArchiveInboxThreadInput {threadId: Scalars['UUID'],workspaceMemberIds?: (Scalars['UUID'][] | null)}
+
 export interface AuthBypassProvidersGenqlSelection{
     google?: boolean | number
     microsoft?: boolean | number
@@ -7200,6 +7203,7 @@ export interface MutationGenqlSelection{
     addAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     approveApplicationIframeMediaPermissions?: (ApplicationGenqlSelection & { __args: {applicationId: Scalars['UUID'], approvedIframeMediaPermissions: IframeMediaPermissionInput[]} })
+    archiveInboxThread?: { __args: {input: ArchiveInboxThreadInput} }
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
@@ -12741,6 +12745,7 @@ export const enumAllMetadataName = {
    roleTarget: 'roleTarget' as const,
    rowLevelPermissionPredicate: 'rowLevelPermissionPredicate' as const,
    rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup' as const,
+   rowLevelPermissionRule: 'rowLevelPermissionRule' as const,
    searchFieldMetadata: 'searchFieldMetadata' as const,
    settingsMenuItem: 'settingsMenuItem' as const,
    skill: 'skill' as const,
@@ -13049,6 +13054,7 @@ export const enumFeatureFlagKey = {
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
+   IS_HTTP_EGRESS_LAMBDA_ENABLED: 'IS_HTTP_EGRESS_LAMBDA_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
    IS_PRIVATE_RECORDS_ENABLED: 'IS_PRIVATE_RECORDS_ENABLED' as const,
