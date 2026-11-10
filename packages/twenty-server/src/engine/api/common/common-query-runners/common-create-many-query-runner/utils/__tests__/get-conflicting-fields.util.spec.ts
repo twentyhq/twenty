@@ -416,7 +416,7 @@ describe('getConflictingFields', () => {
         conflictingProperties: [
           { fullPath: 'uniqueText', column: 'uniqueText' },
         ],
-        ignoresDeletedRecords: true,
+        isIgnoringDeletedRecords: true,
       },
     ]);
   });

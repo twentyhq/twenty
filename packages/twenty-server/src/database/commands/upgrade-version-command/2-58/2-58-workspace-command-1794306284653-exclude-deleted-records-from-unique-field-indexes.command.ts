@@ -5,10 +5,8 @@ import { type DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import {
-  buildUniqueFieldIndexReplacements,
-  type UniqueFieldIndexReplacement,
-} from 'src/database/commands/upgrade-version-command/2-58/utils/build-unique-field-index-replacements.util';
+import { type UniqueFieldIndexReplacement } from 'src/database/commands/upgrade-version-command/2-58/types/unique-field-index-replacement.type';
+import { buildUniqueFieldIndexReplacements } from 'src/database/commands/upgrade-version-command/2-58/utils/build-unique-field-index-replacements.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';

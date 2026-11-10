@@ -233,14 +233,14 @@ describe('getMatchingRecordId', () => {
     const uniqueTextGroup: ConflictingFieldGroup = {
       baseFields: ['uniqueText'],
       conflictingProperties: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
-      ignoresDeletedRecords: true,
+      isIgnoringDeletedRecords: true,
     };
     const otherUniqueTextGroup: ConflictingFieldGroup = {
       baseFields: ['otherUniqueText'],
       conflictingProperties: [
         { fullPath: 'otherUniqueText', column: 'otherUniqueText' },
       ],
-      ignoresDeletedRecords: true,
+      isIgnoringDeletedRecords: true,
     };
 
     it('matches the live record rather than a deleted one holding the same value', () => {

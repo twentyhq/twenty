@@ -1,8 +1,8 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type DuplicateEntryDescription } from 'src/engine/api/common/common-query-runners/types/duplicate-entry-description.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -13,21 +13,15 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 const SINGLE_COLUMN_DUPLICATE_KEY_DETAIL_PATTERN =
   /^Key \("?([A-Za-z0-9_]+)"?\)=\((.+)\) already exists\.$/;
 
-export type DuplicateEntryDescription = {
-  userFriendlyMessage: MessageDescriptor;
-  flatObjectMetadata: FlatObjectMetadata;
-  duplicateColumn?: { name: string; value: string };
-};
-
 const getStringProperty = (
   value: unknown,
   property: string,
 ): string | undefined => {
-  if (typeof value !== 'object' || value === null || !(property in value)) {
+  if (!isObject(value) || !(property in value)) {
     return undefined;
   }
 
-  const propertyValue = (value as Record<string, unknown>)[property];
+  const propertyValue: unknown = Reflect.get(value, property);
 
   return isNonEmptyString(propertyValue) ? propertyValue : undefined;
 };

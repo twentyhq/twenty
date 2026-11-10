@@ -24,10 +24,8 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-mess
 import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-entry.util';
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
-import {
-  describeDuplicateEntry,
-  type DuplicateEntryDescription,
-} from 'src/engine/api/common/common-query-runners/utils/describe-duplicate-entry.util';
+import { type DuplicateEntryDescription } from 'src/engine/api/common/common-query-runners/types/duplicate-entry-description.type';
+import { describeDuplicateEntry } from 'src/engine/api/common/common-query-runners/utils/describe-duplicate-entry.util';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';

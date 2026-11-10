@@ -30,6 +30,7 @@ import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/con
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { sortPeopleWithNonDeletedFirst } from 'src/modules/person/utils/sort-people-with-non-deleted-first.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
@@ -106,10 +107,7 @@ export class CreateCompanyAndPersonService {
         .withDeleted()
         .getMany<PersonWorkspaceEntity>();
 
-      const alreadyCreatedPeople = [
-        ...matchedPeople.filter((person) => !isDefined(person.deletedAt)),
-        ...matchedPeople.filter((person) => isDefined(person.deletedAt)),
-      ];
+      const alreadyCreatedPeople = sortPeopleWithNonDeletedFirst(matchedPeople);
 
       const {
         contactsThatNeedPersonCreate,

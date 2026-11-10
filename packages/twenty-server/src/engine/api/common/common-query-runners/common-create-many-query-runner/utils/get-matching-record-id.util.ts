@@ -51,7 +51,7 @@ export const getMatchingRecordId = (
     );
 
     const matchingRecord =
-      fieldGroup.ignoresDeletedRecords === true
+      fieldGroup.isIgnoringDeletedRecords === true
         ? matchingRecords.find(
             (existingRecord) => !isDefined(existingRecord.deletedAt),
           )

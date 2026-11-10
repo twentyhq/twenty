@@ -163,14 +163,14 @@ export const getConflictingFields = (
       continue;
     }
 
-    const ignoresDeletedRecords =
+    const isIgnoringDeletedRecords =
       flatIndexMetadata.indexWhereClause ===
       NON_DELETED_RECORDS_INDEX_WHERE_CLAUSE;
 
     conflictingFieldGroups.push({
       baseFields: indexConflictingFields.baseFields,
       conflictingProperties: indexConflictingFields.conflictingProperties,
-      ...(ignoresDeletedRecords ? { ignoresDeletedRecords } : {}),
+      ...(isIgnoringDeletedRecords ? { isIgnoringDeletedRecords } : {}),
     });
   }
 

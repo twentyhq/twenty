@@ -22,6 +22,7 @@ import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-particip
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { sortPeopleWithNonDeletedFirst } from 'src/modules/person/utils/sort-people-with-non-deleted-first.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type ObjectMetadataName = 'messageParticipant' | 'calendarEventParticipant';
@@ -193,10 +194,7 @@ export class MatchParticipantService<
         .orderBy('person.createdAt', 'ASC')
         .getMany<PersonWorkspaceEntity>();
 
-      const people = [
-        ...matchedPeople.filter((person) => !isDefined(person.deletedAt)),
-        ...matchedPeople.filter((person) => isDefined(person.deletedAt)),
-      ];
+      const people = sortPeopleWithNonDeletedFirst(matchedPeople);
 
       const workspaceMembers = shouldMatchWithWorkspaceMember
         ? await workspaceMemberRepository.find({
