@@ -9,29 +9,14 @@ import { combineSqlConditions } from 'src/engine/permissions/internal/record-per
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-access-outcome.util';
 import { buildPermissionsCreatorCondition } from 'src/engine/permissions/internal/private-record/utils/build-permissions-creator-condition.util';
 import { buildPermissionsShareCondition } from 'src/engine/permissions/internal/record-share/utils/build-permissions-share-condition.util';
-import { buildPermissionsRlsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-rls-condition.util';
+import { buildPermissionsRoleCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-role-condition.util';
+import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-level-permission-filter.util';
 import { resolvePermissionsRowLevelPermissionSqlCondition } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-level-permission-sql-condition.util';
-import { buildPermissionsAllRecordsCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-all-records-condition.util';
 
 const combineWithOr = (conditions: SqlCondition[]): SqlCondition =>
   conditions.length === 1
     ? conditions[0]
     : combineSqlConditions(conditions, 'OR');
-
-const buildPermissionsRoleConditions = (
-  sqlRequest: PermissionsRowAccessSqlRequest,
-): SqlCondition[] | true => {
-  const allRecordsCondition = buildPermissionsAllRecordsCondition(sqlRequest);
-
-  if (allRecordsCondition === true) {
-    return true;
-  }
-
-  return [
-    allRecordsCondition === false ? undefined : allRecordsCondition,
-    buildPermissionsRlsCondition(sqlRequest),
-  ].filter(isDefined);
-};
 
 export const buildPermissionsCondition = ({
   tableAlias,
@@ -49,11 +34,24 @@ export const buildPermissionsCondition = ({
     return outcome;
   }
 
-  const roleConditions = buildPermissionsRoleConditions(sqlRequest);
+  const rlsRuleFilter = resolvePermissionsRowLevelPermissionFilter(sqlRequest);
+  const rlsRuleCondition = isDefined(rlsRuleFilter)
+    ? resolvePermissionsRowLevelPermissionSqlCondition({
+        request: sqlRequest,
+        rlsRuleFilter,
+      })
+    : undefined;
+  const roleCondition = buildPermissionsRoleCondition({
+    request: sqlRequest,
+    rlsRuleFilter,
+    rlsRuleCondition,
+  });
 
-  if (roleConditions === true) {
+  if (roleCondition === true) {
     return true;
   }
+
+  const roleConditions = roleCondition === false ? [] : [roleCondition];
 
   const recordConditions = [
     buildPermissionsShareCondition(sqlRequest),
@@ -62,7 +60,7 @@ export const buildPermissionsCondition = ({
   const rowLevelPermissionCondition = areRecordGrantsHeldToRowLevelPermissions(
     sqlRequest,
   )
-    ? resolvePermissionsRowLevelPermissionSqlCondition(sqlRequest)
+    ? rlsRuleCondition
     : undefined;
 
   if (isDefined(rowLevelPermissionCondition) && recordConditions.length > 0) {

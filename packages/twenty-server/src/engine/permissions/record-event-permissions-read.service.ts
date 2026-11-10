@@ -16,7 +16,7 @@ import { type PrivateRecordState } from 'src/engine/permissions/internal/private
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
-import { resolveRlsRuleFiltersByRole } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-filters-by-role.util';
+import { resolveRlsRuleFields } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-fields.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -73,7 +73,7 @@ export class RecordEventPermissionsReadService {
     }
 
     return filterReadableEvents({
-      rlsRuleFilterByRoleId: await resolveRlsRuleFiltersByRole({
+      rlsRuleFields: await resolveRlsRuleFields({
         principals,
         metadataMaps,
         flatObjectMetadata: eventBatch.objectMetadata,
@@ -87,7 +87,6 @@ export class RecordEventPermissionsReadService {
       }),
       events,
       readableRecordIds: await findReadableRecordIdsInBatch(principals),
-      principals,
       objectMetadata: eventBatch.objectMetadata,
       recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
         principals,

@@ -12,8 +12,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { composeRecordFieldMetadataIds } from 'src/engine/permissions/internal/masking/utils/compose-record-field-metadata-ids.util';
-import { resolveRlsRuleFiltersByRole } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-filters-by-role.util';
-import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
+import { resolveRlsRuleFields } from 'src/engine/permissions/internal/masking/utils/resolve-rls-rule-fields.util';
+import { findPrincipalsRoleIdsWithRlsRule } from 'src/engine/permissions/internal/rls/utils/find-principals-role-ids-with-rls-rule.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-column-name-to-field-metadata-id.util';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/internal/role/utils/validate-operation-is-permitted-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -364,13 +364,11 @@ export class RecordPermissionsReadService {
       });
 
     if (
-      !isDefined(
-        resolveRlsRuleRecordFilter({
-          principals,
-          metadataMaps,
-          flatObjectMetadata,
-        }),
-      )
+      findPrincipalsRoleIdsWithRlsRule({
+        principals,
+        metadataMaps,
+        objectMetadataId,
+      }).length === 0
     ) {
       return;
     }
@@ -454,7 +452,7 @@ export class RecordPermissionsReadService {
       metadataMaps.flatFieldMetadataMaps,
     );
 
-    const rlsRuleFilterByRoleId = await resolveRlsRuleFiltersByRole({
+    const rlsRuleFields = await resolveRlsRuleFields({
       principals,
       metadataMaps,
       flatObjectMetadata,
@@ -470,13 +468,11 @@ export class RecordPermissionsReadService {
 
     for (const { rawRecordBefore, setColumns } of updates) {
       const uneditableFieldMetadataIds = composeRecordFieldMetadataIds({
-        principals,
-        metadataMaps,
         flatObjectMetadata,
-        fieldList: 'uneditableFields',
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
         objectFieldMetadataIds: [],
         records: formatRecords([rawRecordBefore]),
-        rlsRuleFilterByRoleId,
+        rlsRuleFields,
       });
 
       if (

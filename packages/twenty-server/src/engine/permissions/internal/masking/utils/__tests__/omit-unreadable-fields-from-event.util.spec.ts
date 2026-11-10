@@ -117,15 +117,6 @@ const omit = ({
 }) =>
   omitUnreadableFieldsFromEvent({
     event,
-    principals: {
-      workspaceId: 'workspace-id',
-      mainPrincipal: {
-        type: 'workspaceMember',
-        roleId: 'role-id',
-        workspaceMemberId: 'member-id',
-      },
-      applicationPrincipal: { type: 'customApplication' },
-    },
     objectMetadata: getFlatObjectMetadataMock({
       id: OBJECT_METADATA_ID,
       universalIdentifier: OBJECT_METADATA_ID,
@@ -133,7 +124,7 @@ const omit = ({
     }),
     recordsPermissions: buildRecordsPermissions(unreadableFields),
     recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
-    rlsRuleFilterByRoleId: new Map(),
+    rlsRuleFields: [],
     metadataMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),

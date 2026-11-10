@@ -1,65 +1,42 @@
-import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
-
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/masking/utils/find-rls-rule-fields-by-role.util';
-import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { type RlsRuleFields } from 'src/engine/permissions/internal/masking/types/rls-rule-fields.type';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
 export const composeRecordFieldMetadataIds = ({
-  principals,
-  metadataMaps,
   flatObjectMetadata,
-  fieldList,
+  flatFieldMetadataMaps,
   objectFieldMetadataIds,
   records,
-  rlsRuleFilterByRoleId,
+  rlsRuleFields,
 }: {
-  principals: PermissionsPrincipalsWithRolesContext;
-  metadataMaps: PermissionsMetadataMaps;
   flatObjectMetadata: FlatObjectMetadata;
-  fieldList: 'unreadableFields' | 'uneditableFields';
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectFieldMetadataIds: string[];
   records: object[];
-  rlsRuleFilterByRoleId: Map<string, RecordGqlOperationFilter | null>;
+  rlsRuleFields: RlsRuleFields[];
 }): Set<string> => {
   const fieldMetadataIds = new Set(objectFieldMetadataIds);
 
-  for (const rlsRuleFields of findRlsRuleFieldsByRole({
-    principals,
-    metadataMaps,
-    objectMetadataId: flatObjectMetadata.id,
-    fieldList,
-  })) {
-    if (!rlsRuleFilterByRoleId.has(rlsRuleFields.roleId)) {
-      rlsRuleFilterByRoleId.set(
-        rlsRuleFields.roleId,
-        resolveRlsRuleRecordFilter({
-          principals,
-          metadataMaps,
-          flatObjectMetadata,
-          roleId: rlsRuleFields.roleId,
-        }),
+  for (const {
+    fieldMetadataIds: ruleFieldMetadataIds,
+    recordFilter,
+  } of rlsRuleFields) {
+    const isRuleMatchingRecords = records.some((record) =>
+      isRecordMatchingFilter({
+        record,
+        filter: recordFilter ?? {},
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        shouldIgnoreSoftDeleteDefaultFilter: true,
+      }),
+    );
+
+    if (isRuleMatchingRecords) {
+      ruleFieldMetadataIds.forEach((fieldMetadataId) =>
+        fieldMetadataIds.add(fieldMetadataId),
       );
-    }
-
-    const rlsRuleFilter = rlsRuleFilterByRoleId.get(rlsRuleFields.roleId) ?? {};
-
-    if (
-      records.some((record) =>
-        isRecordMatchingFilter({
-          record,
-          filter: rlsRuleFilter,
-          flatObjectMetadata,
-          flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-          shouldIgnoreSoftDeleteDefaultFilter: true,
-        }),
-      )
-    ) {
-      for (const fieldMetadataId of rlsRuleFields.fieldMetadataIds) {
-        fieldMetadataIds.add(fieldMetadataId);
-      }
     }
   }
 
