@@ -363,6 +363,7 @@ enum AllMetadataName {
   roleTarget
   rowLevelPermissionPredicate
   rowLevelPermissionPredicateGroup
+  rowLevelPermissionRule
   searchFieldMetadata
   settingsMenuItem
   skill

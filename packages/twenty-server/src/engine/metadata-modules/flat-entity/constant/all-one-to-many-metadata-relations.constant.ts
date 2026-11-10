@@ -304,6 +304,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
         'rowLevelPermissionPredicateUniversalIdentifiers',
     },
   },
+  rowLevelPermissionRule: {},
   viewFilterGroup: {
     childViewFilterGroups: {
       metadataName: 'viewFilterGroup',

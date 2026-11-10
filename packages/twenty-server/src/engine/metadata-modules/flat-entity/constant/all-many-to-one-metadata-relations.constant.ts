@@ -546,6 +546,24 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  rowLevelPermissionRule: {
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    role: {
+      metadataName: 'role',
+      foreignKey: 'roleId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'roleUniversalIdentifier',
+    },
+    workspace: null,
+    application: null,
+  },
   viewFilterGroup: {
     application: null,
     parentViewFilterGroup: {

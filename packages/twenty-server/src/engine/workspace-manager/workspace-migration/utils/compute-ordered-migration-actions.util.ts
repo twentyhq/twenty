@@ -138,6 +138,9 @@ export const computeOrderedMigrationActions = (
     // Items CASCADE on their folder, so one moved out of a dropped folder must be repointed before that folder goes
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
 
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.create,
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.update,
+
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
@@ -150,6 +153,7 @@ export const computeOrderedMigrationActions = (
     // Predicates and child groups CASCADE on their group, so one moved out of a dropped group must be repointed before that group goes
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .delete,
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.delete,
 
     ...aggregatedOrchestratorActionsReport.mcpServer.delete,
 
