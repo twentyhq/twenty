@@ -6,7 +6,7 @@ import {
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
-import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
+import { resolveRecordsAccessSQLConditionStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-records-access-sql-condition-strategy.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 
 const ROLE_ID = 'role-id';
@@ -44,12 +44,13 @@ const withRlsRule: ObjectRecordsPermissions = {
 const buildRequest = ({
   objectRecordsPermissions,
   isAccessGroupsEnabled = true,
-  operationType = 'read',
 }: {
   objectRecordsPermissions: ObjectRecordsPermissions;
   isAccessGroupsEnabled?: boolean;
-  operationType?: PermissionsObjectAccessRequest['operationType'];
-}): PermissionsObjectAccessRequest => ({
+}): Pick<
+  PermissionsObjectAccessRequest,
+  'principals' | 'metadataMaps' | 'flatObjectMetadata'
+> => ({
   principals: {
     workspaceId: 'workspace-id',
     mainPrincipal: {
@@ -74,42 +75,41 @@ const buildRequest = ({
     },
   },
   flatObjectMetadata,
-  operationType,
 });
 
-describe('resolveManyRecordsStrategy', () => {
+describe('resolveRecordsAccessSQLConditionStrategy', () => {
   it('should use access groups when the main role has an RLS rule on the object', () => {
     expect(
-      resolveManyRecordsStrategy(
+      resolveRecordsAccessSQLConditionStrategy(
         buildRequest({ objectRecordsPermissions: withRlsRule }),
       ),
     ).toBe('accessGroups');
   });
 
-  it.each([
-    ['the flag is off', { isAccessGroupsEnabled: false }],
-    ['the operation is not a read', { operationType: 'update' as const }],
-  ])('should stay degraded when %s', (_, overrides) => {
+  it('should stay degraded when the flag is off', () => {
     expect(
-      resolveManyRecordsStrategy(
-        buildRequest({ objectRecordsPermissions: withRlsRule, ...overrides }),
+      resolveRecordsAccessSQLConditionStrategy(
+        buildRequest({
+          objectRecordsPermissions: withRlsRule,
+          isAccessGroupsEnabled: false,
+        }),
       ),
-    ).toBe('degradedSQLCondition');
+    ).toBe('degradedRead');
   });
 
-  it('should use the plain sqlCondition when no role has an RLS rule on the object', () => {
+  it('should use the condition without RLS when no role has an RLS rule on the object', () => {
     expect(
-      resolveManyRecordsStrategy(
+      resolveRecordsAccessSQLConditionStrategy(
         buildRequest({ objectRecordsPermissions: allRecords }),
       ),
-    ).toBe('plainSQLCondition');
+    ).toBe('withoutRowLevelPermissions');
   });
 
   it('should stay degraded when an application role also has an RLS rule on the object', () => {
     const request = buildRequest({ objectRecordsPermissions: withRlsRule });
 
     expect(
-      resolveManyRecordsStrategy({
+      resolveRecordsAccessSQLConditionStrategy({
         ...request,
         principals: {
           ...request.principals,
@@ -130,6 +130,6 @@ describe('resolveManyRecordsStrategy', () => {
           },
         },
       }),
-    ).toBe('degradedSQLCondition');
+    ).toBe('degradedRead');
   });
 });
