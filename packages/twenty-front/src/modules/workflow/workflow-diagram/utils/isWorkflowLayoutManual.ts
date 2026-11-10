@@ -4,7 +4,6 @@ import {
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
-// A node added without a position sends the whole diagram back to automatic layout
 export const isWorkflowLayoutManual = ({
   trigger,
   steps,

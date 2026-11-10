@@ -28,7 +28,7 @@ import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
 import { useUpdateTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateTrigger';
-import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
+import { useUpdateWorkflowVersionPositions } from '@/workflow/workflow-version/hooks/useUpdateWorkflowVersionPositions';
 import {
   addEdge,
   ReactFlowProvider,
@@ -74,7 +74,8 @@ export const WorkflowDiagramCanvasEditable = () => {
 
   const { updateTrigger } = useUpdateTrigger();
 
-  const { updateWorkflowVersionPositions } = useTidyUpWorkflowVersion();
+  const { updateWorkflowVersionPositions } =
+    useUpdateWorkflowVersionPositions();
 
   const { startNodeCreation } = useStartNodeCreation();
 
