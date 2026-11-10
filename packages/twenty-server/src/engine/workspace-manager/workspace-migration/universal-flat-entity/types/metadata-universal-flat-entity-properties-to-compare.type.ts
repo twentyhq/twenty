@@ -72,6 +72,7 @@ type Assertions = [
       | 'anyFieldFilterValue'
       | 'visibility'
       | 'createdByUserWorkspaceId'
+      | 'ownerUserWorkspaceId'
       | 'isActive'
       | 'universalOverrides'
     >

@@ -102,6 +102,7 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     workspace: null,
     createdBy: null,
+    owner: null,
     application: null,
     calendarFieldMetadata: {
       foreignKey: 'calendarFieldMetadataId',

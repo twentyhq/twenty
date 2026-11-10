@@ -51,6 +51,7 @@ const BASE_FLAT_VIEW: FlatView = {
   visibility: ViewVisibility.WORKSPACE,
   isActive: true,
   isSystemSideEffect: false,
+  ownerUserWorkspaceId: null,
   createdByUserWorkspaceId: null,
   overrides: null,
   createdAt: TIMESTAMP,

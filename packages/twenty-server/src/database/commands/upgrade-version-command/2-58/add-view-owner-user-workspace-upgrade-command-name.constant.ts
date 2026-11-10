@@ -1,0 +1,2 @@
+export const ADD_VIEW_OWNER_USER_WORKSPACE_UPGRADE_COMMAND_NAME =
+  '2.58.0_AddViewOwnerUserWorkspaceFastInstanceCommand_1794303581057';

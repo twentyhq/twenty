@@ -70,6 +70,7 @@ const existingFlatView: FlatView = {
   visibility: ViewVisibility.WORKSPACE,
   isActive: true,
   isSystemSideEffect: false,
+  ownerUserWorkspaceId: null,
   createdByUserWorkspaceId: null,
   overrides: null,
   createdAt: '2026-09-22T00:00:00.000Z',

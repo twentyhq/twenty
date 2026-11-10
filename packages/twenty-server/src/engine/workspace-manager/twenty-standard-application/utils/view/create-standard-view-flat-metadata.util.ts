@@ -158,6 +158,7 @@ export const createStandardViewFlatMetadata = <
     calendarEndFieldMetadataId,
     anyFieldFilterValue: null,
     visibility: ViewVisibility.WORKSPACE,
+    ownerUserWorkspaceId: null,
     createdByUserWorkspaceId: null,
     isActive: true,
     isSystemSideEffect:

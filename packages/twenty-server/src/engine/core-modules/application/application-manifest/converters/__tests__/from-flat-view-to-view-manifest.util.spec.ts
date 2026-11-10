@@ -177,6 +177,7 @@ describe('fromFlatViewToViewManifest', () => {
       groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
       kanbanColumnWidth: null,
       anyFieldFilterValue: null,
+      ownerUserWorkspaceId: null,
       createdByUserWorkspaceId: null,
       isActive: true,
       isSystemSideEffect: false,

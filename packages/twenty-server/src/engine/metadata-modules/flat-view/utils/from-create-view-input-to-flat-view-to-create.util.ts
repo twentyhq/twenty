@@ -96,6 +96,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
     visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
+    ownerUserWorkspaceId: null,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     isActive: true,
     isSystemSideEffect: false,

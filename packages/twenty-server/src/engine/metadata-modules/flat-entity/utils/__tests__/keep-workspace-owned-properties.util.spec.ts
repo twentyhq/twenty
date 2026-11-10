@@ -99,40 +99,45 @@ describe('keepWorkspaceOwnedProperties', () => {
     });
   });
 
-  it('should preserve an explicitly cleared workspace-owned value', () => {
-    const workspaceView = {
-      universalIdentifier: 'view-universal-identifier',
-      name: 'All Companies',
-      createdByUserWorkspaceId: null,
-    };
-    const shippedView = {
-      ...workspaceView,
-      name: 'Companies',
-      createdByUserWorkspaceId: 'application-default-user-workspace-id',
-    };
+  it.each(['createdByUserWorkspaceId', 'ownerUserWorkspaceId'])(
+    'should preserve an explicitly cleared %s',
+    (property) => {
+      const workspaceView = {
+        universalIdentifier: 'view-universal-identifier',
+        name: 'All Companies',
+        [property]: null,
+      };
+      const shippedView = {
+        ...workspaceView,
+        name: 'Companies',
+        [property]: 'application-default-user-workspace-id',
+      };
 
-    const result = keepWorkspaceOwnedProperties({
-      metadataName: 'view',
-      fromFlatEntityMaps: {
-        byUniversalIdentifier: {
-          'view-universal-identifier': workspaceView,
+      const result = keepWorkspaceOwnedProperties({
+        metadataName: 'view',
+        fromFlatEntityMaps: {
+          byUniversalIdentifier: {
+            'view-universal-identifier': workspaceView,
+          },
         },
-      },
-      toFlatEntityMaps: {
-        byUniversalIdentifier: {
-          'view-universal-identifier': shippedView,
+        toFlatEntityMaps: {
+          byUniversalIdentifier: {
+            'view-universal-identifier': shippedView,
+          },
         },
-      },
-    });
+      });
 
-    expect(result.byUniversalIdentifier['view-universal-identifier']).toEqual({
-      ...shippedView,
-      createdByUserWorkspaceId: null,
-    });
-    expect(shippedView.createdByUserWorkspaceId).toBe(
-      'application-default-user-workspace-id',
-    );
-  });
+      expect(result.byUniversalIdentifier['view-universal-identifier']).toEqual(
+        {
+          ...shippedView,
+          [property]: null,
+        },
+      );
+      expect(shippedView[property]).toBe(
+        'application-default-user-workspace-id',
+      );
+    },
+  );
 
   it('should keep the shipped icon when an agent chat channel has none', () => {
     const shippedChannel = {

@@ -294,6 +294,7 @@ import { AddCanCreatePermissionsFastInstanceCommand } from 'src/database/command
 import { AddRlsRuleFieldPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-instance-command-fast-1794155686000-add-rls-rule-field-permissions';
 import { AddMessagingProviderConversationStyleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794225486244-add-messaging-provider-conversation-style';
 import { AddViewShouldDisplayGroupsAsTabsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794238559013-add-view-should-display-groups-as-tabs';
+import { AddViewOwnerUserWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794303581057-add-view-owner-user-workspace';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -590,4 +591,5 @@ export const INSTANCE_COMMANDS = [
   AddRlsRuleFieldPermissionsFastInstanceCommand,
   AddMessagingProviderConversationStyleFastInstanceCommand,
   AddViewShouldDisplayGroupsAsTabsFastInstanceCommand,
+  AddViewOwnerUserWorkspaceFastInstanceCommand,
 ];

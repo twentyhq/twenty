@@ -138,6 +138,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       groupLoadLimit: 20,
       anyFieldFilterValue: null,
       visibility: ViewVisibility.WORKSPACE,
+      ownerUserWorkspaceId: null,
       createdByUserWorkspaceId: null,
       deletedAt: null,
       viewSortUniversalIdentifiers: [],

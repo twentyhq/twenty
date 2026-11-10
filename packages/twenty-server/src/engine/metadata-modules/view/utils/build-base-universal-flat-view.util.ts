@@ -54,6 +54,7 @@ export const buildBaseUniversalFlatView = ({
     position,
     universalIdentifier,
     visibility: ViewVisibility.WORKSPACE,
+    ownerUserWorkspaceId: null,
     createdByUserWorkspaceId: null,
     isActive: true,
     isSystemSideEffect,

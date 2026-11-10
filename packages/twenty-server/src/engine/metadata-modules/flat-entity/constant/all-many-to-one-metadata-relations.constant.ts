@@ -182,6 +182,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     },
     workspace: null,
     createdBy: null,
+    owner: null,
     application: null,
     calendarFieldMetadata: {
       metadataName: 'fieldMetadata',

@@ -75,6 +75,7 @@ export const fromViewManifestToUniversalFlatView = ({
     kanbanColumnWidth: viewManifest.kanbanColumnWidth ?? null,
     groupLoadLimit: getViewManifestGroupLoadLimitOrThrow(viewManifest),
     anyFieldFilterValue: viewManifest.anyFieldFilterValue ?? null,
+    ownerUserWorkspaceId: null,
     createdByUserWorkspaceId: null,
     isActive: true,
     isSystemSideEffect: false,

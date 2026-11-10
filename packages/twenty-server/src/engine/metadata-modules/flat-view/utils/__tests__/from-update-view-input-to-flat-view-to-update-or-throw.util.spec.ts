@@ -106,6 +106,7 @@ const buildExistingFlatView = ({
     isActive: true,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     visibility: ViewVisibility.WORKSPACE,
+    ownerUserWorkspaceId: null,
     createdByUserWorkspaceId: null,
     createdAt: existingViewGroup.createdAt,
     updatedAt: existingViewGroup.updatedAt,
