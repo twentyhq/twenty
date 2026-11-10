@@ -79,11 +79,18 @@ const buildViewBroadcastEvents = (
   const beforeAudience = resolveViewAudience(beforeRecord);
   const afterAudience = resolveViewAudience(afterRecord);
 
-  const updatedEvent = { ...baseEvent, ...toTargeting(afterAudience) };
-
   if (isSameViewAudience(beforeAudience, afterAudience)) {
-    return [updatedEvent];
+    return [{ ...baseEvent, ...toTargeting(afterAudience) }];
   }
+
+  const updatedEvent = {
+    ...baseEvent,
+    properties: {
+      updatedFields: event.properties.updatedFields,
+      after: afterRecord,
+    },
+    ...toTargeting(afterAudience),
+  };
 
   const lostAudienceTargeting = resolveLostAudienceTargeting({
     before: beforeAudience,

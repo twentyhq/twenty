@@ -3,6 +3,7 @@ import {
   ALL_METADATA_ENTITY_KEYS,
   metadataStoreState,
 } from '@/metadata-store/states/metadataStoreState';
+import { viewFamilyLoadEpochState } from '@/metadata-store/states/viewFamilyLoadEpochState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -16,6 +17,7 @@ export const useInvalidateMetadataStore = () => {
         currentCollectionHash: undefined,
       }));
     }
+    store.set(viewFamilyLoadEpochState.atom, (epoch) => epoch + 1);
     store.set(metadataLoadedVersionState.atom, (prev) => prev + 1);
   }, [store]);
 

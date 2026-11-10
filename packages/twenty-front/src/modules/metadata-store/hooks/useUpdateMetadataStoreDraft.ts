@@ -5,6 +5,9 @@ import {
   type MetadataEntityKey,
   type MetadataStoreItem,
 } from '@/metadata-store/states/metadataStoreState';
+import { removedViewIdsState } from '@/metadata-store/states/removedViewIdsState';
+import { viewFamilyHintState } from '@/metadata-store/states/viewFamilyHintState';
+import { viewFamilyLoadEpochState } from '@/metadata-store/states/viewFamilyLoadEpochState';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { getDraftOrCurrentMetadataItems } from '@/metadata-store/utils/getDraftOrCurrentMetadataItems';
 import { isMetadataStoreDraftConsistent } from '@/metadata-store/utils/isMetadataStoreDraftConsistent';
@@ -27,6 +30,9 @@ export const resetMetadataStore = (store: JotaiStore) => {
   }
 
   store.set(isMinimalMetadataReadyState.atom, false);
+  store.set(viewFamilyLoadEpochState.atom, (epoch) => epoch + 1);
+  store.set(removedViewIdsState.atom, []);
+  store.set(viewFamilyHintState.atom, undefined);
 };
 
 const changeMetadataEntityAsUpToDate = (

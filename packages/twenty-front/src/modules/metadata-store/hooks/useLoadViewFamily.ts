@@ -85,48 +85,7 @@ export const useLoadViewFamily = () => {
     return hint;
   }, [client, store]);
 
-  const attemptViewFamilyLoad = useCallback(async (): Promise<
-    CommittableViewFamily | undefined
-  > => {
-    const startEpoch = store.get(viewFamilyLoadEpochState.atom);
-    const hasEpochChanged = () =>
-      store.get(viewFamilyLoadEpochState.atom) !== startEpoch ||
-      !isSplitModeActive();
-
-    const responses = await fetchViewFamilyResponses();
-    const familyVersions = responses.map((response) => response.familyVersion);
-
-    const outcome = resolveViewFamilyLoadOutcome({
-      familyVersions,
-      hasEpochChanged: hasEpochChanged(),
-      hint: store.get(viewFamilyHintState.atom),
-    });
-
-    const confirmedOutcome =
-      outcome.type === 'confirm-hint'
-        ? resolveViewFamilyLoadOutcome({
-            familyVersions,
-            hasEpochChanged: hasEpochChanged(),
-            hint: await refreshViewFamilyHint(),
-          })
-        : outcome;
-
-    if (confirmedOutcome.type !== 'commit') {
-      return undefined;
-    }
-
-    return {
-      familyVersion: confirmedOutcome.familyVersion,
-      views: responses.flatMap((response) => response.views),
-    };
-  }, [
-    store,
-    isSplitModeActive,
-    fetchViewFamilyResponses,
-    refreshViewFamilyHint,
-  ]);
-
-  const commitViewFamily = useCallback(
+  const installViewFamily = useCallback(
     ({ familyVersion, views }: CommittableViewFamily) => {
       const {
         flatViews,
@@ -151,12 +110,58 @@ export const useLoadViewFamily = () => {
     [replaceDraft, store],
   );
 
+  const attemptViewFamilyLoad = useCallback(async (): Promise<boolean> => {
+    store.set(viewFamilyLoadEpochState.atom, (epoch) => epoch + 1);
+
+    const startEpoch = store.get(viewFamilyLoadEpochState.atom);
+    const isSuperseded = () =>
+      store.get(viewFamilyLoadEpochState.atom) !== startEpoch ||
+      !isSplitModeActive();
+
+    const responses = await fetchViewFamilyResponses();
+    const familyVersions = responses.map((response) => response.familyVersion);
+
+    const outcome = resolveViewFamilyLoadOutcome({
+      familyVersions,
+      hasEpochChanged: isSuperseded(),
+      hint: store.get(viewFamilyHintState.atom),
+    });
+
+    if (outcome.type === 'mismatch') {
+      return false;
+    }
+
+    const hint =
+      outcome.type === 'confirm-hint'
+        ? await refreshViewFamilyHint()
+        : store.get(viewFamilyHintState.atom);
+
+    const confirmedOutcome = resolveViewFamilyLoadOutcome({
+      familyVersions,
+      hasEpochChanged: isSuperseded(),
+      hint,
+    });
+
+    if (confirmedOutcome.type !== 'commit') {
+      return false;
+    }
+
+    installViewFamily({
+      familyVersion: confirmedOutcome.familyVersion,
+      views: responses.flatMap((response) => response.views),
+    });
+
+    return true;
+  }, [
+    store,
+    isSplitModeActive,
+    fetchViewFamilyResponses,
+    refreshViewFamilyHint,
+    installViewFamily,
+  ]);
+
   const loadViewFamily = useCallback(async () => {
-    const firstAttempt = await attemptViewFamilyLoad();
-
-    if (isDefined(firstAttempt)) {
-      commitViewFamily(firstAttempt);
-
+    if (await attemptViewFamilyLoad()) {
       return;
     }
 
@@ -164,11 +169,7 @@ export const useLoadViewFamily = () => {
       VIEW_FAMILY_RETRY_DELAY_MS + Math.random() * VIEW_FAMILY_RETRY_DELAY_MS,
     );
 
-    const secondAttempt = await attemptViewFamilyLoad();
-
-    if (isDefined(secondAttempt)) {
-      commitViewFamily(secondAttempt);
-
+    if (await attemptViewFamilyLoad()) {
       return;
     }
 
@@ -179,7 +180,7 @@ export const useLoadViewFamily = () => {
         'View family stayed inconsistent across retries; no authoritative views installed',
       );
     }
-  }, [attemptViewFamilyLoad, commitViewFamily, store]);
+  }, [attemptViewFamilyLoad, store]);
 
   return { loadViewFamily, isSplitModeActive };
 };

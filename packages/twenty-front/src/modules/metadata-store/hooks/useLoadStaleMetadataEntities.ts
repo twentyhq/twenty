@@ -10,7 +10,9 @@ import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayo
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
+import { viewFamilyLoadEpochState } from '@/metadata-store/states/viewFamilyLoadEpochState';
 import { useApolloClient } from '@apollo/client/react';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -45,6 +47,7 @@ const hasOverlap = (
 
 export const useLoadStaleMetadataEntities = () => {
   const client = useApolloClient();
+  const store = useStore();
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { loadViewFamily, isSplitModeActive } = useLoadViewFamily();
 
@@ -80,6 +83,10 @@ export const useLoadStaleMetadataEntities = () => {
       ) {
         fetchPromises.push(loadViewFamily());
       } else if (hasOverlap(staleEntityKeys, VIEW_FAMILY_ENTITY_KEYS)) {
+        store.set(viewFamilyLoadEpochState.atom, (epoch) => epoch + 1);
+
+        const legacyLoadEpoch = store.get(viewFamilyLoadEpochState.atom);
+
         fetchPromises.push(
           Promise.all([
             client.query({
@@ -103,6 +110,12 @@ export const useLoadStaleMetadataEntities = () => {
               fieldsWidgetViewsResult,
               tableWidgetViewsResult,
             ]) => {
+              if (
+                store.get(viewFamilyLoadEpochState.atom) !== legacyLoadEpoch
+              ) {
+                return;
+              }
+
               const allViews = [
                 ...(indexViewsResult.data?.getViews ?? []),
                 ...(fieldsWidgetViewsResult.data?.getViews ?? []),
@@ -249,7 +262,14 @@ export const useLoadStaleMetadataEntities = () => {
         throw firstRejectedFetch.reason;
       }
     },
-    [client, replaceDraft, applyChanges, loadViewFamily, isSplitModeActive],
+    [
+      client,
+      store,
+      replaceDraft,
+      applyChanges,
+      loadViewFamily,
+      isSplitModeActive,
+    ],
   );
 
   return { loadStaleMetadataEntities };

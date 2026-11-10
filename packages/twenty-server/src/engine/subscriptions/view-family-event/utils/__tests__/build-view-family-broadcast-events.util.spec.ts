@@ -109,6 +109,40 @@ describe('buildViewFamilyBroadcastEvents', () => {
     expect(events[0].recipientUserWorkspaceIds).toBeUndefined();
   });
 
+  it('never sends the private before-image to the audience that gains a view', () => {
+    const [updatedEvent] = buildForView(
+      updatedViewEvent(
+        {
+          ...ALICE_PRIVATE_VIEW,
+          name: 'Private old title',
+          anyFieldFilterValue: 'private-old-filter',
+        },
+        { ...SHARED_VIEW, name: 'Published title', anyFieldFilterValue: null },
+      ),
+    );
+
+    expect(updatedEvent.recipientUserWorkspaceIds).toBeUndefined();
+    expect(updatedEvent.properties).toEqual({
+      updatedFields: [],
+      after: {
+        ...SHARED_VIEW,
+        name: 'Published title',
+        anyFieldFilterValue: null,
+      },
+    });
+    expect(JSON.stringify(updatedEvent)).not.toContain('Private old title');
+    expect(JSON.stringify(updatedEvent)).not.toContain('private-old-filter');
+    expect(JSON.stringify(updatedEvent)).not.toContain('alice');
+  });
+
+  it('never sends the former owner the new private owner state on transfer', () => {
+    const [, removalEvent] = buildForView(
+      updatedViewEvent(ALICE_PRIVATE_VIEW, BOB_PRIVATE_VIEW),
+    );
+
+    expect(JSON.stringify(removalEvent)).not.toContain('bob');
+  });
+
   it('removes a private view from its former owner on transfer', () => {
     const [updatedEvent, removalEvent] = buildForView(
       updatedViewEvent(ALICE_PRIVATE_VIEW, BOB_PRIVATE_VIEW),
