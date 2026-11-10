@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -19,6 +18,7 @@ import { getCoreWorkflowShowPageTabIdFromHash } from '@/object-core/workflows/ut
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { TabListSelectionSyncEffect } from '@/ui/layout/tab-list/components/TabListSelectionSyncEffect';
 import { type GetCoreWorkflowVersionsQuery } from '~/generated/graphql';
 
 const StyledTabContent = styled.div`
@@ -78,11 +78,7 @@ export const CoreWorkflowShowPageTabs = ({
   const { t } = useLingui();
   const location = useLocation();
 
-  // TabList keeps its last tab when the URL has no hash, so a hash-less visit gets a fresh instance that opens Flow
-  const tabListInstanceSuffix = isNonEmptyString(location.hash)
-    ? 'linked-tab'
-    : location.key;
-  const tabListComponentInstanceId = `${CORE_WORKFLOW_SHOW_PAGE_TABS.COMPONENT_INSTANCE_ID_PREFIX}-${coreWorkflowId}-${tabListInstanceSuffix}`;
+  const tabListComponentInstanceId = `${CORE_WORKFLOW_SHOW_PAGE_TABS.COMPONENT_INSTANCE_ID_PREFIX}-${coreWorkflowId}`;
 
   const { objectMetadataItem: workflowRunObjectMetadataItem } =
     useObjectMetadataItem({
@@ -105,6 +101,11 @@ export const CoreWorkflowShowPageTabs = ({
 
   return (
     <>
+      {/* TabList falls back to its stored tab when the URL has no hash, so keep it on the tab being rendered */}
+      <TabListSelectionSyncEffect
+        componentInstanceId={tabListComponentInstanceId}
+        nextActiveTabId={activeTabId}
+      />
       <TabList
         aria-label={t`Workflow sections`}
         componentInstanceId={tabListComponentInstanceId}
