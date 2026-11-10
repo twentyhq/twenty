@@ -263,6 +263,26 @@ describe('getMatchingRecordId', () => {
       expect(id).toBe('newerDeletedRecordId');
     });
 
+    it('refuses to pick between deleted records matched by different unique fields', () => {
+      const otherDeletedRecord: PartialObjectRecordWithId = {
+        id: 'otherDeletedRecordId',
+        otherUniqueText: 'beta',
+        deletedAt: '2026-03-01T00:00:00.000Z',
+      };
+
+      expect(() =>
+        getMatchingRecordId(
+          { uniqueText: 'alpha', otherUniqueText: 'beta' },
+          [uniqueTextGroup, otherUniqueTextGroup],
+          [olderDeletedRecord, otherDeletedRecord],
+        ),
+      ).toThrow(
+        expect.objectContaining({
+          code: CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT,
+        }),
+      );
+    });
+
     it('matches the live record of another unique field rather than a deleted record', () => {
       const id = getMatchingRecordId(
         { uniqueText: 'alpha', otherUniqueText: 'beta' },

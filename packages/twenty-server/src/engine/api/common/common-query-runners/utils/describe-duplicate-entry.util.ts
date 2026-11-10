@@ -83,14 +83,15 @@ export const describeDuplicateEntry = ({
     getStringProperty(duplicateEntryCause, 'detail')?.match(
       SINGLE_COLUMN_DUPLICATE_KEY_DETAIL_PATTERN,
     ) ?? [];
+  const canExposeDuplicateValue = !indexedFlatFieldMetadatas.some(
+    (flatFieldMetadata) =>
+      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
+      unreadableFieldMetadataIds.has(flatFieldMetadata.id),
+  );
   const duplicateColumn =
+    canExposeDuplicateValue &&
     isDefined(duplicateColumnName) &&
-    isDefined(duplicateColumnValue) &&
-    !indexedFlatFieldMetadatas.some(
-      (flatFieldMetadata) =>
-        isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
-        unreadableFieldMetadataIds.has(flatFieldMetadata.id),
-    )
+    isDefined(duplicateColumnValue)
       ? { name: duplicateColumnName, value: duplicateColumnValue }
       : undefined;
 

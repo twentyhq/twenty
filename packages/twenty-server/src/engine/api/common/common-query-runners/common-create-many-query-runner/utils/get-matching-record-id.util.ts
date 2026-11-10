@@ -24,8 +24,8 @@ export const getMatchingRecordId = (
   conflictingFieldGroups: ConflictingFieldGroup[],
   existingRecords: PartialObjectRecordWithId[],
 ): string | undefined => {
-  const matchingRecordIds: string[] = [];
-  const restorableRecords: PartialObjectRecordWithId[] = [];
+  const matchingRecordIds = new Set<string>();
+  const restorableRecordIds = new Set<string>();
 
   for (const fieldGroup of conflictingFieldGroups) {
     const requestFieldValues = fieldGroup.conflictingProperties.map(
@@ -57,13 +57,21 @@ export const getMatchingRecordId = (
       : matchingRecords[0];
 
     if (isDefined(matchingRecord)) {
-      matchingRecordIds.push(matchingRecord.id);
-    } else {
-      restorableRecords.push(...matchingRecords);
+      matchingRecordIds.add(matchingRecord.id);
+      continue;
+    }
+
+    const restorableRecord = findMostRecentlyDeletedRecord(matchingRecords);
+
+    if (isDefined(restorableRecord)) {
+      restorableRecordIds.add(restorableRecord.id);
     }
   }
 
-  if ([...new Set(matchingRecordIds)].length > 1) {
+  const candidateRecordIds =
+    matchingRecordIds.size > 0 ? matchingRecordIds : restorableRecordIds;
+
+  if (candidateRecordIds.size > 1) {
     const conflictingFieldsValues = conflictingFieldGroups
       .map((group) => {
         const values = group.conflictingProperties
@@ -97,7 +105,7 @@ export const getMatchingRecordId = (
     );
   }
 
-  return (
-    matchingRecordIds[0] ?? findMostRecentlyDeletedRecord(restorableRecords)?.id
-  );
+  const [matchingRecordId] = candidateRecordIds;
+
+  return matchingRecordId;
 };

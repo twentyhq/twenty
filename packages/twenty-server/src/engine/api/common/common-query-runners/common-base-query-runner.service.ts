@@ -232,9 +232,10 @@ export abstract class CommonBaseQueryRunnerService<
     }
 
     error.userFriendlyMessage = duplicateEntryDescription.userFriendlyMessage;
-    error.conflictingRecord = await this.findConflictingRecord(
-      duplicateEntryDescription,
-    );
+    error.conflictingRecord = await this.findConflictingRecord({
+      ...duplicateEntryDescription,
+      workspaceId: queryRunnerContext.authContext.workspace.id,
+    });
   }
 
   private async findFieldMetadataIdsHiddenFromCaller(
@@ -263,10 +264,13 @@ export abstract class CommonBaseQueryRunnerService<
   private async findConflictingRecord({
     flatObjectMetadata,
     duplicateColumn,
+    workspaceId,
   }: Pick<
     DuplicateEntryDescription,
     'flatObjectMetadata' | 'duplicateColumn'
-  >): Promise<TwentyOrmException['conflictingRecord']> {
+  > & {
+    workspaceId: string;
+  }): Promise<TwentyOrmException['conflictingRecord']> {
     if (!isDefined(duplicateColumn)) {
       return undefined;
     }
@@ -279,7 +283,7 @@ export abstract class CommonBaseQueryRunnerService<
       .getOne<ObjectRecord>()
       .catch((lookupError: unknown) => {
         this.logger.warn(
-          `Could not look up the ${flatObjectMetadata.nameSingular} holding a duplicate value: ${lookupError instanceof Error ? lookupError.message : String(lookupError)}`,
+          `Could not look up the ${flatObjectMetadata.nameSingular} holding a duplicate value in workspace ${workspaceId}: ${lookupError instanceof Error ? lookupError.message : String(lookupError)}`,
         );
 
         return undefined;

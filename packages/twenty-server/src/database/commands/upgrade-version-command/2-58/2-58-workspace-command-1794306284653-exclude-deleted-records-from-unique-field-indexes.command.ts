@@ -1,14 +1,12 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { type UniqueFieldIndexReplacement } from 'src/database/commands/upgrade-version-command/2-58/types/unique-field-index-replacement.type';
 import { buildUniqueFieldIndexReplacements } from 'src/database/commands/upgrade-version-command/2-58/utils/build-unique-field-index-replacements.util';
+import { createWorkspaceIndexesConcurrently } from 'src/database/commands/upgrade-version-command/2-58/utils/create-workspace-indexes-concurrently.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -89,12 +87,49 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
       return;
     }
 
-    await this.createReplacementIndexesConcurrently({
-      workspaceId,
-      dataSource,
-      replacements,
-      flatFieldMetadataMaps,
-    });
+    const { droppedInvalidIndexNames } =
+      await createWorkspaceIndexesConcurrently({
+        dataSource,
+        indexManager: this.workspaceSchemaManagerService.indexManager,
+        indexes: replacements
+          .filter((replacement) => !replacement.isReplacementAlreadyCreated)
+          .map(
+            ({
+              legacyFlatIndexMetadata,
+              replacementFlatIndexMetadata,
+              flatObjectMetadata,
+            }) => {
+              const { schemaName, tableName } =
+                getWorkspaceSchemaContextForMigration({
+                  workspaceId,
+                  objectMetadata: flatObjectMetadata,
+                });
+
+              return {
+                schemaName,
+                tableName,
+                index: {
+                  name: replacementFlatIndexMetadata.name,
+                  columns: computeFlatIndexFieldColumnNames({
+                    flatIndexFieldMetadatas:
+                      legacyFlatIndexMetadata.flatIndexFieldMetadatas,
+                    flatFieldMetadataMaps,
+                  }),
+                  isUnique: replacementFlatIndexMetadata.isUnique,
+                  type: replacementFlatIndexMetadata.indexType,
+                  where:
+                    replacementFlatIndexMetadata.indexWhereClause ?? undefined,
+                },
+              };
+            },
+          ),
+      });
+
+    for (const droppedInvalidIndexName of droppedInvalidIndexNames) {
+      this.logger.warn(
+        `Dropped invalid index ${droppedInvalidIndexName} left by an interrupted build in workspace ${workspaceId} and recreated it`,
+      );
+    }
 
     const indexOperationsByApplicationUniversalIdentifier = new Map<
       string,
@@ -143,96 +178,6 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
     this.logger.log(
       `Rebuilt ${replacements.length} unique field index(es) for workspace ${workspaceId}`,
     );
-  }
-
-  private async createReplacementIndexesConcurrently({
-    workspaceId,
-    dataSource,
-    replacements,
-    flatFieldMetadataMaps,
-  }: {
-    workspaceId: string;
-    dataSource: DataSource;
-    replacements: UniqueFieldIndexReplacement[];
-    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
-  }): Promise<void> {
-    const coreDataSourceOptions = dataSource.options;
-
-    if (coreDataSourceOptions.type !== 'postgres') {
-      throw new Error(
-        `Concurrent index builds need a postgres datasource, got ${coreDataSourceOptions.type}`,
-      );
-    }
-
-    const indexBuildDataSource = await new DataSource({
-      ...coreDataSourceOptions,
-      entities: [],
-      migrations: [],
-      subscribers: [],
-      poolSize: 1,
-      extra: { ...coreDataSourceOptions.extra, query_timeout: undefined },
-    }).initialize();
-    const queryRunner = indexBuildDataSource.createQueryRunner();
-
-    try {
-      await queryRunner.connect();
-
-      for (const replacement of replacements) {
-        if (replacement.isReplacementAlreadyCreated) {
-          continue;
-        }
-
-        const { legacyFlatIndexMetadata, replacementFlatIndexMetadata } =
-          replacement;
-        const { schemaName, tableName } = getWorkspaceSchemaContextForMigration(
-          {
-            workspaceId,
-            objectMetadata: replacement.flatObjectMetadata,
-          },
-        );
-
-        const invalidIndexes: { name: string }[] = await queryRunner.query(
-          `SELECT c.relname AS name
-           FROM pg_index i
-           JOIN pg_class c ON c.oid = i.indexrelid
-           JOIN pg_namespace n ON n.oid = c.relnamespace
-           WHERE n.nspname = $1 AND c.relname = $2 AND NOT i.indisvalid`,
-          [schemaName, replacementFlatIndexMetadata.name],
-        );
-
-        for (const { name } of invalidIndexes) {
-          await this.workspaceSchemaManagerService.indexManager.dropIndex({
-            queryRunner,
-            schemaName,
-            indexName: name,
-          });
-
-          this.logger.warn(
-            `Dropped invalid index ${name} left by an interrupted build in workspace ${workspaceId}, recreating it`,
-          );
-        }
-
-        await this.workspaceSchemaManagerService.indexManager.createIndex({
-          queryRunner,
-          schemaName,
-          tableName,
-          index: {
-            name: replacementFlatIndexMetadata.name,
-            columns: computeFlatIndexFieldColumnNames({
-              flatIndexFieldMetadatas:
-                legacyFlatIndexMetadata.flatIndexFieldMetadatas,
-              flatFieldMetadataMaps,
-            }),
-            isUnique: replacementFlatIndexMetadata.isUnique,
-            type: replacementFlatIndexMetadata.indexType,
-            where: replacementFlatIndexMetadata.indexWhereClause ?? undefined,
-          },
-          concurrently: true,
-        });
-      }
-    } finally {
-      await indexBuildDataSource.destroy();
-    }
   }
 
   private async runIndexMigration({
