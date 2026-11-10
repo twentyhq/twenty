@@ -4,8 +4,10 @@ import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRedirectToDefaultDomain = () => {
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();
@@ -20,7 +22,19 @@ export const useRedirectToDefaultDomain = () => {
   }) => {
     const url = new URL(window.location.href);
     if (url.hostname !== defaultDomain) {
-      setLastAuthenticateWorkspaceDomain(null);
+      // Writing an already-cleared value re-renders the effect that called us,
+      // which redirects again and aborts the navigation in flight.
+      const lastAuthenticatedWorkspaceDomain = store.get(
+        lastAuthenticatedWorkspaceDomainState.atom,
+      );
+
+      if (
+        isDefined(lastAuthenticatedWorkspaceDomain) &&
+        'workspaceId' in lastAuthenticatedWorkspaceDomain
+      ) {
+        setLastAuthenticateWorkspaceDomain(null);
+      }
+
       url.searchParams.set(
         SIGN_IN_UP_ACTION_SEARCH_PARAM,
         CHOOSE_WORKSPACE_ACTION,
