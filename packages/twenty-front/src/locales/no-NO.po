@@ -7356,6 +7356,11 @@ msgstr "Bekreft oppgradering"
 msgid "Confirming your payment"
 msgstr "Bekrefter betalingen din"
 
+#. js-lingui-id: jtSEaa
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to {workspaceName}"
+msgstr ""
+
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to your account"

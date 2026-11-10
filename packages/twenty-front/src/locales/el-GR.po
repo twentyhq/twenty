@@ -7356,6 +7356,11 @@ msgstr "Επιβεβαίωση αναβάθμισης"
 msgid "Confirming your payment"
 msgstr "Γίνεται επιβεβαίωση της πληρωμής σας"
 
+#. js-lingui-id: jtSEaa
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to {workspaceName}"
+msgstr ""
+
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to your account"

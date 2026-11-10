@@ -7356,6 +7356,11 @@ msgstr "업그레이드 확인"
 msgid "Confirming your payment"
 msgstr "결제를 확인하는 중"
 
+#. js-lingui-id: jtSEaa
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to {workspaceName}"
+msgstr ""
+
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to your account"
