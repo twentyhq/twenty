@@ -13,6 +13,7 @@ import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadat
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { buildRowLevelPermissionRules } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/build-row-level-permission-rules.util';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 
@@ -24,6 +25,7 @@ export const APPLICATION_GRANT_ROLE_METADATA_NAMES = [
   'rolePermissionFlag',
   'rowLevelPermissionPredicateGroup',
   'rowLevelPermissionPredicate',
+  'rowLevelPermissionRule',
 ] as const;
 
 type ApplicationGrantRoleMetadataName =
@@ -39,12 +41,17 @@ export const APPLICATION_GRANT_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS = [
   ),
 ].map(getMetadataFlatEntityMapsKey);
 
+// Rule maps stay optional for upgrade commands that ran before the rule table existed
 export type ApplicationGrantRoleFlatEntityMaps = Pick<
   AllFlatEntityMaps,
   MetadataToFlatEntityMapsKey<
-    Exclude<ApplicationGrantRoleMetadataName, 'roleTarget'>
+    Exclude<
+      ApplicationGrantRoleMetadataName,
+      'roleTarget' | 'rowLevelPermissionRule'
+    >
   >
->;
+> &
+  Partial<Pick<AllFlatEntityMaps, 'flatRowLevelPermissionRuleMaps'>>;
 
 type ApplicationGrantRoleUniversalFlatEntityMaps = Pick<
   AllUniversalFlatEntityMaps,
@@ -82,7 +89,7 @@ const toUniversalFlatEntityMaps = <
 
 type RolePermissionMetadataName = Exclude<
   ApplicationGrantRoleMetadataName,
-  'role' | 'roleTarget'
+  'role' | 'roleTarget' | 'rowLevelPermissionRule'
 >;
 
 type RolePermissionMappers = {
@@ -107,7 +114,7 @@ const mapUniversalFlatEntityMaps = <
       .filter(isDefined),
   );
 
-const findRolePermissionUniversalFlatEntityMaps = ({
+const findRoleGrantUniversalFlatEntityMaps = ({
   flatRole,
   flatEntityMaps,
   mappers,
@@ -115,7 +122,10 @@ const findRolePermissionUniversalFlatEntityMaps = ({
   flatRole: FlatRole;
   flatEntityMaps: ApplicationGrantRoleFlatEntityMaps;
   mappers?: RolePermissionMappers;
-}): RolePermissionUniversalFlatEntityMaps => ({
+}): Omit<
+  RolePermissionUniversalFlatEntityMaps,
+  'flatRowLevelPermissionRuleMaps'
+> => ({
   flatObjectPermissionMaps: mapUniversalFlatEntityMaps(
     getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow({
       universalFlatEntityMaps: flatEntityMaps.flatObjectPermissionMaps,
@@ -157,9 +167,103 @@ const findRolePermissionUniversalFlatEntityMaps = ({
   ),
 });
 
+// Rules follow from the predicate groups and predicates, so a copy derives its own
+const findRolePermissionUniversalFlatEntityMaps = ({
+  flatRole,
+  flatEntityMaps,
+  mappers,
+  now,
+}: {
+  flatRole: FlatRole;
+  flatEntityMaps: ApplicationGrantRoleFlatEntityMaps;
+  mappers?: RolePermissionMappers;
+  now: string;
+}): RolePermissionUniversalFlatEntityMaps => {
+  const rolePermissionUniversalFlatEntityMaps =
+    findRoleGrantUniversalFlatEntityMaps({ flatRole, flatEntityMaps, mappers });
+
+  const { flatRowLevelPermissionRuleMaps } = flatEntityMaps;
+
+  if (!isDefined(flatRowLevelPermissionRuleMaps)) {
+    return {
+      ...rolePermissionUniversalFlatEntityMaps,
+      flatRowLevelPermissionRuleMaps: toUniversalFlatEntityMaps([]),
+    };
+  }
+
+  if (!isDefined(mappers)) {
+    return {
+      ...rolePermissionUniversalFlatEntityMaps,
+      flatRowLevelPermissionRuleMaps: toUniversalFlatEntityMaps(
+        Object.values(flatRowLevelPermissionRuleMaps.byUniversalIdentifier)
+          .filter(isDefined)
+          .filter(
+            ({ roleUniversalIdentifier }) =>
+              roleUniversalIdentifier === flatRole.universalIdentifier,
+          ),
+      ),
+    };
+  }
+
+  const predicateGroups = Object.values(
+    rolePermissionUniversalFlatEntityMaps
+      .flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
+  ).filter(isDefined);
+  const predicates = Object.values(
+    rolePermissionUniversalFlatEntityMaps.flatRowLevelPermissionPredicateMaps
+      .byUniversalIdentifier,
+  ).filter(isDefined);
+  const {
+    rules,
+    ruleUniversalIdentifierByPredicateGroupUniversalIdentifier,
+    ruleUniversalIdentifierByPredicateUniversalIdentifier,
+  } = buildRowLevelPermissionRules({ predicateGroups, predicates, now });
+
+  return {
+    ...rolePermissionUniversalFlatEntityMaps,
+    flatFieldPermissionMaps: toUniversalFlatEntityMaps(
+      Object.values(
+        rolePermissionUniversalFlatEntityMaps.flatFieldPermissionMaps
+          .byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .map((fieldPermission) => ({
+          ...fieldPermission,
+          rowLevelPermissionRuleUniversalIdentifier: isDefined(
+            fieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
+          )
+            ? (ruleUniversalIdentifierByPredicateGroupUniversalIdentifier.get(
+                fieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
+              ) ?? null)
+            : null,
+        })),
+    ),
+    flatRowLevelPermissionPredicateGroupMaps: toUniversalFlatEntityMaps(
+      predicateGroups.map((predicateGroup) => ({
+        ...predicateGroup,
+        rowLevelPermissionRuleUniversalIdentifier:
+          ruleUniversalIdentifierByPredicateGroupUniversalIdentifier.get(
+            predicateGroup.universalIdentifier,
+          ) ?? null,
+      })),
+    ),
+    flatRowLevelPermissionPredicateMaps: toUniversalFlatEntityMaps(
+      predicates.map((predicate) => ({
+        ...predicate,
+        rowLevelPermissionRuleUniversalIdentifier:
+          ruleUniversalIdentifierByPredicateUniversalIdentifier.get(
+            predicate.universalIdentifier,
+          ) ?? null,
+      })),
+    ),
+    flatRowLevelPermissionRuleMaps: toUniversalFlatEntityMaps(rules),
+  };
+};
+
 const findExistingGrantRoleUniversalFlatEntityMaps = ({
   existingGrantRole,
   flatEntityMaps,
+  now,
 }: BuildApplicationGrantRoleFromToFlatEntityMapsArgs): ApplicationGrantRoleUniversalFlatEntityMaps =>
   isDefined(existingGrantRole)
     ? {
@@ -170,6 +274,7 @@ const findExistingGrantRoleUniversalFlatEntityMaps = ({
         ...findRolePermissionUniversalFlatEntityMaps({
           flatRole: existingGrantRole.flatRole,
           flatEntityMaps,
+          now,
         }),
       }
     : {
@@ -180,6 +285,7 @@ const findExistingGrantRoleUniversalFlatEntityMaps = ({
         flatRolePermissionFlagMaps: toUniversalFlatEntityMaps([]),
         flatRowLevelPermissionPredicateGroupMaps: toUniversalFlatEntityMaps([]),
         flatRowLevelPermissionPredicateMaps: toUniversalFlatEntityMaps([]),
+        flatRowLevelPermissionRuleMaps: toUniversalFlatEntityMaps([]),
       };
 
 const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
@@ -314,6 +420,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
             toNullableCopyUniversalIdentifier(
               source.rowLevelPermissionPredicateGroupUniversalIdentifier,
             ),
+          rowLevelPermissionRuleUniversalIdentifier: null,
           canReadFieldValue: source.canReadFieldValue ?? null,
           canUpdateFieldValue: source.canUpdateFieldValue ?? null,
         }),
@@ -347,6 +454,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
                   ),
                 positionInRowLevelPermissionPredicateGroup:
                   source.positionInRowLevelPermissionPredicateGroup,
+                rowLevelPermissionRuleUniversalIdentifier: null,
                 childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
                 rowLevelPermissionPredicateUniversalIdentifiers: [],
                 deletedAt: null,
@@ -377,9 +485,11 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
                   ),
                 positionInRowLevelPermissionPredicateGroup:
                   source.positionInRowLevelPermissionPredicateGroup,
+                rowLevelPermissionRuleUniversalIdentifier: null,
                 deletedAt: null,
               },
       },
+      now,
     }),
   };
 };
@@ -416,6 +526,10 @@ export const buildApplicationGrantRoleFromToFlatEntityMaps = (
     flatRowLevelPermissionPredicateMaps: {
       from: from.flatRowLevelPermissionPredicateMaps,
       to: to.flatRowLevelPermissionPredicateMaps,
+    },
+    flatRowLevelPermissionRuleMaps: {
+      from: from.flatRowLevelPermissionRuleMaps,
+      to: to.flatRowLevelPermissionRuleMaps,
     },
   };
 };

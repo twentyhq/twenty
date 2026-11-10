@@ -424,6 +424,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       universalForeignKey:
         'rowLevelPermissionPredicateGroupUniversalIdentifier',
     },
+    rowLevelPermissionRule: {
+      metadataName: 'rowLevelPermissionRule',
+      foreignKey: 'rowLevelPermissionRuleId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'rowLevelPermissionRuleUniversalIdentifier',
+    },
   },
   pageLayout: {
     workspace: null,
@@ -519,6 +526,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
         'rowLevelPermissionPredicateGroupUniversalIdentifier',
     },
     application: null,
+    rowLevelPermissionRule: {
+      metadataName: 'rowLevelPermissionRule',
+      foreignKey: 'rowLevelPermissionRuleId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'rowLevelPermissionRuleUniversalIdentifier',
+    },
   },
   rowLevelPermissionPredicateGroup: {
     objectMetadata: {
@@ -545,6 +559,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     },
     workspace: null,
     application: null,
+    rowLevelPermissionRule: {
+      metadataName: 'rowLevelPermissionRule',
+      foreignKey: 'rowLevelPermissionRuleId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'rowLevelPermissionRuleUniversalIdentifier',
+    },
   },
   rowLevelPermissionRule: {
     objectMetadata: {

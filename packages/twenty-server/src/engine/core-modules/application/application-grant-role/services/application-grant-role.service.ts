@@ -177,6 +177,7 @@ export class ApplicationGrantRoleService {
         'flatRolePermissionFlagMaps',
         'flatRowLevelPermissionPredicateMaps',
         'flatRowLevelPermissionPredicateGroupMaps',
+        'flatRowLevelPermissionRuleMaps',
       ]);
 
     const flatApplication = findActiveFlatApplicationById(
