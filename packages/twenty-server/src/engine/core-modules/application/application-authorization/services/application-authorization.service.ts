@@ -10,6 +10,7 @@ import { type ApplicationAuthorizationDTO } from 'src/engine/core-modules/applic
 import { toApplicationAuthorizationDto } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
 import { ApplicationOAuthIdentityInstallService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity-install.service';
 import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
+import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 
 @Injectable()
 export class ApplicationAuthorizationService {
@@ -48,9 +49,13 @@ export class ApplicationAuthorizationService {
     userWorkspaceId: string;
     applicationId: string;
     scopes: string[];
-  }): Promise<string> {
+  }): Promise<string | undefined> {
     const now = new Date();
-    const consentId = v4();
+    const isConsentIdAvailable = !UpgradeAwareRepositoryState.getInstance()
+      .getHiddenColumnPropertyNames(ApplicationAuthorizationEntity)
+      .has('consentId');
+    // Before the column's upgrade runs, tokens carry no consentId and the iat check alone applies
+    const consentId = isConsentIdAvailable ? v4() : undefined;
 
     await this.applicationAuthorizationRepository.upsert(
       {
@@ -60,7 +65,7 @@ export class ApplicationAuthorizationService {
         applicationId,
         scopes,
         lastAuthorizedAt: now,
-        consentId,
+        ...(isDefined(consentId) ? { consentId } : {}),
         lastUsedAt: now,
         revokedAt: null,
       },

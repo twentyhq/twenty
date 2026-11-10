@@ -1096,6 +1096,51 @@ describe('OAuth (integration)', () => {
       expect(revokedRefresh.body.error).toBe('invalid_grant');
     });
 
+    it('should exchange and refresh before the consentId upgrade command has run', async () => {
+      const hiddenColumns = jest
+        .spyOn(
+          global.workflowTestServices.upgradeState,
+          'getHiddenColumnPropertyNames',
+        )
+        .mockImplementation(
+          (entityClass) =>
+            new Set(
+              entityClass.name === 'ApplicationAuthorizationEntity'
+                ? ['consentId']
+                : [],
+            ),
+        );
+
+      try {
+        await deleteAuthorization();
+
+        const { refreshToken } = await exchangeForTokens();
+
+        expect(
+          JSON.parse(
+            Buffer.from(refreshToken.split('.')[1], 'base64url').toString(),
+          ).consentId,
+        ).toBeUndefined();
+
+        const [authorization] = await ds.query(
+          `SELECT "consentId" FROM core."applicationAuthorization"
+           WHERE "userId" = $1 AND "applicationId" = $2`,
+          [TEST_USER_ID, testApplication.id],
+        );
+
+        expect(authorization.consentId).toBeNull();
+
+        await postToken({
+          grant_type: 'refresh_token',
+          refresh_token: refreshToken,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        }).expect(200);
+      } finally {
+        hiddenColumns.mockRestore();
+      }
+    });
+
     // Deleting the row recreates the state of tokens minted before this table existed.
     it('should backfill a refresh token that predates the authorization record without inventing a consent', async () => {
       const { refreshToken } = await exchangeForTokens('read write');
