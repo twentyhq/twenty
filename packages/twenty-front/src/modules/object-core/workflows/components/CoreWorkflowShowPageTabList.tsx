@@ -26,14 +26,10 @@ export const CoreWorkflowShowPageTabList = ({
 
   return (
     <>
-      {/* TabList falls back to its stored tab when the URL has no hash, so keep it on the tab being rendered */}
-      <TabListSelectionSyncEffect
-        componentInstanceId={componentInstanceId}
-        nextActiveTabId={activeTabId}
-      />
       <TabList
         aria-label={t`Workflow sections`}
         componentInstanceId={componentInstanceId}
+        defaultActiveTabId={activeTabId}
         centerTabs
         tabs={[
           {
@@ -59,6 +55,11 @@ export const CoreWorkflowShowPageTabList = ({
             Icon: IconVersions,
           },
         ]}
+      />
+      {/* Rendered after TabList so its stored or first-tab fallback never wins over the tab being shown */}
+      <TabListSelectionSyncEffect
+        componentInstanceId={componentInstanceId}
+        nextActiveTabId={activeTabId}
       />
     </>
   );
