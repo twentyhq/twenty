@@ -21,70 +21,48 @@ export class AgentFileLoaderService {
     maxFileSizeBytes: number;
   }): AgentRunFileLoader {
     const filesByUrl = new Map<string, Promise<FileEntity | null>>();
-    const bytesByFileId = new Map<string, Promise<Buffer | null>>();
+    const fileIdsByBytes = new WeakMap<Uint8Array, string>();
+    const unreadableFileUrls = new Set<string>();
 
-    const loadFile = (url: string) =>
-      this.loadOnce({
-        cache: filesByUrl,
-        key: url,
-        load: () =>
-          this.fileService.getFileBySignedUrl({ fileUrl: url, workspaceId }),
+    const loadFile = (url: string) => {
+      const loadedFile = filesByUrl.get(url);
+
+      if (isDefined(loadedFile)) {
+        return loadedFile;
+      }
+
+      const fileLoad = this.fileService.getFileBySignedUrl({
+        fileUrl: url,
+        workspaceId,
       });
+
+      filesByUrl.set(url, fileLoad);
+
+      return fileLoad;
+    };
 
     return {
       loadFile,
       loadFileBytes: async (url) => {
         const file = await loadFile(url);
-
-        return isDefined(file)
-          ? this.loadOnce({
-              cache: bytesByFileId,
-              key: file.id,
-              load: () =>
-                this.readFileBytes({ file, workspaceId, maxFileSizeBytes }),
-            })
+        const fileBytes = isDefined(file)
+          ? await this.readFileBytes({ file, workspaceId, maxFileSizeBytes })
           : null;
-      },
-      getLoadedFileBytes: async (url) => {
-        const file = await loadFile(url);
 
-        return isDefined(file) ? bytesByFileId.get(file.id) : null;
-      },
-      releaseFileBytesExcept: async (urlsToKeep) => {
-        const filesToKeep = await Promise.all([...urlsToKeep].map(loadFile));
-        const fileIdsToKeep = new Set(
-          filesToKeep.filter(isDefined).map(({ id }) => id),
-        );
+        if (!isDefined(file) || !isDefined(fileBytes)) {
+          unreadableFileUrls.add(url);
 
-        for (const fileId of bytesByFileId.keys()) {
-          if (!fileIdsToKeep.has(fileId)) {
-            bytesByFileId.delete(fileId);
-          }
+          return null;
         }
+
+        unreadableFileUrls.delete(url);
+        fileIdsByBytes.set(fileBytes, file.id);
+
+        return fileBytes;
       },
+      getFileIdOfBytes: (fileBytes) => fileIdsByBytes.get(fileBytes),
+      isFileUnreadable: (url) => unreadableFileUrls.has(url),
     };
-  }
-
-  private loadOnce<TValue>({
-    cache,
-    key,
-    load,
-  }: {
-    cache: Map<string, Promise<TValue>>;
-    key: string;
-    load: () => Promise<TValue>;
-  }): Promise<TValue> {
-    const loadedValue = cache.get(key);
-
-    if (isDefined(loadedValue)) {
-      return loadedValue;
-    }
-
-    const valueLoad = load();
-
-    cache.set(key, valueLoad);
-
-    return valueLoad;
   }
 
   private async readFileBytes({

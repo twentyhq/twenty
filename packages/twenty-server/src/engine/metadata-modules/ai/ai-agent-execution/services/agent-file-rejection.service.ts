@@ -8,7 +8,7 @@ import {
   type LanguageModelV4TextPart,
   type LanguageModelV4Usage,
 } from '@ai-sdk/provider';
-import { isNull, isString } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 import { APICallError, type LanguageModelMiddleware } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -188,7 +188,7 @@ export class AgentFileRejectionService {
     );
   }
 
-  private async replaceUnreadableFilePart({
+  private replaceUnreadableFilePart({
     part,
     deliveryState,
   }: {
@@ -199,11 +199,7 @@ export class AgentFileRejectionService {
       return part;
     }
 
-    const loadedBytes = await deliveryState.fileLoader.getLoadedFileBytes(
-      part.data.url.toString(),
-    );
-
-    return isNull(loadedBytes)
+    return deliveryState.fileLoader.isFileUnreadable(part.data.url.toString())
       ? buildFilePlaceholder({ part, reason: 'unavailable' })
       : part;
   }
@@ -285,8 +281,13 @@ export class AgentFileRejectionService {
     }
 
     const fileBytes = part.data.data;
-    const previousRejection =
-      deliveryState.fileRejectionsByBytes.get(fileBytes);
+    const fileId = deliveryState.fileLoader.getFileIdOfBytes(fileBytes);
+
+    if (!isDefined(fileId)) {
+      return this.sendFilePartCheck(filePartCheck);
+    }
+
+    const previousRejection = deliveryState.fileRejectionsByFileId.get(fileId);
 
     if (isDefined(previousRejection)) {
       return previousRejection;
@@ -294,7 +295,7 @@ export class AgentFileRejectionService {
 
     const isRejected = await this.sendFilePartCheck(filePartCheck);
 
-    deliveryState.fileRejectionsByBytes.set(fileBytes, isRejected);
+    deliveryState.fileRejectionsByFileId.set(fileId, isRejected);
 
     return isRejected;
   }

@@ -3,6 +3,6 @@ import { type FileEntity } from 'src/engine/core-modules/file/entities/file.enti
 export type AgentRunFileLoader = {
   loadFile: (url: string) => Promise<FileEntity | null>;
   loadFileBytes: (url: string) => Promise<Buffer | null>;
-  getLoadedFileBytes: (url: string) => Promise<Buffer | null | undefined>;
-  releaseFileBytesExcept: (urlsToKeep: Set<string>) => Promise<void>;
+  getFileIdOfBytes: (fileBytes: Uint8Array) => string | undefined;
+  isFileUnreadable: (url: string) => boolean;
 };

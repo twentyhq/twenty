@@ -35,7 +35,6 @@ type UserContentPart = Exclude<UserContent, string>[number];
 type FileBudget = {
   remainingSizeBytes: number;
   remainingFileCount: number;
-  urlsToKeepLoaded: Set<string>;
 };
 
 @Injectable()
@@ -78,7 +77,7 @@ export class AgentFilePartService {
       }),
       canSendSignedUrls: this.canSendSignedUrls(),
       areFilesRejected: false,
-      fileRejectionsByBytes: new WeakMap(),
+      fileRejectionsByFileId: new Map(),
     };
 
     return {
@@ -131,7 +130,6 @@ export class AgentFilePartService {
     const budget: FileBudget = {
       remainingSizeBytes: deliveryState.limits.maxTotalSizeBytes,
       remainingFileCount: deliveryState.limits.maxFileCount,
-      urlsToKeepLoaded: new Set(),
     };
     const preparedParts = new Map<UserContentPart, FilePart | TextPart>();
 
@@ -141,10 +139,6 @@ export class AgentFilePartService {
         await this.prepareFilePart({ part, deliveryState, budget }),
       );
     }
-
-    await deliveryState.fileLoader.releaseFileBytesExcept(
-      budget.urlsToKeepLoaded,
-    );
 
     return messagesWithInputFiles.map((message) => {
       if (message.role !== 'user' || !isArray(message.content)) {
@@ -163,7 +157,7 @@ export class AgentFilePartService {
     deliveryState: {
       areFilesRejected,
       fileLoader,
-      fileRejectionsByBytes,
+      fileRejectionsByFileId,
       nativeMimeTypes,
       limits,
       canSendSignedUrls,
@@ -175,7 +169,7 @@ export class AgentFilePartService {
       AgentFileDeliveryState,
       | 'areFilesRejected'
       | 'fileLoader'
-      | 'fileRejectionsByBytes'
+      | 'fileRejectionsByFileId'
       | 'nativeMimeTypes'
       | 'limits'
       | 'canSendSignedUrls'
@@ -198,11 +192,7 @@ export class AgentFilePartService {
       return buildFilePlaceholder({ part, reason: 'unavailable' });
     }
 
-    const loadedBytes = await fileLoader.getLoadedFileBytes(url);
-
-    if (isDefined(loadedBytes) && fileRejectionsByBytes.get(loadedBytes)) {
-      budget.urlsToKeepLoaded.add(url);
-
+    if (fileRejectionsByFileId.get(file.id)) {
       return buildFilePlaceholder({ part, reason: 'rejected' });
     }
 
@@ -230,7 +220,6 @@ export class AgentFilePartService {
 
     budget.remainingSizeBytes -= file.size;
     budget.remainingFileCount -= 1;
-    budget.urlsToKeepLoaded.add(url);
 
     return { ...part, mediaType };
   }

@@ -14,5 +14,5 @@ export type AgentFileDeliveryState = {
   fileLoader: AgentRunFileLoader;
   canSendSignedUrls: boolean;
   areFilesRejected: boolean;
-  fileRejectionsByBytes: WeakMap<Uint8Array, boolean>;
+  fileRejectionsByFileId: Map<string, boolean>;
 };
