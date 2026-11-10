@@ -361,6 +361,8 @@ export const GettingStartedStepStack = ({
                 gettingStartedJustCompletedStep === selectedStepActionKey
               }
               nextStepActionKey={nextStepActionKey}
+              isSelectingStep={isSaving}
+              onSelectStep={selectGettingStartedStep}
             />
           </StyledActiveStepCard>
         </AnimatePresence>

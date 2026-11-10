@@ -1,13 +1,14 @@
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
 import { GettingStartedStepDoneButton } from '@/getting-started/components/GettingStartedStepDoneButton';
-import { GettingStartedStepNextButton } from '@/getting-started/components/GettingStartedStepNextButton';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_ACTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneActions';
 import { GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneDescriptions';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
+import { Button } from 'twenty-ui/primitives/input';
 import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';
@@ -135,6 +136,8 @@ type GettingStartedStepCardProps = {
   isCompleted: boolean;
   isJustCompleted: boolean;
   nextStepActionKey: GettingStartedStepActionKey | undefined;
+  isSelectingStep: boolean;
+  onSelectStep: (stepActionKey: GettingStartedStepActionKey) => void;
 };
 
 export const GettingStartedStepCard = ({
@@ -142,7 +145,10 @@ export const GettingStartedStepCard = ({
   isCompleted,
   isJustCompleted,
   nextStepActionKey,
+  isSelectingStep,
+  onSelectStep,
 }: GettingStartedStepCardProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -199,9 +205,13 @@ export const GettingStartedStepCard = ({
               <GettingStartedStepDoneButton stepDefinition={stepDefinition} />
             )}
             {isDefined(nextStepActionKey) && (
-              <GettingStartedStepNextButton
-                nextStepActionKey={nextStepActionKey}
-              />
+              <Button
+                size="sm"
+                disabled={isSelectingStep}
+                onClick={() => onSelectStep(nextStepActionKey)}
+              >
+                {t`Next`}
+              </Button>
             )}
           </StyledHeadingActions>
         </StyledHeadingContent>
