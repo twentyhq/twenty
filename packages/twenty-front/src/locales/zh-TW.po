@@ -24879,6 +24879,11 @@ msgstr "資料列層級權限條件"
 msgid "row level permission predicate group"
 msgstr "資料列層級權限條件群組"
 
+#. js-lingui-id: JWZ1ef
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission rule"
+msgstr ""
+
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Row-level permissions"

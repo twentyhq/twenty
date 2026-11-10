@@ -12,7 +12,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 type RuleLink = { id: string; rowLevelPermissionRuleId: string };
 
-@RegisteredWorkspaceCommand('2.58.0', 1794329095433)
+@RegisteredWorkspaceCommand('2.58.0', 1794337540466)
 @Command({
   name: 'upgrade:2-58:backfill-row-level-permission-rules',
   description:

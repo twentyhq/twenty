@@ -24874,6 +24874,11 @@ msgstr "row level permission predicate"
 msgid "row level permission predicate group"
 msgstr "row level permission predicate group"
 
+#. js-lingui-id: JWZ1ef
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission rule"
+msgstr "row level permission rule"
+
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Row-level permissions"
