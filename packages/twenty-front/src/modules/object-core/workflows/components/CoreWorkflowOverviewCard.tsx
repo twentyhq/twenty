@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -46,7 +47,7 @@ export const CoreWorkflowOverviewCard = ({
   <StyledCard aria-label={title}>
     <StyledHeader>
       <StyledTitle>{title}</StyledTitle>
-      {caption && <StyledCaption>{caption}</StyledCaption>}
+      {isNonEmptyString(caption) && <StyledCaption>{caption}</StyledCaption>}
     </StyledHeader>
     {children}
   </StyledCard>

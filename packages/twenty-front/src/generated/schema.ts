@@ -168,19 +168,19 @@ export type CoreWorkflowRecentRun = {
 
 export type CoreWorkflowRunInsights = {
   __typename?: 'CoreWorkflowRunInsights';
-  /** Average duration of completed runs in the last 14 days */
+  /** Average duration of completed runs over the same 14 calendar days */
   averageDurationInMs?: Maybe<Scalars['Float']['output']>;
   coreWorkflowId: Scalars['UUID']['output'];
   /** One entry per day of the last 14 days, oldest first */
   dailyRunCounts: Array<CoreWorkflowDailyRunCount>;
-  /** Failed runs in the last 14 days */
+  /** Failed runs over the last 14 calendar days in the requested time zone */
   failedRunCount: Scalars['Int']['output'];
   /** True when run retention may have deleted runs from the window, so the counts are lower bounds */
   isRunCountLowerBound: Scalars['Boolean']['output'];
   lastFailedRunAt?: Maybe<Scalars['String']['output']>;
   /** Most recent failed runs first */
   recentFailedRuns: Array<CoreWorkflowFailedRun>;
-  /** Runs in the last 14 days */
+  /** Runs over the last 14 calendar days in the requested time zone */
   runCount: Scalars['Int']['output'];
 };
 

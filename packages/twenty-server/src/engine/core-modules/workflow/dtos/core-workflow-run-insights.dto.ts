@@ -39,10 +39,16 @@ export class CoreWorkflowRunInsightsDTO {
   @Field(() => UUIDScalarType)
   coreWorkflowId: string;
 
-  @Field(() => Int, { description: 'Runs in the last 14 days' })
+  @Field(() => Int, {
+    description:
+      'Runs over the last 14 calendar days in the requested time zone',
+  })
   runCount: number;
 
-  @Field(() => Int, { description: 'Failed runs in the last 14 days' })
+  @Field(() => Int, {
+    description:
+      'Failed runs over the last 14 calendar days in the requested time zone',
+  })
   failedRunCount: number;
 
   @Field(() => Boolean, {
@@ -53,7 +59,8 @@ export class CoreWorkflowRunInsightsDTO {
 
   @Field(() => Float, {
     nullable: true,
-    description: 'Average duration of completed runs in the last 14 days',
+    description:
+      'Average duration of completed runs over the same 14 calendar days',
   })
   averageDurationInMs: number | null;
 
