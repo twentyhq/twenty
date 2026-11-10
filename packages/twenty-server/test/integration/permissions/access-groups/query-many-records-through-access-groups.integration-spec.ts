@@ -1,6 +1,7 @@
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -98,11 +99,13 @@ describe('querying many records through access groups (integration)', () => {
 
     const predicateGroupId = v4();
 
+    await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
+        canReadRecords: true,
         predicateGroups: [
           {
             id: predicateGroupId,
