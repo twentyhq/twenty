@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -15,6 +15,11 @@ import {
   FileFolder,
 } from '~/generated-metadata/graphql';
 
+type ChatThreadAttachmentUpload = {
+  file: File;
+  abortController: AbortController;
+};
+
 export const useChatThreadDraftAttachments = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
@@ -26,24 +31,24 @@ export const useChatThreadDraftAttachments = () => {
   const { objectMetadataItem: attachmentMetadataItem } = useObjectMetadataItem({
     objectNameSingular: StandardObjectNameSingular.Attachment,
   });
-  const [uploadingFiles, setUploadingFiles] = useState<File[]>([]);
+  const [uploads, setUploads] = useState<ChatThreadAttachmentUpload[]>([]);
   const [draftAttachments, setDraftAttachments] = useState<
     ChatThreadDraftAttachment[]
   >([]);
-  const abortControllerByFile = useRef(new Map<File, AbortController>());
 
   const attachmentFileFieldMetadataId = attachmentMetadataItem.fields.find(
     (field) => field.type === FieldMetadataType.FILES && field.name === 'file',
   )?.id;
 
+  const removeUpload = (file: File) =>
+    setUploads((currentUploads) =>
+      currentUploads.filter((upload) => upload.file !== file),
+    );
+
   const uploadDraftAttachment = async (
-    file: File,
+    { file, abortController }: ChatThreadAttachmentUpload,
     fieldMetadataId: string,
   ): Promise<ChatThreadDraftAttachment | null> => {
-    const abortController = new AbortController();
-
-    abortControllerByFile.current.set(file, abortController);
-
     try {
       // the server only attaches to a message files uploaded into the attachment file field
       const uploadedFile = await uploadFile(file, {
@@ -75,10 +80,7 @@ export const useChatThreadDraftAttachments = () => {
 
       return null;
     } finally {
-      abortControllerByFile.current.delete(file);
-      setUploadingFiles((currentUploadingFiles) =>
-        currentUploadingFiles.filter((uploadingFile) => uploadingFile !== file),
-      );
+      removeUpload(file);
     }
   };
 
@@ -87,15 +89,17 @@ export const useChatThreadDraftAttachments = () => {
       return;
     }
 
-    setUploadingFiles((currentUploadingFiles) => [
-      ...currentUploadingFiles,
-      ...files,
-    ]);
+    const newUploads = files.map((file) => ({
+      file,
+      abortController: new AbortController(),
+    }));
+
+    setUploads((currentUploads) => [...currentUploads, ...newUploads]);
 
     const uploadedAttachments = (
       await Promise.all(
-        files.map((file) =>
-          uploadDraftAttachment(file, attachmentFileFieldMetadataId),
+        newUploads.map((upload) =>
+          uploadDraftAttachment(upload, attachmentFileFieldMetadataId),
         ),
       )
     ).filter(isDefined);
@@ -107,10 +111,8 @@ export const useChatThreadDraftAttachments = () => {
   };
 
   const cancelUpload = (file: File) => {
-    abortControllerByFile.current.get(file)?.abort();
-    setUploadingFiles((currentUploadingFiles) =>
-      currentUploadingFiles.filter((uploadingFile) => uploadingFile !== file),
-    );
+    uploads.find((upload) => upload.file === file)?.abortController.abort();
+    removeUpload(file);
   };
 
   const removeDraftAttachment = (fileId: string) =>
@@ -123,7 +125,7 @@ export const useChatThreadDraftAttachments = () => {
   return {
     canAttachFiles:
       isMessageAttachmentEnabled && isDefined(attachmentFileFieldMetadataId),
-    uploadingFiles,
+    uploadingFiles: uploads.map(({ file }) => file),
     draftAttachments,
     attachFiles,
     cancelUpload,
