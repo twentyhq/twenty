@@ -7,7 +7,6 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-// TODO: Refactor AgentChat and Message component lib
 import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { getAgentChatFilePartFieldFilesValue } from '@/ai/utils/getAgentChatFilePartFieldFilesValue';
@@ -211,6 +210,7 @@ export const AiChatMessage = ({
           {isNonEmptyArray(fileParts) && (
             <StyledFilesContainer>
               {fileParts.map((filePart) => (
+                // TODO: Refactor AgentChat and Message component lib
                 <ChatThreadMessageAttachment
                   key={filePart.fileId}
                   file={getAgentChatFilePartFieldFilesValue(filePart)}
