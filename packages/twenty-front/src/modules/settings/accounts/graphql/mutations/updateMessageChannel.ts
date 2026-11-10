@@ -9,6 +9,7 @@ export const UPDATE_MESSAGE_CHANNEL = gql`
       excludeNonProfessionalEmails
       excludeGroupEmails
       messageFolderImportPolicy
+      isSyncEnabled
     }
   }
 `;
