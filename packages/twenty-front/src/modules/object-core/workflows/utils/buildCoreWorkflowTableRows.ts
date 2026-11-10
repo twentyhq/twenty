@@ -20,6 +20,7 @@ export const buildCoreWorkflowTableRows = ({
         recentRuns: null,
         lastRunAt: null,
         runCountLast14Days: null,
+        isRunCountLowerBound: false,
       };
     }
 
@@ -28,5 +29,6 @@ export const buildCoreWorkflowTableRows = ({
       recentRuns: runSummary.recentRuns,
       lastRunAt: runSummary.recentRuns[0]?.createdAt ?? null,
       runCountLast14Days: runSummary.runCountLast14Days,
+      isRunCountLowerBound: runSummary.isRunCountLowerBound,
     };
   });

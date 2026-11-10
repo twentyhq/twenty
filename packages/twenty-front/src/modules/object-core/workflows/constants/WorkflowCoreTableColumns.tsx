@@ -83,7 +83,10 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflowTabl
       align: 'right',
       gridTrack: '100px',
       renderCell: (workflow) => (
-        <CoreWorkflowRunCountCell runCount={workflow.runCountLast14Days} />
+        <CoreWorkflowRunCountCell
+          runCount={workflow.runCountLast14Days}
+          isLowerBound={workflow.isRunCountLowerBound}
+        />
       ),
     },
     {

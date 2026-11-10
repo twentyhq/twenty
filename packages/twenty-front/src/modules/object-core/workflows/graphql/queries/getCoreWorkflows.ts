@@ -40,6 +40,7 @@ export const GET_CORE_WORKFLOWS = gql`
       runSummaries {
         coreWorkflowId
         runCountLast14Days
+        isRunCountLowerBound
         recentRuns {
           id
           status

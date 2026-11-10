@@ -6,4 +6,5 @@ export type CoreWorkflowTableRow = CoreWorkflow & {
   recentRuns: CoreWorkflowRecentRun[] | null;
   lastRunAt: string | null;
   runCountLast14Days: number | null;
+  isRunCountLowerBound: boolean;
 };
