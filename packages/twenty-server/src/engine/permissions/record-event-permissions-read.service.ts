@@ -10,6 +10,7 @@ import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/internal/combine/utils/resolve-event-record-snapshots.util';
+import { findRelatedRecordPathTargetObjectMetadataIds } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-target-object-metadata-ids.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
@@ -20,6 +21,7 @@ import { resolveFieldsHiddenOnMatchingRecords } from 'src/engine/permissions/int
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 type EventBatchAccessLoaders = {
@@ -40,6 +42,7 @@ export class RecordEventPermissionsReadService {
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
   async filterReadableEvents<TEvent extends ObjectRecordEvent>({
@@ -195,13 +198,15 @@ export class RecordEventPermissionsReadService {
 
     const findReadableRecordIdsInBatch = async (
       principals: PermissionsPrincipalsWithRolesContext,
-    ) =>
-      findGrantedRecordIds({
+    ) => {
+      const metadataMaps = await loadMetadataMaps();
+      const records = resolveEventRecordSnapshots(events);
+      const readableRecordIds = await findGrantedRecordIds({
         principals,
-        metadataMaps: await loadMetadataMaps(),
+        metadataMaps,
         flatObjectMetadata: objectMetadata,
         operationType: 'read',
-        records: resolveEventRecordSnapshots(events),
+        records,
         context: {
           shouldIgnoreSoftDeleteDefaultFilter: true,
           fetchRecordShares,
@@ -213,6 +218,29 @@ export class RecordEventPermissionsReadService {
             }),
         },
       });
+      const recordIdsToFindThroughRelatedRecordPaths = records
+        .map((record) => record.id)
+        .filter((recordId) => !readableRecordIds.has(recordId));
+
+      if (
+        recordIdsToFindThroughRelatedRecordPaths.length === 0 ||
+        !findRelatedRecordPathTargetObjectMetadataIds(metadataMaps).has(
+          objectMetadata.id,
+        )
+      ) {
+        return readableRecordIds;
+      }
+
+      return new Set([
+        ...readableRecordIds,
+        ...(await this.recordPermissionsReadService.filterGrantedRecordIds({
+          principals,
+          objectMetadataId: objectMetadata.id,
+          operationType: 'read',
+          recordIds: recordIdsToFindThroughRelatedRecordPaths,
+        })),
+      ]);
+    };
 
     const loaders = { loadMetadataMaps, findReadableRecordIdsInBatch };
 
