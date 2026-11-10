@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
 
 import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
 import { type CoreWorkflowShowPageTabId } from '@/object-core/workflows/types/CoreWorkflowShowPageTabId';
@@ -15,7 +16,7 @@ const RUN_TAB_IDS: CoreWorkflowShowPageTabId[] = [
 
 type UseCoreWorkflowShowPageActiveTabArgs = {
   coreWorkflowId: string;
-  isPublished: boolean;
+  isPublished: boolean | undefined;
   isVersionRequested: boolean;
 };
 
@@ -25,6 +26,13 @@ export const useCoreWorkflowShowPageActiveTab = ({
   isVersionRequested,
 }: UseCoreWorkflowShowPageActiveTabArgs) => {
   const location = useLocation();
+
+  // Settled once loaded so publishing from the Flow tab does not switch to Overview
+  const [isPublishedOnLoad, setIsPublishedOnLoad] = useState(isPublished);
+
+  if (!isDefined(isPublishedOnLoad) && isDefined(isPublished)) {
+    setIsPublishedOnLoad(isPublished);
+  }
 
   const { objectMetadataItem: workflowRunObjectMetadataItem } =
     useObjectMetadataItem({
@@ -40,7 +48,7 @@ export const useCoreWorkflowShowPageActiveTab = ({
 
   // Drafts have no runs yet and a requested version is opened to see its flow
   const defaultTabId =
-    isPublished && canReadWorkflowRuns && !isVersionRequested
+    isPublishedOnLoad === true && canReadWorkflowRuns && !isVersionRequested
       ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW
       : CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW;
 
