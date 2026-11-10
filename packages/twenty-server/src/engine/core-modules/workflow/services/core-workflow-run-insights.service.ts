@@ -123,7 +123,8 @@ export class CoreWorkflowRunInsightsService {
       .addSelect(column('id'), 'id')
       .addSelect(column('name'), 'name')
       .addSelect(column('createdAt'), 'createdAt')
-      .addSelect(`${column('state')}->>'workflowRunError'`, 'errorMessage')
+      // A plain column gets the row-level nullification an expression on it would skip
+      .addSelect(column('state'), 'state')
       .andWhere(`${column('status')} = :failedStatus`);
 
     await totalsQueryBuilder.applyRowLevelPermissions();
@@ -163,7 +164,11 @@ export class CoreWorkflowRunInsightsService {
       ),
       workflowRunRepository.executeRaw<FailedRunRow>(
         `
-        SELECT *
+        SELECT
+          "failedRun"."id",
+          "failedRun"."name",
+          "failedRun"."createdAt",
+          "failedRun"."state"->>'workflowRunError' AS "errorMessage"
         FROM (${failedRunsQueryBuilder.getQuery()}) AS "failedRun"
         ORDER BY "failedRun"."createdAt" DESC, "failedRun"."id" DESC
         LIMIT :recentFailedRunsLimit`,
