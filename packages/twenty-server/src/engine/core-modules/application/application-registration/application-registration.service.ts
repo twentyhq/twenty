@@ -966,7 +966,10 @@ export class ApplicationRegistrationService {
       additionalFields: {
         name: params.name,
         sourcePackage: params.sourcePackage,
-        oAuthScopes: getCatalogOAuthScopes(params),
+        // Scopes an owner configured stay theirs unless the app now acts for members
+        ...(isDefined(getApplicationOAuthIdentity(params))
+          ? { oAuthScopes: getCatalogOAuthScopes(params) }
+          : {}),
       },
     });
 

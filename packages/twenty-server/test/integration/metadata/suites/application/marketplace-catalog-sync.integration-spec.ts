@@ -677,6 +677,40 @@ describe('Marketplace Catalog Sync (integration)', () => {
       });
     });
 
+    it('keeps the scopes an owner set on an app without an OAuth identity', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Scoped App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+
+      await ds.query(
+        `UPDATE core."applicationRegistration" SET "oAuthScopes" = $2 WHERE id = $1`,
+        [registrationId, ['api']],
+      );
+
+      await upsertApplicationRegistrationFromCatalog(
+        buildCatalogParams({
+          universalIdentifier,
+          name: 'Scoped App',
+          latestAvailableVersion: '1.1.0',
+        }),
+      );
+
+      const [registration] = await ds.query(
+        `SELECT "latestAvailableVersion", "oAuthScopes" FROM core."applicationRegistration" WHERE id = $1`,
+        [registrationId],
+      );
+
+      expect(registration).toEqual({
+        latestAvailableVersion: '1.1.0',
+        oAuthScopes: ['api'],
+      });
+    });
+
     it('does not erase a known version when the catalog entry has none', async () => {
       const universalIdentifier = crypto.randomUUID();
 
