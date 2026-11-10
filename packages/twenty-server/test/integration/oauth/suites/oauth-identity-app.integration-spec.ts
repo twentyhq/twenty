@@ -582,6 +582,31 @@ describe('OAuth identity apps (integration)', () => {
       });
 
       expect(refreshResponse.status).toBe(200);
+
+      const renewedRefreshToken = refreshResponse.body.refresh_token;
+      const introspection = await request(baseUrl)
+        .post('/oauth/introspect')
+        .send({
+          token: renewedRefreshToken,
+          client_id: CHATGPT_DOCUMENT.clientId,
+        });
+
+      expect(introspection.body.active).toBe(true);
+
+      await request(baseUrl)
+        .post('/oauth/revoke')
+        .send({
+          token: renewedRefreshToken,
+          client_id: CHATGPT_DOCUMENT.clientId,
+        })
+        .expect(200);
+
+      const revokedRefresh = await refresh({
+        clientId: CHATGPT_DOCUMENT.clientId,
+        refreshToken: renewedRefreshToken,
+      });
+
+      expect(revokedRefresh.status).toBe(400);
     });
 
     it('should reject a vendor callback that the document does not list', async () => {
