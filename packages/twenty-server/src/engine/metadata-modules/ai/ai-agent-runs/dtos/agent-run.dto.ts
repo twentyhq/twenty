@@ -15,6 +15,11 @@ export class AgentRunDTO {
   @Field(() => String, { nullable: true })
   threadTitle: string | null;
 
+  @Field(() => Boolean, {
+    description: 'Whether the requesting member can open the conversation',
+  })
+  canReadThread: boolean;
+
   @Field(() => AgentTurnStatus)
   status: AgentTurnStatus;
 

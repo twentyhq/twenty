@@ -150,8 +150,10 @@ export const CoreAgentRunsContent = ({
     );
   }
 
-  const handleRunClick = (run: Pick<CoreAgentRun, 'id' | 'threadId'>) => {
-    if (isDefined(run.threadId)) {
+  const handleRunClick = (
+    run: Pick<CoreAgentRun, 'id' | 'threadId' | 'canReadThread'>,
+  ) => {
+    if (isDefined(run.threadId) && run.canReadThread) {
       openAskAiThread(run.threadId);
       return;
     }

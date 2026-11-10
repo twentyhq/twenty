@@ -10,6 +10,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentRunDTO } from 'src/engine/metadata-modules/ai/ai-agent-runs/dtos/agent-run.dto';
@@ -57,11 +58,17 @@ export class AgentRunsResolver {
     agentId: string,
     @Args('limit', { type: () => Int, defaultValue: 100 }) limit: number,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
   ): Promise<AgentRunDTO[]> {
     // The application target guard lets unknown ids through, and turns outlive
     // their agent, so a deleted agent's runs would otherwise reach any app
     await this.agentService.findOneAgentById({ id: agentId, workspaceId });
 
-    return this.agentRunsService.findAgentRuns({ workspaceId, agentId, limit });
+    return this.agentRunsService.findAgentRuns({
+      workspaceId,
+      workspaceMemberId,
+      agentId,
+      limit,
+    });
   }
 }

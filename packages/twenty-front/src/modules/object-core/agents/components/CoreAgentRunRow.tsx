@@ -39,7 +39,7 @@ export const CoreAgentRunRow = ({
   const { t } = useLingui();
   const tokens = getRunTokens(run);
   const durationMs = getRunDurationMs(run);
-  const hasConversation = isDefined(run.threadId);
+  const canOpenConversation = isDefined(run.threadId) && run.canReadThread;
 
   return (
     <>
@@ -50,7 +50,7 @@ export const CoreAgentRunRow = ({
         onKeyDown={handleCoreObjectTableRowKeyDown(onClick)}
         role="button"
         tabIndex={0}
-        ariaExpanded={hasConversation ? undefined : isExpanded}
+        ariaExpanded={canOpenConversation ? undefined : isExpanded}
       >
         <TableCell>
           <CoreAgentRunStatus status={run.status} />

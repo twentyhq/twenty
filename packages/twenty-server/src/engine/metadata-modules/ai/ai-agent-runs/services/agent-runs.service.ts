@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { AGENT_RUNS_MAX_LIMIT } from 'src/engine/metadata-modules/ai/ai-agent-runs/constants/agent-runs-max-limit.constant';
 import { type AgentRunDTO } from 'src/engine/metadata-modules/ai/ai-agent-runs/dtos/agent-run.dto';
 import { mapAgentTurnToAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-runs/utils/map-agent-turn-to-agent-run.util';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -21,15 +23,18 @@ export class AgentRunsService {
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
+    private readonly agentChatSharingService: AgentChatSharingService,
   ) {}
 
   // tool inputs and outputs can be large, so parts are read without them
   async findAgentRuns({
     workspaceId,
+    workspaceMemberId,
     agentId,
     limit,
   }: {
     workspaceId: string;
+    workspaceMemberId: string | undefined;
     agentId: string;
     limit: number;
   }): Promise<AgentRunDTO[]> {
@@ -66,14 +71,44 @@ export class AgentRunsService {
 
     const partsByMessageId = groupBy(parts, (part) => part.messageId);
     const messagesByTurnId = groupBy(messages, (message) => message.turnId);
+    const readableThreadIds = await this.findReadableThreadIds({
+      workspaceId,
+      workspaceMemberId,
+      threadIds: turns.map((turn) => turn.threadId).filter(isDefined),
+    });
 
-    return turns.map((turn) =>
-      mapAgentTurnToAgentRun({
+    return turns.map((turn) => ({
+      ...mapAgentTurnToAgentRun({
         ...turn,
         messages: (messagesByTurnId[turn.id] ?? []).map((message) => ({
           ...message,
           parts: partsByMessageId[message.id] ?? [],
         })),
+      }),
+      canReadThread:
+        isDefined(turn.threadId) && readableThreadIds.has(turn.threadId),
+    }));
+  }
+
+  // Conversations are private, while turns are listed to anyone managing the agent
+  private async findReadableThreadIds({
+    workspaceId,
+    workspaceMemberId,
+    threadIds,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string | undefined;
+    threadIds: string[];
+  }): Promise<Set<string>> {
+    if (!isDefined(workspaceMemberId) || threadIds.length === 0) {
+      return new Set();
+    }
+
+    return new Set(
+      await this.agentChatSharingService.findReadableThreadIds({
+        workspaceId,
+        workspaceMemberId,
+        threadIds: [...new Set(threadIds)],
       }),
     );
   }

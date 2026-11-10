@@ -197,6 +197,8 @@ export interface AgentMessageReactionSummary {
 }
 
 export interface AgentRun {
+    /** Whether the requesting member can open the conversation */
+    canReadThread: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     creatorName: Scalars['String']
     creatorSource: Scalars['String']
@@ -4684,6 +4686,8 @@ export interface AgentMessageReactionSummaryGenqlSelection{
 }
 
 export interface AgentRunGenqlSelection{
+    /** Whether the requesting member can open the conversation */
+    canReadThread?: boolean | number
     createdAt?: boolean | number
     creatorName?: boolean | number
     creatorSource?: boolean | number

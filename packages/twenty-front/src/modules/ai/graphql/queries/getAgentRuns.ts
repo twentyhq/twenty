@@ -6,6 +6,7 @@ export const GET_AGENT_RUNS = gql`
       id
       threadId
       threadTitle
+      canReadThread
       status
       errorMessage
       createdAt

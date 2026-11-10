@@ -597,6 +597,9 @@ export default {
             ]
         },
         "AgentRun": {
+            "canReadThread": [
+                4
+            ],
             "createdAt": [
                 222
             ],

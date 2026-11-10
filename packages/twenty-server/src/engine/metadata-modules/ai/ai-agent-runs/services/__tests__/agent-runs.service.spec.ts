@@ -30,24 +30,31 @@ const buildService = ({
   turns,
   messages,
   parts,
+  readableThreadIds = [],
 }: {
   turns: unknown[];
   messages: unknown[];
   parts: unknown[];
+  readableThreadIds?: string[];
 }) => {
   const turnRepository = { find: jest.fn().mockResolvedValue(turns) };
   const messageRepository = { find: jest.fn().mockResolvedValue(messages) };
   const messagePartRepository = { find: jest.fn().mockResolvedValue(parts) };
+  const agentChatSharingService = {
+    findReadableThreadIds: jest.fn().mockResolvedValue(readableThreadIds),
+  };
 
   return {
     service: new AgentRunsService(
       turnRepository as never,
       messageRepository as never,
       messagePartRepository as never,
+      agentChatSharingService as never,
     ),
     turnRepository,
     messageRepository,
     messagePartRepository,
+    agentChatSharingService,
   };
 };
 
@@ -91,6 +98,7 @@ describe('AgentRunsService', () => {
 
     const runs = await service.findAgentRuns({
       workspaceId: 'workspace-id',
+      workspaceMemberId: 'member-id',
       agentId: 'agent-id',
       limit: 10,
     });
@@ -121,11 +129,56 @@ describe('AgentRunsService', () => {
     expect(
       await service.findAgentRuns({
         workspaceId: 'workspace-id',
+        workspaceMemberId: 'member-id',
         agentId: 'agent-id',
         limit: 10,
       }),
     ).toEqual([]);
     expect(messageRepository.find).not.toHaveBeenCalled();
     expect(messagePartRepository.find).not.toHaveBeenCalled();
+  });
+
+  it('flags only the conversations the member can open', async () => {
+    const { service, agentChatSharingService } = buildService({
+      turns: [buildTurn('turn-a'), buildTurn('turn-b')],
+      messages: [],
+      parts: [],
+      readableThreadIds: ['thread-of-turn-a'],
+    });
+
+    const runs = await service.findAgentRuns({
+      workspaceId: 'workspace-id',
+      workspaceMemberId: 'member-id',
+      agentId: 'agent-id',
+      limit: 10,
+    });
+
+    expect(runs.map((run) => run.canReadThread)).toEqual([true, false]);
+    expect(agentChatSharingService.findReadableThreadIds).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      workspaceMemberId: 'member-id',
+      threadIds: ['thread-of-turn-a', 'thread-of-turn-b'],
+    });
+  });
+
+  it('opens no conversation for a caller without a workspace member', async () => {
+    const { service, agentChatSharingService } = buildService({
+      turns: [buildTurn('turn-a')],
+      messages: [],
+      parts: [],
+      readableThreadIds: ['thread-of-turn-a'],
+    });
+
+    const runs = await service.findAgentRuns({
+      workspaceId: 'workspace-id',
+      workspaceMemberId: undefined,
+      agentId: 'agent-id',
+      limit: 10,
+    });
+
+    expect(runs.map((run) => run.canReadThread)).toEqual([false]);
+    expect(
+      agentChatSharingService.findReadableThreadIds,
+    ).not.toHaveBeenCalled();
   });
 });
