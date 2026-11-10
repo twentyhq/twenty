@@ -52,7 +52,6 @@ export class ApplicationOAuthIdentityService {
       : null;
   }
 
-  // Lets a consent screen warn when an unverified client borrows a verified app's name
   async isVerifiedClientName(name: string): Promise<boolean> {
     const normalizedName = name.trim().toLowerCase();
 

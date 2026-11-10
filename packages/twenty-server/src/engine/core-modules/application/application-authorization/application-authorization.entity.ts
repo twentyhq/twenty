@@ -10,7 +10,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_CONSENT_ID_TO_APPLICATION_AUTHORIZATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-consent-id-to-application-authorization-upgrade-command-name.constant';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -88,6 +90,10 @@ export class ApplicationAuthorizationEntity {
   @Column({ type: 'timestamptz', nullable: true })
   lastAuthorizedAt: Date | null;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_CONSENT_ID_TO_APPLICATION_AUTHORIZATION_UPGRADE_COMMAND_NAME,
+  })
   @Column({ type: 'uuid', nullable: true })
   consentId: string | null;
 
