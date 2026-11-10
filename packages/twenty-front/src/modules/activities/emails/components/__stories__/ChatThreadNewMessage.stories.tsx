@@ -1,0 +1,100 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { IconBrandLinkedin, IconBrandWhatsapp, IconMail } from 'twenty-ui/icon';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+import { ChatThreadNewMessage } from '@/activities/emails/components/ChatThreadNewMessage';
+import { type ChatThreadComposerChannel } from '@/activities/emails/types/ChatThreadComposerChannel';
+import { type ChatThreadRecipient } from '@/activities/emails/types/ChatThreadRecipient';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+
+const CHANNELS: ChatThreadComposerChannel[] = [
+  {
+    id: 'email',
+    name: 'Email',
+    handle: 'sundar@google.com',
+    logo: <IconMail size={14} />,
+  },
+  {
+    id: 'whatsapp',
+    name: 'WhatsApp',
+    handle: '+1 650 253 0000',
+    logo: <IconBrandWhatsapp size={14} />,
+  },
+  {
+    id: 'linkedin',
+    name: 'LinkedIn',
+    handle: 'Sundar Pichai',
+    logo: <IconBrandLinkedin size={14} />,
+  },
+];
+
+const RECIPIENTS: ChatThreadRecipient[] = [
+  { id: 'sundar', name: 'Sundar Pichai' },
+  { id: 'thomas', name: 'Thomas Kurian' },
+];
+
+const onSendMessage = fn(() => Promise.resolve());
+const onMessageSent = fn(() => new Promise(() => undefined));
+
+const ChatThreadNewMessageStory = () => {
+  const [recipients, setRecipients] = useState(RECIPIENTS);
+  const [selectedChannelId, setSelectedChannelId] = useState('whatsapp');
+
+  return (
+    <ChatThreadNewMessage
+      recipients={recipients}
+      onRecipientRemove={(recipientId) =>
+        setRecipients((currentRecipients) =>
+          currentRecipients.filter(({ id }) => id !== recipientId),
+        )
+      }
+      channels={CHANNELS}
+      selectedChannelId={selectedChannelId}
+      onChannelChange={setSelectedChannelId}
+      onSendMessage={onSendMessage}
+      onMessageSent={onMessageSent}
+      canAttachFiles
+    />
+  );
+};
+
+const meta: Meta<typeof ChatThreadNewMessageStory> = {
+  title: 'Modules/Activities/Emails/ChatThreadNewMessage',
+  component: ChatThreadNewMessageStory,
+  decorators: [ComponentDecorator, ObjectMetadataItemsDecorator],
+  parameters: { container: { width: 400, height: 400 } },
+  beforeEach: () => {
+    onSendMessage.mockClear();
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof ChatThreadNewMessageStory>;
+
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const recipients = await canvas.findByRole('group', { name: 'Recipients' });
+
+    const recipientRemoval = within(recipients).getByRole('button', {
+      name: 'Remove Thomas Kurian',
+    });
+
+    recipientRemoval.focus();
+    await userEvent.click(recipientRemoval);
+    await expect(
+      within(recipients).queryByText('Thomas Kurian'),
+    ).not.toBeInTheDocument();
+
+    await userEvent.type(
+      canvas.getByPlaceholderText('Message Sundar Pichai'),
+      'Hello{Enter}',
+    );
+    await waitFor(() => expect(onSendMessage).toHaveBeenCalledTimes(1));
+    await expect(onSendMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ text: 'Hello', files: [] }),
+    );
+  },
+};
