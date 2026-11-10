@@ -12,7 +12,6 @@ import {
 import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
-import { type CoreWorkflowTriggerSummaryDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-trigger-summary.dto';
 import { type CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
 import {
   CoreWorkflowOrderByDirection,
@@ -52,7 +51,6 @@ type CoreWorkflowRow = {
   hasDraftVersion: boolean;
   hasActiveVersion: boolean;
   hasDeactivatedVersion: boolean;
-  trigger: CoreWorkflowTriggerSummaryDTO | null;
 };
 
 type CoreWorkflowCursor = {
@@ -106,22 +104,6 @@ const getReaderApplicationId = ({
 
 const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."createdAt", c."updatedAt"`;
 
-// The published version is the one that fires, so its trigger wins over a newer draft
-const TRIGGER_SUMMARY_SELECT_EXPRESSION = `(
-         SELECT jsonb_build_object(
-           'type', tv.triggers -> 0 ->> 'type',
-           'databaseEventName', tv.triggers -> 0 -> 'settings' ->> 'eventName'
-         )
-         FROM core."workflowVersion" tv
-         WHERE tv."coreWorkflowId" = c.id
-           AND tv."workspaceId" = $1
-           AND tv.triggers -> 0 ->> 'type' IS NOT NULL
-         ORDER BY coalesce(tv.id = c."lastPublishedCoreWorkflowVersionId", false) DESC,
-           tv."createdAt" DESC,
-           tv.id DESC
-         LIMIT 1
-       )`;
-
 const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c.name,
          c."lastPublishedVersionId", c."lastPublishedCoreWorkflowVersionId",
@@ -131,7 +113,6 @@ const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          ${canChangeCoreWorkflowVisibilitySelectExpression({ tableAlias: 'c', userWorkspaceIdParameter: READER_PARAMETER })} AS "canChangeVisibility",
          c."createdAt",
          c."updatedAt",
-         ${TRIGGER_SUMMARY_SELECT_EXPRESSION} AS "trigger",
          coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
          coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
          coalesce(bool_or(v.status = 'DEACTIVATED'), false) AS "hasDeactivatedVersion"`;
@@ -151,7 +132,6 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
   isSystem: row.isSystem,
   visibility: row.visibility,
   canChangeVisibility: row.canChangeVisibility,
-  trigger: row.trigger,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
 });

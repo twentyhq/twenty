@@ -75,8 +75,6 @@ export type CoreWorkflowDto = {
   lastPublishedVersionId?: Maybe<Scalars['UUID']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   statuses: Array<CoreWorkflowStatus>;
-  /** Trigger of the published version, or of the latest version when none is published */
-  trigger?: Maybe<CoreWorkflowTriggerSummary>;
   updatedAt: Scalars['String']['output'];
   visibility: WorkflowVisibility;
   workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
@@ -175,12 +173,6 @@ export enum CoreWorkflowStatus {
   DEACTIVATED = 'DEACTIVATED',
   DRAFT = 'DRAFT'
 }
-
-export type CoreWorkflowTriggerSummary = {
-  __typename?: 'CoreWorkflowTriggerSummary';
-  databaseEventName?: Maybe<Scalars['String']['output']>;
-  type: Scalars['String']['output'];
-};
 
 export type CoreWorkflowVersionDto = {
   __typename?: 'CoreWorkflowVersionDTO';

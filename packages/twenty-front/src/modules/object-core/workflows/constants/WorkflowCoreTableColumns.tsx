@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import {
-  IconBolt,
   IconCalendarTime,
   IconShare,
   IconStatusChange,
@@ -13,7 +12,6 @@ import { CoreWorkflowNameCell } from '@/object-core/workflows/components/CoreWor
 import { CoreWorkflowRecentRunsCell } from '@/object-core/workflows/components/CoreWorkflowRecentRunsCell';
 import { CoreWorkflowRunCountCell } from '@/object-core/workflows/components/CoreWorkflowRunCountCell';
 import { CoreWorkflowStatusesCell } from '@/object-core/workflows/components/CoreWorkflowStatusesCell';
-import { CoreWorkflowTriggerCell } from '@/object-core/workflows/components/CoreWorkflowTriggerCell';
 import { CoreWorkflowVisibilityCell } from '@/object-core/workflows/components/CoreWorkflowVisibilityCell';
 import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -41,16 +39,6 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflowTabl
       gridTrack: '160px',
       renderCell: (workflow) => (
         <CoreWorkflowStatusesCell statuses={workflow.statuses} />
-      ),
-    },
-    {
-      fieldName: 'trigger',
-      fieldLabel: msg`Trigger`,
-      FieldIcon: IconBolt,
-      align: 'left',
-      gridTrack: '240px',
-      renderCell: (workflow) => (
-        <CoreWorkflowTriggerCell trigger={workflow.trigger} />
       ),
     },
     {
