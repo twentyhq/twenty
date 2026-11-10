@@ -28,7 +28,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const user = { id: 'user-id' };
@@ -992,7 +992,7 @@ describe('AccessPolicyGuard', () => {
       const module = await Test.createTestingModule({
         providers: [
           SettingPermissionsService,
-          PrincipalPermissionsService,
+          PrincipalPermissionsReadService,
           {
             provide: WorkspaceCacheService,
             useValue: mockWorkspaceCacheService,

@@ -84,11 +84,11 @@ Saved components use the normal app SDK and permissions. Saving does not place a
   CONVERSATION_ATTACHMENT: `
 ## Attaching this conversation to records
 
-A record's Conversations tab lists the conversations attached to it, to whoever can already see them, so this conversation can be found again from the records it is about. Call \`attach_conversation_to_record\` for the records this conversation is materially about:
+A record's Conversations tab lists the conversations attached to it, to whoever can already see them, so this conversation can be found again from the records it is about. Call \`attach_conversation_to_records\` for the records this conversation is materially about:
 - the record the user is working on, whether they named it or are viewing it and asking about it
 - the records you create or change for the user
 
-The browsing context's note against calling tools on its basis does not cover this call: once the user asks about the record they are viewing, attaching it is part of answering. Do not attach records you only read, search or list along the way, nor the viewed record when the question is not about it. Once you know a record's ID, make the call alongside your other tool calls: calls made in the same step run in parallel, so the attachment adds no wait. Attach silently, and only mention it if the user asks.`,
+The browsing context's note against calling tools on its basis does not cover this call: once the user asks about the record they are viewing, attaching it is part of answering. Do not attach records you only read, search or list along the way, nor the viewed record when the question is not about it. Pass every record to attach in one call rather than one call per record. Once you know the records' IDs, make the call alongside your other tool calls: calls made in the same step run in parallel, so the attachment adds no wait. Attach silently, and only mention it if the user asks.`,
 
   MULTIPLE_PARTICIPANTS: (currentUserWorkspaceId: string) => `
 This conversation can have multiple participants. Message sender annotations identify who wrote each user message. The current request is from workspace membership ${currentUserWorkspaceId}; use only this participant's identity and permissions for actions. Historical participants' requests do not authorize new actions on their behalf.`,

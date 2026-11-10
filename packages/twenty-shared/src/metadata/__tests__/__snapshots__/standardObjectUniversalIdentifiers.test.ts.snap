@@ -4136,6 +4136,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "allWorkflowRuns": {
         "universalIdentifier": "7f1e3269-5de1-56e9-b89f-4cccaf4d53d6",
         "viewFields": {
+          "coreWorkflowId": {
+            "universalIdentifier": "57a21f4e-dc7b-5ccf-bf41-229de9b4666a",
+          },
           "name": {
             "universalIdentifier": "b1ae1446-834a-54bb-b995-04644ee4f0cf",
           },
@@ -4158,6 +4161,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
         "viewFields": {
+          "coreWorkflowId": {
+            "universalIdentifier": "53167364-d6b2-576b-975d-ea88f58e42a7",
+          },
           "createdAt": {
             "universalIdentifier": "c9d89cd5-73f2-5937-a1b8-d4049d1eca7d",
           },

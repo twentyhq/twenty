@@ -16,8 +16,9 @@ import { deleteApiKeysWithObjectRecordGrants } from 'test/integration/permission
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { type RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
 import { type RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
@@ -29,8 +30,9 @@ describe('permissions read services', () => {
   const recordId = randomUUID();
   let adminAuthContext: PermissionsAuthContext;
   let personFlatObjectMetadata: FlatObjectMetadata;
-  let principalPermissionsService: PrincipalPermissionsService;
-  let recordPermissionsService: RecordPermissionsService;
+  let principalPermissionsReadService: PrincipalPermissionsReadService;
+  let recordPermissionsReadService: RecordPermissionsReadService;
+  let recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService;
   let rolePermissionsService: RolePermissionsService;
   const missingRoleAuthContext: PermissionsAuthContext = {
     type: 'apiKey',
@@ -65,13 +67,17 @@ describe('permissions read services', () => {
     }
 
     personFlatObjectMetadata = person;
-    principalPermissionsService =
-      getAppProviderByClassName<PrincipalPermissionsService>(
-        'PrincipalPermissionsService',
+    principalPermissionsReadService =
+      getAppProviderByClassName<PrincipalPermissionsReadService>(
+        'PrincipalPermissionsReadService',
       );
-    recordPermissionsService =
-      getAppProviderByClassName<RecordPermissionsService>(
-        'RecordPermissionsService',
+    recordPermissionsReadService =
+      getAppProviderByClassName<RecordPermissionsReadService>(
+        'RecordPermissionsReadService',
+      );
+    recordPermissionsOnlyRoleReadService =
+      getAppProviderByClassName<RecordPermissionsOnlyRoleReadService>(
+        'RecordPermissionsOnlyRoleReadService',
       );
     rolePermissionsService = getAppProviderByClassName<RolePermissionsService>(
       'RolePermissionsService',
@@ -98,10 +104,10 @@ describe('permissions read services', () => {
   }: {
     authContext: PermissionsAuthContext;
   }): Promise<boolean> =>
-    recordPermissionsService.canAccessSomeRecords({
+    recordPermissionsReadService.canAccessSomeRecords({
       operationType: 'read',
       principals:
-        await principalPermissionsService.resolvePermissionsPrincipals({
+        await principalPermissionsReadService.resolvePermissionsPrincipals({
           authContext,
         }),
       objectMetadataId: personFlatObjectMetadata.id,
@@ -116,10 +122,10 @@ describe('permissions read services', () => {
     authContext: PermissionsAuthContext;
     recordIds: string[];
   }): Promise<boolean> =>
-    recordPermissionsService.canAccessKnownRecords({
+    recordPermissionsReadService.canAccessKnownRecords({
       operationType,
       principals:
-        await principalPermissionsService.resolvePermissionsPrincipals({
+        await principalPermissionsReadService.resolvePermissionsPrincipals({
           authContext,
         }),
       objectMetadataId: personFlatObjectMetadata.id,
@@ -293,7 +299,7 @@ describe('permissions read services', () => {
       apiKey: Pick<ApiKeyWithObjectRecordGrants, 'apiKeyId'>,
     ) => {
       const principals =
-        await principalPermissionsService.resolvePermissionsPrincipals({
+        await principalPermissionsReadService.resolvePermissionsPrincipals({
           authContext: {
             type: 'apiKey',
             workspace: { id: SEED_APPLE_WORKSPACE_ID },
@@ -338,7 +344,7 @@ describe('permissions read services', () => {
     it('hides a field the role cannot read from reads and updates', async () => {
       const principals = await buildApiKeyPrincipals(readRestricted);
       const unreadableFieldMetadataIds =
-        await recordPermissionsService.findUnreadableFields({
+        await recordPermissionsOnlyRoleReadService.findUnreadableFields({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         });
@@ -346,7 +352,7 @@ describe('permissions read services', () => {
       expect(unreadableFieldMetadataIds).toContain(introFieldMetadataId);
       expect(unreadableFieldMetadataIds).not.toContain(jobTitleFieldMetadataId);
       expect(
-        await recordPermissionsService.findUneditableFields({
+        await recordPermissionsOnlyRoleReadService.findUneditableFields({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         }),
@@ -360,14 +366,18 @@ describe('permissions read services', () => {
         objectMetadataId: personFlatObjectMetadata.id,
       };
       const nonUpdatableFieldMetadataIds =
-        await recordPermissionsService.findUneditableFields(objectQuestion);
+        await recordPermissionsOnlyRoleReadService.findUneditableFields(
+          objectQuestion,
+        );
 
       expect(nonUpdatableFieldMetadataIds).toContain(introFieldMetadataId);
       expect(nonUpdatableFieldMetadataIds).not.toContain(
         jobTitleFieldMetadataId,
       );
       expect(
-        await recordPermissionsService.findUnreadableFields(objectQuestion),
+        await recordPermissionsOnlyRoleReadService.findUnreadableFields(
+          objectQuestion,
+        ),
       ).not.toContain(introFieldMetadataId);
     });
   });

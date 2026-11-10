@@ -44153,6 +44153,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stream-chain@npm:^3.6.1":
+  version: 3.6.3
+  resolution: "stream-chain@npm:3.6.3"
+  checksum: 10c0/4af869a28a8d55dcfdbdaf25cfc03c3d31860bffabdb649cd82320a12ac9e71440d42078a3441f93dd288cf3b7077c524eceaa6cf2af637c202dea07014e3b96
+  languageName: node
+  linkType: hard
+
+"stream-json@npm:2.1.0":
+  version: 2.1.0
+  resolution: "stream-json@npm:2.1.0"
+  dependencies:
+    stream-chain: "npm:^3.6.1"
+  checksum: 10c0/7ec5f0f7a795d5843c52c2f79383ee1c414d544b69e153b9f60869fee150597143a38e17fcf7ec4a0092732ed062c493559a29763b0f76481e72fde22c847af7
+  languageName: node
+  linkType: hard
+
 "stream-shift@npm:^1.0.0":
   version: 1.0.3
   resolution: "stream-shift@npm:1.0.3"
@@ -46301,6 +46317,7 @@ __metadata:
     dompurify: "npm:^3.4.17"
     dotenv: "npm:16.4.5"
     email-reply-parser: "npm:^2.3.5"
+    entities: "npm:^4.5.0"
     esbuild: "npm:^0.28.1"
     express: "npm:5.3.0"
     express-session: "npm:^1.18.2"
@@ -46371,6 +46388,7 @@ __metadata:
     sanitize-html: "npm:2.18.1"
     semver: "npm:7.6.3"
     sns-payload-validator: "npm:^2.1.0"
+    stream-json: "npm:2.1.0"
     stripe: "npm:20.4.1"
     supertest: "npm:^6.1.3"
     tar: "npm:^7.5.9"

@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { convertToModelMessages, hasToolCall } from 'ai';
 import {
   AgentChatThreadConversationType,
-  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+  ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
   REACT_TO_MESSAGE_TOOL_NAME,
@@ -39,7 +39,7 @@ import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
+import { createAttachConversationToRecordsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-records.tool';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
@@ -388,8 +388,8 @@ export class ChatExecutionService {
             : {}),
           ...(canAttachConversationToRecords
             ? {
-                [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
-                  createAttachConversationToRecordTool({
+                [ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME]:
+                  createAttachConversationToRecordsTool({
                     agentChatThreadTargetService:
                       this.agentChatThreadTargetService,
                     toolContext,

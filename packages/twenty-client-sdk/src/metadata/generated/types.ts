@@ -4414,6 +4414,9 @@ export default {
             "position": [
                 6
             ],
+            "shouldDisplayGroupsAsTabs": [
+                4
+            ],
             "shouldHideEmptyGroups": [
                 4
             ],
@@ -15116,6 +15119,9 @@ export default {
             "position": [
                 6
             ],
+            "shouldDisplayGroupsAsTabs": [
+                4
+            ],
             "shouldHideEmptyGroups": [
                 4
             ],
@@ -16243,6 +16249,9 @@ export default {
             ],
             "position": [
                 6
+            ],
+            "shouldDisplayGroupsAsTabs": [
+                4
             ],
             "shouldHideEmptyGroups": [
                 4

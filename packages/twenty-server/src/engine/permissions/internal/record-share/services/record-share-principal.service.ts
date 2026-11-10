@@ -6,8 +6,9 @@ import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import {
   RecordShareException,
   RecordShareExceptionCode,
@@ -27,8 +28,9 @@ type RecordSharePrincipal = Pick<
 export class RecordSharePrincipalService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordPermissionsService: RecordPermissionsService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
   // Without reach beyond roles, a grant the recipient's role cannot use would
@@ -74,11 +76,13 @@ export class RecordSharePrincipalService {
       userWorkspaceRoleMap,
     });
     const roleIdsUnableToReadObject =
-      await this.recordPermissionsService.filterRoleIdsWithoutReadAccess({
-        workspaceId,
-        roleIds: roleIds.filter(isDefined),
-        objectMetadataId: flatObjectMetadata.id,
-      });
+      await this.recordPermissionsOnlyRoleReadService.filterRoleIdsWithoutReadAccess(
+        {
+          workspaceId,
+          roleIds: roleIds.filter(isDefined),
+          objectMetadataId: flatObjectMetadata.id,
+        },
+      );
 
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
@@ -104,10 +108,10 @@ export class RecordSharePrincipalService {
       }
 
       const hasGrant =
-        await this.recordPermissionsService.canAccessKnownRecords({
+        await this.recordPermissionsReadService.canAccessKnownRecords({
           operationType: 'read',
           principals:
-            await this.principalPermissionsService.resolvePermissionsPrincipals(
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
               {
                 authContext: {
                   type: 'user',

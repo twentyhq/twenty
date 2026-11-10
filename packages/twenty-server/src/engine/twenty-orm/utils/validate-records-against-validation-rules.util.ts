@@ -31,6 +31,7 @@ type ValidateRecordsAgainstValidationRulesArgs<TEntity extends ObjectLiteral> =
     tableShape: WorkspaceTableShape;
     validationRules: FlatValidationRule[];
     writtenRecords: ObjectRecord[];
+    recordsBeforeWrite: ObjectRecord[];
     inputRecordIds?: (string | undefined)[];
   };
 
@@ -150,6 +151,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
   tableShape,
   validationRules,
   writtenRecords,
+  recordsBeforeWrite,
   inputRecordIds,
 }: ValidateRecordsAgainstValidationRulesArgs<TEntity>): Promise<void> => {
   const recordIds = writtenRecords
@@ -159,6 +161,15 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
   if (recordIds.length === 0) {
     return;
   }
+
+  const previousRecordById = new Map(
+    recordsBeforeWrite
+      .filter((recordBeforeWrite) => isNonEmptyString(recordBeforeWrite.id))
+      .map((recordBeforeWrite) => [
+        String(recordBeforeWrite.id),
+        recordBeforeWrite,
+      ]),
+  );
 
   const inputIndexByRecordId = buildInputIndexByRecordId({
     inputRecordIds,
@@ -222,6 +233,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
       fields,
       now,
       inputIndexByRecordId,
+      previousRecordById,
       maxViolations:
         VALIDATION_RULE_MAX_REPORTED_VIOLATIONS -
         violations.length -

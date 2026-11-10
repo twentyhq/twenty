@@ -110,8 +110,6 @@ const filter = ({
     metadataMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       flatApplicationMaps: { byId: {} },
       featureFlagsMap: {},
       rolesPermissions: {

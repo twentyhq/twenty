@@ -2072,6 +2072,7 @@ export type CreateViewInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
@@ -2581,6 +2582,7 @@ export enum FeatureFlagKey {
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
+  IS_RECORD_GROUP_TABS_ENABLED = 'IS_RECORD_GROUP_TABS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
@@ -8066,6 +8068,7 @@ export type UpdateViewInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
   type?: InputMaybe<ViewType>;
@@ -8601,6 +8604,7 @@ export type View = {
   /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn: ViewOpenRecordIn;
   position: Scalars['Float']['output'];
+  shouldDisplayGroupsAsTabs?: Maybe<Scalars['Boolean']['output']>;
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
   type: ViewType;
   universalIdentifier: Scalars['UUID']['output'];
