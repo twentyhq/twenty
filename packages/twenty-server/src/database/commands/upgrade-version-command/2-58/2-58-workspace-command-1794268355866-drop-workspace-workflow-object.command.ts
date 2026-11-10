@@ -51,6 +51,33 @@ const WORKFLOWS_NATIVE_PAGE_ALREADY_VISIBLE_CONDITION = `
       )
   )`;
 
+// One per member, since all open the same page.
+const DUPLICATE_LEGACY_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY = `
+  WITH ranked AS (
+    SELECT
+      "navigationMenuItem".id,
+      "navigationMenuItem"."userWorkspaceId",
+      ROW_NUMBER() OVER (
+        ORDER BY
+          "navigationMenuItem"."userWorkspaceId" IS NULL DESC,
+          "navigationMenuItem"."createdAt",
+          "navigationMenuItem".id
+      ) AS rank
+    FROM core."navigationMenuItem" "navigationMenuItem"
+    WHERE ${LEGACY_WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION}
+  )
+  SELECT duplicate.id
+  FROM ranked duplicate
+  WHERE EXISTS (
+    SELECT 1
+    FROM ranked kept
+    WHERE kept.rank < duplicate.rank
+      AND (
+        kept."userWorkspaceId" IS NULL
+        OR kept."userWorkspaceId" = duplicate."userWorkspaceId"
+      )
+  )`;
+
 @RegisteredWorkspaceCommand('2.58.0', 1794268355866)
 @Command({
   name: 'upgrade:2-58:drop-workspace-workflow-object',
@@ -396,10 +423,16 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
   }): Promise<void> {
     const parameters = [workspaceId, legacyWorkflowObjectId];
 
-    const [, deletedCount]: [unknown[], number] = await dataSource.query(
+    const [, alreadyVisibleCount]: [unknown[], number] = await dataSource.query(
       `DELETE FROM core."navigationMenuItem" "navigationMenuItem"
        WHERE ${LEGACY_WORKFLOW_NAVIGATION_MENU_ITEMS_CONDITION}
          AND ${WORKFLOWS_NATIVE_PAGE_ALREADY_VISIBLE_CONDITION}`,
+      parameters,
+    );
+
+    const [, duplicateCount]: [unknown[], number] = await dataSource.query(
+      `DELETE FROM core."navigationMenuItem"
+       WHERE id IN (${DUPLICATE_LEGACY_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY})`,
       parameters,
     );
 
@@ -414,7 +447,7 @@ export class DropWorkspaceWorkflowObjectCommand extends ProvisionedWorkspaceComm
       parameters,
     );
 
-    if (deletedCount + convertedCount > 0) {
+    if (alreadyVisibleCount + duplicateCount + convertedCount > 0) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatNavigationMenuItemMaps',
       ]);
