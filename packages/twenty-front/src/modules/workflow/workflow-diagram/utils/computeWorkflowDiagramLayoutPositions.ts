@@ -1,12 +1,16 @@
-import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import {
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramNode,
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import {
   computeWorkflowLayout,
   WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
 } from 'twenty-shared/workflow';
 
-export const computeWorkflowDiagramLayoutPositions = (
-  diagram: WorkflowDiagram,
-): Map<string, { x: number; y: number }> =>
+export const computeWorkflowDiagramLayoutPositions = (diagram: {
+  nodes: Pick<WorkflowDiagramNode, 'id' | 'measured'>[];
+  edges: Pick<WorkflowDiagramEdge, 'source' | 'target'>[];
+}): Map<string, { x: number; y: number }> =>
   new Map(
     computeWorkflowLayout({
       nodes: diagram.nodes.map((node) => ({

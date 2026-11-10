@@ -10,6 +10,7 @@ import { applyPositionsToFlow } from '@/workflow/utils/applyPositionsToFlow';
 import { getFlowPositions } from '@/workflow/utils/getFlowPositions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 import { UpdateCoreWorkflowVersionPositionsDocument } from '~/generated/graphql';
 
 type NodePositionUpdate = {
@@ -39,6 +40,14 @@ export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
 
   const savePositions = async (positions: NodePositionUpdate[]) => {
     await savePendingWorkflowFlow();
+
+    // Another save can start while the pending flow saves, and only one may own the save marker
+    let saveInProgress = store.get(saveInProgressCallbackState);
+
+    while (isDefined(saveInProgress)) {
+      await saveInProgress.promise.catch(() => undefined);
+      saveInProgress = store.get(saveInProgressCallbackState);
+    }
 
     const saving = getUpdatableWorkflowVersion().then((workflowVersionId) =>
       mutateCore({
