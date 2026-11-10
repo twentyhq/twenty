@@ -221,6 +221,7 @@ describe('getMatchingRecordId', () => {
         conflictingProperties: [
           { fullPath: 'otherUniqueText', column: 'otherUniqueText' },
         ],
+        isIgnoringDeletedRecords: true,
       },
     ];
 
@@ -239,5 +240,36 @@ describe('getMatchingRecordId', () => {
     );
 
     expect(id).toBe('liveRecordId');
+  });
+
+  it('throws when the id targets a deleted record and a unique field matches a live one', () => {
+    const conflictingFieldGroups: ConflictingFieldGroup[] = [
+      {
+        baseFields: ['id'],
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
+      },
+      {
+        baseFields: ['uniqueText'],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
+        isIgnoringDeletedRecords: true,
+      },
+    ];
+
+    expect(() =>
+      getMatchingRecordId(
+        { id: 'deletedRecordId', uniqueText: 'alpha' },
+        conflictingFieldGroups,
+        [
+          { id: 'liveRecordId', uniqueText: 'alpha' },
+          {
+            id: 'deletedRecordId',
+            uniqueText: 'alpha',
+            deletedAt: '2026-01-01T00:00:00.000Z',
+          },
+        ],
+      ),
+    ).toThrow();
   });
 });

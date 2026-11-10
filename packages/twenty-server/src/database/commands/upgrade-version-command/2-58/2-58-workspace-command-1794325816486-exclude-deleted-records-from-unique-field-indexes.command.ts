@@ -3,7 +3,7 @@ import { Command } from 'nest-commander';
 import { getIndexUniversalIdentifier } from 'twenty-shared/application';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -242,12 +242,27 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
       return;
     }
 
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-    const queryRunner = dataSource.createQueryRunner();
+    if (dataSource.options.type !== 'postgres') {
+      throw new Error(
+        `Concurrent index builds need a postgres datasource, got ${dataSource.options.type}`,
+      );
+    }
 
-    await queryRunner.connect();
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const indexBuildDataSource = await new DataSource({
+      ...dataSource.options,
+      entities: [],
+      migrations: [],
+      subscribers: [],
+      poolSize: 1,
+      extra: { ...dataSource.options.extra, query_timeout: undefined },
+    }).initialize();
 
     try {
+      const queryRunner = indexBuildDataSource.createQueryRunner();
+
+      await queryRunner.connect();
+
       const invalidIndexes: { name: string }[] = await queryRunner.query(
         `SELECT c.relname AS name
          FROM pg_index i
@@ -284,7 +299,7 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
         });
       }
     } finally {
-      await queryRunner.release();
+      await indexBuildDataSource.destroy();
     }
   }
 }

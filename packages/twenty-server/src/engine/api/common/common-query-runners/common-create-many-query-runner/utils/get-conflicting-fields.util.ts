@@ -165,6 +165,9 @@ export const getConflictingFields = (
     conflictingFieldGroups.push({
       baseFields: indexConflictingFields.baseFields,
       conflictingProperties: indexConflictingFields.conflictingProperties,
+      ...(flatIndexMetadata.indexWhereClause === '"deletedAt" IS NULL'
+        ? { isIgnoringDeletedRecords: true }
+        : {}),
     });
   }
 

@@ -15,8 +15,8 @@ export const getMatchingRecordId = (
   conflictingFieldGroups: ConflictingFieldGroup[],
   existingRecords: PartialObjectRecordWithId[],
 ): string | undefined => {
-  const matchingRecords = conflictingFieldGroups.reduce<
-    PartialObjectRecordWithId[]
+  const matches = conflictingFieldGroups.reduce<
+    { matchingRecord: PartialObjectRecordWithId; isReplaceable: boolean }[]
   >((acc, fieldGroup) => {
     const requestFieldValues = fieldGroup.conflictingProperties.map(
       (conflictingProperty) => ({
@@ -41,18 +41,23 @@ export const getMatchingRecordId = (
     );
 
     if (isDefined(matchingRecord)) {
-      acc.push(matchingRecord);
+      acc.push({
+        matchingRecord,
+        isReplaceable:
+          fieldGroup.isIgnoringDeletedRecords === true &&
+          isDefined(matchingRecord.deletedAt),
+      });
     }
 
     return acc;
   }, []);
 
-  const liveMatchingRecords = matchingRecords.filter(
-    (matchingRecord) => !isDefined(matchingRecord.deletedAt),
+  const hasLiveMatch = matches.some(
+    ({ matchingRecord }) => !isDefined(matchingRecord.deletedAt),
   );
-  const matchingRecordIds = (
-    liveMatchingRecords.length > 0 ? liveMatchingRecords : matchingRecords
-  ).map((matchingRecord) => matchingRecord.id);
+  const matchingRecordIds = matches
+    .filter(({ isReplaceable }) => !(hasLiveMatch && isReplaceable))
+    .map(({ matchingRecord }) => matchingRecord.id);
 
   if ([...new Set(matchingRecordIds)].length > 1) {
     const conflictingFieldsValues = conflictingFieldGroups
