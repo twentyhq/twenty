@@ -1,4 +1,5 @@
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { CHART_CONFIGURATION_REQUIRED_KEYS_BY_CONFIGURATION_TYPE } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,6 +15,6 @@ export const isChartConfigurationMissingRequiredFields = (
   ).some((key) => {
     const value = configurationValues[key];
 
-    return !isDefined(value) || value === '';
+    return !isDefined(value) || (isString(value) && !isNonEmptyString(value));
   });
 };
