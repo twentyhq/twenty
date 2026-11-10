@@ -27,6 +27,8 @@ import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatS
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
+import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
+import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
@@ -42,6 +44,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
   isMobile: boolean;
   isCentered?: boolean;
+  hasPageContentInset: boolean;
 }>`
   align-items: flex-end;
   background: ${themeCssVariables.background.primary};
@@ -50,10 +53,19 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
   margin-top: auto;
-  padding-block: ${({ isMobile }) =>
-    isMobile ? '0' : themeCssVariables.spacing[3]};
-  padding-inline: ${({ isCentered }) =>
-    isCentered ? themeCssVariables.spacing[4] : themeCssVariables.spacing[3]};
+  padding-block: ${({ isMobile, isCentered, hasPageContentInset }) => {
+    if (isMobile) {
+      return '0';
+    }
+
+    return hasPageContentInset && !isCentered
+      ? themeCssVariables.spacing[2]
+      : themeCssVariables.spacing[3];
+  }};
+  padding-inline: ${({ isCentered, hasPageContentInset }) =>
+    hasPageContentInset && !isCentered
+      ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
+      : themeCssVariables.spacing[4]};
 `;
 
 const StyledInputBox = styled.div<{
@@ -164,6 +176,7 @@ const EditableAiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
+  const hasPageContentInset = useHasAiChatPageContentInset();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
   const hasReachedAiChatUsageLimit = useHasReachedAiChatUsageLimit();
   const shouldShowUsageLimitBanner =
@@ -228,7 +241,11 @@ const EditableAiChatEditorSection = () => {
         </StyledMessageListPlaceholder>
       )}
 
-      <StyledInputArea isMobile={isMobile} isCentered={isComposerCentered}>
+      <StyledInputArea
+        isMobile={isMobile}
+        isCentered={isComposerCentered}
+        hasPageContentInset={hasPageContentInset}
+      >
         {isComposerCentered && !isDirectMessage && (
           <AiChatEmptyState isCentered />
         )}
@@ -257,9 +274,13 @@ export const AiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const access = useCurrentAiChatThreadAccess();
+  const hasPageContentInset = useHasAiChatPageContentInset();
   if (access !== 'writer') {
     return (
-      <StyledInputArea isMobile={isMobile}>
+      <StyledInputArea
+        isMobile={isMobile}
+        hasPageContentInset={hasPageContentInset}
+      >
         <div role="status">
           {access === 'loading'
             ? t`Loading conversation…`
