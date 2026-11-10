@@ -41,7 +41,6 @@ export const APPLICATION_GRANT_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS = [
   ),
 ].map(getMetadataFlatEntityMapsKey);
 
-// Rule maps stay optional for upgrade commands that ran before the rule table existed
 export type ApplicationGrantRoleFlatEntityMaps = Pick<
   AllFlatEntityMaps,
   MetadataToFlatEntityMapsKey<
@@ -50,8 +49,7 @@ export type ApplicationGrantRoleFlatEntityMaps = Pick<
       'roleTarget' | 'rowLevelPermissionRule'
     >
   >
-> &
-  Partial<Pick<AllFlatEntityMaps, 'flatRowLevelPermissionRuleMaps'>>;
+>;
 
 type ApplicationGrantRoleUniversalFlatEntityMaps = Pick<
   AllUniversalFlatEntityMaps,
@@ -167,7 +165,7 @@ const findRoleGrantUniversalFlatEntityMaps = ({
   ),
 });
 
-// Rules follow from the predicate groups and predicates, so a copy derives its own
+// Rules are derived from the predicate groups and predicates, for the existing grant and its copy alike
 const findRolePermissionUniversalFlatEntityMaps = ({
   flatRole,
   flatEntityMaps,
@@ -181,29 +179,6 @@ const findRolePermissionUniversalFlatEntityMaps = ({
 }): RolePermissionUniversalFlatEntityMaps => {
   const rolePermissionUniversalFlatEntityMaps =
     findRoleGrantUniversalFlatEntityMaps({ flatRole, flatEntityMaps, mappers });
-
-  const { flatRowLevelPermissionRuleMaps } = flatEntityMaps;
-
-  if (!isDefined(flatRowLevelPermissionRuleMaps)) {
-    return {
-      ...rolePermissionUniversalFlatEntityMaps,
-      flatRowLevelPermissionRuleMaps: toUniversalFlatEntityMaps([]),
-    };
-  }
-
-  if (!isDefined(mappers)) {
-    return {
-      ...rolePermissionUniversalFlatEntityMaps,
-      flatRowLevelPermissionRuleMaps: toUniversalFlatEntityMaps(
-        Object.values(flatRowLevelPermissionRuleMaps.byUniversalIdentifier)
-          .filter(isDefined)
-          .filter(
-            ({ roleUniversalIdentifier }) =>
-              roleUniversalIdentifier === flatRole.universalIdentifier,
-          ),
-      ),
-    };
-  }
 
   const predicateGroups = Object.values(
     rolePermissionUniversalFlatEntityMaps
