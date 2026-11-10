@@ -24,7 +24,6 @@ const {
   fieldUniversalIdentifiers,
 } = WORKFLOW_RUN_CORE_WORKFLOW_ID_CREATED_AT_INDEX;
 
-// Built CONCURRENTLY first so run writes are not blocked; the migration then only persists metadata
 @RegisteredWorkspaceCommand('2.58.0', 1794293607493)
 @Command({
   name: 'upgrade:2-58:backfill-workflow-run-core-workflow-id-created-at-index',
