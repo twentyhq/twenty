@@ -59,10 +59,6 @@ const StyledActiveStepCardBase = styled.div`
 const StyledActiveStepCard = motion.create(StyledActiveStepCardBase);
 
 const StyledStepsTrack = styled.div`
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   position: absolute;
   right: calc(100% + ${themeCssVariables.spacing[10]});
   top: 0;
@@ -77,7 +73,6 @@ const StyledSteps = styled.nav`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: auto;
 `;
 
 const StyledTicks = styled.div`
@@ -360,6 +355,9 @@ export const GettingStartedStepStack = ({
               isJustCompleted={
                 gettingStartedJustCompletedStep === selectedStepActionKey
               }
+              nextStepActionKey={nextStepActionKey}
+              isSelectingStep={isSaving}
+              onSelectStep={selectGettingStartedStep}
             />
           </StyledActiveStepCard>
         </AnimatePresence>
