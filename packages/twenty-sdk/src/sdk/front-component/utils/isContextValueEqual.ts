@@ -1,42 +1,56 @@
-// Not fastDeepEqual from twenty-shared/utils: it sits in a non-tree-shakable
-// chunk that adds ~600KB to every front component bundle.
-export const isContextValueEqual = (
-  firstValue: unknown,
-  secondValue: unknown,
-): boolean => {
-  if (Object.is(firstValue, secondValue)) {
-    return true;
-  }
+import { isDefined } from 'twenty-shared/utils';
 
-  if (
-    typeof firstValue !== 'object' ||
-    typeof secondValue !== 'object' ||
-    firstValue === null ||
-    secondValue === null ||
-    Array.isArray(firstValue) !== Array.isArray(secondValue)
-  ) {
+type IsContextValueEqualArgs = {
+  previousValue: unknown;
+  nextValue: unknown;
+};
+
+const isJsonObject = (value: unknown): value is Record<string, unknown> => {
+  if (typeof value !== 'object' || !isDefined(value)) {
     return false;
   }
 
-  if (Array.isArray(firstValue) && Array.isArray(secondValue)) {
+  const prototype = Object.getPrototypeOf(value);
+
+  return prototype === Object.prototype || prototype === null;
+};
+
+// twenty-shared's fastDeepEqual sits in a non-tree-shakable ~600KB chunk.
+export const isContextValueEqual = ({
+  previousValue,
+  nextValue,
+}: IsContextValueEqualArgs): boolean => {
+  if (Object.is(previousValue, nextValue)) {
+    return true;
+  }
+
+  if (Array.isArray(previousValue) && Array.isArray(nextValue)) {
     return (
-      firstValue.length === secondValue.length &&
-      firstValue.every((item, index) =>
-        isContextValueEqual(item, secondValue[index]),
+      previousValue.length === nextValue.length &&
+      previousValue.every((item, index) =>
+        isContextValueEqual({
+          previousValue: item,
+          nextValue: nextValue[index],
+        }),
       )
     );
   }
 
-  const firstRecord = firstValue as Record<string, unknown>;
-  const secondRecord = secondValue as Record<string, unknown>;
-  const firstKeys = Object.keys(firstRecord);
+  if (!isJsonObject(previousValue) || !isJsonObject(nextValue)) {
+    return false;
+  }
+
+  const previousKeys = Object.keys(previousValue);
 
   return (
-    firstKeys.length === Object.keys(secondRecord).length &&
-    firstKeys.every(
+    previousKeys.length === Object.keys(nextValue).length &&
+    previousKeys.every(
       (key) =>
-        Object.prototype.hasOwnProperty.call(secondRecord, key) &&
-        isContextValueEqual(firstRecord[key], secondRecord[key]),
+        Object.prototype.hasOwnProperty.call(nextValue, key) &&
+        isContextValueEqual({
+          previousValue: previousValue[key],
+          nextValue: nextValue[key],
+        }),
     )
   );
 };

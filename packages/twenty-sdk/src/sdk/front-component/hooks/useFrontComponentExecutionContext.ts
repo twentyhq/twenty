@@ -20,10 +20,10 @@ export const useFrontComponentExecutionContext = <T>(
     const onContextChange = () => {
       const newSelectedValue = selector(getFrontComponentExecutionContext());
 
-      const hasSelectedValueChanged = !isContextValueEqual(
-        newSelectedValue,
-        previousSelectedValueRef.current,
-      );
+      const hasSelectedValueChanged = !isContextValueEqual({
+        previousValue: previousSelectedValueRef.current,
+        nextValue: newSelectedValue,
+      });
 
       if (hasSelectedValueChanged) {
         previousSelectedValueRef.current = newSelectedValue;
