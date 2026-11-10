@@ -12,6 +12,7 @@ import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
+import { useListenToCoreWorkflowRunEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowRunEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { hasAppliedCoreObjectFilters } from '@/object-core/filters/utils/hasAppliedCoreObjectFilters';
@@ -67,6 +68,11 @@ const WorkflowCoreIndexContent = () => {
   } = useCoreWorkflowsSelection({ coreWorkflows });
 
   useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
+  useListenToCoreWorkflowRunEvents({
+    coreWorkflowIds: coreWorkflows.map(({ id }) => id),
+    queryId: `core-workflows-run-events-${tableId}`,
+    onRunsChanged: refetchLoadedCoreWorkflows,
+  });
 
   const coreWorkflowTableRows = buildCoreWorkflowTableRows({
     coreWorkflows: displayedCoreWorkflows,
