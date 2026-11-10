@@ -35,6 +35,11 @@ export class BackfillRowLevelPermissionRulesCommand extends ProvisionedWorkspace
       return;
     }
 
+    // A cache computed before the upgrade forces all records off where predicates exist, which would zero the grants copied below
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rolesPermissions',
+    ]);
+
     const {
       flatApplicationMaps,
       flatRoleMaps,
