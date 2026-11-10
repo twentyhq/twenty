@@ -5,6 +5,7 @@ import { CoreAgentModelCell } from '@/object-core/agents/components/CoreAgentMod
 import { CoreAgentNameCell } from '@/object-core/agents/components/CoreAgentNameCell';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DateTimeDisplay } from '@/ui/field/display/components/DateTimeDisplay';
 
 export const CORE_AGENT_TABLE_COLUMNS: CoreObjectTableColumn<CoreAgent>[] = [
@@ -32,6 +33,11 @@ export const CORE_AGENT_TABLE_COLUMNS: CoreObjectTableColumn<CoreAgent>[] = [
     fieldType: 'string',
     align: 'left',
     gridTrack: '150px',
-    renderCell: (agent) => <DateTimeDisplay value={agent.updatedAt} />,
+    renderCell: (agent) => (
+      <DateTimeDisplay
+        value={agent.updatedAt}
+        dateFieldSettings={{ displayFormat: FieldDateDisplayFormat.RELATIVE }}
+      />
+    ),
   },
 ];

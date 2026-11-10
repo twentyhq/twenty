@@ -26,7 +26,7 @@ export const useCoreAgentsSelectionCommands = () => {
   );
   const selectedCoreAgentIds = useSelectedCoreAgentIds();
 
-  const seeRunsCommandLabel = t`See Runs`;
+  const seeRunsCommandLabel = t`See Turns`;
   const shouldDisplaySeeRunsCommand =
     selectedCoreAgentIds.length === 1 &&
     isAiChatInboxEnabled &&

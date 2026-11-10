@@ -1,10 +1,17 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
-import { IconCancel, IconDeviceFloppy, IconTrash } from 'twenty-ui/icon';
+import {
+  IconCancel,
+  IconDeviceFloppy,
+  IconSettings,
+  IconTerminal,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
+import { CoreObjectShowPageTabList } from '@/object-core/components/CoreObjectShowPageTabList';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
@@ -35,8 +42,8 @@ import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentD
 import { useIsCoreAgentReadOnly } from '@/object-core/agents/hooks/useIsCoreAgentReadOnly';
 import { useRenameCoreAgent } from '@/object-core/agents/hooks/useRenameCoreAgent';
 import { useSaveCoreAgent } from '@/object-core/agents/hooks/useSaveCoreAgent';
-import { coreAgentIsRunsViewFamilyState } from '@/object-core/agents/states/coreAgentIsRunsViewFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { CORE_AGENT_SHOW_PAGE_TABS } from '@/object-core/agents/constants/CoreAgentShowPageTabs';
+import { useCoreAgentShowPageActiveTab } from '@/object-core/agents/hooks/useCoreAgentShowPageActiveTab';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 
@@ -52,10 +59,8 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const { openDialog } = useDialog();
 
   const isReadOnly = useIsCoreAgentReadOnly(agent);
-  const coreAgentIsRunsView = useAtomFamilyStateValue(
-    coreAgentIsRunsViewFamilyState,
-    agent.id,
-  );
+  const { activeTabId, isTurnsTabAvailable, tabListComponentInstanceId } =
+    useCoreAgentShowPageActiveTab(agent.id);
 
   const { draft, updateDraft } = useCoreAgentDraft(agent);
   const { isDirty } = useCoreAgentDirtyState(agent);
@@ -80,7 +85,6 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   );
 
   const title = isNonEmptyString(agent.label) ? agent.label : t`Untitled`;
-  const isShowingRuns = isAiChatInboxEnabled && coreAgentIsRunsView;
 
   return (
     <>
@@ -156,8 +160,28 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
               size={24}
             />
           }
+          tabList={
+            <CoreObjectShowPageTabList
+              aria-label={t`Agent sections`}
+              activeTabId={activeTabId}
+              componentInstanceId={tabListComponentInstanceId}
+              tabs={[
+                {
+                  id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS,
+                  title: t`Settings`,
+                  Icon: IconSettings,
+                },
+                {
+                  id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS,
+                  title: t`Turns`,
+                  Icon: IconTerminal,
+                  hide: !isTurnsTabAvailable,
+                },
+              ]}
+            />
+          }
         />
-        {isShowingRuns ? (
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS ? (
           <CoreAgentRunsContent agentId={agent.id} />
         ) : (
           <SettingsPageContainer>

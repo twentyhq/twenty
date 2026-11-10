@@ -1,13 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { IconTerminal } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { coreAgentIsRunsViewFamilyState } from '@/object-core/agents/states/coreAgentIsRunsViewFamilyState';
+import { CORE_AGENT_SHOW_PAGE_TABS } from '@/object-core/agents/constants/CoreAgentShowPageTabs';
 import { CORE_AGENTS_SEE_RUNS_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsSeeRunsCommandId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type CoreAgentsSeeRunsCommandProps = {
   agentId: string;
@@ -18,17 +18,15 @@ export const CoreAgentsSeeRunsCommand = ({
   agentId,
   label,
 }: CoreAgentsSeeRunsCommandProps) => {
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const setCoreAgentIsRunsView = useSetAtomFamilyState(
-    coreAgentIsRunsViewFamilyState,
-    agentId,
-  );
 
   const handleSeeRuns = () => {
     closeSidePanelMenu();
-    setCoreAgentIsRunsView(true);
-    navigate(AppPath.AgentShowPage, { agentId });
+    navigate({
+      pathname: getAppPath(AppPath.AgentShowPage, { agentId }),
+      hash: `#${CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS}`,
+    });
   };
 
   return (
