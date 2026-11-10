@@ -68,6 +68,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Private records`,
     description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,
   },
+  [FeatureFlagKey.IS_PRIVATE_METADATA_ENABLED]: {
+    label: msg`Private views`,
+    description: msg`Show private views to their owners and load shared and private views separately. Who can see a private view does not change when this is turned off. Enable after the instance upgrade completes.`,
+  },
   [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
     label: msg`Access groups`,
     description: msg`Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes.`,
