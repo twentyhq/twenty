@@ -35,6 +35,7 @@ import {
 } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
 import { type FlatRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule.type';
 import { buildRowLevelPermissionRules } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/build-row-level-permission-rules.util';
 import { validateRowLevelPermissionRuleOwnershipOrThrow } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/validate-row-level-permission-rule-ownership.util';
@@ -109,6 +110,7 @@ export class RowLevelPermissionPredicateService {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatRowLevelPermissionRuleMaps,
+      flatFieldPermissionMaps,
       flatRoleMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -120,6 +122,7 @@ export class RowLevelPermissionPredicateService {
             'flatRowLevelPermissionPredicateMaps',
             'flatRowLevelPermissionPredicateGroupMaps',
             'flatRowLevelPermissionRuleMaps',
+            'flatFieldPermissionMaps',
             'flatRoleMaps',
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
@@ -209,6 +212,7 @@ export class RowLevelPermissionPredicateService {
       workspaceId,
       flatApplication: workspaceCustomFlatApplication,
       flatRowLevelPermissionRuleMaps,
+      flatFieldPermissionMaps,
     });
 
     await this.runUpsertMigration({
@@ -462,6 +466,7 @@ export class RowLevelPermissionPredicateService {
     workspaceId,
     flatApplication,
     flatRowLevelPermissionRuleMaps,
+    flatFieldPermissionMaps,
   }: {
     existingGroups: FlatRowLevelPermissionPredicateGroup[];
     existingPredicates: FlatRowLevelPermissionPredicate[];
@@ -476,8 +481,10 @@ export class RowLevelPermissionPredicateService {
     workspaceId: string;
     flatApplication: FlatApplication;
     flatRowLevelPermissionRuleMaps: FlatEntityMaps<FlatRowLevelPermissionRule>;
+    flatFieldPermissionMaps: FlatEntityMaps<FlatFieldPermission>;
   }): {
     rulesToCreate: FlatRowLevelPermissionRule[];
+    fieldPermissionsToUpdate: FlatFieldPermission[];
     rulesToDelete: FlatRowLevelPermissionRule[];
     groupsToCreate: FlatRowLevelPermissionPredicateGroup[];
     groupsToUpdate: FlatRowLevelPermissionPredicateGroup[];
@@ -642,9 +649,55 @@ export class RowLevelPermissionPredicateService {
       existingPredicates.map((predicate) => [predicate.id, predicate]),
     );
 
+    // Rule-level field permissions cascade with their rule, so they must follow a group that moves to another rule
+    const ruleIdByGroupId = new Map(
+      [...linkedGroups.linkedToCreate, ...linkedGroups.linkedToUpdate].map(
+        (group) => [group.id, group.rowLevelPermissionRuleId],
+      ),
+    );
+    const fieldPermissionsToUpdate = Object.values(
+      flatFieldPermissionMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .flatMap((fieldPermission) => {
+        if (
+          !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) ||
+          !ruleIdByGroupId.has(
+            fieldPermission.rowLevelPermissionPredicateGroupId,
+          )
+        ) {
+          return [];
+        }
+
+        const rowLevelPermissionRuleId =
+          ruleIdByGroupId.get(
+            fieldPermission.rowLevelPermissionPredicateGroupId,
+          ) ?? null;
+
+        if (
+          rowLevelPermissionRuleId === fieldPermission.rowLevelPermissionRuleId
+        ) {
+          return [];
+        }
+
+        const rule = [...existingRules, ...rulesToCreate].find(
+          ({ id }) => id === rowLevelPermissionRuleId,
+        );
+
+        return [
+          {
+            ...fieldPermission,
+            rowLevelPermissionRuleId,
+            rowLevelPermissionRuleUniversalIdentifier:
+              rule?.universalIdentifier ?? null,
+          },
+        ];
+      });
+
     return {
       rulesToCreate,
       rulesToDelete,
+      fieldPermissionsToUpdate,
       groupsToCreate: linkedGroups.linkedToCreate,
       groupsToUpdate: linkedGroups.linkedToUpdate.filter(
         (group) =>
@@ -666,6 +719,7 @@ export class RowLevelPermissionPredicateService {
     workspaceId,
     rulesToCreate,
     rulesToDelete,
+    fieldPermissionsToUpdate,
     predicatesToCreate,
     predicatesToUpdate,
     predicatesToDelete,
@@ -676,6 +730,7 @@ export class RowLevelPermissionPredicateService {
     workspaceId: string;
     rulesToCreate: FlatRowLevelPermissionRule[];
     rulesToDelete: FlatRowLevelPermissionRule[];
+    fieldPermissionsToUpdate: FlatFieldPermission[];
     predicatesToCreate: FlatRowLevelPermissionPredicate[];
     predicatesToUpdate: FlatRowLevelPermissionPredicate[];
     predicatesToDelete: FlatRowLevelPermissionPredicate[];
@@ -706,6 +761,11 @@ export class RowLevelPermissionPredicateService {
               flatEntityToCreate: predicatesToCreate,
               flatEntityToUpdate: predicatesToUpdate,
               flatEntityToDelete: predicatesToDelete,
+            },
+            fieldPermission: {
+              flatEntityToCreate: [],
+              flatEntityToUpdate: fieldPermissionsToUpdate,
+              flatEntityToDelete: [],
             },
           },
           workspaceId,

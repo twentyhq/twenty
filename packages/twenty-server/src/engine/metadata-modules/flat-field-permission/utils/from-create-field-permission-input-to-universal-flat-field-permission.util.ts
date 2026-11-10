@@ -1,7 +1,4 @@
-import {
-  getFieldPermissionUniversalIdentifier,
-  getRowLevelPermissionRuleUniversalIdentifier,
-} from 'twenty-shared/application';
+import { getFieldPermissionUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -77,18 +74,9 @@ export const fromCreateFieldPermissionInputToUniversalFlatFieldPermission = ({
     objectMetadataUniversalIdentifier,
     fieldMetadataUniversalIdentifier,
     rowLevelPermissionPredicateGroupUniversalIdentifier,
-    rowLevelPermissionRuleUniversalIdentifier: isDefined(
-      rowLevelPermissionPredicateGroup,
-    )
-      ? getRowLevelPermissionRuleUniversalIdentifier({
-          applicationUniversalIdentifier:
-            rowLevelPermissionPredicateGroup.applicationUniversalIdentifier,
-          roleUniversalIdentifier,
-          objectMetadataUniversalIdentifier,
-          rootRowLevelPermissionPredicateGroupUniversalIdentifier:
-            rowLevelPermissionPredicateGroup.universalIdentifier,
-        })
-      : null,
+    rowLevelPermissionRuleUniversalIdentifier:
+      rowLevelPermissionPredicateGroup?.rowLevelPermissionRuleUniversalIdentifier ??
+      null,
     canReadFieldValue: fieldPermissionInput.canReadFieldValue ?? undefined,
     canUpdateFieldValue: fieldPermissionInput.canUpdateFieldValue ?? undefined,
     createdAt: now,
