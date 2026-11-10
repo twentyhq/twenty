@@ -27,7 +27,6 @@ export class ApplicationAuthorizationDTO {
   @Field(() => [String], { nullable: true })
   scopes: string[] | null;
 
-  // The app whose OAuth identity this client was verified against
   @Field(() => String, { nullable: true })
   oAuthIdentityUniversalIdentifier: string | null;
 

@@ -1,5 +1,6 @@
 import {
   type ApplicationOAuthIdentity,
+  type Manifest,
   validateApplicationOAuthIdentity,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,10 +12,11 @@ import { isTwentyApplicationPackage } from 'src/engine/core-modules/application/
 // Only Twenty can publish under its npm scope, so no one else can claim a vendor's callbacks
 export const getApplicationOAuthIdentity = (
   registration:
-    | Pick<
-        ApplicationRegistrationEntity,
-        'sourceType' | 'sourcePackage' | 'manifest'
-      >
+    | (Pick<ApplicationRegistrationEntity, 'sourceType' | 'sourcePackage'> & {
+        manifest: {
+          application?: Pick<Manifest['application'], 'oAuthIdentity'>;
+        } | null;
+      })
     | null
     | undefined,
 ): ApplicationOAuthIdentity | null => {

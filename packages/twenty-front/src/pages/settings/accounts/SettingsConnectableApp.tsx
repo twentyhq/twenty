@@ -1,6 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { SettingsConnectableAppConnectionsSection } from '@/settings/app-preferences/components/SettingsConnectableAppConnectionsSection';
-import { useConnectableApps } from '@/settings/app-preferences/hooks/useConnectableApps';
+import { useConnectableApp } from '@/settings/app-preferences/hooks/useConnectableApp';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -16,12 +16,11 @@ export const SettingsConnectableApp = () => {
   const { t } = useLingui();
   const { applicationId } = useParams<{ applicationId: string }>();
   const {
-    connectableApps,
+    connectableApp,
     isLoading,
     hasConnectableAppsLoadError,
     refetchConnectableApps,
-  } = useConnectableApps();
-  const connectableApp = connectableApps.find(({ id }) => id === applicationId);
+  } = useConnectableApp(applicationId);
 
   if (
     !isDefined(connectableApp) &&

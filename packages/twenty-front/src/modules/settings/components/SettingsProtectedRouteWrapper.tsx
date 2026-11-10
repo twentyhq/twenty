@@ -1,14 +1,13 @@
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
   type FeatureFlagKey,
   type PermissionFlagType,
@@ -26,9 +25,7 @@ export const SettingsProtectedRouteWrapper = ({
   requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
   const isLogged = useIsLogged();
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-  const hasPermission =
-    !isDefined(settingsPermission) || permissionFlagMap[settingsPermission];
+  const hasPermission = useHasPermissionFlag(settingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );

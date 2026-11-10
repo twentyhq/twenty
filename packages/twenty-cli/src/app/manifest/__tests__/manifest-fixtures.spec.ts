@@ -378,10 +378,11 @@ export default defineFrontComponent({
     const result = await compareManifest(appPath);
 
     expect(result.success).toBe(false);
-    if (!result.success)
+    if (!result.success) {
       expect(result.errors).toContain(
         "An application with an OAuth identity acts with the connecting member's permissions, so it cannot ship roles",
       );
+    }
   }, 60000);
 
   it('matches duplicate identifier diagnostics and empty lockfile failures', async () => {
