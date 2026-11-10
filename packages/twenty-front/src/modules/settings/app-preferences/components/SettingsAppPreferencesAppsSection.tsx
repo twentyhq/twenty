@@ -32,7 +32,11 @@ export const SettingsAppPreferencesAppsSection = () => {
     error: accountGroupsError,
     refetch: refetchAccountGroups,
   } = useMyAccountGroups();
-  const { connectableApps } = useConnectableApps();
+  const {
+    connectableApps,
+    hasConnectableAppsLoadError,
+    refetchConnectableApps,
+  } = useConnectableApps();
   const connectableAppStatusesById =
     useConnectableAppStatusesById(connectableApps);
   const isLoadingApplications =
@@ -53,7 +57,9 @@ export const SettingsAppPreferencesAppsSection = () => {
       title={t`Apps`}
       description={t`Choose your preferences for the apps installed on your workspace by the admin`}
       toolbar={
-        hasApplicationsLoadError || hasAccountGroupsLoadError ? (
+        hasApplicationsLoadError ||
+        hasAccountGroupsLoadError ||
+        hasConnectableAppsLoadError ? (
           <StyledToolbar>
             {hasApplicationsLoadError && (
               <SettingsApplicationLoadErrorBanner
@@ -65,6 +71,12 @@ export const SettingsAppPreferencesAppsSection = () => {
               <SettingsApplicationLoadErrorBanner
                 message={t`Your connections could not be loaded. Check your connection and try again.`}
                 onRetry={() => refetchAccountGroups().catch(() => undefined)}
+              />
+            )}
+            {hasConnectableAppsLoadError && (
+              <SettingsApplicationLoadErrorBanner
+                message={t`The apps you can connect could not be loaded. Check your connection and try again.`}
+                onRetry={refetchConnectableApps}
               />
             )}
           </StyledToolbar>

@@ -17,6 +17,7 @@ import { SettingsAppPreferencesApp } from '~/pages/settings/accounts/SettingsApp
 import { SettingsConnectableApp } from '~/pages/settings/accounts/SettingsConnectableApp';
 import { removeConnectedAccountsPermission } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 const CLAUDE_AUTHORIZATION_ID = '20202020-6a7b-4c3d-8e4f-0000000000c1';
 
@@ -179,5 +180,43 @@ export const ClaudeOpensWithoutConnectedAccountsPermission: Story = {
 
     expect(await canvas.findByText('Connected')).toBeVisible();
     expect(canvas.getByText('Last used 2h')).toBeVisible();
+  },
+};
+
+export const CatalogLoadErrorOffersRetryInsteadOfLeaving: Story = {
+  beforeEach: async () => {
+    await mockedApolloClient.clearStore();
+    getWorker().use(
+      graphql.query(
+        'FindManyMarketplaceApps',
+        () =>
+          HttpResponse.json({
+            errors: [
+              {
+                message: 'Internal server error',
+                extensions: { code: 'INTERNAL_SERVER_ERROR' },
+              },
+            ],
+          }),
+        { once: true },
+      ),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'This app could not be loaded. Check your connection and try again.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+
+    expect(
+      await canvas.findByText('Connected', undefined, { timeout: 3000 }),
+    ).toBeVisible();
   },
 };
