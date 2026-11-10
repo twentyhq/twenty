@@ -486,7 +486,7 @@ LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET=your-layer-bucket
 
 The Lambda driver uploads each app's dependency layer to `LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET`, a bucket you own in the same region as your functions. When it is not set, the driver uses your storage bucket (`STORAGE_S3_NAME`). If neither is set, logic functions fail with a configuration error.
 
-By default the Lambdas run outside any VPC and reach Twenty through `SERVER_URL`. To run them inside a VPC, for example to give them a fixed outbound IP, set both (setting only one is a configuration error):
+By default the Lambdas run outside any VPC and reach Twenty through `SERVER_URL`. To run them inside a VPC, for example so they reach Twenty privately behind an authenticating proxy (see [Logic functions](/developers/self-host/capabilities/security#logic-functions)), set both (setting only one is a configuration error):
 
 ```bash
 LOGIC_FUNCTION_LAMBDA_SUBNET_IDS=subnet-0abc,subnet-0def

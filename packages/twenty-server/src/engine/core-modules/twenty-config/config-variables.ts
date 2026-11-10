@@ -1754,7 +1754,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Private URL logic functions use to call the server, e.g. http://server:3000 with Docker Compose, so their requests skip an authenticating proxy in front of SERVER_URL. Must be reachable from the server and worker. Local driver only: leave it unset with the Lambda driver, whose functions run outside your network and cannot reach it. Falls back to SERVER_URL.',
+      'Private URL logic functions use to call the server, e.g. http://server:3000 with Docker Compose, so their requests skip an authenticating proxy in front of SERVER_URL. Must be reachable from the server and worker. With the Lambda driver, set it together with LOGIC_FUNCTION_LAMBDA_SUBNET_IDS and LOGIC_FUNCTION_LAMBDA_SECURITY_GROUP_IDS, pointing at an internal load balancer: functions outside a VPC cannot reach it. Falls back to SERVER_URL.',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
