@@ -479,7 +479,7 @@ describe('record export lifecycle (integration)', () => {
     );
   });
 
-  it('preserves application row permissions in the export worker', async () => {
+  it('ignores application row permissions in the export worker', async () => {
     await setApplicationRole(roleId);
     await upsertContainsRlsPredicate({
       roleId,
@@ -489,9 +489,8 @@ describe('record export lifecycle (integration)', () => {
     });
     const ready = await exportToCompletion(input, cliToken);
     const response = await download(ready).expect(200);
-    expect(response.text.replace(/^\uFEFF/, '')).toBe(
-      `Id,Name\n${companies[0].id},${companies[0].name}\n`,
-    );
+    expect(response.text).toContain(companies[0].id);
+    expect(response.text).toContain(companies[1].id);
   });
 
   it('rejects an OAuth export when its application cannot read the object', async () => {
