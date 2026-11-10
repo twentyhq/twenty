@@ -6,7 +6,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getIndexUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type ExcludeDeletedRecordsFromUniqueFieldIndexesCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794331902322-exclude-deleted-records-from-unique-field-indexes.command';
+import { type ExcludeDeletedRecordsFromUniqueFieldIndexesCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794348093538-exclude-deleted-records-from-unique-field-indexes.command';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';

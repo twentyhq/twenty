@@ -32,19 +32,19 @@ const StyledRemoveAction = styled.span`
   pointer-events: none;
 `;
 
-type AiChatNewThreadRecipientChipProps = {
+type ChatRecipientChipProps = {
   label: string;
   avatar: ReactNode;
   onRemove: () => void;
   disabled?: boolean;
 };
 
-export const AiChatNewThreadRecipientChip = ({
+export const ChatRecipientChip = ({
   label,
   avatar,
   onRemove,
   disabled = false,
-}: AiChatNewThreadRecipientChipProps) => {
+}: ChatRecipientChipProps) => {
   const { t } = useLingui();
 
   return (

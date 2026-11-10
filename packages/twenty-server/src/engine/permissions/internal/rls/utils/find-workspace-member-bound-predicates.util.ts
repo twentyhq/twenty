@@ -13,11 +13,13 @@ export const findWorkspaceMemberBoundPredicates = (
   rolesPermissions: Record<string, RoleRecordsPermissions>,
 ): WorkspaceMemberBoundPredicate[] =>
   Object.values(rolesPermissions).flatMap(({ objects }) =>
-    Object.values(objects).flatMap(
-      (objectRecordsPermissions) =>
-        objectRecordsPermissions?.rowLevelRecordsPermissions?.predicates.filter(
-          (predicate): predicate is WorkspaceMemberBoundPredicate =>
-            isDefined(predicate.workspaceMemberFieldMetadataId),
-        ) ?? [],
+    Object.values(objects).flatMap((objectRecordsPermissions) =>
+      (objectRecordsPermissions?.rowLevelRecordsPermissions ?? []).flatMap(
+        ({ predicates }) =>
+          predicates.filter(
+            (predicate): predicate is WorkspaceMemberBoundPredicate =>
+              isDefined(predicate.workspaceMemberFieldMetadataId),
+          ),
+      ),
     ),
   );

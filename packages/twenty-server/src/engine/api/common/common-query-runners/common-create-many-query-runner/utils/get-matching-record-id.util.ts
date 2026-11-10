@@ -44,7 +44,7 @@ export const getMatchingRecordId = (
       acc.push({
         matchingRecord,
         isReplaceable:
-          fieldGroup.isIgnoringDeletedRecords === true &&
+          (fieldGroup.isIgnoringDeletedRecords ?? false) &&
           isDefined(matchingRecord.deletedAt),
       });
     }

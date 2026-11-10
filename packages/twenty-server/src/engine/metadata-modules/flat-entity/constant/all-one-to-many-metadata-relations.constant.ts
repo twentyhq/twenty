@@ -104,6 +104,25 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'fieldMetadataOptionUniversalIdentifiers',
     },
+    rowLevelPermissionPredicates: {
+      metadataName: 'rowLevelPermissionPredicate',
+      flatEntityForeignKeyAggregator: 'rowLevelPermissionPredicateIds',
+      universalFlatEntityForeignKeyAggregator:
+        'rowLevelPermissionPredicateUniversalIdentifiers',
+    },
+    relationRowLevelPermissionPredicates: {
+      metadataName: 'rowLevelPermissionPredicate',
+      flatEntityForeignKeyAggregator: 'relationRowLevelPermissionPredicateIds',
+      universalFlatEntityForeignKeyAggregator:
+        'relationRowLevelPermissionPredicateUniversalIdentifiers',
+    },
+    workspaceMemberRowLevelPermissionPredicates: {
+      metadataName: 'rowLevelPermissionPredicate',
+      flatEntityForeignKeyAggregator:
+        'workspaceMemberRowLevelPermissionPredicateIds',
+      universalFlatEntityForeignKeyAggregator:
+        'workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers',
+    },
   },
   objectMetadata: {
     fields: {

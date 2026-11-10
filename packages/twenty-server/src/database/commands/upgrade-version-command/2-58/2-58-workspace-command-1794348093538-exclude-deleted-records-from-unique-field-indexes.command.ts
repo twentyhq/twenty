@@ -14,6 +14,10 @@ import { generateDeterministicIndexForFlatFieldMetadataOrThrow } from 'src/engin
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { isPrimaryKeyFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-primary-key-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import {
+  WorkspaceSchemaManagerException,
+  WorkspaceSchemaManagerExceptionCode,
+} from 'src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -35,7 +39,7 @@ type IndexOperations = {
   flatEntityToDelete: FlatIndexMetadata[];
 };
 
-@RegisteredWorkspaceCommand('2.58.0', 1794331902322)
+@RegisteredWorkspaceCommand('2.58.0', 1794348093538)
 @Command({
   name: 'upgrade:2-58:exclude-deleted-records-from-unique-field-indexes',
   description:
@@ -113,7 +117,7 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
       if (
         !isDefined(flatFieldMetadata) ||
         !isDefined(flatObjectMetadata) ||
-        flatFieldMetadata.isUnique !== true ||
+        !flatFieldMetadata.isUnique ||
         isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
         isPrimaryKeyFlatFieldMetadata(flatFieldMetadata)
       ) {
@@ -243,8 +247,9 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
     }
 
     if (dataSource.options.type !== 'postgres') {
-      throw new Error(
+      throw new WorkspaceSchemaManagerException(
         `Concurrent index builds need a postgres datasource, got ${dataSource.options.type}`,
+        WorkspaceSchemaManagerExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
 

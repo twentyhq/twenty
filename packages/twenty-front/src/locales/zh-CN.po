@@ -775,6 +775,11 @@ msgstr "{earnedCredits, plural, other {{formattedEarnedCredits} 积分}}"
 msgid "{emoji} by {reactorNames}"
 msgstr "{reactorNames} 对 {emoji} 作出的 प्रतिक्रिया"
 
+#. js-lingui-id: 1u0J17
+#: src/modules/activities/emails/components/ChatThreadMessageReactions.tsx
+msgid "{emoji} by {reactors}"
+msgstr "{reactors} 对 {emoji} 作出了回应"
+
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -4577,6 +4582,7 @@ msgid "Attach file"
 msgstr "附加文件"
 
 #. js-lingui-id: N7m8E+
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -7359,7 +7365,7 @@ msgstr "正在确认您的付款"
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"
-msgstr ""
+msgstr "将 {appName} 连接到 {workspaceName}"
 
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
@@ -10621,6 +10627,7 @@ msgid "Draft an email to this company about "
 msgstr "起草一封关于此公司的电子邮件，内容为 "
 
 #. js-lingui-id: DbAw4C
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "邮件草稿"
@@ -15166,7 +15173,7 @@ msgstr "HTTP 请求失败"
 #. js-lingui-id: 82OlFB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "HTTP requests in the logic function runtime"
-msgstr ""
+msgstr "逻辑函数运行时中的 HTTP 请求"
 
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -23283,7 +23290,7 @@ msgstr "正在使用 {emoji} 添加反应"
 #. js-lingui-id: cQlPDN
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Read"
-msgstr ""
+msgstr "已读"
 
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -23456,6 +23463,7 @@ msgid "recipient@example.com"
 msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
+#: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -23986,6 +23994,7 @@ msgstr "移除"
 #. placeholder {0}: file.name
 #. placeholder {0}: recipient.address
 #: src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 #: src/modules/file/components/AttachmentChip.tsx
 msgid "Remove {0}"
 msgstr "移除 {0}"
@@ -24002,18 +24011,13 @@ msgstr "移除 {0} 个导航菜单项？"
 msgid "Remove {0} navigation menu items?"
 msgstr "移除 {0} 个导航菜单项？"
 
-#. js-lingui-id: Q7qiJ+
-#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
-msgid "Remove {address}"
-msgstr "移除 {address}"
-
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "移除 {displayName}"
 
 #. js-lingui-id: HND1q3
-#: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
+#: src/modules/chat/components/ChatRecipientChip.tsx
 msgid "Remove {label}"
 msgstr "移除 {label}"
 
@@ -24691,11 +24695,6 @@ msgstr "查看此应用请求的额外麦克风或摄像头访问权限。成员
 msgid "Review media access"
 msgstr "查看媒体访问权限"
 
-#. js-lingui-id: 35zlhZ
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
-msgid "Review this email before it goes out"
-msgstr "在发送此电子邮件前进行审核"
-
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -24878,6 +24877,11 @@ msgstr "行级权限谓词"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "row level permission predicate group"
 msgstr "行级权限谓词组"
+
+#. js-lingui-id: JWZ1ef
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission rule"
+msgstr "行级权限规则"
 
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26333,6 +26337,7 @@ msgstr "发送营销活动"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "发送邮件"
@@ -26420,7 +26425,7 @@ msgstr "发送至收件箱"
 #. js-lingui-id: 69d0/t
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr ""
+msgstr "通过逻辑函数驱动程序发送工作流 HTTP 请求、测试请求和 AI 智能体 HTTP 工具；当逻辑函数在 Lambda 中运行时，驱动程序会在隔离的 Lambda 中执行它们。"
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -26431,7 +26436,7 @@ msgstr "发件人名称"
 #. js-lingui-id: 9bG48P
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Sending"
-msgstr ""
+msgstr "发送中"
 
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx

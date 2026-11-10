@@ -775,6 +775,11 @@ msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} crédito} other {{
 msgid "{emoji} by {reactorNames}"
 msgstr "{emoji} por {reactorNames}"
 
+#. js-lingui-id: 1u0J17
+#: src/modules/activities/emails/components/ChatThreadMessageReactions.tsx
+msgid "{emoji} by {reactors}"
+msgstr "{emoji} por {reactors}"
+
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -4577,6 +4582,7 @@ msgid "Attach file"
 msgstr "Adjuntar archivo"
 
 #. js-lingui-id: N7m8E+
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -7359,7 +7365,7 @@ msgstr "Confirmando tu pago"
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"
-msgstr ""
+msgstr "Conectar {appName} a {workspaceName}"
 
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
@@ -10621,6 +10627,7 @@ msgid "Draft an email to this company about "
 msgstr "Redactar un correo electrónico a esta empresa sobre "
 
 #. js-lingui-id: DbAw4C
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "Borrador de correo electrónico"
@@ -15166,7 +15173,7 @@ msgstr "La solicitud HTTP falló"
 #. js-lingui-id: 82OlFB
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "HTTP requests in the logic function runtime"
-msgstr ""
+msgstr "Solicitudes HTTP en el entorno de ejecución de funciones lógicas"
 
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -23283,7 +23290,7 @@ msgstr "Reaccionando con {emoji}"
 #. js-lingui-id: cQlPDN
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Read"
-msgstr ""
+msgstr "Leído"
 
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -23456,6 +23463,7 @@ msgid "recipient@example.com"
 msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
+#: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -23986,6 +23994,7 @@ msgstr "Eliminar"
 #. placeholder {0}: file.name
 #. placeholder {0}: recipient.address
 #: src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 #: src/modules/file/components/AttachmentChip.tsx
 msgid "Remove {0}"
 msgstr "Eliminar {0}"
@@ -24002,18 +24011,13 @@ msgstr "¿Eliminar {0} elemento del menú de navegación?"
 msgid "Remove {0} navigation menu items?"
 msgstr "¿Eliminar {0} elementos del menú de navegación?"
 
-#. js-lingui-id: Q7qiJ+
-#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
-msgid "Remove {address}"
-msgstr "Eliminar {address}"
-
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Eliminar {displayName}"
 
 #. js-lingui-id: HND1q3
-#: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
+#: src/modules/chat/components/ChatRecipientChip.tsx
 msgid "Remove {label}"
 msgstr "Eliminar {label}"
 
@@ -24691,11 +24695,6 @@ msgstr "Revisa el acceso adicional al micrófono o la cámara solicitado por est
 msgid "Review media access"
 msgstr "Revisar el acceso a medios"
 
-#. js-lingui-id: 35zlhZ
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
-msgid "Review this email before it goes out"
-msgstr "Revisa este correo electrónico antes de enviarlo"
-
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -24878,6 +24877,11 @@ msgstr "predicado de permisos a nivel de fila"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "row level permission predicate group"
 msgstr "grupo de predicados de permisos a nivel de fila"
+
+#. js-lingui-id: JWZ1ef
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission rule"
+msgstr "regla de permisos a nivel de fila"
 
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26333,6 +26337,7 @@ msgstr "Enviar campaña"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "Enviar correo electrónico"
@@ -26420,7 +26425,7 @@ msgstr "Enviar a la bandeja de entrada"
 #. js-lingui-id: 69d0/t
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
-msgstr ""
+msgstr "Envía solicitudes HTTP de flujos de trabajo, solicitudes de prueba y la herramienta HTTP del agente de IA a través del controlador de funciones lógicas, que las ejecuta en una Lambda aislada cuando las funciones lógicas se ejecutan en Lambda."
 
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -26431,7 +26436,7 @@ msgstr "Nombre del remitente"
 #. js-lingui-id: 9bG48P
 #: src/modules/chat/components/ChatMessageReceipt.tsx
 msgid "Sending"
-msgstr ""
+msgstr "Enviando"
 
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx

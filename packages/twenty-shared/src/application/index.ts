@@ -143,6 +143,7 @@ export { getRelatedRecordPathUniversalIdentifier } from './deterministic-identif
 export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identifier/get-role-permission-flag-universal-identifier.util';
 export { getRoleTargetUniversalIdentifier } from './deterministic-identifier/get-role-target-universal-identifier.util';
 export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
+export { getRowLevelPermissionRuleUniversalIdentifier } from './deterministic-identifier/get-row-level-permission-rule-universal-identifier.util';
 export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/get-search-field-universal-identifier.util';
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
