@@ -78,7 +78,12 @@ export class AgentRunsService {
     const readableThreadIds = await this.findReadableThreadIds({
       workspaceId,
       workspaceMemberId,
-      threadIds: turns.map((turn) => turn.threadId).filter(isDefined),
+      threadIds: turns
+        .filter(
+          (turn) => isDefined(turn.thread) && !isDefined(turn.thread.deletedAt),
+        )
+        .map((turn) => turn.threadId)
+        .filter(isDefined),
     });
 
     return turns.map((turn) => ({

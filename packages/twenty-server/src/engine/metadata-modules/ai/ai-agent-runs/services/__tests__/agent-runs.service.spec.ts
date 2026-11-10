@@ -8,7 +8,10 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-const buildTurn = (id: string) => ({
+const buildTurn = (
+  id: string,
+  { deletedAt = null }: { deletedAt?: string | null } = {},
+) => ({
   id,
   threadId: `thread-of-${id}`,
   status: AgentTurnStatus.COMPLETED,
@@ -27,7 +30,7 @@ const buildTurn = (id: string) => ({
     workspaceMemberId: null,
     context: {},
   },
-  thread: { title: null },
+  thread: { title: null, deletedAt },
 });
 
 const buildService = ({
@@ -45,7 +48,10 @@ const buildService = ({
   const messageRepository = { find: jest.fn().mockResolvedValue(messages) };
   const messagePartRepository = { find: jest.fn().mockResolvedValue(parts) };
   const agentChatSharingService = {
-    findReadableThreadIds: jest.fn().mockResolvedValue(readableThreadIds),
+    findReadableThreadIds: jest.fn(
+      async ({ threadIds }: { threadIds: string[] }) =>
+        readableThreadIds.filter((threadId) => threadIds.includes(threadId)),
+    ),
   };
 
   return {
@@ -163,6 +169,30 @@ describe('AgentRunsService', () => {
       workspaceMemberId: 'member-id',
       threadIds: ['thread-of-turn-a', 'thread-of-turn-b'],
     });
+  });
+
+  it('does not offer to open a deleted conversation', async () => {
+    const { service, agentChatSharingService } = buildService({
+      turns: [
+        buildTurn('turn-a'),
+        buildTurn('turn-b', { deletedAt: '2026-10-06T10:00:00.000Z' }),
+      ],
+      messages: [],
+      parts: [],
+      readableThreadIds: ['thread-of-turn-a', 'thread-of-turn-b'],
+    });
+
+    const runs = await service.findAgentRuns({
+      workspaceId: 'workspace-id',
+      workspaceMemberId: 'member-id',
+      agentId: 'agent-id',
+      limit: 10,
+    });
+
+    expect(runs.map((run) => run.canReadThread)).toEqual([true, false]);
+    expect(agentChatSharingService.findReadableThreadIds).toHaveBeenCalledWith(
+      expect.objectContaining({ threadIds: ['thread-of-turn-a'] }),
+    );
   });
 
   it('opens no conversation for a caller without a workspace member', async () => {
