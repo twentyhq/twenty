@@ -137,7 +137,7 @@ Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/us
   * `connectedAccountId`: una variable, como `{{trigger.properties.after.connectedAccountId}}`. Los pasos de correo electrónico también aceptan un id de miembro del espacio de trabajo, como `{{trigger.properties.after.assigneeId}}`, que se resuelve en la primera cuenta de ese miembro que puede enviar.
 
   Establece exactamente uno de los dos.
-* `SEND_CHAT_MESSAGE` publica en la bandeja de entrada de un miembro del espacio de trabajo, configurado con `workspaceMemberId`. Los ID de miembro también son locales para cada espacio de trabajo, por lo que una aplicación pasa una variable, como `{{trigger.properties.after.assigneeId}}`.
+* `SEND_CHAT_MESSAGE` publica en la bandeja de entrada de un miembro del espacio de trabajo, configurado con `workspaceMemberId`. Los ID de miembro también son locales para cada espacio de trabajo, por lo que una aplicación pasa una variable, como `{{trigger.properties.after.assigneeId}}`. Los miembros mencionados en su `text`, como los de un cuerpo de nota pasado como `{{trigger.properties.after.bodyV2.markdown}}`, reciben una notificación, al igual que con los [mensajes de la bandeja de entrada](/es/developers/extend/apps/logic/inbox#mentions-and-record-references).
 
 ## Después de la instalación
 

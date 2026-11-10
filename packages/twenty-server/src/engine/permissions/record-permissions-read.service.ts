@@ -21,7 +21,7 @@ import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/inte
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
-import { resolveManyRecordsStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-many-records-strategy.util';
+import { resolveRecordsAccessSQLConditionStrategy } from 'src/engine/permissions/internal/access-group/utils/resolve-records-access-sql-condition-strategy.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
@@ -315,38 +315,68 @@ export class RecordPermissionsReadService {
     });
   }
 
-  async buildManyRecordsAccessSQLCondition({
+  async buildReadRecordsAccessSQLCondition({
+    tableAlias,
+    ...question
+  }: Omit<RecordOperationQuestion, 'operationType'> & {
+    tableAlias: string;
+  }): Promise<SQLCondition | boolean> {
+    const objectAccessRequest = await this.findObjectAccessRequestOrThrow({
+      ...question,
+      operationType: 'read',
+    });
+
+    if (
+      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest) !==
+      'accessGroups'
+    ) {
+      return this.buildRecordsAccessSQLCondition({
+        objectAccessRequest,
+        tableAlias,
+      });
+    }
+
+    return this.buildRecordsAccessSQLCondition({
+      objectAccessRequest,
+      tableAlias,
+      callerAccessGroupCompactIds:
+        await this.accessGroupReadService.findCallerCompactIds({
+          principals: objectAccessRequest.principals,
+          objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+          operationType: 'read',
+        }),
+    });
+  }
+
+  async buildWriteRecordsAccessSQLCondition({
     tableAlias,
     ...question
   }: RecordOperationQuestion & {
+    operationType: Exclude<ObjectRecordsOperationType, 'read'>;
     tableAlias: string;
   }): Promise<SQLCondition | boolean> {
-    const { principals } = question;
-    const objectAccessRequest =
-      await this.findObjectAccessRequestOrThrow(question);
+    return this.buildRecordsAccessSQLCondition({
+      objectAccessRequest: await this.findObjectAccessRequestOrThrow(question),
+      tableAlias,
+    });
+  }
 
+  private buildRecordsAccessSQLCondition({
+    objectAccessRequest,
+    tableAlias,
+    callerAccessGroupCompactIds,
+  }: {
+    objectAccessRequest: PermissionsObjectAccessRequest;
+    tableAlias: string;
+    callerAccessGroupCompactIds?: number[];
+  }): SQLCondition | boolean {
     return buildPermissionsSQLCondition({
       ...objectAccessRequest,
       tableAlias,
       recordShareTableExpression: buildRecordShareTableExpression({
-        workspaceId: principals.workspaceId,
+        workspaceId: objectAccessRequest.principals.workspaceId,
       }),
-      callerAccessGroupCompactIds:
-        await this.findCallerAccessGroupCompactIds(objectAccessRequest),
-    });
-  }
-
-  private async findCallerAccessGroupCompactIds(
-    objectAccessRequest: PermissionsObjectAccessRequest,
-  ): Promise<number[] | undefined> {
-    if (resolveManyRecordsStrategy(objectAccessRequest) !== 'accessGroups') {
-      return undefined;
-    }
-
-    return this.accessGroupReadService.findCallerCompactIds({
-      principals: objectAccessRequest.principals,
-      objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
-      operationType: objectAccessRequest.operationType,
+      callerAccessGroupCompactIds,
     });
   }
 
