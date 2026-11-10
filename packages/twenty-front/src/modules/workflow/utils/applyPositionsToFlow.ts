@@ -13,7 +13,7 @@ export const applyPositionsToFlow = <
   positions,
 }: {
   flow: TFlow | undefined;
-  positions: { id: string; position: NodePosition }[];
+  positions: { id: string; position: NodePosition | undefined }[];
 }): TFlow | undefined => {
   if (!isDefined(flow)) {
     return flow;
@@ -23,21 +23,17 @@ export const applyPositionsToFlow = <
     positions.map(({ id, position }) => [id, position]),
   );
 
-  const triggerPosition = positionById.get(TRIGGER_STEP_ID);
-
   return {
     ...flow,
     trigger:
-      isDefined(flow.trigger) && isDefined(triggerPosition)
-        ? { ...flow.trigger, position: triggerPosition }
+      isDefined(flow.trigger) && positionById.has(TRIGGER_STEP_ID)
+        ? { ...flow.trigger, position: positionById.get(TRIGGER_STEP_ID) }
         : flow.trigger,
     steps:
-      flow.steps?.map((step) => {
-        const stepPosition = positionById.get(step.id);
-
-        return isDefined(stepPosition)
-          ? { ...step, position: stepPosition }
-          : step;
-      }) ?? null,
+      flow.steps?.map((step) =>
+        positionById.has(step.id)
+          ? { ...step, position: positionById.get(step.id) }
+          : step,
+      ) ?? null,
   };
 };

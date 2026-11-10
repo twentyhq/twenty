@@ -40,6 +40,7 @@ import { useStore } from 'jotai';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { logError } from '~/utils/logError';
 
 export const WorkflowDiagramCanvasEditable = () => {
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
@@ -214,9 +215,9 @@ export const WorkflowDiagramCanvasEditable = () => {
 
     setWorkflowDiagram({ ...displayedWorkflowDiagram, nodes });
 
-    void updateWorkflowVersionPositions(
+    updateWorkflowVersionPositions(
       nodes.map(({ id, position }) => ({ id, position })),
-    );
+    ).catch(logError);
   };
 
   const onNodeDragStop: OnNodeDrag<WorkflowDiagramNode> = async (_, node) => {

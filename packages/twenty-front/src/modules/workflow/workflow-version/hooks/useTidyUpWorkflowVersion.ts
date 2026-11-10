@@ -17,12 +17,18 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
 
     setWorkflowDiagram(tidiedUpDiagram);
 
-    await updateWorkflowVersionPositions(
-      tidiedUpDiagram.nodes.map((node) => ({
-        id: node.id,
-        position: node.position,
-      })),
-    );
+    try {
+      await updateWorkflowVersionPositions(
+        tidiedUpDiagram.nodes.map((node) => ({
+          id: node.id,
+          position: node.position,
+        })),
+      );
+    } catch (error) {
+      setWorkflowDiagram(workflowDiagram);
+
+      throw error;
+    }
   };
 
   return { tidyUpWorkflowVersion };
