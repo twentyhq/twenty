@@ -4,6 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
+import { type ChatThreadDraftAttachment } from '@/activities/emails/types/ChatThreadDraftAttachment';
 
 const mockSendAppChannelMessage = jest.fn();
 
@@ -14,7 +15,7 @@ jest.mock('@/activities/emails/hooks/useSendAppChannelMessage', () => ({
 }));
 
 const mockClearDraftAttachments = jest.fn();
-const mockDraftAttachments = jest.fn(() => [] as unknown[]);
+const mockDraftAttachments = jest.fn<ChatThreadDraftAttachment[], []>(() => []);
 
 jest.mock('@/activities/emails/hooks/useChatThreadDraftAttachments', () => ({
   useChatThreadDraftAttachments: () => ({

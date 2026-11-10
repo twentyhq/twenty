@@ -46,10 +46,13 @@ export const useChatThreadDraftAttachments = () => {
       currentUploads.filter((upload) => upload.file !== file),
     );
 
-  const uploadDraftAttachment = async (
-    { file, abortController }: ChatThreadAttachmentUpload,
-    fieldMetadataId: string,
-  ) => {
+  const uploadDraftAttachment = async ({
+    upload: { file, abortController },
+    fieldMetadataId,
+  }: {
+    upload: ChatThreadAttachmentUpload;
+    fieldMetadataId: string;
+  }) => {
     try {
       const uploadedFile = await uploadFile(file, {
         fileFolder: FileFolder.FilesField,
@@ -116,7 +119,10 @@ export const useChatThreadDraftAttachments = () => {
 
     await Promise.all(
       newUploads.map((upload) =>
-        uploadDraftAttachment(upload, attachmentFileFieldMetadataId),
+        uploadDraftAttachment({
+          upload,
+          fieldMetadataId: attachmentFileFieldMetadataId,
+        }),
       ),
     );
   };

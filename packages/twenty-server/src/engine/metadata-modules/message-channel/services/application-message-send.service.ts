@@ -12,6 +12,7 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import {
+  assertIsDefinedOrThrow,
   convertEmailBodyToEmailDocument,
   isDefined,
   isNonEmptyArray,
@@ -429,10 +430,12 @@ export class ApplicationMessageSendService {
       attachments.map(async ({ fileId, label }) => {
         const file = fileById.get(fileId);
 
+        assertIsDefinedOrThrow(file);
+
         return {
           filename: label,
-          mimeType: file?.mimeType ?? 'application/octet-stream',
-          size: file?.size ?? 0,
+          mimeType: file.mimeType,
+          size: file.size,
           url: await this.fileUrlService.signFileByIdUrl({
             fileId,
             workspaceId,
@@ -564,22 +567,26 @@ export class ApplicationMessageSendService {
     email?: SendAppChannelMessageEmailInput;
     attachments: AppMessageAttachmentInput[];
   }): Promise<ValidatedAppReply> {
-    if (!isDefined(email)) {
-      if (!isNonEmptyString(text?.trim()) && attachments.length === 0) {
-        throw new MessageChannelException(
-          'A message needs a text or at least one attachment',
-          MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
-        );
-      }
-
-      return { text: text ?? '', attachments, recipients: null, email: null };
-    }
-
-    if (attachments.length > 0) {
+    if (isDefined(email) && attachments.length > 0) {
       throw new MessageChannelException(
         'Attachments can only be sent with chat replies',
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
+    }
+
+    if (
+      !isDefined(email) &&
+      !isNonEmptyString(text?.trim()) &&
+      attachments.length === 0
+    ) {
+      throw new MessageChannelException(
+        'A message needs a text or at least one attachment',
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    if (!isDefined(email)) {
+      return { text: text ?? '', attachments, recipients: null, email: null };
     }
 
     const bodyConversionResult = convertEmailBodyToEmailDocument(email.body);
