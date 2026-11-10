@@ -553,6 +553,7 @@ export type Application = {
   runOnUserPreferences: Scalars['Boolean']['output'];
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   settingsMenuItems?: Maybe<Array<SettingsMenuItem>>;
+  sourceType: ApplicationRegistrationSourceType;
   universalIdentifier: Scalars['String']['output'];
   version?: Maybe<Scalars['String']['output']>;
   yarnLockChecksum?: Maybe<Scalars['String']['output']>;
@@ -568,7 +569,9 @@ export type ApplicationAuthorization = {
   id: Scalars['UUID']['output'];
   lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
   lastUsedAt: Scalars['DateTime']['output'];
+  oAuthIdentityUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   scopes?: Maybe<Array<Scalars['String']['output']>>;
+  userId: Scalars['UUID']['output'];
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -879,6 +882,7 @@ export type ApplicationRegistrationSummary = {
   id: Scalars['UUID']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
+  oAuthIdentityUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   sourceType: ApplicationRegistrationSourceType;
 };
 
@@ -3307,6 +3311,7 @@ export type MarketplaceApp = {
   __typename?: 'MarketplaceApp';
   author: Scalars['String']['output'];
   category: Scalars['String']['output'];
+  connectUrl?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
   isListed: Scalars['Boolean']['output'];
@@ -3321,6 +3326,7 @@ export type MarketplaceAppDetail = {
   author?: Maybe<Scalars['String']['output']>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
+  connectUrl?: Maybe<Scalars['String']['output']>;
   content?: Maybe<ApplicationContent>;
   defaultRoleUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -3843,6 +3849,7 @@ export type Mutation = {
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
   revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
+  revokeWorkspaceApplicationMemberAccess: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
@@ -4881,6 +4888,12 @@ export type MutationRevokeTwoFactorAuthenticationRecoveryCodeArgs = {
 
 export type MutationRevokeUserSessionArgs = {
   userSessionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRevokeWorkspaceApplicationMemberAccessArgs = {
+  applicationId: Scalars['UUID']['input'];
+  userId: Scalars['UUID']['input'];
 };
 
 
@@ -6017,9 +6030,11 @@ export type PreviewMessageCampaignSendOutputDto = {
 
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
+  claimsVerifiedClientName: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
+  oAuthIdentityUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   oAuthScopes: Array<Scalars['String']['output']>;
   websiteUrl?: Maybe<Scalars['String']['output']>;
 };
@@ -6239,6 +6254,7 @@ export type Query = {
   validationRulesReadingField: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+  workspaceApplicationAuthorizations: Array<ApplicationAuthorization>;
 };
 
 
@@ -6786,6 +6802,11 @@ export type QueryValidationRulesReadingFieldArgs = {
 
 export type QueryWebhookArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryWorkspaceApplicationAuthorizationsArgs = {
+  applicationId: Scalars['UUID']['input'];
 };
 
 export type RatioAggregateConfig = {
