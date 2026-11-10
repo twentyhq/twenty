@@ -202,11 +202,13 @@ export class CreateCompanyAndPersonService {
         });
       }, authContext);
 
-    for (const contactsBatch of contactsBatches) {
+    const createCompaniesAndPeopleIgnoringDuplicates = async (
+      contacts: Contact[],
+    ): Promise<{ hasHitDuplicateEntry: boolean }> => {
       try {
         await this.createCompaniesAndPeople(
           connectedAccount,
-          contactsBatch,
+          contacts,
           workspaceId,
           source,
           accountOwner,
@@ -214,7 +216,7 @@ export class CreateCompanyAndPersonService {
       } catch (error) {
         // Concurrent imports can race on a unique company domain or person email; the record exists either way
         if (isDuplicateEntryError(error)) {
-          continue;
+          return { hasHitDuplicateEntry: true };
         }
 
         this.exceptionHandlerService.captureExceptions([error], {
@@ -222,6 +224,23 @@ export class CreateCompanyAndPersonService {
             id: workspaceId,
           },
         });
+      }
+
+      return { hasHitDuplicateEntry: false };
+    };
+
+    for (const contactsBatch of contactsBatches) {
+      const { hasHitDuplicateEntry } =
+        await createCompaniesAndPeopleIgnoringDuplicates(contactsBatch);
+
+      if (!hasHitDuplicateEntry || contactsBatch.length === 1) {
+        continue;
+      }
+
+      // Restoring a deleted person whose email a live person now holds fails the
+      // whole batch, so retry one by one to only lose the conflicting contact
+      for (const contact of contactsBatch) {
+        await createCompaniesAndPeopleIgnoringDuplicates([contact]);
       }
     }
   }
