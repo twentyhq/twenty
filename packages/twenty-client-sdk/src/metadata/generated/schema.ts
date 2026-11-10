@@ -3106,8 +3106,8 @@ export interface PreviewMessageCampaignSendOutputDTO {
 }
 
 export interface PublicApplicationRegistration {
-    claimsVerifiedClientName: Scalars['Boolean']
     id: Scalars['UUID']
+    isClaimingVerifiedClientName: Scalars['Boolean']
     logoUrl?: Scalars['String']
     name: Scalars['String']
     oAuthIdentityUniversalIdentifier?: Scalars['String']
@@ -7957,8 +7957,8 @@ export interface PreviewMessageCampaignSendOutputDTOGenqlSelection{
 }
 
 export interface PublicApplicationRegistrationGenqlSelection{
-    claimsVerifiedClientName?: boolean | number
     id?: boolean | number
+    isClaimingVerifiedClientName?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
     oAuthIdentityUniversalIdentifier?: boolean | number

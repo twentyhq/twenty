@@ -6030,8 +6030,8 @@ export type PreviewMessageCampaignSendOutputDto = {
 
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
-  claimsVerifiedClientName: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
+  isClaimingVerifiedClientName: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   oAuthIdentityUniversalIdentifier?: Maybe<Scalars['String']['output']>;

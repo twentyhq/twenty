@@ -9,7 +9,7 @@ export const FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID = gql`
       oAuthScopes
       websiteUrl
       oAuthIdentityUniversalIdentifier
-      claimsVerifiedClientName
+      isClaimingVerifiedClientName
     }
   }
 `;

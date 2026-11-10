@@ -64,7 +64,7 @@ export class OAuthClientResolver {
         websiteUrl: registration.websiteUrl,
         oAuthScopes: registration.oAuthScopes,
         oAuthIdentityUniversalIdentifier,
-        claimsVerifiedClientName:
+        isClaimingVerifiedClientName:
           !isDefined(oAuthIdentityUniversalIdentifier) &&
           (await this.applicationOAuthIdentityService.isVerifiedClientName(
             registration.name,
@@ -87,7 +87,7 @@ export class OAuthClientResolver {
       websiteUrl: null,
       oAuthScopes: [...ALL_OAUTH_SCOPES],
       oAuthIdentityUniversalIdentifier: null,
-      claimsVerifiedClientName:
+      isClaimingVerifiedClientName:
         await this.applicationOAuthIdentityService.isVerifiedClientName(name),
     };
   }
