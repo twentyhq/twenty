@@ -44,7 +44,7 @@ export default defineNavigationMenuItem({
 
 * Un elemento `NATIVE_PAGE` è nascosto ai membri che non dispongono dell'autorizzazione della pagina (Workflows per `'workflows'`, IA per `'agents'`).
 
-* L'enum contiene anche `NavigationMenuItemType.RECORD`, utilizzato internamente per i preferiti dei record creati dall'utente, e `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, utilizzato per i canali di chat fissati ai preferiti. Nessuno dei due è utilizzabile dal manifest di un'app (non esiste alcun campo per fare riferimento a un record o a un canale).
+* L'enum contiene anche `NavigationMenuItemType.RECORD`, utilizzato internamente per i record preferiti creati dagli utenti, `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, utilizzato per i canali di chat fissati ai preferiti, e `NavigationMenuItemType.WORKFLOW` e `NavigationMenuItemType.AGENT`, utilizzati per i workflow e gli agenti fissati alla barra laterale. Nessuno di essi è utilizzabile da un manifest dell'app (non esiste alcun campo per fare riferimento a un record, un canale, un workflow o un agente).
 
 * `icon` e `color` sono opzionali e personalizzano l’aspetto della voce.
 
