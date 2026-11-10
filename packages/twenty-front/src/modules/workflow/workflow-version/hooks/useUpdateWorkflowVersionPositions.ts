@@ -5,11 +5,14 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
+import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
 import { applyPositionsToFlow } from '@/workflow/utils/applyPositionsToFlow';
 import { getFlowPositions } from '@/workflow/utils/getFlowPositions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { UpdateCoreWorkflowVersionPositionsDocument } from '~/generated/graphql';
+
+type NodePositionUpdate = { id: string; position: { x: number; y: number } };
 
 export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
   const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(instanceId);
@@ -25,54 +28,58 @@ export const useUpdateWorkflowVersionPositions = (instanceId?: string) => {
     flowComponentState,
     instanceId,
   );
+  const saveInProgressCallbackState = useAtomComponentStateCallbackState(
+    workflowFlowSaveInProgressComponentState,
+    instanceId,
+  );
   const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
 
-  const savePositions = async (
-    positions: { id: string; position: { x: number; y: number } }[],
-  ) => {
+  const savePositions = async (positions: NodePositionUpdate[]) => {
     await savePendingWorkflowFlow();
 
-    const workflowVersionId = await getUpdatableWorkflowVersion();
+    const saving = getUpdatableWorkflowVersion().then((workflowVersionId) =>
+      mutateCore({
+        variables: {
+          input: { coreWorkflowVersionId: workflowVersionId, positions },
+        },
+      }),
+    );
 
-    await mutateCore({
-      variables: {
-        input: { coreWorkflowVersionId: workflowVersionId, positions },
-      },
+    // Reseeds from the server keep the local nodes of a save in progress, so a draft created meanwhile keeps the positions
+    store.set(saveInProgressCallbackState, {
+      flowKeys: positions.map(({ id }) => id),
+      promise: saving.then(() => undefined),
     });
 
-    return workflowVersionId;
+    try {
+      await saving;
+    } finally {
+      store.set(saveInProgressCallbackState, undefined);
+    }
   };
 
   const updateWorkflowVersionPositions = async (
-    positions: { id: string; position: { x: number; y: number } }[],
+    positions: NodePositionUpdate[],
   ) => {
-    const flowBeforeUpdate = store.get(flowCallbackState);
-    const positionsBeforeUpdate = getFlowPositions(flowBeforeUpdate);
+    const positionsBeforeUpdate = getFlowPositions(
+      store.get(flowCallbackState),
+    );
 
     // Written before any await so the diagram switches to these positions in the same render
     setFlow((currentFlow) =>
       applyPositionsToFlow({ flow: currentFlow, positions }),
     );
 
-    const workflowVersionId = await savePositions(positions).catch(
-      (error: unknown) => {
-        setFlow((currentFlow) =>
-          applyPositionsToFlow({
-            flow: currentFlow,
-            positions: positionsBeforeUpdate,
-          }),
-        );
-
-        throw error;
-      },
-    );
-
-    // A draft created by the save is seeded from the server, which drops the optimistic positions
-    if (workflowVersionId !== flowBeforeUpdate?.workflowVersionId) {
+    await savePositions(positions).catch((error: unknown) => {
       setFlow((currentFlow) =>
-        applyPositionsToFlow({ flow: currentFlow, positions }),
+        applyPositionsToFlow({
+          flow: currentFlow,
+          positions: positionsBeforeUpdate,
+        }),
       );
-    }
+
+      throw error;
+    });
 
     await invalidateCoreWorkflowVersions(apolloCoreClient);
   };
