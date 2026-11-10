@@ -392,6 +392,12 @@ describe('Related record path metadata', () => {
   });
 
   it('should delete the paths that reach a deleted object', async () => {
+    const response = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
     const createdPathIdsBefore = await findPathIds();
 
     expect(
