@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
+import {
+  VALIDATION_RULE_NOW_VARIABLE_NAME,
+  VALIDATION_RULE_PREVIOUS_VARIABLE_NAME,
+} from 'twenty-shared/constants';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   createValidationRuleEvaluator,
@@ -15,14 +18,7 @@ import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/
 
 type ConditionFieldNames = { current: string[]; previous: string[] };
 
-const findConditionFieldNames = ({
-  condition,
-  fields,
-}: {
-  condition: string;
-  fields: ValidationRuleFieldDescriptor[];
-}): ConditionFieldNames => {
-  const fieldNames = new Set(fields.map(({ name }) => name));
+const findConditionFieldNames = (condition: string): ConditionFieldNames => {
   const conditionFieldNames: ConditionFieldNames = {
     current: [],
     previous: [],
@@ -37,7 +33,10 @@ const findConditionFieldNames = ({
         rootName === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME;
       const fieldName = isPreviousPath ? previousRootName : rootName;
 
-      if (isDefined(fieldName) && fieldNames.has(fieldName)) {
+      if (
+        isDefined(fieldName) &&
+        fieldName !== VALIDATION_RULE_NOW_VARIABLE_NAME
+      ) {
         conditionFieldNames[isPreviousPath ? 'previous' : 'current'].push(
           fieldName,
         );
@@ -102,7 +101,21 @@ export const filterEventsMatchingDatabaseEventTrigger = <
     expression: condition,
     fields,
   });
-  const conditionFieldNames = findConditionFieldNames({ condition, fields });
+  const conditionFieldNames = findConditionFieldNames(condition);
+  const fieldNames = new Set(fields.map(({ name }) => name));
+  const unknownFieldName = [
+    ...conditionFieldNames.current,
+    ...conditionFieldNames.previous,
+  ].find((fieldName) => !fieldNames.has(fieldName));
+
+  // A wildcard trigger reaches objects without the field, which would read as empty
+  if (isDefined(unknownFieldName)) {
+    return {
+      events: [],
+      conditionErrorMessage: `The condition reads ${unknownFieldName}, which this object does not have`,
+    };
+  }
+
   const now = new Date().toISOString();
   const matchingEvents: TEvent[] = [];
   let conditionErrorMessage: string | undefined;

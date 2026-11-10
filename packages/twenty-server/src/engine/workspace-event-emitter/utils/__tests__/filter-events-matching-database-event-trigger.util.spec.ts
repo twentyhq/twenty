@@ -142,6 +142,21 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
     expect(result.conditionErrorMessage).toEqual(expect.any(String));
   });
 
+  it('should not match an object that does not have the condition field', () => {
+    expect(
+      filterEventsMatchingDatabaseEventTrigger({
+        events: [buildEvent({ after: { stage: 'NEW' } })],
+        eventName: '*.created',
+        condition: "status != 'DONE'",
+        fields: FIELDS,
+      }),
+    ).toEqual({
+      events: [],
+      conditionErrorMessage:
+        'The condition reads status, which this object does not have',
+    });
+  });
+
   it('should not match a record whose condition field the trigger cannot see', () => {
     const withCompany = buildEvent({ after: { stage: 'NEW' } }, 'hidden');
 
