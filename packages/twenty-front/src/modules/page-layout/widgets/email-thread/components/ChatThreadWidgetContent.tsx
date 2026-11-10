@@ -3,6 +3,7 @@ import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadCom
 import { ChatThreadDisconnectedBanner } from '@/activities/emails/components/ChatThreadDisconnectedBanner';
 import { ChatThreadMessages } from '@/activities/emails/components/ChatThreadMessages';
 import { useChatThreadCounterparts } from '@/activities/emails/hooks/useChatThreadCounterparts';
+import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { useReplyConnectedAccount } from '@/activities/emails/hooks/useReplyConnectedAccount';
 import { useStickToBottomScroll } from '@/activities/emails/hooks/useStickToBottomScroll';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
@@ -53,6 +54,7 @@ export const ChatThreadWidgetContent = ({
   const { messageChannel, connectedAccount } =
     useReplyConnectedAccount(messageChannelId);
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
+  const { sendAppChannelMessage } = useSendAppChannelMessage();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const hasSendPermission = useHasPermissionFlag(
     PermissionFlagType.SEND_EMAIL_TOOL,
@@ -118,8 +120,6 @@ export const ChatThreadWidgetContent = ({
           isDefined(connectionProvider) && (
             <ChatThreadComposer
               key={messageThreadId}
-              messageThreadId={messageThreadId}
-              messageChannelId={messageChannel.id}
               channelName={connectionProvider.displayName}
               recipientName={
                 isDefined(firstCounterpart)
@@ -129,6 +129,14 @@ export const ChatThreadWidgetContent = ({
                   : null
               }
               isDisconnected={isDisconnected}
+              onSendMessage={({ id, text }) =>
+                sendAppChannelMessage({
+                  messageChannelId: messageChannel.id,
+                  messageThreadId,
+                  text,
+                  idempotencyKey: id,
+                })
+              }
               onMessageSent={onMessageSent}
             />
           )}

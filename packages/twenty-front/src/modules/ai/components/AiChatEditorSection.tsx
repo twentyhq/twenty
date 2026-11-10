@@ -7,6 +7,7 @@ import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
@@ -68,19 +69,10 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
       : themeCssVariables.spacing[4]};
 `;
 
-const StyledInputBox = styled.div<{
+const StyledInputBox = styled(StyledChatComposerBox)<{
   isMobile: boolean;
   isCentered: boolean;
 }>`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: calc(
-    ${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]}
-  );
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
   min-height: ${({ isMobile, isCentered }) => {
     if (isMobile) {
       return 'auto';
@@ -88,13 +80,6 @@ const StyledInputBox = styled.div<{
 
     return isCentered ? themeCssVariables.spacing[20] : '140px';
   }};
-  padding: ${themeCssVariables.spacing[2]};
-  width: 100%;
-
-  &:focus-within {
-    border-color: ${themeCssVariables.color.blue};
-    box-shadow: 0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2};
-  }
 `;
 
 const StyledEditorWrapper = styled.div<{
