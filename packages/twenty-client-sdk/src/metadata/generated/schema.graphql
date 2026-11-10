@@ -1726,6 +1726,7 @@ input CreateMcpServerInput {
   isActive: Boolean
   label: String!
   name: String!
+  signInScope: ConnectionProviderScope
   url: String!
 }
 
@@ -3212,6 +3213,7 @@ type McpServer {
   isActive: Boolean!
   label: String!
   name: String!
+  signInScope: ConnectionProviderScope
   tools: [McpServerTool!]!
   toolsSyncError: String
   toolsSyncedAt: DateTime
@@ -5403,6 +5405,7 @@ input UpdateMcpServerInputUpdates {
   isActive: Boolean
   label: String
   name: String
+  signInScope: ConnectionProviderScope
   url: String
 }
 
