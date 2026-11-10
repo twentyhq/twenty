@@ -35,7 +35,6 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
     groupBy: ['roleId'],
     where: { deletedAt: IsNull() },
   },
-  rowLevelPermissionRule: { columns: true, groupBy: ['roleId'] },
   objectMetadata: [
     'id',
     'isSystem',
@@ -68,7 +67,6 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       fieldPermission: fieldPermissions,
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
-      rowLevelPermissionRule: rowLevelPermissionRules,
       objectMetadata: workspaceObjectMetadataCollection,
       fieldMetadata: morphRelationFieldMetadatas,
     } = rows;
@@ -114,8 +112,6 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             rowLevelPermissionPredicates.byRoleId.get(role.id) ?? [],
           rowLevelPermissionPredicateGroups:
             rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? [],
-          rowLevelPermissionRules:
-            rowLevelPermissionRules.byRoleId.get(role.id) ?? [],
         },
         objectMetadataCollection: workspaceObjectMetadataCollection,
         resolveMorphRelationPermissionFieldIds,

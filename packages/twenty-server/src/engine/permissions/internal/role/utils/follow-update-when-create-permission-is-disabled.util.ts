@@ -16,10 +16,10 @@ const followUpdateForCreate = (
     ...objectRecordsPermissions,
     canCreateAllRecords: objectRecordsPermissions.canUpdateAllRecords,
     ...(isDefined(rowLevelRecordsPermissions) && {
-      rowLevelRecordsPermissions: rowLevelRecordsPermissions.map((rule) => ({
-        ...rule,
-        canCreateRecords: rule.canUpdateRecords,
-      })),
+      rowLevelRecordsPermissions: {
+        ...rowLevelRecordsPermissions,
+        canCreateRecords: rowLevelRecordsPermissions.canUpdateRecords,
+      },
     }),
   };
 };

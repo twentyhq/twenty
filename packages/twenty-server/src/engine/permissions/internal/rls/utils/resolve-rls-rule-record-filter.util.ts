@@ -1,19 +1,10 @@
 /* @license Enterprise */
 
-import {
-  type ObjectRecordsOperationType,
-  type RecordGqlOperationFilter,
-} from 'twenty-shared/types';
-import {
-  canReachAllRecords,
-  isDefined,
-  isRowLevelRecordsPermissionsRuleGrantingOperation,
-} from 'twenty-shared/utils';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
-import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 import {
   buildRowLevelPermissionRecordFilter,
@@ -23,19 +14,32 @@ import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/i
 import { resolveRowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-workspace-member.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
-type ResolveRlsRuleRecordFilterArgs = {
+export const resolveRlsRuleRecordFilter = ({
+  principals,
+  metadataMaps,
+  flatObjectMetadata,
+  roleId,
+}: {
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
   flatObjectMetadata: FlatObjectMetadata;
-};
+  roleId?: string;
+}): RecordGqlOperationFilter | null => {
+  const rowLevelPermissionRules: RowLevelPermissionRule[] = [
+    roleId ?? principals.mainPrincipal.roleId,
+  ]
+    .map(
+      (principalRoleId) =>
+        metadataMaps.rolesPermissions[principalRoleId]?.objects[
+          flatObjectMetadata.id
+        ]?.rowLevelRecordsPermissions,
+    )
+    .filter(isDefined);
 
-export const buildRlsRulesRecordFilter = ({
-  principals,
-  metadataMaps,
-  rowLevelPermissionRules,
-}: Omit<ResolveRlsRuleRecordFilterArgs, 'flatObjectMetadata'> & {
-  rowLevelPermissionRules: RowLevelPermissionRule[];
-}): RecordGqlOperationFilter => {
+  if (rowLevelPermissionRules.length === 0) {
+    return null;
+  }
+
   const workspaceMember = resolveRowLevelPermissionWorkspaceMember({
     principals,
     metadataMaps,
@@ -56,43 +60,5 @@ export const buildRlsRulesRecordFilter = ({
     isRelationHopEnabled: isRowLevelPermissionRelationHopEnabled(
       metadataMaps.featureFlagsMap,
     ),
-  });
-};
-
-// Null when the principals reach every record for the operation, or have no rule on the object
-export const resolveRlsRuleRecordFilter = ({
-  operationType,
-  ...args
-}: ResolveRlsRuleRecordFilterArgs & {
-  operationType: ObjectRecordsOperationType;
-}): RecordGqlOperationFilter | null => {
-  const objectRecordsPermissions =
-    getPermissionsPrincipalsRecordsPermissions(args).objects[
-      args.flatObjectMetadata.id
-    ];
-  const enforcedOperationType = getEnforcedOperationType({
-    operationType,
-    featureFlagsMap: args.metadataMaps.featureFlagsMap,
-  });
-
-  if (
-    !isDefined(objectRecordsPermissions?.rowLevelRecordsPermissions) ||
-    canReachAllRecords({
-      objectRecordsPermissions,
-      operationType: enforcedOperationType,
-    })
-  ) {
-    return null;
-  }
-
-  return buildRlsRulesRecordFilter({
-    ...args,
-    rowLevelPermissionRules:
-      objectRecordsPermissions.rowLevelRecordsPermissions.filter((rule) =>
-        isRowLevelRecordsPermissionsRuleGrantingOperation({
-          rule,
-          operationType: enforcedOperationType,
-        }),
-      ),
   });
 };

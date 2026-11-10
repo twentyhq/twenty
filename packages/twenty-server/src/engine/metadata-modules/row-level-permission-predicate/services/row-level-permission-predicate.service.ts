@@ -44,27 +44,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const RULE_GRANT_KEYS = [
-  'canCreateRecords',
-  'canReadRecords',
-  'canUpdateRecords',
-  'canSoftDeleteRecords',
-  'canDestroyRecords',
-] as const;
-
-type RuleGrantKey = (typeof RULE_GRANT_KEYS)[number];
-
-const withDefinedRuleGrants = (
-  ruleGrants: Partial<Record<RuleGrantKey, boolean>>,
-): Partial<Record<RuleGrantKey, boolean>> =>
-  Object.fromEntries(
-    RULE_GRANT_KEYS.flatMap((ruleGrantKey) =>
-      isDefined(ruleGrants[ruleGrantKey])
-        ? [[ruleGrantKey, ruleGrants[ruleGrantKey]]]
-        : [],
-    ),
-  );
-
 @Injectable()
 export class RowLevelPermissionPredicateService {
   constructor(
@@ -234,13 +213,6 @@ export class RowLevelPermissionPredicateService {
       flatApplication: workspaceCustomFlatApplication,
       flatRowLevelPermissionRuleMaps,
       flatFieldPermissionMaps,
-      ruleGrants: {
-        canCreateRecords: input.canCreateRecords,
-        canReadRecords: input.canReadRecords,
-        canUpdateRecords: input.canUpdateRecords,
-        canSoftDeleteRecords: input.canSoftDeleteRecords,
-        canDestroyRecords: input.canDestroyRecords,
-      },
     });
 
     await this.runUpsertMigration({
@@ -495,7 +467,6 @@ export class RowLevelPermissionPredicateService {
     flatApplication,
     flatRowLevelPermissionRuleMaps,
     flatFieldPermissionMaps,
-    ruleGrants,
   }: {
     existingGroups: FlatRowLevelPermissionPredicateGroup[];
     existingPredicates: FlatRowLevelPermissionPredicate[];
@@ -511,10 +482,8 @@ export class RowLevelPermissionPredicateService {
     flatApplication: FlatApplication;
     flatRowLevelPermissionRuleMaps: FlatEntityMaps<FlatRowLevelPermissionRule>;
     flatFieldPermissionMaps: FlatEntityMaps<FlatFieldPermission>;
-    ruleGrants: Partial<Pick<FlatRowLevelPermissionRule, RuleGrantKey>>;
   }): {
     rulesToCreate: FlatRowLevelPermissionRule[];
-    rulesToUpdate: FlatRowLevelPermissionRule[];
     fieldPermissionsToUpdate: FlatFieldPermission[];
     rulesToDelete: FlatRowLevelPermissionRule[];
     groupsToCreate: FlatRowLevelPermissionPredicateGroup[];
@@ -588,26 +557,12 @@ export class RowLevelPermissionPredicateService {
       )
       .map((rule) => ({
         ...rule,
-        ...withDefinedRuleGrants(ruleGrants),
         id: v4(),
         workspaceId,
         applicationId: flatApplication.id,
         roleId,
         objectMetadataId,
       }));
-    const rulesToUpdate = existingRules.flatMap((existingRule) => {
-      const updatedRule = {
-        ...existingRule,
-        ...withDefinedRuleGrants(ruleGrants),
-      };
-
-      return RULE_GRANT_KEYS.some(
-        (ruleGrantKey) =>
-          updatedRule[ruleGrantKey] !== existingRule[ruleGrantKey],
-      )
-        ? [updatedRule]
-        : [];
-    });
     const ruleUniversalIdentifiers = new Set(
       rules.map(({ universalIdentifier }) => universalIdentifier),
     );
@@ -741,9 +696,6 @@ export class RowLevelPermissionPredicateService {
 
     return {
       rulesToCreate,
-      rulesToUpdate: rulesToUpdate.filter(({ universalIdentifier }) =>
-        ruleUniversalIdentifiers.has(universalIdentifier),
-      ),
       rulesToDelete,
       fieldPermissionsToUpdate,
       groupsToCreate: linkedGroups.linkedToCreate,
@@ -766,7 +718,6 @@ export class RowLevelPermissionPredicateService {
   private async runUpsertMigration({
     workspaceId,
     rulesToCreate,
-    rulesToUpdate,
     rulesToDelete,
     fieldPermissionsToUpdate,
     predicatesToCreate,
@@ -778,7 +729,6 @@ export class RowLevelPermissionPredicateService {
   }: {
     workspaceId: string;
     rulesToCreate: FlatRowLevelPermissionRule[];
-    rulesToUpdate: FlatRowLevelPermissionRule[];
     rulesToDelete: FlatRowLevelPermissionRule[];
     fieldPermissionsToUpdate: FlatFieldPermission[];
     predicatesToCreate: FlatRowLevelPermissionPredicate[];
@@ -799,7 +749,7 @@ export class RowLevelPermissionPredicateService {
           allFlatEntityOperationByMetadataName: {
             rowLevelPermissionRule: {
               flatEntityToCreate: rulesToCreate,
-              flatEntityToUpdate: rulesToUpdate,
+              flatEntityToUpdate: [],
               flatEntityToDelete: rulesToDelete,
             },
             rowLevelPermissionPredicateGroup: {

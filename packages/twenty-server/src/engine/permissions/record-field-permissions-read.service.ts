@@ -8,9 +8,9 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { findRlsRuleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields.util';
+import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields-by-role.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
-import { buildRlsRulesRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -51,7 +51,7 @@ export class RecordFieldPermissionsReadService {
       return [];
     }
 
-    const rlsRuleFields = findRlsRuleFields({
+    const rlsRuleFieldsByRole = findRlsRuleFieldsByRole({
       principals,
       metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
         { principals },
@@ -60,30 +60,30 @@ export class RecordFieldPermissionsReadService {
       fieldList: 'unreadableFields',
     });
 
-    if (!isNonEmptyArray(rlsRuleFields)) {
+    if (!isNonEmptyArray(rlsRuleFieldsByRole)) {
       return [];
     }
 
     const { metadataMaps, flatObjectMetadata } =
       await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
 
-    return rlsRuleFields.map(
-      ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
-        fieldMetadataIds,
-        // An RLS rule whose filter compiles to nothing matches every record
-        sqlCondition: renderRowLevelPermissionFilterToSql({
-          recordFilter: buildRlsRulesRecordFilter({
+    return rlsRuleFieldsByRole.map(({ roleId, fieldMetadataIds }) => ({
+      fieldMetadataIds,
+      // An RLS rule whose filter compiles to nothing matches every record
+      sqlCondition: renderRowLevelPermissionFilterToSql({
+        recordFilter:
+          resolveRlsRuleRecordFilter({
             principals,
             metadataMaps,
-            rowLevelPermissionRules: [rowLevelPermissionRule],
-          }),
-          tableAlias,
-          objectMetadata: flatObjectMetadata,
-          flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-          flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-        }) ?? { sql: 'TRUE', parameters: {} },
-      }),
-    );
+            flatObjectMetadata,
+            roleId,
+          }) ?? {},
+        tableAlias,
+        objectMetadata: flatObjectMetadata,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+      }) ?? { sql: 'TRUE', parameters: {} },
+    }));
   }
 
   private async findObjectFieldMetadataIds({

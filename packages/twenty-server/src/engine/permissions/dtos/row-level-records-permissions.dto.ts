@@ -6,9 +6,6 @@ import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-
 
 @ObjectType('RowLevelRecordsPermissions')
 export class RowLevelRecordsPermissionsDTO {
-  @Field(() => UUIDScalarType)
-  ruleId: string;
-
   @Field(() => Boolean)
   canCreateRecords: boolean;
 
@@ -30,9 +27,9 @@ export class RowLevelRecordsPermissionsDTO {
   @Field(() => [RowLevelPermissionPredicateGroupDTO])
   predicateGroups: RowLevelPermissionPredicateGroupDTO[];
 
-  @Field(() => [UUIDScalarType])
-  unreadableFields: string[];
+  @Field(() => [UUIDScalarType], { nullable: true })
+  unreadableFields?: string[];
 
-  @Field(() => [UUIDScalarType])
-  uneditableFields: string[];
+  @Field(() => [UUIDScalarType], { nullable: true })
+  uneditableFields?: string[];
 }

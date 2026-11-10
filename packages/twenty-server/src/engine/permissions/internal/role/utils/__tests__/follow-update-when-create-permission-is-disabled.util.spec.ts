@@ -19,20 +19,15 @@ const recordsPermissions: RoleRecordsPermissions = {
       canDestroyAllRecords: false,
       unreadableFields: [],
       uneditableFields: [],
-      rowLevelRecordsPermissions: [
-        {
-          ruleId: 'rule-id',
-          canCreateRecords: false,
-          canReadRecords: true,
-          canUpdateRecords: true,
-          canSoftDeleteRecords: true,
-          canDestroyRecords: true,
-          predicates: [],
-          predicateGroups: [],
-          unreadableFields: [],
-          uneditableFields: [],
-        },
-      ],
+      rowLevelRecordsPermissions: {
+        canCreateRecords: false,
+        canReadRecords: true,
+        canUpdateRecords: true,
+        canSoftDeleteRecords: true,
+        canDestroyRecords: true,
+        predicates: [],
+        predicateGroups: [],
+      },
     },
   },
 };
@@ -45,8 +40,7 @@ describe('followUpdateWhenCreatePermissionIsDisabled', () => {
 
     expect(objectRecordsPermissions?.canCreateAllRecords).toBe(false);
     expect(
-      objectRecordsPermissions?.rowLevelRecordsPermissions?.[0]
-        ?.canCreateRecords,
+      objectRecordsPermissions?.rowLevelRecordsPermissions?.canCreateRecords,
     ).toBe(true);
   });
 
@@ -61,8 +55,7 @@ describe('followUpdateWhenCreatePermissionIsDisabled', () => {
     ).objects[OBJECT_METADATA_ID];
 
     expect(
-      objectRecordsPermissions?.rowLevelRecordsPermissions?.[0]
-        ?.canCreateRecords,
+      objectRecordsPermissions?.rowLevelRecordsPermissions?.canCreateRecords,
     ).toBe(false);
   });
 });

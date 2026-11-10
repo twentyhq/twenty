@@ -37,7 +37,7 @@ export type RowLevelPermissionRule = Pick<
   'predicates' | 'predicateGroups'
 >;
 
-type BuildRecordFilterForRuleArgs = {
+type BuildRecordFilterForRoleArgs = {
   rowLevelPermissionRule: RowLevelPermissionRule | null | undefined;
   memberFieldValues: RowLevelPermissionMemberFieldValues;
   currentWorkspaceMemberId?: string;
@@ -112,7 +112,7 @@ const buildPredicateRecordFilter = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   isRelationHopEnabled,
-}: Omit<BuildRecordFilterForRuleArgs, 'rowLevelPermissionRule'> & {
+}: Omit<BuildRecordFilterForRoleArgs, 'rowLevelPermissionRule'> & {
   predicate: RowLevelPermissionPredicate;
 }): RecordGqlOperationFilter | undefined => {
   const fieldMetadata = findFieldMetadataOrThrow({
@@ -188,6 +188,37 @@ const buildPredicateRecordFilter = ({
   return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
 };
 
+// Only one parentless group is enforced: the one reached by the first grouped predicate
+const findEnforcedRootPredicateGroup = ({
+  predicates,
+  predicateGroups,
+}: RowLevelPermissionRule): RowLevelPermissionPredicateGroup | undefined => {
+  const predicateGroupById = new Map(
+    predicateGroups.map((predicateGroup) => [
+      predicateGroup.id,
+      predicateGroup,
+    ]),
+  );
+  const visitedPredicateGroupIds = new Set<string>();
+  let rootPredicateGroup = predicateGroupById.get(
+    predicates.find(({ rowLevelPermissionPredicateGroupId }) =>
+      isDefined(rowLevelPermissionPredicateGroupId),
+    )?.rowLevelPermissionPredicateGroupId ?? '',
+  );
+
+  while (
+    isDefined(rootPredicateGroup?.parentRowLevelPermissionPredicateGroupId) &&
+    !visitedPredicateGroupIds.has(rootPredicateGroup.id)
+  ) {
+    visitedPredicateGroupIds.add(rootPredicateGroup.id);
+    rootPredicateGroup = predicateGroupById.get(
+      rootPredicateGroup.parentRowLevelPermissionPredicateGroupId,
+    );
+  }
+
+  return rootPredicateGroup;
+};
+
 const combineRecordFilters = (
   recordFilters: RecordGqlOperationFilter[],
 ): RecordGqlOperationFilter => {
@@ -198,10 +229,10 @@ const combineRecordFilters = (
   return recordFilters.length === 0 ? {} : { and: recordFilters };
 };
 
-export const buildRecordFilterForRule = ({
+export const buildRecordFilterForRole = ({
   rowLevelPermissionRule,
   ...buildPredicateRecordFilterArgs
-}: BuildRecordFilterForRuleArgs): RecordGqlOperationFilter | null => {
+}: BuildRecordFilterForRoleArgs): RecordGqlOperationFilter | null => {
   if (
     !isDefined(rowLevelPermissionRule) ||
     rowLevelPermissionRule.predicates.length === 0
@@ -254,38 +285,40 @@ export const buildRecordFilterForRule = ({
       : { and: recordFilters };
   };
 
+  const enforcedRootPredicateGroup = findEnforcedRootPredicateGroup(
+    rowLevelPermissionRule,
+  );
+
   return combineRecordFilters(
     [
       ...findGroupRecordFilters(null),
-      ...predicateGroups
-        .filter(
-          ({ parentRowLevelPermissionPredicateGroupId }) =>
-            !isDefined(parentRowLevelPermissionPredicateGroupId),
-        )
-        .map(buildGroupRecordFilter),
+      isDefined(enforcedRootPredicateGroup)
+        ? buildGroupRecordFilter(enforcedRootPredicateGroup)
+        : undefined,
     ].filter(isDefined),
   );
 };
 
-// A record is reachable through any of the rules, so their filters are ORed
+// Roles compile separately, then AND, so a rule of one role never widens another
 export const buildRowLevelPermissionRecordFilter = ({
   rowLevelPermissionRules,
-  ...buildRecordFilterForRuleArgs
-}: Omit<BuildRecordFilterForRuleArgs, 'rowLevelPermissionRule'> & {
-  rowLevelPermissionRules: RowLevelPermissionRule[];
-}): RecordGqlOperationFilter => {
+  ...buildRecordFilterForRoleArgs
+}: Omit<BuildRecordFilterForRoleArgs, 'rowLevelPermissionRule'> & {
+  rowLevelPermissionRules: (RowLevelPermissionRule | null | undefined)[];
+}): RecordGqlOperationFilter | null => {
   const recordFilters = rowLevelPermissionRules
     .map((rowLevelPermissionRule) =>
-      buildRecordFilterForRule({
-        ...buildRecordFilterForRuleArgs,
+      buildRecordFilterForRole({
+        ...buildRecordFilterForRoleArgs,
         rowLevelPermissionRule,
       }),
     )
-    .filter(isDefined);
+    .filter(isDefined)
+    .filter((recordFilter) => Object.keys(recordFilter).length > 0);
 
   if (recordFilters.length === 0) {
-    return UNSATISFIABLE_RECORD_FILTER;
+    return null;
   }
 
-  return recordFilters.length === 1 ? recordFilters[0] : { or: recordFilters };
+  return combineRecordFilters(recordFilters);
 };

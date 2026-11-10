@@ -1245,9 +1245,7 @@ export class DataloaderService {
       Required<
         Pick<
           RoleDTO,
-          | 'rowLevelPermissionPredicates'
-          | 'rowLevelPermissionPredicateGroups'
-          | 'rowLevelPermissionRules'
+          'rowLevelPermissionPredicates' | 'rowLevelPermissionPredicateGroups'
         >
       >
     >(async (dataLoaderParams: RowLevelPermissionsByRoleIdLoaderPayload[]) => {
@@ -1262,7 +1260,6 @@ export class DataloaderService {
         return dataLoaderParams.map(() => ({
           rowLevelPermissionPredicates: [],
           rowLevelPermissionPredicateGroups: [],
-          rowLevelPermissionRules: [],
         }));
       }
 
@@ -1270,7 +1267,6 @@ export class DataloaderService {
         flatRoleMaps,
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
-        flatRowLevelPermissionRuleMaps,
       } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
@@ -1279,7 +1275,6 @@ export class DataloaderService {
               'flatRoleMaps',
               'flatRowLevelPermissionPredicateMaps',
               'flatRowLevelPermissionPredicateGroupMaps',
-              'flatRowLevelPermissionRuleMaps',
             ],
           },
         );
@@ -1294,7 +1289,6 @@ export class DataloaderService {
           return {
             rowLevelPermissionPredicates: [],
             rowLevelPermissionPredicateGroups: [],
-            rowLevelPermissionRules: [],
           };
         }
 
@@ -1329,28 +1323,6 @@ export class DataloaderService {
                     0),
               )
               .map(fromFlatRowLevelPermissionPredicateGroupToDto),
-          rowLevelPermissionRules: findManyFlatEntityByIdInFlatEntityMaps({
-            flatEntityIds: flatRole.rowLevelPermissionRuleIds,
-            flatEntityMaps: flatRowLevelPermissionRuleMaps,
-          }).map(
-            ({
-              id,
-              objectMetadataId,
-              canCreateRecords,
-              canReadRecords,
-              canUpdateRecords,
-              canSoftDeleteRecords,
-              canDestroyRecords,
-            }) => ({
-              id,
-              objectMetadataId,
-              canCreateRecords,
-              canReadRecords,
-              canUpdateRecords,
-              canSoftDeleteRecords,
-              canDestroyRecords,
-            }),
-          ),
         };
       });
     });

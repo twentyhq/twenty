@@ -18,7 +18,6 @@ export const resolvePermissionsRowLevelPermissionFilter = (
       principals: request.principals,
       metadataMaps: request.metadataMaps,
       flatObjectMetadata: request.flatObjectMetadata,
-      operationType: request.operationType,
     }) ?? undefined
   );
 };

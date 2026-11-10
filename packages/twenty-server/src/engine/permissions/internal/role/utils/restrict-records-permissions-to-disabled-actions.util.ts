@@ -41,19 +41,24 @@ const restrictObjectRecordsPermissionsToDisabledActions = ({
       objectRecordsPermissions.canDestroyAllRecords &&
       isEnabled('canDestroyObjectRecords'),
     ...(isDefined(rowLevelRecordsPermissions) && {
-      rowLevelRecordsPermissions: rowLevelRecordsPermissions.map((rule) => ({
-        ...rule,
+      rowLevelRecordsPermissions: {
+        ...rowLevelRecordsPermissions,
         canCreateRecords:
-          rule.canCreateRecords && isEnabled('canCreateObjectRecords'),
+          rowLevelRecordsPermissions.canCreateRecords &&
+          isEnabled('canCreateObjectRecords'),
         canReadRecords:
-          rule.canReadRecords && isEnabled('canReadObjectRecords'),
+          rowLevelRecordsPermissions.canReadRecords &&
+          isEnabled('canReadObjectRecords'),
         canUpdateRecords:
-          rule.canUpdateRecords && isEnabled('canUpdateObjectRecords'),
+          rowLevelRecordsPermissions.canUpdateRecords &&
+          isEnabled('canUpdateObjectRecords'),
         canSoftDeleteRecords:
-          rule.canSoftDeleteRecords && isEnabled('canSoftDeleteObjectRecords'),
+          rowLevelRecordsPermissions.canSoftDeleteRecords &&
+          isEnabled('canSoftDeleteObjectRecords'),
         canDestroyRecords:
-          rule.canDestroyRecords && isEnabled('canDestroyObjectRecords'),
-      })),
+          rowLevelRecordsPermissions.canDestroyRecords &&
+          isEnabled('canDestroyObjectRecords'),
+      },
     }),
   };
 };

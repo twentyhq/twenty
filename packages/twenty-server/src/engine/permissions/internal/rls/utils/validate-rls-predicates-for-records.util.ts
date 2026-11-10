@@ -33,7 +33,6 @@ export const validateRLSPredicatesForRecords = async <T extends ObjectRecord>({
     principals,
     metadataMaps,
     flatObjectMetadata: objectMetadata,
-    operationType: 'create',
   });
 
   if (!isDefined(recordFilter)) {

@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { findSingleCreateRowLevelPermissionRule } from '@/object-metadata/utils/findSingleCreateRowLevelPermissionRule';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { getRestrictingRowLevelPermissionPredicates } from '@/object-record/record-field/ui/meta-types/utils/getRestrictingRowLevelPermissionPredicates';
@@ -124,15 +123,14 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
       return { filteredOptions: options, canSelectEmpty: true };
     }
 
-    const createRowLevelPermissionRule =
-      findSingleCreateRowLevelPermissionRule(objectPermissions);
     const selectPredicates = (
-      createRowLevelPermissionRule?.predicates ?? []
+      objectPermissions.rowLevelRecordsPermissions?.predicates ?? []
     ).filter((predicate) => predicate.fieldMetadataId === fieldMetadataId);
 
     const restrictingPredicates = getRestrictingRowLevelPermissionPredicates({
       predicates: selectPredicates,
-      predicateGroups: createRowLevelPermissionRule?.predicateGroups ?? [],
+      predicateGroups:
+        objectPermissions.rowLevelRecordsPermissions?.predicateGroups ?? [],
     });
 
     if (restrictingPredicates.length === 0) {
@@ -156,5 +154,10 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
       ),
       canSelectEmpty: hasIsEmptyPredicate && !hasIsNotEmptyPredicate,
     };
-  }, [objectMetadataId, objectPermissions, fieldMetadataId, options]);
+  }, [
+    objectMetadataId,
+    objectPermissions.rowLevelRecordsPermissions,
+    fieldMetadataId,
+    options,
+  ]);
 };

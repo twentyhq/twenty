@@ -50,7 +50,6 @@ export const USER_QUERY_FRAGMENT = gql`
         uneditableFields
         restrictedFields
         rowLevelRecordsPermissions {
-          ruleId
           canCreateRecords
           canReadRecords
           canUpdateRecords
@@ -62,8 +61,6 @@ export const USER_QUERY_FRAGMENT = gql`
           predicateGroups {
             ...RowLevelPermissionPredicateGroupFragment
           }
-          unreadableFields
-          uneditableFields
         }
       }
       twoFactorAuthenticationMethodSummary {

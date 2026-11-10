@@ -40,20 +40,15 @@ const buildRole = (
 const ROLE_WITH_RULE = buildRole({
   ...allRecords,
   canReadAllRecords: false,
-  rowLevelRecordsPermissions: [
-    {
-      ruleId: 'rule-id',
-      canCreateRecords: false,
-      canReadRecords: true,
-      canUpdateRecords: false,
-      canSoftDeleteRecords: false,
-      canDestroyRecords: false,
-      predicates: [],
-      predicateGroups: [],
-      unreadableFields: [],
-      uneditableFields: [],
-    },
-  ],
+  rowLevelRecordsPermissions: {
+    canCreateRecords: false,
+    canReadRecords: true,
+    canUpdateRecords: false,
+    canSoftDeleteRecords: false,
+    canDestroyRecords: false,
+    predicates: [],
+    predicateGroups: [],
+  },
 });
 
 describe('isObjectUsingRecordAccessGroups', () => {

@@ -2,7 +2,6 @@ import {
   FieldMetadataType,
   type ObjectRecordsPermissions,
   RowLevelPermissionPredicateOperand,
-  type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -41,46 +40,15 @@ const flatFieldMetadataMaps = [
   createEmptyFlatEntityMaps(),
 );
 
-const buildRule = ({
+const buildObjectRecordsPermissions = ({
   roleId,
-  ruleId,
   value,
-  unreadableFields,
+  rlsRuleUnreadableFields,
 }: {
   roleId: string;
-  ruleId: string;
   value: string;
-  unreadableFields: string[];
-}): RowLevelRecordsPermissions => ({
-  ruleId,
-  canCreateRecords: false,
-  canReadRecords: true,
-  canUpdateRecords: false,
-  canSoftDeleteRecords: false,
-  canDestroyRecords: false,
-  predicateGroups: [],
-  predicates: [
-    {
-      id: `${ruleId}-predicate`,
-      roleId,
-      objectMetadataId: OBJECT_METADATA_ID,
-      fieldMetadataId: 'name-field-id',
-      relationFieldMetadataId: null,
-      rowLevelPermissionPredicateGroupId: null,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      value,
-      subFieldName: null,
-      workspaceMemberFieldMetadataId: null,
-      workspaceMemberSubFieldName: null,
-    },
-  ],
-  unreadableFields,
-  uneditableFields: unreadableFields,
-});
-
-const buildObjectRecordsPermissions = (
-  rowLevelRecordsPermissions: RowLevelRecordsPermissions[],
-): ObjectRecordsPermissions => ({
+  rlsRuleUnreadableFields: string[];
+}): ObjectRecordsPermissions => ({
   canCreateAllRecords: false,
   canReadAllRecords: false,
   canUpdateAllRecords: false,
@@ -88,121 +56,92 @@ const buildObjectRecordsPermissions = (
   canDestroyAllRecords: false,
   unreadableFields: [],
   uneditableFields: [],
-  rowLevelRecordsPermissions,
+  rowLevelRecordsPermissions: {
+    canCreateRecords: false,
+    canReadRecords: true,
+    canUpdateRecords: false,
+    canSoftDeleteRecords: false,
+    canDestroyRecords: false,
+    predicateGroups: [],
+    predicates: [
+      {
+        id: `${roleId}-predicate`,
+        roleId,
+        objectMetadataId: OBJECT_METADATA_ID,
+        fieldMetadataId: 'name-field-id',
+        relationFieldMetadataId: null,
+        rowLevelPermissionPredicateGroupId: null,
+        operand: RowLevelPermissionPredicateOperand.IS,
+        value,
+        subFieldName: null,
+        workspaceMemberFieldMetadataId: null,
+        workspaceMemberSubFieldName: null,
+      },
+    ],
+    unreadableFields: rlsRuleUnreadableFields,
+    uneditableFields: rlsRuleUnreadableFields,
+  },
 });
-
-const resolve = ({
-  memberRules,
-  agentRules = [],
-}: {
-  memberRules: RowLevelRecordsPermissions[];
-  agentRules?: RowLevelRecordsPermissions[];
-}) =>
-  resolveFieldsHiddenOnMatchingRecords({
-    principals: {
-      workspaceId: 'workspace-id',
-      mainPrincipal: {
-        type: 'workspaceMember',
-        roleId: MEMBER_ROLE_ID,
-        workspaceMemberId: 'member-id',
-      },
-      limitingPrincipal: {
-        type: 'agent',
-        agentId: 'agent-id',
-        roleId: AGENT_ROLE_ID,
-      },
-      applicationPrincipal: { type: 'customApplication' },
-    },
-    metadataMaps: {
-      flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: invoice,
-        flatEntityMaps: createEmptyFlatEntityMaps(),
-      }),
-      flatFieldMetadataMaps,
-      flatApplicationMaps: { byId: {} },
-      featureFlagsMap: {},
-      rolesPermissions: {
-        [MEMBER_ROLE_ID]: {
-          ...NO_ROLE_RECORDS_PERMISSIONS,
-          objects: {
-            [OBJECT_METADATA_ID]: buildObjectRecordsPermissions(memberRules),
-          },
-        },
-        [AGENT_ROLE_ID]: {
-          ...NO_ROLE_RECORDS_PERMISSIONS,
-          objects: {
-            [OBJECT_METADATA_ID]: buildObjectRecordsPermissions(agentRules),
-          },
-        },
-      },
-    },
-    flatObjectMetadata: invoice,
-    fieldList: 'unreadableFields',
-    records: [],
-    findRelationJoinValues: jest.fn(),
-  });
 
 describe('resolveFieldsHiddenOnMatchingRecords', () => {
   it('should take the hidden fields and filter of the main role only', async () => {
-    expect(
-      await resolve({
-        memberRules: [
-          buildRule({
+    const fieldsHiddenOnMatchingRecords =
+      await resolveFieldsHiddenOnMatchingRecords({
+        principals: {
+          workspaceId: 'workspace-id',
+          mainPrincipal: {
+            type: 'workspaceMember',
             roleId: MEMBER_ROLE_ID,
-            ruleId: 'member-rule-id',
-            value: 'member-invoice',
-            unreadableFields: ['secret-field-id'],
-          }),
-        ],
-        agentRules: [
-          buildRule({
+            workspaceMemberId: 'member-id',
+          },
+          limitingPrincipal: {
+            type: 'agent',
+            agentId: 'agent-id',
             roleId: AGENT_ROLE_ID,
-            ruleId: 'agent-rule-id',
-            value: 'agent-invoice',
-            unreadableFields: ['amount-field-id'],
+          },
+          applicationPrincipal: { type: 'customApplication' },
+        },
+        metadataMaps: {
+          flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: invoice,
+            flatEntityMaps: createEmptyFlatEntityMaps(),
           }),
-        ],
-      }),
-    ).toEqual([
+          flatFieldMetadataMaps,
+          flatApplicationMaps: { byId: {} },
+          featureFlagsMap: {},
+          rolesPermissions: {
+            [MEMBER_ROLE_ID]: {
+              ...NO_ROLE_RECORDS_PERMISSIONS,
+              objects: {
+                [OBJECT_METADATA_ID]: buildObjectRecordsPermissions({
+                  roleId: MEMBER_ROLE_ID,
+                  value: 'member-invoice',
+                  rlsRuleUnreadableFields: ['secret-field-id'],
+                }),
+              },
+            },
+            [AGENT_ROLE_ID]: {
+              ...NO_ROLE_RECORDS_PERMISSIONS,
+              objects: {
+                [OBJECT_METADATA_ID]: buildObjectRecordsPermissions({
+                  roleId: AGENT_ROLE_ID,
+                  value: 'agent-invoice',
+                  rlsRuleUnreadableFields: ['amount-field-id'],
+                }),
+              },
+            },
+          },
+        },
+        flatObjectMetadata: invoice,
+        fieldList: 'unreadableFields',
+        records: [],
+        findRelationJoinValues: jest.fn(),
+      });
+
+    expect(fieldsHiddenOnMatchingRecords).toEqual([
       {
         fieldMetadataIds: ['secret-field-id'],
         recordFilter: { name: { eq: 'member-invoice' } },
-      },
-    ]);
-  });
-
-  it('should hide each rule fields on the records matching that rule only', async () => {
-    expect(
-      await resolve({
-        memberRules: [
-          buildRule({
-            roleId: MEMBER_ROLE_ID,
-            ruleId: 'first-rule-id',
-            value: 'first-invoice',
-            unreadableFields: ['secret-field-id'],
-          }),
-          buildRule({
-            roleId: MEMBER_ROLE_ID,
-            ruleId: 'second-rule-id',
-            value: 'second-invoice',
-            unreadableFields: [],
-          }),
-          buildRule({
-            roleId: MEMBER_ROLE_ID,
-            ruleId: 'third-rule-id',
-            value: 'third-invoice',
-            unreadableFields: ['amount-field-id'],
-          }),
-        ],
-      }),
-    ).toEqual([
-      {
-        fieldMetadataIds: ['secret-field-id'],
-        recordFilter: { name: { eq: 'first-invoice' } },
-      },
-      {
-        fieldMetadataIds: ['amount-field-id'],
-        recordFilter: { name: { eq: 'third-invoice' } },
       },
     ]);
   });

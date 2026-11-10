@@ -49,12 +49,10 @@ const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
     operationType: 'destroy',
   }),
   ...buildFieldLists(objectRecordsPermissions),
-  rowLevelPermissionPredicates: (
-    objectRecordsPermissions.rowLevelRecordsPermissions ?? []
-  ).flatMap(({ predicates }) => predicates),
-  rowLevelPermissionPredicateGroups: (
-    objectRecordsPermissions.rowLevelRecordsPermissions ?? []
-  ).flatMap(({ predicateGroups }) => predicateGroups),
+  rowLevelPermissionPredicates:
+    objectRecordsPermissions.rowLevelRecordsPermissions?.predicates ?? [],
+  rowLevelPermissionPredicateGroups:
+    objectRecordsPermissions.rowLevelRecordsPermissions?.predicateGroups ?? [],
 });
 
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
