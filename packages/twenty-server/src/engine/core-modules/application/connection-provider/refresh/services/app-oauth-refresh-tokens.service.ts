@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { isPermanentOAuthDiscoveryRefreshError } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/is-permanent-oauth-discovery-refresh-error.util';
 import { ConnectionProviderOAuthDiscoveryTokenService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery-token.service';
 import { assertOAuthDiscoveryProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
@@ -135,9 +136,12 @@ export class AppOAuthRefreshAccessTokenService {
         refreshToken,
       });
     } catch (error) {
-      if (error instanceof ConnectionProviderException) {
+      if (
+        error instanceof ConnectionProviderException ||
+        isPermanentOAuthDiscoveryRefreshError(error)
+      ) {
         throw new ConnectedAccountRefreshAccessTokenException(
-          error.message,
+          error instanceof Error ? error.message : String(error),
           ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
         );
       }
