@@ -93,6 +93,11 @@ export const ChannelsAndAttachments: Story = {
     await canvas.findByRole('button', { name: 'Attach files' });
 
     const fileInput = canvasElement.querySelector('input[type="file"]');
+
+    if (!(fileInput instanceof HTMLInputElement)) {
+      throw new Error('The composer file input is missing');
+    }
+
     const signedPage = new File(['signed'], 'signed-page.pdf', {
       type: 'application/pdf',
     });
@@ -100,10 +105,7 @@ export const ChannelsAndAttachments: Story = {
       type: 'application/pdf',
     });
 
-    await userEvent.upload(fileInput as HTMLInputElement, [
-      signedPage,
-      draftPage,
-    ]);
+    await userEvent.upload(fileInput, [signedPage, draftPage]);
     await userEvent.click(
       await canvas.findByRole('button', { name: /Remove draft-page/ }),
     );
