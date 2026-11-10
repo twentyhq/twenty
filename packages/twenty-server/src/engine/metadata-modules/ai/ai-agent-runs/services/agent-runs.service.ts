@@ -7,6 +7,10 @@ import { In } from 'typeorm';
 import { AGENT_RUNS_MAX_LIMIT } from 'src/engine/metadata-modules/ai/ai-agent-runs/constants/agent-runs-max-limit.constant';
 import { type AgentRunDTO } from 'src/engine/metadata-modules/ai/ai-agent-runs/dtos/agent-run.dto';
 import { mapAgentTurnToAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-runs/utils/map-agent-turn-to-agent-run.util';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -104,12 +108,23 @@ export class AgentRunsService {
       return new Set();
     }
 
-    return new Set(
-      await this.agentChatSharingService.findReadableThreadIds({
-        workspaceId,
-        workspaceMemberId,
-        threadIds: [...new Set(threadIds)],
-      }),
-    );
+    try {
+      return new Set(
+        await this.agentChatSharingService.findReadableThreadIds({
+          workspaceId,
+          workspaceMemberId,
+          threadIds: [...new Set(threadIds)],
+        }),
+      );
+    } catch (error) {
+      // thrown when the member cannot use AI chat, which only means no conversation opens
+      if (
+        error instanceof AiException &&
+        error.code === AiExceptionCode.THREAD_NOT_FOUND
+      ) {
+        return new Set();
+      }
+      throw error;
+    }
   }
 }

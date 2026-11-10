@@ -3,6 +3,10 @@ import { In } from 'typeorm';
 
 import { AgentRunsService } from 'src/engine/metadata-modules/ai/ai-agent-runs/services/agent-runs.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 const buildTurn = (id: string) => ({
   id,
@@ -180,5 +184,26 @@ describe('AgentRunsService', () => {
     expect(
       agentChatSharingService.findReadableThreadIds,
     ).not.toHaveBeenCalled();
+  });
+
+  it('still lists the runs of a member without AI chat access', async () => {
+    const { service, agentChatSharingService } = buildService({
+      turns: [buildTurn('turn-a')],
+      messages: [],
+      parts: [],
+    });
+
+    agentChatSharingService.findReadableThreadIds.mockRejectedValue(
+      new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
+    );
+
+    const runs = await service.findAgentRuns({
+      workspaceId: 'workspace-id',
+      workspaceMemberId: 'member-id',
+      agentId: 'agent-id',
+      limit: 10,
+    });
+
+    expect(runs.map((run) => run.canReadThread)).toEqual([false]);
   });
 });
