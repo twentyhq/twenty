@@ -5,6 +5,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 import { collapseViewVisibilityOverrides } from 'src/database/commands/upgrade-version-command/2-58/utils/collapse-view-visibility-overrides.util';
+import { resolveViewOwnerForBackfill } from 'src/database/commands/upgrade-version-command/2-58/utils/resolve-view-owner-for-backfill.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const VIEW_BACKFILL_BATCH_SIZE = 1000;
@@ -13,6 +14,7 @@ type StoredView = {
   id: string;
   visibility: string;
   overrides: unknown;
+  createdByUserWorkspaceId: string | null;
   ownerUserWorkspaceId: string | null;
   activeOwnerUserWorkspaceId: string | null;
   activeCreatorUserWorkspaceId: string | null;
@@ -26,10 +28,10 @@ export class BackfillViewOwnershipSlowInstanceCommand implements SlowInstanceCom
   async runDataMigration(dataSource: DataSource): Promise<void> {
     let lastViewId: string | null = null;
 
-    while (true) {
-      const nextViewId = await dataSource.transaction(async (manager) => {
+    do {
+      lastViewId = await dataSource.transaction(async (manager) => {
         const views: StoredView[] = await manager.query(
-          `SELECT view."id", view."visibility", view."overrides", view."ownerUserWorkspaceId",
+          `SELECT view."id", view."visibility", view."overrides", view."ownerUserWorkspaceId", view."createdByUserWorkspaceId",
              application."universalIdentifier" AS "applicationUniversalIdentifier",
              creator."id" AS "activeCreatorUserWorkspaceId",
              owner."id" AS "activeOwnerUserWorkspaceId"
@@ -53,24 +55,13 @@ export class BackfillViewOwnershipSlowInstanceCommand implements SlowInstanceCom
         const normalizedViews = views.map((view) => {
           const normalized = collapseViewVisibilityOverrides(view);
 
-          if (
-            normalized.visibility === 'UNLISTED' &&
-            isDefined(view.ownerUserWorkspaceId) &&
-            !isDefined(view.activeOwnerUserWorkspaceId)
-          ) {
-            throw new Error(
-              `View ${view.id} has an inactive or cross-workspace owner`,
-            );
-          }
-
           return {
             id: view.id,
             ...normalized,
-            ownerUserWorkspaceId:
-              normalized.visibility === 'UNLISTED'
-                ? (view.ownerUserWorkspaceId ??
-                  view.activeCreatorUserWorkspaceId)
-                : null,
+            ownerUserWorkspaceId: resolveViewOwnerForBackfill({
+              ...view,
+              visibility: normalized.visibility,
+            }),
           };
         });
 
@@ -90,17 +81,11 @@ export class BackfillViewOwnershipSlowInstanceCommand implements SlowInstanceCom
 
         return views[views.length - 1].id;
       });
-
-      if (!isDefined(nextViewId)) {
-        break;
-      }
-
-      lastViewId = nextViewId;
-    }
+    } while (isDefined(lastViewId));
 
     let lastWorkspaceId: string | null = null;
 
-    while (true) {
+    do {
       const workspaces: { workspaceId: string }[] = await dataSource.query(
         `SELECT DISTINCT "workspaceId" FROM "core"."view"
          WHERE ($1::uuid IS NULL OR "workspaceId" > $1::uuid)
@@ -108,13 +93,9 @@ export class BackfillViewOwnershipSlowInstanceCommand implements SlowInstanceCom
         [lastWorkspaceId, VIEW_BACKFILL_BATCH_SIZE],
       );
 
-      if (workspaces.length === 0) {
-        break;
-      }
-
       for (const { workspaceId } of workspaces) {
         const refresh = () =>
-          this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          this.workspaceCacheService.flush(workspaceId, [
             'flatViewMaps',
             'flatViewFieldMaps',
             'flatViewFieldGroupMaps',
@@ -131,8 +112,8 @@ export class BackfillViewOwnershipSlowInstanceCommand implements SlowInstanceCom
         }
       }
 
-      lastWorkspaceId = workspaces[workspaces.length - 1].workspaceId;
-    }
+      lastWorkspaceId = workspaces[workspaces.length - 1]?.workspaceId ?? null;
+    } while (isDefined(lastWorkspaceId));
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
