@@ -91,7 +91,7 @@ export class LambdaToolFunctionsService {
   private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
   private httpEgressFunction:
-    | Promise<{ functionName: string; handlerCode: string }>
+    | { functionName: string; handlerCode: string }
     | undefined;
 
   constructor(
@@ -324,26 +324,7 @@ export class LambdaToolFunctionsService {
   }
 
   private async ensureHttpEgressLambdaIsActive(): Promise<string> {
-    this.httpEgressFunction ??= buildHttpEgressHandlerBundle()
-      .then((handlerCode) => ({
-        handlerCode,
-        functionName: computeHashedLambdaResourceName({
-          resourceNamePrefix: HTTP_EGRESS_FUNCTION_NAME_PREFIX,
-          namespace: this.options.resourceNamespace,
-          contents: [
-            handlerCode,
-            String(HTTP_EGRESS_LAMBDA_MEMORY_MB),
-            String(HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS),
-          ],
-        }),
-      }))
-      .catch((error) => {
-        this.httpEgressFunction = undefined;
-
-        throw error;
-      });
-
-    const { functionName, handlerCode } = await this.httpEgressFunction;
+    const { functionName, handlerCode } = await this.getHttpEgressFunction();
 
     await this.ensureBuildToolLambdaIsActive({
       functionName,
@@ -604,6 +585,32 @@ export class LambdaToolFunctionsService {
     });
 
     return this.yarnInstallFunctionName;
+  }
+
+  private async getHttpEgressFunction(): Promise<{
+    functionName: string;
+    handlerCode: string;
+  }> {
+    if (isDefined(this.httpEgressFunction)) {
+      return this.httpEgressFunction;
+    }
+
+    const handlerCode = await buildHttpEgressHandlerBundle();
+
+    this.httpEgressFunction = {
+      handlerCode,
+      functionName: computeHashedLambdaResourceName({
+        resourceNamePrefix: HTTP_EGRESS_FUNCTION_NAME_PREFIX,
+        namespace: this.options.resourceNamespace,
+        contents: [
+          handlerCode,
+          String(HTTP_EGRESS_LAMBDA_MEMORY_MB),
+          String(HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS),
+        ],
+      }),
+    };
+
+    return this.httpEgressFunction;
   }
 
   private async getBuilderFunctionName(): Promise<string> {
