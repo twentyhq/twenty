@@ -1,4 +1,7 @@
-type InputData = Record<string, any> | string;
+type InputData = Record<string, unknown> | string;
+
+const toStringEntries = (data: Record<string, unknown>): [string, string][] =>
+  Object.entries(data).map(([key, value]) => [key, String(value)]);
 
 const parseUrlEncoded = (data: InputData): string => {
   let parsedData = data;
@@ -9,7 +12,9 @@ const parseUrlEncoded = (data: InputData): string => {
       parsedData = data;
     }
   }
-  return new URLSearchParams(parsedData).toString();
+  return new URLSearchParams(
+    typeof parsedData === 'string' ? parsedData : toStringEntries(parsedData),
+  ).toString();
 };
 
 const parseFormData = (data: InputData): FormData => {
@@ -25,7 +30,7 @@ const parseFormData = (data: InputData): FormData => {
       throw new Error('String data for FormData must be valid JSON');
     }
   } else {
-    Object.entries(data).forEach(([key, val]) => form.append(key, val));
+    Object.entries(data).forEach(([key, val]) => form.append(key, String(val)));
   }
   return form;
 };

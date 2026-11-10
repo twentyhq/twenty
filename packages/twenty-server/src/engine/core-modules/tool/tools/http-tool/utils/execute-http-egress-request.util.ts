@@ -4,12 +4,12 @@ import {
   type AxiosRequestConfig,
   isAxiosError,
 } from 'axios';
-import { isDefined } from 'twenty-shared/utils';
-import { parseDataFromContentType } from 'twenty-shared/workflow';
+import { isNull, isUndefined } from '@sniptt/guards';
 
 import { describeOutboundRequestError } from 'src/engine/core-modules/secure-http-client/utils/describe-outbound-request-error.util';
 import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
 import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
+import { parseDataFromContentType } from 'src/engine/core-modules/tool/tools/http-tool/utils/parse-data-from-content-type.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 const METHODS_WITH_BODY = ['POST', 'PUT', 'PATCH'];
@@ -48,7 +48,7 @@ const buildErrorToolOutput = ({
   };
 };
 
-// Imports only axios, twenty-shared and framework-free helpers: the HTTP egress Lambda bundles it.
+// Bundled into the HTTP egress Lambda: keep its imports framework-free.
 export const executeHttpEgressRequest = async (
   request: HttpEgressRequest,
   httpClient: AxiosInstance,
@@ -67,7 +67,11 @@ export const executeHttpEgressRequest = async (
       maxBodyLength: request.limits.maxPayloadSizeBytes,
     };
 
-    if (METHODS_WITH_BODY.includes(method) && isDefined(body)) {
+    if (
+      METHODS_WITH_BODY.includes(method) &&
+      !isNull(body) &&
+      !isUndefined(body)
+    ) {
       const contentType = headersCopy.getContentType()?.toString();
 
       axiosConfig.data = parseDataFromContentType(body, contentType);

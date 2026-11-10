@@ -1,5 +1,5 @@
 import { isAxiosError } from 'axios';
-import { isDefined } from 'twenty-shared/utils';
+import { isUndefined } from '@sniptt/guards';
 
 import { type OutboundRequestOutcomeDetails } from 'src/engine/core-modules/secure-http-client/outbound-request-outcome-details.type';
 import { findOutboundRequestBlockedError } from 'src/engine/core-modules/secure-http-client/utils/find-outbound-request-blocked-error.util';
@@ -14,7 +14,7 @@ export const describeOutboundRequestError = (
     outcome,
     status: isAxiosError(error) ? error.response?.status : undefined,
     errorCode:
-      isAxiosError(error) && !isDefined(error.response)
+      isAxiosError(error) && isUndefined(error.response)
         ? error.code
         : undefined,
     reason:

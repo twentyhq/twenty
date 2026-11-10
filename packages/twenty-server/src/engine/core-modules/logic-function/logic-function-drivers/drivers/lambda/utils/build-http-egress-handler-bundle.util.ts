@@ -11,7 +11,9 @@ const HANDLER_ENTRY_PATH_WITHOUT_EXTENSION = join(
   'http-egress-lambda.handler',
 );
 
-const FORBIDDEN_BUNDLE_INPUT_REGEX = /node_modules\/(@nestjs|typeorm)\//;
+// twenty-shared only exposes barrels, which pull in React, class-validator and zod.
+const FORBIDDEN_BUNDLE_INPUT_REGEX =
+  /(?:^|\/)(?:@nestjs|typeorm|twenty-shared)\//;
 
 // Bundled from the compiled server at runtime, so the Lambda always runs the code of the pod that invokes it.
 export const buildHttpEgressHandlerBundle = async (): Promise<string> => {
