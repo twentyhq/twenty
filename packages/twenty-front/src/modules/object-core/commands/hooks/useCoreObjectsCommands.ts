@@ -49,14 +49,16 @@ export const useCoreObjectsCommands = () => {
     commandMenuContextApi.pageType === ContextStorePageType.Record &&
     commandMenuContextApi.coreObjectName === 'workflow';
 
+  const openCoreWorkflowIds = commandMenuContextApi.selectedRecords
+    .map(({ id }) => id)
+    .filter(isDefined);
+  const indexSelectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
+    selection: coreWorkflowsSelection,
+    currentFilterSettings: coreWorkflowsFilterSettings,
+  });
   const selectedCoreWorkflowIds = isOnCoreWorkflowShowPage
-    ? commandMenuContextApi.selectedRecords
-        .map(({ id }) => id)
-        .filter(isDefined)
-    : getSelectedCoreWorkflowRowIds({
-        selection: coreWorkflowsSelection,
-        currentFilterSettings: coreWorkflowsFilterSettings,
-      });
+    ? openCoreWorkflowIds
+    : indexSelectedCoreWorkflowIds;
 
   const matchesSidePanelSearch = (label: string) =>
     isMatchingSidePanelSearch({ label, sidePanelSearch });

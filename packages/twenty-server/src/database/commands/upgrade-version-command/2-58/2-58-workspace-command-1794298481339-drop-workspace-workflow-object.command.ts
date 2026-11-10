@@ -44,7 +44,6 @@ const WORKFLOWS_NATIVE_PAGE_ALREADY_VISIBLE_CONDITION = `
       )
   )`;
 
-// One per member, since all open the same page.
 const DUPLICATE_LEGACY_WORKFLOW_NAVIGATION_MENU_ITEM_IDS_QUERY = `
   WITH ranked AS (
     SELECT
