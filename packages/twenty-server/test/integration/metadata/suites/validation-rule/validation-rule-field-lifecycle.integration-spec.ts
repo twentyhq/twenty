@@ -148,7 +148,7 @@ describe('Validation rules should follow the fields they read', () => {
     });
   });
 
-  it('should disable the rule when the workspace deactivates a standard field through an override', async () => {
+  it('should disable the rule when the workspace deactivates a field on a standard object', async () => {
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: { filter: {}, paging: { first: 1000 } },
