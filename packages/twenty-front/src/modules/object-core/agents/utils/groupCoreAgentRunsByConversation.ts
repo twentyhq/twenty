@@ -3,8 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
 import { type CoreAgentRunListItem } from '@/object-core/agents/types/CoreAgentRunListItem';
 
-// Runs sharing a conversation the reader can open fold under it, placed at its
-// latest run; a conversation with a single run stays a plain row
+// Runs of a readable conversation fold into one row placed at its latest run
 export const groupCoreAgentRunsByConversation = <
   TRun extends Pick<CoreAgentRun, 'threadId' | 'threadTitle' | 'canReadThread'>,
 >(
@@ -26,7 +25,6 @@ export const groupCoreAgentRunsByConversation = <
   const listedThreadIds = new Set<string>();
 
   return runs.flatMap((run): CoreAgentRunListItem<TRun>[] => {
-    // a one-shot run, or one whose conversation is not shared with the reader, shows its own details
     if (!isDefined(run.threadId) || !run.canReadThread) {
       return [{ type: 'run', run }];
     }
