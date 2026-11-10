@@ -555,6 +555,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       'isActive',
       'universalOverrides',
       'createdByUserWorkspaceId',
+      'ownerUserWorkspaceId',
     ],
     knownGaps: VIEW_KIND_GAPS,
   },

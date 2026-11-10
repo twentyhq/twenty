@@ -153,6 +153,16 @@ describe('fromFlatViewToViewManifest', () => {
     ).toEqual(VIEW_MANIFEST);
   });
 
+  it('should keep workspace ownership out of the application manifest', () => {
+    const flatView = {
+      ...forward(VIEW_MANIFEST),
+      ownerUserWorkspaceId: '11111111-aaaa-4111-8111-111111111111',
+      createdByUserWorkspaceId: '22222222-bbbb-4222-8222-222222222222',
+    };
+
+    expect(fromFlatViewToViewManifest({ flatView })).toEqual(VIEW_MANIFEST);
+  });
+
   it('should reproduce the flat entity after an inverse then a forward conversion', () => {
     const flatView: UniversalFlatView = {
       universalIdentifier: VIEW_UID,
