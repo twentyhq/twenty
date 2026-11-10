@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -8,7 +9,6 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { PAGE_LAYOUT_TOOL_ACCESS_POLICY } from 'src/engine/metadata-modules/page-layout/tools/constants/page-layout-tool-access-policy.constant';
 import { PageLayoutToolService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
-import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import {
   widgetPositionSchema,
   widgetConfigurationSchema,
@@ -100,11 +100,18 @@ export class AddPageLayoutWidgetTool extends BaseTool<
         identifierMaps,
       );
 
+      const { configuration } = widgetWithMetadataIds;
+
+      if (!isDefined(configuration)) {
+        throw new Error('Widget configuration is required');
+      }
+
       const widget = await this.pageLayoutWidgetService.create({
         input: {
           ...widgetWithMetadataIds,
           pageLayoutTabId: parameters.pageLayoutTabId,
-        } as CreatePageLayoutWidgetInput,
+          configuration,
+        },
         workspaceId: context.workspaceId,
       });
 

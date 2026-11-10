@@ -439,6 +439,30 @@ describe('Manifest sync - front component widgetAvailability', () => {
       });
     });
 
+    it('rejects a missing widget configuration without creating a widget', async () => {
+      expect(
+        await executeTool({
+          name: 'add_page_layout_widget',
+          arguments: {
+            pageLayoutTabId,
+            title: 'Missing configuration',
+            type: 'FRONT_COMPONENT',
+            position: {
+              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+              index: 0,
+            },
+          },
+        }),
+      ).toMatchObject({
+        success: false,
+        error: 'Widget configuration is required',
+      });
+      const { data } = await findPageLayoutWidgets({
+        input: { pageLayoutTabId },
+      });
+      expect(data.getPageLayoutWidgets).toHaveLength(0);
+    });
+
     it('persists an inserted component and renumbers existing siblings', async () => {
       await syncApplication({
         manifest: buildManifest({
