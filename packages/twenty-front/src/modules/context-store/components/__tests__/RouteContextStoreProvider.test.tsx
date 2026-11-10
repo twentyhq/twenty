@@ -221,15 +221,15 @@ describe('RouteContextStoreProvider', () => {
 
     const routeContextStore = screen.getByTestId('route-context-store');
 
-    expect(routeContextStore).toHaveAttribute(
-      'data-object-metadata-id',
-      'workflow-object',
-    );
+    expect(routeContextStore).not.toHaveAttribute('data-object-metadata-id');
     expect(routeContextStore).toHaveAttribute(
       'data-is-record-index-page',
       'true',
     );
     expect(routeContextStore).not.toHaveAttribute('data-view-id');
+    expect(
+      screen.getByTestId('route-context-store-core-object-name'),
+    ).toHaveAttribute('data-core-object-name', 'workflow');
   });
 
   it('provides workflow context on the core workflow show page', () => {
