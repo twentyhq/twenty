@@ -4,7 +4,7 @@ import { type ValidationRuleEvaluationResult } from '@/types/ValidationRuleEvalu
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { buildValidationRuleEvaluationContext } from '@/utils/validation-rule/buildValidationRuleEvaluationContext';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
-import { runWithValidationRuleNow } from '@/utils/validation-rule/validationRuleEvaluationClock';
+import { runWithValidationRuleNow } from '@/utils/validation-rule/internal/validationRuleEvaluationClock';
 
 type ValidationRuleEvaluator = (params: {
   record: Record<string, unknown>;

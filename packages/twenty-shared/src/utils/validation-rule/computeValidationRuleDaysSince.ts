@@ -1,6 +1,6 @@
 import { isString } from '@sniptt/guards';
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
-import { getValidationRuleNowInUtc } from '@/utils/validation-rule/validationRuleEvaluationClock';
+import { getValidationRuleNowInUtc } from '@/utils/validation-rule/internal/validationRuleEvaluationClock';
 
 export const computeValidationRuleDaysSince = (
   value: unknown,
