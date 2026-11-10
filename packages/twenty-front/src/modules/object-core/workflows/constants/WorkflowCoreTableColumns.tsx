@@ -68,7 +68,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflowTabl
       fieldLabel: msg`Last run`,
       FieldIcon: IconCalendarTime,
       align: 'left',
-      gridTrack: '130px',
+      gridTrack: '150px',
       renderCell: (workflow) => (
         <DateTimeDisplay
           value={workflow.lastRunAt}
