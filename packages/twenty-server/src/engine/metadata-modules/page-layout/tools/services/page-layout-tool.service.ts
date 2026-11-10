@@ -83,10 +83,10 @@ export class PageLayoutToolService {
       dependencies,
       contextWithPermissions,
     );
-    const listDashboards = createListDashboardsTool(
-      dependencies,
-      contextWithPermissions,
-    );
+    const listDashboards = createListDashboardsTool({
+      deps: dependencies,
+      context: contextWithPermissions,
+    });
     const getDashboard = createGetDashboardTool(
       dependencies,
       contextWithPermissions,
@@ -164,7 +164,10 @@ export class PageLayoutToolService {
     configuration: WidgetConfigurationInput | undefined;
     pageLayoutTabId: string;
     position?: PageLayoutWidgetPosition;
-    context: PageLayoutToolContext;
+    context: Pick<
+      PageLayoutToolContext,
+      'workspaceId' | 'callingApplication' | 'workspaceCustomApplicationId'
+    >;
   }): Promise<void> {
     if (
       !isDefined(configuration) ||

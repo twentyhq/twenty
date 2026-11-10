@@ -15,15 +15,18 @@ const listDashboardsSchema = z.object({
     .describe('Maximum number of dashboards to return (default: 20, max: 100)'),
 });
 
-export const createListDashboardsTool = (
+export const createListDashboardsTool = ({
+  deps,
+  context,
+}: {
   deps: {
     workspaceOrmManager: Pick<
       PageLayoutToolDependencies['workspaceOrmManager'],
       'executeInWorkspaceContext' | 'getRepository'
     >;
-  },
-  context: PageLayoutToolContextWithPermissions,
-) => ({
+  };
+  context: PageLayoutToolContextWithPermissions;
+}) => ({
   name: 'list_dashboards' as const,
   description: `List all dashboards in the workspace. Use get_dashboard to retrieve full layout structure.`,
   inputSchema: listDashboardsSchema,

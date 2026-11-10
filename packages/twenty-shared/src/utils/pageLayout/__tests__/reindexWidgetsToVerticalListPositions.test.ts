@@ -40,14 +40,17 @@ describe('reindexWidgetsToVerticalListPositions', () => {
       'emails',
     ]);
     expect(result.map(({ position }) => position.index)).toEqual([0, 1, 2, 3]);
-    expect(result[0].position.heightBehavior).toBe(
+    expect(result[0]?.position.heightBehavior).toBe(
       PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
     );
-    expect(result[2].position.heightBehavior).toBe(
+    expect(result[2]?.position.heightBehavior).toBe(
       PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
     );
-    expect(result[3].position).not.toHaveProperty('heightBehavior');
-    expect(widgets[0].position?.index).toBe(7);
+    expect(result[3]?.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 3,
+    });
+    expect(widgets[0]?.position?.index).toBe(7);
   });
 
   it('converts grid positions without retaining grid coordinates', () => {

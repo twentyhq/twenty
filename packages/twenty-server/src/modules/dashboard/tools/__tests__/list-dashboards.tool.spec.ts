@@ -29,9 +29,12 @@ describe('createListDashboardsTool', () => {
   it('reads dashboards as the caller rather than bypassing permissions', async () => {
     const { deps, getRepository } = buildDeps();
 
-    const tool = createListDashboardsTool(deps, {
-      workspaceId: WORKSPACE_ID,
-      authContext: AUTH_CONTEXT,
+    const tool = createListDashboardsTool({
+      deps,
+      context: {
+        workspaceId: WORKSPACE_ID,
+        authContext: AUTH_CONTEXT,
+      },
     });
 
     const result = await tool.execute({});

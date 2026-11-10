@@ -20,9 +20,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const DASHBOARD_BUILDING_SKILL_UNIVERSAL_IDENTIFIER =
   STANDARD_SKILL['dashboard-building'].universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.57.0', 1794218339631)
+@RegisteredWorkspaceCommand('2.58.0', 1794320652499)
 @Command({
-  name: 'upgrade:2-57:update-dashboard-building-skill-page-layout-tools',
+  name: 'upgrade:2-58:update-dashboard-building-skill-page-layout-tools',
   description:
     'Update the standard dashboard-building skill to use page-layout tools',
 })
