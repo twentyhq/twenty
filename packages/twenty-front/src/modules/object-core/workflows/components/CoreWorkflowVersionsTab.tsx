@@ -12,8 +12,6 @@ import {
   CoreObjectTableRow,
 } from '@/object-core/components/CoreObjectTableRow';
 import { CORE_WORKFLOW_VERSIONS_GRID_TEMPLATE_COLUMNS } from '@/object-core/workflows/constants/CoreWorkflowVersionsGridTemplateColumns';
-import { CORE_WORKFLOW_VERSION_STATUS_COLORS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusColors';
-import { CORE_WORKFLOW_VERSION_STATUS_LABELS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels';
 import { useOpenCoreWorkflowVersionSidePanel } from '@/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionSidePanel';
 import { handleCoreObjectTableRowKeyDown } from '@/object-core/utils/handleCoreObjectTableRowKeyDown';
 import { DateTimeDisplay } from '@/ui/field/display/components/DateTimeDisplay';
@@ -22,6 +20,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { type GetCoreWorkflowVersionsQuery } from '~/generated/graphql';
 
 type CoreWorkflowVersionsTabProps = {
@@ -60,6 +59,9 @@ export const CoreWorkflowVersionsTab = ({
               coreWorkflowVersionId: coreWorkflowVersion.id,
               pageTitle: coreWorkflowVersion.label,
             });
+          const statusTagProps = getWorkflowVersionStatusTagProps({
+            workflowVersionStatus: coreWorkflowVersion.status,
+          });
 
           return (
             <CoreObjectTableRow
@@ -72,19 +74,7 @@ export const CoreWorkflowVersionsTab = ({
             >
               <TableCell>{coreWorkflowVersion.label}</TableCell>
               <TableCell>
-                <Tag
-                  color={
-                    CORE_WORKFLOW_VERSION_STATUS_COLORS[
-                      coreWorkflowVersion.status
-                    ]
-                  }
-                >
-                  {t(
-                    CORE_WORKFLOW_VERSION_STATUS_LABELS[
-                      coreWorkflowVersion.status
-                    ],
-                  )}
-                </Tag>
+                <Tag color={statusTagProps.color}>{statusTagProps.text}</Tag>
               </TableCell>
               <TableCell color={themeCssVariables.font.color.secondary}>
                 <DateTimeDisplay value={coreWorkflowVersion.createdAt} />
