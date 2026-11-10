@@ -8,6 +8,7 @@ import { CLIENT_ID_METADATA_DOCUMENT_TRANSIENT_CLIENT_ERROR_STATUS_CODES } from 
 import { type CachedClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/cached-client-id-metadata-document.type';
 import { type ClientIdMetadataDocumentFetchResult } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document-fetch-result.type';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
+import { isAllowedClientIdMetadataDocumentFetchUrl } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-allowed-client-id-metadata-document-fetch-url.util';
 import { buildClientIdMetadataDocumentCacheEntry } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/build-client-id-metadata-document-cache-entry.util';
 import { parseClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/parse-client-id-metadata-document.util';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -105,6 +106,12 @@ export class ClientIdMetadataDocumentService {
   private async fetchDocument(
     clientIdMetadataDocumentUrl: string,
   ): Promise<ClientIdMetadataDocumentFetchResult> {
+    if (
+      !isAllowedClientIdMetadataDocumentFetchUrl(clientIdMetadataDocumentUrl)
+    ) {
+      return { status: 'invalid' };
+    }
+
     try {
       // A redirect would hand the client identity to another URL than the client_id
       const response = await this.secureHttpClientService
