@@ -2,6 +2,9 @@ import { isUndefined } from '@sniptt/guards';
 
 import { CALL_RECORDER_MEDIA_UPLOAD_BASE_URL_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-media-upload-base-url-env-var-name';
 
+// The server's own upload route; storage providers such as S3 issue presigned URLs elsewhere.
+const TWENTY_FILE_UPLOAD_PATH_PREFIX = '/file-upload/';
+
 export const resolveMediaUploadUrl = ({
   issuedUploadUrl,
   mediaUploadBaseUrl,
@@ -11,7 +14,10 @@ export const resolveMediaUploadUrl = ({
 }): URL => {
   const uploadUrl = new URL(issuedUploadUrl);
 
-  if (isUndefined(mediaUploadBaseUrl)) {
+  if (
+    isUndefined(mediaUploadBaseUrl) ||
+    !uploadUrl.pathname.startsWith(TWENTY_FILE_UPLOAD_PATH_PREFIX)
+  ) {
     return uploadUrl;
   }
 
@@ -30,6 +36,8 @@ export const resolveMediaUploadUrl = ({
 
   uploadUrl.protocol = baseUrl.protocol;
   uploadUrl.host = baseUrl.host;
+  // The host setter keeps the old port when the new host has none.
+  uploadUrl.port = baseUrl.port;
 
   return uploadUrl;
 };

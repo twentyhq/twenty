@@ -34,6 +34,22 @@ export const putMediaDownloadBodyToUploadTarget = async ({
   uploadTarget: MediaUploadTarget;
   signal: AbortSignal;
 }): Promise<void> => {
+  let uploadUrl: URL;
+
+  try {
+    uploadUrl = resolveMediaUploadUrl({
+      issuedUploadUrl: uploadTarget.uploadUrl,
+      mediaUploadBaseUrl: normalizeOptionalString(
+        getApplicationVariableValue(
+          CALL_RECORDER_MEDIA_UPLOAD_BASE_URL_ENV_VAR_NAME,
+        )?.trim(),
+      ),
+    });
+  } catch (error) {
+    await mediaDownloadBody.cancel().catch(() => undefined);
+    throw error;
+  }
+
   // Use node:http instead of fetch here: fetch can buffer ReadableStream
   // request bodies in memory, which OOMs Lambda for large recordings.
   const mediaDownloadReadable = Readable.fromWeb(
@@ -45,6 +61,7 @@ export const putMediaDownloadBodyToUploadTarget = async ({
     mediaDownloadReadable,
     sizeBytes,
     uploadTarget,
+    uploadUrl,
     signal,
   });
 };
@@ -54,22 +71,16 @@ const streamMediaDownloadReadableToUploadTarget = async ({
   mediaDownloadReadable,
   sizeBytes,
   uploadTarget,
+  uploadUrl,
   signal,
 }: {
   fileName: string;
   mediaDownloadReadable: Readable;
   sizeBytes: number;
   uploadTarget: MediaUploadTarget;
+  uploadUrl: URL;
   signal: AbortSignal;
 }): Promise<void> => {
-  const uploadUrl = resolveMediaUploadUrl({
-    issuedUploadUrl: uploadTarget.uploadUrl,
-    mediaUploadBaseUrl: normalizeOptionalString(
-      getApplicationVariableValue(
-        CALL_RECORDER_MEDIA_UPLOAD_BASE_URL_ENV_VAR_NAME,
-      )?.trim(),
-    ),
-  });
   const requestUpload =
     uploadUrl.protocol === 'http:' ? requestOverHttp : requestOverHttps;
   const uploadRequest = requestUpload(uploadUrl, {

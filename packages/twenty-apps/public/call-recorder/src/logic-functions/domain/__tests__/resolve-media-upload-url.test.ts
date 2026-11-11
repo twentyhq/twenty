@@ -45,4 +45,28 @@ describe('resolveMediaUploadUrl', () => {
       }),
     ).toThrow(/CALL_RECORDER_MEDIA_UPLOAD_BASE_URL/);
   });
+
+  it('uses the port of the media upload base URL, including its default port', () => {
+    expect(
+      resolveMediaUploadUrl({
+        issuedUploadUrl:
+          'https://crm.example.com:8443/file-upload/6a1f0c52-8a0e-4b8e-9f43-1f7f3c2d9e10?token=abc.def.ghi',
+        mediaUploadBaseUrl: 'http://internal.example.com',
+      }).toString(),
+    ).toBe(
+      'http://internal.example.com/file-upload/6a1f0c52-8a0e-4b8e-9f43-1f7f3c2d9e10?token=abc.def.ghi',
+    );
+  });
+
+  it('keeps a storage provider upload URL, such as a presigned S3 URL', () => {
+    const presignedS3UploadUrl =
+      'https://bucket.s3.eu-central-1.amazonaws.com/workspace/files/recording.mp4?X-Amz-Signature=abc';
+
+    expect(
+      resolveMediaUploadUrl({
+        issuedUploadUrl: presignedS3UploadUrl,
+        mediaUploadBaseUrl: 'http://localhost:3000',
+      }).toString(),
+    ).toBe(presignedS3UploadUrl);
+  });
 });
