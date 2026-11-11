@@ -280,7 +280,7 @@ describe('Manifest update - agents', () => {
                 universalIdentifier: TEST_TRIGGER_ID,
                 type: 'EVENT',
                 settings: {
-                  on: 'record',
+                  on: 'recordEvent',
                   objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
                   action: 'updated',
                   watchedFieldUniversalIdentifiers: [

@@ -74,7 +74,7 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
       ...getDatabaseEventTriggerSettingsErrors({
         settings: config.databaseEventTriggerSettings,
         subject: 'Database event trigger',
-        replacement: "eventTriggerSettings with on: 'record'",
+        replacement: "eventTriggerSettings with on: 'recordEvent'",
       }),
     );
   }

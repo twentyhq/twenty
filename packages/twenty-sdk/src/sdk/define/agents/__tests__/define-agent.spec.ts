@@ -197,7 +197,7 @@ describe('defineAgent', () => {
           universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
           type: 'EVENT',
           settings: {
-            on: 'record',
+            on: 'recordEvent',
             objectUniversalIdentifier: 'b7e6c2a1-3f4d-4e5a-9b8c-7d6e5f4a3b2c',
             action: 'updated',
             watchedFieldUniversalIdentifiers: [
@@ -220,7 +220,11 @@ describe('defineAgent', () => {
         {
           universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
           type: 'EVENT',
-          settings: { on: 'record', action: '*', condition: 'employees > 10' },
+          settings: {
+            on: 'recordEvent',
+            action: '*',
+            condition: 'employees > 10',
+          },
         },
       ],
     });
@@ -242,7 +246,7 @@ describe('defineAgent', () => {
           universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
           type: 'EVENT',
           settings: {
-            on: 'record',
+            on: 'recordEvent',
             objectUniversalIdentifier: 'b7e6c2a1-3f4d-4e5a-9b8c-7d6e5f4a3b2c',
             action: 'created',
             watchedFieldUniversalIdentifiers: [
