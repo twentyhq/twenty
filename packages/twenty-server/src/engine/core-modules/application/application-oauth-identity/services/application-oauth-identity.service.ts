@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
+import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-client-id-metadata-document-url.util';
 import { APPLICATION_OAUTH_IDENTITIES_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-oauth-identity/constants/application-oauth-identities-cache-entity-id.constant';
 import { type ApplicationOAuthIdentityRegistration } from 'src/engine/core-modules/application/application-oauth-identity/types/application-oauth-identity-registration.type';
 import { findOAuthIdentityRegistrationByRedirectUris } from 'src/engine/core-modules/application/application-oauth-identity/utils/find-oauth-identity-registration-by-redirect-uris.util';
@@ -91,22 +92,33 @@ export class ApplicationOAuthIdentityService {
       return registration.universalIdentifier;
     }
 
-    // Among unowned OAuth-only registrations only DCR ones have UUID client ids; metadata document ones use their URL, and its host can change their callbacks
     if (
       registration.sourceType !==
         ApplicationRegistrationSourceType.OAUTH_ONLY ||
-      isDefined(registration.ownerWorkspaceId) ||
-      !isValidUuid(registration.oAuthClientId)
+      isDefined(registration.ownerWorkspaceId)
     ) {
       return null;
     }
 
-    return (
-      findOAuthIdentityRegistrationByRedirectUris({
-        identityRegistrations,
-        redirectUris: registration.oAuthRedirectUris,
-      })?.universalIdentifier ?? null
-    );
+    const identityRegistration = findOAuthIdentityRegistrationByRedirectUris({
+      identityRegistrations,
+      redirectUris: registration.oAuthRedirectUris,
+    });
+
+    if (isValidUuid(registration.oAuthClientId)) {
+      return identityRegistration?.universalIdentifier ?? null;
+    }
+
+    // A document's host controls its callbacks, so it needs the same hostname check as a fresh connection
+    if (!isClientIdMetadataDocumentUrl(registration.oAuthClientId)) {
+      return null;
+    }
+
+    return identityRegistration?.oAuthIdentity.clientIdMetadataDocumentHostnames?.includes(
+      new URL(registration.oAuthClientId).hostname,
+    )
+      ? identityRegistration.universalIdentifier
+      : null;
   }
 
   private async findAll(): Promise<ApplicationOAuthIdentityRegistration[]> {
