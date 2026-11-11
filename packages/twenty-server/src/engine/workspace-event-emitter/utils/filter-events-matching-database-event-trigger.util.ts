@@ -253,21 +253,25 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
       return isReadable;
     });
 
-  let relatedRecordsByRelation: Map<string, Map<string, ConditionRecord>>;
+  const relatedRecordsLoad = await findRelatedRecordsById({
+    relations: conditionReads.relations,
+    records: readableEvents.map(({ record }) => record),
+    findRelatedRecords,
+  }).then(
+    (relatedRecordsByRelation) => ({ relatedRecordsByRelation }),
+    (error: unknown) => ({
+      errorMessage: error instanceof Error ? error.message : String(error),
+    }),
+  );
 
-  try {
-    relatedRecordsByRelation = await findRelatedRecordsById({
-      relations: conditionReads.relations,
-      records: readableEvents.map(({ record }) => record),
-      findRelatedRecords,
-    });
-  } catch (error) {
+  if ('errorMessage' in relatedRecordsLoad) {
     return {
       events: [],
-      conditionErrorMessage:
-        error instanceof Error ? error.message : String(error),
+      conditionErrorMessage: relatedRecordsLoad.errorMessage,
     };
   }
+
+  const { relatedRecordsByRelation } = relatedRecordsLoad;
 
   const evaluate = createValidationRuleEvaluator({
     expression: condition,

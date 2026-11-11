@@ -7,10 +7,10 @@ import {
 } from 'twenty-shared/application';
 import {
   compileValidationRuleExpression,
-  computeDatabaseEventWatchedFieldName,
   isDefined,
 } from 'twenty-shared/utils';
 
+import { computeDatabaseEventWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-database-event-watched-field-name.util';
 import { type DatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/types/database-event-trigger-manifest-resolver.type';
 import {
   ApplicationException,

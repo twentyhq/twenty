@@ -1,6 +1,5 @@
-import { FieldMetadataType } from '@/types/FieldMetadataType';
-import { RelationType } from '@/types/RelationType';
-import { computeRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 
 // Update events list a relation to one record by its join column (companyId), and never a relation to many
 export const computeDatabaseEventWatchedFieldName = ({

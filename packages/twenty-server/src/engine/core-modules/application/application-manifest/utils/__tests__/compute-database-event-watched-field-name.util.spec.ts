@@ -1,6 +1,6 @@
-import { FieldMetadataType } from '@/types/FieldMetadataType';
-import { RelationType } from '@/types/RelationType';
-import { computeDatabaseEventWatchedFieldName } from '@/utils/fieldMetadata/computeDatabaseEventWatchedFieldName';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+
+import { computeDatabaseEventWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-database-event-watched-field-name.util';
 
 describe('computeDatabaseEventWatchedFieldName', () => {
   it('keeps the name of a field that is not a relation', () => {
