@@ -14,7 +14,8 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
-const FLOW_SECRET_CACHE_KEY_PREFIX = 'connection-provider-oauth-flow-secret';
+const buildFlowSecretCacheKey = (flowSecretId: string): string =>
+  `connection-provider-oauth-flow-secret:${flowSecretId}`;
 const FLOW_SECRET_TTL_MS = 10 * 60 * 1000;
 
 export type ConnectionProviderFlowSecrets = {
@@ -51,7 +52,7 @@ export class ConnectionProviderAuthorizationStateService {
 
     if (isDefined(flowSecretId)) {
       await this.cacheStorage.set(
-        `${FLOW_SECRET_CACHE_KEY_PREFIX}:${flowSecretId}`,
+        buildFlowSecretCacheKey(flowSecretId),
         flowSecrets,
         FLOW_SECRET_TTL_MS,
       );
@@ -101,7 +102,7 @@ export class ConnectionProviderAuthorizationStateService {
   async consumeFlowSecretsOrThrow(
     flowSecretId: string,
   ): Promise<ConnectionProviderFlowSecrets> {
-    const cacheKey = `${FLOW_SECRET_CACHE_KEY_PREFIX}:${flowSecretId}`;
+    const cacheKey = buildFlowSecretCacheKey(flowSecretId);
     const flowSecrets =
       await this.cacheStorage.get<ConnectionProviderFlowSecrets>(cacheKey);
     const isClaimed =

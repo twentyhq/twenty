@@ -137,7 +137,7 @@ export class AppOAuthRefreshAccessTokenService {
     } catch (error) {
       if (error instanceof ConnectionProviderException) {
         throw new ConnectedAccountRefreshAccessTokenException(
-          error instanceof Error ? error.message : String(error),
+          error.message,
           ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
         );
       }
