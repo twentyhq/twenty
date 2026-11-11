@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { useState } from 'react';
 import { type ToolCallApprovalResponse } from 'twenty-shared/ai';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -7,6 +8,7 @@ import { useTheme } from 'twenty-ui/theme';
 import { AiChatApprovalReviewDeck } from '@/ai/components/AiChatApprovalReviewDeck';
 import { AiChatRecordApprovalReview } from '@/ai/components/AiChatRecordApprovalReview';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
 import { getAgentChatRecordApprovalGroupId } from '@/ai/utils/getAgentChatRecordApprovalGroupId';
 import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
@@ -27,6 +29,7 @@ export const AiChatRecordApprovalDeck = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const store = useStore();
   const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
   const [activeIndex, setActiveIndex] = useState(0);
   const [skippedToolCallIds, setSkippedToolCallIds] = useState<string[]>([]);
@@ -59,7 +62,16 @@ export const AiChatRecordApprovalDeck = ({
       recordApprovalsToAnswer.map(({ toolCallId }) => toolCallId),
     );
 
+    const threadId = store.get(agentChatDisplayedThreadState.atom);
+
     for (const { toolCallId, proposal } of recordApprovalsToAnswer) {
+      // an answer goes to the displayed conversation, so the rest waits if the person left this one
+      if (store.get(agentChatDisplayedThreadState.atom) !== threadId) {
+        onAnsweringToolCallIdsChange([]);
+
+        return;
+      }
+
       const isApproved = !isDenied && !skippedToolCallIds.includes(toolCallId);
       const isAnswered = await answerAgentChatToolCall({
         toolCallId,

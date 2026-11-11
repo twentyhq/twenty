@@ -6,6 +6,7 @@ import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 
 import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
 
 const answerAgentChatToolCall = jest.fn();
@@ -56,10 +57,10 @@ const Deck = () => {
   );
 };
 
-const renderDeck = () =>
+const renderDeck = (store = createStore()) =>
   render(
     <I18nProvider i18n={i18n}>
-      <Provider store={createStore()}>
+      <Provider store={store}>
         <Deck />
       </Provider>
     </I18nProvider>,
@@ -114,6 +115,26 @@ describe('AiChatRecordApprovalDeck', () => {
     answerAgentChatToolCall.mockResolvedValue(false);
 
     renderDeck();
+
+    await user.click(screen.getByRole('button', { name: 'Create 3' }));
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Create 3' })).toBeEnabled(),
+    );
+    expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops answering when the person opens another conversation', async () => {
+    const user = userEvent.setup();
+    const store = createStore();
+    store.set(agentChatDisplayedThreadState.atom, 'thread-1');
+    answerAgentChatToolCall.mockImplementation(async () => {
+      store.set(agentChatDisplayedThreadState.atom, 'thread-2');
+
+      return true;
+    });
+
+    renderDeck(store);
 
     await user.click(screen.getByRole('button', { name: 'Create 3' }));
 
