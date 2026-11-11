@@ -7,13 +7,19 @@ export const computeWorkflowWatchedFieldName = ({
   name,
   type,
   universalSettings,
+  relationTargetObjectMetadataUniversalIdentifier,
 }: Pick<
   WorkflowManifestFieldReference,
-  'name' | 'type' | 'universalSettings'
+  | 'name'
+  | 'type'
+  | 'universalSettings'
+  | 'relationTargetObjectMetadataUniversalIdentifier'
 >): string | undefined =>
   computeDatabaseEventWatchedFieldName({
     name,
     type,
+    relationTargetObjectUniversalIdentifier:
+      relationTargetObjectMetadataUniversalIdentifier,
     relationType:
       isDefined(universalSettings) && 'relationType' in universalSettings
         ? universalSettings.relationType
