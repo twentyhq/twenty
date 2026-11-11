@@ -30,19 +30,55 @@ const buildInvalidConditionException = ({
     },
   );
 
+const readEventCondition = (
+  trigger: unknown,
+): { eventName: string; condition: string } | undefined => {
+  if (
+    !isPlainObject(trigger) ||
+    trigger.type !== 'DATABASE_EVENT' ||
+    !isPlainObject(trigger.settings)
+  ) {
+    return undefined;
+  }
+
+  const { eventName, condition } = trigger.settings;
+
+  return isNonEmptyString(condition) && isString(eventName)
+    ? { eventName, condition }
+    : undefined;
+};
+
+const toEventConditionKey = ({
+  eventName,
+  condition,
+}: {
+  eventName: string;
+  condition: string;
+}) => JSON.stringify([eventName, condition]);
+
 // Agent validation sees no object metadata, so conditions are compiled where agents are written
 export const assertAgentTriggerConditionsCompileOrThrow = ({
   triggers,
+  storedTriggers,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   triggers: unknown;
+  storedTriggers?: unknown;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }) => {
   if (!Array.isArray(triggers)) {
     return;
   }
+
+  // A stored condition whose field was later deleted must not block unrelated edits
+  const storedEventConditionKeys = new Set(
+    (Array.isArray(storedTriggers) ? storedTriggers : [])
+      .map(readEventCondition)
+      .filter(isDefined)
+      .map(toEventConditionKey),
+  );
 
   const flatObjectMetadataByNameSingular = new Map(
     Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
@@ -54,19 +90,16 @@ export const assertAgentTriggerConditionsCompileOrThrow = ({
   );
 
   for (const trigger of triggers) {
+    const eventCondition = readEventCondition(trigger);
+
     if (
-      !isPlainObject(trigger) ||
-      trigger.type !== 'DATABASE_EVENT' ||
-      !isPlainObject(trigger.settings)
+      !isDefined(eventCondition) ||
+      storedEventConditionKeys.has(toEventConditionKey(eventCondition))
     ) {
       continue;
     }
 
-    const { eventName, condition } = trigger.settings;
-
-    if (!isNonEmptyString(condition) || !isString(eventName)) {
-      continue;
-    }
+    const { eventName, condition } = eventCondition;
 
     const [objectNameSingular] = eventName.split('.');
     const flatObjectMetadata =
