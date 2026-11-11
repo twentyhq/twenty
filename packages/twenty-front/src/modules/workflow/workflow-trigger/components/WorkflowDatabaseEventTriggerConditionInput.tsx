@@ -56,8 +56,8 @@ export const WorkflowDatabaseEventTriggerConditionInput = ({
     isNonEmptyArray(filter?.stepFilters) ||
     isNonEmptyArray(filter?.stepFilterGroups);
   // Each mode is offered only if it can show what the trigger runs, so switching never hides or drops it
-  const canShowAsFilters =
-    !isNonEmptyString(condition) || condition === conditionFromFilter;
+  const hasCondition = isNonEmptyString(condition?.trim());
+  const canShowAsFilters = !hasCondition || condition === conditionFromFilter;
   const canShowAsExpression =
     !hasFilterRows || isNonEmptyString(conditionFromFilter);
 
@@ -71,7 +71,7 @@ export const WorkflowDatabaseEventTriggerConditionInput = ({
     if (
       readonly ||
       nextMode !== 'EXPRESSION' ||
-      isNonEmptyString(condition) ||
+      hasCondition ||
       !isNonEmptyString(conditionFromFilter)
     ) {
       return;
