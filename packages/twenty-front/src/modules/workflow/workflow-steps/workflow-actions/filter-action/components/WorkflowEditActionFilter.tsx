@@ -1,10 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from 'twenty-shared/utils';
 import { computeWorkflowStepConditionFromFilter } from 'twenty-shared/workflow';
 
 import { type WorkflowFilterAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { hasFilledStepFilter } from '@/workflow/workflow-steps/conditions/utils/hasFilledStepFilter';
 import { WorkflowStepConditionInput } from '@/workflow/workflow-steps/conditions/components/WorkflowStepConditionInput';
 import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
@@ -66,10 +66,7 @@ export const WorkflowEditActionFilter = ({
           expressionLabel={t`Conditions`}
           condition={input.condition}
           conditionFromFilter={computeWorkflowStepConditionFromFilter(input)}
-          hasFilterRows={
-            isNonEmptyArray(input.stepFilters) ||
-            isNonEmptyArray(input.stepFilterGroups)
-          }
+          hasFilterRows={hasFilledStepFilter(input.stepFilters ?? [])}
           readonly={actionOptions.readonly === true}
           onConditionSeed={(condition) => updateInput({ ...input, condition })}
           onConditionChange={handleConditionChange}

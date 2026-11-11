@@ -1,4 +1,5 @@
 import { type WorkflowIfElseAction } from '@/workflow/types/Workflow';
+import { hasFilledStepFilter } from '@/workflow/workflow-steps/conditions/utils/hasFilledStepFilter';
 import { WorkflowStepConditionInput } from '@/workflow/workflow-steps/conditions/components/WorkflowStepConditionInput';
 import { WorkflowStepFilterAddFilterRuleSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect';
 import { WorkflowStepFilterColumn } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterColumn';
@@ -101,7 +102,16 @@ export const WorkflowIfElseBranchEditor = ({
           expressionLabel={capitalize(i18n._(branchLabel).toLowerCase())}
           condition={branch.condition}
           conditionFromFilter={conditionFromFilter}
-          hasFilterRows={childStepFiltersAndChildStepFilterGroups.length > 0}
+          hasFilterRows={
+            childStepFiltersAndChildStepFilterGroups.some(
+              isStepFilterGroupChildAStepFilterGroup,
+            ) ||
+            hasFilledStepFilter(
+              childStepFiltersAndChildStepFilterGroups.filter(
+                (child) => !isStepFilterGroupChildAStepFilterGroup(child),
+              ),
+            )
+          }
           readonly={readonly}
           onConditionSeed={onConditionSeed}
           onConditionChange={onConditionChange}
