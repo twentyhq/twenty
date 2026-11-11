@@ -1,6 +1,10 @@
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  compileValidationRuleExpression,
+  getValidationRulePreviousValueFieldPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { computeDatabaseEventTriggerConditionFromFilter } from 'twenty-shared/workflow';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -20,6 +24,31 @@ type StoredTrigger = {
       typeof computeDatabaseEventTriggerConditionFromFilter
     >[0]['filter'];
   };
+};
+
+// The legacy filter read related records with system permissions; a condition reads them as the
+// trigger's owner, so those triggers keep the filter rather than risk silently stopping
+const readsRelatedRecordFields = ({
+  condition,
+  fields,
+}: {
+  condition: string;
+  fields: ReturnType<typeof buildValidationRuleFieldDescriptors>;
+}) => {
+  const compilation = compileValidationRuleExpression({
+    expression: condition,
+    fields,
+  });
+
+  return (
+    !compilation.isValid ||
+    Object.keys(compilation.bindings).some((boundPath) => {
+      const fieldPath =
+        getValidationRulePreviousValueFieldPath(boundPath) ?? boundPath;
+
+      return fieldPath.includes('.') && !fieldPath.endsWith('.id');
+    })
+  );
 };
 
 @RegisteredWorkspaceCommand('2.58.0', 1794409228217)
@@ -78,19 +107,25 @@ export class AddConditionToWorkflowDatabaseEventTriggersCommand extends Provisio
       const objectMetadataId = objectMetadataIdByNameSingular.get(
         settings.eventName.split('.')[0],
       );
+      const fields = isDefined(objectMetadataId)
+        ? buildValidationRuleFieldDescriptors({
+            objectMetadataId,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          })
+        : [];
       const condition = isDefined(objectMetadataId)
         ? computeDatabaseEventTriggerConditionFromFilter({
             eventName: settings.eventName,
             filter: settings.filter,
-            fields: buildValidationRuleFieldDescriptors({
-              objectMetadataId,
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps,
-            }),
+            fields,
           })
         : undefined;
 
-      if (!isDefined(condition)) {
+      if (
+        !isDefined(condition) ||
+        readsRelatedRecordFields({ condition, fields })
+      ) {
         keptFilterCount += settings.filter.stepFilters?.length ? 1 : 0;
 
         return trigger;

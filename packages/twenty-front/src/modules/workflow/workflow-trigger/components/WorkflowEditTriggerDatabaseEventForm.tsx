@@ -52,11 +52,19 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       return;
     }
 
+    if (value === triggerEvent.objectType) {
+      return;
+    }
+
+    // Fields, filters and condition name the previous object's fields
     triggerOptions.onTriggerUpdate({
       ...trigger,
       settings: {
         ...trigger.settings,
         eventName: `${value}.${triggerEvent.event}`,
+        fields: null,
+        filter: undefined,
+        condition: undefined,
       },
     });
   };
@@ -97,6 +105,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         />
         {isDefined(selectedObjectMetadataItem) && isFieldFilteringSupported && (
           <WorkflowFieldsMultiSelect
+            key={selectedObjectMetadataItem.id}
             label={t`Fields (Optional)`}
             placeholder={t`Select specific fields to listen to`}
             objectMetadataItem={selectedObjectMetadataItem}
@@ -108,6 +117,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         )}
         {isDefined(selectedObjectMetadataItem) && (
           <WorkflowDatabaseEventTriggerConditionInput
+            key={selectedObjectMetadataItem.id}
             trigger={trigger}
             objectMetadataItem={selectedObjectMetadataItem}
             readonly={triggerOptions.readonly ?? false}

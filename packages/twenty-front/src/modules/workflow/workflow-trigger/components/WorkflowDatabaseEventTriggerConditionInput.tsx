@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
@@ -5,7 +6,9 @@ import {
   computeDatabaseEventTriggerConditionFromFilter,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { SegmentedControl } from 'twenty-ui/components/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
@@ -16,6 +19,11 @@ import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/com
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
 type ConditionMode = 'FILTERS' | 'EXPRESSION';
+
+const StyledModeHint = styled.div`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+`;
 
 type WorkflowDatabaseEventTriggerConditionInputProps = {
   trigger: WorkflowDatabaseEventTrigger;
@@ -43,30 +51,35 @@ export const WorkflowDatabaseEventTriggerConditionInput = ({
       fields,
     });
 
-  // A condition the rows don't produce was written as an expression
+  const conditionFromFilter = computeConditionFromFilter(filter);
+  const hasFilterRows =
+    isNonEmptyArray(filter?.stepFilters) ||
+    isNonEmptyArray(filter?.stepFilterGroups);
+  // Each mode is offered only if it can show what the trigger runs, so switching never hides or drops it
+  const canShowAsFilters =
+    !isNonEmptyString(condition) || condition === conditionFromFilter;
+  const canShowAsExpression =
+    !hasFilterRows || isNonEmptyString(conditionFromFilter);
+
   const [mode, setMode] = useState<ConditionMode>(
-    isNonEmptyString(condition) &&
-      condition !== computeConditionFromFilter(filter)
-      ? 'EXPRESSION'
-      : 'FILTERS',
+    canShowAsFilters ? 'FILTERS' : 'EXPRESSION',
   );
 
   const handleModeChange = (nextMode: ConditionMode) => {
     setMode(nextMode);
 
-    if (readonly) {
+    if (
+      readonly ||
+      nextMode !== 'EXPRESSION' ||
+      isNonEmptyString(condition) ||
+      !isNonEmptyString(conditionFromFilter)
+    ) {
       return;
     }
 
     onTriggerUpdate({
       ...trigger,
-      settings: {
-        ...trigger.settings,
-        condition:
-          nextMode === 'EXPRESSION'
-            ? (computeConditionFromFilter(filter) ?? '')
-            : computeConditionFromFilter(filter),
-      },
+      settings: { ...trigger.settings, condition: conditionFromFilter },
     });
   };
 
@@ -106,10 +119,24 @@ export const WorkflowDatabaseEventTriggerConditionInput = ({
           value={mode}
           onValueChange={handleModeChange}
           options={[
-            { value: 'FILTERS', label: t`Filters` },
-            { value: 'EXPRESSION', label: t`Expression` },
+            {
+              value: 'FILTERS',
+              label: t`Filters`,
+              disabled: !canShowAsFilters,
+            },
+            {
+              value: 'EXPRESSION',
+              label: t`Expression`,
+              disabled: !canShowAsExpression,
+            },
           ]}
         />
+      )}
+      {!readonly && !canShowAsFilters && (
+        <StyledModeHint>{t`Clear the expression to edit it as filters.`}</StyledModeHint>
+      )}
+      {!readonly && !canShowAsExpression && (
+        <StyledModeHint>{t`These filters can't be written as an expression.`}</StyledModeHint>
       )}
       {mode === 'FILTERS' ? (
         <WorkflowStepFilterBuilder
