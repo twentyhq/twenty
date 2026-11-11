@@ -143,6 +143,11 @@ const buildContext = (): RowAccessEvaluationContext => ({
   findPrivateRecordStates: jest.fn(async () => privateRecordStates),
 });
 
+const SHARING_WORKSPACE_FEATURE_FLAG_KEYS = [
+  FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+  FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+];
+
 const findGranted = ({
   principals,
   featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED],
@@ -178,9 +183,9 @@ describe('findGrantedRecordIds', () => {
     jest.mocked(resolveRlsRuleRecordFilter).mockReturnValue(null);
   });
 
-  it('grants no record to a role without access', async () => {
+  it('grants a member whose role has no access only the private records they created', async () => {
     expect(await findGranted({ principals: deniedPrincipals })).toEqual(
-      new Set(),
+      new Set(['active-private']),
     );
   });
 
@@ -202,7 +207,7 @@ describe('findGrantedRecordIds', () => {
     expect(
       await findGranted({
         principals: deniedPrincipals,
-        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        featureFlagKeys: SHARING_WORKSPACE_FEATURE_FLAG_KEYS,
       }),
     ).toEqual(new Set(['active-shared', 'active-private', 'archived-shared']));
   });
@@ -218,7 +223,7 @@ describe('findGrantedRecordIds', () => {
             roleId: 'missing-role',
           },
         },
-        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        featureFlagKeys: SHARING_WORKSPACE_FEATURE_FLAG_KEYS,
       }),
     ).toEqual(new Set());
   });
@@ -245,7 +250,7 @@ describe('findGrantedRecordIds', () => {
     expect(
       await findGranted({
         principals: memberPrincipals,
-        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        featureFlagKeys: SHARING_WORKSPACE_FEATURE_FLAG_KEYS,
         context,
       }),
     ).toEqual(new Set(records.map((record) => record.id)));

@@ -9,7 +9,6 @@ import { type PrivateRecordState } from 'src/engine/permissions/internal/private
 import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/internal/private-record/utils/build-find-private-record-states-query.util';
 import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/internal/private-record/utils/index-private-record-states-by-record-id.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/created-by-workspace-member-id-column-name.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -86,30 +85,5 @@ export class PrivateRecordRepository {
       });
 
     return indexPrivateRecordStatesByRecordId(rows);
-  }
-
-  async hasPrivateRecordCreatedByWorkspaceMember({
-    workspaceId,
-    flatObjectMetadata,
-    workspaceMemberId,
-  }: {
-    workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
-    workspaceMemberId: string;
-  }): Promise<boolean> {
-    const rows = await this.recordPermissionQueryService.execute<{
-      id: string;
-    }>({
-      workspaceId,
-      query: {
-        sql: `SELECT "id" FROM ${buildWorkspaceTableExpression({
-          workspaceId,
-          tableName: computeObjectTargetTable(flatObjectMetadata),
-        })} WHERE ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} = TRUE AND ${escapeIdentifier(CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME)} = :workspaceMemberId LIMIT 1`,
-        parameters: { workspaceMemberId },
-      },
-    });
-
-    return rows.length > 0;
   }
 }

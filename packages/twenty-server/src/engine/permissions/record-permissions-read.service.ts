@@ -39,7 +39,6 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/internal/record-share/utils/resolve-permissions-share-grant.util';
-import { resolvePermissionsCreatorWorkspaceMemberId } from 'src/engine/permissions/internal/private-record/utils/resolve-permissions-creator-workspace-member-id.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/combine/utils/is-object-operation-denied-to-principals.util';
 import { canAllRecordsOrRowLevelPermissionsGrantOperation } from 'src/engine/permissions/internal/role/utils/can-all-records-or-row-level-permissions-grant-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -157,32 +156,18 @@ export class RecordPermissionsReadService {
     }
 
     const shareGrant = resolvePermissionsShareGrant(request);
-    const sharedAccessLevels = isDefined(shareGrant)
-      ? ((
-          await this.findSharedAccessLevelsByObjectMetadataId(
-            request.principals,
-          )
-        ).get(request.flatObjectMetadata.id) ?? [])
-      : [];
 
-    if (
-      sharedAccessLevels.some((accessLevel) =>
-        shareGrant?.accessLevels.includes(accessLevel),
-      )
-    ) {
-      return true;
+    if (!isDefined(shareGrant)) {
+      return false;
     }
 
-    const creatorWorkspaceMemberId =
-      resolvePermissionsCreatorWorkspaceMemberId(request);
+    const sharedAccessLevels =
+      (
+        await this.findSharedAccessLevelsByObjectMetadataId(request.principals)
+      ).get(request.flatObjectMetadata.id) ?? [];
 
-    return (
-      isDefined(creatorWorkspaceMemberId) &&
-      this.privateRecordRepository.hasPrivateRecordCreatedByWorkspaceMember({
-        workspaceId: request.principals.workspaceId,
-        flatObjectMetadata: request.flatObjectMetadata,
-        workspaceMemberId: creatorWorkspaceMemberId,
-      })
+    return sharedAccessLevels.some((accessLevel) =>
+      shareGrant.accessLevels.includes(accessLevel),
     );
   }
 
