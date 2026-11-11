@@ -206,6 +206,7 @@ type AgentMessageReactionSummary {
 }
 
 type AgentRun {
+  canReadThread: Boolean!
   createdAt: DateTime!
   creatorName: String!
   creatorSource: String!

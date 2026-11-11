@@ -54,7 +54,6 @@ export const DashboardWidgetPlaceholder = () => {
     >
       <WidgetCardHeader
         variant="framed"
-        widgetId="widget-placeholder"
         isInEditMode={isPageLayoutInEditMode}
         isResizing={false}
         title={t`Add Widget`}
