@@ -24,7 +24,7 @@ const getHopsKey = (
   >[0],
 ) => getRelatedRecordPathFieldMetadataUniversalIdentifiers(hops).join(':');
 
-@RegisteredWorkspaceCommand('2.58.0', 1794354007923)
+@RegisteredWorkspaceCommand('2.58.0', 1794404020938)
 @Command({
   name: 'upgrade:2-58:align-standard-related-record-paths-inherent-flag',
   description:

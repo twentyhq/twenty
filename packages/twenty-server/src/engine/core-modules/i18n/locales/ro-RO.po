@@ -6700,13 +6700,13 @@ msgstr "Indexul cu același identificator universal există deja"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot form a cycle"
-msgstr ""
+msgstr "Căile inerente ale înregistrărilor asociate nu pot forma un ciclu"
 
 #. js-lingui-id: GdaBpX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot have more than two relations"
-msgstr ""
+msgstr "Căile inerente ale înregistrărilor asociate nu pot avea mai mult de două relații"
 
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts

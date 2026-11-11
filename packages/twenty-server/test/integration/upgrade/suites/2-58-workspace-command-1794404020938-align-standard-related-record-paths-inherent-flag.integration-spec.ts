@@ -14,7 +14,7 @@ import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { type AlignStandardRelatedRecordPathsInherentFlagCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794354007923-align-standard-related-record-paths-inherent-flag.command';
+import { type AlignStandardRelatedRecordPathsInherentFlagCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794404020938-align-standard-related-record-paths-inherent-flag.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';

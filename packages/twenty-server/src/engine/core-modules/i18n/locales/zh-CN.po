@@ -6700,13 +6700,13 @@ msgstr "具有相同通用标识符的索引已存在"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot form a cycle"
-msgstr ""
+msgstr "固有相关记录路径不能形成循环"
 
 #. js-lingui-id: GdaBpX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot have more than two relations"
-msgstr ""
+msgstr "固有相关记录路径不能包含超过两个关系"
 
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts

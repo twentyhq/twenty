@@ -6193,9 +6193,7 @@ type UserWorkspace {
   id: UUID!
   isImpersonating: Boolean
   locale: String!
-  objectPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   objectRecordsPermissions: [ObjectRecordsPermissions!]
-  objectsPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   permissionFlags: [PermissionFlagType!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
   updatedAt: DateTime!

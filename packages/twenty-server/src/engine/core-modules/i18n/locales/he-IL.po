@@ -6700,13 +6700,13 @@ msgstr "אינדקס עם אותו מזהה אוניברסלי כבר קיים"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot form a cycle"
-msgstr ""
+msgstr "נתיבי רשומות קשורות מובנים אינם יכולים ליצור מעגל"
 
 #. js-lingui-id: GdaBpX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot have more than two relations"
-msgstr ""
+msgstr "נתיבי רשומות קשורות מובנים אינם יכולים לכלול יותר משני קשרים"
 
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
