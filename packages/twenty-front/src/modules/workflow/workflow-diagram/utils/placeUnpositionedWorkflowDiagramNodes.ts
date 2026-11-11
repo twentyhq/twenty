@@ -35,7 +35,13 @@ export const placeUnpositionedWorkflowDiagramNodes = ({
   );
   const fallbackAnchorNodeId = placedNodeById.keys().next().value;
 
-  const placeNode = (node: WorkflowDiagramNode, anchorNodeId?: string) => {
+  const placeNode = ({
+    node,
+    anchorNodeId,
+  }: {
+    node: WorkflowDiagramNode;
+    anchorNodeId?: string;
+  }) => {
     const anchorNode = isDefined(anchorNodeId)
       ? placedNodeById.get(anchorNodeId)
       : undefined;
@@ -78,7 +84,7 @@ export const placeUnpositionedWorkflowDiagramNodes = ({
     unpositionedNodeIds.has(node.id),
   );
 
-  // Nodes are placed outward from the positioned ones, so each new node follows wherever its neighbour ended up
+  // Placing round by round lets a new node anchor on a neighbour that was itself moved aside, keeping a new branch together
   while (nodesToPlace.length > 0) {
     const anchoredNodesToPlace = nodesToPlace
       .map((node) => ({
@@ -90,11 +96,14 @@ export const placeUnpositionedWorkflowDiagramNodes = ({
       .filter(({ anchorNodeId }) => isDefined(anchorNodeId));
 
     if (anchoredNodesToPlace.length === 0) {
-      placeNode(nodesToPlace[0], fallbackAnchorNodeId);
+      placeNode({
+        node: nodesToPlace[0],
+        anchorNodeId: fallbackAnchorNodeId,
+      });
     }
 
     for (const { node, anchorNodeId } of anchoredNodesToPlace) {
-      placeNode(node, anchorNodeId);
+      placeNode({ node, anchorNodeId });
     }
 
     nodesToPlace = nodesToPlace.filter((node) => !placedNodeById.has(node.id));

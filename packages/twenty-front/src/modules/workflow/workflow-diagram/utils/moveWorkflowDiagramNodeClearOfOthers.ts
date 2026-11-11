@@ -5,6 +5,8 @@ import {
   WORKFLOW_LAYOUT_DEFAULT_OPTIONS,
 } from 'twenty-shared/workflow';
 
+const MINIMUM_HORIZONTAL_GAP = WORKFLOW_LAYOUT_DEFAULT_OPTIONS.nodesep;
+
 type WorkflowDiagramNodeBox = Pick<WorkflowDiagramNode, 'position'> & {
   width: number;
   height: number;
@@ -52,17 +54,12 @@ export const moveWorkflowDiagramNodeClearOfOthers = ({
       break;
     }
 
-    box.position = {
-      x:
-        direction === 'right'
-          ? blockingBox.position.x +
-            blockingBox.width +
-            WORKFLOW_LAYOUT_DEFAULT_OPTIONS.nodesep
-          : blockingBox.position.x -
-            box.width -
-            WORKFLOW_LAYOUT_DEFAULT_OPTIONS.nodesep,
-      y: box.position.y,
-    };
+    const nextX =
+      direction === 'right'
+        ? blockingBox.position.x + blockingBox.width + MINIMUM_HORIZONTAL_GAP
+        : blockingBox.position.x - box.width - MINIMUM_HORIZONTAL_GAP;
+
+    box.position = { x: nextX, y: box.position.y };
   }
 
   return box.position;

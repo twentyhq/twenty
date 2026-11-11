@@ -3,8 +3,8 @@ import {
   computeWorkflowLayout,
   type WorkflowLayoutEdge,
   type WorkflowLayoutNode,
-  type WorkflowLayoutPosition,
 } from '@/workflow/layout/utils/compute-workflow-layout.util';
+import { isDefined } from '@/utils';
 
 const buildNode = (
   id: string,
@@ -157,9 +157,6 @@ describe('computeWorkflowLayout', () => {
       { source: 'nestedIfElse', target: 'nestedElse' },
     ];
 
-    const getX = (positions: WorkflowLayoutPosition[], id: string) =>
-      positions.find((position) => position.id === id)?.centerPosition.x ?? 0;
-
     const grownPositions = computeWorkflowLayout({
       nodes: [
         'trigger',
@@ -174,11 +171,17 @@ describe('computeWorkflowLayout', () => {
       edges: grownIfBranchEdges,
     });
 
-    expect(getX(grownPositions, 'ifBranch')).toBeLessThan(
-      getX(grownPositions, 'elseBranch'),
-    );
-    expect(getX(grownPositions, 'nestedIf')).toBeLessThan(
-      getX(grownPositions, 'nestedElse'),
-    );
+    const getX = ({ id }: { id: string }) => {
+      const position = grownPositions.find((position) => position.id === id);
+
+      if (!isDefined(position)) {
+        throw new Error(`No layout position for ${id}`);
+      }
+
+      return position.centerPosition.x;
+    };
+
+    expect(getX({ id: 'ifBranch' })).toBeLessThan(getX({ id: 'elseBranch' }));
+    expect(getX({ id: 'nestedIf' })).toBeLessThan(getX({ id: 'nestedElse' }));
   });
 });
