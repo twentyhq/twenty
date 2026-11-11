@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -125,10 +129,29 @@ const companyAttachmentsPath = buildPath({
   isInherent: true,
 });
 
-const buildMetadataMaps = (
-  paths: FlatRelatedRecordPath[],
-): PermissionsMetadataMaps =>
+const buildMetadataMaps = ({
+  paths,
+  objectNamesWithRlsRule = ['company', 'opportunity'],
+  isAccessGroupsEnabled = true,
+}: {
+  paths: FlatRelatedRecordPath[];
+  objectNamesWithRlsRule?: string[];
+  isAccessGroupsEnabled?: boolean;
+}): PermissionsMetadataMaps =>
   ({
+    featureFlagsMap: {
+      [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: isAccessGroupsEnabled,
+    },
+    rolesPermissions: {
+      sales: {
+        objects: Object.fromEntries(
+          objectNamesWithRlsRule.map((objectName) => [
+            objectName,
+            { rowLevelRecordsPermissions: [] },
+          ]),
+        ),
+      },
+    },
     flatObjectMetadataMaps: buildFlatEntityMaps([
       company,
       attachment,
@@ -152,11 +175,10 @@ const buildEntrySQLConditionFrom =
   };
 
 const buildAttachmentCondition = ({
-  paths,
   entryByObject,
   disabledObjectNames = [],
-}: {
-  paths: FlatRelatedRecordPath[];
+  ...metadataMapsArgs
+}: Parameters<typeof buildMetadataMaps>[0] & {
   entryByObject: Record<string, boolean | 'owned'>;
   disabledObjectNames?: string[];
 }) =>
@@ -164,7 +186,7 @@ const buildAttachmentCondition = ({
     workspaceId: WORKSPACE_ID,
     flatObjectMetadata: attachment,
     tableAlias: 'attachment',
-    metadataMaps: buildMetadataMaps(paths),
+    metadataMaps: buildMetadataMaps(metadataMapsArgs),
     buildEntrySQLCondition: buildEntrySQLConditionFrom(entryByObject),
     isObjectOperationDisabled: (flatObjectMetadata) =>
       disabledObjectNames.includes(flatObjectMetadata.nameSingular),
@@ -202,6 +224,44 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
       sql: `EXISTS (SELECT 1 FROM "${SCHEMA}"."_company" AS "related_record_path_0" WHERE "attachment"."targetCompanyId" = "related_record_path_0"."id" AND "related_record_path_0"."deletedAt" IS NULL AND ("related_record_path_0"."ownerId" = :related_record_path_0Owner))`,
       parameters: { related_record_path_0Owner: 'member-id' },
     });
+  });
+
+  it('ignores a path whose source object has no RLS rule', () => {
+    expect(
+      buildAttachmentCondition({
+        paths: [companyAttachmentsPath],
+        objectNamesWithRlsRule: [],
+        entryByObject: { company: 'owned' },
+      }),
+    ).toBe(false);
+  });
+
+  it('follows an inherent path whose source is reached from an object with an RLS rule', () => {
+    expect(
+      buildAttachmentCondition({
+        paths: [
+          companyAttachmentsPath,
+          buildPath({
+            id: 'opportunityCompanyPath',
+            objectMetadataId: 'opportunity',
+            firstFieldMetadataId: 'opportunityCompany',
+            isInherent: false,
+          }),
+        ],
+        objectNamesWithRlsRule: ['opportunity'],
+        entryByObject: { opportunity: 'owned' },
+      }),
+    ).not.toBe(false);
+  });
+
+  it('ignores paths while access groups are disabled', () => {
+    expect(
+      buildAttachmentCondition({
+        paths: [companyAttachmentsPath],
+        isAccessGroupsEnabled: false,
+        entryByObject: { company: 'owned' },
+      }),
+    ).toBe(false);
   });
 
   it('denies records when the source object is not reachable', () => {
@@ -291,7 +351,9 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
   });
 
   it('ignores paths through inactive fields', () => {
-    const metadataMaps = buildMetadataMaps([companyAttachmentsPath]);
+    const metadataMaps = buildMetadataMaps({
+      paths: [companyAttachmentsPath],
+    });
 
     metadataMaps.flatFieldMetadataMaps.byUniversalIdentifier.companyAttachments =
       { ...fields[0], isActive: false };
