@@ -30,7 +30,7 @@ export const computeValidationRuleEditorSegments = ({
       cursorOffset <= token.end;
 
     if (
-      token.type === 'path' &&
+      (token.type === 'path' || token.type === 'variable') &&
       isFieldPath(token.text) &&
       (isAlreadyField || !isBeingTyped)
     ) {
