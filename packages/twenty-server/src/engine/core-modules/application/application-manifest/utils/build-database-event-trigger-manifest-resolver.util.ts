@@ -151,13 +151,15 @@ export const buildDatabaseEventTriggerManifestResolver = ({
     name,
     type,
     universalIdentifier,
-  }: DatabaseEventTriggerManifestField): ValidationRuleFieldDescriptor => ({
+  }: Pick<
+    DatabaseEventTriggerManifestField,
+    'name' | 'type' | 'universalIdentifier'
+  >): ValidationRuleFieldDescriptor => ({
     name,
     type,
     universalIdentifier,
   });
 
-  // Same fields as a validation rule: a relation to one record reads its target's own fields
   const listConditionFields = (
     objectUniversalIdentifier: string,
   ): ValidationRuleFieldDescriptor[] =>

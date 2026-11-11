@@ -56,10 +56,13 @@ describe('Database event trigger conditions on related records', () => {
     );
   });
 
-  const filterOpportunityEvents = async (
-    condition: string,
-    events: ObjectRecordEvent[],
-  ) => {
+  const filterOpportunityEvents = async ({
+    condition,
+    events,
+  }: {
+    condition: string;
+    events: ObjectRecordEvent[];
+  }) => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
     const { flatApplicationMaps, flatObjectMetadataMaps } =
@@ -95,10 +98,10 @@ describe('Database event trigger conditions on related records', () => {
     const smallCompanyEvent = buildOpportunityCreatedEvent(SMALL_COMPANY_ID);
     const noCompanyEvent = buildOpportunityCreatedEvent(null);
 
-    const { events, conditionErrorMessage } = await filterOpportunityEvents(
-      'company.employees > 100',
-      [bigCompanyEvent, smallCompanyEvent, noCompanyEvent],
-    );
+    const { events, conditionErrorMessage } = await filterOpportunityEvents({
+      condition: 'company.employees > 100',
+      events: [bigCompanyEvent, smallCompanyEvent, noCompanyEvent],
+    });
 
     expect(conditionErrorMessage).toBeUndefined();
     expect(events).toEqual([bigCompanyEvent]);
@@ -108,10 +111,10 @@ describe('Database event trigger conditions on related records', () => {
     const bigCompanyEvent = buildOpportunityCreatedEvent(BIG_COMPANY_ID);
     const smallCompanyEvent = buildOpportunityCreatedEvent(SMALL_COMPANY_ID);
 
-    const { events, conditionErrorMessage } = await filterOpportunityEvents(
-      "company.address.addressCity == 'Paris'",
-      [bigCompanyEvent, smallCompanyEvent],
-    );
+    const { events, conditionErrorMessage } = await filterOpportunityEvents({
+      condition: "company.address.addressCity == 'Paris'",
+      events: [bigCompanyEvent, smallCompanyEvent],
+    });
 
     expect(conditionErrorMessage).toBeUndefined();
     expect(events).toEqual([bigCompanyEvent]);
@@ -121,10 +124,10 @@ describe('Database event trigger conditions on related records', () => {
     const bigCompanyEvent = buildOpportunityCreatedEvent(BIG_COMPANY_ID);
     const noCompanyEvent = buildOpportunityCreatedEvent(null);
 
-    const { events } = await filterOpportunityEvents(
-      `company.id == '${BIG_COMPANY_ID}'`,
-      [bigCompanyEvent, noCompanyEvent],
-    );
+    const { events } = await filterOpportunityEvents({
+      condition: `company.id == '${BIG_COMPANY_ID}'`,
+      events: [bigCompanyEvent, noCompanyEvent],
+    });
 
     expect(events).toEqual([bigCompanyEvent]);
   });
@@ -132,10 +135,10 @@ describe('Database event trigger conditions on related records', () => {
   it('reads a related record that does not exist as empty', async () => {
     const missingCompanyEvent = buildOpportunityCreatedEvent(randomUUID());
 
-    const { events } = await filterOpportunityEvents(
-      'not isDefined(company.employees)',
-      [missingCompanyEvent],
-    );
+    const { events } = await filterOpportunityEvents({
+      condition: 'not isDefined(company.employees)',
+      events: [missingCompanyEvent],
+    });
 
     expect(events).toEqual([missingCompanyEvent]);
   });

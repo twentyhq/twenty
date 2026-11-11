@@ -28,7 +28,6 @@ type ConditionRelation = {
 };
 
 type ConditionReads = {
-  // What the event itself carries: own fields, and a relation's join column
   eventFieldNames: string[];
   previousFieldNames: string[];
   relations: ConditionRelation[];
