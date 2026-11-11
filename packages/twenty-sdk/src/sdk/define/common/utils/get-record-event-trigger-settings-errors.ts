@@ -29,8 +29,8 @@ export const getRecordEventTriggerSettingsErrors = ({
     return [`${subject} settings must be an object`];
   }
 
-  if (settings.on !== 'record') {
-    return [`${subject} settings must set on: 'record'`];
+  if (settings.on !== 'recordEvent') {
+    return [`${subject} settings must set on: 'recordEvent'`];
   }
 
   const errors: string[] = [];

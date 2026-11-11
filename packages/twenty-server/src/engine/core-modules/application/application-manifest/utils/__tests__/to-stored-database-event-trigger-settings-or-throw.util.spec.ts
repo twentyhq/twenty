@@ -4,7 +4,7 @@ describe('toStoredDatabaseEventTriggerSettingsOrThrow', () => {
   it('refuses settings that were not resolved', () => {
     expect(() =>
       toStoredDatabaseEventTriggerSettingsOrThrow({
-        on: 'record',
+        on: 'recordEvent',
         action: 'created',
       }),
     ).toThrow(/must be resolved/);
