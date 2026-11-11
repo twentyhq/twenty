@@ -177,10 +177,12 @@ const buildEntrySQLConditionFrom =
 const buildAttachmentCondition = ({
   entryByObject,
   disabledObjectNames = [],
+  privateObjectNames = [],
   ...metadataMapsArgs
 }: Parameters<typeof buildMetadataMaps>[0] & {
   entryByObject: Record<string, boolean | 'owned'>;
   disabledObjectNames?: string[];
+  privateObjectNames?: string[];
 }) =>
   buildRelatedRecordPathsSQLCondition({
     workspaceId: WORKSPACE_ID,
@@ -190,6 +192,8 @@ const buildAttachmentCondition = ({
     buildEntrySQLCondition: buildEntrySQLConditionFrom(entryByObject),
     isObjectOperationDisabled: (flatObjectMetadata) =>
       disabledObjectNames.includes(flatObjectMetadata.nameSingular),
+    isRecordPrivacyApplicable: (flatObjectMetadata) =>
+      privateObjectNames.includes(flatObjectMetadata.nameSingular),
   });
 
 describe('buildRelatedRecordPathsSQLCondition', () => {
@@ -202,6 +206,20 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
     ).toEqual({
       sql: '"attachment"."ownerId" = :attachmentOwner',
       parameters: { attachmentOwner: 'member-id' },
+    });
+  });
+
+  it('does not reach a private record through a path', () => {
+    const sqlCondition = buildAttachmentCondition({
+      paths: [companyAttachmentsPath],
+      entryByObject: { company: true },
+      privateObjectNames: ['attachment'],
+    });
+
+    expect(sqlCondition).toMatchObject({
+      sql: expect.stringMatching(
+        /EXISTS \(.*\).* AND .*"attachment"\."_isPrivate"/,
+      ),
     });
   });
 
@@ -368,6 +386,7 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
           company: true,
         }),
         isObjectOperationDisabled: () => false,
+        isRecordPrivacyApplicable: () => false,
       }),
     ).toBe(false);
   });

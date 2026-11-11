@@ -22,6 +22,7 @@ import { resolveRecordsAccessSQLConditionStrategy } from 'src/engine/permissions
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { isRecordPrivacyApplicable } from 'src/engine/permissions/internal/private-record/utils/is-record-privacy-applicable.util';
 import { PrivateRecordRepository } from 'src/engine/permissions/internal/private-record/repositories/private-record.repository';
 import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-share-table-expression.util';
 import {
@@ -690,6 +691,12 @@ export class RecordPermissionsReadService {
           principals,
           metadataMaps,
           flatObjectMetadata: sourceFlatObjectMetadata,
+          operationType,
+        }),
+      isRecordPrivacyApplicable: (targetFlatObjectMetadata) =>
+        isRecordPrivacyApplicable({
+          metadataMaps,
+          flatObjectMetadata: targetFlatObjectMetadata,
           operationType,
         }),
     });

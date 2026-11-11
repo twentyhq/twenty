@@ -4,6 +4,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
@@ -44,6 +45,7 @@ export const buildRelatedRecordPathsSQLCondition = ({
   metadataMaps,
   buildEntrySQLCondition,
   isObjectOperationDisabled,
+  isRecordPrivacyApplicable,
 }: {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
@@ -51,6 +53,9 @@ export const buildRelatedRecordPathsSQLCondition = ({
   metadataMaps: PermissionsMetadataMaps;
   buildEntrySQLCondition: BuildEntrySQLCondition;
   isObjectOperationDisabled: (
+    flatObjectMetadata: FlatObjectMetadata,
+  ) => boolean;
+  isRecordPrivacyApplicable: (
     flatObjectMetadata: FlatObjectMetadata,
   ) => boolean;
 }): SQLCondition | boolean => {
@@ -138,9 +143,8 @@ export const buildRelatedRecordPathsSQLCondition = ({
       flatObjectMetadata.id,
     ]);
 
-    return combineWithOr([
-      entrySQLCondition,
-      ...findRelatedRecordPathsFeedingAccessGroups({
+    const pathsSQLCondition = combineWithOr(
+      findRelatedRecordPathsFeedingAccessGroups({
         rolesPermissions: metadataMaps.rolesPermissions,
         resolvedRelatedRecordPaths,
         objectMetadataId: flatObjectMetadata.id,
@@ -151,6 +155,19 @@ export const buildRelatedRecordPathsSQLCondition = ({
           visitedObjectMetadataIds: nextVisitedObjectMetadataIds,
         }),
       ),
+    );
+
+    return combineWithOr([
+      entrySQLCondition,
+      typeof pathsSQLCondition !== 'boolean' &&
+      isRecordPrivacyApplicable(flatObjectMetadata)
+        ? combineSQLConditions({
+            sqlConditions: [
+              pathsSQLCondition,
+              buildRecordPrivacySQLCondition({ tableAlias, isPrivate: false }),
+            ],
+          })
+        : pathsSQLCondition,
     ]);
   };
 
