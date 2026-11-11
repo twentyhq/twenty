@@ -15384,12 +15384,6 @@ msgstr "رشته‌ای که این وضعیت به آن تعلق دارد"
 msgid "Thursday"
 msgstr "پنج‌شنبه"
 
-#. js-lingui-id: g9BupG
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Tidy up"
-msgstr "مرتب‌سازی"
-
 #. js-lingui-id: l+VvdV
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"

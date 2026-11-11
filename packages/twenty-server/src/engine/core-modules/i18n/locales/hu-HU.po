@@ -15384,12 +15384,6 @@ msgstr "Az a szál, amelyhez ez az állapot tartozik"
 msgid "Thursday"
 msgstr "Csütörtök"
 
-#. js-lingui-id: g9BupG
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Tidy up"
-msgstr "Rendberakás"
-
 #. js-lingui-id: l+VvdV
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"

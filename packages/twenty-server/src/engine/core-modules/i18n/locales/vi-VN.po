@@ -15384,12 +15384,6 @@ msgstr "Chuỗi hội thoại mà trạng thái này thuộc về"
 msgid "Thursday"
 msgstr "Thứ Năm"
 
-#. js-lingui-id: g9BupG
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Tidy up"
-msgstr "Dọn dẹp"
-
 #. js-lingui-id: l+VvdV
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
