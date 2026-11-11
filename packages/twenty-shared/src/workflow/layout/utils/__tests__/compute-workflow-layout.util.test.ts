@@ -3,6 +3,7 @@ import {
   computeWorkflowLayout,
   type WorkflowLayoutEdge,
   type WorkflowLayoutNode,
+  type WorkflowLayoutPosition,
 } from '@/workflow/layout/utils/compute-workflow-layout.util';
 
 const buildNode = (
@@ -140,5 +141,44 @@ describe('computeWorkflowLayout', () => {
 
     expect(() => computeWorkflowLayout({ nodes, edges })).not.toThrow();
     expect(computeWorkflowLayout({ nodes, edges })).toHaveLength(2);
+  });
+
+  it('should keep branches in their order when one branch grows', () => {
+    const branchEdges: WorkflowLayoutEdge[] = [
+      { source: 'trigger', target: 'ifElse' },
+      { source: 'ifElse', target: 'ifBranch' },
+      { source: 'ifElse', target: 'elseBranch' },
+      { source: 'elseBranch', target: 'elseFollowUp' },
+    ];
+    const grownIfBranchEdges: WorkflowLayoutEdge[] = [
+      ...branchEdges,
+      { source: 'ifBranch', target: 'nestedIfElse' },
+      { source: 'nestedIfElse', target: 'nestedIf' },
+      { source: 'nestedIfElse', target: 'nestedElse' },
+    ];
+
+    const getX = (positions: WorkflowLayoutPosition[], id: string) =>
+      positions.find((position) => position.id === id)?.centerPosition.x ?? 0;
+
+    const grownPositions = computeWorkflowLayout({
+      nodes: [
+        'trigger',
+        'ifElse',
+        'ifBranch',
+        'elseBranch',
+        'elseFollowUp',
+        'nestedIfElse',
+        'nestedIf',
+        'nestedElse',
+      ].map((id) => buildNode(id)),
+      edges: grownIfBranchEdges,
+    });
+
+    expect(getX(grownPositions, 'ifBranch')).toBeLessThan(
+      getX(grownPositions, 'elseBranch'),
+    );
+    expect(getX(grownPositions, 'nestedIf')).toBeLessThan(
+      getX(grownPositions, 'nestedElse'),
+    );
   });
 });
