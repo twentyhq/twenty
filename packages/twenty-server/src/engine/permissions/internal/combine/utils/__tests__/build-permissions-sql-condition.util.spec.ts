@@ -394,10 +394,15 @@ describe('buildPermissionsSQLCondition', () => {
       },
     );
 
-    it('keeps deletion with the role', () => {
-      expect(buildForCompany(withoutCompanyPermission, 'destroy')).toEqual({
-        kind: 'denied',
-      });
+    it('narrows deletion by a principal without object permission to the records named with full access', () => {
+      const policy = buildForCompany(withoutCompanyPermission, 'destroy');
+
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a grant gate');
+      }
+      expect(Object.values(policy.sqlCondition.parameters)).toContainEqual([
+        RecordShareAccessLevel.FULL,
+      ]);
     });
 
     it('lets a named grant bypass the row filter of the role', () => {
@@ -537,10 +542,15 @@ describe('buildPermissionsSQLCondition', () => {
       (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
       const policy = buildSQLConditionOutcome({
         ...prospectiveShareArguments,
+        metadataMaps,
         operationType: 'softDelete',
         hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.FULL,
         tableAlias: note.nameSingular,
-        flatObjectMetadata: note,
+        flatObjectMetadata: {
+          ...note,
+          universalIdentifier:
+            STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+        },
       });
 
       expect(policy).toMatchObject({

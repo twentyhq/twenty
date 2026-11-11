@@ -12,6 +12,10 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { CoreWorkflowShowPageActiveTab } from '@/object-core/workflows/components/CoreWorkflowShowPageActiveTab';
+import { CoreWorkflowShowPageTabList } from '@/object-core/workflows/components/CoreWorkflowShowPageTabList';
+import { useCoreWorkflowShowPageActiveTab } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageActiveTab';
+import { getCoreWorkflowShowPageTabListComponentInstanceId } from '@/object-core/workflows/utils/getCoreWorkflowShowPageTabListComponentInstanceId';
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
@@ -79,6 +83,13 @@ const CoreWorkflowShowContent = ({
     : currentVersion;
   const isReadOnlyVersion =
     isApplicationManaged || isDefined(requestedVersionId);
+  const activeTabId = useCoreWorkflowShowPageActiveTab({
+    coreWorkflowId,
+    isPublished: isDefined(coreWorkflow)
+      ? isDefined(coreWorkflow.lastPublishedCoreWorkflowVersionId)
+      : undefined,
+    requestedVersionId,
+  });
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
     currentName: record?.name,
@@ -169,17 +180,35 @@ const CoreWorkflowShowContent = ({
             namePlaceholder={t`Untitled`}
             onRename={renameWorkflow}
             isReadOnly={isApplicationManaged}
+            tabList={
+              <CoreWorkflowShowPageTabList
+                activeTabId={activeTabId}
+                componentInstanceId={getCoreWorkflowShowPageTabListComponentInstanceId(
+                  {
+                    coreWorkflowId,
+                    requestedVersionId,
+                  },
+                )}
+              />
+            }
           />
-          {isDefined(selectedVersion) ? (
-            <CoreWorkflowEditor
-              key={selectedVersion.id}
-              coreWorkflowId={coreWorkflowId}
-              coreWorkflowVersionId={selectedVersion.id}
-              readonly={isReadOnlyVersion}
-            />
-          ) : (
-            <WorkspaceRouteUnavailable>{t`Workflow version not found.`}</WorkspaceRouteUnavailable>
-          )}
+          <CoreWorkflowShowPageActiveTab
+            activeTabId={activeTabId}
+            coreWorkflowId={coreWorkflowId}
+            coreWorkflowVersions={versions.coreWorkflowVersions}
+            flowTab={
+              isDefined(selectedVersion) ? (
+                <CoreWorkflowEditor
+                  key={selectedVersion.id}
+                  coreWorkflowId={coreWorkflowId}
+                  coreWorkflowVersionId={selectedVersion.id}
+                  readonly={isReadOnlyVersion}
+                />
+              ) : (
+                <WorkspaceRouteUnavailable>{t`Workflow version not found.`}</WorkspaceRouteUnavailable>
+              )
+            }
+          />
         </StyledContainer>
       </PageCardLayout>
     </CommandMenuComponentInstanceContext.Provider>

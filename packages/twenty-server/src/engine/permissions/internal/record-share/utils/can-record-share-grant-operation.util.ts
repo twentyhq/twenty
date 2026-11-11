@@ -5,8 +5,8 @@ import {
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
 
-import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { resolveOperationTypesGrantableByRecordShare } from 'src/engine/permissions/record-share/utils/resolve-operation-types-grantable-by-record-share.util';
 
 export const canRecordShareGrantOperation = ({
   flatObjectMetadata,
@@ -15,12 +15,12 @@ export const canRecordShareGrantOperation = ({
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'universalIdentifier' | 'isSystem' | 'disabledObjectPermissionActions'
+    'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   operationType: ObjectRecordsOperationType;
 }): boolean =>
-  resolveObjectSharing({
+  resolveOperationTypesGrantableByRecordShare({
     flatObjectMetadata,
     featureFlagsMap,
-  }).operationTypesGrantedBeyondRole.includes(operationType);
+  }).includes(operationType);

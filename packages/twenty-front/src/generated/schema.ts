@@ -80,10 +80,28 @@ export type CoreWorkflowDto = {
   workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
+export type CoreWorkflowDailyRunCount = {
+  __typename?: 'CoreWorkflowDailyRunCount';
+  completedRunCount: Scalars['Int']['output'];
+  /** Day in the requested time zone, as YYYY-MM-DD */
+  day: Scalars['String']['output'];
+  failedRunCount: Scalars['Int']['output'];
+  /** Runs neither completed nor failed, such as running or stopped */
+  otherRunCount: Scalars['Int']['output'];
+};
+
 export type CoreWorkflowEdge = {
   __typename?: 'CoreWorkflowEdge';
   cursor: Scalars['String']['output'];
   node: CoreWorkflowDto;
+};
+
+export type CoreWorkflowFailedRun = {
+  __typename?: 'CoreWorkflowFailedRun';
+  createdAt: Scalars['String']['output'];
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
 };
 
 export enum CoreWorkflowFilterFieldKey {
@@ -146,6 +164,23 @@ export type CoreWorkflowRecentRun = {
   createdAt: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   status: CoreWorkflowRunStatus;
+};
+
+export type CoreWorkflowRunInsights = {
+  __typename?: 'CoreWorkflowRunInsights';
+  /** Average duration of completed runs over the same 14 days */
+  averageDurationInMs?: Maybe<Scalars['Float']['output']>;
+  coreWorkflowId: Scalars['UUID']['output'];
+  /** One entry per calendar day of the last 14 days in the requested time zone, oldest first */
+  dailyRunCounts: Array<CoreWorkflowDailyRunCount>;
+  /** Failed runs over the same 14 days */
+  failedRunCount: Scalars['Int']['output'];
+  /** True when run retention may have deleted runs from the window, so the counts are lower bounds */
+  isRunCountLowerBound: Scalars['Boolean']['output'];
+  /** Most recent failed runs first */
+  recentFailedRuns: Array<CoreWorkflowFailedRun>;
+  /** Runs over the last 14 days, the same window as the workflows list run count */
+  runCount: Scalars['Int']['output'];
 };
 
 export enum CoreWorkflowRunStatus {
@@ -609,6 +644,7 @@ export type Query = {
   __typename?: 'Query';
   coreWorkflow?: Maybe<CoreWorkflowDto>;
   coreWorkflowById?: Maybe<CoreWorkflowDto>;
+  coreWorkflowRunInsights?: Maybe<CoreWorkflowRunInsights>;
   coreWorkflowVersion?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersionById?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersions: Array<CoreWorkflowVersionDto>;
@@ -648,6 +684,12 @@ export type QueryCoreWorkflowArgs = {
 
 export type QueryCoreWorkflowByIdArgs = {
   coreWorkflowId: Scalars['UUID']['input'];
+};
+
+
+export type QueryCoreWorkflowRunInsightsArgs = {
+  coreWorkflowId: Scalars['UUID']['input'];
+  timeZone: Scalars['String']['input'];
 };
 
 
