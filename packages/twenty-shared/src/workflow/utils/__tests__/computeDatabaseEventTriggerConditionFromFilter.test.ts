@@ -92,6 +92,21 @@ describe('computeDatabaseEventTriggerConditionFromFilter', () => {
     ).toBeUndefined();
   });
 
+  it('keeps the legacy filter when the expression reads a relation id', () => {
+    expect(
+      computeDatabaseEventTriggerConditionFromFilter({
+        eventName: 'person.created',
+        filter: buildFilter({
+          type: 'TEXT',
+          operand: ViewFilterOperand.IS,
+          value: 'company-1',
+          path: 'company.id',
+        }),
+        fields: FIELDS,
+      }),
+    ).toBeUndefined();
+  });
+
   it('keeps the legacy filter when the filter does not convert', () => {
     expect(
       computeDatabaseEventTriggerConditionFromFilter({

@@ -6,6 +6,7 @@ import { type ValidationRuleDatabaseEventAction } from '@/types/ValidationRuleDa
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { compileValidationRuleExpression } from '@/utils/validation-rule/compileValidationRuleExpression';
 import { getValidationRulePreviousValueFieldPath } from '@/utils/validation-rule/getValidationRulePreviousValueFieldPath';
+import { isValidationRuleToOneRelationField } from '@/utils/validation-rule/isValidationRuleToOneRelationField';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { convertStepFiltersToRuleExpression } from '@/workflow/utils/convertStepFiltersToRuleExpression';
 
@@ -25,7 +26,7 @@ const isDatabaseEventAction = (
     (databaseEventAction) => databaseEventAction === action,
   );
 
-// Undefined keeps the legacy filter: inexact, an unknown field, or a related record (read with system permissions)
+// Undefined keeps the legacy filter: inexact, an unknown field, or a relation (the filter loads it with system permissions)
 export const computeDatabaseEventTriggerConditionFromFilter = ({
   eventName,
   filter,
@@ -69,14 +70,19 @@ export const computeDatabaseEventTriggerConditionFromFilter = ({
     return undefined;
   }
 
-  const readsRelatedRecordFields = Object.keys(compilation.bindings).some(
-    (boundPath) => {
-      const fieldPath =
-        getValidationRulePreviousValueFieldPath(boundPath) ?? boundPath;
+  const toOneRelationFieldNames = fields
+    .filter(isValidationRuleToOneRelationField)
+    .map(({ name }) => name);
+  const readsRelation = Object.keys(compilation.bindings).some((boundPath) => {
+    const fieldPath =
+      getValidationRulePreviousValueFieldPath(boundPath) ?? boundPath;
 
-      return fieldPath.includes('.') && !fieldPath.endsWith('.id');
-    },
-  );
+    return toOneRelationFieldNames.some(
+      (relationFieldName) =>
+        fieldPath === relationFieldName ||
+        fieldPath.startsWith(`${relationFieldName}.`),
+    );
+  });
 
-  return readsRelatedRecordFields ? undefined : conversion.expression;
+  return readsRelation ? undefined : conversion.expression;
 };
