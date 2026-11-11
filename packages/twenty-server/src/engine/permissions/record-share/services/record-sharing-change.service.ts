@@ -11,7 +11,7 @@ import { RecordSharingReadService } from 'src/engine/permissions/record-share/se
 import { RecordShareRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-share.repository';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
-import { resolveRecordSharingObjectOrThrow } from 'src/engine/permissions/internal/record-share/utils/resolve-record-sharing-object-or-throw.util';
+import { resolveRecordSharingMetadataOrThrow } from 'src/engine/permissions/internal/record-share/utils/resolve-record-sharing-metadata-or-throw.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { toPermissionsException } from 'src/engine/permissions/internal/record-permission-repository/utils/to-permissions-exception.util';
 import { WorkspaceQueryExecutorService } from 'src/engine/workspace-query-executor/services/workspace-query-executor.service';
@@ -32,26 +32,31 @@ export class RecordSharingChangeService {
   async runChange({
     args,
     write,
-    requiredCapability,
+    isChangeEnabled,
   }: {
     args: RecordSharingArgs;
     write: (change: RecordSharingChange) => Promise<void>;
-    requiredCapability: 'isShareable' | 'canSetRecordPrivacy';
+    isChangeEnabled: (
+      sharingMetadata: Pick<
+        RecordSharingChange['sharingMetadata'],
+        'featureFlagsMap'
+      >,
+    ) => boolean;
   }): Promise<RecordSharingDTO> {
     const { flatObjectMetadataMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(
         args.authContext.workspace.id,
         ['flatObjectMetadataMaps', 'featureFlagsMap'],
       );
-    const sharingObject = resolveRecordSharingObjectOrThrow({
+    const sharingMetadata = resolveRecordSharingMetadataOrThrow({
       objectMetadataId: args.objectMetadataId,
       flatObjectMetadataMaps,
       featureFlagsMap,
     });
-    const { flatObjectMetadata } = sharingObject;
+    const { flatObjectMetadata } = sharingMetadata;
     const workspaceId = args.authContext.workspace.id;
 
-    if (!sharingObject[requiredCapability]) {
+    if (!isChangeEnabled(sharingMetadata)) {
       throw new NotFoundError('Record not found');
     }
 
@@ -110,7 +115,7 @@ export class RecordSharingChangeService {
           await write({
             workspaceId,
             transactionScope,
-            sharingObject,
+            sharingMetadata,
             creatorWorkspaceMemberId,
           });
         },

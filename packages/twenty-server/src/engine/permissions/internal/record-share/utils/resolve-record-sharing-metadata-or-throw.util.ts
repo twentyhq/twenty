@@ -7,16 +7,13 @@ import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-err
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  type ObjectSharing,
-  resolveObjectSharing,
-} from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 
-export type RecordSharingObject = ObjectSharing & {
+export type RecordSharingMetadata = {
   flatObjectMetadata: FlatObjectMetadata;
+  featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 };
 
-export const resolveRecordSharingObjectOrThrow = ({
+export const resolveRecordSharingMetadataOrThrow = ({
   objectMetadataId,
   flatObjectMetadataMaps,
   featureFlagsMap,
@@ -24,7 +21,7 @@ export const resolveRecordSharingObjectOrThrow = ({
   objectMetadataId: string;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-}): RecordSharingObject => {
+}): RecordSharingMetadata => {
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: objectMetadataId,
     flatEntityMaps: flatObjectMetadataMaps,
@@ -34,8 +31,5 @@ export const resolveRecordSharingObjectOrThrow = ({
     throw new NotFoundError('Record not found');
   }
 
-  return {
-    flatObjectMetadata,
-    ...resolveObjectSharing({ flatObjectMetadata, featureFlagsMap }),
-  };
+  return { flatObjectMetadata, featureFlagsMap };
 };

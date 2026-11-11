@@ -3,8 +3,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { RecordSharePrincipalType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  type FeatureFlagKey,
+  RecordSharePrincipalType,
+} from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
@@ -12,6 +15,7 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
+import { resolveOperationTypesGrantableByRecordShare } from 'src/engine/permissions/record-share/utils/resolve-operation-types-grantable-by-record-share.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -31,18 +35,18 @@ export class RecordSharePrincipalService {
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
-  async assertPrincipalsReachRecordsOrThrow({
+  async assertShareRecipientsCanReadRecordsOrThrow({
     workspaceId,
     transactionScope,
     flatObjectMetadata,
-    isAccessGrantableByRecordShare,
+    featureFlagsMap,
     principals,
     recordIds,
   }: {
     workspaceId: string;
     transactionScope: RecordPermissionTransactionScope;
     flatObjectMetadata: FlatObjectMetadata;
-    isAccessGrantableByRecordShare: boolean;
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     principals: RecordSharePrincipal[];
     recordIds: string[];
   }): Promise<void> {
@@ -54,7 +58,12 @@ export class RecordSharePrincipalService {
     if (
       namedPrincipals.length === 0 ||
       recordIds.length === 0 ||
-      isAccessGrantableByRecordShare
+      isNonEmptyArray(
+        resolveOperationTypesGrantableByRecordShare({
+          flatObjectMetadata,
+          featureFlagsMap,
+        }),
+      )
     ) {
       return;
     }
@@ -100,8 +109,8 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant = await this.recordPermissionsReadService.canAccessRecords(
-        {
+      const canRecipientReadRecords =
+        await this.recordPermissionsReadService.canAccessRecords({
           operationType: 'read',
           principals:
             await this.principalPermissionsReadService.resolvePermissionsPrincipals(
@@ -116,10 +125,9 @@ export class RecordSharePrincipalService {
           objectMetadataId: flatObjectMetadata.id,
           recordIds,
           transactionScope,
-        },
-      );
+        });
 
-      if (!hasGrant) {
+      if (!canRecipientReadRecords) {
         throw new RecordShareException(
           `Principal ${principal.principalId} cannot see these records through its role`,
           RecordShareExceptionCode.INVALID_SHARE_WITH,

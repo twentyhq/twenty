@@ -36,7 +36,9 @@ import {
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { type CreatedRecordSharing } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
-import { type ObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
+import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
+import { canSetRecordPrivacy } from 'src/engine/permissions/private-record/utils/can-set-record-privacy.util';
+import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -67,8 +69,8 @@ export class RecordSharingWriteService {
 
     return this.recordSharingChangeService.runChange({
       args,
-      requiredCapability: 'isShareable',
-      write: async ({ workspaceId, transactionScope, sharingObject }) => {
+      isChangeEnabled: isRecordSharingEnabled,
+      write: async ({ workspaceId, transactionScope, sharingMetadata }) => {
         await this.recordShareStorageService.setManualShare({
           workspaceId,
           transactionScope,
@@ -80,13 +82,11 @@ export class RecordSharingWriteService {
             sourceId: args.recordId,
           },
         });
-        await this.recordSharePrincipalService.assertPrincipalsReachRecordsOrThrow(
+        await this.recordSharePrincipalService.assertShareRecipientsCanReadRecordsOrThrow(
           {
             workspaceId,
             transactionScope,
-            flatObjectMetadata: sharingObject.flatObjectMetadata,
-            isAccessGrantableByRecordShare:
-              sharingObject.isAccessGrantableByRecordShare,
+            ...sharingMetadata,
             principals: [principal],
             recordIds: [args.recordId],
           },
@@ -102,7 +102,7 @@ export class RecordSharingWriteService {
 
     return this.recordSharingChangeService.runChange({
       args,
-      requiredCapability: 'isShareable',
+      isChangeEnabled: isRecordSharingEnabled,
       write: ({ workspaceId, transactionScope }) =>
         this.recordShareStorageService.setManualShare({
           workspaceId,
@@ -125,7 +125,7 @@ export class RecordSharingWriteService {
     return this.recordSharingChangeService.runChange({
       args,
       write: (change) => this.writeRecordPrivacy({ ...change, args }),
-      requiredCapability: 'canSetRecordPrivacy',
+      isChangeEnabled: canSetRecordPrivacy,
     });
   }
 
@@ -161,14 +161,12 @@ export class RecordSharingWriteService {
   async insertRecordSharesForCreatedRecords({
     authContext,
     objectMetadataId,
-    objectSharing,
     recordIds,
     createdRecordSharing: { shareWith, isPrivate },
     transactionScope,
   }: {
     authContext: WorkspaceAuthContext;
     objectMetadataId: string;
-    objectSharing: ObjectSharing;
     recordIds: string[];
     createdRecordSharing: CreatedRecordSharing;
     transactionScope: RecordPermissionTransactionScope;
@@ -183,10 +181,11 @@ export class RecordSharingWriteService {
       transactionScope,
     });
 
-    const { apiKeyRoleMap, flatObjectMetadataMaps } =
+    const { apiKeyRoleMap, flatObjectMetadataMaps, featureFlagsMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'apiKeyRoleMap',
         'flatObjectMetadataMaps',
+        'featureFlagsMap',
       ]);
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: objectMetadataId,
@@ -208,7 +207,7 @@ export class RecordSharingWriteService {
         authContext,
         apiKeyRoleMap,
         shareWith,
-        isPrivateByDefault: objectSharing.isPrivateByDefault,
+        isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
         isPrivate,
       }),
       transactionScope,
@@ -224,21 +223,22 @@ export class RecordSharingWriteService {
       });
     }
 
-    await this.recordSharePrincipalService.assertPrincipalsReachRecordsOrThrow({
-      workspaceId,
-      transactionScope,
-      flatObjectMetadata,
-      isAccessGrantableByRecordShare:
-        objectSharing.isAccessGrantableByRecordShare,
-      principals: shareWith.map(resolveShareWithPrincipalOrThrow),
-      recordIds,
-    });
+    await this.recordSharePrincipalService.assertShareRecipientsCanReadRecordsOrThrow(
+      {
+        workspaceId,
+        transactionScope,
+        flatObjectMetadata,
+        featureFlagsMap,
+        principals: shareWith.map(resolveShareWithPrincipalOrThrow),
+        recordIds,
+      },
+    );
   }
 
   private async writeRecordPrivacy({
     workspaceId,
     transactionScope,
-    sharingObject: { flatObjectMetadata, isShareable },
+    sharingMetadata: { flatObjectMetadata, featureFlagsMap },
     creatorWorkspaceMemberId,
     args,
   }: RecordSharingChange & {
@@ -248,7 +248,7 @@ export class RecordSharingWriteService {
 
     if (
       isPrivate &&
-      !isShareable &&
+      !isRecordSharingEnabled({ featureFlagsMap }) &&
       args.authContext.workspaceMemberId !== creatorWorkspaceMemberId
     ) {
       throw new NotFoundError('Record not found', {
