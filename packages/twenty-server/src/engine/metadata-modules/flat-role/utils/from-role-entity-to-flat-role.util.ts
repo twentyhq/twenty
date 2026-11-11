@@ -45,6 +45,9 @@ export const fromRoleEntityToFlatRole = (
     ),
     rowLevelPermissionPredicateGroupIds:
       roleEntity.rowLevelPermissionPredicateGroups.map(({ id }) => id),
+    rowLevelPermissionRuleIds: (roleEntity.rowLevelPermissionRules ?? []).map(
+      ({ id }) => id,
+    ),
     roleTargetUniversalIdentifiers: roleEntity.roleTargets.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
@@ -65,6 +68,9 @@ export const fromRoleEntityToFlatRole = (
       roleEntity.rowLevelPermissionPredicateGroups.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
+    rowLevelPermissionRuleUniversalIdentifiers: (
+      roleEntity.rowLevelPermissionRules ?? []
+    ).map(({ universalIdentifier }) => universalIdentifier),
     agentChatChannelRoleIds: roleEntity.agentChatChannelRoles.map(
       ({ id }) => id,
     ),

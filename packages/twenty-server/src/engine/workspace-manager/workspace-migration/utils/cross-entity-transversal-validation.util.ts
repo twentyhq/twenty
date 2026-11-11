@@ -1,3 +1,4 @@
+import { validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util';
 import { validateNavigationMenuItemPageLayoutReferenceCrossEntity } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util';
 import { validateObjectMetadataCrossEntity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-cross-entity.util';
 import { validatePermissionFlagNotInUseCrossEntity } from 'src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util';
@@ -7,6 +8,7 @@ import {
   type OrchestratorFailureReport,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
@@ -16,10 +18,14 @@ export const crossEntityTransversalValidation = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
   preDeletionFlatViewFieldMaps,
+  fromFlatFieldMetadataMaps,
 }: {
   optimisticUniversalFlatMaps: AllUniversalFlatEntityMaps;
   orchestratorActionsReport: OrchestratorActionsReport;
   preDeletionFlatViewFieldMaps: UniversalFlatEntityMaps<UniversalFlatViewField>;
+  fromFlatFieldMetadataMaps:
+    | MetadataUniversalFlatEntityMaps<'fieldMetadata'>
+    | undefined;
 }): OrchestratorFailureReport => {
   const crossEntityFailureReport = EMPTY_ORCHESTRATOR_FAILURE_REPORT();
 
@@ -40,6 +46,13 @@ export const crossEntityTransversalValidation = ({
       orchestratorActionsReport.permissionFlag.delete,
   });
 
+  const { fieldMetadata } =
+    validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity({
+      fromFlatFieldMetadataMaps,
+      optimisticUniversalFlatMaps,
+      orchestratorActionsReport,
+    });
+
   const { navigationMenuItem } =
     validateNavigationMenuItemPageLayoutReferenceCrossEntity({
       optimisticUniversalFlatMaps,
@@ -50,6 +63,7 @@ export const crossEntityTransversalValidation = ({
   crossEntityFailureReport.viewField.push(...viewField);
   crossEntityFailureReport.permissionFlag.push(...permissionFlag);
   crossEntityFailureReport.navigationMenuItem.push(...navigationMenuItem);
+  crossEntityFailureReport.fieldMetadata.push(...fieldMetadata);
 
   validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation({
     optimisticUniversalFlatMaps,

@@ -39,6 +39,6 @@ export class ObjectRecordsPermissionsDTO {
   @Field(() => [UUIDScalarType])
   uneditableFields: string[];
 
-  @Field(() => RowLevelRecordsPermissionsDTO, { nullable: true })
-  rowLevelRecordsPermissions?: RowLevelRecordsPermissionsDTO | null;
+  @Field(() => [RowLevelRecordsPermissionsDTO], { nullable: true })
+  rowLevelRecordsPermissions?: RowLevelRecordsPermissionsDTO[] | null;
 }

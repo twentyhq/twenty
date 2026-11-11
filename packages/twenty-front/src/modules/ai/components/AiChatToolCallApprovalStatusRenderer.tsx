@@ -10,6 +10,7 @@ import { IconMail, IconTool } from 'twenty-ui/icon';
 
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
 import { StyledAiChatAskStatusDetail } from '@/ai/components/StyledAiChatAskStatusDetail';
+import { useIsAgentChatToolCallAskedInComposer } from '@/ai/hooks/useIsAgentChatToolCallAskedInComposer';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 
 export const AiChatToolCallApprovalStatusRenderer = ({
@@ -20,6 +21,9 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   isStreaming: boolean;
 }) => {
   const { t } = useLingui();
+  const isAskedInComposer = useIsAgentChatToolCallAskedInComposer(
+    toolPart.toolCallId,
+  );
 
   const output = toolPart.output as
     | { result?: ProposeToolCallToolResult; error?: string }
@@ -61,6 +65,10 @@ export const AiChatToolCallApprovalStatusRenderer = ({
       skipped: summary,
     };
   const detail = hasFailedToPropose ? proposeErrorText : detailByStatus[status];
+
+  if (isAskedInComposer) {
+    return null;
+  }
 
   return (
     <AiChatAskStatusRow

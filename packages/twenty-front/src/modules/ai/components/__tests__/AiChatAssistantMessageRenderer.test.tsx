@@ -433,6 +433,44 @@ describe('AiChatAssistantMessageRenderer', () => {
     );
   });
 
+  it('should show the thinking row before the first step of a streaming message arrives', () => {
+    const messageParts: ExtendedUIMessagePart[] = [{ type: 'step-start' }];
+
+    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
+
+    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+      'thinking-0-trailing-while-streaming',
+    );
+  });
+
+  it('should keep the same thinking row when the first reasoning arrives', () => {
+    const partsBeforeFirstStep: ExtendedUIMessagePart[] = [
+      { type: 'step-start' },
+    ];
+    const partsWithFirstReasoning: ExtendedUIMessagePart[] = [
+      { type: 'step-start' },
+      { type: 'reasoning', text: 'Weighing options', state: 'streaming' },
+    ];
+    const { rerender } = renderAssistantRenderer(partsBeforeFirstStep, {
+      isLastMessageStreaming: true,
+    });
+    const thinkingRow = screen.getByTestId('thinking-steps-display');
+
+    rerender(
+      <ThemeProvider colorScheme="light">
+        <AiChatAssistantMessageRenderer
+          messageParts={partsWithFirstReasoning}
+          isLastMessageStreaming
+        />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByTestId('thinking-steps-display')).toBe(thinkingRow);
+    expect(thinkingRow).toHaveTextContent(
+      'thinking-1-trailing-while-streaming',
+    );
+  });
+
   it('should not flag a thinking steps group when answer text follows it', () => {
     const messageParts = [
       {

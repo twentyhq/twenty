@@ -21,6 +21,7 @@ import { FlatRolePermissionFlagValidatorService } from 'src/engine/workspace-man
 import { FlatRoleTargetValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service';
 import { FlatRoleValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service';
 import { FlatRowLevelPermissionPredicateGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service';
+import { FlatRowLevelPermissionRuleValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service';
 import { FlatRowLevelPermissionPredicateValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service';
 import { FlatSkillValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service';
 import { FlatViewFieldGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service';
@@ -71,6 +72,7 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatPageLayoutTabValidatorService,
     FlatRowLevelPermissionPredicateValidatorService,
     FlatRowLevelPermissionPredicateGroupValidatorService,
+    FlatRowLevelPermissionRuleValidatorService,
     FlatFrontComponentValidatorService,
     FlatWebhookValidatorService,
     FlatMcpServerValidatorService,
@@ -112,6 +114,7 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatPageLayoutTabValidatorService,
     FlatRowLevelPermissionPredicateValidatorService,
     FlatRowLevelPermissionPredicateGroupValidatorService,
+    FlatRowLevelPermissionRuleValidatorService,
     FlatFrontComponentValidatorService,
     FlatWebhookValidatorService,
     FlatMcpServerValidatorService,

@@ -2,6 +2,7 @@ import { type RowLevelPermissionPredicate } from '@/types/RowLevelPermissionPred
 import { type RowLevelPermissionPredicateGroup } from '@/types/RowLevelPermissionPredicateGroup';
 
 export type RowLevelRecordsPermissions = {
+  ruleId: string;
   canCreateRecords: boolean;
   canReadRecords: boolean;
   canUpdateRecords: boolean;
@@ -9,6 +10,6 @@ export type RowLevelRecordsPermissions = {
   canDestroyRecords: boolean;
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
-  unreadableFields?: string[];
-  uneditableFields?: string[];
+  unreadableFields: string[];
+  uneditableFields: string[];
 };

@@ -53,6 +53,7 @@ export const buildUniversalFlatLogicFunctionToCreate = (
     serverRouteTriggerSettings: input.serverRouteTriggerSettings ?? null,
     toolTriggerSettings: input.toolTriggerSettings ?? null,
     workflowActionTriggerSettings: input.workflowActionTriggerSettings ?? null,
+    jobConfig: input.jobConfig ?? null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

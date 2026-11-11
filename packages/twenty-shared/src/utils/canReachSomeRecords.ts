@@ -1,8 +1,8 @@
 import { type ObjectRecordsOperationType } from '@/types/ObjectRecordsOperationType';
 import { type ObjectRecordsPermissions } from '@/types/ObjectRecordsPermissions';
-import { assertUnreachable } from '@/utils/assertUnreachable';
 import { canReachAllRecords } from '@/utils/canReachAllRecords';
 import { isDefined } from '@/utils/validation/isDefined';
+import { isRowLevelRecordsPermissionsRuleGrantingOperation } from '@/utils/isRowLevelRecordsPermissionsRuleGrantingOperation';
 
 const canReachRowLevelRecords = ({
   rowLevelRecordsPermissions,
@@ -15,20 +15,9 @@ const canReachRowLevelRecords = ({
     return false;
   }
 
-  switch (operationType) {
-    case 'read':
-      return rowLevelRecordsPermissions.canReadRecords;
-    case 'create':
-      return rowLevelRecordsPermissions.canCreateRecords;
-    case 'update':
-      return rowLevelRecordsPermissions.canUpdateRecords;
-    case 'destroy':
-      return rowLevelRecordsPermissions.canDestroyRecords;
-    case 'softDelete':
-      return rowLevelRecordsPermissions.canSoftDeleteRecords;
-    default:
-      return assertUnreachable(operationType);
-  }
+  return rowLevelRecordsPermissions.some((rule) =>
+    isRowLevelRecordsPermissionsRuleGrantingOperation({ rule, operationType }),
+  );
 };
 
 export const canReachSomeRecords = ({
