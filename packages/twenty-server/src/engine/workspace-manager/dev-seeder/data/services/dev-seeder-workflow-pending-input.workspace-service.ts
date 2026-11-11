@@ -26,6 +26,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { askQuestionCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/ask-question-call.util';
 import { proposeEmailCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/propose-email-call.util';
@@ -175,6 +176,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async seed({
@@ -441,6 +443,11 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
       status: WorkflowVersionStatus.ACTIVE,
       coreWorkflowId,
     });
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatWorkflowMaps',
+      'flatWorkflowVersionMaps',
+    ]);
 
     return {
       coreWorkflowId,

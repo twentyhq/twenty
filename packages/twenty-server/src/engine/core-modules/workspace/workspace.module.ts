@@ -35,6 +35,7 @@ import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/role-assignment.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
@@ -72,6 +73,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     CustomDomainManagerModule,
     ViewModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceCacheModule,
     ApplicationModule,
     ApplicationManifestModule,
     PreInstalledAppsModule,

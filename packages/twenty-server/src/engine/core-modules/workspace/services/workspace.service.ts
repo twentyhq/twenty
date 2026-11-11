@@ -120,9 +120,11 @@ import {
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
+import { invalidatePrefilledWorkflowCaches } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/invalidate-prefilled-workflow-caches.util';
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
 import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-opportunities.util';
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-people.util';
@@ -200,6 +202,7 @@ export class WorkspaceService {
     private readonly preInstalledAppsService: PreInstalledAppsService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceSchemaService: WorkspaceSchemaService,
     private readonly customDomainManagerService: CustomDomainManagerService,
@@ -1466,6 +1469,11 @@ export class WorkspaceService {
     } finally {
       await queryRunner.release();
     }
+
+    await invalidatePrefilledWorkflowCaches({
+      workspaceId,
+      workspaceCacheService: this.workspaceCacheService,
+    });
 
     try {
       await prefillWorkflowCommandMenuItems({

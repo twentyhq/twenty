@@ -124,6 +124,8 @@ import {
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { invalidatePrefilledWorkflowCaches } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/invalidate-prefilled-workflow-caches.util';
 import { prefillFrontComponentCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-command-menu-items.util';
 import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
@@ -315,6 +317,7 @@ export class DevSeederDataService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async seed({
@@ -382,6 +385,11 @@ export class DevSeederDataService {
         );
       },
     );
+
+    await invalidatePrefilledWorkflowCaches({
+      workspaceId,
+      workspaceCacheService: this.workspaceCacheService,
+    });
 
     await prefillWorkflowCommandMenuItems({
       workspaceId,
