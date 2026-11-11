@@ -158,7 +158,11 @@ export class FlatRowLevelPermissionRuleValidatorService {
       | 'canDestroyRecords'
     >;
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: RuleRelatedFlatEntityMaps;
-    buildOptions: RuleValidationBuildOptions;
+    buildOptions: Pick<
+      RuleValidationBuildOptions,
+      | 'applicationDefaultRoleUniversalIdentifier'
+      | 'workspaceCustomApplicationUniversalIdentifier'
+    >;
   }): FlatEntityValidationError[] {
     const errors: FlatEntityValidationError[] = [];
 

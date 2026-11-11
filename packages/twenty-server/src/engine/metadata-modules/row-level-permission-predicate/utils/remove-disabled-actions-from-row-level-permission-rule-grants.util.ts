@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type DisableableObjectPermissionAction } from 'twenty-shared/application';
+import { type ObjectPermissionAction } from 'twenty-shared/application';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule.type';
@@ -16,11 +16,11 @@ type RuleGrants = Partial<
   >
 >;
 
+// Same actions as validateObjectPermissionGrantsNoDisabledAction: create still follows update
 const OBJECT_PERMISSION_ACTION_BY_RULE_GRANT: Record<
-  keyof RuleGrants,
-  DisableableObjectPermissionAction
+  Exclude<keyof RuleGrants, 'canCreateRecords'>,
+  ObjectPermissionAction
 > = {
-  canCreateRecords: 'canCreateObjectRecords',
   canReadRecords: 'canReadObjectRecords',
   canUpdateRecords: 'canUpdateObjectRecords',
   canSoftDeleteRecords: 'canSoftDeleteObjectRecords',
@@ -40,13 +40,15 @@ export const removeDisabledActionsFromRowLevelPermissionRuleGrants = ({
   const disabledActions: string[] =
     flatObjectMetadata?.disabledObjectPermissionActions ?? [];
 
-  const resolveRuleGrant = (ruleGrant: keyof RuleGrants) =>
+  const resolveRuleGrant = (
+    ruleGrant: keyof typeof OBJECT_PERMISSION_ACTION_BY_RULE_GRANT,
+  ) =>
     disabledActions.includes(OBJECT_PERMISSION_ACTION_BY_RULE_GRANT[ruleGrant])
       ? false
       : ruleGrants[ruleGrant];
 
   return {
-    canCreateRecords: resolveRuleGrant('canCreateRecords'),
+    ...ruleGrants,
     canReadRecords: resolveRuleGrant('canReadRecords'),
     canUpdateRecords: resolveRuleGrant('canUpdateRecords'),
     canSoftDeleteRecords: resolveRuleGrant('canSoftDeleteRecords'),
