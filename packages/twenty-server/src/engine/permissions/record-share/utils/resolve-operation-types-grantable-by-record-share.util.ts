@@ -7,21 +7,23 @@ import {
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { OPERATIONS_GRANTABLE_BY_RECORD_SHARE } from 'src/engine/permissions/record-share/constants/operations-grantable-by-record-share.constant';
-import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
+import { areRecordSharesApplied } from 'src/engine/permissions/record-share/utils/are-record-shares-applied.util';
 
 export const resolveOperationTypesGrantableByRecordShare = ({
-  flatObjectMetadata: { disabledObjectPermissionActions },
+  flatObjectMetadata,
   featureFlagsMap,
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'disabledObjectPermissionActions'
+    'universalIdentifier' | 'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): ObjectRecordsOperationType[] =>
-  isRecordSharingEnabled({ featureFlagsMap })
+  areRecordSharesApplied({ flatObjectMetadata, featureFlagsMap })
     ? OPERATIONS_GRANTABLE_BY_RECORD_SHARE.filter(
         ({ objectPermissionAction }) =>
-          !disabledObjectPermissionActions?.includes(objectPermissionAction),
+          !flatObjectMetadata.disabledObjectPermissionActions?.includes(
+            objectPermissionAction,
+          ),
       ).map(({ operationType }) => operationType)
     : [];
