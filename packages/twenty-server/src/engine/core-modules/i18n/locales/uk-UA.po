@@ -6700,13 +6700,13 @@ msgstr "Індекс з таким самим універсальним іде�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot form a cycle"
-msgstr ""
+msgstr "Шляхи пов’язаних записів за своєю природою не можуть утворювати цикл"
 
 #. js-lingui-id: GdaBpX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot have more than two relations"
-msgstr ""
+msgstr "Шляхи пов’язаних записів за своєю природою не можуть мати більше двох зв’язків"
 
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts

@@ -6700,13 +6700,13 @@ msgstr "Chỉ mục có cùng định danh phổ quát đã tồn tại"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot form a cycle"
-msgstr ""
+msgstr "Đường dẫn bản ghi liên quan vốn có không thể tạo thành một chu trình"
 
 #. js-lingui-id: GdaBpX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Inherent related record paths cannot have more than two relations"
-msgstr ""
+msgstr "Đường dẫn bản ghi liên quan vốn có không thể có nhiều hơn hai mối quan hệ"
 
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
