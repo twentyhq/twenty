@@ -543,7 +543,7 @@ export class WorkflowDatabaseEventTriggerListener {
     const watchedFields = (eventListener.settings as UpdateEventTriggerSettings)
       .fields;
 
-    if (!isNonEmptyString(condition)) {
+    if (!isNonEmptyString(condition?.trim())) {
       return filterEventsByUpdatedFields({
         events,
         eventName,

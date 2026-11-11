@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type DatabaseEventTriggerSettings } from 'twenty-shared/application';
 import { isPlainObject } from 'twenty-shared/utils';
 
+// TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
 export const getDatabaseEventTriggerSettingsErrors = ({
   settings,
   subject,

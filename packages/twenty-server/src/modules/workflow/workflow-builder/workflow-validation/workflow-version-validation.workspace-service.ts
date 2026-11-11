@@ -124,7 +124,7 @@ export class WorkflowVersionValidationWorkspaceService {
     );
     const hasTriggerCondition =
       trigger?.type === WorkflowTriggerType.DATABASE_EVENT &&
-      isNonEmptyString(trigger.settings.condition);
+      isNonEmptyString(trigger.settings.condition?.trim());
 
     if (!hasRecordStep && !hasTriggerCondition) {
       return [];
