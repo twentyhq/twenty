@@ -6,11 +6,12 @@ import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/internal/combine/utils/resolve-event-record-snapshots.util';
-import { findRelatedRecordPathTargetObjectMetadataIds } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-target-object-metadata-ids.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
@@ -196,51 +197,38 @@ export class RecordEventPermissionsReadService {
           }),
       ));
 
+    const isDestroyedRecordEventBatch =
+      parseEventNameOrThrow(eventBatch.name).action ===
+      DatabaseEventAction.DESTROYED;
+
+    // a destroyed record has no row left to query, so only its last snapshot can be checked
     const findReadableRecordIdsInBatch = async (
       principals: PermissionsPrincipalsWithRolesContext,
-    ) => {
-      const metadataMaps = await loadMetadataMaps();
-      const records = resolveEventRecordSnapshots(events);
-      const readableRecordIds = await findGrantedRecordIds({
-        principals,
-        metadataMaps,
-        flatObjectMetadata: objectMetadata,
-        operationType: 'read',
-        records,
-        context: {
-          shouldIgnoreSoftDeleteDefaultFilter: true,
-          fetchRecordShares,
-          findPrivateRecordStates,
-          findRelationJoinValues: (args) =>
-            this.recordPermissionReadRepository.findRelationJoinValues({
-              ...args,
-              workspaceId,
-            }),
-        },
-      });
-      const recordIdsToFindThroughRelatedRecordPaths = records
-        .map((record) => record.id)
-        .filter((recordId) => !readableRecordIds.has(recordId));
-
-      if (
-        recordIdsToFindThroughRelatedRecordPaths.length === 0 ||
-        !findRelatedRecordPathTargetObjectMetadataIds(metadataMaps).has(
-          objectMetadata.id,
-        )
-      ) {
-        return readableRecordIds;
-      }
-
-      return new Set([
-        ...readableRecordIds,
-        ...(await this.recordPermissionsReadService.filterGrantedRecordIds({
-          principals,
-          objectMetadataId: objectMetadata.id,
-          operationType: 'read',
-          recordIds: recordIdsToFindThroughRelatedRecordPaths,
-        })),
-      ]);
-    };
+    ) =>
+      isDestroyedRecordEventBatch
+        ? findGrantedRecordIds({
+            principals,
+            metadataMaps: await loadMetadataMaps(),
+            flatObjectMetadata: objectMetadata,
+            operationType: 'read',
+            records: resolveEventRecordSnapshots(events),
+            context: {
+              shouldIgnoreSoftDeleteDefaultFilter: true,
+              fetchRecordShares,
+              findPrivateRecordStates,
+              findRelationJoinValues: (args) =>
+                this.recordPermissionReadRepository.findRelationJoinValues({
+                  ...args,
+                  workspaceId,
+                }),
+            },
+          })
+        : this.recordPermissionsReadService.filterGrantedRecordIds({
+            principals,
+            objectMetadataId: objectMetadata.id,
+            operationType: 'read',
+            recordIds: events.map((event) => event.recordId),
+          });
 
     const loaders = { loadMetadataMaps, findReadableRecordIdsInBatch };
 

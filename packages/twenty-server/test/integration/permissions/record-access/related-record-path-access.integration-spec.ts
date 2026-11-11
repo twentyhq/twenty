@@ -3,6 +3,7 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -110,18 +111,28 @@ describe('Record access through related record paths', () => {
       recordIds: [recordId],
     });
 
-  const findTaskEventRecordIdsReadableByJony = async () => {
+  const findEventRecordIdsReadableByJony = async ({
+    objectMetadataId,
+    eventName,
+    snapshotKey,
+    recordIds,
+  }: {
+    objectMetadataId: string;
+    eventName: string;
+    snapshotKey: 'before' | 'after';
+    recordIds: string[];
+  }) => {
     const { flatObjectMetadataMaps } =
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
       ).getOrRecompute(workspaceId, ['flatObjectMetadataMaps']);
     const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: taskObjectMetadataId,
+      flatEntityId: objectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
     if (!isDefined(objectMetadata)) {
-      throw new Error('Task object metadata is missing');
+      throw new Error('Object metadata is missing');
     }
 
     const readableEvents =
@@ -130,18 +141,26 @@ describe('Record access through related record paths', () => {
       ).filterReadableEvents({
         authContext: await findJonyAuthContext(),
         eventBatch: {
-          name: `${TASK_NAME}.updated`,
+          name: eventName,
           workspaceId,
           objectMetadata,
-          events: [taskOfProjectId, taskWithoutProjectId].map((recordId) => ({
+          events: recordIds.map((recordId) => ({
             recordId,
-            properties: { after: { id: recordId } },
+            properties: { [snapshotKey]: { id: recordId } },
           })) as ObjectRecordEvent[],
         },
       });
 
     return readableEvents.map(({ recordId }) => recordId);
   };
+
+  const findTaskEventRecordIdsReadableByJony = () =>
+    findEventRecordIdsReadableByJony({
+      objectMetadataId: taskObjectMetadataId,
+      eventName: `${TASK_NAME}.updated`,
+      snapshotKey: 'after',
+      recordIds: [taskOfProjectId, taskWithoutProjectId],
+    });
 
   beforeAll(async () => {
     await updateFeatureFlag({
@@ -228,6 +247,19 @@ describe('Record access through related record paths', () => {
     expect(await findTaskEventRecordIdsReadableByJony()).toEqual([
       taskOfProjectId,
     ]);
+  });
+
+  it('should deliver the event of a destroyed record from its last snapshot', async () => {
+    const destroyedProjectId = v4();
+
+    expect(
+      await findEventRecordIdsReadableByJony({
+        objectMetadataId: projectObjectMetadataId,
+        eventName: `${PROJECT_NAME}.destroyed`,
+        snapshotKey: 'before',
+        recordIds: [destroyedProjectId],
+      }),
+    ).toEqual([destroyedProjectId]);
   });
 
   it('should stop granting once the path is deleted', async () => {
