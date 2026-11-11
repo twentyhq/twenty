@@ -92,8 +92,9 @@ export default defineAgent({
   triggers: [
     {
       universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
-      type: 'DATABASE_EVENT',
+      type: 'EVENT',
       settings: {
+        on: 'record',
         objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
         action: 'updated',
         watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
@@ -110,7 +111,7 @@ export default defineAgent({
 });
 ```
 
-A `DATABASE_EVENT` trigger takes the same settings as a [logic function's database event trigger](/developers/extend/apps/logic/logic-functions#database-event-trigger-payload), except that it needs one object and one action. `instructions` (optional) are added to the agent's prompt for the runs the trigger starts.
+An `EVENT` trigger takes the same settings as a [logic function's `eventTriggerSettings`](/developers/extend/apps/logic/logic-functions#database-event-trigger-payload), except that it needs one object and one action. The earlier `DATABASE_EVENT` trigger with an `eventName` is still accepted. `instructions` (optional) are added to the agent's prompt for the runs the trigger starts.
 
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
 
