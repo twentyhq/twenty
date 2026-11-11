@@ -209,7 +209,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     [
       'a condition reading a field the related record lacks',
       {
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         objectUniversalIdentifier: OPPORTUNITY,
         action: 'created' as const,
         condition: "company.domain == 'acme.com'",
@@ -240,7 +240,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow built-in fields', (
     expect(() =>
       resolve({
         objectUniversalIdentifier: OPPORTUNITY,
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         action: 'updated',
         condition: 'archivedScore > 1',
       }),
