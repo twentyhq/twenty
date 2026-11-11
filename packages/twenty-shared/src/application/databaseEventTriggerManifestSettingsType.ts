@@ -1,5 +1,5 @@
 import { type DatabaseEventTriggerSettings } from '@/application/logicFunctionManifestType';
-import { type ValidationRuleDatabaseEventAction } from '@/utils/validation-rule/getValidationRuleRecordsFromDatabaseEvent';
+import { type ValidationRuleDatabaseEventAction } from '@/types/ValidationRuleDatabaseEventAction';
 
 export type DatabaseEventTriggerManifestAction =
   | ValidationRuleDatabaseEventAction
