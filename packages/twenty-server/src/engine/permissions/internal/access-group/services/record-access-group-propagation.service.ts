@@ -13,6 +13,7 @@ import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/p
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
+import { type RelatedRecordPathFollowingLookup } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-lookup.type';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -140,7 +141,7 @@ export class RecordAccessGroupPropagationService {
       ...propagatedFromObjectMetadataIds,
       objectMetadataId,
     ];
-    const followingRecordIdsByObjectMetadataId = new Map<string, Set<string>>();
+    const lookups: RelatedRecordPathFollowingLookup[] = [];
 
     for (const resolvedPath of this.findRelatedRecordPathsLeadingFromObject({
       metadataMaps,
@@ -173,42 +174,45 @@ export class RecordAccessGroupPropagationService {
           continue;
         }
 
-        const followingRecordIds =
-          await this.recordAccessGroupRepository.findRecordIdsFollowingRelatedRecordPath(
-            {
-              workspaceId,
-              targetFlatObjectMetadata:
-                findFlatEntityByIdInFlatEntityMapsOrThrow({
-                  flatEntityId: targetObjectMetadataId,
-                  flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-                }),
-              writtenHop,
-              followingHops: hops.slice(hopIndex + 1),
-              recordIds,
-              recordsBefore: recordsBeforeWrite,
-              transactionScope,
-            },
-          );
-
-        followingRecordIdsByObjectMetadataId.set(
-          targetObjectMetadataId,
-          new Set([
-            ...(followingRecordIdsByObjectMetadataId.get(
-              targetObjectMetadataId,
-            ) ?? []),
-            ...followingRecordIds,
-          ]),
-        );
+        lookups.push({
+          targetFlatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityId: targetObjectMetadataId,
+            flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+          }),
+          writtenHop,
+          followingHops: hops.slice(hopIndex + 1),
+          recordIds,
+          recordsBefore: recordsBeforeWrite,
+        });
       }
     }
 
-    return [...followingRecordIdsByObjectMetadataId.entries()]
-      .filter(([, recordIds]) => recordIds.size > 0)
-      .map(([followingObjectMetadataId, recordIds]) => ({
-        objectMetadataId: followingObjectMetadataId,
-        recordIds: [...recordIds],
-        propagatedFromObjectMetadataIds: recomputedObjectMetadataIds,
-      }));
+    const followingRecords =
+      await this.recordAccessGroupRepository.findRecordsFollowingRelatedRecordPaths(
+        { workspaceId, lookups, transactionScope },
+      );
+    const followingObjectMetadataIds = [
+      ...new Set(
+        followingRecords.map(
+          (followingRecord) => followingRecord.objectMetadataId,
+        ),
+      ),
+    ];
+
+    return followingObjectMetadataIds.map((followingObjectMetadataId) => ({
+      objectMetadataId: followingObjectMetadataId,
+      recordIds: [
+        ...new Set(
+          followingRecords
+            .filter(
+              (followingRecord) =>
+                followingRecord.objectMetadataId === followingObjectMetadataId,
+            )
+            .map(({ id }) => id),
+        ),
+      ],
+      propagatedFromObjectMetadataIds: recomputedObjectMetadataIds,
+    }));
   }
 
   async isObjectLeadingThroughRelatedRecordPath({
