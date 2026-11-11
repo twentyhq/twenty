@@ -9,6 +9,10 @@ import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { RelatedRecordPathExceptionCode } from 'src/engine/metadata-modules/related-record-path/related-record-path.exception';
+import {
+  hasInherentRelatedRecordPathCycle,
+  type InherentRelatedRecordPathEdge,
+} from 'src/engine/metadata-modules/related-record-path/utils/has-inherent-related-record-path-cycle.util';
 import { getRelatedRecordPathFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/related-record-path/utils/get-related-record-path-field-metadata-universal-identifiers.util';
 import { type UniversalFlatRelatedRecordPath } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-related-record-path.type';
 import {
@@ -39,6 +43,43 @@ const buildInvalidInputError = ({
   message,
   userFriendlyMessage,
 });
+
+const buildInherentRelatedRecordPathEdge = ({
+  universalFlatRelatedRecordPath,
+  flatFieldMetadataMaps,
+}: {
+  universalFlatRelatedRecordPath: UniversalFlatRelatedRecordPath;
+  flatFieldMetadataMaps: RelatedRecordPathRelatedMaps['flatFieldMetadataMaps'];
+}): InherentRelatedRecordPathEdge | undefined => {
+  const fieldMetadataUniversalIdentifiers =
+    getRelatedRecordPathFieldMetadataUniversalIdentifiers(
+      universalFlatRelatedRecordPath,
+    );
+  const lastFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier:
+      fieldMetadataUniversalIdentifiers[
+        fieldMetadataUniversalIdentifiers.length - 1
+      ],
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
+
+  if (
+    !isDefined(lastFlatFieldMetadata) ||
+    !isMorphOrRelationUniversalFlatFieldMetadata(lastFlatFieldMetadata) ||
+    !isDefined(
+      lastFlatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+    )
+  ) {
+    return undefined;
+  }
+
+  return {
+    sourceObjectMetadataUniversalIdentifier:
+      universalFlatRelatedRecordPath.objectMetadataUniversalIdentifier,
+    targetObjectMetadataUniversalIdentifier:
+      lastFlatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+  };
+};
 
 const buildNotFoundError = (): FlatEntityValidationError => ({
   code: RelatedRecordPathExceptionCode.RELATED_RECORD_PATH_NOT_FOUND,
@@ -87,6 +128,18 @@ export class FlatRelatedRecordPathValidatorService {
         buildInvalidInputError({
           message: t`Related record path cannot skip its second relation`,
           userFriendlyMessage: msg`Related record path cannot skip its second relation`,
+        }),
+      ];
+    }
+
+    if (
+      universalFlatRelatedRecordPath.isInherent &&
+      isDefined(thirdFieldMetadataUniversalIdentifier)
+    ) {
+      return [
+        buildInvalidInputError({
+          message: t`Inherent related record paths cannot have more than two relations`,
+          userFriendlyMessage: msg`Inherent related record paths cannot have more than two relations`,
         }),
       ];
     }
@@ -193,6 +246,42 @@ export class FlatRelatedRecordPathValidatorService {
         buildInvalidInputError({
           message: t`This related record path already exists`,
           userFriendlyMessage: msg`This related record path already exists`,
+        }),
+      ];
+    }
+
+    if (!universalFlatRelatedRecordPath.isInherent) {
+      return [];
+    }
+
+    const hasCycle = hasInherentRelatedRecordPathCycle({
+      inherentRelatedRecordPathEdges: [
+        ...Object.values(
+          flatRelatedRecordPathMaps.byUniversalIdentifier,
+        ).filter(
+          (otherFlatRelatedRecordPath) =>
+            isDefined(otherFlatRelatedRecordPath) &&
+            otherFlatRelatedRecordPath.isInherent &&
+            otherFlatRelatedRecordPath.universalIdentifier !==
+              universalFlatRelatedRecordPath.universalIdentifier,
+        ),
+        universalFlatRelatedRecordPath,
+      ]
+        .filter(isDefined)
+        .map((flatRelatedRecordPath) =>
+          buildInherentRelatedRecordPathEdge({
+            universalFlatRelatedRecordPath: flatRelatedRecordPath,
+            flatFieldMetadataMaps,
+          }),
+        )
+        .filter(isDefined),
+    });
+
+    if (hasCycle) {
+      return [
+        buildInvalidInputError({
+          message: t`Inherent related record paths cannot form a cycle`,
+          userFriendlyMessage: msg`Inherent related record paths cannot form a cycle`,
         }),
       ];
     }

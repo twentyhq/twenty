@@ -1312,6 +1312,9 @@ export const STANDARD_OBJECTS = {
       workflowVersionIdIndex: {
         universalIdentifier: '8183c8d2-9114-4b6e-8c5d-12a3b14a5a14',
       },
+      coreWorkflowIdCreatedAtIndex: {
+        universalIdentifier: '5f16fa40-7dd4-4a30-8331-9ad4a106f6be',
+      },
       searchVectorGinIndex: {
         universalIdentifier: 'e0ac5ad2-d0c8-4f72-b710-8e53b9dc18d9',
       },

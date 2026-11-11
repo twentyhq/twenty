@@ -1,3 +1,4 @@
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -101,6 +102,7 @@ describe('access group sync (integration)', () => {
         input: {
           roleId,
           objectMetadataId,
+          canReadRecords: true,
           predicateGroups: [
             {
               id: predicateGroupId,
@@ -124,11 +126,14 @@ describe('access group sync (integration)', () => {
       { compactId: number; groupHash: string }[]
     > =>
       global.testDataSource.query(
-        `SELECT "compactId", "groupHash" FROM ${ACCESS_GROUP_TABLE} WHERE "rowLevelPermissionPredicateGroupId" = $1`,
+        `SELECT "compactId", "groupHash" FROM ${ACCESS_GROUP_TABLE} WHERE "rowLevelPermissionPredicateGroupId" = (
+          SELECT "rowLevelPermissionRuleId" FROM core."rowLevelPermissionPredicateGroup" WHERE "id" = $1
+        )`,
         [predicateGroupId],
       );
 
     try {
+      await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
       await upsertRule('Paris');
       await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 

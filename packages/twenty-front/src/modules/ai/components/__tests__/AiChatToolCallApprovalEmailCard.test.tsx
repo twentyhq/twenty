@@ -17,6 +17,14 @@ jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
 }));
 
 jest.mock(
+  '@/activities/emails/recipients/hooks/useEmailRecipientsResolution',
+  () => ({
+    useEmailRecipientsResolution: () => ({
+      resolutionByRecipientKey: new Map(),
+    }),
+  }),
+);
+jest.mock(
   '@/ai/components/internal/AiChatToolCallApprovalArgumentsCard',
   () => ({ AiChatToolCallApprovalArgumentsCard: () => null }),
 );

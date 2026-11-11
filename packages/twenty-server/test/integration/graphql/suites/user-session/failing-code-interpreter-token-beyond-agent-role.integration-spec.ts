@@ -257,6 +257,7 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
       objectNameSingular: 'company',
       fieldName: 'name',
       value: AGENT_VISIBLE_COMPANY_NAME_TOKEN,
+      ruleGrants: { canReadRecords: true },
     });
 
     const assignResponse = await makeMetadataApiRequest({
@@ -334,7 +335,7 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
     ).toBe(true);
   });
 
-  it('should refuse a member run people through MCP when the agent role denies them', async () => {
+  it('should refuse a member run people and companies through MCP when the agent role lacks all records on them', async () => {
     const sandboxToken = await captureSandboxTokenForAgentRun({
       globalTestContext,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -351,7 +352,7 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
         token: sandboxToken,
         toolName: 'find_many_companies',
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('should let an admin run create a workspace navigation item through MCP when no agent restricts it', async () => {
@@ -492,27 +493,6 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
       globalTestContext,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
       isAgentPassed: false,
-    });
-
-    expect(
-      (
-        await findCompanyIdsThroughMcp({
-          globalTestContext,
-          token: sandboxToken,
-        })
-      ).sort(),
-    ).toEqual(
-      [
-        globalTestContext.hiddenCompanyId,
-        globalTestContext.visibleCompanyId,
-      ].sort(),
-    );
-  });
-
-  it('should ignore the agent role row-level rules on MCP tools for a member run', async () => {
-    const sandboxToken = await captureSandboxTokenForAgentRun({
-      globalTestContext,
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
     expect(

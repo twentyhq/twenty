@@ -145,9 +145,9 @@ export class CoreWorkflowRunnerService {
 
     if (isManualTrigger) {
       const scope =
-        await this.workflowRunJobScopeWorkspaceService.resolveForApplication({
+        await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow({
           workspaceId,
-          applicationId: workflow.applicationId,
+          coreWorkflowId: workflow.id,
         });
 
       await this.workflowRunEnqueueWorkspaceService.enqueueRunOrFailIt({

@@ -84,6 +84,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "roleTarget": [],
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [],
+  "rowLevelPermissionRule": [],
   "searchFieldMetadata": [],
   "settingsMenuItem": [],
   "skill": [

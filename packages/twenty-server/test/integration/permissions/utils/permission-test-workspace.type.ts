@@ -19,7 +19,8 @@ export type PermissionTestRecordName =
   | 'insideEveryFilter'
   | 'outsideStatusFilter'
   | 'outsideCategoryFilter'
-  | 'outsideRegionFilter';
+  | 'outsideRegionFilter'
+  | 'sharedWithMemberWithoutAccess';
 
 export type PermissionTestWorkspace = {
   workspaceId: string;

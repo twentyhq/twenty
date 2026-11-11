@@ -189,7 +189,7 @@ describe('computePrincipalsRecordsPermissions', () => {
     ).toEqual(defaultRolePermissions);
   });
 
-  it('should mask with the object access of a limiting role, ignoring its RLS rule', () => {
+  it('should deny an object a limiting role only reaches through an RLS rule', () => {
     const readAllRecords: ObjectRecordsPermissions = {
       canCreateAllRecords: false,
       canReadAllRecords: true,
@@ -218,17 +218,20 @@ describe('computePrincipalsRecordsPermissions', () => {
           [OBJECT_ID]: {
             ...readAllRecords,
             canReadAllRecords: false,
-            rowLevelRecordsPermissions: {
-              canCreateRecords: false,
-              canReadRecords: true,
-              canUpdateRecords: false,
-              canSoftDeleteRecords: false,
-              canDestroyRecords: false,
-              predicates: [],
-              predicateGroups: [],
-              unreadableFields: ['rule-hidden-field-id'],
-              uneditableFields: [],
-            },
+            rowLevelRecordsPermissions: [
+              {
+                ruleId: 'rule-id',
+                canCreateRecords: false,
+                canReadRecords: true,
+                canUpdateRecords: false,
+                canSoftDeleteRecords: false,
+                canDestroyRecords: false,
+                predicates: [],
+                predicateGroups: [],
+                unreadableFields: ['rule-hidden-field-id'],
+                uneditableFields: [],
+              },
+            ],
           },
         }),
       },
@@ -237,7 +240,62 @@ describe('computePrincipalsRecordsPermissions', () => {
       flatApplicationMaps: { byId: {} },
     });
 
-    expect(recordsPermissions.objects[OBJECT_ID]).toEqual(readAllRecords);
+    expect(recordsPermissions.objects[OBJECT_ID]).toEqual({
+      ...readAllRecords,
+      canReadAllRecords: false,
+    });
+  });
+
+  it('should deny an object a limiting agent only reaches through the RLS rule of the role it shares with the main principal', () => {
+    const rowLevelOnly: ObjectRecordsPermissions = {
+      canCreateAllRecords: false,
+      canReadAllRecords: false,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+      unreadableFields: [],
+      uneditableFields: [],
+      rowLevelRecordsPermissions: [
+        {
+          ruleId: 'rule-id',
+          canCreateRecords: false,
+          canReadRecords: true,
+          canUpdateRecords: false,
+          canSoftDeleteRecords: false,
+          canDestroyRecords: false,
+          predicates: [],
+          predicateGroups: [],
+          unreadableFields: [],
+          uneditableFields: [],
+        },
+      ],
+    };
+
+    const recordsPermissions = computePrincipalsRecordsPermissions({
+      principals: {
+        mainPrincipal: { type: 'role', roleId: 'shared-role-id' },
+        limitingPrincipal: {
+          type: 'agent',
+          agentId: 'agent-id',
+          roleId: 'shared-role-id',
+        },
+        applicationPrincipal: { type: 'customApplication' },
+      },
+      rolesPermissions: {
+        'shared-role-id': buildRoleRecordsPermissions({
+          [OBJECT_ID]: rowLevelOnly,
+        }),
+      },
+      flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+      flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
+      flatApplicationMaps: { byId: {} },
+    });
+
+    expect(
+      recordsPermissions.objects[OBJECT_ID]?.rowLevelRecordsPermissions,
+    ).toEqual([
+      expect.objectContaining({ ruleId: 'rule-id', canReadRecords: false }),
+    ]);
   });
 
   it('should not grant a permission that only one of the roles allows', () => {
@@ -760,15 +818,20 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
         canDestroyAllRecords: false,
         unreadableFields: [],
         uneditableFields: [],
-        rowLevelRecordsPermissions: {
-          canCreateRecords: true,
-          canReadRecords: true,
-          canUpdateRecords: true,
-          canSoftDeleteRecords: true,
-          canDestroyRecords: true,
-          predicates: [USER_PREDICATE],
-          predicateGroups: [],
-        },
+        rowLevelRecordsPermissions: [
+          {
+            ruleId: 'rule-id',
+            canCreateRecords: true,
+            canReadRecords: true,
+            canUpdateRecords: true,
+            canSoftDeleteRecords: true,
+            canDestroyRecords: true,
+            predicates: [USER_PREDICATE],
+            predicateGroups: [],
+            unreadableFields: [],
+            uneditableFields: [],
+          },
+        ],
       },
     }),
   };
@@ -870,9 +933,11 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
       scopeObjectPermissions: FULL_ACCESS,
     });
 
-    expect(invoicePermissions?.rowLevelRecordsPermissions?.predicates).toEqual([
-      USER_PREDICATE,
-    ]);
+    expect(
+      invoicePermissions?.rowLevelRecordsPermissions?.map(
+        ({ predicates }) => predicates,
+      ),
+    ).toEqual([[USER_PREDICATE]]);
   });
 
   it('adds the field restrictions of the scope', () => {

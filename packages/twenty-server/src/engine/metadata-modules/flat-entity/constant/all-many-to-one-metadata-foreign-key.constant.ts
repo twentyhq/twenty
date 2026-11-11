@@ -234,6 +234,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     rowLevelPermissionPredicateGroup: {
       foreignKey: 'rowLevelPermissionPredicateGroupId',
     },
+    rowLevelPermissionRule: {
+      foreignKey: 'rowLevelPermissionRuleId',
+    },
   },
   pageLayout: {
     workspace: null,
@@ -283,6 +286,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'rowLevelPermissionPredicateGroupId',
     },
     application: null,
+    rowLevelPermissionRule: {
+      foreignKey: 'rowLevelPermissionRuleId',
+    },
   },
   rowLevelPermissionPredicateGroup: {
     objectMetadata: {
@@ -293,6 +299,19 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     parentRowLevelPermissionPredicateGroup: {
       foreignKey: 'parentRowLevelPermissionPredicateGroupId',
+    },
+    workspace: null,
+    application: null,
+    rowLevelPermissionRule: {
+      foreignKey: 'rowLevelPermissionRuleId',
+    },
+  },
+  rowLevelPermissionRule: {
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    role: {
+      foreignKey: 'roleId',
     },
     workspace: null,
     application: null,

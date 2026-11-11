@@ -3,7 +3,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { RecordSharePrincipalType } from 'twenty-shared/types';
+import {
+  type FeatureFlagKey,
+  RecordSharePrincipalType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
@@ -12,6 +15,7 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
+import { canRecordShareGrantOperation } from 'src/engine/permissions/internal/record-share/utils/can-record-share-grant-operation.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -31,21 +35,18 @@ export class RecordSharePrincipalService {
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
-  // Without reach beyond roles, a grant the recipient's role cannot use would
-  // be stored without ever taking effect. Runs after the grants are written:
-  // they satisfy the share gate, so only the role and its row filter are tested
-  async assertPrincipalsReachRecordsOrThrow({
+  async assertShareRecipientsCanReadRecordsOrThrow({
     workspaceId,
     transactionScope,
     flatObjectMetadata,
-    canShareBeyondRole,
+    featureFlagsMap,
     principals,
     recordIds,
   }: {
     workspaceId: string;
     transactionScope: RecordPermissionTransactionScope;
     flatObjectMetadata: FlatObjectMetadata;
-    canShareBeyondRole: boolean;
+    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     principals: RecordSharePrincipal[];
     recordIds: string[];
   }): Promise<void> {
@@ -57,7 +58,11 @@ export class RecordSharePrincipalService {
     if (
       namedPrincipals.length === 0 ||
       recordIds.length === 0 ||
-      canShareBeyondRole
+      canRecordShareGrantOperation({
+        flatObjectMetadata,
+        featureFlagsMap,
+        operationType: 'read',
+      })
     ) {
       return;
     }
@@ -103,8 +108,8 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const hasGrant = await this.recordPermissionsReadService.canAccessRecords(
-        {
+      const canRecipientReadRecords =
+        await this.recordPermissionsReadService.canAccessRecords({
           operationType: 'read',
           principals:
             await this.principalPermissionsReadService.resolvePermissionsPrincipals(
@@ -119,10 +124,9 @@ export class RecordSharePrincipalService {
           objectMetadataId: flatObjectMetadata.id,
           recordIds,
           transactionScope,
-        },
-      );
+        });
 
-      if (!hasGrant) {
+      if (!canRecipientReadRecords) {
         throw new RecordShareException(
           `Principal ${principal.principalId} cannot see these records through its role`,
           RecordShareExceptionCode.INVALID_SHARE_WITH,

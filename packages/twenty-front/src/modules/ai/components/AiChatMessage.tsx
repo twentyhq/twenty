@@ -9,6 +9,7 @@ import { type ReactNode } from 'react';
 
 import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
+import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai/constants/AiChatUserMessageMaxWidth';
 import { getAgentChatAttachmentGroups } from '@/ai/utils/getAgentChatAttachmentGroups';
 
 import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
@@ -49,7 +50,8 @@ const StyledSender = styled.div`
 `;
 
 const StyledMessageContainer = styled.div<{ isUser?: boolean }>`
-  max-width: 100%;
+  max-width: ${({ isUser }) =>
+    isUser ? `min(100%, ${AI_CHAT_USER_MESSAGE_MAX_WIDTH})` : '100%'};
   min-width: 0;
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
 `;
