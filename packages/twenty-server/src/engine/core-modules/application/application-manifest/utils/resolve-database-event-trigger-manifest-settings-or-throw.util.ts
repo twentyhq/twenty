@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 import {
   type DatabaseEventTriggerManifestSettings,
   type DatabaseEventTriggerSettings,
@@ -104,7 +104,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   });
 
   if (!isObjectDatabaseEventTriggerManifestSettings(settings)) {
-    if (isNonEmptyString(condition)) {
+    if (isDefined(condition)) {
       const [objectNameSingular] = settings.eventName.split('.');
 
       assertConditionCompilesOrThrow({
@@ -166,7 +166,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
     },
   );
 
-  if (isNonEmptyString(condition)) {
+  if (isDefined(condition)) {
     assertConditionCompilesOrThrow({
       condition,
       objectUniversalIdentifier,
@@ -178,7 +178,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   return {
     eventName: `${objectNameSingular}.${action}`,
     ...(isDefined(updatedFields) && { updatedFields }),
-    ...(isNonEmptyString(condition) && { condition }),
+    ...(isDefined(condition) && { condition }),
     ...(isDefined(batchMode) && { batchMode }),
   };
 };

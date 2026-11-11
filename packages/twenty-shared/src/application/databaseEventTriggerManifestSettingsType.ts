@@ -1,12 +1,8 @@
 import { type DatabaseEventTriggerSettings } from '@/application/logicFunctionManifestType';
+import { type ValidationRuleDatabaseEventAction } from '@/utils/validation-rule/getValidationRuleRecordsFromDatabaseEvent';
 
 export type DatabaseEventTriggerManifestAction =
-  | 'created'
-  | 'updated'
-  | 'deleted'
-  | 'destroyed'
-  | 'restored'
-  | 'upserted'
+  | ValidationRuleDatabaseEventAction
   | '*';
 
 export type ObjectDatabaseEventTriggerManifestSettings = {
