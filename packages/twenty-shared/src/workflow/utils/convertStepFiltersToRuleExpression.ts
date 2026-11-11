@@ -7,6 +7,7 @@ import {
 } from '@/types/StepFilters';
 import { type ValidationRuleDatabaseEventAction } from '@/types/ValidationRuleDatabaseEventAction';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { isDefined } from '@/utils/validation/isDefined';
 import { type StepFiltersToRuleExpressionConversionResult } from '@/workflow/types/StepFiltersToRuleExpressionConversionResult';
 import { convertStepFilterToRuleExpressionNode } from '@/workflow/utils/internal/convertStepFilterToRuleExpressionNode';
 import { type RuleExpressionNode } from '@/workflow/utils/internal/RuleExpressionNode';
@@ -32,7 +33,7 @@ const findStepFilterGroupTreeError = ({
     (stepFilter) => !groupIds.has(stepFilter.stepFilterGroupId),
   );
 
-  if (filterWithUnknownGroup !== undefined) {
+  if (isDefined(filterWithUnknownGroup)) {
     return {
       reason: `filter ${filterWithUnknownGroup.id} is in an unknown group`,
     };
@@ -181,7 +182,7 @@ const convertStepFilterTree = ({
     stepFilters,
   });
 
-  if (treeError !== undefined) {
+  if (isDefined(treeError)) {
     return { isConvertible: false, reason: treeError.reason };
   }
 

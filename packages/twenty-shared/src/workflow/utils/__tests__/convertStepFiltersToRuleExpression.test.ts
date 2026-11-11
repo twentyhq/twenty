@@ -1,3 +1,4 @@
+import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRuleExpressionMaxLength';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { RelationType } from '@/types/RelationType';
 import {
@@ -87,6 +88,39 @@ const after = (path: string) => `{{trigger.properties.after.${path}}}`;
 const before = (path: string) => `{{trigger.properties.before.${path}}}`;
 
 describe('convertStepFiltersToRuleExpression', () => {
+  describe('expression length', () => {
+    const nameIs = (value: string) =>
+      convert({
+        type: 'TEXT',
+        operand: ViewFilterOperand.IS,
+        value,
+        stepOutputKey: after('name'),
+      });
+
+    it('should accept an expression of exactly the maximum length', () => {
+      const conversion = nameIs(
+        'a'.repeat(VALIDATION_RULE_EXPRESSION_MAX_LENGTH - "name == ''".length),
+      );
+
+      expect(conversion).toMatchObject({ isConvertible: true });
+      expect(conversion.isConvertible && conversion.expression.length).toBe(
+        VALIDATION_RULE_EXPRESSION_MAX_LENGTH,
+      );
+    });
+
+    it('should measure the escaped expression, not the filter value', () => {
+      const value = `${'a'.repeat(VALIDATION_RULE_EXPRESSION_MAX_LENGTH - "name == ''".length - 1)}'`;
+
+      expect(value.length + "name == ''".length).toBe(
+        VALIDATION_RULE_EXPRESSION_MAX_LENGTH,
+      );
+      expect(nameIs(value)).toEqual({
+        isConvertible: false,
+        reason: `the expression is longer than ${VALIDATION_RULE_EXPRESSION_MAX_LENGTH} characters`,
+      });
+    });
+  });
+
   describe('paths', () => {
     it('should read after as the record and before as previous', () => {
       expect(
