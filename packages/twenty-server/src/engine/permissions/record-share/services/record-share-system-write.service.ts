@@ -14,7 +14,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { PrivateRecordWriteService } from 'src/engine/permissions/internal/private-record/services/private-record-write.service';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { type RuleRecordSharesScope } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-rule-record-shares-query.util';
 import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
@@ -37,18 +36,10 @@ export class RecordShareSystemWriteService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly privateRecordWriteService: PrivateRecordWriteService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
   ) {}
 
-  setRecordsPrivacy(
-    args: Parameters<PrivateRecordWriteService['setPrivateOrThrow']>[0],
-  ): Promise<void> {
-    return this.privateRecordWriteService.setPrivateOrThrow(args);
-  }
-
-  // Every path removing a member from an active workspace must call this, or only all-records roles can manage their records
   async transferRecordSharesToSuccessor({
     removedUserWorkspace,
     removedWorkspaceMemberId,

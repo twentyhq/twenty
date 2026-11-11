@@ -2,6 +2,12 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { type PrivateRecordStateRow } from 'src/engine/permissions/internal/private-record/types/private-record-state-row.type';
+import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
+import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/internal/private-record/utils/build-find-private-record-states-query.util';
+import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/internal/private-record/utils/index-private-record-states-by-record-id.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
@@ -44,5 +50,40 @@ export class PrivateRecordRepository {
         parameters: { isPrivate, recordIds },
       },
     });
+  }
+
+  async findPrivateRecordStates({
+    workspaceId,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    recordIds,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    recordIds: string[];
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<Map<string, PrivateRecordState>> {
+    if (recordIds.length === 0) {
+      return new Map();
+    }
+
+    const rows =
+      await this.recordPermissionQueryService.execute<PrivateRecordStateRow>({
+        workspaceId,
+        transactionScope,
+        query: buildFindPrivateRecordStatesQuery({
+          tableExpression: buildWorkspaceTableExpression({
+            workspaceId,
+            tableName: computeObjectTargetTable(flatObjectMetadata),
+          }),
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          recordIds,
+        }),
+      });
+
+    return indexPrivateRecordStatesByRecordId(rows);
   }
 }
