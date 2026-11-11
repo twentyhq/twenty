@@ -22,6 +22,10 @@ Operations are structured entries discriminated by 'kind':
 Mix as needed: pass one array containing both record and metadata operations.",
     "inputSchema": {
       "properties": {
+        "condition": {
+          "description": "Rule expression a record event must meet to be sent, using the object's field names (e.g. "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'"). previous.<field> reads the value before an update, and a relation to one record reads its target's fields (company.employees > 100). Record operations only; metadata events ignore it.",
+          "type": "string",
+        },
         "description": {
           "description": "Optional human description for the webhook",
           "type": "string",
@@ -123,6 +127,13 @@ Mix as needed: pass one array containing both record and metadata operations.",
     "description": "Update an existing webhook. Only the fields you pass are modified; everything else is preserved.",
     "inputSchema": {
       "properties": {
+        "condition": {
+          "description": "Rule expression a record event must meet to be sent, using the object's field names (e.g. "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'"). previous.<field> reads the value before an update, and a relation to one record reads its target's fields (company.employees > 100). Pass null to remove it. Record operations only; metadata events ignore it.",
+          "type": [
+            "string",
+            "null",
+          ],
+        },
         "description": {
           "type": "string",
         },

@@ -70,6 +70,7 @@ describe('MCP webhook tools (integration)', () => {
       targetUrl: TARGET_URL,
       operations: ['person.created'],
       description: null,
+      condition: null,
     });
     expect(await listWebhookIdsThroughMcp()).toContain(webhookId);
 
@@ -90,6 +91,7 @@ describe('MCP webhook tools (integration)', () => {
         targetUrl: TARGET_URL,
         operations: ['metadata.*.*'],
         description: 'Notify the sales channel',
+        condition: null,
       },
     });
 
