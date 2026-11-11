@@ -493,6 +493,7 @@ type Application {
   defaultRoleId: String
   description: String
   frontComponents: [FrontComponent!]!
+  grantRoleId: UUID
   grantedIframeMediaPermissions: [IframeMediaPermission!]!
   healthCheckLogicFunctionId: UUID
   id: UUID!

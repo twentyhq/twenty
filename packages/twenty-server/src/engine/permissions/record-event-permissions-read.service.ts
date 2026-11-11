@@ -6,6 +6,8 @@ import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
@@ -20,6 +22,7 @@ import { resolveFieldsHiddenOnMatchingRecords } from 'src/engine/permissions/int
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 type EventBatchAccessLoaders = {
@@ -40,6 +43,7 @@ export class RecordEventPermissionsReadService {
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
   async filterReadableEvents<TEvent extends ObjectRecordEvent>({
@@ -193,10 +197,24 @@ export class RecordEventPermissionsReadService {
           }),
       ));
 
+    const isDestroyedRecordEventBatch =
+      parseEventNameOrThrow(eventBatch.name).action ===
+      DatabaseEventAction.DESTROYED;
+
     const findReadableRecordIdsInBatch = async (
       principals: PermissionsPrincipalsWithRolesContext,
-    ) =>
-      findGrantedRecordIds({
+    ) => {
+      if (!isDestroyedRecordEventBatch) {
+        return this.recordPermissionsReadService.filterGrantedRecordIds({
+          principals,
+          objectMetadataId: objectMetadata.id,
+          operationType: 'read',
+          recordIds: events.map((event) => event.recordId),
+        });
+      }
+
+      // a destroyed record has no row left to query, so only its last snapshot can be checked
+      return findGrantedRecordIds({
         principals,
         metadataMaps: await loadMetadataMaps(),
         flatObjectMetadata: objectMetadata,
@@ -213,6 +231,7 @@ export class RecordEventPermissionsReadService {
             }),
         },
       });
+    };
 
     const loaders = { loadMetadataMaps, findReadableRecordIdsInBatch };
 

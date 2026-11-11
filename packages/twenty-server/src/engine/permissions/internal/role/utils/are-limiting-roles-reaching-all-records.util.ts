@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { canReachAllRecords } from 'twenty-shared/utils';
+import { canReachAllRecords, isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
@@ -11,16 +11,31 @@ export const areLimitingRolesReachingAllRecords = ({
   metadataMaps,
   flatObjectMetadata,
   operationType,
-}: PermissionsObjectAccessRequest): boolean =>
-  getPermissionsPrincipalsLimitingRoleIds(principals).every((limitingRoleId) =>
-    canReachAllRecords({
-      objectRecordsPermissions:
+}: PermissionsObjectAccessRequest): boolean => {
+  const limitingObjectRecordsPermissions = [
+    ...getPermissionsPrincipalsLimitingRoleIds(principals).map(
+      (limitingRoleId) =>
         metadataMaps.rolesPermissions[limitingRoleId]?.objects[
           flatObjectMetadata.id
         ],
-      operationType: getEnforcedOperationType({
-        operationType,
-        featureFlagsMap: metadataMaps.featureFlagsMap,
-      }),
+    ),
+    ...(isDefined(principals.runtimeLimitingRole)
+      ? [
+          principals.runtimeLimitingRole.recordsPermissions.objects[
+            flatObjectMetadata.id
+          ],
+        ]
+      : []),
+  ];
+  const enforcedOperationType = getEnforcedOperationType({
+    operationType,
+    featureFlagsMap: metadataMaps.featureFlagsMap,
+  });
+
+  return limitingObjectRecordsPermissions.every((objectRecordsPermissions) =>
+    canReachAllRecords({
+      objectRecordsPermissions,
+      operationType: enforcedOperationType,
     }),
   );
+};
