@@ -24,7 +24,7 @@ env:
 jobs:
   storybook-test:
     timeout-minutes: 30
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       STORYBOOK_URL: http://localhost:6006
