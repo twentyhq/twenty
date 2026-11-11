@@ -26,22 +26,22 @@ export const AvailableWorkspaceItem = ({
     getAvailableWorkspacePathAndSearchParams(availableWorkspace);
 
   const handleChange = async () => {
-    await redirectToWorkspaceDomain(
-      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+    await redirectToWorkspaceDomain({
+      baseUrl: getWorkspaceUrl(availableWorkspace.workspaceUrls),
       pathname,
       searchParams,
-    );
+    });
   };
 
   return (
     <Dropdown.OptionItem
       render={
         <a
-          href={buildWorkspaceUrl(
-            getWorkspaceUrl(availableWorkspace.workspaceUrls),
+          href={buildWorkspaceUrl({
+            endpoint: getWorkspaceUrl(availableWorkspace.workspaceUrls),
             pathname,
             searchParams,
-          )}
+          })}
         />
       }
       onClick={(event) => {

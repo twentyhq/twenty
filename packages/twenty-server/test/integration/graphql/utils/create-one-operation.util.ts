@@ -14,6 +14,7 @@ export const createOneOperation = async <T = object>({
   gqlFields = 'id',
   objectMetadataSingularName,
   expectToFail = false,
+  token,
 }: CreateOneOperationArgs<T>): CommonResponseBody<{
   createOneResponse: ObjectRecord;
 }> => {
@@ -23,7 +24,7 @@ export const createOneOperation = async <T = object>({
     gqlFields,
   });
 
-  const response = await makeGraphqlApiRequest(graphqlOperation);
+  const response = await makeGraphqlApiRequest(graphqlOperation, token);
 
   if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
@@ -35,7 +36,7 @@ export const createOneOperation = async <T = object>({
   return {
     data: {
       createOneResponse:
-        response.body.data[`create${capitalize(objectMetadataSingularName)}`],
+        response.body.data?.[`create${capitalize(objectMetadataSingularName)}`],
     },
     errors: response.body.errors,
   };

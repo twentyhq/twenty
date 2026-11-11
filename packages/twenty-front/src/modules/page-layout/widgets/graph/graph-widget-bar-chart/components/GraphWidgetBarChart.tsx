@@ -1,6 +1,4 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
-import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { BarChart } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/BarChart';
@@ -15,6 +13,7 @@ import { type BarChartSliceHoverData } from '@/page-layout/widgets/graph/graph-w
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/calculateValueRangeFromBarChartKeys';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
@@ -41,6 +40,7 @@ type GraphWidgetBarChartProps = {
   groupMode?: 'grouped' | 'stacked';
   id: string;
   indexBy: string;
+  isWidgetMoving?: boolean;
   keys: string[];
   layout?: BarChartLayout;
   omitNullValues?: boolean;
@@ -51,6 +51,7 @@ type GraphWidgetBarChartProps = {
   seriesLabels?: Record<string, string>;
   showGrid?: boolean;
   showLegend?: boolean;
+  isLegendInteractive?: boolean;
   showValues?: boolean;
   tooltipDisplayType?: GraphValueFormatOptions['displayType'];
   xAxisLabel?: string;
@@ -69,9 +70,11 @@ const StyledContainer = styled.div`
 export const GraphWidgetBarChart = ({
   data,
   indexBy,
+  isWidgetMoving = false,
   keys,
   series,
   showLegend = true,
+  isLegendInteractive = true,
   showGrid = true,
   showValues = false,
   xAxisLabel,
@@ -102,30 +105,22 @@ export const GraphWidgetBarChart = ({
 
   const setGraphWidgetBarTooltip = useSetAtomComponentState(
     graphWidgetBarTooltipComponentState,
+    id,
   );
 
   const setGraphWidgetHoveredSliceIndex = useSetAtomComponentState(
     graphWidgetHoveredSliceIndexComponentState,
+    id,
   );
 
   const graphWidgetHoveredSliceIndex = useAtomComponentStateValue(
     graphWidgetHoveredSliceIndexComponentState,
-  );
-
-  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
-    pageLayoutDraggingWidgetIdComponentState,
-  );
-
-  const pageLayoutResizingWidgetId = useAtomComponentStateValue(
-    pageLayoutResizingWidgetIdComponentState,
+    id,
   );
 
   const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingState);
 
-  const isLayoutAnimating =
-    isSidePanelAnimating ||
-    pageLayoutDraggingWidgetId === id ||
-    pageLayoutResizingWidgetId === id;
+  const isLayoutAnimating = isSidePanelAnimating || isWidgetMoving;
 
   const allowDataTransitions = !isLayoutAnimating;
 
@@ -160,7 +155,14 @@ export const GraphWidgetBarChart = ({
   );
 
   const { enrichedKeysMap, enrichedKeys, legendItems, visibleKeys } =
-    useBarChartData({ keys, series, colorRegistry, seriesLabels, colorMode });
+    useBarChartData({
+      keys,
+      series,
+      colorRegistry,
+      seriesLabels,
+      colorMode,
+      instanceId: id,
+    });
 
   const orderedKeys =
     groupMode === 'stacked' && layout === BarChartLayout.VERTICAL
@@ -251,68 +253,74 @@ export const GraphWidgetBarChart = ({
   };
 
   return (
-    <StyledContainer id={id}>
-      <GraphWidgetChartContainer
-        ref={containerRef}
-        $isClickable={hasClickableItems}
-        $cursorSelector="canvas"
-      >
-        <NodeDimensionEffect
-          elementRef={containerRef}
-          onDimensionChange={({ height, width }) => {
-            setChartHeight(height);
-            setChartWidth(width);
-          }}
+    <WidgetComponentInstanceContext.Provider value={{ instanceId: id }}>
+      <StyledContainer id={id}>
+        <GraphWidgetChartContainer
+          ref={containerRef}
+          $isClickable={hasClickableItems}
+          $cursorSelector="canvas"
+        >
+          <NodeDimensionEffect
+            elementRef={containerRef}
+            onDimensionChange={({ height, width }) => {
+              setChartHeight(height);
+              setChartWidth(width);
+            }}
+          />
+          {chartWidth > 0 && chartHeight > 0 && (
+            <BarChart
+              allowDataTransitions={allowDataTransitions}
+              axisConfig={{
+                showGrid,
+                xAxisLabel,
+                yAxisLabel,
+              }}
+              chartHeight={chartHeight}
+              chartWidth={chartWidth}
+              data={data}
+              dataLabelsConfig={{
+                omitNullValues,
+                show: showValues,
+              }}
+              effectiveValueRange={{
+                maximum: effectiveMaximumValue,
+                minimum: effectiveMinimumValue,
+              }}
+              hasExplicitRangeBounds={hasExplicitRangeBounds}
+              enrichedKeysMap={enrichedKeysMap}
+              formatOptions={formatOptions}
+              axisFormatOptions={axisFormatOptions}
+              rightTickLabels={rightTickLabels}
+              groupMode={groupMode}
+              hasNoData={hasNoData}
+              hoveredSliceIndexValue={graphWidgetHoveredSliceIndex}
+              indexBy={indexBy}
+              keys={orderedKeys}
+              layout={layout}
+              onSliceClick={onSliceClick}
+              onSliceHover={handleSliceHover}
+              onSliceLeave={handleSliceLeave}
+            />
+          )}
+        </GraphWidgetChartContainer>
+
+        <BarChartTooltip
+          containerRef={containerRef}
+          dataByIndexValue={dataByIndexValue}
+          enrichedKeys={enrichedKeys}
+          formatOptions={tooltipFormatOptions}
+          onMouseEnter={handleTooltipMouseEnter}
+          onMouseLeave={handleTooltipMouseLeave}
+          onSliceClick={onSliceClick}
         />
-        {chartWidth > 0 && chartHeight > 0 && (
-          <BarChart
-            allowDataTransitions={allowDataTransitions}
-            axisConfig={{
-              showGrid,
-              xAxisLabel,
-              yAxisLabel,
-            }}
-            chartHeight={chartHeight}
-            chartWidth={chartWidth}
-            data={data}
-            dataLabelsConfig={{
-              omitNullValues,
-              show: showValues,
-            }}
-            effectiveValueRange={{
-              maximum: effectiveMaximumValue,
-              minimum: effectiveMinimumValue,
-            }}
-            hasExplicitRangeBounds={hasExplicitRangeBounds}
-            enrichedKeysMap={enrichedKeysMap}
-            formatOptions={formatOptions}
-            axisFormatOptions={axisFormatOptions}
-            rightTickLabels={rightTickLabels}
-            groupMode={groupMode}
-            hasNoData={hasNoData}
-            hoveredSliceIndexValue={graphWidgetHoveredSliceIndex}
-            indexBy={indexBy}
-            keys={orderedKeys}
-            layout={layout}
-            onSliceClick={onSliceClick}
-            onSliceHover={handleSliceHover}
-            onSliceLeave={handleSliceLeave}
+        {showLegend && data.length > 0 && keys.length > 0 && (
+          <GraphWidgetLegend
+            items={legendItems}
+            show
+            isInteractive={isLegendInteractive}
           />
         )}
-      </GraphWidgetChartContainer>
-
-      <BarChartTooltip
-        containerRef={containerRef}
-        dataByIndexValue={dataByIndexValue}
-        enrichedKeys={enrichedKeys}
-        formatOptions={tooltipFormatOptions}
-        onMouseEnter={handleTooltipMouseEnter}
-        onMouseLeave={handleTooltipMouseLeave}
-        onSliceClick={onSliceClick}
-      />
-      {showLegend && data.length > 0 && keys.length > 0 && (
-        <GraphWidgetLegend items={legendItems} show />
-      )}
-    </StyledContainer>
+      </StyledContainer>
+    </WidgetComponentInstanceContext.Provider>
   );
 };

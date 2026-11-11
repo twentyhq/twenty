@@ -29,6 +29,18 @@ export const buildWorkflowRunStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  coreWorkflowIdCreatedAtIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'coreWorkflowIdCreatedAtIndex',
+      relatedFieldNames: ['coreWorkflowId', 'createdAt'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   searchVectorGinIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

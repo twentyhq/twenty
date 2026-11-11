@@ -21,6 +21,7 @@ import { buildApplicationJobMemoryLimitLogEntry } from 'src/engine/core-modules/
 import { buildApplicationJobThrottledLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-throttled-log-entry.util';
 import { buildLogicFunctionTriggerJobIds } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/build-logic-function-trigger-job-ids';
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
+import { buildDatabaseEventTriggerConditionFields } from 'src/engine/workspace-event-emitter/utils/build-database-event-trigger-condition-fields.util';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
   LogicFunctionTriggerJob,
@@ -48,11 +49,14 @@ export class CallDatabaseEventTriggerJobsJob {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
     { jobId }: MessageQueueJobContext,
   ) {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-      );
+    const {
+      flatLogicFunctionMaps,
+      flatApplicationMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(
+      workspaceEventBatch.workspaceId,
+      ['flatLogicFunctionMaps', 'flatApplicationMaps', 'flatFieldMetadataMaps'],
+    );
 
     const logicFunctionsToTrigger = findLogicFunctionsTriggeredByEventName({
       flatLogicFunctionMaps,
@@ -78,6 +82,11 @@ export class CallDatabaseEventTriggerJobsJob {
     if (logicFunctionsByApplicationId.size === 0) {
       return;
     }
+
+    const conditionFields = buildDatabaseEventTriggerConditionFields({
+      flatObjectMetadata: workspaceEventBatch.objectMetadata,
+      flatFieldMetadataMaps,
+    });
 
     for (const [
       applicationId,
@@ -108,6 +117,11 @@ export class CallDatabaseEventTriggerJobsJob {
           ...workspaceEventBatch,
           events: readableEvents,
         },
+        conditionFields,
+        onConditionError: ({ logicFunctionId, errorMessage }) =>
+          this.logger.warn(
+            `Condition of logic function ${logicFunctionId} in workspace ${workspaceEventBatch.workspaceId} failed to evaluate: ${errorMessage}`,
+          ),
       });
 
       if (logicFunctionPayloads.length === 0) {

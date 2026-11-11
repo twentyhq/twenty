@@ -185,17 +185,29 @@ const stepFor = (type: WorkflowStepManifest['type']) =>
 const convert = (type: WorkflowStepManifest['type']) =>
   fromWorkflowStepManifestToActionOrThrow({
     step: stepFor(type),
-    index: 0,
     references,
   });
 
 describe('application workflow actions', () => {
+  it('keeps a declared position and leaves an undeclared one unset', () => {
+    const step = stepFor(WorkflowActionType.LOGIC_FUNCTION);
+
+    expect(convert(WorkflowActionType.LOGIC_FUNCTION)).not.toHaveProperty(
+      'position',
+    );
+    expect(
+      fromWorkflowStepManifestToActionOrThrow({
+        step: { ...step, position: { x: 4, y: 2 } },
+        references,
+      }).position,
+    ).toEqual({ x: 4, y: 2 });
+  });
+
   it('derives a nested function output schema from an expected result', () => {
     const step = stepFor(WorkflowActionType.LOGIC_FUNCTION);
     step.expectedOutputSchema = { company: { name: 'Example' }, count: 2 };
     const result = fromWorkflowStepManifestToActionOrThrow({
       step,
-      index: 0,
       references,
     });
     expect(result.settings.outputSchema).toMatchObject({
@@ -215,7 +227,6 @@ describe('application workflow actions', () => {
     };
     const result = fromWorkflowStepManifestToActionOrThrow({
       step: stepFor(WorkflowActionType.LOGIC_FUNCTION),
-      index: 0,
       references: {
         ...references,
         logicFunctionOutputSchemaByUniversalIdentifier: new Map([
@@ -260,7 +271,6 @@ describe('application workflow actions', () => {
         input,
         nextStepIds: [],
       }),
-      index: 0,
       references: { ...references, agentIdByUniversalIdentifier: new Map() },
     });
 
@@ -316,7 +326,6 @@ describe('application workflow actions', () => {
           input: { prompt: 'Qualify {{trigger.name}}', scope },
           nextStepIds: [],
         }),
-        index: 0,
         references,
       }),
     ).toThrow(error);
@@ -385,7 +394,6 @@ describe('application workflow actions', () => {
           type: 'SELECT',
           settings: { selectedFieldUniversalIdentifier: RECORD_FILTER_ID },
         }),
-        index: 0,
         references,
       }),
     ).toThrow('missing field');
@@ -395,7 +403,6 @@ describe('application workflow actions', () => {
           type: 'MULTI_SELECT',
           settings: { selectedFieldUniversalIdentifier: SELECT_FIELD_ID },
         }),
-        index: 0,
         references,
       }),
     ).toThrow('must reference a MULTI_SELECT field');
@@ -426,8 +433,8 @@ describe('application workflow actions', () => {
     });
 
     expect(
-      fromWorkflowStepManifestToActionOrThrow({ step, index: 0, references })
-        .settings.input,
+      fromWorkflowStepManifestToActionOrThrow({ step, references }).settings
+        .input,
     ).toMatchObject({
       filter: {
         recordFilters: [
@@ -449,14 +456,12 @@ describe('application workflow actions', () => {
     expect(() =>
       fromWorkflowStepManifestToActionOrThrow({
         step: stepFor(WorkflowActionType.AI_AGENT),
-        index: 0,
         references: { ...references, agentIdByUniversalIdentifier: new Map() },
       }),
     ).toThrow('missing application agent');
     expect(() =>
       fromWorkflowStepManifestToActionOrThrow({
         step: stepFor(WorkflowActionType.FIND_RECORDS),
-        index: 0,
         references: {
           ...references,
           fieldByUniversalIdentifier: new Map([
@@ -526,7 +531,6 @@ describe('application workflow actions', () => {
           input: { ...input, connectedAccountHandle: handle },
           nextStepIds: [],
         }),
-        index: 0,
         references: { ...references, connectedAccounts: accounts },
       }).settings.input;
     };
@@ -585,7 +589,6 @@ describe('application workflow actions', () => {
             input: { ...email, connectedAccountId },
             nextStepIds: [],
           }),
-          index: 0,
           references: { ...references, connectedAccounts },
         }).settings.input,
       ).toMatchObject({ connectedAccountId });
@@ -650,7 +653,6 @@ describe('application workflow actions', () => {
     };
     const action = fromWorkflowStepManifestToActionOrThrow({
       step,
-      index: 0,
       references,
     });
     expect(action.settings).toMatchObject({
