@@ -17,16 +17,13 @@ export const SettingsConnectableApp = () => {
   const { applicationId } = useParams<{ applicationId: string }>();
   const {
     connectableApp,
+    isConnectableAppNotFound,
     isLoading,
     hasConnectableAppsLoadError,
     refetchConnectableApps,
   } = useConnectableApp(applicationId);
 
-  if (
-    !isDefined(connectableApp) &&
-    !isLoading &&
-    !hasConnectableAppsLoadError
-  ) {
+  if (isConnectableAppNotFound) {
     return (
       <Navigate to={getSettingsPath(SettingsPath.AppPreferences)} replace />
     );
