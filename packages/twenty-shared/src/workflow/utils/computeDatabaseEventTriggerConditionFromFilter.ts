@@ -5,6 +5,7 @@ import {
 import { type ValidationRuleDatabaseEventAction } from '@/types/ValidationRuleDatabaseEventAction';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { compileValidationRuleExpression } from '@/utils/validation-rule/compileValidationRuleExpression';
+import { getValidationRulePreviousValueFieldPath } from '@/utils/validation-rule/getValidationRulePreviousValueFieldPath';
 import { convertStepFiltersToRuleExpression } from '@/workflow/utils/convertStepFiltersToRuleExpression';
 
 const DATABASE_EVENT_ACTIONS: ValidationRuleDatabaseEventAction[] = [
@@ -23,7 +24,8 @@ const isDatabaseEventAction = (
     (databaseEventAction) => databaseEventAction === action,
   );
 
-// Undefined keeps the legacy filter: the filter can't be expressed exactly, or reads a field the object lacks
+// Undefined keeps the legacy filter: the filter can't be expressed exactly, reads a field the object lacks,
+// or reads a related record, which the filter reads with system permissions and a condition as the trigger owner
 export const computeDatabaseEventTriggerConditionFromFilter = ({
   eventName,
   filter,
@@ -58,10 +60,23 @@ export const computeDatabaseEventTriggerConditionFromFilter = ({
     return undefined;
   }
 
-  return compileValidationRuleExpression({
+  const compilation = compileValidationRuleExpression({
     expression: conversion.expression,
     fields,
-  }).isValid
-    ? conversion.expression
-    : undefined;
+  });
+
+  if (!compilation.isValid) {
+    return undefined;
+  }
+
+  const readsRelatedRecordFields = Object.keys(compilation.bindings).some(
+    (boundPath) => {
+      const fieldPath =
+        getValidationRulePreviousValueFieldPath(boundPath) ?? boundPath;
+
+      return fieldPath.includes('.') && !fieldPath.endsWith('.id');
+    },
+  );
+
+  return readsRelatedRecordFields ? undefined : conversion.expression;
 };
