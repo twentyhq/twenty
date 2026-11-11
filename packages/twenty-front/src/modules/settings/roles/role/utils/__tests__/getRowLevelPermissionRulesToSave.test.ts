@@ -88,6 +88,43 @@ describe('getRowLevelPermissionRulesToSave', () => {
     ]);
   });
 
+  it('should keep the create grant of a saved rule', () => {
+    const [rulesToSave] = getRowLevelPermissionRulesToSave({
+      draftRole: {
+        ...DEFAULT_SETTINGS_DRAFT_ROLE,
+        rowLevelPermissionPredicateGroups: [
+          buildRootGroup('owner-rule', {
+            canUpdateRecords: true,
+            rowLevelPermissionRuleId: 'saved-rule-id',
+          }),
+        ],
+        rowLevelPermissionPredicates: [
+          buildPredicate({
+            id: 'owner',
+            rowLevelPermissionPredicateGroupId: 'owner-rule',
+          }),
+        ],
+      },
+      persistedRole: {
+        ...DEFAULT_SETTINGS_DRAFT_ROLE,
+        rowLevelPermissionRules: [
+          {
+            __typename: 'RowLevelPermissionRule',
+            id: 'saved-rule-id',
+            objectMetadataId: OBJECT_ID,
+            canCreateRecords: false,
+            canReadRecords: true,
+            canUpdateRecords: true,
+            canSoftDeleteRecords: false,
+            canDestroyRecords: false,
+          },
+        ],
+      },
+    });
+
+    expect(rulesToSave.ruleGrants[0]?.canCreateRecords).toBe(false);
+  });
+
   it('should send an empty rule set for an object whose rules were all removed', () => {
     expect(
       getRowLevelPermissionRulesToSave({

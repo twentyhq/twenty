@@ -55,10 +55,32 @@ export const getRowLevelPermissionRulesToSave = ({
   >;
   persistedRole?: Pick<
     RoleWithPartialMembers,
-    'rowLevelPermissionPredicates' | 'rowLevelPermissionPredicateGroups'
+    | 'rowLevelPermissionPredicates'
+    | 'rowLevelPermissionPredicateGroups'
+    | 'rowLevelPermissionRules'
   >;
 }): RowLevelPermissionRulesToSave[] => {
   const predicates = draftRole.rowLevelPermissionPredicates ?? [];
+  const persistedRuleById = new Map(
+    (persistedRole?.rowLevelPermissionRules ?? []).map((rule) => [
+      rule.id,
+      rule,
+    ]),
+  );
+
+  // A saved rule keeps its create grant, a new one follows update like object grants do
+  const getCanCreateRecords = (
+    rootPredicateGroup: RowLevelPermissionPredicateGroup,
+  ) => {
+    if (!isDefined(rootPredicateGroup.rowLevelPermissionRuleId)) {
+      return rootPredicateGroup.canUpdateRecords;
+    }
+
+    return (
+      persistedRuleById.get(rootPredicateGroup.rowLevelPermissionRuleId)
+        ?.canCreateRecords ?? rootPredicateGroup.canUpdateRecords
+    );
+  };
   const predicateGroups = draftRole.rowLevelPermissionPredicateGroups ?? [];
   const predicateGroupById = new Map(
     predicateGroups.map((predicateGroup) => [
@@ -121,7 +143,7 @@ export const getRowLevelPermissionRulesToSave = ({
         )
         .map((rootPredicateGroup) => ({
           rootPredicateGroupId: rootPredicateGroup.id,
-          canCreateRecords: rootPredicateGroup.canUpdateRecords,
+          canCreateRecords: getCanCreateRecords(rootPredicateGroup),
           canReadRecords: rootPredicateGroup.canReadRecords,
           canUpdateRecords: rootPredicateGroup.canUpdateRecords,
           canSoftDeleteRecords: rootPredicateGroup.canSoftDeleteRecords,
