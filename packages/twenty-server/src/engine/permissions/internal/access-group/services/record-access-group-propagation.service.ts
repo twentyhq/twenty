@@ -67,7 +67,9 @@ export class RecordAccessGroupPropagationService {
     workspaceId: string;
   }): Promise<void> {
     const metadataMaps =
-      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
+      await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
+        workspaceId,
+      );
 
     await this.scheduleRecomputeOfObjectsUsingRecordAccessGroups({
       workspaceId,

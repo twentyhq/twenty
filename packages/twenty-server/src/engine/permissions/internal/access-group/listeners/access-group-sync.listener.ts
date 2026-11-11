@@ -52,7 +52,7 @@ export class AccessGroupSyncListener {
   async handleRelatedRecordPathEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.accessGroupSyncSchedulerService.scheduleSyncAndRelatedRecordPathTargetsRecomputeIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
       workspaceId,
     );
   }
@@ -88,7 +88,10 @@ export class AccessGroupSyncListener {
       isDefined(workspaceId) &&
       events.some(({ key }) => FLAGS_AFFECTING_ACCESS_GROUPS.includes(key))
     ) {
-      await this.accessGroupSyncSchedulerService.scheduleSyncAndRelatedRecordPathTargetsRecomputeIfEnabled(
+      await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+        workspaceId,
+      );
+      await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
         workspaceId,
       );
     }

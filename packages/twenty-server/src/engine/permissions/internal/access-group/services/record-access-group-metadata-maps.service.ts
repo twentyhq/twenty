@@ -14,6 +14,14 @@ export class RecordAccessGroupMetadataMapsService {
     private readonly relatedRecordPathReadService: RelatedRecordPathReadService,
   ) {}
 
+  async findAfterEvictingLocalCache(
+    workspaceId: string,
+  ): Promise<RecordAccessGroupComputationMetadataMaps> {
+    await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
+
+    return this.find(workspaceId);
+  }
+
   async find(
     workspaceId: string,
   ): Promise<RecordAccessGroupComputationMetadataMaps> {
