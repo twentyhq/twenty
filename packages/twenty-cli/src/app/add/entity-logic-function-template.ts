@@ -45,7 +45,7 @@ export default defineLogicFunction({
     // },
     // Record event trigger example:
     // eventTriggerSettings: {
-    //   on: 'record',
+    //   on: 'recordEvent',
     //   objectUniversalIdentifier: '<object universal identifier>',
     //   action: 'created',
     //   // Optional: receive one call per batch of events instead of one per event,
