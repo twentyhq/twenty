@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
-  type DatabaseEventTriggerManifestSettings,
   type DatabaseEventTriggerSettings,
-  isObjectDatabaseEventTriggerManifestSettings,
+  type EventTriggerManifestSettings,
+  isRecordEventTriggerManifestSettings,
 } from 'twenty-shared/application';
 
 import {
@@ -11,11 +11,11 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 
 export const toStoredDatabaseEventTriggerSettingsOrThrow = (
-  settings: DatabaseEventTriggerManifestSettings,
+  settings: EventTriggerManifestSettings | DatabaseEventTriggerSettings,
 ): DatabaseEventTriggerSettings => {
-  if (isObjectDatabaseEventTriggerManifestSettings(settings)) {
+  if (isRecordEventTriggerManifestSettings(settings)) {
     throw new ApplicationException(
-      'Database event trigger: object and action settings must be resolved before they are stored',
+      'Event trigger: record settings must be resolved before they are stored',
       ApplicationExceptionCode.INVALID_INPUT,
       {
         userFriendlyMessage: msg`A database event trigger in this application is invalid.`,

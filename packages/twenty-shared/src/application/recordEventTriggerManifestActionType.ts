@@ -1,5 +1,5 @@
 import { type ValidationRuleDatabaseEventAction } from '@/types/ValidationRuleDatabaseEventAction';
 
-export type DatabaseEventTriggerManifestAction =
+export type RecordEventTriggerManifestAction =
   | ValidationRuleDatabaseEventAction
   | '*';
