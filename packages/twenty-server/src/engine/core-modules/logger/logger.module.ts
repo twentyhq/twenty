@@ -40,8 +40,7 @@ export class LoggerModule extends ConfigurableModuleClass {
   static forRootAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     const provider = {
       provide: LOGGER_DRIVER,
-      // oxlint-disable-next-line typescript/no-explicit-any
-      useFactory: async (...args: any[]) => {
+      useFactory: async (...args: unknown[]) => {
         const config = await options?.useFactory?.(...args);
 
         if (!config) {

@@ -269,7 +269,7 @@ export const FormDateTimeFieldInput = ({
           >
             {draftValue.type === 'static' ? (
               <StyledDateInputTextContainer
-                isReadonly={readonly === true}
+                isReadonly={readonly}
                 onPointerDownCapture={handleOpenPicker}
               >
                 <DateTimePickerInput
