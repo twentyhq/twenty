@@ -56,6 +56,12 @@ const mergeFetchedCoreWorkflowPage = (
           (edge) => !alreadyLoadedIds.has(edge.node.id),
         ),
       ],
+      runSummaries: [
+        ...previousResult.coreWorkflows.runSummaries,
+        ...fetchMoreResult.coreWorkflows.runSummaries.filter(
+          (runSummary) => !alreadyLoadedIds.has(runSummary.coreWorkflowId),
+        ),
+      ],
     },
   };
 };
@@ -115,6 +121,17 @@ export const useCoreWorkflows = ({
     [connection],
   );
 
+  const runSummaryByCoreWorkflowId = useMemo(
+    () =>
+      new Map(
+        (connection?.runSummaries ?? []).map((runSummary) => [
+          runSummary.coreWorkflowId,
+          runSummary,
+        ]),
+      ),
+    [connection],
+  );
+
   const { enqueueToast } = useToast();
 
   const fetchNextPage = async () => {
@@ -168,6 +185,7 @@ export const useCoreWorkflows = ({
 
   return {
     coreWorkflows,
+    runSummaryByCoreWorkflowId,
     totalCount: connection?.totalCount ?? 0,
     hasNextPage: connection?.pageInfo.hasNextPage ?? false,
     fetchNextPage,

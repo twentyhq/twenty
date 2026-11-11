@@ -2,7 +2,7 @@ import {
   type CurrentUserWorkspace,
   currentUserWorkspaceState,
 } from '@/auth/states/currentUserWorkspaceState';
-import { withFieldListsFromRestrictedFields } from '@/auth/utils/withFieldListsFromRestrictedFields';
+import { normalizePersistedObjectRecordsPermissions } from '@/auth/utils/normalizePersistedObjectRecordsPermissions';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
 export const currentUserWorkspaceObjectRecordsPermissionsSelector =
@@ -12,6 +12,6 @@ export const currentUserWorkspaceObjectRecordsPermissionsSelector =
     key: 'currentUserWorkspaceObjectRecordsPermissionsSelector',
     get: ({ get }) =>
       get(currentUserWorkspaceState)?.objectRecordsPermissions?.map(
-        withFieldListsFromRestrictedFields,
+        normalizePersistedObjectRecordsPermissions,
       ),
   });
