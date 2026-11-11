@@ -5,7 +5,8 @@ export type ValidationRuleExpressionToken = {
     | 'string'
     | 'unclosedString'
     | 'whitespace'
-    | 'symbol';
+    | 'symbol'
+    | 'variable';
   text: string;
   start: number;
   end: number;

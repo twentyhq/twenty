@@ -31,6 +31,29 @@ describe('tokenizeValidationRuleExpression', () => {
     expect(describeTokens('company.')).toEqual(['path:company', 'symbol:.']);
   });
 
+  it('should read a workflow variable as one token, but not inside a string', () => {
+    expect(describeTokens("{{step-1.amount}} >= 10 and '{{text}}'")).toEqual([
+      'variable:{{step-1.amount}}',
+      'whitespace: ',
+      'symbol:>',
+      'symbol:=',
+      'whitespace: ',
+      'number:10',
+      'whitespace: ',
+      'path:and',
+      'whitespace: ',
+      "string:'{{text}}'",
+    ]);
+  });
+
+  it('should leave unclosed braces as symbols', () => {
+    expect(describeTokens('{{step.amount')).toEqual([
+      'symbol:{',
+      'symbol:{',
+      'path:step.amount',
+    ]);
+  });
+
   it('should cover the whole expression with contiguous offsets', () => {
     const expression = 'isDefined(amount) and stage in ["NEW"]';
     const tokens = tokenizeValidationRuleExpression(expression);
