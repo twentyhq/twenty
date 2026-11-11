@@ -36,6 +36,7 @@ describe('useHandleToggleColumnSort', () => {
 
   const nameFieldMetadataItemId = getFieldMetadataItemId('name');
   const employeesFieldMetadataItemId = getFieldMetadataItemId('employees');
+  const addressFieldMetadataItemId = getFieldMetadataItemId('address');
 
   const savedSort: RecordSort = {
     id: 'saved-sort',
@@ -128,6 +129,35 @@ describe('useHandleToggleColumnSort', () => {
         id: 'employees-sort',
         fieldMetadataId: employeesFieldMetadataItemId,
         direction: ViewSortDirection.DESC,
+      },
+    ]);
+  });
+
+  it('should keep the sub-field when flipping the direction', () => {
+    const { result } = renderUseHandleToggleColumnSort();
+
+    act(() => {
+      result.current.setCurrentRecordSorts([
+        savedSort,
+        {
+          id: 'address-sort',
+          fieldMetadataId: addressFieldMetadataItemId,
+          direction: ViewSortDirection.ASC,
+          subFieldName: 'addressCountry',
+        },
+      ]);
+    });
+
+    act(() => {
+      result.current.handleToggleColumnSort(addressFieldMetadataItemId);
+    });
+
+    expect(result.current.currentRecordSorts).toEqual([
+      {
+        id: 'address-sort',
+        fieldMetadataId: addressFieldMetadataItemId,
+        direction: ViewSortDirection.DESC,
+        subFieldName: 'addressCountry',
       },
     ]);
   });
