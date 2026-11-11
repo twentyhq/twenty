@@ -1,3 +1,5 @@
+import { useOpenRecordBoardCard } from '@/object-record/record-board/record-board-card/hooks/useOpenRecordBoardCard';
+import { isClickOnRecordBoardCardFieldBackground } from '@/object-record/record-board/record-board-card/utils/isClickOnRecordBoardCardFieldBackground';
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { recordBoardCardEditModePositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardEditModePositionComponentState';
 import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
@@ -14,7 +16,12 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useContext } from 'react';
+import { styled } from '@linaria/react';
+import { type MouseEvent, useContext } from 'react';
+
+const StyledBackgroundClickContainer = styled.div`
+  display: contents;
+`;
 
 export const RecordBoardCardCellHoveredPortalContent = () => {
   const { editModeContentOnly, isCentered } = useRecordInlineCellContext();
@@ -69,15 +76,25 @@ export const RecordBoardCardCellHoveredPortalContent = () => {
     setRecordBoardCardHoverPosition(null);
   };
 
+  const { openRecordBoardCard } = useOpenRecordBoardCard();
+
+  const handleBackgroundClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (isClickOnRecordBoardCardFieldBackground(event)) {
+      openRecordBoardCard();
+    }
+  };
+
   return (
-    <RecordInlineCellHoveredPortalContent
-      readonly={isRecordFieldReadOnly}
-      isCentered={isCentered}
-      onMouseLeave={handleMouseLeave}
-    >
-      <RecordInlineCellDisplayMode isHovered={true} onClick={handleClick}>
-        {editModeContentOnly ? <FieldInput /> : <FieldDisplay />}
-      </RecordInlineCellDisplayMode>
-    </RecordInlineCellHoveredPortalContent>
+    <StyledBackgroundClickContainer onClick={handleBackgroundClick}>
+      <RecordInlineCellHoveredPortalContent
+        readonly={isRecordFieldReadOnly}
+        isCentered={isCentered}
+        onMouseLeave={handleMouseLeave}
+      >
+        <RecordInlineCellDisplayMode isHovered={true} onClick={handleClick}>
+          {editModeContentOnly ? <FieldInput /> : <FieldDisplay />}
+        </RecordInlineCellDisplayMode>
+      </RecordInlineCellHoveredPortalContent>
+    </StyledBackgroundClickContainer>
   );
 };
