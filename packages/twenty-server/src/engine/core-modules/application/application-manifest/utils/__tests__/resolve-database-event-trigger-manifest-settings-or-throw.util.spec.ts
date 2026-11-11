@@ -102,7 +102,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
       resolve({
         objectUniversalIdentifier: OPPORTUNITY,
         action: 'updated',
-        fieldUniversalIdentifiers: [STAGE, COMPANY],
+        watchedFieldUniversalIdentifiers: [STAGE, COMPANY],
         condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
         batchMode: true,
       }),
@@ -155,7 +155,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
       {
         objectUniversalIdentifier: OPPORTUNITY,
         action: 'updated' as const,
-        fieldUniversalIdentifiers: [SIGNAL_STATUS],
+        watchedFieldUniversalIdentifiers: [SIGNAL_STATUS],
       },
       /is not on the trigger's object/,
     ],
@@ -164,7 +164,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
       {
         objectUniversalIdentifier: OPPORTUNITY,
         action: 'updated' as const,
-        fieldUniversalIdentifiers: [POINT_OF_CONTACTS],
+        watchedFieldUniversalIdentifiers: [POINT_OF_CONTACTS],
       },
       /pointOfContacts cannot be watched/,
     ],

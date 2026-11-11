@@ -83,7 +83,7 @@ describe('defineLogicFunction', () => {
   it('should error on trigger settings of the wrong type', () => {
     // Manifests are often plain JavaScript, so nothing typed these values
     const databaseEventTriggerSettings = JSON.parse(
-      '{"action":"updated","objectUniversalIdentifier":"9d3a2f8e-5c1b-4e7a-8f6d-2b4c1a9e7d35","fieldUniversalIdentifiers":"name","condition":true,"batchMode":"yes"}',
+      '{"action":"updated","objectUniversalIdentifier":"9d3a2f8e-5c1b-4e7a-8f6d-2b4c1a9e7d35","watchedFieldUniversalIdentifiers":"name","condition":true,"batchMode":"yes"}',
     );
 
     const result = defineLogicFunction({
@@ -96,7 +96,7 @@ describe('defineLogicFunction', () => {
     expect(result.success).toBe(false);
     expect(result.errors).toEqual(
       expect.arrayContaining([
-        'Database event trigger fieldUniversalIdentifiers must be a list of valid UUIDs',
+        'Database event trigger watchedFieldUniversalIdentifiers must be a list of valid UUIDs',
         'Database event trigger condition must be text',
         'Database event trigger batchMode must be true or false',
       ]),
