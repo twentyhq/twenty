@@ -426,10 +426,12 @@ describe('buildPermissionsSQLCondition', () => {
         principals: readEverything,
         flatObjectMetadata: person,
       }),
-    ).toContain('"person_recordShare"."recordId" = "person"."id"');
+    ).toContain(
+      '"person"."id" = ANY(ARRAY(SELECT "person_recordShare"."recordId"',
+    );
   });
 
-  it('opens private records only to shares naming the member or their roles', () => {
+  it('opens records to shares naming the member or their roles', () => {
     const sqlCondition = buildSQLCondition({
       principals: readEverything,
       metadataMaps,
@@ -441,15 +443,16 @@ describe('buildPermissionsSQLCondition', () => {
       throw new Error('Expected a share sqlCondition');
     }
     expect(sqlCondition.sql).toContain(
-      '("person"."_isPrivate" = TRUE) AND (EXISTS',
+      '"person"."id" = ANY(ARRAY(SELECT "person_recordShare"."recordId"',
     );
+    expect(sqlCondition.sql).not.toContain('"person"."_isPrivate" = TRUE');
     expect(Object.values(sqlCondition.parameters)).toContainEqual([
       'member-1',
       'role-1',
     ]);
   });
 
-  it('holds private shares to the role filter without sharing beyond the role', () => {
+  it('lets a share on a private by default object bypass the row filter of the role with record sharing off', () => {
     (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
     const sql = gatedSql({
       principals: readEverything,
@@ -457,7 +460,7 @@ describe('buildPermissionsSQLCondition', () => {
     });
 
     expect(sql).toMatch(
-      /^\(\(\("person"."title" = :restricted\) AND \("person"."_isPrivate" = FALSE\)\) OR \(\("person"."title" = :restricted\) AND \(\("person"."_isPrivate" = TRUE\) AND \(EXISTS/,
+      /^\(\(\("person"."title" = :restricted\) AND \("person"."_isPrivate" = FALSE\)\) OR \("person"."id" = ANY\(ARRAY\(SELECT "person_recordShare"."recordId"/,
     );
   });
 
@@ -529,32 +532,15 @@ describe('buildPermissionsSQLCondition', () => {
       expect(readOnly.kind).toBe('gated');
     });
 
-    it('preserves the member-bound row filter when sharing cannot reach beyond the role', () => {
-      (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
-      const policy = buildSQLConditionOutcome({
-        ...prospectiveShareArguments,
-        metadataMaps,
-        operationType: 'softDelete',
-        hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.FULL,
-        tableAlias: note.nameSingular,
-        flatObjectMetadata: {
-          ...note,
-          universalIdentifier:
-            STANDARD_OBJECTS.agentChatThread.universalIdentifier,
-        },
-      });
-
-      expect(policy).toMatchObject({
-        kind: 'gated',
-        sqlCondition: {
-          sql: expect.stringContaining('"note"."title" = :restricted'),
-        },
-      });
+    it('opens the operation for a prospective share on a private by default object with record sharing off', () => {
       expect(
-        policy.kind === 'gated'
-          ? policy.sqlCondition.sql.match(/"note"\."title" = :restricted/g)
-          : [],
-      ).toHaveLength(2);
+        buildSQLConditionOutcome({
+          ...prospectiveShareArguments,
+          metadataMaps,
+          operationType: 'softDelete',
+          hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.FULL,
+        }),
+      ).toEqual({ kind: 'open' });
     });
 
     it('preserves a disabled edit action', () => {
@@ -600,19 +586,19 @@ describe('buildPermissionsSQLCondition', () => {
     });
 
     it('reaches beyond missing role access only when record sharing is enabled', () => {
+      const noteShareArguments = {
+        ...prospectiveShareArguments,
+        tableAlias: note.nameSingular,
+        flatObjectMetadata: note,
+        principals: withoutObjectPermission,
+      };
+
       expect(
-        buildSQLConditionOutcome({
-          ...prospectiveShareArguments,
-          metadataMaps,
-          principals: withoutObjectPermission,
-        }),
+        buildSQLConditionOutcome({ ...noteShareArguments, metadataMaps }),
       ).toEqual({ kind: 'denied' });
-      expect(
-        buildSQLConditionOutcome({
-          ...prospectiveShareArguments,
-          principals: withoutObjectPermission,
-        }),
-      ).toEqual({ kind: 'open' });
+      expect(buildSQLConditionOutcome(noteShareArguments)).toEqual({
+        kind: 'open',
+      });
     });
   });
 
@@ -658,6 +644,30 @@ describe('buildPermissionsSQLCondition', () => {
       );
       expect(Object.values(policy.sqlCondition.parameters)).toContain(
         'member-1',
+      );
+    });
+
+    it('grants a private record to its creator outside the row filter of the role', () => {
+      (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
+      const policy = buildSQLConditionOutcome({
+        principals: readEverything,
+        metadataMaps: {
+          ...creatorMetadataMaps,
+          featureFlagsMap: metadataMaps.featureFlagsMap,
+        },
+        tableAlias: 'company',
+        flatObjectMetadata: company,
+        operationType: 'read',
+      });
+
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a grant gate');
+      }
+      expect(
+        policy.sqlCondition.sql.match(/"company"\."title" = :restricted/g),
+      ).toHaveLength(1);
+      expect(policy.sqlCondition.sql).toContain(
+        '("company"."_isPrivate" = TRUE) AND ("company"."createdByWorkspaceMemberId" = :',
       );
     });
 
