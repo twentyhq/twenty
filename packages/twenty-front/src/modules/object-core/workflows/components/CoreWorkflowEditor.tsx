@@ -35,7 +35,7 @@ export const CoreWorkflowEditor = ({
   // Stay mounted while a new current version loads, see CURRENT_WORKFLOW_VERSION_EDITOR_KEY
   const coreWorkflowVersion =
     fetchedCoreWorkflowVersion ??
-    (readonly ? null : previousCoreWorkflowVersion);
+    (loading && !readonly ? previousCoreWorkflowVersion : null);
 
   const setShouldWorkflowRefetchRequest = useSetAtomFamilyState(
     shouldWorkflowRefetchRequestFamilyState,

@@ -116,6 +116,25 @@ describe('CoreWorkflowEditor', () => {
     expect(mockOnDiagramEffectMount).toHaveBeenCalledTimes(1);
   });
 
+  it('reports a missing current version once it has loaded, instead of keeping the previous one', () => {
+    mockCoreWorkflowVersionResult.current = {
+      coreWorkflowVersion: null,
+      previousCoreWorkflowVersion: ACTIVE_VERSION,
+      loading: false,
+    };
+
+    render(
+      <CoreWorkflowEditor
+        coreWorkflowId={WORKFLOW_ID}
+        coreWorkflowVersionId="deleted-version-id"
+        readonly={false}
+      />,
+    );
+
+    expect(screen.getByText('Workflow version not found.')).toBeInTheDocument();
+    expect(screen.queryByText('Workflow canvas')).not.toBeInTheDocument();
+  });
+
   it('does not show a previous version while a read-only version loads', () => {
     mockCoreWorkflowVersionResult.current = {
       coreWorkflowVersion: null,
