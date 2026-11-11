@@ -10,7 +10,7 @@ import { isChooseWorkspaceActionRequested } from '@/auth/utils/isChooseWorkspace
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnBareFrontDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnBareFrontDomain';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
-import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
+import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceUrls } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
@@ -28,7 +28,8 @@ export const WorkspaceProviderEffect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isBareFrontDomain } = useIsCurrentLocationOnBareFrontDomain();
-  const { defaultDomain } = useReadDefaultDomainFromConfiguration();
+  const { redirectCurrentLocationToDefaultDomain } =
+    useRedirectToDefaultDomain();
 
   const { currentLocationHostname } = useReadWorkspaceUrlFromCurrentLocation();
 
@@ -47,19 +48,10 @@ export const WorkspaceProviderEffect = () => {
   );
 
   useEffect(() => {
-    if (!isBareFrontDomain) {
-      return;
+    if (isBareFrontDomain) {
+      redirectCurrentLocationToDefaultDomain();
     }
-
-    const defaultDomainUrl = new URL(window.location.origin);
-    defaultDomainUrl.hostname = defaultDomain;
-
-    redirectToWorkspaceDomain({
-      baseUrl: defaultDomainUrl.toString(),
-      pathname: window.location.pathname,
-      searchParams: getCurrentSearchParams(),
-    });
-  }, [isBareFrontDomain, defaultDomain, redirectToWorkspaceDomain]);
+  }, [isBareFrontDomain, redirectCurrentLocationToDefaultDomain]);
 
   useEffect(() => {
     if (

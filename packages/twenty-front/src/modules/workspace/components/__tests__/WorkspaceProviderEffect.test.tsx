@@ -58,11 +58,10 @@ describe('WorkspaceProviderEffect', () => {
     await waitFor(() => expect(windowOpenSpy).toHaveBeenCalled());
 
     expect(windowOpenSpy).toHaveBeenCalledTimes(1);
-    const redirectUrl = new URL(windowOpenSpy.mock.calls[0][0]);
-    expect(redirectUrl.hostname).toBe('app.localhost');
-    expect(redirectUrl.pathname).toBe('/objects/companies');
-    expect(redirectUrl.searchParams.get('view')).toBe('all');
-    expect(windowOpenSpy.mock.calls[0][1]).toBe('_self');
+    expect(windowOpenSpy).toHaveBeenCalledWith(
+      'http://app.localhost/objects/companies?view=all',
+      '_self',
+    );
   });
 
   it('does not redirect the front domain in single-workspace mode', async () => {

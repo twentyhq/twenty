@@ -52,7 +52,14 @@ export const useRedirectToDefaultDomain = () => {
     [defaultDomain, setLastAuthenticateWorkspaceDomain, store, redirect],
   );
 
+  const redirectCurrentLocationToDefaultDomain = useCallback(() => {
+    const url = new URL(window.location.href);
+    url.hostname = defaultDomain;
+    redirect(url.toString());
+  }, [defaultDomain, redirect]);
+
   return {
     redirectToDefaultDomain,
+    redirectCurrentLocationToDefaultDomain,
   };
 };
