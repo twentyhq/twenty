@@ -204,6 +204,10 @@ export class AgentService {
 
     assertAgentTriggerConditionsCompileOrThrow({
       triggers: input.triggers,
+      storedTriggers: findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: input.id,
+        flatEntityMaps: flatAgentMaps,
+      })?.triggers,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });

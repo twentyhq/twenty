@@ -86,4 +86,47 @@ describe('assertAgentTriggerConditionsCompileOrThrow', () => {
       }),
     ).not.toThrow();
   });
+
+  it('accepts a stored condition sent back unchanged, even if its field is gone', () => {
+    const staleTrigger = {
+      type: 'DATABASE_EVENT',
+      settings: { eventName: 'opportunity.created', condition: 'amount > 0' },
+    };
+
+    expect(() =>
+      assertAgentTriggerConditionsCompileOrThrow({
+        triggers: [staleTrigger],
+        storedTriggers: [staleTrigger],
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    ).not.toThrow();
+  });
+
+  it('still checks a stored condition once it is edited', () => {
+    expect(() =>
+      assertAgentTriggerConditionsCompileOrThrow({
+        triggers: [
+          {
+            type: 'DATABASE_EVENT',
+            settings: {
+              eventName: 'opportunity.created',
+              condition: 'amount > 1',
+            },
+          },
+        ],
+        storedTriggers: [
+          {
+            type: 'DATABASE_EVENT',
+            settings: {
+              eventName: 'opportunity.created',
+              condition: 'amount > 0',
+            },
+          },
+        ],
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    ).toThrow(/Condition "amount > 1" of an agent trigger is invalid/);
+  });
 });
