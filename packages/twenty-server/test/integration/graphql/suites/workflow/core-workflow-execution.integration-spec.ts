@@ -2425,6 +2425,54 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
   });
 
+  it.each([
+    { condition: '{{trigger.marker}} == "B-Async payload"', matches: true },
+    { condition: 'includes({{trigger.marker}}, "other")', matches: false },
+  ])(
+    'runs a filter step on its condition, not its filter ($condition)',
+    async ({ condition, matches }) => {
+      const finalStep = emptyStep();
+      const filterStep = {
+        id: randomUUID(),
+        name: 'Filter on a condition',
+        type: WorkflowActionType.FILTER,
+        valid: true,
+        settings: {
+          ...settings,
+          input: {
+            condition,
+            stepFilterGroups: [{ id: 'root', logicalOperator: 'AND' }],
+            stepFilters: [
+              {
+                id: randomUUID(),
+                type: 'TEXT',
+                operand: 'IS',
+                value: 'only the legacy filter would read this',
+                stepOutputKey: '{{trigger.marker}}',
+                stepFilterGroupId: 'root',
+              },
+            ],
+          },
+        },
+        nextStepIds: [finalStep.id],
+      } as WorkflowAction;
+      const fixture = await createFixture({
+        mirrorless: true,
+        steps: [filterStep, finalStep],
+      });
+
+      const run = await waitForRun(await runFixture(fixture), 'COMPLETED');
+
+      expect(run.state.stepInfos[filterStep.id]).toMatchObject({
+        status: matches ? 'SUCCESS' : 'STOPPED',
+        result: { matchesFilter: matches },
+      });
+      expect(run.state.stepInfos[finalStep.id].status).toBe(
+        matches ? 'SUCCESS' : 'NOT_STARTED',
+      );
+    },
+  );
+
   it.each(['ARCHIVED', 'DRAFT'])(
     'drops queued versions that are %s',
     async (status) => {

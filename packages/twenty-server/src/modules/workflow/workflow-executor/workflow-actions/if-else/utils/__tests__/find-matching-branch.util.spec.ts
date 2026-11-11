@@ -38,6 +38,7 @@ describe('findMatchingBranch', () => {
       branches,
       stepFilterGroups: [realGroup],
       resolvedFilters: [matchingFilter('real-group', true)],
+      context: {},
     });
 
     expect(matched.id).toBe('branch-a');
@@ -53,6 +54,7 @@ describe('findMatchingBranch', () => {
       branches,
       stepFilterGroups: [realGroup],
       resolvedFilters: [matchingFilter('real-group', false)],
+      context: {},
     });
 
     expect(matched.id).toBe('branch-else');
@@ -73,6 +75,7 @@ describe('findMatchingBranch', () => {
         branches,
         stepFilterGroups: [realGroup],
         resolvedFilters: [matchingFilter('real-group', false)],
+        context: {},
       }),
     ).toThrow(
       expect.objectContaining({
@@ -96,6 +99,7 @@ describe('findMatchingBranch', () => {
         branches,
         stepFilterGroups: [realGroup],
         resolvedFilters: [matchingFilter('real-group', true)],
+        context: {},
       }),
     ).toThrow(
       expect.objectContaining({
@@ -114,7 +118,83 @@ describe('findMatchingBranch', () => {
         branches,
         stepFilterGroups: [realGroup],
         resolvedFilters: [matchingFilter('real-group', false)],
+        context: {},
       }),
     ).toThrow(WorkflowStepExecutorException);
+  });
+
+  describe('with branch conditions', () => {
+    const context = { 'step-1': { amount: 1200 } };
+
+    it('should evaluate a branch condition instead of its filters', () => {
+      const branches: StepIfElseBranch[] = [
+        {
+          id: 'branch-condition',
+          filterGroupId: 'real-group',
+          condition: '{{step-1.amount}} > 1000',
+          nextStepIds: [],
+        },
+        { id: 'branch-else', nextStepIds: [] },
+      ];
+
+      const matched = findMatchingBranch({
+        branches,
+        stepFilterGroups: [realGroup],
+        resolvedFilters: [matchingFilter('real-group', false)],
+        context,
+      });
+
+      expect(matched.id).toBe('branch-condition');
+    });
+
+    it('should move on to the next branch when the condition is false', () => {
+      const branches: StepIfElseBranch[] = [
+        {
+          id: 'branch-condition',
+          filterGroupId: 'real-group',
+          condition: '{{step-1.amount}} > 5000',
+          nextStepIds: [],
+        },
+        { id: 'branch-filter', filterGroupId: 'other-group', nextStepIds: [] },
+        { id: 'branch-else', nextStepIds: [] },
+      ];
+
+      const matched = findMatchingBranch({
+        branches,
+        stepFilterGroups: [
+          realGroup,
+          { id: 'other-group', logicalOperator: StepLogicalOperator.AND },
+        ],
+        resolvedFilters: [matchingFilter('other-group', true)],
+        context,
+      });
+
+      expect(matched.id).toBe('branch-filter');
+    });
+
+    it('should fail the step when a condition cannot be evaluated', () => {
+      const branches: StepIfElseBranch[] = [
+        {
+          id: 'branch-condition',
+          filterGroupId: 'real-group',
+          condition: '{{step-1.amount}}',
+          nextStepIds: [],
+        },
+        { id: 'branch-else', nextStepIds: [] },
+      ];
+
+      expect(() =>
+        findMatchingBranch({
+          branches,
+          stepFilterGroups: [realGroup],
+          resolvedFilters: [],
+          context,
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+        }),
+      );
+    });
   });
 });

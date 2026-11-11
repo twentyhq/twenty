@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
@@ -6,6 +7,7 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { evaluateWorkflowStepCondition } from 'src/modules/workflow/workflow-executor/utils/evaluate-workflow-step-condition.util';
 import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
 
 export type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
@@ -41,10 +43,12 @@ export const findMatchingBranch = ({
   branches,
   stepFilterGroups,
   resolvedFilters,
+  context,
 }: {
   branches: StepIfElseBranch[];
   stepFilterGroups: StepFilterGroup[];
   resolvedFilters: ResolvedFilter[];
+  context: Record<string, unknown>;
 }): StepIfElseBranch => {
   for (const branch of branches) {
     if (
@@ -59,6 +63,13 @@ export const findMatchingBranch = ({
   }
 
   const matchingBranch = branches.find((branch) => {
+    if (isNonEmptyString(branch.condition)) {
+      return evaluateWorkflowStepCondition({
+        condition: branch.condition,
+        context,
+      });
+    }
+
     if (!isDefined(branch.filterGroupId)) {
       return true;
     }
