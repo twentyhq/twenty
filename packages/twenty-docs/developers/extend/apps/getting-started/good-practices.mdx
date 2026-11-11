@@ -67,7 +67,7 @@ With a random delay over a one-hour window, the same runs are spread out:
                           N × calls spread over 60 minutes  →  OK
 ```
 
-- **Batch database event triggers.** A bulk write such as a mailbox sync emits one event per record, thousands within seconds, and one run per event means one request per record. Set `batchMode: true`, declare `fieldUniversalIdentifiers`, and reduce the batch to distinct records before calling the API. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events).
+- **Batch database event triggers.** A bulk write such as a mailbox sync emits one event per record, thousands within seconds, and one run per event means one request per record. Set `batchMode: true`, declare `watchedFieldUniversalIdentifiers`, and reduce the batch to distinct records before calling the API. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events).
 
 - **Make one request per batch, not per record.** The limit counts requests, not records: a `createMany` with `upsert: true` carrying 200 records is one request, 200 single updates are 200. Read with `in` filters and write with `createMany` or `updateMany`.
 

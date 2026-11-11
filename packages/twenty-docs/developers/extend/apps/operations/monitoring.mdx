@@ -70,7 +70,7 @@ For your own development server, `twenty app logs` streams function logs live in
 
 - **Errors climb right after a release**: compare versions in the **Versions** table, then fix and publish a higher version. See [Publishing](/developers/extend/apps/operations/publishing).
 - **API requests are rate limited**: your app calls the API too often. Batch reads and writes, and avoid calling the API in tight loops.
-- **Jobs are rate limited**: database event or cron triggers fire faster than jobs can be enqueued. Narrow the trigger, for example with `fieldUniversalIdentifiers` in `databaseEventTriggerSettings`, or do the work in fewer, larger runs. See [Logic functions](/developers/extend/apps/logic/logic-functions).
+- **Jobs are rate limited**: database event or cron triggers fire faster than jobs can be enqueued. Narrow the trigger, for example with `watchedFieldUniversalIdentifiers` in `databaseEventTriggerSettings`, or do the work in fewer, larger runs. See [Logic functions](/developers/extend/apps/logic/logic-functions).
 - **Install or upgrade failures**: check your [install hooks](/developers/extend/apps/config/install-hooks). The error message is recorded with the failure.
 - **Slow functions**: a high 95th percentile duration points to a function worth profiling or splitting.
 
