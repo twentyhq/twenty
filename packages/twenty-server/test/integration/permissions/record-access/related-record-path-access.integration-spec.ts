@@ -13,6 +13,9 @@ import { v4 } from 'uuid';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
@@ -22,6 +25,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { setRecordPrivate } from 'test/integration/metadata/suites/private-record/utils/set-record-private.util';
 import { createRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/create-related-record-path.util';
 import { deleteRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/delete-related-record-path.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
@@ -138,6 +142,25 @@ describe('Record access through related record paths', () => {
       operationType: 'read',
       recordIds: [recordId],
     });
+
+  const listTasksAsJony = () =>
+    makeGraphqlApiRequestWithMemberRole(
+      findManyOperationFactory({
+        objectMetadataSingularName: TASK_NAME,
+        objectMetadataPluralName: `${TASK_NAME}s`,
+        gqlFields: 'id',
+      }),
+    );
+
+  const findTaskIdsListedByJony = async (): Promise<string[]> => {
+    const response = await listTasksAsJony();
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data[`${TASK_NAME}s`].edges
+      .map(({ node }: { node: { id: string } }) => node.id)
+      .sort();
+  };
 
   const findEventRecordIdsReadableByJony = async ({
     objectMetadataId,
@@ -418,6 +441,27 @@ describe('Record access through related record paths', () => {
     );
   });
 
+  it('should list only the records related to a readable source record', async () => {
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
+  });
+
+  it('should count only the records related to a readable source record', async () => {
+    const response = await makeGraphqlApiRequestWithMemberRole(
+      groupByOperationFactory({
+        objectMetadataSingularName: TASK_NAME,
+        objectMetadataPluralName: `${TASK_NAME}s`,
+        groupBy: [{ name: true }],
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data[`${TASK_NAME}sGroupBy`].map(
+        ({ totalCount }: { totalCount: number }) => totalCount,
+      ),
+    ).toEqual([1]);
+  });
+
   it('should update the related records when the source record enters or leaves the rule', async () => {
     await runAndWaitForJobs(
       updateOneOperationFactory({
@@ -462,8 +506,13 @@ describe('Record access through related record paths', () => {
     expect(await findTaskAccessGroupIds(taskWithoutProjectId)).toContain(
       projectRuleCompactId,
     );
+    expect(await findTaskIdsListedByJony()).toEqual(
+      [taskOfProjectId, taskWithoutProjectId].sort(),
+    );
 
     await setProjectOfTaskWithoutProject(null);
+
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
 
     expect(await findTaskAccessGroupIds(taskWithoutProjectId)).not.toContain(
       projectRuleCompactId,
@@ -496,20 +545,59 @@ describe('Record access through related record paths', () => {
     );
   });
 
+  it('should stop listing the related records while the source record is private', async () => {
+    const setProjectPrivate = async (isPrivate: boolean) => {
+      const response = await setRecordPrivate({
+        objectMetadataId: projectObjectMetadataId,
+        recordId: projectId,
+        isPrivate,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      await waitForAllJobsToFinish();
+    };
+
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
+    try {
+      await setProjectPrivate(true);
+
+      expect(await findTaskIdsListedByJony()).toEqual([]);
+
+      await setProjectPrivate(false);
+
+      expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
+    } finally {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    }
+  });
+
   it('should stop granting once the path is deleted and grant again once it is back', async () => {
     await deleteRelatedRecordPath(pathId);
 
     expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
     expect(await findTaskEventRecordIdsReadableByJony()).toEqual([]);
+    expect((await listTasksAsJony()).body.errors).toBeDefined();
 
     await createProjectTasksPath();
+    await waitForAllJobsToFinish();
 
     expect(await canJonyReadTask(taskOfProjectId)).toBe(true);
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
   });
 
   it('should not follow the path once no RLS rule restricts its source object', async () => {
     await deleteRoleWithProjectRule();
 
     expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
+    expect((await listTasksAsJony()).body.errors).toBeDefined();
   });
 });

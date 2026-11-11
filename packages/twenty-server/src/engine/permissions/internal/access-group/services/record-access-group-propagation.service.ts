@@ -120,6 +120,46 @@ export class RecordAccessGroupPropagationService {
     }
   }
 
+  // TODO(@charlesBochet): above MAX_RECORDS_RECOMPUTED_IN_WRITE, queue a job after commit once the transaction scope exposes afterCommit
+  async recomputeRecordsFollowingRelatedRecordPathsInWrite({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    propagatedFromObjectMetadataIds = [],
+    transactionScope,
+  }: RecomputeRecordAccessGroupIdsOfRecordsJobData & {
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    for (const followingRecords of await this.findRecordsFollowingRelatedRecordPaths(
+      {
+        workspaceId,
+        objectMetadataId,
+        changedRecordIds: recordIds,
+        writtenRecordIds: recordIds,
+        recordsBefore: [],
+        propagatedFromObjectMetadataIds,
+        transactionScope,
+      },
+    )) {
+      await this.recomputeRecordsFollowingRelatedRecordPathsInWrite({
+        workspaceId,
+        objectMetadataId: followingRecords.objectMetadataId,
+        recordIds:
+          await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecords(
+            {
+              workspaceId,
+              objectMetadataId: followingRecords.objectMetadataId,
+              recordIds: followingRecords.recordIds,
+              transactionScope,
+            },
+          ),
+        propagatedFromObjectMetadataIds:
+          followingRecords.propagatedFromObjectMetadataIds,
+        transactionScope,
+      });
+    }
+  }
+
   async findRecordsFollowingRelatedRecordPaths({
     workspaceId,
     objectMetadataId,
