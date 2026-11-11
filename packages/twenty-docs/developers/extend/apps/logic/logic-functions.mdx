@@ -433,7 +433,7 @@ For soft deletes, `.deleted` follows the update-style shape because the record's
 For permanent deletes, use `.destroyed`.
 
 <Note>
-  `databaseEventTriggerSettings.fieldUniversalIdentifiers` filters which update
+  `databaseEventTriggerSettings.watchedFieldUniversalIdentifiers` filters which update
   events trigger the function. `event.properties.updatedFields` tells you which fields
   actually changed on the current event.
 </Note>
@@ -444,7 +444,7 @@ For permanent deletes, use `.destroyed`.
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `objectUniversalIdentifier` | Optional object to listen on. Leave it out to listen on every object.                                                                                                    |
 | `action`                    | `created`, `updated`, `deleted`, `destroyed`, `restored`, `upserted`, or `*` for all of them.                                                                            |
-| `fieldUniversalIdentifiers` | Optional list of fields of the object. On updates and upserts, only changes touching one of them trigger the function. Relations to many records cannot be listed.      |
+| `watchedFieldUniversalIdentifiers` | Optional list of fields of the object. On updates and upserts, only changes touching one of them trigger the function. Relations to many records cannot be listed.      |
 | `condition`                 | Optional [rule expression](/user-guide/data-model/capabilities/validation-rules#write-a-condition) the record must meet. `previous.<field>` reads it before an update. Needs `objectUniversalIdentifier`. |
 | `batchMode`                 | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
 
@@ -499,7 +499,7 @@ export default defineLogicFunction({
   databaseEventTriggerSettings: {
     objectUniversalIdentifier: PERSON.universalIdentifier,
     action: 'updated',
-    fieldUniversalIdentifiers: [PERSON.fields.emails.universalIdentifier],
+    watchedFieldUniversalIdentifiers: [PERSON.fields.emails.universalIdentifier],
   },
 });
 ```
@@ -514,7 +514,7 @@ export default defineLogicFunction({
   databaseEventTriggerSettings: {
     objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
     action: 'updated',
-    fieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+    watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
     condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
   },
 });
