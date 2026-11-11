@@ -54,6 +54,11 @@ Workflows created at runtime go through the core workflow API (`createCoreWorkfl
 - `condition` is a rule expression on the record's fields, such as `stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'`. `previous.<field>` reads the value before an update, and a relation to one record reads its target's fields (`company.employees > 100`).
 - A set `condition` is used instead of `filter`. Prefer `condition` in new code; `filter` is the builder's older row format.
 
+## Filter and If/Else Steps
+
+- A `FILTER` step (`input.condition`) and each `IF_ELSE` branch (`input.branches[].condition`) take an optional `condition`: a rule expression over workflow variables, such as `{{trigger.properties.after.amount}} > 1000`.
+- A set `condition` is used instead of the step filters. Prefer `condition` in new code.
+
 ## Manual Record Trigger
 
 - Trigger type: manual record selection.
