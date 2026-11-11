@@ -84,6 +84,7 @@ const CoreWorkflowShowContent = ({
   const isReadOnlyVersion =
     isApplicationManaged || isDefined(requestedVersionId);
   const activeTabId = useCoreWorkflowShowPageActiveTab({
+    coreWorkflowId,
     isPublished: isDefined(coreWorkflow)
       ? isDefined(coreWorkflow.lastPublishedCoreWorkflowVersionId)
       : undefined,

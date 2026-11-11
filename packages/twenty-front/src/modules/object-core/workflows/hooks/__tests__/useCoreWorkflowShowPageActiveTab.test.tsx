@@ -29,6 +29,7 @@ const renderActiveTab = ({
   renderHook(
     ({ isPublished }: HookProps) =>
       useCoreWorkflowShowPageActiveTab({
+        coreWorkflowId: 'workflow-id',
         isPublished,
         isVersionRequested: false,
       }),
