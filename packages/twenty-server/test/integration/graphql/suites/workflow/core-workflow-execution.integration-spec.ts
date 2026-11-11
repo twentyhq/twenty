@@ -2468,7 +2468,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         result: { matchesFilter: matches },
       });
       expect(run.state.stepInfos[finalStep.id].status).toBe(
-        matches ? 'SUCCESS' : 'NOT_STARTED',
+        matches ? 'SUCCESS' : 'SKIPPED',
       );
     },
   );
