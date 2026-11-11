@@ -25,6 +25,7 @@ export const METADATA_EVENTS_TO_EMIT = {
   fieldPermission: true,
   rowLevelPermissionPredicate: true,
   rowLevelPermissionPredicateGroup: true,
+  rowLevelPermissionRule: true,
   index: true,
   logicFunction: true,
   viewSort: true,

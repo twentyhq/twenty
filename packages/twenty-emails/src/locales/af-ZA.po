@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Valideer asseblief hierdie domein o
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "’n Rugsteunkode is gebruik om by {workspaceDisplayName} aan te meld. Rugsteunkodes oor: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Daarna sal die werksruimte en al sy data permanent uitgevee word — en 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Rugsteunkode gebruik"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Hallo {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "As dit nie jy was nie, verander jou wagwoord en genereer nuwe rugsteunkodes onder Instellings, Profiel, Twee-faktor-outentikasie."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "As dit nie jy was nie, verander jou wagwoord en genereer nuwe rugsteunkodes."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Bestuur intekening"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Nuwe rugsteunkodes gegenereer"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "Nuwe rugsteunkodes is vir jou rekening in {workspaceDisplayName} gegenereer. Jou vorige rugsteunkodes werk nie meer nie."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Dankie dat jy vir 'n rekening op Twenty geregistreer het! Voor ons begin
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "Die outentiseerder vir jou rekening in {workspaceDisplayName} is uit Instellings verwyder. Jou rugsteunkodes vir hierdie werkruimte werk nie meer nie."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Twee-faktor-outentikasie-herstelkode uitgereik"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Twee-faktor-outentikasie verwyder"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Werkruimte logo"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Jy kan nuwe rugsteunkodes onder Instellings, Profiel, Twee-faktor-outentikasie genereer."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

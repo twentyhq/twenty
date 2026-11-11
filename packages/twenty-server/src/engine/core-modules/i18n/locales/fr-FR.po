@@ -131,7 +131,7 @@ msgstr "24 h"
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
-msgstr ""
+msgstr "Un code de secours a été utilisé pour vous connecter à votre compte"
 
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
@@ -1275,6 +1275,7 @@ msgstr "Une erreur inattendue s'est produite lors du traitement de la route du s
 #: src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 #: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
@@ -5086,7 +5087,7 @@ msgstr "Saisissez votre code d'authentification à deux facteurs pour générer 
 #. js-lingui-id: gb/uW+
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
 msgid "Enter your two-factor authentication code to generate new backup codes."
-msgstr ""
+msgstr "Saisissez votre code d'authentification à deux facteurs pour générer de nouveaux codes de secours."
 
 #. js-lingui-id: vNNSFX
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
@@ -5501,6 +5502,11 @@ msgstr "Le champ \"{workspaceMemberFieldName}\" n'est pas un champ de l'objet wo
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
 msgstr "Le champ {0}.{fieldName} n'est pas disponible. Sélectionnez des champs accessibles de niveau supérieur."
+
+#. js-lingui-id: T0uER/
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
+msgstr "Le champ {fieldName} est utilisé par {survivingPredicateCount} prédicat(s) d'autorisation au niveau des lignes"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6690,6 +6696,18 @@ msgstr "Index avec le même nom existe déjà"
 msgid "Index with same universal identifier already exists"
 msgstr "Un index avec le même identifiant universel existe déjà"
 
+#. js-lingui-id: 5K0P9Y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot form a cycle"
+msgstr "Les chemins d'enregistrements associés inhérents ne peuvent pas former un cycle"
+
+#. js-lingui-id: GdaBpX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot have more than two relations"
+msgstr "Les chemins d'enregistrements associés inhérents ne peuvent pas comporter plus de deux relations"
+
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6963,7 +6981,7 @@ msgid "Invalid email address."
 msgstr "Adresse e-mail invalide."
 
 #. js-lingui-id: e2K52e
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Invalid email addresses: {invalidEmailList}"
 msgstr "Adresses e-mail non valides : {invalidEmailList}"
 
@@ -7413,6 +7431,11 @@ msgstr "Données du prédicat d'autorisation au niveau des lignes invalides."
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Invalid row level permission predicate group data."
 msgstr "Données du groupe de prédicats d'autorisation au niveau des lignes invalides."
+
+#. js-lingui-id: SSt1rf
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
+msgid "Invalid row level permission rule data."
+msgstr "Données de règle d'autorisation au niveau des lignes non valides."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -9306,7 +9329,7 @@ msgstr "Nouveau"
 #. js-lingui-id: 2k6acO
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "New backup codes were generated for your account"
-msgstr ""
+msgstr "De nouveaux codes de secours ont été générés pour votre compte"
 
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9765,6 +9788,8 @@ msgstr "ID des métadonnées de l'objet"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
@@ -9775,6 +9800,7 @@ msgstr "Métadonnées de l'objet non trouvées"
 #. js-lingui-id: rHce90
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -11597,6 +11623,11 @@ msgctxt "commandMenuItem.label"
 msgid "Remove from Favorites"
 msgstr "Retirer des favoris"
 
+#. js-lingui-id: 60CVOK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Remove the row-level permission rules that use this field before deleting it"
+msgstr "Supprimez les règles d'autorisation au niveau des lignes qui utilisent ce champ avant de le supprimer"
+
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
 msgid "Remove this permission from all roles before deleting it"
@@ -11908,6 +11939,8 @@ msgstr "Le nom du rôle est invalide"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Role not found"
 msgstr "Rôle introuvable"
 
@@ -11916,6 +11949,7 @@ msgstr "Rôle introuvable"
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 #: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Rôle introuvable."
@@ -12087,6 +12121,33 @@ msgstr "Prédicat d'autorisation au niveau des lignes à mettre à jour introuva
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate with this universal identifier already exists"
 msgstr "Un prédicat d'autorisation au niveau des lignes avec cet identifiant universel existe déjà"
+
+#. js-lingui-id: 1ypLxw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule already exists"
+msgstr "La règle d'autorisation au niveau des lignes existe déjà"
+
+#. js-lingui-id: PrMheT
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
+msgid "Row level permission rule not found."
+msgstr "Règle d'autorisation au niveau des lignes introuvable."
+
+#. js-lingui-id: WmZbv+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule to delete not found"
+msgstr "Règle d'autorisation au niveau des lignes à supprimer introuvable"
+
+#. js-lingui-id: B+cihG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule to update not found"
+msgstr "Règle d'autorisation au niveau des lignes à mettre à jour introuvable"
+
+#. js-lingui-id: LRPzAu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule with this universal identifier already exists"
+msgstr "Une règle d'autorisation au niveau des lignes avec cet identifiant universel existe déjà"
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -12535,7 +12596,7 @@ msgstr "serverRouteTriggerSettings ne peut être défini que par une application
 #. js-lingui-id: aMFlAV
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
 msgid "Set up two-factor authentication before generating backup codes."
-msgstr ""
+msgstr "Configurez l'authentification à deux facteurs avant de générer des codes de secours."
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -15567,7 +15628,7 @@ msgid "Too many people selected. Narrow your selection and try again."
 msgstr "Trop de personnes sélectionnées. Affinez votre sélection et réessayez."
 
 #. js-lingui-id: JS61oF
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Trop de destinataires : {total}. Le maximum autorisé est {MAX_EMAIL_RECIPIENTS}."
 
@@ -15818,7 +15879,7 @@ msgstr "La vérification de l'authentification à deux facteurs est requise."
 #. js-lingui-id: CTG0vZ
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "Two-factor authentication was removed from your account"
-msgstr ""
+msgstr "L'authentification à deux facteurs a été supprimée de votre compte"
 
 #. js-lingui-id: /OnFql
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -18203,7 +18264,7 @@ msgstr "Votre période d’essai Twenty se termine bientôt"
 #. js-lingui-id: 9xG1k0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service.ts
 msgid "Your two-factor authentication changed. Generate backup codes again."
-msgstr ""
+msgstr "Votre authentification à deux facteurs a changé. Générez de nouveau des codes de secours."
 
 #. js-lingui-id: pOQQ3U
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts

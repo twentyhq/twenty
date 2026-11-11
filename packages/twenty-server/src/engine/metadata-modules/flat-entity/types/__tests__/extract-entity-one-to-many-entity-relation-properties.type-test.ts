@@ -33,6 +33,9 @@ type Assertions = [
       | 'viewSorts'
       | 'searchFieldMetadatas'
       | 'fieldMetadataOptions'
+      | 'rowLevelPermissionPredicates'
+      | 'relationRowLevelPermissionPredicates'
+      | 'workspaceMemberRowLevelPermissionPredicates'
     >
   >,
 
@@ -49,6 +52,9 @@ type Assertions = [
       | 'viewSorts'
       | 'searchFieldMetadatas'
       | 'fieldMetadataOptions'
+      | 'rowLevelPermissionPredicates'
+      | 'relationRowLevelPermissionPredicates'
+      | 'workspaceMemberRowLevelPermissionPredicates'
     >
   >,
 ];

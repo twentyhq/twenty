@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Lütfen bu alan adını doğrulayı
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "{workspaceDisplayName} için oturum açmak üzere bir yedek kod kullanıldı. Kalan yedek kod sayısı: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Bundan sonra, çalışma alanı ve tüm verileri kalıcı olarak silinec
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Yedek kod kullanıldı"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Merhaba {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Bunu siz yapmadıysanız parolanızı değiştirin ve Ayarlar, Profil, İki faktörlü kimlik doğrulama altında yeni yedek kodlar oluşturun."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Bunu siz yapmadıysanız parolanızı değiştirin ve yeni yedek kodlar oluşturun."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Aboneliği yönet"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Yeni yedek kodlar oluşturuldu"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "{workspaceDisplayName} içindeki hesabınız için yeni yedek kodlar oluşturuldu. Önceki yedek kodlarınız artık çalışmıyor."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Twenty'de bir hesap kaydı yaptığınız için teşekkürler! Başlamad
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "{workspaceDisplayName} içindeki hesabınızın kimlik doğrulayıcısı Ayarlar'dan kaldırıldı. Bu çalışma alanı için yedek kodlarınız artık çalışmıyor."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "İki faktörlü kimlik doğrulama kurtarma kodu oluşturuldu"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "İki faktörlü kimlik doğrulama kaldırıldı"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "İş Alanı logosu"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Ayarlar, Profil, İki faktörlü kimlik doğrulama altında yeni yedek kodlar oluşturabilirsiniz."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

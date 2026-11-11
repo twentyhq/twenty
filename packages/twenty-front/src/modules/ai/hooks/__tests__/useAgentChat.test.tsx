@@ -12,6 +12,7 @@ import {
 } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
+import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
@@ -21,6 +22,7 @@ import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThread
 import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/agentChatIsAssistantReplyPendingFamilySelector';
 import { type AgentChatNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -79,8 +81,10 @@ const DRAFT_MENTIONING_COMPANY =
     label: 'Acme',
   });
 
+type SendChatMessageOutcome = 'sent' | 'replying' | 'failed';
+
 const buildSendChatMessageMock = (
-  outcome: 'sent' | 'failed',
+  outcome: SendChatMessageOutcome,
 ): MockedResponse => ({
   request: {
     query: SendChatMessageDocument,
@@ -92,19 +96,19 @@ const buildSendChatMessageMock = (
       return true;
     },
   },
-  ...(outcome === 'sent'
-    ? {
+  ...(outcome === 'failed'
+    ? { error: new Error('Network error') }
+    : {
         result: {
           data: {
             sendChatMessage: {
               messageId: 'message-id',
               queued: false,
-              streamId: null,
+              streamId: outcome === 'replying' ? 'stream-id' : null,
             },
           },
         },
-      }
-    : { error: new Error('Network error') }),
+      }),
 });
 
 const readPersistedDrafts = () =>
@@ -122,7 +126,7 @@ const renderAgentChat = ({
   objectMetadataItems,
 }: {
   persistedDrafts: Record<string, string>;
-  sendChatMessageOutcomes: ('sent' | 'failed')[];
+  sendChatMessageOutcomes: SendChatMessageOutcome[];
   hasAiModels?: boolean;
   isAiChatInboxEnabled?: boolean;
   isDirectMessage?: boolean;
@@ -245,7 +249,7 @@ describe('useAgentChat', () => {
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
   });
 
-  it('keeps the new chat until its first message is sent', async () => {
+  it('keeps the new chat and its first message id until that message is sent', async () => {
     const result = renderAgentChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
@@ -262,6 +266,10 @@ describe('useAgentChat', () => {
 
     expect(result.current.currentAiChatThread).toBe(THREAD_ID);
     expect(result.current.newAiChatThreadId).not.toBe(THREAD_ID);
+    expect(sentMessageVariables).toHaveBeenCalledTimes(2);
+    expect(sentMessageVariables.mock.calls[1][0].messageId).toBe(
+      sentMessageVariables.mock.calls[0][0].messageId,
+    );
   });
 
   it('finishes sending while recipient verification is still pending', async () => {
@@ -324,6 +332,63 @@ describe('useAgentChat', () => {
       threadId: THREAD_ID,
       ...COMPANY_TARGET,
     });
+  });
+
+  it('gives a first message edited after a failed send a new id', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['failed', 'sent'],
+    });
+
+    await send(result);
+
+    act(() => {
+      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+        ...drafts,
+        [THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('Hello again'),
+      }));
+    });
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledTimes(2);
+    expect(sentMessageVariables.mock.calls[1][0].messageId).not.toBe(
+      sentMessageVariables.mock.calls[0][0].messageId,
+    );
+  });
+
+  it('keeps the first message id when the draft is saved differently but sends the same text', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['failed', 'sent'],
+    });
+
+    await send(result);
+
+    act(() => {
+      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+        ...drafts,
+        [THREAD_ID]: serializeJsonContentAsAdvancedTextEditorDocument({
+          type: 'doc',
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] },
+            { type: 'paragraph' },
+          ],
+        }),
+      }));
+    });
+
+    await send(result);
+
+    expect(sentMessageVariables).toHaveBeenCalledTimes(2);
+    expect(sentMessageVariables.mock.calls[1][0].messageId).toBe(
+      sentMessageVariables.mock.calls[0][0].messageId,
+    );
   });
 
   it('does not file a chat under a record it only mentions', async () => {
@@ -771,4 +836,44 @@ describe('useAgentChat', () => {
     expect(jotaiStore.get(agentChatNewThreadChannelIdState.atom)).toBeNull();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
   });
+
+  it.each([
+    { outcome: 'sent' as const, isAssistantReplyPending: false },
+    { outcome: 'replying' as const, isAssistantReplyPending: true },
+  ])(
+    'shows the assistant reply as pending only once the server starts one ($outcome)',
+    async ({ outcome, isAssistantReplyPending }) => {
+      const result = renderAgentChat({
+        persistedDrafts: {
+          [EXISTING_THREAD_ID]:
+            serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+        },
+        sendChatMessageOutcomes: [outcome],
+        currentThreadId: EXISTING_THREAD_ID,
+      });
+      const releaseMutation = holdNextMutation(result.current.apolloClient);
+      const isAssistantReplyPendingAtom =
+        agentChatIsAssistantReplyPendingFamilySelector.selectorFamily(
+          EXISTING_THREAD_ID,
+        );
+
+      let pendingSend: Promise<void> | undefined;
+
+      await act(async () => {
+        pendingSend = result.current.handleSendMessage();
+      });
+
+      expect(jotaiStore.get(isAssistantReplyPendingAtom)).toBe(false);
+
+      releaseMutation();
+
+      await act(async () => {
+        await pendingSend;
+      });
+
+      expect(jotaiStore.get(isAssistantReplyPendingAtom)).toBe(
+        isAssistantReplyPending,
+      );
+    },
+  );
 });

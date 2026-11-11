@@ -96,10 +96,10 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'with row level narrows the main role',
+          it: 'with row level does not apply its filter',
           limitingPrincipal: { type: 'agent', role: 'rowLevel' },
           record: 'outsideCategoryFilter',
-          expected: REACHES_NOTHING,
+          expected: REACHES_EVERY_OPERATION,
         },
         {
           it: 'does not widen a row level main role',
@@ -127,9 +127,9 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'drop a record outside the limiting filter',
+          it: 'keep a record outside the limiting filter',
           record: 'outsideCategoryFilter',
-          expected: REACHES_NOTHING,
+          expected: REACHES_EVERY_OPERATION,
         },
       ],
     });
@@ -152,10 +152,10 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'with row level narrows the main role',
+          it: 'with row level does not apply its filter',
           applicationPrincipal: { type: 'application', role: 'rowLevel' },
           record: 'outsideRegionFilter',
-          expected: REACHES_NOTHING,
+          expected: REACHES_EVERY_OPERATION,
         },
       ],
     });
@@ -210,10 +210,10 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'are held to the filter of the application principal',
+          it: 'are not held to the filter of the application principal',
           applicationPrincipal: { type: 'application', role: 'rowLevel' },
           record: 'outsideRegionFilter',
-          expected: REACHES_NOTHING,
+          expected: REACHES_EVERY_OPERATION,
         },
       ],
     });

@@ -1,5 +1,7 @@
 import * as ts from 'typescript';
 
+import { CODE_STEP_FILE_SUFFIX } from '@/app/constants/code-step-file-suffix.constant';
+
 export const DEFINE_ENTITY_KEYS = {
   defineApplication: 'application',
   defineApplicationRole: 'roles',
@@ -47,6 +49,11 @@ export const extractDefineEntity = ({
   fileContent: string;
   filePath: string;
 }): TargetFunction | undefined => {
+  // Workspace-authored workflow code is data, never a local app definition.
+  if (filePath.endsWith(CODE_STEP_FILE_SUFFIX)) {
+    return undefined;
+  }
+
   const sourceFile = ts.createSourceFile(
     filePath,
     fileContent,

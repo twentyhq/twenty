@@ -733,11 +733,6 @@ msgstr "{dayOfMonthDescription} and {dayOfWeekDescription}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} day} other {{days} days}}"
 
-#. js-lingui-id: Irx6Dx
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
-msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr "{daysLeft, plural, one {# day left} other {# days left}}"
-
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
@@ -774,6 +769,11 @@ msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{fo
 #: src/modules/ai/components/AiChatMessageReactions.tsx
 msgid "{emoji} by {reactorNames}"
 msgstr "{emoji} by {reactorNames}"
+
+#. js-lingui-id: 1u0J17
+#: src/modules/activities/emails/components/ChatThreadMessageReactions.tsx
+msgid "{emoji} by {reactors}"
+msgstr "{emoji} by {reactors}"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -4577,6 +4577,7 @@ msgid "Attach file"
 msgstr "Attach file"
 
 #. js-lingui-id: N7m8E+
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -7355,6 +7356,11 @@ msgstr "Confirm upgrade"
 #: src/pages/onboarding/PaymentSuccess.tsx
 msgid "Confirming your payment"
 msgstr "Confirming your payment"
+
+#. js-lingui-id: jtSEaa
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to {workspaceName}"
+msgstr "Connect {appName} to {workspaceName}"
 
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
@@ -10616,6 +10622,7 @@ msgid "Draft an email to this company about "
 msgstr "Draft an email to this company about "
 
 #. js-lingui-id: DbAw4C
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "Draft email"
@@ -13109,6 +13116,7 @@ msgid "Failed to send campaign"
 msgstr "Failed to send campaign"
 
 #. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useEmailComposerState.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
@@ -14380,6 +14388,7 @@ msgstr "Gets this record only: their role can't access {objectLabelPlural}"
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
@@ -14387,6 +14396,7 @@ msgid "Getting started"
 msgstr "Getting started"
 
 #. js-lingui-id: YRBB4k
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
 msgstr "Getting started progress"
@@ -15155,6 +15165,11 @@ msgstr "HTTP Request"
 msgid "HTTP request failed"
 msgstr "HTTP request failed"
 
+#. js-lingui-id: 82OlFB
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "HTTP requests in the logic function runtime"
+msgstr "HTTP requests in the logic function runtime"
+
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -15543,11 +15558,6 @@ msgstr "In {dateDiff}"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
 msgstr "In {listName}"
-
-#. js-lingui-id: jS5U2e
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "In an hour"
-msgstr "In an hour"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -16472,11 +16482,6 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Kanban widget"
 
-#. js-lingui-id: uW9WOr
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep {planLabel}"
-msgstr "Keep {planLabel}"
-
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
@@ -16497,10 +16502,11 @@ msgstr "Keep tracking my opens"
 msgid "Keep tracking my opens and clicks"
 msgstr "Keep tracking my opens and clicks"
 
-#. js-lingui-id: 9l8cs3
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep your plan"
-msgstr "Keep your plan"
+#. js-lingui-id: TOIQKe
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+msgid "Keep Twenty"
+msgstr "Keep Twenty"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -19452,6 +19458,7 @@ msgstr "Newsletters"
 
 #. js-lingui-id: hXzOVo
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+#: src/modules/getting-started/components/GettingStartedStepCard.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetLegend.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
@@ -22136,6 +22143,7 @@ msgid "Path"
 msgstr "Path"
 
 #. js-lingui-id: IgrLD/
+#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -22545,6 +22553,7 @@ msgid "Plans"
 msgstr "Plans"
 
 #. js-lingui-id: T91vKp
+#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "Play"
@@ -23273,6 +23282,11 @@ msgstr "Reacted with {emoji}"
 msgid "Reacting with {emoji}"
 msgstr "Reacting with {emoji}"
 
+#. js-lingui-id: cQlPDN
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Read"
+msgstr "Read"
+
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read {target}"
@@ -23444,6 +23458,7 @@ msgid "recipient@example.com"
 msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
+#: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -23974,6 +23989,7 @@ msgstr "Remove"
 #. placeholder {0}: file.name
 #. placeholder {0}: recipient.address
 #: src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 #: src/modules/file/components/AttachmentChip.tsx
 msgid "Remove {0}"
 msgstr "Remove {0}"
@@ -23990,18 +24006,13 @@ msgstr "Remove {0} navigation menu item?"
 msgid "Remove {0} navigation menu items?"
 msgstr "Remove {0} navigation menu items?"
 
-#. js-lingui-id: Q7qiJ+
-#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
-msgid "Remove {address}"
-msgstr "Remove {address}"
-
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Remove {displayName}"
 
 #. js-lingui-id: HND1q3
-#: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
+#: src/modules/chat/components/ChatRecipientChip.tsx
 msgid "Remove {label}"
 msgstr "Remove {label}"
 
@@ -24679,11 +24690,6 @@ msgstr "Review additional microphone or camera access requested by this app. Mem
 msgid "Review media access"
 msgstr "Review media access"
 
-#. js-lingui-id: 35zlhZ
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
-msgid "Review this email before it goes out"
-msgstr "Review this email before it goes out"
-
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -24866,6 +24872,11 @@ msgstr "row level permission predicate"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "row level permission predicate group"
 msgstr "row level permission predicate group"
+
+#. js-lingui-id: JWZ1ef
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission rule"
+msgstr "row level permission rule"
 
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26321,6 +26332,7 @@ msgstr "Send Campaign"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "Send email"
@@ -26405,11 +26417,21 @@ msgstr "Send Test Email"
 msgid "Send to Inbox"
 msgstr "Send to Inbox"
 
+#. js-lingui-id: 69d0/t
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
+msgstr "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
+
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Sender name"
 msgstr "Sender name"
+
+#. js-lingui-id: 9bG48P
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Sending"
+msgstr "Sending"
 
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -26448,6 +26470,7 @@ msgid "Sending..."
 msgstr "Sending..."
 
 #. js-lingui-id: h69WC6
+#: src/modules/chat/components/ChatMessageReceipt.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Sent"
@@ -27270,6 +27293,7 @@ msgstr "snippet"
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Snooze"
@@ -27290,7 +27314,6 @@ msgid "Snooze ended {eventTime}"
 msgstr "Snooze ended {eventTime}"
 
 #. js-lingui-id: oIDreL
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
@@ -29865,7 +29888,6 @@ msgstr "Tomato"
 
 #. js-lingui-id: BRMXj0
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Tomorrow"
@@ -30083,7 +30105,6 @@ msgid "Triage"
 msgstr "Triage"
 
 #. js-lingui-id: lhkaAC
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -30942,11 +30963,6 @@ msgstr "Unsupported image format"
 #: src/modules/ai/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
 msgstr "Until {snoozedUntilDay}"
-
-#. js-lingui-id: LRU2W5
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "Until the last 3 days"
-msgstr "Until the last 3 days"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx

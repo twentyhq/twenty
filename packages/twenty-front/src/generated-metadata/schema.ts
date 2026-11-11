@@ -402,6 +402,7 @@ export enum AllMetadataName {
   roleTarget = 'roleTarget',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
+  rowLevelPermissionRule = 'rowLevelPermissionRule',
   searchFieldMetadata = 'searchFieldMetadata',
   settingsMenuItem = 'settingsMenuItem',
   skill = 'skill',
@@ -929,6 +930,11 @@ export type ApprovedAccessDomain = {
   domain: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   isValidated: Scalars['Boolean']['output'];
+};
+
+export type ArchiveInboxThreadInput = {
+  threadId: Scalars['UUID']['input'];
+  workspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
 };
 
 export type AuthBypassProviders = {
@@ -2579,6 +2585,7 @@ export enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
+  IS_HTTP_EGRESS_LAMBDA_ENABLED = 'IS_HTTP_EGRESS_LAMBDA_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
@@ -3651,6 +3658,7 @@ export type Mutation = {
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   approveApplicationIframeMediaPermissions: Application;
+  archiveInboxThread: Scalars['Boolean']['output'];
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3985,6 +3993,11 @@ export type MutationAddQueryToEventStreamArgs = {
 export type MutationApproveApplicationIframeMediaPermissionsArgs = {
   applicationId: Scalars['UUID']['input'];
   approvedIframeMediaPermissions: Array<IframeMediaPermissionInput>;
+};
+
+
+export type MutationArchiveInboxThreadArgs = {
+  input: ArchiveInboxThreadInput;
 };
 
 
@@ -5731,7 +5744,7 @@ export type ObjectRecordsPermissions = {
   objectMetadataId: Scalars['UUID']['output'];
   /** @deprecated Use unreadableFields and uneditableFields */
   restrictedFields: Scalars['JSON']['output'];
-  rowLevelRecordsPermissions?: Maybe<RowLevelRecordsPermissions>;
+  rowLevelRecordsPermissions?: Maybe<Array<RowLevelRecordsPermissions>>;
   uneditableFields: Array<Scalars['UUID']['output']>;
   unreadableFields: Array<Scalars['UUID']['output']>;
 };
@@ -6957,6 +6970,7 @@ export type Role = {
   rowLevelPermissionFieldPermissions?: Maybe<Array<FieldPermission>>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
+  rowLevelPermissionRules?: Maybe<Array<RowLevelPermissionRule>>;
   universalIdentifier?: Maybe<Scalars['UUID']['output']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
@@ -7052,6 +7066,17 @@ export enum RowLevelPermissionPredicateOperand {
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
 
+export type RowLevelPermissionRule = {
+  __typename?: 'RowLevelPermissionRule';
+  canCreateRecords: Scalars['Boolean']['output'];
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
+  id: Scalars['UUID']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+};
+
 export type RowLevelRecordsPermissions = {
   __typename?: 'RowLevelRecordsPermissions';
   canCreateRecords: Scalars['Boolean']['output'];
@@ -7061,8 +7086,9 @@ export type RowLevelRecordsPermissions = {
   canUpdateRecords: Scalars['Boolean']['output'];
   predicateGroups: Array<RowLevelPermissionPredicateGroup>;
   predicates: Array<RowLevelPermissionPredicate>;
-  uneditableFields?: Maybe<Array<Scalars['UUID']['output']>>;
-  unreadableFields?: Maybe<Array<Scalars['UUID']['output']>>;
+  ruleId: Scalars['UUID']['output'];
+  uneditableFields: Array<Scalars['UUID']['output']>;
+  unreadableFields: Array<Scalars['UUID']['output']>;
 };
 
 export type RunAgentInput = {
@@ -7146,11 +7172,21 @@ export type SearchField = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type SendAppChannelMessageEmailInput = {
+  bcc?: InputMaybe<Scalars['String']['input']>;
+  body: Scalars['String']['input'];
+  cc?: InputMaybe<Scalars['String']['input']>;
+  inReplyTo?: InputMaybe<Scalars['String']['input']>;
+  subject: Scalars['String']['input'];
+  to: Scalars['String']['input'];
+};
+
 export type SendAppChannelMessageInput = {
+  email?: InputMaybe<SendAppChannelMessageEmailInput>;
   idempotencyKey: Scalars['UUID']['input'];
   messageChannelId: Scalars['UUID']['input'];
   messageThreadId: Scalars['UUID']['input'];
-  text: Scalars['String']['input'];
+  text?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SendAppChannelMessageOutput = {
@@ -8213,6 +8249,11 @@ export type UpsertPermissionFlagsInput = {
 };
 
 export type UpsertRowLevelPermissionPredicatesInput = {
+  canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
   objectMetadataId: Scalars['UUID']['input'];
   predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
   predicates: Array<RowLevelPermissionPredicateInput>;

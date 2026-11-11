@@ -9,7 +9,7 @@ import {
   type PermissionsLimitingPrincipal,
   type PermissionsMainPrincipal,
 } from 'src/engine/permissions/internal/principal/types/permissions-principal.type';
-import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
+import { type RuntimeLimitingRole } from 'src/engine/permissions/principal/types/runtime-limiting-role.type';
 import {
   type PermissionsApplicationPrincipalWithRole,
   type PermissionsLimitingPrincipalWithRole,
@@ -164,7 +164,7 @@ type PermissionsIdentities = {
   mainPrincipal: PermissionsMainPrincipal;
   limitingPrincipal?: PermissionsLimitingPrincipal;
   applicationPrincipal: PermissionsApplicationPrincipal;
-  aiRunScope?: AiRunPermissionScope;
+  runtimeLimitingRole?: RuntimeLimitingRole;
 };
 
 const toApplicationPrincipal = (
@@ -193,7 +193,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        aiRunScope: authContext.aiRunScope,
+        runtimeLimitingRole: authContext.runtimeLimitingRole,
       };
     case 'apiKey':
       return {
@@ -202,7 +202,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        aiRunScope: authContext.aiRunScope,
+        runtimeLimitingRole: authContext.runtimeLimitingRole,
       };
     case 'application':
       return {
@@ -212,7 +212,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application.id,
         ),
-        aiRunScope: authContext.aiRunScope,
+        runtimeLimitingRole: authContext.runtimeLimitingRole,
       };
     case 'webhook':
       return {
@@ -279,8 +279,8 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     mainPrincipal,
     limitingPrincipal: limitingPrincipalWithRole,
     applicationPrincipal,
-    ...(isDefined(identities.aiRunScope)
-      ? { aiRunScope: identities.aiRunScope }
+    ...(isDefined(identities.runtimeLimitingRole)
+      ? { runtimeLimitingRole: identities.runtimeLimitingRole }
       : {}),
   };
 };

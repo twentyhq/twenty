@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Будь ласка, перевір
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "Для входу до {workspaceDisplayName} було використано резервний код. Залишилося резервних кодів: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Після цього робочий простір і всі його �
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Використано резервний код"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Привіт, {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Якщо це були не ви, змініть пароль і згенеруйте нові резервні коди в розділі Налаштування, Профіль, Двофакторна аутентифікація."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Якщо це були не ви, змініть пароль і згенеруйте нові резервні коди."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Керувати підпискою"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Згенеровано нові резервні коди"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "Для вашого облікового запису в {workspaceDisplayName} було згенеровано нові резервні коди. Ваші попередні резервні коди більше не працюють."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Дякуємо за реєстрацію облікового запис
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "Автентифікатор для вашого облікового запису в {workspaceDisplayName} було видалено в Налаштуваннях. Ваші резервні коди для цього робочого простору більше не працюють."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Код відновлення двофакторної аутентиф�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Двофакторну аутентифікацію видалено"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Логотип робочого простору"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Ви можете згенерувати нові резервні коди в розділі Налаштування, Профіль, Двофакторна аутентифікація."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

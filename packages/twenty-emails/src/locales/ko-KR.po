@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): <1>@{domain}</1> 이메일 주소�
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "{workspaceDisplayName}에 로그인하는 데 백업 코드가 사용되었습니다. 남은 백업 코드: {remainingBackupCodeCount}개."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "그 이후에는 워크스페이스와 그 안의 모든 데이터가 �
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "백업 코드 사용됨"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "{userName}님, 안녕하세요."
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "본인이 수행한 작업이 아니라면 비밀번호를 변경하고 설정, 프로필, 이중 인증에서 새 백업 코드를 생성하세요."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "본인이 수행한 작업이 아니라면 비밀번호를 변경하고 새 백업 코드를 생성하세요."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "구독 관리"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "새 백업 코드 생성됨"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "{workspaceDisplayName}의 계정에 새 백업 코드가 생성되었습니다. 이전 백업 코드는 더 이상 작동하지 않습니다."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Twenty에 계정을 등록해 주셔서 감사합니다! 시작하기 �
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "{workspaceDisplayName}의 계정에 대한 인증 앱이 설정에서 제거되었습니다. 이 워크스페이스의 백업 코드는 더 이상 작동하지 않습니다."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "이중 인증 복구 코드 발급됨"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "이중 인증 제거됨"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "워크스페이스 로고"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "설정, 프로필, 이중 인증에서 새 백업 코드를 생성할 수 있습니다."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

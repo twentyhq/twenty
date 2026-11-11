@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Si prega di convalidare questo domi
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "È stato utilizzato un codice di backup per accedere a {workspaceDisplayName}. Codici di backup rimanenti: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Dopo questo periodo, lo spazio di lavoro e tutti i suoi dati verranno el
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Codice di backup utilizzato"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Ciao {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Se non sei stato tu, cambia la password e genera nuovi codici di backup in Impostazioni, Profilo, Autenticazione a due fattori."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Se non sei stato tu, cambia la password e genera nuovi codici di backup."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Gestisci abbonamento"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Generati nuovi codici di backup"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "Sono stati generati nuovi codici di backup per il tuo account in {workspaceDisplayName}. I tuoi precedenti codici di backup non funzionano più."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Grazie per esserti registrato su Twenty! Prima di iniziare, dobbiamo sol
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "L'autenticatore per il tuo account in {workspaceDisplayName} è stato rimosso da Impostazioni. I tuoi codici di backup per questo spazio di lavoro non funzionano più."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Codice di recupero dell'autenticazione a due fattori emesso"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Autenticazione a due fattori rimossa"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Logo dello spazio di lavoro"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Puoi generare nuovi codici di backup in Impostazioni, Profilo, Autenticazione a due fattori."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

@@ -363,6 +363,7 @@ enum AllMetadataName {
   roleTarget
   rowLevelPermissionPredicate
   rowLevelPermissionPredicateGroup
+  rowLevelPermissionRule
   searchFieldMetadata
   settingsMenuItem
   skill
@@ -850,6 +851,11 @@ type ApprovedAccessDomain {
   domain: String!
   id: UUID!
   isValidated: Boolean!
+}
+
+input ArchiveInboxThreadInput {
+  threadId: UUID!
+  workspaceMemberIds: [UUID!]
 }
 
 type AuthBypassProviders {
@@ -2440,6 +2446,7 @@ enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_HTTP_EGRESS_LAMBDA_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
@@ -3457,6 +3464,7 @@ type Mutation {
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
+  archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
@@ -3975,7 +3983,7 @@ type ObjectRecordsPermissions {
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
   restrictedFields: JSON! @deprecated(reason: "Use unreadableFields and uneditableFields")
-  rowLevelRecordsPermissions: RowLevelRecordsPermissions
+  rowLevelRecordsPermissions: [RowLevelRecordsPermissions!]
   uneditableFields: [UUID!]!
   unreadableFields: [UUID!]!
 }
@@ -4631,6 +4639,7 @@ type Role {
   rowLevelPermissionFieldPermissions: [FieldPermission!]
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
+  rowLevelPermissionRules: [RowLevelPermissionRule!]
   universalIdentifier: UUID
   workspaceMembers: [WorkspaceMember!]!
 }
@@ -4722,6 +4731,16 @@ enum RowLevelPermissionPredicateOperand {
   VECTOR_SEARCH
 }
 
+type RowLevelPermissionRule {
+  canCreateRecords: Boolean!
+  canDestroyRecords: Boolean!
+  canReadRecords: Boolean!
+  canSoftDeleteRecords: Boolean!
+  canUpdateRecords: Boolean!
+  id: UUID!
+  objectMetadataId: UUID!
+}
+
 type RowLevelRecordsPermissions {
   canCreateRecords: Boolean!
   canDestroyRecords: Boolean!
@@ -4730,8 +4749,9 @@ type RowLevelRecordsPermissions {
   canUpdateRecords: Boolean!
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
   predicates: [RowLevelPermissionPredicate!]!
-  uneditableFields: [UUID!]
-  unreadableFields: [UUID!]
+  ruleId: UUID!
+  uneditableFields: [UUID!]!
+  unreadableFields: [UUID!]!
 }
 
 input RunAgentInput {
@@ -4812,11 +4832,21 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+input SendAppChannelMessageEmailInput {
+  bcc: String
+  body: String!
+  cc: String
+  inReplyTo: String
+  subject: String!
+  to: String!
+}
+
 input SendAppChannelMessageInput {
+  email: SendAppChannelMessageEmailInput
   idempotencyKey: UUID!
   messageChannelId: UUID!
   messageThreadId: UUID!
-  text: String!
+  text: String
 }
 
 type SendAppChannelMessageOutput {
@@ -5839,6 +5869,11 @@ input UpsertPermissionFlagsInput {
 }
 
 input UpsertRowLevelPermissionPredicatesInput {
+  canCreateRecords: Boolean
+  canDestroyRecords: Boolean
+  canReadRecords: Boolean
+  canSoftDeleteRecords: Boolean
+  canUpdateRecords: Boolean
   objectMetadataId: UUID!
   predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
   predicates: [RowLevelPermissionPredicateInput!]!

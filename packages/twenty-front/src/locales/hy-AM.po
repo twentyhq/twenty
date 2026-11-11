@@ -738,11 +738,6 @@ msgstr "{dayOfMonthDescription} և {dayOfWeekDescription}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} օր} other {{days} օր}}"
 
-#. js-lingui-id: Irx6Dx
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
-msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr "{daysLeft, plural, one {Մնացել է # օր} other {Մնացել է # օր}}"
-
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
@@ -779,6 +774,11 @@ msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} կրեդիտ} othe
 #: src/modules/ai/components/AiChatMessageReactions.tsx
 msgid "{emoji} by {reactorNames}"
 msgstr "{emoji}՝ {reactorNames}-ի կողմից"
+
+#. js-lingui-id: 1u0J17
+#: src/modules/activities/emails/components/ChatThreadMessageReactions.tsx
+msgid "{emoji} by {reactors}"
+msgstr "{emoji}՝ {reactors}-ի կողմից"
 
 #. js-lingui-id: nRKZKb
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -1064,7 +1064,7 @@ msgstr "{readOnlyFieldCount, plural, one {Չի կարելի խմբագրել # �
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
-msgstr ""
+msgstr "{remainingBackupCodeCount, plural, one {Մնացել է # պահուստային կոդ} other {Մնացել է # պահուստային կոդ}}"
 
 #. js-lingui-id: N7gP92
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
@@ -4582,6 +4582,7 @@ msgid "Attach file"
 msgstr "Կցել ֆայլը"
 
 #. js-lingui-id: N7m8E+
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/ai/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -4948,12 +4949,12 @@ msgstr "Հետադարձ բացատ"
 #. js-lingui-id: M2cci0
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Backup codes"
-msgstr ""
+msgstr "Պահուստային կոդեր"
 
 #. js-lingui-id: 6kNBNT
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Backup codes copied to clipboard"
-msgstr ""
+msgstr "Պահուստային կոդերը պատճենվել են սեղմատախտակին"
 
 #. js-lingui-id: llDXYJ
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -7360,6 +7361,11 @@ msgstr "Հաստատել բարձրացումը"
 #: src/pages/onboarding/PaymentSuccess.tsx
 msgid "Confirming your payment"
 msgstr "Հաստատվում է ձեր վճարումը"
+
+#. js-lingui-id: jtSEaa
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to {workspaceName}"
+msgstr "Կապել {appName}-ը {workspaceName}-ին"
 
 #. js-lingui-id: LOM1MR
 #: src/pages/auth/Authorize.tsx
@@ -10621,6 +10627,7 @@ msgid "Draft an email to this company about "
 msgstr "Սևագրել նամակ այս ընկերությանը՝ "
 
 #. js-lingui-id: DbAw4C
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "Նամակի սևագիր"
@@ -11805,7 +11812,7 @@ msgstr "Մուտքագրեք շեղումը (offset)"
 #. js-lingui-id: lRIswr
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Enter one of your backup codes, or the recovery code a workspace admin gave you. A recovery code removes your current authenticator for this workspace."
-msgstr ""
+msgstr "Մուտքագրեք ձեր պահուստային կոդերից մեկը կամ վերականգնման կոդը, որը ձեզ տվել է աշխատանքային տարածքի ադմինիստրատորը։ Վերականգնման կոդը հեռացնում է ձեր ընթացիկ նույնականացուցիչը այս աշխատանքային տարածքի համար։"
 
 #. js-lingui-id: /xM6j0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -12937,7 +12944,7 @@ msgstr "Չհաջողվեց ստեղծել վերականգնման կոդը։"
 #. js-lingui-id: 3YKuoA
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Failed to generate backup codes."
-msgstr ""
+msgstr "Չհաջողվեց ստեղծել պահուստային կոդերը։"
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -13114,6 +13121,7 @@ msgid "Failed to send campaign"
 msgstr "Չհաջողվեց ուղարկել արշավը"
 
 #. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useEmailComposerState.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 #: src/modules/activities/emails/hooks/useSendEmail.ts
 msgid "Failed to send email"
@@ -14300,7 +14308,7 @@ msgstr "Ստեղծեք ստորագրված պատճեն մեկ սեղմումո
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate backup codes"
-msgstr ""
+msgstr "Ստեղծել պահուստային կոդեր"
 
 #. js-lingui-id: exy8uo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
@@ -14310,7 +14318,7 @@ msgstr "Ստեղծել կոդ"
 #. js-lingui-id: c63Wy6
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate codes"
-msgstr ""
+msgstr "Ստեղծել կոդեր"
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -14321,7 +14329,7 @@ msgstr "Ստեղծել DPA"
 #. js-lingui-id: P2msE+
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Generate new codes"
-msgstr ""
+msgstr "Ստեղծել նոր կոդեր"
 
 #. js-lingui-id: loqHRi
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -14385,6 +14393,7 @@ msgstr "Ստանում է միայն այս գրառումը. նրա դերը հ
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
@@ -14392,6 +14401,7 @@ msgid "Getting started"
 msgstr "Սկսել"
 
 #. js-lingui-id: YRBB4k
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
 msgstr "Սկսելու առաջընթացը"
@@ -15160,6 +15170,11 @@ msgstr "HTTP հարցում"
 msgid "HTTP request failed"
 msgstr "HTTP հարցումը ձախողվեց"
 
+#. js-lingui-id: 82OlFB
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "HTTP requests in the logic function runtime"
+msgstr "HTTP հարցումներ տրամաբանական ֆունկցիայի գործարկման միջավայրում"
+
 #. js-lingui-id: R1jusb
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "HTTP route"
@@ -15548,11 +15563,6 @@ msgstr "{dateDiff}-ից"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
 msgstr "{listName}-ից"
-
-#. js-lingui-id: jS5U2e
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "In an hour"
-msgstr "Մեկ ժամից"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -16099,7 +16109,7 @@ msgstr "Անվավեր թիվ"
 #. js-lingui-id: IPFW7P
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 msgid "Invalid or expired code."
-msgstr ""
+msgstr "Անվավեր կամ ժամկետանց կոդ։"
 
 #. js-lingui-id: sBZMWb
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay.tsx
@@ -16477,11 +16487,6 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Կանբան վիջեթ"
 
-#. js-lingui-id: uW9WOr
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep {planLabel}"
-msgstr "Պահպանել {planLabel}"
-
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
@@ -16502,10 +16507,11 @@ msgstr "Շարունակել հետևել իմ բացումներին"
 msgid "Keep tracking my opens and clicks"
 msgstr "Շարունակել հետևել իմ բացումներին և սեղմումներին"
 
-#. js-lingui-id: 9l8cs3
-#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
-msgid "Keep your plan"
-msgstr "Պահպանել ձեր պլանը"
+#. js-lingui-id: TOIQKe
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+#: src/modules/getting-started/components/GettingStartedKeepPlanButton.tsx
+msgid "Keep Twenty"
+msgstr "Պահպանել Twenty"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -17776,7 +17782,7 @@ msgstr "ցիկլ"
 #. js-lingui-id: UeVuJ/
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Lost your authenticator? Use a backup or recovery code"
-msgstr ""
+msgstr "Կորցրե՞լ եք ձեր նույնականացուցիչը։ Օգտագործեք պահուստային կամ վերականգնման կոդ"
 
 #. js-lingui-id: GpMARg
 #: src/pages/settings/ai/constants/SettingsAiAssistantFaceLabels.ts
@@ -19247,7 +19253,7 @@ msgstr "Նոր հաստատված մուտքի տիրույթ"
 #. js-lingui-id: pQIH+r
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "New backup codes replace your current ones, which stop working."
-msgstr ""
+msgstr "Նոր պահուստային կոդերը փոխարինում են ձեր ընթացիկ կոդերին, որոնք դադարում են աշխատել։"
 
 #. js-lingui-id: E69UDm
 #: src/modules/side-panel/hooks/useOpenComposeCalendarEventInSidePanel.ts
@@ -19457,6 +19463,7 @@ msgstr "Տեղեկագրեր"
 
 #. js-lingui-id: hXzOVo
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+#: src/modules/getting-started/components/GettingStartedStepCard.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetLegend.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
@@ -22141,6 +22148,7 @@ msgid "Path"
 msgstr "Ուղի"
 
 #. js-lingui-id: IgrLD/
+#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -22550,6 +22558,7 @@ msgid "Plans"
 msgstr "Փաթեթներ"
 
 #. js-lingui-id: T91vKp
+#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "Նվագարկել"
@@ -23278,6 +23287,11 @@ msgstr "Արձագանքել է {emoji}-ով"
 msgid "Reacting with {emoji}"
 msgstr "Արձագանքում է {emoji}-ով"
 
+#. js-lingui-id: cQlPDN
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Read"
+msgstr "Կարդացված"
+
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
 msgid "Read {target}"
@@ -23449,6 +23463,7 @@ msgid "recipient@example.com"
 msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
+#: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
 #: src/modules/ai/components/AiChatNewThreadRecipientBar.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -23979,6 +23994,7 @@ msgstr "Հեռացնել"
 #. placeholder {0}: file.name
 #. placeholder {0}: recipient.address
 #: src/modules/activities/emails/recipients/components/EmailRecipientsFieldChip.tsx
+#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
 #: src/modules/file/components/AttachmentChip.tsx
 msgid "Remove {0}"
 msgstr "Հեռացնել {0}"
@@ -23995,18 +24011,13 @@ msgstr "Հեռացնե՞լ նավիգացիոն մենյուի {0} տարրը։"
 msgid "Remove {0} navigation menu items?"
 msgstr "Հեռացնե՞լ նավիգացիոն մենյուի {0} տարրերը։"
 
-#. js-lingui-id: Q7qiJ+
-#: src/modules/ai/components/internal/AiChatEmailRecipientsRow.tsx
-msgid "Remove {address}"
-msgstr "Հեռացնել {address}"
-
 #. js-lingui-id: boQErO
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Հեռացնել {displayName}"
 
 #. js-lingui-id: HND1q3
-#: src/modules/ai/components/AiChatNewThreadRecipientChip.tsx
+#: src/modules/chat/components/ChatRecipientChip.tsx
 msgid "Remove {label}"
 msgstr "Հեռացնել {label}"
 
@@ -24684,11 +24695,6 @@ msgstr "Վերանայեք այս հավելվածի կողմից պահանջվ
 msgid "Review media access"
 msgstr "Վերանայել մեդիայի հասանելիությունը"
 
-#. js-lingui-id: 35zlhZ
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
-msgid "Review this email before it goes out"
-msgstr "Վերանայեք այս էլ. փոստը, նախքան այն ուղարկվելը"
-
 #. js-lingui-id: GXsAby
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
@@ -24871,6 +24877,11 @@ msgstr "տողային մակարդակի թույլտվության արտահ�
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "row level permission predicate group"
 msgstr "տողային մակարդակի թույլտվության արտահայտությունների խումբ"
+
+#. js-lingui-id: JWZ1ef
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "row level permission rule"
+msgstr "տողային մակարդակի թույլտվության կանոն"
 
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25119,7 +25130,7 @@ msgstr "Պահպանել կարգավորումները"
 #. js-lingui-id: /hNRXq
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesDisplay.tsx
 msgid "Save these codes somewhere safe, like a password manager. Each code works once. You won't be able to see them again."
-msgstr ""
+msgstr "Պահպանեք այս կոդերը անվտանգ վայրում, օրինակ՝ գաղտնաբառերի կառավարչում։ Յուրաքանչյուր կոդ աշխատում է մեկ անգամ։ Այլևս չեք կարողանա տեսնել դրանք։"
 
 #. js-lingui-id: kv9Dnn
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
@@ -26326,6 +26337,7 @@ msgstr "Ուղարկել արշավը"
 
 #. js-lingui-id: 65dxv8
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "Ուղարկել էլ․ նամակ"
@@ -26410,11 +26422,21 @@ msgstr "Ուղարկել փորձնական էլ․ նամակ"
 msgid "Send to Inbox"
 msgstr "Ուղարկել մուտքային արկղ"
 
+#. js-lingui-id: 69d0/t
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda."
+msgstr "Ուղարկեք workflow-ի HTTP հարցումները, փորձնական հարցումները և AI գործակալի HTTP գործիքը տրամաբանական ֆունկցիայի դրայվերի միջոցով, որը դրանք գործարկում է մեկուսացված Lambda-ում, երբ տրամաբանական ֆունկցիաները գործարկվում են Lambda-ում։"
+
 #. js-lingui-id: LFupHB
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Sender name"
 msgstr "Ուղարկողի անուն"
+
+#. js-lingui-id: 9bG48P
+#: src/modules/chat/components/ChatMessageReceipt.tsx
+msgid "Sending"
+msgstr "Ուղարկվում է"
 
 #. js-lingui-id: ULtHaJ
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -26453,6 +26475,7 @@ msgid "Sending..."
 msgstr "Ուղարկվում է..."
 
 #. js-lingui-id: h69WC6
+#: src/modules/chat/components/ChatMessageReceipt.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Sent"
@@ -27275,6 +27298,7 @@ msgstr "հատված"
 #: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Հետաձգել"
@@ -27295,7 +27319,6 @@ msgid "Snooze ended {eventTime}"
 msgstr "Հետաձգումն ավարտվել է {eventTime}"
 
 #. js-lingui-id: oIDreL
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
@@ -29868,7 +29891,6 @@ msgstr "Լոլիկ"
 
 #. js-lingui-id: BRMXj0
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Վաղը"
@@ -30086,7 +30108,6 @@ msgid "Triage"
 msgstr "Տեսակավորում"
 
 #. js-lingui-id: lhkaAC
-#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -30946,11 +30967,6 @@ msgstr "Չաջակցվող պատկերի ձևաչափ"
 msgid "Until {snoozedUntilDay}"
 msgstr "Մինչև {snoozedUntilDay}"
 
-#. js-lingui-id: LRU2W5
-#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
-msgid "Until the last 3 days"
-msgstr "Մինչև վերջին 3 օրը"
-
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
@@ -31541,12 +31557,12 @@ msgstr "Օգտագործել «{trimmedSidePanelSearch}»-ը՝..."
 #. js-lingui-id: jFGgyP
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "Use a backup code to sign in if you lose access to your authenticator app. Each code works once."
-msgstr ""
+msgstr "Օգտագործեք պահուստային կոդ՝ մուտք գործելու համար, եթե կորցնեք մուտքը ձեր նույնականացուցիչ հավելված։ Յուրաքանչյուր կոդ աշխատում է մեկ անգամ։"
 
 #. js-lingui-id: tqiY4/
 #: src/pages/auth/SignInUp.tsx
 msgid "Use a backup or recovery code"
-msgstr ""
+msgstr "Օգտագործեք պահուստային կամ վերականգնման կոդ"
 
 #. js-lingui-id: SyMU3+
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
