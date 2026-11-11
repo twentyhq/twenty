@@ -38,7 +38,7 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
 import { type FlatRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule.type';
 import { buildRowLevelPermissionRules } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/build-row-level-permission-rules.util';
-import { removeDisabledActionsFromRowLevelPermissionRuleGrants } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/remove-disabled-actions-from-row-level-permission-rule-grants.util';
+import { removeDisabledOperationsFromRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/remove-disabled-operations-from-row-level-permission-rule.util';
 import { validateRowLevelPermissionRuleOwnershipOrThrow } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/validate-row-level-permission-rule-ownership.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -235,8 +235,8 @@ export class RowLevelPermissionPredicateService {
       flatApplication: workspaceCustomFlatApplication,
       flatRowLevelPermissionRuleMaps,
       flatFieldPermissionMaps,
-      ruleGrants: removeDisabledActionsFromRowLevelPermissionRuleGrants({
-        ruleGrants: {
+      ruleGrants: removeDisabledOperationsFromRowLevelPermissionRule({
+        ruleOperations: {
           canCreateRecords: input.canCreateRecords,
           canReadRecords: input.canReadRecords,
           canUpdateRecords: input.canUpdateRecords,

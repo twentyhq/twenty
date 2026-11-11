@@ -5,7 +5,7 @@ import { type ObjectPermissionAction } from 'twenty-shared/application';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule.type';
 
-type RuleGrants = Partial<
+type RuleOperations = Partial<
   Pick<
     FlatRowLevelPermissionRule,
     | 'canCreateRecords'
@@ -17,8 +17,8 @@ type RuleGrants = Partial<
 >;
 
 // Same actions as validateObjectPermissionGrantsNoDisabledAction: create still follows update
-const OBJECT_PERMISSION_ACTION_BY_RULE_GRANT: Record<
-  Exclude<keyof RuleGrants, 'canCreateRecords'>,
+const OBJECT_PERMISSION_ACTION_BY_RULE_OPERATION: Record<
+  Exclude<keyof RuleOperations, 'canCreateRecords'>,
   ObjectPermissionAction
 > = {
   canReadRecords: 'canReadObjectRecords',
@@ -27,31 +27,33 @@ const OBJECT_PERMISSION_ACTION_BY_RULE_GRANT: Record<
   canDestroyRecords: 'canDestroyObjectRecords',
 };
 
-// Role settings send the grants a rule inherits from its role, disabled actions included
-export const removeDisabledActionsFromRowLevelPermissionRuleGrants = ({
-  ruleGrants,
+// Role settings send the operations a rule inherits from its role, disabled actions included
+export const removeDisabledOperationsFromRowLevelPermissionRule = ({
+  ruleOperations,
   flatObjectMetadata,
 }: {
-  ruleGrants: RuleGrants;
+  ruleOperations: RuleOperations;
   flatObjectMetadata:
     | Pick<FlatObjectMetadata, 'disabledObjectPermissionActions'>
     | undefined;
-}): RuleGrants => {
+}): RuleOperations => {
   const disabledActions: string[] =
     flatObjectMetadata?.disabledObjectPermissionActions ?? [];
 
-  const resolveRuleGrant = (
-    ruleGrant: keyof typeof OBJECT_PERMISSION_ACTION_BY_RULE_GRANT,
+  const resolveRuleOperation = (
+    ruleOperation: keyof typeof OBJECT_PERMISSION_ACTION_BY_RULE_OPERATION,
   ) =>
-    disabledActions.includes(OBJECT_PERMISSION_ACTION_BY_RULE_GRANT[ruleGrant])
+    disabledActions.includes(
+      OBJECT_PERMISSION_ACTION_BY_RULE_OPERATION[ruleOperation],
+    )
       ? false
-      : ruleGrants[ruleGrant];
+      : ruleOperations[ruleOperation];
 
   return {
-    ...ruleGrants,
-    canReadRecords: resolveRuleGrant('canReadRecords'),
-    canUpdateRecords: resolveRuleGrant('canUpdateRecords'),
-    canSoftDeleteRecords: resolveRuleGrant('canSoftDeleteRecords'),
-    canDestroyRecords: resolveRuleGrant('canDestroyRecords'),
+    ...ruleOperations,
+    canReadRecords: resolveRuleOperation('canReadRecords'),
+    canUpdateRecords: resolveRuleOperation('canUpdateRecords'),
+    canSoftDeleteRecords: resolveRuleOperation('canSoftDeleteRecords'),
+    canDestroyRecords: resolveRuleOperation('canDestroyRecords'),
   };
 };
