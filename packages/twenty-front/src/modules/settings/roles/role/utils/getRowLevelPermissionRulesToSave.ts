@@ -21,10 +21,13 @@ export type RowLevelPermissionRulesToSave = {
   ruleGrants: RowLevelPermissionRuleGrant[];
 };
 
-const getRootPredicateGroupId = (
-  predicateGroupId: string,
-  predicateGroupById: Map<string, RowLevelPermissionPredicateGroup>,
-) => {
+const getRootPredicateGroupId = ({
+  predicateGroupId,
+  predicateGroupById,
+}: {
+  predicateGroupId: string;
+  predicateGroupById: Map<string, RowLevelPermissionPredicateGroup>;
+}) => {
   const visitedPredicateGroupIds = new Set<string>();
   let predicateGroup = predicateGroupById.get(predicateGroupId);
 
@@ -46,8 +49,14 @@ export const getRowLevelPermissionRulesToSave = ({
   draftRole,
   persistedRole,
 }: {
-  draftRole: RoleWithPartialMembers;
-  persistedRole?: RoleWithPartialMembers;
+  draftRole: Pick<
+    RoleWithPartialMembers,
+    'rowLevelPermissionPredicates' | 'rowLevelPermissionPredicateGroups'
+  >;
+  persistedRole?: Pick<
+    RoleWithPartialMembers,
+    'rowLevelPermissionPredicates' | 'rowLevelPermissionPredicateGroups'
+  >;
 }): RowLevelPermissionRulesToSave[] => {
   const predicates = draftRole.rowLevelPermissionPredicates ?? [];
   const predicateGroups = draftRole.rowLevelPermissionPredicateGroups ?? [];
@@ -62,20 +71,20 @@ export const getRowLevelPermissionRulesToSave = ({
     predicates
       .map((predicate) =>
         isDefined(predicate.rowLevelPermissionPredicateGroupId)
-          ? getRootPredicateGroupId(
-              predicate.rowLevelPermissionPredicateGroupId,
+          ? getRootPredicateGroupId({
+              predicateGroupId: predicate.rowLevelPermissionPredicateGroupId,
               predicateGroupById,
-            )
+            })
           : undefined,
       )
       .filter(isDefined),
   );
 
   const savedPredicateGroups = predicateGroups.filter((predicateGroup) => {
-    const rootPredicateGroupId = getRootPredicateGroupId(
-      predicateGroup.id,
+    const rootPredicateGroupId = getRootPredicateGroupId({
+      predicateGroupId: predicateGroup.id,
       predicateGroupById,
-    );
+    });
 
     return (
       isDefined(rootPredicateGroupId) &&

@@ -14,7 +14,10 @@ export const getObjectRowLevelPermissionRules = ({
   role,
   objectMetadataId,
 }: {
-  role: RoleWithPartialMembers;
+  role: Pick<
+    RoleWithPartialMembers,
+    'rowLevelPermissionPredicates' | 'rowLevelPermissionPredicateGroups'
+  >;
   objectMetadataId: string;
 }): ObjectRowLevelPermissionRule[] => {
   const predicateGroups = (role.rowLevelPermissionPredicateGroups ?? []).filter(

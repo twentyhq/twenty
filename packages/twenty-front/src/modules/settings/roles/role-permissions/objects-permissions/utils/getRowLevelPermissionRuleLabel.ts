@@ -12,7 +12,10 @@ const getPredicateValueLabel = ({
   predicate,
   workspaceMemberObjectMetadataItem,
 }: {
-  predicate: RowLevelPermissionPredicate;
+  predicate: Pick<
+    RowLevelPermissionPredicate,
+    'workspaceMemberFieldMetadataId' | 'workspaceMemberSubFieldName' | 'value'
+  >;
   workspaceMemberObjectMetadataItem?: Pick<
     EnrichedObjectMetadataItem,
     'fields'
@@ -68,7 +71,7 @@ export const getRowLevelPermissionRuleLabel = ({
   const fieldLabel =
     objectMetadataItem.fields.find(
       (field) => field.id === firstPredicate.fieldMetadataId,
-    )?.label ?? '';
+    )?.label ?? t`Unknown field`;
 
   const operandLabel = getOperandLabel(
     mapRLSOperandToRecordFilterOperand(firstPredicate.operand),

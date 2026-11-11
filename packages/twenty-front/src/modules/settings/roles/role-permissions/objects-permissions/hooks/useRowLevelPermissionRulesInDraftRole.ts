@@ -1,4 +1,5 @@
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { getRulePredicateGroupIds } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getRulePredicateGroupIds';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { isDefined } from 'twenty-shared/utils';
@@ -71,22 +72,10 @@ export const useRowLevelPermissionRulesInDraftRole = (roleId: string) => {
     setSettingsDraftRole((currentSettingsDraftRole) => {
       const predicateGroups =
         currentSettingsDraftRole.rowLevelPermissionPredicateGroups ?? [];
-      const deletedPredicateGroupIds = new Set([rootPredicateGroupId]);
-
-      for (let depth = 0; depth < predicateGroups.length; depth++) {
-        for (const predicateGroup of predicateGroups) {
-          if (
-            isDefined(
-              predicateGroup.parentRowLevelPermissionPredicateGroupId,
-            ) &&
-            deletedPredicateGroupIds.has(
-              predicateGroup.parentRowLevelPermissionPredicateGroupId,
-            )
-          ) {
-            deletedPredicateGroupIds.add(predicateGroup.id);
-          }
-        }
-      }
+      const deletedPredicateGroupIds = getRulePredicateGroupIds({
+        predicateGroups,
+        ruleRootGroupId: rootPredicateGroupId,
+      });
 
       return {
         ...currentSettingsDraftRole,

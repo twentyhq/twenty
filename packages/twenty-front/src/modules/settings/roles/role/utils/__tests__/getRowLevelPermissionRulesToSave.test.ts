@@ -28,10 +28,13 @@ const buildRootGroup = (
   ...grants,
 });
 
-const buildPredicate = (
-  id: string,
-  rowLevelPermissionPredicateGroupId: string,
-): RowLevelPermissionPredicate => ({
+const buildPredicate = ({
+  id,
+  rowLevelPermissionPredicateGroupId,
+}: {
+  id: string;
+  rowLevelPermissionPredicateGroupId: string;
+}): RowLevelPermissionPredicate => ({
   __typename: 'RowLevelPermissionPredicate',
   id,
   fieldMetadataId: 'field-id',
@@ -60,7 +63,12 @@ describe('getRowLevelPermissionRulesToSave', () => {
           }),
           buildRootGroup('empty-rule'),
         ],
-        rowLevelPermissionPredicates: [buildPredicate('owner', 'owner-rule')],
+        rowLevelPermissionPredicates: [
+          buildPredicate({
+            id: 'owner',
+            rowLevelPermissionPredicateGroupId: 'owner-rule',
+          }),
+        ],
       },
     });
 
@@ -87,7 +95,12 @@ describe('getRowLevelPermissionRulesToSave', () => {
         persistedRole: {
           ...DEFAULT_SETTINGS_DRAFT_ROLE,
           rowLevelPermissionPredicateGroups: [buildRootGroup('owner-rule')],
-          rowLevelPermissionPredicates: [buildPredicate('owner', 'owner-rule')],
+          rowLevelPermissionPredicates: [
+            buildPredicate({
+              id: 'owner',
+              rowLevelPermissionPredicateGroupId: 'owner-rule',
+            }),
+          ],
         },
       }),
     ).toEqual([

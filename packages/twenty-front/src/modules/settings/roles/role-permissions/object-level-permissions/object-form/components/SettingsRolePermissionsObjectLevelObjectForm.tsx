@@ -7,6 +7,8 @@ import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
+import { getRulePredicateGroupIds } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getRulePredicateGroupIds';
+import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
 import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
@@ -93,6 +95,12 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
         predicateGroup.objectMetadataId === objectMetadataId,
     );
 
+  const isDraftRoleSeeded = settingsDraftRole.id === roleId;
+
+  if (!isDraftRoleSeeded) {
+    return <SettingsRoleDraftSyncEffect roleId={roleId} />;
+  }
+
   if (!isDefined(ruleRootGroupId) || !isDefined(rootPredicateGroup)) {
     return <Navigate to={finishPath} replace />;
   }
@@ -125,10 +133,19 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           },
         ];
 
+  const rulePredicateGroupIds = getRulePredicateGroupIds({
+    predicateGroups: settingsDraftRole.rowLevelPermissionPredicateGroups ?? [],
+    ruleRootGroupId,
+  });
+
   const rulePredicates =
     settingsDraftRole.rowLevelPermissionPredicates?.filter(
-      (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
+      (predicate) =>
+        isDefined(predicate.rowLevelPermissionPredicateGroupId) &&
+        rulePredicateGroupIds.has(predicate.rowLevelPermissionPredicateGroupId),
     ) ?? [];
+
+  const isRuleEmpty = rulePredicates.length === 0;
 
   const hasInvalidPredicate = rulePredicates.some((predicate) => {
     if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
@@ -146,6 +163,14 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     navigate(finishPath);
   };
 
+  const handleBack = () => {
+    if (isRuleEmpty) {
+      deleteRule(ruleRootGroupId);
+    }
+
+    navigate(finishPath);
+  };
+
   const headerTitle =
     fromAgentId && isDefined(agent) ? agent.label : settingsDraftRole.label;
 
@@ -157,12 +182,12 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       secondaryBar={
         <SettingsWizardStepBar
           label={t`${objectLabelPlural} rule`}
-          onBack={() => navigate(finishPath)}
+          onBack={handleBack}
           trailing={
             <NavigationButton
               size="sm"
               to={finishPath}
-              disabled={hasInvalidPredicate}
+              disabled={hasInvalidPredicate || isRuleEmpty}
               variant="solid"
               color="accent"
             >{t`Finish`}</NavigationButton>
