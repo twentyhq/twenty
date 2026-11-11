@@ -80,6 +80,7 @@ describe('getDatabaseEventTriggerConditionIssues', () => {
 
   it('skips triggers without a condition and wildcard triggers', () => {
     expect(getIssues(buildTrigger('opportunity.updated'))).toEqual([]);
+    expect(getIssues(buildTrigger('opportunity.updated', '  '))).toEqual([]);
     expect(getIssues(buildTrigger('*.updated', 'amount > 0'))).toEqual([]);
   });
 });
