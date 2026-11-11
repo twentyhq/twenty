@@ -6,7 +6,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
+import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 
 export const isObjectUsingRecordAccessGroups = ({
   rolesPermissions,
@@ -24,7 +24,7 @@ export const isObjectUsingRecordAccessGroups = ({
 
   return (
     isDefined(flatObjectMetadata) &&
-    !isPermissionStorageObject(flatObjectMetadata) &&
+    !temporaryExcludePermissionStorageObject(flatObjectMetadata) &&
     Object.values(rolesPermissions).some(({ objects }) =>
       isDefined(objects[objectMetadataId]?.rowLevelRecordsPermissions),
     )
