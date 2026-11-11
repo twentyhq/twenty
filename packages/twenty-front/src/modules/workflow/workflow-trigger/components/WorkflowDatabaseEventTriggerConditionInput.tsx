@@ -21,7 +21,7 @@ import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/Fil
 type ConditionMode = 'FILTERS' | 'EXPRESSION';
 
 const StyledModeHint = styled.div`
-  color: ${themeCssVariables.font.color.light};
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
 `;
 
