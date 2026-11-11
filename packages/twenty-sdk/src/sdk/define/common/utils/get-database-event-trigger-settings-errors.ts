@@ -61,7 +61,7 @@ export const getDatabaseEventTriggerSettingsErrors = ({
   }
 
   if (
-    isNonEmptyString(objectUniversalIdentifier) &&
+    isDefined(objectUniversalIdentifier) &&
     !uuidValidate(objectUniversalIdentifier)
   ) {
     errors.push(`${subject} objectUniversalIdentifier must be a valid UUID`);

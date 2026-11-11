@@ -89,6 +89,23 @@ describe('defineLogicFunction', () => {
     );
   });
 
+  it('should error on an empty objectUniversalIdentifier', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Record Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: {
+        objectUniversalIdentifier: '',
+        action: 'created',
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Database event trigger objectUniversalIdentifier must be a valid UUID',
+    );
+  });
+
   it('should error when a condition has no object to read', () => {
     const result = defineLogicFunction({
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
