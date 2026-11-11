@@ -80,51 +80,6 @@ describe('getPermissionsPrincipalsActingApplicationId', () => {
     ).toBeUndefined();
   });
 
-  it('ignores a grant whose requested role the member also holds', () => {
-    expect(
-      getPermissionsPrincipalsActingApplicationId({
-        principals: {
-          mainPrincipal: {
-            type: 'workspaceMember',
-            roleId: APPLICATION_ROLE_ID,
-            workspaceMemberId: 'member-1',
-          },
-          applicationPrincipal: {
-            type: 'application',
-            roleId: 'grant-role',
-            requestedRoleId: APPLICATION_ROLE_ID,
-            applicationId: APPLICATION_ID,
-          },
-        },
-      }),
-    ).toBeUndefined();
-  });
-
-  it('ignores a grant whose requested role the limiting agent also holds', () => {
-    expect(
-      getPermissionsPrincipalsActingApplicationId({
-        principals: {
-          mainPrincipal: {
-            type: 'apiKey',
-            roleId: 'api-key-role',
-            apiKeyId: 'api-key-1',
-          },
-          limitingPrincipal: {
-            type: 'agent',
-            roleId: APPLICATION_ROLE_ID,
-            agentId: 'agent-1',
-          },
-          applicationPrincipal: {
-            type: 'application',
-            roleId: 'grant-role',
-            requestedRoleId: APPLICATION_ROLE_ID,
-            applicationId: APPLICATION_ID,
-          },
-        },
-      }),
-    ).toBeUndefined();
-  });
-
   describe('for a member holding Admin acting through twenty-standard', () => {
     const TWENTY_STANDARD_APPLICATION_ID = 'twenty-standard-application-id';
     const ADMIN_ROLE_ID = 'admin-role-id';
@@ -169,16 +124,16 @@ describe('getPermissionsPrincipalsActingApplicationId', () => {
       return getPermissionsPrincipalsActingApplicationId({ principals });
     };
 
-    it('acts as no application before it has its grant', () => {
+    it('acts as no application while twenty-standard still runs with Admin', () => {
       expect(resolveActingApplicationId({})).toBeUndefined();
     });
 
-    it('still acts as no application once it runs with its grant', () => {
+    it('acts through twenty-standard once it runs with its grant', () => {
       expect(
         resolveActingApplicationId({
           [TWENTY_STANDARD_APPLICATION_ID]: { roleId: 'admin-grant-role-id' },
         }),
-      ).toBeUndefined();
+      ).toBe(TWENTY_STANDARD_APPLICATION_ID);
     });
   });
 });

@@ -18,19 +18,11 @@ export const getPermissionsPrincipalsActingApplicationId = ({
     return mainPrincipal.applicationId;
   }
 
-  if (applicationPrincipal.type === 'customApplication') {
-    return undefined;
-  }
-
-  // Compared on the requested role, since the grant copying it has its own id
-  // TODO: drop both comparisons with the grant fallback, an application then never shares a role
-  const applicationRoleId =
-    applicationPrincipal.requestedRoleId ?? applicationPrincipal.roleId;
-
   if (
+    applicationPrincipal.type === 'customApplication' ||
     (isPermissionMainPrincipalWorkspaceMember(mainPrincipal) &&
-      applicationRoleId === mainPrincipal.roleId) ||
-    applicationRoleId === limitingPrincipal?.roleId
+      applicationPrincipal.roleId === mainPrincipal.roleId) ||
+    applicationPrincipal.roleId === limitingPrincipal?.roleId
   ) {
     return undefined;
   }

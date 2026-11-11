@@ -13,24 +13,19 @@ import {
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
-// requestedRoleId is the application's own role, which its grant copies
-// TODO: remove once the acting application check no longer reads it
-export type PermissionsApplicationIdPrincipalWithRole =
-  WithRoleId<PermissionsApplicationIdPrincipal> & { requestedRoleId?: string };
-
 export type PermissionsMainPrincipalWithRole =
   | WithRoleId<PermissionsWorkspaceMemberPrincipal>
   | WithRoleId<PermissionsApiKeyPrincipal>
   | WithRoleId<PermissionsAgentPrincipal>
   | WithRoleId<PermissionsWebhookPrincipal>
-  | PermissionsApplicationIdPrincipalWithRole
+  | WithRoleId<PermissionsApplicationIdPrincipal>
   | PermissionsRolePrincipal;
 
 export type PermissionsLimitingPrincipalWithRole =
   WithRoleId<PermissionsAgentPrincipal>;
 
 export type PermissionsApplicationPrincipalWithRole =
-  | PermissionsApplicationIdPrincipalWithRole
+  | WithRoleId<PermissionsApplicationIdPrincipal>
   | PermissionsCustomApplicationPrincipal;
 
 export type PermissionsPrincipalsWithRolesContext = {

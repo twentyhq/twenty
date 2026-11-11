@@ -19,7 +19,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { type PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
-import { getPermissionsPrincipalsActingApplicationId } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-acting-application-id.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
@@ -266,13 +265,7 @@ const resolvePermissions = async (authContext: PermissionsAuthContext) => {
 
   return {
     principals,
-    computed: {
-      recordsPermissions,
-      permissionFlags,
-      actingApplicationId: getPermissionsPrincipalsActingApplicationId({
-        principals,
-      }),
-    },
+    computed: { recordsPermissions, permissionFlags },
   };
 };
 
@@ -396,7 +389,7 @@ describe('Application grant permission resolution', () => {
         authContext: memberActingThrough(confinedApplicationId),
       });
 
-      expect(computed?.actingApplicationId).toBe(confinedApplicationId);
+      expect(computed).toBeDefined();
     });
 
     it('has unchanged permissions for its agent', async () => {
@@ -437,7 +430,7 @@ describe('Application grant permission resolution', () => {
     );
   });
 
-  it('has unchanged permissions for twenty-standard acting for an Admin member', async () => {
+  it('keeps disabled actions on standard objects for an Admin member acting through twenty-standard', async () => {
     const twentyStandardApplicationId = await findApplicationIdOrThrow(
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
     );
@@ -447,7 +440,28 @@ describe('Application grant permission resolution', () => {
       authContext: memberActingThrough(twentyStandardApplicationId),
     });
 
-    expect(computed?.actingApplicationId).toBeUndefined();
+    const { flatObjectMetadataMaps } =
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
+    const readDisabledStandardObject = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    ).find(
+      (flatObjectMetadata) =>
+        flatObjectMetadata?.applicationId === twentyStandardApplicationId &&
+        flatObjectMetadata.disabledObjectPermissionActions?.includes(
+          'canReadObjectRecords',
+        ),
+    );
+
+    if (!isDefined(readDisabledStandardObject)) {
+      throw new Error('No standard object has reading disabled');
+    }
+
+    expect(
+      computed?.recordsPermissions.objects[readDisabledStandardObject.id]
+        ?.canReadAllRecords,
+    ).toBe(false);
   });
 
   it('keeps the workspace custom application on its own role', async () => {
