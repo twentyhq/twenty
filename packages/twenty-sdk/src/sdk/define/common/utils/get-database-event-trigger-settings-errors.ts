@@ -4,7 +4,7 @@ import {
   type DatabaseEventTriggerManifestSettings,
   isObjectDatabaseEventTriggerManifestSettings,
 } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { validate as uuidValidate } from 'uuid';
 
 const DATABASE_EVENT_TRIGGER_ACTIONS: DatabaseEventTriggerManifestAction[] = [
@@ -28,6 +28,10 @@ export const getDatabaseEventTriggerSettingsErrors = ({
   eventNamePattern?: RegExp;
   isObjectRequired?: boolean;
 }): string[] => {
+  if (!isPlainObject(settings)) {
+    return [`${subject} settings must be an object`];
+  }
+
   if (!isObjectDatabaseEventTriggerManifestSettings(settings)) {
     const { eventName } = settings;
 
