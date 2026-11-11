@@ -114,6 +114,7 @@ const workflowTriggerManifestOptions = [
         objectUniversalIdentifier: z.uuid(),
         action: z.enum(['created', 'updated', 'deleted', 'upserted']),
         fieldUniversalIdentifiers: z.array(z.uuid()).optional(),
+        condition: z.string().optional(),
         filter: z
           .strictObject({
             stepFilterGroups: z.array(stepFilterGroupSchema),

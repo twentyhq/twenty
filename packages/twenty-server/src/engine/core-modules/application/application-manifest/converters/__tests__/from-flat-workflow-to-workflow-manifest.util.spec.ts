@@ -617,6 +617,16 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
           filter: STEP_FILTERS,
         },
       },
+      {
+        universalIdentifier: TRIGGER_ID,
+        type: 'DATABASE_EVENT',
+        nextStepIds: [STEP_ID],
+        settings: {
+          objectUniversalIdentifier: OBJECT_ID,
+          action: 'updated',
+          condition: "status == 'open' and previous.status != 'open'",
+        },
+      },
     ])('exports a $type trigger as it was declared', (trigger) => {
       expectRoundTrip(buildWorkflow({ trigger }));
     });

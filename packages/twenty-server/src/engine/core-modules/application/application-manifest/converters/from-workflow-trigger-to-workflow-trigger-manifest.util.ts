@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import isEqual from 'lodash.isequal';
 import {
@@ -103,7 +104,7 @@ const fromDatabaseEventTriggerSettings = ({
 
   const objectUniversalIdentifier =
     resolvers.objectUniversalIdentifier(objectName);
-  const { fields, filter } = settings;
+  const { fields, filter, condition } = settings;
 
   return {
     objectUniversalIdentifier,
@@ -118,6 +119,7 @@ const fromDatabaseEventTriggerSettings = ({
           ),
         }
       : {}),
+    ...(isNonEmptyString(condition) ? { condition } : {}),
     ...(isDefined(filter)
       ? {
           filter: {
