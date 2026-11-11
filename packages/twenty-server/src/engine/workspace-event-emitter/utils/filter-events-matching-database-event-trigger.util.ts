@@ -168,13 +168,17 @@ const toApiShapedRecord = ({
 
   for (const { fieldName, joinColumnName } of relations) {
     const relatedRecordId = readRecordId(record[joinColumnName]);
+    const loadedRelatedRecords = relatedRecordsByRelation.get(fieldName);
 
-    apiShapedRecord[fieldName] = isDefined(relatedRecordId)
-      ? {
-          ...relatedRecordsByRelation.get(fieldName)?.get(relatedRecordId),
-          id: relatedRecordId,
-        }
-      : null;
+    if (!isDefined(relatedRecordId)) {
+      apiShapedRecord[fieldName] = null;
+      continue;
+    }
+
+    // A loaded relation reads null when its record is deleted or hidden, as the API returns it
+    apiShapedRecord[fieldName] = isDefined(loadedRelatedRecords)
+      ? (loadedRelatedRecords.get(relatedRecordId) ?? null)
+      : { id: relatedRecordId };
   }
 
   return apiShapedRecord;

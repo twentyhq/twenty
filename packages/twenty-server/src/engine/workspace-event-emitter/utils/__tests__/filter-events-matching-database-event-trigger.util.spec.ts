@@ -181,18 +181,18 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
     });
   });
 
-  it('should treat a related record the trigger cannot read as missing', async () => {
-    const hiddenCompany = buildEvent({ after: { companyId: 'hidden' } });
+  it('should read a related record that was not returned as no relation', async () => {
+    const deletedCompany = buildEvent({ after: { companyId: 'deleted' } });
 
     const { events } = await filterEventsMatchingDatabaseEventTrigger({
-      events: [hiddenCompany],
+      events: [deletedCompany],
       eventName: 'opportunity.created',
-      condition: 'company.employees > 100',
+      condition: 'not isDefined(company) and not isDefined(company.employees)',
       fields: FIELDS,
       findRelatedRecords: jest.fn().mockResolvedValue([]),
     });
 
-    expect(events).toEqual([]);
+    expect(events).toEqual([deletedCompany]);
   });
 
   it('should match nothing and report why when related records fail to load', async () => {
