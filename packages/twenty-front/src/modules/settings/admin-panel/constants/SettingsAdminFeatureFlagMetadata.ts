@@ -68,6 +68,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Private records`,
     description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,
   },
+  [FeatureFlagKey.IS_PERMISSION_SYSTEM_TABLES_ENABLED]: {
+    label: msg`Permission system tables`,
+    description: msg`Store record shares and access groups in tables owned by the permission engine instead of objects. Turning this on removes both objects from the data model and cannot be undone by turning it off.`,
+  },
   [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
     label: msg`Access groups`,
     description: msg`Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes.`,

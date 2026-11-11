@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { createPermissionTestActiveWorkspace } from 'test/integration/permissions/utils/create-permission-test-active-workspace.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
@@ -19,14 +20,13 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-const workspaceId = SEED_APPLE_WORKSPACE_ID;
-const authContext = buildSystemAuthContext(workspaceId);
 const RECORD_ID = randomUUID();
 const OBJECT_METADATA_ID = randomUUID();
 
 describe('2-45 workspace command 1790876639146 - AddRecordShareNoneAccessLevelCommand (integration)', () => {
+  let workspaceId: string;
+  let authContext: ReturnType<typeof buildSystemAuthContext>;
   let command: AddRecordShareNoneAccessLevelCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let shares: RecordShareStorageService;
@@ -86,7 +86,9 @@ describe('2-45 workspace command 1790876639146 - AddRecordShareNoneAccessLevelCo
       recordIds: [RECORD_ID],
     });
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ workspaceId } = await createPermissionTestActiveWorkspace());
+    authContext = buildSystemAuthContext(workspaceId);
     command = getAppProviderByClassName<AddRecordShareNoneAccessLevelCommand>(
       'AddRecordShareNoneAccessLevelCommand',
     );

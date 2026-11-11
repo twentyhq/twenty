@@ -4,24 +4,25 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { createPermissionTestActiveWorkspace } from 'test/integration/permissions/utils/create-permission-test-active-workspace.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type SyncAccessGroupObjectCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793384492383-sync-access-group-object.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const ACCESS_GROUP = STANDARD_OBJECTS.accessGroup;
 
 describe('2-55 workspace command - sync access group object (integration)', () => {
+  let workspaceId: string;
+  let schemaName: string;
   let command: SyncAccessGroupObjectCommand;
   let workspaceCacheService: WorkspaceCacheService;
 
   const runOnWorkspace = (options: { dryRun?: boolean } = {}) =>
     command.runOnWorkspace({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceId,
       options,
       index: 0,
       total: 1,
@@ -30,7 +31,7 @@ describe('2-55 workspace command - sync access group object (integration)', () =
 
   const findAccessGroupStorage = async () => {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
-      await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+      await workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
         'flatIndexMaps',
@@ -38,7 +39,7 @@ describe('2-55 workspace command - sync access group object (integration)', () =
     const tables: { table_name: string }[] = await global.testDataSource.query(
       `SELECT table_name FROM information_schema.tables
        WHERE table_schema = $1 AND table_name = 'accessGroup'`,
-      [SCHEMA],
+      [schemaName],
     );
 
     return {
@@ -70,12 +71,14 @@ describe('2-55 workspace command - sync access group object (integration)', () =
     groupHash: string;
   }) =>
     global.testDataSource.query(
-      `INSERT INTO "${SCHEMA}"."accessGroup" ("roleId", "groupHash")
+      `INSERT INTO "${schemaName}"."accessGroup" ("roleId", "groupHash")
        VALUES ($1, $2)`,
       [roleId, groupHash],
     );
 
   beforeAll(async () => {
+    ({ workspaceId } = await createPermissionTestActiveWorkspace());
+    schemaName = getWorkspaceSchemaName(workspaceId);
     command = getAppProviderByClassName<SyncAccessGroupObjectCommand>(
       'SyncAccessGroupObjectCommand',
     );
@@ -90,7 +93,7 @@ describe('2-55 workspace command - sync access group object (integration)', () =
       await getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
         'WorkspaceMigrationValidateBuildAndRunService',
       ).validateBuildAndRunLegacyWorkspaceMigration({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceId,
         isSystemBuild: true,
         applicationUniversalIdentifier:
           TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -165,7 +168,7 @@ describe('2-55 workspace command - sync access group object (integration)', () =
       );
     } finally {
       await global.testDataSource.query(
-        `DELETE FROM "${SCHEMA}"."accessGroup" WHERE "roleId" = $1`,
+        `DELETE FROM "${schemaName}"."accessGroup" WHERE "roleId" = $1`,
         [roleId],
       );
     }

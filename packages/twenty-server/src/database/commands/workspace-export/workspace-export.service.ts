@@ -14,6 +14,9 @@ import { getCoreEntityMetadatasWithWorkspaceId } from 'src/database/commands/wor
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PERMISSION_SYSTEM_TABLES } from 'src/engine/permissions/system-table/constants/permission-system-tables.constant';
+import { buildCreatePermissionSystemTablesStatements } from 'src/engine/permissions/system-table/utils/build-create-permission-system-tables-statements.util';
+import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -42,6 +45,7 @@ type WriteRowsOptions = {
   queryParameters?: unknown[];
   jsonColumns?: Set<string>;
   excludedColumns?: Set<string>;
+  includedColumns?: Set<string>;
 };
 
 @Injectable()
@@ -149,6 +153,14 @@ export class WorkspaceExportService {
         queryRunner,
         stream,
       );
+
+      if (!objectMetadatas.some(isPermissionStorageObject)) {
+        await this.writePermissionSystemTables({
+          schemaName,
+          queryRunner,
+          stream,
+        });
+      }
 
       stream.write("\nSET session_replication_role = 'origin';\n");
     } finally {
@@ -299,6 +311,7 @@ export class WorkspaceExportService {
     stream,
     jsonColumns,
     excludedColumns,
+    includedColumns,
   }: Omit<WriteRowsOptions, 'whereClause' | 'queryParameters'>): Promise<void> {
     let columnNames: string[] | undefined;
     let totalRows = 0;
@@ -314,7 +327,9 @@ export class WorkspaceExportService {
 
       if (!columnNames) {
         columnNames = Object.keys(rows[0]).filter(
-          (columnName) => !excludedColumns?.has(columnName),
+          (columnName) =>
+            !excludedColumns?.has(columnName) &&
+            (includedColumns?.has(columnName) ?? true),
         );
 
         const escapedColumns = columnNames.map(escapeIdentifier).join(', ');
@@ -347,6 +362,39 @@ export class WorkspaceExportService {
 
     if (totalRows > 0) {
       this.logger.log(`  ${displayName}: ${totalRows} rows`);
+    }
+  }
+
+  private async writePermissionSystemTables({
+    schemaName,
+    queryRunner,
+    stream,
+  }: Pick<
+    WriteRowsOptions,
+    'schemaName' | 'queryRunner' | 'stream'
+  >): Promise<void> {
+    for (const statement of buildCreatePermissionSystemTablesStatements({
+      schemaName,
+    })) {
+      stream.write(`${statement};\n`);
+    }
+
+    stream.write('\n');
+
+    for (const {
+      tableName,
+      columnNames,
+      jsonColumnNames,
+    } of PERMISSION_SYSTEM_TABLES) {
+      await this.writeCopyRows({
+        schemaName,
+        tableName,
+        displayName: tableName,
+        queryRunner,
+        stream,
+        jsonColumns: new Set(jsonColumnNames),
+        includedColumns: new Set(columnNames),
+      });
     }
   }
 
