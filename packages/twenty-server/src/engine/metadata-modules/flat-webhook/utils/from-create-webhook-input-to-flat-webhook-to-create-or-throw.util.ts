@@ -15,6 +15,7 @@ import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { computeWebhookRoleTargetOperationsOrThrow } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util';
 import { generateWebhookSecret } from 'src/engine/metadata-modules/webhook/utils/generate-webhook-secret.util';
+import { normalizeWebhookCondition } from 'src/engine/metadata-modules/webhook/utils/normalize-webhook-condition.util';
 import {
   WebhookException,
   WebhookExceptionCode,
@@ -63,6 +64,7 @@ export const fromCreateWebhookInputToFlatWebhookToCreateOrThrow = ({
     targetUrl,
     operations: createWebhookInput.operations,
     description: description ?? null,
+    condition: normalizeWebhookCondition(createWebhookInput.condition),
     secret,
     workspaceId,
     createdAt: now,

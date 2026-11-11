@@ -13,6 +13,7 @@ const CREATE_WEBHOOK_MUTATION = gql`
       targetUrl
       operations
       description
+      condition
       secret
       role {
         id
@@ -40,6 +41,7 @@ const GET_WEBHOOK_QUERY = gql`
       targetUrl
       operations
       description
+      condition
       secret
       role {
         id
@@ -67,6 +69,7 @@ const UPDATE_WEBHOOK_MUTATION = gql`
       targetUrl
       operations
       description
+      condition
       secret
       role {
         id
@@ -79,6 +82,7 @@ export type WebhookInput = {
   targetUrl: string;
   operations: string[];
   description?: string;
+  condition?: string | null;
   secret?: string;
   roleId?: string | null;
 };

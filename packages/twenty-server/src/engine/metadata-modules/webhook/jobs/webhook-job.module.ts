@@ -11,9 +11,11 @@ import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/job
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { DatabaseEventTriggerConditionModule } from 'src/engine/workspace-event-emitter/database-event-trigger-condition.module';
 
 @Module({
   imports: [
+    DatabaseEventTriggerConditionModule,
     EventLogEmitterModule,
     MetricsModule,
     PermissionsModule,

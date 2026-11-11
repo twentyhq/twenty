@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,6 +12,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
@@ -18,8 +20,11 @@ import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
@@ -32,7 +37,38 @@ export class CallWebhookJobsJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
+    private readonly databaseEventTriggerConditionService: DatabaseEventTriggerConditionService,
   ) {}
+
+  private async filterEventsMatchingWebhookCondition({
+    webhook,
+    webhookAuthContext,
+    eventBatch,
+    events,
+  }: {
+    webhook: FlatWebhook;
+    webhookAuthContext: PermissionsAuthContext;
+    eventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+    events: ObjectRecordEvent[];
+  }): Promise<ObjectRecordEvent[]> {
+    const { events: matchingEvents, conditionErrorMessage } =
+      await this.databaseEventTriggerConditionService.filterMatchingEvents({
+        workspaceId: eventBatch.workspaceId,
+        objectMetadata: eventBatch.objectMetadata,
+        events,
+        eventName: eventBatch.name,
+        condition: webhook.condition,
+        authContext: webhookAuthContext,
+      });
+
+    if (isDefined(conditionErrorMessage)) {
+      this.logger.warn(
+        `Condition of webhook ${webhook.id} in workspace ${eventBatch.workspaceId} failed to evaluate: ${conditionErrorMessage}`,
+      );
+    }
+
+    return matchingEvents;
+  }
 
   @Process(CallWebhookJobsJob.name)
   async handle(
@@ -93,24 +129,34 @@ export class CallWebhookJobsJob {
         continue;
       }
 
+      const webhookAuthContext: PermissionsAuthContext = {
+        type: 'webhook',
+        workspace: { id: workspaceEventBatch.workspaceId },
+        webhook,
+      };
       const readableEvents =
         readableEventsByRoleId.get(webhookRoleId) ??
         this.recordEventPermissionsReadService.filterReadableEvents({
-          authContext: {
-            type: 'webhook',
-            workspace: { id: workspaceEventBatch.workspaceId },
-            webhook,
-          },
+          authContext: webhookAuthContext,
           eventBatch,
         });
 
       readableEventsByRoleId.set(webhookRoleId, readableEvents);
 
+      const eventsToSend = isNonEmptyString(webhook.condition)
+        ? await this.filterEventsMatchingWebhookCondition({
+            webhook,
+            webhookAuthContext,
+            eventBatch,
+            events: await readableEvents,
+          })
+        : await readableEvents;
+
       webhookEvents.push(
         ...transformEventBatchToWebhookEvents({
           workspaceEventBatch: {
             ...workspaceEventBatch,
-            events: await readableEvents,
+            events: eventsToSend,
           },
           webhooks: [webhook],
         }),

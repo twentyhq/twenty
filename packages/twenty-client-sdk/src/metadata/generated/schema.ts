@@ -4288,6 +4288,7 @@ export type ViewVisibility = 'UNLISTED' | 'WORKSPACE'
 
 export interface Webhook {
     applicationId: Scalars['UUID']
+    condition?: Scalars['String']
     createdAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     description?: Scalars['String']
@@ -6075,7 +6076,7 @@ openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),sh
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
-export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],roleId: Scalars['UUID'],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
+export interface CreateWebhookInput {condition?: (Scalars['String'] | null),description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],roleId: Scalars['UUID'],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
 
 export interface CreditUsedItemGenqlSelection{
     creditsUsed?: boolean | number
@@ -9004,7 +9005,7 @@ id: Scalars['UUID'],
 /** The webhook fields to update */
 update: UpdateWebhookInputUpdates}
 
-export interface UpdateWebhookInputUpdates {description?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),roleId?: (Scalars['UUID'] | null),secret?: (Scalars['String'] | null),targetUrl?: (Scalars['String'] | null)}
+export interface UpdateWebhookInputUpdates {condition?: (Scalars['String'] | null),description?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),roleId?: (Scalars['UUID'] | null),secret?: (Scalars['String'] | null),targetUrl?: (Scalars['String'] | null)}
 
 export interface UpdateWorkspaceAllowedEmbeddingOriginsInput {operation: Scalars['String'],origin: Scalars['String']}
 
@@ -9485,6 +9486,7 @@ export interface ViewSortGenqlSelection{
 
 export interface WebhookGenqlSelection{
     applicationId?: boolean | number
+    condition?: boolean | number
     createdAt?: boolean | number
     deletedAt?: boolean | number
     description?: boolean | number

@@ -4,5 +4,6 @@ export const FLAT_WEBHOOK_EDITABLE_PROPERTIES = [
   'targetUrl',
   'operations',
   'description',
+  'condition',
   'secret',
 ] as const satisfies MetadataEntityPropertyName<'webhook'>[];

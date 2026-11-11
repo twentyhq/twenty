@@ -33,6 +33,11 @@ export class WebhookDTO {
   description: string | null;
 
   @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  condition: string | null;
+
+  @IsString()
   @IsNotEmpty()
   @Field()
   secret: string;

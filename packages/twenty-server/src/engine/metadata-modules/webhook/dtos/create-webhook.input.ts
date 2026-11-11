@@ -33,6 +33,11 @@ export class CreateWebhookInput {
 
   @IsString()
   @IsOptional()
+  @Field(() => String, { nullable: true })
+  condition?: string | null;
+
+  @IsString()
+  @IsOptional()
   @Field({ nullable: true })
   secret?: string;
 

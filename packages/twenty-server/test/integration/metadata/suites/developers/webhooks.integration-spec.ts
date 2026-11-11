@@ -234,6 +234,46 @@ describe('webhooksResolver (e2e)', () => {
     });
   });
 
+  describe('webhook condition', () => {
+    it('should store a condition that compiles on the operation object', async () => {
+      const response = await createWebhook({
+        input: {
+          targetUrl: 'https://example.com/webhook',
+          operations: ['person.updated'],
+          condition: " previous.jobTitle != jobTitle and jobTitle == 'CTO' ",
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      createdWebhookId = response.body.data.createWebhook.id;
+      expect(response.body.data.createWebhook.condition).toBe(
+        "previous.jobTitle != jobTitle and jobTitle == 'CTO'",
+      );
+
+      const updateResponse = await updateWebhook({
+        input: { id: createdWebhookId as string, update: { condition: null } },
+      });
+
+      expect(updateResponse.body.errors).toBeUndefined();
+      expect(updateResponse.body.data.updateWebhook.condition).toBeNull();
+    });
+
+    it('should reject a condition reading a field the object lacks', async () => {
+      const response = await createWebhook({
+        input: {
+          targetUrl: 'https://example.com/webhook',
+          operations: ['person.created', 'company.created'],
+          condition: "jobTitle == 'CTO'",
+        },
+      });
+
+      expect(response.body.data).toBeNull();
+      expect(response.body.errors[0].extensions.userFriendlyMessage).toBe(
+        'The condition of this webhook is invalid',
+      );
+    });
+  });
+
   describe('webhook delivery', () => {
     const WEBHOOK_RECEIVER_PORT = 4317;
 
@@ -353,6 +393,85 @@ describe('webhooksResolver (e2e)', () => {
         );
       } finally {
         await receiver.close();
+        await makeAdminPanelApiRequest({
+          query: DELETE_CONFIG_VARIABLE_MUTATION,
+          variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },
+        }).catch(() => {});
+        jest.useFakeTimers();
+      }
+    }, 60_000);
+
+    it('should deliver only the events that meet the webhook condition', async () => {
+      jest.useRealTimers();
+
+      const receiver = await createWebhookReceiver(WEBHOOK_RECEIVER_PORT);
+      let skippedPersonId: string | undefined;
+
+      try {
+        await makeAdminPanelApiRequest({
+          query: CREATE_CONFIG_VARIABLE_MUTATION,
+          variables: {
+            key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS',
+            value: ['*'],
+          },
+        });
+
+        const createWebhookResponse = await createWebhook({
+          input: {
+            targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
+            operations: ['person.created'],
+            condition: "name.firstName == 'ConditionMatch'",
+          },
+        });
+
+        expect(createWebhookResponse.body.errors).toBeUndefined();
+        createdWebhookId = createWebhookResponse.body.data.createWebhook.id;
+
+        const testId = uuidv4().slice(0, 8);
+        const createSkippedPersonResponse = await makeGraphqlApiRequest({
+          query: CREATE_PERSON_MUTATION,
+          variables: {
+            data: {
+              name: { firstName: 'ConditionSkip', lastName: `Test-${testId}` },
+            },
+          },
+        });
+
+        expect(createSkippedPersonResponse.body.errors).toBeUndefined();
+        skippedPersonId = createSkippedPersonResponse.body.data.createPerson.id;
+
+        const createMatchingPersonResponse = await makeGraphqlApiRequest({
+          query: CREATE_PERSON_MUTATION,
+          variables: {
+            data: {
+              name: { firstName: 'ConditionMatch', lastName: `Test-${testId}` },
+            },
+          },
+        });
+
+        expect(createMatchingPersonResponse.body.errors).toBeUndefined();
+        createdPersonId =
+          createMatchingPersonResponse.body.data.createPerson.id;
+
+        await expectEventually(
+          () => {
+            expect(receiver.receivedPayloads).toEqual([
+              expect.objectContaining({
+                eventName: 'person.created',
+                record: expect.objectContaining({ id: createdPersonId }),
+              }),
+            ]);
+          },
+          { timeoutMs: 30_000, intervalMs: 100 },
+        );
+      } finally {
+        await receiver.close();
+        if (skippedPersonId) {
+          await makeGraphqlApiRequest({
+            query: DESTROY_PERSON_MUTATION,
+            variables: { id: skippedPersonId },
+          }).catch(() => {});
+        }
         await makeAdminPanelApiRequest({
           query: DELETE_CONFIG_VARIABLE_MUTATION,
           variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },

@@ -22,6 +22,13 @@ const updateWebhookInputSchema = z.object({
     .optional()
     .describe('Replaces the operations list. Leave unset to keep current.'),
   description: z.string().optional(),
+  condition: z
+    .string()
+    .nullable()
+    .optional()
+    .describe(
+      "Rule expression a record event must meet to be sent, using the object's field names (e.g. \"stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'\"). previous.<field> reads the value before an update, and a relation to one record reads its target's fields (company.employees > 100). Pass null to remove it. Record operations only; metadata events ignore it.",
+    ),
   secret: z.string().optional(),
   roleId: z
     .uuid()
@@ -52,6 +59,7 @@ export class UpdateWebhookTool extends BaseTool<
       targetUrl?: string;
       operations?: string[];
       description?: string;
+      condition?: string | null;
       secret?: string;
       roleId?: string;
     } = {};
@@ -64,6 +72,9 @@ export class UpdateWebhookTool extends BaseTool<
     }
     if (isDefined(input.description)) {
       update.description = input.description;
+    }
+    if (input.condition !== undefined) {
+      update.condition = input.condition;
     }
     if (isDefined(input.secret)) {
       update.secret = input.secret;
@@ -85,6 +96,7 @@ export class UpdateWebhookTool extends BaseTool<
         targetUrl: webhook.targetUrl,
         operations: webhook.operations,
         description: webhook.description,
+        condition: webhook.condition,
       },
     };
   }

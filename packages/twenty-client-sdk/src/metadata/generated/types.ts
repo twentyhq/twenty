@@ -4468,6 +4468,9 @@ export default {
             ]
         },
         "CreateWebhookInput": {
+            "condition": [
+                1
+            ],
             "description": [
                 1
             ],
@@ -15286,6 +15289,9 @@ export default {
             ]
         },
         "UpdateWebhookInputUpdates": {
+            "condition": [
+                1
+            ],
             "description": [
                 1
             ],
@@ -16675,6 +16681,9 @@ export default {
         "Webhook": {
             "applicationId": [
                 555
+            ],
+            "condition": [
+                1
             ],
             "createdAt": [
                 222

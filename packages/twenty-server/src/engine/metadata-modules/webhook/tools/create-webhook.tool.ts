@@ -20,6 +20,12 @@ const createWebhookInputSchema = z.object({
     .string()
     .optional()
     .describe('Optional human description for the webhook'),
+  condition: z
+    .string()
+    .optional()
+    .describe(
+      "Rule expression a record event must meet to be sent, using the object's field names (e.g. \"stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'\"). previous.<field> reads the value before an update, and a relation to one record reads its target's fields (company.employees > 100). Record operations only; metadata events ignore it.",
+    ),
   secret: z
     .string()
     .optional()
@@ -57,7 +63,7 @@ export class CreateWebhookTool extends BaseTool<
   }
 
   async execute({
-    input: { targetUrl, operations, description, secret, roleId },
+    input: { targetUrl, operations, description, condition, secret, roleId },
     context,
   }: ToolExecuteArgs<typeof createWebhookInputSchema>): Promise<ToolOutput> {
     const webhook = await this.webhookService.create({
@@ -65,6 +71,7 @@ export class CreateWebhookTool extends BaseTool<
         targetUrl,
         operations: compileWebhookOperations(operations),
         description,
+        condition,
         secret,
         roleId,
       },
@@ -79,6 +86,7 @@ export class CreateWebhookTool extends BaseTool<
         targetUrl: webhook.targetUrl,
         operations: webhook.operations,
         description: webhook.description,
+        condition: webhook.condition,
       },
     };
   }

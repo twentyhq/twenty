@@ -8,6 +8,7 @@ import { FLAT_WEBHOOK_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/fl
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { computeWebhookRoleTargetOperationsOrThrow } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util';
+import { normalizeWebhookCondition } from 'src/engine/metadata-modules/webhook/utils/normalize-webhook-condition.util';
 import {
   WebhookException,
   WebhookExceptionCode,
@@ -63,7 +64,14 @@ export const fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow = ({
       ...mergeUpdateInExistingRecord({
         existing: existingFlatWebhook,
         properties: [...FLAT_WEBHOOK_EDITABLE_PROPERTIES],
-        update: updateWebhookInput.update,
+        update: {
+          ...updateWebhookInput.update,
+          ...(updateWebhookInput.update.condition !== undefined && {
+            condition: normalizeWebhookCondition(
+              updateWebhookInput.update.condition,
+            ),
+          }),
+        },
       }),
       updatedAt: new Date().toISOString(),
     },

@@ -72,6 +72,7 @@ const WEBHOOK: FlatWebhook = {
   targetUrl: 'https://example.com/hook',
   operations: ['*.*'],
   description: null,
+  condition: null,
   secret: 'webhook-secret',
   deletedAt: null,
 };

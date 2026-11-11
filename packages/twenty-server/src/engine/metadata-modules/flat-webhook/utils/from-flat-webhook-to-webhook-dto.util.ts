@@ -8,6 +8,7 @@ export const fromFlatWebhookToWebhookDto = (
   targetUrl: flatWebhook.targetUrl,
   operations: flatWebhook.operations,
   description: flatWebhook.description,
+  condition: flatWebhook.condition,
   secret: flatWebhook.secret,
   workspaceId: flatWebhook.workspaceId,
   applicationId: flatWebhook.applicationId,

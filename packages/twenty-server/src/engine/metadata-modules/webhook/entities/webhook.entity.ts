@@ -8,6 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_CONDITION_TO_WEBHOOK_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-condition-to-webhook-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Index('IDX_WEBHOOK_WORKSPACE_ID', ['workspaceId'])
@@ -27,6 +29,12 @@ export class WebhookEntity
 
   @Column({ type: 'varchar', nullable: true })
   description: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CONDITION_TO_WEBHOOK_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'text', nullable: true })
+  condition: string | null;
 
   @Column({ nullable: false })
   secret: string;

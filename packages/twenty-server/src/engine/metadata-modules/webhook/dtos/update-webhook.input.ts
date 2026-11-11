@@ -31,6 +31,11 @@ export class UpdateWebhookInputUpdates {
 
   @IsOptional()
   @IsString()
+  @Field(() => String, { nullable: true })
+  condition?: string | null;
+
+  @IsOptional()
+  @IsString()
   @Field({ nullable: true })
   secret?: string;
 

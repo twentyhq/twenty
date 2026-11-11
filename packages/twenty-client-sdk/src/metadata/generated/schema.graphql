@@ -1970,6 +1970,7 @@ input CreateViewSortInput {
 }
 
 input CreateWebhookInput {
+  condition: String
   description: String
   id: UUID
   operations: [String!]!
@@ -5759,6 +5760,7 @@ input UpdateWebhookInput {
 }
 
 input UpdateWebhookInputUpdates {
+  condition: String
   description: String
   operations: [String!]
   roleId: UUID
@@ -6444,6 +6446,7 @@ enum ViewVisibility {
 
 type Webhook {
   applicationId: UUID!
+  condition: String
   createdAt: DateTime!
   deletedAt: DateTime
   description: String

@@ -15,6 +15,7 @@ const buildFlatWebhookMaps = (
         targetUrl: 'https://example.com/webhook',
         operations,
         description: null,
+        condition: null,
         secret: 'secret',
         workspaceId: 'workspace-id',
         applicationId: 'application-id',

@@ -13,6 +13,7 @@ import { fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow } from 'src/engine/m
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
+import { assertWebhookConditionCompilesOrThrow } from 'src/engine/metadata-modules/webhook/utils/assert-webhook-condition-compiles-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
@@ -114,7 +115,14 @@ export class WebhookService {
         { workspaceId },
       );
 
-    const { flatRoleTargetMaps, flatRoleMaps, flatAgentMaps, flatWebhookMaps } =
+    const {
+      flatRoleTargetMaps,
+      flatRoleMaps,
+      flatAgentMaps,
+      flatWebhookMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -123,6 +131,8 @@ export class WebhookService {
             'flatRoleMaps',
             'flatAgentMaps',
             'flatWebhookMaps',
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
           ],
         },
       );
@@ -140,6 +150,13 @@ export class WebhookService {
         flatAgentMaps,
         flatWebhookMaps,
       });
+
+    assertWebhookConditionCompilesOrThrow({
+      condition: flatWebhookToCreate.condition,
+      operations: flatWebhookToCreate.operations,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -207,7 +224,14 @@ export class WebhookService {
       },
     };
 
-    const { flatWebhookMaps, flatRoleTargetMaps, flatRoleMaps, flatAgentMaps } =
+    const {
+      flatWebhookMaps,
+      flatRoleTargetMaps,
+      flatRoleMaps,
+      flatAgentMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -216,6 +240,8 @@ export class WebhookService {
             'flatRoleTargetMaps',
             'flatRoleMaps',
             'flatAgentMaps',
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
           ],
         },
       );
@@ -233,6 +259,26 @@ export class WebhookService {
       flatAgentMaps,
       flatWebhookMaps,
     });
+
+    const storedFlatWebhook = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: input.id,
+      flatEntityMaps: flatWebhookMaps,
+    });
+
+    // A stored condition whose field was later deleted must not block unrelated edits
+    const isConditionOrOperationsUpdated =
+      flatWebhookToUpdate.condition !== storedFlatWebhook?.condition ||
+      flatWebhookToUpdate.operations.join() !==
+        storedFlatWebhook?.operations.join();
+
+    if (isConditionOrOperationsUpdated) {
+      assertWebhookConditionCompilesOrThrow({
+        condition: flatWebhookToUpdate.condition,
+        operations: flatWebhookToUpdate.operations,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
