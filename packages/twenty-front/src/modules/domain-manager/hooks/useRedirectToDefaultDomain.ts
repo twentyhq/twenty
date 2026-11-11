@@ -6,6 +6,7 @@ import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/us
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useRedirectToDefaultDomain = () => {
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();
@@ -14,38 +15,43 @@ export const useRedirectToDefaultDomain = () => {
   const store = useStore();
 
   const { redirect } = useRedirect();
-  const redirectToDefaultDomain = (options?: {
-    pathname?: string;
-    searchParams?: Record<string, string>;
-  }) => {
-    const url = new URL(window.location.href);
-    if (url.hostname !== defaultDomain) {
-      setLastAuthenticateWorkspaceDomain(null);
-      url.searchParams.set(
-        SIGN_IN_UP_ACTION_SEARCH_PARAM,
-        CHOOSE_WORKSPACE_ACTION,
-      );
+  // Stable identity: callers redirect from effects, and a new function each
+  // render re-fires window.open, cancelling the navigation in flight.
+  const redirectToDefaultDomain = useCallback(
+    (options?: {
+      pathname?: string;
+      searchParams?: Record<string, string>;
+    }) => {
+      const url = new URL(window.location.href);
+      if (url.hostname !== defaultDomain) {
+        setLastAuthenticateWorkspaceDomain(null);
+        url.searchParams.set(
+          SIGN_IN_UP_ACTION_SEARCH_PARAM,
+          CHOOSE_WORKSPACE_ACTION,
+        );
 
-      const returnToPath = store.get(returnToPathState.atom);
-      if (
-        isNonEmptyString(returnToPath) &&
-        !url.searchParams.has('returnToPath')
-      ) {
-        url.searchParams.set('returnToPath', returnToPath);
+        const returnToPath = store.get(returnToPathState.atom);
+        if (
+          isNonEmptyString(returnToPath) &&
+          !url.searchParams.has('returnToPath')
+        ) {
+          url.searchParams.set('returnToPath', returnToPath);
+        }
+
+        if (isNonEmptyString(options?.pathname)) {
+          url.pathname = options.pathname;
+        }
+
+        Object.entries(options?.searchParams ?? {}).forEach(([key, value]) => {
+          url.searchParams.set(key, value);
+        });
+
+        url.hostname = defaultDomain;
+        redirect(url.toString());
       }
-
-      if (isNonEmptyString(options?.pathname)) {
-        url.pathname = options.pathname;
-      }
-
-      Object.entries(options?.searchParams ?? {}).forEach(([key, value]) => {
-        url.searchParams.set(key, value);
-      });
-
-      url.hostname = defaultDomain;
-      redirect(url.toString());
-    }
-  };
+    },
+    [defaultDomain, setLastAuthenticateWorkspaceDomain, store, redirect],
+  );
 
   return {
     redirectToDefaultDomain,
