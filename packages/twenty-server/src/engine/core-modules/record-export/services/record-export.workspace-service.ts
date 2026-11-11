@@ -669,19 +669,21 @@ export class RecordExportWorkspaceService {
       workspaceId,
     );
 
+    if (!isDefined(application) || !isDefined(workspace)) {
+      throw new ForbiddenException(
+        t`You do not have permission to export records.`,
+      );
+    }
+
     return computeRecordExportPermissionsHash({
       permissionsHash,
       application,
-      grantRoleId:
-        isDefined(application) && isDefined(workspace)
-          ? resolveApplicationGrantRoleId({
-              flatApplication: application,
-              workspaceId,
-              workspaceCustomApplicationId:
-                workspace.workspaceCustomApplicationId,
-              flatRoleTargetByApplicationIdMaps,
-            })
-          : undefined,
+      grantRoleId: resolveApplicationGrantRoleId({
+        flatApplication: application,
+        workspaceId,
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+        flatRoleTargetByApplicationIdMaps,
+      }),
     });
   }
 
