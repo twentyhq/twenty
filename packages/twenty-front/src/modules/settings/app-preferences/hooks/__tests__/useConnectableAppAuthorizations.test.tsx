@@ -60,7 +60,7 @@ describe('useConnectableAppAuthorizations', () => {
       },
     });
 
-    await waitFor(() => expect(result.current.loading).toBe(false));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.hasLoadError).toBe(false);
     expect(result.current.authorizations.map(({ id }) => id)).toEqual([
@@ -75,7 +75,7 @@ describe('useConnectableAppAuthorizations', () => {
 
     await waitFor(() => expect(result.current.hasLoadError).toBe(true));
 
-    expect(result.current.loading).toBe(false);
+    expect(result.current.isLoading).toBe(false);
     expect(result.current.authorizations).toEqual([]);
   });
 });

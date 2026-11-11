@@ -8,6 +8,10 @@ import { v4 } from 'uuid';
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
 import { type ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
 import { toApplicationAuthorizationDto } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { ApplicationOAuthIdentityInstallService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity-install.service';
 import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
 
@@ -79,7 +83,10 @@ export class ApplicationAuthorizationService {
 
     assertIsDefinedOrThrow(
       authorization,
-      new Error('Application authorization missing after upsert'),
+      new ApplicationException(
+        'Application authorization missing after upsert',
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      ),
     );
 
     return authorization.consentId ?? undefined;
