@@ -8,8 +8,7 @@ import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
-import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
+import { WorkflowDatabaseEventTriggerConditionInput } from '@/workflow/workflow-trigger/components/WorkflowDatabaseEventTriggerConditionInput';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -80,23 +79,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     });
   };
 
-  const handleFilterSettingsUpdate = (filterSettings: FilterSettings) => {
-    if (triggerOptions.readonly === true) {
-      return;
-    }
-
-    triggerOptions.onTriggerUpdate({
-      ...trigger,
-      settings: {
-        ...trigger.settings,
-        filter: {
-          stepFilterGroups: filterSettings.stepFilterGroups ?? [],
-          stepFilters: filterSettings.stepFilters ?? [],
-        },
-      },
-    });
-  };
-
   return (
     <>
       <WorkflowStepBody>
@@ -125,16 +107,13 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           />
         )}
         {isDefined(selectedObjectMetadataItem) && (
-          <WorkflowStepFilterBuilder
-            instanceId={TRIGGER_STEP_ID}
-            defaultValue={
-              trigger.settings.filter ?? {
-                stepFilterGroups: [],
-                stepFilters: [],
-              }
-            }
+          <WorkflowDatabaseEventTriggerConditionInput
+            trigger={trigger}
+            objectMetadataItem={selectedObjectMetadataItem}
             readonly={triggerOptions.readonly ?? false}
-            onFilterSettingsUpdate={handleFilterSettingsUpdate}
+            onTriggerUpdate={(updatedTrigger) =>
+              triggerOptions.onTriggerUpdate?.(updatedTrigger)
+            }
           />
         )}
       </WorkflowStepBody>

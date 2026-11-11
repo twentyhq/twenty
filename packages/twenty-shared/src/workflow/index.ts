@@ -170,6 +170,7 @@ export type {
 } from './types/WorkflowRunStepLog';
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
+export { computeDatabaseEventTriggerConditionFromFilter } from './utils/computeDatabaseEventTriggerConditionFromFilter';
 export { convertStepFiltersToRuleExpression } from './utils/convertStepFiltersToRuleExpression';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
