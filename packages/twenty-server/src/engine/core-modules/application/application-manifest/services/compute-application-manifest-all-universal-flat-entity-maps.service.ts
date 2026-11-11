@@ -242,6 +242,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
 
     for (const logicFunctionManifest of manifest.logicFunctions) {
+      // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
       const eventTriggerSettings =
         logicFunctionManifest.eventTriggerSettings ??
         logicFunctionManifest.databaseEventTriggerSettings;
@@ -513,6 +514,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         universalFlatEntity: fromAgentManifestToUniversalFlatAgent({
           agentManifest: {
             ...agentManifest,
+            // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
             triggers: agentManifest.triggers?.map((trigger) =>
               trigger.type === 'EVENT' || trigger.type === 'DATABASE_EVENT'
                 ? {
