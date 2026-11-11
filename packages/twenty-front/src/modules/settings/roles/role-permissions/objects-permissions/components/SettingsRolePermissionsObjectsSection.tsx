@@ -7,8 +7,10 @@ import {
   OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS,
   SettingsRolePermissionsObjectOverrideRow,
 } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverrideRow';
+import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { Table } from '@/ui/layout/table/components/Table';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableFooter } from '@/ui/layout/table/components/TableFooter';
@@ -55,6 +57,10 @@ export const SettingsRolePermissionsObjectsSection = ({
     useFilterObjectMetadataItemsWithPermissionOverride({ roleId });
 
   const { resetObjectPermission } = useResetObjectPermission(roleId);
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
   const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     roleId,
@@ -64,7 +70,11 @@ export const SettingsRolePermissionsObjectsSection = ({
     objectMetadataItemsThatCanHavePermission.filter(
       (objectMetadataItem) =>
         addedObjectMetadataIds.includes(objectMetadataItem.id) ||
-        filterObjectMetadataItemsWithPermissionOverride(objectMetadataItem),
+        filterObjectMetadataItemsWithPermissionOverride(objectMetadataItem) ||
+        getObjectRowLevelPermissionRules({
+          role: settingsDraftRole,
+          objectMetadataId: objectMetadataItem.id,
+        }).length > 0,
     );
 
   const addableObjectMetadataItems =

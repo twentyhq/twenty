@@ -106,6 +106,39 @@ export class RowLevelPermissionPredicateGroupInput {
 }
 
 @InputType()
+export class RowLevelPermissionRuleGrantInput {
+  @IsUUID()
+  @IsNotEmpty()
+  @Field(() => UUIDScalarType)
+  rootPredicateGroupId: string;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canCreateRecords?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canReadRecords?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canUpdateRecords?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canSoftDeleteRecords?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  canDestroyRecords?: boolean;
+}
+
+@InputType()
 export class UpsertRowLevelPermissionPredicatesInput {
   @IsUUID()
   @IsNotEmpty()
@@ -128,6 +161,14 @@ export class UpsertRowLevelPermissionPredicatesInput {
   @Type(() => RowLevelPermissionPredicateGroupInput)
   @Field(() => [RowLevelPermissionPredicateGroupInput])
   predicateGroups: RowLevelPermissionPredicateGroupInput[];
+
+  // Grants of the rule rooted at each group; rules without an entry take the top-level grants
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionRuleGrantInput)
+  @Field(() => [RowLevelPermissionRuleGrantInput], { nullable: true })
+  ruleGrants?: RowLevelPermissionRuleGrantInput[];
 
   @IsBoolean()
   @IsOptional()

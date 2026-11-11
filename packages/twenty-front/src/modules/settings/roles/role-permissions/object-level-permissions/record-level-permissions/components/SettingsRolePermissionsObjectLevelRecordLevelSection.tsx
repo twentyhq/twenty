@@ -29,12 +29,14 @@ const StyledCardContainer = styled.div`
 type SettingsRolePermissionsObjectLevelRecordLevelSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   roleId: string;
+  ruleRootGroupId: string;
   hasOrganizationPlan: boolean;
 };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
   objectMetadataItem,
   roleId,
+  ruleRootGroupId,
   hasOrganizationPlan,
 }: SettingsRolePermissionsObjectLevelRecordLevelSectionProps) => {
   const { t } = useLingui();
@@ -81,13 +83,14 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
   return (
     <Section.Root>
       <Section.Header
-        title={t`Record-level`}
-        description={t`Ability to filter the records a user can interact with.`}
+        title={t`Records`}
+        description={t`The rule applies to records matching every filter.`}
       />
       <StyledContent>
         <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder
           roleId={roleId}
           objectMetadataItem={objectMetadataItem}
+          ruleRootGroupId={ruleRootGroupId}
         />
       </StyledContent>
     </Section.Root>

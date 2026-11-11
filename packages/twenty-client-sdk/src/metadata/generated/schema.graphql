@@ -4666,6 +4666,7 @@ type RowLevelPermissionPredicate {
   relationFieldMetadataId: String
   roleId: String!
   rowLevelPermissionPredicateGroupId: String
+  rowLevelPermissionRuleId: String
   subFieldName: String
   value: JSON
   workspaceMemberFieldMetadataId: String
@@ -4683,6 +4684,7 @@ type RowLevelPermissionPredicateGroup {
   parentRowLevelPermissionPredicateGroupId: String
   positionInRowLevelPermissionPredicateGroup: Float
   roleId: String!
+  rowLevelPermissionRuleId: String
 }
 
 input RowLevelPermissionPredicateGroupInput {
@@ -4742,6 +4744,15 @@ type RowLevelPermissionRule {
   canUpdateRecords: Boolean!
   id: UUID!
   objectMetadataId: UUID!
+}
+
+input RowLevelPermissionRuleGrantInput {
+  canCreateRecords: Boolean
+  canDestroyRecords: Boolean
+  canReadRecords: Boolean
+  canSoftDeleteRecords: Boolean
+  canUpdateRecords: Boolean
+  rootPredicateGroupId: UUID!
 }
 
 type RowLevelRecordsPermissions {
@@ -5881,6 +5892,7 @@ input UpsertRowLevelPermissionPredicatesInput {
   predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
   predicates: [RowLevelPermissionPredicateInput!]!
   roleId: UUID!
+  ruleGrants: [RowLevelPermissionRuleGrantInput!]
 }
 
 type UpsertRowLevelPermissionPredicatesResult {

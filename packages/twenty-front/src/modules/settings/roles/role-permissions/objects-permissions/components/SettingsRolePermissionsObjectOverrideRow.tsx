@@ -4,6 +4,7 @@ import { SettingsRolePermissionsObjectOverridePanel } from '@/settings/roles/rol
 import { SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
 import { getObjectPermissionActionsLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionsLabel';
+import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -62,10 +63,10 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     roleId,
   );
 
-  const predicates =
-    settingsDraftRole.rowLevelPermissionPredicates?.filter(
-      (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
-    ) ?? [];
+  const rules = getObjectRowLevelPermissionRules({
+    role: settingsDraftRole,
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const hasFieldRestriction = (settingsDraftRole.fieldPermissions ?? []).some(
     (fieldPermission) =>
@@ -79,7 +80,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const isAdvanced = predicates.length > 0 || hasFieldRestriction;
+  const isAdvanced = rules.length > 0 || hasFieldRestriction;
   const highestGrantedKey = grantedKeys.at(-1);
 
   const AccessIcon = isAdvanced
@@ -92,10 +93,16 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     ? t`Advanced`
     : getObjectPermissionActionsLabel(grantedKeys);
 
-  const ruleLabel = getRowLevelPermissionRuleLabel({
-    predicates,
-    objectMetadataItem,
-  });
+  const ruleCount = rules.length;
+  const ruleLabel =
+    ruleCount === 1 && rules[0] !== undefined
+      ? getRowLevelPermissionRuleLabel({
+          predicates: rules[0].predicates,
+          objectMetadataItem,
+        })
+      : ruleCount > 1
+        ? t`${ruleCount} rules`
+        : '';
 
   const ChevronIcon = isExpanded ? IconChevronUp : IconChevronDown;
 
@@ -141,7 +148,6 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
           roleId={roleId}
           objectMetadataItem={objectMetadataItem}
           isEditable={isEditable}
-          ruleLabel={ruleLabel}
           onRemove={onRemove}
           fromAgentId={fromAgentId}
         />

@@ -1,18 +1,24 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable';
-import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel';
-import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
+import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
+import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
+import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
+import { getRuleGrantedKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getRuleGrantedKeys';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
+import { useQuery } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -20,14 +26,17 @@ import {
   isRecordFilterValueValid,
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components/layout';
+import { IconFilter, IconTrash } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useQuery } from '@apollo/client/react';
-import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import {
   BillingEntitlementKey,
   FindOneAgentDocument,
 } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
+
+const RULE_ACTIONS_SELECT_WIDTH = 240;
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
   roleId: string;
@@ -42,6 +51,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const fromAgentId = searchParams.get('fromAgent');
+  const ruleRootGroupId = searchParams.get('ruleId');
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -50,12 +60,15 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     roleId,
   );
 
+  const { setRuleGrantedKeys, deleteRule } =
+    useRowLevelPermissionRulesInDraftRole(roleId);
+
   const { data: agentData } = useQuery(FindOneAgentDocument, {
     variables: { id: fromAgentId || '' },
     skip: !fromAgentId,
   });
 
-  const objectMetadata = useObjectMetadataItemById({
+  const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });
 
@@ -65,18 +78,30 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       currentWorkspace,
     );
 
-  const objectMetadataItem = objectMetadata.objectMetadataItem;
-
+  const agent = agentData?.findOneAgent;
   const objectLabelSingular = objectMetadataItem.labelSingular;
   const objectLabelPlural = objectMetadataItem.labelPlural;
 
-  const agent = agentData?.findOneAgent;
+  const rolePath = getSettingsPath(SettingsPath.RoleDetail, { roleId });
+  const finishPath =
+    fromAgentId && isDefined(agent) ? getCoreAgentLink(agent.id) : rolePath;
+
+  const rootPredicateGroup =
+    settingsDraftRole.rowLevelPermissionPredicateGroups?.find(
+      (predicateGroup) =>
+        predicateGroup.id === ruleRootGroupId &&
+        predicateGroup.objectMetadataId === objectMetadataId,
+    );
+
+  if (!isDefined(ruleRootGroupId) || !isDefined(rootPredicateGroup)) {
+    return <Navigate to={finishPath} replace />;
+  }
 
   const breadcrumbLinks =
     fromAgentId && isDefined(agent)
       ? getCoreAgentBreadcrumbLinks([
           { children: agent.label, href: getCoreAgentLink(agent.id) },
-          { children: t`Permissions · ${objectLabelSingular}` },
+          { children: t`Permissions · ${objectLabelSingular} rule` },
         ])
       : [
           {
@@ -93,33 +118,19 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           },
           {
             children: settingsDraftRole.label,
-            href: getSettingsPath(SettingsPath.RoleDetail, {
-              roleId,
-            }),
+            href: rolePath,
           },
           {
-            children: t`Permissions · ${objectLabelSingular}`,
+            children: t`Permissions · ${objectLabelSingular} rule`,
           },
         ];
 
-  const finishButtonPath =
-    fromAgentId && isDefined(agent)
-      ? getCoreAgentLink(agent.id)
-      : getSettingsPath(SettingsPath.RoleDetail, { roleId });
-
-  const previousStepPath = `${getSettingsPath(SettingsPath.RoleAddObjectLevel, {
-    roleId,
-  })}${fromAgentId ? `?fromAgent=${fromAgentId}` : ''}`;
-
-  const headerTitle =
-    fromAgentId && isDefined(agent) ? agent.label : settingsDraftRole.label;
-
-  const objectPredicates =
+  const rulePredicates =
     settingsDraftRole.rowLevelPermissionPredicates?.filter(
       (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
     ) ?? [];
 
-  const hasInvalidPredicate = objectPredicates.some((predicate) => {
+  const hasInvalidPredicate = rulePredicates.some((predicate) => {
     if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
       return false;
     }
@@ -130,7 +141,13 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     });
   });
 
-  const isFinishDisabled = hasInvalidPredicate;
+  const handleDeleteRule = () => {
+    deleteRule(ruleRootGroupId);
+    navigate(finishPath);
+  };
+
+  const headerTitle =
+    fromAgentId && isDefined(agent) ? agent.label : settingsDraftRole.label;
 
   return (
     <SettingsPageLayout
@@ -139,13 +156,13 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       links={breadcrumbLinks}
       secondaryBar={
         <SettingsWizardStepBar
-          label={t`2. Set ${objectLabelPlural} permissions`}
-          onBack={() => navigate(previousStepPath)}
+          label={t`${objectLabelPlural} rule`}
+          onBack={() => navigate(finishPath)}
           trailing={
             <NavigationButton
               size="sm"
-              to={finishButtonPath}
-              disabled={isFinishDisabled}
+              to={finishPath}
+              disabled={hasInvalidPredicate}
               variant="solid"
               color="accent"
             >{t`Finish`}</NavigationButton>
@@ -154,19 +171,50 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       }
     >
       <SettingsPageContainer>
-        <SettingsRolePermissionsObjectLevelObjectFormObjectLevel
-          objectMetadataItem={objectMetadataItem}
-          roleId={roleId}
-        />
-        <SettingsRolePermissionsObjectLevelObjectFieldPermissionTable
-          objectMetadataItem={objectMetadataItem}
-          roleId={roleId}
-        />
         <SettingsRolePermissionsObjectLevelRecordLevelSection
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}
+          ruleRootGroupId={ruleRootGroupId}
           hasOrganizationPlan={isRLSBillingEntitlementEnabled}
         />
+        <Section.Root>
+          <Section.Header
+            title={t`Allows`}
+            description={t`What this role can do on matching ${objectLabelPlural}`}
+          />
+          <StyledSettingsSelectGroup controlWidth={RULE_ACTIONS_SELECT_WIDTH}>
+            <Card.Root>
+              <SettingsOptionCardContentSelect
+                Icon={IconFilter}
+                title={t`Matching records`}
+                description={t`Adds to what all records allow`}
+              >
+                <SettingsRolePermissionsObjectActionsSelect
+                  dropdownId={`settings-role-rule-editor-actions-${ruleRootGroupId}`}
+                  selectedKeys={getRuleGrantedKeys(rootPredicateGroup)}
+                  onChange={(selectedKeys) =>
+                    setRuleGrantedKeys({
+                      rootPredicateGroupId: ruleRootGroupId,
+                      grantedKeys: selectedKeys,
+                    })
+                  }
+                  disabled={!settingsDraftRole.isEditable}
+                />
+              </SettingsOptionCardContentSelect>
+            </Card.Root>
+          </StyledSettingsSelectGroup>
+        </Section.Root>
+        {settingsDraftRole.isEditable && (
+          <Section.Root>
+            <Button
+              size="sm"
+              variant="outline"
+              color="danger"
+              startIcon={<IconTrash />}
+              onClick={handleDeleteRule}
+            >{t`Delete rule`}</Button>
+          </Section.Root>
+        )}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

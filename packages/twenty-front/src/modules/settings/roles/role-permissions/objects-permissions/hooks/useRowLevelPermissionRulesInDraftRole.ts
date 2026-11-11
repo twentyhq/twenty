@@ -1,0 +1,110 @@
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+import { RowLevelPermissionPredicateGroupLogicalOperator } from '~/generated-metadata/graphql';
+
+export const useRowLevelPermissionRulesInDraftRole = (roleId: string) => {
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+
+  const createRule = (objectMetadataId: string) => {
+    const rootPredicateGroupId = v4();
+
+    setSettingsDraftRole((currentSettingsDraftRole) => ({
+      ...currentSettingsDraftRole,
+      rowLevelPermissionPredicateGroups: [
+        ...(currentSettingsDraftRole.rowLevelPermissionPredicateGroups ?? []),
+        {
+          __typename: 'RowLevelPermissionPredicateGroup',
+          id: rootPredicateGroupId,
+          parentRowLevelPermissionPredicateGroupId: null,
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          positionInRowLevelPermissionPredicateGroup: null,
+          canReadRecords: true,
+          canUpdateRecords: false,
+          canSoftDeleteRecords: false,
+          canDestroyRecords: false,
+          roleId,
+          objectMetadataId,
+          rowLevelPermissionRuleId: null,
+        },
+      ],
+    }));
+
+    return rootPredicateGroupId;
+  };
+
+  const setRuleGrantedKeys = ({
+    rootPredicateGroupId,
+    grantedKeys,
+  }: {
+    rootPredicateGroupId: string;
+    grantedKeys: SettingsRoleObjectPermissionKey[];
+  }) => {
+    setSettingsDraftRole((currentSettingsDraftRole) => ({
+      ...currentSettingsDraftRole,
+      rowLevelPermissionPredicateGroups: (
+        currentSettingsDraftRole.rowLevelPermissionPredicateGroups ?? []
+      ).map((predicateGroup) =>
+        predicateGroup.id === rootPredicateGroupId
+          ? {
+              ...predicateGroup,
+              canReadRecords: grantedKeys.includes('canReadObjectRecords'),
+              canUpdateRecords: grantedKeys.includes('canUpdateObjectRecords'),
+              canSoftDeleteRecords: grantedKeys.includes(
+                'canSoftDeleteObjectRecords',
+              ),
+              canDestroyRecords: grantedKeys.includes(
+                'canDestroyObjectRecords',
+              ),
+            }
+          : predicateGroup,
+      ),
+    }));
+  };
+
+  const deleteRule = (rootPredicateGroupId: string) => {
+    setSettingsDraftRole((currentSettingsDraftRole) => {
+      const predicateGroups =
+        currentSettingsDraftRole.rowLevelPermissionPredicateGroups ?? [];
+      const deletedPredicateGroupIds = new Set([rootPredicateGroupId]);
+
+      for (let depth = 0; depth < predicateGroups.length; depth++) {
+        for (const predicateGroup of predicateGroups) {
+          if (
+            isDefined(
+              predicateGroup.parentRowLevelPermissionPredicateGroupId,
+            ) &&
+            deletedPredicateGroupIds.has(
+              predicateGroup.parentRowLevelPermissionPredicateGroupId,
+            )
+          ) {
+            deletedPredicateGroupIds.add(predicateGroup.id);
+          }
+        }
+      }
+
+      return {
+        ...currentSettingsDraftRole,
+        rowLevelPermissionPredicateGroups: predicateGroups.filter(
+          (predicateGroup) => !deletedPredicateGroupIds.has(predicateGroup.id),
+        ),
+        rowLevelPermissionPredicates: (
+          currentSettingsDraftRole.rowLevelPermissionPredicates ?? []
+        ).filter(
+          (predicate) =>
+            !isDefined(predicate.rowLevelPermissionPredicateGroupId) ||
+            !deletedPredicateGroupIds.has(
+              predicate.rowLevelPermissionPredicateGroupId,
+            ),
+        ),
+      };
+    });
+  };
+
+  return { createRule, setRuleGrantedKeys, deleteRule };
+};

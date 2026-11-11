@@ -16,5 +16,6 @@ export const ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT = gql`
     positionInRowLevelPermissionPredicateGroup
     roleId
     value
+    rowLevelPermissionRuleId
   }
 `;

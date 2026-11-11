@@ -8,9 +8,13 @@ import {
 } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
+import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
 import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
 import { getObjectPermissionActionLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionLabel';
 import { getObjectPermissionKeysWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionKeysWithReadDependency';
+import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
+import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel';
+import { getRuleGrantedKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getRuleGrantedKeys';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -18,6 +22,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
@@ -42,13 +47,6 @@ const StyledHeaderRow = styled.div`
 
 const StyledActionLabel = styled.span`
   color: ${themeCssVariables.font.color.primary};
-  flex-shrink: 0;
-`;
-
-const StyledActionDescription = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  min-width: 0;
-  overflow: hidden;
 `;
 
 const StyledFooter = styled.div`
@@ -62,7 +60,6 @@ type SettingsRolePermissionsObjectOverridePanelProps = {
   roleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   isEditable: boolean;
-  ruleLabel: string;
   onRemove: () => void;
   fromAgentId?: string;
 };
@@ -71,7 +68,6 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
   roleId,
   objectMetadataItem,
   isEditable,
-  ruleLabel,
   onRemove,
   fromAgentId,
 }: SettingsRolePermissionsObjectOverridePanelProps) => {
@@ -87,9 +83,13 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
   const { upsertObjectPermissionInDraftRole } =
     useUpsertObjectPermissionInDraftRole(roleId);
 
-  const hasRule = (settingsDraftRole.rowLevelPermissionPredicates ?? []).some(
-    (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
-  );
+  const { createRule, setRuleGrantedKeys } =
+    useRowLevelPermissionRulesInDraftRole(roleId);
+
+  const rules = getObjectRowLevelPermissionRules({
+    role: settingsDraftRole,
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const grantedKeys = getGrantedObjectPermissionKeys({
     role: settingsDraftRole,
@@ -139,15 +139,20 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     );
   };
 
-  const openRuleEditor = () => {
+  const openRuleEditor = (rootPredicateGroupId: string) => {
     navigateSettings(
       SettingsPath.RoleObjectLevel,
       { roleId, objectMetadataId: objectMetadataItem.id },
-      fromAgentId ? { fromAgent: fromAgentId } : undefined,
+      {
+        ruleId: rootPredicateGroupId,
+        ...(fromAgentId ? { fromAgent: fromAgentId } : {}),
+      },
     );
   };
 
-  const objectLabelPlural = objectMetadataItem.labelPlural.toLocaleLowerCase();
+  const handleNewRule = () => {
+    openRuleEditor(createRule(objectMetadataItem.id));
+  };
 
   return (
     <StyledPanel>
@@ -158,24 +163,16 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       </StyledHeaderRow>
       {SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.map((key) => {
         const { Icon } = SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key];
-        const isGranted = !hasRule && grantedKeys.includes(key);
         const isFieldsSelectShown =
           key === 'canReadObjectRecords' || key === 'canUpdateObjectRecords';
 
         return (
           <TableRow key={key} gridTemplateColumns={PANEL_GRID_TEMPLATE_COLUMNS}>
-            <TableCell gap={themeCssVariables.spacing[2]} overflow="hidden">
+            <TableCell gap={themeCssVariables.spacing[2]}>
               <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
               <StyledActionLabel>
                 {getObjectPermissionActionLabel(key)}
               </StyledActionLabel>
-              {hasRule && (
-                <StyledActionDescription>
-                  <OverflowingTextWithTooltip
-                    text={t`· Only ${objectLabelPlural} matching the rule below`}
-                  />
-                </StyledActionDescription>
-              )}
             </TableCell>
             <TableCell>
               {isFieldsSelectShown && (
@@ -189,46 +186,73 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             </TableCell>
             <TableCell align="right">
               <Checkbox
-                checked={isGranted}
-                disabled={!isEditable || hasRule}
+                checked={grantedKeys.includes(key)}
+                disabled={!isEditable}
                 onCheckedChange={() => toggleKey(key)}
               />
             </TableCell>
           </TableRow>
         );
       })}
-      {hasRule && (
+      {rules.length > 0 && (
         <>
           <StyledHeaderRow>
             <TableHeader>{t`Some records`}</TableHeader>
             <TableHeader>{t`Allows`}</TableHeader>
             <TableHeader />
           </StyledHeaderRow>
-          <TableRow
-            gridTemplateColumns={PANEL_GRID_TEMPLATE_COLUMNS}
-            onClick={isEditable ? openRuleEditor : undefined}
-          >
-            <TableCell
-              color={themeCssVariables.font.color.primary}
-              overflow="hidden"
-            >
-              <OverflowingTextWithTooltip text={ruleLabel} />
-            </TableCell>
-            <TableCell onClick={(event) => event.stopPropagation()}>
-              <SettingsRolePermissionsObjectActionsSelect
-                dropdownId={`settings-role-object-rule-actions-${objectMetadataItem.id}`}
-                selectedKeys={grantedKeys}
-                onChange={setGrantedKeys}
-                disabled={!isEditable}
-              />
-            </TableCell>
-            <TableCell
-              align="right"
-              color={themeCssVariables.font.color.tertiary}
-            >
-              {isEditable && <IconChevronRight size={theme.icon.size.md} />}
-            </TableCell>
-          </TableRow>
+          {rules.map(({ rootPredicateGroup, predicates }) => {
+            const ruleLabel = getRowLevelPermissionRuleLabel({
+              predicates,
+              objectMetadataItem,
+            });
+
+            return (
+              <TableRow
+                key={rootPredicateGroup.id}
+                gridTemplateColumns={PANEL_GRID_TEMPLATE_COLUMNS}
+                onClick={
+                  isEditable
+                    ? () => openRuleEditor(rootPredicateGroup.id)
+                    : undefined
+                }
+              >
+                <TableCell
+                  color={
+                    isNonEmptyString(ruleLabel)
+                      ? themeCssVariables.font.color.primary
+                      : themeCssVariables.font.color.tertiary
+                  }
+                  overflow="hidden"
+                >
+                  <OverflowingTextWithTooltip
+                    text={
+                      isNonEmptyString(ruleLabel) ? ruleLabel : t`No filter`
+                    }
+                  />
+                </TableCell>
+                <TableCell onClick={(event) => event.stopPropagation()}>
+                  <SettingsRolePermissionsObjectActionsSelect
+                    dropdownId={`settings-role-rule-actions-${rootPredicateGroup.id}`}
+                    selectedKeys={getRuleGrantedKeys(rootPredicateGroup)}
+                    onChange={(selectedKeys) =>
+                      setRuleGrantedKeys({
+                        rootPredicateGroupId: rootPredicateGroup.id,
+                        grantedKeys: selectedKeys,
+                      })
+                    }
+                    disabled={!isEditable}
+                  />
+                </TableCell>
+                <TableCell
+                  align="right"
+                  color={themeCssVariables.font.color.tertiary}
+                >
+                  {isEditable && <IconChevronRight size={theme.icon.size.md} />}
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </>
       )}
       {isEditable && (
@@ -236,16 +260,14 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
           <Button size="sm" variant="outline" onClick={onRemove}>
             {t`Remove override`}
           </Button>
-          {!hasRule && (
-            <Button
-              size="sm"
-              variant="outline"
-              startIcon={<IconPlus />}
-              onClick={openRuleEditor}
-            >
-              {t`New rule`}
-            </Button>
-          )}
+          <Button
+            size="sm"
+            variant="outline"
+            startIcon={<IconPlus />}
+            onClick={handleNewRule}
+          >
+            {t`New rule`}
+          </Button>
         </StyledFooter>
       )}
     </StyledPanel>

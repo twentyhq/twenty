@@ -50,12 +50,14 @@ type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent
   {
     roleId: string;
     objectMetadataItem: EnrichedObjectMetadataItem;
+    ruleRootGroupId: string;
   };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent =
   ({
     roleId,
     objectMetadataItem,
+    ruleRootGroupId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps) => {
     const { t } = useLingui();
     const settingsDraftRole = useAtomFamilyStateValue(
@@ -98,6 +100,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
     const { hasInitialized } = useRecordLevelPermissionFilterInitialization({
       roleId,
       objectMetadataItem,
+      ruleRootGroupId,
       settingsDraftRole,
       filterableFieldMetadataItems,
       setCurrentRecordFilters,
@@ -108,6 +111,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
     useRecordLevelPermissionSyncToDraftRole({
       roleId,
       objectMetadataItem,
+      ruleRootGroupId,
       currentRecordFilters,
       currentRecordFilterGroups,
       hasInitialized,
@@ -116,6 +120,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
     const { handleCreateFirstFilter, handleAddFilter } =
       useRecordLevelPermissionFilterActions({
         objectMetadataItem,
+        ruleRootGroupId,
       });
 
     return (
@@ -141,9 +146,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
               <CommandMenuButton
                 command={{
                   Icon: IconPlus,
-                  label: t`Add rule`,
-                  shortLabel: t`Add rule`,
-                  key: 'add-rule',
+                  label: t`Add filter`,
+                  shortLabel: t`Add filter`,
+                  key: 'add-filter',
                 }}
                 onClick={() => handleAddFilter(rootRecordFilterGroup)}
               />
