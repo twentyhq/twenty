@@ -101,11 +101,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const objectMetadata = useSelectedObjectMetadata();
   ```
 
-- **`eventTriggerSettings` for logic functions and `EVENT` triggers for agents.** With `on: 'record'`, a trigger names an object, an action and `watchedFieldUniversalIdentifiers` instead of an event name and field names, plus an optional `condition`: a rule expression the record must meet, where `previous.<field>` reads it before an update. The build fails on an unknown object or field, or a condition reading a field the object does not have. These settings need a Twenty server that knows them; to deploy to an older server, keep `databaseEventTriggerSettings`.
+- **`eventTriggerSettings` for logic functions and `EVENT` triggers for agents.** With `on: 'recordEvent'`, a trigger names an object, an action and `watchedFieldUniversalIdentifiers` instead of an event name and field names, plus an optional `condition`: a rule expression the record must meet, where `previous.<field>` reads it before an update. The build fails on an unknown object or field, or a condition reading a field the object does not have. These settings need a Twenty server that knows them; to deploy to an older server, keep `databaseEventTriggerSettings`.
 
   ```ts
   eventTriggerSettings: {
-    on: 'record',
+    on: 'recordEvent',
     objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
     action: 'updated',
     watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
@@ -117,7 +117,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Deprecated
 
-- **`databaseEventTriggerSettings` on logic functions and `DATABASE_EVENT` triggers on agents.** Use `eventTriggerSettings` and `EVENT` triggers with `on: 'record'` instead. The old forms keep working for one more release.
+- **`databaseEventTriggerSettings` on logic functions and `DATABASE_EVENT` triggers on agents.** Use `eventTriggerSettings` and `EVENT` triggers with `on: 'recordEvent'` instead. The old forms keep working for one more release.
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
 

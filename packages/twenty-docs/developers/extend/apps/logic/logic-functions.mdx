@@ -45,7 +45,7 @@ export default defineLogicFunction({
     isAuthRequired: true,
   },
   /*eventTriggerSettings: {
-    on: 'record',
+    on: 'recordEvent',
     objectUniversalIdentifier:
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
     action: 'created',
@@ -439,11 +439,11 @@ For permanent deletes, use `.destroyed`.
   actually changed on the current event.
 </Note>
 
-`eventTriggerSettings` with `on: 'record'` accepts:
+`eventTriggerSettings` with `on: 'recordEvent'` accepts:
 
 | Property                    | Description                                                                                                                                                              |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `on`                        | `'record'`: the trigger listens to record events.                                                                                                                        |
+| `on`                        | `'recordEvent'`: the trigger listens to record events.                                                                                                                   |
 | `objectUniversalIdentifier` | Optional object to listen on. Leave it out to listen on every object.                                                                                                    |
 | `action`                    | `created`, `updated`, `deleted`, `destroyed`, `restored`, `upserted`, or `*` for all of them.                                                                            |
 | `watchedFieldUniversalIdentifiers` | Optional list of fields of the object. On updates and upserts, only changes touching one of them trigger the function. Relations to many records cannot be listed.      |
@@ -499,7 +499,7 @@ const PERSON = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person;
 export default defineLogicFunction({
   ...,
   eventTriggerSettings: {
-    on: 'record',
+    on: 'recordEvent',
     objectUniversalIdentifier: PERSON.universalIdentifier,
     action: 'updated',
     watchedFieldUniversalIdentifiers: [PERSON.fields.emails.universalIdentifier],
@@ -515,7 +515,7 @@ const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
 export default defineLogicFunction({
   ...,
   eventTriggerSettings: {
-    on: 'record',
+    on: 'recordEvent',
     objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
     action: 'updated',
     watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
@@ -549,7 +549,7 @@ A bulk write emits many events at once: importing a mailbox, for instance, can u
 export default defineLogicFunction({
   ...,
   eventTriggerSettings: {
-    on: 'record',
+    on: 'recordEvent',
     objectUniversalIdentifier:
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
     action: 'updated',

@@ -5,4 +5,4 @@ import { type RecordEventTriggerManifestSettings } from '@/application/recordEve
 export const isRecordEventTriggerManifestSettings = (
   settings: EventTriggerManifestSettings | DatabaseEventTriggerSettings,
 ): settings is RecordEventTriggerManifestSettings =>
-  'on' in settings && settings.on === 'record';
+  'on' in settings && settings.on === 'recordEvent';
