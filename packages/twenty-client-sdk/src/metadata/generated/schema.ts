@@ -377,6 +377,7 @@ export interface Application {
     defaultRoleId?: Scalars['String']
     description?: Scalars['String']
     frontComponents: FrontComponent[]
+    grantRoleId?: Scalars['UUID']
     grantedIframeMediaPermissions: IframeMediaPermission[]
     healthCheckLogicFunctionId?: Scalars['UUID']
     id: Scalars['UUID']
@@ -4886,6 +4887,7 @@ export interface ApplicationGenqlSelection{
     defaultRoleId?: boolean | number
     description?: boolean | number
     frontComponents?: FrontComponentGenqlSelection
+    grantRoleId?: boolean | number
     grantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     healthCheckLogicFunctionId?: boolean | number
     id?: boolean | number

@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { areRecordGrantsHeldToRowLevelPermissions } from 'src/engine/permissions/internal/combine/utils/are-record-grants-held-to-row-level-permissions.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-access-outcome.util';
 import { buildPermissionsCreatorSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-permissions-creator-sql-condition.util';
@@ -58,26 +57,6 @@ export const buildPermissionsSQLCondition = ({
     buildPermissionsShareSQLCondition(sqlRequest),
     buildPermissionsCreatorSQLCondition(sqlRequest),
   ].filter(isDefined);
-  const rowLevelPermissionSQLCondition =
-    areRecordGrantsHeldToRowLevelPermissions(sqlRequest)
-      ? rlsRuleSQLCondition
-      : undefined;
-
-  if (
-    isDefined(rowLevelPermissionSQLCondition) &&
-    recordSQLConditions.length > 0
-  ) {
-    return combineWithOr([
-      ...roleSQLConditions,
-      combineSQLConditions({
-        sqlConditions: [
-          rowLevelPermissionSQLCondition,
-          combineWithOr(recordSQLConditions),
-        ],
-      }),
-    ]);
-  }
-
   const sqlConditions = [...roleSQLConditions, ...recordSQLConditions];
 
   return sqlConditions.length === 0 ? false : combineWithOr(sqlConditions);
