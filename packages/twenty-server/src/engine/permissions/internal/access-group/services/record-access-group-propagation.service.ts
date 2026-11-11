@@ -120,6 +120,7 @@ export class RecordAccessGroupPropagationService {
     }
   }
 
+  // TODO(@charlesBochet): above MAX_RECORDS_RECOMPUTED_IN_WRITE, queue a job after commit once the transaction scope exposes afterCommit
   async recomputeRecordsFollowingRelatedRecordPathsInWrite({
     workspaceId,
     objectMetadataId,
