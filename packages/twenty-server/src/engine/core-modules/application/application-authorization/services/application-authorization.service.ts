@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type FindOperator, In, IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -77,7 +77,12 @@ export class ApplicationAuthorizationService {
       },
     );
 
-    return authorization?.consentId ?? undefined;
+    assertIsDefinedOrThrow(
+      authorization,
+      new Error('Application authorization missing after upsert'),
+    );
+
+    return authorization.consentId ?? undefined;
   }
 
   // Scopes and consent time stay null: pre-table refresh tokens carry neither, and today's declared scopes prove nothing.

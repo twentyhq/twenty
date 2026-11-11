@@ -28,7 +28,6 @@ const getApplicationRowItem = ({
   }),
   logoUrl: application.logoUrl,
   universalIdentifier: application.universalIdentifier,
-  // An app without a registration ships with the server, so it reads as built-in
   sourceType: isDefined(application.applicationRegistration)
     ? application.sourceType
     : undefined,
