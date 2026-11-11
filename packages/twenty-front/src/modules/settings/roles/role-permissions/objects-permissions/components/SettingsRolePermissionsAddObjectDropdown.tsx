@@ -1,5 +1,6 @@
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -14,16 +15,15 @@ import { Button } from 'twenty-ui/primitives/input';
 type SettingsRolePermissionsAddObjectDropdownProps = {
   roleId: string;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  onSelect: (objectMetadataId: string) => void;
 };
 
 export const SettingsRolePermissionsAddObjectDropdown = ({
   roleId,
   objectMetadataItems,
-  onSelect,
 }: SettingsRolePermissionsAddObjectDropdownProps) => {
   const { t } = useLingui();
   const [searchInputValue, setSearchInputValue] = useState('');
+  const { addObjectOverride } = useSettingsRoleObjectOverrides(roleId);
   const { getSelectIconPropsFromObjectMetadataItem } =
     useObjectMetadataSelectHelpers();
 
@@ -79,7 +79,7 @@ export const SettingsRolePermissionsAddObjectDropdown = ({
                 startIcon={
                   <SelectOptionIcon Icon={Icon} color={iconThemeColor} />
                 }
-                onClick={() => onSelect(objectMetadataItem.id)}
+                onClick={() => addObjectOverride(objectMetadataItem.id)}
               >
                 {objectMetadataItem.labelPlural}
               </Dropdown.ActionItem>

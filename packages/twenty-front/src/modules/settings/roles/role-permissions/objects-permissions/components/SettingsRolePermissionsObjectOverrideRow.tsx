@@ -1,29 +1,27 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectOverridePanel } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel';
-import { SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
+import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
+import { getObjectPermissionAccessIcon } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionAccessIcon';
 import { getObjectPermissionActionsLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionsLabel';
 import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  IconAdjustments,
-  IconChevronDown,
-  IconChevronUp,
-  IconEyeOff,
-} from 'twenty-ui/icon';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-
-export const OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 1fr 36px';
 
 const StyledObjectName = styled.div`
   color: ${themeCssVariables.font.color.primary};
@@ -40,9 +38,6 @@ type SettingsRolePermissionsObjectOverrideRowProps = {
   roleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   isEditable: boolean;
-  isExpanded: boolean;
-  onToggleExpanded: () => void;
-  onRemove: () => void;
   fromAgentId?: string;
 };
 
@@ -50,9 +45,6 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
   roleId,
   objectMetadataItem,
   isEditable,
-  isExpanded,
-  onToggleExpanded,
-  onRemove,
   fromAgentId,
 }: SettingsRolePermissionsObjectOverrideRowProps) => {
   const { t } = useLingui();
@@ -61,6 +53,20 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
+  );
+  const settingsRoleExpandedObjectOverrideIds = useAtomFamilyStateValue(
+    settingsRoleExpandedObjectOverrideIdsFamilyState,
+    roleId,
+  );
+  const { toggleObjectOverrideExpanded } =
+    useSettingsRoleObjectOverrides(roleId);
+  const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
+    });
+
+  const isExpanded = settingsRoleExpandedObjectOverrideIds.includes(
+    objectMetadataItem.id,
   );
 
   const rules = getObjectRowLevelPermissionRules({
@@ -81,44 +87,56 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
   });
 
   const isAdvanced = rules.length > 0 || hasFieldRestriction;
-  const highestGrantedKey = grantedKeys.at(-1);
 
-  const AccessIcon = isAdvanced
-    ? IconAdjustments
-    : highestGrantedKey === undefined
-      ? IconEyeOff
-      : SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[highestGrantedKey].Icon;
+  const AccessIcon = getObjectPermissionAccessIcon({
+    grantedKeys,
+    isAdvanced,
+  });
 
   const accessLabel = isAdvanced
     ? t`Advanced`
     : getObjectPermissionActionsLabel(grantedKeys);
 
-  const ruleCount = rules.length;
-  const ruleLabel =
-    ruleCount === 1 && rules[0] !== undefined
-      ? getRowLevelPermissionRuleLabel({
-          predicates: rules[0].predicates,
-          objectMetadataItem,
-        })
-      : ruleCount > 1
-        ? t`${ruleCount} rules`
-        : '';
+  const getRuleSummary = () => {
+    const [onlyRule] = rules;
+
+    if (rules.length > 1) {
+      const ruleCount = rules.length;
+
+      return t`${ruleCount} rules`;
+    }
+
+    if (rules.length === 1 && onlyRule !== undefined) {
+      return getRowLevelPermissionRuleLabel({
+        predicates: onlyRule.predicates,
+        objectMetadataItem,
+        workspaceMemberObjectMetadataItem,
+      });
+    }
+
+    return '';
+  };
+
+  const ruleSummary = getRuleSummary();
 
   const ChevronIcon = isExpanded ? IconChevronUp : IconChevronDown;
+
+  const handleToggleExpanded = () =>
+    toggleObjectOverrideExpanded(objectMetadataItem.id);
 
   return (
     <Collapsible.Root open={isExpanded}>
       <TableRow
         gridTemplateColumns={OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS}
         isExpanded={isExpanded}
-        onClick={onToggleExpanded}
+        onClick={handleToggleExpanded}
         ariaExpanded={isExpanded}
         role="button"
         tabIndex={0}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            onToggleExpanded();
+            handleToggleExpanded();
           }
         }}
       >
@@ -129,9 +147,9 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
             stroke={theme.icon.stroke.sm}
           />
           <StyledObjectName>{objectMetadataItem.labelPlural}</StyledObjectName>
-          {isNonEmptyString(ruleLabel) && (
+          {isNonEmptyString(ruleSummary) && (
             <StyledRuleLabel>
-              <OverflowingTextWithTooltip text={`· ${ruleLabel}`} />
+              <OverflowingTextWithTooltip text={`· ${ruleSummary}`} />
             </StyledRuleLabel>
           )}
         </TableCell>
@@ -148,7 +166,6 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
           roleId={roleId}
           objectMetadataItem={objectMetadataItem}
           isEditable={isEditable}
-          onRemove={onRemove}
           fromAgentId={fromAgentId}
         />
       </Collapsible.Panel>

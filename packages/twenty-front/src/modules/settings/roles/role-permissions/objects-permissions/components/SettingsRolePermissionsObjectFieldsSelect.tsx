@@ -1,4 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -69,22 +70,27 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   };
 
   const isFieldLocked = (
-    fieldMetadataId: string,
-    isUIEditable?: boolean | null,
+    field: Pick<FieldMetadataItem, 'id' | 'isUIEditable'>,
   ) =>
-    !(isUIEditable ?? true) ||
+    !(field.isUIEditable ?? true) ||
     (mode === 'read' &&
-      objectMetadataItem.labelIdentifierFieldMetadataId === fieldMetadataId);
+      objectMetadataItem.labelIdentifierFieldMetadataId === field.id);
 
   const allowedFieldIds = fieldMetadataItems
     .filter((field) => isFieldAllowed(field.id))
     .map((field) => field.id);
 
   const editableFieldMetadataItems = fieldMetadataItems.filter(
-    (field) => !isFieldLocked(field.id, field.isUIEditable),
+    (field) => !isFieldLocked(field),
   );
 
-  const setFieldAllowed = (fieldMetadataId: string, isAllowed: boolean) => {
+  const setFieldAllowed = ({
+    fieldMetadataId,
+    isAllowed,
+  }: {
+    fieldMetadataId: string;
+    isAllowed: boolean;
+  }) => {
     const fieldPermission: FieldPermission = getFieldPermission(
       fieldMetadataId,
     ) ?? {
@@ -123,7 +129,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
       const isAllowed = nextAllowedFieldIds.includes(field.id);
 
       if (isAllowed !== allowedFieldIds.includes(field.id)) {
-        setFieldAllowed(field.id, isAllowed);
+        setFieldAllowed({ fieldMetadataId: field.id, isAllowed });
       }
     }
   };
@@ -151,22 +157,29 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
       ? fieldMetadataItems.find((field) => field.id === allowedFieldIds[0])
       : undefined;
 
-  const controlText = areAllFieldsAllowed
-    ? t`All fields`
-    : allowedFieldCount === 0
-      ? t`No fields`
-      : isDefined(singleAllowedField)
-        ? singleAllowedField.label
-        : t`${allowedFieldCount} of ${fieldCount} fields`;
+  const getControlText = () => {
+    if (areAllFieldsAllowed) {
+      return t`All fields`;
+    }
 
-  const controlIcon =
-    mode === 'read'
-      ? allowedFieldCount === 0
-        ? IconEyeOff
-        : IconEye
-      : allowedFieldCount === 0
-        ? IconPencilOff
-        : IconPencil;
+    if (allowedFieldCount === 0) {
+      return t`No fields`;
+    }
+
+    if (isDefined(singleAllowedField)) {
+      return singleAllowedField.label;
+    }
+
+    return t`${allowedFieldCount} of ${fieldCount} fields`;
+  };
+
+  const getControlIcon = () => {
+    if (mode === 'read') {
+      return allowedFieldCount === 0 ? IconEyeOff : IconEye;
+    }
+
+    return allowedFieldCount === 0 ? IconPencilOff : IconPencil;
+  };
 
   const matchingFieldMetadataItems = fieldMetadataItems.filter((field) =>
     field.label.toLowerCase().includes(searchInputValue.toLowerCase()),
@@ -175,8 +188,8 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   const selectControl = (
     <MultiSelectControl
       selectedOptions={[]}
-      fixedIcon={controlIcon}
-      fixedText={controlText}
+      fixedIcon={getControlIcon()}
+      fixedText={getControlText()}
       isDisabled={disabled}
       selectSizeVariant="small"
     />
@@ -233,7 +246,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
           >
             <Dropdown.Section scrollable>
               {matchingFieldMetadataItems.map((field) => {
-                const isLocked = isFieldLocked(field.id, field.isUIEditable);
+                const isLocked = isFieldLocked(field);
 
                 return (
                   <Dropdown.OptionItem

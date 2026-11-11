@@ -2,16 +2,42 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
-import { type RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import {
   isDefined,
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
 import { type RowLevelPermissionPredicate } from '~/generated-metadata/graphql';
 
-const getPredicateValueLabel = (predicate: RowLevelPermissionPredicate) => {
+const getPredicateValueLabel = ({
+  predicate,
+  workspaceMemberObjectMetadataItem,
+}: {
+  predicate: RowLevelPermissionPredicate;
+  workspaceMemberObjectMetadataItem?: Pick<
+    EnrichedObjectMetadataItem,
+    'fields'
+  >;
+}) => {
   if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
-    return t`me`;
+    const workspaceMemberField = workspaceMemberObjectMetadataItem?.fields.find(
+      (field) => field.id === predicate.workspaceMemberFieldMetadataId,
+    );
+
+    if (
+      !isDefined(workspaceMemberField) ||
+      workspaceMemberField.name === 'id'
+    ) {
+      return t`me`;
+    }
+
+    const workspaceMemberFieldLabel = [
+      workspaceMemberField.label,
+      predicate.workspaceMemberSubFieldName,
+    ]
+      .filter(isNonEmptyString)
+      .join(' ');
+
+    return t`my ${workspaceMemberFieldLabel}`;
   }
 
   if (isNonEmptyString(predicate.value) || isNumber(predicate.value)) {
@@ -24,9 +50,14 @@ const getPredicateValueLabel = (predicate: RowLevelPermissionPredicate) => {
 export const getRowLevelPermissionRuleLabel = ({
   predicates,
   objectMetadataItem,
+  workspaceMemberObjectMetadataItem,
 }: {
   predicates: RowLevelPermissionPredicate[];
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
+  workspaceMemberObjectMetadataItem?: Pick<
+    EnrichedObjectMetadataItem,
+    'fields'
+  >;
 }) => {
   const [firstPredicate, ...otherPredicates] = predicates;
 
@@ -40,15 +71,16 @@ export const getRowLevelPermissionRuleLabel = ({
     )?.label ?? '';
 
   const operandLabel = getOperandLabel(
-    mapRLSOperandToRecordFilterOperand(
-      firstPredicate.operand as RowLevelPermissionPredicateOperand,
-    ),
+    mapRLSOperandToRecordFilterOperand(firstPredicate.operand),
   ).toLocaleLowerCase();
 
   const firstPredicateLabel = [
     fieldLabel,
     operandLabel,
-    getPredicateValueLabel(firstPredicate),
+    getPredicateValueLabel({
+      predicate: firstPredicate,
+      workspaceMemberObjectMetadataItem,
+    }),
   ]
     .filter(isNonEmptyString)
     .join(' ');

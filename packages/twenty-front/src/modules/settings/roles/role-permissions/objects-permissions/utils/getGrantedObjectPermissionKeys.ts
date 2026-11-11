@@ -7,7 +7,14 @@ export const getGrantedObjectPermissionKeys = ({
   role,
   objectMetadataId,
 }: {
-  role: RoleWithPartialMembers;
+  role: Pick<
+    RoleWithPartialMembers,
+    | 'objectPermissions'
+    | 'canReadAllObjectRecords'
+    | 'canUpdateAllObjectRecords'
+    | 'canSoftDeleteAllObjectRecords'
+    | 'canDestroyAllObjectRecords'
+  >;
   objectMetadataId?: string;
 }): SettingsRoleObjectPermissionKey[] => {
   const objectPermission = role.objectPermissions?.find(

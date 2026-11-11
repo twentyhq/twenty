@@ -1,3 +1,4 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
 import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
@@ -6,9 +7,11 @@ import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
   type SettingsRoleObjectPermissionKey,
 } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
+import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
 import { getObjectPermissionActionLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionLabel';
 import { getObjectPermissionKeysWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionKeysWithReadDependency';
@@ -23,14 +26,12 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-
-const PANEL_GRID_TEMPLATE_COLUMNS = '1fr 1fr 36px';
 
 const StyledPanel = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
@@ -42,7 +43,7 @@ const StyledPanel = styled.div`
 
 const StyledHeaderRow = styled.div`
   display: grid;
-  grid-template-columns: ${PANEL_GRID_TEMPLATE_COLUMNS};
+  grid-template-columns: ${OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS};
 `;
 
 const StyledActionLabel = styled.span`
@@ -60,7 +61,6 @@ type SettingsRolePermissionsObjectOverridePanelProps = {
   roleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   isEditable: boolean;
-  onRemove: () => void;
   fromAgentId?: string;
 };
 
@@ -68,7 +68,6 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
   roleId,
   objectMetadataItem,
   isEditable,
-  onRemove,
   fromAgentId,
 }: SettingsRolePermissionsObjectOverridePanelProps) => {
   const { t } = useLingui();
@@ -85,6 +84,13 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
 
   const { createRule, setRuleGrantedKeys } =
     useRowLevelPermissionRulesInDraftRole(roleId);
+
+  const { removeObjectOverride } = useSettingsRoleObjectOverrides(roleId);
+
+  const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
+    });
 
   const rules = getObjectRowLevelPermissionRules({
     role: settingsDraftRole,
@@ -167,7 +173,10 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
           key === 'canReadObjectRecords' || key === 'canUpdateObjectRecords';
 
         return (
-          <TableRow key={key} gridTemplateColumns={PANEL_GRID_TEMPLATE_COLUMNS}>
+          <TableRow
+            key={key}
+            gridTemplateColumns={OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS}
+          >
             <TableCell gap={themeCssVariables.spacing[2]}>
               <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
               <StyledActionLabel>
@@ -205,12 +214,15 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             const ruleLabel = getRowLevelPermissionRuleLabel({
               predicates,
               objectMetadataItem,
+              workspaceMemberObjectMetadataItem,
             });
 
             return (
               <TableRow
                 key={rootPredicateGroup.id}
-                gridTemplateColumns={PANEL_GRID_TEMPLATE_COLUMNS}
+                gridTemplateColumns={
+                  OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS
+                }
                 onClick={
                   isEditable
                     ? () => openRuleEditor(rootPredicateGroup.id)
@@ -257,7 +269,11 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       )}
       {isEditable && (
         <StyledFooter>
-          <Button size="sm" variant="outline" onClick={onRemove}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => removeObjectOverride(objectMetadataItem.id)}
+          >
             {t`Remove override`}
           </Button>
           <Button

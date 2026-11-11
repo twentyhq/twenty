@@ -1,6 +1,7 @@
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
 import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,13 +9,6 @@ import {
   type FieldPermission,
   type ObjectPermission,
 } from '~/generated-metadata/graphql';
-
-const OBJECT_PERMISSION_KEYS: SettingsRoleObjectPermissionKey[] = [
-  'canReadObjectRecords',
-  'canUpdateObjectRecords',
-  'canSoftDeleteObjectRecords',
-  'canDestroyObjectRecords',
-];
 
 export const useResetObjectPermission = (roleId: string) => {
   const settingsDraftRole = useAtomFamilyStateValue(
@@ -38,7 +32,7 @@ export const useResetObjectPermission = (roleId: string) => {
         objectPermissionToFind.objectMetadataId === objectMetadataItemId,
     );
 
-    const resetPermissions = OBJECT_PERMISSION_KEYS.reduce(
+    const resetPermissions = SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.reduce(
       (acc, permissionKey) => {
         acc[permissionKey] = null;
         return acc;

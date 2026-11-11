@@ -1,7 +1,6 @@
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 
-// changing records needs reading them: dropping See drops every change, picking a change picks See
 export const getObjectPermissionKeysWithReadDependency = ({
   previousKeys,
   nextKeys,
