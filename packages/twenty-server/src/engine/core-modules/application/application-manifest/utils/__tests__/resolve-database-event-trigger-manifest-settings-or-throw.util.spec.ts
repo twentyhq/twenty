@@ -1,10 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { buildDatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/utils/build-database-event-trigger-manifest-resolver.util';
-import {
-  resolveDatabaseEventTriggerManifestSettingsOrThrow,
-  toStoredDatabaseEventTriggerSettingsOrThrow,
-} from 'src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util';
+import { resolveDatabaseEventTriggerManifestSettingsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -198,18 +195,5 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow built-in fields', (
         condition: false as unknown as string,
       }),
     ).toThrow(/the condition must be text/);
-  });
-});
-
-describe('toStoredDatabaseEventTriggerSettingsOrThrow', () => {
-  it('refuses settings that were not resolved', () => {
-    expect(() =>
-      toStoredDatabaseEventTriggerSettingsOrThrow({ action: 'created' }),
-    ).toThrow(/must be resolved/);
-    expect(
-      toStoredDatabaseEventTriggerSettingsOrThrow({
-        eventName: 'company.created',
-      }),
-    ).toEqual({ eventName: 'company.created' });
   });
 });

@@ -10,7 +10,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type DatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/utils/build-database-event-trigger-manifest-resolver.util';
+import { type DatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/types/database-event-trigger-manifest-resolver.type';
 import { computeWorkflowWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-watched-field-name.util';
 import {
   ApplicationException,
@@ -182,14 +182,3 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
     ...(isDefined(batchMode) && { batchMode }),
   };
 };
-
-export const toStoredDatabaseEventTriggerSettingsOrThrow = (
-  settings: DatabaseEventTriggerManifestSettings,
-): DatabaseEventTriggerSettings =>
-  isObjectDatabaseEventTriggerManifestSettings(settings)
-    ? throwInvalidTrigger({
-        subject: 'Database event trigger',
-        reason:
-          'object and action settings must be resolved before they are stored',
-      })
-    : settings;

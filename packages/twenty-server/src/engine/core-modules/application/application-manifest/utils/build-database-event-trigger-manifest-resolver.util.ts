@@ -151,7 +151,3 @@ export const buildDatabaseEventTriggerManifestResolver = ({
     listObjectFields,
   };
 };
-
-export type DatabaseEventTriggerManifestResolver = ReturnType<
-  typeof buildDatabaseEventTriggerManifestResolver
->;

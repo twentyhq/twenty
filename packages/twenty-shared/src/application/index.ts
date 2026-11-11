@@ -116,12 +116,8 @@ export type {
   ConnectionCallbackResult,
 } from './customConnectionFlowType';
 export type { CustomConnectionProviderConfig } from './customConnectionProviderConfigType';
-export type {
-  DatabaseEventTriggerManifestAction,
-  ObjectDatabaseEventTriggerManifestSettings,
-  DatabaseEventTriggerManifestSettings,
-} from './databaseEventTriggerManifestSettingsType';
-export { isObjectDatabaseEventTriggerManifestSettings } from './databaseEventTriggerManifestSettingsType';
+export type { DatabaseEventTriggerManifestAction } from './databaseEventTriggerManifestActionType';
+export type { DatabaseEventTriggerManifestSettings } from './databaseEventTriggerManifestSettingsType';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
@@ -212,6 +208,7 @@ export type {
 export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
+export { isObjectDatabaseEventTriggerManifestSettings } from './isObjectDatabaseEventTriggerManifestSettings';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
@@ -231,6 +228,7 @@ export type {
 export { normalizePageLayoutTabManifest } from './normalizePageLayoutTabManifest';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
+export type { ObjectDatabaseEventTriggerManifestSettings } from './objectDatabaseEventTriggerManifestSettingsType';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type {
