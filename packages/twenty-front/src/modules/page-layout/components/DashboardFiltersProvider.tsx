@@ -26,6 +26,7 @@ export const DashboardFiltersProvider = ({
 
   return (
     <DashboardFiltersFromUrlProvider
+      pageLayoutId={currentPageLayout.id}
       pageLayoutFilters={currentPageLayout.filters}
     >
       {children}

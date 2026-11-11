@@ -7,6 +7,7 @@ import {
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
+import { dashboardFilterSessionSearchFamilyState } from '@/page-layout/states/dashboardFilterSessionSearchFamilyState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import {
@@ -17,7 +18,13 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { MemoryRouter } from 'react-router-dom';
+import {
+  Link,
+  MemoryRouter,
+  Route,
+  Routes,
+  useLocation,
+} from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   DASHBOARD_DATE_RANGE_FILTER,
@@ -62,6 +69,14 @@ const PAGE_LAYOUT_DRAFT_ATOM = pageLayoutDraftComponentState.atomFamily({
 const IS_IN_EDIT_MODE_ATOM = isDashboardInEditModeComponentState.atomFamily({
   instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
 });
+const SESSION_SEARCH_ATOM = dashboardFilterSessionSearchFamilyState.atomFamily({
+  pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+});
+
+const getDashboardFilterSearchFor = (relativeValue: string) =>
+  new URLSearchParams([
+    [`dashboardFilter[${DATE_RANGE_FILTER_ID}][IS_RELATIVE]`, relativeValue],
+  ]).toString();
 
 const setDashboard = ({
   filters,
@@ -92,28 +107,57 @@ type DashboardFilterBarStoryProps = {
   initialSearch: string;
 };
 
+const DashboardFilterBarStoryContent = () => (
+  <PageLayoutTestWrapper
+    layoutType={PageLayoutType.DASHBOARD}
+    store={jotaiStore}
+  >
+    <LayoutRenderingProvider
+      value={{
+        targetRecordIdentifier: {
+          id: DASHBOARD_RECORD_ID,
+          targetObjectNameSingular: 'dashboard',
+        },
+        layoutType: PageLayoutType.DASHBOARD,
+      }}
+    >
+      <DashboardFiltersProvider>
+        <DashboardFilterBar />
+      </DashboardFiltersProvider>
+    </LayoutRenderingProvider>
+  </PageLayoutTestWrapper>
+);
+
 const DashboardFilterBarStory = ({
   initialSearch,
 }: DashboardFilterBarStoryProps) => (
   <MemoryRouter initialEntries={[`/object/dashboard/1${initialSearch}`]}>
-    <PageLayoutTestWrapper
-      layoutType={PageLayoutType.DASHBOARD}
-      store={jotaiStore}
-    >
-      <LayoutRenderingProvider
-        value={{
-          targetRecordIdentifier: {
-            id: DASHBOARD_RECORD_ID,
-            targetObjectNameSingular: 'dashboard',
-          },
-          layoutType: PageLayoutType.DASHBOARD,
-        }}
-      >
-        <DashboardFiltersProvider>
-          <DashboardFilterBar />
-        </DashboardFiltersProvider>
-      </LayoutRenderingProvider>
-    </PageLayoutTestWrapper>
+    <DashboardFilterBarStoryContent />
+  </MemoryRouter>
+);
+
+const LocationSearchProbe = () => (
+  <span data-testid="location-search">{useLocation().search}</span>
+);
+
+const DashboardFilterBarLeaveAndReturnStory = () => (
+  <MemoryRouter initialEntries={['/object/dashboard/1']}>
+    <Routes>
+      <Route
+        path="/object/dashboard/1"
+        element={
+          <>
+            <Link to="/elsewhere">Leave</Link>
+            <LocationSearchProbe />
+            <DashboardFilterBarStoryContent />
+          </>
+        }
+      />
+      <Route
+        path="/elsewhere"
+        element={<Link to="/object/dashboard/1">Return</Link>}
+      />
+    </Routes>
   </MemoryRouter>
 );
 
@@ -148,6 +192,7 @@ const meta: Meta<typeof DashboardFilterBarStory> = {
       mockedUserData.currentUserWorkspace,
     );
     jotaiStore.set(IS_IN_EDIT_MODE_ATOM, false);
+    jotaiStore.set(SESSION_SEARCH_ATOM, '');
     setDashboard({ filters: [DATE_RANGE_FILTER] });
 
     return () => {
@@ -515,5 +560,132 @@ export const KeepsTheValueWhenChoosingACustomRange: Story = {
     expect(
       canvas.getByRole('button', { name: 'Date range: This month' }),
     ).toBeVisible();
+  },
+};
+
+export const RestoresTheRememberedValueOnReEntry: Story = {
+  beforeEach: () => {
+    jotaiStore.set(
+      SESSION_SEARCH_ATOM,
+      getDashboardFilterSearchFor('PAST_7_DAY'),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await findChip(canvasElement, 'Date range: Past 7 days'),
+    ).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Reset' })).toBeVisible();
+  },
+};
+
+export const RemembersAValueChosenOnTheChip: Story = {
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await findChip(canvasElement, 'Date range: This month'),
+    );
+    await userEvent.click(await body.findByText('Month'));
+    await userEvent.click(await body.findByRole('option', { name: 'Year' }));
+
+    expect(
+      await findChip(canvasElement, 'Date range: This year'),
+    ).toBeVisible();
+    expect(jotaiStore.get(SESSION_SEARCH_ATOM)).toBe(
+      getDashboardFilterSearchFor('THIS_1_YEAR'),
+    );
+  },
+};
+
+export const ResetClearsTheRememberedValue: Story = {
+  beforeEach: () => {
+    jotaiStore.set(
+      SESSION_SEARCH_ATOM,
+      getDashboardFilterSearchFor('PAST_7_DAY'),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await findChip(canvasElement, 'Date range: Past 7 days');
+    await userEvent.click(canvas.getByRole('button', { name: 'Reset' }));
+
+    expect(
+      await findChip(canvasElement, 'Date range: This month'),
+    ).toBeVisible();
+    expect(jotaiStore.get(SESSION_SEARCH_ATOM)).toBe('');
+    expect(
+      canvas.queryByRole('button', { name: 'Reset' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const AUrlValueWinsOverTheRememberedValue: Story = {
+  args: {
+    initialSearch: `?${getDashboardFilterSearchFor('THIS_1_YEAR')}`,
+  },
+  beforeEach: () => {
+    jotaiStore.set(
+      SESSION_SEARCH_ATOM,
+      getDashboardFilterSearchFor('PAST_7_DAY'),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    expect(
+      await findChip(canvasElement, 'Date range: This year'),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(jotaiStore.get(SESSION_SEARCH_ATOM)).toBe(
+        getDashboardFilterSearchFor('THIS_1_YEAR'),
+      ),
+    );
+  },
+};
+
+export const EditModeIgnoresTheRememberedValue: Story = {
+  beforeEach: () => {
+    jotaiStore.set(IS_IN_EDIT_MODE_ATOM, true);
+    jotaiStore.set(
+      SESSION_SEARCH_ATOM,
+      getDashboardFilterSearchFor('PAST_7_DAY'),
+    );
+  },
+  play: async ({ canvasElement }) => {
+    expect(
+      await findChip(canvasElement, 'Date range: This month'),
+    ).toBeVisible();
+    expect(jotaiStore.get(SESSION_SEARCH_ATOM)).toBe(
+      getDashboardFilterSearchFor('PAST_7_DAY'),
+    );
+  },
+};
+
+export const RestoresTheValueAfterLeavingAndReturning: Story = {
+  render: () => <DashboardFilterBarLeaveAndReturnStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await findChip(canvasElement, 'Date range: This month'),
+    );
+    await userEvent.click(await body.findByText('Month'));
+    await userEvent.click(await body.findByRole('option', { name: 'Year' }));
+    await findChip(canvasElement, 'Date range: This year');
+    await userEvent.keyboard('{Escape}');
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Leave' }));
+    await userEvent.click(await canvas.findByRole('link', { name: 'Return' }));
+
+    expect(
+      await findChip(canvasElement, 'Date range: This year'),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByTestId('location-search')).toHaveTextContent(
+        `?${getDashboardFilterSearchFor('THIS_1_YEAR')}`,
+      ),
+    );
   },
 };
