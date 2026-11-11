@@ -14,6 +14,7 @@ const SIGNAL = '55555555-5555-4555-8555-555555555555';
 const SIGNAL_STATUS = '66666666-6666-4666-8666-666666666666';
 const COMPANY_OBJECT = '88888888-8888-4888-8888-888888888888';
 const COMPANY_NAME = '99999999-9999-4999-8999-999999999999';
+const ARCHIVED_SCORE = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 
 const addField = (
   maps: ReturnType<typeof createEmptyAllFlatEntityMaps>,
@@ -21,6 +22,7 @@ const addField = (
     objectMetadataUniversalIdentifier: string;
     universalSettings?: FlatFieldMetadata['universalSettings'];
     relationTargetObjectMetadataUniversalIdentifier?: string;
+    isActive?: boolean;
   },
 ) => {
   maps.flatFieldMetadataMaps.byUniversalIdentifier[field.universalIdentifier] =
@@ -58,6 +60,13 @@ const buildLookup = () => {
     name: 'name',
     type: FieldMetadataType.TEXT,
     objectMetadataUniversalIdentifier: COMPANY_OBJECT,
+  });
+  addField(existing, {
+    universalIdentifier: ARCHIVED_SCORE,
+    name: 'archivedScore',
+    type: FieldMetadataType.NUMBER,
+    objectMetadataUniversalIdentifier: OPPORTUNITY,
+    isActive: false,
   });
   addField(existing, {
     universalIdentifier: POINT_OF_CONTACTS,
@@ -225,6 +234,17 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow built-in fields', (
       eventName: 'signal.created',
       condition: 'isDefined(createdAt)',
     });
+  });
+
+  it('rejects a condition reading an inactive field, which dispatch cannot read', () => {
+    expect(() =>
+      resolve({
+        objectUniversalIdentifier: OPPORTUNITY,
+        on: 'record' as const,
+        action: 'updated',
+        condition: 'archivedScore > 1',
+      }),
+    ).toThrow(/is invalid/);
   });
 
   it('rejects a condition that is not text', () => {
