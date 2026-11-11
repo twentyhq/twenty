@@ -71,6 +71,7 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     logicFunctionManifest.name ?? parse(logicFunctionManifest.handlerName).name;
 
   const timeoutSeconds = logicFunctionManifest.timeoutSeconds ?? 300;
+  // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
   const eventTriggerSettings =
     logicFunctionManifest.eventTriggerSettings ??
     logicFunctionManifest.databaseEventTriggerSettings;
