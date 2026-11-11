@@ -1,9 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  FieldMetadataType,
-  RelationType,
-  type ValidationRuleFieldDescriptor,
-} from 'twenty-shared/types';
+import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   computeRelationGqlFieldJoinColumnName,
@@ -11,6 +7,7 @@ import {
   getValidationRulePreviousValueFieldPath,
   getValidationRuleRecordsFromDatabaseEvent,
   isDefined,
+  isValidationRuleToOneRelationField,
 } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -34,12 +31,6 @@ type ConditionReads = {
   previousRelations: ConditionRelation[];
 };
 
-const isToOneRelationField = (field: ValidationRuleFieldDescriptor) =>
-  (field.type === FieldMetadataType.RELATION ||
-    field.type === FieldMetadataType.MORPH_RELATION) &&
-  field.relationType === RelationType.MANY_TO_ONE;
-
-// The event carries a relation as its join column (companyId), read for the relation itself
 const toRecordReads = ({
   paths,
   fields,
@@ -50,7 +41,9 @@ const toRecordReads = ({
   const rootPaths = paths.filter((path) => !path.includes('.'));
   const relations = fields
     .filter(
-      (field) => isToOneRelationField(field) && rootPaths.includes(field.name),
+      (field) =>
+        isValidationRuleToOneRelationField(field) &&
+        rootPaths.includes(field.name),
     )
     .map((field) => ({
       fieldName: field.name,

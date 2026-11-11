@@ -16,6 +16,7 @@ type ValidationRuleFieldChangeTarget = {
   errorFieldMetadataUniversalIdentifier: string | null;
 };
 
+// Each bound prefix (company, company.employees, previous.company.employees) names one field
 const renamePath = ({
   path,
   bindings,
@@ -25,28 +26,19 @@ const renamePath = ({
   bindings: ValidationRuleBindings;
   newFieldNameByUniversalIdentifier: Map<string, string>;
 }): string => {
-  const [rootSegment, memberSegment, ...remainingSegments] = path.split('.');
+  const segments = path.split('.');
 
-  if (!isDefined(rootSegment)) {
-    return path;
-  }
+  return segments
+    .map((segment, index) => {
+      const boundUniversalIdentifier =
+        bindings[segments.slice(0, index + 1).join('.')];
 
-  const rootUniversalIdentifier = bindings[rootSegment];
-  const memberUniversalIdentifier = isDefined(memberSegment)
-    ? bindings[`${rootSegment}.${memberSegment}`]
-    : undefined;
-
-  return [
-    (isDefined(rootUniversalIdentifier)
-      ? newFieldNameByUniversalIdentifier.get(rootUniversalIdentifier)
-      : undefined) ?? rootSegment,
-    isDefined(memberUniversalIdentifier)
-      ? (newFieldNameByUniversalIdentifier.get(memberUniversalIdentifier) ??
-        memberSegment)
-      : memberSegment,
-    ...remainingSegments,
-  ]
-    .filter(isDefined)
+      return (
+        (isDefined(boundUniversalIdentifier)
+          ? newFieldNameByUniversalIdentifier.get(boundUniversalIdentifier)
+          : undefined) ?? segment
+      );
+    })
     .join('.');
 };
 

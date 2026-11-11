@@ -163,7 +163,6 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
     ),
   ];
 
-  // previous.company reads the record the relation pointed to before the write
   const previousRecords = await attachRelatedRecords({
     repository,
     tableShape,

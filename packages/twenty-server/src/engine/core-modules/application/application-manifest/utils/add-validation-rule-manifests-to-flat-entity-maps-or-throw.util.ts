@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { type ValidationRuleManifest } from 'twenty-shared/application';
+import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   RelationType,
@@ -254,9 +255,13 @@ const findUnavailableField = ({
     return undefined;
   }
 
+  const boundPath = isDefined(relationFieldName)
+    ? `${relationFieldName}.${name}`
+    : name;
   const boundFieldUniversalIdentifier =
+    existingFlatValidationRule.bindings[boundPath] ??
     existingFlatValidationRule.bindings[
-      isDefined(relationFieldName) ? `${relationFieldName}.${name}` : name
+      `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.${boundPath}`
     ];
 
   if (!isDefined(boundFieldUniversalIdentifier)) {
