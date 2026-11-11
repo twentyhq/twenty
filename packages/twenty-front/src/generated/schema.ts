@@ -60,6 +60,7 @@ export type CoreWorkflowConnection = {
   __typename?: 'CoreWorkflowConnection';
   edges: Array<CoreWorkflowEdge>;
   pageInfo: CoreWorkflowPageInfo;
+  runSummaries: Array<CoreWorkflowRunSummary>;
   totalCount: Scalars['Int']['output'];
 };
 
@@ -138,6 +139,33 @@ export type CoreWorkflowPageInfo = {
   __typename?: 'CoreWorkflowPageInfo';
   endCursor?: Maybe<Scalars['String']['output']>;
   hasNextPage: Scalars['Boolean']['output'];
+};
+
+export type CoreWorkflowRecentRun = {
+  __typename?: 'CoreWorkflowRecentRun';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  status: CoreWorkflowRunStatus;
+};
+
+export enum CoreWorkflowRunStatus {
+  COMPLETED = 'COMPLETED',
+  ENQUEUED = 'ENQUEUED',
+  FAILED = 'FAILED',
+  NOT_STARTED = 'NOT_STARTED',
+  RUNNING = 'RUNNING',
+  STOPPED = 'STOPPED',
+  STOPPING = 'STOPPING'
+}
+
+export type CoreWorkflowRunSummary = {
+  __typename?: 'CoreWorkflowRunSummary';
+  coreWorkflowId: Scalars['UUID']['output'];
+  /** True when run retention may have deleted runs from the window, so runCountLast14Days is a lower bound */
+  isRunCountLowerBound: Scalars['Boolean']['output'];
+  /** Most recent runs first */
+  recentRuns: Array<CoreWorkflowRecentRun>;
+  runCountLast14Days: Scalars['Int']['output'];
 };
 
 export enum CoreWorkflowStatus {

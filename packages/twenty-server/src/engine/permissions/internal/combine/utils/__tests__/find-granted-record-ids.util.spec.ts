@@ -208,6 +208,22 @@ describe('findGrantedRecordIds', () => {
     ).toEqual(new Set(['active-shared', 'active-private', 'archived-shared']));
   });
 
+  it('grants no shared or created record when a limiting role lacks all records', async () => {
+    expect(
+      await findGranted({
+        principals: {
+          ...memberPrincipals,
+          limitingPrincipal: {
+            type: 'agent',
+            agentId: 'agent-1',
+            roleId: 'missing-role',
+          },
+        },
+        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+      }),
+    ).toEqual(new Set());
+  });
+
   it('grants private records to their creator within the role filter', async () => {
     filterByStatus('none');
 

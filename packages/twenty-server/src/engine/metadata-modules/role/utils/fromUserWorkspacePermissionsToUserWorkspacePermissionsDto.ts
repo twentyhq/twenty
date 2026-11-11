@@ -1,8 +1,7 @@
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { buildDeprecatedRestrictedFields } from 'src/engine/metadata-modules/role/utils/build-deprecated-restricted-fields.util';
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 import { type UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
@@ -24,45 +23,11 @@ const buildFieldLists = ({
   };
 };
 
-const fromObjectRecordsPermissionsToLegacyObjectPermission = ({
-  objectMetadataId,
-  objectRecordsPermissions,
-}: {
-  objectMetadataId: string;
-  objectRecordsPermissions: ObjectRecordsPermissions;
-}): ObjectPermissionDTO => ({
-  objectMetadataId,
-  canReadObjectRecords: canReachSomeRecords({
-    objectRecordsPermissions,
-    operationType: 'read',
-  }),
-  canUpdateObjectRecords: canReachSomeRecords({
-    objectRecordsPermissions,
-    operationType: 'update',
-  }),
-  canSoftDeleteObjectRecords: canReachSomeRecords({
-    objectRecordsPermissions,
-    operationType: 'softDelete',
-  }),
-  canDestroyObjectRecords: canReachSomeRecords({
-    objectRecordsPermissions,
-    operationType: 'destroy',
-  }),
-  ...buildFieldLists(objectRecordsPermissions),
-  rowLevelPermissionPredicates: (
-    objectRecordsPermissions.rowLevelRecordsPermissions ?? []
-  ).flatMap(({ predicates }) => predicates),
-  rowLevelPermissionPredicateGroups: (
-    objectRecordsPermissions.rowLevelRecordsPermissions ?? []
-  ).flatMap(({ predicateGroups }) => predicateGroups),
-});
-
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   recordsPermissions,
   permissionFlags: rawSettingsPermissions,
 }: UserWorkspacePermissions): UserWorkspacePermissionsDto => {
   const objectRecordsPermissions: ObjectRecordsPermissionsDTO[] = [];
-  const legacyObjectPermissions: ObjectPermissionDTO[] = [];
 
   for (const [objectMetadataId, permissions] of Object.entries(
     recordsPermissions.objects,
@@ -81,12 +46,6 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       ...buildFieldLists(permissions),
       rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
     });
-    legacyObjectPermissions.push(
-      fromObjectRecordsPermissionsToLegacyObjectPermission({
-        objectMetadataId,
-        objectRecordsPermissions: permissions,
-      }),
-    );
   }
 
   const permissionFlags = (
@@ -95,8 +54,6 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
 
   return {
     objectRecordsPermissions,
-    objectPermissions: legacyObjectPermissions,
-    objectsPermissions: legacyObjectPermissions,
     permissionFlags,
   };
 };
