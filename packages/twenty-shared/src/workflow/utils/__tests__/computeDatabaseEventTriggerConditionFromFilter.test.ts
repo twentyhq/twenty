@@ -1,10 +1,25 @@
 import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { RelationType } from '@/types/RelationType';
 import { StepLogicalOperator } from '@/types/StepFilters';
 import { ViewFilterOperand } from '@/types/ViewFilterOperand';
 import { computeDatabaseEventTriggerConditionFromFilter } from '@/workflow/utils/computeDatabaseEventTriggerConditionFromFilter';
 
 const FIELDS = [
   { name: 'name', type: FieldMetadataType.TEXT, universalIdentifier: 'name' },
+  {
+    name: 'company',
+    type: FieldMetadataType.RELATION,
+    universalIdentifier: 'company',
+    relationType: RelationType.MANY_TO_ONE,
+    relationTargetFields: [
+      { name: 'id', type: FieldMetadataType.UUID, universalIdentifier: 'id' },
+      {
+        name: 'name',
+        type: FieldMetadataType.TEXT,
+        universalIdentifier: 'company-name',
+      },
+    ],
+  },
 ];
 
 const buildFilter = ({
@@ -56,6 +71,21 @@ describe('computeDatabaseEventTriggerConditionFromFilter', () => {
           operand: ViewFilterOperand.IS,
           value: 'Acme',
           path: 'domainName',
+        }),
+        fields: FIELDS,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('keeps the legacy filter when the expression reads a related record', () => {
+    expect(
+      computeDatabaseEventTriggerConditionFromFilter({
+        eventName: 'person.created',
+        filter: buildFilter({
+          type: 'TEXT',
+          operand: ViewFilterOperand.IS,
+          value: 'Acme',
+          path: 'company.name',
         }),
         fields: FIELDS,
       }),
