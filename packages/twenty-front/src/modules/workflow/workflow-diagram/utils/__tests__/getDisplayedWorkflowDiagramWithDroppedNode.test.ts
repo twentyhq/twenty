@@ -5,7 +5,13 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 const TRIGGER_POSITION = { x: 500, y: 100 };
 const DROP_POSITION = { x: 1200, y: 600 };
 
-const buildNode = (id: string, position: { x: number; y: number }) => ({
+const buildNode = ({
+  id,
+  position,
+}: {
+  id: string;
+  position: { x: number; y: number };
+}) => ({
   id,
   position,
   data: {
@@ -17,7 +23,7 @@ const buildNode = (id: string, position: { x: number; y: number }) => ({
   },
 });
 
-const buildEdge = (source: string, target: string) => ({
+const buildEdge = ({ source, target }: { source: string; target: string }) => ({
   id: `${source}-to-${target}`,
   source,
   sourceHandle: 'source',
@@ -27,13 +33,13 @@ const buildEdge = (source: string, target: string) => ({
 
 const diagram: WorkflowDiagram = {
   nodes: [
-    buildNode(TRIGGER_STEP_ID, TRIGGER_POSITION),
-    buildNode('new-branch', DROP_POSITION),
-    buildNode('new-branch-child', { x: 0, y: 0 }),
+    buildNode({ id: TRIGGER_STEP_ID, position: TRIGGER_POSITION }),
+    buildNode({ id: 'new-branch', position: DROP_POSITION }),
+    buildNode({ id: 'new-branch-child', position: { x: 0, y: 0 } }),
   ],
   edges: [
-    buildEdge(TRIGGER_STEP_ID, 'new-branch'),
-    buildEdge('new-branch', 'new-branch-child'),
+    buildEdge({ source: TRIGGER_STEP_ID, target: 'new-branch' }),
+    buildEdge({ source: 'new-branch', target: 'new-branch-child' }),
   ],
 };
 
