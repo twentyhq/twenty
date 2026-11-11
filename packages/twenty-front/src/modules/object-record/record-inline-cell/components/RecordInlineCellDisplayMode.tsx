@@ -104,6 +104,7 @@ export const RecordInlineCellDisplayMode = ({
         isHovered={isHovered}
         readonly={readonly}
         onClick={onClick}
+        data-inline-cell-display-mode
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
           {shouldShowValue ? (
