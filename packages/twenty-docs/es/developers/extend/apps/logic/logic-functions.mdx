@@ -61,7 +61,7 @@ Tipos de desencadenadores disponibles:
 Para invocar una función de lógica activada por una ruta desde un componente de frontend (headless), consulta [Llamar a una función de lógica](/es/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 * **cron**: Ejecuta tu función en un horario usando una expresión CRON.
-* **databaseEvent**: Se ejecuta en eventos del ciclo de vida de objetos del espacio de trabajo. Cuando la operación del evento es `updated`, se pueden especificar campos específicos que se deben escuchar en la matriz `updatedFields`. Si se deja sin definir o vacío, cualquier actualización activará la función.
+* **databaseEvent**: Se ejecuta en eventos del ciclo de vida de objetos del espacio de trabajo. Cuando la operación del evento es `updated`, se pueden especificar campos específicos que se deben escuchar en la matriz `updatedFields`. Si se deja sin definir o vacío, cualquier actualización activará la función. Una `condition` lo limita a los registros que cumplen una expresión de regla.
 > p. ej. `person.updated`, `*.created`, `company.*`
 * **serverRoute**: expone una única ruta HTTP con ámbito de registro. Una función de **resolver** (declarada con `serverRouteTriggerSettings`) se ejecuta en el espacio de trabajo propietario y devuelve una `Response` síncrona o el espacio de trabajo de destino Y la función de lógica de destino para poner en cola; en la ruta de encolado, la plataforma confirma con `202` y ejecuta ese **destino** en la cola de workers. Consulta [Disparador de ruta de servidor](#server-route-trigger).
 
@@ -440,11 +440,12 @@ Para eliminaciones permanentes, usa `.destroyed`.
 
 `databaseEventTriggerSettings` acepta:
 
-| Propiedad       | Descripción                                                                                                                                                                                                         |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `eventName`     | Evento que se debe escuchar, como `person.updated`. Admite `*` para el nombre del objeto, la operación o ambos.                                                                                                     |
-| `updatedFields` | Lista opcional de nombres de campos. En los eventos `.updated`, solo los cambios que afectan a uno de ellos activan la función.                                                                                     |
-| `batchMode`     | Booleano opcional. Cuando es `true`, se llama al manejador una vez por cada lote de registros en lugar de una vez por cada registro. El servidor decide cuántos registros contiene un lote, hasta un máximo de 200. |
+| Propiedad       | Descripción                                                                                                                                                                                                                                                                                                                                                            |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `eventName`     | Evento que se debe escuchar, como `person.updated`. Admite `*` para el nombre del objeto, la operación o ambos.                                                                                                                                                                                                                                                        |
+| `updatedFields` | Lista opcional de nombres de campos. En los eventos `.updated` y `.upserted`, solo los cambios que afectan a uno de ellos activan la función.                                                                                                                                                                                                                          |
+| `condición`     | [Expresión de regla](/es/user-guide/data-model/capabilities/validation-rules#write-a-condition) opcional que el registro debe cumplir, como `stage == 'CUSTOMER'`. `anterior.\<field>` lee el registro antes de una actualización. Lee los propios campos del registro; una relación de varios a uno es su campo de id (`companyId`), no `company.name`. |
+| `batchMode`     | Booleano opcional. Cuando es `true`, se llama al manejador una vez por cada lote de registros en lugar de una vez por cada registro. El servidor decide cuántos registros contiene un lote, hasta un máximo de 200.                                                                                                                                                    |
 
 Ejemplo de evento de creación:
 
