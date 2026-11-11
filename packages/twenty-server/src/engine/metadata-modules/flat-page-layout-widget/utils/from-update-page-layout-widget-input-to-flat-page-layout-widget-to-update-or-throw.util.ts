@@ -80,7 +80,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     if (
       Object.prototype.hasOwnProperty.call(editableProperties, 'configuration')
     ) {
-      validateWidgetConfigurationInput({
+      editableProperties.configuration = validateWidgetConfigurationInput({
         configuration: editableProperties.configuration,
       });
     }

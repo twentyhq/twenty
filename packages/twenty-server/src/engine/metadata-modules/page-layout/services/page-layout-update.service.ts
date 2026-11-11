@@ -24,7 +24,10 @@ import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layou
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
+import { WIDGET_CONFIGURATION_INPUT_DTO_BY_TYPE } from 'src/engine/metadata-modules/page-layout-widget/constants/widget-configuration-input-dto-by-type.constant';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { sanitizeWidgetConfigurationByDto } from 'src/engine/metadata-modules/page-layout-widget/utils/sanitize-widget-configuration-by-dto.util';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
@@ -532,7 +535,7 @@ export class PageLayoutUpdateService {
 
   private computeWidgetOperationsForTab({
     tabId,
-    widgets,
+    widgets: rawWidgets,
     widgetIdsAcrossAllTabs,
     flatPageLayoutWidgetMaps,
     flatPageLayoutTabMaps,
@@ -565,6 +568,13 @@ export class PageLayoutUpdateService {
     widgetsToUpdate: FlatPageLayoutWidget[];
     widgetsToDelete: FlatPageLayoutWidget[];
   } {
+    const widgets = rawWidgets.map((widgetInput) => ({
+      ...widgetInput,
+      configuration: this.sanitizeWidgetConfiguration(
+        widgetInput.configuration,
+      ),
+    }));
+
     for (const widgetInput of widgets) {
       this.validateConfigurationFieldReferences({
         widgetInput,
@@ -883,6 +893,24 @@ export class PageLayoutUpdateService {
     return idsToRemove.filter(
       (widgetId) => !widgetIdsAcrossAllTabs.has(widgetId),
     );
+  }
+
+  // The layout editor saves half-configured widgets, so an invalid configuration is cleaned and kept
+  private sanitizeWidgetConfiguration(
+    configuration: AllPageLayoutWidgetConfiguration,
+  ): AllPageLayoutWidgetConfiguration {
+    const WidgetConfigurationDto = isDefined(configuration)
+      ? WIDGET_CONFIGURATION_INPUT_DTO_BY_TYPE[configuration.configurationType]
+      : undefined;
+
+    if (!isDefined(WidgetConfigurationDto)) {
+      return configuration;
+    }
+
+    return sanitizeWidgetConfigurationByDto({
+      DtoClass: WidgetConfigurationDto,
+      configuration: { ...configuration },
+    }).sanitizedConfiguration;
   }
 
   private validateConfigurationFieldReferences({

@@ -24,6 +24,40 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 
 describe('validateWidgetConfigurationInput', () => {
+  describe('returned configuration', () => {
+    it('should drop the keys the DTO does not declare and the settings sent as null', () => {
+      expect(
+        validateWidgetConfigurationInput({
+          configuration: {
+            ...TEST_NUMBER_CHART_CONFIG_MINIMAL,
+            __typename: 'AggregateChartConfiguration',
+            label: null,
+            prefix: '$',
+            layout: 'VERTICAL',
+            ratioAggregateConfig: {
+              __typename: 'RatioAggregateConfig',
+              fieldMetadataId: TEST_NUMBER_CHART_CONFIG_MINIMAL.aggregateFieldMetadataId,
+              optionValue: 'DONE',
+            },
+          },
+        }),
+      ).toEqual({
+        ...TEST_NUMBER_CHART_CONFIG_MINIMAL,
+        prefix: '$',
+        ratioAggregateConfig: {
+          fieldMetadataId: TEST_NUMBER_CHART_CONFIG_MINIMAL.aggregateFieldMetadataId,
+          optionValue: 'DONE',
+        },
+      });
+    });
+
+    it('should return a valid configuration unchanged', () => {
+      expect(
+        validateWidgetConfigurationInput({ configuration: TEST_PIE_CHART_CONFIG }),
+      ).toEqual(TEST_PIE_CHART_CONFIG);
+    });
+  });
+
   describe('EMAIL_THREAD widget', () => {
     it('should not throw for valid email thread configuration', () => {
       expect(() =>

@@ -1,0 +1,81 @@
+// The widget configuration keys as of 2.58; only charts switch type and keep the previous type's settings
+export const NULLABLE_CONFIGURATION_KEYS_BY_TYPE: Partial<
+  Record<string, Set<string>>
+> = {
+  RECORD_TABLE: new Set(['viewId']),
+  FIELD: new Set(['nestedRelationFieldMetadataId']),
+  FIELDS: new Set(['viewId', 'newFieldDefaultVisibility']),
+};
+
+const AXIS_CHART_KEYS = [
+  'configurationType',
+  'aggregateFieldMetadataId',
+  'aggregateOperation',
+  'primaryAxisGroupByFieldMetadataId',
+  'primaryAxisGroupBySubFieldName',
+  'primaryAxisDateGranularity',
+  'primaryAxisOrderBy',
+  'primaryAxisManualSortOrder',
+  'secondaryAxisGroupByFieldMetadataId',
+  'secondaryAxisGroupBySubFieldName',
+  'secondaryAxisGroupByDateGranularity',
+  'secondaryAxisOrderBy',
+  'secondaryAxisManualSortOrder',
+  'omitNullValues',
+  'splitMultiValueFields',
+  'axisNameDisplay',
+  'displayDataLabel',
+  'displayLegend',
+  'numberFormat',
+  'rangeMin',
+  'rangeMax',
+  'description',
+  'color',
+  'filter',
+  'isCumulative',
+  'timezone',
+  'firstDayOfTheWeek',
+];
+
+export const CHART_CONFIGURATION_KEYS_BY_TYPE: Partial<
+  Record<string, Set<string>>
+> = {
+  AGGREGATE_CHART: new Set([
+    'configurationType',
+    'aggregateFieldMetadataId',
+    'aggregateOperation',
+    'label',
+    'displayDataLabel',
+    'numberFormat',
+    'description',
+    'filter',
+    'timezone',
+    'firstDayOfTheWeek',
+    'prefix',
+    'suffix',
+    'ratioAggregateConfig',
+  ]),
+  PIE_CHART: new Set([
+    'configurationType',
+    'aggregateFieldMetadataId',
+    'aggregateOperation',
+    'groupByFieldMetadataId',
+    'groupBySubFieldName',
+    'dateGranularity',
+    'orderBy',
+    'manualSortOrder',
+    'displayDataLabel',
+    'showCenterMetric',
+    'displayLegend',
+    'hideEmptyCategory',
+    'numberFormat',
+    'splitMultiValueFields',
+    'description',
+    'color',
+    'filter',
+    'timezone',
+    'firstDayOfTheWeek',
+  ]),
+  BAR_CHART: new Set([...AXIS_CHART_KEYS, 'groupMode', 'layout']),
+  LINE_CHART: new Set([...AXIS_CHART_KEYS, 'isStacked']),
+};

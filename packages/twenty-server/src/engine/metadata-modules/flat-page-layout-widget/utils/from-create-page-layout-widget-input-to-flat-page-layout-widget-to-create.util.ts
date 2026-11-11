@@ -41,7 +41,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
       ['pageLayoutTabId'],
     );
 
-  validateWidgetConfigurationInput({
+  const configuration = validateWidgetConfigurationInput({
     configuration: createPageLayoutWidgetInput.configuration,
   });
 
@@ -70,7 +70,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     updatedAt: createdAt,
     deletedAt: null,
     universalIdentifier: pageLayoutWidgetId,
-    configuration: createPageLayoutWidgetInput.configuration,
+    configuration,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     conditionalDisplay: null,
@@ -79,7 +79,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     universalOverrides: null,
     universalConfiguration:
       fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-        configuration: createPageLayoutWidgetInput.configuration,
+        configuration,
         fieldMetadataUniversalIdentifierById:
           flatFieldMetadataMaps.universalIdentifierById,
         frontComponentUniversalIdentifierById:

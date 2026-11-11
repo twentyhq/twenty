@@ -414,4 +414,61 @@ describe('Page layout with tabs update should succeed', () => {
       });
     }
   });
+
+  it('should store widget configurations without undeclared keys or settings sent as null', async () => {
+    const pieChartConfiguration = {
+      configurationType: WidgetConfigurationType.PIE_CHART,
+      aggregateFieldMetadataId: testFieldMetadataIds.fieldMetadataId1,
+      aggregateOperation: AggregateOperations.COUNT,
+      groupByFieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
+    } satisfies AllPageLayoutWidgetConfiguration;
+    const widgetId = v4();
+
+    await updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: false,
+      input: {
+        id: testPageLayoutId,
+        name: 'Original Page Layout',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: null,
+        tabs: [
+          {
+            id: testTabId1,
+            title: 'Tab 1',
+            position: 0,
+            widgets: [
+              {
+                id: widgetId,
+                pageLayoutTabId: testTabId1,
+                title: 'Pie Chart Widget',
+                type: WidgetType.GRAPH,
+                objectMetadataId: testFieldMetadataIds.objectMetadataId,
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID as const,
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                // What the layout editor sends back after a chart type switch
+                configuration: {
+                  ...pieChartConfiguration,
+                  __typename: 'PieChartConfiguration',
+                  layout: 'VERTICAL',
+                  description: null,
+                } as AllPageLayoutWidgetConfiguration,
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const [storedWidget] = await global.testDataSource.query(
+      `SELECT configuration FROM core."pageLayoutWidget" WHERE id = $1`,
+      [widgetId],
+    );
+
+    expect(storedWidget.configuration).toEqual(pieChartConfiguration);
+  });
 });
