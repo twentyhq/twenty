@@ -7,19 +7,17 @@ import { getStandardApplicationReadme } from '@/applications/utils/getStandardAp
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsConnectableAppConnectButton } from '@/settings/app-preferences/components/SettingsConnectableAppConnectButton';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
 import { useMarketplaceApplicationContentLink } from '@/settings/applications/hooks/useMarketplaceApplicationContentLink';
-import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
+import { SettingsAvailableApplicationActionButton } from '@/settings/applications/components/SettingsAvailableApplicationActionButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
@@ -29,7 +27,6 @@ import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
-  FeatureFlagKey,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationByUniversalIdentifierDocument,
   PermissionFlagType,
@@ -73,9 +70,6 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,
-  );
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
 
   const { data: applicationData } = useQuery(
@@ -160,34 +154,6 @@ export const SettingsAvailableApplicationDetails = () => {
     !isDefined(builtInApplicationContent);
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
-
-  const renderActionButton = () => {
-    if (!isDefined(detail)) {
-      return undefined;
-    }
-
-    if (isDefined(detail.connectUrl)) {
-      if (!isAppPreferencesEnabled) {
-        return undefined;
-      }
-
-      return (
-        <SettingsConnectableAppConnectButton
-          connectableApp={{ name: detail.name, connectUrl: detail.connectUrl }}
-        />
-      );
-    }
-
-    return (
-      <SettingsApplicationActionButton
-        installedApplicationId={application?.id}
-        canInstallMarketplaceApps={canInstallMarketplaceApps}
-        onInstall={requestInstall}
-        isInstalling={isInstalling}
-        installProgress={installProgress}
-      />
-    );
-  };
 
   const renderContent = () => {
     if (isUnavailable) {
@@ -283,7 +249,19 @@ export const SettingsAvailableApplicationDetails = () => {
             />
           ) : undefined
         }
-        actionButton={renderActionButton()}
+        actionButton={
+          isDefined(detail) ? (
+            <SettingsAvailableApplicationActionButton
+              name={detail.name}
+              connectUrl={detail.connectUrl}
+              installedApplicationId={application?.id}
+              canInstallMarketplaceApps={canInstallMarketplaceApps}
+              onInstall={requestInstall}
+              isInstalling={isInstalling}
+              installProgress={installProgress}
+            />
+          ) : undefined
+        }
       >
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (
