@@ -11,6 +11,7 @@ import { LineChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/line-cha
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 import { applyCumulativeToLineDataPoints } from 'src/modules/dashboard/chart-data/utils/apply-cumulative-to-line-data-points.util';
+import { type DateRangeBounds } from 'src/modules/dashboard/chart-data/types/date-range-bounds.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
 import { getAggregateValueLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util';
@@ -25,6 +26,7 @@ export const transformToOneDimensionalLineChartData = ({
   configuration,
   userTimezone,
   firstDayOfTheWeek,
+  gapFillingDateRange,
   seriesIdPrefix,
   relationLabelResolution,
   i18n,
@@ -35,6 +37,7 @@ export const transformToOneDimensionalLineChartData = ({
   configuration: LineChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
+  gapFillingDateRange?: DateRangeBounds;
   seriesIdPrefix: string;
   relationLabelResolution: RelationLabelResolution | undefined;
   i18n: I18n;
@@ -51,6 +54,7 @@ export const transformToOneDimensionalLineChartData = ({
       isDescOrder,
       isTwoDimensional: false,
       splitMultiValueFields: configuration.splitMultiValueFields,
+      dateRange: gapFillingDateRange,
     });
 
   const selectOptions = getSelectOptions(primaryAxisGroupByField);

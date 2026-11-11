@@ -131,9 +131,8 @@ const validateOverrideFieldOrThrow = ({
 
 export const buildChartGqlOperationFilterOrThrow = ({
   widgetFilter,
-  widgetTimeZone,
   dashboardFilterValues,
-  viewerTimeZone,
+  timeZone,
   dashboardFilterBindings,
   groupByFieldMetadataIds,
   widgetFilterFieldMetadataIds,
@@ -144,9 +143,8 @@ export const buildChartGqlOperationFilterOrThrow = ({
   currentWorkspaceMemberId,
 }: {
   widgetFilter?: ChartFilter;
-  widgetTimeZone: string;
   dashboardFilterValues: DashboardFilterValue[] | null | undefined;
-  viewerTimeZone: string | null | undefined;
+  timeZone: string;
   dashboardFilterBindings: DashboardFilterBinding[] | null | undefined;
   groupByFieldMetadataIds: string[];
   widgetFilterFieldMetadataIds: string[];
@@ -156,7 +154,7 @@ export const buildChartGqlOperationFilterOrThrow = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   currentWorkspaceMemberId?: string;
 }): ObjectRecordFilter => {
-  const convertFilter = (filter: ChartFilter | undefined, timeZone: string) =>
+  const convertFilter = (filter: ChartFilter | undefined) =>
     convertChartFilterToGqlOperationFilter({
       filter,
       flatFieldMetadataMaps,
@@ -166,11 +164,8 @@ export const buildChartGqlOperationFilterOrThrow = ({
     });
 
   if (!isNonEmptyArray(dashboardFilterValues)) {
-    return convertFilter(widgetFilter, widgetTimeZone);
+    return convertFilter(widgetFilter);
   }
-
-  // A missing time zone fails the builder's time zone check
-  const timeZone = viewerTimeZone ?? '';
 
   const objectFlatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
@@ -229,7 +224,7 @@ export const buildChartGqlOperationFilterOrThrow = ({
     });
 
   return combineFilters([
-    convertFilter(widgetFilterWithoutReplacedPeriods, widgetTimeZone),
-    convertFilter({ recordFilters }, timeZone),
+    convertFilter(widgetFilterWithoutReplacedPeriods),
+    convertFilter({ recordFilters }),
   ]);
 };

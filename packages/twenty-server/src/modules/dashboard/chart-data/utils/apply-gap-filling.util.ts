@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type DateRangeBounds } from 'src/modules/dashboard/chart-data/types/date-range-bounds.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import {
   fillDateGaps,
@@ -25,6 +26,8 @@ type ApplyGapFillingParams = {
   isDescOrder: boolean;
   isTwoDimensional: boolean;
   splitMultiValueFields?: boolean;
+  dateRange?: DateRangeBounds;
+  maximumNumberOfSegments?: number;
 };
 
 type ApplyGapFillingResult = {
@@ -40,6 +43,8 @@ export const applyGapFilling = ({
   isDescOrder,
   isTwoDimensional,
   splitMultiValueFields,
+  dateRange,
+  maximumNumberOfSegments,
 }: ApplyGapFillingParams): ApplyGapFillingResult => {
   if (omitNullValues) {
     return { data, wasTruncated: false };
@@ -53,15 +58,20 @@ export const applyGapFilling = ({
   );
 
   if (isPrimaryFieldDate) {
-    const fillDateGapsFn = isTwoDimensional
-      ? fillDateGapsTwoDimensional
-      : fillDateGaps;
-
-    const dateResult = fillDateGapsFn({
-      data: currentData,
-      dateGranularity,
-      isDescOrder,
-    });
+    const dateResult = isTwoDimensional
+      ? fillDateGapsTwoDimensional({
+          data: currentData,
+          dateGranularity,
+          isDescOrder,
+          dateRange,
+          maximumNumberOfSegments,
+        })
+      : fillDateGaps({
+          data: currentData,
+          dateGranularity,
+          isDescOrder,
+          dateRange,
+        });
 
     currentData = dateResult.data;
     wasTruncated = dateResult.wasTruncated;

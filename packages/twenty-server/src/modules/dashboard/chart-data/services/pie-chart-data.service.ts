@@ -18,6 +18,7 @@ import {
   ChartDataExceptionCode,
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
+import { resolveChartTimeZone } from 'src/modules/dashboard/chart-data/utils/resolve-chart-time-zone.util';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
@@ -106,6 +107,11 @@ export class PieChartDataService {
         PIE_CHART_MAXIMUM_NUMBER_OF_SLICES +
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
+      const timeZone = resolveChartTimeZone({
+        viewerTimeZone,
+        widgetTimeZone: configuration.timezone,
+      });
+
       const { idByNameSingular: objectIdByNameSingular } =
         buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
@@ -122,9 +128,8 @@ export class PieChartDataService {
         filter: configuration.filter,
         dashboardFilterBindings: configuration.dashboardFilterBindings,
         dashboardFilterValues,
-        viewerTimeZone,
         dateGranularity: configuration.dateGranularity,
-        userTimezone: configuration.timezone ?? 'UTC',
+        userTimezone: timeZone,
         firstDayOfTheWeek:
           (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
           CalendarStartDay.MONDAY,
@@ -160,7 +165,7 @@ export class PieChartDataService {
         filteredRawResults: resolvedResults,
         groupByField,
         configuration,
-        userTimezone: configuration.timezone ?? 'UTC',
+        userTimezone: timeZone,
         firstDayOfTheWeek:
           (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
           CalendarStartDay.MONDAY,

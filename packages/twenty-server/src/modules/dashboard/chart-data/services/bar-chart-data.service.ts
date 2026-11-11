@@ -9,6 +9,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
@@ -22,8 +23,10 @@ import {
   ChartDataExceptionCode,
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
+import { resolveChartTimeZone } from 'src/modules/dashboard/chart-data/utils/resolve-chart-time-zone.util';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
+import { computeGapFillingDateRange } from 'src/modules/dashboard/chart-data/utils/compute-gap-filling-date-range.util';
 import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
 import { filterOutUnresolvedRelationBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-unresolved-relation-buckets.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
@@ -127,7 +130,10 @@ export class BarChartDataService {
         : BAR_CHART_MAXIMUM_NUMBER_OF_BARS +
           EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
-      const userTimezone = configuration.timezone ?? 'UTC';
+      const timeZone = resolveChartTimeZone({
+        viewerTimeZone,
+        widgetTimeZone: configuration.timezone,
+      });
       const firstDayOfTheWeek: CalendarStartDay =
         (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
         CalendarStartDay.MONDAY;
@@ -148,9 +154,8 @@ export class BarChartDataService {
         filter: configuration.filter,
         dashboardFilterBindings: configuration.dashboardFilterBindings,
         dashboardFilterValues,
-        viewerTimeZone,
         dateGranularity: configuration.primaryAxisDateGranularity,
-        userTimezone,
+        userTimezone: timeZone,
         firstDayOfTheWeek,
         limit,
         primaryAxisOrderBy: configuration.primaryAxisOrderBy,
@@ -196,6 +201,24 @@ export class BarChartDataService {
 
       const i18n = this.i18nService.getI18nInstance(locale);
 
+      const gapFillingDateRange = computeGapFillingDateRange({
+        dashboardFilterValues,
+        dashboardFilterBindings: configuration.dashboardFilterBindings,
+        primaryAxisGroupByFieldMetadataId:
+          configuration.primaryAxisGroupByFieldMetadataId,
+        primaryAxisGroupBySubFieldName:
+          configuration.primaryAxisGroupBySubFieldName,
+        primaryAxisDateGranularity: configuration.primaryAxisDateGranularity,
+        widgetFilter: configuration.filter,
+        fields: getFlatFieldsFromFlatObjectMetadata(
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        ),
+        timeZone,
+        firstDayOfTheWeek,
+        isQueryResultCutByLimit: rawResults.length >= limit,
+      });
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return transformToTwoDimensionalBarChartData({
           filteredRawResults: resolvedResults,
@@ -203,7 +226,8 @@ export class BarChartDataService {
           secondaryAxisGroupByField,
           aggregateField,
           configuration,
-          userTimezone,
+          userTimezone: timeZone,
+          gapFillingDateRange,
           firstDayOfTheWeek,
           primaryRelationLabelResolution: relationLabelResolutions.primary,
           secondaryRelationLabelResolution: relationLabelResolutions.secondary,
@@ -216,7 +240,8 @@ export class BarChartDataService {
         primaryAxisGroupByField,
         aggregateField,
         configuration,
-        userTimezone,
+        userTimezone: timeZone,
+        gapFillingDateRange,
         firstDayOfTheWeek,
         relationLabelResolution: relationLabelResolutions.primary,
         i18n,

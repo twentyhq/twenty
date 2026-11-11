@@ -1,3 +1,4 @@
+import { Temporal } from 'temporal-polyfill';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
 import {
@@ -399,6 +400,98 @@ describe('fillDateGaps with records that have no value', () => {
       { groupByDimensionValues: ['2024-01-02', 'X'], aggregateValue: 3 },
       { groupByDimensionValues: [null, 'X'], aggregateValue: 4 },
       { groupByDimensionValues: [null, 'Y'], aggregateValue: 2 },
+    ]);
+  });
+});
+
+describe('fillDateGaps with a dashboard filter range', () => {
+  const data = [
+    { groupByDimensionValues: ['2024-03-04'], aggregateValue: 5 },
+    { groupByDimensionValues: ['2024-03-05'], aggregateValue: 3 },
+  ];
+
+  const fillDays = (
+    dateRange: Parameters<typeof fillDateGaps>[0]['dateRange'],
+    isDescOrder = false,
+  ) =>
+    fillDateGaps({
+      data,
+      dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      dateRange,
+      isDescOrder,
+    }).data.map(({ groupByDimensionValues: [date] }) => date);
+
+  it('should extend both bounded sides of the axis', () => {
+    expect(
+      fillDays({
+        start: Temporal.PlainDate.from('2024-03-02'),
+        end: Temporal.PlainDate.from('2024-03-07'),
+      }),
+    ).toEqual([
+      '2024-03-02',
+      '2024-03-03',
+      '2024-03-04',
+      '2024-03-05',
+      '2024-03-06',
+      '2024-03-07',
+    ]);
+  });
+
+  it("should keep the data's bound on an open side", () => {
+    expect(
+      fillDays({ start: Temporal.PlainDate.from('2024-03-03'), end: null }),
+    ).toEqual(['2024-03-03', '2024-03-04', '2024-03-05']);
+    expect(
+      fillDays({ start: null, end: Temporal.PlainDate.from('2024-03-06') }),
+    ).toEqual(['2024-03-04', '2024-03-05', '2024-03-06']);
+  });
+
+  it('should extend a descending axis', () => {
+    expect(
+      fillDays(
+        {
+          start: Temporal.PlainDate.from('2024-03-03'),
+          end: Temporal.PlainDate.from('2024-03-06'),
+        },
+        true,
+      ),
+    ).toEqual(['2024-03-06', '2024-03-05', '2024-03-04', '2024-03-03']);
+  });
+
+  it('should keep the data bounds when the range needs more buckets than the cap', () => {
+    const result = fillDateGaps({
+      data,
+      dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      dateRange: {
+        start: Temporal.PlainDate.from('2023-01-01'),
+        end: Temporal.PlainDate.from('2024-03-05'),
+      },
+    });
+
+    expect(result.data).toEqual(data);
+    expect(result.wasTruncated).toBe(false);
+  });
+
+  it('should extend every secondary series of a two dimensional chart', () => {
+    const result = fillDateGapsTwoDimensional({
+      data: [
+        { groupByDimensionValues: ['2024-03-04', 'A'], aggregateValue: 5 },
+        { groupByDimensionValues: ['2024-03-04', 'B'], aggregateValue: 2 },
+      ],
+      dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      dateRange: {
+        start: Temporal.PlainDate.from('2024-03-03'),
+        end: Temporal.PlainDate.from('2024-03-05'),
+      },
+    });
+
+    expect(result.data).toEqual([
+      { groupByDimensionValues: ['2024-03-03', 'A'], aggregateValue: 0 },
+      { groupByDimensionValues: ['2024-03-03', 'B'], aggregateValue: 0 },
+      { groupByDimensionValues: ['2024-03-04', 'A'], aggregateValue: 5 },
+      { groupByDimensionValues: ['2024-03-04', 'B'], aggregateValue: 2 },
+      { groupByDimensionValues: ['2024-03-05', 'A'], aggregateValue: 0 },
+      { groupByDimensionValues: ['2024-03-05', 'B'], aggregateValue: 0 },
     ]);
   });
 });

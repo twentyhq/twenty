@@ -57,7 +57,6 @@ type ExecuteGroupByQueryParams = {
   filter?: ChartFilter;
   dashboardFilterBindings?: DashboardFilterBinding[] | null;
   dashboardFilterValues?: DashboardFilterValueInput[] | null;
-  viewerTimeZone?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
@@ -89,7 +88,6 @@ export class ChartDataQueryService {
     filter,
     dashboardFilterBindings,
     dashboardFilterValues,
-    viewerTimeZone,
     dateGranularity,
     userTimezone,
     firstDayOfTheWeek,
@@ -107,9 +105,8 @@ export class ChartDataQueryService {
 
     const gqlOperationFilter = buildChartGqlOperationFilterOrThrow({
       widgetFilter: filter,
-      widgetTimeZone: userTimezone,
       dashboardFilterValues,
-      viewerTimeZone,
+      timeZone: userTimezone,
       dashboardFilterBindings,
       ...getDashboardFilterCandidateFieldMetadataIds({
         groupByFieldMetadataId,

@@ -18,6 +18,7 @@ import { BarChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/bar-chart
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 import { applyCumulativeToTwoDimensionalBarData } from 'src/modules/dashboard/chart-data/utils/apply-cumulative-to-two-dimensional-bar-data.util';
+import { type DateRangeBounds } from 'src/modules/dashboard/chart-data/types/date-range-bounds.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
 import { getAggregateValueLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util';
@@ -34,6 +35,7 @@ export const transformToTwoDimensionalBarChartData = ({
   configuration,
   userTimezone,
   firstDayOfTheWeek,
+  gapFillingDateRange,
   primaryRelationLabelResolution,
   secondaryRelationLabelResolution,
   i18n,
@@ -45,6 +47,7 @@ export const transformToTwoDimensionalBarChartData = ({
   configuration: BarChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
+  gapFillingDateRange?: DateRangeBounds;
   primaryRelationLabelResolution: RelationLabelResolution | undefined;
   secondaryRelationLabelResolution: RelationLabelResolution | undefined;
   i18n: I18n;
@@ -68,6 +71,10 @@ export const transformToTwoDimensionalBarChartData = ({
       isDescOrder,
       isTwoDimensional: true,
       splitMultiValueFields: configuration.splitMultiValueFields,
+      dateRange: gapFillingDateRange,
+      maximumNumberOfSegments: isStacked
+        ? undefined
+        : BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
     });
 
   const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);

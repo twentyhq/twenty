@@ -9,6 +9,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
@@ -22,8 +23,10 @@ import {
   ChartDataExceptionCode,
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
+import { resolveChartTimeZone } from 'src/modules/dashboard/chart-data/utils/resolve-chart-time-zone.util';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
+import { computeGapFillingDateRange } from 'src/modules/dashboard/chart-data/utils/compute-gap-filling-date-range.util';
 import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
 import { filterOutUnresolvedRelationBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-unresolved-relation-buckets.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
@@ -130,7 +133,10 @@ export class LineChartDataService {
         : LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS +
           EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
-      const userTimezone = configuration.timezone ?? 'UTC';
+      const timeZone = resolveChartTimeZone({
+        viewerTimeZone,
+        widgetTimeZone: configuration.timezone,
+      });
       const firstDayOfTheWeek: CalendarStartDay =
         (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
         CalendarStartDay.MONDAY;
@@ -151,9 +157,8 @@ export class LineChartDataService {
         filter: configuration.filter,
         dashboardFilterBindings: configuration.dashboardFilterBindings,
         dashboardFilterValues,
-        viewerTimeZone,
         dateGranularity: configuration.primaryAxisDateGranularity,
-        userTimezone,
+        userTimezone: timeZone,
         firstDayOfTheWeek,
         limit,
         primaryAxisOrderBy: configuration.primaryAxisOrderBy,
@@ -204,6 +209,24 @@ export class LineChartDataService {
 
       const i18n = this.i18nService.getI18nInstance(locale);
 
+      const gapFillingDateRange = computeGapFillingDateRange({
+        dashboardFilterValues,
+        dashboardFilterBindings: configuration.dashboardFilterBindings,
+        primaryAxisGroupByFieldMetadataId:
+          configuration.primaryAxisGroupByFieldMetadataId,
+        primaryAxisGroupBySubFieldName:
+          configuration.primaryAxisGroupBySubFieldName,
+        primaryAxisDateGranularity: configuration.primaryAxisDateGranularity,
+        widgetFilter: configuration.filter,
+        fields: getFlatFieldsFromFlatObjectMetadata(
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        ),
+        timeZone,
+        firstDayOfTheWeek,
+        isQueryResultCutByLimit: rawResults.length >= limit,
+      });
+
       if (isTwoDimensional && isDefined(secondaryAxisGroupByField)) {
         return transformToTwoDimensionalLineChartData({
           filteredRawResults: resolvedResults,
@@ -211,7 +234,8 @@ export class LineChartDataService {
           secondaryAxisGroupByField,
           aggregateField,
           configuration,
-          userTimezone,
+          userTimezone: timeZone,
+          gapFillingDateRange,
           firstDayOfTheWeek,
           seriesIdPrefix,
           primaryRelationLabelResolution: relationLabelResolutions.primary,
@@ -225,7 +249,8 @@ export class LineChartDataService {
         primaryAxisGroupByField,
         aggregateField,
         configuration,
-        userTimezone,
+        userTimezone: timeZone,
+        gapFillingDateRange,
         firstDayOfTheWeek,
         seriesIdPrefix,
         relationLabelResolution: relationLabelResolutions.primary,
