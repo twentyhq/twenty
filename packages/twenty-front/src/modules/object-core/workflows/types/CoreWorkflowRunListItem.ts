@@ -1,11 +1,10 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type WorkflowRunStatus } from '@/workflow/types/Workflow';
+import { type WorkflowRun } from '@/workflow/types/Workflow';
 
-export type CoreWorkflowRunListItem = ObjectRecord & {
-  name: string | null;
-  status: WorkflowRunStatus;
-  createdAt: string;
-  startedAt: string | null;
-  endedAt: string | null;
-  coreWorkflowVersionId: string | null;
-};
+export type CoreWorkflowRunListItem = ObjectRecord &
+  Pick<
+    WorkflowRun,
+    'name' | 'status' | 'createdAt' | 'endedAt' | 'coreWorkflowVersionId'
+  > & {
+    startedAt: string | null;
+  };
