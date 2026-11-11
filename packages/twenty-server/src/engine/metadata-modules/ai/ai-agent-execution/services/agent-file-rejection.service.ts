@@ -6,21 +6,16 @@ import {
   type LanguageModelV4FilePart,
   type LanguageModelV4Prompt,
   type LanguageModelV4TextPart,
-  type LanguageModelV4Usage,
 } from '@ai-sdk/provider';
-import { isString } from '@sniptt/guards';
 import { APICallError, type LanguageModelMiddleware } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentFileDeliveryState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-file-delivery-state.type';
 import { buildFilePlaceholder } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-file-placeholder.util';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 
 const FILE_REJECTION_STATUS_CODES = new Set([400, 413, 422]);
 const PROMPT_TOO_LONG_ERROR_PATTERN =
   /context.length|prompt is too long|input is too long|maximum prompt length|maximum number of tokens/i;
-const FILE_CHECK_PROMPT = 'Reply with OK.';
-const FILE_CHECK_MAX_OUTPUT_TOKENS = 16;
 
 type FileFallbackArguments = {
   params: LanguageModelV4CallOptions;
@@ -28,15 +23,9 @@ type FileFallbackArguments = {
   deliveryState: AgentFileDeliveryState;
 };
 
-type FilePartCheckArguments = FileFallbackArguments & {
-  part: LanguageModelV4FilePart;
-};
-
 @Injectable()
 export class AgentFileRejectionService {
   private readonly logger = new Logger(AgentFileRejectionService.name);
-
-  constructor(private readonly aiBillingService: AiBillingService) {}
 
   buildMiddleware(
     deliveryState: AgentFileDeliveryState,
@@ -53,7 +42,14 @@ export class AgentFileRejectionService {
       }),
       wrapStream: async ({ doStream, params, model }) => {
         try {
-          return await doStream();
+          const stream = await doStream();
+
+          await this.markFilesDelivered({
+            prompt: params.prompt,
+            deliveryState,
+          });
+
+          return stream;
         } catch (error) {
           return this.retryWithoutRefusedFiles({
             fileRejection: error,
@@ -77,7 +73,8 @@ export class AgentFileRejectionService {
 
     const buildFallbackPrompts = [
       (fallback: FileFallbackArguments) => this.sendFileUrlsAsBytes(fallback),
-      (fallback: FileFallbackArguments) => this.removeRejectedFiles(fallback),
+      (fallback: FileFallbackArguments) =>
+        this.removeUndeliveredFiles(fallback),
     ];
 
     for (const buildFallbackPrompt of buildFallbackPrompts) {
@@ -104,13 +101,23 @@ export class AgentFileRejectionService {
       currentParams = { ...currentParams, prompt };
 
       try {
-        return await model.doStream(currentParams);
+        const stream = await model.doStream(currentParams);
+
+        await this.markFilesDelivered({
+          prompt: currentParams.prompt,
+          deliveryState,
+        });
+
+        return stream;
       } catch (nextRejection) {
         rejection = nextRejection;
       }
     }
 
-    if (!this.isFileRejection(rejection, currentParams.prompt)) {
+    if (
+      !this.isFileRejection(rejection, currentParams.prompt) ||
+      !this.isPromptTooLong(rejection)
+    ) {
       throw rejection;
     }
 
@@ -247,126 +254,80 @@ export class AgentFileRejectionService {
     return { ...part, data: { type: 'data' as const, data: bytes } };
   }
 
-  private async removeRejectedFiles(
-    fallback: FileFallbackArguments,
-  ): Promise<LanguageModelV4Prompt> {
-    const rejectedFileParts = new Set<LanguageModelV4FilePart>();
+  private async removeUndeliveredFiles({
+    params: { prompt },
+    deliveryState,
+  }: FileFallbackArguments): Promise<LanguageModelV4Prompt> {
+    const undeliveredFileParts = new Set<LanguageModelV4FilePart>();
 
-    for (const part of this.getPromptFileParts(fallback.params.prompt)) {
-      if (await this.isFilePartRejected({ ...fallback, part })) {
-        rejectedFileParts.add(part);
+    for (const part of this.getPromptFileParts(prompt)) {
+      const fileId = await this.getFilePartFileId({
+        part,
+        fileLoader: deliveryState.fileLoader,
+      });
+
+      if (isDefined(fileId) && deliveryState.deliveredFileIds.has(fileId)) {
+        continue;
+      }
+
+      undeliveredFileParts.add(part);
+
+      if (isDefined(fileId)) {
+        deliveryState.rejectedFileIds.add(fileId);
       }
     }
 
-    if (rejectedFileParts.size === 0) {
-      return fallback.params.prompt;
+    if (undeliveredFileParts.size === 0) {
+      return prompt;
     }
 
     return this.replaceFileParts({
-      prompt: fallback.params.prompt,
+      prompt,
       replaceFilePart: (part) =>
-        rejectedFileParts.has(part)
+        undeliveredFileParts.has(part)
           ? buildFilePlaceholder({ part, reason: 'rejected' })
           : part,
     });
   }
 
-  private async isFilePartRejected(
-    filePartCheck: FilePartCheckArguments,
-  ): Promise<boolean> {
-    const { part, deliveryState } = filePartCheck;
-
-    if (part.data.type !== 'data' || isString(part.data.data)) {
-      return false;
-    }
-
-    const fileBytes = part.data.data;
-    const fileId = deliveryState.fileLoader.getFileIdOfBytes(fileBytes);
-
-    if (!isDefined(fileId)) {
-      return this.sendFilePartCheck(filePartCheck);
-    }
-
-    const previousRejection = deliveryState.fileRejectionsByFileId.get(fileId);
-
-    if (isDefined(previousRejection)) {
-      return previousRejection;
-    }
-
-    const isRejected = await this.sendFilePartCheck(filePartCheck);
-
-    deliveryState.fileRejectionsByFileId.set(fileId, isRejected);
-
-    return isRejected;
-  }
-
-  private async sendFilePartCheck({
-    part,
-    params: { abortSignal, headers, providerOptions },
-    model,
-    deliveryState,
-  }: FilePartCheckArguments): Promise<boolean> {
-    const prompt: LanguageModelV4Prompt = [
-      {
-        role: 'user',
-        content: [part, { type: 'text', text: FILE_CHECK_PROMPT }],
-      },
-    ];
-
-    try {
-      const { usage } = await model.doGenerate({
-        prompt,
-        maxOutputTokens: FILE_CHECK_MAX_OUTPUT_TOKENS,
-        abortSignal,
-        headers,
-        providerOptions,
-      });
-
-      this.billFilePartCheck({ usage, deliveryState });
-
-      return false;
-    } catch (error) {
-      if (!this.isFileRejection(error, prompt)) {
-        throw error;
-      }
-
-      return true;
-    }
-  }
-
-  private billFilePartCheck({
-    usage: { inputTokens, outputTokens },
-    deliveryState: { modelId, workspaceId, operationType, spenders },
+  private async markFilesDelivered({
+    prompt,
+    deliveryState: { fileLoader, deliveredFileIds },
   }: {
-    usage: LanguageModelV4Usage;
+    prompt: LanguageModelV4Prompt;
     deliveryState: Pick<
       AgentFileDeliveryState,
-      'modelId' | 'workspaceId' | 'operationType' | 'spenders'
+      'fileLoader' | 'deliveredFileIds'
     >;
-  }): void {
-    void this.aiBillingService
-      .calculateAndBillUsage({
-        modelId,
-        billingInput: {
-          usage: {
-            inputTokens: inputTokens.total,
-            outputTokens: outputTokens.total,
-            inputTokenDetails: {
-              cacheReadTokens: inputTokens.cacheRead,
-              cacheWriteTokens: inputTokens.cacheWrite,
-            },
-            outputTokenDetails: { reasoningTokens: outputTokens.reasoning },
-          },
-        },
-        workspaceId,
-        operationType,
-        spenders,
-      })
-      .catch((error: unknown) =>
-        this.logger.error(
-          `Could not bill a file check in workspace ${workspaceId}`,
-          error instanceof Error ? error.stack : error,
-        ),
-      );
+  }): Promise<void> {
+    const fileIds = await Promise.all(
+      this.getPromptFileParts(prompt).map((part) =>
+        this.getFilePartFileId({ part, fileLoader }),
+      ),
+    );
+
+    for (const fileId of fileIds.filter(isDefined)) {
+      deliveredFileIds.add(fileId);
+    }
+  }
+
+  private async getFilePartFileId({
+    part,
+    fileLoader,
+  }: {
+    part: LanguageModelV4FilePart;
+    fileLoader: AgentFileDeliveryState['fileLoader'];
+  }): Promise<string | undefined> {
+    if (part.data.type === 'url') {
+      const file = await fileLoader.loadFile(part.data.url.toString());
+
+      return file?.id;
+    }
+
+    if (part.data.type === 'data' && part.data.data instanceof Uint8Array) {
+      return fileLoader.getFileIdOfBytes(part.data.data);
+    }
+
+    return undefined;
   }
 }

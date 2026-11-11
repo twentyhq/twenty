@@ -14,5 +14,6 @@ export type AgentFileDeliveryState = {
   fileLoader: AgentRunFileLoader;
   canSendSignedUrls: boolean;
   areFilesRejected: boolean;
-  fileRejectionsByFileId: Map<string, boolean>;
+  deliveredFileIds: Set<string>;
+  rejectedFileIds: Set<string>;
 };

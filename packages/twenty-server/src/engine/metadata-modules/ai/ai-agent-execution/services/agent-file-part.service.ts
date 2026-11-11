@@ -77,7 +77,8 @@ export class AgentFilePartService {
       }),
       canSendSignedUrls: this.canSendSignedUrls(),
       areFilesRejected: false,
-      fileRejectionsByFileId: new Map(),
+      deliveredFileIds: new Set(),
+      rejectedFileIds: new Set(),
     };
 
     return {
@@ -120,20 +121,38 @@ export class AgentFilePartService {
     deliveryState: AgentFileDeliveryState;
   }): Promise<ModelMessage[]> {
     const messagesWithInputFiles = insertModelInputFileMessages(messages);
-    const newestFilePartsFirst = messagesWithInputFiles
-      .flatMap((message) =>
+    const originalMessages = new Set(messages);
+    const currentTurnStartIndex = messagesWithInputFiles.reduce(
+      (startIndex, message, index) =>
+        message.role === 'user' && originalMessages.has(message)
+          ? index
+          : startIndex,
+      0,
+    );
+    const getFileParts = (turnMessages: ModelMessage[]) =>
+      turnMessages.flatMap((message) =>
         message.role === 'user' && isArray(message.content)
           ? message.content.filter((part) => part.type === 'file')
           : [],
-      )
-      .reverse();
+      );
     const budget: FileBudget = {
       remainingSizeBytes: deliveryState.limits.maxTotalSizeBytes,
       remainingFileCount: deliveryState.limits.maxFileCount,
     };
     const preparedParts = new Map<UserContentPart, FilePart | TextPart>();
 
-    for (const part of newestFilePartsFirst) {
+    for (const part of getFileParts(
+      messagesWithInputFiles.slice(0, currentTurnStartIndex),
+    )) {
+      preparedParts.set(
+        part,
+        buildFilePlaceholder({ part, reason: 'earlierTurn' }),
+      );
+    }
+
+    for (const part of getFileParts(
+      messagesWithInputFiles.slice(currentTurnStartIndex),
+    ).reverse()) {
       preparedParts.set(
         part,
         await this.prepareFilePart({ part, deliveryState, budget }),
@@ -157,7 +176,7 @@ export class AgentFilePartService {
     deliveryState: {
       areFilesRejected,
       fileLoader,
-      fileRejectionsByFileId,
+      rejectedFileIds,
       nativeMimeTypes,
       limits,
       canSendSignedUrls,
@@ -169,7 +188,7 @@ export class AgentFilePartService {
       AgentFileDeliveryState,
       | 'areFilesRejected'
       | 'fileLoader'
-      | 'fileRejectionsByFileId'
+      | 'rejectedFileIds'
       | 'nativeMimeTypes'
       | 'limits'
       | 'canSendSignedUrls'
@@ -192,7 +211,7 @@ export class AgentFilePartService {
       return buildFilePlaceholder({ part, reason: 'unavailable' });
     }
 
-    if (fileRejectionsByFileId.get(file.id)) {
+    if (rejectedFileIds.has(file.id)) {
       return buildFilePlaceholder({ part, reason: 'rejected' });
     }
 
