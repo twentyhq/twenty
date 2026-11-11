@@ -8,20 +8,22 @@ import { type AddConditionToWorkflowDatabaseEventTriggersCommand } from 'src/dat
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const buildDatabaseEventTrigger = ({
+  eventName = 'company.created',
   type,
   operand,
   value,
   path,
 }: {
+  eventName?: string;
   type: string;
   operand: string;
   value: string;
   path: string;
 }) => ({
-  name: 'Company is created',
+  name: 'Record is created',
   type: 'DATABASE_EVENT',
   settings: {
-    eventName: 'company.created',
+    eventName,
     outputSchema: {},
     filter: {
       stepFilterGroups: [{ id: 'root', logicalOperator: 'AND' }],
@@ -114,6 +116,16 @@ describe('2-58 workspace command - add condition to workflow database event trig
       }),
     );
 
+    const relatedRecordVersionId = await createVersionWithTrigger(
+      buildDatabaseEventTrigger({
+        eventName: 'person.created',
+        type: 'TEXT',
+        operand: 'IS',
+        value: 'Acme',
+        path: 'company.name',
+      }),
+    );
+
     await runCommand({ dryRun: true });
     expect(
       (await readTriggerSettings(convertibleVersionId)).condition,
@@ -130,6 +142,9 @@ describe('2-58 workspace command - add condition to workflow database event trig
     ).toBeUndefined();
     expect(
       (await readTriggerSettings(unknownFieldVersionId)).condition,
+    ).toBeUndefined();
+    expect(
+      (await readTriggerSettings(relatedRecordVersionId)).condition,
     ).toBeUndefined();
 
     await runCommand();

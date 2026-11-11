@@ -208,9 +208,14 @@ const toApiShapedRecord = ({
 }): ConditionRecord => {
   const apiShapedRecord = { ...record };
 
-  for (const { fieldName, joinColumnName } of relations) {
+  for (const { fieldName, joinColumnName, targetFieldNames } of relations) {
     const relatedRecordId = readRecordId(record[joinColumnName]);
-    const loadedRelatedRecords = relatedRecordsByRelation.get(fieldName);
+    // Per side, so a previous.<relation> read doesn't change how the current relation reads
+    const loadedRelatedRecords = targetFieldNames.some(
+      (targetFieldName) => targetFieldName !== 'id',
+    )
+      ? relatedRecordsByRelation.get(fieldName)
+      : undefined;
 
     if (!isDefined(relatedRecordId)) {
       apiShapedRecord[fieldName] = null;
