@@ -7,7 +7,7 @@ import {
   type FeatureFlagKey,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
@@ -15,7 +15,7 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
-import { resolveOperationTypesGrantableByRecordShare } from 'src/engine/permissions/record-share/utils/resolve-operation-types-grantable-by-record-share.util';
+import { canRecordShareGrantOperation } from 'src/engine/permissions/internal/record-share/utils/can-record-share-grant-operation.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -58,12 +58,11 @@ export class RecordSharePrincipalService {
     if (
       namedPrincipals.length === 0 ||
       recordIds.length === 0 ||
-      isNonEmptyArray(
-        resolveOperationTypesGrantableByRecordShare({
-          flatObjectMetadata,
-          featureFlagsMap,
-        }),
-      )
+      canRecordShareGrantOperation({
+        flatObjectMetadata,
+        featureFlagsMap,
+        operationType: 'read',
+      })
     ) {
       return;
     }
