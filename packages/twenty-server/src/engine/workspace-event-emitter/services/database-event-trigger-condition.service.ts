@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -9,6 +10,7 @@ import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
@@ -90,13 +92,33 @@ export class DatabaseEventTriggerConditionService {
         throw new Error(`Cannot read the records of "${relationFieldName}"`);
       }
 
+      // A composite field is stored as one column per subfield (addressCity...)
+      const columnNames = targetObjectMetadata.fieldIds
+        .map((fieldId) =>
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: fieldId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          }),
+        )
+        .filter(isDefined)
+        .filter((field) => fieldNames.includes(field.name))
+        .flatMap((field) => {
+          const compositeType = compositeTypeDefinitions.get(field.type);
+
+          return isDefined(compositeType)
+            ? compositeType.properties.map((property) =>
+                computeCompositeColumnName(field, property),
+              )
+            : [field.name];
+        });
+
       return this.workspaceOrmManager.executeInWorkspaceContext(
         () =>
           this.workspaceOrmManager
             .getRepository(targetObjectMetadata.nameSingular)
             .find({
               where: { id: In(recordIds) },
-              select: ['id', ...fieldNames],
+              select: ['id', ...columnNames],
             }),
         buildApplicationAuthContext({ workspace, application, agentId }),
       );

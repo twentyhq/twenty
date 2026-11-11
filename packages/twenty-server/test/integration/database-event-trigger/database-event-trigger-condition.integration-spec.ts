@@ -31,7 +31,12 @@ describe('Database event trigger conditions on related records', () => {
         objectMetadataPluralName: 'companies',
         gqlFields: 'id',
         data: [
-          { id: BIG_COMPANY_ID, name: 'Big Co', employees: 500 },
+          {
+            id: BIG_COMPANY_ID,
+            name: 'Big Co',
+            employees: 500,
+            address: { addressCity: 'Paris' },
+          },
           { id: SMALL_COMPANY_ID, name: 'Small Co', employees: 5 },
         ],
       }),
@@ -93,6 +98,19 @@ describe('Database event trigger conditions on related records', () => {
     const { events, conditionErrorMessage } = await filterOpportunityEvents(
       'company.employees > 100',
       [bigCompanyEvent, smallCompanyEvent, noCompanyEvent],
+    );
+
+    expect(conditionErrorMessage).toBeUndefined();
+    expect(events).toEqual([bigCompanyEvent]);
+  });
+
+  it('matches on a subfield of a composite field of the related record', async () => {
+    const bigCompanyEvent = buildOpportunityCreatedEvent(BIG_COMPANY_ID);
+    const smallCompanyEvent = buildOpportunityCreatedEvent(SMALL_COMPANY_ID);
+
+    const { events, conditionErrorMessage } = await filterOpportunityEvents(
+      "company.address.addressCity == 'Paris'",
+      [bigCompanyEvent, smallCompanyEvent],
     );
 
     expect(conditionErrorMessage).toBeUndefined();
