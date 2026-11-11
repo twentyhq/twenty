@@ -580,6 +580,83 @@ describe('Record access through related record paths', () => {
     }
   });
 
+  it('should list the records related to a private source record its creator reads', async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
+    const createdProject = await makeGraphqlApiRequestWithMemberRole(
+      createOneOperationFactory({
+        objectMetadataSingularName: PROJECT_NAME,
+        gqlFields: 'id',
+        data: { name: 'Readable project of Jony' },
+      }),
+    );
+
+    expect(createdProject.body.errors).toBeUndefined();
+
+    const projectOfJonyId = Object.values<{ id: string }>(
+      createdProject.body.data,
+    )[0].id;
+    const taskOfProjectOfJonyId = await createRecord({
+      objectMetadataSingularName: TASK_NAME,
+      data: {
+        name: 'Task of the project of Jony',
+        [projectFieldNameOnTask]: projectOfJonyId,
+      },
+    });
+
+    try {
+      const response = await setRecordPrivate({
+        objectMetadataId: projectObjectMetadataId,
+        recordId: projectOfJonyId,
+        isPrivate: true,
+        accessToken: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      await waitForAllJobsToFinish();
+
+      expect(await findTaskIdsListedByJony()).toEqual(
+        [taskOfProjectId, taskOfProjectOfJonyId].sort(),
+      );
+    } finally {
+      await runAndWaitForJobs(
+        deleteOneOperationFactory({
+          objectMetadataSingularName: TASK_NAME,
+          gqlFields: 'id',
+          recordId: taskOfProjectOfJonyId,
+        }),
+      );
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    }
+  });
+
+  it('should let a record be updated through the source record it is related to', async () => {
+    const updateTaskAsJony = (recordId: string) =>
+      makeGraphqlApiRequestWithMemberRole(
+        updateOneOperationFactory({
+          objectMetadataSingularName: TASK_NAME,
+          gqlFields: 'id',
+          recordId,
+          data: { name: 'Renamed by Jony' },
+        }),
+      );
+
+    expect(
+      (await updateTaskAsJony(taskOfProjectId)).body.errors,
+    ).toBeUndefined();
+    expect(
+      (await updateTaskAsJony(taskWithoutProjectId)).body.errors,
+    ).toBeDefined();
+  });
+
   it('should stop granting once the path is deleted and grant again once it is back', async () => {
     await deleteRelatedRecordPath(pathId);
 
