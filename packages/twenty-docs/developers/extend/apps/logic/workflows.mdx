@@ -88,7 +88,7 @@ A reference Twenty can't resolve fails the install.
 |------|-----------|----------|
 | `MANUAL` | A user launches it | `availability` (optional): `GLOBAL`, or `SINGLE_RECORD` / `BULK_RECORDS` with an `objectUniversalIdentifier`. Adds a command menu entry, with an optional `icon` and `isPinned`. |
 | `CRON` | On a schedule | `type`: `DAYS`, `HOURS` or `MINUTES` with a `schedule`, or `CUSTOM` with a cron `pattern`. |
-| `DATABASE_EVENT` | A record changes | `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), optional `fieldUniversalIdentifiers` to watch (updates and upserts only) and `filter`. |
+| `DATABASE_EVENT` | A record changes | `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), optional `fieldUniversalIdentifiers` to watch (updates and upserts only), and an optional `condition` ([rule expression](/user-guide/data-model/capabilities/validation-rules#write-a-condition), with `previous.<field>` on updates) or `filter`. A set `condition` is used instead of `filter`. |
 | `WEBHOOK` | An HTTP request reaches the workflow URL | `httpMethod` (`GET` or `POST`), and `expectedBody` for `POST`. |
 
 A manual workflow without `availability` gets no command menu entry.
