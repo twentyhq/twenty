@@ -164,7 +164,6 @@ export class RecordAccessGroupRepository {
     const nextAliases = [...followingHopAliases, '"target"'];
     const writtenJoinColumn = `${nextAliases[0]}.${escapeIdentifier(writtenHop.targetColumnName)}`;
 
-    // Values before the write still lead to the records the written ones no longer reach
     const rows = await this.recordPermissionQueryService.execute<{
       id: string;
     }>({

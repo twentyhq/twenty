@@ -1,4 +1,4 @@
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -6,11 +6,11 @@ const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
 
 const buildObject = (nameSingular: string) =>
-  ({
+  getFlatObjectMetadataMock({
     id: nameSingular,
     universalIdentifier: nameSingular,
     nameSingular,
-  }) as FlatObjectMetadata;
+  });
 
 const company = buildObject('company');
 const noteTarget = buildObject('noteTarget');
@@ -52,12 +52,7 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
   it('should pass on only the own groups of the source through a regular path', () => {
     const { sql, parameters } = buildNoteQuery([
       {
-        resolvedPath: {
-          isInherent: false,
-          sourceFlatObjectMetadata: company,
-          targetObjectMetadataId: note.id,
-          hops: COMPANY_TO_NOTE_HOPS,
-        },
+        hops: COMPANY_TO_NOTE_HOPS,
         sourceObjectCompactIds: [12, 13],
         isSourcePrivacyApplicable: true,
       },
@@ -75,12 +70,7 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
   it('should pass on every group of the source through an inherent path', () => {
     const { sql, parameters } = buildNoteQuery([
       {
-        resolvedPath: {
-          isInherent: true,
-          sourceFlatObjectMetadata: company,
-          targetObjectMetadataId: note.id,
-          hops: COMPANY_TO_NOTE_HOPS,
-        },
+        hops: COMPANY_TO_NOTE_HOPS,
         sourceObjectCompactIds: null,
         isSourcePrivacyApplicable: false,
       },

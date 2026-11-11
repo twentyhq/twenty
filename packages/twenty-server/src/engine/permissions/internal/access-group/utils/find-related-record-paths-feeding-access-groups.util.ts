@@ -10,7 +10,6 @@ import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 
-// A path only carries access when RLS restricts its source, so workspaces without rules compute nothing
 export const findRelatedRecordPathsFeedingAccessGroups = ({
   rolesPermissions,
   flatObjectMetadataMaps,

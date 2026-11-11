@@ -17,7 +17,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
   targetTableAlias,
   pathIndex,
   relatedRecordPathAccessGroupSource: {
-    resolvedPath: { hops },
+    hops,
     sourceObjectCompactIds,
     isSourcePrivacyApplicable,
   },

@@ -2,10 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { findEnabledFlatRelatedRecordPathMaps } from 'src/engine/permissions/internal/related-record-path/utils/find-enabled-flat-related-record-path-maps.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { findWorkspaceMemberBoundPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-bound-predicates.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -57,11 +57,11 @@ export class PermissionsMetadataMapsService {
               .getOrRecompute(workspaceId, ['flatWorkspaceMemberMaps'])
               .then((cache) => cache.flatWorkspaceMemberMaps)
           : undefined,
-        featureFlagsMap[FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED] === true
-          ? this.workspaceCacheService
-              .getOrRecompute(workspaceId, ['flatRelatedRecordPathMaps'])
-              .then((cache) => cache.flatRelatedRecordPathMaps)
-          : undefined,
+        findEnabledFlatRelatedRecordPathMaps({
+          workspaceCacheService: this.workspaceCacheService,
+          workspaceId,
+          featureFlagsMap,
+        }),
       ]);
 
     return {

@@ -3,7 +3,6 @@
 import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -34,6 +33,7 @@ import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permission
 import { arePrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/are-private-records-enabled.util';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
+import { findEnabledFlatRelatedRecordPathMaps } from 'src/engine/permissions/internal/related-record-path/utils/find-enabled-flat-related-record-path-maps.util';
 import { resolveRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/resolve-related-record-paths.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -102,7 +102,6 @@ export class RecordAccessGroupComputationService {
       ...propagatedFromObjectMetadataIds,
       objectMetadataId,
     ];
-    // Regular paths pass on own groups only, which a propagated recompute leaves unchanged
     const followingObjectMetadataIds = new Set(
       metadataMaps.resolvedRelatedRecordPaths
         .filter(
@@ -168,30 +167,38 @@ export class RecordAccessGroupComputationService {
       flatEntityId: objectMetadataId,
       flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
     });
+    const feedingRelatedRecordPaths = findRelatedRecordPathsFeedingAccessGroups(
+      { ...metadataMaps, objectMetadataId },
+    );
+    const accessGroups = await this.findAccessGroupsOfObjects({
+      workspaceId,
+      objectMetadataIds: [
+        objectMetadataId,
+        ...feedingRelatedRecordPaths
+          .filter(({ isInherent }) => !isInherent)
+          .map(({ sourceFlatObjectMetadata }) => sourceFlatObjectMetadata.id),
+      ],
+      transactionScope,
+    });
     const relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[] =
-      [];
-
-    for (const resolvedPath of findRelatedRecordPathsFeedingAccessGroups({
-      ...metadataMaps,
-      objectMetadataId,
-    })) {
-      relatedRecordPathAccessGroupSources.push({
-        resolvedPath,
-        sourceObjectCompactIds: resolvedPath.isInherent
-          ? null
-          : (
-              await this.findObjectAccessGroups({
-                workspaceId,
-                objectMetadataId: resolvedPath.sourceFlatObjectMetadata.id,
-                transactionScope,
-              })
-            ).map(({ compactId }) => compactId),
-        isSourcePrivacyApplicable: arePrivateRecordsEnabled({
-          flatObjectMetadata: resolvedPath.sourceFlatObjectMetadata,
-          featureFlagsMap: metadataMaps.featureFlagsMap,
+      feedingRelatedRecordPaths.map(
+        ({ hops, isInherent, sourceFlatObjectMetadata }) => ({
+          hops,
+          sourceObjectCompactIds: isInherent
+            ? null
+            : accessGroups
+                .filter(
+                  (accessGroup) =>
+                    accessGroup.objectMetadataId ===
+                    sourceFlatObjectMetadata.id,
+                )
+                .map(({ compactId }) => compactId),
+          isSourcePrivacyApplicable: arePrivateRecordsEnabled({
+            flatObjectMetadata: sourceFlatObjectMetadata,
+            featureFlagsMap: metadataMaps.featureFlagsMap,
+          }),
         }),
-      });
-    }
+      );
 
     return this.recordAccessGroupRepository.updateRecordAccessGroupIds({
       workspaceId,
@@ -199,11 +206,9 @@ export class RecordAccessGroupComputationService {
       recordAccessGroupSQLConditions: buildRecordAccessGroupSQLConditions({
         flatObjectMetadata,
         metadataMaps,
-        accessGroups: await this.findObjectAccessGroups({
-          workspaceId,
-          objectMetadataId,
-          transactionScope,
-        }),
+        accessGroups: accessGroups.filter(
+          (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
+        ),
       }),
       relatedRecordPathAccessGroupSources,
       recordIds,
@@ -282,7 +287,6 @@ export class RecordAccessGroupComputationService {
           continue;
         }
 
-        // A source joined by its id reaches the same records before and after, so only a change of its groups matters
         const isOnlyFollowedWhenChanged =
           hopIndex === 0 && writtenHop.sourceColumnName === 'id';
         const recordIds = isOnlyFollowedWhenChanged
@@ -489,19 +493,19 @@ export class RecordAccessGroupComputationService {
     return relatedRecords;
   }
 
-  private findObjectAccessGroups({
+  private findAccessGroupsOfObjects({
     workspaceId,
-    objectMetadataId,
+    objectMetadataIds,
     transactionScope,
   }: {
     workspaceId: string;
-    objectMetadataId: string;
+    objectMetadataIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<AccessGroup[]> {
     if (isDefined(transactionScope)) {
-      return this.accessGroupRepository.findObjectAccessGroups({
+      return this.accessGroupRepository.findAccessGroupsOfObjects({
         workspaceId,
-        objectMetadataId,
+        objectMetadataIds,
         transactionScope,
       });
     }
@@ -509,9 +513,9 @@ export class RecordAccessGroupComputationService {
     // The sync queues this job before writing, so groups are read once its writes are done
     return this.cacheLockService.withLock(
       () =>
-        this.accessGroupRepository.findObjectAccessGroups({
+        this.accessGroupRepository.findAccessGroupsOfObjects({
           workspaceId,
-          objectMetadataId,
+          objectMetadataIds,
         }),
       buildAccessGroupSyncLockKey(workspaceId),
       ACCESS_GROUP_SYNC_LOCK_OPTIONS,
@@ -572,22 +576,15 @@ export class RecordAccessGroupComputationService {
         'rolesPermissions',
       ],
     );
-    const flatRelatedRecordPathMaps =
-      metadataMaps.featureFlagsMap[
-        FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED
-      ] === true
-        ? (
-            await this.workspaceCacheService.getOrRecompute(workspaceId, [
-              'flatRelatedRecordPathMaps',
-            ])
-          ).flatRelatedRecordPathMaps
-        : undefined;
-
     return {
       ...metadataMaps,
       resolvedRelatedRecordPaths: resolveRelatedRecordPaths({
         ...metadataMaps,
-        flatRelatedRecordPathMaps,
+        flatRelatedRecordPathMaps: await findEnabledFlatRelatedRecordPathMaps({
+          workspaceCacheService: this.workspaceCacheService,
+          workspaceId,
+          featureFlagsMap: metadataMaps.featureFlagsMap,
+        }),
       }),
     };
   }

@@ -36,6 +36,5 @@ export const buildRecordAccessGroupIdsExpression = ({
     return ownAccessGroupIdsExpression;
   }
 
-  // Sorted so an unchanged record compares equal and is not rewritten
   return `ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(${[ownAccessGroupIdsExpression, ...inheritedAccessGroupIdsExpressions].join(' || ')}) AS "accessGroupId" ORDER BY "accessGroupId")`;
 };

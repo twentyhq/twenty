@@ -1,3 +1,5 @@
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
+
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -38,19 +40,33 @@ const buildPath = ({
   hops: [],
 });
 
+const OBJECT_RECORDS_PERMISSIONS_WITH_RLS_RULE: ObjectRecordsPermissions = {
+  canCreateAllRecords: false,
+  canReadAllRecords: false,
+  canUpdateAllRecords: false,
+  canSoftDeleteAllRecords: false,
+  canDestroyAllRecords: false,
+  unreadableFields: [],
+  uneditableFields: [],
+  rowLevelRecordsPermissions: [],
+};
+
 const buildRolesPermissions = (
   objectNamesWithRlsRule: string[],
-): Record<string, RoleRecordsPermissions> =>
-  ({
-    sales: {
-      objects: Object.fromEntries(
-        objectNamesWithRlsRule.map((objectName) => [
-          objectName,
-          { rowLevelRecordsPermissions: [] },
-        ]),
-      ),
-    },
-  }) as unknown as Record<string, RoleRecordsPermissions>;
+): Record<string, RoleRecordsPermissions> => ({
+  sales: {
+    canReadAllRecords: true,
+    canUpdateAllRecords: true,
+    canSoftDeleteAllRecords: true,
+    canDestroyAllRecords: true,
+    objects: Object.fromEntries(
+      objectNamesWithRlsRule.map((objectName) => [
+        objectName,
+        OBJECT_RECORDS_PERMISSIONS_WITH_RLS_RULE,
+      ]),
+    ),
+  },
+});
 
 const REGION_TO_COMPANY = buildPath({
   source: REGION,

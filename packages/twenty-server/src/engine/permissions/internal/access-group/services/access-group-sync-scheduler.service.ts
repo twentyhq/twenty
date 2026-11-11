@@ -55,7 +55,6 @@ export class AccessGroupSyncSchedulerService {
         isWorkspaceJob: true,
         workspaceId,
         retryLimit: 3,
-        // One recompute per object and origin at a time, and at most one waiting behind it
         deduplication: {
           id: `record-access-group-ids:${workspaceId}:${objectMetadataId}${propagatedFromObjectMetadataIds.length > 0 ? ':propagated' : ''}`,
           keepLastIfActive: true,

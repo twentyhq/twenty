@@ -55,7 +55,6 @@ export const buildRelatedRecordPathsSQLCondition = ({
     flatObjectMetadata: FlatObjectMetadata,
   ) => boolean;
 }): SQLCondition | boolean => {
-  // Known ids follow the paths listings follow, so both answer the same
   const resolvedRelatedRecordPaths = areRecordAccessGroupsEnabled({
     featureFlagsMap: metadataMaps.featureFlagsMap,
   })

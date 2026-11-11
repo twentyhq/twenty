@@ -154,7 +154,6 @@ export class RecordAccessGroupWriteService {
         {
           workspaceId,
           objectMetadataId,
-          // A soft delete or a restore changes what the record passes on without changing its groups
           changedRecordIds: isRecomputingWrittenRecords
             ? changedRecordIds
             : writtenRecordIds,

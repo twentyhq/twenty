@@ -22,7 +22,7 @@ export class SyncAccessGroupsJob {
   }: SyncAccessGroupsJobData): Promise<void> {
     await this.accessGroupSyncService.syncAccessGroups(workspaceId);
 
-    if (isRecomputingRelatedRecordPathTargets === true) {
+    if (isRecomputingRelatedRecordPathTargets) {
       await this.recordAccessGroupComputationService.scheduleRecomputeOfRelatedRecordPathTargets(
         { workspaceId },
       );
