@@ -1,9 +1,9 @@
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
+import { getRoleWithoutObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getRoleWithoutObjectRowLevelPermissionRules';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
 import { settingsRoleListedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleListedObjectOverrideIdsFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useSettingsRoleObjectOverrides = (roleId: string) => {
   const setSettingsDraftRole = useSetAtomFamilyState(
@@ -46,20 +46,12 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
 
   const removeObjectOverride = (objectMetadataId: string) => {
     resetObjectPermission(objectMetadataId);
-    setSettingsDraftRole((currentSettingsDraftRole) => ({
-      ...currentSettingsDraftRole,
-      rowLevelPermissionPredicates:
-        currentSettingsDraftRole.rowLevelPermissionPredicates?.filter(
-          (predicate) =>
-            predicate.objectMetadataId !== objectMetadataId ||
-            isDefined(predicate.relationFieldMetadataId),
-        ),
-      rowLevelPermissionPredicateGroups:
-        currentSettingsDraftRole.rowLevelPermissionPredicateGroups?.filter(
-          (predicateGroup) =>
-            predicateGroup.objectMetadataId !== objectMetadataId,
-        ),
-    }));
+    setSettingsDraftRole((currentSettingsDraftRole) =>
+      getRoleWithoutObjectRowLevelPermissionRules({
+        role: currentSettingsDraftRole,
+        objectMetadataId,
+      }),
+    );
     setSettingsRoleListedObjectOverrideIds((currentIds) =>
       currentIds.filter((id) => id !== objectMetadataId),
     );

@@ -26,6 +26,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { SettingsPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
@@ -151,7 +152,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       { roleId, objectMetadataId: objectMetadataItem.id },
       {
         ruleId: rootPredicateGroupId,
-        ...(fromAgentId ? { fromAgent: fromAgentId } : {}),
+        ...(isDefined(fromAgentId) ? { fromAgent: fromAgentId } : {}),
       },
     );
   };
