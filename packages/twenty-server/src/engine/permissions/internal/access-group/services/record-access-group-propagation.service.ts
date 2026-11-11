@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
@@ -117,6 +118,52 @@ export class RecordAccessGroupPropagationService {
           ...followingRecords,
         },
       );
+    }
+  }
+
+  async recomputeRecordsFollowingRelatedRecordPathsInWrite({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    propagatedFromObjectMetadataIds = [],
+    transactionScope,
+  }: RecomputeRecordAccessGroupIdsOfRecordsJobData & {
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    for (const followingRecords of await this.findRecordsFollowingRelatedRecordPaths(
+      {
+        workspaceId,
+        objectMetadataId,
+        changedRecordIds: recordIds,
+        writtenRecordIds: recordIds,
+        recordsBefore: [],
+        propagatedFromObjectMetadataIds,
+        transactionScope,
+      },
+    )) {
+      if (followingRecords.recordIds.length > MAX_RECORDS_RECOMPUTED_IN_WRITE) {
+        await this.recordAccessGroupComputationService.queueRecomputeRecordAccessGroupIdsOfRecords(
+          { workspaceId, ...followingRecords },
+        );
+        continue;
+      }
+
+      await this.recomputeRecordsFollowingRelatedRecordPathsInWrite({
+        workspaceId,
+        objectMetadataId: followingRecords.objectMetadataId,
+        recordIds:
+          await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecords(
+            {
+              workspaceId,
+              objectMetadataId: followingRecords.objectMetadataId,
+              recordIds: followingRecords.recordIds,
+              transactionScope,
+            },
+          ),
+        propagatedFromObjectMetadataIds:
+          followingRecords.propagatedFromObjectMetadataIds,
+        transactionScope,
+      });
     }
   }
 

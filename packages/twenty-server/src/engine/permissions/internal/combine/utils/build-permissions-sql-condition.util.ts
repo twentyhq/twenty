@@ -7,6 +7,7 @@ import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-access-outcome.util';
 import { buildPermissionsCreatorSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-permissions-creator-sql-condition.util';
+import { buildPermissionsRelatedRecordPathSQLCondition } from 'src/engine/permissions/internal/related-record-path/utils/build-permissions-related-record-path-sql-condition.util';
 import { buildPermissionsShareSQLCondition } from 'src/engine/permissions/internal/record-share/utils/build-permissions-share-sql-condition.util';
 import { buildAllRecordsOrRowLevelPermissionsSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-all-records-or-row-level-permissions-sql-condition.util';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-level-permission-filter.util';
@@ -59,6 +60,7 @@ export const buildPermissionsSQLCondition = ({
   const recordSQLConditions = [
     buildPermissionsShareSQLCondition(sqlRequest),
     buildPermissionsCreatorSQLCondition(sqlRequest),
+    buildPermissionsRelatedRecordPathSQLCondition(sqlRequest),
   ].filter(isDefined);
   const sqlConditions = [
     ...allRecordsOrRowLevelPermissionsSQLConditions,

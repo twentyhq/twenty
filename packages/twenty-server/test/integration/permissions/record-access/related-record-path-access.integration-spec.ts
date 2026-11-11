@@ -8,11 +8,14 @@ import {
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type DocumentNode } from 'graphql';
+import { type DocumentNode, parse } from 'graphql';
 import { v4 } from 'uuid';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
@@ -28,6 +31,7 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
@@ -50,6 +54,9 @@ const PROJECT_NAME = 'pathAccessProject';
 const TASK_NAME = 'pathAccessTask';
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const SCHEMA = `"${getWorkspaceSchemaName(workspaceId)}"`;
+const SET_RECORD_PRIVATE = parse(
+  `mutation SetRecordPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { isPrivate } }`,
+);
 const PATH_FEATURE_FLAGS = [
   FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
   FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
@@ -138,6 +145,25 @@ describe('Record access through related record paths', () => {
       operationType: 'read',
       recordIds: [recordId],
     });
+
+  const listTasksAsJony = () =>
+    makeGraphqlApiRequestWithMemberRole(
+      findManyOperationFactory({
+        objectMetadataSingularName: TASK_NAME,
+        objectMetadataPluralName: `${TASK_NAME}s`,
+        gqlFields: 'id',
+      }),
+    );
+
+  const findTaskIdsListedByJony = async (): Promise<string[]> => {
+    const response = await listTasksAsJony();
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data[`${TASK_NAME}s`].edges
+      .map(({ node }: { node: { id: string } }) => node.id)
+      .sort();
+  };
 
   const findEventRecordIdsReadableByJony = async ({
     objectMetadataId,
@@ -418,6 +444,27 @@ describe('Record access through related record paths', () => {
     );
   });
 
+  it('should list only the records related to a readable source record', async () => {
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
+  });
+
+  it('should count only the records related to a readable source record', async () => {
+    const response = await makeGraphqlApiRequestWithMemberRole(
+      groupByOperationFactory({
+        objectMetadataSingularName: TASK_NAME,
+        objectMetadataPluralName: `${TASK_NAME}s`,
+        groupBy: [{ name: true }],
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data[`${TASK_NAME}sGroupBy`].map(
+        ({ totalCount }: { totalCount: number }) => totalCount,
+      ),
+    ).toEqual([1]);
+  });
+
   it('should update the related records when the source record enters or leaves the rule', async () => {
     await runAndWaitForJobs(
       updateOneOperationFactory({
@@ -462,8 +509,13 @@ describe('Record access through related record paths', () => {
     expect(await findTaskAccessGroupIds(taskWithoutProjectId)).toContain(
       projectRuleCompactId,
     );
+    expect(await findTaskIdsListedByJony()).toEqual(
+      [taskOfProjectId, taskWithoutProjectId].sort(),
+    );
 
     await setProjectOfTaskWithoutProject(null);
+
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
 
     expect(await findTaskAccessGroupIds(taskWithoutProjectId)).not.toContain(
       projectRuleCompactId,
@@ -496,20 +548,64 @@ describe('Record access through related record paths', () => {
     );
   });
 
+  it('should stop listing the related records while the source record is private', async () => {
+    const setProjectPrivate = async (isPrivate: boolean) => {
+      const response = await makeMetadataApiRequest({
+        query: SET_RECORD_PRIVATE,
+        variables: {
+          target: {
+            objectMetadataId: projectObjectMetadataId,
+            recordId: projectId,
+          },
+          isPrivate,
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      await waitForAllJobsToFinish();
+    };
+
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
+    try {
+      await setProjectPrivate(true);
+
+      expect(await findTaskIdsListedByJony()).toEqual([]);
+
+      await setProjectPrivate(false);
+
+      expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
+    } finally {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    }
+  });
+
   it('should stop granting once the path is deleted and grant again once it is back', async () => {
     await deleteRelatedRecordPath(pathId);
 
     expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
     expect(await findTaskEventRecordIdsReadableByJony()).toEqual([]);
+    expect((await listTasksAsJony()).body.errors).toBeDefined();
 
     await createProjectTasksPath();
+    await waitForAllJobsToFinish();
 
     expect(await canJonyReadTask(taskOfProjectId)).toBe(true);
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
   });
 
   it('should not follow the path once no RLS rule restricts its source object', async () => {
     await deleteRoleWithProjectRule();
 
     expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
+    expect((await listTasksAsJony()).body.errors).toBeDefined();
   });
 });

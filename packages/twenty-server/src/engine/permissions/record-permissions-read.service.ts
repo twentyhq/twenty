@@ -43,6 +43,7 @@ import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/inte
 import { canAllRecordsOrRowLevelPermissionsGrantOperation } from 'src/engine/permissions/internal/role/utils/can-all-records-or-row-level-permissions-grant-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
+import { canRelatedRecordPathGrantOperation } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-grant-operation.util';
 import { buildRelatedRecordPathsSQLCondition } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-paths-sql-condition.util';
 import { buildPermissionsSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-sql-condition.util';
 import {
@@ -151,7 +152,10 @@ export class RecordPermissionsReadService {
       return false;
     }
 
-    if (canAllRecordsOrRowLevelPermissionsGrantOperation(request)) {
+    if (
+      canAllRecordsOrRowLevelPermissionsGrantOperation(request) ||
+      canRelatedRecordPathGrantOperation(request)
+    ) {
       return true;
     }
 
@@ -332,25 +336,28 @@ export class RecordPermissionsReadService {
       operationType: 'read',
     });
 
-    if (
-      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest) !==
+    const [
+      callerAccessGroupCompactIds,
+      callerRelatedRecordPathAccessGroupCompactIds,
+    ] = await Promise.all([
+      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest) ===
       'accessGroups'
-    ) {
-      return this.buildRecordsAccessSQLCondition({
+        ? this.accessGroupReadService.findCallerCompactIds({
+            principals: objectAccessRequest.principals,
+            objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+            operationType: 'read',
+          })
+        : undefined,
+      this.accessGroupReadService.findCallerRelatedRecordPathCompactIds(
         objectAccessRequest,
-        tableAlias,
-      });
-    }
+      ),
+    ]);
 
     return this.buildRecordsAccessSQLCondition({
       objectAccessRequest,
       tableAlias,
-      callerAccessGroupCompactIds:
-        await this.accessGroupReadService.findCallerCompactIds({
-          principals: objectAccessRequest.principals,
-          objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
-          operationType: 'read',
-        }),
+      callerAccessGroupCompactIds,
+      callerRelatedRecordPathAccessGroupCompactIds,
     });
   }
 
@@ -371,10 +378,12 @@ export class RecordPermissionsReadService {
     objectAccessRequest,
     tableAlias,
     callerAccessGroupCompactIds,
+    callerRelatedRecordPathAccessGroupCompactIds,
   }: {
     objectAccessRequest: PermissionsObjectAccessRequest;
     tableAlias: string;
     callerAccessGroupCompactIds?: number[];
+    callerRelatedRecordPathAccessGroupCompactIds?: number[];
   }): SQLCondition | boolean {
     return buildPermissionsSQLCondition({
       ...objectAccessRequest,
@@ -383,6 +392,7 @@ export class RecordPermissionsReadService {
         workspaceId: objectAccessRequest.principals.workspaceId,
       }),
       callerAccessGroupCompactIds,
+      callerRelatedRecordPathAccessGroupCompactIds,
     });
   }
 
