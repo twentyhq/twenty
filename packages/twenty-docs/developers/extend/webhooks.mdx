@@ -38,7 +38,13 @@ Twenty sends webhooks for these event types:
 | **Record Updated** | `person.updated`, `company.updated`, `opportunity.updated` |
 | **Record Deleted** | `person.deleted`, `company.deleted` |
 
-All event types are sent to your webhook URL. Event filtering may be added in future releases.
+Pick the events a webhook sends in its **Filters**.
+
+### Conditions
+
+A webhook can also carry a condition, so it only sends the record events that meet it. A condition uses the [validation rule](/developers/extend/apps/data/validation-rules) syntax: the record's fields by name, `previous.<field>` for the value before an update, and the fields of a related record (`company.employees > 100`). To send updates only when a field changes, write `previous.stage != stage`.
+
+In Settings the condition editor appears once every selected event targets the same object. Through the API, a condition is checked against each object its events name; with `*` it is checked per object when an event arrives, and events of an object it does not fit are not sent. Metadata events ignore the condition. Related records are read with the webhook's role.
 
 ## Payload Format
 
