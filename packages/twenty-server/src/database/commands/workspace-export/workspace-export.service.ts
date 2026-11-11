@@ -83,9 +83,13 @@ export class WorkspaceExportService {
 
     this.logger.log(`Exporting workspace ${workspaceId} (${schemaName})`);
 
-    const objectMetadatas = await this.objectMetadataRepository.find(
-      workspaceId,
-      { relations: { application: true } },
+    const objectMetadatas = (
+      await this.objectMetadataRepository.find(workspaceId, {
+        relations: { application: true },
+      })
+    ).filter(
+      (objectMetadata) =>
+        !temporaryExcludePermissionStorageObject(objectMetadata),
     );
 
     const fieldMetadatas = await this.fieldMetadataRepository.find(workspaceId);
@@ -157,14 +161,12 @@ export class WorkspaceExportService {
         stream,
       );
 
-      if (!objectMetadatas.some(temporaryExcludePermissionStorageObject)) {
-        await this.writePermissionSystemTables({
-          schemaName,
-          tableFilter,
-          queryRunner,
-          stream,
-        });
-      }
+      await this.writePermissionSystemTables({
+        schemaName,
+        tableFilter,
+        queryRunner,
+        stream,
+      });
 
       stream.write("\nSET session_replication_role = 'origin';\n");
     } finally {
