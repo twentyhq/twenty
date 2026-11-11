@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -44,6 +45,7 @@ export class AiGenerateService {
     private readonly agentRunCallerContextService: AgentRunCallerContextService,
     private readonly agentRunnerService: AgentRunnerService,
     private readonly agentRunStopService: AgentRunStopService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
   ) {}
@@ -77,7 +79,12 @@ export class AiGenerateService {
     // guard refuses other roleless applications first; an OAuth-only one acting with its member's role gets here
     if (
       isDefined(callerApplication) &&
-      !isDefined(callerApplication.defaultRoleId)
+      !isDefined(
+        await this.applicationGrantRoleLookupService.findGrantRoleId({
+          workspaceId: workspace.id,
+          flatApplication: callerApplication,
+        }),
+      )
     ) {
       throw new AiException(
         'ai.generate needs a default role on the application; declare one with defineApplicationRole()',

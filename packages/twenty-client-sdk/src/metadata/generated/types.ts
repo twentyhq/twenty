@@ -1086,6 +1086,9 @@ export default {
             "frontComponents": [
                 298
             ],
+            "grantRoleId": [
+                556
+            ],
             "grantedIframeMediaPermissions": [
                 320
             ],
