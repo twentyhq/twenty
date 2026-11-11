@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
+import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
 import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
@@ -14,6 +15,7 @@ import { type RecordPermissionTransactionScope } from 'src/engine/permissions/ty
 export class RecordAccessGroupWriteService {
   constructor(
     private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
+    private readonly recordAccessGroupPropagationService: RecordAccessGroupPropagationService,
   ) {}
 
   async isWriteTransactionRequired({
@@ -53,7 +55,7 @@ export class RecordAccessGroupWriteService {
           objectMetadataId,
         },
       )) ||
-        (await this.recordAccessGroupComputationService.isObjectLeadingThroughRelatedRecordPath(
+        (await this.recordAccessGroupPropagationService.isObjectLeadingThroughRelatedRecordPath(
           {
             workspaceId,
             objectMetadataId,
@@ -89,7 +91,7 @@ export class RecordAccessGroupWriteService {
         recordsBefore,
         transactionScope,
       })),
-      ...(await this.recordAccessGroupComputationService.findRecordsFollowingRelatedRecordPaths(
+      ...(await this.recordAccessGroupPropagationService.findRecordsFollowingRelatedRecordPaths(
         {
           workspaceId,
           objectMetadataId,
@@ -150,7 +152,7 @@ export class RecordAccessGroupWriteService {
         updatedColumnNames,
         transactionScope,
       })),
-      ...(await this.recordAccessGroupComputationService.findRecordsFollowingRelatedRecordPaths(
+      ...(await this.recordAccessGroupPropagationService.findRecordsFollowingRelatedRecordPaths(
         {
           workspaceId,
           objectMetadataId,
