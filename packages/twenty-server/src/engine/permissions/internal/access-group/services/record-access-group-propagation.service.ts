@@ -224,7 +224,10 @@ export class RecordAccessGroupPropagationService {
     objectMetadataId,
     propagatedFromObjectMetadataIds,
   }: {
-    resolvedPath: ResolvedRelatedRecordPath;
+    resolvedPath: Pick<
+      ResolvedRelatedRecordPath,
+      'isInherent' | 'targetObjectMetadataId'
+    >;
     objectMetadataId: string;
     propagatedFromObjectMetadataIds: string[];
   }): boolean {
