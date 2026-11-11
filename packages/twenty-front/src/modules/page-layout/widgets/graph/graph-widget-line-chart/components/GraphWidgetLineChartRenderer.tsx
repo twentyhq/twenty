@@ -154,6 +154,7 @@ export const GraphWidgetLineChartRenderer = () => {
         yAxisLabel={displayYAxisLabel}
         enablePointLabel={showDataLabels}
         showLegend={showLegend}
+        isLegendInteractive={!isPageLayoutInEditMode}
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}

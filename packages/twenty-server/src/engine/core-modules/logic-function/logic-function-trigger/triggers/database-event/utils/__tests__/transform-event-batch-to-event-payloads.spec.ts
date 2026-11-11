@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { MAX_EVENTS_PER_TRIGGER_JOB } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/constants/max-events-per-trigger-job.constant';
@@ -813,6 +815,71 @@ describe('transformEventBatchToEventPayloads', () => {
       });
 
       expect(result).toHaveLength(0);
+    });
+  });
+
+  describe('condition', () => {
+    const conditionFields = [
+      {
+        name: 'employees',
+        type: FieldMetadataType.NUMBER,
+        universalIdentifier: 'company-employees',
+      },
+    ];
+
+    it('should only send the events whose record matches the condition', () => {
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch: createMockWorkspaceEventBatch({
+          events: [
+            createMockEvent({
+              recordId: 'large',
+              properties: { after: { employees: 500 } },
+            } as Partial<ObjectRecordEvent>),
+            createMockEvent({
+              recordId: 'small',
+              properties: { after: { employees: 5 } },
+            } as Partial<ObjectRecordEvent>),
+          ],
+        }),
+        logicFunctions: [
+          createMockLogicFunction({
+            databaseEventTriggerSettings: {
+              eventName: 'company.updated',
+              condition: 'employees >= 100',
+            },
+          }),
+        ],
+        conditionFields,
+      });
+
+      expect(
+        result.map((r) => (r.payload as ObjectRecordEvent).recordId),
+      ).toEqual(['large']);
+    });
+
+    it('should report a condition that cannot be read and send nothing', () => {
+      const onConditionError = jest.fn();
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch: createMockWorkspaceEventBatch(),
+        logicFunctions: [
+          createMockLogicFunction({
+            databaseEventTriggerSettings: {
+              eventName: 'company.updated',
+              condition: 'employees >',
+            },
+          }),
+        ],
+        conditionFields,
+        onConditionError,
+      });
+
+      expect(result).toEqual([]);
+      expect(onConditionError).toHaveBeenCalledTimes(1);
+      expect(onConditionError).toHaveBeenCalledWith({
+        logicFunctionId: 'function-1',
+        errorMessage: expect.any(String),
+      });
     });
   });
 });

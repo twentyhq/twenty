@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  FeatureFlagKey,
   type RecordShareAccessLevel,
   type RecordSharePrincipalType,
   RecordShareRowCause,
@@ -15,13 +14,12 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { PrivateRecordWriteService } from 'src/engine/permissions/internal/private-record/services/private-record-write.service';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { type RuleRecordSharesScope } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-rule-record-shares-query.util';
 import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { diffRuleRecordShares } from 'src/engine/permissions/internal/record-share/utils/diff-rule-record-shares.util';
 import { type RuleRecordShareGrant } from 'src/engine/permissions/record-share/types/rule-record-share-grant.type';
-import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
+import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/created-by-workspace-member-id-column-name.constant';
@@ -38,18 +36,10 @@ export class RecordShareSystemWriteService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly privateRecordWriteService: PrivateRecordWriteService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
   ) {}
 
-  setRecordsPrivacy(
-    args: Parameters<PrivateRecordWriteService['setPrivateOrThrow']>[0],
-  ): Promise<void> {
-    return this.privateRecordWriteService.setPrivateOrThrow(args);
-  }
-
-  // Every path removing a member from an active workspace must call this, or only all-records roles can manage their records
   async transferRecordSharesToSuccessor({
     removedUserWorkspace,
     removedWorkspaceMemberId,
@@ -165,16 +155,9 @@ export class RecordShareSystemWriteService {
       Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
         .filter(isDefined)
         // Rows written while sharing was enabled still need a successor
-        .filter((flatObjectMetadata) => {
-          const { isShareable, isPrivateByDefault } = resolveObjectSharing({
-            flatObjectMetadata,
-            featureFlagsMap: {
-              [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
-            },
-          });
-
-          return isShareable && !isPrivateByDefault;
-        })
+        .filter(
+          (flatObjectMetadata) => !isPrivateByDefaultObject(flatObjectMetadata),
+        )
     );
   }
 

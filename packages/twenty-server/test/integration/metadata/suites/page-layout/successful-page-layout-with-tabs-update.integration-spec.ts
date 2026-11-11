@@ -422,7 +422,6 @@ describe('Page layout with tabs update should succeed', () => {
       aggregateOperation: AggregateOperations.COUNT,
       groupByFieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
     } satisfies AllPageLayoutWidgetConfiguration;
-    // What the layout editor sends back after a chart type switch
     const sentConfiguration = {
       ...pieChartConfiguration,
       __typename: 'PieChartConfiguration',

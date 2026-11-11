@@ -5,9 +5,11 @@ import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modul
 import { sanitizeWidgetConfigurationByDto } from 'src/engine/metadata-modules/page-layout-widget/utils/sanitize-widget-configuration-by-dto.util';
 
 // The layout editor saves half-configured widgets, so an invalid configuration is cleaned and kept
-export const sanitizeWidgetConfiguration = (
-  configuration: AllPageLayoutWidgetConfiguration,
-): AllPageLayoutWidgetConfiguration => {
+export const sanitizeWidgetConfiguration = <
+  TConfiguration extends AllPageLayoutWidgetConfiguration | null | undefined,
+>(
+  configuration: TConfiguration,
+): TConfiguration | AllPageLayoutWidgetConfiguration => {
   const WidgetConfigurationDto = isDefined(configuration)
     ? WIDGET_CONFIGURATION_INPUT_DTO_BY_TYPE[configuration.configurationType]
     : undefined;

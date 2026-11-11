@@ -8,6 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import {
@@ -64,6 +65,7 @@ export class ApplicationResolver {
     private readonly applicationStopService: ApplicationStopService,
     private readonly applicationService: ApplicationService,
     private readonly applicationContentService: ApplicationContentService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -124,6 +126,29 @@ export class ApplicationResolver {
       workspaceId: workspace.id,
       applicationId: application.id,
     });
+  }
+
+  @ResolveField(() => UUIDScalarType, { nullable: true })
+  async grantRoleId(
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
+    @AuthWorkspace() { id: workspaceId }: Pick<WorkspaceEntity, 'id'>,
+  ): Promise<string | null> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+    const flatApplication = flatApplicationMaps.byId[application.id];
+
+    if (!isDefined(flatApplication)) {
+      return null;
+    }
+
+    return (
+      (await this.applicationGrantRoleLookupService.findGrantRoleId({
+        workspaceId,
+        flatApplication,
+      })) ?? null
+    );
   }
 
   @ResolveField(() => Boolean)
