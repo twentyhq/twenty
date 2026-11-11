@@ -126,7 +126,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   const {
     objectUniversalIdentifier,
     action,
-    fieldUniversalIdentifiers,
+    watchedFieldUniversalIdentifiers,
     batchMode,
   } = settings;
 
@@ -141,7 +141,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
     });
   }
 
-  const updatedFields = fieldUniversalIdentifiers?.map(
+  const updatedFields = watchedFieldUniversalIdentifiers?.map(
     (fieldUniversalIdentifier) => {
       const field = resolver.findField(fieldUniversalIdentifier);
 

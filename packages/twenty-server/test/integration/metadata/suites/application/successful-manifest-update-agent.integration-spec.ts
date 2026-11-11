@@ -282,7 +282,7 @@ describe('Manifest update - agents', () => {
                 settings: {
                   objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
                   action: 'updated',
-                  fieldUniversalIdentifiers: [
+                  watchedFieldUniversalIdentifiers: [
                     OPPORTUNITY.fields.stage.universalIdentifier,
                     OPPORTUNITY.fields.company.universalIdentifier,
                   ],
