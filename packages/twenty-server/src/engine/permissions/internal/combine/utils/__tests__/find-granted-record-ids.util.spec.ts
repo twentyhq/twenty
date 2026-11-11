@@ -224,11 +224,11 @@ describe('findGrantedRecordIds', () => {
     ).toEqual(new Set());
   });
 
-  it('grants private records to their creator within the role filter', async () => {
+  it('grants private records to their creator whatever the role filter', async () => {
     filterByStatus('none');
 
     expect(await findGranted({ principals: memberPrincipals })).toEqual(
-      new Set(),
+      new Set(['active-private']),
     );
 
     filterByStatus('active');
