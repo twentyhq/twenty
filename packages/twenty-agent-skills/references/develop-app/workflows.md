@@ -48,6 +48,12 @@ Workflows created at runtime go through the core workflow API (`createCoreWorkfl
 - Member ids only exist in one workspace: in app code, pass a variable such as `{{trigger.properties.after.assigneeId}}`.
 - Member mentions in `text`, such as those in a note body passed as `{{trigger.properties.after.bodyV2.markdown}}`, notify those members, as in `sendInboxMessage` (see `logic.md`).
 
+## Database Event Trigger
+
+- `DATABASE_EVENT` settings: `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), optional `fieldUniversalIdentifiers` to watch (updates and upserts only), and an optional `condition` or `filter`.
+- `condition` is a rule expression on the record's fields, such as `stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'`. `previous.<field>` reads the value before an update, and a relation to one record reads its target's fields (`company.employees > 100`).
+- A set `condition` is used instead of `filter`. Prefer `condition` in new code; `filter` is the builder's older row format.
+
 ## Manual Record Trigger
 
 - Trigger type: manual record selection.
