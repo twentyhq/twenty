@@ -7,7 +7,7 @@ import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/inte
 import { areRoleGrantsLimitedToPublicRecords } from 'src/engine/permissions/internal/combine/utils/are-role-grants-limited-to-public-records.util';
 import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
-import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
+import { canAllRecordsOrRowLevelPermissionsGrantOperation } from 'src/engine/permissions/internal/role/utils/can-all-records-or-row-level-permissions-grant-operation.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
 export const buildPermissionsRoleSQLCondition = ({
@@ -19,7 +19,7 @@ export const buildPermissionsRoleSQLCondition = ({
   rlsRuleFilter: RecordGqlOperationFilter | undefined;
   rlsRuleSQLCondition: SQLCondition | undefined;
 }): SQLCondition | boolean => {
-  if (!isRolePermittingOperation(request)) {
+  if (!canAllRecordsOrRowLevelPermissionsGrantOperation(request)) {
     return false;
   }
 

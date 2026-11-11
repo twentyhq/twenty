@@ -37,6 +37,8 @@ import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/u
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
+import { filterEventsMatchingDatabaseEventTrigger } from 'src/engine/workspace-event-emitter/utils/filter-events-matching-database-event-trigger.util';
+import { isDatabaseEventTriggerListeningToEvent } from 'src/engine/workspace-event-emitter/utils/is-database-event-trigger-listening-to-event.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
@@ -60,7 +62,6 @@ type DatabaseEventTriggerListener = {
 type TriggerEvaluationArgs = {
   eventPayload: ObjectRecordEvent;
   eventListener: DatabaseEventTriggerListener;
-  action: DatabaseEventAction;
 };
 
 @Injectable()
@@ -90,7 +91,6 @@ export class WorkflowDatabaseEventTriggerListener {
 
     await this.handleEvent({
       payload,
-      action: DatabaseEventAction.CREATED,
       enrichPayload: (payloadToEnrich) =>
         this.enrichCreatedEvent(payloadToEnrich),
     });
@@ -106,7 +106,6 @@ export class WorkflowDatabaseEventTriggerListener {
 
     await this.handleEvent({
       payload,
-      action: DatabaseEventAction.UPDATED,
       enrichPayload: (payloadToEnrich) =>
         this.enrichUpdatedEvent(payloadToEnrich),
     });
@@ -122,7 +121,6 @@ export class WorkflowDatabaseEventTriggerListener {
 
     await this.handleEvent({
       payload,
-      action: DatabaseEventAction.DELETED,
       enrichPayload: (payloadToEnrich) =>
         this.enrichDeletedEvent(payloadToEnrich),
     });
@@ -138,7 +136,6 @@ export class WorkflowDatabaseEventTriggerListener {
 
     await this.handleEvent({
       payload,
-      action: DatabaseEventAction.DESTROYED,
       enrichPayload: (payloadToEnrich) =>
         this.enrichDestroyedEvent(payloadToEnrich),
     });
@@ -154,7 +151,6 @@ export class WorkflowDatabaseEventTriggerListener {
 
     await this.handleEvent({
       payload,
-      action: DatabaseEventAction.UPSERTED,
     });
   }
 
@@ -346,11 +342,9 @@ export class WorkflowDatabaseEventTriggerListener {
 
   private async handleEvent<TEvent extends ObjectRecordEvent>({
     payload,
-    action,
     enrichPayload,
   }: {
     payload: WorkspaceEventBatch<TEvent>;
-    action: DatabaseEventAction;
     enrichPayload?: (payload: WorkspaceEventBatch<TEvent>) => Promise<void>;
   }) {
     const workspaceId = payload.workspaceId;
@@ -410,16 +404,17 @@ export class WorkflowDatabaseEventTriggerListener {
         );
       }
 
-      for (const eventPayload of readableEventsByApplicationId.get(
-        applicationId,
-      ) ?? []) {
-        const shouldTriggerJob = this.shouldTriggerJob({
-          eventPayload,
-          eventListener,
-          action,
+      const { events: eventsWithWatchedFields } =
+        filterEventsMatchingDatabaseEventTrigger({
+          events: readableEventsByApplicationId.get(applicationId) ?? [],
+          eventName: databaseEventName,
+          watchedFields: (eventListener.settings as UpdateEventTriggerSettings)
+            .fields,
+          fields: [],
         });
 
-        if (shouldTriggerJob) {
+      for (const eventPayload of eventsWithWatchedFields) {
+        if (this.eventMatchesRecordFilter({ eventPayload, eventListener })) {
           await this.messageQueueService.add<WorkflowTriggerJobData>(
             WorkflowTriggerJob.name,
             {
@@ -461,7 +456,10 @@ export class WorkflowDatabaseEventTriggerListener {
     ).flatMap<DatabaseEventTriggerListener>((trigger) => {
       if (
         !isCachedDatabaseEventTrigger(trigger) ||
-        trigger.settings.eventName !== databaseEventName ||
+        !isDatabaseEventTriggerListeningToEvent({
+          triggerEventName: trigger.settings.eventName,
+          eventName: databaseEventName,
+        }) ||
         isApplicationInstallPending(flatApplicationMaps, trigger.applicationId)
       ) {
         return [];
@@ -523,45 +521,10 @@ export class WorkflowDatabaseEventTriggerListener {
     });
   }
 
-  private shouldTriggerJob({
-    eventPayload,
-    eventListener,
-    action,
-  }: TriggerEvaluationArgs) {
-    return (
-      this.eventMatchesWatchedFields({ eventPayload, eventListener, action }) &&
-      this.eventMatchesRecordFilter({ eventPayload, eventListener })
-    );
-  }
-
-  private eventMatchesWatchedFields({
-    eventPayload,
-    eventListener,
-    action,
-  }: TriggerEvaluationArgs) {
-    if (
-      action === DatabaseEventAction.UPDATED ||
-      action === DatabaseEventAction.UPSERTED
-    ) {
-      const settings = eventListener.settings as UpdateEventTriggerSettings;
-      const updatedFields =
-        (eventPayload as ObjectRecordUpdateEvent)?.properties?.updatedFields ??
-        [];
-
-      return (
-        !settings.fields ||
-        settings.fields.length === 0 ||
-        settings.fields.some((field) => updatedFields.includes(field))
-      );
-    }
-
-    return true;
-  }
-
   private eventMatchesRecordFilter({
     eventPayload,
     eventListener,
-  }: Pick<TriggerEvaluationArgs, 'eventPayload' | 'eventListener'>) {
+  }: TriggerEvaluationArgs) {
     const { filter } =
       eventListener.settings as BaseDatabaseEventTriggerSettings;
 

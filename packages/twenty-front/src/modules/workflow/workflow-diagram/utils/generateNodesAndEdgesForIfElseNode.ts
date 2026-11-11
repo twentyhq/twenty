@@ -1,3 +1,4 @@
+import { AUTOMATICALLY_LAID_OUT_NODE_PLACEHOLDER_POSITION } from '@/workflow/workflow-diagram/constants/AutomaticallyLaidOutNodePlaceholderPosition';
 import {
   type WorkflowIfElseAction,
   type WorkflowStep,
@@ -22,16 +23,12 @@ import { v4 } from 'uuid';
 export const generateNodesAndEdgesForIfElseNode = ({
   step,
   steps,
-  xPos,
-  yPos,
   nodes,
   edges,
   workflowContext,
 }: {
   step: WorkflowIfElseAction;
   steps: WorkflowStep[];
-  yPos: number;
-  xPos: number;
   nodes: readonly WorkflowDiagramNode[];
   edges: readonly WorkflowDiagramEdge[];
   workflowContext: WorkflowContext;
@@ -54,15 +51,8 @@ export const generateNodesAndEdgesForIfElseNode = ({
       name: getWorkflowStepDisplayName({ name: step.name, type: step.type }),
       hasNextStepIds: true,
       stepId: step.id,
-      position: step.position ?? {
-        x: xPos,
-        y: yPos,
-      },
     } satisfies WorkflowDiagramStepNodeData,
-    position: step.position ?? {
-      x: xPos,
-      y: yPos,
-    },
+    position: step.position ?? AUTOMATICALLY_LAID_OUT_NODE_PLACEHOLDER_POSITION,
   };
 
   updatedNodes.push(ifElseNode);
