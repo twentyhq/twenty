@@ -81,6 +81,16 @@ export const getRecordEventTriggerSettingsErrors = ({
     );
   }
 
+  if (
+    isNonEmptyArray(watchedFieldUniversalIdentifiers) &&
+    action !== 'updated' &&
+    action !== 'upserted'
+  ) {
+    errors.push(
+      `${subject} watchedFieldUniversalIdentifiers only apply to the updated and upserted actions`,
+    );
+  }
+
   if (isDefined(condition) && !isString(condition)) {
     errors.push(`${subject} condition must be text`);
   }
