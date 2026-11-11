@@ -541,7 +541,25 @@ describe('workflow manifest cron trigger', () => {
     },
   });
 
-  it('accepts every schedule type', () => {
+  it('accepts a cron pattern, the shape agents and logic functions use', () => {
+    expect(
+      workflowManifestSchema.safeParse(withCron({ pattern: '0 9 * * 1-5' }))
+        .success,
+    ).toBe(true);
+  });
+
+  it('rejects a blank cron pattern', () => {
+    const result = workflowManifestSchema.safeParse(withCron({ pattern: ' ' }));
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'pattern',
+    ]);
+  });
+
+  it('accepts every legacy schedule type', () => {
     for (const settings of [
       { type: 'DAYS', schedule: { day: 1, hour: 9, minute: 0 } },
       { type: 'HOURS', schedule: { hour: 2, minute: 30 } },

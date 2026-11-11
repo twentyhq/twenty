@@ -8,6 +8,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
+- **Workflow `CRON` triggers take a cron `pattern`**, the same `{ pattern }` settings as agent `CRON` triggers and logic function `cronTriggerSettings`. The `DAYS`, `HOURS`, `MINUTES` and `CUSTOM` settings are still accepted and keep their schedule. `twenty app pull` now writes the pattern.
+
+  ```diff
+  - settings: { type: 'DAYS', schedule: { day: 1, hour: 9, minute: 30 } },
+  + settings: { pattern: '30 9 */1 * *' },
+  ```
+
 - **`INBOX_ASSISTANT_MENTION` now writes a canonical assistant reference instead of plain `@Ada` text.** The inbox keeps the saved label and assistant identity when rendering the message. Existing plain text is unchanged. This does not change assistant participation or reply selection for application messages.
 
 ### Breaking Changes

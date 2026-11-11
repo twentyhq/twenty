@@ -32,7 +32,12 @@ const [
   customCronSettingsSchema,
 ] = workflowCronTriggerSchema.shape.settings.options;
 
+// The typed schedules are replaced by a pattern and still accepted
 const cronTriggerSettingsManifestSchema = z.discriminatedUnion('type', [
+  z.strictObject({
+    type: z.undefined().optional(),
+    pattern: z.string().trim().min(1),
+  }),
   dailyCronSettingsSchema
     .omit({ outputSchema: true })
     .extend({ schedule: dailyCronSettingsSchema.shape.schedule.strict() })

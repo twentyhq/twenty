@@ -7,6 +7,7 @@ import {
   isPlainObject,
   sortKeysDeeply,
 } from 'twenty-shared/utils';
+import { computeCronPatternFromWorkflowCronSchedule } from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import {
@@ -82,10 +83,20 @@ const fromManualTriggerSettings = ({
   };
 };
 
-const fromCronTriggerSettings = (settings: WorkflowCronTrigger['settings']) => {
-  const { outputSchema: _outputSchema, ...rest } = settings;
+const fromCronTriggerSettings = ({
+  settings,
+  resolvers,
+}: {
+  settings: WorkflowCronTrigger['settings'];
+  resolvers: WorkflowManifestInverseReferenceResolvers;
+}) => {
+  const pattern = computeCronPatternFromWorkflowCronSchedule(settings);
 
-  return rest;
+  if (!isNonEmptyString(pattern)) {
+    return resolvers.markUnsupported('cron trigger with an unknown schedule');
+  }
+
+  return { pattern };
 };
 
 const fromDatabaseEventTriggerSettings = ({
@@ -163,7 +174,10 @@ const fromTriggerSettings = ({
         resolvers,
       });
     case WorkflowTriggerType.CRON:
-      return fromCronTriggerSettings(trigger.settings);
+      return fromCronTriggerSettings({
+        settings: trigger.settings,
+        resolvers,
+      });
     case WorkflowTriggerType.DATABASE_EVENT:
       return fromDatabaseEventTriggerSettings({
         settings: trigger.settings,

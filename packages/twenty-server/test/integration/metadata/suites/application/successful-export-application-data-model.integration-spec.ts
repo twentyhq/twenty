@@ -1678,7 +1678,7 @@ const EXPORTED_WORKFLOWS: WorkflowManifest[] = [
         universalIdentifier: workflowNodeIdentifier(20),
         type: 'CRON',
         nextStepIds: [workflowNodeIdentifier(21)],
-        settings: { type: 'DAYS', schedule: { day: 1, hour: 3, minute: 15 } },
+        settings: { pattern: '15 3 */1 * *' },
       },
       steps: [
         {

@@ -615,13 +615,13 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
         universalIdentifier: TRIGGER_ID,
         type: 'CRON',
         nextStepIds: [STEP_ID],
-        settings: { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
+        settings: { pattern: '30 */2 * * *' },
       },
       {
         universalIdentifier: TRIGGER_ID,
         type: 'CRON',
         nextStepIds: [STEP_ID],
-        settings: { type: 'CUSTOM', pattern: '0 9 * * 1' },
+        settings: { pattern: '0 9 * * 1' },
       },
       {
         universalIdentifier: TRIGGER_ID,
@@ -668,6 +668,42 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
     ])('exports a $type trigger as it was declared', (trigger) => {
       expectRoundTrip(buildWorkflow({ trigger }));
     });
+
+    it.each([
+      {
+        settings: { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
+        pattern: '30 */2 * * *',
+      },
+      {
+        settings: { type: 'CUSTOM', pattern: '0 9 * * 1' },
+        pattern: '0 9 * * 1',
+      },
+    ] as const)(
+      'exports a legacy $settings.type schedule as its cron pattern',
+      ({ settings, pattern }) => {
+        const synced = syncWorkflow(
+          buildWorkflow({
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'CRON',
+              nextStepIds: [STEP_ID],
+              settings,
+            },
+          }),
+        );
+
+        expect(exportWorkflow(synced)).toEqual({
+          manifest: buildWorkflow({
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'CRON',
+              nextStepIds: [STEP_ID],
+              settings: { pattern },
+            },
+          }),
+        });
+      },
+    );
 
     it('emits the same source whatever the stored key order', () => {
       const synced = syncWorkflow(

@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { computeWorkflowCronScheduleFromCronPattern } from 'twenty-shared/workflow';
 
 import {
   type WorkflowManifestFieldReference,
@@ -118,10 +119,15 @@ const fromCronTriggerManifestOrThrow = (
   trigger: CronTriggerManifest,
 ): WorkflowCronTrigger => {
   const { base, outputSchema } = fromTriggerManifestBase(trigger);
+  const { settings } = trigger;
+  const schedule =
+    settings.type === undefined
+      ? computeWorkflowCronScheduleFromCronPattern(settings.pattern)
+      : settings;
   const cronTrigger = {
     ...base,
     type: WorkflowTriggerType.CRON,
-    settings: { ...trigger.settings, outputSchema },
+    settings: { ...schedule, outputSchema },
   } satisfies WorkflowCronTrigger;
 
   try {
