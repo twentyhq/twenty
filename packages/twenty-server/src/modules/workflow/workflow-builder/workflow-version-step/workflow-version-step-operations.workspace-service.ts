@@ -49,6 +49,9 @@ import {
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+// A duplicate has no edge to be placed from, so a manual layout keeps it next to its source
+const DUPLICATED_STEP_POSITION_OFFSET = 50;
+
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -837,7 +840,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     return {
       ...step,
       name: `${step.name} (Duplicate)`,
-      position: undefined,
+      position: isDefined(step.position)
+        ? {
+            x: step.position.x + DUPLICATED_STEP_POSITION_OFFSET,
+            y: step.position.y + DUPLICATED_STEP_POSITION_OFFSET,
+          }
+        : undefined,
     };
   }
 
