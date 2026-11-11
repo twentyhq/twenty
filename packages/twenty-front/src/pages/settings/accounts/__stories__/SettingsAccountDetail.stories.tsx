@@ -137,6 +137,10 @@ const UPDATE_CHANNEL_GRAPHQL_HANDLERS = [
 ];
 
 export const SyncSwitchesPauseEmailAndCalendarSync: Story = {
+  beforeEach: () => {
+    updateMessageChannel.mockClear();
+    updateCalendarChannel.mockClear();
+  },
   parameters: {
     msw: {
       handlers: [
@@ -167,6 +171,7 @@ export const SyncSwitchesPauseEmailAndCalendarSync: Story = {
       }),
     );
     await waitFor(() => expect(emailSyncSwitch).not.toBeChecked());
+    expect(updateMessageChannel).toHaveBeenCalledTimes(1);
 
     await userEvent.click(canvas.getByTestId('tab-calendar'));
 
@@ -183,6 +188,7 @@ export const SyncSwitchesPauseEmailAndCalendarSync: Story = {
       }),
     );
     await waitFor(() => expect(calendarSyncSwitch).not.toBeChecked());
+    expect(updateCalendarChannel).toHaveBeenCalledTimes(1);
   },
 };
 
