@@ -18,12 +18,14 @@ import { PrincipalPermissionsReadService } from 'src/engine/permissions/principa
 import { findUserWorkspaceFlatRoleOrThrow } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 
 @Injectable()
 export class SettingPermissionsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -41,7 +43,6 @@ export class SettingPermissionsService {
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'featureFlagsMap',
       'userWorkspaceRoleMap',
@@ -50,7 +51,6 @@ export class SettingPermissionsService {
       'rolesPermissions',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
-      'flatApplicationMaps',
     ]);
 
     const flatRole = findUserWorkspaceFlatRoleOrThrow({
@@ -81,7 +81,6 @@ export class SettingPermissionsService {
           rolesPermissions,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          flatApplicationMaps,
         }),
         featureFlagsMap,
       }),
@@ -185,9 +184,15 @@ export class SettingPermissionsService {
       applicationId,
       flatApplicationMaps,
     });
+    const grantRoleId = isDefined(application)
+      ? await this.applicationGrantRoleLookupService.findGrantRoleId({
+          workspaceId,
+          flatApplication: application,
+        })
+      : undefined;
 
     return this.isPermissionFlagGrantedToRoles({
-      roleIds: [application?.defaultRoleId ?? undefined],
+      roleIds: [grantRoleId],
       permissionFlag,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
