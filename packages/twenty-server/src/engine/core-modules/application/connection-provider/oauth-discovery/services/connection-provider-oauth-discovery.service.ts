@@ -23,7 +23,6 @@ type ProviderContext = {
   workspaceId: string;
 };
 
-// Runs the MCP authorization flow: RFC 9728 discovery, client registration, PKCE and resource indicators.
 @Injectable()
 export class ConnectionProviderOAuthDiscoveryService {
   private readonly logger = new Logger(

@@ -61,12 +61,6 @@ export class ConnectionProviderOAuthFlowService {
     const { connectionProvider, workspaceId, userWorkspaceId } =
       authorizationArgs;
 
-    if (connectionProvider.type === 'oauth-discovery') {
-      return this.startOAuthDiscoveryAuthorizationFlow(authorizationArgs);
-    }
-
-    assertOAuthProvider(connectionProvider);
-
     await this.connectedAccountService.assertCallerCanConnectOrThrow({
       connectionProviderId: connectionProvider.id,
       workspaceId,
@@ -75,6 +69,12 @@ export class ConnectionProviderOAuthFlowService {
       reconnectingConnectedAccountId:
         authorizationArgs.reconnectingConnectedAccountId,
     });
+
+    if (connectionProvider.type === 'oauth-discovery') {
+      return this.startOAuthDiscoveryAuthorizationFlow(authorizationArgs);
+    }
+
+    assertOAuthProvider(connectionProvider);
 
     const { clientId } =
       await this.oauthProviderService.getClientCredentials(connectionProvider);
@@ -120,19 +120,9 @@ export class ConnectionProviderOAuthFlowService {
   private async startOAuthDiscoveryAuthorizationFlow(
     authorizationArgs: ConnectionAuthorizationArgs,
   ): Promise<{ authorizationUrl: string }> {
-    const { connectionProvider, workspaceId, userWorkspaceId } =
-      authorizationArgs;
+    const { connectionProvider, workspaceId } = authorizationArgs;
 
     assertOAuthDiscoveryProvider(connectionProvider);
-
-    await this.connectedAccountService.assertCallerCanConnectOrThrow({
-      connectionProviderId: connectionProvider.id,
-      workspaceId,
-      userWorkspaceId,
-      scope: connectionProvider.scope,
-      reconnectingConnectedAccountId:
-        authorizationArgs.reconnectingConnectedAccountId,
-    });
 
     const { authorizationUrl, codeVerifier, clientId } =
       await this.oauthDiscoveryService.prepareAuthorization({

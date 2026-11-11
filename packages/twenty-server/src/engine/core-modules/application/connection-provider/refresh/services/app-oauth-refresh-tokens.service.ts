@@ -146,7 +146,6 @@ export class AppOAuthRefreshAccessTokenService {
     }
   }
 
-  // Only 4xx token-endpoint responses (esp. invalid_grant) mean the user must reconnect; 5xx and transport errors stay transient.
   private isTransientRefreshError(error: unknown): boolean {
     if (error instanceof OAuthTokenEndpointError) {
       return error.status >= 500;

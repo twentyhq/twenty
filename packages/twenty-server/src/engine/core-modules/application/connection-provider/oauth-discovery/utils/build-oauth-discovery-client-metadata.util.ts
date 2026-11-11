@@ -1,14 +1,8 @@
 import { type OAuthClientMetadata } from '@modelcontextprotocol/sdk/shared/auth.js';
-import { ApiPath } from 'twenty-shared/types';
 
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 
 const TWENTY_WEBSITE_URL = 'https://twenty.com';
-
-export const buildOAuthDiscoveryClientMetadataUrl = (
-  serverUrl: string,
-): string =>
-  new URL(`/${ApiPath.Auth}/apps/client-metadata.json`, serverUrl).toString();
 
 // A public client: PKCE protects the code exchange, so there is no secret to leak.
 export const buildOAuthDiscoveryClientMetadata = (
