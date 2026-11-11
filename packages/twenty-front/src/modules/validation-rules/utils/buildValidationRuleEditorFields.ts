@@ -107,7 +107,10 @@ const buildMorphTargetIdEditorFields = ({
   objectMetadataItem,
   objectMetadataItems,
 }: {
-  fieldMetadataItem: FieldMetadataItem;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'name' | 'type' | 'label' | 'icon' | 'isSystem' | 'morphRelations'
+  >;
   objectMetadataItem: ValidationRuleEditorObject;
   objectMetadataItems: ValidationRuleEditorObject[];
 }): ValidationRuleEditorField[] => {
