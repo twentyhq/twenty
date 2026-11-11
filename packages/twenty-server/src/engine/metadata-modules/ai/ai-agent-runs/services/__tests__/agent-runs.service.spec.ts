@@ -8,10 +8,13 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-const buildTurn = (
-  id: string,
-  { deletedAt = null }: { deletedAt?: string | null } = {},
-) => ({
+const buildTurn = ({
+  id,
+  deletedAt = null,
+}: {
+  id: string;
+  deletedAt?: string | null;
+}) => ({
   id,
   threadId: `thread-of-${id}`,
   status: AgentTurnStatus.COMPLETED,
@@ -71,7 +74,7 @@ const buildService = ({
 describe('AgentRunsService', () => {
   it('gives each run the messages and parts of its own turn', async () => {
     const { service, messageRepository, messagePartRepository } = buildService({
-      turns: [buildTurn('turn-a'), buildTurn('turn-b')],
+      turns: [buildTurn({ id: 'turn-a' }), buildTurn({ id: 'turn-b' })],
       messages: [
         {
           id: 'message-a',
@@ -150,7 +153,7 @@ describe('AgentRunsService', () => {
 
   it('flags only the conversations the member can open', async () => {
     const { service, agentChatSharingService } = buildService({
-      turns: [buildTurn('turn-a'), buildTurn('turn-b')],
+      turns: [buildTurn({ id: 'turn-a' }), buildTurn({ id: 'turn-b' })],
       messages: [],
       parts: [],
       readableThreadIds: ['thread-of-turn-a'],
@@ -174,8 +177,8 @@ describe('AgentRunsService', () => {
   it('does not offer to open a deleted conversation', async () => {
     const { service, agentChatSharingService } = buildService({
       turns: [
-        buildTurn('turn-a'),
-        buildTurn('turn-b', { deletedAt: '2026-10-06T10:00:00.000Z' }),
+        buildTurn({ id: 'turn-a' }),
+        buildTurn({ id: 'turn-b', deletedAt: '2026-10-06T10:00:00.000Z' }),
       ],
       messages: [],
       parts: [],
@@ -197,7 +200,7 @@ describe('AgentRunsService', () => {
 
   it('opens no conversation for a caller without a workspace member', async () => {
     const { service, agentChatSharingService } = buildService({
-      turns: [buildTurn('turn-a')],
+      turns: [buildTurn({ id: 'turn-a' })],
       messages: [],
       parts: [],
       readableThreadIds: ['thread-of-turn-a'],
@@ -218,7 +221,7 @@ describe('AgentRunsService', () => {
 
   it('still lists the runs of a member without AI chat access', async () => {
     const { service, agentChatSharingService } = buildService({
-      turns: [buildTurn('turn-a')],
+      turns: [buildTurn({ id: 'turn-a' })],
       messages: [],
       parts: [],
     });
