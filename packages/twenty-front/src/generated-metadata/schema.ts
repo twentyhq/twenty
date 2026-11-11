@@ -2095,6 +2095,7 @@ export type CreateViewSortInput = {
 };
 
 export type CreateWebhookInput = {
+  condition?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   operations: Array<Scalars['String']['input']>;
@@ -8151,6 +8152,7 @@ export type UpdateWebhookInput = {
 };
 
 export type UpdateWebhookInputUpdates = {
+  condition?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   operations?: InputMaybe<Array<Scalars['String']['input']>>;
   roleId?: InputMaybe<Scalars['UUID']['input']>;
@@ -8842,6 +8844,7 @@ export enum ViewVisibility {
 export type Webhook = {
   __typename?: 'Webhook';
   applicationId: Scalars['UUID']['output'];
+  condition?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   description?: Maybe<Scalars['String']['output']>;

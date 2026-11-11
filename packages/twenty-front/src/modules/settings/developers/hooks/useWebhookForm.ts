@@ -4,11 +4,13 @@ import { useForm } from 'react-hook-form';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
+import { type WebhookOperationType } from '@/settings/developers/types/WebhookOperationsType';
 import { addEmptyOperationIfNecessary } from '@/settings/developers/utils/addEmptyOperationIfNecessary';
 import {
   createWebhookCreateInput,
   createWebhookUpdateInput,
 } from '@/settings/developers/utils/createWebhookInput';
+import { getWebhookConditionObjectNameSingular } from '@/settings/developers/utils/getWebhookConditionObjectNameSingular';
 import { parseOperationsFromStrings } from '@/settings/developers/utils/parseOperationsFromStrings';
 import {
   getWebhookFormSchema,
@@ -16,6 +18,7 @@ import {
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateWebhookDocument,
@@ -37,6 +40,7 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
   targetUrl: '',
   description: '',
   operations: addEmptyOperationIfNecessary([{ object: '*', action: '*' }]),
+  condition: '',
   secret: '',
   roleId: '',
 };
@@ -92,6 +96,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         targetUrl: webhook.targetUrl || '',
         description: webhook.description || '',
         operations,
+        condition: webhook.condition ?? '',
         secret: webhook.secret || '',
         roleId: webhook.role?.id ?? '',
       });
@@ -163,34 +168,46 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const handleSave = isCreationMode ? handleCreate : handleUpdate;
 
+  const setOperations = (nextOperations: WebhookOperationType[]) => {
+    const previousConditionObjectNameSingular =
+      getWebhookConditionObjectNameSingular(formConfig.getValues('operations'));
+    const operations = addEmptyOperationIfNecessary(nextOperations);
+    const conditionObjectNameSingular =
+      getWebhookConditionObjectNameSingular(operations);
+
+    formConfig.setValue('operations', operations, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    // A condition reads the fields of one object, so it can't follow a switch to another
+    if (
+      isDefined(previousConditionObjectNameSingular) &&
+      isDefined(conditionObjectNameSingular) &&
+      previousConditionObjectNameSingular !== conditionObjectNameSingular
+    ) {
+      formConfig.setValue('condition', '', { shouldDirty: true });
+    }
+  };
+
   const updateOperation = (
     index: number,
     field: 'object' | 'action',
     value: string | null,
   ) => {
-    const currentOperations = formConfig.getValues('operations');
-    const newOperations = [...currentOperations];
+    const newOperations = [...formConfig.getValues('operations')];
 
     newOperations[index] = {
       ...newOperations[index],
       [field]: value,
     };
 
-    formConfig.setValue(
-      'operations',
-      addEmptyOperationIfNecessary(newOperations),
-      { shouldDirty: true, shouldValidate: true },
-    );
+    setOperations(newOperations);
   };
 
   const removeOperation = (index: number) => {
-    const currentOperations = formConfig.getValues('operations');
-    const newOperations = currentOperations.filter((_, i) => i !== index);
-
-    formConfig.setValue(
-      'operations',
-      addEmptyOperationIfNecessary(newOperations),
-      { shouldDirty: true, shouldValidate: true },
+    setOperations(
+      formConfig.getValues('operations').filter((_, i) => i !== index),
     );
   };
 

@@ -31,6 +31,7 @@ const createMockWebhookData = (overrides = {}) => ({
   targetUrl: 'https://test.com/webhook',
   operations: ['person.created'],
   description: 'Test webhook',
+  condition: null,
   secret: 'test-secret',
   role: null,
   ...overrides,
@@ -44,6 +45,7 @@ const createSuccessfulCreateMock = (webhookData = {}) => ({
         targetUrl: 'https://test.com/webhook',
         operations: ['person.created'],
         description: 'Test webhook',
+        condition: null,
         secret: 'test-secret',
         roleId: 'role-id',
         ...webhookData,
@@ -67,6 +69,7 @@ const createSuccessfulUpdateMock = (webhookId: string, webhookData = {}) => ({
           targetUrl: 'https://updated.com/webhook',
           operations: ['person.updated'],
           description: 'Updated webhook',
+          condition: null,
           secret: 'updated-secret',
           roleId: 'role-id',
           ...webhookData,
@@ -166,6 +169,7 @@ describe('useWebhookForm', () => {
         targetUrl: '',
         description: '',
         operations: [{ object: '*', action: '*' }, WEBHOOK_EMPTY_OPERATION],
+        condition: '',
         secret: '',
         roleId: '',
       });
@@ -210,6 +214,7 @@ describe('useWebhookForm', () => {
               targetUrl: 'https://test.com/webhook',
               operations: ['person.created'],
               description: 'Test webhook',
+              condition: null,
               secret: 'test-secret',
               roleId: 'role-id',
             },
@@ -360,6 +365,7 @@ describe('useWebhookForm', () => {
                 targetUrl: 'https://test.com/webhook',
                 operations: ['person.created'],
                 description: 'Test webhook',
+                condition: null,
                 secret: 'test-secret',
                 roleId: 'role-id',
               },
@@ -418,6 +424,65 @@ describe('useWebhookForm', () => {
 
       const operations = result.current.formConfig.getValues('operations');
       expect(operations[0].object).toBe('person');
+    });
+
+    it('should send the trimmed condition with the webhook', async () => {
+      const mocks = [
+        createSuccessfulCreateMock({ condition: "stage == 'WON'" }),
+      ];
+
+      const { result } = renderHook(
+        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        {
+          wrapper: ({ children }) => (
+            <Wrapper mocks={mocks}>{children}</Wrapper>
+          ),
+        },
+      );
+
+      await act(async () => {
+        await result.current.handleSave({
+          targetUrl: 'https://test.com/webhook',
+          description: 'Test webhook',
+          operations: [{ object: 'person', action: 'created' }],
+          condition: "  stage == 'WON'  ",
+          secret: 'test-secret',
+          roleId: 'role-id',
+        });
+      });
+
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        status: 'success',
+        children: 'Webhook https://test.com/webhook created successfully',
+      });
+    });
+
+    it('should clear the condition when the events switch to another object', () => {
+      const { result } = renderHook(
+        () => useWebhookForm({ mode: WebhookFormMode.Create }),
+        { wrapper: ({ children }) => <Wrapper>{children}</Wrapper> },
+      );
+
+      act(() => {
+        result.current.formConfig.setValue('operations', [
+          { object: 'person', action: 'created' },
+        ]);
+        result.current.formConfig.setValue('condition', "city == 'Paris'");
+      });
+
+      act(() => {
+        result.current.updateOperation(0, 'action', 'updated');
+      });
+
+      expect(result.current.formConfig.getValues('condition')).toBe(
+        "city == 'Paris'",
+      );
+
+      act(() => {
+        result.current.updateOperation(0, 'object', 'company');
+      });
+
+      expect(result.current.formConfig.getValues('condition')).toBe('');
     });
 
     it('should remove operations correctly', () => {

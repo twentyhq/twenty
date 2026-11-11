@@ -6,6 +6,7 @@ export const WEBHOOK_FRAGMENT = gql`
     targetUrl
     operations
     description
+    condition
     secret
     role {
       id

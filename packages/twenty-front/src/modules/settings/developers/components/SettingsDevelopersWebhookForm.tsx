@@ -6,6 +6,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { type WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
+import { SettingsDevelopersWebhookConditionInput } from '@/settings/developers/components/SettingsDevelopersWebhookConditionInput';
 import { SettingsDevelopersWebhookDefaultRoleEffect } from '@/settings/developers/components/SettingsDevelopersWebhookDefaultRoleEffect';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -183,6 +184,17 @@ export const SettingsDevelopersWebhookForm = ({
                   events={value}
                   updateOperation={updateOperation}
                   removeOperation={removeOperation}
+                />
+              )}
+            />
+            <Controller
+              name="condition"
+              control={formConfig.control}
+              render={({ field: { onChange, value } }) => (
+                <SettingsDevelopersWebhookConditionInput
+                  operations={formConfig.watch('operations')}
+                  condition={value ?? ''}
+                  onConditionChange={onChange}
                 />
               )}
             />

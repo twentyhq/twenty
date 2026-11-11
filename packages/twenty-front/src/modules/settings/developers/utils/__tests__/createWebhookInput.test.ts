@@ -26,9 +26,23 @@ describe('createWebhookInput', () => {
         targetUrl: 'https://test.com/webhook',
         operations: ['person.created', 'company.updated'],
         description: 'Test webhook',
+        condition: null,
         secret: 'test-secret',
         roleId: 'role-id',
       });
+    });
+
+    it('should trim the condition and send a blank one as null', () => {
+      expect(
+        createWebhookCreateInput({
+          ...mockFormValues,
+          condition: "  stage == 'WON'  ",
+        }).condition,
+      ).toBe("stage == 'WON'");
+      expect(
+        createWebhookCreateInput({ ...mockFormValues, condition: '   ' })
+          .condition,
+      ).toBeNull();
     });
 
     it('should trim targetUrl', () => {
@@ -51,6 +65,7 @@ describe('createWebhookInput', () => {
         targetUrl: 'https://test.com/webhook',
         operations: ['person.created', 'company.updated'],
         description: 'Test webhook',
+        condition: null,
         secret: 'test-secret',
         roleId: 'role-id',
       });

@@ -27,6 +27,7 @@ export const getWebhookFormSchema = () =>
           error: () => t`At least one complete operation is required`,
         },
       ),
+    condition: z.string().optional(),
     secret: z.string().optional(),
     roleId: z.string().min(1, { error: () => t`A role is required` }),
   });
