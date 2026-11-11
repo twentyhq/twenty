@@ -18,6 +18,7 @@ describe('computeDatabaseEventWatchedFieldName', () => {
         name: 'company',
         type: FieldMetadataType.RELATION,
         relationType: RelationType.MANY_TO_ONE,
+        relationTargetObjectUniversalIdentifier: 'company-object',
       }),
     ).toBe('companyId');
   });
@@ -28,8 +29,19 @@ describe('computeDatabaseEventWatchedFieldName', () => {
         name: 'targetCompany',
         type: FieldMetadataType.MORPH_RELATION,
         relationType: RelationType.MANY_TO_ONE,
+        relationTargetObjectUniversalIdentifier: 'company-object',
       }),
     ).toBe('targetCompanyId');
+  });
+
+  it('cannot watch a morph head, which has no join column', () => {
+    expect(
+      computeDatabaseEventWatchedFieldName({
+        name: 'target',
+        type: FieldMetadataType.MORPH_RELATION,
+        relationType: RelationType.MANY_TO_ONE,
+      }),
+    ).toBeUndefined();
   });
 
   it('cannot watch a relation to many records', () => {

@@ -145,6 +145,7 @@ export type {
   InputSchemaProperty,
   InputSchema,
 } from './types/InputSchema';
+export type { StepFiltersToRuleExpressionConversionResult } from './types/StepFiltersToRuleExpressionConversionResult';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export { WorkflowActionType } from './types/WorkflowActionType';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
@@ -169,6 +170,7 @@ export type {
 } from './types/WorkflowRunStepLog';
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
+export { convertStepFiltersToRuleExpression } from './utils/convertStepFiltersToRuleExpression';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';
