@@ -52,12 +52,14 @@ describe('Record-level sharing on an object open by default', () => {
   let recordPermissionReadRepository: RecordPermissionReadRepository;
   const target = () => ({ objectMetadataId, recordId: RECORD_ID });
 
-  const setRecordSharingEnabled = (value: boolean) =>
-    updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      value,
-      expectToFail: false,
-    });
+  const setRecordSharingAndPrivateRecordsEnabled = async (value: boolean) => {
+    for (const featureFlag of [
+      FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+    ]) {
+      await updateFeatureFlag({ featureFlag, value, expectToFail: false });
+    }
+  };
 
   const readSharing = (token = APPLE_JANE_ADMIN_ACCESS_TOKEN) =>
     makeMetadataApiRequest(
@@ -165,7 +167,7 @@ describe('Record-level sharing on an object open by default', () => {
     );
 
     expect(created.body.errors).toBeUndefined();
-    await setRecordSharingEnabled(true);
+    await setRecordSharingAndPrivateRecordsEnabled(true);
   });
 
   beforeEach(async () => {
@@ -178,7 +180,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
+    await setRecordSharingAndPrivateRecordsEnabled(false);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -364,12 +366,12 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   it('should let a record be made private with private records on and sharing off', async () => {
+    await setRecordSharingAndPrivateRecordsEnabled(false);
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
       value: true,
       expectToFail: false,
     });
-    await setRecordSharingEnabled(false);
 
     try {
       expect(
@@ -388,18 +390,13 @@ describe('Record-level sharing on an object open by default', () => {
         (await setPrivate({ isPrivate: false })).body.errors,
       ).toBeUndefined();
     } finally {
-      await setRecordSharingEnabled(true);
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
+      await setRecordSharingAndPrivateRecordsEnabled(true);
     }
   });
 
-  it('should keep a private record private while record sharing is off', async () => {
+  it('should keep a private record private while record sharing and private records are off', async () => {
     await setPrivate({ isPrivate: true });
-    await setRecordSharingEnabled(false);
+    await setRecordSharingAndPrivateRecordsEnabled(false);
 
     try {
       expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
@@ -410,7 +407,7 @@ describe('Record-level sharing on an object open by default', () => {
       });
       expect((await setPrivate({ isPrivate: true })).body.errors).toBeDefined();
     } finally {
-      await setRecordSharingEnabled(true);
+      await setRecordSharingAndPrivateRecordsEnabled(true);
     }
   });
 });

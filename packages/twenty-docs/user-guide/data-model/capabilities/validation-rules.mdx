@@ -69,6 +69,15 @@ Put text in single or double quotes and use parentheses to group conditions. Use
 
 To make a field required, use `not isEmpty(fieldName)`. This also works for composite fields such as emails and addresses.
 
+### Compare Dates
+
+| Function                                               | Use                                                                                                                                                                                                                                    |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `daysSince(date)`                                      | Get the number of days from a date to today, in UTC. A date in the future gives a negative number.                                                                                                                                     |
+| `isInRelativeDateRange(date, direction, amount, unit)` | Check whether a date falls in a period counted from today, in UTC. `direction` is `"PAST"`, `"NEXT"` or `"THIS"`, `unit` is `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` or `"YEAR"`. `"PAST"` and `"NEXT"` leave out the current period. |
+
+For example, `daysSince(closeDate) >= 0 and daysSince(closeDate) <= 30` allows a save only on the close date or in the 30 days after it.
+
 ### Reference Composite and Related Fields
 
 Use a dot to read part of a composite field, such as `name.firstName` or `amount.amountMicros`. You can also read a field through a many-to-one relation, such as `company.name` on a person. Select fields from the helper to find the available paths.

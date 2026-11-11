@@ -39,7 +39,7 @@ import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/internal/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/combine/utils/is-object-operation-denied-to-principals.util';
-import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
+import { canAllRecordsOrRowLevelPermissionsGrantOperation } from 'src/engine/permissions/internal/role/utils/can-all-records-or-row-level-permissions-grant-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
 import { buildRelatedRecordPathsSQLCondition } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-paths-sql-condition.util';
@@ -149,7 +149,7 @@ export class RecordPermissionsReadService {
       return false;
     }
 
-    if (isRolePermittingOperation(request)) {
+    if (canAllRecordsOrRowLevelPermissionsGrantOperation(request)) {
       return true;
     }
 
@@ -174,7 +174,10 @@ export class RecordPermissionsReadService {
   ): Promise<boolean> {
     const request = await this.findObjectAccessRequest(question);
 
-    return isDefined(request) && isRolePermittingOperation(request);
+    return (
+      isDefined(request) &&
+      canAllRecordsOrRowLevelPermissionsGrantOperation(request)
+    );
   }
 
   async filterRoleIdsWithoutReadAccess({
