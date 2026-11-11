@@ -1,6 +1,13 @@
 /* @license Enterprise */
 
-export const PERMISSION_SYSTEM_TABLES = [
+type PermissionSystemTable = {
+  tableName: string;
+  columnNames: string[];
+  jsonColumnNames: string[];
+  identityColumnName?: string;
+};
+
+export const PERMISSION_SYSTEM_TABLES: PermissionSystemTable[] = [
   {
     tableName: 'recordShare',
     columnNames: [
@@ -33,5 +40,6 @@ export const PERMISSION_SYSTEM_TABLES = [
       'compactId',
     ],
     jsonColumnNames: ['memberFieldValues'],
+    identityColumnName: 'compactId',
   },
 ];

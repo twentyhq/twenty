@@ -21,10 +21,13 @@ import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-fi
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import {
+  escapeIdentifier,
+  escapeLiteral,
+} from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { formatPgCopyField } from './utils/format-pg-copy-value.util';
 
 const BATCH_SIZE = 10_000;
@@ -157,6 +160,7 @@ export class WorkspaceExportService {
       if (!objectMetadatas.some(isPermissionStorageObject)) {
         await this.writePermissionSystemTables({
           schemaName,
+          tableFilter,
           queryRunner,
           stream,
         });
@@ -367,12 +371,11 @@ export class WorkspaceExportService {
 
   private async writePermissionSystemTables({
     schemaName,
+    tableFilter,
     queryRunner,
     stream,
-  }: Pick<
-    WriteRowsOptions,
-    'schemaName' | 'queryRunner' | 'stream'
-  >): Promise<void> {
+  }: Pick<WriteRowsOptions, 'schemaName' | 'queryRunner' | 'stream'> &
+    Pick<WorkspaceExportParams, 'tableFilter'>): Promise<void> {
     for (const statement of buildCreatePermissionSystemTablesStatements({
       schemaName,
     })) {
@@ -385,7 +388,12 @@ export class WorkspaceExportService {
       tableName,
       columnNames,
       jsonColumnNames,
+      identityColumnName,
     } of PERMISSION_SYSTEM_TABLES) {
+      if (isDefined(tableFilter) && !tableFilter.includes(tableName)) {
+        continue;
+      }
+
       await this.writeCopyRows({
         schemaName,
         tableName,
@@ -395,6 +403,16 @@ export class WorkspaceExportService {
         jsonColumns: new Set(jsonColumnNames),
         includedColumns: new Set(columnNames),
       });
+
+      if (isDefined(identityColumnName)) {
+        const table = `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
+        const column = escapeIdentifier(identityColumnName);
+
+        // COPY keeps the exported ids but leaves the identity sequence at its start
+        stream.write(
+          `SELECT setval(pg_get_serial_sequence(${escapeLiteral(table)}, ${escapeLiteral(identityColumnName)}), COALESCE(MAX(${column}), 1), MAX(${column}) IS NOT NULL) FROM ${table};\n\n`,
+        );
+      }
     }
   }
 
