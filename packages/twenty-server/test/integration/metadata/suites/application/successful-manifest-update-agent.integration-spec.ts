@@ -278,8 +278,9 @@ describe('Manifest update - agents', () => {
             triggers: [
               {
                 universalIdentifier: TEST_TRIGGER_ID,
-                type: 'DATABASE_EVENT',
+                type: 'EVENT',
                 settings: {
+                  on: 'record',
                   objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
                   action: 'updated',
                   watchedFieldUniversalIdentifiers: [

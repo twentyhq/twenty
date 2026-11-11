@@ -1,8 +1,10 @@
 import { HTTPMethod } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { getDatabaseEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-database-event-trigger-settings-errors';
+import { getRecordEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-record-event-trigger-settings-errors';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 
 export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
@@ -48,11 +50,30 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
     }
   }
 
-  if (config.databaseEventTriggerSettings) {
+  if (
+    isDefined(config.eventTriggerSettings) &&
+    isDefined(config.databaseEventTriggerSettings)
+  ) {
+    errors.push(
+      'Set eventTriggerSettings or databaseEventTriggerSettings, not both',
+    );
+  }
+
+  if (isDefined(config.eventTriggerSettings)) {
+    errors.push(
+      ...getRecordEventTriggerSettingsErrors({
+        settings: config.eventTriggerSettings,
+        subject: 'Event trigger',
+      }),
+    );
+  }
+
+  if (isDefined(config.databaseEventTriggerSettings)) {
     errors.push(
       ...getDatabaseEventTriggerSettingsErrors({
         settings: config.databaseEventTriggerSettings,
         subject: 'Database event trigger',
+        replacement: "eventTriggerSettings with on: 'record'",
       }),
     );
   }
