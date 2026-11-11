@@ -70,7 +70,12 @@ export class RecordSharingWriteService {
     return this.recordSharingChangeService.runChange({
       args,
       isChangeEnabled: isRecordSharingEnabled,
-      write: async ({ workspaceId, transactionScope, sharingMetadata }) => {
+      write: async ({
+        workspaceId,
+        transactionScope,
+        flatObjectMetadata,
+        featureFlagsMap,
+      }) => {
         await this.recordShareStorageService.setManualShare({
           workspaceId,
           transactionScope,
@@ -86,7 +91,8 @@ export class RecordSharingWriteService {
           {
             workspaceId,
             transactionScope,
-            ...sharingMetadata,
+            flatObjectMetadata,
+            featureFlagsMap,
             principals: [principal],
             recordIds: [args.recordId],
           },
@@ -238,7 +244,8 @@ export class RecordSharingWriteService {
   private async writeRecordPrivacy({
     workspaceId,
     transactionScope,
-    sharingMetadata: { flatObjectMetadata, featureFlagsMap },
+    flatObjectMetadata,
+    featureFlagsMap,
     creatorWorkspaceMemberId,
     args,
   }: RecordSharingChange & {

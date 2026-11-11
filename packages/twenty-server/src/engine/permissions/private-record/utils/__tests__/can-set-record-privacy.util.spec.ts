@@ -15,7 +15,7 @@ describe('canSetRecordPrivacy', () => {
       featureFlagsMap: {
         [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
       },
-      expected: true,
+      expected: false,
     },
   ])(
     'should return $expected for flags $featureFlagsMap',
