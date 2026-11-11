@@ -201,34 +201,37 @@ export class RecordEventPermissionsReadService {
       parseEventNameOrThrow(eventBatch.name).action ===
       DatabaseEventAction.DESTROYED;
 
-    // a destroyed record has no row left to query, so only its last snapshot can be checked
     const findReadableRecordIdsInBatch = async (
       principals: PermissionsPrincipalsWithRolesContext,
-    ) =>
-      isDestroyedRecordEventBatch
-        ? findGrantedRecordIds({
-            principals,
-            metadataMaps: await loadMetadataMaps(),
-            flatObjectMetadata: objectMetadata,
-            operationType: 'read',
-            records: resolveEventRecordSnapshots(events),
-            context: {
-              shouldIgnoreSoftDeleteDefaultFilter: true,
-              fetchRecordShares,
-              findPrivateRecordStates,
-              findRelationJoinValues: (args) =>
-                this.recordPermissionReadRepository.findRelationJoinValues({
-                  ...args,
-                  workspaceId,
-                }),
-            },
-          })
-        : this.recordPermissionsReadService.filterGrantedRecordIds({
-            principals,
-            objectMetadataId: objectMetadata.id,
-            operationType: 'read',
-            recordIds: events.map((event) => event.recordId),
-          });
+    ) => {
+      if (!isDestroyedRecordEventBatch) {
+        return this.recordPermissionsReadService.filterGrantedRecordIds({
+          principals,
+          objectMetadataId: objectMetadata.id,
+          operationType: 'read',
+          recordIds: events.map((event) => event.recordId),
+        });
+      }
+
+      // a destroyed record has no row left to query, so only its last snapshot can be checked
+      return findGrantedRecordIds({
+        principals,
+        metadataMaps: await loadMetadataMaps(),
+        flatObjectMetadata: objectMetadata,
+        operationType: 'read',
+        records: resolveEventRecordSnapshots(events),
+        context: {
+          shouldIgnoreSoftDeleteDefaultFilter: true,
+          fetchRecordShares,
+          findPrivateRecordStates,
+          findRelationJoinValues: (args) =>
+            this.recordPermissionReadRepository.findRelationJoinValues({
+              ...args,
+              workspaceId,
+            }),
+        },
+      });
+    };
 
     const loaders = { loadMetadataMaps, findReadableRecordIdsInBatch };
 
