@@ -17,17 +17,24 @@ describe('arePrivateRecordsEnabled', () => {
     ).toBe(false);
   });
 
-  it.each([
-    { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
-    { [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true },
-    { [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false },
-  ])('should be on with %j', (featureFlagsMap) => {
+  it('should be on with the private records flag', () => {
     expect(
       arePrivateRecordsEnabled({
         flatObjectMetadata: ORDINARY_OBJECT,
-        featureFlagsMap,
+        featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
       }),
     ).toBe(true);
+  });
+
+  it('should stay off when only record sharing is on', () => {
+    expect(
+      arePrivateRecordsEnabled({
+        flatObjectMetadata: ORDINARY_OBJECT,
+        featureFlagsMap: {
+          [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+        },
+      }),
+    ).toBe(false);
   });
 
   it.each([
