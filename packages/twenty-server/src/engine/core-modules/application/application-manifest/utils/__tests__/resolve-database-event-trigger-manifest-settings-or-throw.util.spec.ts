@@ -101,6 +101,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     expect(
       resolve({
         objectUniversalIdentifier: OPPORTUNITY,
+        on: 'record' as const,
         action: 'updated',
         watchedFieldUniversalIdentifiers: [STAGE, COMPANY],
         condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
@@ -118,6 +119,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     expect(
       resolve({
         objectUniversalIdentifier: SIGNAL,
+        on: 'record' as const,
         action: 'created',
         condition: "status == 'NEW'",
       }),
@@ -125,7 +127,9 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
   });
 
   it('listens to every object when no object is given', () => {
-    expect(resolve({ action: '*' })).toEqual({ eventName: '*.*' });
+    expect(resolve({ on: 'record', action: '*' })).toEqual({
+      eventName: '*.*',
+    });
   });
 
   it('keeps the event name form and checks its condition against the object', () => {
@@ -147,13 +151,18 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
   it.each([
     [
       'an unknown object',
-      { objectUniversalIdentifier: STAGE, action: 'created' as const },
+      {
+        on: 'record' as const,
+        objectUniversalIdentifier: STAGE,
+        action: 'created' as const,
+      },
       /unknown object/,
     ],
     [
       'a field of another object',
       {
         objectUniversalIdentifier: OPPORTUNITY,
+        on: 'record' as const,
         action: 'updated' as const,
         watchedFieldUniversalIdentifiers: [SIGNAL_STATUS],
       },
@@ -163,6 +172,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
       'a relation to many records',
       {
         objectUniversalIdentifier: OPPORTUNITY,
+        on: 'record' as const,
         action: 'updated' as const,
         watchedFieldUniversalIdentifiers: [POINT_OF_CONTACTS],
       },
@@ -170,13 +180,18 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     ],
     [
       'a condition without an object',
-      { action: 'created' as const, condition: 'isDefined(name)' },
+      {
+        on: 'record' as const,
+        action: 'created' as const,
+        condition: 'isDefined(name)',
+      },
       /a condition needs a trigger on one object/,
     ],
     [
       'a condition reading a relation by its join column',
       {
         objectUniversalIdentifier: OPPORTUNITY,
+        on: 'record' as const,
         action: 'created' as const,
         condition: 'isDefined(companyId)',
       },
@@ -201,6 +216,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow built-in fields', (
     expect(
       resolve({
         objectUniversalIdentifier: SIGNAL,
+        on: 'record' as const,
         action: 'created',
         condition: 'isDefined(createdAt)',
       }),
@@ -214,6 +230,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow built-in fields', (
     expect(() =>
       resolve({
         objectUniversalIdentifier: SIGNAL,
+        on: 'record' as const,
         action: 'created',
         condition: false as unknown as string,
       }),

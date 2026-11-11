@@ -242,17 +242,20 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
 
     for (const logicFunctionManifest of manifest.logicFunctions) {
-      const { databaseEventTriggerSettings } = logicFunctionManifest;
+      const eventTriggerSettings =
+        logicFunctionManifest.eventTriggerSettings ??
+        logicFunctionManifest.databaseEventTriggerSettings;
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromLogicFunctionManifestToUniversalFlatLogicFunction({
-            logicFunctionManifest: isDefined(databaseEventTriggerSettings)
+            logicFunctionManifest: isDefined(eventTriggerSettings)
               ? {
                   ...logicFunctionManifest,
+                  eventTriggerSettings: undefined,
                   databaseEventTriggerSettings:
                     resolveDatabaseEventTriggerManifestSettingsOrThrow({
-                      settings: databaseEventTriggerSettings,
+                      settings: eventTriggerSettings,
                       resolver: databaseEventTriggerManifestResolver,
                       subject: `Logic function ${logicFunctionManifest.name ?? logicFunctionManifest.universalIdentifier}`,
                     }),
@@ -511,9 +514,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           agentManifest: {
             ...agentManifest,
             triggers: agentManifest.triggers?.map((trigger) =>
-              trigger.type === 'DATABASE_EVENT'
+              trigger.type === 'EVENT' || trigger.type === 'DATABASE_EVENT'
                 ? {
                     ...trigger,
+                    type: 'DATABASE_EVENT' as const,
                     settings:
                       resolveDatabaseEventTriggerManifestSettingsOrThrow({
                         settings: trigger.settings,

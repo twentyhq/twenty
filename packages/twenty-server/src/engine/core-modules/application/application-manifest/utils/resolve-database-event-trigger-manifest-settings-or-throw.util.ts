@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import {
-  type DatabaseEventTriggerManifestSettings,
+  type EventTriggerManifestSettings,
   type DatabaseEventTriggerSettings,
-  isObjectDatabaseEventTriggerManifestSettings,
+  isRecordEventTriggerManifestSettings,
 } from 'twenty-shared/application';
 import {
   compileValidationRuleExpression,
@@ -89,7 +89,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   resolver,
   subject,
 }: {
-  settings: DatabaseEventTriggerManifestSettings;
+  settings: EventTriggerManifestSettings | DatabaseEventTriggerSettings;
   resolver: DatabaseEventTriggerManifestResolver;
   subject: string;
 }): DatabaseEventTriggerSettings => {
@@ -98,7 +98,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
     subject,
   });
 
-  if (!isObjectDatabaseEventTriggerManifestSettings(settings)) {
+  if (!isRecordEventTriggerManifestSettings(settings)) {
     if (isDefined(condition)) {
       const [objectNameSingular] = settings.eventName.split('.');
 

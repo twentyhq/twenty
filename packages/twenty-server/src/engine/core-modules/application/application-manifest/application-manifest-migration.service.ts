@@ -76,10 +76,11 @@ export class ApplicationManifestMigrationService {
       application: manifest.application,
       objects: [],
       fields: [],
-      // The app's objects don't exist yet: the full sync that follows adds the event trigger
+      // The app's objects don't exist yet: the full sync that follows adds the event triggers
       logicFunctions: [
         {
           ...preInstallLogicFunctionManifest,
+          eventTriggerSettings: undefined,
           databaseEventTriggerSettings: undefined,
         },
       ],

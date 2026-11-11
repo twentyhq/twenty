@@ -8,6 +8,7 @@ import {
   AGENT_TRIGGER_EVENT_NAME_PATTERN,
   AGENT_TRIGGER_LIMITS,
   AGENT_TRIGGER_TYPES,
+  type AgentTriggerManifest,
   type AgentManifest,
 } from 'twenty-shared/application';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
@@ -16,6 +17,7 @@ import { validate as uuidValidate } from 'uuid';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { getDatabaseEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-database-event-trigger-settings-errors';
+import { getRecordEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-record-event-trigger-settings-errors';
 
 // Keyed by every ModelConfiguration key so a new capability fails to compile until listed
 const MODEL_CAPABILITIES: Record<keyof ModelConfiguration, true> = {
@@ -24,6 +26,12 @@ const MODEL_CAPABILITIES: Record<keyof ModelConfiguration, true> = {
 };
 
 const MODEL_CAPABILITY_NAMES = new Set(Object.keys(MODEL_CAPABILITIES));
+
+// EVENT is stored as DATABASE_EVENT once its object and fields are resolved
+const AGENT_TRIGGER_MANIFEST_TYPES: AgentTriggerManifest['type'][] = [
+  'EVENT',
+  ...AGENT_TRIGGER_TYPES,
+];
 
 export const defineAgent: DefineEntity<AgentManifest> = (config) => {
   const errors: string[] = [];
@@ -144,21 +152,34 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
       );
     }
 
-    if (!AGENT_TRIGGER_TYPES.includes(trigger.type)) {
+    if (!AGENT_TRIGGER_MANIFEST_TYPES.includes(trigger.type)) {
       errors.push(
-        `Agent '${config.name}' trigger type must be one of: ${AGENT_TRIGGER_TYPES.join(', ')}`,
+        `Agent '${config.name}' trigger type must be one of: ${AGENT_TRIGGER_MANIFEST_TYPES.join(', ')}`,
       );
     }
 
-    if (trigger.type === 'DATABASE_EVENT' && !isPlainObject(trigger.settings)) {
-      errors.push(`Agent '${config.name}' trigger must have settings`);
+    const triggerSubject = `Agent '${config.name}' trigger`;
+
+    if (
+      (trigger.type === 'EVENT' || trigger.type === 'DATABASE_EVENT') &&
+      !isPlainObject(trigger.settings)
+    ) {
+      errors.push(`${triggerSubject} must have settings`);
+    } else if (trigger.type === 'EVENT') {
+      errors.push(
+        ...getRecordEventTriggerSettingsErrors({
+          settings: trigger.settings,
+          subject: triggerSubject,
+          isObjectRequired: true,
+        }),
+      );
     } else if (trigger.type === 'DATABASE_EVENT') {
       errors.push(
         ...getDatabaseEventTriggerSettingsErrors({
           settings: trigger.settings,
-          subject: `Agent '${config.name}' trigger`,
+          subject: triggerSubject,
           eventNamePattern: AGENT_TRIGGER_EVENT_NAME_PATTERN,
-          isObjectRequired: true,
+          replacement: "an EVENT trigger with on: 'record'",
         }),
       );
     }

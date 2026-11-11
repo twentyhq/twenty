@@ -3,7 +3,10 @@ import { toStoredDatabaseEventTriggerSettingsOrThrow } from 'src/engine/core-mod
 describe('toStoredDatabaseEventTriggerSettingsOrThrow', () => {
   it('refuses settings that were not resolved', () => {
     expect(() =>
-      toStoredDatabaseEventTriggerSettingsOrThrow({ action: 'created' }),
+      toStoredDatabaseEventTriggerSettingsOrThrow({
+        on: 'record',
+        action: 'created',
+      }),
     ).toThrow(/must be resolved/);
     expect(
       toStoredDatabaseEventTriggerSettingsOrThrow({
