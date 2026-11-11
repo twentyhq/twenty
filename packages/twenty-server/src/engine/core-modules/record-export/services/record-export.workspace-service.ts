@@ -61,6 +61,10 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -669,9 +673,16 @@ export class RecordExportWorkspaceService {
       workspaceId,
     );
 
-    if (!isDefined(application) || !isDefined(workspace)) {
+    if (!isDefined(workspace)) {
+      throw new WorkspaceException(
+        `Workspace ${workspaceId} not found`,
+        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    if (!isDefined(application)) {
       throw new ForbiddenException(
-        t`You do not have permission to export records.`,
+        t`The application that requested this export is no longer installed.`,
       );
     }
 
