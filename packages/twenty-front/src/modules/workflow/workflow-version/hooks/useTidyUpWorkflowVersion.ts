@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
+import { workflowFlowAppliedServerChangesCountComponentState } from '@/workflow/states/workflowFlowAppliedServerChangesCountComponentState';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 
 export const useTidyUpWorkflowVersion = (instanceId?: string) => {
@@ -18,6 +19,10 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
   });
 
   const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
+  const setWorkflowFlowAppliedServerChangesCount = useSetAtomComponentState(
+    workflowFlowAppliedServerChangesCountComponentState,
+    instanceId,
+  );
 
   const updateWorkflowVersionPosition = async (
     workflowVersionId: string,
@@ -62,6 +67,7 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
           }) ?? null,
       };
     });
+    setWorkflowFlowAppliedServerChangesCount((count) => count + 1);
 
     await invalidateCoreWorkflowVersions(apolloCoreClient);
   };

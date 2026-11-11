@@ -7,6 +7,7 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
+import { workflowFlowAppliedServerChangesCountComponentState } from '@/workflow/states/workflowFlowAppliedServerChangesCountComponentState';
 import { workflowFailedFlowKeysComponentState } from '@/workflow/states/workflowFailedFlowKeysComponentState';
 import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
 import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
@@ -62,8 +63,8 @@ export const WorkflowDiagramEffect = () => {
       workflowVisualizerWorkflowId ?? '',
     );
 
-  const [shouldSeedFlowFromServer, setShouldSeedFlowFromServer] =
-    useState(false);
+  const [serverSeedAppliedChangesCount, setServerSeedAppliedChangesCount] =
+    useState<number>();
   const [lastCurrentVersionId, setLastCurrentVersionId] = useState<string>();
   const [seededVersionUpdatedAt, setSeededVersionUpdatedAt] =
     useState<string>();
@@ -79,6 +80,9 @@ export const WorkflowDiagramEffect = () => {
   );
   const saveDraftVersionId = useAtomComponentStateCallbackState(
     workflowFlowSaveDraftVersionIdComponentState,
+  );
+  const appliedServerChangesCount = useAtomComponentStateCallbackState(
+    workflowFlowAppliedServerChangesCountComponentState,
   );
   const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow();
   const [previousDiagramUpdatedAt, setPreviousDiagramUpdatedAt] =
@@ -140,17 +144,24 @@ export const WorkflowDiagramEffect = () => {
     setShouldWorkflowRefetchRequest(false);
 
     void savePendingWorkflowFlow()
-      .then(() => refetchContent())
-      .then(() => {
-        setShouldSeedFlowFromServer(true);
+      .then(async () => {
+        const appliedChangesCountBeforeRefetch = store.get(
+          appliedServerChangesCount,
+        );
+
+        await refetchContent();
+
+        setServerSeedAppliedChangesCount(appliedChangesCountBeforeRefetch);
       })
       .catch(logError);
   }, [
+    appliedServerChangesCount,
     currentVersion?.id,
     shouldWorkflowRefetchRequest,
     setShouldWorkflowRefetchRequest,
     refetchContent,
     savePendingWorkflowFlow,
+    store,
   ]);
 
   useEffect(() => {
@@ -172,13 +183,29 @@ export const WorkflowDiagramEffect = () => {
     }
 
     const hasCurrentVersionChanged = lastCurrentVersionId !== currentVersion.id;
+    const hasServerSeedRequest = isDefined(serverSeedAppliedChangesCount);
+
+    if (!hasCurrentVersionChanged && !hasServerSeedRequest) {
+      return;
+    }
+
+    setServerSeedAppliedChangesCount(undefined);
+
+    // A change applied while refetching (e.g. the first step added right after the draft
+    // creation event) may be missing from the refetched content, so refetch again instead
+    const shouldSeedFlowFromServer =
+      hasServerSeedRequest &&
+      serverSeedAppliedChangesCount === store.get(appliedServerChangesCount);
+
+    if (hasServerSeedRequest && !shouldSeedFlowFromServer) {
+      setShouldWorkflowRefetchRequest(true);
+    }
 
     if (!hasCurrentVersionChanged && !shouldSeedFlowFromServer) {
       return;
     }
 
     setLastCurrentVersionId(currentVersion.id);
-    setShouldSeedFlowFromServer(false);
 
     if (
       isDefined(lastCurrentVersionId) &&
@@ -230,7 +257,9 @@ export const WorkflowDiagramEffect = () => {
     currentVersion,
     flow?.workflowVersionId,
     lastCurrentVersionId,
-    shouldSeedFlowFromServer,
+    serverSeedAppliedChangesCount,
+    setShouldWorkflowRefetchRequest,
+    appliedServerChangesCount,
     contentUpdatedAt,
     setFlow,
     deleteStepsOutputSchema,
