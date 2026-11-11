@@ -82,15 +82,6 @@ const resolveOutcome = ({
           objects: { [flatObjectMetadata.id]: readOnlyPermissions },
         },
       },
-      flatApplicationMaps: {
-        byId: {
-          [APPLICATION_ID]: {
-            id: APPLICATION_ID,
-            defaultRoleId: APPLICATION_ROLE_ID,
-            deletedAt: null,
-          },
-        },
-      },
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
@@ -121,11 +112,23 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     ).toBe(false);
     expect(
       resolveOutcome({
-        operationType: 'destroy',
+        operationType: 'create',
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
     ).toBe(false);
   });
+
+  it.each(['softDelete', 'destroy'] as const)(
+    'leaves %s the role lacks to the share grant path',
+    (operationType) => {
+      expect(
+        resolveOutcome({
+          operationType,
+          featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        }),
+      ).toBeUndefined();
+    },
+  );
 
   it('denies a disabled operation unless the principal owns the object', () => {
     expect(

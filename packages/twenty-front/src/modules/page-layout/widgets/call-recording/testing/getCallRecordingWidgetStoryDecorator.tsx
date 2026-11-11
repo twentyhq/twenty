@@ -12,7 +12,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
-import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
+import { PageLayoutWidgetCardHeader } from '@/page-layout/widgets/widget-card/components/PageLayoutWidgetCardHeader';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -219,7 +219,7 @@ export const getCallRecordingWidgetStoryDecorator =
                   isDragging={false}
                   isResizing={false}
                 >
-                  <WidgetCardHeader
+                  <PageLayoutWidgetCardHeader
                     className="widget-card-header"
                     widgetId={widget.id}
                     variant="flush"

@@ -10,6 +10,7 @@ import { ApplicationStopModule } from 'src/engine/core-modules/application/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/workspace-flat-application-map-cache.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
@@ -44,6 +45,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ]),
     ApplicationTranslationModule,
     ApplicationLookupModule,
+    ApplicationGrantRoleLookupModule,
     ApplicationStopModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
