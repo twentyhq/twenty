@@ -41,7 +41,7 @@ export const SettingsConnectableAppConnectionsSection = ({
   connectableApp,
 }: SettingsConnectableAppConnectionsSectionProps) => {
   const { t } = useLingui();
-  const { authorizations, loading, hasLoadError, refetch } =
+  const { authorizations, isLoading, hasLoadError, refetch } =
     useConnectableAppAuthorizations(connectableApp);
   const connectLink = useConnectableAppConnectLink(connectableApp);
   const [revokeApplicationAuthorization] = useMutation(
@@ -83,7 +83,7 @@ export const SettingsConnectableAppConnectionsSection = ({
   };
 
   const renderContent = () => {
-    if (loading) {
+    if (isLoading) {
       return <SettingsSectionSkeletonLoader />;
     }
 

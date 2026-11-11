@@ -17,7 +17,7 @@ export const useConnectableAppAuthorizations = (
       authorizations: data?.currentUserApplicationAuthorizations ?? [],
       connectableAppId: connectableApp.id,
     }),
-    loading: loading && !isDefined(data),
+    isLoading: loading && !isDefined(data),
     hasLoadError: isDefined(error) && !isDefined(data),
     refetch,
   };
