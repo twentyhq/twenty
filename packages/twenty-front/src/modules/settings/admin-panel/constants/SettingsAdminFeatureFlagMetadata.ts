@@ -70,7 +70,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_PERMISSION_SYSTEM_TABLES_ENABLED]: {
     label: msg`Permission system tables`,
-    description: msg`Store record shares and access groups in tables owned by the permission engine instead of objects. Turning this on removes both objects from the data model and cannot be undone by turning it off.`,
+    description: msg`Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created.`,
   },
   [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
     label: msg`Access groups`,
