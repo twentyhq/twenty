@@ -1,6 +1,6 @@
 export type RecomputeRecordAccessGroupIdsJobData = {
   workspaceId: string;
   objectMetadataId: string;
-  // Set when only the groups inherited through related record paths can have changed
-  isPropagatedThroughRelatedRecordPath?: boolean;
+  // Objects whose recompute led to this one, so paths saved as a cycle stop propagating
+  propagatedFromObjectMetadataIds?: string[];
 };

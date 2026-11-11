@@ -46,18 +46,18 @@ export class AccessGroupSyncSchedulerService {
   async scheduleRecordAccessGroupIdsRecompute({
     workspaceId,
     objectMetadataId,
-    isPropagatedThroughRelatedRecordPath = false,
+    propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
       RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
-      { workspaceId, objectMetadataId, isPropagatedThroughRelatedRecordPath },
+      { workspaceId, objectMetadataId, propagatedFromObjectMetadataIds },
       {
         isWorkspaceJob: true,
         workspaceId,
         retryLimit: 3,
         // One recompute per object and origin at a time, and at most one waiting behind it
         deduplication: {
-          id: `record-access-group-ids:${workspaceId}:${objectMetadataId}${isPropagatedThroughRelatedRecordPath ? ':propagated' : ''}`,
+          id: `record-access-group-ids:${workspaceId}:${objectMetadataId}${propagatedFromObjectMetadataIds.length > 0 ? ':propagated' : ''}`,
           keepLastIfActive: true,
         },
       },

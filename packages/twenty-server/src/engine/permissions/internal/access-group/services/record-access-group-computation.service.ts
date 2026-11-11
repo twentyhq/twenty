@@ -52,7 +52,7 @@ export class RecordAccessGroupComputationService {
   async recomputeRecordAccessGroupIdsOfAllObjectRecords({
     workspaceId,
     objectMetadataId,
-    isPropagatedThroughRelatedRecordPath = false,
+    propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
@@ -91,13 +91,18 @@ export class RecordAccessGroupComputationService {
       });
     }
 
+    const recomputedObjectMetadataIds = [
+      ...propagatedFromObjectMetadataIds,
+      objectMetadataId,
+    ];
     // Regular paths pass on own groups only, which a propagated recompute leaves unchanged
     const followingObjectMetadataIds = new Set(
       metadataMaps.resolvedRelatedRecordPaths
         .filter(
-          ({ isInherent, sourceFlatObjectMetadata }) =>
+          ({ isInherent, sourceFlatObjectMetadata, targetObjectMetadataId }) =>
             sourceFlatObjectMetadata.id === objectMetadataId &&
-            (isInherent || !isPropagatedThroughRelatedRecordPath),
+            (isInherent || propagatedFromObjectMetadataIds.length === 0) &&
+            !recomputedObjectMetadataIds.includes(targetObjectMetadataId),
         )
         .map(({ targetObjectMetadataId }) => targetObjectMetadataId),
     );
@@ -105,6 +110,7 @@ export class RecordAccessGroupComputationService {
     await this.scheduleRecomputeOfObjectsUsingRecordAccessGroups({
       workspaceId,
       objectMetadataIds: followingObjectMetadataIds,
+      propagatedFromObjectMetadataIds: recomputedObjectMetadataIds,
       metadataMaps,
     });
   }
@@ -123,6 +129,7 @@ export class RecordAccessGroupComputationService {
           ({ targetObjectMetadataId }) => targetObjectMetadataId,
         ),
       ),
+      propagatedFromObjectMetadataIds: [],
       metadataMaps,
     });
   }
@@ -363,10 +370,12 @@ export class RecordAccessGroupComputationService {
   private async scheduleRecomputeOfObjectsUsingRecordAccessGroups({
     workspaceId,
     objectMetadataIds,
+    propagatedFromObjectMetadataIds,
     metadataMaps,
   }: {
     workspaceId: string;
     objectMetadataIds: Set<string>;
+    propagatedFromObjectMetadataIds: string[];
     metadataMaps: Awaited<ReturnType<typeof this.findMetadataMaps>>;
   }): Promise<void> {
     for (const objectMetadataId of objectMetadataIds) {
@@ -374,11 +383,7 @@ export class RecordAccessGroupComputationService {
         isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId })
       ) {
         await this.accessGroupSyncSchedulerService.scheduleRecordAccessGroupIdsRecompute(
-          {
-            workspaceId,
-            objectMetadataId,
-            isPropagatedThroughRelatedRecordPath: true,
-          },
+          { workspaceId, objectMetadataId, propagatedFromObjectMetadataIds },
         );
       }
     }
