@@ -1,16 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { getPermissionsPrincipalsActingApplicationId } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-acting-application-id.util';
+import { getPermissionsPrincipalsActingApplication } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-acting-application.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/internal/principal/utils/resolve-permissions-principals-with-roles.util';
 
 const APPLICATION_ID = 'application-1';
 const APPLICATION_ROLE_ID = 'application-role';
 
-describe('getPermissionsPrincipalsActingApplicationId', () => {
+describe('getPermissionsPrincipalsActingApplication', () => {
   it('returns the application a member acts through', () => {
     expect(
-      getPermissionsPrincipalsActingApplicationId({
+      getPermissionsPrincipalsActingApplication({
         principals: {
           mainPrincipal: {
             type: 'workspaceMember',
@@ -24,12 +24,16 @@ describe('getPermissionsPrincipalsActingApplicationId', () => {
           },
         },
       }),
-    ).toBe(APPLICATION_ID);
+    ).toEqual({
+      type: 'application',
+      applicationId: APPLICATION_ID,
+      roleId: APPLICATION_ROLE_ID,
+    });
   });
 
   it('returns the application acting alone', () => {
     expect(
-      getPermissionsPrincipalsActingApplicationId({
+      getPermissionsPrincipalsActingApplication({
         principals: {
           mainPrincipal: {
             type: 'application',
@@ -43,12 +47,16 @@ describe('getPermissionsPrincipalsActingApplicationId', () => {
           },
         },
       }),
-    ).toBe(APPLICATION_ID);
+    ).toEqual({
+      type: 'application',
+      applicationId: APPLICATION_ID,
+      roleId: APPLICATION_ROLE_ID,
+    });
   });
 
   it('ignores an app role the member also holds', () => {
     expect(
-      getPermissionsPrincipalsActingApplicationId({
+      getPermissionsPrincipalsActingApplication({
         principals: {
           mainPrincipal: {
             type: 'workspaceMember',
@@ -67,7 +75,7 @@ describe('getPermissionsPrincipalsActingApplicationId', () => {
 
   it('ignores the custom app', () => {
     expect(
-      getPermissionsPrincipalsActingApplicationId({
+      getPermissionsPrincipalsActingApplication({
         principals: {
           mainPrincipal: {
             type: 'workspaceMember',
@@ -84,7 +92,7 @@ describe('getPermissionsPrincipalsActingApplicationId', () => {
     const TWENTY_STANDARD_APPLICATION_ID = 'twenty-standard-application-id';
     const ADMIN_ROLE_ID = 'admin-role-id';
 
-    const resolveActingApplicationId = (
+    const resolveActingApplication = (
       flatRoleTargetByApplicationIdMaps: Record<string, { roleId: string }>,
     ) => {
       const principals = resolvePermissionsPrincipalsWithRoles({
@@ -121,19 +129,23 @@ describe('getPermissionsPrincipalsActingApplicationId', () => {
         throw new Error('The member should hold a role');
       }
 
-      return getPermissionsPrincipalsActingApplicationId({ principals });
+      return getPermissionsPrincipalsActingApplication({ principals });
     };
 
     it('acts as no application while twenty-standard still runs with Admin', () => {
-      expect(resolveActingApplicationId({})).toBeUndefined();
+      expect(resolveActingApplication({})).toBeUndefined();
     });
 
     it('acts through twenty-standard once it runs with its grant', () => {
       expect(
-        resolveActingApplicationId({
+        resolveActingApplication({
           [TWENTY_STANDARD_APPLICATION_ID]: { roleId: 'admin-grant-role-id' },
         }),
-      ).toBe(TWENTY_STANDARD_APPLICATION_ID);
+      ).toEqual({
+        type: 'application',
+        applicationId: TWENTY_STANDARD_APPLICATION_ID,
+        roleId: 'admin-grant-role-id',
+      });
     });
   });
 });
