@@ -7,7 +7,7 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import { buildFlatPageLayoutWidgetCommonProperties } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/build-flat-page-layout-widget-common-properties.util';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { sanitizeWidgetConfigurationInputOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/sanitize-widget-configuration-input-or-throw.util';
+import { sanitizeAndValidateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/sanitize-and-validate-widget-configuration-input.util';
 
 export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
   {
@@ -41,7 +41,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
       ['pageLayoutTabId'],
     );
 
-  const configuration = sanitizeWidgetConfigurationInputOrThrow({
+  const configuration = sanitizeAndValidateWidgetConfigurationInput({
     configuration: createPageLayoutWidgetInput.configuration,
   });
 

@@ -58,7 +58,7 @@ const formatValidationErrors = ({
     .join('; ');
 };
 
-export const sanitizeWidgetConfigurationInputOrThrow = ({
+export const sanitizeAndValidateWidgetConfigurationInput = ({
   configuration,
 }: {
   configuration: unknown;
