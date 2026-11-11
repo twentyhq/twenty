@@ -45,6 +45,7 @@ import { useSaveCoreAgent } from '@/object-core/agents/hooks/useSaveCoreAgent';
 import { CORE_AGENT_SHOW_PAGE_TABS } from '@/object-core/agents/constants/CoreAgentShowPageTabs';
 import { useCoreAgentShowPageActiveTab } from '@/object-core/agents/hooks/useCoreAgentShowPageActiveTab';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
+import { getCoreAgentShowPageTabListComponentInstanceId } from '@/object-core/agents/utils/getCoreAgentShowPageTabListComponentInstanceId';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 
 type CoreAgentFormContentProps = {
@@ -59,8 +60,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const { openDialog } = useDialog();
 
   const isReadOnly = useIsCoreAgentReadOnly(agent);
-  const { activeTabId, isTurnsTabAvailable, tabListComponentInstanceId } =
-    useCoreAgentShowPageActiveTab(agent.id);
+  const activeTabId = useCoreAgentShowPageActiveTab();
 
   const { draft, updateDraft } = useCoreAgentDraft(agent);
   const { isDirty } = useCoreAgentDirtyState(agent);
@@ -164,7 +164,9 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
             <CoreObjectShowPageTabList
               aria-label={t`Agent sections`}
               activeTabId={activeTabId}
-              componentInstanceId={tabListComponentInstanceId}
+              componentInstanceId={getCoreAgentShowPageTabListComponentInstanceId(
+                agent.id,
+              )}
               tabs={[
                 {
                   id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS,
@@ -175,7 +177,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
                   id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS,
                   title: t`Turns`,
                   Icon: IconTerminal,
-                  hide: !isTurnsTabAvailable,
+                  hide: !isAiChatInboxEnabled,
                 },
               ]}
             />
