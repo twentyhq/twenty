@@ -5,7 +5,7 @@ import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/inte
 import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 
-export const isRolePermittingOperation = ({
+export const canAllRecordsOrRowLevelPermissionsGrantOperation = ({
   principals,
   metadataMaps,
   flatObjectMetadata,

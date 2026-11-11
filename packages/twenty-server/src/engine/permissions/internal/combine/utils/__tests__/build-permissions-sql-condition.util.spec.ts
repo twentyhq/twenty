@@ -316,7 +316,7 @@ describe('buildPermissionsSQLCondition', () => {
       ...readEverything,
       limitingPrincipal: {
         type: 'agent',
-        roleId: 'role-2',
+        roleId: FULL_ACCESS_ROLE_ID,
         agentId: 'agent-1',
       },
       mainPrincipal: {
@@ -326,6 +326,15 @@ describe('buildPermissionsSQLCondition', () => {
       },
       applicationPrincipal: { type: 'customApplication' },
     };
+    const withLimitingRoleWithoutCompanyPermission: PermissionsPrincipalsWithRolesContext =
+      {
+        ...withoutCompanyPermission,
+        limitingPrincipal: {
+          type: 'agent',
+          roleId: ROLE_WITHOUT_PERMISSION_ID,
+          agentId: 'agent-1',
+        },
+      };
 
     it('narrows a principal without object permission to the records named for them', () => {
       const policy = buildForCompany(withoutCompanyPermission);
@@ -339,7 +348,7 @@ describe('buildPermissionsSQLCondition', () => {
       );
       expect(Object.values(policy.sqlCondition.parameters)).toContainEqual([
         'member-1',
-        'role-2',
+        FULL_ACCESS_ROLE_ID,
         'role-3',
       ]);
     });
@@ -352,7 +361,7 @@ describe('buildPermissionsSQLCondition', () => {
       }
       expect(Object.values(policy.sqlCondition.parameters)).toEqual(
         expect.arrayContaining([
-          ['member-1', 'role-2', 'role-3'],
+          ['member-1', FULL_ACCESS_ROLE_ID, 'role-3'],
           [RecordShareAccessLevel.READ_WRITE, RecordShareAccessLevel.FULL],
         ]),
       );
@@ -372,6 +381,18 @@ describe('buildPermissionsSQLCondition', () => {
         Object.values(policy.sqlCondition.parameters).flat(),
       ).not.toContain(EVERYONE_PRINCIPAL_ID);
     });
+
+    it.each(['read', 'update'] as const)(
+      'denies %s on records named for a principal whose limiting role lacks all records',
+      (operationType) => {
+        expect(
+          buildForCompany(
+            withLimitingRoleWithoutCompanyPermission,
+            operationType,
+          ),
+        ).toEqual({ kind: 'denied' });
+      },
+    );
 
     it('keeps deletion with the role', () => {
       expect(buildForCompany(withoutCompanyPermission, 'destroy')).toEqual({
