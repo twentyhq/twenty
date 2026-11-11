@@ -148,7 +148,6 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;
 
-  // TODO: rename to requestedRoleId, the application runs with its grant role
   @Column({ nullable: true, type: 'uuid' })
   defaultRoleId: string | null;
 

@@ -65,7 +65,6 @@ export class ApplicationManifestApplyService {
         shouldDeferActions,
       });
 
-    // TODO: ask for approval before an upgrade's permission changes reach the grant role
     await this.applicationGrantRoleService.upsertGrantRole({
       workspaceId,
       applicationId: application.id,
