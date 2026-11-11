@@ -438,6 +438,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
       optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
       orchestratorActionsReport,
       preDeletionFlatViewFieldMaps,
+      fromFlatFieldMetadataMaps:
+        fromToAllFlatEntityMaps.flatFieldMetadataMaps?.from,
     });
 
     mergeOrchestratorFailureReports({

@@ -1,14 +1,12 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   type PermissionsMetadataMaps,
   type RowAccessEvaluationContext,
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type FieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/fields-hidden-on-matching-records.type';
-import { findRlsRuleFieldsByRole } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields-by-role.util';
+import { findRlsRuleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields.util';
 import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
-import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
+import { buildRlsRulesRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 export const resolveFieldsHiddenOnMatchingRecords = async ({
@@ -27,30 +25,23 @@ export const resolveFieldsHiddenOnMatchingRecords = async ({
   findRelationJoinValues: RowAccessEvaluationContext['findRelationJoinValues'];
 }): Promise<FieldsHiddenOnMatchingRecords[]> =>
   Promise.all(
-    findRlsRuleFieldsByRole({
+    findRlsRuleFields({
       principals,
       metadataMaps,
       objectMetadataId: flatObjectMetadata.id,
       fieldList,
-    }).map(async ({ roleId, fieldMetadataIds }) => {
-      const recordFilter = resolveRlsRuleRecordFilter({
-        principals,
-        metadataMaps,
+    }).map(async ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
+      fieldMetadataIds,
+      recordFilter: await resolveRelationsInRecordFilter({
+        recordFilter: buildRlsRulesRecordFilter({
+          principals,
+          metadataMaps,
+          rowLevelPermissionRules: [rowLevelPermissionRule],
+        }),
         flatObjectMetadata,
-        roleId,
-      });
-
-      return {
-        fieldMetadataIds,
-        recordFilter: isDefined(recordFilter)
-          ? await resolveRelationsInRecordFilter({
-              recordFilter,
-              flatObjectMetadata,
-              records,
-              metadataMaps,
-              findRelationJoinValues,
-            })
-          : {},
-      };
-    }),
+        records,
+        metadataMaps,
+        findRelationJoinValues,
+      }),
+    })),
   );

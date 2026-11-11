@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
@@ -114,5 +114,60 @@ export const UnplayableVoiceNote: Story = {
     await expect(
       canvas.queryByRole('button', { name: 'Play' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+const onReactionToggle = fn();
+
+export const Reactions: Story = {
+  args: {
+    group: {
+      id: 'group-id',
+      isOutgoing: true,
+      messages: [
+        {
+          ...buildVoiceNoteMessage(''),
+          text: 'Got it, thanks Sundar!',
+          attachments: [],
+        },
+      ],
+    },
+    reactionsByMessageId: {
+      'message-id': [
+        {
+          emoji: '👍',
+          count: 2,
+          isOwn: false,
+          reactorNames: ['Sundar Pichai', 'Thomas Kurian'],
+        },
+      ],
+    },
+    onReactionToggle,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', {
+        name: '👍 by Sundar Pichai and Thomas Kurian',
+      }),
+    );
+    await expect(onReactionToggle).toHaveBeenCalledTimes(1);
+    await expect(onReactionToggle).toHaveBeenCalledWith('message-id', '👍');
+  },
+};
+
+export const ReadOnlyReactions: Story = {
+  args: { ...Reactions.args, onReactionToggle: undefined },
+  play: async ({ canvasElement }) => {
+    const reaction = await within(canvasElement).findByRole('button', {
+      name: '👍 by Sundar Pichai and Thomas Kurian',
+    });
+
+    await expect(reaction).toBeDisabled();
+    await userEvent.hover(reaction.parentElement ?? reaction);
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Sundar Pichai and Thomas Kurian');
   },
 };

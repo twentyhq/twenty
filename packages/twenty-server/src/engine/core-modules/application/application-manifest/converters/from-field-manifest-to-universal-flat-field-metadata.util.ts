@@ -161,6 +161,9 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
     fieldMetadataOptionUniversalIdentifiers: [],
+    rowLevelPermissionPredicateUniversalIdentifiers: [],
+    relationRowLevelPermissionPredicateUniversalIdentifiers: [],
+    workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
   };
