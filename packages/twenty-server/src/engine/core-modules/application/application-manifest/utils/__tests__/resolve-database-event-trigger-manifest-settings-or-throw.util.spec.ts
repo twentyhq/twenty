@@ -1,6 +1,6 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { buildDatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/utils/build-database-event-trigger-manifest-resolver.util';
+import { buildDatabaseEventTriggerManifestLookup } from 'src/engine/core-modules/application/application-manifest/utils/build-database-event-trigger-manifest-lookup.util';
 import { resolveDatabaseEventTriggerManifestSettingsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -24,7 +24,7 @@ const addField = (
     { universalSettings: null, ...field } as unknown as FlatFieldMetadata;
 };
 
-const buildResolver = () => {
+const buildLookup = () => {
   const existing = createEmptyAllFlatEntityMaps();
   const manifest = createEmptyAllFlatEntityMaps();
 
@@ -65,7 +65,7 @@ const buildResolver = () => {
     objectMetadataUniversalIdentifier: SIGNAL,
   });
 
-  return buildDatabaseEventTriggerManifestResolver({
+  return buildDatabaseEventTriggerManifestLookup({
     manifestFlatEntityMaps: manifest,
     existingFlatEntityMaps: existing,
   });
@@ -78,7 +78,7 @@ const resolve = (
 ) =>
   resolveDatabaseEventTriggerManifestSettingsOrThrow({
     settings,
-    resolver: buildResolver(),
+    lookup: buildLookup(),
     subject: 'Agent deal-watcher',
   });
 
