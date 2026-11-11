@@ -41,7 +41,7 @@ export const resolveApplicationGrantRoleId = ({
   }
 
   // TODO: remove this fallback once every application is known to have its grant,
-  // and with it the role comparisons in getPermissionsPrincipalsActingApplicationId
+  // and with it the role comparisons in getPermissionsPrincipalsActingApplication
   logger.warn(
     `Application ${flatApplication.id} has no grant role in workspace ${workspaceId}, it runs with its requested role`,
   );

@@ -237,7 +237,6 @@ describe('computePrincipalsRecordsPermissions', () => {
       },
       flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
       flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-      flatApplicationMaps: { byId: {} },
     });
 
     expect(recordsPermissions.objects[OBJECT_ID]).toEqual({
@@ -288,7 +287,6 @@ describe('computePrincipalsRecordsPermissions', () => {
       },
       flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
       flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-      flatApplicationMaps: { byId: {} },
     });
 
     expect(
