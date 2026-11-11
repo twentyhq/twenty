@@ -152,8 +152,7 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
       }),
     ).toEqual({
       events: [],
-      conditionErrorMessage:
-        'The condition reads status, which this object does not have',
+      conditionErrorMessage: 'Unknown field "status"',
     });
   });
 

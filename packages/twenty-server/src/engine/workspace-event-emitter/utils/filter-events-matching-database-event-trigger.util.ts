@@ -1,14 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  VALIDATION_RULE_NOW_VARIABLE_NAME,
-  VALIDATION_RULE_PREVIOUS_VARIABLE_NAME,
-} from 'twenty-shared/constants';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
+  compileValidationRuleExpression,
   createValidationRuleEvaluator,
+  getValidationRulePreviousValueFieldPath,
   getValidationRuleRecordsFromDatabaseEvent,
   isDefined,
-  parseValidationRuleExpression,
 } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -18,36 +15,13 @@ import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/
 
 type ConditionFieldNames = { current: string[]; previous: string[] };
 
-const findConditionFieldNames = (condition: string): ConditionFieldNames => {
-  const conditionFieldNames: ConditionFieldNames = {
-    current: [],
-    previous: [],
-  };
-
-  try {
-    for (const path of parseValidationRuleExpression(condition).variables({
-      withMembers: true,
-    })) {
-      const [rootName, previousRootName] = path.split('.');
-      const isPreviousPath =
-        rootName === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME;
-      const fieldName = isPreviousPath ? previousRootName : rootName;
-
-      if (
-        isDefined(fieldName) &&
-        fieldName !== VALIDATION_RULE_NOW_VARIABLE_NAME
-      ) {
-        conditionFieldNames[isPreviousPath ? 'previous' : 'current'].push(
-          fieldName,
-        );
-      }
-    }
-  } catch {
-    // The evaluator reports the parse error
-  }
-
-  return conditionFieldNames;
-};
+// Event fields have no related records, so every binding is a field or previous.field
+const toConditionFieldNames = (boundPaths: string[]): ConditionFieldNames => ({
+  current: boundPaths.filter((path) => !path.includes('.')),
+  previous: boundPaths
+    .map(getValidationRulePreviousValueFieldPath)
+    .filter(isDefined),
+});
 
 // Fields the caller cannot read are removed from events, and must not read as empty
 const hasConditionFields = ({
@@ -96,26 +70,24 @@ export const filterEventsMatchingDatabaseEventTrigger = <
     return { events: eventsWithWatchedFields };
   }
 
+  // Compiling against the object's fields also rejects a field a wildcard trigger's object lacks
+  const compilation = compileValidationRuleExpression({
+    expression: condition,
+    fields,
+  });
+
+  if (!compilation.isValid) {
+    return { events: [], conditionErrorMessage: compilation.errorMessage };
+  }
+
   const { action } = parseEventNameOrThrow(eventName);
   const evaluate = createValidationRuleEvaluator({
     expression: condition,
     fields,
   });
-  const conditionFieldNames = findConditionFieldNames(condition);
-  const fieldNames = new Set(fields.map(({ name }) => name));
-  const unknownFieldName = [
-    ...conditionFieldNames.current,
-    ...conditionFieldNames.previous,
-  ].find((fieldName) => !fieldNames.has(fieldName));
-
-  // A wildcard trigger reaches objects without the field, which would read as empty
-  if (isDefined(unknownFieldName)) {
-    return {
-      events: [],
-      conditionErrorMessage: `The condition reads ${unknownFieldName}, which this object does not have`,
-    };
-  }
-
+  const conditionFieldNames = toConditionFieldNames(
+    Object.keys(compilation.bindings),
+  );
   const now = new Date().toISOString();
   const matchingEvents: TEvent[] = [];
   let conditionErrorMessage: string | undefined;
