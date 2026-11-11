@@ -33,6 +33,37 @@ const AGENT_TRIGGER_MANIFEST_TYPES: AgentTriggerManifest['type'][] = [
   ...AGENT_TRIGGER_TYPES,
 ];
 
+const getAgentTriggerSettingsErrors = ({
+  trigger,
+  subject,
+}: {
+  trigger: AgentTriggerManifest;
+  subject: string;
+}): string[] => {
+  if (trigger.type !== 'EVENT' && trigger.type !== 'DATABASE_EVENT') {
+    return [];
+  }
+
+  if (!isPlainObject(trigger.settings)) {
+    return [`${subject} must have settings`];
+  }
+
+  if (trigger.type === 'EVENT') {
+    return getRecordEventTriggerSettingsErrors({
+      settings: trigger.settings,
+      subject,
+      isObjectRequired: true,
+    });
+  }
+
+  return getDatabaseEventTriggerSettingsErrors({
+    settings: trigger.settings,
+    subject,
+    eventNamePattern: AGENT_TRIGGER_EVENT_NAME_PATTERN,
+    replacement: "an EVENT trigger with on: 'record'",
+  });
+};
+
 export const defineAgent: DefineEntity<AgentManifest> = (config) => {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -158,31 +189,12 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
       );
     }
 
-    const triggerSubject = `Agent '${config.name}' trigger`;
-
-    if (
-      (trigger.type === 'EVENT' || trigger.type === 'DATABASE_EVENT') &&
-      !isPlainObject(trigger.settings)
-    ) {
-      errors.push(`${triggerSubject} must have settings`);
-    } else if (trigger.type === 'EVENT') {
-      errors.push(
-        ...getRecordEventTriggerSettingsErrors({
-          settings: trigger.settings,
-          subject: triggerSubject,
-          isObjectRequired: true,
-        }),
-      );
-    } else if (trigger.type === 'DATABASE_EVENT') {
-      errors.push(
-        ...getDatabaseEventTriggerSettingsErrors({
-          settings: trigger.settings,
-          subject: triggerSubject,
-          eventNamePattern: AGENT_TRIGGER_EVENT_NAME_PATTERN,
-          replacement: "an EVENT trigger with on: 'record'",
-        }),
-      );
-    }
+    errors.push(
+      ...getAgentTriggerSettingsErrors({
+        trigger,
+        subject: `Agent '${config.name}' trigger`,
+      }),
+    );
 
     if (
       (trigger.instructions?.length ?? 0) >
