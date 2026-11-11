@@ -16,7 +16,7 @@ export const findRelatedRecordPathsGrantingOperation = ({
   'metadataMaps' | 'flatObjectMetadata' | 'operationType'
 >): ResolvedRelatedRecordPath[] => {
   if (
-    operationType !== 'read' ||
+    operationType === 'create' ||
     !areRecordAccessGroupsEnabled(metadataMaps) ||
     temporaryExcludePermissionStorageObject(flatObjectMetadata)
   ) {
