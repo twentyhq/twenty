@@ -108,6 +108,7 @@ export { SETTINGS_VARIABLES_TAB_ID } from './constants/SettingsVariablesTabId';
 export { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from './constants/TwentyPublicAppUniversalIdentifiers';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
+export type { CronTriggerSettings } from './cronTriggerSettingsType';
 export type {
   AuthorizeConnectionPayload,
   AuthorizeConnectionResult,
@@ -210,7 +211,6 @@ export type { IndexManifest } from './indexManifestType';
 export { isRecordEventTriggerManifestSettings } from './isRecordEventTriggerManifestSettings';
 export type {
   LogicFunctionManifest,
-  CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';

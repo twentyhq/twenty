@@ -1,3 +1,4 @@
+import { type CronTriggerSettings } from '@/application/cronTriggerSettingsType';
 import { type EventTriggerManifestSettings } from '@/application/eventTriggerManifestSettingsType';
 import { type ServerRouteTriggerSettings } from '@/application/serverRouteTriggerSettingsType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
@@ -21,10 +22,6 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   builtHandlerPath: string;
   builtHandlerChecksum: string;
   handlerName: string;
-};
-
-export type CronTriggerSettings = {
-  pattern: string;
 };
 
 export type DatabaseEventTriggerSettings = {

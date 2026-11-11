@@ -1,8 +1,6 @@
 import { type EventTriggerManifestSettings } from '@/application/eventTriggerManifestSettingsType';
-import {
-  type CronTriggerSettings,
-  type DatabaseEventTriggerSettings,
-} from '@/application/logicFunctionManifestType';
+import { type CronTriggerSettings } from '@/application/cronTriggerSettingsType';
+import { type DatabaseEventTriggerSettings } from '@/application/logicFunctionManifestType';
 import { type AGENT_TRIGGER_TYPES } from '@/application/constants/AgentTriggerTypes';
 
 export type AgentTriggerType = (typeof AGENT_TRIGGER_TYPES)[number];

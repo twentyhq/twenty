@@ -157,6 +157,7 @@ export type {
   WorkflowConversation,
   WorkflowConversationScope,
 } from './types/WorkflowConversation';
+export type { WorkflowCronTriggerSchedule } from './types/WorkflowCronTriggerSchedule';
 export type { BodyType } from './types/WorkflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,
@@ -170,8 +171,10 @@ export type {
 } from './types/WorkflowRunStepLog';
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
+export { computeCronPatternFromWorkflowCronSchedule } from './utils/computeCronPatternFromWorkflowCronSchedule';
 export { computeDatabaseEventTriggerConditionFromFilter } from './utils/computeDatabaseEventTriggerConditionFromFilter';
 export { computeIfElseBranchConditionFromFilter } from './utils/computeIfElseBranchConditionFromFilter';
+export { computeWorkflowCronScheduleFromCronPattern } from './utils/computeWorkflowCronScheduleFromCronPattern';
 export { computeWorkflowStepConditionFromFilter } from './utils/computeWorkflowStepConditionFromFilter';
 export { convertStepFiltersToRuleExpression } from './utils/convertStepFiltersToRuleExpression';
 export { convertWorkflowStepFiltersToRuleExpression } from './utils/convertWorkflowStepFiltersToRuleExpression';
