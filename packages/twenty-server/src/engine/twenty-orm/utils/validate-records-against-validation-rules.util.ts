@@ -163,21 +163,16 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
     ),
   ];
 
-  const previousRecords = await attachRelatedRecords({
-    repository,
-    tableShape,
-    bindingPaths: bindingPaths
-      .map(getValidationRulePreviousValueFieldPath)
-      .filter(isDefined),
-    records: recordsBeforeWrite
+  const previousBindingPaths = bindingPaths
+    .map(getValidationRulePreviousValueFieldPath)
+    .filter(isDefined);
+  const recordBeforeWriteById = new Map(
+    recordsBeforeWrite
       .filter((recordBeforeWrite) => isNonEmptyString(recordBeforeWrite.id))
-      .map((recordBeforeWrite) => ({ ...recordBeforeWrite })),
-  });
-  const previousRecordById = new Map(
-    previousRecords.map((previousRecord) => [
-      String(previousRecord.id),
-      previousRecord,
-    ]),
+      .map((recordBeforeWrite) => [
+        String(recordBeforeWrite.id),
+        recordBeforeWrite,
+      ]),
   );
 
   const inputIndexByRecordId = buildInputIndexByRecordId({
@@ -222,14 +217,30 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
       VALIDATION_RULE_MAX_REPORTED_VIOLATIONS;
     chunkStart += VALIDATION_RULE_RECORD_CHUNK_SIZE
   ) {
+    const chunkRecordIds = recordIds.slice(
+      chunkStart,
+      chunkStart + VALIDATION_RULE_RECORD_CHUNK_SIZE,
+    );
     const rawWrittenRecords =
       await repository.findRecordSnapshotsBypassingPermissions({
         fieldNames,
-        ids: recordIds.slice(
-          chunkStart,
-          chunkStart + VALIDATION_RULE_RECORD_CHUNK_SIZE,
-        ),
+        ids: chunkRecordIds,
       });
+    const previousRecords = await attachRelatedRecords({
+      repository,
+      tableShape,
+      bindingPaths: previousBindingPaths,
+      records: chunkRecordIds
+        .map((recordId) => recordBeforeWriteById.get(recordId))
+        .filter(isDefined)
+        .map((recordBeforeWrite) => ({ ...recordBeforeWrite })),
+    });
+    const previousRecordById = new Map(
+      previousRecords.map((previousRecord) => [
+        String(previousRecord.id),
+        previousRecord,
+      ]),
+    );
 
     const chunkResult = computeRecordValidationRuleViolations({
       records: await attachRelatedRecords({
