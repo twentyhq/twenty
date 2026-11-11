@@ -8439,7 +8439,7 @@ msgstr "Vytvořit záznam"
 #. js-lingui-id: fYhMZY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr ""
+msgstr "Vytvářet úložiště sdílení záznamů a skupin přístupu jako tabulky vlastněné modulem oprávnění namísto objektů. Platí pouze při vytváření pracovního prostoru."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22399,7 +22399,7 @@ msgstr "Příznaky oprávnění"
 #. js-lingui-id: yAZKh+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Permission tables"
-msgstr ""
+msgstr "Tabulky oprávnění"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx

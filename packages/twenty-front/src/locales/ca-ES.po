@@ -8439,7 +8439,7 @@ msgstr "Crea un registre"
 #. js-lingui-id: fYhMZY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr ""
+msgstr "Crea l'emmagatzematge de compartició de registres i de grups d'accés com a taules propietat del motor de permisos en lloc d'objectes. Només s'aplica quan es crea un espai de treball."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22399,7 +22399,7 @@ msgstr "Indicadors de permisos"
 #. js-lingui-id: yAZKh+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Permission tables"
-msgstr ""
+msgstr "Taules de permisos"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx

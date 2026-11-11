@@ -8439,7 +8439,7 @@ msgstr "Δημιουργία εγγραφής"
 #. js-lingui-id: fYhMZY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr ""
+msgstr "Δημιουργία αποθήκευσης κοινοποίησης εγγραφών και ομάδων πρόσβασης ως πινάκων που ανήκουν στη μηχανή δικαιωμάτων αντί για αντικείμενα. Ισχύει μόνο όταν δημιουργείται ένας χώρος εργασίας."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22399,7 +22399,7 @@ msgstr "Σημαίες δικαιώματος"
 #. js-lingui-id: yAZKh+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Permission tables"
-msgstr ""
+msgstr "Πίνακες δικαιωμάτων"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx

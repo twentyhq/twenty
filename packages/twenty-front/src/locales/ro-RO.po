@@ -8439,7 +8439,7 @@ msgstr "Creează înregistrare"
 #. js-lingui-id: fYhMZY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr ""
+msgstr "Creează stocarea partajării înregistrărilor și a grupurilor de acces sub formă de tabele deținute de motorul de permisiuni, în loc de obiecte. Se aplică doar atunci când este creat un spațiu de lucru."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22399,7 +22399,7 @@ msgstr "Indicatori de permisiune"
 #. js-lingui-id: yAZKh+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Permission tables"
-msgstr ""
+msgstr "Tabele de permisiuni"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx

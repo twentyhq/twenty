@@ -8439,7 +8439,7 @@ msgstr "创建记录"
 #. js-lingui-id: fYhMZY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr ""
+msgstr "将记录共享和访问组存储创建为由权限引擎拥有的表，而非对象。仅在创建工作区时适用。"
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22399,7 +22399,7 @@ msgstr "权限标志"
 #. js-lingui-id: yAZKh+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Permission tables"
-msgstr ""
+msgstr "权限表"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx

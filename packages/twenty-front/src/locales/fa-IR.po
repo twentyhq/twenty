@@ -8439,7 +8439,7 @@ msgstr "ایجاد رکورد"
 #. js-lingui-id: fYhMZY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr ""
+msgstr "ذخیره‌سازی اشتراک‌گذاری رکورد و گروه دسترسی را به‌جای اشیا، به‌صورت جدول‌های متعلق به موتور مجوز ایجاد کنید. فقط هنگام ایجاد یک فضای کاری اعمال می‌شود."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22399,7 +22399,7 @@ msgstr "پرچم‌های مجوز"
 #. js-lingui-id: yAZKh+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Permission tables"
-msgstr ""
+msgstr "جدول‌های مجوز"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
