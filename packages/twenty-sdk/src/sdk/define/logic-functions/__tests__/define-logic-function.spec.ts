@@ -66,6 +66,20 @@ describe('defineLogicFunction', () => {
     expect(result.success).toBe(true);
   });
 
+  it('should error when the database event trigger settings are not an object', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Record Updated',
+      handler: mockHandler,
+      databaseEventTriggerSettings: JSON.parse('"company.updated"'),
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Database event trigger settings must be an object',
+    );
+  });
+
   it('should error on trigger settings of the wrong type', () => {
     // Manifests are often plain JavaScript, so nothing typed these values
     const databaseEventTriggerSettings = JSON.parse(
