@@ -157,10 +157,7 @@ const buildFieldDescriptors = ({
   (
     activeFieldsByObjectUniversalIdentifier.get(objectUniversalIdentifier) ?? []
   ).map((field) => {
-    if (
-      !isMorphOrRelationUniversalFlatFieldMetadata(field) ||
-      field.type !== FieldMetadataType.RELATION
-    ) {
+    if (!isMorphOrRelationUniversalFlatFieldMetadata(field)) {
       return toScalarFieldDescriptor(field);
     }
 

@@ -164,7 +164,10 @@ export const buildDatabaseEventTriggerManifestResolver = ({
     objectUniversalIdentifier: string,
   ): ValidationRuleFieldDescriptor[] =>
     listObjectFields(objectUniversalIdentifier).map((field) => {
-      if (field.type !== FieldMetadataType.RELATION) {
+      if (
+        field.type !== FieldMetadataType.RELATION &&
+        field.type !== FieldMetadataType.MORPH_RELATION
+      ) {
         return toScalarConditionField(field);
       }
 

@@ -5,9 +5,8 @@ import {
   RelationType as SharedRelationType,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
-import { RelationType } from '~/generated-metadata/graphql';
+import { getValidationRuleToOneRelationTargets } from '@/validation-rules/utils/getValidationRuleToOneRelationTargets';
 
 const toScalarFieldDescriptor = (
   fieldMetadataItem: FieldMetadataItem,
@@ -27,32 +26,34 @@ export const buildValidationRuleFieldDescriptors = ({
 }): ValidationRuleFieldDescriptor[] =>
   objectMetadataItem.fields
     .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
-    .map((fieldMetadataItem) => {
-      const relation = fieldMetadataItem.relation;
-
+    .flatMap((fieldMetadataItem) => {
       if (
-        fieldMetadataItem.type !== FieldMetadataType.RELATION ||
-        !isDefined(relation)
+        fieldMetadataItem.type !== FieldMetadataType.RELATION &&
+        fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION
       ) {
-        return toScalarFieldDescriptor(fieldMetadataItem);
+        return [toScalarFieldDescriptor(fieldMetadataItem)];
       }
 
-      const isManyToOne = relation.type === RelationType.MANY_TO_ONE;
+      const relationTargets =
+        getValidationRuleToOneRelationTargets(fieldMetadataItem);
 
-      const targetObjectMetadataItem = objectMetadataItems.find(
-        (candidate) => candidate.id === relation.targetObjectMetadata.id,
-      );
+      // A relation to many records can still be named, to reject it with a clear error
+      if (relationTargets.length === 0) {
+        return [
+          {
+            ...toScalarFieldDescriptor(fieldMetadataItem),
+            relationType: SharedRelationType.ONE_TO_MANY,
+          },
+        ];
+      }
 
-      return {
+      return relationTargets.map(({ name, targetObjectMetadataId }) => ({
         ...toScalarFieldDescriptor(fieldMetadataItem),
-        relationType: isManyToOne
-          ? SharedRelationType.MANY_TO_ONE
-          : SharedRelationType.ONE_TO_MANY,
-        relationTargetFields:
-          isManyToOne && isDefined(targetObjectMetadataItem)
-            ? targetObjectMetadataItem.fields
-                .filter((targetField) => targetField.isActive)
-                .map(toScalarFieldDescriptor)
-            : undefined,
-      };
+        name,
+        relationType: SharedRelationType.MANY_TO_ONE,
+        relationTargetFields: objectMetadataItems
+          .find((candidate) => candidate.id === targetObjectMetadataId)
+          ?.fields.filter((targetField) => targetField.isActive)
+          .map(toScalarFieldDescriptor),
+      }));
     });

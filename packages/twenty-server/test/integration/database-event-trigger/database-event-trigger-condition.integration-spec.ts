@@ -59,9 +59,13 @@ describe('Database event trigger conditions on related records', () => {
   const filterOpportunityEvents = async ({
     condition,
     events,
+    eventName = 'opportunity.created',
+    objectNameSingular = 'opportunity',
   }: {
     condition: string;
     events: ObjectRecordEvent[];
+    eventName?: string;
+    objectNameSingular?: string;
   }) => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
@@ -75,7 +79,7 @@ describe('Database event trigger conditions on related records', () => {
     );
     const objectMetadata = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
-    ).find((candidate) => candidate?.nameSingular === 'opportunity');
+    ).find((candidate) => candidate?.nameSingular === objectNameSingular);
 
     if (!isDefined(application) || !isDefined(objectMetadata)) {
       throw new Error('The seeded workspace has no application or opportunity');
@@ -87,7 +91,7 @@ describe('Database event trigger conditions on related records', () => {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadata,
       events,
-      eventName: 'opportunity.created',
+      eventName,
       condition,
       application,
     });
@@ -141,5 +145,47 @@ describe('Database event trigger conditions on related records', () => {
     });
 
     expect(events).toEqual([missingCompanyEvent]);
+  });
+
+  it('matches on the record a relation pointed to before an update', async () => {
+    const movedToSmallCompany = {
+      recordId: randomUUID(),
+      properties: {
+        before: { stage: 'NEW', companyId: BIG_COMPANY_ID },
+        after: { stage: 'NEW', companyId: SMALL_COMPANY_ID },
+        updatedFields: ['companyId'],
+      },
+    } as ObjectRecordEvent;
+
+    const { events, conditionErrorMessage } = await filterOpportunityEvents({
+      condition:
+        'previous.company.employees > 100 and company.employees <= 100',
+      events: [movedToSmallCompany],
+      eventName: 'opportunity.updated',
+    });
+
+    expect(conditionErrorMessage).toBeUndefined();
+    expect(events).toEqual([movedToSmallCompany]);
+  });
+
+  it('matches on a field of a morph target', async () => {
+    const onBigCompany = {
+      recordId: randomUUID(),
+      properties: { after: { targetCompanyId: BIG_COMPANY_ID } },
+    } as ObjectRecordEvent;
+    const onSmallCompany = {
+      recordId: randomUUID(),
+      properties: { after: { targetCompanyId: SMALL_COMPANY_ID } },
+    } as ObjectRecordEvent;
+
+    const { events, conditionErrorMessage } = await filterOpportunityEvents({
+      condition: 'targetCompany.employees > 100',
+      events: [onBigCompany, onSmallCompany],
+      objectNameSingular: 'taskTarget',
+      eventName: 'taskTarget.created',
+    });
+
+    expect(conditionErrorMessage).toBeUndefined();
+    expect(events).toEqual([onBigCompany]);
   });
 });

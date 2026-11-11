@@ -52,6 +52,13 @@ const OPPORTUNITY_FIELDS: ValidationRuleFieldDescriptor[] = [
     universalIdentifier: 'opportunity-point-of-contacts',
     relationType: RelationType.ONE_TO_MANY,
   },
+  {
+    name: 'targetCompany',
+    type: FieldMetadataType.MORPH_RELATION,
+    universalIdentifier: 'opportunity-target-company',
+    relationType: RelationType.MANY_TO_ONE,
+    relationTargetFields: COMPANY_FIELDS,
+  },
 ];
 
 const compile = (expression: string) =>
@@ -237,6 +244,20 @@ describe('compileValidationRuleExpression', () => {
   });
 });
 
+describe('compileValidationRuleExpression with morph targets', () => {
+  it('should read a morph target like a relation to one record', () => {
+    expect(
+      compile('targetCompany.industry == "SaaS" and isDefined(targetCompany)'),
+    ).toEqual({
+      isValid: true,
+      bindings: {
+        targetCompany: 'opportunity-target-company',
+        'targetCompany.industry': 'company-industry',
+      },
+    });
+  });
+});
+
 describe('compileValidationRuleExpression with previous values', () => {
   it('should bind a previous value to the field it reads', () => {
     expect(
@@ -269,11 +290,26 @@ describe('compileValidationRuleExpression with previous values', () => {
     });
   });
 
-  it('should reject the previous value of a relation', () => {
-    expect(compile('previous.company.industry == "SaaS"')).toMatchObject({
+  it('should bind the previous value of a relation and of its fields', () => {
+    expect(
+      compile(
+        'previous.company.industry != company.industry and isDefined(previous.company)',
+      ),
+    ).toEqual({
+      isValid: true,
+      bindings: {
+        company: 'opportunity-company',
+        'company.industry': 'company-industry',
+        'previous.company': 'opportunity-company',
+        'previous.company.industry': 'company-industry',
+      },
+    });
+  });
+
+  it('should reject a previous relation path two relations deep', () => {
+    expect(compile('isDefined(previous.company.people)')).toMatchObject({
       isValid: false,
-      errorCode: 'PREVIOUS_VALUE_OF_RELATION',
-      errorParams: { path: 'previous.company.industry' },
+      errorCode: 'RELATION_TOO_DEEP',
     });
   });
 

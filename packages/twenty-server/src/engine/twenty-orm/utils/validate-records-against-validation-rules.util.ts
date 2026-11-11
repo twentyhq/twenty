@@ -2,7 +2,10 @@
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  getValidationRulePreviousValueFieldPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -70,22 +73,14 @@ const findLiveRelatedRecords = async <TEntity extends ObjectLiteral>({
 const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
   repository,
   tableShape,
-  validationRules,
-  rawWrittenRecords,
+  bindingPaths,
+  records,
 }: {
   repository: WorkspaceRepository<TEntity>;
   tableShape: WorkspaceTableShape;
-  validationRules: FlatValidationRule[];
-  rawWrittenRecords: ObjectRecord[];
+  bindingPaths: string[];
+  records: ObjectRecord[];
 }): Promise<ObjectRecord[]> => {
-  const bindingPaths = [
-    ...new Set(
-      validationRules.flatMap((validationRule) =>
-        Object.keys(validationRule.bindings),
-      ),
-    ),
-  ];
-
   const referencedRelationShapes = bindingPaths
     .map((bindingPath) => tableShape.relationShapeByFieldName[bindingPath])
     .filter(isDefined)
@@ -94,8 +89,6 @@ const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
         relationShape.relationType === RelationType.MANY_TO_ONE &&
         isNonEmptyString(relationShape.joinColumnName),
     );
-
-  const records = repository.formatResult<ObjectRecord[]>(rawWrittenRecords);
 
   for (const relationShape of referencedRelationShapes) {
     const joinColumnName = relationShape.joinColumnName ?? '';
@@ -162,13 +155,30 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
     return;
   }
 
-  const previousRecordById = new Map(
-    recordsBeforeWrite
+  const bindingPaths = [
+    ...new Set(
+      validationRules.flatMap((validationRule) =>
+        Object.keys(validationRule.bindings),
+      ),
+    ),
+  ];
+
+  // previous.company reads the record the relation pointed to before the write
+  const previousRecords = await attachRelatedRecords({
+    repository,
+    tableShape,
+    bindingPaths: bindingPaths
+      .map(getValidationRulePreviousValueFieldPath)
+      .filter(isDefined),
+    records: recordsBeforeWrite
       .filter((recordBeforeWrite) => isNonEmptyString(recordBeforeWrite.id))
-      .map((recordBeforeWrite) => [
-        String(recordBeforeWrite.id),
-        recordBeforeWrite,
-      ]),
+      .map((recordBeforeWrite) => ({ ...recordBeforeWrite })),
+  });
+  const previousRecordById = new Map(
+    previousRecords.map((previousRecord) => [
+      String(previousRecord.id),
+      previousRecord,
+    ]),
   );
 
   const inputIndexByRecordId = buildInputIndexByRecordId({
@@ -226,8 +236,8 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
       records: await attachRelatedRecords({
         repository,
         tableShape,
-        validationRules,
-        rawWrittenRecords,
+        bindingPaths,
+        records: repository.formatResult<ObjectRecord[]>(rawWrittenRecords),
       }),
       validationRules: validationRulesWithActiveErrorField,
       fields,

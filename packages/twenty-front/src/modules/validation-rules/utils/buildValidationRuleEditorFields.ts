@@ -12,7 +12,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
-import { RelationType } from '~/generated-metadata/graphql';
+import { getValidationRuleToOneRelationTargets } from '@/validation-rules/utils/getValidationRuleToOneRelationTargets';
 
 type ValidationRuleEditorObject = Pick<
   EnrichedObjectMetadataItem,
@@ -113,58 +113,57 @@ const buildCurrentValueEditorFields = ({
         });
       }
 
-      const relation = fieldMetadataItem.relation;
+      return getValidationRuleToOneRelationTargets(fieldMetadataItem).flatMap(
+        ({ name, targetObjectMetadataId, isMorphTarget }) => {
+          const targetObjectMetadataItem = objectMetadataItems.find(
+            (candidate) => candidate.id === targetObjectMetadataId,
+          );
+          const label =
+            isMorphTarget && isDefined(targetObjectMetadataItem)
+              ? `${fieldMetadataItem.label} › ${targetObjectMetadataItem.labelSingular}`
+              : fieldMetadataItem.label;
 
-      if (
-        fieldMetadataItem.type !== FieldMetadataType.RELATION ||
-        relation?.type !== RelationType.MANY_TO_ONE
-      ) {
-        return [];
-      }
-
-      const targetObjectMetadataItem = objectMetadataItems.find(
-        (candidate) => candidate.id === relation.targetObjectMetadata.id,
-      );
-
-      const relationField: ValidationRuleEditorField = {
-        path: fieldMetadataItem.name,
-        label: fieldMetadataItem.label,
-        parentLabel: null,
-        iconName:
-          [fieldMetadataItem.icon, targetObjectMetadataItem?.icon].find(
-            isNonEmptyString,
-          ) ?? DEFAULT_OBJECT_ICON,
-        type: fieldMetadataItem.type,
-        objectLabelSingular: objectMetadataItem.labelSingular,
-        objectIconName: isNonEmptyString(objectMetadataItem.icon)
-          ? objectMetadataItem.icon
-          : DEFAULT_OBJECT_ICON,
-        selectOptionValues: [],
-        isSystem: fieldMetadataItem.isSystem ?? false,
-        hasMembers: isDefined(targetObjectMetadataItem),
-        readsRelatedRecord: true,
-      };
-
-      if (!isDefined(targetObjectMetadataItem)) {
-        return [relationField];
-      }
-
-      const targetFields = targetObjectMetadataItem.fields
-        .filter(
-          (targetField) =>
-            targetField.isActive && !isRelationType(targetField.type),
-        )
-        .flatMap((targetField) =>
-          buildScalarEditorFields({
-            fieldMetadataItem: targetField,
-            objectMetadataItem: targetObjectMetadataItem,
-            pathPrefix: `${fieldMetadataItem.name}.`,
-            parentLabel: fieldMetadataItem.label,
+          const relationField: ValidationRuleEditorField = {
+            path: name,
+            label,
+            parentLabel: null,
+            iconName:
+              [fieldMetadataItem.icon, targetObjectMetadataItem?.icon].find(
+                isNonEmptyString,
+              ) ?? DEFAULT_OBJECT_ICON,
+            type: fieldMetadataItem.type,
+            objectLabelSingular: objectMetadataItem.labelSingular,
+            objectIconName: isNonEmptyString(objectMetadataItem.icon)
+              ? objectMetadataItem.icon
+              : DEFAULT_OBJECT_ICON,
+            selectOptionValues: [],
+            isSystem: fieldMetadataItem.isSystem ?? false,
+            hasMembers: isDefined(targetObjectMetadataItem),
             readsRelatedRecord: true,
-          }),
-        );
+          };
 
-      return [relationField, ...targetFields];
+          if (!isDefined(targetObjectMetadataItem)) {
+            return [relationField];
+          }
+
+          const targetFields = targetObjectMetadataItem.fields
+            .filter(
+              (targetField) =>
+                targetField.isActive && !isRelationType(targetField.type),
+            )
+            .flatMap((targetField) =>
+              buildScalarEditorFields({
+                fieldMetadataItem: targetField,
+                objectMetadataItem: targetObjectMetadataItem,
+                pathPrefix: `${name}.`,
+                parentLabel: label,
+                readsRelatedRecord: true,
+              }),
+            );
+
+          return [relationField, ...targetFields];
+        },
+      );
     });
 
 const buildPreviousValueEditorField = (
@@ -193,9 +192,9 @@ export const buildValidationRuleEditorFields = ({
     objectMetadataItems,
   });
 
-  const previousValueFields = currentValueFields
-    .filter((field) => !field.readsRelatedRecord)
-    .map(buildPreviousValueEditorField);
+  const previousValueFields = currentValueFields.map(
+    buildPreviousValueEditorField,
+  );
 
   return [...currentValueFields, ...previousValueFields];
 };

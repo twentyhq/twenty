@@ -31,6 +31,45 @@ type ConditionReads = {
   eventFieldNames: string[];
   previousFieldNames: string[];
   relations: ConditionRelation[];
+  previousRelations: ConditionRelation[];
+};
+
+const isToOneRelationField = (field: ValidationRuleFieldDescriptor) =>
+  (field.type === FieldMetadataType.RELATION ||
+    field.type === FieldMetadataType.MORPH_RELATION) &&
+  field.relationType === RelationType.MANY_TO_ONE;
+
+// The event carries a relation as its join column (companyId), read for the relation itself
+const toRecordReads = ({
+  paths,
+  fields,
+}: {
+  paths: string[];
+  fields: ValidationRuleFieldDescriptor[];
+}) => {
+  const rootPaths = paths.filter((path) => !path.includes('.'));
+  const relations = fields
+    .filter(
+      (field) => isToOneRelationField(field) && rootPaths.includes(field.name),
+    )
+    .map((field) => ({
+      fieldName: field.name,
+      joinColumnName: computeRelationGqlFieldJoinColumnName({
+        name: field.name,
+      }),
+      targetFieldNames: paths
+        .filter((path) => path.startsWith(`${field.name}.`))
+        .map((path) => path.slice(field.name.length + 1)),
+    }));
+  const relationFieldNames = relations.map(({ fieldName }) => fieldName);
+
+  return {
+    fieldNames: [
+      ...rootPaths.filter((path) => !relationFieldNames.includes(path)),
+      ...relations.map(({ joinColumnName }) => joinColumnName),
+    ],
+    relations,
+  };
 };
 
 const toConditionReads = ({
@@ -40,34 +79,19 @@ const toConditionReads = ({
   boundPaths: string[];
   fields: ValidationRuleFieldDescriptor[];
 }): ConditionReads => {
-  const rootPaths = boundPaths.filter((path) => !path.includes('.'));
-  const relations = fields
-    .filter(
-      (field) =>
-        field.type === FieldMetadataType.RELATION &&
-        field.relationType === RelationType.MANY_TO_ONE &&
-        rootPaths.includes(field.name),
-    )
-    .map((field) => ({
-      fieldName: field.name,
-      joinColumnName: computeRelationGqlFieldJoinColumnName({
-        name: field.name,
-      }),
-      targetFieldNames: boundPaths
-        .filter((path) => path.startsWith(`${field.name}.`))
-        .map((path) => path.slice(field.name.length + 1)),
-    }));
-  const relationFieldNames = relations.map(({ fieldName }) => fieldName);
-
-  return {
-    eventFieldNames: [
-      ...rootPaths.filter((path) => !relationFieldNames.includes(path)),
-      ...relations.map(({ joinColumnName }) => joinColumnName),
-    ],
-    previousFieldNames: boundPaths
+  const currentReads = toRecordReads({ paths: boundPaths, fields });
+  const previousReads = toRecordReads({
+    paths: boundPaths
       .map(getValidationRulePreviousValueFieldPath)
       .filter(isDefined),
-    relations,
+    fields,
+  });
+
+  return {
+    eventFieldNames: currentReads.fieldNames,
+    previousFieldNames: previousReads.fieldNames,
+    relations: currentReads.relations,
+    previousRelations: previousReads.relations,
   };
 };
 
@@ -90,14 +114,50 @@ const hasConditionFields = ({
 const readRecordId = (value: unknown): string | undefined =>
   isNonEmptyString(value) ? value : undefined;
 
-// Only fields beyond the id need the related record itself
+type RelationLoad = {
+  joinColumnName: string;
+  fieldNames: Set<string>;
+  recordIds: Set<string>;
+};
+
+// One load per relation serves both the current and the previous record
+const toRelationLoads = (
+  relationReads: {
+    relations: ConditionRelation[];
+    records: ConditionRecord[];
+  }[],
+): Map<string, RelationLoad> => {
+  const relationLoads = new Map<string, RelationLoad>();
+
+  for (const { relations, records } of relationReads) {
+    for (const relation of relations) {
+      const relationLoad = relationLoads.get(relation.fieldName) ?? {
+        joinColumnName: relation.joinColumnName,
+        fieldNames: new Set<string>(),
+        recordIds: new Set<string>(),
+      };
+
+      // Only fields beyond the id need the related record itself
+      relation.targetFieldNames
+        .filter((fieldName) => fieldName !== 'id')
+        .forEach((fieldName) => relationLoad.fieldNames.add(fieldName));
+      records
+        .map((record) => readRecordId(record[relation.joinColumnName]))
+        .filter(isDefined)
+        .forEach((recordId) => relationLoad.recordIds.add(recordId));
+
+      relationLoads.set(relation.fieldName, relationLoad);
+    }
+  }
+
+  return relationLoads;
+};
+
 const findRelatedRecordsById = async ({
-  relations,
-  records,
+  relationLoads,
   findRelatedRecords,
 }: {
-  relations: ConditionRelation[];
-  records: ConditionRecord[];
+  relationLoads: Map<string, RelationLoad>;
   findRelatedRecords?: FindDatabaseEventRelatedRecords;
 }): Promise<Map<string, Map<string, ConditionRecord>>> => {
   const relatedRecordsByRelation = new Map<
@@ -105,39 +165,28 @@ const findRelatedRecordsById = async ({
     Map<string, ConditionRecord>
   >();
 
-  for (const relation of relations) {
-    const fieldNames = relation.targetFieldNames.filter(
-      (fieldName) => fieldName !== 'id',
-    );
-
-    if (fieldNames.length === 0) {
+  for (const [relationFieldName, relationLoad] of relationLoads) {
+    if (relationLoad.fieldNames.size === 0) {
       continue;
     }
 
     if (!isDefined(findRelatedRecords)) {
       throw new Error(
-        `This trigger cannot read the fields of "${relation.fieldName}"`,
+        `This trigger cannot read the fields of "${relationFieldName}"`,
       );
     }
 
-    const recordIds = [
-      ...new Set(
-        records
-          .map((record) => readRecordId(record[relation.joinColumnName]))
-          .filter(isDefined),
-      ),
-    ];
     const relatedRecords =
-      recordIds.length > 0
+      relationLoad.recordIds.size > 0
         ? await findRelatedRecords({
-            relationFieldName: relation.fieldName,
-            recordIds,
-            fieldNames,
+            relationFieldName,
+            recordIds: [...relationLoad.recordIds],
+            fieldNames: [...relationLoad.fieldNames],
           })
         : [];
 
     relatedRecordsByRelation.set(
-      relation.fieldName,
+      relationFieldName,
       new Map(
         relatedRecords
           .map((relatedRecord) => [
@@ -254,8 +303,18 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
     });
 
   const relatedRecordsLoad = await findRelatedRecordsById({
-    relations: conditionReads.relations,
-    records: readableEvents.map(({ record }) => record),
+    relationLoads: toRelationLoads([
+      {
+        relations: conditionReads.relations,
+        records: readableEvents.map(({ record }) => record),
+      },
+      {
+        relations: conditionReads.previousRelations,
+        records: readableEvents
+          .map(({ previousRecord }) => previousRecord)
+          .filter(isDefined),
+      },
+    ]),
     findRelatedRecords,
   }).then(
     (relatedRecordsByRelation) => ({ relatedRecordsByRelation }),
@@ -287,7 +346,13 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
         relations: conditionReads.relations,
         relatedRecordsByRelation,
       }),
-      previousRecord,
+      previousRecord: isDefined(previousRecord)
+        ? toApiShapedRecord({
+            record: previousRecord,
+            relations: conditionReads.previousRelations,
+            relatedRecordsByRelation,
+          })
+        : undefined,
       now,
     });
 

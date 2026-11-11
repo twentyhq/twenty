@@ -209,17 +209,62 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
     ).toEqual({ events: [], conditionErrorMessage: 'Cannot read employees' });
   });
 
-  it('should reject previous values of a relation', async () => {
-    const { events, conditionErrorMessage } =
-      await filterEventsMatchingDatabaseEventTrigger({
-        events: [buildEvent({ before: {}, after: {}, updatedFields: [] })],
-        eventName: 'opportunity.updated',
-        condition: 'previous.company.id != company.id',
-        fields: FIELDS,
-      });
+  it('should read the record a relation pointed to before, in the same load', async () => {
+    const movedToSmallCompany = buildEvent(
+      {
+        before: { companyId: 'big' },
+        after: { companyId: 'small' },
+        updatedFields: ['companyId'],
+      },
+      'moved',
+    );
+    const findRelatedRecords = jest.fn().mockResolvedValue([
+      { id: 'big', employees: 500 },
+      { id: 'small', employees: 5 },
+    ]);
 
-    expect(events).toEqual([]);
-    expect(conditionErrorMessage).toContain('previous values only cover');
+    const { events } = await filterEventsMatchingDatabaseEventTrigger({
+      events: [movedToSmallCompany],
+      eventName: 'opportunity.updated',
+      condition:
+        'previous.company.employees > 100 and company.employees <= 100 and previous.company.id != company.id',
+      fields: FIELDS,
+      findRelatedRecords,
+    });
+
+    expect(events).toEqual([movedToSmallCompany]);
+    expect(findRelatedRecords).toHaveBeenCalledTimes(1);
+    expect(findRelatedRecords).toHaveBeenCalledWith({
+      relationFieldName: 'company',
+      recordIds: ['small', 'big'],
+      fieldNames: ['employees'],
+    });
+  });
+
+  it('should read a morph target like a relation to one record', async () => {
+    const onBigCompany = buildEvent(
+      { after: { targetCompanyId: 'big' } },
+      'big',
+    );
+    const onPerson = buildEvent({ after: { targetCompanyId: null } }, 'person');
+
+    const { events } = await filterEventsMatchingDatabaseEventTrigger({
+      events: [onBigCompany, onPerson],
+      eventName: 'taskTarget.created',
+      condition: 'targetCompany.employees > 100',
+      fields: [
+        {
+          ...FIELDS[1],
+          name: 'targetCompany',
+          type: FieldMetadataType.MORPH_RELATION,
+        },
+      ],
+      findRelatedRecords: jest
+        .fn()
+        .mockResolvedValue([{ id: 'big', employees: 500 }]),
+    });
+
+    expect(events).toEqual([onBigCompany]);
   });
 
   it('should match nothing and report why when the condition cannot be read', async () => {
