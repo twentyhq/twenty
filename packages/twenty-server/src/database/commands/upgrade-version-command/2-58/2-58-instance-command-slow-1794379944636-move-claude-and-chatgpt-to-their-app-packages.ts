@@ -9,7 +9,7 @@ const SOURCE_PACKAGE_BY_UNIVERSAL_IDENTIFIER = {
 };
 
 // The server used to seed these as OAuth-only registrations; the catalog sync now owns them, and only updates npm ones
-@RegisteredInstanceCommand('2.58.0', 1794298930712, { type: 'slow' })
+@RegisteredInstanceCommand('2.58.0', 1794379944636, { type: 'slow' })
 export class MoveClaudeAndChatGptToTheirAppPackagesSlowInstanceCommand
   implements SlowInstanceCommand
 {
