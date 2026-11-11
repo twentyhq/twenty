@@ -6696,6 +6696,18 @@ msgstr "Նույն անունով ինդեքսն արդեն գոյություն
 msgid "Index with same universal identifier already exists"
 msgstr "Նույն ունիվերսալ նույնացուցիչով ինդեքս արդեն գոյություն ունի"
 
+#. js-lingui-id: 5K0P9Y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot form a cycle"
+msgstr "Ներկառուցված կապված գրառումների ուղիները չեն կարող ցիկլ կազմել"
+
+#. js-lingui-id: GdaBpX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot have more than two relations"
+msgstr "Ներկառուցված կապված գրառումների ուղիները չեն կարող ունենալ երկուսից ավելի կապ"
+
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
