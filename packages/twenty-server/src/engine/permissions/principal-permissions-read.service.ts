@@ -110,10 +110,12 @@ export class PrincipalPermissionsReadService {
   private async findWorkspaceCustomApplicationId(
     authContext: PermissionsAuthContext,
   ): Promise<string | undefined> {
-    if (
-      authContext.type !== 'application' &&
-      !('application' in authContext && isDefined(authContext.application))
-    ) {
+    const isActingThroughApplication =
+      authContext.type === 'application' ||
+      ((authContext.type === 'user' || authContext.type === 'apiKey') &&
+        isDefined(authContext.application));
+
+    if (!isActingThroughApplication) {
       return undefined;
     }
 
