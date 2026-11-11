@@ -11,7 +11,6 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-// Creating records and managing access stay with the roles that can access the object
 const OPERATIONS_GRANTABLE_BY_RECORD_SHARE: {
   operationType: ObjectRecordsOperationType;
   objectPermissionAction: ObjectPermissionAction;

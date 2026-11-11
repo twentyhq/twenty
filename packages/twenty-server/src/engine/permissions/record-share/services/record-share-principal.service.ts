@@ -31,9 +31,6 @@ export class RecordSharePrincipalService {
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
-  // Without reach beyond roles, a grant the recipient's role cannot use would
-  // be stored without ever taking effect. Runs after the grants are written:
-  // they satisfy the share gate, so only the role and its row filter are tested
   async assertPrincipalsReachRecordsOrThrow({
     workspaceId,
     transactionScope,
