@@ -5503,6 +5503,11 @@ msgstr "Το πεδίο \"{workspaceMemberFieldName}\" δεν είναι πεδ�
 msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
 msgstr "Το πεδίο {0}.{fieldName} δεν είναι διαθέσιμο. Επιλέξτε προσβάσιμα πεδία ανώτατου επιπέδου."
 
+#. js-lingui-id: T0uER/
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
+msgstr "Το πεδίο {fieldName} χρησιμοποιείται από {survivingPredicateCount} κατηγόρημα(τα) δικαιωμάτων σε επίπεδο γραμμής"
+
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
@@ -6691,6 +6696,18 @@ msgstr "Το ευρετήριο με το ίδιο όνομα υπάρχει ή�
 msgid "Index with same universal identifier already exists"
 msgstr "Το ευρετήριο με το ίδιο καθολικό αναγνωριστικό υπάρχει ήδη"
 
+#. js-lingui-id: 5K0P9Y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot form a cycle"
+msgstr "Οι εγγενείς διαδρομές σχετικών εγγραφών δεν μπορούν να σχηματίζουν κύκλο"
+
+#. js-lingui-id: GdaBpX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot have more than two relations"
+msgstr "Οι εγγενείς διαδρομές σχετικών εγγραφών δεν μπορούν να έχουν περισσότερες από δύο σχέσεις"
+
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -7418,7 +7435,7 @@ msgstr "Μη έγκυρα δεδομένα ομάδας κατηγορημάτω
 #. js-lingui-id: SSt1rf
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Invalid row level permission rule data."
-msgstr ""
+msgstr "Μη έγκυρα δεδομένα κανόνα δικαιωμάτων σε επίπεδο γραμμής."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -11606,6 +11623,11 @@ msgctxt "commandMenuItem.label"
 msgid "Remove from Favorites"
 msgstr "Αφαίρεση από τα αγαπημένα"
 
+#. js-lingui-id: 60CVOK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Remove the row-level permission rules that use this field before deleting it"
+msgstr "Καταργήστε τους κανόνες δικαιωμάτων σε επίπεδο γραμμής που χρησιμοποιούν αυτό το πεδίο πριν το διαγράψετε"
+
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
 msgid "Remove this permission from all roles before deleting it"
@@ -12103,29 +12125,29 @@ msgstr "Το κατηγόρημα δικαιωμάτων σε επίπεδο γ�
 #. js-lingui-id: 1ypLxw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule already exists"
-msgstr ""
+msgstr "Ο κανόνας δικαιωμάτων σε επίπεδο γραμμής υπάρχει ήδη"
 
 #. js-lingui-id: PrMheT
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 msgid "Row level permission rule not found."
-msgstr ""
+msgstr "Δεν βρέθηκε ο κανόνας δικαιωμάτων σε επίπεδο γραμμής."
 
 #. js-lingui-id: WmZbv+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to delete not found"
-msgstr ""
+msgstr "Δεν βρέθηκε ο κανόνας δικαιωμάτων σε επίπεδο γραμμής προς διαγραφή"
 
 #. js-lingui-id: B+cihG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule to update not found"
-msgstr ""
+msgstr "Δεν βρέθηκε ο κανόνας δικαιωμάτων σε επίπεδο γραμμής προς ενημέρωση"
 
 #. js-lingui-id: LRPzAu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Row level permission rule with this universal identifier already exists"
-msgstr ""
+msgstr "Ο κανόνας δικαιωμάτων σε επίπεδο γραμμής με αυτό το καθολικό αναγνωριστικό υπάρχει ήδη"
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts

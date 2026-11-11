@@ -409,12 +409,16 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   it('should let a named grant reach a record the row filter of the role hides', async () => {
-    await setMemberObjectAccess(true);
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
         roleId: memberRoleId,
         objectMetadataId,
+        canCreateRecords: true,
+        canReadRecords: true,
+        canUpdateRecords: true,
+        canSoftDeleteRecords: true,
+        canDestroyRecords: true,
         predicates: [
           {
             fieldMetadataId: nameFieldMetadataId,
@@ -454,12 +458,16 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   it('should refuse a merge that would leave a shared record the role cannot delete', async () => {
-    await setMemberObjectAccess(true);
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
         roleId: memberRoleId,
         objectMetadataId,
+        canCreateRecords: true,
+        canReadRecords: true,
+        canUpdateRecords: true,
+        canSoftDeleteRecords: true,
+        canDestroyRecords: true,
         predicates: [
           {
             fieldMetadataId: nameFieldMetadataId,

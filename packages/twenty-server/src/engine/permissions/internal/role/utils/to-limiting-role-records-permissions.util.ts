@@ -14,12 +14,31 @@ const toLimitingObjectRecordsPermissions = ({
   isDefined(rowLevelRecordsPermissions)
     ? {
         ...objectRecordsPermissions,
-        canCreateAllRecords: rowLevelRecordsPermissions.canCreateRecords,
-        canReadAllRecords: rowLevelRecordsPermissions.canReadRecords,
-        canUpdateAllRecords: rowLevelRecordsPermissions.canUpdateRecords,
+        canCreateAllRecords:
+          objectRecordsPermissions.canCreateAllRecords ||
+          rowLevelRecordsPermissions.some(
+            ({ canCreateRecords }) => canCreateRecords,
+          ),
+        canReadAllRecords:
+          objectRecordsPermissions.canReadAllRecords ||
+          rowLevelRecordsPermissions.some(
+            ({ canReadRecords }) => canReadRecords,
+          ),
+        canUpdateAllRecords:
+          objectRecordsPermissions.canUpdateAllRecords ||
+          rowLevelRecordsPermissions.some(
+            ({ canUpdateRecords }) => canUpdateRecords,
+          ),
         canSoftDeleteAllRecords:
-          rowLevelRecordsPermissions.canSoftDeleteRecords,
-        canDestroyAllRecords: rowLevelRecordsPermissions.canDestroyRecords,
+          objectRecordsPermissions.canSoftDeleteAllRecords ||
+          rowLevelRecordsPermissions.some(
+            ({ canSoftDeleteRecords }) => canSoftDeleteRecords,
+          ),
+        canDestroyAllRecords:
+          objectRecordsPermissions.canDestroyAllRecords ||
+          rowLevelRecordsPermissions.some(
+            ({ canDestroyRecords }) => canDestroyRecords,
+          ),
       }
     : objectRecordsPermissions;
 

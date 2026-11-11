@@ -3,6 +3,7 @@ import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
+import { withRowLevelPermissionRuleGrants } from '@/settings/roles/role/utils/withRowLevelPermissionRuleGrants';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentDirtyState';
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
@@ -83,11 +84,13 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
       query: GetRolesDocument,
       fetchPolicy: 'network-only',
     });
-    const savedRole = data?.getRoles.find((role) => role.id === roleId);
+    const fetchedRole = data?.getRoles.find((role) => role.id === roleId);
 
-    if (!isDefined(savedRole)) {
+    if (!isDefined(fetchedRole)) {
       return;
     }
+
+    const savedRole = withRowLevelPermissionRuleGrants(fetchedRole);
 
     setSettingsPersistedRole(savedRole);
     setSettingsDraftRoleBase(savedRole);
