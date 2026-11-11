@@ -60,7 +60,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const { openDialog } = useDialog();
 
   const isReadOnly = useIsCoreAgentReadOnly(agent);
-  const activeTabId = useCoreAgentShowPageActiveTab();
+  const activeTabId = useCoreAgentShowPageActiveTab(agent.id);
 
   const { draft, updateDraft } = useCoreAgentDraft(agent);
   const { isDirty } = useCoreAgentDirtyState(agent);

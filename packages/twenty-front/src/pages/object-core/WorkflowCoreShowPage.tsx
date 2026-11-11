@@ -84,10 +84,11 @@ const CoreWorkflowShowContent = ({
   const isReadOnlyVersion =
     isApplicationManaged || isDefined(requestedVersionId);
   const activeTabId = useCoreWorkflowShowPageActiveTab({
+    coreWorkflowId,
     isPublished: isDefined(coreWorkflow)
       ? isDefined(coreWorkflow.lastPublishedCoreWorkflowVersionId)
       : undefined,
-    isVersionRequested: isDefined(requestedVersionId),
+    requestedVersionId,
   });
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
@@ -183,7 +184,10 @@ const CoreWorkflowShowContent = ({
               <CoreWorkflowShowPageTabList
                 activeTabId={activeTabId}
                 componentInstanceId={getCoreWorkflowShowPageTabListComponentInstanceId(
-                  coreWorkflowId,
+                  {
+                    coreWorkflowId,
+                    requestedVersionId,
+                  },
                 )}
               />
             }

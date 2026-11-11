@@ -1,7 +1,10 @@
 import { renderHook } from '@testing-library/react';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 
 import { useCoreWorkflowShowPageActiveTab } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageActiveTab';
+import { getCoreWorkflowShowPageTabListComponentInstanceId } from '@/object-core/workflows/utils/getCoreWorkflowShowPageTabListComponentInstanceId';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: () => ({
@@ -17,30 +20,53 @@ jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
 
 type HookProps = {
   isPublished: boolean | undefined;
+  requestedVersionId: string | null;
 };
 
 const renderActiveTab = ({
   initialIsPublished,
   hash = '',
+  requestedVersionId = null,
+  storedTabId,
 }: {
   initialIsPublished: boolean | undefined;
   hash?: string;
-}) =>
-  renderHook(
-    ({ isPublished }: HookProps) =>
+  requestedVersionId?: string | null;
+  storedTabId?: string;
+}) => {
+  const store = createStore();
+
+  if (storedTabId !== undefined) {
+    store.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: getCoreWorkflowShowPageTabListComponentInstanceId({
+          coreWorkflowId: 'workflow-id',
+          requestedVersionId: null,
+        }),
+      }),
+      storedTabId,
+    );
+  }
+
+  return renderHook(
+    ({ isPublished, requestedVersionId }: HookProps) =>
       useCoreWorkflowShowPageActiveTab({
+        coreWorkflowId: 'workflow-id',
         isPublished,
-        isVersionRequested: false,
+        requestedVersionId,
       }),
     {
-      initialProps: { isPublished: initialIsPublished },
+      initialProps: { isPublished: initialIsPublished, requestedVersionId },
       wrapper: ({ children }) => (
-        <MemoryRouter initialEntries={[`/workflow/workflow-id${hash}`]}>
-          {children}
-        </MemoryRouter>
+        <JotaiProvider store={store}>
+          <MemoryRouter initialEntries={[`/workflow/workflow-id${hash}`]}>
+            {children}
+          </MemoryRouter>
+        </JotaiProvider>
       ),
     },
   );
+};
 
 describe('useCoreWorkflowShowPageActiveTab', () => {
   it('opens Overview for a published workflow', () => {
@@ -60,7 +86,7 @@ describe('useCoreWorkflowShowPageActiveTab', () => {
       initialIsPublished: undefined,
     });
 
-    rerender({ isPublished: true });
+    rerender({ isPublished: true, requestedVersionId: null });
 
     expect(result.current).toBe('overview');
   });
@@ -70,7 +96,7 @@ describe('useCoreWorkflowShowPageActiveTab', () => {
       initialIsPublished: false,
     });
 
-    rerender({ isPublished: true });
+    rerender({ isPublished: true, requestedVersionId: null });
 
     expect(result.current).toBe('flow');
   });
@@ -82,5 +108,24 @@ describe('useCoreWorkflowShowPageActiveTab', () => {
     });
 
     expect(result.current).toBe('runs');
+  });
+
+  it('reopens the last viewed tab', () => {
+    const { result } = renderActiveTab({
+      initialIsPublished: true,
+      storedTabId: 'runs',
+    });
+
+    expect(result.current).toBe('runs');
+  });
+
+  it('opens Flow for a requested version even after another tab was viewed', () => {
+    const { result } = renderActiveTab({
+      initialIsPublished: true,
+      storedTabId: 'overview',
+      requestedVersionId: 'version-id',
+    });
+
+    expect(result.current).toBe('flow');
   });
 });
