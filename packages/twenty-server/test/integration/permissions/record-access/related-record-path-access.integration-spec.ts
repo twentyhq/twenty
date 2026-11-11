@@ -8,10 +8,14 @@ import {
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type DocumentNode } from 'graphql';
 import { v4 } from 'uuid';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -27,6 +31,7 @@ import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/su
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -57,6 +62,9 @@ describe('Record access through related record paths', () => {
   let projectRuleRoleId: string;
   let isProjectRuleRoleDeleted = false;
   let pathId: string;
+  let projectId: string;
+  let projectFieldNameOnTask: string;
+  let projectRuleCompactId: number;
   let taskOfProjectId: string;
   let taskWithoutProjectId: string;
 
@@ -255,6 +263,16 @@ describe('Record access through related record paths', () => {
     isProjectRuleRoleDeleted = true;
   };
 
+  const runAndWaitForJobs = async (operation: {
+    query: DocumentNode;
+    variables: Record<string, unknown>;
+  }) => {
+    const response = await makeGraphqlApiRequest(operation);
+
+    expect(response.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
+  };
+
   const findTaskAccessGroupIds = async (recordId: string) => {
     const [{ accessGroupIds }]: { accessGroupIds: number[] | null }[] =
       await global.testDataSource.query(
@@ -305,7 +323,8 @@ describe('Record access through related record paths', () => {
       },
     });
 
-    const projectId = await createRecord({
+    projectFieldNameOnTask = `${projectTasksField.relation.targetFieldMetadata.name}Id`;
+    projectId = await createRecord({
       objectMetadataSingularName: PROJECT_NAME,
       data: { name: 'Readable project' },
     });
@@ -314,7 +333,7 @@ describe('Record access through related record paths', () => {
       objectMetadataSingularName: TASK_NAME,
       data: {
         name: 'Task of the project',
-        [`${projectTasksField.relation.targetFieldMetadata.name}Id`]: projectId,
+        [projectFieldNameOnTask]: projectId,
       },
     });
     taskWithoutProjectId = await createRecord({
@@ -386,16 +405,93 @@ describe('Record access through related record paths', () => {
       });
     }
 
-    const [{ compactId: projectRuleCompactId }]: { compactId: number }[] =
-      await global.testDataSource.query(
-        `SELECT "compactId" FROM ${SCHEMA}."accessGroup" WHERE "roleId" = $1 AND "objectMetadataId" = $2 AND "rowLevelPermissionPredicateGroupId" IS NOT NULL`,
-        [projectRuleRoleId, projectObjectMetadataId],
-      );
+    [{ compactId: projectRuleCompactId }] = await global.testDataSource.query(
+      `SELECT "compactId" FROM ${SCHEMA}."accessGroup" WHERE "roleId" = $1 AND "objectMetadataId" = $2 AND "rowLevelPermissionPredicateGroupId" IS NOT NULL`,
+      [projectRuleRoleId, projectObjectMetadataId],
+    );
 
     expect(await findTaskAccessGroupIds(taskOfProjectId)).toContain(
       projectRuleCompactId,
     );
     expect(await findTaskAccessGroupIds(taskWithoutProjectId)).not.toContain(
+      projectRuleCompactId,
+    );
+  });
+
+  it('should update the related records when the source record enters or leaves the rule', async () => {
+    await runAndWaitForJobs(
+      updateOneOperationFactory({
+        objectMetadataSingularName: PROJECT_NAME,
+        gqlFields: 'id',
+        recordId: projectId,
+        data: { name: 'Hidden project' },
+      }),
+    );
+
+    expect(await findTaskAccessGroupIds(taskOfProjectId)).not.toContain(
+      projectRuleCompactId,
+    );
+
+    await runAndWaitForJobs(
+      updateOneOperationFactory({
+        objectMetadataSingularName: PROJECT_NAME,
+        gqlFields: 'id',
+        recordId: projectId,
+        data: { name: 'Readable project' },
+      }),
+    );
+
+    expect(await findTaskAccessGroupIds(taskOfProjectId)).toContain(
+      projectRuleCompactId,
+    );
+  });
+
+  it('should update a record when it is linked to or unlinked from a source record', async () => {
+    const setProjectOfTaskWithoutProject = (linkedProjectId: string | null) =>
+      runAndWaitForJobs(
+        updateOneOperationFactory({
+          objectMetadataSingularName: TASK_NAME,
+          gqlFields: 'id',
+          recordId: taskWithoutProjectId,
+          data: { [projectFieldNameOnTask]: linkedProjectId },
+        }),
+      );
+
+    await setProjectOfTaskWithoutProject(projectId);
+
+    expect(await findTaskAccessGroupIds(taskWithoutProjectId)).toContain(
+      projectRuleCompactId,
+    );
+
+    await setProjectOfTaskWithoutProject(null);
+
+    expect(await findTaskAccessGroupIds(taskWithoutProjectId)).not.toContain(
+      projectRuleCompactId,
+    );
+  });
+
+  it('should update the related records when the source record is deleted or restored', async () => {
+    await runAndWaitForJobs(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: PROJECT_NAME,
+        gqlFields: 'id',
+        recordId: projectId,
+      }),
+    );
+
+    expect(await findTaskAccessGroupIds(taskOfProjectId)).not.toContain(
+      projectRuleCompactId,
+    );
+
+    await runAndWaitForJobs(
+      restoreOneOperationFactory({
+        objectMetadataSingularName: PROJECT_NAME,
+        gqlFields: 'id',
+        recordId: projectId,
+      }),
+    );
+
+    expect(await findTaskAccessGroupIds(taskOfProjectId)).toContain(
       projectRuleCompactId,
     );
   });

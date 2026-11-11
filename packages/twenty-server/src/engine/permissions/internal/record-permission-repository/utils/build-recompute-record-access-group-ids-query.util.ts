@@ -55,7 +55,8 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
         WHERE ${alias}."id" = ANY(:recordIds)
       ) AS "recomputed"
       WHERE ${alias}."id" = "recomputed"."id"
-        AND ${alias}.${accessGroupIdsColumn} IS DISTINCT FROM "recomputed"."accessGroupIds"`,
+        AND ${alias}.${accessGroupIdsColumn} IS DISTINCT FROM "recomputed"."accessGroupIds"
+      RETURNING ${alias}."id"`,
     parameters: Object.assign(
       { recordIds },
       ...recordAccessGroupSQLConditions.map(

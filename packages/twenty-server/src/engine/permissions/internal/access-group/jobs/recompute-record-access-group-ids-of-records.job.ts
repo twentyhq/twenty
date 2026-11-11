@@ -17,7 +17,7 @@ export class RecomputeRecordAccessGroupIdsOfRecordsJob {
   async handle(
     jobData: RecomputeRecordAccessGroupIdsOfRecordsJobData,
   ): Promise<void> {
-    await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecords(
+    await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecordsAndPropagate(
       jobData,
     );
   }

@@ -10,6 +10,7 @@ import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/inter
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
+import { type RelatedRecordPathHop } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -117,8 +118,10 @@ export class RecordAccessGroupRepository {
     relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[];
     recordIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
-  }): Promise<void> {
-    await this.recordPermissionQueryService.execute({
+  }): Promise<string[]> {
+    const updatedRows = await this.recordPermissionQueryService.execute<{
+      id: string;
+    }>({
       workspaceId,
       transactionScope,
       query: buildRecomputeRecordAccessGroupIdsQuery({
@@ -129,5 +132,74 @@ export class RecordAccessGroupRepository {
         recordIds,
       }),
     });
+
+    return updatedRows.map(({ id }) => id);
+  }
+
+  async findRecordIdsFollowingRelatedRecordPath({
+    workspaceId,
+    targetFlatObjectMetadata,
+    writtenHop,
+    followingHops,
+    recordIds,
+    recordsBefore,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    targetFlatObjectMetadata: FlatObjectMetadata;
+    writtenHop: RelatedRecordPathHop;
+    followingHops: RelatedRecordPathHop[];
+    recordIds: string[];
+    recordsBefore: Record<string, unknown>[];
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<string[]> {
+    const buildTableExpression = (flatObjectMetadata: FlatObjectMetadata) =>
+      buildWorkspaceTableExpression({
+        workspaceId,
+        tableName: computeObjectTargetTable(flatObjectMetadata),
+      });
+    const followingHopAliases = followingHops.map(
+      (_, hopIndex) => `"following_${hopIndex}"`,
+    );
+    const nextAliases = [...followingHopAliases, '"target"'];
+    const writtenJoinColumn = `${nextAliases[0]}.${escapeIdentifier(writtenHop.targetColumnName)}`;
+
+    // Values before the write still lead to the records the written ones no longer reach
+    const rows = await this.recordPermissionQueryService.execute<{
+      id: string;
+    }>({
+      workspaceId,
+      transactionScope,
+      query: {
+        sql: `SELECT DISTINCT "target"."id"
+          FROM ${[
+            ...followingHops.map(
+              (hop, hopIndex) =>
+                `${buildTableExpression(hop.flatObjectMetadata)} AS ${followingHopAliases[hopIndex]}`,
+            ),
+            `${buildTableExpression(targetFlatObjectMetadata)} AS "target"`,
+          ].join(', ')}
+          WHERE (${writtenJoinColumn} = ANY(:joinValuesBefore)
+            OR ${writtenJoinColumn} IN (
+              SELECT "written".${escapeIdentifier(writtenHop.sourceColumnName)}
+              FROM ${buildTableExpression(writtenHop.flatObjectMetadata)} AS "written"
+              WHERE "written"."id" = ANY(:recordIds)
+            ))
+            ${followingHops
+              .map(
+                (hop, hopIndex) =>
+                  `AND ${nextAliases[hopIndex + 1]}.${escapeIdentifier(hop.targetColumnName)} = ${followingHopAliases[hopIndex]}.${escapeIdentifier(hop.sourceColumnName)}`,
+              )
+              .join(' ')}`,
+        parameters: {
+          recordIds,
+          joinValuesBefore: recordsBefore
+            .map((recordBefore) => recordBefore[writtenHop.sourceColumnName])
+            .filter(isDefined),
+        },
+      },
+    });
+
+    return rows.map(({ id }) => id);
   }
 }
