@@ -117,6 +117,24 @@ export class AlignStandardRelatedRecordPathsInherentFlagCommand extends Provisio
         continue;
       }
 
+      const hasEveryActiveField =
+        getRelatedRecordPathFieldMetadataUniversalIdentifiers(
+          flatRelatedRecordPath,
+        ).every(
+          (fieldMetadataUniversalIdentifier) =>
+            flatFieldMetadataMaps.byUniversalIdentifier[
+              fieldMetadataUniversalIdentifier
+            ]?.isActive ?? false,
+        );
+
+      // the validator rejects a path through a deactivated relation, and such a path grants nothing
+      if (!hasEveryActiveField) {
+        this.logger.warn(
+          `Workspace ${workspaceId}: leaving standard related record path ${flatRelatedRecordPath.universalIdentifier} as is, one of its relations is inactive`,
+        );
+        continue;
+      }
+
       const inherentEdge = findInherentEdge(flatRelatedRecordPath);
 
       // a workspace's own inherent path may lead back to the source, which the validator would reject
