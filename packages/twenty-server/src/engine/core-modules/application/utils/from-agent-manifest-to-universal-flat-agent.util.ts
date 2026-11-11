@@ -38,10 +38,10 @@ export const fromAgentManifestToUniversalFlatAgent = ({
           instructions: isDefined(instructions) ? instructions : null,
         };
 
-        return trigger.type === 'DATABASE_EVENT'
+        return trigger.type === 'EVENT' || trigger.type === 'DATABASE_EVENT'
           ? {
               ...triggerBase,
-              type: trigger.type,
+              type: 'DATABASE_EVENT' as const,
               settings: toStoredDatabaseEventTriggerSettingsOrThrow(
                 trigger.settings,
               ),
