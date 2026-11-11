@@ -804,11 +804,23 @@ export class WorkspaceService {
     await queryRunner.startTransaction();
 
     try {
-      await queryRunner.manager.update(WorkspaceEntity, workspaceId, {
-        activationStatus: hasWorkspaceAnySubscription
-          ? WorkspaceActivationStatus.ACTIVE
-          : WorkspaceActivationStatus.CREATED,
-      });
+      // A workspace soft-deleted mid-activation must stay unprovisioned so the onboarding cleaner destroys it
+      const { affected } = await queryRunner.manager.update(
+        WorkspaceEntity,
+        { id: workspaceId, deletedAt: IsNull() },
+        {
+          activationStatus: hasWorkspaceAnySubscription
+            ? WorkspaceActivationStatus.ACTIVE
+            : WorkspaceActivationStatus.CREATED,
+        },
+      );
+
+      if (!isDefined(affected) || affected === 0) {
+        throw new WorkspaceException(
+          `Workspace ${workspaceId} was deleted during activation`,
+          WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
 
       await this.upgradeMigrationService.markAsWorkspaceInitial({
         name: initialCursor.name,
@@ -881,6 +893,29 @@ export class WorkspaceService {
     }
 
     return hasBeenReactivated;
+  }
+
+  async softDeleteWorkspaceIfStillInCreation(id: string): Promise<boolean> {
+    // Conditional on status so this and activation's final status update cannot both succeed
+    const { affected } = await this.workspaceRepository.update(
+      {
+        id,
+        activationStatus: In([
+          WorkspaceActivationStatus.PENDING_CREATION,
+          WorkspaceActivationStatus.ONGOING_CREATION,
+        ]),
+        deletedAt: IsNull(),
+      },
+      { deletedAt: new Date() },
+    );
+
+    if (!isDefined(affected) || affected === 0) {
+      return false;
+    }
+
+    await this.deleteWorkspace(id, true);
+
+    return true;
   }
 
   async deleteWorkspace(id: string, softDelete = false) {

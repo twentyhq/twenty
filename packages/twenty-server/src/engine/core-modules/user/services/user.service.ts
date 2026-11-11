@@ -328,12 +328,12 @@ export class UserService {
   ) {
     const workspaceId = userWorkspace.workspaceId;
 
-    const workspace =
-      await this.workspaceService.findOneWorkspaceById(workspaceId);
+    const hasDeletedWorkspaceStillInCreation =
+      await this.workspaceService.softDeleteWorkspaceIfStillInCreation(
+        workspaceId,
+      );
 
-    if (isDefined(workspace) && !isWorkspaceProvisioned(workspace)) {
-      await this.workspaceService.deleteWorkspace(workspaceId, true);
-
+    if (hasDeletedWorkspaceStillInCreation) {
       return;
     }
 
