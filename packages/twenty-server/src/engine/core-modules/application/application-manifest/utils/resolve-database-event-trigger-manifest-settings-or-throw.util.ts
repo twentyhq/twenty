@@ -10,8 +10,12 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type DatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/types/database-event-trigger-manifest-resolver.type';
+import { type DatabaseEventTriggerManifestLookup } from 'src/engine/core-modules/application/application-manifest/types/database-event-trigger-manifest-lookup.type';
 import { computeWorkflowWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-watched-field-name.util';
+import { findDatabaseEventTriggerManifestField } from 'src/engine/core-modules/application/application-manifest/utils/find-database-event-trigger-manifest-field.util';
+import { findDatabaseEventTriggerManifestObjectNameSingular } from 'src/engine/core-modules/application/application-manifest/utils/find-database-event-trigger-manifest-object-name-singular.util';
+import { findDatabaseEventTriggerManifestObjectUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/find-database-event-trigger-manifest-object-universal-identifier.util';
+import { listDatabaseEventTriggerManifestObjectFields } from 'src/engine/core-modules/application/application-manifest/utils/list-database-event-trigger-manifest-object-fields.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -39,12 +43,12 @@ const throwInvalidTrigger = ({
 const assertConditionCompilesOrThrow = ({
   condition,
   objectUniversalIdentifier,
-  resolver,
+  lookup,
   subject,
 }: {
   condition: string;
   objectUniversalIdentifier: string | undefined;
-  resolver: DatabaseEventTriggerManifestResolver;
+  lookup: DatabaseEventTriggerManifestLookup;
   subject: string;
 }) => {
   if (!isDefined(objectUniversalIdentifier)) {
@@ -54,8 +58,10 @@ const assertConditionCompilesOrThrow = ({
     });
   }
 
-  const fields = resolver
-    .listObjectFields(objectUniversalIdentifier)
+  const fields = listDatabaseEventTriggerManifestObjectFields({
+    lookup,
+    objectUniversalIdentifier,
+  })
     .map(toDatabaseEventTriggerConditionField)
     .filter(isDefined);
   const compilation = compileValidationRuleExpression({
@@ -91,11 +97,11 @@ const readConditionOrThrow = ({
 // Object and field universal identifiers become the event name and field names events carry
 export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   settings,
-  resolver,
+  lookup,
   subject,
 }: {
   settings: EventTriggerManifestSettings | DatabaseEventTriggerSettings;
-  resolver: DatabaseEventTriggerManifestResolver;
+  lookup: DatabaseEventTriggerManifestLookup;
   subject: string;
 }): DatabaseEventTriggerSettings => {
   const condition = readConditionOrThrow({
@@ -112,10 +118,11 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
         objectUniversalIdentifier:
           objectNameSingular === ANY_OBJECT
             ? undefined
-            : resolver.findObjectUniversalIdentifierByNameSingular(
+            : findDatabaseEventTriggerManifestObjectUniversalIdentifier({
+                lookup,
                 objectNameSingular,
-              ),
-        resolver,
+              }),
+        lookup,
         subject,
       });
     }
@@ -131,7 +138,10 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   } = settings;
 
   const objectNameSingular = isDefined(objectUniversalIdentifier)
-    ? resolver.findObjectNameSingular(objectUniversalIdentifier)
+    ? findDatabaseEventTriggerManifestObjectNameSingular({
+        lookup,
+        objectUniversalIdentifier,
+      })
     : ANY_OBJECT;
 
   if (!isDefined(objectNameSingular)) {
@@ -143,7 +153,10 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
 
   const updatedFields = watchedFieldUniversalIdentifiers?.map(
     (fieldUniversalIdentifier) => {
-      const field = resolver.findField(fieldUniversalIdentifier);
+      const field = findDatabaseEventTriggerManifestField({
+        lookup,
+        fieldUniversalIdentifier,
+      });
 
       if (
         !isDefined(field) ||
@@ -170,7 +183,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
     assertConditionCompilesOrThrow({
       condition,
       objectUniversalIdentifier,
-      resolver,
+      lookup,
       subject,
     });
   }
