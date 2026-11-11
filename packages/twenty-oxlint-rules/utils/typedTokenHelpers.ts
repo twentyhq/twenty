@@ -69,6 +69,17 @@ const isArrayWithoutSpread = (node: any): boolean =>
   node.type === 'ArrayExpression' &&
   node.elements.every((element: any) => element?.type !== 'SpreadElement');
 
+const isInlineAccessPolicyValue = (property: any): boolean => {
+  switch (getPropertyName(property)) {
+    case 'authPrincipals':
+      return isInlineAuthPrincipals(property.value);
+    case 'isActiveWorkspaceRequired':
+      return isBooleanLiteral(property.value);
+    default:
+      return isArrayWithoutSpread(property.value);
+  }
+};
+
 const isInlineAccessPolicy = (node: any): boolean =>
   node.type === 'ObjectExpression' &&
   node.properties.every(
@@ -76,9 +87,7 @@ const isInlineAccessPolicy = (node: any): boolean =>
       property.type === 'Property' &&
       !property.computed &&
       !property.shorthand &&
-      (getPropertyName(property) === 'authPrincipals'
-        ? isInlineAuthPrincipals(property.value)
-        : isArrayWithoutSpread(property.value)),
+      isInlineAccessPolicyValue(property),
   ) &&
   getPropertyValue(node, 'authPrincipals')?.properties.length > 0 &&
   getPropertyValue(node, 'requiredPermissionFlags') !== undefined;

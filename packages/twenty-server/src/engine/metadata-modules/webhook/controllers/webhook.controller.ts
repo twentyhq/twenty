@@ -25,13 +25,13 @@ import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-module
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { WEBHOOK_DELETE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-delete-access-policy.constant';
 import { WEBHOOK_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-read-access-policy.constant';
-import { WEBHOOK_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-write-access-policy.constant';
 import { CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { UpdateWebhookInputUpdates } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { WEBHOOK_CREATE_OR_UPDATE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-create-or-update-access-policy.constant';
 
 @Controller([`${ApiPath.Rest}/webhooks`, `${ApiPath.Rest}/metadata/webhooks`])
 @UseGuards(JwtAuthGuard)
@@ -68,7 +68,7 @@ export class WebhookController {
   }
 
   @Post()
-  @UseGuards(AccessPolicyGuard(WEBHOOK_WRITE_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(WEBHOOK_CREATE_OR_UPDATE_ACCESS_POLICY))
   async create(
     @Body() createWebhookDto: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -80,7 +80,7 @@ export class WebhookController {
   }
 
   @Patch(':id')
-  @UseGuards(AccessPolicyGuard(WEBHOOK_WRITE_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(WEBHOOK_CREATE_OR_UPDATE_ACCESS_POLICY))
   async update(
     @Param('id') id: string,
     @Body() updateWebhookDto: UpdateWebhookInputUpdates,

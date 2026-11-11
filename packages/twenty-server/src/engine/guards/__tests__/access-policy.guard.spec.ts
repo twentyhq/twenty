@@ -12,6 +12,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
@@ -792,11 +793,13 @@ describe('AccessPolicyGuard', () => {
       WorkspaceActivationStatus.PENDING_CREATION,
       WorkspaceActivationStatus.ONGOING_CREATION,
     ])(
-      'should bypass the permission check while the workspace is %s',
+      'should deny every permission flag while the workspace is %s',
       async (activationStatus) => {
         sessionRequest.workspace = { ...activeWorkspace, activationStatus };
 
-        await expect(canActivateSession()).resolves.toBe(true);
+        await expect(canActivateSession()).rejects.toThrow(
+          PermissionsException,
+        );
         expect(
           mockSettingPermissionsService.hasPermissionFlag,
         ).not.toHaveBeenCalled();
@@ -844,6 +847,95 @@ describe('AccessPolicyGuard', () => {
 
       await expect(canActivateSession()).rejects.toThrow(PermissionsException);
     });
+  });
+
+  describe('active workspace requirement', () => {
+    const ACTIVE_WORKSPACE_POLICY: AccessPolicy = {
+      authPrincipals: ACCEPT_EVERY_PRINCIPAL,
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+      isActiveWorkspaceRequired: true,
+    };
+
+    let mockSettingPermissionsService: { hasPermissionFlag: jest.Mock };
+
+    beforeEach(() => {
+      mockSettingPermissionsService = {
+        hasPermissionFlag: jest.fn().mockResolvedValue(true),
+      };
+    });
+
+    const canActivateInWorkspace = async (
+      activationStatus: WorkspaceActivationStatus,
+    ) =>
+      canActivateOverHttp(
+        ACTIVE_WORKSPACE_POLICY,
+        {
+          user,
+          workspace: { ...activeWorkspace, activationStatus },
+          userWorkspaceId: 'user-workspace-id',
+          tokenType: JwtTokenTypeEnum.ACCESS,
+        },
+        await buildAccessPolicyServiceWithMocks({
+          settingPermissionsService: mockSettingPermissionsService,
+        }),
+      );
+
+    it('should let the caller through in an active workspace', async () => {
+      await expect(
+        canActivateInWorkspace(WorkspaceActivationStatus.ACTIVE),
+      ).resolves.toBe(true);
+    });
+
+    it.each([
+      WorkspaceActivationStatus.PENDING_CREATION,
+      WorkspaceActivationStatus.ONGOING_CREATION,
+      WorkspaceActivationStatus.CREATED,
+      WorkspaceActivationStatus.SUSPENDED,
+      WorkspaceActivationStatus.INACTIVE,
+    ])(
+      'should refuse before looking up permissions when the workspace is %s',
+      async (activationStatus) => {
+        await expect(canActivateInWorkspace(activationStatus)).rejects.toThrow(
+          new ForbiddenException('This action requires an active workspace'),
+        );
+        expect(
+          mockSettingPermissionsService.hasPermissionFlag,
+        ).not.toHaveBeenCalled();
+      },
+    );
+  });
+
+  describe('active workspace requirement for tools', () => {
+    it.each([
+      [true, WorkspaceActivationStatus.ACTIVE],
+      [false, WorkspaceActivationStatus.CREATED],
+      [false, WorkspaceActivationStatus.PENDING_CREATION],
+    ])(
+      'should return %s for a tool in a %s workspace',
+      async (isSatisfied, activationStatus) => {
+        const accessPolicyService = await buildAccessPolicyServiceWithMocks({
+          settingPermissionsService: {
+            hasPermissionFlag: jest.fn().mockResolvedValue(true),
+          },
+        });
+
+        await expect(
+          accessPolicyService.isToolAccessPolicySatisfied({
+            accessPolicy: {
+              authPrincipals: ACCEPT_EVERY_PRINCIPAL,
+              requiredPermissionFlags: [],
+              isActiveWorkspaceRequired: true,
+            },
+            authContext: {
+              type: 'apiKey',
+              apiKey,
+              workspace: { ...activeWorkspace, activationStatus },
+            } as unknown as WorkspaceAuthContext,
+            featureFlagsMap: {} as Record<FeatureFlagKey, boolean>,
+          }),
+        ).resolves.toBe(isSatisfied);
+      },
+    );
   });
 
   describe('feature flags', () => {

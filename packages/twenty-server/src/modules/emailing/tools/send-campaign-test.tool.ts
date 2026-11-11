@@ -7,9 +7,9 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-write-access-policy.constant';
 import { SEND_CAMPAIGN_TEST_TOOL_NAME } from 'src/modules/emailing/constants/send-campaign-test-tool-name.constant';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
+import { MESSAGE_CAMPAIGN_TEST_SEND_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-test-send-access-policy.constant';
 
 const sendCampaignTestInputSchema = z.object({
   campaignId: z.uuid().describe('The UUID of the messageCampaign record.'),
@@ -21,7 +21,7 @@ const sendCampaignTestInputSchema = z.object({
 @DefineTool({
   name: SEND_CAMPAIGN_TEST_TOOL_NAME,
   category: ToolCategory.ACTION,
-  accessPolicy: MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY,
+  accessPolicy: MESSAGE_CAMPAIGN_TEST_SEND_ACCESS_POLICY,
   description:
     'Send one test email of a saved campaign to a single address, from the campaign sender. ' +
     'Variables render with empty values or their fallbacks, since the test is not tied to a person. ' +

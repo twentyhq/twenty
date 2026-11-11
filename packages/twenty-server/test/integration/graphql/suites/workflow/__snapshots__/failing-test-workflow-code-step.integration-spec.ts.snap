@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Workflow code step tests should fail in a workspace created without a subscription should refuse to run the code 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "This action is only available once your workspace is active.",
+  },
+  "message": "This action requires an active workspace",
+}
+`;
+
+exports[`Workflow code step tests should fail in a workspace pending creation should refuse to run the code 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "This action is only available once your workspace is active.",
+  },
+  "message": "This action requires an active workspace",
+}
+`;

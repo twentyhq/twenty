@@ -23,26 +23,26 @@ import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modu
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { ImapSmtpCalDavApiService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+
+const IMAP_SMTP_CALDAV_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.CONNECTED_ACCOUNTS],
+};
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    },
-    requiredPermissionFlags: [PermissionFlagType.CONNECTED_ACCOUNTS],
-  }),
-)
 export class ImapSmtpCaldavResolver {
   constructor(
     private readonly imapSmtpCaldavService: ImapSmtpCaldavService,
@@ -52,6 +52,7 @@ export class ImapSmtpCaldavResolver {
   ) {}
 
   @Query(() => ConnectedImapSmtpCaldavAccountDTO)
+  @UseGuards(AccessPolicyGuard(IMAP_SMTP_CALDAV_ACCESS_POLICY))
   async getConnectedImapSmtpCaldavAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -83,6 +84,23 @@ export class ImapSmtpCaldavResolver {
   }
 
   @Mutation(() => ImapSmtpCaldavConnectionSuccessDTO)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.CONNECTED_ACCOUNTS],
+      isActiveWorkspaceRequired: true,
+    }),
+  )
   async saveImapSmtpCaldavAccount(
     @Args('handle') handle: string,
     @Args('connectionParameters')

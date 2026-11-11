@@ -44,6 +44,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
       application: true,
     },
     requiredPermissionFlags: [PermissionFlagType.AI],
+    isActiveWorkspaceRequired: true,
   }),
 )
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)

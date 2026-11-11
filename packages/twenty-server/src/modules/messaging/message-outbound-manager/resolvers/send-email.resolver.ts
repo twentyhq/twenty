@@ -48,6 +48,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
       application: true,
     },
     requiredPermissionFlags: [PermissionFlagType.SEND_EMAIL_TOOL],
+    isActiveWorkspaceRequired: true,
   }),
 )
 export class SendEmailResolver {

@@ -45,23 +45,23 @@ import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usa
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+const AGENT_CHAT_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
     },
-    requiredPermissionFlags: [PermissionFlagType.AI],
-  }),
-)
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  },
+  requiredPermissionFlags: [PermissionFlagType.AI],
+};
+
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
@@ -84,6 +84,7 @@ export class AgentChatResolver {
   ) {}
 
   @Query(() => AgentChatThreadDTO)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_ACCESS_POLICY))
   async chatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
 
@@ -98,6 +99,7 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => UUIDScalarType)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_ACCESS_POLICY))
   async openDirectMessage(
     @Args('workspaceMemberId', { type: () => UUIDScalarType })
     peerWorkspaceMemberId: string,
@@ -112,6 +114,7 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => AgentChatThreadDTO)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_ACCESS_POLICY))
   async createChatThread(
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -126,6 +129,23 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => SendChatMessageResultDTO)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [PermissionFlagType.AI],
+      isActiveWorkspaceRequired: true,
+    }),
+  )
   async sendChatMessage(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @Args('text') text: string,
@@ -203,6 +223,7 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => SendChatMessageResultDTO)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_ACCESS_POLICY))
   async retryChatMessage(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @Args('modelId', { type: () => String, nullable: true })
@@ -242,6 +263,7 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_ACCESS_POLICY))
   async stopAgentChatStream(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
 
@@ -260,6 +282,7 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_ACCESS_POLICY))
   async deleteQueuedChatMessage(
     @Args('messageId', { type: () => UUIDScalarType }) messageId: string,
 
@@ -300,6 +323,7 @@ export class AgentChatResolver {
   }
 
   @Query(() => AiSystemPromptPreviewDTO)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_ACCESS_POLICY))
   async getAiSystemPromptPreview(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,

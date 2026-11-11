@@ -37,6 +37,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
       application: false,
     },
     requiredPermissionFlags: [PermissionFlagType.SEND_EMAIL_TOOL],
+    isActiveWorkspaceRequired: true,
   }),
 )
 @UseInterceptors(

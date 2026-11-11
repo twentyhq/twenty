@@ -104,7 +104,21 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => WorkspaceMigrationDTO)
   @UseGuards(
-    AccessPolicyGuard(APPLICATION_DEVELOPMENT_WRITE_ACCESS_POLICY),
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: false,
+      },
+      requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+      isActiveWorkspaceRequired: true,
+    }),
     ApplicationTargetGuard,
   )
   async syncApplication(

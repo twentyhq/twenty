@@ -1,5 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Outbound HTTP requests should fail in a workspace created without a subscription should refuse to send the test request 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "This action is only available once your workspace is active.",
+  },
+  "message": "This action requires an active workspace",
+}
+`;
+
+exports[`Outbound HTTP requests should fail in a workspace pending creation should refuse to send the test request 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "This action is only available once your workspace is active.",
+  },
+  "message": "This action requires an active workspace",
+}
+`;
+
 exports[`Outbound HTTP requests should fail with a member session without the WORKFLOWS permission should refuse to test an HTTP request 1`] = `
 {
   "extensions": {

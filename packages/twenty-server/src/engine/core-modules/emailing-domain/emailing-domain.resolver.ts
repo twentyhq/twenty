@@ -32,6 +32,22 @@ const EMAILING_DOMAIN_WRITE_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
 };
 
+const EMAILING_DOMAIN_VERIFICATION_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+  isActiveWorkspaceRequired: true,
+};
+
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,
   EmailingDomainGraphqlApiExceptionFilter,
@@ -46,7 +62,7 @@ export class EmailingDomainResolver {
   ) {}
 
   @Mutation(() => EmailingDomainDTO)
-  @UseGuards(AccessPolicyGuard(EMAILING_DOMAIN_WRITE_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(EMAILING_DOMAIN_VERIFICATION_ACCESS_POLICY))
   async createEmailingDomain(
     @Args('input') input: CreateEmailingDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -76,7 +92,7 @@ export class EmailingDomainResolver {
   }
 
   @Mutation(() => EmailingDomainDTO)
-  @UseGuards(AccessPolicyGuard(EMAILING_DOMAIN_WRITE_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(EMAILING_DOMAIN_VERIFICATION_ACCESS_POLICY))
   async verifyEmailingDomain(
     @Args('id') id: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

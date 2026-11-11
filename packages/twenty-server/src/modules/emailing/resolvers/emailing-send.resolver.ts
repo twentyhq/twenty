@@ -28,8 +28,9 @@ import { MessageCampaignScheduleService } from 'src/modules/emailing/services/me
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { MESSAGE_CAMPAIGN_SEND_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-send-access-policy.constant';
-import { MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { MESSAGE_CAMPAIGN_DELIVERY_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-delivery-access-policy.constant';
+import { MESSAGE_CAMPAIGN_TEST_SEND_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-test-send-access-policy.constant';
 
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,
@@ -50,7 +51,7 @@ export class EmailingSendResolver {
   ) {}
 
   @Mutation(() => SendMessageCampaignOutputDTO)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_SEND_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_DELIVERY_ACCESS_POLICY))
   async sendMessageCampaign(
     @Args('input') input: SendMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -83,7 +84,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
-  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(MESSAGE_CAMPAIGN_TEST_SEND_ACCESS_POLICY))
   async sendMessageCampaignTest(
     @Args('input') input: SendMessageCampaignTestInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

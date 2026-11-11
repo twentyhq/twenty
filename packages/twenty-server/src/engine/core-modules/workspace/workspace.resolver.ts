@@ -618,6 +618,7 @@ export class WorkspaceResolver {
         application: true,
       },
       requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+      isActiveWorkspaceRequired: true,
     }),
   )
   async checkCustomDomainValidRecords(

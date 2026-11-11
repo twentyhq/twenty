@@ -37,6 +37,7 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
       application: { withUser: true, withoutUser: false },
     },
     requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+    isActiveWorkspaceRequired: true,
   }),
 )
 @UseFilters(

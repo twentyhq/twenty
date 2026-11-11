@@ -45,6 +45,7 @@ type EndpointPermissionDeclarations = {
   acceptedAuthPrincipals: AcceptedAuthPrincipals | null;
   requiredPermissionFlags: PermissionFlagType[];
   requiredFeatureFlags: FeatureFlagKey[];
+  isActiveWorkspaceRequired: boolean;
   applicationTarget: ApplicationTarget | null;
 };
 
@@ -184,12 +185,14 @@ const toToolPermissionDeclarations = ({
   authPrincipals,
   requiredPermissionFlags,
   requiredFeatureFlags = [],
+  isActiveWorkspaceRequired = false,
 }: AccessPolicy): EndpointPermissionDeclarations => ({
   acceptedAuthPrincipals: toAcceptedAuthPrincipals([
     withAgentsAdmitted(authPrincipals),
   ]),
   requiredPermissionFlags: toSortedUniqueValues(requiredPermissionFlags),
   requiredFeatureFlags: toSortedUniqueValues(requiredFeatureFlags),
+  isActiveWorkspaceRequired,
   applicationTarget: null,
 });
 
@@ -283,6 +286,9 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
           accessPolicies.flatMap(
             ({ requiredFeatureFlags = [] }) => requiredFeatureFlags,
           ),
+        ),
+        isActiveWorkspaceRequired: accessPolicies.some(
+          ({ isActiveWorkspaceRequired }) => isActiveWorkspaceRequired === true,
         ),
         applicationTarget:
           reflector.get<ApplicationTarget | undefined>(

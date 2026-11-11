@@ -8,7 +8,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { WEBHOOK_DELETE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-delete-access-policy.constant';
 import { WEBHOOK_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-read-access-policy.constant';
-import { WEBHOOK_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-write-access-policy.constant';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
@@ -18,6 +17,7 @@ import { WebhookGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modul
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { WEBHOOK_CREATE_OR_UPDATE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-create-or-update-access-policy.constant';
 
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
@@ -46,7 +46,7 @@ export class WebhookResolver {
   }
 
   @Mutation(() => WebhookDTO)
-  @UseGuards(AccessPolicyGuard(WEBHOOK_WRITE_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(WEBHOOK_CREATE_OR_UPDATE_ACCESS_POLICY))
   async createWebhook(
     @Args('input') input: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -58,7 +58,7 @@ export class WebhookResolver {
   }
 
   @Mutation(() => WebhookDTO)
-  @UseGuards(AccessPolicyGuard(WEBHOOK_WRITE_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(WEBHOOK_CREATE_OR_UPDATE_ACCESS_POLICY))
   async updateWebhook(
     @Args('input') input: UpdateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -196,7 +196,23 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => TestHttpRequestDTO)
-  @UseGuards(AccessPolicyGuard(WORKFLOW_VERSION_STEP_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: { withUser: true, withoutUser: false },
+        application: { withUser: true, withoutUser: false },
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+      isActiveWorkspaceRequired: true,
+    }),
+  )
   async testHttpRequest(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() { id: userId }: AuthContextUser,
@@ -240,7 +256,23 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
-  @UseGuards(AccessPolicyGuard(WORKFLOW_CODE_STEP_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+      isActiveWorkspaceRequired: true,
+    }),
+  )
   async testWorkflowCodeStep(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() { id: userId }: AuthContextUser,

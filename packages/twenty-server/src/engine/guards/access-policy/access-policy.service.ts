@@ -10,6 +10,8 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { isWorkspaceActive } from 'src/engine/core-modules/workspace/utils/is-workspace-active.util';
+import { ActiveWorkspaceRequiredException } from 'src/engine/guards/exceptions/active-workspace-required.exception';
 import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
@@ -21,7 +23,7 @@ import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-
 import { withAgentsAdmitted } from 'src/engine/guards/access-policy/utils/with-agents-admitted.util';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
-// A workspace being created has no roles to check settings permissions against yet
+// A workspace being created has no roles yet, so it holds no permission flag until it is activated
 const WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES = [
   WorkspaceActivationStatus.PENDING_CREATION,
   WorkspaceActivationStatus.ONGOING_CREATION,
@@ -51,6 +53,13 @@ export class AccessPolicyService {
     }
 
     const { workspace } = request;
+
+    if (
+      accessPolicy.isActiveWorkspaceRequired === true &&
+      !isWorkspaceActive(workspace)
+    ) {
+      throw new ActiveWorkspaceRequiredException();
+    }
 
     const disabledFeatureFlag = this.findDisabledFeatureFlag({
       accessPolicy,
@@ -94,6 +103,8 @@ export class AccessPolicyService {
           ? classifyWorkspaceAuthContext(authContext)
           : undefined,
       }) ||
+      (accessPolicy.isActiveWorkspaceRequired === true &&
+        !isWorkspaceActive(authContext?.workspace)) ||
       isDefined(this.findDisabledFeatureFlag({ accessPolicy, featureFlagsMap }))
     ) {
       return false;
@@ -131,7 +142,7 @@ export class AccessPolicyService {
         workspace.activationStatus,
       )
     ) {
-      return true;
+      return false;
     }
 
     return this.settingPermissionsService.hasPermissionFlag({

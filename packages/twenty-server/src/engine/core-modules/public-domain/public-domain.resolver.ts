@@ -120,7 +120,23 @@ export class PublicDomainResolver {
   }
 
   @Mutation(() => DomainValidRecords, { nullable: true })
-  @UseGuards(AccessPolicyGuard(PUBLIC_DOMAIN_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+      isActiveWorkspaceRequired: true,
+    }),
+  )
   async checkPublicDomainValidRecords(
     @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

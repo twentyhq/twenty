@@ -5,10 +5,10 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { WEBHOOK_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-write-access-policy.constant';
 import { webhookOperationSchema } from 'src/engine/metadata-modules/webhook/tools/schemas/webhook-operation.schema';
 import { compileWebhookOperations } from 'src/engine/metadata-modules/webhook/tools/utils/compile-webhook-operations.util';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
+import { WEBHOOK_CREATE_OR_UPDATE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-create-or-update-access-policy.constant';
 
 const createWebhookInputSchema = z.object({
   targetUrl: z
@@ -36,7 +36,7 @@ const createWebhookInputSchema = z.object({
 @DefineTool({
   name: 'create_webhook',
   category: ToolCategory.WEBHOOK,
-  accessPolicy: WEBHOOK_WRITE_ACCESS_POLICY,
+  accessPolicy: WEBHOOK_CREATE_OR_UPDATE_ACCESS_POLICY,
   description: `Register a new outgoing webhook for this workspace.
 
 Operations are structured entries discriminated by 'kind':

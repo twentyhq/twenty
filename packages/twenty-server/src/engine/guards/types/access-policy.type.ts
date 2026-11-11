@@ -7,4 +7,6 @@ export type AccessPolicy = {
   authPrincipals: AuthPrincipalGuardConfig;
   requiredPermissionFlags: PermissionFlagType[];
   requiredFeatureFlags?: FeatureFlagKey[];
+  // ACTIVE only, so a workspace still awaiting its subscription (CREATED) is refused too
+  isActiveWorkspaceRequired?: boolean;
 };

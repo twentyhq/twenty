@@ -75,6 +75,22 @@ const APPLICATION_INSTALL_WRITE_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
 };
 
+const APPLICATION_INSTALL_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.APPLICATIONS],
+  isActiveWorkspaceRequired: true,
+};
+
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseFilters(
@@ -132,7 +148,7 @@ export class ApplicationInstallResolver {
     deprecationReason: 'Use installApplication instead',
   })
   @UseGuards(
-    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
+    AccessPolicyGuard(APPLICATION_INSTALL_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async installMarketplaceApp(
@@ -156,7 +172,7 @@ export class ApplicationInstallResolver {
 
   @Mutation(() => ApplicationDTO)
   @UseGuards(
-    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
+    AccessPolicyGuard(APPLICATION_INSTALL_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async installApplication(
@@ -183,7 +199,7 @@ export class ApplicationInstallResolver {
 
   @Mutation(() => TriggerInstallApplicationResultDTO)
   @UseGuards(
-    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
+    AccessPolicyGuard(APPLICATION_INSTALL_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async triggerInstallApplication(
@@ -225,7 +241,7 @@ export class ApplicationInstallResolver {
     deprecationReason: 'Use triggerInstallApplication instead',
   })
   @UseGuards(
-    AccessPolicyGuard(APPLICATION_INSTALL_WRITE_ACCESS_POLICY),
+    AccessPolicyGuard(APPLICATION_INSTALL_ACCESS_POLICY),
     ApplicationTargetGuard,
   )
   async triggerInstallApplicationJob(

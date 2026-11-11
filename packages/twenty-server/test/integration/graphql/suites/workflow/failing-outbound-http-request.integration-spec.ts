@@ -4,6 +4,7 @@ import { type AddressInfo } from 'node:net';
 import IORedis from 'ioredis';
 import { testHttpRequest } from 'test/integration/graphql/suites/workflow/utils/test-http-request.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { setWorkspaceActivationStatus } from 'test/integration/graphql/utils/set-workspace-activation-status.util';
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
@@ -14,6 +15,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
@@ -65,9 +67,26 @@ const invalidInputTestCases: EachTestingContext<InvalidInputTestContext>[] = [
   },
 ];
 
+type InactiveWorkspaceTestContext = {
+  activationStatus: WorkspaceActivationStatus;
+};
+
+const inactiveWorkspaceTestCases: EachTestingContext<InactiveWorkspaceTestContext>[] =
+  [
+    {
+      title: 'in a workspace pending creation',
+      context: { activationStatus: WorkspaceActivationStatus.PENDING_CREATION },
+    },
+    {
+      title: 'in a workspace created without a subscription',
+      context: { activationStatus: WorkspaceActivationStatus.CREATED },
+    },
+  ];
+
 describe('Outbound HTTP requests should fail', () => {
   let server: http.Server;
   let baseUrl: string;
+  const receivedRequestUrls: string[] = [];
 
   beforeAll(async () => {
     await updateConfigVariable({
@@ -78,6 +97,8 @@ describe('Outbound HTTP requests should fail', () => {
     });
 
     server = http.createServer((request, response) => {
+      receivedRequestUrls.push(request.url ?? '');
+
       if (request.url === '/not-found') {
         response
           .writeHead(404, { 'Content-Type': 'application/json' })
@@ -124,6 +145,35 @@ describe('Outbound HTTP requests should fail', () => {
         });
 
         expectOneNotInternalServerErrorSnapshot({ errors });
+      });
+    },
+  );
+
+  describe.each(eachTestingContextFilter(inactiveWorkspaceTestCases))(
+    '$title',
+    ({ context }) => {
+      beforeAll(async () => {
+        await setWorkspaceActivationStatus({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          activationStatus: context.activationStatus,
+        });
+      });
+
+      afterAll(async () => {
+        await setWorkspaceActivationStatus({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          activationStatus: WorkspaceActivationStatus.ACTIVE,
+        });
+      });
+
+      it('should refuse to send the test request', async () => {
+        const { errors } = await testHttpRequest({
+          input: { url: `${baseUrl}/inactive-workspace`, method: 'GET' },
+          expectToFail: true,
+        });
+
+        expectOneNotInternalServerErrorSnapshot({ errors });
+        expect(receivedRequestUrls).not.toContain('/inactive-workspace');
       });
     },
   );

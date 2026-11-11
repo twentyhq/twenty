@@ -285,7 +285,21 @@ export class LogicFunctionResolver {
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
   @UseGuards(
-    AccessPolicyGuard(LOGIC_FUNCTION_WORKFLOWS_ACCESS_POLICY),
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+      isActiveWorkspaceRequired: true,
+    }),
     ApplicationTargetGuard,
   )
   async executeOneLogicFunction(

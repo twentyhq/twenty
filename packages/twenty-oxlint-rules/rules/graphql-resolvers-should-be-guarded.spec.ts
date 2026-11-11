@@ -55,6 +55,16 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestResolver {
+          @Mutation()
+          @UseGuards(AccessPolicyGuard({ authPrincipals: { userSession: true, apiKey: false, oauthClient: false, application: false }, requiredPermissionFlags: [PermissionFlagType.WORKFLOWS], isActiveWorkspaceRequired: true }))
+          testMutation() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
           @Query()
           @UseGuards(${ACCEPT_EVERY_PRINCIPAL}, CustomPermissionGuard)
           testQuery() {}
@@ -197,6 +207,7 @@ ruleTester.run(RULE_NAME, rule, {
       'AccessPolicyGuard({ authPrincipals: { userSession: USER_SESSION_VARIANTS, apiKey: false, oauthClient: false, application: false }, requiredPermissionFlags: [] })',
       'AccessPolicyGuard({ authPrincipals: { userSession: false, apiKey: true, oauthClient: false, application: false }, requiredPermissionFlags: [...VIEW_FLAGS] })',
       'AccessPolicyGuard({ authPrincipals: { userSession: false, apiKey: true, oauthClient: false, application: false }, requiredPermissionFlags: VIEW_FLAGS })',
+      'AccessPolicyGuard({ authPrincipals: { userSession: false, apiKey: true, oauthClient: false, application: false }, requiredPermissionFlags: [], isActiveWorkspaceRequired: IS_ACTIVE })',
       'AccessPolicyGuard(VIEW_POLICY)',
       'AccessPolicyGuard()',
     ].map((accessPolicyGuard) => ({
