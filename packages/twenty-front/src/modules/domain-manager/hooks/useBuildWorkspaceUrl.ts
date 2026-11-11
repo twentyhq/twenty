@@ -3,11 +3,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useBuildWorkspaceUrl = () => {
   const buildWorkspaceUrl = useCallback(
-    (
-      endpoint: string,
-      pathname?: string,
-      searchParams?: Record<string, string | boolean>,
-    ) => {
+    ({
+      endpoint,
+      pathname,
+      searchParams,
+    }: {
+      endpoint: string;
+      pathname?: string;
+      searchParams?: Record<string, string | boolean>;
+    }) => {
       const url = new URL(endpoint);
 
       if (isDefined(pathname)) {

@@ -26,9 +26,13 @@ export const useRedirectToWorkspaceDomain = () => {
         return;
       }
       redirect(
-        buildWorkspaceUrl(baseUrl, pathname, {
-          ...searchParams,
-          ...(await buildSearchParamsFromUrlSyncedStates()),
+        buildWorkspaceUrl({
+          endpoint: baseUrl,
+          pathname,
+          searchParams: {
+            ...searchParams,
+            ...(await buildSearchParamsFromUrlSyncedStates()),
+          },
         }),
         target,
       );

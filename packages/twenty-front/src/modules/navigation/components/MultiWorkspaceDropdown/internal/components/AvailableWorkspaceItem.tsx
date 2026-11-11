@@ -37,11 +37,11 @@ export const AvailableWorkspaceItem = ({
     <Dropdown.OptionItem
       render={
         <a
-          href={buildWorkspaceUrl(
-            getWorkspaceUrl(availableWorkspace.workspaceUrls),
+          href={buildWorkspaceUrl({
+            endpoint: getWorkspaceUrl(availableWorkspace.workspaceUrls),
             pathname,
             searchParams,
-          )}
+          })}
         />
       }
       onClick={(event) => {

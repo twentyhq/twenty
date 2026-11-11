@@ -15,8 +15,7 @@ export const useRedirectToDefaultDomain = () => {
   const store = useStore();
 
   const { redirect } = useRedirect();
-  // Stable identity: callers redirect from effects, and a new function each
-  // render re-fires window.open, cancelling the navigation in flight.
+  // Stable so effect callers don't re-fire window.open and cancel the navigation.
   const redirectToDefaultDomain = useCallback(
     (options?: {
       pathname?: string;
