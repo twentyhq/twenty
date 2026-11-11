@@ -234,6 +234,31 @@ describe('defineAgent', () => {
     );
   });
 
+  it('should error when fields are watched on an action other than updated or upserted', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      triggers: [
+        {
+          universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+          type: 'EVENT',
+          settings: {
+            on: 'record',
+            objectUniversalIdentifier: 'b7e6c2a1-3f4d-4e5a-9b8c-7d6e5f4a3b2c',
+            action: 'created',
+            watchedFieldUniversalIdentifiers: [
+              'e3d2c1b0-9a8f-4e7d-8c6b-5a4f3e2d1c0b',
+            ],
+          },
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      `Agent 'sales-assistant' trigger watchedFieldUniversalIdentifiers only apply to the updated and upserted actions`,
+    ]);
+  });
+
   it('should warn when responseFormat is missing', () => {
     const { responseFormat: _responseFormat, ...configWithoutFormat } =
       VALID_AGENT_CONFIG;
