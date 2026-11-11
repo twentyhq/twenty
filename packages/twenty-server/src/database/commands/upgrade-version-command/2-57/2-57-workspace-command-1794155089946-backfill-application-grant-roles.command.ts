@@ -8,7 +8,7 @@ import {
   APPLICATION_GRANT_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
   buildApplicationGrantRoleFromToFlatEntityMaps,
 } from 'src/engine/core-modules/application/application-grant-role/utils/build-application-grant-role-from-to-flat-entity-maps.util';
-import { findApplicationGrantRoleFlatRoleTarget } from 'src/engine/core-modules/application/application-grant-role/utils/find-application-grant-role-flat-role-target.util';
+import { findApplicationGrantRoleFlatRoleTarget } from 'src/database/commands/upgrade-version-command/2-57/utils/find-application-grant-role-flat-role-target.util';
 import { canApplicationHaveGrantRole } from 'src/engine/core-modules/application/application-grant-role/utils/can-application-have-grant-role.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
