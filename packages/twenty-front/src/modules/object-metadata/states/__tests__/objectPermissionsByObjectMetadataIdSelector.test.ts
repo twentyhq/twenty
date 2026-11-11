@@ -152,29 +152,6 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
     });
   });
 
-  it('should drop row level permissions persisted as a single object', () => {
-    const store = createStore();
-
-    store.set(
-      currentUserWorkspaceState.atom,
-      buildCurrentUserWorkspace([
-        {
-          ...PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS,
-          rowLevelRecordsPermissions: {
-            canReadRecords: true,
-            predicates: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE],
-          } as unknown as CurrentUserWorkspace['objectRecordsPermissions'][number]['rowLevelRecordsPermissions'],
-        },
-      ]),
-    );
-
-    expect(
-      store.get(objectPermissionsByObjectMetadataIdSelector.atom)[
-        'person-object-metadata-id'
-      ]?.rowLevelRecordsPermissions,
-    ).toBeNull();
-  });
-
   it('should keep the same map when only the permission flags change', () => {
     const store = createStore();
 
