@@ -58,8 +58,7 @@ const formatValidationErrors = ({
     .join('; ');
 };
 
-// Returns the configuration to store: the input without the keys its DTO does not declare
-export const validateWidgetConfigurationInput = ({
+export const sanitizeWidgetConfigurationInputOrThrow = ({
   configuration,
 }: {
   configuration: unknown;

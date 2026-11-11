@@ -17,7 +17,7 @@ import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
+import { sanitizeWidgetConfigurationInputOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/sanitize-widget-configuration-input-or-throw.util';
 import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
@@ -80,9 +80,10 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     if (
       Object.prototype.hasOwnProperty.call(editableProperties, 'configuration')
     ) {
-      editableProperties.configuration = validateWidgetConfigurationInput({
-        configuration: editableProperties.configuration,
-      });
+      editableProperties.configuration =
+        sanitizeWidgetConfigurationInputOrThrow({
+          configuration: editableProperties.configuration,
+        });
     }
 
     const shouldOverride = isCallerOverridingEntity({

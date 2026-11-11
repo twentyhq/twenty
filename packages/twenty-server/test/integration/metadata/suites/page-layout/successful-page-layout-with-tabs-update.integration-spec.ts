@@ -422,6 +422,13 @@ describe('Page layout with tabs update should succeed', () => {
       aggregateOperation: AggregateOperations.COUNT,
       groupByFieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
     } satisfies AllPageLayoutWidgetConfiguration;
+    // What the layout editor sends back after a chart type switch
+    const sentConfiguration = {
+      ...pieChartConfiguration,
+      __typename: 'PieChartConfiguration',
+      layout: 'VERTICAL',
+      description: null,
+    };
     const widgetId = v4();
 
     await updateOnePageLayoutWithTabsAndWidgets({
@@ -450,13 +457,8 @@ describe('Page layout with tabs update should succeed', () => {
                   rowSpan: 1,
                   columnSpan: 1,
                 },
-                // What the layout editor sends back after a chart type switch
-                configuration: {
-                  ...pieChartConfiguration,
-                  __typename: 'PieChartConfiguration',
-                  layout: 'VERTICAL',
-                  description: null,
-                } as AllPageLayoutWidgetConfiguration,
+                configuration:
+                  sentConfiguration as unknown as AllPageLayoutWidgetConfiguration,
               },
             ],
           },

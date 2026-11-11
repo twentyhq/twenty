@@ -21,13 +21,13 @@ import {
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
+import { sanitizeWidgetConfigurationInputOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/sanitize-widget-configuration-input-or-throw.util';
 
-describe('validateWidgetConfigurationInput', () => {
+describe('sanitizeWidgetConfigurationInputOrThrow', () => {
   describe('returned configuration', () => {
     it('should drop the keys the DTO does not declare and the settings sent as null', () => {
       expect(
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             ...TEST_NUMBER_CHART_CONFIG_MINIMAL,
             __typename: 'AggregateChartConfiguration',
@@ -55,7 +55,7 @@ describe('validateWidgetConfigurationInput', () => {
 
     it('should return a valid configuration unchanged', () => {
       expect(
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: TEST_PIE_CHART_CONFIG,
         }),
       ).toEqual(TEST_PIE_CHART_CONFIG);
@@ -65,7 +65,7 @@ describe('validateWidgetConfigurationInput', () => {
   describe('EMAIL_THREAD widget', () => {
     it('should not throw for valid email thread configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             configurationType: WidgetConfigurationType.EMAIL_THREAD,
           },
@@ -77,7 +77,7 @@ describe('validateWidgetConfigurationInput', () => {
   describe('MESSAGE_CAMPAIGN_BODY widget', () => {
     it('should not throw for valid message campaign body configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
           },
@@ -89,7 +89,7 @@ describe('validateWidgetConfigurationInput', () => {
   describe('MESSAGE_CAMPAIGN_DETAILS widget', () => {
     it('should not throw for valid message campaign details configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
           },
@@ -101,7 +101,7 @@ describe('validateWidgetConfigurationInput', () => {
   describe('CALL_RECORDING_SUMMARY widget', () => {
     it('should not throw for valid call recording summary configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY,
           },
@@ -113,7 +113,7 @@ describe('validateWidgetConfigurationInput', () => {
   describe('CALL_RECORDING_TRANSCRIPT widget', () => {
     it('should not throw for valid call recording transcript configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             configurationType:
               WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
@@ -126,7 +126,7 @@ describe('validateWidgetConfigurationInput', () => {
   describe('CHAT_THREADS widget', () => {
     it('should not throw for valid chat threads configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             configurationType: WidgetConfigurationType.CHAT_THREADS,
           },
@@ -138,7 +138,7 @@ describe('validateWidgetConfigurationInput', () => {
   describe('IFRAME widget', () => {
     it('should not throw for valid iframe configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: TEST_IFRAME_CONFIG,
         }),
       ).not.toThrow();
@@ -146,7 +146,7 @@ describe('validateWidgetConfigurationInput', () => {
 
     it('should throw error for invalid URL', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             ...INVALID_IFRAME_CONFIG_BAD_URL,
             configurationType: WidgetConfigurationType.IFRAME,
@@ -157,7 +157,7 @@ describe('validateWidgetConfigurationInput', () => {
 
     it('should throw error for empty URL', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             ...INVALID_IFRAME_CONFIG_EMPTY_URL,
             configurationType: WidgetConfigurationType.IFRAME,
@@ -170,7 +170,7 @@ describe('validateWidgetConfigurationInput', () => {
   describe('STANDALONE_RICH_TEXT widget', () => {
     it('should not throw for valid standalone rich text configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: TEST_STANDALONE_RICH_TEXT_CONFIG,
         }),
       ).not.toThrow();
@@ -178,7 +178,7 @@ describe('validateWidgetConfigurationInput', () => {
 
     it('should not throw for minimal standalone rich text configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL,
         }),
       ).not.toThrow();
@@ -186,7 +186,7 @@ describe('validateWidgetConfigurationInput', () => {
 
     it('should throw error for missing body', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             ...INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY,
             configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
@@ -197,7 +197,7 @@ describe('validateWidgetConfigurationInput', () => {
 
     it('should throw error when body is wrong type', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: {
             ...INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE,
             configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
@@ -211,7 +211,7 @@ describe('validateWidgetConfigurationInput', () => {
     describe('AGGREGATE_CHART graph', () => {
       it('should not throw for full aggregate chart configuration', () => {
         expect(() =>
-          validateWidgetConfigurationInput({
+          sanitizeWidgetConfigurationInputOrThrow({
             configuration: TEST_NUMBER_CHART_CONFIG,
           }),
         ).not.toThrow();
@@ -219,7 +219,7 @@ describe('validateWidgetConfigurationInput', () => {
 
       it('should not throw for minimal aggregate chart configuration', () => {
         expect(() =>
-          validateWidgetConfigurationInput({
+          sanitizeWidgetConfigurationInputOrThrow({
             configuration: TEST_NUMBER_CHART_CONFIG_MINIMAL,
           }),
         ).not.toThrow();
@@ -227,7 +227,7 @@ describe('validateWidgetConfigurationInput', () => {
 
       it('should throw error for partial aggregate chart configuration with missing required fields', () => {
         expect(() =>
-          validateWidgetConfigurationInput({
+          sanitizeWidgetConfigurationInputOrThrow({
             configuration: INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
           }),
         ).toThrow(/aggregateFieldMetadataId.*aggregateOperation/);
@@ -235,7 +235,7 @@ describe('validateWidgetConfigurationInput', () => {
 
       it('should throw error for invalid UUID', () => {
         expect(() =>
-          validateWidgetConfigurationInput({
+          sanitizeWidgetConfigurationInputOrThrow({
             configuration: INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
           }),
         ).toThrow(/aggregateFieldMetadataId must be a UUID/);
@@ -246,7 +246,7 @@ describe('validateWidgetConfigurationInput', () => {
       describe('VERTICAL layout', () => {
         it('should not throw for full vertical bar chart configuration', () => {
           expect(() =>
-            validateWidgetConfigurationInput({
+            sanitizeWidgetConfigurationInputOrThrow({
               configuration: TEST_VERTICAL_BAR_CHART_CONFIG,
             }),
           ).not.toThrow();
@@ -254,7 +254,7 @@ describe('validateWidgetConfigurationInput', () => {
 
         it('should not throw for minimal vertical bar chart configuration', () => {
           expect(() =>
-            validateWidgetConfigurationInput({
+            sanitizeWidgetConfigurationInputOrThrow({
               configuration: TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
             }),
           ).not.toThrow();
@@ -262,7 +262,7 @@ describe('validateWidgetConfigurationInput', () => {
 
         it('should throw error for partial vertical bar chart configuration with missing required fields', () => {
           expect(() =>
-            validateWidgetConfigurationInput({
+            sanitizeWidgetConfigurationInputOrThrow({
               configuration: INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
             }),
           ).toThrow(/primaryAxisGroupByFieldMetadataId/);
@@ -272,7 +272,7 @@ describe('validateWidgetConfigurationInput', () => {
       describe('HORIZONTAL layout', () => {
         it('should not throw for full horizontal bar chart configuration', () => {
           expect(() =>
-            validateWidgetConfigurationInput({
+            sanitizeWidgetConfigurationInputOrThrow({
               configuration: TEST_HORIZONTAL_BAR_CHART_CONFIG,
             }),
           ).not.toThrow();
@@ -280,7 +280,7 @@ describe('validateWidgetConfigurationInput', () => {
 
         it('should not throw for minimal horizontal bar chart configuration', () => {
           expect(() =>
-            validateWidgetConfigurationInput({
+            sanitizeWidgetConfigurationInputOrThrow({
               configuration: TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
             }),
           ).not.toThrow();
@@ -288,7 +288,7 @@ describe('validateWidgetConfigurationInput', () => {
 
         it('should throw error for partial horizontal bar chart configuration with missing required fields', () => {
           expect(() =>
-            validateWidgetConfigurationInput({
+            sanitizeWidgetConfigurationInputOrThrow({
               configuration:
                 INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
             }),
@@ -300,7 +300,7 @@ describe('validateWidgetConfigurationInput', () => {
     describe('PIE_CHART graph', () => {
       it('should not throw for pie chart configuration', () => {
         expect(() =>
-          validateWidgetConfigurationInput({
+          sanitizeWidgetConfigurationInputOrThrow({
             configuration: TEST_PIE_CHART_CONFIG,
           }),
         ).not.toThrow();
@@ -310,7 +310,7 @@ describe('validateWidgetConfigurationInput', () => {
     describe('LINE_CHART graph', () => {
       it('should not throw for line chart configuration', () => {
         expect(() =>
-          validateWidgetConfigurationInput({
+          sanitizeWidgetConfigurationInputOrThrow({
             configuration: TEST_LINE_CHART_CONFIG,
           }),
         ).not.toThrow();
@@ -321,7 +321,7 @@ describe('validateWidgetConfigurationInput', () => {
   describe('Edge cases', () => {
     it('should throw error for null configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: null,
         }),
       ).toThrow('Invalid configuration: not an object');
@@ -329,7 +329,7 @@ describe('validateWidgetConfigurationInput', () => {
 
     it('should throw error for undefined configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: undefined,
         }),
       ).toThrow('Invalid configuration: not an object');
@@ -337,7 +337,7 @@ describe('validateWidgetConfigurationInput', () => {
 
     it('should throw error for non-object configuration', () => {
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: 'string',
         }),
       ).toThrow('Invalid configuration: not an object');
@@ -347,7 +347,7 @@ describe('validateWidgetConfigurationInput', () => {
       const configuration = { someField: 'value' };
 
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: configuration,
         }),
       ).toThrow('Invalid configuration: missing configuration type');
@@ -360,7 +360,7 @@ describe('validateWidgetConfigurationInput', () => {
       };
 
       expect(() =>
-        validateWidgetConfigurationInput({
+        sanitizeWidgetConfigurationInputOrThrow({
           configuration: configuration,
         }),
       ).toThrow(/Invalid configuration type: UNSUPPORTED_TYPE/);
