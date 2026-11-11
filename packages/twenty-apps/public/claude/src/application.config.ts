@@ -10,8 +10,11 @@ export default defineApplication({
   logo: 'public/claude.png',
   websiteUrl: 'https://claude.ai',
   oAuthIdentity: {
-    redirectUris: ['https://claude.ai/api/mcp/auth_callback'],
-    clientIdMetadataDocumentHostnames: ['claude.ai'],
+    redirectUris: [
+      'https://claude.ai/api/mcp/auth_callback',
+      'https://claude.com/api/mcp/auth_callback',
+    ],
+    clientIdMetadataDocumentHostnames: ['claude.ai', 'claude.com'],
     connectUrl:
       'https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Twenty&connectorUrl={mcpServerUrl}',
   },
