@@ -18,8 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 type CoreAgentRunRowProps = {
   run: CoreAgentRun;
   isExpanded: boolean;
-  onToggle: () => void;
-  isNested?: boolean;
+  onClick: () => void;
 };
 
 const getRunTokens = (run: CoreAgentRun): number | null =>
@@ -35,29 +34,25 @@ const getRunDurationMs = (run: CoreAgentRun): number | null =>
 export const CoreAgentRunRow = ({
   run,
   isExpanded,
-  onToggle,
-  isNested = false,
+  onClick,
 }: CoreAgentRunRowProps) => {
   const { t } = useLingui();
   const tokens = getRunTokens(run);
   const durationMs = getRunDurationMs(run);
+  const canOpenConversation = isDefined(run.threadId) && run.canReadThread;
 
   return (
     <>
       <TableRow
         gridTemplateColumns={CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS}
         isExpanded={isExpanded}
-        onClick={onToggle}
-        onKeyDown={handleCoreObjectTableRowKeyDown(onToggle)}
+        onClick={onClick}
+        onKeyDown={handleCoreObjectTableRowKeyDown(onClick)}
         role="button"
         tabIndex={0}
-        ariaExpanded={isExpanded}
+        ariaExpanded={canOpenConversation ? undefined : isExpanded}
       >
-        <TableCell
-          padding={
-            isNested ? `0 0 0 ${themeCssVariables.spacing[4]}` : undefined
-          }
-        >
+        <TableCell>
           <CoreAgentRunStatus status={run.status} />
         </TableCell>
         <TableCell color={themeCssVariables.font.color.tertiary}>
