@@ -108,7 +108,8 @@ export const WorkflowIfElseBranchEditor = ({
             ) ||
             hasFilledStepFilter(
               childStepFiltersAndChildStepFilterGroups.filter(
-                (child) => !isStepFilterGroupChildAStepFilterGroup(child),
+                (child): child is StepFilter =>
+                  !isStepFilterGroupChildAStepFilterGroup(child),
               ),
             )
           }
