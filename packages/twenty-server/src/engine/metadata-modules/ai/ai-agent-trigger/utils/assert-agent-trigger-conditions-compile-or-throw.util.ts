@@ -15,6 +15,21 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildDatabaseEventTriggerConditionFields } from 'src/engine/workspace-event-emitter/utils/build-database-event-trigger-condition-fields.util';
 
+const buildInvalidConditionException = ({
+  condition,
+  reason,
+}: {
+  condition: string;
+  reason: string;
+}) =>
+  new AiException(
+    `Condition "${condition}" of an agent trigger is invalid: ${reason}`,
+    AiExceptionCode.INVALID_AGENT_INPUT,
+    {
+      userFriendlyMessage: msg`The condition of an agent trigger is invalid`,
+    },
+  );
+
 // Agent validation sees no object metadata, so conditions are compiled where agents are written
 export const assertAgentTriggerConditionsCompileOrThrow = ({
   triggers,
@@ -57,27 +72,26 @@ export const assertAgentTriggerConditionsCompileOrThrow = ({
     const flatObjectMetadata =
       flatObjectMetadataByNameSingular.get(objectNameSingular);
 
-    const compilation = isDefined(flatObjectMetadata)
-      ? compileValidationRuleExpression({
-          expression: condition,
-          fields: buildDatabaseEventTriggerConditionFields({
-            flatObjectMetadata,
-            flatFieldMetadataMaps,
-          }),
-        })
-      : {
-          isValid: false as const,
-          errorMessage: `Unknown object ${objectNameSingular}`,
-        };
+    if (!isDefined(flatObjectMetadata)) {
+      throw buildInvalidConditionException({
+        condition,
+        reason: `Unknown object ${objectNameSingular}`,
+      });
+    }
+
+    const compilation = compileValidationRuleExpression({
+      expression: condition,
+      fields: buildDatabaseEventTriggerConditionFields({
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    });
 
     if (!compilation.isValid) {
-      throw new AiException(
-        `Condition "${condition}" of an agent trigger is invalid: ${compilation.errorMessage}`,
-        AiExceptionCode.INVALID_AGENT_INPUT,
-        {
-          userFriendlyMessage: msg`The condition of an agent trigger is invalid`,
-        },
-      );
+      throw buildInvalidConditionException({
+        condition,
+        reason: compilation.errorMessage,
+      });
     }
   }
 };

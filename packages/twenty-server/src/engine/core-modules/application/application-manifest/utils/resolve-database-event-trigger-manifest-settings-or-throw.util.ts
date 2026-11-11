@@ -12,7 +12,6 @@ import {
 } from 'twenty-shared/utils';
 
 import { type DatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/types/database-event-trigger-manifest-resolver.type';
-import { computeWorkflowWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-watched-field-name.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -155,7 +154,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
         });
       }
 
-      const watchedFieldName = computeWorkflowWatchedFieldName(field);
+      const watchedFieldName = toDatabaseEventValidationRuleField(field)?.name;
 
       return isDefined(watchedFieldName)
         ? watchedFieldName

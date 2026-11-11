@@ -7,13 +7,13 @@ import {
 } from 'twenty-shared/types';
 import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import {
-  computeMorphRelationGqlFieldJoinColumnName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getRelationIdFieldNames } from '@/object-metadata/utils/getRelationIdFieldNames';
 import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleScope } from '@/validation-rules/types/ValidationRuleScope';
@@ -26,6 +26,11 @@ type ValidationRuleEditorObject = Pick<
 
 const DEFAULT_FIELD_ICON = 'IconListSearch';
 const DEFAULT_OBJECT_ICON = 'IconBox';
+
+const getObjectIconName = (objectMetadataItem: ValidationRuleEditorObject) =>
+  isNonEmptyString(objectMetadataItem.icon)
+    ? objectMetadataItem.icon
+    : DEFAULT_OBJECT_ICON;
 
 const isRelationType = (type: FieldMetadataType) =>
   type === FieldMetadataType.RELATION ||
@@ -71,9 +76,7 @@ const buildScalarEditorFields = ({
     iconName,
     type: fieldMetadataItem.type,
     objectLabelSingular: objectMetadataItem.labelSingular,
-    objectIconName: isNonEmptyString(objectMetadataItem.icon)
-      ? objectMetadataItem.icon
-      : DEFAULT_OBJECT_ICON,
+    objectIconName: getObjectIconName(objectMetadataItem),
     selectOptionValues:
       fieldMetadataItem.options?.map((option) => option.value) ?? [],
     isSystem: fieldMetadataItem.isSystem ?? false,
@@ -107,42 +110,45 @@ const buildMorphTargetIdEditorFields = ({
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItem: ValidationRuleEditorObject;
   objectMetadataItems: ValidationRuleEditorObject[];
-}): ValidationRuleEditorField[] =>
-  (fieldMetadataItem.morphRelations ?? [])
-    .filter((morphRelation) => morphRelation.type === RelationType.MANY_TO_ONE)
-    .map((morphRelation) => {
-      const targetObjectMetadataItem = objectMetadataItems.find(
-        (candidate) => candidate.id === morphRelation.targetObjectMetadata.id,
-      );
+}): ValidationRuleEditorField[] => {
+  const morphRelations = fieldMetadataItem.morphRelations ?? [];
 
-      return {
-        path: computeMorphRelationGqlFieldJoinColumnName({
-          fieldName: fieldMetadataItem.name,
-          relationType: morphRelation.type,
-          targetObjectMetadataNameSingular:
-            morphRelation.targetObjectMetadata.nameSingular,
-          targetObjectMetadataNamePlural:
-            morphRelation.targetObjectMetadata.namePlural,
-        }),
-        label:
-          targetObjectMetadataItem?.labelSingular ??
-          morphRelation.targetObjectMetadata.nameSingular,
-        parentLabel: fieldMetadataItem.label,
-        iconName:
-          [targetObjectMetadataItem?.icon, fieldMetadataItem.icon].find(
-            isNonEmptyString,
-          ) ?? DEFAULT_OBJECT_ICON,
-        type: FieldMetadataType.UUID,
-        objectLabelSingular: objectMetadataItem.labelSingular,
-        objectIconName: isNonEmptyString(objectMetadataItem.icon)
-          ? objectMetadataItem.icon
-          : DEFAULT_OBJECT_ICON,
-        selectOptionValues: [],
-        isSystem: fieldMetadataItem.isSystem ?? false,
-        hasMembers: false,
-        readsRelatedRecord: false,
-      };
-    });
+  if (
+    !morphRelations.some(
+      (morphRelation) => morphRelation.type === RelationType.MANY_TO_ONE,
+    )
+  ) {
+    return [];
+  }
+
+  // Join column names come in the same order as the morph relations
+  return getRelationIdFieldNames(fieldMetadataItem).map((path, index) => {
+    const targetObjectMetadata = morphRelations[index]?.targetObjectMetadata;
+    const targetObjectMetadataItem = objectMetadataItems.find(
+      (candidate) => candidate.id === targetObjectMetadata?.id,
+    );
+
+    return {
+      path,
+      label:
+        targetObjectMetadataItem?.labelSingular ??
+        targetObjectMetadata?.nameSingular ??
+        path,
+      parentLabel: fieldMetadataItem.label,
+      iconName:
+        [targetObjectMetadataItem?.icon, fieldMetadataItem.icon].find(
+          isNonEmptyString,
+        ) ?? DEFAULT_OBJECT_ICON,
+      type: FieldMetadataType.UUID,
+      objectLabelSingular: objectMetadataItem.labelSingular,
+      objectIconName: getObjectIconName(objectMetadataItem),
+      selectOptionValues: [],
+      isSystem: fieldMetadataItem.isSystem ?? false,
+      hasMembers: false,
+      readsRelatedRecord: false,
+    };
+  });
+};
 
 const buildCurrentValueEditorFields = ({
   objectMetadataItem,
@@ -190,31 +196,6 @@ const buildCurrentValueEditorFields = ({
         (candidate) => candidate.id === relation.targetObjectMetadata.id,
       );
 
-      if (scope === 'databaseEvent') {
-        return [
-          {
-            path: computeRelationGqlFieldJoinColumnName({
-              name: fieldMetadataItem.name,
-            }),
-            label: fieldMetadataItem.label,
-            parentLabel: null,
-            iconName:
-              [fieldMetadataItem.icon, targetObjectMetadataItem?.icon].find(
-                isNonEmptyString,
-              ) ?? DEFAULT_OBJECT_ICON,
-            type: FieldMetadataType.UUID,
-            objectLabelSingular: objectMetadataItem.labelSingular,
-            objectIconName: isNonEmptyString(objectMetadataItem.icon)
-              ? objectMetadataItem.icon
-              : DEFAULT_OBJECT_ICON,
-            selectOptionValues: [],
-            isSystem: fieldMetadataItem.isSystem ?? false,
-            hasMembers: false,
-            readsRelatedRecord: false,
-          },
-        ];
-      }
-
       const relationField: ValidationRuleEditorField = {
         path: fieldMetadataItem.name,
         label: fieldMetadataItem.label,
@@ -225,14 +206,26 @@ const buildCurrentValueEditorFields = ({
           ) ?? DEFAULT_OBJECT_ICON,
         type: fieldMetadataItem.type,
         objectLabelSingular: objectMetadataItem.labelSingular,
-        objectIconName: isNonEmptyString(objectMetadataItem.icon)
-          ? objectMetadataItem.icon
-          : DEFAULT_OBJECT_ICON,
+        objectIconName: getObjectIconName(objectMetadataItem),
         selectOptionValues: [],
         isSystem: fieldMetadataItem.isSystem ?? false,
         hasMembers: isDefined(targetObjectMetadataItem),
         readsRelatedRecord: true,
       };
+
+      if (scope === 'databaseEvent') {
+        return [
+          {
+            ...relationField,
+            path: computeRelationGqlFieldJoinColumnName({
+              name: fieldMetadataItem.name,
+            }),
+            type: FieldMetadataType.UUID,
+            hasMembers: false,
+            readsRelatedRecord: false,
+          },
+        ];
+      }
 
       if (!isDefined(targetObjectMetadataItem)) {
         return [relationField];

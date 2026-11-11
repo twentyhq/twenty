@@ -11,7 +11,7 @@ type DatabaseEventTriggerManifestField = {
   name: string;
   type: FieldMetadataType;
   objectUniversalIdentifier: string;
-  universalSettings: FlatFieldMetadata['universalSettings'];
+  relationType?: RelationType;
 };
 
 type FieldReadProperty =
@@ -97,7 +97,7 @@ export const buildDatabaseEventTriggerManifestResolver = ({
           name: field.name,
           type: field.type,
           objectUniversalIdentifier: field.objectMetadataUniversalIdentifier,
-          universalSettings: field.universalSettings,
+          relationType: readRelationType(field.universalSettings),
         }
       : undefined;
 
@@ -112,9 +112,7 @@ export const buildDatabaseEventTriggerManifestResolver = ({
 
   const listObjectFields = (
     objectUniversalIdentifier: string,
-  ): (DatabaseEventTriggerManifestField & {
-    relationType?: RelationType;
-  })[] => {
+  ): DatabaseEventTriggerManifestField[] => {
     const fieldsByUniversalIdentifier = new Map<
       string,
       DatabaseEventTriggerManifestField
@@ -138,10 +136,7 @@ export const buildDatabaseEventTriggerManifestResolver = ({
       }
     }
 
-    return [...fieldsByUniversalIdentifier.values()].map((field) => ({
-      ...field,
-      relationType: readRelationType(field.universalSettings),
-    }));
+    return [...fieldsByUniversalIdentifier.values()];
   };
 
   return {

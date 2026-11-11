@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo } from 'react';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -26,6 +27,26 @@ export const CoreAgentTriggerConditionInput = ({
   const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  // The editor is controlled, so these would otherwise be rebuilt on every keystroke
+  const fields = useMemo(
+    () =>
+      buildValidationRuleFieldDescriptors({
+        objectMetadataItem,
+        objectMetadataItems,
+        scope: 'databaseEvent',
+      }),
+    [objectMetadataItem, objectMetadataItems],
+  );
+  const editorFields = useMemo(
+    () =>
+      buildValidationRuleEditorFields({
+        objectMetadataItem,
+        objectMetadataItems,
+        scope: 'databaseEvent',
+      }),
+    [objectMetadataItem, objectMetadataItems],
+  );
+
   if (isReadOnly && !isNonEmptyString(condition)) {
     return null;
   }
@@ -39,16 +60,8 @@ export const CoreAgentTriggerConditionInput = ({
         <Card.Root fullWidth>
           <SettingsValidationRuleExpressionEditor
             value={condition}
-            fields={buildValidationRuleFieldDescriptors({
-              objectMetadataItem,
-              objectMetadataItems,
-              scope: 'databaseEvent',
-            })}
-            editorFields={buildValidationRuleEditorFields({
-              objectMetadataItem,
-              objectMetadataItems,
-              scope: 'databaseEvent',
-            })}
+            fields={fields}
+            editorFields={editorFields}
             onChange={onConditionChange}
           />
         </Card.Root>
