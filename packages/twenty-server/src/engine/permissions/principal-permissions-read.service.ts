@@ -16,13 +16,13 @@ import { canAuthContextHoldRoles } from 'src/engine/permissions/internal/princip
 import { findUserWorkspaceFlatRoleOrThrow } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/internal/principal/utils/resolve-permissions-principals-with-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 
 @Injectable()
 export class PrincipalPermissionsReadService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   async resolvePermissionsPrincipalsOrThrow({
@@ -98,33 +98,15 @@ export class PrincipalPermissionsReadService {
         flatRoleTargetByAgentIdMaps,
         flatRoleTargetByApplicationIdMaps,
         workspaceCustomApplicationId:
-          await this.findWorkspaceCustomApplicationId(authContext),
+          await this.applicationGrantRoleLookupService.findWorkspaceCustomApplicationIdOrThrow(
+            workspaceId,
+          ),
         flatApplicationMaps,
         flatWorkspaceMemberMaps:
           await this.findFlatWorkspaceMemberMaps(authContext),
         flatRoleTargetMaps: await this.findFlatRoleTargetMaps(authContext),
       },
     });
-  }
-
-  private async findWorkspaceCustomApplicationId(
-    authContext: PermissionsAuthContext,
-  ): Promise<string | undefined> {
-    const isActingThroughApplication =
-      authContext.type === 'application' ||
-      ((authContext.type === 'user' || authContext.type === 'apiKey') &&
-        isDefined(authContext.application));
-
-    if (!isActingThroughApplication) {
-      return undefined;
-    }
-
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      authContext.workspace.id,
-    );
-
-    return workspace?.workspaceCustomApplicationId;
   }
 
   private async findFlatWorkspaceMemberMaps(

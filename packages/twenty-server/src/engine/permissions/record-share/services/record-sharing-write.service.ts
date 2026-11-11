@@ -41,7 +41,7 @@ import { canSetRecordPrivacy } from 'src/engine/permissions/private-record/utils
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 
 @Injectable()
@@ -52,6 +52,7 @@ export class RecordSharingWriteService {
     private readonly recordSharingChangeService: RecordSharingChangeService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly privateRecordWriteService: PrivateRecordWriteService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   async setShare(
@@ -189,17 +190,12 @@ export class RecordSharingWriteService {
       transactionScope,
     });
 
-    const {
-      apiKeyRoleMap,
-      flatObjectMetadataMaps,
-      featureFlagsMap,
-      flatRoleTargetByApplicationIdMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'apiKeyRoleMap',
-      'flatObjectMetadataMaps',
-      'featureFlagsMap',
-      'flatRoleTargetByApplicationIdMaps',
-    ]);
+    const { apiKeyRoleMap, flatObjectMetadataMaps, featureFlagsMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'apiKeyRoleMap',
+        'flatObjectMetadataMaps',
+        'featureFlagsMap',
+      ]);
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: objectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
@@ -220,12 +216,9 @@ export class RecordSharingWriteService {
         authContext,
         apiKeyRoleMap,
         applicationRoleId: isApplicationAuthContext(authContext)
-          ? resolveApplicationGrantRoleId({
-              flatApplication: authContext.application,
+          ? await this.applicationGrantRoleLookupService.findGrantRoleId({
               workspaceId,
-              workspaceCustomApplicationId:
-                authContext.workspace.workspaceCustomApplicationId,
-              flatRoleTargetByApplicationIdMaps,
+              flatApplication: authContext.application,
             })
           : undefined,
         shareWith,

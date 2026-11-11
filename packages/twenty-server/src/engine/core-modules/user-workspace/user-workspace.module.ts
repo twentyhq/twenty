@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -36,6 +37,7 @@ import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/rol
     OnboardingModule,
     BillingModule,
     CoreEntityCacheModule,
+    ApplicationGrantRoleLookupModule,
   ],
   exports: [UserWorkspaceService, UserWorkspaceAuthContextService],
   providers: [

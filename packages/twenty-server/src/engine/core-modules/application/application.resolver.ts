@@ -8,7 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import {
@@ -65,6 +65,7 @@ export class ApplicationResolver {
     private readonly applicationStopService: ApplicationStopService,
     private readonly applicationService: ApplicationService,
     private readonly applicationContentService: ApplicationContentService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -131,13 +132,11 @@ export class ApplicationResolver {
   @ResolveField(() => UUIDScalarType, { nullable: true })
   async grantRoleId(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace()
-    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+    @AuthWorkspace() { id: workspaceId }: Pick<WorkspaceEntity, 'id'>,
   ): Promise<string | null> {
-    const { flatApplicationMaps, flatRoleTargetByApplicationIdMaps } =
+    const { flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
-        'flatRoleTargetByApplicationIdMaps',
       ]);
     const flatApplication = flatApplicationMaps.byId[application.id];
 
@@ -146,12 +145,10 @@ export class ApplicationResolver {
     }
 
     return (
-      resolveApplicationGrantRoleId({
-        flatApplication,
+      (await this.applicationGrantRoleLookupService.findGrantRoleId({
         workspaceId,
-        workspaceCustomApplicationId,
-        flatRoleTargetByApplicationIdMaps,
-      }) ?? null
+        flatApplication,
+      })) ?? null
     );
   }
 

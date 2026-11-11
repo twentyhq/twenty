@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ProposeToolCallToolInput } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role-lookup.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';

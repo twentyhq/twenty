@@ -61,16 +61,12 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
@@ -98,6 +94,7 @@ export class RecordExportWorkspaceService {
 
   constructor(
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly settingPermissionsService: SettingPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -658,43 +655,15 @@ export class RecordExportWorkspaceService {
         RECORD_EXPORT_PERMISSION_CACHE_KEYS,
       );
 
-    if (!isDefined(applicationId)) {
-      return permissionsHash;
-    }
-
-    const { flatApplicationMaps, flatRoleTargetByApplicationIdMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-        'flatRoleTargetByApplicationIdMaps',
-      ]);
-    const application = flatApplicationMaps.byId[applicationId];
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      workspaceId,
-    );
-
-    if (!isDefined(workspace)) {
-      throw new WorkspaceException(
-        `Workspace ${workspaceId} not found`,
-        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+    const { flatApplication, grantRoleId } =
+      await this.applicationGrantRoleLookupService.findApplicationAndGrantRoleIdOrThrow(
+        { workspaceId, applicationId },
       );
-    }
-
-    if (!isDefined(application)) {
-      throw new ForbiddenException(
-        t`The application that requested this export is no longer installed.`,
-      );
-    }
 
     return computeRecordExportPermissionsHash({
       permissionsHash,
-      application,
-      grantRoleId: resolveApplicationGrantRoleId({
-        flatApplication: application,
-        workspaceId,
-        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
-        flatRoleTargetByApplicationIdMaps,
-      }),
+      application: flatApplication,
+      grantRoleId,
     });
   }
 

@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -25,6 +25,7 @@ export class UserWorkspaceAuthContextService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   async resolveWorkspaceMember({
@@ -154,10 +155,9 @@ export class UserWorkspaceAuthContextService {
         ? matchingUserContext?.application
         : undefined;
     if (isDefined(applicationId)) {
-      const { flatApplicationMaps, flatRoleTargetByApplicationIdMaps } =
+      const { flatApplicationMaps } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatApplicationMaps',
-          'flatRoleTargetByApplicationIdMaps',
         ]);
       application = flatApplicationMaps.byId[applicationId];
       // OAuth-only applications have no role and act with the member's role
@@ -165,12 +165,9 @@ export class UserWorkspaceAuthContextService {
         !isDefined(application) ||
         (!isOAuthOnlyApplication(application) &&
           !isDefined(
-            resolveApplicationGrantRoleId({
-              flatApplication: application,
+            await this.applicationGrantRoleLookupService.findGrantRoleId({
               workspaceId,
-              workspaceCustomApplicationId:
-                workspace.workspaceCustomApplicationId,
-              flatRoleTargetByApplicationIdMaps,
+              flatApplication: application,
             }),
           ))
       ) {

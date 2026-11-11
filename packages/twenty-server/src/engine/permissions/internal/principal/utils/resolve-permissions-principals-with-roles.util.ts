@@ -49,7 +49,7 @@ export type PermissionsPrincipalsRoleMaps = {
   flatRoleTargetByApplicationIdMaps: Partial<
     Record<string, Pick<FlatRoleTarget, 'roleId'>>
   >;
-  workspaceCustomApplicationId: string | undefined;
+  workspaceCustomApplicationId: string;
   flatRoleTargetMaps?: AllFlatEntityMaps['flatRoleTargetMaps'];
 };
 

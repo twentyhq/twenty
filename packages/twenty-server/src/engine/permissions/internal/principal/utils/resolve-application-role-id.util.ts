@@ -14,7 +14,7 @@ export const resolveApplicationRoleId = ({
   application: Pick<FlatApplication, 'id' | 'defaultRoleId' | 'sourceType'>;
   userRoleId?: string;
   workspaceId: string;
-  workspaceCustomApplicationId: string | undefined;
+  workspaceCustomApplicationId: string;
   flatRoleTargetByApplicationIdMaps: Partial<
     Record<string, Pick<FlatRoleTarget, 'roleId'>>
   >;
