@@ -66,14 +66,17 @@ const buildPredicateGroupContent = ({
 export const computeAccessGroupHash = ({
   roleId,
   objectMetadataId,
-  rowLevelRecordsPermissions,
+  rowLevelPermissionRule,
   rowLevelPermissionPredicateGroupId,
   memberFieldValues,
   isRelationHopEnabled,
 }: {
   roleId: string;
   objectMetadataId: string;
-  rowLevelRecordsPermissions: RowLevelRecordsPermissions | null | undefined;
+  rowLevelPermissionRule: Pick<
+    RowLevelRecordsPermissions,
+    'predicates' | 'predicateGroups'
+  > | null;
   rowLevelPermissionPredicateGroupId: string | null;
   memberFieldValues: RowLevelPermissionMemberFieldValues | null;
   isRelationHopEnabled: boolean;
@@ -83,11 +86,11 @@ export const computeAccessGroupHash = ({
       JSON.stringify([
         roleId,
         objectMetadataId,
-        isDefined(rowLevelRecordsPermissions)
+        isDefined(rowLevelPermissionRule)
           ? buildPredicateGroupContent({
               parentPredicateGroupId: null,
-              predicates: rowLevelRecordsPermissions.predicates,
-              predicateGroups: rowLevelRecordsPermissions.predicateGroups,
+              predicates: rowLevelPermissionRule.predicates,
+              predicateGroups: rowLevelPermissionRule.predicateGroups,
               isRelationHopEnabled,
             })
           : null,

@@ -60,6 +60,7 @@ import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-ro
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
+import { RowLevelPermissionRuleDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-rule.dto';
 import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
 import { UpsertRowLevelPermissionPredicatesResultDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/upsert-row-level-permission-predicates-result.dto';
 import { RowLevelPermissionPredicateGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/row-level-permission-predicate/filters/row-level-permission-predicate-graphql-api-exception.filter';
@@ -413,5 +414,22 @@ export class RoleResolver {
       });
 
     return rowLevelPermissionPredicateGroups;
+  }
+
+  @ResolveField('rowLevelPermissionRules', () => [RowLevelPermissionRuleDTO], {
+    nullable: true,
+  })
+  async getRowLevelPermissionRulesForRole(
+    @Parent() role: RoleDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<RowLevelPermissionRuleDTO[]> {
+    const { rowLevelPermissionRules } =
+      await context.loaders.rowLevelPermissionsByRoleIdLoader.load({
+        workspaceId: workspace.id,
+        roleId: role.id,
+      });
+
+    return rowLevelPermissionRules;
   }
 }

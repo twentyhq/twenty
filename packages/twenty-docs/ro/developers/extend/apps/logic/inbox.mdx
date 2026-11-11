@@ -125,4 +125,28 @@ await attachRecordToInboxThread({
 * Apelul rulează cu același acces ca [trimiterea unui mesaj](#who-sends-the-message), care necesită permisiunea `AI`. Un membru trebuie să poată edita conversația, iar aplicația dvs. poate acționa asupra unei conversații pe care a scris-o ea însăși sau asupra uneia care a fost acordată rolului său implicit; în caz contrar, apelul eșuează cu `THREAD_NOT_FOUND`.
 * Înregistrarea trebuie să poată fi citită cu acel acces, altfel apelul eșuează cu `RECORD_NOT_FOUND`.
 
+## Arhivarea unei conversații
+
+`archiveInboxThread()` arhivează o conversație creată de aplicația dvs., pentru membrii pe care îi specificați, ca și cum fiecare dintre ei ar fi arhivat-o din căsuța sa de primire. Utilizați-o atunci când activitatea din spatele unui mesaj a fost finalizată în altă parte: e-mailul pe care l-ați propus a fost trimis din Gmail, întâlnirea despre care ați întrebat a fost aprobată în calendar.
+
+```ts src/logic-functions/on-email-sent-archive-thread.ts
+import { archiveInboxThread } from 'twenty-sdk/logic-function';
+
+await archiveInboxThread({
+  threadId,
+  workspaceMemberIds: [owner.id],
+});
+```
+
+* Doar aplicația dvs. o poate apela, pentru o conversație pe care a creat-o ea însăși sau una la care rolului său implicit i s-a acordat acces; în caz contrar, apelul eșuează cu `THREAD_NOT_FOUND`. Membrii arhivează din propriile căsuțe de primire.
+* Fiecare membru pe care îl numiți trebuie să poată citi conversația. Dacă unul nu poate, apelul eșuează cu `THREAD_NOT_FOUND` și o arhivează pentru nimeni.
+* Un mesaj nou în conversație o readuce în inbox, la fel cum se întâmplă după ce un membru o arhivează.
+* Un membru care a încetat să urmărească conversația este omis, astfel încât aceasta rămâne în afara inboxului său.
+
+Omiteți `workspaceMemberIds` pentru a marca în schimb o conversație ca finalizată în canalul său, așa cum face un membru din vizualizarea canalului. Inboxurile proprii ale membrilor rămân neschimbate, iar o conversație care nu se află în niciun canal eșuează cu `CHAT_THREAD_NOT_IN_CHANNEL`.
+
+```ts
+await archiveInboxThread({ threadId });
+```
+
 <PageBanner illustration="card-page-inbox" />

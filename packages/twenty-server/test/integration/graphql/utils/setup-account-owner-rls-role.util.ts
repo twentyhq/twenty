@@ -1,4 +1,5 @@
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -78,6 +79,11 @@ export const setupAccountOwnerRlsRole = async ({
 
   jestExpectToBeDefined(accountOwnerFieldMetadata);
 
+  await revokeObjectRecordsPermissions({
+    roleId: customRoleId,
+    objectMetadataId: companyObjectMetadata.id,
+  });
+
   await updateWorkspaceMemberRole({
     input: {
       roleId: customRoleId,
@@ -119,6 +125,9 @@ export const upsertAccountOwnerRlsPredicate = async ({
         },
       ],
       predicateGroups: [],
+      canCreateRecords: true,
+      canReadRecords: true,
+      canUpdateRecords: true,
     },
   });
 

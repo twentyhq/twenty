@@ -17,6 +17,7 @@ const buildFieldPermission = (
   objectMetadataUniversalIdentifier: 'invoice-universal-identifier',
   fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
   rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+  rowLevelPermissionRuleUniversalIdentifier: null,
   canReadFieldValue: null,
   canUpdateFieldValue: null,
   createdAt: '2026-10-28T00:00:00.000Z',

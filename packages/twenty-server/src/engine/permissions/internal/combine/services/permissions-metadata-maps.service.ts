@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
@@ -52,16 +53,27 @@ export class PermissionsMetadataMapsService {
       flatApplicationMaps,
     };
 
-    if (findWorkspaceMemberBoundPredicates(rolesPermissions).length === 0) {
-      return metadataMaps;
-    }
-
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
+    const [flatWorkspaceMemberMaps, flatRelatedRecordPathMaps] =
+      await Promise.all([
+        findWorkspaceMemberBoundPredicates(rolesPermissions).length > 0
+          ? this.workspaceCacheService
+              .getOrRecompute(workspaceId, ['flatWorkspaceMemberMaps'])
+              .then((cache) => cache.flatWorkspaceMemberMaps)
+          : undefined,
+        featureFlagsMap[FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED] === true
+          ? this.workspaceCacheService
+              .getOrRecompute(workspaceId, ['flatRelatedRecordPathMaps'])
+              .then((cache) => cache.flatRelatedRecordPathMaps)
+          : undefined,
       ]);
 
-    return { ...metadataMaps, flatWorkspaceMemberMaps };
+    return {
+      ...metadataMaps,
+      ...(isDefined(flatWorkspaceMemberMaps) && { flatWorkspaceMemberMaps }),
+      ...(isDefined(flatRelatedRecordPathMaps) && {
+        flatRelatedRecordPathMaps,
+      }),
+    };
   }
 
   async loadForPrincipals({

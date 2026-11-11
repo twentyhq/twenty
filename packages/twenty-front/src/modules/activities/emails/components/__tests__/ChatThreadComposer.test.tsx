@@ -7,12 +7,6 @@ import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadCom
 
 const mockSendAppChannelMessage = jest.fn();
 
-jest.mock('@/activities/emails/hooks/useSendAppChannelMessage', () => ({
-  useSendAppChannelMessage: () => ({
-    sendAppChannelMessage: mockSendAppChannelMessage,
-  }),
-}));
-
 describe('ChatThreadComposer', () => {
   it('retries a failed message with the same idempotency key', async () => {
     mockSendAppChannelMessage
@@ -24,11 +18,10 @@ describe('ChatThreadComposer', () => {
     render(
       <I18nProvider i18n={i18n}>
         <ChatThreadComposer
-          messageThreadId="thread-id"
-          messageChannelId="channel-id"
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
+          onSendMessage={mockSendAppChannelMessage}
           onMessageSent={onMessageSent}
         />
       </I18nProvider>,
@@ -41,8 +34,8 @@ describe('ChatThreadComposer', () => {
 
     const [firstCall, secondCall] = mockSendAppChannelMessage.mock.calls;
 
-    expect(firstCall[0].idempotencyKey).toEqual(expect.any(String));
-    expect(secondCall[0].idempotencyKey).toBe(firstCall[0].idempotencyKey);
+    expect(firstCall[0].id).toEqual(expect.any(String));
+    expect(secondCall[0].id).toBe(firstCall[0].id);
   });
 
   it('keeps the sent message until the thread is refreshed', async () => {
@@ -59,11 +52,10 @@ describe('ChatThreadComposer', () => {
     render(
       <I18nProvider i18n={i18n}>
         <ChatThreadComposer
-          messageThreadId="thread-id"
-          messageChannelId="channel-id"
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
+          onSendMessage={mockSendAppChannelMessage}
           onMessageSent={onMessageSent}
         />
       </I18nProvider>,
