@@ -9,8 +9,7 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role-lookup.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -45,7 +44,7 @@ export class AiGenerateService {
   constructor(
     private readonly agentRunCallerContextService: AgentRunCallerContextService,
     private readonly agentRunnerService: AgentRunnerService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
   ) {}
@@ -80,9 +79,9 @@ export class AiGenerateService {
     if (
       isDefined(callerApplication) &&
       !isDefined(
-        await this.findApplicationGrantRoleId({
-          workspace,
-          application: callerApplication,
+        await this.applicationGrantRoleLookupService.findGrantRoleId({
+          workspaceId: workspace.id,
+          flatApplication: callerApplication,
         }),
       )
     ) {
@@ -166,25 +165,6 @@ export class AiGenerateService {
     };
   }
 
-  private async findApplicationGrantRoleId({
-    workspace,
-    application,
-  }: {
-    workspace: FlatWorkspace;
-    application: FlatApplication;
-  }): Promise<string | undefined> {
-    const { flatRoleTargetByApplicationIdMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'flatRoleTargetByApplicationIdMaps',
-      ]);
-
-    return resolveApplicationGrantRoleId({
-      flatApplication: application,
-      workspaceId: workspace.id,
-      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
-      flatRoleTargetByApplicationIdMaps,
-    });
-  }
   private async resolveStreamChannelIdOrThrow({
     workspaceId,
     callerApplication,

@@ -1,3 +1,4 @@
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role/application-grant-role-lookup.module';
 import { AgentChatReplyPolicyModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-reply-policy.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { AgentChatStreamClaimService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-claim.service';
@@ -62,6 +63,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
 
 @Module({
   imports: [
+    ApplicationGrantRoleLookupModule,
     CoreEntityCacheModule,
     AgentChatStreamStateModule,
     AgentChatThreadLifecycleModule,
