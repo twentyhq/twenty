@@ -19,7 +19,7 @@ export const StandaloneWidgetProvider = ({
   <LayoutRenderingProvider
     value={{
       targetRecordIdentifier: undefined,
-      layoutType: PageLayoutType.DASHBOARD,
+      layoutType: PageLayoutType.STANDALONE_PAGE,
     }}
   >
     <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
