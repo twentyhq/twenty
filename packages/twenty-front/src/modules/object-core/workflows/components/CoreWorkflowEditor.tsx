@@ -24,8 +24,18 @@ export const CoreWorkflowEditor = ({
   readonly: boolean;
 }) => {
   const { t } = useLingui();
-  const { coreWorkflowVersion, loading, error, refetchCoreWorkflowVersion } =
-    useCoreWorkflowVersion(coreWorkflowVersionId);
+  const {
+    coreWorkflowVersion: fetchedCoreWorkflowVersion,
+    previousCoreWorkflowVersion,
+    loading,
+    error,
+    refetchCoreWorkflowVersion,
+  } = useCoreWorkflowVersion(coreWorkflowVersionId);
+
+  // Stay mounted while a new current version loads, see CURRENT_WORKFLOW_VERSION_EDITOR_KEY
+  const coreWorkflowVersion =
+    fetchedCoreWorkflowVersion ??
+    (readonly ? null : previousCoreWorkflowVersion);
 
   const setShouldWorkflowRefetchRequest = useSetAtomFamilyState(
     shouldWorkflowRefetchRequestFamilyState,
