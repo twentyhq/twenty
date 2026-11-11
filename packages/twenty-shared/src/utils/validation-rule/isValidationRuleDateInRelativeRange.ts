@@ -5,7 +5,7 @@ import { isDefined } from '@/utils/validation/isDefined';
 
 import { relativeDateFilterSchema } from '@/utils/filter/dates/utils/relativeDateFilterSchema';
 import { resolveRelativeDateTimeFilter } from '@/utils/filter/dates/utils/resolveRelativeDateTimeFilter';
-import { getValidationRuleNowInUtc } from '@/utils/validation-rule/internal/validationRuleEvaluationClock';
+import { getValidationRuleNowInUtc } from '@/utils/validation-rule/internal/getValidationRuleNowInUtc';
 
 const parseToInstant = (value: string): Temporal.Instant | null => {
   try {
