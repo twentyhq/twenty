@@ -112,11 +112,21 @@ describe('ApplicationOAuthIdentityService', () => {
     ).resolves.toBe(CHATGPT_IDENTITY_REGISTRATION.universalIdentifier);
   });
 
+  it('resolves a metadata document connection made before the app existed when its host is trusted', async () => {
+    await expect(
+      service.findOAuthIdentityUniversalIdentifier(
+        buildLegacyRegistration({
+          oAuthClientId: 'https://chatgpt.com/oauth/client.json',
+        }),
+      ),
+    ).resolves.toBe(CHATGPT_IDENTITY_REGISTRATION.universalIdentifier);
+  });
+
   it.each([
     ['an owned registration', { ownerWorkspaceId: 'workspace-id' }],
     [
-      'a metadata document registration',
-      { oAuthClientId: 'https://chatgpt.com/oauth/client.json' },
+      'a metadata document hosted elsewhere',
+      { oAuthClientId: 'https://example.com/oauth/client.json' },
     ],
     ['an npm app', { sourceType: ApplicationRegistrationSourceType.NPM }],
     ['another client', { oAuthRedirectUris: ['https://example.com/callback'] }],

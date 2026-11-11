@@ -583,6 +583,23 @@ describe('OAuth identity apps (integration)', () => {
 
       expect(refreshResponse.status).toBe(200);
 
+      const authorizationsResponse = await makeMetadataApiRequest({
+        query: gql`
+          query CurrentUserApplicationAuthorizations {
+            currentUserApplicationAuthorizations {
+              oAuthIdentityUniversalIdentifier
+            }
+          }
+        `,
+      });
+
+      expect(authorizationsResponse.body.errors).toBeUndefined();
+      expect(
+        authorizationsResponse.body.data.currentUserApplicationAuthorizations,
+      ).toContainEqual({
+        oAuthIdentityUniversalIdentifier: CHATGPT_UNIVERSAL_IDENTIFIER,
+      });
+
       const renewedRefreshToken = refreshResponse.body.refresh_token;
       const introspection = await request(baseUrl)
         .post('/oauth/introspect')
