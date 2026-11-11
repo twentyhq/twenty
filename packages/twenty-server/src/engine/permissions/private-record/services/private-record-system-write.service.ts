@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { PrivateRecordRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/private-record.repository';
+import { PrivateRecordRepository } from 'src/engine/permissions/internal/private-record/repositories/private-record.repository';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
   PermissionsException,
@@ -15,13 +15,13 @@ import { type RecordPermissionTransactionScope } from 'src/engine/permissions/ty
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class PrivateRecordWriteService {
+export class PrivateRecordSystemWriteService {
   constructor(
     private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async setPrivateOrThrow({
+  async setRecordsPrivacy({
     workspaceId,
     objectMetadataId,
     recordIds,
