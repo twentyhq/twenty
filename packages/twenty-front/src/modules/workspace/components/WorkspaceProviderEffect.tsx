@@ -8,7 +8,9 @@ import { useEffect, useCallback } from 'react';
 import { useInitializeQueryParamState } from '@/app/hooks/useInitializeQueryParamState';
 import { isChooseWorkspaceActionRequested } from '@/auth/utils/isChooseWorkspaceActionRequested';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
+import { useIsCurrentLocationOnBareFrontDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnBareFrontDomain';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
+import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceUrls } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
@@ -25,6 +27,8 @@ export const WorkspaceProviderEffect = () => {
 
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
+  const { isBareFrontDomain } = useIsCurrentLocationOnBareFrontDomain();
+  const { defaultDomain } = useReadDefaultDomainFromConfiguration();
 
   const { currentLocationHostname } = useReadWorkspaceUrlFromCurrentLocation();
 
@@ -41,6 +45,21 @@ export const WorkspaceProviderEffect = () => {
     },
     [currentLocationHostname],
   );
+
+  useEffect(() => {
+    if (!isBareFrontDomain) {
+      return;
+    }
+
+    const defaultDomainUrl = new URL(window.location.origin);
+    defaultDomainUrl.hostname = defaultDomain;
+
+    redirectToWorkspaceDomain(
+      defaultDomainUrl.toString(),
+      window.location.pathname,
+      getCurrentSearchParams(),
+    );
+  }, [isBareFrontDomain, defaultDomain, redirectToWorkspaceDomain]);
 
   useEffect(() => {
     if (

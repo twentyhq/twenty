@@ -1,10 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { DomainShell } from '@/app/components/DomainShell';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -126,32 +125,5 @@ describe('DomainShell', () => {
     renderShell();
 
     expect(screen.getByText('WORKSPACE_APP')).toBeInTheDocument();
-  });
-
-  it('redirects the bare front domain to the default domain in multi-workspace mode', async () => {
-    const windowOpenSpy = jest
-      .spyOn(window, 'open')
-      .mockImplementation(() => null);
-    setClientConfigLoaded(true);
-    jotaiStore.set(isMultiWorkspaceEnabledState.atom, true);
-    jotaiStore.set(domainConfigurationState.atom, {
-      frontDomain: 'localhost',
-      defaultSubdomain: 'app',
-      publicFunctionDomain: undefined,
-      serverUrl: '',
-    });
-    isDefaultDomainValue = false;
-    window.history.pushState({}, '', '/objects/companies?view=all');
-
-    renderShell();
-
-    expect(screen.queryByText('WORKSPACE_APP')).not.toBeInTheDocument();
-    await waitFor(() =>
-      expect(windowOpenSpy).toHaveBeenCalledWith(
-        'http://app.localhost/objects/companies?view=all',
-        '_self',
-      ),
-    );
-    windowOpenSpy.mockRestore();
   });
 });
