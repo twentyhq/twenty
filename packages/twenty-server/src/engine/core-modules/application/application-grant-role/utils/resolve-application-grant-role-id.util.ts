@@ -40,7 +40,7 @@ export const resolveApplicationGrantRoleId = ({
     return grantRoleId;
   }
 
-  // TODO: remove once every application is known to have its grant
+  // TODO: remove this fallback once every application is known to have its grant
   logger.warn(
     `Application ${flatApplication.id} has no grant role in workspace ${workspaceId}, it runs with its requested role`,
   );

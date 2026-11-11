@@ -52,6 +52,7 @@ const resolveCreatorRoleId = ({
   apiKeyRoleMap: Record<string, string>;
 }): string | null | undefined => {
   if (isApplicationAuthContext(authContext)) {
+    // TODO: share with the application's grant role instead of its requested role
     return authContext.application.defaultRoleId;
   }
 

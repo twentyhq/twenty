@@ -82,6 +82,7 @@ export const SettingsRolesList = () => {
   );
 
   // An application runs with its grant, a copy of the role it requests
+  // TODO: stop hiding requested roles here once they are cleaned up server-side
   const requestedOnlyRoleIds = new Set(
     installedApplications
       .filter(

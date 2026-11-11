@@ -14,6 +14,7 @@ import {
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
 // requestedRoleId is the application's own role, which its grant copies
+// TODO: remove once the acting application check and record shares no longer read it
 export type PermissionsApplicationIdPrincipalWithRole =
   WithRoleId<PermissionsApplicationIdPrincipal> & { requestedRoleId?: string };
 

@@ -23,6 +23,7 @@ export const getPermissionsPrincipalsActingApplicationId = ({
   }
 
   // Compared on the requested role, since the grant copying it has its own id
+  // TODO: drop both comparisons with the grant fallback, an application then never shares a role
   const applicationRoleId =
     applicationPrincipal.requestedRoleId ?? applicationPrincipal.roleId;
 

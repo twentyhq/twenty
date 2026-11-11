@@ -7,6 +7,7 @@ import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 
 // Records shared with an application's requested role stay shared with the grant copying it
+// TODO: remove once record shares target the grant role and existing ones are migrated
 const getPermissionsPrincipalsRequestedRoleIds = ({
   mainPrincipal,
   applicationPrincipal,
