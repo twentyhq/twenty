@@ -36,7 +36,8 @@ describe('validateWidgetConfigurationInput', () => {
             layout: 'VERTICAL',
             ratioAggregateConfig: {
               __typename: 'RatioAggregateConfig',
-              fieldMetadataId: TEST_NUMBER_CHART_CONFIG_MINIMAL.aggregateFieldMetadataId,
+              fieldMetadataId:
+                TEST_NUMBER_CHART_CONFIG_MINIMAL.aggregateFieldMetadataId,
               optionValue: 'DONE',
             },
           },
@@ -45,7 +46,8 @@ describe('validateWidgetConfigurationInput', () => {
         ...TEST_NUMBER_CHART_CONFIG_MINIMAL,
         prefix: '$',
         ratioAggregateConfig: {
-          fieldMetadataId: TEST_NUMBER_CHART_CONFIG_MINIMAL.aggregateFieldMetadataId,
+          fieldMetadataId:
+            TEST_NUMBER_CHART_CONFIG_MINIMAL.aggregateFieldMetadataId,
           optionValue: 'DONE',
         },
       });
@@ -53,7 +55,9 @@ describe('validateWidgetConfigurationInput', () => {
 
     it('should return a valid configuration unchanged', () => {
       expect(
-        validateWidgetConfigurationInput({ configuration: TEST_PIE_CHART_CONFIG }),
+        validateWidgetConfigurationInput({
+          configuration: TEST_PIE_CHART_CONFIG,
+        }),
       ).toEqual(TEST_PIE_CHART_CONFIG);
     });
   });
