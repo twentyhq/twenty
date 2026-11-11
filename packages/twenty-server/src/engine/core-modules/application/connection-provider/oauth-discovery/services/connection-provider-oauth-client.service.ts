@@ -11,7 +11,7 @@ import { isUniqueViolationError } from 'src/engine/workspace-query-executor/util
 import { ConnectionProviderOAuthClientEntity } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/entities/connection-provider-oauth-client.entity';
 import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
-import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -163,8 +163,9 @@ export class ConnectionProviderOAuthClientService {
       clientId: clientInformation.client_id,
       clientSecret: this.connectedAccountTokenEncryptionService.encryptNullable(
         {
-          plaintext: (clientInformation.client_secret ??
-            null) as PlaintextString | null,
+          plaintext: isDefined(clientInformation.client_secret)
+            ? plaintextStringSchema.parse(clientInformation.client_secret)
+            : null,
           workspaceId,
         },
       ),

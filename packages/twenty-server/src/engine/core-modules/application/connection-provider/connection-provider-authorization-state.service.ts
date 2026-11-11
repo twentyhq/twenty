@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type ConnectionAuthorizationArgs } from 'src/engine/core-modules/application/connection-provider/types/connection-authorization-args.type';
+import { type ConnectionProviderFlowSecrets } from 'src/engine/core-modules/application/connection-provider/types/connection-provider-flow-secrets.type';
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -17,11 +18,6 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 const buildFlowSecretCacheKey = (flowSecretId: string): string =>
   `connection-provider-oauth-flow-secret:${flowSecretId}`;
 const FLOW_SECRET_TTL_MS = 10 * 60 * 1000;
-
-export type ConnectionProviderFlowSecrets = {
-  codeVerifier: string;
-  oauthClientId: string | null;
-};
 
 @Injectable()
 export class ConnectionProviderAuthorizationStateService {

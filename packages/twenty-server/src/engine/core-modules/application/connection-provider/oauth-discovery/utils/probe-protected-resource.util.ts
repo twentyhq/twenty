@@ -14,27 +14,23 @@ export const probeProtectedResource = async ({
   resourceUrl: string;
   fetchFn: FetchLike;
 }): Promise<ProtectedResourceProbe> => {
-  try {
-    const response = await fetchFn(resourceUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json, text/event-stream',
-      },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 0, method: 'ping' }),
-    });
+  const response = await fetchFn(resourceUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json, text/event-stream',
+    },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 0, method: 'ping' }),
+  });
 
-    await response.body?.cancel().catch(() => undefined);
+  await response.body?.cancel().catch(() => undefined);
 
-    if (response.status !== 401) {
-      return { isSignInRequired: false };
-    }
-
-    return {
-      isSignInRequired: true,
-      ...extractWWWAuthenticateParams(response),
-    };
-  } catch {
+  if (response.status !== 401) {
     return { isSignInRequired: false };
   }
+
+  return {
+    isSignInRequired: true,
+    ...extractWWWAuthenticateParams(response),
+  };
 };

@@ -36,11 +36,12 @@ describe('probeProtectedResource', () => {
     ).resolves.toEqual({ isSignInRequired: false });
   });
 
-  it('does not require a sign-in when the resource is unreachable', async () => {
-    const fetchFn = jest.fn().mockRejectedValue(new Error('ECONNREFUSED'));
+  it('reports an unreachable resource instead of guessing', async () => {
+    const transportError = new Error('ECONNREFUSED');
+    const fetchFn = jest.fn().mockRejectedValue(transportError);
 
     await expect(
       probeProtectedResource({ resourceUrl: RESOURCE_URL, fetchFn }),
-    ).resolves.toEqual({ isSignInRequired: false });
+    ).rejects.toBe(transportError);
   });
 });

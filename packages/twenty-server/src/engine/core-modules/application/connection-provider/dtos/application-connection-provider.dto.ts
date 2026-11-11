@@ -7,7 +7,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-export const ConnectionProviderScopeEnum = {
+const ConnectionProviderScopeEnum = {
   WORKSPACE: 'WORKSPACE',
   USER: 'USER',
 } as const satisfies { [P in ConnectionProviderScope]: P };

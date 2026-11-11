@@ -8,20 +8,19 @@ import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/applica
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/constants/oauth-discovery-request-timeout-ms.constant';
 import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
+import { type OAuthDiscoveryProviderContext } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-provider-context.type';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
 import { buildOAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-provider.util';
 import { isOAuthClientRejected } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/is-oauth-client-rejected.util';
 import { type OAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/oauth-discovery-client-provider';
-import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
+import {
+  probeProtectedResource,
+  type ProtectedResourceProbe,
+} from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
 import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-type ProviderContext = {
-  provider: OAuthDiscoveryConnectionProvider;
-  workspaceId: string;
-};
 
 @Injectable()
 export class ConnectionProviderOAuthDiscoveryService {
@@ -39,7 +38,7 @@ export class ConnectionProviderOAuthDiscoveryService {
     provider,
     workspaceId,
     canReuseConcurrentRegistration = true,
-  }: ProviderContext & {
+  }: OAuthDiscoveryProviderContext & {
     canReuseConcurrentRegistration?: boolean;
   }): Promise<{
     authorizationUrl: URL;
@@ -47,8 +46,8 @@ export class ConnectionProviderOAuthDiscoveryService {
     clientId: string;
   }> {
     const fetchFn = this.buildFetch(workspaceId);
-    const { resourceMetadataUrl, scope } = await probeProtectedResource({
-      resourceUrl: provider.oauthDiscoveryConfig.resourceUrl,
+    const { resourceMetadataUrl, scope } = await this.probeResource({
+      provider,
       fetchFn,
     });
     const storedClient = await this.oauthClientService.findStoredClient({
@@ -170,6 +169,28 @@ export class ConnectionProviderOAuthDiscoveryService {
       );
 
       return null;
+    }
+  }
+
+  private async probeResource({
+    provider,
+    fetchFn,
+  }: {
+    provider: OAuthDiscoveryConnectionProvider;
+    fetchFn: FetchLike;
+  }): Promise<ProtectedResourceProbe> {
+    try {
+      return await probeProtectedResource({
+        resourceUrl: provider.oauthDiscoveryConfig.resourceUrl,
+        fetchFn,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+
+      throw new ConnectionProviderException(
+        `Could not reach the resource of connection provider ${provider.id}: ${message}`,
+        ConnectionProviderExceptionCode.INVALID_REQUEST,
+      );
     }
   }
 

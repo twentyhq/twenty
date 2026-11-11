@@ -15,19 +15,14 @@ import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/applica
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/constants/oauth-discovery-request-timeout-ms.constant';
 import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
+import { type OAuthDiscoveryProviderContext } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-provider-context.type';
 import { buildOAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-provider.util';
 import { isPermanentOAuthDiscoveryRefreshError } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/is-permanent-oauth-discovery-refresh-error.util';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
-import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { parseTokenResponse } from 'src/engine/core-modules/application/connection-provider/utils/parse-token-response.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-type ProviderContext = {
-  provider: OAuthDiscoveryConnectionProvider;
-  workspaceId: string;
-};
 
 @Injectable()
 export class ConnectionProviderOAuthDiscoveryTokenService {
@@ -43,7 +38,7 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
     code,
     codeVerifier,
     clientId,
-  }: ProviderContext & {
+  }: OAuthDiscoveryProviderContext & {
     code: string;
     codeVerifier: string;
     clientId: string;
@@ -102,7 +97,7 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
     provider,
     workspaceId,
     refreshToken,
-  }: ProviderContext & {
+  }: OAuthDiscoveryProviderContext & {
     refreshToken: PlaintextString;
   }): Promise<TokenExchangeResponse> {
     const storedClient = await this.oauthClientService.findStoredClientOrThrow({
@@ -120,9 +115,7 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
         metadata: authorizationServerMetadata,
         clientInformation: storedClient.clientInformation,
         refreshToken,
-        resource: isDefined(resourceMetadata)
-          ? new URL(resourceMetadata.resource)
-          : undefined,
+        resource: resourceMetadata?.resource,
         fetchFn: this.buildFetch(workspaceId),
       });
 
