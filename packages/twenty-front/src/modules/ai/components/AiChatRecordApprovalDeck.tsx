@@ -62,18 +62,13 @@ export const AiChatRecordApprovalDeck = ({
       recordApprovalsToAnswer.map(({ toolCallId }) => toolCallId),
     );
 
+    // answers go to the conversation the batch started in, even if the person opens another one
     const threadId = store.get(agentChatDisplayedThreadState.atom);
 
     for (const { toolCallId, proposal } of recordApprovalsToAnswer) {
-      // an answer goes to the displayed conversation, so the rest waits if the person left this one
-      if (store.get(agentChatDisplayedThreadState.atom) !== threadId) {
-        onAnsweringToolCallIdsChange([]);
-
-        return;
-      }
-
       const isApproved = !isDenied && !skippedToolCallIds.includes(toolCallId);
       const isAnswered = await answerAgentChatToolCall({
+        threadId,
         toolCallId,
         response: {
           decision: isApproved ? 'approve' : 'reject',

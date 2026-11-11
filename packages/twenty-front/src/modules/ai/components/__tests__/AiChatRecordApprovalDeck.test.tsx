@@ -124,7 +124,7 @@ describe('AiChatRecordApprovalDeck', () => {
     expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
   });
 
-  it('stops answering when the person opens another conversation', async () => {
+  it('keeps answering in its conversation when the person opens another one', async () => {
     const user = userEvent.setup();
     const store = createStore();
     store.set(agentChatDisplayedThreadState.atom, 'thread-1');
@@ -139,8 +139,10 @@ describe('AiChatRecordApprovalDeck', () => {
     await user.click(screen.getByRole('button', { name: 'Create 3' }));
 
     await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'Create 3' })).toBeEnabled(),
+      expect(answerAgentChatToolCall).toHaveBeenCalledTimes(3),
     );
-    expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
+    expect(
+      answerAgentChatToolCall.mock.calls.map(([{ threadId }]) => threadId),
+    ).toEqual(['thread-1', 'thread-1', 'thread-1']);
   });
 });
