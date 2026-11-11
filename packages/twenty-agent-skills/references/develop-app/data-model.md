@@ -126,7 +126,7 @@ When adding permissions:
 
 ## Validation Rules
 
-Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`.
+Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`. Two date functions are available in both forms: `daysSince(date)` returns whole days since the date (negative for a future date), and `isInRelativeDateRange(date, direction, amount, unit)` checks a period, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 ```ts
 import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';
