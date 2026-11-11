@@ -1,9 +1,8 @@
+import { type CronTriggerSettings } from 'twenty-shared/application';
+
 import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { type CachedWorkflowAutomatedTrigger } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
-import {
-  type BaseDatabaseEventTriggerSettings,
-  type CronTriggerSettings,
-} from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
+import { type BaseDatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 
 export const isCachedCronTrigger = (
   trigger: CachedWorkflowAutomatedTrigger,

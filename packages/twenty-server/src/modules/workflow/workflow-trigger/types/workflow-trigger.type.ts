@@ -2,6 +2,7 @@ import {
   type BulkRecordsAvailability,
   type GlobalAvailability,
   type SingleRecordAvailability,
+  type WorkflowCronTriggerSchedule,
 } from 'twenty-shared/workflow';
 
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
@@ -51,25 +52,7 @@ export type WorkflowManualTrigger = BaseTrigger & {
 
 export type WorkflowCronTrigger = BaseTrigger & {
   type: WorkflowTriggerType.CRON;
-  settings: BaseWorkflowTriggerSettings &
-    (
-      | {
-          type: 'DAYS';
-          schedule: { day: number; hour: number; minute: number };
-        }
-      | {
-          type: 'HOURS';
-          schedule: { hour: number; minute: number };
-        }
-      | {
-          type: 'MINUTES';
-          schedule: { minute: number };
-        }
-      | {
-          type: 'CUSTOM';
-          pattern: string;
-        }
-    );
+  settings: BaseWorkflowTriggerSettings & WorkflowCronTriggerSchedule;
 };
 
 export type WorkflowWebhookTrigger = BaseTrigger & {

@@ -1,3 +1,4 @@
+import { type CronTriggerSettings } from 'twenty-shared/application';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 
 export type DatabaseEventTriggerFilterSettings = {
@@ -22,10 +23,6 @@ export type UpdateEventTriggerSettings = BaseDatabaseEventTriggerSettings & {
 
 export type UpsertEventTriggerSettings = BaseDatabaseEventTriggerSettings & {
   fields: string[];
-};
-
-export type CronTriggerSettings = {
-  pattern: string;
 };
 
 export type AutomatedTriggerSettings =

@@ -535,6 +535,71 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
     throw new Error('Cron failed to dispatch');
   });
+
+  it('fires an editor schedule once per tick through the shared cron deduplication', async () => {
+    const fixture = await createFixture({
+      triggerType: 'CRON',
+      triggerSettings: { type: 'MINUTES', schedule: { minute: 1 } },
+    });
+    const cache = global.app.get<CacheStorageService>(
+      CacheStorageNamespace.ModuleWorkflow,
+    );
+    const cron = global.workflowTestServices.cron;
+
+    // A stale cached pattern that is never due, so a run proves the published schedule is read
+    jest.spyOn(cache, 'hashGetValues').mockResolvedValue([
+      JSON.stringify({
+        workspaceId,
+        workflowId: fixture.coreWorkflowId,
+        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+        pattern: '0 0 1 1 *',
+      }),
+    ]);
+    const cronTriggerDeduplication =
+      getAppProviderByClassName<CronTriggerDeduplicationService>(
+        'CronTriggerDeduplicationService',
+      );
+    const shouldDispatch = cronTriggerDeduplication.shouldDispatch.bind(
+      cronTriggerDeduplication,
+    );
+    let tickTime: Date | undefined;
+    const shouldDispatchSpy = jest
+      .spyOn(cronTriggerDeduplication, 'shouldDispatch')
+      .mockImplementation((key, pattern, now) => {
+        tickTime ??= now;
+
+        return shouldDispatch(key, pattern, tickTime);
+      });
+
+    // Two workers handling the same tick
+    await Promise.all([cron.handle(), cron.handle()]);
+
+    expect(shouldDispatchSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/^workflow-cron:/),
+      '*/1 * * * *',
+      expect.anything(),
+    );
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const runs = await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+        [fixture.coreWorkflowId],
+      );
+
+      if (runs.length > 0) {
+        await waitForRun(runs[0].id, 'COMPLETED');
+        expect(
+          await global.testDataSource.query(
+            `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+            [fixture.coreWorkflowId],
+          ),
+        ).toHaveLength(1);
+
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    throw new Error('Cron failed to dispatch the editor schedule');
+  });
   const waitForStep = async (runId: string, stepId: string, status: string) => {
     for (let attempt = 0; attempt < 600; attempt++) {
       const run = await getRun(runId);
