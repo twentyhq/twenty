@@ -35,6 +35,7 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { upsertContainsRlsPredicate } from 'test/integration/graphql/utils/upsert-contains-rls-predicate.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -232,10 +233,7 @@ describe('record export lifecycle (integration)', () => {
     id: string;
   }) => (await cache.get<string>(`{${workspaceId}}:active`)) === id;
 
-  const changeRole = async (updatePayload: {
-    canAccessAllTools?: boolean;
-    canReadAllObjectRecords?: boolean;
-  }) => {
+  const changeRole = async (updatePayload: { canAccessAllTools?: boolean }) => {
     const result = await updateOneRole({
       input: { idToUpdate: roleId, updatePayload },
       expectToFail: false,
@@ -338,10 +336,19 @@ describe('record export lifecycle (integration)', () => {
           predicateGroups: [],
         },
       });
-      await changeRole({
-        canAccessAllTools: true,
-        canReadAllObjectRecords: true,
+      await upsertObjectPermissions({
+        input: {
+          roleId,
+          objectPermissions: [
+            {
+              objectMetadataId: input.objectMetadataId,
+              canReadObjectRecords: true,
+            },
+          ],
+        },
+        expectToFail: false,
       });
+      await changeRole({ canAccessAllTools: true });
     }
   });
 
@@ -430,6 +437,7 @@ describe('record export lifecycle (integration)', () => {
       objectNameSingular: 'company',
       fieldName: 'name',
       value: companies[0].name,
+      ruleGrants: { canReadRecords: true },
     });
     const ready = await exportToCompletion(input, requester.token);
     expect(await authorization(ready)).toMatchObject({
@@ -486,6 +494,7 @@ describe('record export lifecycle (integration)', () => {
       objectNameSingular: 'company',
       fieldName: 'name',
       value: companies[0].name,
+      ruleGrants: { canReadRecords: true },
     });
     const ready = await exportToCompletion(input, cliToken);
     const response = await download(ready).expect(200);
@@ -495,7 +504,10 @@ describe('record export lifecycle (integration)', () => {
 
   it('rejects an OAuth export when its application cannot read the object', async () => {
     await setApplicationRole(roleId);
-    await changeRole({ canReadAllObjectRecords: false });
+    await revokeObjectRecordsPermissions({
+      roleId,
+      objectMetadataId: input.objectMetadataId,
+    });
     await expect(exportToCompletion(input, cliToken)).rejects.toThrow(
       'The export failed. Please try again or export fewer records.',
     );
@@ -1116,6 +1128,7 @@ describe('record export lifecycle (integration)', () => {
             objectNameSingular: 'company',
             fieldName: 'name',
             value: companies[0].name,
+            ruleGrants: { canReadRecords: true },
           });
         }
         releasePage();
@@ -1136,6 +1149,7 @@ describe('record export lifecycle (integration)', () => {
       objectNameSingular: 'company',
       fieldName: 'name',
       value: companies[0].name,
+      ruleGrants: { canReadRecords: true },
     });
     const recordExport = await exportToCompletion(
       input,
@@ -1329,6 +1343,7 @@ describe('record export lifecycle (integration)', () => {
           objectNameSingular: 'company',
           fieldName: 'name',
           value: companies[0].name,
+          ruleGrants: { canReadRecords: true },
         });
       if (when === 'during-storage-open') {
         const readFile = storage.readFile.bind(storage);
@@ -1382,6 +1397,7 @@ describe('record export lifecycle (integration)', () => {
           objectNameSingular: 'company',
           fieldName: 'name',
           value: companies[0].name,
+          ruleGrants: { canReadRecords: true },
         });
       if (when === 'access-check') {
         const resolveRequester = query.resolveRequester.bind(query);
