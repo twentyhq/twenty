@@ -125,4 +125,28 @@ await attachRecordToInboxThread({
 - The call runs with the same access as [sending a message](#who-sends-the-message), which needs the `AI` permission. A member must be able to edit the conversation, and your application can act on a conversation it wrote in itself or one its default role was granted; otherwise the call fails with `THREAD_NOT_FOUND`.
 - The record must be readable with that access, or the call fails with `RECORD_NOT_FOUND`.
 
+## Archiving a conversation
+
+`archiveInboxThread()` archives a conversation your application wrote, for the members you name, as if each of them had archived it from their inbox. Use it when the work behind a message got done somewhere else: the email you proposed was sent from Gmail, the meeting you asked about was approved in the calendar.
+
+```ts src/logic-functions/on-email-sent-archive-thread.ts
+import { archiveInboxThread } from 'twenty-sdk/logic-function';
+
+await archiveInboxThread({
+  threadId,
+  workspaceMemberIds: [owner.id],
+});
+```
+
+- Only your application can call it, on a conversation it wrote in itself or one its default role was granted; otherwise the call fails with `THREAD_NOT_FOUND`. Members archive from their own inbox.
+- Every member you name must be able to read the conversation. If one cannot, the call fails with `THREAD_NOT_FOUND` and archives it for nobody.
+- A new message in the conversation brings it back to the inbox, as it does after a member archives it.
+- A member who stopped following the conversation is skipped, so it stays out of their inbox.
+
+Leave out `workspaceMemberIds` to mark a conversation done in its channel instead, as a member does from the channel view. Members' own inboxes are left as they are, and a conversation that is in no channel fails with `CHAT_THREAD_NOT_IN_CHANNEL`.
+
+```ts
+await archiveInboxThread({ threadId });
+```
+
 <PageBanner illustration="card-page-inbox" />

@@ -16,7 +16,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
+import { type RuntimeLimitingRole } from 'src/engine/permissions/principal/types/runtime-limiting-role.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import {
   type PermissionsPrincipalsRoleMaps,
@@ -110,17 +110,17 @@ const buildMemberAuthContext = ({
 const buildApiKeyAuthContext = ({
   apiKeyId,
   agentId,
-  aiRunScope,
+  runtimeLimitingRole,
 }: {
   apiKeyId: string;
   agentId?: string;
-  aiRunScope?: AiRunPermissionScope;
+  runtimeLimitingRole?: RuntimeLimitingRole;
 }): PermissionsAuthContext => ({
   type: 'apiKey',
   workspace: { id: 'workspace-id' },
   apiKey: { id: apiKeyId },
   ...(isDefined(agentId) ? { agentId } : {}),
-  ...(isDefined(aiRunScope) ? { aiRunScope } : {}),
+  ...(isDefined(runtimeLimitingRole) ? { runtimeLimitingRole } : {}),
 });
 
 const computeForAuthContext = ({
@@ -187,6 +187,60 @@ describe('computePrincipalsRecordsPermissions', () => {
         applicationPrincipal: { type: 'customApplication' },
       }),
     ).toEqual(defaultRolePermissions);
+  });
+
+  it('should mask with the object access of a limiting role, ignoring its RLS rule', () => {
+    const readAllRecords: ObjectRecordsPermissions = {
+      canCreateAllRecords: false,
+      canReadAllRecords: true,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+      unreadableFields: [],
+      uneditableFields: [],
+    };
+
+    const recordsPermissions = computePrincipalsRecordsPermissions({
+      principals: {
+        mainPrincipal: { type: 'role', roleId: 'main-role-id' },
+        limitingPrincipal: {
+          type: 'agent',
+          agentId: 'agent-id',
+          roleId: 'rls-agent-role-id',
+        },
+        applicationPrincipal: { type: 'customApplication' },
+      },
+      rolesPermissions: {
+        'main-role-id': buildRoleRecordsPermissions({
+          [OBJECT_ID]: readAllRecords,
+        }),
+        'rls-agent-role-id': buildRoleRecordsPermissions({
+          [OBJECT_ID]: {
+            ...readAllRecords,
+            canReadAllRecords: false,
+            rowLevelRecordsPermissions: [
+              {
+                ruleId: 'rule-id',
+                canCreateRecords: false,
+                canReadRecords: true,
+                canUpdateRecords: false,
+                canSoftDeleteRecords: false,
+                canDestroyRecords: false,
+                predicates: [],
+                predicateGroups: [],
+                unreadableFields: ['rule-hidden-field-id'],
+                uneditableFields: [],
+              },
+            ],
+          },
+        }),
+      },
+      flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+      flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
+      flatApplicationMaps: { byId: {} },
+    });
+
+    expect(recordsPermissions.objects[OBJECT_ID]).toEqual(readAllRecords);
   });
 
   it('should not grant a permission that only one of the roles allows', () => {
@@ -709,15 +763,20 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
         canDestroyAllRecords: false,
         unreadableFields: [],
         uneditableFields: [],
-        rowLevelRecordsPermissions: {
-          canCreateRecords: true,
-          canReadRecords: true,
-          canUpdateRecords: true,
-          canSoftDeleteRecords: true,
-          canDestroyRecords: true,
-          predicates: [USER_PREDICATE],
-          predicateGroups: [],
-        },
+        rowLevelRecordsPermissions: [
+          {
+            ruleId: 'rule-id',
+            canCreateRecords: true,
+            canReadRecords: true,
+            canUpdateRecords: true,
+            canSoftDeleteRecords: true,
+            canDestroyRecords: true,
+            predicates: [USER_PREDICATE],
+            predicateGroups: [],
+            unreadableFields: [],
+            uneditableFields: [],
+          },
+        ],
       },
     }),
   };
@@ -734,7 +793,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     const principals = resolvePermissionsPrincipalsWithRoles({
       authContext: buildApiKeyAuthContext({
         apiKeyId,
-        aiRunScope: hasScope
+        runtimeLimitingRole: hasScope
           ? {
               recordsPermissions: buildRoleRecordsPermissions(
                 isDefined(scopeObjectPermissions)
@@ -819,9 +878,11 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
       scopeObjectPermissions: FULL_ACCESS,
     });
 
-    expect(invoicePermissions?.rowLevelRecordsPermissions?.predicates).toEqual([
-      USER_PREDICATE,
-    ]);
+    expect(
+      invoicePermissions?.rowLevelRecordsPermissions?.map(
+        ({ predicates }) => predicates,
+      ),
+    ).toEqual([[USER_PREDICATE]]);
   });
 
   it('adds the field restrictions of the scope', () => {

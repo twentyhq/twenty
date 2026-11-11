@@ -30,6 +30,7 @@
         "src/instrument.ts",
         "src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util.ts",
         "src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service.ts",
+        "src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/http-egress/http-egress-lambda.handler.ts",
         "lingui.config.ts",
         "scripts/**/*.ts",
         "**/*.spec.ts",

@@ -41,7 +41,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Iltimos, ushbu domenni tasdiqlang, 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
-msgstr ""
+msgstr "{workspaceDisplayName} tizimiga kirish uchun zaxira kodi ishlatildi. Qolgan zaxira kodlari: {remainingBackupCodeCount}."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
@@ -71,7 +71,7 @@ msgstr "Shundan soʻng ish maydoni va uning barcha maʼlumotlari butunlay oʻchi
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "Backup code used"
-msgstr ""
+msgstr "Zaxira kodi ishlatildi"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -150,12 +150,12 @@ msgstr "Salom, {userName},"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Agar buni siz qilmagan bo'lsangiz, parolingizni o'zgartiring va Sozlamalar, Profil, Ikki faktorli autentifikatsiya bo'limida yangi zaxira kodlarini yarating."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "If this was not you, change your password and generate new backup codes."
-msgstr ""
+msgstr "Agar buni siz qilmagan bo'lsangiz, parolingizni o'zgartiring va yangi zaxira kodlarini yarating."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
@@ -227,12 +227,12 @@ msgstr "Obunani boshqarish"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes generated"
-msgstr ""
+msgstr "Yangi zaxira kodlari yaratildi"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
 msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
-msgstr ""
+msgstr "{workspaceDisplayName} dagi hisob qaydnomangiz uchun yangi zaxira kodlari yaratildi. Avvalgi zaxira kodlaringiz endi ishlamaydi."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -313,7 +313,7 @@ msgstr "Twenty’da hisob qaydnomasidan o‘tganingiz uchun rahmat! Boshlashdan 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
-msgstr ""
+msgstr "{workspaceDisplayName} dagi hisob qaydnomangiz uchun autentifikator Sozlamalardan olib tashlandi. Ushbu ish maydoni uchun zaxira kodlaringiz endi ishlamaydi."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -358,7 +358,7 @@ msgstr "Ikki faktorli autentifikatsiya tiklash kodi berildi"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-removed.email.tsx
 msgid "Two-factor authentication removed"
-msgstr ""
+msgstr "Ikki faktorli autentifikatsiya olib tashlandi"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -425,7 +425,7 @@ msgstr "Ish maydoni logotipi"
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-backup-code-used.email.tsx
 msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
-msgstr ""
+msgstr "Sozlamalar, Profil, Ikki faktorli autentifikatsiya bo'limida yangi zaxira kodlarini yaratishingiz mumkin."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

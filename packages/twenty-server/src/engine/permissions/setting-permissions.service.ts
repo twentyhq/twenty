@@ -128,11 +128,11 @@ export class SettingPermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    const { aiRunScope } = principals;
+    const { runtimeLimitingRole } = principals;
 
     return (
-      (!isDefined(aiRunScope) ||
-        (aiRunScope.permissionFlags[permissionFlag] ?? false)) &&
+      (!isDefined(runtimeLimitingRole) ||
+        (runtimeLimitingRole.permissionFlags[permissionFlag] ?? false)) &&
       this.isPermissionFlagGrantedToRoles({
         roleIds: getPermissionsPrincipalsRoleIds(principals),
         permissionFlag,

@@ -1,31 +1,11 @@
 import {
   type ObjectRecordsPermissions,
-  type RowLevelPermissionPredicate,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import { canReachAllRecords, isDefined } from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-
-// Keeping a field constrained by one role alone would let it cancel another role's deny in the insert guard
-const intersectRowLevelPermissionPredicates = (
-  rowLevelPermissionPredicatesPerRole: RowLevelPermissionPredicate[][],
-): RowLevelPermissionPredicate[] => {
-  const [firstRolePredicates = [], ...otherRolesPredicates] =
-    rowLevelPermissionPredicatesPerRole;
-
-  const constrainedFieldMetadataIdsPerOtherRole = otherRolesPredicates.map(
-    (predicates) =>
-      new Set(predicates.map((predicate) => predicate.fieldMetadataId)),
-  );
-
-  return firstRolePredicates.filter((predicate) =>
-    constrainedFieldMetadataIdsPerOtherRole.every((fieldMetadataIds) =>
-      fieldMetadataIds.has(predicate.fieldMetadataId),
-    ),
-  );
-};
 
 const unionFields = ({
   objectRecordsPermissionsPerRole,
@@ -52,13 +32,6 @@ const intersectObjectRecordsPermissions = (
         isDefined(objectRecordsPermissions) &&
         isGranted(objectRecordsPermissions),
     );
-  const isReachingSomeRecordsForEveryRole = (
-    operationType: ObjectRecordsOperationType,
-  ) =>
-    objectRecordsPermissionsPerRole.every((objectRecordsPermissions) =>
-      canReachSomeRecords({ objectRecordsPermissions, operationType }),
-    );
-
   const intersectedObjectRecordsPermissions: ObjectRecordsPermissions = {
     canCreateAllRecords: isGrantedToAllRecordsByEveryRole(
       ({ canCreateAllRecords }) => canCreateAllRecords,
@@ -85,33 +58,48 @@ const intersectObjectRecordsPermissions = (
     }),
   };
 
-  const hasRowLevelPermissions = objectRecordsPermissionsPerRole.some(
-    (objectRecordsPermissions) =>
-      isDefined(objectRecordsPermissions?.rowLevelRecordsPermissions),
+  const rowLevelRecordsPermissions = objectRecordsPermissionsPerRole.flatMap(
+    (objectRecordsPermissions, roleIndex) => {
+      const otherRolesObjectRecordsPermissions =
+        objectRecordsPermissionsPerRole.filter(
+          (_, otherRoleIndex) => otherRoleIndex !== roleIndex,
+        );
+      const isReachingAllRecordsForOtherRoles = (
+        operationType: ObjectRecordsOperationType,
+      ) =>
+        otherRolesObjectRecordsPermissions.every(
+          (otherRoleObjectRecordsPermissions) =>
+            canReachAllRecords({
+              objectRecordsPermissions: otherRoleObjectRecordsPermissions,
+              operationType,
+            }),
+        );
+
+      return (objectRecordsPermissions?.rowLevelRecordsPermissions ?? []).map(
+        (rule) => ({
+          ...rule,
+          canCreateRecords:
+            rule.canCreateRecords &&
+            isReachingAllRecordsForOtherRoles('create'),
+          canReadRecords:
+            rule.canReadRecords && isReachingAllRecordsForOtherRoles('read'),
+          canUpdateRecords:
+            rule.canUpdateRecords &&
+            isReachingAllRecordsForOtherRoles('update'),
+          canSoftDeleteRecords:
+            rule.canSoftDeleteRecords &&
+            isReachingAllRecordsForOtherRoles('softDelete'),
+          canDestroyRecords:
+            rule.canDestroyRecords &&
+            isReachingAllRecordsForOtherRoles('destroy'),
+        }),
+      );
+    },
   );
 
-  if (!hasRowLevelPermissions) {
-    return intersectedObjectRecordsPermissions;
-  }
-
-  return {
-    ...intersectedObjectRecordsPermissions,
-    rowLevelRecordsPermissions: {
-      canCreateRecords: isReachingSomeRecordsForEveryRole('create'),
-      canReadRecords: isReachingSomeRecordsForEveryRole('read'),
-      canUpdateRecords: isReachingSomeRecordsForEveryRole('update'),
-      canSoftDeleteRecords: isReachingSomeRecordsForEveryRole('softDelete'),
-      canDestroyRecords: isReachingSomeRecordsForEveryRole('destroy'),
-      predicates: intersectRowLevelPermissionPredicates(
-        objectRecordsPermissionsPerRole.map(
-          (objectRecordsPermissions) =>
-            objectRecordsPermissions?.rowLevelRecordsPermissions?.predicates ??
-            [],
-        ),
-      ),
-      predicateGroups: [],
-    },
-  };
+  return rowLevelRecordsPermissions.length > 0
+    ? { ...intersectedObjectRecordsPermissions, rowLevelRecordsPermissions }
+    : intersectedObjectRecordsPermissions;
 };
 
 export const computePermissionIntersection = (
