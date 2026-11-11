@@ -241,6 +241,26 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
     });
   });
 
+  it('should read a relation the same way whether or not the other side loads it', async () => {
+    const movedToDeletedCompany = buildEvent({
+      before: { companyId: 'big' },
+      after: { companyId: 'deleted' },
+      updatedFields: ['companyId'],
+    });
+
+    const { events } = await filterEventsMatchingDatabaseEventTrigger({
+      events: [movedToDeletedCompany],
+      eventName: 'opportunity.updated',
+      condition: 'previous.company.employees > 100 and isDefined(company)',
+      fields: FIELDS,
+      findRelatedRecords: jest
+        .fn()
+        .mockResolvedValue([{ id: 'big', employees: 500 }]),
+    });
+
+    expect(events).toEqual([movedToDeletedCompany]);
+  });
+
   it('should read a morph target like a relation to one record', async () => {
     const onBigCompany = buildEvent(
       { after: { targetCompanyId: 'big' } },
