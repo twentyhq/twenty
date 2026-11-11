@@ -48,7 +48,20 @@ const OBJECT_RECORDS_PERMISSIONS_WITH_RLS_RULE: ObjectRecordsPermissions = {
   canDestroyAllRecords: false,
   unreadableFields: [],
   uneditableFields: [],
-  rowLevelRecordsPermissions: [],
+  rowLevelRecordsPermissions: [
+    {
+      ruleId: 'rule-id',
+      canCreateRecords: false,
+      canReadRecords: true,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+      predicates: [],
+      predicateGroups: [],
+      unreadableFields: [],
+      uneditableFields: [],
+    },
+  ],
 };
 
 const buildRolesPermissions = (

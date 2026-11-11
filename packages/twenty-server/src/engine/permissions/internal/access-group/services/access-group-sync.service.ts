@@ -68,23 +68,27 @@ export class AccessGroupSyncService {
         canDeleteStaleAccessGroups && !newGroupHashes.has(groupHash),
     );
 
-    const changedObjectMetadataIds = new Set(
-      [...insertedAccessGroups, ...staleAccessGroups].map(
-        ({ objectMetadataId }) => objectMetadataId,
+    const objectMetadataIdsToRecompute =
+      await this.recordAccessGroupComputationService.filterObjectsUsingRecordAccessGroups(
+        {
+          workspaceId,
+          objectMetadataIds: [
+            ...new Set(
+              [...insertedAccessGroups, ...staleAccessGroups].map(
+                ({ objectMetadataId }) => objectMetadataId,
+              ),
+            ),
+          ],
+        },
+      );
+
+    await Promise.all(
+      objectMetadataIdsToRecompute.map((objectMetadataId) =>
+        this.accessGroupSyncSchedulerService.scheduleRecordAccessGroupIdsRecompute(
+          { workspaceId, objectMetadataId },
+        ),
       ),
     );
-
-    for (const objectMetadataId of changedObjectMetadataIds) {
-      if (
-        await this.recordAccessGroupComputationService.isObjectUsingRecordAccessGroups(
-          { workspaceId, objectMetadataId },
-        )
-      ) {
-        await this.accessGroupSyncSchedulerService.scheduleRecordAccessGroupIdsRecompute(
-          { workspaceId, objectMetadataId },
-        );
-      }
-    }
 
     await this.accessGroupRepository.insertAccessGroups({
       workspaceId,

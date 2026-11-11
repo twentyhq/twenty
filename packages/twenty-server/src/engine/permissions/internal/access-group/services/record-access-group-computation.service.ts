@@ -203,6 +203,21 @@ export class RecordAccessGroupComputationService {
     });
   }
 
+  async filterObjectsUsingRecordAccessGroups({
+    workspaceId,
+    objectMetadataIds,
+  }: {
+    workspaceId: string;
+    objectMetadataIds: string[];
+  }): Promise<string[]> {
+    const metadataMaps =
+      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
+
+    return objectMetadataIds.filter((objectMetadataId) =>
+      isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
+    );
+  }
+
   async isObjectReachedByRlsRuleRelation({
     workspaceId,
     objectMetadataId,

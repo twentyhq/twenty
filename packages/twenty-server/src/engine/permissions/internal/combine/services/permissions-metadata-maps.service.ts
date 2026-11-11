@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { findEnabledFlatRelatedRecordPathMaps } from 'src/engine/permissions/internal/related-record-path/utils/find-enabled-flat-related-record-path-maps.util';
+import { RelatedRecordPathReadService } from 'src/engine/permissions/internal/related-record-path/services/related-record-path-read.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { findWorkspaceMemberBoundPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-bound-predicates.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -24,7 +24,10 @@ export class PermissionsMetadataMapsService {
     Promise<LoadedPrincipalsPermissions>
   >();
 
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+  constructor(
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly relatedRecordPathReadService: RelatedRecordPathReadService,
+  ) {}
 
   async load({
     workspaceId,
@@ -57,8 +60,7 @@ export class PermissionsMetadataMapsService {
               .getOrRecompute(workspaceId, ['flatWorkspaceMemberMaps'])
               .then((cache) => cache.flatWorkspaceMemberMaps)
           : undefined,
-        findEnabledFlatRelatedRecordPathMaps({
-          workspaceCacheService: this.workspaceCacheService,
+        this.relatedRecordPathReadService.findEnabledFlatRelatedRecordPathMaps({
           workspaceId,
           featureFlagsMap,
         }),
