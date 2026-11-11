@@ -6,22 +6,22 @@ import {
 } from 'twenty-ui/icon';
 
 import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
+import { useCanReadWorkflowRuns } from '@/object-core/workflows/hooks/useCanReadWorkflowRuns';
 import { type CoreWorkflowShowPageTabId } from '@/object-core/workflows/types/CoreWorkflowShowPageTabId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListSelectionSyncEffect } from '@/ui/layout/tab-list/components/TabListSelectionSyncEffect';
 
 type CoreWorkflowShowPageTabListProps = {
   activeTabId: CoreWorkflowShowPageTabId;
-  canReadWorkflowRuns: boolean;
   componentInstanceId: string;
 };
 
 export const CoreWorkflowShowPageTabList = ({
   activeTabId,
-  canReadWorkflowRuns,
   componentInstanceId,
 }: CoreWorkflowShowPageTabListProps) => {
   const { t } = useLingui();
+  const canReadWorkflowRuns = useCanReadWorkflowRuns();
 
   return (
     <>

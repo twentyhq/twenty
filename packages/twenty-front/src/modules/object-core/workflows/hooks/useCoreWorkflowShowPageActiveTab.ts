@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_WORKFLOW_SHOW_PAGE_TABS } from '@/object-core/workflows/constants/CoreWorkflowShowPageTabs';
+import { useCanReadWorkflowRuns } from '@/object-core/workflows/hooks/useCanReadWorkflowRuns';
 import { type CoreWorkflowShowPageTabId } from '@/object-core/workflows/types/CoreWorkflowShowPageTabId';
 import { getCoreWorkflowShowPageTabIdFromHash } from '@/object-core/workflows/utils/getCoreWorkflowShowPageTabIdFromHash';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 
 const RUN_TAB_IDS: CoreWorkflowShowPageTabId[] = [
   CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW,
@@ -15,13 +13,11 @@ const RUN_TAB_IDS: CoreWorkflowShowPageTabId[] = [
 ];
 
 type UseCoreWorkflowShowPageActiveTabArgs = {
-  coreWorkflowId: string;
   isPublished: boolean | undefined;
   isVersionRequested: boolean;
 };
 
 export const useCoreWorkflowShowPageActiveTab = ({
-  coreWorkflowId,
   isPublished,
   isVersionRequested,
 }: UseCoreWorkflowShowPageActiveTabArgs) => {
@@ -34,17 +30,7 @@ export const useCoreWorkflowShowPageActiveTab = ({
     setIsPublishedOnLoad(isPublished);
   }
 
-  const { objectMetadataItem: workflowRunObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: StandardObjectNameSingular.WorkflowRun,
-    });
-  const workflowRunPermissions = useObjectPermissionsForObject(
-    workflowRunObjectMetadataItem.id,
-  );
-  const canReadWorkflowRuns = canReachSomeRecords({
-    objectRecordsPermissions: workflowRunPermissions,
-    operationType: 'read',
-  });
+  const canReadWorkflowRuns = useCanReadWorkflowRuns();
 
   // Drafts have no runs yet and a requested version is opened to see its flow
   const defaultTabId =
@@ -59,11 +45,7 @@ export const useCoreWorkflowShowPageActiveTab = ({
   const isLinkedToUnreadableRuns =
     RUN_TAB_IDS.includes(tabIdFromHash) && !canReadWorkflowRuns;
 
-  return {
-    activeTabId: isLinkedToUnreadableRuns
-      ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW
-      : tabIdFromHash,
-    canReadWorkflowRuns,
-    tabListComponentInstanceId: `${CORE_WORKFLOW_SHOW_PAGE_TABS.COMPONENT_INSTANCE_ID_PREFIX}-${coreWorkflowId}`,
-  };
+  return isLinkedToUnreadableRuns
+    ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW
+    : tabIdFromHash;
 };

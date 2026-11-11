@@ -15,6 +15,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { CoreWorkflowShowPageActiveTab } from '@/object-core/workflows/components/CoreWorkflowShowPageActiveTab';
 import { CoreWorkflowShowPageTabList } from '@/object-core/workflows/components/CoreWorkflowShowPageTabList';
 import { useCoreWorkflowShowPageActiveTab } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageActiveTab';
+import { getCoreWorkflowShowPageTabListComponentInstanceId } from '@/object-core/workflows/utils/getCoreWorkflowShowPageTabListComponentInstanceId';
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
@@ -82,14 +83,12 @@ const CoreWorkflowShowContent = ({
     : currentVersion;
   const isReadOnlyVersion =
     isApplicationManaged || isDefined(requestedVersionId);
-  const { activeTabId, canReadWorkflowRuns, tabListComponentInstanceId } =
-    useCoreWorkflowShowPageActiveTab({
-      coreWorkflowId,
-      isPublished: isDefined(coreWorkflow)
-        ? isDefined(coreWorkflow.lastPublishedCoreWorkflowVersionId)
-        : undefined,
-      isVersionRequested: isDefined(requestedVersionId),
-    });
+  const activeTabId = useCoreWorkflowShowPageActiveTab({
+    isPublished: isDefined(coreWorkflow)
+      ? isDefined(coreWorkflow.lastPublishedCoreWorkflowVersionId)
+      : undefined,
+    isVersionRequested: isDefined(requestedVersionId),
+  });
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
     currentName: record?.name,
@@ -183,8 +182,9 @@ const CoreWorkflowShowContent = ({
             tabList={
               <CoreWorkflowShowPageTabList
                 activeTabId={activeTabId}
-                canReadWorkflowRuns={canReadWorkflowRuns}
-                componentInstanceId={tabListComponentInstanceId}
+                componentInstanceId={getCoreWorkflowShowPageTabListComponentInstanceId(
+                  coreWorkflowId,
+                )}
               />
             }
           />
