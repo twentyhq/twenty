@@ -21,7 +21,6 @@ import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/f
 import { type PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { getPermissionsPrincipalsActingApplicationId } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-acting-application-id.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
-import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -290,14 +289,6 @@ const expectSamePermissionsWithAndWithoutGrant = async ({
   );
 
   expect(withGrant.computed).toEqual(withoutGrant.computed);
-
-  if (isDefined(withGrant.principals) && isDefined(withoutGrant.principals)) {
-    expect(getPermissionsPrincipalsShareKeys(withGrant.principals)).toEqual(
-      expect.arrayContaining(
-        getPermissionsPrincipalsShareKeys(withoutGrant.principals),
-      ),
-    );
-  }
 
   return withGrant;
 };

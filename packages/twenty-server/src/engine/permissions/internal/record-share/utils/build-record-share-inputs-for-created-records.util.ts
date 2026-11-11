@@ -47,13 +47,14 @@ const resolveShareWithRowOrigin = ({
 const resolveCreatorRoleId = ({
   authContext,
   apiKeyRoleMap,
+  applicationRoleId,
 }: {
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
-}): string | null | undefined => {
+  applicationRoleId: string | undefined;
+}): string | undefined => {
   if (isApplicationAuthContext(authContext)) {
-    // TODO: share with the application's grant role instead of its requested role
-    return authContext.application.defaultRoleId;
+    return applicationRoleId;
   }
 
   if (isApiKeyAuthContext(authContext)) {
@@ -66,11 +67,13 @@ const resolveCreatorRoleId = ({
 const buildCreatorRows = ({
   authContext,
   apiKeyRoleMap,
+  applicationRoleId,
   recordId,
   shareWithPrincipals,
 }: {
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
+  applicationRoleId: string | undefined;
   recordId: string;
   shareWithPrincipals: Pick<RecordShareInput, 'principalId'>[];
 }): RecordShareInputForRecord[] => {
@@ -86,7 +89,11 @@ const buildCreatorRows = ({
     ];
   }
 
-  const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
+  const creatorRoleId = resolveCreatorRoleId({
+    authContext,
+    apiKeyRoleMap,
+    applicationRoleId,
+  });
 
   if (
     !isDefined(creatorRoleId) ||
@@ -112,6 +119,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
   objectMetadataId,
   authContext,
   apiKeyRoleMap,
+  applicationRoleId,
   shareWith,
   isPrivateByDefault,
   isPrivate,
@@ -120,12 +128,18 @@ export const buildRecordShareInputsForCreatedRecords = ({
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
+  // The role the application runs with, its grant role
+  applicationRoleId?: string;
   shareWith?: ShareWithInput[] | null;
   isPrivateByDefault: boolean;
   isPrivate: boolean;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
-  const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
+  const creatorRoleId = resolveCreatorRoleId({
+    authContext,
+    apiKeyRoleMap,
+    applicationRoleId,
+  });
   const shareWithPrincipals = shareWithEntries
     .map(resolveShareWithPrincipalOrThrow)
     .map((shareWithPrincipal) =>
@@ -144,6 +158,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
         ? buildCreatorRows({
             authContext,
             apiKeyRoleMap,
+            applicationRoleId,
             recordId,
             shareWithPrincipals,
           })

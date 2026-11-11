@@ -41,6 +41,8 @@ import { canSetRecordPrivacy } from 'src/engine/permissions/private-record/utils
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 
 @Injectable()
 export class RecordSharingWriteService {
@@ -187,12 +189,17 @@ export class RecordSharingWriteService {
       transactionScope,
     });
 
-    const { apiKeyRoleMap, flatObjectMetadataMaps, featureFlagsMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'apiKeyRoleMap',
-        'flatObjectMetadataMaps',
-        'featureFlagsMap',
-      ]);
+    const {
+      apiKeyRoleMap,
+      flatObjectMetadataMaps,
+      featureFlagsMap,
+      flatRoleTargetByApplicationIdMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'apiKeyRoleMap',
+      'flatObjectMetadataMaps',
+      'featureFlagsMap',
+      'flatRoleTargetByApplicationIdMaps',
+    ]);
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: objectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
@@ -212,6 +219,15 @@ export class RecordSharingWriteService {
         objectMetadataId,
         authContext,
         apiKeyRoleMap,
+        applicationRoleId: isApplicationAuthContext(authContext)
+          ? resolveApplicationGrantRoleId({
+              flatApplication: authContext.application,
+              workspaceId,
+              workspaceCustomApplicationId:
+                authContext.workspace.workspaceCustomApplicationId,
+              flatRoleTargetByApplicationIdMaps,
+            })
+          : undefined,
         shareWith,
         isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
         isPrivate,
