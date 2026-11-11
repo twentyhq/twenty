@@ -37,11 +37,7 @@ jest.mock(
   '@/workflow/workflow-diagram/components/WorkflowDiagramEffect',
   () => ({
     WorkflowDiagramEffect: () => {
-      const { useEffect } = jest.requireActual('react');
-
-      useEffect(() => {
-        mockOnDiagramEffectMount();
-      }, []);
+      jest.requireActual('react').useState(mockOnDiagramEffectMount);
 
       return null;
     },

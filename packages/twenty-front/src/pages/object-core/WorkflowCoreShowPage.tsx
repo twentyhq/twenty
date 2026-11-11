@@ -30,9 +30,6 @@ import { getWorkflowCurrentVersion } from '@/workflow/utils/getWorkflowCurrentVe
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 import { useLingui } from '@lingui/react/macro';
 
-// A remount on draft creation re-seeds the flow from cache and can drop in-flight edits
-const CURRENT_WORKFLOW_VERSION_EDITOR_KEY = 'current-workflow-version';
-
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -175,11 +172,6 @@ const CoreWorkflowShowContent = ({
           />
           {isDefined(selectedVersion) ? (
             <CoreWorkflowEditor
-              key={
-                isReadOnlyVersion
-                  ? selectedVersion.id
-                  : CURRENT_WORKFLOW_VERSION_EDITOR_KEY
-              }
               coreWorkflowId={coreWorkflowId}
               coreWorkflowVersionId={selectedVersion.id}
               readonly={isReadOnlyVersion}

@@ -37,11 +37,7 @@ jest.mock('@/object-core/workflows/components/CoreWorkflowEditor', () => ({
     coreWorkflowVersionId: string;
     readonly: boolean;
   }) => {
-    const { useEffect: useMountEffect } = jest.requireActual('react');
-
-    useMountEffect(() => {
-      mockOnEditorMount();
-    }, []);
+    jest.requireActual('react').useState(mockOnEditorMount);
 
     return (
       <div>

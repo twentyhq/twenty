@@ -32,7 +32,7 @@ export const CoreWorkflowEditor = ({
     refetchCoreWorkflowVersion,
   } = useCoreWorkflowVersion(coreWorkflowVersionId);
 
-  // Stay mounted while a new current version loads, see CURRENT_WORKFLOW_VERSION_EDITOR_KEY
+  // A remount when a draft becomes current would re-seed the flow from cache and drop in-flight edits
   const coreWorkflowVersion =
     fetchedCoreWorkflowVersion ??
     (loading && !readonly ? previousCoreWorkflowVersion : null);
