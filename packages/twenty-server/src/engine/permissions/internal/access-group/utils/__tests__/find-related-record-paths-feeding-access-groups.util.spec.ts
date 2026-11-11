@@ -1,7 +1,5 @@
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
@@ -18,12 +16,6 @@ const REGION = buildObject('region');
 const COMPANY = buildObject('company');
 const PERSON = buildObject('person');
 const NOTE = buildObject('note');
-
-const flatObjectMetadataMaps = [REGION, COMPANY, PERSON, NOTE].reduce(
-  (flatEntityMaps, flatEntity) =>
-    addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
-  createEmptyFlatEntityMaps(),
-);
 
 const buildPath = ({
   source,
@@ -106,7 +98,6 @@ const findFeedingPaths = ({
 }) =>
   findRelatedRecordPathsFeedingAccessGroups({
     rolesPermissions: buildRolesPermissions(objectNamesWithRlsRule),
-    flatObjectMetadataMaps,
     resolvedRelatedRecordPaths: [
       REGION_TO_COMPANY,
       COMPANY_TO_PERSON,
@@ -156,7 +147,6 @@ describe('findRelatedRecordPathsFeedingAccessGroups', () => {
     expect(
       findRelatedRecordPathsFeedingAccessGroups({
         rolesPermissions: buildRolesPermissions([]),
-        flatObjectMetadataMaps,
         resolvedRelatedRecordPaths: [
           COMPANY_TO_NOTE,
           buildPath({

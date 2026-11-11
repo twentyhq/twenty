@@ -4,12 +4,11 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
+import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { resolveRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/resolve-related-record-paths.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export type BuildEntrySQLCondition = (args: {
@@ -90,17 +89,15 @@ export const buildRelatedRecordPathsSQLCondition = ({
       return false;
     }
 
-    const nextTableAliases = [...hopTableAliases.slice(1), targetTableAlias];
-    const fromExpressions = resolvedPath.hops.map(
-      (hop, index) =>
-        `${buildWorkspaceTableExpression({
-          workspaceId,
-          tableName: computeObjectTargetTable(hop.flatObjectMetadata),
-        })} AS ${escapeIdentifier(hopTableAliases[index])}`,
-    );
-    const whereConditions = resolvedPath.hops.flatMap((hop, index) => [
-      `${escapeIdentifier(nextTableAliases[index])}.${escapeIdentifier(hop.targetColumnName)} = ${escapeIdentifier(hopTableAliases[index])}.${escapeIdentifier(hop.sourceColumnName)}`,
-      `${escapeIdentifier(hopTableAliases[index])}."deletedAt" IS NULL`,
+    const { fromExpressions, joinConditions } = buildRelatedRecordPathHopsJoin({
+      workspaceId,
+      hops: resolvedPath.hops,
+      hopTableAliases,
+      targetTableAlias,
+    });
+    const whereConditions = hopTableAliases.flatMap((hopTableAlias, index) => [
+      joinConditions[index],
+      `${escapeIdentifier(hopTableAlias)}."deletedAt" IS NULL`,
     ]);
 
     if (sourceSQLCondition !== true) {
@@ -145,7 +142,6 @@ export const buildRelatedRecordPathsSQLCondition = ({
       entrySQLCondition,
       ...findRelatedRecordPathsFeedingAccessGroups({
         rolesPermissions: metadataMaps.rolesPermissions,
-        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
         resolvedRelatedRecordPaths,
         objectMetadataId: flatObjectMetadata.id,
       }).map((resolvedPath) =>

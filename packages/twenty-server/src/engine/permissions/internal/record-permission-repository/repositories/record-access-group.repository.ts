@@ -8,6 +8,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
+import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 import { type RelatedRecordPathFollowingLookup } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-lookup.type';
@@ -160,17 +161,20 @@ export class RecordAccessGroupRepository {
         lookupIndex,
       ) => {
         const followingHopAliases = followingHops.map(
-          (_, hopIndex) => `"following_${hopIndex}"`,
+          (_, hopIndex) => `following_${hopIndex}`,
         );
-        const nextAliases = [...followingHopAliases, '"target"'];
-        const writtenJoinColumn = `${nextAliases[0]}.${escapeIdentifier(writtenHop.targetColumnName)}`;
+        const { fromExpressions, joinConditions } =
+          buildRelatedRecordPathHopsJoin({
+            workspaceId,
+            hops: followingHops,
+            hopTableAliases: followingHopAliases,
+            targetTableAlias: 'target',
+          });
+        const writtenJoinColumn = `${escapeIdentifier(followingHopAliases[0] ?? 'target')}.${escapeIdentifier(writtenHop.targetColumnName)}`;
 
         return `SELECT ${lookupIndex} AS "lookupIndex", "target"."id"
           FROM ${[
-            ...followingHops.map(
-              (hop, hopIndex) =>
-                `${buildTableExpression(hop.flatObjectMetadata)} AS ${followingHopAliases[hopIndex]}`,
-            ),
+            ...fromExpressions,
             `${buildTableExpression(targetFlatObjectMetadata)} AS "target"`,
           ].join(', ')}
           WHERE (${writtenJoinColumn} = ANY(:joinValuesBefore_${lookupIndex})
@@ -179,12 +183,7 @@ export class RecordAccessGroupRepository {
               FROM ${buildTableExpression(writtenHop.flatObjectMetadata)} AS "written"
               WHERE "written"."id" = ANY(:recordIds_${lookupIndex})
             ))
-            ${followingHops
-              .map(
-                (hop, hopIndex) =>
-                  `AND ${nextAliases[hopIndex + 1]}.${escapeIdentifier(hop.targetColumnName)} = ${followingHopAliases[hopIndex]}.${escapeIdentifier(hop.sourceColumnName)}`,
-              )
-              .join(' ')}`;
+            ${joinConditions.map((joinCondition) => `AND ${joinCondition}`).join(' ')}`;
       },
     );
 

@@ -39,17 +39,16 @@ export class RecordAccessGroupPropagationService {
 
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const recomputedObjectMetadataIds = [
-      ...propagatedFromObjectMetadataIds,
-      objectMetadataId,
-    ];
     const followingObjectMetadataIds = new Set(
       metadataMaps.resolvedRelatedRecordPaths
         .filter(
-          ({ isInherent, sourceFlatObjectMetadata, targetObjectMetadataId }) =>
-            sourceFlatObjectMetadata.id === objectMetadataId &&
-            (isInherent || propagatedFromObjectMetadataIds.length === 0) &&
-            !recomputedObjectMetadataIds.includes(targetObjectMetadataId),
+          (resolvedPath) =>
+            resolvedPath.sourceFlatObjectMetadata.id === objectMetadataId &&
+            this.isRelatedRecordPathFollowed({
+              resolvedPath,
+              objectMetadataId,
+              propagatedFromObjectMetadataIds,
+            }),
         )
         .map(({ targetObjectMetadataId }) => targetObjectMetadataId),
     );
@@ -57,7 +56,10 @@ export class RecordAccessGroupPropagationService {
     await this.scheduleRecomputeOfObjectsUsingRecordAccessGroups({
       workspaceId,
       objectMetadataIds: followingObjectMetadataIds,
-      propagatedFromObjectMetadataIds: recomputedObjectMetadataIds,
+      propagatedFromObjectMetadataIds: [
+        ...propagatedFromObjectMetadataIds,
+        objectMetadataId,
+      ],
       metadataMaps,
     });
   }
@@ -137,21 +139,20 @@ export class RecordAccessGroupPropagationService {
   }): Promise<RelatedRecords[]> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const recomputedObjectMetadataIds = [
-      ...propagatedFromObjectMetadataIds,
-      objectMetadataId,
-    ];
     const lookups: RelatedRecordPathFollowingLookup[] = [];
 
     for (const resolvedPath of this.findRelatedRecordPathsLeadingFromObject({
       metadataMaps,
       objectMetadataId,
     })) {
-      const { hops, isInherent, targetObjectMetadataId } = resolvedPath;
+      const { hops, targetObjectMetadataId } = resolvedPath;
 
       if (
-        recomputedObjectMetadataIds.includes(targetObjectMetadataId) ||
-        (!isInherent && propagatedFromObjectMetadataIds.length > 0)
+        !this.isRelatedRecordPathFollowed({
+          resolvedPath,
+          objectMetadataId,
+          propagatedFromObjectMetadataIds,
+        })
       ) {
         continue;
       }
@@ -211,8 +212,27 @@ export class RecordAccessGroupPropagationService {
             .map(({ id }) => id),
         ),
       ],
-      propagatedFromObjectMetadataIds: recomputedObjectMetadataIds,
+      propagatedFromObjectMetadataIds: [
+        ...propagatedFromObjectMetadataIds,
+        objectMetadataId,
+      ],
     }));
+  }
+
+  private isRelatedRecordPathFollowed({
+    resolvedPath: { isInherent, targetObjectMetadataId },
+    objectMetadataId,
+    propagatedFromObjectMetadataIds,
+  }: {
+    resolvedPath: ResolvedRelatedRecordPath;
+    objectMetadataId: string;
+    propagatedFromObjectMetadataIds: string[];
+  }): boolean {
+    return (
+      (isInherent || propagatedFromObjectMetadataIds.length === 0) &&
+      targetObjectMetadataId !== objectMetadataId &&
+      !propagatedFromObjectMetadataIds.includes(targetObjectMetadataId)
+    );
   }
 
   async isObjectLeadingThroughRelatedRecordPath({
@@ -237,9 +257,7 @@ export class RecordAccessGroupPropagationService {
   }: {
     metadataMaps: Pick<
       RecordAccessGroupComputationMetadataMaps,
-      | 'rolesPermissions'
-      | 'flatObjectMetadataMaps'
-      | 'resolvedRelatedRecordPaths'
+      'rolesPermissions' | 'resolvedRelatedRecordPaths'
     >;
     objectMetadataId: string;
   }): ResolvedRelatedRecordPath[] {

@@ -31,7 +31,6 @@ import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permission
 import { arePrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/are-private-records-enabled.util';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const RECOMPUTE_BATCH_SIZE = 1_000;
 
@@ -39,7 +38,6 @@ const RECOMPUTE_BATCH_SIZE = 1_000;
 export class RecordAccessGroupComputationService {
   constructor(
     private readonly cacheLockService: CacheLockService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupRepository: AccessGroupRepository,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
@@ -54,10 +52,10 @@ export class RecordAccessGroupComputationService {
     RecomputeRecordAccessGroupIdsJobData,
     'workspaceId' | 'objectMetadataId'
   >): Promise<void> {
-    await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
-
     const metadataMaps =
-      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
+      await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
+        workspaceId,
+      );
 
     if (
       !isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId })

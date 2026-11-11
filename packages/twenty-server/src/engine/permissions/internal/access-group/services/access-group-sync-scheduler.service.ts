@@ -33,37 +33,19 @@ export class AccessGroupSyncSchedulerService {
   }
 
   async scheduleSyncIfEnabled(workspaceId: string): Promise<void> {
-    if (!(await this.isEnabled(workspaceId))) {
-      return;
-    }
-
-    await this.messageQueueService.add<SyncAccessGroupsJobData>(
-      SYNC_ACCESS_GROUPS_JOB_NAME,
-      { workspaceId },
-      {
-        isWorkspaceJob: true,
-        workspaceId,
-        retryLimit: 3,
-      },
-    );
+    await this.scheduleWorkspaceJobIfEnabled({
+      workspaceId,
+      jobName: SYNC_ACCESS_GROUPS_JOB_NAME,
+    });
   }
 
   async scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
     workspaceId: string,
   ): Promise<void> {
-    if (!(await this.isEnabled(workspaceId))) {
-      return;
-    }
-
-    await this.messageQueueService.add<RecomputeRelatedRecordPathTargetsJobData>(
-      RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME,
-      { workspaceId },
-      {
-        isWorkspaceJob: true,
-        workspaceId,
-        retryLimit: 3,
-      },
-    );
+    await this.scheduleWorkspaceJobIfEnabled({
+      workspaceId,
+      jobName: RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME,
+    });
   }
 
   async scheduleRecordAccessGroupIdsRecompute({
@@ -83,6 +65,26 @@ export class AccessGroupSyncSchedulerService {
           keepLastIfActive: true,
         },
       },
+    );
+  }
+
+  private async scheduleWorkspaceJobIfEnabled({
+    workspaceId,
+    jobName,
+  }: {
+    workspaceId: string;
+    jobName: string;
+  }): Promise<void> {
+    if (!(await this.isEnabled(workspaceId))) {
+      return;
+    }
+
+    await this.messageQueueService.add<
+      SyncAccessGroupsJobData | RecomputeRelatedRecordPathTargetsJobData
+    >(
+      jobName,
+      { workspaceId },
+      { isWorkspaceJob: true, workspaceId, retryLimit: 3 },
     );
   }
 }
