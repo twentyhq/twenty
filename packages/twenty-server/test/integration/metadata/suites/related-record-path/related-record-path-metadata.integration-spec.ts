@@ -272,6 +272,10 @@ describe('Related record path metadata', () => {
     expect(JSON.stringify(secondResponse.body.errors)).toContain(
       'This related record path already exists',
     );
+
+    await deleteRelatedRecordPath(
+      firstResponse.body.data.createRelatedRecordPath.id,
+    );
   });
 
   it('should save only one of two identical paths created at the same time', async () => {
@@ -308,6 +312,29 @@ describe('Related record path metadata', () => {
 
     expect(JSON.stringify(response.body.errors)).toContain(
       'Related record path cannot visit the same object twice',
+    );
+  });
+
+  it('should reject inherent paths that form a cycle', async () => {
+    const projectToTasksResponse = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+      isInherent: true,
+    });
+
+    expect(projectToTasksResponse.body.errors).toBeUndefined();
+
+    const taskToProjectResponse = await createRelatedRecordPath({
+      objectMetadataId: taskObjectMetadataId,
+      firstFieldMetadataId: taskProjectFieldMetadataId,
+      isInherent: true,
+    });
+
+    expect(JSON.stringify(taskToProjectResponse.body.errors)).toContain(
+      'Inherent related record paths cannot form a cycle',
+    );
+
+    await deleteRelatedRecordPath(
+      projectToTasksResponse.body.data.createRelatedRecordPath.id,
     );
   });
 
@@ -365,6 +392,12 @@ describe('Related record path metadata', () => {
   });
 
   it('should delete the paths that reach a deleted object', async () => {
+    const response = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
     const createdPathIdsBefore = await findPathIds();
 
     expect(

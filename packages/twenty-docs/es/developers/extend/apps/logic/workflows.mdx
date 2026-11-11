@@ -107,7 +107,7 @@ Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/us
 
 * Los pasos de registro usan `objectUniversalIdentifier` en lugar de un nombre de objeto.
 * Los filtros y las ordenaciones apuntan a campos con `fieldMetadataUniversalIdentifier`.
-* Los operandos de filtro toman valores de `ViewFilterOperand`, exportados por `twenty-sdk/define`. Los operadores de grupo de filtros toman valores de cadena como `'AND'` u `'OR'`.
+* Los operandos de filtro aceptan valores `ViewFilterOperand`. Los operadores de grupo de filtros aceptan valores `StepLogicalOperator` en los filtros de pasos y valores `RecordFilterGroupLogicalOperator` en los filtros de registros, ambos `AND` u `OR`. `twenty-sdk/define` exporta los tres, junto con `ViewFilterOperandDeprecated` para los operandos que los flujos de trabajo más antiguos aún almacenan.
 * Los campos de formulario de tipo `RECORD` nombran su objeto con `settings.objectUniversalIdentifier`. Los campos de tipo `SELECT` y `MULTI_SELECT` ofrecen las opciones de un campo existente del mismo tipo, denominado con `settings.selectedFieldUniversalIdentifier`.
 * Un paso `CODE` contiene su código fuente de TypeScript en `input.code`: un módulo que exporta una función `main`, que recibe `input.logicFunctionInput`. Para compartir código entre workflows, usa un paso `LOGIC_FUNCTION` en su lugar.
 

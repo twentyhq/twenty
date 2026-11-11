@@ -107,7 +107,7 @@ Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/us
 
 * Pașii de înregistrare folosesc `objectUniversalIdentifier` în locul numelui obiectului.
 * Filtrele și sortările indică spre câmpuri cu `fieldMetadataUniversalIdentifier`.
-* Operanzii de filtrare acceptă valori `ViewFilterOperand`, exportate de `twenty-sdk/define`. Operatorii grupului de filtre acceptă valori șir de caractere precum `'AND'` sau `'OR'`.
+* Operanzii de filtrare acceptă valori `ViewFilterOperand`. Operatorii de grup de filtre acceptă valori `StepLogicalOperator` în filtrele de pași și valori `RecordFilterGroupLogicalOperator` în filtrele de înregistrări, ambele `AND` sau `OR`. `twenty-sdk/define` exportă toate cele trei, împreună cu `ViewFilterOperandDeprecated` pentru operanzii pe care fluxurile de lucru mai vechi îi stochează încă.
 * Câmpurile de formular de tip `RECORD` își denumesc obiectul cu `settings.objectUniversalIdentifier`. Câmpurile de tip `SELECT` și `MULTI_SELECT` oferă opțiunile unui câmp existent de același tip, denumit cu `settings.selectedFieldUniversalIdentifier`.
 * Un pas `CODE` își conține sursa TypeScript în `input.code`: un modul care exportă o funcție `main`, care primește `input.logicFunctionInput`. Pentru a partaja cod între fluxuri de lucru, folosește în schimb un pas `LOGIC_FUNCTION`.
 

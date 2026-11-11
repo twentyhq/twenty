@@ -9,9 +9,19 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 
 const WORKSPACE_ID = 'workspace-id';
 
+const LIMITER = { max: 100, durationMs: 60_000 };
+
 const WORKFLOWS = {
-  'workflow-a': { id: 'workflow-a', applicationId: 'application-a' },
-  'workflow-b': { id: 'workflow-b', applicationId: 'application-b' },
+  'workflow-a': {
+    id: 'workflow-a',
+    applicationId: 'application-a',
+    jobConfig: { limiter: LIMITER },
+  },
+  'workflow-b': {
+    id: 'workflow-b',
+    applicationId: 'application-b',
+    jobConfig: { limiter: LIMITER },
+  },
 };
 
 const buildService = (triggerType: WorkflowTriggerType) => {
@@ -38,6 +48,13 @@ const buildService = (triggerType: WorkflowTriggerType) => {
           },
         },
         idByUniversalIdentifier: {},
+      },
+      flatWorkflowMaps: {
+        byUniversalIdentifier: WORKFLOWS,
+        universalIdentifierById: {
+          'workflow-a': 'workflow-a',
+          'workflow-b': 'workflow-b',
+        },
       },
     }),
   };
@@ -110,7 +127,7 @@ const buildService = (triggerType: WorkflowTriggerType) => {
 };
 
 describe('CoreWorkflowRunnerService', () => {
-  it('scopes the run job of each workflow to the application owning it', async () => {
+  it('scopes the run job of each workflow to the application owning it, with the limiter of the workflow', async () => {
     const { runBothWorkflows, messageQueueService } = buildService(
       WorkflowTriggerType.MANUAL,
     );
@@ -126,6 +143,7 @@ describe('CoreWorkflowRunnerService', () => {
           doNotCheckDuplicatesBasedOnPrefix: true,
           workspaceId: WORKSPACE_ID,
           applicationUniversalIdentifier: 'application-a-universal-id',
+          limiter: { key: 'workflow:workflow-a', ...LIMITER },
         },
       ],
       [
@@ -136,6 +154,7 @@ describe('CoreWorkflowRunnerService', () => {
           doNotCheckDuplicatesBasedOnPrefix: true,
           workspaceId: WORKSPACE_ID,
           applicationUniversalIdentifier: 'application-b-universal-id',
+          limiter: { key: 'workflow:workflow-b', ...LIMITER },
         },
       ],
     ]);

@@ -62,15 +62,20 @@ const PERSON_OBJECT_RECORDS_PERMISSIONS_WITH_ROW_LEVEL_ACCESS: CurrentUserWorksp
     canDestroyAllRecords: false,
     unreadableFields: [],
     uneditableFields: [],
-    rowLevelRecordsPermissions: {
-      canCreateRecords: true,
-      canReadRecords: true,
-      canUpdateRecords: true,
-      canSoftDeleteRecords: false,
-      canDestroyRecords: false,
-      predicates: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE],
-      predicateGroups: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP],
-    },
+    rowLevelRecordsPermissions: [
+      {
+        ruleId: 'rule-id',
+        canCreateRecords: true,
+        canReadRecords: true,
+        canUpdateRecords: true,
+        canSoftDeleteRecords: false,
+        canDestroyRecords: false,
+        predicates: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE],
+        predicateGroups: [PERSON_ROW_LEVEL_PERMISSION_PREDICATE_GROUP],
+        unreadableFields: [],
+        uneditableFields: [],
+      },
+    ],
   };
 
 const buildCurrentUserWorkspace = (

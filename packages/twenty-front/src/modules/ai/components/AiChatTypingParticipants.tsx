@@ -4,6 +4,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatTypingIndicator } from '@/ai/components/AiChatTypingIndicator';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
+import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
+import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
@@ -14,12 +16,20 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledContainer = styled(StyledAiChatContentContainer)`
+const StyledContainer = styled(StyledAiChatContentContainer)<{
+  hasPageContentInset: boolean;
+}>`
   flex-shrink: 0;
-  padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
+  padding: 0
+    ${({ hasPageContentInset }) =>
+      hasPageContentInset
+        ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
+        : themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[2]};
 `;
 
 export const AiChatTypingParticipants = () => {
+  const hasPageContentInset = useHasAiChatPageContentInset();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -48,7 +58,7 @@ export const AiChatTypingParticipants = () => {
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer hasPageContentInset={hasPageContentInset}>
       <AiChatTypingIndicator participants={participants} />
     </StyledContainer>
   );
