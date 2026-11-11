@@ -55,15 +55,58 @@ describe('defineLogicFunction', () => {
     });
   });
 
-  it('should accept databaseEventTriggerSettings on every object', () => {
+  it('should accept eventTriggerSettings on every object', () => {
     const result = defineLogicFunction({
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Any Record Created',
       handler: mockHandler,
-      databaseEventTriggerSettings: { action: 'created' },
+      eventTriggerSettings: { on: 'record', action: 'created' },
     });
 
     expect(result.success).toBe(true);
+  });
+
+  it('should error when eventTriggerSettings does not set on', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Any Record Created',
+      handler: mockHandler,
+      eventTriggerSettings: JSON.parse('{"action":"created"}'),
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      "Event trigger settings must set on: 'record'",
+    );
+  });
+
+  it('should point an object and action in databaseEventTriggerSettings to eventTriggerSettings', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Any Record Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: JSON.parse('{"action":"created"}'),
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      "Database event trigger: declare an object and an action with eventTriggerSettings with on: 'record'",
+    );
+  });
+
+  it('should error when both trigger settings are set', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Contact Created',
+      handler: mockHandler,
+      eventTriggerSettings: { on: 'record', action: 'created' },
+      databaseEventTriggerSettings: { eventName: 'contact.created' },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Set eventTriggerSettings or databaseEventTriggerSettings, not both',
+    );
   });
 
   it('should error when the database event trigger settings are not an object', () => {
@@ -82,23 +125,23 @@ describe('defineLogicFunction', () => {
 
   it('should error on trigger settings of the wrong type', () => {
     // Manifests are often plain JavaScript, so nothing typed these values
-    const databaseEventTriggerSettings = JSON.parse(
-      '{"action":"updated","objectUniversalIdentifier":"9d3a2f8e-5c1b-4e7a-8f6d-2b4c1a9e7d35","watchedFieldUniversalIdentifiers":"name","condition":true,"batchMode":"yes"}',
+    const eventTriggerSettings = JSON.parse(
+      '{"on":"record","action":"updated","objectUniversalIdentifier":"9d3a2f8e-5c1b-4e7a-8f6d-2b4c1a9e7d35","watchedFieldUniversalIdentifiers":"name","condition":true,"batchMode":"yes"}',
     );
 
     const result = defineLogicFunction({
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Record Updated',
       handler: mockHandler,
-      databaseEventTriggerSettings,
+      eventTriggerSettings,
     });
 
     expect(result.success).toBe(false);
     expect(result.errors).toEqual(
       expect.arrayContaining([
-        'Database event trigger watchedFieldUniversalIdentifiers must be a list of valid UUIDs',
-        'Database event trigger condition must be text',
-        'Database event trigger batchMode must be true or false',
+        'Event trigger watchedFieldUniversalIdentifiers must be a list of valid UUIDs',
+        'Event trigger condition must be text',
+        'Event trigger batchMode must be true or false',
       ]),
     );
   });
@@ -108,7 +151,8 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Record Created',
       handler: mockHandler,
-      databaseEventTriggerSettings: {
+      eventTriggerSettings: {
+        on: 'record',
         objectUniversalIdentifier: '',
         action: 'created',
       },
@@ -116,7 +160,7 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Database event trigger objectUniversalIdentifier must be a valid UUID',
+      'Event trigger objectUniversalIdentifier must be a valid UUID',
     );
   });
 
@@ -125,7 +169,8 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Any Record Created',
       handler: mockHandler,
-      databaseEventTriggerSettings: {
+      eventTriggerSettings: {
+        on: 'record',
         action: 'created',
         condition: 'isDefined(name)',
       },
@@ -133,7 +178,7 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Database event trigger needs an objectUniversalIdentifier to watch fields or check a condition',
+      'Event trigger needs an objectUniversalIdentifier to watch fields or check a condition',
     );
   });
 
@@ -285,7 +330,7 @@ describe('defineLogicFunction', () => {
     expect(result.errors).toContain('Cron trigger must have a pattern');
   });
 
-  it('should return error when databaseEvent trigger has neither action nor eventName', () => {
+  it('should return error when databaseEvent trigger has no eventName', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
@@ -297,7 +342,7 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Database event trigger must have an action or an eventName',
+      'Database event trigger must have an eventName',
     );
   });
 
