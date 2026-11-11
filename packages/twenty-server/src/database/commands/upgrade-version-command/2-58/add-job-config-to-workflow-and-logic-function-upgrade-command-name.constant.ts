@@ -1,0 +1,2 @@
+export const ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME =
+  '2.58.0_AddJobConfigToWorkflowAndLogicFunctionFastInstanceCommand_1794319991745';

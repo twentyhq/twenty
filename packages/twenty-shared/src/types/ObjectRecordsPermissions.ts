@@ -8,5 +8,5 @@ export type ObjectRecordsPermissions = {
   canDestroyAllRecords: boolean;
   unreadableFields: string[];
   uneditableFields: string[];
-  rowLevelRecordsPermissions?: RowLevelRecordsPermissions | null;
+  rowLevelRecordsPermissions?: RowLevelRecordsPermissions[] | null;
 };

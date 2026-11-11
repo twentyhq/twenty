@@ -257,6 +257,7 @@ describe('Code interpreter sandbox token beyond the agent role should be refused
       objectNameSingular: 'company',
       fieldName: 'name',
       value: AGENT_VISIBLE_COMPANY_NAME_TOKEN,
+      ruleGrants: { canReadRecords: true },
     });
 
     const assignResponse = await makeMetadataApiRequest({

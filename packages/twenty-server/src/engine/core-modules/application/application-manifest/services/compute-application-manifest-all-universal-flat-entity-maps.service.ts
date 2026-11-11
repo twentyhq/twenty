@@ -55,7 +55,10 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
+import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { buildRowLevelPermissionRules } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/build-row-level-permission-rules.util';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
 const CONNECTION_FLOW_HOOKS = new Set([
@@ -391,35 +394,76 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         });
       }
 
-      for (const rowLevelPermissionPredicateGroupManifest of roleManifest.rowLevelPermissionPredicateGroups ??
-        []) {
+      const universalFlatPredicateGroups = (
+        roleManifest.rowLevelPermissionPredicateGroups ?? []
+      ).map((rowLevelPermissionPredicateGroupManifest) =>
+        fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
+          {
+            rowLevelPermissionPredicateGroupManifest,
+            roleUniversalIdentifier: roleManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          },
+        ),
+      );
+      const universalFlatPredicates = (
+        roleManifest.rowLevelPermissionPredicates ?? []
+      ).map((rowLevelPermissionPredicateManifest) =>
+        fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
+          {
+            rowLevelPermissionPredicateManifest,
+            roleUniversalIdentifier: roleManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          },
+        ),
+      );
+      const {
+        rules,
+        ruleUniversalIdentifierByPredicateGroupUniversalIdentifier,
+        ruleUniversalIdentifierByPredicateUniversalIdentifier,
+      } = buildRowLevelPermissionRules({
+        predicateGroups: universalFlatPredicateGroups,
+        predicates: universalFlatPredicates,
+        now,
+      });
+
+      for (const rule of rules) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
-              {
-                rowLevelPermissionPredicateGroupManifest,
-                roleUniversalIdentifier: roleManifest.universalIdentifier,
-                applicationUniversalIdentifier,
-                now,
-              },
-            ),
+          universalFlatEntity: rule,
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatRowLevelPermissionRuleMaps,
+        });
+      }
+
+      for (const universalFlatPredicateGroup of universalFlatPredicateGroups) {
+        const linkedPredicateGroup: UniversalFlatRowLevelPermissionPredicateGroup =
+          {
+            ...universalFlatPredicateGroup,
+            rowLevelPermissionRuleUniversalIdentifier:
+              ruleUniversalIdentifierByPredicateGroupUniversalIdentifier.get(
+                universalFlatPredicateGroup.universalIdentifier,
+              ) ?? null,
+          };
+
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: linkedPredicateGroup,
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
         });
       }
 
-      for (const rowLevelPermissionPredicateManifest of roleManifest.rowLevelPermissionPredicates ??
-        []) {
+      for (const universalFlatPredicate of universalFlatPredicates) {
+        const linkedPredicate: UniversalFlatRowLevelPermissionPredicate = {
+          ...universalFlatPredicate,
+          rowLevelPermissionRuleUniversalIdentifier:
+            ruleUniversalIdentifierByPredicateUniversalIdentifier.get(
+              universalFlatPredicate.universalIdentifier,
+            ) ?? null,
+        };
+
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
-              {
-                rowLevelPermissionPredicateManifest,
-                roleUniversalIdentifier: roleManifest.universalIdentifier,
-                applicationUniversalIdentifier,
-                now,
-              },
-            ),
+          universalFlatEntity: linkedPredicate,
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatRowLevelPermissionPredicateMaps,
         });

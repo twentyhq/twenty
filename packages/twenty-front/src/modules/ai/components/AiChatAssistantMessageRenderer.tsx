@@ -9,6 +9,7 @@ import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStat
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai/components/AiChatToolCallApprovalStatusRenderer';
 import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
+import { type AssistantMessageRenderItem } from '@/ai/types/AssistantMessageRenderItem';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
@@ -35,7 +36,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledMessagePartsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const MessagePartRenderer = ({
@@ -185,11 +186,20 @@ export const AiChatAssistantMessageRenderer = ({
     (renderItem) => renderItem.type !== 'thinking-steps',
   );
   // Falling back to the steps keeps a finished message from rendering as an empty entry
-  const renderItems =
+  const visibleRenderItems =
     shouldHideThinkingSteps &&
     (isLastMessageStreaming || renderItemsWithoutThinkingSteps.length > 0)
       ? renderItemsWithoutThinkingSteps
       : groupedRenderItems;
+  const isAwaitingFirstStep =
+    visibleRenderItems.length === 0 &&
+    isLastMessageStreaming &&
+    !hasError &&
+    !shouldHideThinkingSteps &&
+    !hasSucceededCompleteWorkspaceSetupToolPart;
+  const renderItems: AssistantMessageRenderItem[] = isAwaitingFirstStep
+    ? [{ type: 'thinking-steps', parts: [] }]
+    : visibleRenderItems;
 
   const lastRenderItemIndex = renderItems.length - 1;
   // the duration covers the whole message, so only the steps right before the final answer carry it

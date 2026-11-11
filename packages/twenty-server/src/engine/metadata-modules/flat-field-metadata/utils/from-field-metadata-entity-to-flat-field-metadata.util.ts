@@ -105,6 +105,29 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
       ) ?? [],
     searchFieldMetadataIds:
       fieldMetadataEntity.searchFieldMetadatas?.map(({ id }) => id) ?? [],
+    rowLevelPermissionPredicateIds:
+      fieldMetadataEntity.rowLevelPermissionPredicates?.map(({ id }) => id) ??
+      [],
+    rowLevelPermissionPredicateUniversalIdentifiers:
+      fieldMetadataEntity.rowLevelPermissionPredicates?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    relationRowLevelPermissionPredicateIds:
+      fieldMetadataEntity.relationRowLevelPermissionPredicates?.map(
+        ({ id }) => id,
+      ) ?? [],
+    relationRowLevelPermissionPredicateUniversalIdentifiers:
+      fieldMetadataEntity.relationRowLevelPermissionPredicates?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    workspaceMemberRowLevelPermissionPredicateIds:
+      fieldMetadataEntity.workspaceMemberRowLevelPermissionPredicates?.map(
+        ({ id }) => id,
+      ) ?? [],
+    workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers:
+      fieldMetadataEntity.workspaceMemberRowLevelPermissionPredicates?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     fieldMetadataOptionIds:
       fieldMetadataEntity.fieldMetadataOptions?.map(({ id }) => id) ?? [],
     fieldMetadataOptionUniversalIdentifiers:

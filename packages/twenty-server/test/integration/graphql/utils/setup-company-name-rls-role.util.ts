@@ -1,4 +1,7 @@
-import { upsertContainsRlsPredicate } from 'test/integration/graphql/utils/upsert-contains-rls-predicate.util';
+import {
+  type RowLevelPermissionRuleGrants,
+  upsertContainsRlsPredicate,
+} from 'test/integration/graphql/utils/upsert-contains-rls-predicate.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -9,6 +12,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 export const VISIBLE_COMPANY_NAME_TOKEN = 'Visible';
+
+export const COMPANY_NAME_RLS_RULE_GRANTS: RowLevelPermissionRuleGrants = {
+  canCreateRecords: true,
+  canReadRecords: true,
+  canUpdateRecords: true,
+};
 
 export type CompanyNameRlsRoleSetup = {
   customRoleId: string;
@@ -51,6 +60,7 @@ export const setupCompanyNameRlsRole = async ({
     objectNameSingular: 'company',
     fieldName: 'name',
     value: VISIBLE_COMPANY_NAME_TOKEN,
+    ruleGrants: COMPANY_NAME_RLS_RULE_GRANTS,
   });
 
   await updateWorkspaceMemberRole({

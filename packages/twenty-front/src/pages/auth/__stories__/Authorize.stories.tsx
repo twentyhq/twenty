@@ -9,8 +9,11 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getOperationName } from '~/utils/getOperationName';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { FindApplicationRegistrationByClientIdDocument } from '~/generated-metadata/graphql';
 
@@ -158,5 +161,42 @@ export const WithLongAppName: Story = {
       undefined,
       { timeout: 5000 },
     );
+  },
+};
+
+export const WithClaudeInWorkspace: Story = {
+  args: {
+    searchParams: {
+      client_id: 'claude-client-id',
+      redirect_uri: 'https://claude.ai/api/mcp/auth_callback',
+    },
+  },
+  beforeEach: () => {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      displayName: 'Acme',
+      logo: null,
+    });
+
+    return () => {
+      jotaiStore.set(currentWorkspaceState.atom, null);
+    };
+  },
+  parameters: {
+    msw: {
+      handlers: buildHandlers({
+        id: 'application-id-claude',
+        name: 'Claude',
+        logoUrl: null,
+        oAuthScopes: ['api', 'profile'],
+        websiteUrl: null,
+      }),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText('Connect Claude to Acme', undefined, {
+      timeout: 5000,
+    });
   },
 };
