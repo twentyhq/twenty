@@ -7,15 +7,17 @@ import { In } from 'typeorm';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
+import { buildSystemAuthContext } from 'src/engine/core-modules/auth/utils/build-system-auth-context.util';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type FindDatabaseEventRelatedRecords } from 'src/engine/workspace-event-emitter/types/find-database-event-related-records.type';
@@ -29,31 +31,19 @@ export class DatabaseEventTriggerConditionService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
   // A hidden field reads as null, which a condition can't tell from an empty one
   private async findFieldHiddenFromTrigger({
-    workspaceId,
-    application,
-    agentId,
+    principals,
     objectMetadataId,
     fieldIds,
   }: {
-    workspaceId: string;
-    application: FlatApplication;
-    agentId?: string;
+    principals: PermissionsPrincipalsWithRolesContext;
     objectMetadataId: string;
     fieldIds: string[];
   }): Promise<string | undefined> {
-    const principals =
-      await this.principalPermissionsReadService.resolvePermissionsPrincipals({
-        authContext: {
-          type: 'application',
-          workspace: { id: workspaceId },
-          application,
-          agentId,
-        },
-      });
     const unreadableFieldIds =
       await this.recordFieldPermissionsReadService.findUnreadableFields({
         principals,
@@ -80,17 +70,15 @@ export class DatabaseEventTriggerConditionService {
     eventName,
     watchedFields,
     condition,
-    application,
-    agentId,
+    authContext,
   }: {
     workspaceId: string;
     objectMetadata: FlatObjectMetadata;
     events: TEvent[];
     eventName: string;
     watchedFields?: string[];
-    condition?: string;
-    application: FlatApplication;
-    agentId?: string;
+    condition?: string | null;
+    authContext: PermissionsAuthContext;
   }) {
     if (!isNonEmptyString(condition)) {
       return filterEventsMatchingDatabaseEventTrigger({
@@ -107,7 +95,7 @@ export class DatabaseEventTriggerConditionService {
         'flatFieldMetadataMaps',
       ]);
 
-    // Related records are read as the trigger's owner, so a condition sees no more than its handler could
+    // Related records are read as the trigger's principal, so a condition sees no more than its handler could
     const findRelatedRecords: FindDatabaseEventRelatedRecords = async ({
       relationFieldName,
       recordIds,
@@ -134,7 +122,16 @@ export class DatabaseEventTriggerConditionService {
         workspaceId,
       );
 
-      if (!isDefined(targetObjectMetadata) || !isDefined(workspace)) {
+      const principals =
+        await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+          { authContext },
+        );
+
+      if (
+        !isDefined(targetObjectMetadata) ||
+        !isDefined(workspace) ||
+        !isDefined(principals)
+      ) {
         throw new Error(`Cannot read the records of "${relationFieldName}"`);
       }
 
@@ -148,9 +145,7 @@ export class DatabaseEventTriggerConditionService {
         .filter(isDefined)
         .filter((field) => fieldNames.includes(field.name));
       const hiddenFieldId = await this.findFieldHiddenFromTrigger({
-        workspaceId,
-        application,
-        agentId,
+        principals,
         objectMetadataId: targetObjectMetadata.id,
         fieldIds: targetFields.map(({ id }) => id),
       });
@@ -165,6 +160,19 @@ export class DatabaseEventTriggerConditionService {
         );
       }
 
+      const canReadTargetRecords =
+        await this.recordPermissionsReadService.canAccessSomeRecords({
+          principals,
+          objectMetadataId: targetObjectMetadata.id,
+          operationType: 'read',
+        });
+
+      if (!canReadTargetRecords) {
+        throw new Error(
+          `The condition reads "${relationFieldName}", which this trigger cannot see`,
+        );
+      }
+
       const columnNames = targetFields.flatMap((field) => {
         const compositeType = compositeTypeDefinitions.get(field.type);
 
@@ -175,15 +183,30 @@ export class DatabaseEventTriggerConditionService {
           : [field.name];
       });
 
-      return this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
-            .getRepository(targetObjectMetadata.nameSingular)
-            .find({
-              where: { id: In(recordIds) },
-              select: ['id', ...columnNames],
-            }),
-        buildApplicationAuthContext({ workspace, application, agentId }),
+      // The ORM can't read as a webhook, so records are filtered by the principal's grants instead
+      const relatedRecords =
+        await this.workspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            this.workspaceOrmManager
+              .getRepositoryWithoutPermissionChecks(
+                targetObjectMetadata.nameSingular,
+              )
+              .find({
+                where: { id: In(recordIds) },
+                select: ['id', ...columnNames],
+              }),
+          buildSystemAuthContext({ workspace }),
+        );
+      const readableRecordIds =
+        await this.recordPermissionsReadService.filterGrantedRecordIds({
+          principals,
+          objectMetadataId: targetObjectMetadata.id,
+          operationType: 'read',
+          recordIds: relatedRecords.map(({ id }) => id),
+        });
+
+      return relatedRecords.filter(({ id }) =>
+        readableRecordIds.has(id.toLowerCase()),
       );
     };
 

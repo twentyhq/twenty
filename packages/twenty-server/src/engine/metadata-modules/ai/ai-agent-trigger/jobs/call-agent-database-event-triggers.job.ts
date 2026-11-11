@@ -95,8 +95,7 @@ export class CallAgentDatabaseEventTriggersJob {
           eventName,
           watchedFields: trigger.settings.updatedFields,
           condition: trigger.settings.condition,
-          application,
-          agentId: flatAgent.id,
+          authContext: agentAuthContext,
         });
 
       if (isDefined(conditionErrorMessage)) {

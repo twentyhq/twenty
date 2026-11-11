@@ -2,7 +2,6 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -12,7 +11,9 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
@@ -58,15 +59,38 @@ const flatObjectMetadataMaps = [OPPORTUNITY, COMPANY].reduce(
   createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>,
 );
 
+const PRINCIPALS = { workspaceId: 'workspace-id' };
+
+const AGENT_AUTH_CONTEXT: PermissionsAuthContext = {
+  type: 'application',
+  workspace: { id: 'workspace-id' },
+  application: { id: 'application-id' },
+  agentId: 'agent-id',
+};
+
+const WEBHOOK_AUTH_CONTEXT: PermissionsAuthContext = {
+  type: 'webhook',
+  workspace: { id: 'workspace-id' },
+  webhook: { id: 'webhook-id' },
+};
+
 const buildService = ({
   hiddenFieldIds = [],
   unreadableFieldIds = [],
+  grantedRecordIds = ['big'],
+  canReadTargetObject = true,
 }: {
   hiddenFieldIds?: string[];
   unreadableFieldIds?: string[];
+  grantedRecordIds?: string[];
+  canReadTargetObject?: boolean;
 }) => {
   const find = jest.fn().mockResolvedValue([{ id: 'big', employees: 500 }]);
   const executeInWorkspaceContext = jest.fn((run: () => unknown) => run());
+  const resolvePermissionsPrincipals = jest.fn().mockResolvedValue(PRINCIPALS);
+  const filterGrantedRecordIds = jest
+    .fn()
+    .mockResolvedValue(new Set(grantedRecordIds));
 
   const service = new DatabaseEventTriggerConditionService(
     {
@@ -79,10 +103,10 @@ const buildService = ({
     } as unknown as CoreEntityCacheService,
     {
       executeInWorkspaceContext,
-      getRepository: jest.fn().mockReturnValue({ find }),
+      getRepositoryWithoutPermissionChecks: jest.fn().mockReturnValue({ find }),
     } as unknown as WorkspaceOrmManager,
     {
-      resolvePermissionsPrincipals: jest.fn().mockResolvedValue({}),
+      resolvePermissionsPrincipals,
     } as unknown as PrincipalPermissionsReadService,
     {
       findUnreadableFields: jest
@@ -96,9 +120,19 @@ const buildService = ({
             : [],
         ),
     } as unknown as RecordFieldPermissionsReadService,
+    {
+      canAccessSomeRecords: jest.fn().mockResolvedValue(canReadTargetObject),
+      filterGrantedRecordIds,
+    } as unknown as RecordPermissionsReadService,
   );
 
-  return { service, find, executeInWorkspaceContext };
+  return {
+    service,
+    find,
+    executeInWorkspaceContext,
+    resolvePermissionsPrincipals,
+    filterGrantedRecordIds,
+  };
 };
 
 const BIG_COMPANY_EVENT = {
@@ -106,22 +140,33 @@ const BIG_COMPANY_EVENT = {
   properties: { after: { companyId: 'big' } },
 } as ObjectRecordEvent;
 
-const filterBigCompanyEvent = (service: DatabaseEventTriggerConditionService) =>
+const filterBigCompanyEvent = (
+  service: DatabaseEventTriggerConditionService,
+  authContext: PermissionsAuthContext = AGENT_AUTH_CONTEXT,
+) =>
   service.filterMatchingEvents({
     workspaceId: 'workspace-id',
     objectMetadata: OPPORTUNITY,
     events: [BIG_COMPANY_EVENT],
     eventName: 'opportunity.created',
     condition: 'company.employees > 100',
-    application: { id: 'application-id' } as FlatApplication,
-    agentId: 'agent-id',
+    authContext,
   });
 
 describe('DatabaseEventTriggerConditionService', () => {
-  it('reads related fields as the trigger owner', async () => {
-    const { service, find, executeInWorkspaceContext } = buildService({});
+  it.each([
+    ['an agent', AGENT_AUTH_CONTEXT],
+    ['a webhook', WEBHOOK_AUTH_CONTEXT],
+  ])('reads related fields as %s', async (_, authContext) => {
+    const {
+      service,
+      find,
+      executeInWorkspaceContext,
+      resolvePermissionsPrincipals,
+      filterGrantedRecordIds,
+    } = buildService({});
 
-    expect(await filterBigCompanyEvent(service)).toEqual({
+    expect(await filterBigCompanyEvent(service, authContext)).toEqual({
       events: [BIG_COMPANY_EVENT],
       conditionErrorMessage: undefined,
     });
@@ -130,12 +175,35 @@ describe('DatabaseEventTriggerConditionService', () => {
     );
     expect(executeInWorkspaceContext).toHaveBeenCalledWith(
       expect.any(Function),
-      expect.objectContaining({
-        type: 'application',
-        application: { id: 'application-id' },
-        agentId: 'agent-id',
-      }),
+      expect.objectContaining({ type: 'system' }),
     );
+    expect(resolvePermissionsPrincipals).toHaveBeenCalledWith({ authContext });
+    expect(filterGrantedRecordIds).toHaveBeenCalledWith({
+      principals: PRINCIPALS,
+      objectMetadataId: COMPANY.id,
+      operationType: 'read',
+      recordIds: ['big'],
+    });
+  });
+
+  it('reads a related record the trigger cannot see as empty', async () => {
+    const { service } = buildService({ grantedRecordIds: [] });
+
+    expect(await filterBigCompanyEvent(service)).toEqual({
+      events: [],
+      conditionErrorMessage: undefined,
+    });
+  });
+
+  it('matches nothing when the trigger cannot read the related object', async () => {
+    const { service, find } = buildService({ canReadTargetObject: false });
+
+    expect(await filterBigCompanyEvent(service)).toEqual({
+      events: [],
+      conditionErrorMessage:
+        'The condition reads "company", which this trigger cannot see',
+    });
+    expect(find).not.toHaveBeenCalled();
   });
 
   it.each([

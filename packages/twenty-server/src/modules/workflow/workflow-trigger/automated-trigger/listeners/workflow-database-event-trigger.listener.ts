@@ -574,7 +574,11 @@ export class WorkflowDatabaseEventTriggerListener {
         eventName,
         watchedFields,
         condition,
-        application,
+        authContext: {
+          type: 'application',
+          workspace: { id: workspaceId },
+          application,
+        },
       });
 
     if (isDefined(conditionErrorMessage)) {

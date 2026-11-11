@@ -26,6 +26,7 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
@@ -95,13 +96,14 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
+      const applicationAuthContext: PermissionsAuthContext = {
+        type: 'application',
+        workspace: { id: workspaceEventBatch.workspaceId },
+        application,
+      };
       const readableEvents =
         await this.recordEventPermissionsReadService.filterReadableEvents({
-          authContext: {
-            type: 'application',
-            workspace: { id: workspaceEventBatch.workspaceId },
-            application,
-          },
+          authContext: applicationAuthContext,
           eventBatch: workspaceEventBatch,
         });
       const logicFunctionPayloads = await transformEventBatchToEventPayloads({
@@ -115,7 +117,7 @@ export class CallDatabaseEventTriggerJobsJob {
             ...trigger,
             workspaceId: workspaceEventBatch.workspaceId,
             objectMetadata: workspaceEventBatch.objectMetadata,
-            application,
+            authContext: applicationAuthContext,
           }),
         onConditionError: ({ logicFunctionId, errorMessage }) =>
           this.logger.warn(

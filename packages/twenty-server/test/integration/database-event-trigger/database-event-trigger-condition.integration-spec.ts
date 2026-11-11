@@ -4,10 +4,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import {
+  createWebhook,
+  deleteWebhook,
+} from 'test/integration/metadata/suites/utils/webhook-test.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
@@ -61,11 +66,13 @@ describe('Database event trigger conditions on related records', () => {
     events,
     eventName = 'opportunity.created',
     objectNameSingular = 'opportunity',
+    authContext,
   }: {
     condition: string;
     events: ObjectRecordEvent[];
     eventName?: string;
     objectNameSingular?: string;
+    authContext?: PermissionsAuthContext;
   }) => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
@@ -93,7 +100,11 @@ describe('Database event trigger conditions on related records', () => {
       events,
       eventName,
       condition,
-      application,
+      authContext: authContext ?? {
+        type: 'application',
+        workspace: { id: SEED_APPLE_WORKSPACE_ID },
+        application,
+      },
     });
   };
 
@@ -109,6 +120,38 @@ describe('Database event trigger conditions on related records', () => {
 
     expect(conditionErrorMessage).toBeUndefined();
     expect(events).toEqual([bigCompanyEvent]);
+  });
+
+  it('reads the related record as a webhook role', async () => {
+    const createWebhookResponse = await createWebhook({
+      input: {
+        targetUrl: 'https://example.com/webhook',
+        operations: ['opportunity.created'],
+      },
+    });
+
+    expect(createWebhookResponse.body.errors).toBeUndefined();
+
+    const webhookId = createWebhookResponse.body.data.createWebhook.id;
+    const bigCompanyEvent = buildOpportunityCreatedEvent(BIG_COMPANY_ID);
+    const smallCompanyEvent = buildOpportunityCreatedEvent(SMALL_COMPANY_ID);
+
+    try {
+      const { events, conditionErrorMessage } = await filterOpportunityEvents({
+        condition: 'company.employees > 100',
+        events: [bigCompanyEvent, smallCompanyEvent],
+        authContext: {
+          type: 'webhook',
+          workspace: { id: SEED_APPLE_WORKSPACE_ID },
+          webhook: { id: webhookId },
+        },
+      });
+
+      expect(conditionErrorMessage).toBeUndefined();
+      expect(events).toEqual([bigCompanyEvent]);
+    } finally {
+      await deleteWebhook({ id: webhookId });
+    }
   });
 
   it('matches on a subfield of a composite field of the related record', async () => {
