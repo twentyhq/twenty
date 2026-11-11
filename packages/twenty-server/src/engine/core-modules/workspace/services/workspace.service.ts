@@ -896,7 +896,8 @@ export class WorkspaceService {
   }
 
   async softDeleteWorkspaceIfStillInCreation(id: string): Promise<boolean> {
-    // Conditional on status so this and activation's final status update cannot both succeed
+    // Conditional on status so this and activation's final status update cannot both succeed,
+    // and not on deletedAt so a retry resumes a cleanup that failed after the soft delete
     const { affected } = await this.workspaceRepository.update(
       {
         id,
@@ -904,9 +905,8 @@ export class WorkspaceService {
           WorkspaceActivationStatus.PENDING_CREATION,
           WorkspaceActivationStatus.ONGOING_CREATION,
         ]),
-        deletedAt: IsNull(),
       },
-      { deletedAt: new Date() },
+      { deletedAt: () => 'COALESCE("deletedAt", now())' },
     );
 
     if (!isDefined(affected) || affected === 0) {
