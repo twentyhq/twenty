@@ -14,7 +14,7 @@ import {
   hasInherentRelatedRecordPathCycle,
   type InherentRelatedRecordPathEdge,
 } from 'src/engine/metadata-modules/related-record-path/utils/has-inherent-related-record-path-cycle.util';
-import { getLongestInherentRelatedRecordPathChainLength } from 'src/engine/metadata-modules/related-record-path/utils/get-longest-inherent-related-record-path-chain-length.util';
+import { getInherentRelatedRecordPathChainLengthThroughPath } from 'src/engine/metadata-modules/related-record-path/utils/get-inherent-related-record-path-chain-length-through-path.util';
 import { getRelatedRecordPathFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/related-record-path/utils/get-related-record-path-field-metadata-universal-identifiers.util';
 import { type UniversalFlatRelatedRecordPath } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-related-record-path.type';
 import {
@@ -284,15 +284,22 @@ export class FlatRelatedRecordPathValidatorService {
       ];
     }
 
+    const inherentRelatedRecordPathEdge = buildInherentRelatedRecordPathEdge({
+      universalFlatRelatedRecordPath,
+      flatFieldMetadataMaps,
+    });
+
     if (
-      getLongestInherentRelatedRecordPathChainLength({
+      isDefined(inherentRelatedRecordPathEdge) &&
+      getInherentRelatedRecordPathChainLengthThroughPath({
         inherentRelatedRecordPathEdges,
+        inherentRelatedRecordPathEdge,
       }) > MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH
     ) {
       return [
         buildInvalidInputError({
-          message: t`Inherent related record paths cannot follow one another more than twice`,
-          userFriendlyMessage: msg`Inherent related record paths cannot follow one another more than twice`,
+          message: t`No more than ${MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inherent related record paths can follow one another`,
+          userFriendlyMessage: msg`No more than ${MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inherent related record paths can follow one another`,
         }),
       ];
     }

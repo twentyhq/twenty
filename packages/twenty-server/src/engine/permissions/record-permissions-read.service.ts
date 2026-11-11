@@ -361,10 +361,7 @@ export class RecordPermissionsReadService {
       callerRelatedRecordPathAccessGroupCompactIds,
     });
 
-    if (
-      sqlCondition === true ||
-      !canRelatedRecordPathGrantOperation(objectAccessRequest)
-    ) {
+    if (!canRelatedRecordPathGrantOperation(objectAccessRequest)) {
       return sqlCondition;
     }
 
