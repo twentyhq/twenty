@@ -68,6 +68,7 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
     );
   }
 
+  // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
   if (isDefined(config.databaseEventTriggerSettings)) {
     errors.push(
       ...getDatabaseEventTriggerSettingsErrors({
