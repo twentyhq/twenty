@@ -31,7 +31,7 @@ const EXCLUDED_MODEL_PREFIXES = [
 
 const EXCLUDED_MODEL_SUFFIXES = ['-audio-preview', '-realtime-preview'];
 
-const LONG_CONTEXT_THRESHOLD_TOKENS = 200000;
+const LEGACY_LONG_CONTEXT_THRESHOLD_TOKENS = 200000;
 
 const isLanguageModel = (modelId: string): boolean => {
   const lowerId = modelId.toLowerCase();
@@ -67,20 +67,34 @@ const extractCost = ({
   model.cachedInputCostPerMillionTokens = cost.cache_read;
   model.cacheCreationCostPerMillionTokens = cost.cache_write;
 
-  const longContextCost = cost.context_over_200k;
+  const tieredCost = cost.tiers?.find(
+    (t) => isDefined(t.input) && isDefined(t.tier?.size)
+  );
 
-  if (!isDefined(longContextCost?.input)) {
+  if (isDefined(tieredCost) && isDefined(tieredCost.tier?.size)) {
+    model.longContextCost = {
+      inputCostPerMillionTokens: tieredCost.input,
+      outputCostPerMillionTokens:
+        tieredCost.output ?? model.outputCostPerMillionTokens ?? 0,
+      thresholdTokens: tieredCost.tier.size,
+      cachedInputCostPerMillionTokens: tieredCost.cache_read,
+      cacheCreationCostPerMillionTokens: tieredCost.cache_write,
+    };
     return;
   }
 
-  model.longContextCost = {
-    inputCostPerMillionTokens: longContextCost.input,
-    outputCostPerMillionTokens:
-      longContextCost.output ?? model.outputCostPerMillionTokens ?? 0,
-    thresholdTokens: LONG_CONTEXT_THRESHOLD_TOKENS,
-    cachedInputCostPerMillionTokens: longContextCost.cache_read,
-    cacheCreationCostPerMillionTokens: longContextCost.cache_write,
-  };
+  const legacyCost = cost.context_over_200k;
+
+  if (isDefined(legacyCost?.input)) {
+    model.longContextCost = {
+      inputCostPerMillionTokens: legacyCost.input,
+      outputCostPerMillionTokens:
+        legacyCost.output ?? model.outputCostPerMillionTokens ?? 0,
+      thresholdTokens: LEGACY_LONG_CONTEXT_THRESHOLD_TOKENS,
+      cachedInputCostPerMillionTokens: legacyCost.cache_read,
+      cacheCreationCostPerMillionTokens: legacyCost.cache_write,
+    };
+  }
 };
 
 const buildModel = ({
