@@ -1,3 +1,4 @@
+import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardCellHoveredPortalContent } from '@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardCellHoveredPortalContent';
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
@@ -118,6 +119,7 @@ describe('RecordBoardCardCellHoveredPortalContent', () => {
     await user.click(getHoveredBackground());
 
     expect(mockOpenRecordBoardCard).toHaveBeenCalledTimes(1);
+    expect(mockOpenRecordBoardCard).toHaveBeenCalledWith();
     expect(mockOpenFieldInput).not.toHaveBeenCalled();
   });
 
@@ -128,6 +130,12 @@ describe('RecordBoardCardCellHoveredPortalContent', () => {
     await user.click(screen.getByText('Field value'));
 
     expect(mockOpenFieldInput).toHaveBeenCalledTimes(1);
+    expect(mockOpenFieldInput).toHaveBeenCalledWith({
+      fieldDefinition: fieldContextValue.fieldDefinition,
+      recordId: fieldContextValue.recordId,
+      prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
+      onFileUploadClose: expect.any(Function),
+    });
     expect(mockOpenRecordBoardCard).not.toHaveBeenCalled();
   });
 
