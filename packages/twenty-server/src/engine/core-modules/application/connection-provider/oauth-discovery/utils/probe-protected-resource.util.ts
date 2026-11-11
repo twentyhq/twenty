@@ -7,7 +7,6 @@ export type ProtectedResourceProbe = {
   scope?: string;
 };
 
-// A 401 to an unauthenticated ping means the resource wants a sign-in; its header names the metadata and scope.
 export const probeProtectedResource = async ({
   resourceUrl,
   fetchFn,

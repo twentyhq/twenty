@@ -22,6 +22,7 @@ import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/co
 import { computePkceChallenge } from 'src/engine/core-modules/application/connection-provider/utils/compute-pkce-challenge.util';
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
 import { generatePkceVerifier } from 'src/engine/core-modules/application/connection-provider/utils/generate-pkce-verifier.util';
+import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -116,7 +117,6 @@ export class ConnectionProviderOAuthFlowService {
     return { authorizationUrl: authorizationUrl.toString() };
   }
 
-  // Discovery picks the endpoints, the client and the PKCE verifier; the state stays ours.
   private async startOAuthDiscoveryAuthorizationFlow(
     authorizationArgs: ConnectionAuthorizationArgs,
   ): Promise<{ authorizationUrl: string }> {
@@ -172,19 +172,11 @@ export class ConnectionProviderOAuthFlowService {
         statePayload.reconnectingConnectedAccountId,
     });
 
-    const flowSecrets = isDefined(statePayload.flowSecretId)
-      ? await this.authorizationStateService.consumeFlowSecretsOrThrow(
-          statePayload.flowSecretId,
-        )
-      : isDefined(statePayload.codeVerifier)
-        ? { codeVerifier: statePayload.codeVerifier, oauthClientId: null }
-        : null;
-
     const tokenResponse = await this.exchangeCodeForTokens({
       provider,
       workspaceId: statePayload.workspaceId,
       code: callbackArgs.code,
-      flowSecrets,
+      flowSecrets: await this.resolveFlowSecrets(statePayload),
     });
 
     const identifiedAccount =
@@ -280,15 +272,33 @@ export class ConnectionProviderOAuthFlowService {
         contentType: provider.oauthConfig.tokenRequestContentType,
       });
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+
       this.logger.error(
-        `OAuth token exchange failed for provider ${provider.id}: ${(error as Error).message}`,
+        `OAuth token exchange failed for provider ${provider.id}: ${message}`,
       );
 
       throw new ConnectionProviderException(
-        (error as Error).message,
+        message,
         ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED,
       );
     }
+  }
+
+  private async resolveFlowSecrets(
+    statePayload: AppOAuthStateJwtPayload,
+  ): Promise<ConnectionProviderFlowSecrets | null> {
+    if (isDefined(statePayload.flowSecretId)) {
+      return this.authorizationStateService.consumeFlowSecretsOrThrow(
+        statePayload.flowSecretId,
+      );
+    }
+
+    if (isDefined(statePayload.codeVerifier)) {
+      return { codeVerifier: statePayload.codeVerifier, oauthClientId: null };
+    }
+
+    return null;
   }
 
   private getServerUrl(): string {

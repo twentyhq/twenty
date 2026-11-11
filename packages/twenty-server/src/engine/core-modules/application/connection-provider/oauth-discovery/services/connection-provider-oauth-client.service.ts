@@ -7,7 +7,7 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
-import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
+import { isUniqueViolationError } from 'src/engine/workspace-query-executor/utils/is-unique-violation-error.util';
 import { ConnectionProviderOAuthClientEntity } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/entities/connection-provider-oauth-client.entity';
 import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
@@ -91,7 +91,6 @@ export class ConnectionProviderOAuthClientService {
     return storedClient;
   }
 
-  // Returns false when another sign-in replaced the expected client meanwhile, which then stays
   async replaceClientIfUnchanged({
     client,
     expectedClientId,
@@ -111,7 +110,6 @@ export class ConnectionProviderOAuthClientService {
     return isDefined(affected) && affected > 0;
   }
 
-  // Returns false when the provider already has a client, which then stays
   async insertClientIfAbsent(
     client: OAuthDiscoveryClientToSave,
   ): Promise<boolean> {

@@ -25,7 +25,6 @@ type OAuthDiscoveryClientProviderOptions = {
   now: Date;
 };
 
-// The MCP SDK drives the flow; Twenty persists only what it settled on once a step succeeds.
 export class OAuthDiscoveryClientProvider implements OAuthClientProvider {
   authorizationUrl: URL | undefined;
   savedCodeVerifier: string | undefined;
@@ -125,7 +124,6 @@ export class OAuthDiscoveryClientProvider implements OAuthClientProvider {
       : undefined;
   }
 
-  // What the SDK settled on, to persist once the flow step succeeded.
   getClientToPersist(): Omit<OAuthDiscoveryStoredClient, 'redirectUri'> | null {
     const clientInformation = this.clientInformation();
     const discoveryState = this.discoveryState();

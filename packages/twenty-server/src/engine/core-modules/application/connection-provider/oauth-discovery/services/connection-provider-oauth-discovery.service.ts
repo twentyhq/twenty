@@ -16,7 +16,6 @@ import { probeProtectedResource } from 'src/engine/core-modules/application/conn
 import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { buildSecureFetchLike } from 'src/engine/core-modules/secure-http-client/utils/build-secure-fetch-like.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type ProviderContext = {
@@ -24,8 +23,7 @@ type ProviderContext = {
   workspaceId: string;
 };
 
-// Runs the MCP authorization flow for a protected resource: RFC 9728 discovery,
-// a Client ID Metadata Document or dynamic registration, PKCE and resource indicators.
+// Runs the MCP authorization flow: RFC 9728 discovery, client registration, PKCE and resource indicators.
 @Injectable()
 export class ConnectionProviderOAuthDiscoveryService {
   private readonly logger = new Logger(
@@ -84,6 +82,7 @@ export class ConnectionProviderOAuthDiscoveryService {
       isClientIdMetadataDocumentAllowed: true,
     });
     const retryAttempt = await this.prepareReplacementIfRejected({
+      connectionProviderId: provider.id,
       firstAttempt,
       fetchFn,
       prepareReplacement: () =>
@@ -134,15 +133,16 @@ export class ConnectionProviderOAuthDiscoveryService {
     };
   }
 
-  // A server that forgot our client, or rejects our metadata document, would strand the user on its error page.
-  // The replacement is kept only if accepted: other members' refresh tokens belong to the stored client.
+  // A replacement client is kept only if the server accepts it: other members' refresh tokens belong to the stored one.
   private async prepareReplacementIfRejected<
     TAttempt extends { authorizationUrl: URL },
   >({
+    connectionProviderId,
     firstAttempt,
     fetchFn,
     prepareReplacement,
   }: {
+    connectionProviderId: string;
     firstAttempt: TAttempt;
     fetchFn: FetchLike;
     prepareReplacement: () => Promise<TAttempt>;
@@ -167,7 +167,7 @@ export class ConnectionProviderOAuthDiscoveryService {
         : replacement;
     } catch (error) {
       this.logger.warn(
-        `Could not register a replacement OAuth client: ${error instanceof Error ? error.message : String(error)}`,
+        `Could not register a replacement OAuth client for connection provider ${connectionProviderId}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return null;
@@ -228,8 +228,7 @@ export class ConnectionProviderOAuthDiscoveryService {
   }
 
   private buildFetch(workspaceId: string): FetchLike {
-    return buildSecureFetchLike({
-      secureHttpClientService: this.secureHttpClientService,
+    return this.secureHttpClientService.createFetchLike({
       context: { workspaceId, source: 'connection-provider' },
       timeoutMs: OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS,
     });

@@ -16,12 +16,12 @@ import { ConnectionProviderException } from 'src/engine/core-modules/application
 import { OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/constants/oauth-discovery-request-timeout-ms.constant';
 import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
 import { buildOAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-provider.util';
+import { isPermanentOAuthDiscoveryRefreshError } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/is-permanent-oauth-discovery-refresh-error.util';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { parseTokenResponse } from 'src/engine/core-modules/application/connection-provider/utils/parse-token-response.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { buildSecureFetchLike } from 'src/engine/core-modules/secure-http-client/utils/build-secure-fetch-like.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type ProviderContext = {
@@ -53,7 +53,6 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
       workspaceId,
     });
 
-    // Another sign-in replaced the client meanwhile: this code belongs to the old one
     if (storedClient.clientInformation.client_id !== clientId) {
       throw new ConnectionProviderException(
         `OAuth client of connection provider ${provider.id} changed during sign-in: sign in again`,
@@ -141,13 +140,19 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
         });
       }
 
+      if (isPermanentOAuthDiscoveryRefreshError(error)) {
+        throw new ConnectionProviderException(
+          error instanceof Error ? error.message : String(error),
+          ConnectionProviderExceptionCode.REFRESH_FAILED,
+        );
+      }
+
       throw error;
     }
   }
 
   private buildFetch(workspaceId: string): FetchLike {
-    return buildSecureFetchLike({
-      secureHttpClientService: this.secureHttpClientService,
+    return this.secureHttpClientService.createFetchLike({
       context: { workspaceId, source: 'connection-provider' },
       timeoutMs: OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS,
     });
