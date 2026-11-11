@@ -3,7 +3,7 @@
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { areRoleGrantsLimitedToPublicRecords } from 'src/engine/permissions/internal/combine/utils/are-role-grants-limited-to-public-records.util';
 import { findRecordIdsByPrivacy } from 'src/engine/permissions/internal/private-record/utils/find-record-ids-by-privacy.util';
-import { isRolePermittingOperation } from 'src/engine/permissions/internal/role/utils/is-role-permitting-operation.util';
+import { canAllRecordsOrRowLevelPermissionsGrantOperation } from 'src/engine/permissions/internal/role/utils/can-all-records-or-row-level-permissions-grant-operation.util';
 
 export const findRecordIdsGrantedByRole = async ({
   request,
@@ -12,7 +12,7 @@ export const findRecordIdsGrantedByRole = async ({
   request: PermissionsRowAccessEvaluationRequest;
   rlsRuleMatchingRecordIds: string[] | undefined;
 }): Promise<string[]> => {
-  if (!isRolePermittingOperation(request)) {
+  if (!canAllRecordsOrRowLevelPermissionsGrantOperation(request)) {
     return [];
   }
 
