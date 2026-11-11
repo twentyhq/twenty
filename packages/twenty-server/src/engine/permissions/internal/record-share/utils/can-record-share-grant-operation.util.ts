@@ -8,7 +8,7 @@ import {
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const isOperationGrantedBeyondRole = ({
+export const canRecordShareGrantOperation = ({
   flatObjectMetadata,
   featureFlagsMap,
   operationType,
