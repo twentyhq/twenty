@@ -63,7 +63,8 @@ jobs:
           retention-days: 1
   renderer-sb-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    # Playwright has no Chromium build for ubuntu-latest (26.04) yet
+    runs-on: ubuntu-24.04
     needs: renderer-sb-build
     env:
       STORYBOOK_URL: http://localhost:6008
