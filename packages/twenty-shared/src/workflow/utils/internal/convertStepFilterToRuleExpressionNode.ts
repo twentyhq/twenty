@@ -261,7 +261,7 @@ const parseRatingRank = (value: string): number | undefined => {
 
   const ratingPrefixMatch = value.match(/^RATING_(\d+)$/);
 
-  if (ratingPrefixMatch !== null) {
+  if (isDefined(ratingPrefixMatch)) {
     return Number(ratingPrefixMatch[1]);
   }
 

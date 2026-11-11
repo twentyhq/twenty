@@ -1,6 +1,7 @@
 import { type ValidationRuleDatabaseEventAction } from '@/types/ValidationRuleDatabaseEventAction';
 import { isValidationRuleReservedName } from '@/utils/validation-rule/isValidationRuleReservedName';
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
+import { isDefined } from '@/utils/validation/isDefined';
 
 type TriggerRecordSnapshot = 'after' | 'before';
 
@@ -34,7 +35,7 @@ export const mapStepOutputKeyToRuleExpressionPath = ({
 }): StepOutputKeyRuleExpressionPathMapping => {
   const match = stepOutputKey.match(TRIGGER_RECORD_VARIABLE_PATTERN);
 
-  if (match === null) {
+  if (!isDefined(match)) {
     return {
       isMapped: false,
       reason: `"${stepOutputKey}" does not read the trigger record`,
