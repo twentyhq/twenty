@@ -23,12 +23,13 @@ export const resolvePermissionsShareGrant = (
   const accessLevels = resolveRequiredRecordShareAccessLevels(
     request.operationType,
   );
-  const isGrantedBeyondRole = canRecordShareGrantOperationToPrincipals(request);
+  const isGrantableByRecordShare =
+    canRecordShareGrantOperationToPrincipals(request);
 
   if (
     !isNonEmptyArray(principalIds) ||
     !isNonEmptyArray(accessLevels) ||
-    (!isGrantedBeyondRole &&
+    (!isGrantableByRecordShare &&
       !(
         isRecordPrivacyApplicable(request) && isRecordShareReadEnabled(request)
       ))
@@ -39,6 +40,6 @@ export const resolvePermissionsShareGrant = (
   return {
     principalIds,
     accessLevels,
-    isLimitedToPrivateRecords: !isGrantedBeyondRole,
+    isLimitedToPrivateRecords: !isGrantableByRecordShare,
   };
 };

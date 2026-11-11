@@ -80,6 +80,23 @@ jest.mock(
   }),
 );
 
+jest.mock(
+  '@/object-core/workflows/hooks/useCoreWorkflowShowPageActiveTab',
+  () => ({
+    useCoreWorkflowShowPageActiveTab: () =>
+      jest.requireActual(
+        '@/object-core/workflows/constants/CoreWorkflowShowPageTabs',
+      ).CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW,
+  }),
+);
+
+jest.mock(
+  '@/object-core/workflows/components/CoreWorkflowShowPageTabList',
+  () => ({
+    CoreWorkflowShowPageTabList: () => null,
+  }),
+);
+
 jest.mock('@/ui/layout/page/components/PageCardLayout', () => ({
   PageCardLayout: ({ children }: { children: ReactNode }) => children,
 }));
