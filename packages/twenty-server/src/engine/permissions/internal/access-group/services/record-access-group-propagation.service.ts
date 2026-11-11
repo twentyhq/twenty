@@ -231,7 +231,12 @@ export class RecordAccessGroupPropagationService {
     metadataMaps,
     objectMetadataId,
   }: {
-    metadataMaps: RecordAccessGroupComputationMetadataMaps;
+    metadataMaps: Pick<
+      RecordAccessGroupComputationMetadataMaps,
+      | 'rolesPermissions'
+      | 'flatObjectMetadataMaps'
+      | 'resolvedRelatedRecordPaths'
+    >;
     objectMetadataId: string;
   }): ResolvedRelatedRecordPath[] {
     return metadataMaps.resolvedRelatedRecordPaths.filter(
