@@ -14,8 +14,8 @@ import { getCoreEntityMetadatasWithWorkspaceId } from 'src/database/commands/wor
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { PERMISSION_SYSTEM_TABLES } from 'src/engine/permissions/system-table/constants/permission-system-tables.constant';
-import { buildCreatePermissionSystemTablesStatements } from 'src/engine/permissions/system-table/utils/build-create-permission-system-tables-statements.util';
+import { PERMISSION_TABLES } from 'src/engine/permissions/permission-table/constants/permission-tables.constant';
+import { buildCreatePermissionTablesStatements } from 'src/engine/permissions/permission-table/utils/build-create-permission-tables-statements.util';
 import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -161,7 +161,7 @@ export class WorkspaceExportService {
         stream,
       );
 
-      await this.writePermissionSystemTables({
+      await this.writePermissionTables({
         schemaName,
         tableFilter,
         queryRunner,
@@ -371,14 +371,14 @@ export class WorkspaceExportService {
     }
   }
 
-  private async writePermissionSystemTables({
+  private async writePermissionTables({
     schemaName,
     tableFilter,
     queryRunner,
     stream,
   }: Pick<WriteRowsOptions, 'schemaName' | 'queryRunner' | 'stream'> &
     Pick<WorkspaceExportParams, 'tableFilter'>): Promise<void> {
-    for (const statement of buildCreatePermissionSystemTablesStatements({
+    for (const statement of buildCreatePermissionTablesStatements({
       schemaName,
     })) {
       stream.write(`${statement};\n`);
@@ -391,7 +391,7 @@ export class WorkspaceExportService {
       columnNames,
       jsonColumnNames,
       identityColumnName,
-    } of PERMISSION_SYSTEM_TABLES) {
+    } of PERMISSION_TABLES) {
       if (isDefined(tableFilter) && !tableFilter.includes(tableName)) {
         continue;
       }

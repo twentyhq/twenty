@@ -1,13 +1,13 @@
 /* @license Enterprise */
 
-type PermissionSystemTable = {
+type PermissionTable = {
   tableName: string;
   columnNames: string[];
   jsonColumnNames: string[];
   identityColumnName?: string;
 };
 
-export const PERMISSION_SYSTEM_TABLES: PermissionSystemTable[] = [
+export const PERMISSION_TABLES: PermissionTable[] = [
   {
     tableName: 'recordShare',
     columnNames: [

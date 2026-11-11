@@ -12,17 +12,17 @@ import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-const OBJECT_NAME_SINGULAR = 'systemTableRecord';
+const OBJECT_NAME_SINGULAR = 'permissionTableRecord';
 const SET_RECORD_SHARE = parse(
   `mutation SetRecordShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { canManageSharing } }`,
 );
 
-describe('permission system tables', () => {
+describe('permission tables', () => {
   it('should store record shares in a workspace created without the record share and access group objects', async () => {
     const { workspaceId, workspaceOrigin, inviteHash, adminAccessToken } =
       await createPermissionTestActiveWorkspace({
         featureFlagsEnabledBeforeActivation: [
-          FeatureFlagKey.IS_PERMISSION_SYSTEM_TABLES_ENABLED,
+          FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED,
         ],
       });
 
@@ -79,7 +79,7 @@ describe('permission system tables', () => {
     expect(createResponse.body.errors).toBeUndefined();
 
     const recordId: string =
-      createResponse.body.data.createSystemTableRecord.id;
+      createResponse.body.data.createPermissionTableRecord.id;
     const shareResponse = await makeMetadataApiRequest(
       {
         query: SET_RECORD_SHARE,

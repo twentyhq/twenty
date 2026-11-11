@@ -22,7 +22,7 @@ const buildCreateEnumStatement = ({
 }): string =>
   `CREATE TYPE ${schema}.${escapeIdentifier(enumName)} AS ENUM (${values.map(escapeLiteral).join(', ')})`;
 
-export const buildCreatePermissionSystemTablesStatements = ({
+export const buildCreatePermissionTablesStatements = ({
   schemaName,
 }: {
   schemaName: string;
