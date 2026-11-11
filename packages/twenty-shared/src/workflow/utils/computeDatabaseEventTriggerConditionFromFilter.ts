@@ -6,6 +6,7 @@ import { type ValidationRuleDatabaseEventAction } from '@/types/ValidationRuleDa
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { compileValidationRuleExpression } from '@/utils/validation-rule/compileValidationRuleExpression';
 import { getValidationRulePreviousValueFieldPath } from '@/utils/validation-rule/getValidationRulePreviousValueFieldPath';
+import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { convertStepFiltersToRuleExpression } from '@/workflow/utils/convertStepFiltersToRuleExpression';
 
 const DATABASE_EVENT_ACTIONS: ValidationRuleDatabaseEventAction[] = [
@@ -24,8 +25,7 @@ const isDatabaseEventAction = (
     (databaseEventAction) => databaseEventAction === action,
   );
 
-// Undefined keeps the legacy filter: the filter can't be expressed exactly, reads a field the object lacks,
-// or reads a related record, which the filter reads with system permissions and a condition as the trigger owner
+// Undefined keeps the legacy filter: inexact, an unknown field, or a related record (read with system permissions)
 export const computeDatabaseEventTriggerConditionFromFilter = ({
   eventName,
   filter,
@@ -45,7 +45,7 @@ export const computeDatabaseEventTriggerConditionFromFilter = ({
 
   if (
     !isDatabaseEventAction(databaseEventAction) ||
-    !filter?.stepFilters?.length
+    !isNonEmptyArray(filter?.stepFilters)
   ) {
     return undefined;
   }

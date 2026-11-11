@@ -559,6 +559,10 @@ export class WorkflowDatabaseEventTriggerListener {
     );
 
     if (!isDefined(application)) {
+      this.logger.warn(
+        `Condition of the trigger of workflow ${eventListener.workflowId} in workspace ${workspaceId} was not evaluated: its application ${eventListener.applicationId} is not active`,
+      );
+
       return [];
     }
 
