@@ -17,6 +17,7 @@ import {
 } from 'src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception';
 import { getDatabaseEventTriggerConditionIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-database-event-trigger-condition-issues.util';
 import { getWorkflowRecordStepMetadataIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-record-step-metadata-issues.util';
+import { getWorkflowStepConditionIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-step-condition-issues.util';
 import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
 import { validateWorkflowClassifyStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-classify-step.util';
 import { validateWorkflowConversationStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-conversation-step.util';
@@ -92,7 +93,7 @@ export class WorkflowVersionValidationWorkspaceService {
         return validateWorkflowClassifyStep(step);
       }
 
-      return [];
+      return getWorkflowStepConditionIssues(step);
     });
 
     const metadataIssues = await this.validateWorkspaceMetadata({
