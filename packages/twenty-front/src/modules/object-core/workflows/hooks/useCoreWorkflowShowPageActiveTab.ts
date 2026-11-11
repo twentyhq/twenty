@@ -10,13 +10,13 @@ import { useTabListActiveTabId } from '@/ui/layout/tab-list/hooks/useTabListActi
 type UseCoreWorkflowShowPageActiveTabArgs = {
   coreWorkflowId: string;
   isPublished: boolean | undefined;
-  isVersionRequested: boolean;
+  requestedVersionId: string | null;
 };
 
 export const useCoreWorkflowShowPageActiveTab = ({
   coreWorkflowId,
   isPublished,
-  isVersionRequested,
+  requestedVersionId,
 }: UseCoreWorkflowShowPageActiveTabArgs): CoreWorkflowShowPageTabId => {
   // Settled once loaded so publishing from the Flow tab does not switch to Overview
   const [isPublishedOnLoad, setIsPublishedOnLoad] = useState(isPublished);
@@ -37,14 +37,16 @@ export const useCoreWorkflowShowPageActiveTab = ({
 
   // Drafts have no runs yet and a requested version is opened to see its flow
   const defaultTabId =
-    isPublishedOnLoad && canReadWorkflowRuns && !isVersionRequested
+    isPublishedOnLoad && canReadWorkflowRuns && !isDefined(requestedVersionId)
       ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW
       : CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW;
 
   return (
     useTabListActiveTabId({
-      componentInstanceId:
-        getCoreWorkflowShowPageTabListComponentInstanceId(coreWorkflowId),
+      componentInstanceId: getCoreWorkflowShowPageTabListComponentInstanceId({
+        coreWorkflowId,
+        requestedVersionId,
+      }),
       visibleTabIds,
       defaultTabId,
     }) ?? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW
