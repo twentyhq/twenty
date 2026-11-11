@@ -15,7 +15,7 @@ export const canRecordShareGrantOperation = ({
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'disabledObjectPermissionActions'
+    'universalIdentifier' | 'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   operationType: ObjectRecordsOperationType;
