@@ -87,7 +87,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     expect(
       resolve({
         objectUniversalIdentifier: OPPORTUNITY,
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         action: 'updated',
         watchedFieldUniversalIdentifiers: [STAGE, COMPANY],
         condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
@@ -105,7 +105,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     expect(
       resolve({
         objectUniversalIdentifier: SIGNAL,
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         action: 'created',
         condition: "status == 'NEW'",
       }),
@@ -113,7 +113,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
   });
 
   it('listens to every object when no object is given', () => {
-    expect(resolve({ on: 'record', action: '*' })).toEqual({
+    expect(resolve({ on: 'recordEvent', action: '*' })).toEqual({
       eventName: '*.*',
     });
   });
@@ -138,7 +138,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     [
       'an unknown object',
       {
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         objectUniversalIdentifier: STAGE,
         action: 'created' as const,
       },
@@ -148,7 +148,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
       'a field of another object',
       {
         objectUniversalIdentifier: OPPORTUNITY,
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         action: 'updated' as const,
         watchedFieldUniversalIdentifiers: [SIGNAL_STATUS],
       },
@@ -158,7 +158,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
       'a relation to many records',
       {
         objectUniversalIdentifier: OPPORTUNITY,
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         action: 'updated' as const,
         watchedFieldUniversalIdentifiers: [POINT_OF_CONTACTS],
       },
@@ -167,7 +167,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     [
       'a condition without an object',
       {
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         action: 'created' as const,
         condition: 'isDefined(name)',
       },
@@ -177,7 +177,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
       'a condition reading a related record',
       {
         objectUniversalIdentifier: OPPORTUNITY,
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         action: 'created' as const,
         condition: "company.name == 'Acme'",
       },
@@ -193,7 +193,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow built-in fields', (
     expect(
       resolve({
         objectUniversalIdentifier: SIGNAL,
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         action: 'created',
         condition: 'isDefined(createdAt)',
       }),
@@ -207,7 +207,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow built-in fields', (
     expect(() =>
       resolve({
         objectUniversalIdentifier: SIGNAL,
-        on: 'record' as const,
+        on: 'recordEvent' as const,
         action: 'created',
         condition: false as unknown as string,
       }),

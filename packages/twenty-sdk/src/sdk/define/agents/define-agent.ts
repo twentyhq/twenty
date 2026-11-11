@@ -61,7 +61,7 @@ const getAgentTriggerSettingsErrors = ({
     settings: trigger.settings,
     subject,
     eventNamePattern: AGENT_TRIGGER_EVENT_NAME_PATTERN,
-    replacement: "an EVENT trigger with on: 'record'",
+    replacement: "an EVENT trigger with on: 'recordEvent'",
   });
 };
 

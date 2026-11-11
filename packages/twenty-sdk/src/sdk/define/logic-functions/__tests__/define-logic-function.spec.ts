@@ -60,7 +60,7 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Any Record Created',
       handler: mockHandler,
-      eventTriggerSettings: { on: 'record', action: 'created' },
+      eventTriggerSettings: { on: 'recordEvent', action: 'created' },
     });
 
     expect(result.success).toBe(true);
@@ -76,7 +76,7 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      "Event trigger settings must set on: 'record'",
+      "Event trigger settings must set on: 'recordEvent'",
     );
   });
 
@@ -90,7 +90,7 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      "Database event trigger: declare an object and an action with eventTriggerSettings with on: 'record'",
+      "Database event trigger: declare an object and an action with eventTriggerSettings with on: 'recordEvent'",
     );
   });
 
@@ -99,7 +99,7 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
       handler: mockHandler,
-      eventTriggerSettings: { on: 'record', action: 'created' },
+      eventTriggerSettings: { on: 'recordEvent', action: 'created' },
       databaseEventTriggerSettings: { eventName: 'contact.created' },
     });
 
@@ -126,7 +126,7 @@ describe('defineLogicFunction', () => {
   it('should error on trigger settings of the wrong type', () => {
     // Manifests are often plain JavaScript, so nothing typed these values
     const eventTriggerSettings = JSON.parse(
-      '{"on":"record","action":"updated","objectUniversalIdentifier":"9d3a2f8e-5c1b-4e7a-8f6d-2b4c1a9e7d35","watchedFieldUniversalIdentifiers":"name","condition":true,"batchMode":"yes"}',
+      '{"on":"recordEvent","action":"updated","objectUniversalIdentifier":"9d3a2f8e-5c1b-4e7a-8f6d-2b4c1a9e7d35","watchedFieldUniversalIdentifiers":"name","condition":true,"batchMode":"yes"}',
     );
 
     const result = defineLogicFunction({
@@ -152,7 +152,7 @@ describe('defineLogicFunction', () => {
       name: 'On Record Created',
       handler: mockHandler,
       eventTriggerSettings: {
-        on: 'record',
+        on: 'recordEvent',
         objectUniversalIdentifier: '',
         action: 'created',
       },
@@ -170,7 +170,7 @@ describe('defineLogicFunction', () => {
       name: 'On Any Record Created',
       handler: mockHandler,
       eventTriggerSettings: {
-        on: 'record',
+        on: 'recordEvent',
         action: 'created',
         condition: 'isDefined(name)',
       },
