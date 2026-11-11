@@ -29,7 +29,6 @@ const renderActiveTab = ({
   renderHook(
     ({ isPublished }: HookProps) =>
       useCoreWorkflowShowPageActiveTab({
-        coreWorkflowId: 'workflow-id',
         isPublished,
         isVersionRequested: false,
       }),
@@ -47,13 +46,13 @@ describe('useCoreWorkflowShowPageActiveTab', () => {
   it('opens Overview for a published workflow', () => {
     const { result } = renderActiveTab({ initialIsPublished: true });
 
-    expect(result.current.activeTabId).toBe('overview');
+    expect(result.current).toBe('overview');
   });
 
   it('opens Flow for a draft workflow', () => {
     const { result } = renderActiveTab({ initialIsPublished: false });
 
-    expect(result.current.activeTabId).toBe('flow');
+    expect(result.current).toBe('flow');
   });
 
   it('picks the default once the workflow has loaded', () => {
@@ -63,7 +62,7 @@ describe('useCoreWorkflowShowPageActiveTab', () => {
 
     rerender({ isPublished: true });
 
-    expect(result.current.activeTabId).toBe('overview');
+    expect(result.current).toBe('overview');
   });
 
   it('stays on Flow when the draft is published from the page', () => {
@@ -73,7 +72,7 @@ describe('useCoreWorkflowShowPageActiveTab', () => {
 
     rerender({ isPublished: true });
 
-    expect(result.current.activeTabId).toBe('flow');
+    expect(result.current).toBe('flow');
   });
 
   it('follows the hash over the default', () => {
@@ -82,6 +81,6 @@ describe('useCoreWorkflowShowPageActiveTab', () => {
       hash: '#runs',
     });
 
-    expect(result.current.activeTabId).toBe('runs');
+    expect(result.current).toBe('runs');
   });
 });

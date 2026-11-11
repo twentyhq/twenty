@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 import { type CoreWorkflowRunSummaryDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-summary.dto';
 import { buildCoreWorkflowRunCountWindowPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-run-count-window-predicate.util';
 import {
@@ -30,7 +32,7 @@ export class CoreWorkflowRunSummaryService {
   async findManyByCoreWorkflowIds(
     coreWorkflowIds: string[],
   ): Promise<CoreWorkflowRunSummaryDTO[]> {
-    if (coreWorkflowIds.length === 0) {
+    if (!isNonEmptyArray(coreWorkflowIds)) {
       return [];
     }
 
