@@ -1,11 +1,11 @@
 /* @license Enterprise */
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { areRoleGrantsLimitedToPublicRecords } from 'src/engine/permissions/internal/combine/utils/are-role-grants-limited-to-public-records.util';
+import { areAllRecordsOrRowLevelPermissionsLimitedToPublicRecords } from 'src/engine/permissions/internal/combine/utils/are-all-records-or-row-level-permissions-limited-to-public-records.util';
 import { findRecordIdsByPrivacy } from 'src/engine/permissions/internal/private-record/utils/find-record-ids-by-privacy.util';
 import { canAllRecordsOrRowLevelPermissionsGrantOperation } from 'src/engine/permissions/internal/role/utils/can-all-records-or-row-level-permissions-grant-operation.util';
 
-export const findRecordIdsGrantedByRole = async ({
+export const findRecordIdsGrantedByAllRecordsOrRowLevelPermissions = async ({
   request,
   rlsRuleMatchingRecordIds,
 }: {
@@ -19,7 +19,7 @@ export const findRecordIdsGrantedByRole = async ({
   const recordIds =
     rlsRuleMatchingRecordIds ?? request.records.map((record) => record.id);
 
-  if (!areRoleGrantsLimitedToPublicRecords(request)) {
+  if (!areAllRecordsOrRowLevelPermissionsLimitedToPublicRecords(request)) {
     return recordIds;
   }
 

@@ -171,7 +171,7 @@ export class RecordPermissionsReadService {
     );
   }
 
-  async canRoleAccessSomeRecords(
+  async canAllRecordsOrRowLevelPermissionsGrantOperation(
     question: ObjectOperationQuestion,
   ): Promise<boolean> {
     const request = await this.findObjectAccessRequest(question);

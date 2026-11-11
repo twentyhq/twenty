@@ -93,6 +93,7 @@ const buildSQLCondition = (
 const sharingMetadataMaps = {
   ...metadataMaps,
   featureFlagsMap: {
+    ...metadataMaps.featureFlagsMap,
     [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
   },
 };
