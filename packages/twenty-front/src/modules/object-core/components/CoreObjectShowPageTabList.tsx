@@ -1,5 +1,4 @@
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { TabListSelectionSyncEffect } from '@/ui/layout/tab-list/components/TabListSelectionSyncEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
 type CoreObjectShowPageTabListProps = {
@@ -15,18 +14,11 @@ export const CoreObjectShowPageTabList = ({
   componentInstanceId,
   tabs,
 }: CoreObjectShowPageTabListProps) => (
-  <>
-    <TabList
-      aria-label={ariaLabel}
-      componentInstanceId={componentInstanceId}
-      defaultActiveTabId={activeTabId}
-      centerTabs
-      tabs={tabs}
-    />
-    {/* Rendered after TabList so its stored or first-tab fallback never wins over the tab being shown */}
-    <TabListSelectionSyncEffect
-      componentInstanceId={componentInstanceId}
-      nextActiveTabId={activeTabId}
-    />
-  </>
+  <TabList
+    aria-label={ariaLabel}
+    componentInstanceId={componentInstanceId}
+    defaultActiveTabId={activeTabId}
+    centerTabs
+    tabs={tabs}
+  />
 );
