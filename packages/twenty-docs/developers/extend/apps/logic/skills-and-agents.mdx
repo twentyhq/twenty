@@ -96,7 +96,7 @@ export default defineAgent({
       settings: {
         objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
         action: 'updated',
-        fieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+        watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
         condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
       },
       instructions: 'Draft the onboarding plan for this new customer.',
@@ -238,7 +238,7 @@ export default defineApplicationRole({
 <Warning>
   **Avoid loops:** if you call `runAgent()` from a `*.updated` database-event
   trigger and the agent updates the same record, scope the trigger with
-  `fieldUniversalIdentifiers` to a field the agent never writes (e.g. the
+  `watchedFieldUniversalIdentifiers` to a field the agent never writes (e.g. the
   source URL), or with a `condition` that only holds while a target field is
   still empty, such as `isEmpty(summary)`.
 </Warning>
