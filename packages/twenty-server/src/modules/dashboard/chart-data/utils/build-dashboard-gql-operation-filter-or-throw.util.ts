@@ -128,7 +128,7 @@ const validateOverrideFieldOrThrow = ({
 
 export const buildDashboardGqlOperationFilterOrThrow = ({
   dashboardFilterValues,
-  viewerTimeZone,
+  timeZone,
   dashboardFilterBindings,
   groupByFieldMetadataIds,
   widgetFilterFieldMetadataIds,
@@ -139,7 +139,7 @@ export const buildDashboardGqlOperationFilterOrThrow = ({
   currentWorkspaceMemberId,
 }: {
   dashboardFilterValues: DashboardFilterValue[] | null | undefined;
-  viewerTimeZone: string | null | undefined;
+  timeZone: string;
   dashboardFilterBindings: DashboardFilterBinding[] | null | undefined;
   groupByFieldMetadataIds: string[];
   widgetFilterFieldMetadataIds: string[];
@@ -152,9 +152,6 @@ export const buildDashboardGqlOperationFilterOrThrow = ({
   if (!isNonEmptyArray(dashboardFilterValues)) {
     return {};
   }
-
-  // A missing time zone fails the builder's time zone check
-  const timeZone = viewerTimeZone ?? '';
 
   const objectFlatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,

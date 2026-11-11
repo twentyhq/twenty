@@ -111,7 +111,7 @@ const buildDashboardFilter = ({
   groupByFieldMetadataIds = [],
   widgetFilterFieldMetadataIds = [],
   flatObjectMetadata = OPPORTUNITY_OBJECT,
-  viewerTimeZone = VIEWER_TIME_ZONE,
+  timeZone = VIEWER_TIME_ZONE,
   firstDayOfTheWeek = CalendarStartDay.MONDAY,
 }: Partial<Parameters<typeof buildDashboardGqlOperationFilterOrThrow>[0]> &
   Pick<
@@ -120,7 +120,7 @@ const buildDashboardFilter = ({
   >) =>
   buildDashboardGqlOperationFilterOrThrow({
     dashboardFilterValues,
-    viewerTimeZone,
+    timeZone,
     dashboardFilterBindings,
     groupByFieldMetadataIds,
     widgetFilterFieldMetadataIds,
@@ -167,7 +167,7 @@ describe('buildDashboardGqlOperationFilterOrThrow', () => {
         buildFilterBoundTo({
           fieldMetadataId: CREATED_AT_FIELD.id,
           dashboardFilterValues,
-          viewerTimeZone: null,
+          timeZone: '',
         }),
       ).toEqual({});
     },
@@ -466,9 +466,9 @@ describe('buildDashboardGqlOperationFilterOrThrow', () => {
   });
 
   it.each([
-    ['no time zone', null],
+    ['an empty time zone', ''],
     ['a time zone Temporal does not know', 'Mars/Olympus_Mons'],
-  ])('should reject values sent with %s', (_, viewerTimeZone) => {
+  ])('should reject values sent with %s', (_, timeZone) => {
     expect(
       catchChartDataException(() =>
         buildFilterBoundTo({
@@ -477,7 +477,7 @@ describe('buildDashboardGqlOperationFilterOrThrow', () => {
             ViewFilterOperand.IS_AFTER,
             '2026-01-01',
           ),
-          viewerTimeZone,
+          timeZone,
         }),
       ),
     ).toMatchObject({
