@@ -41,6 +41,8 @@ import { canSetRecordPrivacy } from 'src/engine/permissions/private-record/utils
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 
 @Injectable()
 export class RecordSharingWriteService {
@@ -50,6 +52,7 @@ export class RecordSharingWriteService {
     private readonly recordSharingChangeService: RecordSharingChangeService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly privateRecordWriteService: PrivateRecordWriteService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
   async setShare(
@@ -212,6 +215,12 @@ export class RecordSharingWriteService {
         objectMetadataId,
         authContext,
         apiKeyRoleMap,
+        applicationRoleId: isApplicationAuthContext(authContext)
+          ? await this.applicationGrantRoleLookupService.findGrantRoleId({
+              workspaceId,
+              flatApplication: authContext.application,
+            })
+          : undefined,
         shareWith,
         isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
         isPrivate,
