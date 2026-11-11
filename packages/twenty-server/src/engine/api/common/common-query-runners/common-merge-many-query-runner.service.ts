@@ -15,13 +15,13 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { DryRunRollbackSignal } from 'src/engine/api/common/common-query-runners/errors/dry-run-rollback-signal.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/common/common-query-runners/utils/compute-duplicate-key-column-groups-for-join-column.util';
 import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
@@ -84,11 +84,21 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       args.dryRun ?? false,
     );
 
-    if (args.dryRun) {
-      return this.createDryRunResponse(priorityRecord, mergedData);
-    }
-
     const idsToDelete = args.ids.filter((id) => id !== priorityRecord.id);
+
+    if (args.dryRun) {
+      // Run the full transactional merge but always ROLLBACK — this validates
+      // every DB constraint (junction unique indexes, FK checks, RLS policies)
+      // so callers get a reliable preflight result instead of a mock object.
+      return this.executeDryRunWithinTransaction({
+        args,
+        queryRunnerContext,
+        idsToDelete,
+        priorityRecordId: priorityRecord.id,
+        mergedData,
+        priorityRecord,
+      });
+    }
 
     const updatedRecord = await this.executeMergeWithinTransaction({
       args,
@@ -277,18 +287,115 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     return fieldMetadata?.isSystem ?? false;
   }
 
-  private createDryRunResponse(
-    priorityRecord: ObjectRecord,
-    mergedData: Partial<ObjectRecord>,
-  ): ObjectRecord {
-    const dryRunRecord: ObjectRecord = {
-      ...priorityRecord,
-      ...mergedData,
-      id: uuidv4(),
-      deletedAt: new Date().toISOString(),
-    };
+  /**
+   * Executes the full merge transaction but always issues a ROLLBACK so no
+   * data is persisted.  This provides true constraint-level validation:
+   * junction unique-index conflicts, FK violations, and RLS policy failures
+   * are all surfaced the same way they would be during a real merge.
+   *
+   * The `DryRunRollbackSignal` is thrown inside the transaction to force the
+   * rollback; it is caught here and the simulated result is returned.
+   */
+  private async executeDryRunWithinTransaction({
+    args,
+    queryRunnerContext,
+    idsToDelete,
+    priorityRecordId,
+    mergedData,
+    priorityRecord,
+  }: {
+    args: CommonExtendedInput<MergeManyQueryArgs>;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    idsToDelete: string[];
+    priorityRecordId: string;
+    mergedData: Partial<ObjectRecord>;
+    priorityRecord: ObjectRecord;
+  }): Promise<ObjectRecord> {
+    return this.workspaceOrmManager
+      .runInWorkspaceTransaction(async (transactionScope) => {
+        const {
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          flatIndexMaps,
+          rolePermissionConfig,
+        } = queryRunnerContext;
 
-    return dryRunRecord;
+        if (!isDefined(flatIndexMaps)) {
+          throw new CommonQueryRunnerException(
+            `Missing flatIndexMaps in queryRunnerContext`,
+            CommonQueryRunnerExceptionCode.MISSING_FLAT_INDEX_MAPS,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+          );
+        }
+
+        const alias = flatObjectMetadata.nameSingular;
+
+        // Step 1: Migrate / soft-delete related records exactly as the real
+        // merge would — this is what validates junction unique indexes.
+        for (const relationField of this.getRelationFieldsPointingToCurrentObject(
+          queryRunnerContext,
+        )) {
+          await this.mergeRelatedRecordsIntoPriorityRecord({
+            transactionScope,
+            relationField,
+            flatFieldMetadataMaps,
+            flatIndexMaps,
+            rolePermissionConfig,
+            idsToDelete,
+            priorityRecordId,
+          });
+        }
+
+        const columnsToReturn = buildColumnsToReturn({
+          select: args.selectedFieldsResult.select,
+          relations: args.selectedFieldsResult.relations,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        });
+
+        const objectRepository = transactionScope.getRepository(
+          alias,
+          rolePermissionConfig,
+        );
+
+        // Step 2: Simulate the survivor update to validate survivor-level
+        // constraints (e.g. unique email index on the person table).
+        const [resolvedMergedData] = await this.resolveNestedRelations({
+          records: [mergedData],
+          queryRunnerContext,
+          writeRepository: objectRepository,
+        });
+
+        await objectRepository.runMutation({
+          selectQueryBuilder: objectRepository
+            .createQueryBuilder(alias)
+            .where({ id: priorityRecordId }),
+          rowLevelPermissionsApplied: false,
+          kind: 'update',
+          columnsToReturn,
+          data: resolvedMergedData,
+        });
+
+        // Step 3: All DB validations passed — build the preview result from
+        // the merged scalar data (relations preview already computed
+        // in-memory by performDeepMerge) and force the ROLLBACK.
+        const simulatedResult: ObjectRecord = {
+          ...priorityRecord,
+          ...mergedData,
+          id: priorityRecord.id,
+        };
+
+        throw new DryRunRollbackSignal(simulatedResult);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DryRunRollbackSignal) {
+          return error.simulatedResult;
+        }
+
+        throw error;
+      });
   }
 
   private getRelationFieldsPointingToCurrentObject(

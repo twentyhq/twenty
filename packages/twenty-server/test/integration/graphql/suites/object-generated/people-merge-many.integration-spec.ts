@@ -723,6 +723,96 @@ describe('people merge resolvers (integration)', () => {
       );
     });
 
+    it('should validate junction constraints during dry run and leave source records intact', async () => {
+      // Create two people that share a message thread — the exact scenario
+      // that used to cause dryRun:false to fail with "A duplicate entry was
+      // detected" while dryRun:true (the old in-memory mock) succeeded.
+      const { priorityPersonId, duplicatePersonId } = await createPeoplePair(
+        'DryRun Shared Thread',
+      );
+
+      // Create a shared message thread and attach both people to it.
+      const createThreadResponse = await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'messageThread',
+          gqlFields: 'id',
+          data: {},
+        }),
+      );
+
+      expect(createThreadResponse.body.errors).toBeUndefined();
+      const sharedThreadId =
+        createThreadResponse.body.data.createMessageThread.id;
+
+      createdMessageThreadIdsForCleaning.push(sharedThreadId);
+
+      const createTarget1Response = await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'messageThreadTarget',
+          gqlFields: 'id',
+          data: { messageThreadId: sharedThreadId, targetPersonId: priorityPersonId },
+        }),
+      );
+
+      expect(createTarget1Response.body.errors).toBeUndefined();
+      createdMessageThreadTargetIdsForCleaning.push(
+        createTarget1Response.body.data.createMessageThreadTarget.id,
+      );
+
+      const createTarget2Response = await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'messageThreadTarget',
+          gqlFields: 'id',
+          data: { messageThreadId: sharedThreadId, targetPersonId: duplicatePersonId },
+        }),
+      );
+
+      expect(createTarget2Response.body.errors).toBeUndefined();
+      createdMessageThreadTargetIdsForCleaning.push(
+        createTarget2Response.body.data.createMessageThreadTarget.id,
+      );
+
+      // Dry run should succeed — constraint validation passes because the
+      // duplicate thread link is soft-deleted within the rolled-back
+      // transaction.
+      const dryRunResponse = await makeGraphqlApiRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: [priorityPersonId, duplicatePersonId],
+          conflictPriorityIndex: 0,
+          dryRun: true,
+        }),
+      );
+
+      expect(dryRunResponse.body.errors).toBeUndefined();
+      expect(dryRunResponse.body.data.mergePeople.id).toBe(priorityPersonId);
+
+      // Source records must be untouched — the transaction was rolled back.
+      const findDuplicateResponse = await makeGraphqlApiRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          filter: { id: { eq: duplicatePersonId } },
+        }),
+      );
+
+      expect(findDuplicateResponse.body.data.person).toBeTruthy();
+
+      // The real merge must also succeed — verifies the fix is end-to-end.
+      const mergeResponse = await makeGraphqlApiRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: [priorityPersonId, duplicatePersonId],
+          conflictPriorityIndex: 0,
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+      expect(mergeResponse.body.data.mergePeople.id).toBe(priorityPersonId);
+    });
+
     it('should merge phones and whatsapp composite fields correctly', async () => {
       const createPersonsOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
