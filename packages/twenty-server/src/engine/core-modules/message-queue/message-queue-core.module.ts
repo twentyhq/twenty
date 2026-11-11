@@ -74,8 +74,7 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
 
     const driverProvider: Provider = {
       provide: QUEUE_DRIVER,
-      // oxlint-disable-next-line typescript/no-explicit-any
-      useFactory: async (...args: any[]) => {
+      useFactory: async (...args: unknown[]) => {
         if (options.useFactory) {
           const config = await options.useFactory(...args);
 
