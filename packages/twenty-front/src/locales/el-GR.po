@@ -1115,7 +1115,7 @@ msgstr "Ο χρήστης {roleTargetName} θα εκχωρηθεί στο ρόλ
 #. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
 msgid "{runCount, plural, one {# turn} other {# turns}}"
-msgstr ""
+msgstr "{runCount, plural, one {# σειρά} other {# σειρές}}"
 
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -2993,7 +2993,7 @@ msgstr "Εκτέλεση πράκτορα"
 #. js-lingui-id: aeu9gE
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 msgid "Agent sections"
-msgstr ""
+msgstr "Ενότητες πράκτορα"
 
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -4870,7 +4870,7 @@ msgstr "Μέσος όρος"
 #. js-lingui-id: RSsxRl
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Avg duration"
-msgstr ""
+msgstr "Μέση διάρκεια"
 
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -8004,7 +8004,7 @@ msgstr "Δεν ήταν δυνατή η φόρτωση σχετικών εγγρ
 #. js-lingui-id: 3167/q
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Could not load run insights"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η φόρτωση πληροφοριών εκτέλεσης"
 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
@@ -8024,7 +8024,7 @@ msgstr "Δεν ήταν δυνατή η φόρτωση αυτής της ροή�
 #. js-lingui-id: 6UPqqs
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Could not load turns"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η φόρτωση των γύρων"
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -12763,7 +12763,7 @@ msgstr "Απέτυχε"
 #. js-lingui-id: GUHLDy
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Failed · 14d"
-msgstr ""
+msgstr "Απέτυχε · 14ημ"
 
 #. js-lingui-id: hGfbkg
 #: src/modules/activities/files/utils/downloadFile.ts
@@ -13305,7 +13305,7 @@ msgstr "Αποτυχία μεταφόρτωσης εικόνας"
 #. js-lingui-id: D98pOW
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Failure rate"
-msgstr ""
+msgstr "Ποσοστό αποτυχίας"
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -20011,7 +20011,7 @@ msgstr "Δεν έχουν προγραμματιστεί ακόμη συμβάν
 #. js-lingui-id: dAMlIe
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 msgid "No failed runs"
-msgstr ""
+msgstr "Δεν υπάρχουν αποτυχημένες εκτελέσεις"
 
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
@@ -20519,7 +20519,7 @@ msgstr "Κανένα έναυσμα δεν είναι ενεργοποιημέν
 #. js-lingui-id: 96i2d6
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "No turns yet"
-msgstr ""
+msgstr "Δεν υπάρχουν γύροι ακόμα"
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -23512,7 +23512,7 @@ msgstr "Πρόσφατα Γεγονότα (παλιότερα → νεότερα
 #. js-lingui-id: gKFqSG
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Recent failed runs"
-msgstr ""
+msgstr "Πρόσφατες αποτυχημένες εκτελέσεις"
 
 #. js-lingui-id: dF8kMd
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
@@ -25099,12 +25099,12 @@ msgstr "Εκτελέσεις και αποτυχίες ανά έκδοση"
 #. js-lingui-id: +L9ulP
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Runs appear here once this workflow is triggered"
-msgstr ""
+msgstr "Οι εκτελέσεις εμφανίζονται εδώ μόλις ενεργοποιηθεί αυτή η ροή εργασίας"
 
 #. js-lingui-id: NQVS6K
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Runs per day"
-msgstr ""
+msgstr "Εκτελέσεις ανά ημέρα"
 
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -25971,7 +25971,7 @@ msgstr "Δείτε εγγραφές σε όλα τα αντικείμενα"
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Turns"
-msgstr ""
+msgstr "Δείτε τους γύρους"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -28984,7 +28984,7 @@ msgstr "Το όνομα που βλέπουν οι παραλήπτες δίπλ
 #. js-lingui-id: op7R9r
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
-msgstr ""
+msgstr "Ο αριθμός των ημερών από την ημερομηνία έως σήμερα, σε UTC. Αρνητικός για ημερομηνία στο μέλλον."
 
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30363,7 +30363,7 @@ msgstr "Αληθές όταν και οι δύο πλευρές είναι αλ�
 #. js-lingui-id: NYXoie
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
-msgstr ""
+msgstr "Αληθές όταν η ημερομηνία εμπίπτει σε περίοδο που υπολογίζεται από σήμερα, σε UTC: PAST, NEXT ή THIS, ένα πλήθος και μια μονάδα όπως DAY, WEEK ή MONTH. Τα PAST και NEXT δεν περιλαμβάνουν την τρέχουσα περίοδο."
 
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30453,12 +30453,12 @@ msgstr "Μετατρέψτε την καρτέλα AI σε εισερχόμεν�
 #. js-lingui-id: R3c2/s
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 msgid "Turns"
-msgstr ""
+msgstr "Γύροι"
 
 #. js-lingui-id: ZKeDcZ
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Turns appear here once a workflow or an app uses this agent"
-msgstr ""
+msgstr "Οι γύροι εμφανίζονται εδώ μόλις μια ροή εργασίας ή μια εφαρμογή χρησιμοποιήσει αυτόν τον πράκτορα"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33015,7 +33015,7 @@ msgstr "Η ροή εργασίας δεν βρέθηκε."
 #. js-lingui-id: fezYCQ
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 msgid "Workflow sections"
-msgstr ""
+msgstr "Ενότητες ροής εργασίας"
 
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
