@@ -8,7 +8,7 @@ import {
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type DocumentNode, parse } from 'graphql';
+import { type DocumentNode } from 'graphql';
 import { v4 } from 'uuid';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -25,13 +25,13 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { setRecordPrivate } from 'test/integration/metadata/suites/private-record/utils/set-record-private.util';
 import { createRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/create-related-record-path.util';
 import { deleteRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/delete-related-record-path.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
@@ -54,9 +54,6 @@ const PROJECT_NAME = 'pathAccessProject';
 const TASK_NAME = 'pathAccessTask';
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const SCHEMA = `"${getWorkspaceSchemaName(workspaceId)}"`;
-const SET_RECORD_PRIVATE = parse(
-  `mutation SetRecordPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { isPrivate } }`,
-);
 const PATH_FEATURE_FLAGS = [
   FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
   FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
@@ -550,15 +547,10 @@ describe('Record access through related record paths', () => {
 
   it('should stop listing the related records while the source record is private', async () => {
     const setProjectPrivate = async (isPrivate: boolean) => {
-      const response = await makeMetadataApiRequest({
-        query: SET_RECORD_PRIVATE,
-        variables: {
-          target: {
-            objectMetadataId: projectObjectMetadataId,
-            recordId: projectId,
-          },
-          isPrivate,
-        },
+      const response = await setRecordPrivate({
+        objectMetadataId: projectObjectMetadataId,
+        recordId: projectId,
+        isPrivate,
       });
 
       expect(response.body.errors).toBeUndefined();

@@ -157,17 +157,21 @@ export const buildRelatedRecordPathsSQLCondition = ({
       ),
     );
 
+    if (
+      typeof pathsSQLCondition === 'boolean' ||
+      !isRecordPrivacyApplicable(flatObjectMetadata)
+    ) {
+      return combineWithOr([entrySQLCondition, pathsSQLCondition]);
+    }
+
     return combineWithOr([
       entrySQLCondition,
-      typeof pathsSQLCondition !== 'boolean' &&
-      isRecordPrivacyApplicable(flatObjectMetadata)
-        ? combineSQLConditions({
-            sqlConditions: [
-              pathsSQLCondition,
-              buildRecordPrivacySQLCondition({ tableAlias, isPrivate: false }),
-            ],
-          })
-        : pathsSQLCondition,
+      combineSQLConditions({
+        sqlConditions: [
+          pathsSQLCondition,
+          buildRecordPrivacySQLCondition({ tableAlias, isPrivate: false }),
+        ],
+      }),
     ]);
   };
 
