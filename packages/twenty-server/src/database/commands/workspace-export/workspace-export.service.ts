@@ -14,6 +14,7 @@ import { getCoreEntityMetadatasWithWorkspaceId } from 'src/database/commands/wor
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PERMISSION_STORAGE_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/constants/permission-storage-object-universal-identifiers.constant';
 import { PERMISSION_TABLES } from 'src/engine/permissions/permission-table/constants/permission-tables.constant';
 import { buildCreatePermissionTablesStatements } from 'src/engine/permissions/permission-table/utils/build-create-permission-tables-statements.util';
 import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
@@ -203,6 +204,12 @@ export class WorkspaceExportService {
     const coreEntityMetadatas = getCoreEntityMetadatasWithWorkspaceId(
       this.dataSource,
     );
+    const permissionStorageObjectRowIdsByTableName =
+      await this.findPermissionStorageObjectRowIdsByTableName({
+        workspaceId,
+        coreEntityMetadatas,
+        queryRunner,
+      });
 
     for (const entityMetadata of coreEntityMetadatas) {
       try {
@@ -212,8 +219,13 @@ export class WorkspaceExportService {
           displayName: entityMetadata.tableName,
           queryRunner,
           stream,
-          whereClause: '"workspaceId" = $1',
-          queryParameters: [workspaceId],
+          whereClause: '"workspaceId" = $1 AND "id" <> ALL($2::uuid[])',
+          queryParameters: [
+            workspaceId,
+            permissionStorageObjectRowIdsByTableName.get(
+              entityMetadata.tableName,
+            ) ?? [],
+          ],
           jsonColumns: this.buildJsonColumnSet(entityMetadata),
         });
       } catch (error) {
@@ -369,6 +381,66 @@ export class WorkspaceExportService {
     if (totalRows > 0) {
       this.logger.log(`  ${displayName}: ${totalRows} rows`);
     }
+  }
+
+  // The two objects are exported as permission tables, so their metadata and
+  // every core row that cascades from it stay out of the export
+  private async findPermissionStorageObjectRowIdsByTableName({
+    workspaceId,
+    coreEntityMetadatas,
+    queryRunner,
+  }: {
+    workspaceId: string;
+    coreEntityMetadatas: EntityMetadata[];
+    queryRunner: QueryRunner;
+  }): Promise<Map<string, string[]>> {
+    const permissionStorageObjects: { id: string }[] = await queryRunner.query(
+      `SELECT "id" FROM "core"."objectMetadata"
+       WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+      [workspaceId, PERMISSION_STORAGE_OBJECT_UNIVERSAL_IDENTIFIERS],
+    );
+    const rowIdsByTableName = new Map<string, string[]>([
+      ['objectMetadata', permissionStorageObjects.map(({ id }) => id)],
+    ]);
+    let hasFoundRows = isNonEmptyArray(permissionStorageObjects);
+
+    while (hasFoundRows) {
+      hasFoundRows = false;
+
+      for (const entityMetadata of coreEntityMetadatas) {
+        for (const foreignKey of entityMetadata.foreignKeys) {
+          const parentRowIds = rowIdsByTableName.get(
+            foreignKey.referencedEntityMetadata.tableName,
+          );
+          const [columnName] = foreignKey.columnNames;
+
+          if (
+            foreignKey.onDelete !== 'CASCADE' ||
+            !isNonEmptyArray(parentRowIds)
+          ) {
+            continue;
+          }
+
+          const knownRowIds =
+            rowIdsByTableName.get(entityMetadata.tableName) ?? [];
+          const rows: { id: string }[] = await queryRunner.query(
+            `SELECT "id" FROM "core".${escapeIdentifier(entityMetadata.tableName)}
+             WHERE "workspaceId" = $1 AND ${escapeIdentifier(columnName)} = ANY($2::uuid[]) AND "id" <> ALL($3::uuid[])`,
+            [workspaceId, parentRowIds, knownRowIds],
+          );
+
+          if (isNonEmptyArray(rows)) {
+            rowIdsByTableName.set(entityMetadata.tableName, [
+              ...knownRowIds,
+              ...rows.map(({ id }) => id),
+            ]);
+            hasFoundRows = true;
+          }
+        }
+      }
+    }
+
+    return rowIdsByTableName;
   }
 
   private async writePermissionTables({
