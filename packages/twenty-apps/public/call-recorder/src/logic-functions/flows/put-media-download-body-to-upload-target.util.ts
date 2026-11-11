@@ -8,6 +8,11 @@ import { Readable } from 'node:stream';
 import { finished, pipeline } from 'node:stream/promises';
 import { type ReadableStream as NodeWebReadableStream } from 'node:stream/web';
 
+import { CALL_RECORDER_MEDIA_UPLOAD_BASE_URL_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-media-upload-base-url-env-var-name';
+import { resolveMediaUploadUrl } from 'src/logic-functions/domain/resolve-media-upload-url.util';
+import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
+import { normalizeOptionalString } from 'src/logic-functions/utils/normalize-optional-string.util';
+
 type MediaUploadTarget = {
   uploadUrl: string;
   contentType: string;
@@ -57,7 +62,14 @@ const streamMediaDownloadReadableToUploadTarget = async ({
   uploadTarget: MediaUploadTarget;
   signal: AbortSignal;
 }): Promise<void> => {
-  const uploadUrl = new URL(uploadTarget.uploadUrl);
+  const uploadUrl = resolveMediaUploadUrl({
+    issuedUploadUrl: uploadTarget.uploadUrl,
+    mediaUploadBaseUrl: normalizeOptionalString(
+      getApplicationVariableValue(
+        CALL_RECORDER_MEDIA_UPLOAD_BASE_URL_ENV_VAR_NAME,
+      )?.trim(),
+    ),
+  });
   const requestUpload =
     uploadUrl.protocol === 'http:' ? requestOverHttp : requestOverHttps;
   const uploadRequest = requestUpload(uploadUrl, {
