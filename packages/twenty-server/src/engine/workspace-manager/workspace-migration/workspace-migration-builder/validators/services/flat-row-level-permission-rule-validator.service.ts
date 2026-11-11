@@ -16,15 +16,12 @@ import {
 import { validateObjectPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 type RuleRelatedFlatEntityMaps = UniversalFlatEntityValidationArgs<
   typeof ALL_METADATA_NAME.rowLevelPermissionRule
 >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'];
-
-type RuleValidationBuildOptions = UniversalFlatEntityValidationArgs<
-  typeof ALL_METADATA_NAME.rowLevelPermissionRule
->['buildOptions'];
 
 @Injectable()
 export class FlatRowLevelPermissionRuleValidatorService {
@@ -159,7 +156,7 @@ export class FlatRowLevelPermissionRuleValidatorService {
     >;
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: RuleRelatedFlatEntityMaps;
     buildOptions: Pick<
-      RuleValidationBuildOptions,
+      WorkspaceMigrationValidationBuildOptions,
       | 'applicationDefaultRoleUniversalIdentifier'
       | 'workspaceCustomApplicationUniversalIdentifier'
     >;
