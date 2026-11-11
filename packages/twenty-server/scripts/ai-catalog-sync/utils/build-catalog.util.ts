@@ -68,10 +68,14 @@ const extractCost = ({
   model.cacheCreationCostPerMillionTokens = cost.cache_write;
 
   const tieredCost = cost.tiers?.find(
-    (t) => isDefined(t.input) && isDefined(t.tier?.size)
+    (t) => isDefined(t.input) && isDefined(t.tier?.size),
   );
 
-  if (isDefined(tieredCost) && isDefined(tieredCost.tier?.size)) {
+  if (
+    isDefined(tieredCost) &&
+    isDefined(tieredCost.input) &&
+    isDefined(tieredCost.tier?.size)
+  ) {
     model.longContextCost = {
       inputCostPerMillionTokens: tieredCost.input,
       outputCostPerMillionTokens:
@@ -151,7 +155,7 @@ export const buildCatalog = ({
 
     if (!isDefined(providerData)) {
       // oxlint-disable-next-line no-console
-      console.warn(`Provider "${providerName}" not found in models.dev`);
+      console.warn();
       continue;
     }
 
@@ -166,7 +170,7 @@ export const buildCatalog = ({
 
     if (models.length === 0) {
       // oxlint-disable-next-line no-console
-      console.warn(`No qualifying models for "${providerName}", skipping`);
+      console.warn();
       continue;
     }
 
