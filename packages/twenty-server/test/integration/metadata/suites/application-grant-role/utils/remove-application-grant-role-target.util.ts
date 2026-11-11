@@ -8,8 +8,6 @@ const invalidateRoleTargets = () =>
     'WorkspaceCacheService',
   ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatRoleTargetMaps']);
 
-// No API takes a grant away from an application that stays installed, so the
-// row is removed directly: this is an application the grant backfill missed.
 export const removeApplicationGrantRoleTarget = async ({
   applicationId,
 }: {

@@ -7,8 +7,6 @@ type DatabaseToolPayload = {
   error?: string;
 };
 
-// A token carrying an agent is only accepted by MCP, where database tools are
-// reached through the execute_tool wrapper.
 export const executeDatabaseToolThroughMcp = async ({
   toolName,
   toolArguments,

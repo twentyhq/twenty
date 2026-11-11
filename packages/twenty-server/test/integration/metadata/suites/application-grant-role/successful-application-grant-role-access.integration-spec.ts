@@ -66,7 +66,6 @@ const readCompanyTestCases: EachTestingContext<ReadCompanyTestContext>[] = [
 
 type GrantRoleIdTestContext = {
   getApplicationId: (applications: GrantRoleApplications) => string;
-  // 'grant': a role of the workspace custom application, 'own': its own role
   expectedRole: 'grant' | 'own' | 'none';
 };
 

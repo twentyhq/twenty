@@ -60,9 +60,6 @@ const generateApplicationForAdminMemberToken = async (
   return applicationAccessToken.token;
 };
 
-// The requested role reads and writes everything except companies, which it
-// only reads, and its agent's role writes companies too: a company update
-// tells the application's role apart from every role it is combined with.
 const installConfinedApplication = async ({
   applicationUniversalIdentifier,
   invoiceObjectNameSingular,

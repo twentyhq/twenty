@@ -58,7 +58,6 @@ export class ApplicationGrantRoleService {
         `Application ${flatApplication.universalIdentifier} has no default role in workspace ${workspaceId}, it gets no grant role`,
       );
 
-      // The grant mirrors the requested role, so it goes with it
       if (isDefined(grantFlatRole)) {
         await this.deleteFlatGrantRole({
           workspaceId,

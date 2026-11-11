@@ -128,7 +128,6 @@ export class ApplicationResolver {
     });
   }
 
-  // The role the application runs with, see twentyhq/core-team-issues#3146
   @ResolveField(() => UUIDScalarType, { nullable: true })
   async grantRoleId(
     @Parent() application: Pick<ApplicationDTO, 'id'>,

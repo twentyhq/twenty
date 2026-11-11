@@ -81,7 +81,6 @@ export const SettingsRolesList = () => {
       .map((application) => [application.grantRoleId, application]),
   );
 
-  // An application runs with its grant, a copy of the role it requests
   const requestedOnlyRoleIds = new Set(
     installedApplications
       .filter(
@@ -92,7 +91,6 @@ export const SettingsRolesList = () => {
       .map((application) => application.defaultRoleId),
   );
 
-  // Admin is the standard application's requested role but stays a member role
   const isApplicationRole = (role: RoleWithPartialMembers) =>
     !role.canBeAssignedToUsers &&
     installedApplicationByGrantRoleId.has(role.id);

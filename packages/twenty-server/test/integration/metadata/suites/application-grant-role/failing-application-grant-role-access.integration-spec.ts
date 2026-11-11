@@ -37,7 +37,6 @@ type TestSetup = {
 
 type TestContext = {
   attempt: (setup: TestSetup) => Promise<{ errors: BaseGraphQLError[] }>;
-  // Absent where the refused request has nothing to change
   readTarget?: (setup: TestSetup) => Promise<unknown>;
 };
 
@@ -233,7 +232,6 @@ describe('Applications acting with their grant role should fail', () => {
       token: setup.applications.tokens.confinedApplicationAgent,
     });
 
-    // Tools the combined roles do not permit are left out of the agent's catalog
     expect(isError).toBe(true);
     expect(payload).toMatchObject({
       success: false,

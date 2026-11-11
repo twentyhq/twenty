@@ -8,7 +8,6 @@ import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-targe
 
 const logger = new Logger('ResolveApplicationGrantRoleId');
 
-// The role an application runs with: its grant, see twentyhq/core-team-issues#3146
 export const resolveApplicationGrantRoleId = ({
   flatApplication,
   workspaceId,
@@ -40,8 +39,6 @@ export const resolveApplicationGrantRoleId = ({
     return grantRoleId;
   }
 
-  // TODO: remove this fallback once every application is known to have its grant,
-  // and with it the role comparisons in getPermissionsPrincipalsActingApplication
   logger.warn(
     `Application ${flatApplication.id} has no grant role in workspace ${workspaceId}, it runs with its requested role`,
   );

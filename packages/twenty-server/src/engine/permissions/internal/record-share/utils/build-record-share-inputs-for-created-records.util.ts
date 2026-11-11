@@ -128,7 +128,6 @@ export const buildRecordShareInputsForCreatedRecords = ({
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
-  // The role the application runs with, its grant role
   applicationRoleId?: string;
   shareWith?: ShareWithInput[] | null;
   isPrivateByDefault: boolean;
