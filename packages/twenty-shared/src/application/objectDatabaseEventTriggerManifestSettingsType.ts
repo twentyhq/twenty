@@ -4,7 +4,7 @@ export type ObjectDatabaseEventTriggerManifestSettings = {
   // Every object when left out; a condition needs one object to read
   objectUniversalIdentifier?: string;
   action: DatabaseEventTriggerManifestAction;
-  fieldUniversalIdentifiers?: string[];
+  watchedFieldUniversalIdentifiers?: string[];
   condition?: string;
   batchMode?: boolean;
 };

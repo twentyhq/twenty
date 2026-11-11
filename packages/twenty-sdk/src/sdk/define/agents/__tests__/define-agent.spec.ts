@@ -199,7 +199,9 @@ describe('defineAgent', () => {
           settings: {
             objectUniversalIdentifier: 'b7e6c2a1-3f4d-4e5a-9b8c-7d6e5f4a3b2c',
             action: 'updated',
-            fieldUniversalIdentifiers: ['e3d2c1b0-9a8f-4e7d-8c6b-5a4f3e2d1c0b'],
+            watchedFieldUniversalIdentifiers: [
+              'e3d2c1b0-9a8f-4e7d-8c6b-5a4f3e2d1c0b',
+            ],
             condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
           },
         },
