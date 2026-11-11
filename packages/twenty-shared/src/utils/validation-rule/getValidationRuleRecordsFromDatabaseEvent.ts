@@ -1,12 +1,5 @@
 import { type ObjectRecordEvent } from '@/database-events/object-record-event.event';
-
-export type ValidationRuleDatabaseEventAction =
-  | 'created'
-  | 'updated'
-  | 'upserted'
-  | 'deleted'
-  | 'destroyed'
-  | 'restored';
+import { type ValidationRuleDatabaseEventAction } from '@/types/ValidationRuleDatabaseEventAction';
 
 type ValidationRuleRecords = {
   record: Record<string, unknown>;
