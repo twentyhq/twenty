@@ -10,7 +10,6 @@ type ValidationRuleToOneRelationTarget = {
   isMorphTarget: boolean;
 };
 
-// A morph relation reads each of its targets as its own relation (targetCompany, targetPerson)
 export const getValidationRuleToOneRelationTargets = (
   fieldMetadataItem: Pick<
     FieldMetadataItem,

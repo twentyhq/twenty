@@ -2,11 +2,11 @@ import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNow
 import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from '@/constants/ValidationRulePreviousVariableName';
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
-import { RelationType } from '@/types/RelationType';
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { isValidationRuleToOneRelationField } from '@/utils/validation-rule/isValidationRuleToOneRelationField';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type ValidationRuleIdentifierPathError = {
@@ -69,13 +69,6 @@ const isRelationField = (field: ValidationRuleFieldDescriptor) =>
   field.type === FieldMetadataType.RELATION ||
   field.type === FieldMetadataType.MORPH_RELATION;
 
-// A morph target (targetCompany) reads like a relation to one record
-const isToOneRelationField = (field: ValidationRuleFieldDescriptor) =>
-  isRelationField(field) &&
-  field.relationType === RelationType.MANY_TO_ONE &&
-  isDefined(field.relationTargetFields);
-
-// The same paths resolve after previous., bound under that prefix
 const resolveFieldPath = ({
   path,
   segments,
@@ -120,7 +113,7 @@ const resolveFieldPath = ({
       : { isResolved: false, ...subfieldError };
   }
 
-  if (!isToOneRelationField(rootField)) {
+  if (!isValidationRuleToOneRelationField(rootField)) {
     return {
       isResolved: false,
       errorMessage: `"${rootSegment}" is not a to-one relation`,
@@ -193,17 +186,19 @@ export const resolveValidationRuleIdentifierPath = ({
       : { isResolved: false, ...buildNotAValueError(path) };
   }
 
-  return rootSegment === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME
-    ? resolveFieldPath({
-        path,
-        segments: memberSegments,
-        fields,
-        bindingPrefix: `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.`,
-      })
-    : resolveFieldPath({
-        path,
-        segments: path.split('.'),
-        fields,
-        bindingPrefix: '',
-      });
+  if (rootSegment === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME) {
+    return resolveFieldPath({
+      path,
+      segments: memberSegments,
+      fields,
+      bindingPrefix: `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.`,
+    });
+  }
+
+  return resolveFieldPath({
+    path,
+    segments: path.split('.'),
+    fields,
+    bindingPrefix: '',
+  });
 };

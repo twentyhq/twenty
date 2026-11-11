@@ -377,6 +377,7 @@ export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationR
 export { isValidationRuleDateInRelativeRange } from './validation-rule/isValidationRuleDateInRelativeRange';
 export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';
 export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
+export { isValidationRuleToOneRelationField } from './validation-rule/isValidationRuleToOneRelationField';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
 export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleValueEmpty';
 export { parseValidationRuleExpression } from './validation-rule/parseValidationRuleExpression';
