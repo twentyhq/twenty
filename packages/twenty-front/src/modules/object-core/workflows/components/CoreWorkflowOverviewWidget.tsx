@@ -5,13 +5,11 @@ import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 
 type CoreWorkflowOverviewWidgetProps = {
-  widgetId: string;
   title: string;
   children: ReactNode;
 };
 
 export const CoreWorkflowOverviewWidget = ({
-  widgetId,
   title,
   children,
 }: CoreWorkflowOverviewWidgetProps) => (
@@ -22,12 +20,7 @@ export const CoreWorkflowOverviewWidget = ({
     isDragging={false}
     isResizing={false}
   >
-    <WidgetCardHeader
-      variant="framed"
-      widgetId={widgetId}
-      isInEditMode={false}
-      title={title}
-    />
+    <WidgetCardHeader variant="framed" isInEditMode={false} title={title} />
     <WidgetCardContent variant="framed" hasHeader isEditable={false}>
       {children}
     </WidgetCardContent>
