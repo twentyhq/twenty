@@ -54,11 +54,11 @@ export const WorkspaceProviderEffect = () => {
     const defaultDomainUrl = new URL(window.location.origin);
     defaultDomainUrl.hostname = defaultDomain;
 
-    redirectToWorkspaceDomain(
-      defaultDomainUrl.toString(),
-      window.location.pathname,
-      getCurrentSearchParams(),
-    );
+    redirectToWorkspaceDomain({
+      baseUrl: defaultDomainUrl.toString(),
+      pathname: window.location.pathname,
+      searchParams: getCurrentSearchParams(),
+    });
   }, [isBareFrontDomain, defaultDomain, redirectToWorkspaceDomain]);
 
   useEffect(() => {
@@ -69,11 +69,11 @@ export const WorkspaceProviderEffect = () => {
         getPublicWorkspaceData.workspaceUrls,
       )
     ) {
-      redirectToWorkspaceDomain(
-        getWorkspaceUrl(getPublicWorkspaceData.workspaceUrls),
-        window.location.pathname,
-        getCurrentSearchParams(),
-      );
+      redirectToWorkspaceDomain({
+        baseUrl: getWorkspaceUrl(getPublicWorkspaceData.workspaceUrls),
+        pathname: window.location.pathname,
+        searchParams: getCurrentSearchParams(),
+      });
     }
   }, [
     isMultiWorkspaceEnabled,
@@ -93,11 +93,11 @@ export const WorkspaceProviderEffect = () => {
       isDefined(lastAuthenticatedWorkspaceDomain?.workspaceUrl)
     ) {
       initializeQueryParamState();
-      redirectToWorkspaceDomain(
-        lastAuthenticatedWorkspaceDomain.workspaceUrl,
-        window.location.pathname,
-        getCurrentSearchParams(),
-      );
+      redirectToWorkspaceDomain({
+        baseUrl: lastAuthenticatedWorkspaceDomain.workspaceUrl,
+        pathname: window.location.pathname,
+        searchParams: getCurrentSearchParams(),
+      });
     }
   }, [
     isMultiWorkspaceEnabled,

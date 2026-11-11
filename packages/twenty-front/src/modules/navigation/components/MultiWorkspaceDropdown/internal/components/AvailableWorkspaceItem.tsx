@@ -26,11 +26,11 @@ export const AvailableWorkspaceItem = ({
     getAvailableWorkspacePathAndSearchParams(availableWorkspace);
 
   const handleChange = async () => {
-    await redirectToWorkspaceDomain(
-      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+    await redirectToWorkspaceDomain({
+      baseUrl: getWorkspaceUrl(availableWorkspace.workspaceUrls),
       pathname,
       searchParams,
-    );
+    });
   };
 
   return (
