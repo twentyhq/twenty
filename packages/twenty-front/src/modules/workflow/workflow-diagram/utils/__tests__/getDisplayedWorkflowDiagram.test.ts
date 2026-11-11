@@ -1,6 +1,9 @@
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getDisplayedWorkflowDiagram } from '@/workflow/workflow-diagram/utils/getDisplayedWorkflowDiagram';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import {
+  TRIGGER_STEP_ID,
+  WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
+} from 'twenty-shared/workflow';
 
 const TRIGGER_POSITION = { x: 500, y: 100 };
 const IF_BRANCH_POSITION = { x: 300, y: 400 };
@@ -135,6 +138,43 @@ describe('getDisplayedWorkflowDiagram', () => {
     });
 
     expect(nodes[1].position).not.toEqual(PLACEHOLDER_POSITION);
+  });
+
+  it('moves a new branch clear of a node the user placed where the layout would put it', () => {
+    const loopBodyPosition = { x: TRIGGER_POSITION.x, y: 240 };
+
+    const { nodes } = getDisplayedWorkflowDiagram({
+      diagram: {
+        nodes: [
+          buildNode(TRIGGER_STEP_ID, TRIGGER_POSITION),
+          buildNode('loop-body', loopBodyPosition),
+          buildNode('new-branch', PLACEHOLDER_POSITION),
+          buildNode('new-branch-child', PLACEHOLDER_POSITION),
+        ],
+        edges: [
+          buildEdge(TRIGGER_STEP_ID, 'loop-body'),
+          buildEdge(TRIGGER_STEP_ID, 'new-branch'),
+          buildEdge('new-branch', 'new-branch-child'),
+        ],
+      },
+      flow: {
+        trigger: { position: TRIGGER_POSITION },
+        steps: [
+          { id: 'loop-body', position: loopBodyPosition },
+          { id: 'new-branch' },
+          { id: 'new-branch-child' },
+        ],
+      },
+    });
+
+    const [, loopBody, newBranch, newBranchChild] = nodes;
+
+    expect(loopBody.position).toEqual(loopBodyPosition);
+    expect(newBranch.position.x).toBeGreaterThanOrEqual(
+      loopBodyPosition.x + WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS.width,
+    );
+    expect(newBranchChild.position.x).toBe(newBranch.position.x);
+    expect(newBranchChild.position.y).toBeGreaterThan(newBranch.position.y);
   });
 
   it('leaves a node being dragged where the user holds it', () => {
