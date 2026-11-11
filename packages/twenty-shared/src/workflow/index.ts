@@ -171,7 +171,10 @@ export type {
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
 export { computeDatabaseEventTriggerConditionFromFilter } from './utils/computeDatabaseEventTriggerConditionFromFilter';
+export { computeIfElseBranchConditionFromFilter } from './utils/computeIfElseBranchConditionFromFilter';
+export { computeWorkflowStepConditionFromFilter } from './utils/computeWorkflowStepConditionFromFilter';
 export { convertStepFiltersToRuleExpression } from './utils/convertStepFiltersToRuleExpression';
+export { convertWorkflowStepFiltersToRuleExpression } from './utils/convertWorkflowStepFiltersToRuleExpression';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';

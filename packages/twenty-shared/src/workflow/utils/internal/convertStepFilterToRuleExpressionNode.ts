@@ -11,9 +11,11 @@ import { isVariableReference } from '@/utils/variable-resolver';
 import { buildStepFilterContainsRuleExpressionNode } from '@/workflow/utils/internal/buildStepFilterContainsRuleExpressionNode';
 import { convertDateStepFilterToRuleExpressionNode } from '@/workflow/utils/internal/convertDateStepFilterToRuleExpressionNode';
 import { mapStepOutputKeyToRuleExpressionPath } from '@/workflow/utils/internal/mapStepOutputKeyToRuleExpressionPath';
+import { mapStepOutputKeyToRuleExpressionVariable } from '@/workflow/utils/internal/mapStepOutputKeyToRuleExpressionVariable';
 import { type RuleExpressionNode } from '@/workflow/utils/internal/RuleExpressionNode';
 import { type RuleExpressionNodeConversion } from '@/workflow/utils/internal/RuleExpressionNodeConversion';
 import { ruleExpressionNodeBuilder } from '@/workflow/utils/internal/ruleExpressionNodeBuilder';
+import { type StepFilterOperandSource } from '@/workflow/utils/internal/StepFilterOperandSource';
 
 type TextValueKind = 'text' | 'list';
 
@@ -546,12 +548,79 @@ const convertCompositeFilter = ({
       );
 };
 
-export const convertStepFilterToRuleExpressionNode = ({
+type LeftOperandMapping =
+  | {
+      isMapped: true;
+      segments: string[];
+      buildNode: (segments: string[]) => RuleExpressionNode;
+      convertVariableComparison: (
+        segments: string[],
+      ) => RuleExpressionNodeConversion;
+    }
+  | { isMapped: false; reason: string };
+
+const mapLeftOperand = ({
   stepFilter,
-  databaseEventAction,
+  operand,
+  operandSource,
 }: {
   stepFilter: StepFilterWithPotentiallyDeprecatedOperand;
-  databaseEventAction: ValidationRuleDatabaseEventAction;
+  operand: ViewFilterOperand;
+  operandSource: StepFilterOperandSource;
+}): LeftOperandMapping => {
+  if (operandSource.type === 'WORKFLOW_VARIABLES') {
+    const variableMapping = mapStepOutputKeyToRuleExpressionVariable(
+      stepFilter.stepOutputKey,
+    );
+
+    return variableMapping.isMapped
+      ? {
+          isMapped: true,
+          segments: variableMapping.segments,
+          buildNode: (segments) =>
+            ruleExpressionNodeBuilder.path(
+              `{{${[variableMapping.stepId, ...segments].join('.')}}}`,
+            ),
+          // Either variable can be missing rather than null, which the legacy filter tells apart
+          convertVariableComparison: () =>
+            unconvertible(
+              `comparing with the variable "${stepFilter.value}" does not convert`,
+            ),
+        }
+      : variableMapping;
+  }
+
+  const { databaseEventAction } = operandSource;
+  const pathMapping = mapStepOutputKeyToRuleExpressionPath({
+    stepOutputKey: stepFilter.stepOutputKey,
+    databaseEventAction,
+  });
+
+  return pathMapping.isMapped
+    ? {
+        isMapped: true,
+        segments: pathMapping.segments,
+        buildNode: (segments) =>
+          buildPath({ isPrevious: pathMapping.isPrevious, segments }),
+        convertVariableComparison: (segments) =>
+          convertTriggerRecordVariableComparison({
+            stepFilter,
+            operand,
+            databaseEventAction,
+            leftSnapshot: pathMapping.snapshot,
+            leftIsPrevious: pathMapping.isPrevious,
+            leftSegments: segments,
+          }),
+      }
+    : pathMapping;
+};
+
+export const convertStepFilterToRuleExpressionNode = ({
+  stepFilter,
+  operandSource,
+}: {
+  stepFilter: StepFilterWithPotentiallyDeprecatedOperand;
+  operandSource: StepFilterOperandSource;
 }): RuleExpressionNodeConversion => {
   const operand: ViewFilterOperand | undefined =
     convertViewFilterOperandToCoreOperand(stepFilter.operand);
@@ -564,10 +633,7 @@ export const convertStepFilterToRuleExpressionNode = ({
     return unconvertible('the value is not text');
   }
 
-  const leftMapping = mapStepOutputKeyToRuleExpressionPath({
-    stepOutputKey: stepFilter.stepOutputKey,
-    databaseEventAction,
-  });
+  const leftMapping = mapLeftOperand({ stepFilter, operand, operandSource });
 
   if (!leftMapping.isMapped) {
     return unconvertible(leftMapping.reason);
@@ -584,18 +650,11 @@ export const convertStepFilterToRuleExpressionNode = ({
   }
 
   if (isVariableReference(stepFilter.value)) {
-    return convertTriggerRecordVariableComparison({
-      stepFilter,
-      operand,
-      databaseEventAction,
-      leftSnapshot: leftMapping.snapshot,
-      leftIsPrevious: leftMapping.isPrevious,
-      leftSegments: segments,
-    });
+    return leftMapping.convertVariableComparison(segments);
   }
 
   const comparison: ConstantComparison = {
-    path: buildPath({ isPrevious: leftMapping.isPrevious, segments }),
+    path: leftMapping.buildNode(segments),
     operand,
     value: stepFilter.value,
   };

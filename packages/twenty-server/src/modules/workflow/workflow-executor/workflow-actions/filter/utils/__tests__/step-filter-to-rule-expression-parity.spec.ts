@@ -16,12 +16,16 @@ import {
   isDefined,
   isPlainObject,
 } from 'twenty-shared/utils';
-import { convertStepFiltersToRuleExpression } from 'twenty-shared/workflow';
+import {
+  convertStepFiltersToRuleExpression,
+  convertWorkflowStepFiltersToRuleExpression,
+} from 'twenty-shared/workflow';
 
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 
 // Proves the converter: every filter it converts gives the legacy evaluator's
-// result on each sample record, read after, before and on a deleted record
+// result on each sample record, read after, before and on a deleted record,
+// and, for step filters, read through a {{stepId.path}} variable
 
 const NOW = '2026-11-11T10:00:00.000Z';
 
@@ -957,5 +961,144 @@ describe('step filter to rule expression parity', () => {
     expect(
       results.filter(({ legacy, converted }) => legacy !== converted),
     ).toEqual([]);
+  });
+
+  describe('step filters reading workflow variables', () => {
+    const STEP_ID = 'step-1';
+
+    const evaluateLegacyStep = ({
+      stepFilters,
+      context,
+    }: {
+      stepFilters: StepFilter[];
+      context: Record<string, unknown>;
+    }): boolean | string => {
+      // A failing legacy filter fails the step, as an errored condition does
+      try {
+        return evaluateStepFilters({
+          stepFilters,
+          stepFilterGroups: [ROOT_GROUP],
+          context,
+        });
+      } catch {
+        return 'errored';
+      }
+    };
+
+    const evaluateConvertedStep = ({
+      expression,
+      context,
+    }: {
+      expression: string;
+      context: Record<string, unknown>;
+    }): boolean | string => {
+      const result = createValidationRuleEvaluator({
+        expression,
+        fields: [],
+        allowsVariables: true,
+      })({ record: {}, now: NOW, variableContext: context });
+
+      return result.status === 'errored'
+        ? 'errored'
+        : result.status === 'passed';
+    };
+
+    describe.each(PARITY_CASES)('$type on $path', (parityCase) => {
+      it.each(parityCase.operands)('should match the legacy %s', (operand) => {
+        const mismatches: Mismatch[] = [];
+        let convertedCount = 0;
+
+        for (const value of parityCase.values) {
+          const stepFilters: StepFilter[] = [
+            {
+              ...buildStepFilter({
+                parityCase,
+                operand,
+                value,
+                snapshot: 'after',
+              }),
+              stepOutputKey: `{{${STEP_ID}.${parityCase.path}}}`,
+            },
+          ];
+          const conversion = convertWorkflowStepFiltersToRuleExpression({
+            stepFilterGroups: [ROOT_GROUP],
+            stepFilters,
+          });
+
+          if (!conversion.isConvertible) {
+            continue;
+          }
+
+          convertedCount++;
+
+          const compilation = compileValidationRuleExpression({
+            expression: conversion.expression,
+            fields: [],
+            allowsVariables: true,
+          });
+
+          expect(compilation.isValid).toBe(true);
+
+          for (const sample of parityCase.samples) {
+            const context = {
+              [STEP_ID]: setSample(parityCase.path, sample),
+            };
+            const legacy = evaluateLegacyStep({ stepFilters, context });
+            const converted = evaluateConvertedStep({
+              expression: conversion.expression,
+              context,
+            });
+
+            if (legacy !== converted) {
+              mismatches.push({
+                value,
+                sample: describeSample(sample),
+                variant: 'step variable',
+                expression: conversion.expression,
+                legacy: legacy === true,
+                converted,
+              });
+            }
+          }
+        }
+
+        expect(convertedCount).toBeGreaterThan(0);
+        expect(mismatches).toEqual([]);
+      });
+    });
+
+    it('should read a missing step as empty, as the legacy filter does', () => {
+      const stepFilters: StepFilter[] = [
+        ViewFilterOperand.IS,
+        ViewFilterOperand.IS_NOT,
+        ViewFilterOperand.IS_EMPTY,
+        ViewFilterOperand.IS_NOT_EMPTY,
+      ].map((operand, index) => ({
+        id: `filter-${index}`,
+        type: 'TEXT',
+        operand,
+        value: 'Acme',
+        stepOutputKey: '{{step-that-did-not-run.name}}',
+        stepFilterGroupId: ROOT_GROUP.id,
+      }));
+
+      for (const stepFilter of stepFilters) {
+        const conversion = convertWorkflowStepFiltersToRuleExpression({
+          stepFilterGroups: [ROOT_GROUP],
+          stepFilters: [stepFilter],
+        });
+
+        if (!conversion.isConvertible) {
+          throw new Error(conversion.reason);
+        }
+
+        expect(
+          evaluateConvertedStep({
+            expression: conversion.expression,
+            context: {},
+          }),
+        ).toBe(evaluateLegacyStep({ stepFilters: [stepFilter], context: {} }));
+      }
+    });
   });
 });
