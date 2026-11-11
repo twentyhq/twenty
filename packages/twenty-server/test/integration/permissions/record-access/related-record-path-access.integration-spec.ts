@@ -1,7 +1,12 @@
 /* @license Enterprise */
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -11,10 +16,14 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { createRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/create-related-record-path.util';
 import { deleteRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/delete-related-record-path.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
@@ -22,9 +31,12 @@ import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolv
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
+import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -32,10 +44,18 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const PROJECT_NAME = 'pathAccessProject';
 const TASK_NAME = 'pathAccessTask';
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
+const SCHEMA = `"${getWorkspaceSchemaName(workspaceId)}"`;
+const PATH_FEATURE_FLAGS = [
+  FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
+  FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+];
 
 describe('Record access through related record paths', () => {
   let projectObjectMetadataId: string;
   let taskObjectMetadataId: string;
+  let projectTasksFieldMetadataId: string;
+  let projectRuleRoleId: string;
+  let isProjectRuleRoleDeleted = false;
   let pathId: string;
   let taskOfProjectId: string;
   let taskWithoutProjectId: string;
@@ -162,12 +182,97 @@ describe('Record access through related record paths', () => {
       recordIds: [taskOfProjectId, taskWithoutProjectId],
     });
 
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-      value: true,
-      expectToFail: false,
+  const createProjectTasksPath = async () => {
+    const response = await createRelatedRecordPath({
+      objectMetadataId: projectObjectMetadataId,
+      firstFieldMetadataId: projectTasksFieldMetadataId,
     });
+
+    expect(response.body.errors).toBeUndefined();
+    pathId = response.body.data.createRelatedRecordPath.id;
+  };
+
+  const createRoleWithProjectRule = async () => {
+    const { data } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Path access project rule',
+        description: 'Path access project rule',
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+      },
+    });
+    const [{ id: nameFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'name'`,
+      [projectObjectMetadataId],
+    );
+    const predicateGroupId = v4();
+
+    projectRuleRoleId = data.createOneRole.id;
+
+    await revokeObjectRecordsPermissions({
+      roleId: projectRuleRoleId,
+      objectMetadataId: projectObjectMetadataId,
+    });
+    await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: {
+        roleId: projectRuleRoleId,
+        objectMetadataId: projectObjectMetadataId,
+        canReadRecords: true,
+        predicateGroups: [
+          {
+            id: predicateGroupId,
+            objectMetadataId: projectObjectMetadataId,
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          },
+        ],
+        predicates: [
+          {
+            id: v4(),
+            fieldMetadataId: nameFieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Readable',
+            rowLevelPermissionPredicateGroupId: predicateGroupId,
+          },
+        ],
+      },
+    });
+  };
+
+  const deleteRoleWithProjectRule = async () => {
+    if (isProjectRuleRoleDeleted) {
+      return;
+    }
+
+    await deleteOneRole({
+      expectToFail: false,
+      input: { idToDelete: projectRuleRoleId },
+    });
+    isProjectRuleRoleDeleted = true;
+  };
+
+  const findTaskAccessGroupIds = async (recordId: string) => {
+    const [{ accessGroupIds }]: { accessGroupIds: number[] | null }[] =
+      await global.testDataSource.query(
+        `SELECT "_accessGroupIds" AS "accessGroupIds" FROM ${SCHEMA}."_${TASK_NAME}" WHERE "id" = $1`,
+        [recordId],
+      );
+
+    return accessGroupIds ?? [];
+  };
+
+  beforeAll(async () => {
+    for (const featureFlag of PATH_FEATURE_FLAGS) {
+      await updateFeatureFlag({
+        featureFlag,
+        value: true,
+        expectToFail: false,
+      });
+    }
 
     projectObjectMetadataId = await createObject(PROJECT_NAME);
     taskObjectMetadataId = await createObject(TASK_NAME);
@@ -183,6 +288,7 @@ describe('Record access through related record paths', () => {
       targetFieldIcon: 'IconBox',
     });
 
+    await createRoleWithProjectRule();
     await upsertObjectPermissions({
       expectToFail: false,
       input: {
@@ -216,25 +322,26 @@ describe('Record access through related record paths', () => {
       data: { name: 'Task without project' },
     });
 
-    const response = await createRelatedRecordPath({
-      objectMetadataId: projectObjectMetadataId,
-      firstFieldMetadataId: projectTasksField.id,
-    });
+    projectTasksFieldMetadataId = projectTasksField.id;
 
-    expect(response.body.errors).toBeUndefined();
-    pathId = response.body.data.createRelatedRecordPath.id;
+    await createProjectTasksPath();
   });
 
   afterAll(async () => {
     try {
+      await deleteRoleWithProjectRule();
       await deleteObject(projectObjectMetadataId);
       await deleteObject(taskObjectMetadataId);
     } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
+      for (const featureFlag of PATH_FEATURE_FLAGS) {
+        await updateFeatureFlag({
+          featureFlag,
+          value: false,
+          expectToFail: false,
+        });
+      }
+
+      await global.testDataSource.query(`DELETE FROM ${SCHEMA}."accessGroup"`);
     }
   });
 
@@ -262,10 +369,51 @@ describe('Record access through related record paths', () => {
     ).toEqual([destroyedProjectId]);
   });
 
-  it('should stop granting once the path is deleted', async () => {
+  it('should store the groups of the source record on the records related to it', async () => {
+    await getAppProviderByClassName<AccessGroupSyncService>(
+      'AccessGroupSyncService',
+    ).syncAccessGroups(workspaceId);
+
+    for (const objectMetadataId of [
+      projectObjectMetadataId,
+      taskObjectMetadataId,
+    ]) {
+      await getAppProviderByClassName<RecordAccessGroupComputationService>(
+        'RecordAccessGroupComputationService',
+      ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
+        workspaceId,
+        objectMetadataId,
+      });
+    }
+
+    const [{ compactId: projectRuleCompactId }]: { compactId: number }[] =
+      await global.testDataSource.query(
+        `SELECT "compactId" FROM ${SCHEMA}."accessGroup" WHERE "roleId" = $1 AND "objectMetadataId" = $2 AND "rowLevelPermissionPredicateGroupId" IS NOT NULL`,
+        [projectRuleRoleId, projectObjectMetadataId],
+      );
+
+    expect(await findTaskAccessGroupIds(taskOfProjectId)).toContain(
+      projectRuleCompactId,
+    );
+    expect(await findTaskAccessGroupIds(taskWithoutProjectId)).not.toContain(
+      projectRuleCompactId,
+    );
+  });
+
+  it('should stop granting once the path is deleted and grant again once it is back', async () => {
     await deleteRelatedRecordPath(pathId);
 
     expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
     expect(await findTaskEventRecordIdsReadableByJony()).toEqual([]);
+
+    await createProjectTasksPath();
+
+    expect(await canJonyReadTask(taskOfProjectId)).toBe(true);
+  });
+
+  it('should not follow the path once no RLS rule restricts its source object', async () => {
+    await deleteRoleWithProjectRule();
+
+    expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
   });
 });

@@ -4,11 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
 
-export const buildRecordAccessGroupIdsExpression = ({
-  recordAccessGroupSQLConditions,
-}: {
-  recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
-}): string => {
+const buildOwnAccessGroupIdsExpression = (
+  recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[],
+): string => {
   if (recordAccessGroupSQLConditions.length === 0) {
     return `CAST('{}' AS integer[])`;
   }
@@ -21,4 +19,23 @@ export const buildRecordAccessGroupIdsExpression = ({
   );
 
   return `ARRAY_REMOVE(CAST(ARRAY[${compactIdCases.join(', ')}] AS integer[]), NULL)`;
+};
+
+export const buildRecordAccessGroupIdsExpression = ({
+  recordAccessGroupSQLConditions,
+  inheritedAccessGroupIdsExpressions,
+}: {
+  recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
+  inheritedAccessGroupIdsExpressions: string[];
+}): string => {
+  const ownAccessGroupIdsExpression = buildOwnAccessGroupIdsExpression(
+    recordAccessGroupSQLConditions,
+  );
+
+  if (inheritedAccessGroupIdsExpressions.length === 0) {
+    return ownAccessGroupIdsExpression;
+  }
+
+  // Sorted so an unchanged record compares equal and is not rewritten
+  return `ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(${[ownAccessGroupIdsExpression, ...inheritedAccessGroupIdsExpressions].join(' || ')}) AS "accessGroupId" ORDER BY "accessGroupId")`;
 };

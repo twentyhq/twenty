@@ -7,7 +7,9 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-job-name.constant';
 import { SYNC_ACCESS_GROUPS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/sync-access-groups-job-name.constant';
+import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -29,16 +31,52 @@ export class AccessGroupSyncSchedulerService {
   }
 
   async scheduleSyncIfEnabled(workspaceId: string): Promise<void> {
-    if (!(await this.isEnabled(workspaceId))) {
+    await this.scheduleSyncJobIfEnabled({ workspaceId });
+  }
+
+  async scheduleSyncAndRelatedRecordPathTargetsRecomputeIfEnabled(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.scheduleSyncJobIfEnabled({
+      workspaceId,
+      isRecomputingRelatedRecordPathTargets: true,
+    });
+  }
+
+  async scheduleRecordAccessGroupIdsRecompute({
+    workspaceId,
+    objectMetadataId,
+    isPropagatedThroughRelatedRecordPath = false,
+  }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
+    await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
+      RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
+      { workspaceId, objectMetadataId, isPropagatedThroughRelatedRecordPath },
+      {
+        isWorkspaceJob: true,
+        workspaceId,
+        retryLimit: 3,
+        // One recompute per object and origin at a time, and at most one waiting behind it
+        deduplication: {
+          id: `record-access-group-ids:${workspaceId}:${objectMetadataId}${isPropagatedThroughRelatedRecordPath ? ':propagated' : ''}`,
+          keepLastIfActive: true,
+        },
+      },
+    );
+  }
+
+  private async scheduleSyncJobIfEnabled(
+    jobData: SyncAccessGroupsJobData,
+  ): Promise<void> {
+    if (!(await this.isEnabled(jobData.workspaceId))) {
       return;
     }
 
     await this.messageQueueService.add<SyncAccessGroupsJobData>(
       SYNC_ACCESS_GROUPS_JOB_NAME,
-      { workspaceId },
+      jobData,
       {
         isWorkspaceJob: true,
-        workspaceId,
+        workspaceId: jobData.workspaceId,
         retryLimit: 3,
       },
     );

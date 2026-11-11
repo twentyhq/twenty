@@ -4,6 +4,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { SYNC_ACCESS_GROUPS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/sync-access-groups-job-name.constant';
+import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
 
@@ -11,10 +12,20 @@ import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/ac
 export class SyncAccessGroupsJob {
   constructor(
     private readonly accessGroupSyncService: AccessGroupSyncService,
+    private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
   ) {}
 
   @Process(SYNC_ACCESS_GROUPS_JOB_NAME)
-  async handle({ workspaceId }: SyncAccessGroupsJobData): Promise<void> {
+  async handle({
+    workspaceId,
+    isRecomputingRelatedRecordPathTargets,
+  }: SyncAccessGroupsJobData): Promise<void> {
     await this.accessGroupSyncService.syncAccessGroups(workspaceId);
+
+    if (isRecomputingRelatedRecordPathTargets === true) {
+      await this.recordAccessGroupComputationService.scheduleRecomputeOfRelatedRecordPathTargets(
+        { workspaceId },
+      );
+    }
   }
 }

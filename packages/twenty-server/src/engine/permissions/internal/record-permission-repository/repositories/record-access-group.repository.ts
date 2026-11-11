@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
+import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -106,12 +107,14 @@ export class RecordAccessGroupRepository {
     workspaceId,
     flatObjectMetadata,
     recordAccessGroupSQLConditions,
+    relatedRecordPathAccessGroupSources,
     recordIds,
     transactionScope,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
+    relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[];
     recordIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
@@ -122,6 +125,7 @@ export class RecordAccessGroupRepository {
         workspaceId,
         flatObjectMetadata,
         recordAccessGroupSQLConditions,
+        relatedRecordPathAccessGroupSources,
         recordIds,
       }),
     });
