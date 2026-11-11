@@ -10,6 +10,8 @@ import { type ReactNode } from 'react';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
+import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -139,6 +141,8 @@ export const AiChatMessage = ({
     { threadId: currentAiChatThread },
   );
 
+  const setShouldFocusChatEditor = useSetAtomState(shouldFocusChatEditorState);
+
   if (
     !isDefined(agentChatMessage) ||
     (isSilentAgentChatMessage(agentChatMessage) && !isDefined(error))
@@ -258,7 +262,10 @@ export const AiChatMessage = ({
               {canReply && (
                 <LightIconButton
                   aria-label={t`Reply`}
-                  onClick={() => setAgentChatQuotedMessageId(messageId)}
+                  onClick={() => {
+                    setAgentChatQuotedMessageId(messageId);
+                    setShouldFocusChatEditor(true);
+                  }}
                 >
                   <IconArrowBackUp />
                 </LightIconButton>

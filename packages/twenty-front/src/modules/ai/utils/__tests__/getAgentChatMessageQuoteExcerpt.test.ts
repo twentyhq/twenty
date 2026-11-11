@@ -22,4 +22,17 @@ describe('getAgentChatMessageQuoteExcerpt', () => {
 
     expect(excerpt).toBe(`${'a'.repeat(AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH)}…`);
   });
+
+  it('leaves out the quote a reply starts with', () => {
+    expect(
+      getAgentChatMessageQuoteExcerpt({
+        parts: [
+          {
+            type: 'text',
+            text: '> **Jane Doe:** Can you take Stripe?\n> They asked twice.\n\nYes, on it.',
+          },
+        ],
+      }),
+    ).toBe('Yes, on it.');
+  });
 });

@@ -410,6 +410,7 @@ export const ReplyToTeammate: Story = {
     await expect(
       await canvas.findByRole('button', { name: 'View original message' }),
     ).toBeVisible();
+    await waitFor(() => expect(canvas.getByRole('textbox')).toHaveFocus());
 
     await userEvent.click(canvas.getByRole('button', { name: 'Remove quote' }));
     await expect(
