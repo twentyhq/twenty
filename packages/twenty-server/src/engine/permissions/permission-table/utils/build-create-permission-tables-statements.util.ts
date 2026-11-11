@@ -45,7 +45,12 @@ export const buildCreatePermissionTablesStatements = ({
     buildCreateEnumStatement({
       schema,
       enumName: 'recordShare_accessLevel_enum',
-      values: Object.values(RecordShareAccessLevel),
+      values: [
+        RecordShareAccessLevel.READ,
+        RecordShareAccessLevel.READ_WRITE,
+        RecordShareAccessLevel.FULL,
+        RecordShareAccessLevel.NONE,
+      ],
     }),
     `CREATE TABLE ${recordShare} (
       "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
