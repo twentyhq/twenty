@@ -71,6 +71,9 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     logicFunctionManifest.name ?? parse(logicFunctionManifest.handlerName).name;
 
   const timeoutSeconds = logicFunctionManifest.timeoutSeconds ?? 300;
+  const eventTriggerSettings =
+    logicFunctionManifest.eventTriggerSettings ??
+    logicFunctionManifest.databaseEventTriggerSettings;
 
   return {
     universalIdentifier: logicFunctionManifest.universalIdentifier,
@@ -88,12 +91,8 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     handlerName: logicFunctionManifest.handlerName,
     checksum: logicFunctionManifest.builtHandlerChecksum,
     cronTriggerSettings: logicFunctionManifest.cronTriggerSettings ?? null,
-    databaseEventTriggerSettings: isDefined(
-      logicFunctionManifest.databaseEventTriggerSettings,
-    )
-      ? toStoredDatabaseEventTriggerSettingsOrThrow(
-          logicFunctionManifest.databaseEventTriggerSettings,
-        )
+    databaseEventTriggerSettings: isDefined(eventTriggerSettings)
+      ? toStoredDatabaseEventTriggerSettingsOrThrow(eventTriggerSettings)
       : null,
     httpRouteTriggerSettings:
       logicFunctionManifest.httpRouteTriggerSettings ?? null,

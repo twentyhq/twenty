@@ -116,8 +116,6 @@ export type {
   ConnectionCallbackResult,
 } from './customConnectionFlowType';
 export type { CustomConnectionProviderConfig } from './customConnectionProviderConfigType';
-export type { DatabaseEventTriggerManifestAction } from './databaseEventTriggerManifestActionType';
-export type { DatabaseEventTriggerManifestSettings } from './databaseEventTriggerManifestSettingsType';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
@@ -182,6 +180,7 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
+export type { EventTriggerManifestSettings } from './eventTriggerManifestSettingsType';
 export type { FieldManifestOptions } from './fieldManifestOptionsType';
 export type {
   RegularFieldManifest,
@@ -208,7 +207,7 @@ export type {
 export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
-export { isObjectDatabaseEventTriggerManifestSettings } from './isObjectDatabaseEventTriggerManifestSettings';
+export { isRecordEventTriggerManifestSettings } from './isRecordEventTriggerManifestSettings';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
@@ -228,7 +227,6 @@ export type {
 export { normalizePageLayoutTabManifest } from './normalizePageLayoutTabManifest';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
-export type { ObjectDatabaseEventTriggerManifestSettings } from './objectDatabaseEventTriggerManifestSettingsType';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type {
@@ -251,6 +249,8 @@ export type {
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { RecordEventTriggerManifestAction } from './recordEventTriggerManifestActionType';
+export type { RecordEventTriggerManifestSettings } from './recordEventTriggerManifestSettingsType';
 export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
