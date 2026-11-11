@@ -77,15 +77,6 @@ const metadataMaps: PermissionsMetadataMaps = {
     [FULL_ACCESS_ROLE_ID]: fullAccessByObjectId,
     [APPLICATION_ROLE_ID]: fullAccessByObjectId,
   },
-  flatApplicationMaps: {
-    byId: {
-      [APPLICATION_ID]: {
-        id: APPLICATION_ID,
-        defaultRoleId: APPLICATION_ROLE_ID,
-        deletedAt: null,
-      },
-    },
-  },
   featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
 };
 const buildSQLCondition = (
