@@ -110,6 +110,10 @@ export class CoreWorkflowRunSummaryService {
         FROM (
           SELECT *
           FROM (${recentRunsQueryBuilder.getQuery()}) AS "candidateRun"
+          -- row-level rules can hide these columns, which would break the non-nullable DTO and sort first
+          WHERE "candidateRun"."id" IS NOT NULL
+            AND "candidateRun"."status" IS NOT NULL
+            AND "candidateRun"."createdAt" IS NOT NULL
           ORDER BY "candidateRun"."createdAt" DESC, "candidateRun"."id" DESC
           LIMIT :recentRunsLimit
         ) AS "recentRun"
