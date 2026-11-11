@@ -1125,8 +1125,8 @@ export type WorkflowStepPositionInput = {
 export type WorkflowStepPositionUpdateInput = {
   /** Step or trigger ID */
   id: Scalars['String']['input'];
-  /** Position of the step or trigger */
-  position: WorkflowStepPositionInput;
+  /** Position of the step or trigger, null to remove it */
+  position?: InputMaybe<WorkflowStepPositionInput>;
 };
 
 export type WorkflowVersionStepChanges = {

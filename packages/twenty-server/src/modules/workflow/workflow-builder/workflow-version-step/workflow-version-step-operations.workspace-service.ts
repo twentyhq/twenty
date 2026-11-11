@@ -13,7 +13,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 import {
-  IF_ELSE_BRANCH_POSITION_OFFSETS,
   WORKFLOW_ACTION_FEATURE_FLAGS,
   WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
   WorkflowActionType,
@@ -50,6 +49,9 @@ import {
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+// A duplicate has no edge to be placed from, so a manual layout keeps it next to its source
+const DUPLICATED_STEP_POSITION_OFFSET = 50;
+
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -60,13 +62,6 @@ const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
       value: 0,
     },
   },
-};
-
-const DUPLICATED_STEP_POSITION_OFFSET = 50;
-
-const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
-  x: 174,
-  y: 83,
 };
 
 @Injectable()
@@ -548,7 +543,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       case WorkflowActionType.ITERATOR: {
         const emptyNodeStep = this.buildEmptyNodeForIteratorStep({
           iteratorStepId: baseStep.id,
-          iteratorPosition: position,
         });
 
         return {
@@ -570,9 +564,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.IF_ELSE: {
         const { ifEmptyNode, elseEmptyNode, ifFilterGroupId, branches } =
-          this.buildEmptyNodesForIfElseStep({
-            ifElsePosition: position,
-          });
+          this.buildEmptyNodesForIfElseStep();
 
         const initialFilterId = v4();
 
@@ -817,11 +809,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
-    const duplicatedStepPosition = {
-      x: step.position?.x ?? 0,
-      y: step.position?.y ?? 0,
-    };
-
     await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
     switch (step.type) {
@@ -830,7 +817,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           ...step,
           id: v4(),
           nextStepIds: [],
-          position: duplicatedStepPosition,
           settings: {
             ...step.settings,
             input: {
@@ -845,7 +831,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           ...step,
           id: v4(),
           nextStepIds: [],
-          position: duplicatedStepPosition,
         };
       }
     }
@@ -855,19 +840,19 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     return {
       ...step,
       name: `${step.name} (Duplicate)`,
-      position: {
-        x: (step.position?.x ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
-        y: (step.position?.y ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
-      },
+      position: isDefined(step.position)
+        ? {
+            x: step.position.x + DUPLICATED_STEP_POSITION_OFFSET,
+            y: step.position.y + DUPLICATED_STEP_POSITION_OFFSET,
+          }
+        : undefined,
     };
   }
 
   buildEmptyNodeForIteratorStep({
     iteratorStepId,
-    iteratorPosition,
   }: {
     iteratorStepId: string;
-    iteratorPosition?: WorkflowStepPositionInput;
   }): WorkflowAction {
     const emptyNodeStep: WorkflowEmptyAction = {
       id: v4(),
@@ -879,20 +864,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         ...BASE_STEP_DEFINITION,
         input: {},
       },
-      position: {
-        x: (iteratorPosition?.x ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.x,
-        y: (iteratorPosition?.y ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.y,
-      },
     };
 
     return emptyNodeStep;
   }
 
-  buildEmptyNodesForIfElseStep({
-    ifElsePosition,
-  }: {
-    ifElsePosition?: WorkflowStepPositionInput;
-  }): {
+  buildEmptyNodesForIfElseStep(): {
     ifEmptyNode: WorkflowAction;
     elseEmptyNode: WorkflowAction;
     ifFilterGroupId: string;
@@ -907,10 +884,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         ...BASE_STEP_DEFINITION,
         input: {},
       },
-      position: {
-        x: (ifElsePosition?.x ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
-        y: (ifElsePosition?.y ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.y,
-      },
     };
 
     const elseEmptyNode: WorkflowEmptyAction = {
@@ -921,10 +894,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       settings: {
         ...BASE_STEP_DEFINITION,
         input: {},
-      },
-      position: {
-        x: (ifElsePosition?.x ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
-        y: (ifElsePosition?.y ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.y,
       },
     };
 
