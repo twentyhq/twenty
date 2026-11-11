@@ -41,7 +41,7 @@ export const isValidationRuleDateInRelativeRange = (
     unit,
   });
 
-  if (instant === null || !relativeDateFilter.success) {
+  if (!isDefined(instant) || !relativeDateFilter.success) {
     return false;
   }
 
