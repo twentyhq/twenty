@@ -50,7 +50,7 @@ export const getDatabaseEventTriggerSettingsErrors = ({
   const {
     objectUniversalIdentifier,
     action,
-    fieldUniversalIdentifiers,
+    watchedFieldUniversalIdentifiers,
     condition,
     batchMode,
   } = settings;
@@ -75,7 +75,7 @@ export const getDatabaseEventTriggerSettingsErrors = ({
     !isNonEmptyString(objectUniversalIdentifier) &&
     (isObjectRequired ||
       isNonEmptyString(condition) ||
-      isNonEmptyArray(fieldUniversalIdentifiers))
+      isNonEmptyArray(watchedFieldUniversalIdentifiers))
   ) {
     errors.push(
       `${subject} needs an objectUniversalIdentifier to watch fields or check a condition`,
@@ -83,14 +83,14 @@ export const getDatabaseEventTriggerSettingsErrors = ({
   }
 
   if (
-    isDefined(fieldUniversalIdentifiers) &&
-    (!Array.isArray(fieldUniversalIdentifiers) ||
-      fieldUniversalIdentifiers.some(
+    isDefined(watchedFieldUniversalIdentifiers) &&
+    (!Array.isArray(watchedFieldUniversalIdentifiers) ||
+      watchedFieldUniversalIdentifiers.some(
         (fieldUniversalIdentifier) => !uuidValidate(fieldUniversalIdentifier),
       ))
   ) {
     errors.push(
-      `${subject} fieldUniversalIdentifiers must be a list of valid UUIDs`,
+      `${subject} watchedFieldUniversalIdentifiers must be a list of valid UUIDs`,
     );
   }
 
