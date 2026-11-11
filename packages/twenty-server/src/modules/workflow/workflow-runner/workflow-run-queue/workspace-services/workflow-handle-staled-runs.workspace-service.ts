@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
-import { type FindOptionsWhere } from 'typeorm';
+import { type FindOptionsWhere, In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -13,6 +13,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -23,6 +24,7 @@ import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workf
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { buildInFlightWorkflowRunIds } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/build-in-flight-workflow-run-ids.util';
 import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
 import { getStuckRunningRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-find-options.util';
 import { getStuckRunningRunsMonitorCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-stuck-running-runs-monitor-cache-key.util';
@@ -44,9 +46,19 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     private readonly metricsService: MetricsService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async handleStaledRunsForWorkspace(workspaceId: string) {
+    const staledRunIds = await this.collectRunIds({
+      workspaceId,
+      findOptions: getStaledRunsFindOptions(),
+    });
+
+    if (staledRunIds.length === 0) {
+      return;
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -55,34 +67,24 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           WorkflowRunWorkspaceEntity,
         );
 
-      const staledRunsCount = await workflowRunRepository.count({
-        where: getStaledRunsFindOptions(),
-      });
+      // limiter pacing can hold a run past the threshold, so only runs without a job are lost.
+      const lostRunIds = this.twentyConfigService.get(
+        'IS_WORKER_GROUP_LIMITER_ENABLED',
+      )
+        ? await this.filterRunsWithoutInFlightJob(staledRunIds)
+        : staledRunIds;
 
-      if (staledRunsCount <= 0) {
-        return;
-      }
-
-      const batchCount = Math.ceil(staledRunsCount / QUERY_MAX_RECORDS);
-
-      for (let batchIndex = 0; batchIndex < batchCount; batchIndex++) {
-        const staledWorkflowRuns = await workflowRunRepository.find({
-          where: getStaledRunsFindOptions(),
-          select: {
-            id: true,
-          },
-          order: {
-            createdAt: 'ASC',
-          },
-          take: QUERY_MAX_RECORDS,
-        });
-
-        if (staledWorkflowRuns.length <= 0) {
-          break;
-        }
-
+      for (
+        let offset = 0;
+        offset < lostRunIds.length;
+        offset += QUERY_MAX_RECORDS
+      ) {
+        // A run may have started since its id was read, so the stale filter is checked again.
         await workflowRunRepository.update(
-          staledWorkflowRuns.map((workflowRun) => workflowRun.id),
+          {
+            ...getStaledRunsFindOptions(),
+            id: In(lostRunIds.slice(offset, offset + QUERY_MAX_RECORDS)),
+          },
           {
             enqueuedAt: null,
             status: WorkflowRunStatus.NOT_STARTED,
@@ -139,15 +141,12 @@ export class WorkflowHandleStaledRunsWorkspaceService {
       return;
     }
 
-    const inFlightJobs =
-      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>();
+    const inFlightWorkflowRunIds = buildInFlightWorkflowRunIds(
+      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>(),
+    );
 
     const hasInFlightJob = (workflowRunId: string) =>
-      inFlightJobs.some(
-        (job) =>
-          job.id?.startsWith(`${workflowRunId}-`) ||
-          job.data?.workflowRunId === workflowRunId,
-      );
+      inFlightWorkflowRunIds.has(workflowRunId);
 
     const stillFlaggedRuns: Record<string, string> = {};
 
@@ -271,6 +270,18 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     }
 
     return WorkflowRunStatus.COMPLETED;
+  }
+
+  private async filterRunsWithoutInFlightJob(
+    workflowRunIds: string[],
+  ): Promise<string[]> {
+    const inFlightWorkflowRunIds = buildInFlightWorkflowRunIds(
+      await this.messageQueueService.getInFlightJobs<RunWorkflowJobData>(),
+    );
+
+    return workflowRunIds.filter(
+      (workflowRunId) => !inFlightWorkflowRunIds.has(workflowRunId),
+    );
   }
 
   private async collectRunIds({

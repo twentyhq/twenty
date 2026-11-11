@@ -9,8 +9,8 @@ import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/even
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { LogicFunctionExecutionThrottleModule } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.module';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
@@ -18,7 +18,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    ThrottlerModule,
+    LogicFunctionExecutionThrottleModule,
     EventLogEmitterModule,
     EventLogLiveModule,
     TokenModule,

@@ -29,9 +29,10 @@ export const findRlsRuleRelationPredicatesToObject = ({
 
   return Object.values(rolesPermissions)
     .flatMap(({ objects }) => Object.values(objects))
-    .flatMap(
-      (objectRecordsPermissions) =>
-        objectRecordsPermissions?.rowLevelRecordsPermissions?.predicates ?? [],
+    .flatMap((objectRecordsPermissions) =>
+      (objectRecordsPermissions?.rowLevelRecordsPermissions ?? []).flatMap(
+        ({ predicates }) => predicates,
+      ),
     )
     .filter(
       ({ relationFieldMetadataId, fieldMetadataId }) =>

@@ -171,6 +171,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       input: {
         roleId: memberRoleId,
         objectMetadataId,
+        canReadRecords: true,
         predicates: predicates.map(({ value }) => ({
           fieldMetadataId: nameFieldMetadataId,
           operand: RowLevelPermissionPredicateOperand.CONTAINS,
@@ -431,6 +432,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   });
 
   it('applies the row rules of its member to what the step reads', async () => {
+    await setMemberObjectAccess(false);
     await setMemberRowRule([{ value: 'Visible' }]);
     const calls = mockModelCallingFindTool();
 

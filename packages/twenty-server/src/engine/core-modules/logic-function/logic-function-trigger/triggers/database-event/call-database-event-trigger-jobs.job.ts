@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { buildLogicFunctionJobLimiter } from 'src/engine/core-modules/logic-function/utils/build-logic-function-job-limiter.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -144,6 +145,13 @@ export class CallDatabaseEventTriggerJobsJob {
         logicFunctionPayloads,
       });
 
+      const logicFunctionsById = new Map(
+        logicFunctions.map((logicFunction) => [
+          logicFunction.id,
+          logicFunction,
+        ]),
+      );
+
       try {
         await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
           LogicFunctionTriggerJob.name,
@@ -153,6 +161,12 @@ export class CallDatabaseEventTriggerJobsJob {
               applicationUniversalIdentifier: application.universalIdentifier,
             },
             jobId: logicFunctionTriggerJobIds[index],
+            limiter: buildLogicFunctionJobLimiter({
+              logicFunctionId: logicFunctionPayload.logicFunctionId,
+              limiter: logicFunctionsById.get(
+                logicFunctionPayload.logicFunctionId,
+              )?.jobConfig?.limiter,
+            }),
             workspaceId: workspaceEventBatch.workspaceId,
             applicationUniversalIdentifier: application.universalIdentifier,
           })),

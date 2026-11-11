@@ -264,9 +264,30 @@ Granting write access without read access is rejected. System-managed roles (lik
 Example, "members with this role only see records where the owner field matches the current user": pass one predicate with fieldMetadataId = the owner field on the object, operand = IS, and workspaceMemberFieldMetadataId = the "id" field of the workspaceMember object (resolved to the current user at query time). Use metadata tools to look up field ids.
 The same works between relations: for "only records in my region", pass fieldMetadataId = a many-to-one relation on the object and workspaceMemberFieldMetadataId = a many-to-one relation on workspaceMember pointing at the same object, with operand IS.
 Combine several predicates with predicateGroups (AND / OR): give each new group a client-generated UUID and reference it from predicates via rowLevelPermissionPredicateGroupId.
+Grants: the rules only open access through canReadRecords, canUpdateRecords, etc. An object-level permission granting all records on this object wins over the rules, so turn it off for the operations the rules should restrict.
 IMPORTANT: this replaces the full rule set for the role + object. Predicates or groups omitted from the lists are deleted; empty lists clear all rules. System-managed roles (like Admin) cannot be changed.",
     "inputSchema": {
       "properties": {
+        "canCreateRecords": {
+          "description": "Whether members with this role can create records the rules match",
+          "type": "boolean",
+        },
+        "canDestroyRecords": {
+          "description": "Whether members with this role can permanently delete the records the rules match",
+          "type": "boolean",
+        },
+        "canReadRecords": {
+          "description": "Whether members with this role can read the records the rules match",
+          "type": "boolean",
+        },
+        "canSoftDeleteRecords": {
+          "description": "Whether members with this role can soft delete the records the rules match",
+          "type": "boolean",
+        },
+        "canUpdateRecords": {
+          "description": "Whether members with this role can update the records the rules match",
+          "type": "boolean",
+        },
         "objectMetadataId": {
           "description": "Id of the object the rules restrict",
           "format": "uuid",

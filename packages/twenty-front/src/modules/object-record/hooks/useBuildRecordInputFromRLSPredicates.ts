@@ -6,6 +6,7 @@ import { convertPredicateToRecordFilter } from '@/settings/roles/role-permission
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { StandardObjectNameSingular, RelationType } from 'twenty-shared/types';
+import { findSingleCreateRowLevelPermissionRule } from '@/object-metadata/utils/findSingleCreateRowLevelPermissionRule';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -127,7 +128,8 @@ export const useBuildRecordInputFromRLSPredicates = ({
       objectMetadataItem.id,
     );
     const rlsPredicates = (
-      objectPermissions.rowLevelRecordsPermissions?.predicates ?? []
+      findSingleCreateRowLevelPermissionRule(objectPermissions)?.predicates ??
+      []
     ).filter(
       (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
     );
