@@ -72,7 +72,6 @@ export class ApplicationOAuthIdentityInstallService {
 
     const { oAuthIdentityUniversalIdentifier, installs } = foldedInstalls;
 
-    // Uninstalling an older install alone leaves the app and its other installs in place
     if (
       universalIdentifier !== oAuthIdentityUniversalIdentifier &&
       installs.some(
