@@ -21,14 +21,15 @@ const getNodeBox = (
     node.measured?.height ?? WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS.height,
 });
 
+// Positions are node centers, matching the canvas node origin
 const doBoxesOverlap = (
   box: WorkflowDiagramNodeBox,
   otherBox: WorkflowDiagramNodeBox,
 ) =>
-  box.position.x < otherBox.position.x + otherBox.width &&
-  otherBox.position.x < box.position.x + box.width &&
-  box.position.y < otherBox.position.y + otherBox.height &&
-  otherBox.position.y < box.position.y + box.height;
+  Math.abs(box.position.x - otherBox.position.x) <
+    (box.width + otherBox.width) / 2 &&
+  Math.abs(box.position.y - otherBox.position.y) <
+    (box.height + otherBox.height) / 2;
 
 export const moveWorkflowDiagramNodeClearOfOthers = ({
   node,
@@ -54,10 +55,12 @@ export const moveWorkflowDiagramNodeClearOfOthers = ({
       break;
     }
 
+    const clearance =
+      (box.width + blockingBox.width) / 2 + MINIMUM_HORIZONTAL_GAP;
     const nextX =
       direction === 'right'
-        ? blockingBox.position.x + blockingBox.width + MINIMUM_HORIZONTAL_GAP
-        : blockingBox.position.x - box.width - MINIMUM_HORIZONTAL_GAP;
+        ? blockingBox.position.x + clearance
+        : blockingBox.position.x - clearance;
 
     box.position = { x: nextX, y: box.position.y };
   }

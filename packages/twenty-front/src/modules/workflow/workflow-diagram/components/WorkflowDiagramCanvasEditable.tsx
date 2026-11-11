@@ -15,7 +15,7 @@ import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getDisplayedWorkflowDiagram } from '@/workflow/workflow-diagram/utils/getDisplayedWorkflowDiagram';
+import { getDisplayedWorkflowDiagramWithDroppedNode } from '@/workflow/workflow-diagram/utils/getDisplayedWorkflowDiagramWithDroppedNode';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { hasUnpositionedWorkflowNode } from '@/workflow/workflow-diagram/utils/hasUnpositionedWorkflowNode';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
@@ -202,21 +202,21 @@ export const WorkflowDiagramCanvasEditable = () => {
       return;
     }
 
-    const displayedWorkflowDiagram = getDisplayedWorkflowDiagram({
-      diagram: workflowDiagram,
-      flow,
-    });
-
-    const nodes = displayedWorkflowDiagram.nodes.map((node) =>
-      node.id === draggedNode.id
-        ? { ...node, position: draggedNode.position }
-        : node,
+    const displayedWorkflowDiagram = getDisplayedWorkflowDiagramWithDroppedNode(
+      {
+        diagram: workflowDiagram,
+        flow,
+        droppedNode: draggedNode,
+      },
     );
 
-    setWorkflowDiagram({ ...displayedWorkflowDiagram, nodes });
+    setWorkflowDiagram(displayedWorkflowDiagram);
 
     updateWorkflowVersionPositions(
-      nodes.map(({ id, position }) => ({ id, position })),
+      displayedWorkflowDiagram.nodes.map(({ id, position }) => ({
+        id,
+        position,
+      })),
     ).catch(logError);
   };
 
