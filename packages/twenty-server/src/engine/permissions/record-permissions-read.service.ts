@@ -22,6 +22,7 @@ import { resolveRecordsAccessSQLConditionStrategy } from 'src/engine/permissions
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { PrivateRecordRepository } from 'src/engine/permissions/internal/private-record/repositories/private-record.repository';
 import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-share-table-expression.util';
 import {
   type PermissionsMetadataMaps,
@@ -83,6 +84,7 @@ export class RecordPermissionsReadService {
   constructor(
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
+    private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly accessGroupReadService: AccessGroupReadService,
   ) {}
@@ -874,7 +876,7 @@ export class RecordPermissionsReadService {
       },
       findPrivateRecordStates: async () =>
         (privateRecordStates ??=
-          this.recordPermissionReadRepository.findPrivateRecordStates({
+          this.privateRecordRepository.findPrivateRecordStates({
             workspaceId,
             flatObjectMetadata,
             flatFieldMetadataMaps,

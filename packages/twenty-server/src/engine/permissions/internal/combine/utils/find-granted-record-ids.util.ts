@@ -3,7 +3,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { areRecordGrantsHeldToRowLevelPermissions } from 'src/engine/permissions/internal/combine/utils/are-record-grants-held-to-row-level-permissions.util';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-access-outcome.util';
 import { findRecordIdsGrantedByCreator } from 'src/engine/permissions/internal/private-record/utils/find-record-ids-granted-by-creator.util';
 import { findRecordIdsGrantedByShare } from 'src/engine/permissions/internal/record-share/utils/find-record-ids-granted-by-share.util';
@@ -32,16 +31,8 @@ export const findGrantedRecordIds = async (
   const roleGrantedRecordIds = new Set(
     await findRecordIdsGrantedByRole({ request, rlsRuleMatchingRecordIds }),
   );
-  const recordGrantCandidateIds =
-    areRecordGrantsHeldToRowLevelPermissions(request) &&
-    isDefined(rlsRuleMatchingRecordIds)
-      ? new Set(rlsRuleMatchingRecordIds)
-      : undefined;
   const remainingRecords = records.filter(
-    (record) =>
-      !roleGrantedRecordIds.has(record.id) &&
-      (!isDefined(recordGrantCandidateIds) ||
-        recordGrantCandidateIds.has(record.id)),
+    (record) => !roleGrantedRecordIds.has(record.id),
   );
 
   if (remainingRecords.length === 0) {

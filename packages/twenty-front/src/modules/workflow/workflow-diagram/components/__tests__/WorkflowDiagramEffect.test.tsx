@@ -8,7 +8,10 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { type WorkflowAction } from '@/workflow/types/Workflow';
+import {
+  type WorkflowAction,
+  type WorkflowDelayAction,
+} from '@/workflow/types/Workflow';
 import { WorkflowDiagramEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramEffect';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
@@ -17,19 +20,26 @@ import { type WorkflowVersionContent } from '@/workflow/workflow-version/hooks/u
 const WORKFLOW_ID = 'workflow-id';
 const DRAFT_VERSION_ID = 'draft-version-id';
 
-const existingStep = {
+const existingStep: WorkflowDelayAction = {
   id: 'existing-step',
   name: 'Delay',
   type: 'DELAY',
   valid: true,
-  settings: {},
   nextStepIds: [],
-} as unknown as WorkflowAction;
+  settings: {
+    input: { delayType: 'DURATION' },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    },
+  },
+};
 
-const addedStep = {
+const addedStep: WorkflowDelayAction = {
   ...existingStep,
   id: 'added-step',
-} as WorkflowAction;
+};
 
 const buildContent = (steps: WorkflowAction[]): WorkflowVersionContent => ({
   workflowVersionId: DRAFT_VERSION_ID,

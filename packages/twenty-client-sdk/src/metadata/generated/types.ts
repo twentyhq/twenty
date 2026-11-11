@@ -597,6 +597,9 @@ export default {
             ]
         },
         "AgentRun": {
+            "canReadThread": [
+                4
+            ],
             "createdAt": [
                 222
             ],
@@ -1082,6 +1085,9 @@ export default {
             ],
             "frontComponents": [
                 298
+            ],
+            "grantRoleId": [
+                555
             ],
             "grantedIframeMediaPermissions": [
                 320

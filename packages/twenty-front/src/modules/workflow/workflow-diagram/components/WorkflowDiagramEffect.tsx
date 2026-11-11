@@ -191,8 +191,7 @@ export const WorkflowDiagramEffect = () => {
 
     setServerSeedAppliedChangesCount(undefined);
 
-    // A change applied while refetching (e.g. the first step added right after the draft
-    // creation event) may be missing from the refetched content, so refetch again instead
+    // Content refetched while a change was applied may lack it (e.g. the first step of a new draft)
     const shouldSeedFlowFromServer =
       hasServerSeedRequest &&
       serverSeedAppliedChangesCount === store.get(appliedServerChangesCount);

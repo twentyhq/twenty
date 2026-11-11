@@ -28,6 +28,7 @@ export type DatabaseEventTriggerSettings = {
   eventName: string;
   updatedFields?: string[];
   batchMode?: boolean;
+  condition?: string;
 };
 
 export type HttpRouteTriggerSettings = {

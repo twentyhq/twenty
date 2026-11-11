@@ -61,7 +61,7 @@ Available trigger types:
 To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 - **cron**: Runs your function on a schedule using a CRON expression.
-- **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+- **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function. A `condition` limits it to records that meet a rule expression.
 > e.g. `person.updated`, `*.created`, `company.*`
 - **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and either returns a sync `Response` or the target workspace AND logic function to enqueue; on the enqueue path the platform acks with `202` and runs that **target** on the worker queue. See [Server route trigger](#server-route-trigger).
 
@@ -442,7 +442,8 @@ For permanent deletes, use `.destroyed`.
 | Property        | Description                                                                                                                                                              |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `eventName`     | Event to listen on, such as `person.updated`. Supports `*` for the object name, the operation, or both.                                                                  |
-| `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function.                                                              |
+| `updatedFields` | Optional list of field names. On `.updated` and `.upserted` events, only changes touching one of them trigger the function.                                              |
+| `condition`     | Optional [rule expression](/user-guide/data-model/capabilities/validation-rules#write-a-condition) the record must meet, such as `stage == 'CUSTOMER'`. `previous.<field>` reads the record before an update. It reads the record's own fields; a many-to-one relation is its id field (`companyId`), not `company.name`. |
 | `batchMode`     | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
 
 Created event example:
