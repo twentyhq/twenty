@@ -364,15 +364,17 @@ export class RecordSharingReadService {
           ? getPermissionsPrincipalsShareKeys(principals)
           : []),
       ],
-      implicitAccessLevels: canSetRecordPrivacy({ featureFlagsMap })
-        ? [
-            isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
-            creatorWorkspaceMemberId === authContext.workspaceMemberId ||
-            (canAccessAllRecords && !isPrivate)
-              ? RecordShareAccessLevel.FULL
-              : null,
-          ]
-        : [],
+      implicitAccessLevels:
+        isRecordSharingEnabled({ featureFlagsMap }) ||
+        canSetRecordPrivacy({ featureFlagsMap })
+          ? [
+              isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
+              creatorWorkspaceMemberId === authContext.workspaceMemberId ||
+              (canAccessAllRecords && !isPrivate)
+                ? RecordShareAccessLevel.FULL
+                : null,
+            ]
+          : [],
     });
 
     return {
