@@ -39,7 +39,7 @@ const hasConditionFields = ({
       (fieldName) => fieldName in previousRecord,
     ));
 
-export type DatabaseEventTriggerMatch<TEvent extends ObjectRecordEvent> = {
+type DatabaseEventTriggerMatch<TEvent extends ObjectRecordEvent> = {
   events: TEvent[];
   conditionErrorMessage?: string;
 };
