@@ -56,6 +56,7 @@ const getAgentTriggerSettingsErrors = ({
     });
   }
 
+  // TODO: remove with the legacy databaseEventTriggerSettings / DATABASE_EVENT manifest form
   return getDatabaseEventTriggerSettingsErrors({
     settings: trigger.settings,
     subject,
