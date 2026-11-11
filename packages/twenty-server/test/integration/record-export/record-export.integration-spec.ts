@@ -487,7 +487,7 @@ describe('record export lifecycle (integration)', () => {
     );
   });
 
-  it('ignores application row permissions in the export worker', async () => {
+  it('rejects an OAuth export when its application only reads the object through a row level rule', async () => {
     await setApplicationRole(roleId);
     await upsertContainsRlsPredicate({
       roleId,
@@ -496,10 +496,9 @@ describe('record export lifecycle (integration)', () => {
       value: companies[0].name,
       ruleGrants: { canReadRecords: true },
     });
-    const ready = await exportToCompletion(input, cliToken);
-    const response = await download(ready).expect(200);
-    expect(response.text).toContain(companies[0].id);
-    expect(response.text).toContain(companies[1].id);
+    await expect(exportToCompletion(input, cliToken)).rejects.toThrow(
+      'The export failed. Please try again or export fewer records.',
+    );
   });
 
   it('rejects an OAuth export when its application cannot read the object', async () => {
