@@ -24,7 +24,6 @@ export const CoreAgentTriggerConditionInput = ({
   const { t } = useLingui();
   const { fields, editorFields } = useValidationRuleFields({
     objectMetadataItem,
-    scope: 'databaseEvent',
   });
 
   if (isReadOnly && !isNonEmptyString(condition)) {

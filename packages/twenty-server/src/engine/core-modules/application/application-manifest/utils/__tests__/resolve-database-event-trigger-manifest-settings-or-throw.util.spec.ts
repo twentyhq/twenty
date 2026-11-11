@@ -12,12 +12,15 @@ const COMPANY = '33333333-3333-4333-8333-333333333333';
 const POINT_OF_CONTACTS = '44444444-4444-4444-8444-444444444444';
 const SIGNAL = '55555555-5555-4555-8555-555555555555';
 const SIGNAL_STATUS = '66666666-6666-4666-8666-666666666666';
+const COMPANY_OBJECT = '88888888-8888-4888-8888-888888888888';
+const COMPANY_NAME = '99999999-9999-4999-8999-999999999999';
 
 const addField = (
   maps: ReturnType<typeof createEmptyAllFlatEntityMaps>,
   field: Pick<FlatFieldMetadata, 'universalIdentifier' | 'name' | 'type'> & {
     objectMetadataUniversalIdentifier: string;
     universalSettings?: FlatFieldMetadata['universalSettings'];
+    relationTargetObjectMetadataUniversalIdentifier?: string;
   },
 ) => {
   maps.flatFieldMetadataMaps.byUniversalIdentifier[field.universalIdentifier] =
@@ -44,7 +47,18 @@ const buildResolver = () => {
     type: FieldMetadataType.RELATION,
     objectMetadataUniversalIdentifier: OPPORTUNITY,
     universalSettings: { relationType: RelationType.MANY_TO_ONE },
+    relationTargetObjectMetadataUniversalIdentifier: COMPANY_OBJECT,
   } as Parameters<typeof addField>[1]);
+  existing.flatObjectMetadataMaps.byUniversalIdentifier[COMPANY_OBJECT] = {
+    universalIdentifier: COMPANY_OBJECT,
+    nameSingular: 'company',
+  } as FlatObjectMetadata;
+  addField(existing, {
+    universalIdentifier: COMPANY_NAME,
+    name: 'name',
+    type: FieldMetadataType.TEXT,
+    objectMetadataUniversalIdentifier: COMPANY_OBJECT,
+  });
   addField(existing, {
     universalIdentifier: POINT_OF_CONTACTS,
     name: 'pointOfContacts',
@@ -118,11 +132,11 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     expect(
       resolve({
         eventName: 'opportunity.created',
-        condition: 'isDefined(companyId)',
+        condition: "isDefined(company) and company.name != 'Acme'",
       }),
     ).toEqual({
       eventName: 'opportunity.created',
-      condition: 'isDefined(companyId)',
+      condition: "isDefined(company) and company.name != 'Acme'",
     });
 
     expect(() =>
@@ -160,13 +174,22 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
       /a condition needs a trigger on one object/,
     ],
     [
-      'a condition reading a related record',
+      'a condition reading a relation by its join column',
       {
         objectUniversalIdentifier: OPPORTUNITY,
         action: 'created' as const,
-        condition: "company.name == 'Acme'",
+        condition: 'isDefined(companyId)',
       },
-      /is invalid/,
+      /Unknown field "companyId"/,
+    ],
+    [
+      'a condition reading a field the related record lacks',
+      {
+        objectUniversalIdentifier: OPPORTUNITY,
+        action: 'created' as const,
+        condition: "company.domain == 'acme.com'",
+      },
+      /Unknown field "domain" on "company"/,
     ],
   ])('rejects %s', (_, settings, error) => {
     expect(() => resolve(settings)).toThrow(error);

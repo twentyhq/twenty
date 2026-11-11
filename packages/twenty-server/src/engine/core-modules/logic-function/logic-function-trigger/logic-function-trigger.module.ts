@@ -18,6 +18,8 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
@@ -26,12 +28,14 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     TokenModule,
     WorkspaceDomainsModule,
     WorkspaceCacheModule,
+    CoreEntityCacheModule,
     CronModule,
     EventLogEmitterModule,
     PermissionsModule,
     RecordShareModule,
   ],
   providers: [
+    DatabaseEventTriggerConditionService,
     provideWorkspaceScopedRepository(LogicFunctionEntity),
     LogicFunctionTriggerJob,
     ApplicationLifecycleHookJob,

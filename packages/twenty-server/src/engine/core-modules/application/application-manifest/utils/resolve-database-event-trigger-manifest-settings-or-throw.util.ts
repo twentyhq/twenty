@@ -7,8 +7,8 @@ import {
 } from 'twenty-shared/application';
 import {
   compileValidationRuleExpression,
+  computeDatabaseEventWatchedFieldName,
   isDefined,
-  toDatabaseEventValidationRuleField,
 } from 'twenty-shared/utils';
 
 import { type DatabaseEventTriggerManifestResolver } from 'src/engine/core-modules/application/application-manifest/types/database-event-trigger-manifest-resolver.type';
@@ -53,13 +53,9 @@ const assertConditionCompilesOrThrow = ({
     });
   }
 
-  const fields = resolver
-    .listObjectFields(objectUniversalIdentifier)
-    .map(toDatabaseEventValidationRuleField)
-    .filter(isDefined);
   const compilation = compileValidationRuleExpression({
     expression: condition,
-    fields,
+    fields: resolver.listConditionFields(objectUniversalIdentifier),
   });
 
   if (!compilation.isValid) {
@@ -154,7 +150,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
         });
       }
 
-      const watchedFieldName = toDatabaseEventValidationRuleField(field)?.name;
+      const watchedFieldName = computeDatabaseEventWatchedFieldName(field);
 
       return isDefined(watchedFieldName)
         ? watchedFieldName

@@ -1,4 +1,8 @@
-import { type FieldMetadataType, type RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationType,
+  type ValidationRuleFieldDescriptor,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -12,6 +16,7 @@ type DatabaseEventTriggerManifestField = {
   type: FieldMetadataType;
   objectUniversalIdentifier: string;
   relationType?: RelationType;
+  relationTargetObjectUniversalIdentifier?: string;
 };
 
 type FieldReadProperty =
@@ -19,7 +24,8 @@ type FieldReadProperty =
   | 'name'
   | 'type'
   | 'objectMetadataUniversalIdentifier'
-  | 'universalSettings';
+  | 'universalSettings'
+  | 'relationTargetObjectMetadataUniversalIdentifier';
 
 const readRelationType = (
   universalSettings: FlatFieldMetadata['universalSettings'],
@@ -98,6 +104,8 @@ export const buildDatabaseEventTriggerManifestResolver = ({
           type: field.type,
           objectUniversalIdentifier: field.objectMetadataUniversalIdentifier,
           relationType: readRelationType(field.universalSettings),
+          relationTargetObjectUniversalIdentifier:
+            field.relationTargetObjectMetadataUniversalIdentifier ?? undefined,
         }
       : undefined;
 
@@ -139,10 +147,42 @@ export const buildDatabaseEventTriggerManifestResolver = ({
     return [...fieldsByUniversalIdentifier.values()];
   };
 
+  const toScalarConditionField = ({
+    name,
+    type,
+    universalIdentifier,
+  }: DatabaseEventTriggerManifestField): ValidationRuleFieldDescriptor => ({
+    name,
+    type,
+    universalIdentifier,
+  });
+
+  // Same fields as a validation rule: a relation to one record reads its target's own fields
+  const listConditionFields = (
+    objectUniversalIdentifier: string,
+  ): ValidationRuleFieldDescriptor[] =>
+    listObjectFields(objectUniversalIdentifier).map((field) => {
+      if (field.type !== FieldMetadataType.RELATION) {
+        return toScalarConditionField(field);
+      }
+
+      return {
+        ...toScalarConditionField(field),
+        relationType: field.relationType,
+        relationTargetFields:
+          field.relationType === RelationType.MANY_TO_ONE &&
+          isDefined(field.relationTargetObjectUniversalIdentifier)
+            ? listObjectFields(
+                field.relationTargetObjectUniversalIdentifier,
+              ).map(toScalarConditionField)
+            : undefined,
+      };
+    });
+
   return {
     findObjectNameSingular,
     findObjectUniversalIdentifierByNameSingular,
     findField,
-    listObjectFields,
+    listConditionFields,
   };
 };

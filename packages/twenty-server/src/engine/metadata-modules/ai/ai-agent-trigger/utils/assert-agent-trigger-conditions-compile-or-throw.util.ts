@@ -13,7 +13,7 @@ import {
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { buildDatabaseEventTriggerConditionFields } from 'src/engine/workspace-event-emitter/utils/build-database-event-trigger-condition-fields.util';
+import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
 
 const buildInvalidConditionException = ({
   condition,
@@ -81,8 +81,9 @@ export const assertAgentTriggerConditionsCompileOrThrow = ({
 
     const compilation = compileValidationRuleExpression({
       expression: condition,
-      fields: buildDatabaseEventTriggerConditionFields({
-        flatObjectMetadata,
+      fields: buildValidationRuleFieldDescriptors({
+        objectMetadataId: flatObjectMetadata.id,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
     });

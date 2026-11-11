@@ -1,4 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { resolveValidationRuleIdentifierPath } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -153,78 +152,6 @@ describe('buildValidationRuleEditorFields', () => {
         iconName: 'IconListSearch',
         objectIconName: 'IconBox',
       });
-    });
-  });
-
-  describe('for a database event', () => {
-    const eventEditorFields = buildValidationRuleEditorFields({
-      objectMetadataItem: opportunity,
-      objectMetadataItems,
-      scope: 'databaseEvent',
-    });
-    const eventPaths = eventEditorFields.map(({ path }) => path);
-
-    it('should offer a to-one relation by its id instead of its members', () => {
-      expect(eventPaths).toEqual(
-        expect.arrayContaining(['companyId', 'previous.companyId', 'stage']),
-      );
-      expect(eventPaths).not.toContain('company');
-      expect(eventPaths.some((path) => path.startsWith('company.'))).toBe(
-        false,
-      );
-    });
-
-    it('should only offer paths the rule compiler resolves', () => {
-      const descriptors = buildValidationRuleFieldDescriptors({
-        objectMetadataItem: opportunity,
-        objectMetadataItems,
-        scope: 'databaseEvent',
-      });
-
-      expect(
-        eventPaths.filter(
-          (path) =>
-            !resolveValidationRuleIdentifierPath({ path, fields: descriptors })
-              .isResolved,
-        ),
-      ).toEqual([]);
-    });
-  });
-
-  describe('for a database event on an object with morph relations', () => {
-    const objectWithMorphRelation = objectMetadataItems.find(({ fields }) =>
-      fields.some(
-        ({ type, isActive, morphRelations }) =>
-          type === FieldMetadataType.MORPH_RELATION &&
-          isActive &&
-          (morphRelations ?? []).length > 0,
-      ),
-    ) as EnrichedObjectMetadataItem;
-
-    const morphEditorFields = buildValidationRuleEditorFields({
-      objectMetadataItem: objectWithMorphRelation,
-      objectMetadataItems,
-      scope: 'databaseEvent',
-    });
-
-    it('should offer each morph target by its join column, as the compiler resolves it', () => {
-      const descriptors = buildValidationRuleFieldDescriptors({
-        objectMetadataItem: objectWithMorphRelation,
-        objectMetadataItems,
-        scope: 'databaseEvent',
-      });
-      const morphPaths = morphEditorFields
-        .map(({ path }) => path)
-        .filter((path) => /^target[A-Z].*Id$/.test(path));
-
-      expect(morphPaths.length).toBeGreaterThan(0);
-      expect(
-        morphPaths.filter(
-          (path) =>
-            !resolveValidationRuleIdentifierPath({ path, fields: descriptors })
-              .isResolved,
-        ),
-      ).toEqual([]);
     });
   });
 });

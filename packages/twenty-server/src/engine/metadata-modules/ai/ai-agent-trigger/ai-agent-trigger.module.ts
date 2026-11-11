@@ -16,6 +16,8 @@ import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
 
 @Module({
   imports: [
@@ -26,8 +28,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordShareModule,
     ThrottlerModule,
     WorkspaceCacheModule,
+    CoreEntityCacheModule,
   ],
   providers: [
+    DatabaseEventTriggerConditionService,
     provideWorkspaceScopedRepository(AgentEntity),
     AgentCronTriggerCronCommand,
     AgentCronTriggerCronJob,

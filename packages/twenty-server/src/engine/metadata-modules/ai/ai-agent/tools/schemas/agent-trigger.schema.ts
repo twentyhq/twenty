@@ -44,7 +44,7 @@ const databaseEventTriggerSchema = agentTriggerBaseSchema.extend({
       .string()
       .optional()
       .describe(
-        "Rule expression the record must meet for the trigger to fire, using the object's field names (e.g. \"stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'\"). previous.<field> reads the value before an update. A relation to one record is read through its id field (companyId); related records cannot be read.",
+        "Rule expression the record must meet for the trigger to fire, using the object's field names (e.g. \"stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'\"). previous.<field> reads the value before an update. A relation to one record reads its target's fields, as in a validation rule (company.id, company.employees > 100); previous.<field> only covers the record's own fields.",
       ),
     batchMode: z
       .boolean()
