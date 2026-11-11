@@ -156,7 +156,7 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
         ? watchedFieldName
         : throwInvalidTrigger({
             subject,
-            reason: `${field.name} cannot be watched, only relations to a single record change on update`,
+            reason: `${field.name} cannot be watched: only a relation to a single record, or one target of a morph relation, changes on update`,
           });
     },
   );

@@ -165,7 +165,6 @@ export class DatabaseEventTriggerConditionService {
         );
       }
 
-      // A composite field is stored as one column per subfield (addressCity...)
       const columnNames = targetFields.flatMap((field) => {
         const compositeType = compositeTypeDefinitions.get(field.type);
 
