@@ -34,10 +34,10 @@ export const teamsListUnlinkedUsersHandler =
     }
 
     try {
-      const linkedAadObjectIds = await listLinkedTeamsUserAadObjectIds(
-        new CoreApiClient({ runAs: 'application' }),
-        { teamsTenantId: graphAccess.tenantId },
-      );
+      const linkedAadObjectIds = await listLinkedTeamsUserAadObjectIds({
+        client: new CoreApiClient({ runAs: 'application' }),
+        teamsTenantId: graphAccess.tenantId,
+      });
 
       const { users, isTruncated } = await collectGraphUsers({
         accessToken: graphAccess.accessToken,

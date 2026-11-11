@@ -115,10 +115,10 @@ describe('teamsListUnlinkedUsersHandler', () => {
         },
       ],
     });
-    expect(listLinkedTeamsUserAadObjectIdsMock).toHaveBeenCalledWith(
-      expect.anything(),
-      { teamsTenantId: 'tenant-1' },
-    );
+    expect(listLinkedTeamsUserAadObjectIdsMock).toHaveBeenCalledWith({
+      client: expect.anything(),
+      teamsTenantId: 'tenant-1',
+    });
   });
 
   it('passes the truncation flag through as hasMore', async () => {

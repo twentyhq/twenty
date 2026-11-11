@@ -4,10 +4,13 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 const LINKS_PER_PAGE = 200;
 const MAX_PAGES = 25;
 
-export const listLinkedTeamsUserAadObjectIds = async (
-  client: Pick<CoreApiClient, 'query'>,
-  { teamsTenantId }: { teamsTenantId: string },
-): Promise<Set<string>> => {
+export const listLinkedTeamsUserAadObjectIds = async ({
+  client,
+  teamsTenantId,
+}: {
+  client: Pick<CoreApiClient, 'query'>;
+  teamsTenantId: string;
+}): Promise<Set<string>> => {
   const linkedAadObjectIds = new Set<string>();
 
   let after: string | undefined;
@@ -39,11 +42,13 @@ export const listLinkedTeamsUserAadObjectIds = async (
       pageInfo?.hasNextPage !== true ||
       !isNonEmptyString(pageInfo.endCursor)
     ) {
-      break;
+      return linkedAadObjectIds;
     }
 
     after = pageInfo.endCursor;
   }
 
-  return linkedAadObjectIds;
+  throw new Error(
+    `More than ${MAX_PAGES * LINKS_PER_PAGE} Teams user links exist for this tenant, so the unlinked users cannot be listed. Use the search to find a specific person.`,
+  );
 };

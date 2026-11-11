@@ -42,13 +42,11 @@ export const TeamsUserLinksSettings = () => {
     unlinkedErrorMessage,
     refetchUnlinkedTeamsUsers,
   } = useUnlinkedTeamsUsers({ isEnabled: canManage });
-  // The existing links list owns its own fetch; bumping this key reloads it
-  // after a save without threading a refetch through it.
-  const [linkedListVersion, setLinkedListVersion] = useState(0);
+  const [teamsUserLinksListKey, setTeamsUserLinksListKey] = useState(0);
   const [isManualFormOpen, setIsManualFormOpen] = useState(false);
 
   const handleLinkSaved = async () => {
-    setLinkedListVersion((version) => version + 1);
+    setTeamsUserLinksListKey((version) => version + 1);
     await refetchUnlinkedTeamsUsers();
   };
 
@@ -91,7 +89,7 @@ export const TeamsUserLinksSettings = () => {
           )}
         </Section.Root>
       )}
-      <TeamsUserLinksList key={linkedListVersion} />
+      <TeamsUserLinksList key={teamsUserLinksListKey} />
       {canManage &&
         (isManualFormOpen ? (
           <TeamsUserLinkForm onLinkSaved={handleManualLinkSaved} />

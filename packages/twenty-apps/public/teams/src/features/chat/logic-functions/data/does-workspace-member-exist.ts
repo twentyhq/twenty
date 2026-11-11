@@ -1,10 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-export const doesWorkspaceMemberExist = async (
-  client: Pick<CoreApiClient, 'query'>,
-  workspaceMemberId: string,
-): Promise<boolean> => {
+export const doesWorkspaceMemberExist = async ({
+  client,
+  workspaceMemberId,
+}: {
+  client: Pick<CoreApiClient, 'query'>;
+  workspaceMemberId: string;
+}): Promise<boolean> => {
   const queryResult = await client.query({
     workspaceMembers: {
       __args: {

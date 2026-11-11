@@ -28,7 +28,8 @@ describe('listLinkedTeamsUserAadObjectIds', () => {
         },
       });
 
-    const result = await listLinkedTeamsUserAadObjectIds(client, {
+    const result = await listLinkedTeamsUserAadObjectIds({
+      client,
       teamsTenantId: 'tenant-1',
     });
 
@@ -47,10 +48,26 @@ describe('listLinkedTeamsUserAadObjectIds', () => {
       },
     });
 
-    await listLinkedTeamsUserAadObjectIds(client, { teamsTenantId: 'tenant-9' });
+    await listLinkedTeamsUserAadObjectIds({
+      client,
+      teamsTenantId: 'tenant-9',
+    });
 
-    expect(
-      queryMock.mock.calls[0][0].teamsUserLinks.__args.filter,
-    ).toEqual({ teamsTenantId: { eq: 'tenant-9' } });
+    expect(queryMock.mock.calls[0][0].teamsUserLinks.__args.filter).toEqual({
+      teamsTenantId: { eq: 'tenant-9' },
+    });
+  });
+
+  it('throws instead of returning a partial set when the page budget runs out', async () => {
+    queryMock.mockResolvedValue({
+      teamsUserLinks: {
+        edges: [{ node: { teamsUserAadObjectId: 'aad-1' } }],
+        pageInfo: { hasNextPage: true, endCursor: 'cursor' },
+      },
+    });
+
+    await expect(
+      listLinkedTeamsUserAadObjectIds({ client, teamsTenantId: 'tenant-1' }),
+    ).rejects.toThrow('cannot be listed');
   });
 });

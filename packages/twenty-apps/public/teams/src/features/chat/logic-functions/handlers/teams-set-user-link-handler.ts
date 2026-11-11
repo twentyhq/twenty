@@ -39,8 +39,6 @@ export const teamsSetUserLinkHandler = async (
     };
   }
 
-  // The tenant is resolved from the workspace connection, never trusted from the
-  // client, so a caller cannot write a link into another tenant.
   const graphAccess = await getTeamsWorkspaceGraphAccess();
 
   if (!graphAccess.success) {
@@ -56,7 +54,10 @@ export const teamsSetUserLinkHandler = async (
   let memberExists: boolean;
 
   try {
-    memberExists = await doesWorkspaceMemberExist(client, workspaceMemberId);
+    memberExists = await doesWorkspaceMemberExist({
+      client,
+      workspaceMemberId,
+    });
   } catch (error) {
     return {
       success: false,
@@ -76,7 +77,8 @@ export const teamsSetUserLinkHandler = async (
   let existingLink: TeamsUserLink | undefined;
 
   try {
-    existingLink = await findTeamsUserLink(client, {
+    existingLink = await findTeamsUserLink({
+      client,
       teamsTenantId: graphAccess.tenantId,
       teamsUserAadObjectId,
     });

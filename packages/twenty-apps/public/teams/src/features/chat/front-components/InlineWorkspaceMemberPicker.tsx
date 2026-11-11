@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { InlineWorkspaceMemberPickerPanel } from 'src/features/chat/front-components/InlineWorkspaceMemberPickerPanel';
 import { type WorkspaceMemberOption } from 'src/features/chat/front-components/types/workspace-member-option.type';
-import { getMemberDisplayName } from 'src/features/chat/front-components/utils/get-member-display-name.util';
+import { getMemberDisplayName } from 'src/features/chat/front-components/utils/get-member-display-name';
 
 const StyledContainer = styled.div`
   flex: 1;

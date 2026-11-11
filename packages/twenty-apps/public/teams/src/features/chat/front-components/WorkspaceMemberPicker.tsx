@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { PickedEntityButton } from 'src/features/chat/front-components/PickedEntityButton';
 import { SearchDropdownPicker } from 'src/features/chat/front-components/SearchDropdownPicker';
 import { type WorkspaceMemberOption } from 'src/features/chat/front-components/types/workspace-member-option.type';
-import { getMemberDisplayName } from 'src/features/chat/front-components/utils/get-member-display-name.util';
+import { getMemberDisplayName } from 'src/features/chat/front-components/utils/get-member-display-name';
 import { useWorkspaceMemberSearch } from 'src/features/chat/front-components/hooks/use-workspace-member-search';
 
 type WorkspaceMemberPickerProps = {

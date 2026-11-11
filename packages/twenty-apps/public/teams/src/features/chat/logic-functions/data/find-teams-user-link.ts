@@ -4,13 +4,15 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { type TeamsUserLink } from 'src/features/chat/logic-functions/types/teams-user-link.type';
 import { isTeamsUserLinkSource } from 'src/features/chat/logic-functions/utils/is-teams-user-link-source';
 
-export const findTeamsUserLink = async (
-  client: Pick<CoreApiClient, 'query'>,
-  {
-    teamsTenantId,
-    teamsUserAadObjectId,
-  }: { teamsTenantId: string; teamsUserAadObjectId: string },
-): Promise<TeamsUserLink | undefined> => {
+export const findTeamsUserLink = async ({
+  client,
+  teamsTenantId,
+  teamsUserAadObjectId,
+}: {
+  client: Pick<CoreApiClient, 'query'>;
+  teamsTenantId: string;
+  teamsUserAadObjectId: string;
+}): Promise<TeamsUserLink | undefined> => {
   const queryResult = await client.query({
     teamsUserLinks: {
       __args: {

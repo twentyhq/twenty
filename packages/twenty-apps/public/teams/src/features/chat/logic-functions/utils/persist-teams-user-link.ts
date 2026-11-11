@@ -7,9 +7,6 @@ import { createTeamsUserLink } from 'src/features/chat/logic-functions/data/crea
 import { updateTeamsUserLink } from 'src/features/chat/logic-functions/data/update-teams-user-link';
 import { type TeamsUserLink } from 'src/features/chat/logic-functions/types/teams-user-link.type';
 
-// A manual link is admin-set and authoritative, so it is written as MANUAL with
-// no consent step. An existing link (same or different member) is updated in
-// place rather than recreated, keeping the (tenant, Entra id) row stable.
 export const persistTeamsUserLink = async ({
   client,
   existingLink,

@@ -1,7 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-// Allow-list rather than strip today's delimiters: the REST filter grammar can
-// grow new ones, and a name only needs letters, digits and these marks.
 const NON_NAME_CHARACTERS = /[^\p{L}\p{M}\p{N}'\-.]+/gu;
 
 const toSearchWords = (searchTerm: string): string[] =>

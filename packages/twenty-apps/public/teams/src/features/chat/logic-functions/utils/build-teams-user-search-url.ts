@@ -9,8 +9,7 @@ export const buildTeamsUserSearchUrl = ({
   top: number;
 }): string => {
   const escapedQuery = escapeODataStringLiteral(query);
-  // startswith on these properties is case-insensitive and needs no advanced
-  // query header, unlike $search.
+  // startswith is case-insensitive and, unlike $search, needs no ConsistencyLevel header.
   const filter = [
     `startswith(displayName,'${escapedQuery}')`,
     `startswith(mail,'${escapedQuery}')`,

@@ -3,8 +3,10 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_USER_LINKS_UNLINKED_ROUTE_PATH } from 'src/features/chat/constants/teams-user-links-route-path';
-import { type TeamsUserSearchOption } from 'src/features/chat/logic-functions/types/teams-user-search-option.type';
-import { parseTeamsUserSearchResponse } from 'src/features/chat/front-components/utils/parse-teams-user-search-response.util';
+import {
+  type TeamsUnlinkedUsersResult,
+  type TeamsUserSearchOption,
+} from 'src/features/chat/logic-functions/types/teams-user-search-option.type';
 
 const UNLINKED_USERS_ERROR_MESSAGE =
   'Could not load unlinked Teams users. Please try again later.';
@@ -13,7 +15,6 @@ type UnlinkedTeamsUsersState = {
   unlinkedTeamsUsers: TeamsUserSearchOption[];
   hasMoreUnlinkedTeamsUsers: boolean;
   isUnlinkedTeamsUsersLoading: boolean;
-  hasLoadedUnlinkedTeamsUsers: boolean;
   unlinkedErrorMessage: string | undefined;
   refetchUnlinkedTeamsUsers: () => Promise<void>;
 };
@@ -30,8 +31,6 @@ export const useUnlinkedTeamsUsers = ({
     useState(false);
   const [isUnlinkedTeamsUsersLoading, setIsUnlinkedTeamsUsersLoading] =
     useState(true);
-  const [hasLoadedUnlinkedTeamsUsers, setHasLoadedUnlinkedTeamsUsers] =
-    useState(false);
   const [unlinkedErrorMessage, setUnlinkedErrorMessage] = useState<
     string | undefined
   >(undefined);
@@ -45,31 +44,24 @@ export const useUnlinkedTeamsUsers = ({
     setUnlinkedErrorMessage(undefined);
 
     try {
-      const result = await new RestApiClient().post(
-        `/s${TEAMS_USER_LINKS_UNLINKED_ROUTE_PATH}`,
-        {},
-      );
+      const result = await new RestApiClient().post<
+        TeamsUnlinkedUsersResult | undefined
+      >(`/s${TEAMS_USER_LINKS_UNLINKED_ROUTE_PATH}`, {});
 
       if (fetchId !== fetchIdRef.current) {
         return;
       }
 
-      const { options, errorMessage } = parseTeamsUserSearchResponse(result);
-
-      if (isDefined(errorMessage)) {
-        setUnlinkedErrorMessage(errorMessage);
+      if (!isDefined(result) || !result.success) {
+        setUnlinkedErrorMessage(result?.error ?? UNLINKED_USERS_ERROR_MESSAGE);
         setUnlinkedTeamsUsers([]);
         setHasMoreUnlinkedTeamsUsers(false);
 
         return;
       }
 
-      setUnlinkedTeamsUsers(options);
-      setHasMoreUnlinkedTeamsUsers(
-        isDefined(result) &&
-          typeof result === 'object' &&
-          (result as { hasMore?: unknown }).hasMore === true,
-      );
+      setUnlinkedTeamsUsers(result.teamsUsers);
+      setHasMoreUnlinkedTeamsUsers(result.hasMore);
     } catch {
       if (fetchId === fetchIdRef.current) {
         setUnlinkedErrorMessage(UNLINKED_USERS_ERROR_MESSAGE);
@@ -77,7 +69,6 @@ export const useUnlinkedTeamsUsers = ({
     } finally {
       if (fetchId === fetchIdRef.current) {
         setIsUnlinkedTeamsUsersLoading(false);
-        setHasLoadedUnlinkedTeamsUsers(true);
       }
     }
   }, []);
@@ -94,7 +85,6 @@ export const useUnlinkedTeamsUsers = ({
     unlinkedTeamsUsers,
     hasMoreUnlinkedTeamsUsers,
     isUnlinkedTeamsUsersLoading,
-    hasLoadedUnlinkedTeamsUsers,
     unlinkedErrorMessage,
     refetchUnlinkedTeamsUsers,
   };

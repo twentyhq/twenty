@@ -6,7 +6,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type WorkspaceMemberOption } from 'src/features/chat/front-components/types/workspace-member-option.type';
-import { getMemberDisplayName } from 'src/features/chat/front-components/utils/get-member-display-name.util';
+import { getMemberDisplayName } from 'src/features/chat/front-components/utils/get-member-display-name';
 import { useWorkspaceMemberSearch } from 'src/features/chat/front-components/hooks/use-workspace-member-search';
 
 const StyledBackdrop = styled.div`

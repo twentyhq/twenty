@@ -5,9 +5,7 @@ import {
   type LinkableGraphUser,
 } from 'src/features/chat/logic-functions/types/graph-user.type';
 
-// A directory entry only resolves on a future message through its mail or UPN,
-// so one carrying neither (rooms, shared mailboxes, service principals) is not
-// linkable.
+// Rooms, shared mailboxes and service principals carry neither mail nor UPN.
 export const isLinkableGraphUser = (
   user: GraphUser,
 ): user is LinkableGraphUser =>

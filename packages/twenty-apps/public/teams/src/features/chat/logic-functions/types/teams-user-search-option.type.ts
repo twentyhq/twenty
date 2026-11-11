@@ -6,7 +6,7 @@ export type TeamsUserSearchOption = {
 
 export type TeamsUserSearchResult =
   | { success: true; teamsUsers: TeamsUserSearchOption[] }
-  | { success: false; message: string; error?: string };
+  | { success: false; message: string; error: string };
 
 export type TeamsUnlinkedUsersResult =
   | { success: true; teamsUsers: TeamsUserSearchOption[]; hasMore: boolean }

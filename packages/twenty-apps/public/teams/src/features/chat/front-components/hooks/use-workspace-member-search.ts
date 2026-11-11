@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { type WorkspaceMemberOption } from 'src/features/chat/front-components/types/workspace-member-option.type';
-import { buildWorkspaceMemberSearchFilter } from 'src/features/chat/front-components/utils/build-workspace-member-search-filter.util';
-import { formatWorkspaceMemberName } from 'src/features/chat/front-components/utils/format-workspace-member-name.util';
+import { buildWorkspaceMemberSearchFilter } from 'src/features/chat/front-components/utils/build-workspace-member-search-filter';
+import { formatWorkspaceMemberName } from 'src/features/chat/front-components/utils/format-workspace-member-name';
 
 const WORKSPACE_MEMBER_SEARCH_DEBOUNCE_MS = 250;
 const WORKSPACE_MEMBER_SEARCH_PAGE_SIZE = 20;
