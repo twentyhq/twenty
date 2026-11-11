@@ -16,7 +16,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PERMISSION_SYSTEM_TABLES } from 'src/engine/permissions/system-table/constants/permission-system-tables.constant';
 import { buildCreatePermissionSystemTablesStatements } from 'src/engine/permissions/system-table/utils/build-create-permission-system-tables-statements.util';
-import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
+import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -157,7 +157,7 @@ export class WorkspaceExportService {
         stream,
       );
 
-      if (!objectMetadatas.some(isPermissionStorageObject)) {
+      if (!objectMetadatas.some(temporaryExcludePermissionStorageObject)) {
         await this.writePermissionSystemTables({
           schemaName,
           tableFilter,
