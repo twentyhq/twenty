@@ -2395,7 +2395,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       for (let attempt = 0; attempt < 100; attempt++) {
         const [run] = await findRuns();
 
-        if (run) {
+        if (isDefined(run)) {
           await waitForRun(run.id, 'COMPLETED');
           break;
         }
