@@ -16852,6 +16852,11 @@ msgstr "L'últim pagament va fallar. Si us plau, actualitza les teves dades de f
 msgid "Last refreshed"
 msgstr "Última actualització"
 
+#. js-lingui-id: WT1Ibn
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Last run"
+msgstr ""
+
 #. js-lingui-id: U011Uh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Last seen"
@@ -23455,6 +23460,12 @@ msgstr "Recent"
 msgid "Recent Events (oldest → newest)"
 msgstr "Esdeveniments recents (més antic → més nou)"
 
+#. js-lingui-id: dF8kMd
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Recent runs"
+msgstr ""
+
 #. js-lingui-id: EoiSFI
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Recent Users"
@@ -25018,6 +25029,11 @@ msgstr "execucions"
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Runs"
 msgstr "Execucions"
+
+#. js-lingui-id: 24xGtY
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Runs · 14d"
+msgstr ""
 
 #. js-lingui-id: F4I4hU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
