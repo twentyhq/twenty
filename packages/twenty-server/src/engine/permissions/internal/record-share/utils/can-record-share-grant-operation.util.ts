@@ -23,4 +23,4 @@ export const canRecordShareGrantOperation = ({
   resolveObjectSharing({
     flatObjectMetadata,
     featureFlagsMap,
-  }).operationTypesGrantedBeyondRole.includes(operationType);
+  }).operationTypesGrantableByRecordShare.includes(operationType);

@@ -85,7 +85,8 @@ export class RecordSharingWriteService {
             workspaceId,
             transactionScope,
             flatObjectMetadata: sharingObject.flatObjectMetadata,
-            canShareBeyondRole: sharingObject.canShareBeyondRole,
+            isAccessGrantableByRecordShare:
+              sharingObject.isAccessGrantableByRecordShare,
             principals: [principal],
             recordIds: [args.recordId],
           },
@@ -227,7 +228,8 @@ export class RecordSharingWriteService {
       workspaceId,
       transactionScope,
       flatObjectMetadata,
-      canShareBeyondRole: objectSharing.canShareBeyondRole,
+      isAccessGrantableByRecordShare:
+        objectSharing.isAccessGrantableByRecordShare,
       principals: shareWith.map(resolveShareWithPrincipalOrThrow),
       recordIds,
     });

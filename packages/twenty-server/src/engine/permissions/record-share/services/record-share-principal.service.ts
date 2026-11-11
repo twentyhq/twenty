@@ -38,14 +38,14 @@ export class RecordSharePrincipalService {
     workspaceId,
     transactionScope,
     flatObjectMetadata,
-    canShareBeyondRole,
+    isAccessGrantableByRecordShare,
     principals,
     recordIds,
   }: {
     workspaceId: string;
     transactionScope: RecordPermissionTransactionScope;
     flatObjectMetadata: FlatObjectMetadata;
-    canShareBeyondRole: boolean;
+    isAccessGrantableByRecordShare: boolean;
     principals: RecordSharePrincipal[];
     recordIds: string[];
   }): Promise<void> {
@@ -57,7 +57,7 @@ export class RecordSharePrincipalService {
     if (
       namedPrincipals.length === 0 ||
       recordIds.length === 0 ||
-      canShareBeyondRole
+      isAccessGrantableByRecordShare
     ) {
       return;
     }

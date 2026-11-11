@@ -28,8 +28,8 @@ describe('resolveObjectSharing', () => {
       isShareable: true,
       canSetRecordPrivacy: true,
       isPrivateByDefault: false,
-      canShareBeyondRole: true,
-      operationTypesGrantedBeyondRole: [
+      isAccessGrantableByRecordShare: true,
+      operationTypesGrantableByRecordShare: [
         'read',
         'update',
         'softDelete',
@@ -45,8 +45,8 @@ describe('resolveObjectSharing', () => {
       isShareable: false,
       canSetRecordPrivacy: false,
       isPrivateByDefault: false,
-      canShareBeyondRole: false,
-      operationTypesGrantedBeyondRole: [],
+      isAccessGrantableByRecordShare: false,
+      operationTypesGrantableByRecordShare: [],
     });
   });
 
@@ -58,7 +58,7 @@ describe('resolveObjectSharing', () => {
           disabledObjectPermissionActions: ['canUpdateObjectRecords'],
         },
         featureFlagsMap: RECORD_SHARING,
-      }).operationTypesGrantedBeyondRole,
+      }).operationTypesGrantableByRecordShare,
     ).toEqual(['read', 'softDelete', 'destroy']);
   });
 
@@ -77,8 +77,8 @@ describe('resolveObjectSharing', () => {
         featureFlagsMap: RECORD_SHARING,
       }),
     ).toMatchObject({
-      canShareBeyondRole: false,
-      operationTypesGrantedBeyondRole: [],
+      isAccessGrantableByRecordShare: false,
+      operationTypesGrantableByRecordShare: [],
     });
   });
 

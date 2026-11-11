@@ -12,7 +12,7 @@ import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 // Creating records and managing access stay with the roles that can access the object
-const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
+const OPERATIONS_GRANTABLE_BY_RECORD_SHARE: {
   operationType: ObjectRecordsOperationType;
   objectPermissionAction: ObjectPermissionAction;
 }[] = [
@@ -32,17 +32,17 @@ export type ObjectSharing = {
   isShareable: boolean;
   canSetRecordPrivacy: boolean;
   isPrivateByDefault: boolean;
-  canShareBeyondRole: boolean;
-  operationTypesGrantedBeyondRole: ObjectRecordsOperationType[];
+  isAccessGrantableByRecordShare: boolean;
+  operationTypesGrantableByRecordShare: ObjectRecordsOperationType[];
 };
 
-const resolveOperationTypesGrantableBeyondRole = ({
+const resolveOperationTypesGrantableByRecordShare = ({
   disabledObjectPermissionActions,
 }: Pick<
   FlatObjectMetadata,
   'disabledObjectPermissionActions'
 >): ObjectRecordsOperationType[] =>
-  OPERATIONS_GRANTABLE_BEYOND_ROLE.filter(
+  OPERATIONS_GRANTABLE_BY_RECORD_SHARE.filter(
     ({ objectPermissionAction }) =>
       !disabledObjectPermissionActions?.includes(objectPermissionAction),
   ).map(({ operationType }) => operationType);
@@ -59,8 +59,8 @@ export const resolveObjectSharing = ({
 }): ObjectSharing => {
   const isShareable =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
-  const operationTypesGrantedBeyondRole = isShareable
-    ? resolveOperationTypesGrantableBeyondRole(flatObjectMetadata)
+  const operationTypesGrantableByRecordShare = isShareable
+    ? resolveOperationTypesGrantableByRecordShare(flatObjectMetadata)
     : [];
 
   return {
@@ -69,7 +69,9 @@ export const resolveObjectSharing = ({
       isShareable ||
       (featureFlagsMap[FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED] ?? false),
     isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
-    canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
-    operationTypesGrantedBeyondRole,
+    isAccessGrantableByRecordShare: isNonEmptyArray(
+      operationTypesGrantableByRecordShare,
+    ),
+    operationTypesGrantableByRecordShare,
   };
 };
