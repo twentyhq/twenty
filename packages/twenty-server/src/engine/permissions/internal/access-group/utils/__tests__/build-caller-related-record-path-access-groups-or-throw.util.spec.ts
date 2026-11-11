@@ -1,109 +1,54 @@
 import {
   FeatureFlagKey,
-  FieldMetadataType,
   type ObjectRecordsOperationType,
   type ObjectRecordsPermissions,
-  RelationType,
 } from 'twenty-shared/types';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
+import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { buildCallerRelatedRecordPathAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-caller-related-record-path-access-groups-or-throw.util';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
+import { resolveRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/resolve-related-record-paths.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
-const buildFlatEntityMaps = <TEntity extends { id: string }>(
-  entities: TEntity[],
-) =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      entities.map((entity) => [entity.id, entity]),
-    ),
-    universalIdentifierById: Object.fromEntries(
-      entities.map((entity) => [entity.id, entity.id]),
-    ),
-    universalIdentifiersByApplicationId: {},
-  }) as unknown as FlatEntityMaps<never>;
+jest.mock(
+  'src/engine/permissions/internal/related-record-path/utils/resolve-related-record-paths.util',
+);
 
-const buildObject = (nameSingular: string) =>
-  ({
+const buildObject = (nameSingular: string): FlatObjectMetadata =>
+  getFlatObjectMetadataMock({
     id: nameSingular,
     universalIdentifier: nameSingular,
     nameSingular,
-  }) as FlatObjectMetadata;
+  });
 
-const buildRelationField = ({
-  id,
-  objectMetadataId,
-  relationTargetObjectMetadataId,
-  relationType,
-  joinColumnName,
-  relationTargetFieldMetadataId,
-}: {
-  id: string;
-  objectMetadataId: string;
-  relationTargetObjectMetadataId: string;
-  relationType: RelationType;
-  joinColumnName?: string;
-  relationTargetFieldMetadataId?: string;
-}) =>
-  ({
-    id,
-    universalIdentifier: id,
-    name: id,
-    objectMetadataId,
-    type: FieldMetadataType.RELATION,
-    isActive: true,
-    relationTargetObjectMetadataId,
-    relationTargetFieldMetadataId,
-    settings: { relationType, joinColumnName },
-  }) as unknown as OrmFlatFieldMetadata;
+const COMPANY = buildObject('company');
+const OPPORTUNITY = buildObject('opportunity');
+const ATTACHMENT = buildObject('attachment');
+
+const flatObjectMetadataMaps = [COMPANY, OPPORTUNITY, ATTACHMENT].reduce(
+  (flatEntityMaps, flatEntity) =>
+    addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
+  createEmptyFlatEntityMaps(),
+);
 
 const buildPath = ({
-  objectMetadataId,
-  firstFieldMetadataId,
+  source,
+  target,
   isInherent,
 }: {
-  objectMetadataId: string;
-  firstFieldMetadataId: string;
+  source: FlatObjectMetadata;
+  target: FlatObjectMetadata;
   isInherent: boolean;
-}) =>
-  ({
-    id: firstFieldMetadataId,
-    universalIdentifier: firstFieldMetadataId,
-    objectMetadataId,
-    firstFieldMetadataId,
-    secondFieldMetadataId: null,
-    thirdFieldMetadataId: null,
-    isInherent,
-  }) as FlatRelatedRecordPath;
-
-const attachment = buildObject('attachment');
-const flatFieldMetadataMaps = buildFlatEntityMaps([
-  buildRelationField({
-    id: 'companyAttachments',
-    objectMetadataId: 'company',
-    relationTargetObjectMetadataId: 'attachment',
-    relationType: RelationType.ONE_TO_MANY,
-    relationTargetFieldMetadataId: 'attachmentTargetCompany',
-  }),
-  buildRelationField({
-    id: 'attachmentTargetCompany',
-    objectMetadataId: 'attachment',
-    relationTargetObjectMetadataId: 'company',
-    relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'targetCompanyId',
-  }),
-  buildRelationField({
-    id: 'opportunityCompany',
-    objectMetadataId: 'opportunity',
-    relationTargetObjectMetadataId: 'company',
-    relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'companyId',
-  }),
-]);
+}): ResolvedRelatedRecordPath => ({
+  isInherent,
+  sourceFlatObjectMetadata: source,
+  targetObjectMetadataId: target.id,
+  hops: [],
+});
 
 const READ_ALL_RECORDS: ObjectRecordsPermissions = {
   canCreateAllRecords: false,
@@ -142,11 +87,20 @@ const buildCallerAccessGroupObjectMetadataIds = ({
   isAccessGroupsEnabled?: boolean;
   operationType?: ObjectRecordsOperationType;
   principals?: PermissionsPrincipalsWithRolesContext;
-} = {}) =>
-  buildCallerRelatedRecordPathAccessGroupsOrThrow({
+} = {}) => {
+  jest.mocked(resolveRelatedRecordPaths).mockReturnValue([
+    buildPath({
+      source: COMPANY,
+      target: ATTACHMENT,
+      isInherent: isCompanyAttachmentsPathInherent,
+    }),
+    buildPath({ source: OPPORTUNITY, target: COMPANY, isInherent: false }),
+  ]);
+
+  return buildCallerRelatedRecordPathAccessGroupsOrThrow({
     request: {
       principals,
-      flatObjectMetadata: attachment,
+      flatObjectMetadata: ATTACHMENT,
       operationType,
       metadataMaps: {
         featureFlagsMap: {
@@ -154,12 +108,14 @@ const buildCallerAccessGroupObjectMetadataIds = ({
         },
         rolesPermissions: {
           sales: {
+            ...NO_ROLE_RECORDS_PERMISSIONS,
             objects: {
               company: READ_ALL_RECORDS,
               opportunity: READ_ALL_RECORDS,
             },
           },
           manager: {
+            ...NO_ROLE_RECORDS_PERMISSIONS,
             objects: Object.fromEntries(
               objectNamesWithRlsRule.map((objectName) => [
                 objectName,
@@ -168,29 +124,23 @@ const buildCallerAccessGroupObjectMetadataIds = ({
             ),
           },
         },
-        flatObjectMetadataMaps: buildFlatEntityMaps([
-          buildObject('company'),
-          buildObject('opportunity'),
-          attachment,
-        ]),
-        flatFieldMetadataMaps,
-        flatRelatedRecordPathMaps: buildFlatEntityMaps([
-          buildPath({
-            objectMetadataId: 'company',
-            firstFieldMetadataId: 'companyAttachments',
-            isInherent: isCompanyAttachmentsPathInherent,
-          }),
-          buildPath({
-            objectMetadataId: 'opportunity',
-            firstFieldMetadataId: 'opportunityCompany',
-            isInherent: false,
-          }),
-        ]),
-      } as unknown as PermissionsMetadataMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+      },
     },
     workspaceMembers: [],
-    flatFieldMetadataMaps,
+    flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
   }).map(({ objectMetadataId }) => objectMetadataId);
+};
+
+const limitedByManagerRole: PermissionsPrincipalsWithRolesContext = {
+  ...salesMember,
+  applicationPrincipal: {
+    type: 'application',
+    roleId: 'manager',
+    applicationId: 'application-id',
+  },
+};
 
 describe('buildCallerRelatedRecordPathAccessGroupsOrThrow', () => {
   it('should hold the groups of the caller on the source object of a path', () => {
@@ -235,14 +185,17 @@ describe('buildCallerRelatedRecordPathAccessGroupsOrThrow', () => {
   it('should hold no group when a limiting role does not reach every source record', () => {
     expect(
       buildCallerAccessGroupObjectMetadataIds({
-        principals: {
-          ...salesMember,
-          applicationPrincipal: {
-            type: 'application',
-            roleId: 'manager',
-            applicationId: 'application-id',
-          },
-        },
+        principals: limitedByManagerRole,
+      }),
+    ).toEqual([]);
+  });
+
+  it('should not go past an inherent source a limiting role does not fully reach', () => {
+    expect(
+      buildCallerAccessGroupObjectMetadataIds({
+        isCompanyAttachmentsPathInherent: true,
+        objectNamesWithRlsRule: ['company'],
+        principals: limitedByManagerRole,
       }),
     ).toEqual([]);
   });

@@ -44,6 +44,8 @@ import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/inte
 import { canAllRecordsOrRowLevelPermissionsGrantOperation } from 'src/engine/permissions/internal/role/utils/can-all-records-or-row-level-permissions-grant-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
+import { canRelatedRecordPathsReachObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-paths-reach-object.util';
+import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { canRelatedRecordPathGrantOperation } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-grant-operation.util';
 import { buildRelatedRecordPathsSQLCondition } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-paths-sql-condition.util';
 import { buildPermissionsSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-sql-condition.util';
@@ -341,14 +343,7 @@ export class RecordPermissionsReadService {
       callerAccessGroupCompactIds,
       callerRelatedRecordPathAccessGroupCompactIds,
     ] = await Promise.all([
-      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest) ===
-      'accessGroups'
-        ? this.accessGroupReadService.findCallerCompactIds({
-            principals: objectAccessRequest.principals,
-            objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
-            operationType: 'read',
-          })
-        : undefined,
+      this.findCallerAccessGroupCompactIds(objectAccessRequest),
       this.accessGroupReadService.findCallerRelatedRecordPathCompactIds(
         objectAccessRequest,
       ),
@@ -359,6 +354,23 @@ export class RecordPermissionsReadService {
       tableAlias,
       callerAccessGroupCompactIds,
       callerRelatedRecordPathAccessGroupCompactIds,
+    });
+  }
+
+  private async findCallerAccessGroupCompactIds(
+    objectAccessRequest: PermissionsObjectAccessRequest,
+  ): Promise<number[] | undefined> {
+    if (
+      resolveRecordsAccessSQLConditionStrategy(objectAccessRequest) !==
+      'accessGroups'
+    ) {
+      return undefined;
+    }
+
+    return this.accessGroupReadService.findCallerCompactIds({
+      principals: objectAccessRequest.principals,
+      objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
+      operationType: 'read',
     });
   }
 
@@ -686,8 +698,8 @@ export class RecordPermissionsReadService {
               ? hypotheticalRecordShareAccessLevel
               : undefined,
         }),
-      isObjectOperationDisabled: (sourceFlatObjectMetadata) =>
-        isObjectOperationDisabledToPrincipals({
+      canRelatedRecordPathsReachObject: (sourceFlatObjectMetadata) =>
+        canRelatedRecordPathsReachObject({
           principals,
           metadataMaps,
           flatObjectMetadata: sourceFlatObjectMetadata,
@@ -717,31 +729,15 @@ export class RecordPermissionsReadService {
     tableAlias: string;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
   }): SQLCondition | boolean {
-    try {
-      validateOperationIsPermittedOrThrow({
-        entityName: flatObjectMetadata.nameSingular,
+    if (
+      !areRecordIdsReadableByPrincipals({
+        principals,
+        metadataMaps,
+        flatObjectMetadata,
         operationType,
-        recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
-          principals,
-          metadataMaps,
-        }),
-        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-        objectIdByNameSingular: {
-          [flatObjectMetadata.nameSingular]: flatObjectMetadata.id,
-        },
-        selectedColumns: ['id'],
-        updatedColumns: [],
-      });
-    } catch (error) {
-      if (
-        error instanceof PermissionsException &&
-        error.code === PermissionsExceptionCode.PERMISSION_DENIED
-      ) {
-        return false;
-      }
-
-      throw error;
+      })
+    ) {
+      return false;
     }
 
     return buildPermissionsSQLCondition({

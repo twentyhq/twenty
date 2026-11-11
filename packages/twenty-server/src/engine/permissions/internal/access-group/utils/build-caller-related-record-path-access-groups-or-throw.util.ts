@@ -6,8 +6,8 @@ import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/interna
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { findRelatedRecordPathsGrantingOperation } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-granting-operation.util';
-import { areLimitingRolesReachingAllRecords } from 'src/engine/permissions/internal/role/utils/are-limiting-roles-reaching-all-records.util';
-import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
+import { canRelatedRecordPathsReachObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-paths-reach-object.util';
+import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 
@@ -36,12 +36,12 @@ export const buildCallerRelatedRecordPathAccessGroupsOrThrow = ({
         flatObjectMetadata: sourceFlatObjectMetadata,
       };
 
-      if (isObjectOperationDisabledToPrincipals(sourceRequest)) {
+      if (!canRelatedRecordPathsReachObject(sourceRequest)) {
         return [];
       }
 
       return [
-        ...(areLimitingRolesReachingAllRecords(sourceRequest)
+        ...(areRecordIdsReadableByPrincipals(sourceRequest)
           ? buildRoleAccessGroupsOrThrow({
               roleId,
               objectMetadataId: sourceFlatObjectMetadata.id,

@@ -190,8 +190,8 @@ const buildAttachmentCondition = ({
     tableAlias: 'attachment',
     metadataMaps: buildMetadataMaps(metadataMapsArgs),
     buildEntrySQLCondition: buildEntrySQLConditionFrom(entryByObject),
-    isObjectOperationDisabled: (flatObjectMetadata) =>
-      disabledObjectNames.includes(flatObjectMetadata.nameSingular),
+    canRelatedRecordPathsReachObject: (flatObjectMetadata) =>
+      !disabledObjectNames.includes(flatObjectMetadata.nameSingular),
     isRecordPrivacyApplicable: (flatObjectMetadata) =>
       privateObjectNames.includes(flatObjectMetadata.nameSingular),
   });
@@ -385,7 +385,7 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
         buildEntrySQLCondition: buildEntrySQLConditionFrom({
           company: true,
         }),
-        isObjectOperationDisabled: () => false,
+        canRelatedRecordPathsReachObject: () => true,
         isRecordPrivacyApplicable: () => false,
       }),
     ).toBe(false);
