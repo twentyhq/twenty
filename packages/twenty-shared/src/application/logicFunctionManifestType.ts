@@ -28,7 +28,6 @@ export type DatabaseEventTriggerSettings = {
   eventName: string;
   updatedFields?: string[];
   batchMode?: boolean;
-  // A rule expression on the record; previous.<field> reads it before an update
   condition?: string;
 };
 
