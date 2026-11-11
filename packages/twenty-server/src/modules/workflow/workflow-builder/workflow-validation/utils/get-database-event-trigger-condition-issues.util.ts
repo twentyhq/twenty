@@ -32,7 +32,7 @@ export const getDatabaseEventTriggerConditionIssues = ({
 
   const { condition, eventName } = trigger.settings;
 
-  if (!isNonEmptyString(condition)) {
+  if (!isNonEmptyString(condition?.trim())) {
     return [];
   }
 
