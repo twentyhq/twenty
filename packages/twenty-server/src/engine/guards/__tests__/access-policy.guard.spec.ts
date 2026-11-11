@@ -29,7 +29,6 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
-import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role-lookup.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -998,7 +997,6 @@ describe('AccessPolicyGuard', () => {
         providers: [
           SettingPermissionsService,
           PrincipalPermissionsReadService,
-          ApplicationGrantRoleLookupService,
           {
             provide: WorkspaceCacheService,
             useValue: mockWorkspaceCacheService,

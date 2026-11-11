@@ -63,7 +63,7 @@ export class AgentInboxResolver {
       input,
       resolveProposal: (proposeToolCallInput) =>
         this.agentInboxProposalService.resolveApplicationProposal({
-          workspaceId: workspace.id,
+          workspace,
           application,
           input: proposeToolCallInput,
         }),

@@ -3,10 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { type ProposeToolCallToolInput } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role-lookup.service';
+import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/proposed-tool-call-resolution.type';
 import { isEmailToolName } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/is-email-tool-name.util';
@@ -19,15 +21,15 @@ import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent
 export class AgentInboxProposalService {
   constructor(
     private readonly toolRegistryService: ToolRegistryService,
-    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async resolveApplicationProposal({
-    workspaceId,
+    workspace,
     application,
     input,
   }: {
-    workspaceId: string;
+    workspace: FlatWorkspace;
     application: FlatApplication;
     input: ProposeToolCallToolInput;
   }): Promise<ProposedToolCallResolution> {
@@ -36,11 +38,16 @@ export class AgentInboxProposalService {
     }
 
     const authContext = workspaceAuthContextStorage.getStore();
-    const grantRoleId =
-      await this.applicationGrantRoleLookupService.findGrantRoleId({
-        workspaceId,
-        flatApplication: application,
-      });
+    const { flatRoleTargetByApplicationIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatRoleTargetByApplicationIdMaps',
+      ]);
+    const grantRoleId = resolveApplicationGrantRoleId({
+      flatApplication: application,
+      workspaceId: workspace.id,
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+      flatRoleTargetByApplicationIdMaps,
+    });
 
     if (!isDefined(authContext) || !isDefined(grantRoleId)) {
       return {
@@ -49,7 +56,7 @@ export class AgentInboxProposalService {
     }
 
     const toolContext: ToolContext = {
-      workspaceId,
+      workspaceId: workspace.id,
       authContext,
       application,
     };
