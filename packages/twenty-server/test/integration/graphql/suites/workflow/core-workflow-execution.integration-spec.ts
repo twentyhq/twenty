@@ -2349,6 +2349,82 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
   });
 
+  it('fires a database-event workflow only for records matching its condition', async () => {
+    const fixture = await createFixture({
+      mirrorless: true,
+      triggerType: 'DATABASE_EVENT',
+      triggerSettings: {
+        eventName: 'company.created',
+        condition: 'name == "B-Async matching" and employees > 100',
+        filter: {
+          stepFilterGroups: [],
+          stepFilters: [
+            {
+              id: randomUUID(),
+              type: 'TEXT',
+              operand: 'IS',
+              value: 'only the legacy filter would match this',
+              stepOutputKey: '{{trigger.properties.after.name}}',
+            },
+          ],
+        },
+      },
+    });
+    const createCompany = async (name: string, employees: number) => {
+      const response = await workflowGraphqlRequest(
+        'mutation Create($data: CompanyCreateInput!) { createCompany(data: $data) { id } }',
+        { data: { name, employees } },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.createCompany.id as string;
+    };
+    const companyIds = [
+      await createCompany('B-Async matching', 50),
+      await createCompany('B-Async other', 500),
+      await createCompany('B-Async matching', 500),
+    ];
+    const findRuns = () =>
+      global.testDataSource.query(
+        `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+        [fixture.coreWorkflowId],
+      );
+
+    try {
+      for (let attempt = 0; attempt < 100; attempt++) {
+        const [run] = await findRuns();
+
+        if (run) {
+          await waitForRun(run.id, 'COMPLETED');
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const runs = await findRuns();
+
+      expect(runs).toHaveLength(1);
+      const [{ context }] = await global.testDataSource.query(
+        `SELECT state->'stepInfos'->'trigger'->'result' AS context FROM "${schema}"."workflowRun" WHERE id = $1`,
+        [runs[0].id],
+      );
+
+      expect(context?.properties?.after?.id ?? context?.recordId).toBe(
+        companyIds[2],
+      );
+    } finally {
+      for (const companyId of companyIds) {
+        await workflowGraphqlRequest(
+          'mutation Destroy($id: UUID!) { destroyCompany(id: $id) { id } }',
+          { id: companyId },
+        );
+      }
+    }
+  });
+
   it.each(['ARCHIVED', 'DRAFT'])(
     'drops queued versions that are %s',
     async (status) => {

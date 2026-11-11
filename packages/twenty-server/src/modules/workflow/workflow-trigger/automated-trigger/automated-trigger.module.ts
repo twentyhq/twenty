@@ -11,6 +11,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { DatabaseEventTriggerConditionModule } from 'src/engine/workspace-event-emitter/database-event-trigger-condition.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
@@ -24,6 +25,7 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
     WorkflowCoreModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
     CronModule,
+    DatabaseEventTriggerConditionModule,
     PermissionsModule,
     RecordShareModule,
     WorkflowCommonModule,
