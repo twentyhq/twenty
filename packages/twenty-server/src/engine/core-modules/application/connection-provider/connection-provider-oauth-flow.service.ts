@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { randomUUID } from 'crypto';
-
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
@@ -34,8 +32,7 @@ type CallbackArgs = {
   browserNonce: string | undefined;
 };
 
-type AuthorizationStart = {
-  authorizationUrl: string;
+type AuthorizationStartArgs = ConnectionAuthorizationArgs & {
   browserNonce: string;
 };
 
@@ -61,12 +58,12 @@ export class ConnectionProviderOAuthFlowService {
     private readonly oauthDiscoveryTokenService: ConnectionProviderOAuthDiscoveryTokenService,
   ) {}
 
-  async startAuthorizationFlow(
-    authorizationArgs: ConnectionAuthorizationArgs,
-  ): Promise<AuthorizationStart> {
+  async startAuthorizationFlow({
+    browserNonce,
+    ...authorizationArgs
+  }: AuthorizationStartArgs): Promise<{ authorizationUrl: string }> {
     const { connectionProvider, workspaceId, userWorkspaceId } =
       authorizationArgs;
-    const browserNonce = randomUUID();
 
     await this.connectedAccountService.assertCallerCanConnectOrThrow({
       connectionProviderId: connectionProvider.id,
@@ -122,7 +119,7 @@ export class ConnectionProviderOAuthFlowService {
       authorizationUrl.searchParams.set(key, value);
     }
 
-    return { authorizationUrl: authorizationUrl.toString(), browserNonce };
+    return { authorizationUrl: authorizationUrl.toString() };
   }
 
   private async startOAuthDiscoveryAuthorizationFlow({
@@ -131,7 +128,7 @@ export class ConnectionProviderOAuthFlowService {
   }: {
     authorizationArgs: ConnectionAuthorizationArgs;
     browserNonce: string;
-  }): Promise<AuthorizationStart> {
+  }): Promise<{ authorizationUrl: string }> {
     const { connectionProvider, workspaceId } = authorizationArgs;
 
     assertOAuthDiscoveryProvider(connectionProvider);
@@ -150,7 +147,7 @@ export class ConnectionProviderOAuthFlowService {
 
     authorizationUrl.searchParams.set('state', state);
 
-    return { authorizationUrl: authorizationUrl.toString(), browserNonce };
+    return { authorizationUrl: authorizationUrl.toString() };
   }
 
   async completeAuthorizationFlow(

@@ -151,12 +151,11 @@ export class ConnectionProviderOAuthController {
         return res.redirect(authorizationUrl);
       }
 
-      const { authorizationUrl, browserNonce } =
-        await this.oauthProviderFlowService.startAuthorizationFlow(
-          authorizationArgs,
-        );
-
-      this.flowCookieService.attachBrowserNonce(res, browserNonce);
+      const { authorizationUrl } =
+        await this.oauthProviderFlowService.startAuthorizationFlow({
+          ...authorizationArgs,
+          browserNonce: this.flowCookieService.attachBrowserNonce(res),
+        });
 
       return res.redirect(authorizationUrl);
     } catch (error) {

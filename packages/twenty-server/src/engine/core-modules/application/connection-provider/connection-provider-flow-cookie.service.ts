@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { randomUUID } from 'crypto';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CookieOptions, type Request, type Response } from 'express';
 
@@ -18,11 +20,15 @@ const FLOW_COOKIE_MAX_AGE_MS = 10 * 60 * 1000;
 export class ConnectionProviderFlowCookieService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  attachBrowserNonce(response: Response, browserNonce: string): void {
+  attachBrowserNonce(response: Response): string {
+    const browserNonce = randomUUID();
+
     response.cookie(this.resolveCookieName(), browserNonce, {
       ...this.resolveCookieOptions(),
       maxAge: FLOW_COOKIE_MAX_AGE_MS,
     });
+
+    return browserNonce;
   }
 
   readBrowserNonce(request: Request): string | undefined {
