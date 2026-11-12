@@ -15,7 +15,7 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
-import { canRecordShareGrantOperation } from 'src/engine/permissions/internal/record-share/utils/can-record-share-grant-operation.util';
+import { canRecordShareAccessOperation } from 'src/engine/permissions/internal/record-share/utils/can-record-share-access-operation.util';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -58,7 +58,7 @@ export class RecordSharePrincipalService {
     if (
       namedPrincipals.length === 0 ||
       recordIds.length === 0 ||
-      canRecordShareGrantOperation({
+      canRecordShareAccessOperation({
         flatObjectMetadata,
         featureFlagsMap,
         operationType: 'read',
