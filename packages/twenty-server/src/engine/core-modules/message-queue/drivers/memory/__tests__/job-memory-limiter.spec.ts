@@ -578,3 +578,45 @@ describe('JobMemoryLimiter', () => {
     });
   });
 });
+
+describe('critical maintenance queues', () => {
+  it.each([
+    MessageQueue.accessGroupQueue,
+    MessageQueue.workspaceDestroyQueue,
+    MessageQueue.deleteCascadeQueue,
+  ])(
+    'admits %s when the workspace has no memory available',
+    async (queueName) => {
+      const { limiter, redis } = await createLimiter({
+        usedMemoryBytes: 10_000,
+      });
+
+      await expect(
+        limiter.admit({
+          queueName,
+          jobName: 'maintenance',
+          jobs: [
+            { jobId: 'maintenance', sizeBytes: 500, groupKeys: [WORKSPACE_1] },
+          ],
+        }),
+      ).resolves.toEqual({ isCharged: false, availableBytes: null });
+      expect(await redis.get(usedKeyOf(WORKSPACE_1))).toBeNull();
+
+      await expect(
+        limiter.admit({
+          queueName: QUEUE,
+          jobName: 'application-job',
+          jobs: [
+            {
+              jobId: 'application-job',
+              sizeBytes: 500,
+              groupKeys: [WORKSPACE_1],
+            },
+          ],
+        }),
+      ).rejects.toMatchObject({
+        code: MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+      });
+    },
+  );
+});
