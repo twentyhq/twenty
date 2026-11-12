@@ -218,7 +218,7 @@ msgstr "Un tableau de bord"
 #: src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util.ts
 #: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
 msgid "A database event trigger in this application is invalid."
-msgstr ""
+msgstr "Un déclencheur d'événement de base de données dans cette application n'est pas valide."
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -13801,7 +13801,7 @@ msgstr "Les dépendances du composant n’ont pas pu être vérifiées. Essayez 
 #. js-lingui-id: Ebgiv3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "The condition of a database event trigger must be text"
-msgstr ""
+msgstr "La condition d'un déclencheur d'événement de base de données doit être du texte"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -16985,7 +16985,7 @@ msgstr "Les champs surveillés d'un déclencheur d'événement de base de donné
 #. js-lingui-id: 0ngZ7S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Watched fields only apply to \"updated\" and \"upserted\" database event triggers"
-msgstr ""
+msgstr "Les champs surveillés s'appliquent uniquement aux déclencheurs d'événements de base de données \"updated\" et \"upserted\""
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts

@@ -218,7 +218,7 @@ msgstr "儀表板"
 #: src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util.ts
 #: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
 msgid "A database event trigger in this application is invalid."
-msgstr ""
+msgstr "此應用程式中的資料庫事件觸發條件無效。"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -13801,7 +13801,7 @@ msgstr "無法驗證元件相依性。請嘗試再次建立元件。"
 #. js-lingui-id: Ebgiv3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "The condition of a database event trigger must be text"
-msgstr ""
+msgstr "資料庫事件觸發條件的條件必須是文字"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -16985,7 +16985,7 @@ msgstr "資料庫事件觸發條件的監看欄位必須是欄位名稱"
 #. js-lingui-id: 0ngZ7S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Watched fields only apply to \"updated\" and \"upserted\" database event triggers"
-msgstr ""
+msgstr "監看欄位僅適用於「updated」和「upserted」資料庫事件觸發條件"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts

@@ -218,7 +218,7 @@ msgstr "Um painel"
 #: src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util.ts
 #: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
 msgid "A database event trigger in this application is invalid."
-msgstr ""
+msgstr "Um gatilho de evento do banco de dados neste aplicativo é inválido."
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -13801,7 +13801,7 @@ msgstr "Não foi possível verificar as dependências do componente. Tente criar
 #. js-lingui-id: Ebgiv3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "The condition of a database event trigger must be text"
-msgstr ""
+msgstr "A condição de um gatilho de evento do banco de dados deve ser texto"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -16985,7 +16985,7 @@ msgstr "Os campos monitorados de um gatilho de evento de banco de dados devem se
 #. js-lingui-id: 0ngZ7S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Watched fields only apply to \"updated\" and \"upserted\" database event triggers"
-msgstr ""
+msgstr "Os campos monitorados aplicam-se apenas a gatilhos de evento do banco de dados \"updated\" e \"upserted\""
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
