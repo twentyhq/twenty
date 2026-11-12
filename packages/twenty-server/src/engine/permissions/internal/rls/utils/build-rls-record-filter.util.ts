@@ -23,9 +23,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-union-operands.constant';
-import { RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-intersection-operands.constant';
-import { RLS_PREDICATE_SINGLE_VALUE_FILTER_TYPES_COMPARABLE_TO_ARRAY } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-single-value-filter-types-comparable-to-array.constant';
+import { resolveRlsPredicateArrayComparison } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/resolve-rls-predicate-array-comparison.util';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
@@ -200,42 +198,46 @@ const buildPredicateRecordFilter = ({
 
   if (
     !isDefined(predicate.workspaceMemberFieldMetadataId) ||
-    !Array.isArray(predicateValue) ||
-    !RLS_PREDICATE_SINGLE_VALUE_FILTER_TYPES_COMPARABLE_TO_ARRAY.includes(
-      filterType,
-    )
+    !Array.isArray(predicateValue)
   ) {
     return buildValueRecordFilter(predicateValue);
   }
 
-  const isArrayMatchedByIntersection =
-    RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS.includes(
-      predicate.operand,
-    );
+  const arrayComparison = resolveRlsPredicateArrayComparison({
+    fieldType: fieldMetadata.type,
+    operand: predicate.operand,
+  });
 
   if (
-    predicateValue.length > 1 &&
-    !isArrayMatchedByIntersection &&
-    !RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS.includes(predicate.operand)
+    arrayComparison === 'ARRAY_AS_A_WHOLE' ||
+    arrayComparison === 'FIELD_TYPE_NOT_COMPARABLE'
   ) {
-    return UNSATISFIABLE_RECORD_FILTER;
+    return buildValueRecordFilter(predicateValue);
+  }
+
+  if (arrayComparison === 'OPERAND_NOT_COMPARABLE') {
+    return predicateValue.length === 1
+      ? buildValueRecordFilter(predicateValue[0])
+      : UNSATISFIABLE_RECORD_FILTER;
   }
 
   const valueRecordFilters = predicateValue
     .map((value) => buildValueRecordFilter(value))
     .filter(isDefined);
 
-  // Values that give no filter, as blank strings do, must not drop an any-of predicate
-  if (valueRecordFilters.length === 0 && !isArrayMatchedByIntersection) {
+  if (arrayComparison === 'INTERSECTION_OF_VALUES') {
+    return valueRecordFilters.length <= 1
+      ? valueRecordFilters[0]
+      : { and: valueRecordFilters };
+  }
+
+  // Values that give no filter, as blank strings do, must not drop the predicate
+  if (valueRecordFilters.length === 0) {
     return UNSATISFIABLE_RECORD_FILTER;
   }
 
-  if (valueRecordFilters.length <= 1) {
-    return valueRecordFilters[0];
-  }
-
-  return isArrayMatchedByIntersection
-    ? { and: valueRecordFilters }
+  return valueRecordFilters.length === 1
+    ? valueRecordFilters[0]
     : { or: valueRecordFilters };
 };
 
