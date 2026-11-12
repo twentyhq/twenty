@@ -5498,6 +5498,11 @@ msgstr "필드 \"{fieldName}\"은 관계 \"{relationFieldName}\"을 통해 도�
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "필드 \"{fieldName}\"은(는) 다대일 관계가 아니므로 비교할 조인 열이 없습니다"
 
+#. js-lingui-id: pxJKic
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
+msgstr ""
+
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{relationFieldName}\" is not a relation"
@@ -14807,6 +14812,11 @@ msgstr "이 기능은 {MAX_SEATS_WITHOUT_ENTERPRISE_KEY}석까지 무료로 제�
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This feature is not enabled."
 msgstr "이 기능은 활성화되어 있지 않습니다."
+
+#. js-lingui-id: 2DYjsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to a list of values"
+msgstr ""
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

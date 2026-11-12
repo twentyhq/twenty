@@ -5498,6 +5498,11 @@ msgstr "欄位 \"{fieldName}\" 不屬於透過關聯 \"{relationFieldName}\" 到
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "欄位 \"{fieldName}\" 不是多對一關聯，沒有可供比較的聯結欄位"
 
+#. js-lingui-id: pxJKic
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
+msgstr ""
+
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{relationFieldName}\" is not a relation"
@@ -14807,6 +14812,11 @@ msgstr "此功能免費提供最多 {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} 個席位
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This feature is not enabled."
 msgstr "此功能尚未啟用。"
+
+#. js-lingui-id: 2DYjsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to a list of values"
+msgstr ""
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

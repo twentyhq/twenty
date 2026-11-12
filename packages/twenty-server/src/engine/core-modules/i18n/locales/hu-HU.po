@@ -5498,6 +5498,11 @@ msgstr "A \"{fieldName}\" mező nem tartozik a \"{relationFieldName}\" kapcsolat
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "A(z) \"{fieldName}\" mező nem több-az-egyhez kapcsolat, nincs összehasonlítható join oszlopa"
 
+#. js-lingui-id: pxJKic
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
+msgstr ""
+
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{relationFieldName}\" is not a relation"
@@ -14807,6 +14812,11 @@ msgstr "Ez a funkció {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} felhasználói helyig d
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This feature is not enabled."
 msgstr "Ez a funkció nincs engedélyezve."
+
+#. js-lingui-id: 2DYjsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to a list of values"
+msgstr ""
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
