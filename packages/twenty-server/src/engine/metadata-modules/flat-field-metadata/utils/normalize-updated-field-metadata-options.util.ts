@@ -19,7 +19,6 @@ export const normalizeUpdatedFieldMetadataOptions = <
   existingOptions: FieldMetadataOption[];
 }): TOption[] => {
   const updatedOptionIds = new Set(updatedOptions.map(({ id }) => id));
-  // An input without ids still targets the options holding the same values, each matched once.
   const unclaimedExistingOptionByValue = new Map(
     existingOptions
       .filter((option) => !updatedOptionIds.has(option.id))

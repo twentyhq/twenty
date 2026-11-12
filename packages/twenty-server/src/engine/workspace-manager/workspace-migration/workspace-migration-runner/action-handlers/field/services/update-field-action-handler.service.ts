@@ -679,6 +679,19 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       }
     }
 
+    // An option replaced by one with the same value under another id (app
+    // sync taking over a workspace option) must keep its records.
+    const toValues = new Set((toOptions ?? []).map((option) => option.value));
+
+    for (const fromOption of fromOptions ?? []) {
+      if (
+        !isDefined(valueMapping[fromOption.value]) &&
+        toValues.has(fromOption.value)
+      ) {
+        valueMapping[fromOption.value] = fromOption.value;
+      }
+    }
+
     const enumColumnDefinitions = generateColumnDefinitions({
       flatFieldMetadata,
       flatObjectMetadata,
