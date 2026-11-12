@@ -1,5 +1,6 @@
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { isDefined } from 'twenty-shared/utils';
+import { sortByProperty } from '~/utils/array/sortByProperty';
 import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
 import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -30,9 +31,8 @@ export const getRoleWithoutSaveArtifacts = (
       ),
   );
 
-  const objectPermissionsOfObjectsWithRule = ruleObjectMetadataIds
-    .toSorted()
-    .map((objectMetadataId) => {
+  const objectPermissionsOfObjectsWithRule = ruleObjectMetadataIds.map(
+    (objectMetadataId) => {
       const grantedKeys = getGrantedObjectPermissionKeys({
         role,
         objectMetadataId,
@@ -49,7 +49,8 @@ export const getRoleWithoutSaveArtifacts = (
           'canDestroyObjectRecords',
         ),
       };
-    });
+    },
+  );
 
   return {
     ...role,
@@ -63,6 +64,6 @@ export const getRoleWithoutSaveArtifacts = (
     objectPermissions: [
       ...objectPermissionsOfObjectsWithoutRule,
       ...objectPermissionsOfObjectsWithRule,
-    ],
+    ].sort(sortByProperty('objectMetadataId')),
   };
 };
