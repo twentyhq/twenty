@@ -4,7 +4,7 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
+import { waitForDeferredWorkspaceOperationsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-operations-or-throw.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const NON_EXISTENT_UUID = '00000000-0000-4000-8000-000000000000';
@@ -46,7 +46,7 @@ export const createTestObjectViaGraphql = async (
     );
   }
 
-  await waitForDeferredWorkspaceMigrationActionsOrThrow();
+  await waitForDeferredWorkspaceOperationsOrThrow();
 
   return { id: data.createOneObject.id, input };
 };
@@ -99,7 +99,7 @@ export const createTestFieldViaGraphql = async (
     );
   }
 
-  await waitForDeferredWorkspaceMigrationActionsOrThrow();
+  await waitForDeferredWorkspaceOperationsOrThrow();
 
   return { id: data.createOneField.id, input };
 };

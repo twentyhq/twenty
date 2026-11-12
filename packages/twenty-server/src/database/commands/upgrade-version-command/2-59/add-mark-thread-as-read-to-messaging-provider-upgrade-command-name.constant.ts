@@ -1,2 +1,2 @@
 export const ADD_MARK_THREAD_AS_READ_TO_MESSAGING_PROVIDER_UPGRADE_COMMAND_NAME =
-  '2.59.0_AddMarkThreadAsReadToMessagingProviderFastInstanceCommand_1794505411073';
+  '2.59.0_AddMarkThreadAsReadToMessagingProviderFastInstanceCommand_1794514147610';

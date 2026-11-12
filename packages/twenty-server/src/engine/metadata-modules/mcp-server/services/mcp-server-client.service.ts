@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
@@ -148,7 +147,6 @@ export class McpServerClientService {
     return [...page.tools, ...nextPages];
   }
 
-  // The SDK reads SSE from a WHATWG Response, which the axios client yields whatever globalThis.fetch is.
   private buildFetch({
     workspaceId,
     timeoutMs,
@@ -156,14 +154,10 @@ export class McpServerClientService {
     workspaceId: string;
     timeoutMs: number;
   }): FetchLike {
-    const axiosFetch = buildAxiosFetch(
-      this.secureHttpClientService.getHttpClient(
-        { timeout: timeoutMs },
-        { workspaceId, source: 'mcp-server' },
-      ),
-    );
-
-    return (url, init) => axiosFetch(url.toString(), init);
+    return this.secureHttpClientService.createFetchLike({
+      context: { workspaceId, source: 'mcp-server' },
+      timeoutMs,
+    });
   }
 
   async canCallerConnect(target: McpServerTarget): Promise<boolean> {
