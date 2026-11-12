@@ -4,6 +4,7 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { recordIndexTabRecordFiltersComponentSelector } from '@/object-record/record-index-tab/states/selectors/recordIndexTabRecordFiltersComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -11,6 +12,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
@@ -45,6 +47,10 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
     currentRecordFiltersComponentState,
   );
 
+  const recordIndexTabRecordFilters = useAtomComponentSelectorValue(
+    recordIndexTabRecordFiltersComponentSelector,
+  );
+
   const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
   );
@@ -61,7 +67,10 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
       variables: {
         filter: computeRecordGqlOperationFilter({
           fieldMetadataItems: flattenedFieldMetadataItems,
-          recordFilters: currentRecordFilters,
+          recordFilters: [
+            ...currentRecordFilters,
+            ...recordIndexTabRecordFilters,
+          ],
           recordFilterGroups: currentRecordFilterGroups,
           filterValueDependencies,
         }),
@@ -71,6 +80,7 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
     [
       objectMetadataItem,
       currentRecordFilters,
+      recordIndexTabRecordFilters,
       currentRecordFilterGroups,
       filterValueDependencies,
       currentRecordSorts,

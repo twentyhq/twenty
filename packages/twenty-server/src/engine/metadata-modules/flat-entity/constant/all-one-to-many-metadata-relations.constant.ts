@@ -92,6 +92,11 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'mainGroupByFieldMetadataViewUniversalIdentifiers',
     },
+    tabViews: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'tabViewIds',
+      universalFlatEntityForeignKeyAggregator: 'tabViewUniversalIdentifiers',
+    },
     searchFieldMetadatas: {
       metadataName: 'searchFieldMetadata',
       flatEntityForeignKeyAggregator: 'searchFieldMetadataIds',

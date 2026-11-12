@@ -8,7 +8,7 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
-import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
+import { recordIndexTabRecordFiltersComponentSelector } from '@/object-record/record-index-tab/states/selectors/recordIndexTabRecordFiltersComponentSelector';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -56,8 +56,8 @@ export const useFindManyRecordIndexTableParams = (
     instanceId,
   );
 
-  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
-    isRecordGroupTabsDisplayedComponentSelector,
+  const recordIndexTabRecordFilters = useAtomComponentSelectorValue(
+    recordIndexTabRecordFiltersComponentSelector,
     instanceId,
   );
 
@@ -70,7 +70,7 @@ export const useFindManyRecordIndexTableParams = (
   const currentFilters = computeRecordGqlOperationFilter({
     fieldMetadataItems: flattenedFieldMetadataItems,
     recordFilterGroups: currentRecordFilterGroups,
-    recordFilters: currentRecordFilters,
+    recordFilters: [...currentRecordFilters, ...recordIndexTabRecordFilters],
     filterValueDependencies,
   });
 
@@ -101,8 +101,8 @@ export const useFindManyRecordIndexTableParams = (
     objectNameSingular,
     filter: combinedFilter,
     orderBy,
-    // Omitting limit lets ungrouped views and group tabs fall through to QUERY_DEFAULT_LIMIT_RECORDS
-    ...(isDefined(currentRecordGroupDefinition) && !isRecordGroupTabsDisplayed
+    // Omitting limit lets ungrouped views fall through to QUERY_DEFAULT_LIMIT_RECORDS
+    ...(isDefined(currentRecordGroupDefinition)
       ? { limit: recordIndexGroupLoadLimit }
       : {}),
   };

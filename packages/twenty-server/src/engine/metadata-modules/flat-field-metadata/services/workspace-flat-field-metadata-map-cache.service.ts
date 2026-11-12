@@ -47,6 +47,7 @@ const FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
       'calendarFieldMetadataId',
       'calendarEndFieldMetadataId',
       'mainGroupByFieldMetadataId',
+      'tabFieldMetadataId',
     ],
   },
   searchFieldMetadata: {
@@ -149,6 +150,8 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
           mainGroupByFieldMetadataViews:
             views.byMainGroupByFieldMetadataId.get(fieldMetadataEntity.id) ||
             [],
+          tabViews:
+            views.byTabFieldMetadataId.get(fieldMetadataEntity.id) || [],
           viewSorts:
             viewSorts.byFieldMetadataId.get(fieldMetadataEntity.id) || [],
           searchFieldMetadatas:

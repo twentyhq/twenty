@@ -83,6 +83,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
         viewFilterUniversalIdentifiers: [],
         calendarViewUniversalIdentifiers: [viewUniversalIdentifier],
         calendarEndViewUniversalIdentifiers: [viewUniversalIdentifier],
+        tabViewUniversalIdentifiers: [],
         mainGroupByFieldMetadataViewUniversalIdentifiers: [],
         kanbanAggregateOperationViewUniversalIdentifiers: [],
         createdAt: '2024-01-01T00:00:00.000Z',
@@ -128,6 +129,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
         fieldMetadataUniversalIdentifier,
       calendarEndFieldMetadataUniversalIdentifier:
         fieldMetadataUniversalIdentifier,
+      tabFieldMetadataUniversalIdentifier: null,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
       name: 'Test View',
@@ -232,6 +234,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
     expect(updatedFieldMetadata).toMatchObject({
       calendarViewUniversalIdentifiers: [],
       calendarEndViewUniversalIdentifiers: [],
+      tabViewUniversalIdentifiers: [],
     });
   });
 });

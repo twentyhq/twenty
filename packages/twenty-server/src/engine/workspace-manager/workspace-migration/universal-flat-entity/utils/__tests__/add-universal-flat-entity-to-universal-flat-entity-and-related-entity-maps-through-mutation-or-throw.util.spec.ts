@@ -87,6 +87,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
         viewFilterUniversalIdentifiers: [],
         calendarViewUniversalIdentifiers: [],
         calendarEndViewUniversalIdentifiers: [],
+        tabViewUniversalIdentifiers: [],
         mainGroupByFieldMetadataViewUniversalIdentifiers: [],
         kanbanAggregateOperationViewUniversalIdentifiers: [],
         createdAt: '2024-01-01T00:00:00.000Z',
@@ -132,6 +133,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
         fieldMetadataUniversalIdentifier,
       calendarEndFieldMetadataUniversalIdentifier:
         fieldMetadataUniversalIdentifier,
+      tabFieldMetadataUniversalIdentifier: null,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
       name: 'Test View',
@@ -246,6 +248,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       updatedAt: '2024-01-01T00:00:00.000Z',
       name: 'Test View',
       calendarEndFieldMetadataUniversalIdentifier: null,
+      tabFieldMetadataUniversalIdentifier: null,
       type: ViewType.TABLE,
       isActive: true,
       isSystemSideEffect: false,

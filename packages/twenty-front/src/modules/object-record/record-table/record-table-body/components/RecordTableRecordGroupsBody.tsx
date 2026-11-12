@@ -1,12 +1,8 @@
-import { RecordGroupTabs } from '@/object-record/record-group/components/RecordGroupTabs';
-import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
-import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/components/RecordTableBodyContextProvider';
-import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { RecordTableRecordGroupRows } from '@/object-record/record-table/components/RecordTableRecordGroupRows';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
@@ -34,48 +30,26 @@ export const RecordTableRecordGroupsBody = () => {
     ViewType.TABLE,
   );
 
-  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
-    isRecordGroupTabsDisplayedComponentSelector,
-  );
-
-  const activeRecordGroupTabId = useAtomComponentSelectorValue(
-    activeRecordGroupTabIdComponentSelector,
-  );
-
-  const displayedRecordGroupIds = isRecordGroupTabsDisplayed
-    ? visibleRecordGroupIds.filter(
-        (recordGroupId) => recordGroupId === activeRecordGroupTabId,
-      )
-    : visibleRecordGroupIds;
-
   const isInitialLoadingDisplayed =
     isRecordTableInitialLoading && !recordTableHasRecords;
 
   return (
     <>
       <RecordTableBodyRecordGroupDragDropContextProvider>
-        <RecordGroupTabs
-          viewType={ViewType.TABLE}
-          dndType={RECORD_TABLE_ROW_DND_TYPE}
-        />
         {isInitialLoadingDisplayed && <RecordTableBodyLoading />}
         {!isInitialLoadingDisplayed &&
-          displayedRecordGroupIds.map((recordGroupId, index) => (
+          visibleRecordGroupIds.map((recordGroupId, index) => (
             <RecordTableBodyContextProvider key={recordGroupId}>
               <RecordGroupContext.Provider value={{ recordGroupId }}>
                 <RecordTableBody data-replay-ignore-mutations="true">
-                  {!isRecordGroupTabsDisplayed && (
-                    <RecordTableRecordGroupSection />
-                  )}
+                  <RecordTableRecordGroupSection />
                   <RecordTableRecordGroupRows />
                   {index === 0 && <RecordTableCellPortals />}
                 </RecordTableBody>
               </RecordGroupContext.Provider>
             </RecordTableBodyContextProvider>
           ))}
-        {!isInitialLoadingDisplayed && !isRecordGroupTabsDisplayed && (
-          <RecordTableRecordGroupAddNewGroup />
-        )}
+        {!isInitialLoadingDisplayed && <RecordTableRecordGroupAddNewGroup />}
         {!isInitialLoadingDisplayed && <RecordIndexGroupAggregatesDataLoader />}
       </RecordTableBodyRecordGroupDragDropContextProvider>
     </>

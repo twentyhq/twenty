@@ -278,6 +278,9 @@ export class FieldMetadataEntity<
   @OneToMany(() => ViewEntity, (view) => view.mainGroupByFieldMetadata)
   mainGroupByFieldMetadataViews: Relation<ViewEntity[]>;
 
+  @OneToMany(() => ViewEntity, (view) => view.tabFieldMetadata)
+  tabViews: Relation<ViewEntity[]>;
+
   @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.fieldMetadata)
   viewSorts: Relation<ViewSortEntity[]>;
 

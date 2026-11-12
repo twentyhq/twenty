@@ -1,12 +1,9 @@
-import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { RecordTableNoRecordGroupRows } from '@/object-record/record-table/components/RecordTableNoRecordGroupRows';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
-import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
-import { isRecordTableEmptyStateHiddenComponentState } from '@/object-record/record-table/states/isRecordTableEmptyStateHiddenComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { RecordTableVirtualizedJunctionDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedJunctionDataChangedEffect';
@@ -24,25 +21,8 @@ export const RecordTableNoRecordGroupBodyContent = () => {
     isRecordTableInitialLoadingComponentState,
   );
 
-  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
-    isRecordGroupTabsDisplayedComponentSelector,
-  );
-
-  const isRecordTableEmptyStateHidden = useAtomComponentStateValue(
-    isRecordTableEmptyStateHiddenComponentState,
-  );
-
   if (isRecordTableInitialLoading && !recordTableHasRecords) {
     return <RecordTableBodyLoading />;
-  }
-
-  // RecordTable keeps this body mounted for the tabs instead of showing its empty state
-  if (
-    isRecordGroupTabsDisplayed &&
-    !recordTableHasRecords &&
-    !isRecordTableEmptyStateHidden
-  ) {
-    return <RecordTableEmptyState />;
   }
 
   return (

@@ -81,8 +81,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     description: msg`Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes.`,
   },
   [FeatureFlagKey.IS_RECORD_GROUP_TABS_ENABLED]: {
-    label: msg`Group tabs`,
-    description: msg`Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes.`,
+    label: msg`View tabs`,
+    description: msg`Let table and list views show one tab per value of a select field, independently of grouping. Enable after the instance upgrade completes.`,
   },
   [FeatureFlagKey.IS_HTTP_EGRESS_LAMBDA_ENABLED]: {
     label: msg`HTTP requests in the logic function runtime`,

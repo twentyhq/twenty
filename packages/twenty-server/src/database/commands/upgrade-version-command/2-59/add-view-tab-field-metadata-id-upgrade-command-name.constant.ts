@@ -1,0 +1,2 @@
+export const ADD_VIEW_TAB_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME =
+  '2.59.0_AddViewTabFieldMetadataIdFastInstanceCommand_1794518297456';

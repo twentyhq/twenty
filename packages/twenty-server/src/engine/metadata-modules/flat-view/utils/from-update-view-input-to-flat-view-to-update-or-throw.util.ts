@@ -206,6 +206,20 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
       mainGroupByFieldMetadataUniversalIdentifier;
   }
 
+  if (updatedEditableProperties.tabFieldMetadataId !== undefined) {
+    const { tabFieldMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          tabFieldMetadataId: mergedRecord.tabFieldMetadataId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
+      });
+
+    flatViewToUpdate.tabFieldMetadataUniversalIdentifier =
+      tabFieldMetadataUniversalIdentifier;
+  }
+
   if (isDefined(overrides)) {
     flatViewToUpdate.universalOverrides = fromViewOverridesToUniversalOverrides(
       {

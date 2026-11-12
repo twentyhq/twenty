@@ -1136,20 +1136,31 @@ export class WorkspaceService {
     try {
       await queryRunner.startTransaction();
 
+      let hasDeletedFieldMetadata = false;
+
       for (const metadataName of ALL_METADATA_NAMES_SORTED_ATOMICALLY) {
-        if (metadataName === 'fieldMetadata') {
+        // Deleting objects first would cascade to every field in one statement
+        if (
+          !hasDeletedFieldMetadata &&
+          (metadataName === 'fieldMetadata' ||
+            metadataName === 'objectMetadata')
+        ) {
           const deletedCount = await this.deleteFieldMetadataInChunks(
             queryRunner,
             workspace.id,
             fieldMetadataIdChunks,
           );
 
+          hasDeletedFieldMetadata = true;
+
           if (deletedCount > 0) {
             this.logger.log(
-              `workspace ${workspace.id}: deleted ${deletedCount} ${metadataName} record(s)`,
+              `workspace ${workspace.id}: deleted ${deletedCount} fieldMetadata record(s)`,
             );
           }
+        }
 
+        if (metadataName === 'fieldMetadata') {
           continue;
         }
 

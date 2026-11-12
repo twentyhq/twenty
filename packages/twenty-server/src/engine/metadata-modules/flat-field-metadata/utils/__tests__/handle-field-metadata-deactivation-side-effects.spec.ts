@@ -56,6 +56,44 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
     ]);
   });
 
+  it('clears the tab field without deleting the view', () => {
+    const view = {
+      ...getFlatView('tabbed-view-id'),
+      tabFieldMetadataId: 'tab-field-id',
+      tabFieldMetadataUniversalIdentifier: 'tab-field-universal-identifier',
+    };
+    const fromFlatFieldMetadata = getFlatFieldMetadataMock({
+      id: 'tab-field-id',
+      objectMetadataId: 'object-id',
+      universalIdentifier: 'tab-field-universal-identifier',
+      type: FieldMetadataType.SELECT,
+      tabViewIds: [view.id],
+    });
+
+    const result = handleFieldMetadataDeactivationSideEffects({
+      fromFlatFieldMetadata,
+      toFlatFieldMetadata: {
+        ...fromFlatFieldMetadata,
+        isActive: false,
+      },
+      flatViewMaps: addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: view,
+        flatEntityMaps: createEmptyFlatEntityMaps(),
+      }),
+      ...getEmptyRelatedMaps(),
+    });
+
+    expect(result.flatViewsToDelete).toEqual([]);
+    expect(result.flatViewsToUpdate).toEqual([
+      expect.objectContaining({
+        id: view.id,
+        tabFieldMetadataId: null,
+        tabFieldMetadataUniversalIdentifier: null,
+        calendarEndFieldMetadataId: 'calendar-end-field-id',
+      }),
+    ]);
+  });
+
   it('deletes the view when the deactivated field is both its start and end field', () => {
     const view = getFlatView('calendar-view-id');
     const fromFlatFieldMetadata = getFlatFieldMetadataMock({

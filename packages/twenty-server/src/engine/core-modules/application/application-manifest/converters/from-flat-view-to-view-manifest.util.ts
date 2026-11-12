@@ -81,5 +81,11 @@ export const fromFlatViewToViewManifest = ({
           flatView.calendarEndFieldMetadataUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatView.tabFieldMetadataUniversalIdentifier)
+    ? {
+        tabFieldMetadataUniversalIdentifier:
+          flatView.tabFieldMetadataUniversalIdentifier,
+      }
+    : {}),
   ...withoutEmptyCollections(children),
 });

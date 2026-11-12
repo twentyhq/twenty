@@ -120,6 +120,8 @@ describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThr
       calendarViewUniversalIdentifiers: [],
       calendarEndViewIds: [],
       calendarEndViewUniversalIdentifiers: [],
+      tabViewIds: [],
+      tabViewUniversalIdentifiers: [],
     });
   });
 });

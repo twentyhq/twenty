@@ -4,6 +4,7 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { recordIndexTabRecordFiltersComponentSelector } from '@/object-record/record-index-tab/states/selectors/recordIndexTabRecordFiltersComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
@@ -48,6 +49,10 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
     currentRecordFiltersComponentState,
   );
 
+  const recordIndexTabRecordFilters = useAtomComponentSelectorValue(
+    recordIndexTabRecordFiltersComponentSelector,
+  );
+
   const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
   );
@@ -64,7 +69,10 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       variables: {
         filter: computeRecordGqlOperationFilter({
           fieldMetadataItems: flattenedFieldMetadataItems,
-          recordFilters: currentRecordFilters,
+          recordFilters: [
+            ...currentRecordFilters,
+            ...recordIndexTabRecordFilters,
+          ],
           recordFilterGroups: currentRecordFilterGroups,
           filterValueDependencies,
         }),
@@ -74,6 +82,7 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
     [
       objectMetadataItem,
       currentRecordFilters,
+      recordIndexTabRecordFilters,
       currentRecordFilterGroups,
       filterValueDependencies,
       currentRecordSorts,

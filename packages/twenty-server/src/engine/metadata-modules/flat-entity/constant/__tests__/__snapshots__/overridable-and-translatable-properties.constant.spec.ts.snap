@@ -115,6 +115,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "calendarEndFieldMetadataId",
     "visibility",
     "mainGroupByFieldMetadataId",
+    "tabFieldMetadataId",
     "shouldHideEmptyGroups",
     "shouldDisplayGroupsAsTabs",
     "kanbanColumnWidth",

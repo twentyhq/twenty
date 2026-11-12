@@ -34,6 +34,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "relationTargetObjectMetadataUniversalIdentifier": null,
   "rowLevelPermissionPredicateUniversalIdentifiers": [],
   "searchFieldMetadataUniversalIdentifiers": [],
+  "tabViewUniversalIdentifiers": [],
   "type": "TEXT",
   "universalIdentifier": "field-universal-identifier",
   "universalSettings": null,

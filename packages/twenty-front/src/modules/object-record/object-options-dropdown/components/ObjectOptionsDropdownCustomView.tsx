@@ -5,7 +5,9 @@ import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdow
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
+import { isRecordIndexTabsSupportedForViewType } from '@/object-record/record-index-tab/utils/isRecordIndexTabsSupportedForViewType';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -27,13 +29,16 @@ import {
 } from '@/views/types/ViewType';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   IconCalendar,
   IconCalendarWeek,
   IconLayoutList,
+  IconLayoutNavbar,
   IconListDetails,
   IconShare,
   IconTrash,
@@ -70,6 +75,18 @@ export const ObjectOptionsDropdownCustomView = ({
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
+  const recordIndexTabFieldMetadataItem = useAtomComponentStateValue(
+    recordIndexTabFieldMetadataItemComponentState,
+  );
+
+  const isRecordIndexTabsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_GROUP_TABS_ENABLED,
+  );
+
+  const shouldShowTabs =
+    isRecordIndexTabsEnabled &&
+    isRecordIndexTabsSupportedForViewType(currentView?.type);
+
   const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
     recordIndexCalendarFieldMetadataIdComponentState,
   );
@@ -126,6 +143,7 @@ export const ObjectOptionsDropdownCustomView = ({
     ...(customViewData?.type !== ViewType.CALENDAR
       ? [doNotTranslate('Group')]
       : []),
+    ...(shouldShowTabs ? [doNotTranslate('Tabs')] : []),
     doNotTranslate('Delete view'),
   ];
 
@@ -285,6 +303,21 @@ export const ObjectOptionsDropdownCustomView = ({
                 </SelectableListItem>
               </div>
             </Tooltip>
+          )}
+          {shouldShowTabs && (
+            <SelectableListItem
+              itemId="Tabs"
+              onEnter={() => onContentChange('recordIndexTabFields')}
+            >
+              <ListItemButton
+                focused={selectedItemId === 'Tabs'}
+                onClick={() => onContentChange('recordIndexTabFields')}
+                startIcon={<IconLayoutNavbar />}
+                description={recordIndexTabFieldMetadataItem?.label}
+                descriptionPlacement="end"
+                hasSubmenu
+              >{t`Tabs`}</ListItemButton>
+            </SelectableListItem>
           )}
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />

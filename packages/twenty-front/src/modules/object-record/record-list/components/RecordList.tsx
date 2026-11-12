@@ -1,5 +1,4 @@
-import { RecordGroupTabs } from '@/object-record/record-group/components/RecordGroupTabs';
-import { RecordGroupTabsPortalProvider } from '@/object-record/record-group/components/RecordGroupTabsPortalProvider';
+import { RecordIndexTabs } from '@/object-record/record-index-tab/components/RecordIndexTabs';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordListBody } from '@/object-record/record-list/components/RecordListBody';
@@ -8,13 +7,11 @@ import { RecordListFieldTooltip } from '@/object-record/record-list/components/R
 import { RecordListRecordGroupsBody } from '@/object-record/record-list/components/RecordListRecordGroupsBody';
 import { RecordListResponsiveFieldsEffect } from '@/object-record/record-list/components/RecordListResponsiveFieldsEffect';
 import { RecordListSSESubscribeEffect } from '@/object-record/record-list/components/RecordListSSESubscribeEffect';
-import { RECORD_LIST_ROW_DND_TYPE } from '@/object-record/record-list/constants/RecordListRowDndType';
 import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
 import { RecordSelectionEscapeHotkeyEffect } from '@/object-record/record-selection/components/RecordSelectionEscapeHotkeyEffect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { ViewType } from '@/views/types/ViewType';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -46,26 +43,21 @@ export const RecordList = () => {
       <RecordSelectionEscapeHotkeyEffect />
       <RecordListSSESubscribeEffect />
       <RecordIndexRemoveSortingModal />
-      <RecordGroupTabsPortalProvider>
-        <RecordListFieldTooltip>
-          <ScrollWrapper
-            componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
-            defaultEnableXScroll={false}
-          >
-            <RecordListDragDropProvider>
-              <RecordGroupTabs
-                viewType={ViewType.LIST}
-                dndType={RECORD_LIST_ROW_DND_TYPE}
-              />
-              {hasRecordGroups ? (
-                <RecordListRecordGroupsBody />
-              ) : (
-                <RecordListBody />
-              )}
-            </RecordListDragDropProvider>
-          </ScrollWrapper>
-        </RecordListFieldTooltip>
-      </RecordGroupTabsPortalProvider>
+      <RecordIndexTabs />
+      <RecordListFieldTooltip>
+        <ScrollWrapper
+          componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
+          defaultEnableXScroll={false}
+        >
+          <RecordListDragDropProvider>
+            {hasRecordGroups ? (
+              <RecordListRecordGroupsBody />
+            ) : (
+              <RecordListBody />
+            )}
+          </RecordListDragDropProvider>
+        </ScrollWrapper>
+      </RecordListFieldTooltip>
     </StyledContainer>
   );
 };

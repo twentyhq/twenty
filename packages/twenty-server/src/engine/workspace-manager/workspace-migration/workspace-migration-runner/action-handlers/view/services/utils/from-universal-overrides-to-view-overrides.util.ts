@@ -15,6 +15,7 @@ const VIEW_OVERRIDES_UNIVERSAL_FIELD_METADATA_PROPERTIES = [
   'calendarFieldMetadataUniversalIdentifier',
   'calendarEndFieldMetadataUniversalIdentifier',
   'mainGroupByFieldMetadataUniversalIdentifier',
+  'tabFieldMetadataUniversalIdentifier',
 ] as const;
 
 type ViewOverridesUniversalFieldMetadataProperty =
@@ -40,6 +41,7 @@ const fromUniversalOverridesToViewOverridesEntry = ({
     calendarFieldMetadataUniversalIdentifier: _calendar,
     calendarEndFieldMetadataUniversalIdentifier: _calendarEnd,
     mainGroupByFieldMetadataUniversalIdentifier: _mainGroupBy,
+    tabFieldMetadataUniversalIdentifier: _tab,
     ...scalarOverrides
   } = universalOverrides;
 

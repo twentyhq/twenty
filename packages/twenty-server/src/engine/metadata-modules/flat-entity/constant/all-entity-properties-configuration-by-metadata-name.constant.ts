@@ -439,6 +439,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'mainGroupByFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
+    tabFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'tabFieldMetadataUniversalIdentifier',
+      isOverridable: true,
+    },
     shouldHideEmptyGroups: {
       toCompare: true,
       toStringify: false,

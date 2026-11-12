@@ -226,6 +226,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'mainGroupByFieldMetadataUniversalIdentifier',
     },
+    tabFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'tabFieldMetadataId',
+      inverseOneToManyProperty: 'tabViews',
+      isNullable: true,
+      universalForeignKey: 'tabFieldMetadataUniversalIdentifier',
+    },
   },
   viewField: {
     fieldMetadata: {

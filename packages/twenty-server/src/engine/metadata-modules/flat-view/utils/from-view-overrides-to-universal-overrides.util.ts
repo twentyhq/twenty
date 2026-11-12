@@ -17,6 +17,7 @@ const VIEW_OVERRIDES_FIELD_METADATA_FOREIGN_KEYS = [
   'calendarFieldMetadataId',
   'calendarEndFieldMetadataId',
   'mainGroupByFieldMetadataId',
+  'tabFieldMetadataId',
 ] as const;
 
 type ViewOverridesFieldMetadataForeignKey =
@@ -44,6 +45,7 @@ const fromViewOverridesToUniversalOverridesEntry = ({
     calendarFieldMetadataId: _calendar,
     calendarEndFieldMetadataId: _calendarEnd,
     mainGroupByFieldMetadataId: _mainGroupBy,
+    tabFieldMetadataId: _tab,
     ...scalarOverrides
   } = overrides;
 

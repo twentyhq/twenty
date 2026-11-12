@@ -3,16 +3,18 @@ import { type ReactNode } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
-import { recordIndexShouldDisplayGroupsAsTabsComponentState } from '@/object-record/record-index/states/recordIndexShouldDisplayGroupsAsTabsComponentState';
+import { RECORD_INDEX_ALL_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexAllTabId';
+import { selectedRecordIndexTabIdComponentState } from '@/object-record/record-index-tab/states/selectedRecordIndexTabIdComponentState';
+import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { ViewType } from '@/views/types/ViewType';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -28,12 +30,20 @@ const groupByFieldMetadataItem = getMockFieldMetadataItemOrThrow({
   fieldName: 'name',
 });
 
+const opportunityObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('opportunity');
+
+const stageFieldMetadataItem = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: opportunityObjectMetadataItem,
+  fieldName: 'stage',
+});
+
 const getWrapper = ({
   recordGroupId,
-  shouldDisplayGroupsAsTabs = false,
+  selectedRecordIndexTabId,
 }: {
   recordGroupId: string;
-  shouldDisplayGroupsAsTabs?: boolean;
+  selectedRecordIndexTabId?: string;
 }) => {
   const JestMetadataAndApolloMocksWrapper =
     getJestMetadataAndApolloMocksWrapper({
@@ -45,19 +55,23 @@ const getWrapper = ({
           ],
         });
         store.set(
-          recordIndexShouldDisplayGroupsAsTabsComponentState.atomFamily({
-            instanceId: INSTANCE_ID,
-          }),
-          shouldDisplayGroupsAsTabs,
-        );
-        store.set(
           recordIndexViewTypeState.atomFamily({ instanceId: INSTANCE_ID }),
           ViewType.TABLE,
         );
-        store.set(
-          recordGroupIdsComponentState.atomFamily({ instanceId: INSTANCE_ID }),
-          [RECORD_GROUP_ID],
-        );
+        if (isDefined(selectedRecordIndexTabId)) {
+          store.set(
+            recordIndexTabFieldMetadataItemComponentState.atomFamily({
+              instanceId: INSTANCE_ID,
+            }),
+            stageFieldMetadataItem,
+          );
+          store.set(
+            selectedRecordIndexTabIdComponentState.atomFamily({
+              instanceId: INSTANCE_ID,
+            }),
+            selectedRecordIndexTabId,
+          );
+        }
         store.set(
           recordIndexGroupLoadLimitComponentState.atomFamily({
             instanceId: INSTANCE_ID,
@@ -104,18 +118,32 @@ describe('useFindManyRecordIndexTableParams', () => {
     expect(result.current.limit).toBe(50);
   });
 
-  it('should not set a limit when record groups are displayed as tabs', () => {
+  it('should narrow the query to the active tab', () => {
     const { result } = renderHook(
-      () => useFindManyRecordIndexTableParams('company', INSTANCE_ID),
+      () => useFindManyRecordIndexTableParams('opportunity', INSTANCE_ID),
       {
         wrapper: getWrapper({
-          recordGroupId: RECORD_GROUP_ID,
-          shouldDisplayGroupsAsTabs: true,
+          recordGroupId: 'unknown-record-group-id',
+          selectedRecordIndexTabId: 'MEETING',
         }),
       },
     );
 
-    expect(result.current).not.toHaveProperty('limit');
+    expect(result.current.filter).toEqual({ stage: { in: ['MEETING'] } });
+  });
+
+  it('should not narrow the query on the All tab', () => {
+    const { result } = renderHook(
+      () => useFindManyRecordIndexTableParams('opportunity', INSTANCE_ID),
+      {
+        wrapper: getWrapper({
+          recordGroupId: 'unknown-record-group-id',
+          selectedRecordIndexTabId: RECORD_INDEX_ALL_TAB_ID,
+        }),
+      },
+    );
+
+    expect(result.current.filter).toEqual({});
   });
 
   it('should not set a limit outside a record group', () => {

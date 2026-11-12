@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
-import { RecordGroupTabsPortalProvider } from '@/object-record/record-group/components/RecordGroupTabsPortalProvider';
+import { RecordIndexTabs } from '@/object-record/record-index-tab/components/RecordIndexTabs';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -52,9 +52,10 @@ export const RecordIndexContainer = () => {
         <>
           <RecordIndexFiltersToContextStoreEffect />
           {recordIndexViewType === ViewType.TABLE && (
-            <RecordGroupTabsPortalProvider>
+            <>
+              <RecordIndexTabs />
               <RecordIndexTableContainer recordTableId={recordIndexId} />
-            </RecordGroupTabsPortalProvider>
+            </>
           )}
           {recordIndexViewType === ViewType.KANBAN && (
             <StyledContainerWithPadding>

@@ -72,6 +72,7 @@ const VIEW_MANIFEST: Required<
   calendarLayout: ViewCalendarLayout.WEEK,
   calendarFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
   calendarEndFieldMetadataUniversalIdentifier: END_DATE_FIELD_UID,
+  tabFieldMetadataUniversalIdentifier: STAGE_FIELD_UID,
 };
 
 const MINIMAL_VIEW_MANIFEST: ViewManifest = {
@@ -127,6 +128,7 @@ const NULLABLE_VIEW_MANIFEST_PROPERTIES: (keyof ViewManifest)[] = [
   'calendarLayout',
   'calendarFieldMetadataUniversalIdentifier',
   'calendarEndFieldMetadataUniversalIdentifier',
+  'tabFieldMetadataUniversalIdentifier',
 ];
 
 const VIEW_CHILD_COLLECTION_PROPERTIES_OTHER_THAN_FIELDS: (keyof ViewManifest)[] =
@@ -171,6 +173,7 @@ describe('fromFlatViewToViewManifest', () => {
       calendarLayout: ViewCalendarLayout.MONTH,
       calendarFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
       calendarEndFieldMetadataUniversalIdentifier: null,
+      tabFieldMetadataUniversalIdentifier: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
       shouldHideEmptyGroups: false,
       shouldDisplayGroupsAsTabs: false,

@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { recordIndexSelectableRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexSelectableRecordIdsComponentSelector';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { recordSelectionRangeComponentState } from '@/object-record/record-selection/states/recordSelectionRangeComponentState';
@@ -22,7 +22,7 @@ export const useSelectAllRecords = (recordIndexId?: string) => {
   );
 
   const selectableRecordIds = useAtomComponentSelectorCallbackState(
-    recordIndexSelectableRecordIdsComponentSelector,
+    recordIndexAllRecordIdsComponentSelector,
     recordIndexId,
   );
 

@@ -2089,6 +2089,7 @@ export type CreateViewInput = {
   position?: InputMaybe<Scalars['Float']['input']>;
   shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  tabFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
 };
@@ -8145,6 +8146,7 @@ export type UpdateViewInput = {
   position?: InputMaybe<Scalars['Float']['input']>;
   shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  tabFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
@@ -8342,6 +8344,7 @@ export type UpsertViewWidgetViewSettingsInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  tabFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   /** The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed. */
   type?: InputMaybe<ViewType>;
 };
@@ -8683,6 +8686,7 @@ export type View = {
   position: Scalars['Float']['output'];
   shouldDisplayGroupsAsTabs?: Maybe<Scalars['Boolean']['output']>;
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
+  tabFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   type: ViewType;
   universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];

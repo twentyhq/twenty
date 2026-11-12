@@ -38,6 +38,11 @@ export class UpsertViewWidgetViewSettingsInput {
   mainGroupByFieldMetadataId?: string | null;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  tabFieldMetadataId?: string | null;
+
+  @IsOptional()
   @IsBoolean()
   @Field({ nullable: true })
   shouldHideEmptyGroups?: boolean;

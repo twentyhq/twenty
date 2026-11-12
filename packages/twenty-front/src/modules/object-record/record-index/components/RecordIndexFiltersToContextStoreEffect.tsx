@@ -9,13 +9,9 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
-import { isAllRecordGroupsTabActiveComponentSelector } from '@/object-record/record-group/states/selectors/isAllRecordGroupsTabActiveComponentSelector';
-import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
-import { isAllRecordGroupsTabFilteredByVisibleGroups } from '@/object-record/record-group/utils/isAllRecordGroupsTabFilteredByVisibleGroups';
+import { recordIndexTabRecordFiltersComponentSelector } from '@/object-record/record-index-tab/states/selectors/recordIndexTabRecordFiltersComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
@@ -49,35 +45,10 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
-    isRecordGroupTabsDisplayedComponentSelector,
+  const recordIndexTabRecordFilters = useAtomComponentSelectorValue(
+    recordIndexTabRecordFiltersComponentSelector,
     recordIndexId,
   );
-
-  const isAllRecordGroupsTabActive = useAtomComponentSelectorValue(
-    isAllRecordGroupsTabActiveComponentSelector,
-    recordIndexId,
-  );
-
-  const hiddenRecordGroupIds = useAtomComponentSelectorValue(
-    hiddenRecordGroupIdsComponentSelector,
-    recordIndexId,
-  );
-
-  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
-    recordIndexGroupFieldMetadataItemComponentState,
-    recordIndexId,
-  );
-
-  // The whole-view rule carries only view filters, not All's visible-groups filter
-  const isWholeViewTargeted =
-    hasUserSelectedAllRecords &&
-    (!isRecordGroupTabsDisplayed ||
-      (isAllRecordGroupsTabActive &&
-        !isAllRecordGroupsTabFilteredByVisibleGroups({
-          hiddenRecordGroupIds,
-          recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
-        })));
 
   const recordIndexAllRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
@@ -126,7 +97,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
     setIfChanged(
       contextStoreTargetedRecordsRuleAtom,
-      isWholeViewTargeted
+      hasUserSelectedAllRecords
         ? {
             mode: 'exclusion',
             excludedRecordIds: recordIndexAllRecordIds.filter(
@@ -142,11 +113,15 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
         previousRecordIdsInSelectionOrder: store.get(
           contextStoreRecordIdsInSelectionOrderAtom,
         ),
-        selectedRecordIds: isWholeViewTargeted ? [] : selectedRecordIds,
+        selectedRecordIds: hasUserSelectedAllRecords ? [] : selectedRecordIds,
       }),
     );
 
-    setIfChanged(contextStoreFiltersAtom, currentRecordFilters);
+    // Bulk actions on the whole view must stay within the active tab
+    setIfChanged(contextStoreFiltersAtom, [
+      ...currentRecordFilters,
+      ...recordIndexTabRecordFilters,
+    ]);
     setIfChanged(contextStoreFilterGroupsAtom, currentRecordFilterGroups);
     setIfChanged(contextStoreAnyFieldFilterValueAtom, anyFieldFilterValue);
 
@@ -167,7 +142,8 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     contextStoreTargetedRecordsRuleAtom,
     currentRecordFilterGroups,
     currentRecordFilters,
-    isWholeViewTargeted,
+    hasUserSelectedAllRecords,
+    recordIndexTabRecordFilters,
     recordIndexAllRecordIds,
     selectedRecordIds,
     store,

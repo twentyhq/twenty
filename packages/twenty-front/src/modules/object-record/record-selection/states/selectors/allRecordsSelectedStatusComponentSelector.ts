@@ -1,4 +1,4 @@
-import { recordIndexSelectableRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexSelectableRecordIdsComponentSelector';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { type AllRecordsSelectedStatus } from '@/object-record/record-selection/types/AllRecordsSelectedStatus';
@@ -12,7 +12,7 @@ export const allRecordsSelectedStatusComponentSelector =
       ({ instanceId }) =>
       ({ get }) => {
         const selectableRecordIds = get(
-          recordIndexSelectableRecordIdsComponentSelector,
+          recordIndexAllRecordIdsComponentSelector,
           { instanceId },
         );
 

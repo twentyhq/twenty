@@ -34,6 +34,7 @@ export const buildMorphRelationHeadFromTarget = ({
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
   calendarEndViewUniversalIdentifiers: [],
+  tabViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
   searchFieldMetadataUniversalIdentifiers: [],
 });

@@ -30,6 +30,7 @@ export const getMockFieldMetadataEntity = <
     calendarViews: [],
     calendarEndViews: [],
     mainGroupByFieldMetadataViews: [],
+    tabViews: [],
     viewFilters: [],
     viewFields: [],
     kanbanAggregateOperationViews: [],

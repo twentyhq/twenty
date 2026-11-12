@@ -27,6 +27,7 @@ type Assertions = [
       | 'calendarViews'
       | 'calendarEndViews'
       | 'mainGroupByFieldMetadataViews'
+      | 'tabViews'
       | 'viewSorts'
       | 'searchFieldMetadatas'
       | 'fieldMetadataOptions'

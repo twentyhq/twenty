@@ -24,7 +24,7 @@ import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/obje
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
-import { recordIndexShouldDisplayGroupsAsTabsComponentState } from '@/object-record/record-index/states/recordIndexShouldDisplayGroupsAsTabsComponentState';
+import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
@@ -77,9 +77,9 @@ export const useLoadRecordIndexStates = () => {
       recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
 
-  const recordIndexShouldDisplayGroupsAsTabsAtom =
+  const recordIndexTabFieldMetadataItemAtom =
     useAtomComponentStateCallbackState(
-      recordIndexShouldDisplayGroupsAsTabsComponentState,
+      recordIndexTabFieldMetadataItemComponentState,
     );
 
   const recordIndexKanbanColumnWidthAtom = useAtomComponentStateCallbackState(
@@ -363,8 +363,10 @@ export const useLoadRecordIndexStates = () => {
           );
 
           batchSet(
-            recordIndexShouldDisplayGroupsAsTabsAtom,
-            view.shouldDisplayGroupsAsTabs ?? false,
+            recordIndexTabFieldMetadataItemAtom,
+            objectMetadataItem.fields.find(
+              (field) => field.id === view.tabFieldMetadataId,
+            ),
           );
 
           batchSet(
@@ -419,7 +421,7 @@ export const useLoadRecordIndexStates = () => {
       recordIndexGroupAggregateOperationAtom,
       recordIndexGroupAggregateFieldMetadataItemAtom,
       recordIndexShouldHideEmptyRecordGroupsAtom,
-      recordIndexShouldDisplayGroupsAsTabsAtom,
+      recordIndexTabFieldMetadataItemAtom,
       recordIndexKanbanColumnWidthAtom,
       recordIndexGroupLoadLimitAtom,
       getFieldMetadataItemByIdOrThrow,

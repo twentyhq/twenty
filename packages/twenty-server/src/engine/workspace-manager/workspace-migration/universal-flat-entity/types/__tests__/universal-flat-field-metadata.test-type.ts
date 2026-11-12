@@ -37,6 +37,7 @@ type OneToManyUniversalIdentifierArrays = {
   calendarViewUniversalIdentifiers: string[];
   calendarEndViewUniversalIdentifiers: string[];
   mainGroupByFieldMetadataViewUniversalIdentifiers: string[];
+  tabViewUniversalIdentifiers: string[];
 };
 
 // Narrowed relation universal identifier assertions - verifies conditional typing is preserved

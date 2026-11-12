@@ -73,6 +73,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     mainGroupByFieldMetadataViewIds:
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(({ id }) => id) ??
       [],
+    tabViewIds: fieldMetadataEntity.tabViews.map(({ id }) => id),
     viewFieldIds: fieldMetadataEntity.viewFields.map(({ id }) => id),
     viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
     fieldPermissionIds:
@@ -98,6 +99,9 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
+    tabViewUniversalIdentifiers: fieldMetadataEntity.tabViews.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
     viewSortIds: fieldMetadataEntity.viewSorts?.map(({ id }) => id) ?? [],
     viewSortUniversalIdentifiers:
       fieldMetadataEntity.viewSorts?.map(

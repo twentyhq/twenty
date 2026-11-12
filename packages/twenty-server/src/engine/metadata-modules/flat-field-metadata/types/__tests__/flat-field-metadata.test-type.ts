@@ -28,6 +28,7 @@ type OneToManyRelationIdArrays = {
   calendarViewIds: string[];
   calendarEndViewIds: string[];
   mainGroupByFieldMetadataViewIds: string[];
+  tabViewIds: string[];
 };
 
 // oxlint-disable-next-line unused-imports/no-unused-vars

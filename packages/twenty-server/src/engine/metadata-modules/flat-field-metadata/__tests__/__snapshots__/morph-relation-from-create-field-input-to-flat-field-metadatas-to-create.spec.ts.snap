@@ -148,6 +148,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "rowLevelPermissionPredicateUniversalIdentifiers": [],
         "searchFieldMetadataUniversalIdentifiers": [],
+        "tabViewUniversalIdentifiers": [],
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
@@ -192,6 +193,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "rowLevelPermissionPredicateUniversalIdentifiers": [],
         "searchFieldMetadataUniversalIdentifiers": [],
+        "tabViewUniversalIdentifiers": [],
         "type": "RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
@@ -238,6 +240,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "rowLevelPermissionPredicateUniversalIdentifiers": [],
         "searchFieldMetadataUniversalIdentifiers": [],
+        "tabViewUniversalIdentifiers": [],
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
@@ -282,6 +285,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "rowLevelPermissionPredicateUniversalIdentifiers": [],
         "searchFieldMetadataUniversalIdentifiers": [],
+        "tabViewUniversalIdentifiers": [],
         "type": "RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {

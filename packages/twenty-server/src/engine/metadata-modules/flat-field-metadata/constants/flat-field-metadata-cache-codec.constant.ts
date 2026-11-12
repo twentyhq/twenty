@@ -58,6 +58,8 @@ export const FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY = {
   viewSortIds: '$L',
   viewSortUniversalIdentifiers: '$M',
   workspaceId: '$N',
+  tabViewIds: '$X',
+  tabViewUniversalIdentifiers: '$Y',
 } as const satisfies Record<string, string>;
 
 export const FLAT_FIELD_METADATA_SHORT_CODE_LOOKUP = new Map<string, string>(
@@ -75,6 +77,7 @@ export const FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS = [
   'calendarViewIds',
   'calendarEndViewIds',
   'mainGroupByFieldMetadataViewIds',
+  'tabViewIds',
   'viewFieldIds',
   'viewFilterIds',
   'fieldPermissionIds',
@@ -84,6 +87,7 @@ export const FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS = [
   'calendarViewUniversalIdentifiers',
   'calendarEndViewUniversalIdentifiers',
   'mainGroupByFieldMetadataViewUniversalIdentifiers',
+  'tabViewUniversalIdentifiers',
   'viewSortIds',
   'viewSortUniversalIdentifiers',
   'searchFieldMetadataIds',
