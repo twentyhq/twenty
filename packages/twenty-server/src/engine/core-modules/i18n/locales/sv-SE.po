@@ -13809,6 +13809,11 @@ msgstr "Komponentberoendena kunde inte verifieras. Försök skapa komponenten ig
 msgid "The condition of a database event trigger must be text"
 msgstr "Villkoret för en databashändelseutlösare måste vara text"
 
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
