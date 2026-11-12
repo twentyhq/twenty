@@ -1,5 +1,9 @@
 import { isArray, isNull, isString } from '@sniptt/guards';
-import { isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
+import {
+  isNonEmptyArray,
+  isPlainObject,
+  typedObjectEntries,
+} from 'twenty-shared/utils';
 
 import { createAppNotInstalledError } from '@/app/create-app-not-installed-error';
 import { isApplicationNotFoundError } from '@/app/is-application-not-found-error';
@@ -86,9 +90,7 @@ export const fetchAppExport = async ({
 }): Promise<AppExport> => {
   const client = createMetadataClient({ target, signal });
   const fileOptions = { shouldIncludeSourceFiles, shouldIncludePublicAssets };
-  const fileOptionKeys = Object.keys(
-    fileOptions,
-  ) as (keyof typeof fileOptions)[];
+  const fileOptionKeys = typedObjectEntries(fileOptions).map(([key]) => key);
   const query = () =>
     client.query({
       __name: 'ExportApplication',
