@@ -329,6 +329,8 @@ const AiChatInboxPageContent = () => {
                       <AgentChatChannelThreadsFetchMoreTrigger />
                     ) : (
                       <AgentChatThreadsFetchMoreTrigger
+                        // A remount observes again, as switching tabs can leave it in view
+                        key={agentChatThreadFilterStatus}
                         filterStatus={agentChatThreadFilterStatus}
                       />
                     )}

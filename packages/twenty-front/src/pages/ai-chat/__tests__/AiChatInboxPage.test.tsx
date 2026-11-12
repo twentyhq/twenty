@@ -3,7 +3,13 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { atom, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -110,8 +116,20 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
     )),
 }));
 
+const mountFetchMoreTrigger = jest.fn();
+
 jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
-  AgentChatThreadsFetchMoreTrigger: () => null,
+  AgentChatThreadsFetchMoreTrigger: ({
+    filterStatus,
+  }: {
+    filterStatus?: string;
+  }) => {
+    jest.requireActual('react').useEffect(() => {
+      mountFetchMoreTrigger(filterStatus);
+    }, []);
+
+    return null;
+  },
 }));
 
 jest.mock('@/ai/components/AgentChatChannelThreadsLoadEffect', () => ({
@@ -399,6 +417,46 @@ describe('AiChatInboxPage', () => {
     expect(
       screen.getByText(`Chat page ${secondThread.id}`),
     ).toBeInTheDocument();
+  });
+
+  it("waits for the tab's first page before showing it empty", () => {
+    jotaiStore.set(
+      agentChatThreadFilterStatusState.atom,
+      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+    );
+
+    renderInbox('/inbox');
+
+    expect(screen.queryByText('No conversations')).not.toBeInTheDocument();
+
+    act(() => {
+      jotaiStore.set(agentChatThreadListState.atom, {
+        threadIds: THREADS.map(({ id }) => id),
+        hasNextPage: false,
+        endCursor: null,
+        filterStatusPages: {
+          snoozed: { hasNextPage: false, endCursor: null },
+        },
+      });
+    });
+
+    expect(screen.getByText('No conversations')).toBeInTheDocument();
+  });
+
+  it('starts a fresh scroll trigger for the tab the member switches to', () => {
+    renderInbox('/inbox');
+    mountFetchMoreTrigger.mockClear();
+
+    act(() => {
+      jotaiStore.set(
+        agentChatThreadFilterStatusState.atom,
+        AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+      );
+    });
+
+    expect(mountFetchMoreTrigger).toHaveBeenCalledWith(
+      AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+    );
   });
 
   it('adds a chat to the one on screen with cmd+click', () => {
