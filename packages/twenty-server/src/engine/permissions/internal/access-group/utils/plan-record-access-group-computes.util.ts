@@ -8,7 +8,7 @@ import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/
 type PlannedRecordAccessGroupCompute = Required<
   Pick<
     RecomputeRecordAccessGroupIdsJobData,
-    'objectMetadataId' | 'propagatedFromObjectMetadataIds'
+    'objectMetadataId' | 'fromRelatedObjectMetadataIds'
   >
 >;
 
@@ -28,7 +28,7 @@ export const planRecordAccessGroupComputes = ({
   const computesToVisit: PlannedRecordAccessGroupCompute[] =
     objectMetadataIds.map((objectMetadataId) => ({
       objectMetadataId,
-      propagatedFromObjectMetadataIds: [],
+      fromRelatedObjectMetadataIds: [],
     }));
 
   for (const compute of computesToVisit) {
@@ -40,7 +40,7 @@ export const planRecordAccessGroupComputes = ({
 
     plannedComputeById.set(computeId, compute);
 
-    const { objectMetadataId, propagatedFromObjectMetadataIds } = compute;
+    const { objectMetadataId, fromRelatedObjectMetadataIds } = compute;
     const followingObjectMetadataIds = new Set(
       resolvedRelatedRecordPaths
         .filter(
@@ -49,7 +49,7 @@ export const planRecordAccessGroupComputes = ({
             isRelatedRecordPathFollowed({
               resolvedPath,
               objectMetadataId,
-              propagatedFromObjectMetadataIds,
+              fromRelatedObjectMetadataIds,
             }) &&
             isObjectUsingRecordAccessGroups(
               resolvedPath.targetObjectMetadataId,
@@ -61,8 +61,8 @@ export const planRecordAccessGroupComputes = ({
     for (const followingObjectMetadataId of followingObjectMetadataIds) {
       computesToVisit.push({
         objectMetadataId: followingObjectMetadataId,
-        propagatedFromObjectMetadataIds: [
-          ...propagatedFromObjectMetadataIds,
+        fromRelatedObjectMetadataIds: [
+          ...fromRelatedObjectMetadataIds,
           objectMetadataId,
         ],
       });

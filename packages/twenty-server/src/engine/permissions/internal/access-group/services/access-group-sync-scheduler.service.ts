@@ -54,22 +54,22 @@ export class AccessGroupSyncSchedulerService {
   async scheduleRecordAccessGroupIdsRecompute({
     workspaceId,
     objectMetadataId,
-    propagatedFromObjectMetadataIds = [],
+    fromRelatedObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.accessGroupPropagationProgressService.markComputePending({
       workspaceId,
       objectMetadataId,
-      propagatedFromObjectMetadataIds,
+      fromRelatedObjectMetadataIds,
     });
     await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
       RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
-      { workspaceId, objectMetadataId, propagatedFromObjectMetadataIds },
+      { workspaceId, objectMetadataId, fromRelatedObjectMetadataIds },
       {
         isWorkspaceJob: true,
         workspaceId,
         retryLimit: 3,
         deduplication: {
-          id: `record-access-group-ids:${workspaceId}:${buildRecordAccessGroupComputeId({ objectMetadataId, propagatedFromObjectMetadataIds })}`,
+          id: `record-access-group-ids:${workspaceId}:${buildRecordAccessGroupComputeId({ objectMetadataId, fromRelatedObjectMetadataIds })}`,
           keepLastIfActive: true,
         },
       },

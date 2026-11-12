@@ -34,12 +34,12 @@ export class RecordAccessGroupPropagationService {
   async recomputeRecordAccessGroupIdsOfAllObjectRecordsAndPropagate({
     workspaceId,
     objectMetadataId,
-    propagatedFromObjectMetadataIds = [],
+    fromRelatedObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.accessGroupPropagationProgressService.markComputePending({
       workspaceId,
       objectMetadataId,
-      propagatedFromObjectMetadataIds,
+      fromRelatedObjectMetadataIds,
     });
     await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
       {
@@ -63,7 +63,7 @@ export class RecordAccessGroupPropagationService {
             isRelatedRecordPathFollowed({
               resolvedPath,
               objectMetadataId,
-              propagatedFromObjectMetadataIds,
+              fromRelatedObjectMetadataIds,
             }),
         )
         .map(({ targetObjectMetadataId }) => targetObjectMetadataId),
@@ -72,8 +72,8 @@ export class RecordAccessGroupPropagationService {
     await this.scheduleRecomputeOfObjectsUsingRecordAccessGroups({
       workspaceId,
       objectMetadataIds: followingObjectMetadataIds,
-      propagatedFromObjectMetadataIds: [
-        ...propagatedFromObjectMetadataIds,
+      fromRelatedObjectMetadataIds: [
+        ...fromRelatedObjectMetadataIds,
         objectMetadataId,
       ],
       metadataMaps,
@@ -82,7 +82,7 @@ export class RecordAccessGroupPropagationService {
     await this.accessGroupPropagationProgressService.finishCompute({
       workspaceId,
       objectMetadataId,
-      propagatedFromObjectMetadataIds,
+      fromRelatedObjectMetadataIds,
     });
   }
 
@@ -111,7 +111,7 @@ export class RecordAccessGroupPropagationService {
     await this.scheduleRecomputeOfObjectsUsingRecordAccessGroups({
       workspaceId,
       objectMetadataIds,
-      propagatedFromObjectMetadataIds: [],
+      fromRelatedObjectMetadataIds: [],
       metadataMaps,
     });
   }
@@ -120,7 +120,7 @@ export class RecordAccessGroupPropagationService {
     workspaceId,
     objectMetadataId,
     recordIds,
-    propagatedFromObjectMetadataIds = [],
+    fromRelatedObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsOfRecordsJobData): Promise<void> {
     const changedRecordIds =
       await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecords(
@@ -138,7 +138,7 @@ export class RecordAccessGroupPropagationService {
         changedRecordIds,
         writtenRecordIds: changedRecordIds,
         recordsBefore: [],
-        propagatedFromObjectMetadataIds,
+        fromRelatedObjectMetadataIds,
       },
     )) {
       await this.recordAccessGroupComputationService.queueRecomputeRecordAccessGroupIdsOfRecords(
@@ -155,7 +155,7 @@ export class RecordAccessGroupPropagationService {
     workspaceId,
     objectMetadataId,
     recordIds,
-    propagatedFromObjectMetadataIds = [],
+    fromRelatedObjectMetadataIds = [],
     transactionScope,
   }: RecomputeRecordAccessGroupIdsOfRecordsJobData & {
     transactionScope: RecordPermissionTransactionScope;
@@ -167,7 +167,7 @@ export class RecordAccessGroupPropagationService {
         changedRecordIds: recordIds,
         writtenRecordIds: recordIds,
         recordsBefore: [],
-        propagatedFromObjectMetadataIds,
+        fromRelatedObjectMetadataIds,
         transactionScope,
       },
     )) {
@@ -183,8 +183,8 @@ export class RecordAccessGroupPropagationService {
               transactionScope,
             },
           ),
-        propagatedFromObjectMetadataIds:
-          followingRecords.propagatedFromObjectMetadataIds,
+        fromRelatedObjectMetadataIds:
+          followingRecords.fromRelatedObjectMetadataIds,
         transactionScope,
       });
     }
@@ -196,7 +196,7 @@ export class RecordAccessGroupPropagationService {
     changedRecordIds,
     writtenRecordIds,
     recordsBefore,
-    propagatedFromObjectMetadataIds = [],
+    fromRelatedObjectMetadataIds = [],
     transactionScope,
   }: {
     workspaceId: string;
@@ -204,7 +204,7 @@ export class RecordAccessGroupPropagationService {
     changedRecordIds: string[];
     writtenRecordIds: string[];
     recordsBefore: Record<string, unknown>[];
-    propagatedFromObjectMetadataIds?: string[];
+    fromRelatedObjectMetadataIds?: string[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<RelatedRecords[]> {
     const metadataMaps =
@@ -221,7 +221,7 @@ export class RecordAccessGroupPropagationService {
         !isRelatedRecordPathFollowed({
           resolvedPath,
           objectMetadataId,
-          propagatedFromObjectMetadataIds,
+          fromRelatedObjectMetadataIds,
         })
       ) {
         continue;
@@ -282,8 +282,8 @@ export class RecordAccessGroupPropagationService {
             .map(({ id }) => id),
         ),
       ],
-      propagatedFromObjectMetadataIds: [
-        ...propagatedFromObjectMetadataIds,
+      fromRelatedObjectMetadataIds: [
+        ...fromRelatedObjectMetadataIds,
         objectMetadataId,
       ],
     }));
@@ -331,12 +331,12 @@ export class RecordAccessGroupPropagationService {
   private async scheduleRecomputeOfObjectsUsingRecordAccessGroups({
     workspaceId,
     objectMetadataIds,
-    propagatedFromObjectMetadataIds,
+    fromRelatedObjectMetadataIds,
     metadataMaps,
   }: {
     workspaceId: string;
     objectMetadataIds: Set<string>;
-    propagatedFromObjectMetadataIds: string[];
+    fromRelatedObjectMetadataIds: string[];
     metadataMaps: RecordAccessGroupComputationMetadataMaps;
   }): Promise<void> {
     for (const objectMetadataId of objectMetadataIds) {
@@ -344,7 +344,7 @@ export class RecordAccessGroupPropagationService {
         isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId })
       ) {
         await this.accessGroupSyncSchedulerService.scheduleRecordAccessGroupIdsRecompute(
-          { workspaceId, objectMetadataId, propagatedFromObjectMetadataIds },
+          { workspaceId, objectMetadataId, fromRelatedObjectMetadataIds },
         );
       }
     }

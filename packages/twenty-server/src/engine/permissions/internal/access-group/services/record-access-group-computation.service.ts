@@ -176,7 +176,7 @@ export class RecordAccessGroupComputationService {
     workspaceId,
     objectMetadataId,
     recordIds,
-    propagatedFromObjectMetadataIds,
+    fromRelatedObjectMetadataIds,
   }: RecomputeRecordAccessGroupIdsOfRecordsJobData): Promise<void> {
     for (const recordIdsBatch of chunk(recordIds, RECOMPUTE_BATCH_SIZE)) {
       await this.messageQueueService.add<RecomputeRecordAccessGroupIdsOfRecordsJobData>(
@@ -185,7 +185,7 @@ export class RecordAccessGroupComputationService {
           workspaceId,
           objectMetadataId,
           recordIds: recordIdsBatch,
-          propagatedFromObjectMetadataIds,
+          fromRelatedObjectMetadataIds,
         },
         { isWorkspaceJob: true, workspaceId, retryLimit: 3 },
       );

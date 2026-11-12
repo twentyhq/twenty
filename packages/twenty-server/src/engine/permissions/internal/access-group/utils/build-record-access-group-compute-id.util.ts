@@ -4,14 +4,14 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 
-// Also the deduplication id of the job: an object can have one compute of its own and one propagated to it queued at once
+// Also the deduplication id of the job: an object can have a direct compute and one from a related object queued at once
 export const buildRecordAccessGroupComputeId = ({
   objectMetadataId,
-  propagatedFromObjectMetadataIds,
+  fromRelatedObjectMetadataIds,
 }: Pick<
   RecomputeRecordAccessGroupIdsJobData,
-  'objectMetadataId' | 'propagatedFromObjectMetadataIds'
+  'objectMetadataId' | 'fromRelatedObjectMetadataIds'
 >): string =>
-  isNonEmptyArray(propagatedFromObjectMetadataIds)
-    ? `${objectMetadataId}:propagated`
-    : objectMetadataId;
+  isNonEmptyArray(fromRelatedObjectMetadataIds)
+    ? `${objectMetadataId}:from-related-object`
+    : `${objectMetadataId}:direct`;

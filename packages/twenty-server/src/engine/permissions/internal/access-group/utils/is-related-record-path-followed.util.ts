@@ -5,15 +5,15 @@ import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/
 export const isRelatedRecordPathFollowed = ({
   resolvedPath: { isInherent, targetObjectMetadataId },
   objectMetadataId,
-  propagatedFromObjectMetadataIds,
+  fromRelatedObjectMetadataIds,
 }: {
   resolvedPath: Pick<
     ResolvedRelatedRecordPath,
     'isInherent' | 'targetObjectMetadataId'
   >;
   objectMetadataId: string;
-  propagatedFromObjectMetadataIds: string[];
+  fromRelatedObjectMetadataIds: string[];
 }): boolean =>
-  (isInherent || propagatedFromObjectMetadataIds.length === 0) &&
+  (isInherent || fromRelatedObjectMetadataIds.length === 0) &&
   targetObjectMetadataId !== objectMetadataId &&
-  !propagatedFromObjectMetadataIds.includes(targetObjectMetadataId);
+  !fromRelatedObjectMetadataIds.includes(targetObjectMetadataId);

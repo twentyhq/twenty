@@ -37,7 +37,7 @@ const plan = ({
 describe('planRecordAccessGroupComputes', () => {
   it('should plan only the changed objects when no path leads from them', () => {
     expect(plan({ objectMetadataIds: ['company'], paths: [] })).toEqual([
-      { objectMetadataId: 'company', propagatedFromObjectMetadataIds: [] },
+      { objectMetadataId: 'company', fromRelatedObjectMetadataIds: [] },
     ]);
   });
 
@@ -48,10 +48,10 @@ describe('planRecordAccessGroupComputes', () => {
         paths: [buildPath({ source: 'company', target: 'person' })],
       }),
     ).toEqual([
-      { objectMetadataId: 'company', propagatedFromObjectMetadataIds: [] },
+      { objectMetadataId: 'company', fromRelatedObjectMetadataIds: [] },
       {
         objectMetadataId: 'person',
-        propagatedFromObjectMetadataIds: ['company'],
+        fromRelatedObjectMetadataIds: ['company'],
       },
     ]);
   });
@@ -89,15 +89,15 @@ describe('planRecordAccessGroupComputes', () => {
         ],
       }),
     ).toEqual([
-      { objectMetadataId: 'company', propagatedFromObjectMetadataIds: [] },
-      { objectMetadataId: 'person', propagatedFromObjectMetadataIds: [] },
+      { objectMetadataId: 'company', fromRelatedObjectMetadataIds: [] },
+      { objectMetadataId: 'person', fromRelatedObjectMetadataIds: [] },
       {
         objectMetadataId: 'person',
-        propagatedFromObjectMetadataIds: ['company'],
+        fromRelatedObjectMetadataIds: ['company'],
       },
       {
         objectMetadataId: 'company',
-        propagatedFromObjectMetadataIds: ['person'],
+        fromRelatedObjectMetadataIds: ['person'],
       },
     ]);
   });
