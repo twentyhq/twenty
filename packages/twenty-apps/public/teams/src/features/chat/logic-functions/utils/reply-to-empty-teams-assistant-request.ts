@@ -25,7 +25,12 @@ export const replyToEmptyTeamsAssistantRequest = async (
   } catch (error) {
     await kv
       .delete(buildTeamsEmptyRequestReplyKvKey(emptyRequest))
-      .catch(() => undefined);
+      .catch((releaseError: unknown) =>
+        console.warn(
+          `[teams] could not release the hint claim of ${emptyRequest.teamsActivityId}`,
+          releaseError,
+        ),
+      );
 
     throw error;
   }

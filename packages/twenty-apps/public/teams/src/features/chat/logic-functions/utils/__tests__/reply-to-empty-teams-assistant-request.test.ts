@@ -44,7 +44,7 @@ describe('replyToEmptyTeamsAssistantRequest', () => {
       replyToEmptyTeamsAssistantRequest(EMPTY_REQUEST),
     ).resolves.toEqual({ ok: true });
 
-    expect(kvMock.set).toHaveBeenCalledWith(CLAIM_KEY, {
+    expect(kvMock.set).toHaveBeenCalledExactlyOnceWith(CLAIM_KEY, {
       expiresAt: expect.any(Number),
     });
     expect(sendActivityMock).toHaveBeenCalledExactlyOnceWith({
@@ -72,6 +72,6 @@ describe('replyToEmptyTeamsAssistantRequest', () => {
       replyToEmptyTeamsAssistantRequest(EMPTY_REQUEST),
     ).rejects.toThrow('Bot Connector POST failed');
 
-    expect(kvMock.delete).toHaveBeenCalledWith(CLAIM_KEY);
+    expect(kvMock.delete).toHaveBeenCalledExactlyOnceWith(CLAIM_KEY);
   });
 });
