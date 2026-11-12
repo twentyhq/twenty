@@ -2963,7 +2963,7 @@ msgstr "Chats relacionados con la oportunidad"
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
-msgstr ""
+msgstr "Elige una pestaña activa y una posición de widget que coincida con su modo de diseño."
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -6171,7 +6171,7 @@ msgstr "La solicitud del generador de componentes de frontend supera el límite 
 #. js-lingui-id: SOTpsW
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Frontend component not found."
-msgstr ""
+msgstr "No se encontró el componente de interfaz."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13816,7 +13816,7 @@ msgstr "La condición de un desencadenador de eventos de base de datos debe ser 
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "La condición de un desencadenador de agente no es válida"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14878,7 +14878,7 @@ msgstr "Este formulario ya no espera una respuesta."
 #. js-lingui-id: phhLXX
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "This frontend component is not available on this page layout."
-msgstr ""
+msgstr "Este componente de interfaz no está disponible en este diseño de página."
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -17245,7 +17245,7 @@ msgstr "Por qué se concedió el acceso"
 #. js-lingui-id: ciRAJR
 #: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
 msgid "Widget configuration is required."
-msgstr ""
+msgstr "Se requiere la configuración del widget."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
