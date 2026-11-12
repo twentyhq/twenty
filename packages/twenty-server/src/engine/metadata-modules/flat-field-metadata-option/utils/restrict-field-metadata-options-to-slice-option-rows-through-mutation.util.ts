@@ -7,11 +7,17 @@ import { resolveFieldMetadataOptionsFromRows } from 'src/engine/metadata-modules
 // An application-scoped slice compares a field's options with what that application declares, so the
 // options added by other applications are left out. The field entry is replaced, never mutated.
 export const restrictFieldMetadataOptionsToSliceOptionRowsThroughMutation = ({
-  allFlatEntityMapsToMutate: { flatFieldMetadataMaps, flatFieldMetadataOptionMaps },
+  allFlatEntityMapsToMutate: {
+    flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
+  },
 }: {
   allFlatEntityMapsToMutate: Partial<AllFlatEntityMaps>;
 }): void => {
-  if (!isDefined(flatFieldMetadataMaps) || !isDefined(flatFieldMetadataOptionMaps)) {
+  if (
+    !isDefined(flatFieldMetadataMaps) ||
+    !isDefined(flatFieldMetadataOptionMaps)
+  ) {
     return;
   }
 

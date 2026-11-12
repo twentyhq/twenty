@@ -77,7 +77,9 @@ export const buildFieldMetadataOptionEnumChangeTracker = ({
 
   for (const action of actions) {
     if (action.metadataName === 'objectMetadata' && action.type === 'create') {
-      for (const { universalIdentifier } of action.universalFlatFieldMetadatas) {
+      for (const {
+        universalIdentifier,
+      } of action.universalFlatFieldMetadatas) {
         fieldMetadataUniversalIdentifiersWithFieldAction.add(
           universalIdentifier,
         );

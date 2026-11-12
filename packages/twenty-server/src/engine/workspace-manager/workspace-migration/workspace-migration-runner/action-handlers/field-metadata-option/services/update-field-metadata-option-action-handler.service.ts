@@ -73,8 +73,7 @@ export class UpdateFieldMetadataOptionActionHandlerService extends WorkspaceMigr
   ): Promise<void> {
     await this.fieldMetadataOptionEnumSchemaService.applyEnumChangeOfOptionAction(
       {
-        fieldMetadataUniversalIdentifier:
-          findFlatEntityByUniversalIdentifier({
+        fieldMetadataUniversalIdentifier: findFlatEntityByUniversalIdentifier({
           universalIdentifier: context.action.universalIdentifier,
           flatEntityMaps: context.allFlatEntityMaps.flatFieldMetadataOptionMaps,
         })?.fieldMetadataUniversalIdentifier,

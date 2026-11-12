@@ -14,7 +14,11 @@ export class DerivedFieldMetadataIdsService {
   ) {}
 
   async getForWorkspace(workspaceId: string): Promise<DerivedFieldMetadataIds> {
-    const { flatIndexMaps, flatSearchFieldMetadataMaps, flatFieldMetadataMaps } =
+    const {
+      flatIndexMaps,
+      flatSearchFieldMetadataMaps,
+      flatFieldMetadataMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,

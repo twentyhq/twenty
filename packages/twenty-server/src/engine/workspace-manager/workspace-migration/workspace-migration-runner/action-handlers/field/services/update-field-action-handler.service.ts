@@ -202,7 +202,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       objectMetadata: flatObjectMetadata,
     });
 
-    const optimisticFlatFieldMetadata = structuredClone(currentFlatFieldMetadata);
+    const optimisticFlatFieldMetadata = structuredClone(
+      currentFlatFieldMetadata,
+    );
 
     let wasDefaultValueHandledByEnumUpdate = false;
 
