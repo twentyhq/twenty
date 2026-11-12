@@ -1,5 +1,4 @@
 import { getObjectPermissionUniversalIdentifier } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
 import { buildRowLevelPermissionRules } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/build-row-level-permission-rules.util';
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
