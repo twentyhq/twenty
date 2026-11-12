@@ -227,12 +227,16 @@ export class AdminPanelQueueService {
           continue;
         }
 
+        let isDeleted = false;
+
         try {
           const { memoryGroupKeys } = job.opts as typeof job.opts & {
             memoryGroupKeys?: string[];
           };
 
           await job.remove();
+          isDeleted = true;
+          deletedCount++;
 
           const chargedGroupKeys = getChargedGroupKeys(memoryGroupKeys ?? []);
 
@@ -251,7 +255,6 @@ export class AdminPanelQueueService {
             );
           }
 
-          deletedCount++;
           results.push({
             jobId,
             success: true,
@@ -259,8 +262,12 @@ export class AdminPanelQueueService {
         } catch (error) {
           results.push({
             jobId,
-            success: false,
-            error: error instanceof Error ? error.message : String(error),
+            success: isDeleted,
+            error: isDeleted
+              ? `Job deleted, but its memory reservation could not be released: ${error instanceof Error ? error.message : String(error)}`
+              : error instanceof Error
+                ? error.message
+                : String(error),
           });
         }
       }
