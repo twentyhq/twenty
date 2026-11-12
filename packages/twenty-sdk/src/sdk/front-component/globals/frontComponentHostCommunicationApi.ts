@@ -121,7 +121,6 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
-// Replaces the arguments the approval card submits when the user approves the proposed call.
 export type SetToolCallArgumentsFunction = (
   toolArguments: Record<string, unknown>,
 ) => Promise<void>;

@@ -211,7 +211,7 @@ export const FrontComponentRenderer = ({
 
         {!isDefined(error) && !isReady && loadingFallback}
 
-        {isReady && (
+        {isReady && !(isDefined(error) && isDefined(errorFallback)) && (
           <ThemeProvider colorScheme={colorScheme}>
             <ErrorBoundary
               onError={setError}

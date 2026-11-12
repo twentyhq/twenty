@@ -139,6 +139,9 @@ const FrontComponentRendererContent = ({
     frontComponentSharedDependenciesChecksum,
   } = frontComponent;
 
+  // A crashed component may keep running in its worker, so it must stop editing what Approve submits.
+  const [hasRuntimeError, setHasRuntimeError] = useState(false);
+
   const {
     executionContext,
     frontComponentHostCommunicationApi,
@@ -152,7 +155,9 @@ const FrontComponentRendererContent = ({
     objectNameSingular,
     timelineActivityId,
     toolCall,
-    onToolCallArgumentsChange,
+    onToolCallArgumentsChange: hasRuntimeError
+      ? undefined
+      : onToolCallArgumentsChange,
     colorScheme,
   });
 
@@ -174,6 +179,7 @@ const FrontComponentRendererContent = ({
         return;
       }
 
+      setHasRuntimeError(true);
       enqueueToast({
         status: 'error',
         children: t`Failed to load front component: ${error.message}`,
