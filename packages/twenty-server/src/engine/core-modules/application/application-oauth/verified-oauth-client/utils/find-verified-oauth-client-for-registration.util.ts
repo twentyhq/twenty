@@ -3,22 +3,39 @@ import { type VerifiedOAuthClient } from 'src/engine/core-modules/application/ap
 import { isVerifiedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-registration.util';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 
+type VerifiableRegistration = Pick<
+  ApplicationRegistrationEntity,
+  | 'universalIdentifier'
+  | 'sourceType'
+  | 'ownerWorkspaceId'
+  | 'createdByUserId'
+  | 'oAuthClientSecretHash'
+  | 'oAuthClientId'
+>;
+
+const isRegistrationOfVerifiedClient = ({
+  verifiedClient,
+  registration,
+}: {
+  verifiedClient: VerifiedOAuthClient;
+  registration: VerifiableRegistration;
+}): boolean => {
+  if ('clientIdMetadataDocumentUrl' in verifiedClient) {
+    return (
+      verifiedClient.clientIdMetadataDocumentUrl === registration.oAuthClientId
+    );
+  }
+
+  return (
+    isVerifiedOAuthClientRegistration(registration) &&
+    verifiedClient.registrationUniversalIdentifier ===
+      registration.universalIdentifier.toLowerCase()
+  );
+};
+
 export const findVerifiedOAuthClientForRegistration = (
-  registration: Pick<
-    ApplicationRegistrationEntity,
-    | 'universalIdentifier'
-    | 'sourceType'
-    | 'ownerWorkspaceId'
-    | 'createdByUserId'
-    | 'oAuthClientSecretHash'
-    | 'oAuthClientId'
-  >,
+  registration: VerifiableRegistration,
 ): VerifiedOAuthClient | undefined =>
   VERIFIED_OAUTH_CLIENTS.find((verifiedClient) =>
-    'registrationUniversalIdentifier' in verifiedClient
-      ? isVerifiedOAuthClientRegistration(registration) &&
-        verifiedClient.registrationUniversalIdentifier ===
-          registration.universalIdentifier.toLowerCase()
-      : verifiedClient.clientIdMetadataDocumentUrl ===
-        registration.oAuthClientId,
+    isRegistrationOfVerifiedClient({ verifiedClient, registration }),
   );
