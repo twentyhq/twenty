@@ -11121,6 +11121,12 @@ export default {
             "id": [
                 557
             ],
+            "isClaimingVerifiedClientName": [
+                1
+            ],
+            "isVerified": [
+                1
+            ],
             "logoUrl": [
                 4
             ],

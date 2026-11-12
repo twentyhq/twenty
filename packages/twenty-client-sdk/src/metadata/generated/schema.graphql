@@ -4250,6 +4250,8 @@ type PreviewMessageCampaignSendOutputDTO {
 
 type PublicApplicationRegistration {
   id: UUID!
+  isClaimingVerifiedClientName: Boolean!
+  isVerified: Boolean!
   logoUrl: String
   name: String!
   oAuthScopes: [String!]!
