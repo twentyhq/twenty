@@ -14,6 +14,9 @@ import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
+import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-release-script.constant';
+import { getChargedGroupKeys } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
+
 type JobOperationResult = {
   jobId: string;
   success: boolean;
@@ -225,7 +228,29 @@ export class AdminPanelQueueService {
         }
 
         try {
+          const { memoryGroupKeys } = job.opts as typeof job.opts & {
+            memoryGroupKeys?: string[];
+          };
+
           await job.remove();
+
+          const chargedGroupKeys = getChargedGroupKeys(memoryGroupKeys ?? []);
+
+          if (chargedGroupKeys.length > 0) {
+            const prefix = this.redisClient.getQueuePrefix();
+            const keys = chargedGroupKeys.flatMap((groupKey) => [
+              `${prefix}:jobmem:used:${groupKey}`,
+              `${prefix}:jobmem:jobs:${groupKey}`,
+            ]);
+
+            await redis.eval(
+              JOB_MEMORY_RELEASE_SCRIPT,
+              keys.length,
+              ...keys,
+              `${queueName}:${jobId}`,
+            );
+          }
+
           deletedCount++;
           results.push({
             jobId,
