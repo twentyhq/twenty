@@ -28,6 +28,7 @@ export const useCustomResolver = <
   objectName,
   activityTargetableObject,
   pageSize,
+  variables,
 }: {
   query:
     | DocumentNode
@@ -36,6 +37,7 @@ export const useCustomResolver = <
   objectName: string;
   activityTargetableObject: ActivityTargetableObject;
   pageSize: number;
+  variables?: OperationVariables;
 }): {
   error: ErrorLike | undefined;
   data: CustomResolverQueryResult<T> | undefined;
@@ -58,6 +60,7 @@ export const useCustomResolver = <
     recordId: activityTargetableObject.id,
     page: 1,
     pageSize,
+    ...variables,
   };
 
   const { data, loading, fetchMore, refetch, error } = useQuery<
