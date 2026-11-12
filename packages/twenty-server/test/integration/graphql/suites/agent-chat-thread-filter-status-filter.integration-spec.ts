@@ -5,6 +5,7 @@ import {
   type AgentChatThreadFilterStatus,
   computeAgentChatThreadFilterStatusGqlFilter,
 } from 'twenty-shared/ai';
+import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
 
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -185,7 +186,7 @@ const createThreadInState = async ({
     ],
   );
 
-  if (otherMemberParticipant !== undefined) {
+  if (isDefined(otherMemberParticipant)) {
     await global.testDataSource.query(
       `INSERT INTO ${SCHEMA}."agentChatThreadParticipant"
          ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt")
@@ -204,17 +205,16 @@ const createThreadInState = async ({
 };
 
 describe('Agent chat thread filter status filter', () => {
-  const threadIdByState = {} as Record<ThreadStateName, string>;
+  const threadIdByState = new Map<ThreadStateName, string>();
 
   beforeAll(async () => {
-    for (const [stateName, state] of Object.entries(THREAD_STATES)) {
-      threadIdByState[stateName as ThreadStateName] =
-        await createThreadInState(state);
+    for (const [stateName, state] of typedObjectEntries(THREAD_STATES)) {
+      threadIdByState.set(stateName, await createThreadInState(state));
     }
   });
 
   afterAll(async () => {
-    for (const threadId of Object.values(threadIdByState)) {
+    for (const threadId of threadIdByState.values()) {
       await destroyAgentChatThread({ threadId });
     }
   });
@@ -229,7 +229,7 @@ describe('Agent chat thread filter status filter', () => {
           gqlFields: 'id',
           filter: {
             and: [
-              { id: { in: Object.values(threadIdByState) } },
+              { id: { in: [...threadIdByState.values()] } },
               computeAgentChatThreadFilterStatusGqlFilter({
                 filterStatus,
                 workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -248,7 +248,7 @@ describe('Agent chat thread filter status filter', () => {
 
       expect(listedThreadIds).toEqual(
         EXPECTED_THREAD_STATES_BY_FILTER_STATUS[filterStatus]
-          .map((stateName) => threadIdByState[stateName])
+          .map((stateName) => threadIdByState.get(stateName))
           .sort(),
       );
     },
