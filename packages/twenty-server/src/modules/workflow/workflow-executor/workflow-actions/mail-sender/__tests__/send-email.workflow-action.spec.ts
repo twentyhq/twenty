@@ -73,14 +73,12 @@ describe('SendEmailWorkflowAction', () => {
         {
           provide: WorkflowExecutionContextService,
           useValue: {
-            getExecutionContext: jest
-              .fn()
-              .mockResolvedValue({
-                authContext: { type: 'application' },
-                isActingOnBehalfOfUser: false,
-                workflowId: 'workflow-id',
-                workflowName: 'Churn win-back',
-              }),
+            getExecutionContext: jest.fn().mockResolvedValue({
+              authContext: { type: 'application' },
+              isActingOnBehalfOfUser: false,
+              workflowId: 'workflow-id',
+              workflowName: 'Churn win-back',
+            }),
           },
         },
         {
