@@ -6,10 +6,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import {
-  MessageQueueException,
-  MessageQueueExceptionCode,
-} from 'src/engine/core-modules/message-queue/message-queue.exception';
+import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -18,6 +15,7 @@ import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { buildRefusedTriggerPayload } from 'src/modules/workflow/workflow-trigger/utils/build-refused-trigger-payload.util';
 import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
 import { buildWorkflowTriggerRefusalError } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-trigger-refusal-error.util';
 
@@ -88,10 +86,10 @@ export class WorkflowTriggerDispatchWorkspaceService {
       await this.coreWorkflowRunnerService.createFailedRun({
         workspaceId,
         coreWorkflowVersionId,
-        payload:
-          exception.code === MessageQueueExceptionCode.JOB_TOO_LARGE
-            ? {}
-            : jobData.payload,
+        payload: buildRefusedTriggerPayload({
+          exception,
+          payload: jobData.payload,
+        }),
         source: buildWorkflowRunSource(coreWorkflow.name),
         error: buildWorkflowTriggerRefusalError(exception),
       });
