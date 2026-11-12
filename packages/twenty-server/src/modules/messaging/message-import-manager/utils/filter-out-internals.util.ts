@@ -6,12 +6,15 @@ type ItemWithParticipants = {
   participants?: { handle?: string | null }[] | null;
 };
 
-export const filterOutInternals = <TItem extends ItemWithParticipants>(
-  primaryHandle: string,
-  items: TItem[],
-): TItem[] => {
+export const filterOutInternals = <TItem extends ItemWithParticipants>({
+  primaryHandle,
+  items,
+}: {
+  primaryHandle: string;
+  items: TItem[];
+}): TItem[] => {
   return items.filter((item) => {
-    if (!item.participants) {
+    if (!isDefined(item.participants)) {
       return true;
     }
 

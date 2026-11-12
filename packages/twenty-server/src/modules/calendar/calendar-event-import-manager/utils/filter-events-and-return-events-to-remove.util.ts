@@ -3,24 +3,43 @@ import { filterOutInternalEvents } from 'src/modules/calendar/calendar-event-imp
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
-export const filterEventsAndReturnEventsToRemove = (
-  primaryHandle: string,
-  handleAliases: string[],
-  events: FetchedCalendarEvent[],
-  blocklist: string[],
-  excludePrivateEvents: boolean,
-  isInternalImportEnabled: boolean,
-): {
+export const filterEventsAndReturnEventsToRemove = ({
+  primaryHandle,
+  handleAliases,
+  events,
+  blocklist,
+  excludePrivateEvents,
+  isInternalImportEnabled,
+}: {
+  primaryHandle: string;
+  handleAliases: string[];
+  events: FetchedCalendarEvent[];
+  blocklist: string[];
+  excludePrivateEvents: boolean;
+  isInternalImportEnabled: boolean;
+}): {
   filteredEvents: FetchedCalendarEvent[];
   eventsToRemove: FetchedCalendarEvent[];
 } => {
-  const filteredEvents = filterOutBlocklistedEvents(
+  const eventsWithoutBlocklisted = filterOutBlocklistedEvents(
     [primaryHandle, ...handleAliases],
     events,
     blocklist,
   );
 
-  const { eventsToKeep, eventsToRemove } = filteredEvents.reduce(
+  const shouldFilterOutInternals =
+    isWorkEmail(primaryHandle) && !isInternalImportEnabled;
+
+  const eventsWithExternalParticipants = new Set(
+    shouldFilterOutInternals
+      ? filterOutInternalEvents({
+          primaryHandle,
+          events: eventsWithoutBlocklisted,
+        })
+      : eventsWithoutBlocklisted,
+  );
+
+  const { eventsToKeep, eventsToRemove } = eventsWithoutBlocklisted.reduce(
     (
       acc: {
         eventsToKeep: FetchedCalendarEvent[];
@@ -28,7 +47,11 @@ export const filterEventsAndReturnEventsToRemove = (
       },
       event,
     ) => {
-      if (event.isCanceled || (excludePrivateEvents && event.isPrivate)) {
+      if (
+        event.isCanceled ||
+        (excludePrivateEvents && event.isPrivate) ||
+        !eventsWithExternalParticipants.has(event)
+      ) {
         acc.eventsToRemove.push(event);
       } else {
         acc.eventsToKeep.push(event);
@@ -42,13 +65,8 @@ export const filterEventsAndReturnEventsToRemove = (
     },
   );
 
-  const shouldFilterOutInternals =
-    isWorkEmail(primaryHandle) && !isInternalImportEnabled;
-
   return {
-    filteredEvents: shouldFilterOutInternals
-      ? filterOutInternalEvents(primaryHandle, eventsToKeep)
-      : eventsToKeep,
+    filteredEvents: eventsToKeep,
     eventsToRemove,
   };
 };

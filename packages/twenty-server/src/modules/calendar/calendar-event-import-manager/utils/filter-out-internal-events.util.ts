@@ -3,13 +3,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 import { filterOutInternals } from 'src/modules/messaging/message-import-manager/utils/filter-out-internals.util';
 
-export const filterOutInternalEvents = (
-  primaryHandle: string,
-  events: FetchedCalendarEvent[],
-): FetchedCalendarEvent[] =>
-  filterOutInternals(
+export const filterOutInternalEvents = ({
+  primaryHandle,
+  events,
+}: {
+  primaryHandle: string;
+  events: FetchedCalendarEvent[];
+}): FetchedCalendarEvent[] =>
+  filterOutInternals({
     primaryHandle,
-    events.map((event) => ({
+    items: events.map((event) => ({
       event,
       participants: [
         ...event.participants,
@@ -20,4 +23,4 @@ export const filterOutInternalEvents = (
         },
       ],
     })),
-  ).map(({ event }) => event);
+  }).map(({ event }) => event);

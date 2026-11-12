@@ -136,16 +136,17 @@ export class CalendarEventsImportService {
           });
 
           const { filteredEvents, eventsToRemove } =
-            filterEventsAndReturnEventsToRemove(
-              calendarChannel.handle,
-              connectedAccount.handleAliases,
-              calendarEvents,
-              blocklist
+            filterEventsAndReturnEventsToRemove({
+              primaryHandle: calendarChannel.handle,
+              handleAliases: connectedAccount.handleAliases,
+              events: calendarEvents,
+              blocklist: blocklist
                 .map((blocklistItem) => blocklistItem.handle)
                 .filter(isDefined),
-              calendarChannel.excludePrivateEvents,
-              workspace?.isInternalImportEnabled ?? false,
-            );
+              excludePrivateEvents: calendarChannel.excludePrivateEvents,
+              isInternalImportEnabled:
+                workspace?.isInternalImportEnabled ?? false,
+            });
 
           const eventExternalIdsToRemove = eventsToRemove.map(
             (event) => event.id,
