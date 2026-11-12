@@ -24,7 +24,6 @@ const deletion = ({
   }),
 });
 
-// As the server annotates a real plan: an app object with its attachments, and a field of a kept object.
 const ACTIONS: AppPlanAction[] = [
   deletion({
     metadataName: 'objectMetadata',

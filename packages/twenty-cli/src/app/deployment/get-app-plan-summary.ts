@@ -5,7 +5,6 @@ import {
   type AppPlanSummary,
 } from '@/app/deployment/types/app-plan.type';
 
-// destructive skips cascaded deletions, such as the columns of a dropped table.
 export const getAppPlanSummary = (actions: AppPlanAction[]): AppPlanSummary => {
   const { primaryActions } = groupAppPlanCascades(actions);
   const summary = {

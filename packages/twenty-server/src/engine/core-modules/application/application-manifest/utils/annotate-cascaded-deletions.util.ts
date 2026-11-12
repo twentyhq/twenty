@@ -20,12 +20,11 @@ type ManyToOneRelation = {
 export type CascadeAnnotatedAction<TAction extends AnnotatableAction> =
   TAction & { cascadedFromUniversalIdentifier?: string };
 
-const getManyToOneRelations = (metadataName: AllMetadataName) =>
-  Object.values(
-    (ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName] ?? {}) as Record<
-      string,
-      ManyToOneRelation | null
-    >,
+const getManyToOneRelations = (
+  metadataName: AllMetadataName,
+): ManyToOneRelation[] =>
+  Object.values<ManyToOneRelation | null>(
+    ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName],
   ).filter(isDefined);
 
 const collectNestedStrings = (value: unknown): string[] => {
@@ -59,10 +58,10 @@ const getSerializedRelationReferences = ({
   metadataName: AllMetadataName;
   flatEntity: Record<string, unknown>;
 }) =>
-  Object.values(
-    (ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME[
+  Object.values<string>(
+    ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME[
       metadataName
-    ] ?? {}) as Record<string, string>,
+    ],
   ).flatMap((property) =>
     collectNestedStrings(flatEntity[`universal${capitalize(property)}`]),
   );
@@ -94,7 +93,6 @@ const getParentReferences = (action: AnnotatableAction) => {
   ].filter(isNonEmptyString);
 };
 
-// Tags each deletion caused by another deletion in the migration with its root deletion.
 export const annotateCascadedDeletions = <TAction extends AnnotatableAction>(
   actions: TAction[],
 ): CascadeAnnotatedAction<TAction>[] => {
