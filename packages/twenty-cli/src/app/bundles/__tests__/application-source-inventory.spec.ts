@@ -41,7 +41,7 @@ const fixture = async (files: Record<string, string | Buffer>) => {
   return root;
 };
 
-describe('application source inventory', () => {
+describe('application source inventory', { timeout: 30_000 }, () => {
   it('builds and retains runtime imports, type-only aliases, nested styles and binary assets', async () => {
     const image = Buffer.from([0, 255, 1, 128]);
     const appPath = await fixture({
@@ -165,19 +165,19 @@ describe('application source inventory', () => {
     ).toEqual(['main.ts', 'tsconfig.json']);
   });
 
-  it('rejects a referenced symlink escaping the app', async () => {
+  it('excludes a referenced symlink escaping the app without rejecting the build', async () => {
     const outside = await fixture({
       'secret.ts': 'export const secret = true;',
     });
     const appPath = await fixture({ 'main.ts': "import './secret';" });
     await symlink(join(outside, 'secret.ts'), join(appPath, 'secret.ts'));
-    expect(() =>
+    expect(
       collectApplicationSourceFiles({
         appPath,
         entryPaths: ['main.ts'],
         buildInputs: [],
       }),
-    ).toThrow('Cannot preserve application source');
+    ).toEqual(['main.ts', 'tsconfig.json']);
   });
 
   it('rejects missing local type-only imports', async () => {

@@ -43,6 +43,18 @@ describe('validateFileExtension', () => {
     },
   );
 
+  it.each(['.mjs', '.js', '.json', '.css', '.png', '.woff2'])(
+    'accepts retained source files with %s',
+    (extension) => {
+      expect(
+        validateFileExtension({
+          resourcePath: `src/imported${extension}`,
+          fileFolder: FileFolder.Source,
+        }),
+      ).toEqual({ isValid: true });
+    },
+  );
+
   it.each([
     {
       title: 'BuiltLogicFunction with .js',
@@ -60,8 +72,8 @@ describe('validateFileExtension', () => {
       fileFolder: FileFolder.BuiltLogicFunction,
     },
     {
-      title: 'Source with .mjs',
-      resourcePath: 'src/index.mjs',
+      title: 'Source with .sh',
+      resourcePath: 'src/index.sh',
       fileFolder: FileFolder.Source,
     },
     {

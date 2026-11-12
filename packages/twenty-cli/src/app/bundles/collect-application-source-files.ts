@@ -4,7 +4,6 @@ import ts from 'typescript';
 import { APPLICATION_SOURCE_FILE_EXTENSIONS } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isInstalledApplicationDependency } from '@/app/bundles/is-installed-application-dependency';
 import { isInsideDirectory } from '@/utils/is-inside-directory';
 import { recordWatchFile } from '@/app/dev/collect-watch-inputs';
 
@@ -46,9 +45,7 @@ export const collectApplicationSourceFiles = ({
       ) ||
       !statSync(absolutePath).isFile()
     ) {
-      throw new Error(
-        `Cannot preserve application source outside the supported app files: ${filePath}`,
-      );
+      return;
     }
     if (files.has(absolutePath)) return;
     files.add(absolutePath);
@@ -94,12 +91,8 @@ export const collectApplicationSourceFiles = ({
     const path = pending.pop();
     if (!isDefined(path)) {
       for (const input of remainingBuildInputs.splice(0)) {
-        const isDependency = isInstalledApplicationDependency({
-          appPath: root,
-          filePath: input,
-        });
         // Virtual esbuild modules have no source file to restore.
-        if (!isDependency && existsSync(input)) addFile(input);
+        if (existsSync(input)) addFile(input);
       }
       continue;
     }
