@@ -57,6 +57,7 @@ export class WorkspaceGraphqlSchemaSDLService {
       data: {
         flatObjectMetadataMaps: allFlatObjectMetadataMaps,
         flatFieldMetadataMaps: allFlatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         flatIndexMaps: allFlatIndexMaps,
         flatApplicationMaps,
       },
@@ -102,6 +103,7 @@ export class WorkspaceGraphqlSchemaSDLService {
         twentyStandardApplicationId,
         flatObjectMetadataMaps: allFlatObjectMetadataMaps,
         flatFieldMetadataMaps: allFlatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         flatIndexMaps: allFlatIndexMaps,
       });
 
@@ -156,6 +158,7 @@ export class WorkspaceGraphqlSchemaSDLService {
             schemaGenerationContext: {
               flatObjectMetadataMaps,
               flatFieldMetadataMaps,
+              flatFieldMetadataOptionMaps,
               flatIndexMaps,
             },
           });

@@ -12,7 +12,9 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
   'name',
   'label',
   'defaultValue',
+  // stored copy, only a fallback: readers resolve options from flatFieldMetadataOptionMaps
   'options',
+  'fieldMetadataOptionUniversalIdentifiers',
   'settings',
   'isNullable',
   'isUnique',

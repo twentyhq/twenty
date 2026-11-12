@@ -13,7 +13,10 @@ export type FlatViewUpdateSideEffects = {
 };
 
 type HandleFlatViewUpdateSideEffectArgs = FromTo<FlatView, 'flatView'> &
-  Pick<AllFlatEntityMaps, 'flatViewGroupMaps' | 'flatFieldMetadataMaps'>;
+  Pick<
+    AllFlatEntityMaps,
+    'flatViewGroupMaps' | 'flatFieldMetadataMaps' | 'flatFieldMetadataOptionMaps'
+  >;
 
 export const FLAT_VIEW_UPDATE_EMPTY_SIDE_EFFECTS: FlatViewUpdateSideEffects = {
   flatViewGroupsToDelete: [],
@@ -25,6 +28,7 @@ export const handleFlatViewUpdateSideEffect = ({
   toFlatView,
   flatViewGroupMaps,
   flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
 }: HandleFlatViewUpdateSideEffectArgs): FlatViewUpdateSideEffects => {
   const sideEffectResult = structuredClone(FLAT_VIEW_UPDATE_EMPTY_SIDE_EFFECTS);
 
@@ -53,6 +57,7 @@ export const handleFlatViewUpdateSideEffect = ({
     flatViewToCreateUniversalIdentifier: toFlatView.universalIdentifier,
     mainGroupByFieldMetadataId: newMainGroupByFieldMetadataId,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
   });
 
   return sideEffectResult;
