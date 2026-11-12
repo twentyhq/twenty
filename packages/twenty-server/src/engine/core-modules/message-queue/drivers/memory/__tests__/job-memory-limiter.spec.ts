@@ -578,3 +578,76 @@ describe('JobMemoryLimiter', () => {
     });
   });
 });
+
+describe('global memory budget', () => {
+  const GLOBAL = 'global';
+
+  const admitWorkspaceJob = ({
+    limiter,
+    workspaceId,
+    sizeBytes,
+  }: {
+    limiter: JobMemoryLimiter;
+    workspaceId: string;
+    sizeBytes: number;
+  }) =>
+    limiter.admit({
+      queueName: QUEUE,
+      jobName: 'workspace-job',
+      jobs: [
+        {
+          jobId: `job-${workspaceId}`,
+          sizeBytes,
+          groupKeys: [`workspace:${workspaceId}`],
+        },
+      ],
+    });
+
+  it('refuses workspaces that share one memory snapshot once the free memory is booked', async () => {
+    const { limiter, redis } = await createLimiter({
+      maxMemoryBytes: 90_000,
+      usedMemoryBytes: 20_000,
+      workspaceShare: 0.3,
+    });
+
+    for (const workspaceId of ['A', 'B', 'C']) {
+      await expect(
+        admitWorkspaceJob({ limiter, workspaceId, sizeBytes: 21_000 }),
+      ).resolves.toMatchObject({ isCharged: true });
+    }
+
+    await expect(
+      admitWorkspaceJob({ limiter, workspaceId: 'D', sizeBytes: 21_000 }),
+    ).rejects.toMatchObject({
+      code: MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+    });
+    expect(await readUsedBytes({ redis, groupKey: GLOBAL })).toBe(63_000);
+
+    await limiter.release({
+      queueName: QUEUE,
+      jobId: 'job-A',
+      groupKeys: ['workspace:A'],
+    });
+
+    await expect(
+      admitWorkspaceJob({ limiter, workspaceId: 'D', sizeBytes: 21_000 }),
+    ).resolves.toMatchObject({ isCharged: true });
+    expect(await readUsedBytes({ redis, groupKey: GLOBAL })).toBe(63_000);
+  });
+
+  it('does not count jobs already in the used memory twice', async () => {
+    const { limiter, redis } = await createLimiter({
+      maxMemoryBytes: 90_000,
+      usedMemoryBytes: 20_000,
+      workspaceShare: 1,
+    });
+
+    await redis.set(usedKeyOf(GLOBAL), 20_000);
+    await redis.hset(jobsKeyOf(GLOBAL), `${QUEUE}:resident-job`, 20_000);
+
+    await expect(
+      admitWorkspaceJob({ limiter, workspaceId: 'A', sizeBytes: 60_000 }),
+    ).resolves.toMatchObject({ isCharged: true });
+    expect(await readUsedBytes({ redis, groupKey: GLOBAL })).toBe(80_000);
+  });
+});

@@ -11,7 +11,8 @@ export const JOB_MEMORY_ADMIT_SCRIPT = `
 --   2: used memory, bytes Redis reports as used right now
 --   3: key count K
 --   4 .. 3 + K: share of the free memory each key may use (0.1 = 10%)
---   4 + K: job count, then for each job: member, size, number of keys, key indexes
+--   4 + K: bytes charged to the global key when used memory was read
+--   5 + K: job count, then for each job: member, size, number of keys, key indexes
 --
 -- Charges never expire: they last until the job is released or job-memory:reconcile
 -- finds its BullMQ job gone or finished.
@@ -31,9 +32,10 @@ for keyIndex = 1, keyCount do
   requested[keyIndex] = 0
 end
 
-local jobCount = tonumber(ARGV[4 + keyCount])
+local snapshotGlobalUsed = tonumber(ARGV[4 + keyCount])
+local jobCount = tonumber(ARGV[5 + keyCount])
 local jobs = {}
-local cursor = 5 + keyCount
+local cursor = 6 + keyCount
 
 -- Sum, per key, the bytes the batch would add. A job already charged to a key,
 -- or listed earlier in this batch (same id enqueued twice), is not counted again.
@@ -71,10 +73,10 @@ local limits = {}
 for keyIndex = 1, keyCount do
   local limit = math.max(0, math.floor(shares[keyIndex] * (capacity - (usedMemory - used[keyIndex]))))
 
-  -- Reserve a shared budget even while other producers use the same INFO snapshot.
-  -- Already resident jobs are counted conservatively until their charges are released.
+  -- The global key only adds back the charges already in the used memory snapshot, so
+  -- admissions made since that snapshot still count against the free memory
   if string.sub(KEYS[2 * keyIndex - 1], -7) == ':global' then
-    limit = math.max(0, capacity - usedMemory)
+    limit = math.max(0, capacity - (usedMemory - math.min(used[keyIndex], snapshotGlobalUsed)))
   end
 
   limits[keyIndex] = limit

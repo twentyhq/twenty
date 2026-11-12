@@ -73,6 +73,7 @@ type JobMemoryLimiterOptions = {
 
 type MemorySnapshot = {
   info: RedisMemoryInfo | undefined;
+  globalUsedBytes: number;
   fetchedAt: number;
 };
 
@@ -131,7 +132,8 @@ export class JobMemoryLimiter {
       return NOT_CHARGED;
     }
 
-    const memoryInfo = await this.getMemoryInfo(queueName);
+    const { info: memoryInfo, globalUsedBytes } =
+      await this.getMemorySnapshot(queueName);
 
     if (!isDefined(memoryInfo) || memoryInfo.maxMemoryBytes <= 0) {
       return NOT_CHARGED;
@@ -157,6 +159,7 @@ export class JobMemoryLimiter {
         memoryInfo.usedMemoryBytes,
         groupKeys.length,
         ...groupKeys.map((groupKey) => this.getShare(groupKey)),
+        globalUsedBytes,
         chargedJobs.length,
         ...chargedJobs.flatMap(({ jobId, sizeBytes, groupKeys }) => [
           this.buildMember({ queueName, jobId }),
@@ -393,7 +396,7 @@ export class JobMemoryLimiter {
   }
 
   async getUsedRatio(queueName: MessageQueue): Promise<number | undefined> {
-    const memoryInfo = await this.getMemoryInfo(queueName);
+    const { info: memoryInfo } = await this.getMemorySnapshot(queueName);
 
     if (!isDefined(memoryInfo) || memoryInfo.maxMemoryBytes <= 0) {
       return undefined;
@@ -442,23 +445,28 @@ export class JobMemoryLimiter {
     }
   }
 
-  private async getMemoryInfo(
+  private async getMemorySnapshot(
     queueName: MessageQueue,
-  ): Promise<RedisMemoryInfo | undefined> {
+  ): Promise<MemorySnapshot> {
     const now = Date.now();
 
     if (
       isDefined(this.memorySnapshot) &&
       now - this.memorySnapshot.fetchedAt < JOB_MEMORY_INFO_CACHE_MS
     ) {
-      return this.memorySnapshot.info;
+      return this.memorySnapshot;
     }
 
     let info: RedisMemoryInfo | undefined;
+    let globalUsedBytes = 0;
 
     try {
       const client = await this.options.getClient(queueName);
+      const [globalUsedKey] = this.buildKeys(GLOBAL_MEMORY_GROUP_KEY);
 
+      globalUsedBytes = Number(
+        (await client.runCommand('get', [globalUsedKey])) ?? 0,
+      );
       info = parseRedisMemoryInfo(
         String(await client.runCommand('info', ['memory'])),
       );
@@ -468,9 +476,9 @@ export class JobMemoryLimiter {
       );
     }
 
-    this.memorySnapshot = { info, fetchedAt: now };
+    this.memorySnapshot = { info, globalUsedBytes, fetchedAt: now };
 
-    return info;
+    return this.memorySnapshot;
   }
 
   private parseAdmitResult({
