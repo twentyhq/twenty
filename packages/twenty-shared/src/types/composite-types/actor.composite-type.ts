@@ -66,6 +66,7 @@ export type ActorMetadata = {
     provider?: ConnectedAccountProvider;
     applicationId?: string;
     agentId?: string;
+    // Core workflow id
     workflowId?: string;
   };
 };

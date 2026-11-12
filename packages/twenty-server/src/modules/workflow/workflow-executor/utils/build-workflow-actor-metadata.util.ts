@@ -1,36 +1,20 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
-
-const DEFAULT_WORKFLOW_ACTOR_NAME = 'Workflow';
+import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
 
 export const buildWorkflowActorMetadata = (
   executionContext: Pick<
     WorkflowExecutionContext,
-    'isActingOnBehalfOfUser' | 'initiator' | 'workflowId' | 'workflowName'
+    'isActingOnBehalfOfUser' | 'initiator' | 'coreWorkflowId' | 'workflowName'
   >,
 ): ActorMetadata => {
-  const workflowContext = isDefined(executionContext.workflowId)
-    ? { workflowId: executionContext.workflowId }
-    : {};
-
-  if (executionContext.isActingOnBehalfOfUser) {
-    return {
-      ...executionContext.initiator,
-      context: { ...executionContext.initiator.context, ...workflowContext },
-    };
-  }
-
-  const workflowName = executionContext.workflowName?.trim();
+  const actor = executionContext.isActingOnBehalfOfUser
+    ? executionContext.initiator
+    : buildWorkflowRunSource(executionContext.workflowName);
 
   return {
-    source: FieldActorSource.WORKFLOW,
-    name: isNonEmptyString(workflowName)
-      ? workflowName
-      : DEFAULT_WORKFLOW_ACTOR_NAME,
-    workspaceMemberId: null,
-    context: workflowContext,
+    ...actor,
+    context: { ...actor.context, workflowId: executionContext.coreWorkflowId },
   };
 };

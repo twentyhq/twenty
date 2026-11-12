@@ -16,7 +16,7 @@ const buildExecutionContext = (
 ): WorkflowActorInput => ({
   isActingOnBehalfOfUser: false,
   initiator: MEMBER_INITIATOR,
-  workflowId: 'workflow-id',
+  coreWorkflowId: 'workflow-id',
   workflowName: 'Churn win-back',
   ...overrides,
 });
