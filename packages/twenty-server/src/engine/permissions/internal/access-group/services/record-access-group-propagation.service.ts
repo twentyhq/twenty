@@ -36,7 +36,7 @@ export class RecordAccessGroupPropagationService {
     objectMetadataId,
     propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
-    await this.accessGroupPropagationProgressService.markRecomputePending({
+    await this.accessGroupPropagationProgressService.markComputePending({
       workspaceId,
       objectMetadataId,
       propagatedFromObjectMetadataIds,
@@ -45,8 +45,8 @@ export class RecordAccessGroupPropagationService {
       {
         workspaceId,
         objectMetadataId,
-        onRecordsRecomputed: (recordCount) =>
-          this.accessGroupPropagationProgressService.trackRecomputedRecords({
+        onRecordsComputed: (recordCount) =>
+          this.accessGroupPropagationProgressService.trackComputedRecords({
             workspaceId,
             recordCount,
           }),
@@ -79,7 +79,7 @@ export class RecordAccessGroupPropagationService {
       metadataMaps,
     });
 
-    await this.accessGroupPropagationProgressService.finishRecompute({
+    await this.accessGroupPropagationProgressService.finishCompute({
       workspaceId,
       objectMetadataId,
       propagatedFromObjectMetadataIds,
@@ -102,7 +102,7 @@ export class RecordAccessGroupPropagationService {
       ),
     );
 
-    await this.accessGroupPropagationProgressService.planRecomputes({
+    await this.accessGroupPropagationProgressService.planComputes({
       workspaceId,
       objectMetadataIds: [...objectMetadataIds].filter((objectMetadataId) =>
         isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),

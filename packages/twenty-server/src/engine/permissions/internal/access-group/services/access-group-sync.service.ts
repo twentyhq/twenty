@@ -84,7 +84,7 @@ export class AccessGroupSyncService {
         },
       );
 
-    await this.accessGroupPropagationProgressService.planRecomputes({
+    await this.accessGroupPropagationProgressService.planComputes({
       workspaceId,
       objectMetadataIds: objectMetadataIdsToRecompute,
     });

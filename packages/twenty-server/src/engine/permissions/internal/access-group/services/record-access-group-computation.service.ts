@@ -48,12 +48,12 @@ export class RecordAccessGroupComputationService {
   async recomputeRecordAccessGroupIdsOfAllObjectRecords({
     workspaceId,
     objectMetadataId,
-    onRecordsRecomputed,
+    onRecordsComputed,
   }: Pick<
     RecomputeRecordAccessGroupIdsJobData,
     'workspaceId' | 'objectMetadataId'
   > & {
-    onRecordsRecomputed?: (recordCount: number) => Promise<void>;
+    onRecordsComputed?: (recordCount: number) => Promise<void>;
   }): Promise<void> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
@@ -84,7 +84,7 @@ export class RecordAccessGroupComputationService {
         objectMetadataId,
         recordIds,
       });
-      await onRecordsRecomputed?.(recordIds.length);
+      await onRecordsComputed?.(recordIds.length);
 
       recordIds = await this.recordAccessGroupRepository.findRecordIds({
         workspaceId,

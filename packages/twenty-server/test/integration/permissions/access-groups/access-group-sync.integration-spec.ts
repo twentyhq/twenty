@@ -256,10 +256,10 @@ describe('access group propagation progress (integration)', () => {
       .get<CacheStorageService>(CacheStorageNamespace.EnginePermissions)
       .mdel(
         [
-          'pending-recomputes',
-          'planned-recomputes',
+          'pending-computes',
+          'planned-computes',
           'total-record-count',
-          'recomputed-record-count',
+          'computed-record-count',
         ].map(
           (key) => `access-group-propagation:${SEED_APPLE_WORKSPACE_ID}:${key}`,
         ),
@@ -283,22 +283,22 @@ describe('access group propagation progress (integration)', () => {
     await global.testDataSource.query(`DELETE FROM ${ACCESS_GROUP_TABLE}`);
   });
 
-  it('should plan the records of a rule change and report them until they are recomputed', async () => {
+  it('should plan the records of a rule change and report them until they are computed', async () => {
     const [{ count }] = await global.testDataSource.query(
       `SELECT COUNT(*) AS "count" FROM ${PERSON_TABLE}`,
     );
     const personCount = Number(count);
-    const recomputeRecords =
+    const computeRecords =
       recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecords.bind(
         recordAccessGroupComputationService,
       );
     let signalFirstBatchReached = () => {};
-    let resumeRecompute = () => {};
+    let resumeCompute = () => {};
     const firstBatchReached = new Promise<void>((resolve) => {
       signalFirstBatchReached = resolve;
     });
-    const recomputeResumed = new Promise<void>((resolve) => {
-      resumeRecompute = resolve;
+    const computeResumed = new Promise<void>((resolve) => {
+      resumeCompute = resolve;
     });
 
     jest
@@ -308,9 +308,9 @@ describe('access group propagation progress (integration)', () => {
       )
       .mockImplementation(async (args) => {
         signalFirstBatchReached();
-        await recomputeResumed;
+        await computeResumed;
 
-        return recomputeRecords(args);
+        return computeRecords(args);
       });
 
     const predicateGroupId = v4();
@@ -350,7 +350,7 @@ describe('access group propagation progress (integration)', () => {
       expect(progress?.remainingRecordCount).toBe(progress?.totalRecordCount);
       expect(progress?.isInProgress).toBe(true);
     } finally {
-      resumeRecompute();
+      resumeCompute();
     }
 
     await waitForAllJobsToFinish();

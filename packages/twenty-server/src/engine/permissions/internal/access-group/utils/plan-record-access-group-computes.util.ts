@@ -1,18 +1,18 @@
 /* @license Enterprise */
 
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
-import { buildRecordAccessGroupRecomputeKey } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-recompute-key.util';
+import { buildRecordAccessGroupComputeKey } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-compute-key.util';
 import { isRelatedRecordPathFollowed } from 'src/engine/permissions/internal/access-group/utils/is-related-record-path-followed.util';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 
-type PlannedRecordAccessGroupRecompute = Required<
+type PlannedRecordAccessGroupCompute = Required<
   Pick<
     RecomputeRecordAccessGroupIdsJobData,
     'objectMetadataId' | 'propagatedFromObjectMetadataIds'
   >
 >;
 
-export const planRecordAccessGroupRecomputes = ({
+export const planRecordAccessGroupComputes = ({
   objectMetadataIds,
   resolvedRelatedRecordPaths,
   isObjectUsingRecordAccessGroups,
@@ -23,27 +23,27 @@ export const planRecordAccessGroupRecomputes = ({
     'isInherent' | 'sourceFlatObjectMetadata' | 'targetObjectMetadataId'
   >[];
   isObjectUsingRecordAccessGroups: (objectMetadataId: string) => boolean;
-}): PlannedRecordAccessGroupRecompute[] => {
-  const plannedRecomputeByKey = new Map<
+}): PlannedRecordAccessGroupCompute[] => {
+  const plannedComputeByKey = new Map<
     string,
-    PlannedRecordAccessGroupRecompute
+    PlannedRecordAccessGroupCompute
   >();
-  const recomputesToVisit: PlannedRecordAccessGroupRecompute[] =
+  const computesToVisit: PlannedRecordAccessGroupCompute[] =
     objectMetadataIds.map((objectMetadataId) => ({
       objectMetadataId,
       propagatedFromObjectMetadataIds: [],
     }));
 
-  for (const recompute of recomputesToVisit) {
-    const recomputeKey = buildRecordAccessGroupRecomputeKey(recompute);
+  for (const compute of computesToVisit) {
+    const computeKey = buildRecordAccessGroupComputeKey(compute);
 
-    if (plannedRecomputeByKey.has(recomputeKey)) {
+    if (plannedComputeByKey.has(computeKey)) {
       continue;
     }
 
-    plannedRecomputeByKey.set(recomputeKey, recompute);
+    plannedComputeByKey.set(computeKey, compute);
 
-    const { objectMetadataId, propagatedFromObjectMetadataIds } = recompute;
+    const { objectMetadataId, propagatedFromObjectMetadataIds } = compute;
     const followingObjectMetadataIds = new Set(
       resolvedRelatedRecordPaths
         .filter(
@@ -62,7 +62,7 @@ export const planRecordAccessGroupRecomputes = ({
     );
 
     for (const followingObjectMetadataId of followingObjectMetadataIds) {
-      recomputesToVisit.push({
+      computesToVisit.push({
         objectMetadataId: followingObjectMetadataId,
         propagatedFromObjectMetadataIds: [
           ...propagatedFromObjectMetadataIds,
@@ -72,5 +72,5 @@ export const planRecordAccessGroupRecomputes = ({
     }
   }
 
-  return [...plannedRecomputeByKey.values()];
+  return [...plannedComputeByKey.values()];
 };

@@ -1,5 +1,5 @@
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { planRecordAccessGroupRecomputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-recomputes.util';
+import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
 
 const buildPath = ({
   source,
@@ -27,14 +27,14 @@ const plan = ({
   paths: ReturnType<typeof buildPath>[];
   objectsWithoutAccessGroups?: string[];
 }) =>
-  planRecordAccessGroupRecomputes({
+  planRecordAccessGroupComputes({
     objectMetadataIds,
     resolvedRelatedRecordPaths: paths,
     isObjectUsingRecordAccessGroups: (objectMetadataId) =>
       !objectsWithoutAccessGroups.includes(objectMetadataId),
   });
 
-describe('planRecordAccessGroupRecomputes', () => {
+describe('planRecordAccessGroupComputes', () => {
   it('should plan only the changed objects when no path leads from them', () => {
     expect(plan({ objectMetadataIds: ['company'], paths: [] })).toEqual([
       { objectMetadataId: 'company', propagatedFromObjectMetadataIds: [] },
@@ -79,7 +79,7 @@ describe('planRecordAccessGroupRecomputes', () => {
     ).toEqual(['company']);
   });
 
-  it('should plan an object once per kind of recompute and stop on cycles', () => {
+  it('should plan an object once per kind of compute and stop on cycles', () => {
     expect(
       plan({
         objectMetadataIds: ['company', 'person'],
