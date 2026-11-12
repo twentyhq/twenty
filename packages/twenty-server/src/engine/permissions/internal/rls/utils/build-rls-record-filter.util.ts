@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -15,7 +15,11 @@ import {
   convertViewFilterValueToString,
   getFilterOperandsForFilterableFieldType,
   getFilterTypeFromFieldType,
+  getFilterValueValidationIssue,
   isDefined,
+  isFilterValueExpectedAsArray,
+  isRecordFilterOperandExpectingValue,
+  isRecordFilterValueValid,
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
 
@@ -125,8 +129,9 @@ const buildPredicateRecordFilter = ({
     | CompositeFieldSubFieldName
     | undefined;
   const operand = mapRLSOperandToRecordFilterOperand(predicate.operand);
+  const filterType = getFilterTypeFromFieldType(fieldMetadata.type);
   const allowedOperands = getFilterOperandsForFilterableFieldType({
-    filterType: getFilterTypeFromFieldType(fieldMetadata.type),
+    filterType,
     subFieldName,
   });
 
@@ -167,28 +172,74 @@ const buildPredicateRecordFilter = ({
     }
   }
 
-  const recordFilter = computeRecordGqlOperationFilterFromFlatMaps({
-    recordFilters: [
-      {
-        fieldMetadataId:
-          predicate.relationFieldMetadataId ?? predicate.fieldMetadataId,
-        relationTargetFieldMetadataId: isDefined(
-          predicate.relationFieldMetadataId,
-        )
-          ? predicate.fieldMetadataId
-          : undefined,
-        value: convertViewFilterValueToString(predicateValue),
+  const buildValueRecordFilter = (
+    value: RowLevelPermissionPredicateValue,
+  ): RecordGqlOperationFilter | undefined => {
+    const recordFilter = computeRecordGqlOperationFilterFromFlatMaps({
+      recordFilters: [
+        {
+          fieldMetadataId:
+            predicate.relationFieldMetadataId ?? predicate.fieldMetadataId,
+          relationTargetFieldMetadataId: isDefined(
+            predicate.relationFieldMetadataId,
+          )
+            ? predicate.fieldMetadataId
+            : undefined,
+          value: convertViewFilterValueToString(value),
+          operand,
+          subFieldName,
+        },
+      ],
+      recordFilterGroups: [],
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      filterValueDependencies: { currentWorkspaceMemberId },
+    });
+
+    return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
+  };
+
+  if (!isDefined(predicate.workspaceMemberFieldMetadataId)) {
+    return buildValueRecordFilter(predicateValue);
+  }
+
+  if (!isRecordFilterOperandExpectingValue(operand)) {
+    return buildValueRecordFilter(predicateValue);
+  }
+
+  if (isFilterValueExpectedAsArray({ filterType, operand, subFieldName })) {
+    return buildValueRecordFilter(
+      isString(predicateValue) ? [predicateValue] : predicateValue,
+    );
+  }
+
+  if (Array.isArray(predicateValue) && predicateValue.length > 1) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
+
+  const singleValue = Array.isArray(predicateValue)
+    ? predicateValue[0]
+    : predicateValue;
+
+  // A member value the filter would drop or misread must not widen the rule
+  if (
+    !isRecordFilterValueValid({
+      operand,
+      value: convertViewFilterValueToString(singleValue),
+    }) ||
+    isDefined(
+      getFilterValueValidationIssue({
+        fieldType: fieldMetadata.type,
         operand,
         subFieldName,
-      },
-    ],
-    recordFilterGroups: [],
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
-    filterValueDependencies: { currentWorkspaceMemberId },
-  });
+        value: singleValue,
+      }),
+    )
+  ) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
 
-  return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
+  return buildValueRecordFilter(singleValue);
 };
 
 const combineRecordFilters = (
