@@ -110,14 +110,22 @@ export class FieldMetadataResolver {
     const derivedFieldMetadataIds =
       await this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId);
 
+    const fieldMetadataDtos =
+      await this.fieldMetadataService.addOptionApplicationIds({
+        fieldMetadataDtos: connection.edges.map((edge) =>
+          fromFieldMetadataEntityToFieldMetadataDto(
+            edge.node,
+            derivedFieldMetadataIds,
+          ),
+        ),
+        workspaceId,
+      });
+
     return {
       ...connection,
-      edges: connection.edges.map((edge) => ({
+      edges: connection.edges.map((edge, edgeIndex) => ({
         ...edge,
-        node: fromFieldMetadataEntityToFieldMetadataDto(
-          edge.node,
-          derivedFieldMetadataIds,
-        ),
+        node: fieldMetadataDtos[edgeIndex],
       })),
     };
   }
@@ -146,10 +154,18 @@ export class FieldMetadataResolver {
     const derivedFieldMetadataIds =
       await this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId);
 
-    return fromFieldMetadataEntityToFieldMetadataDto(
-      fieldMetadata,
-      derivedFieldMetadataIds,
-    );
+    const [fieldMetadataDto] =
+      await this.fieldMetadataService.addOptionApplicationIds({
+        fieldMetadataDtos: [
+          fromFieldMetadataEntityToFieldMetadataDto(
+            fieldMetadata,
+            derivedFieldMetadataIds,
+          ),
+        ],
+        workspaceId,
+      });
+
+    return fieldMetadataDto;
   }
 
   @ResolveField(() => ObjectMetadataDTO, { nullable: true })

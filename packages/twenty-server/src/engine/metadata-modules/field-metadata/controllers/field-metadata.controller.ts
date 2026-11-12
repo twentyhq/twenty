@@ -99,9 +99,15 @@ export class FieldMetadataController {
         },
       );
 
-    return resolvedFields.map((field) =>
-      fromFieldMetadataEntityToFieldMetadataDto(field, derivedFieldMetadataIds),
-    );
+    return this.fieldMetadataService.addOptionApplicationIds({
+      fieldMetadataDtos: resolvedFields.map((field) =>
+        fromFieldMetadataEntityToFieldMetadataDto(
+          field,
+          derivedFieldMetadataIds,
+        ),
+      ),
+      workspaceId,
+    });
   }
 
   @Get()

@@ -543,15 +543,33 @@ export class FieldMetadataService {
     flatFieldMetadata: FlatFieldMetadata;
     workspaceId: string;
   }): Promise<FieldMetadataDTO> {
+    const [fieldMetadataDto] = await this.addOptionApplicationIds({
+      fieldMetadataDtos: [
+        fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata),
+      ],
+      workspaceId,
+    });
+
+    return fieldMetadataDto;
+  }
+
+  async addOptionApplicationIds({
+    fieldMetadataDtos,
+    workspaceId,
+  }: {
+    fieldMetadataDtos: FieldMetadataDTO[];
+    workspaceId: string;
+  }): Promise<FieldMetadataDTO[]> {
     const { flatFieldMetadataOptionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId, flatMapsKeys: ['flatFieldMetadataOptionMaps'] },
       );
 
-    return addOptionApplicationIdsToFieldMetadataDto({
-      fieldMetadataDto:
-        fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata),
-      flatFieldMetadataOptionMaps,
-    });
+    return fieldMetadataDtos.map((fieldMetadataDto) =>
+      addOptionApplicationIdsToFieldMetadataDto({
+        fieldMetadataDto,
+        flatFieldMetadataOptionMaps,
+      }),
+    );
   }
 }
