@@ -165,10 +165,7 @@ export const AiChatMessage = ({
   });
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
   const canReply =
-    isAiChatInboxEnabled &&
-    isUser &&
-    isDefined(sender) &&
-    !isReadOnly;
+    isAiChatInboxEnabled && isUser && isDefined(sender) && !isReadOnly;
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
   const canManageMessage = isUser && isOwnMessage && !isReadOnly;
   const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
