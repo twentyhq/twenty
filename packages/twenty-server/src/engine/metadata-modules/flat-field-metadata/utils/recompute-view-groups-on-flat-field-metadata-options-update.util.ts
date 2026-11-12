@@ -1,12 +1,7 @@
 import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
 import { type EnumFieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -56,7 +51,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
     flatEntityMaps: flatViewGroupMaps,
   });
 
-  if (flatViewGroups.length === 0) {
+  if (flatViewsAffected.length === 0) {
     return {
       flatViewGroupsToCreate: [],
       flatViewGroupsToDelete: [],
@@ -107,8 +102,9 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
       {},
     );
 
-  const viewUniversalIdentifiers = Object.keys(
-    viewGroupsByViewUniversalIdentifier.flatViewGroupRecordByViewUniversalIdentifier,
+  // Taken from the views, not their groups: a view whose options were all inactive has no group left.
+  const viewUniversalIdentifiers = flatViewsAffected.map(
+    (flatView) => flatView.universalIdentifier,
   );
 
   const createdAt = new Date().toISOString();
@@ -119,14 +115,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
           viewGroupsByViewUniversalIdentifier
             .highestViewGroupPositionByViewUniversalIdentifier[
             viewUniversalIdentifier
-          ];
-
-        if (!isDefined(viewGroupHighestPosition)) {
-          throw new FlatEntityMapsException(
-            'View universal identifier highest position not found, should never occur',
-            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-          );
-        }
+          ] ?? -1;
 
         const currentVisibleCount =
           visibleViewGroupCountByViewUniversalIdentifier[

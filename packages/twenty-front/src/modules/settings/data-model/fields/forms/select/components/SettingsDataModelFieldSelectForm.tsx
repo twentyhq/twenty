@@ -338,15 +338,35 @@ export const SettingsDataModelFieldSelectForm = ({
     );
   };
 
-  // Application options stay, deactivated unless a default value still points at them.
+  // The server refuses an inactive default option, so it stays active until the default changes.
+  const keepDefaultSelectOptionsActive = (
+    options: FieldMetadataItemOption[],
+  ): FieldMetadataItemOption[] => {
+    const activeOptions: FieldMetadataItemOption[] = [];
+    const inactiveOptions: FieldMetadataItemOption[] = [];
+
+    for (const option of options) {
+      const { isActive, ...activeOption } = option;
+
+      if (isActive !== false || isOptionDefaultValue(option.value)) {
+        activeOptions.push(activeOption);
+      } else {
+        inactiveOptions.push(option);
+      }
+    }
+
+    return [...activeOptions, ...inactiveOptions].map((option, position) => ({
+      ...option,
+      position,
+    }));
+  };
+
   const removeAllSelectOptions = (options: FieldMetadataItemOption[]) =>
-    options
-      .filter((option) => applicationOptionIds.has(option.id))
-      .map((option, position) => ({
-        ...option,
-        position,
-        ...(isOptionDefaultValue(option.value) ? {} : { isActive: false }),
-      }));
+    keepDefaultSelectOptionsActive(
+      options
+        .filter((option) => applicationOptionIds.has(option.id))
+        .map((option) => ({ ...option, isActive: false })),
+    );
 
   const handleAddOption = () => {
     const newOptions = getOptionsWithNewOption();
@@ -471,10 +491,12 @@ export const SettingsDataModelFieldSelectForm = ({
                         return;
                       }
 
-                      const nextOptions = convertBulkTextToOptions(
-                        nextOptionAsText,
-                        options,
-                        applicationOptionIds,
+                      const nextOptions = keepDefaultSelectOptionsActive(
+                        convertBulkTextToOptions(
+                          nextOptionAsText,
+                          options,
+                          applicationOptionIds,
+                        ),
                       );
 
                       onChange(nextOptions);

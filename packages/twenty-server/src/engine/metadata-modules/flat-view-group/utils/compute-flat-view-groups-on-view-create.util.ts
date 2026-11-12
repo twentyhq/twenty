@@ -36,18 +36,20 @@ export const computeFlatViewGroupsOnViewCreate = ({
 
   const flatViewGroupsFromOptions: UniversalFlatViewGroup[] = (
     mainGroupByFieldMetadata.options ?? []
-  ).map((option, index) => ({
-    viewUniversalIdentifier: flatViewToCreateUniversalIdentifier,
-    createdAt,
-    updatedAt: createdAt,
-    deletedAt: null,
-    universalIdentifier: v4(),
-    isVisible: index < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
-    fieldValue: option.value,
-    position: index,
-    applicationUniversalIdentifier:
-      mainGroupByFieldMetadata.applicationUniversalIdentifier,
-  }));
+  )
+    .filter((option) => option.isActive !== false)
+    .map((option, index) => ({
+      viewUniversalIdentifier: flatViewToCreateUniversalIdentifier,
+      createdAt,
+      updatedAt: createdAt,
+      deletedAt: null,
+      universalIdentifier: v4(),
+      isVisible: index < VIEW_GROUP_VISIBLE_OPTIONS_MAX,
+      fieldValue: option.value,
+      position: index,
+      applicationUniversalIdentifier:
+        mainGroupByFieldMetadata.applicationUniversalIdentifier,
+    }));
 
   const flatViewGroups: UniversalFlatViewGroup[] = [
     ...flatViewGroupsFromOptions,
