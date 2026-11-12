@@ -2,7 +2,7 @@ import { UnipileMessaging } from '@unipile/sdk';
 
 import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 import { requestUnipile } from 'src/unipile/utils/request-unipile.util';
-import { readStreamWithinSizeLimit } from 'src/utils/read-stream-within-size-limit.util';
+import { readStreamWithinSizeLimitOrThrow } from 'src/utils/read-stream-within-size-limit.util';
 
 export const downloadUnipileMessageAttachment = async ({
   accountId,
@@ -41,5 +41,5 @@ export const downloadUnipileMessageAttachment = async ({
     throw new Error('Unipile returned no attachment content');
   }
 
-  return readStreamWithinSizeLimit({ stream: data, maxSizeBytes });
+  return readStreamWithinSizeLimitOrThrow({ stream: data, maxSizeBytes });
 };

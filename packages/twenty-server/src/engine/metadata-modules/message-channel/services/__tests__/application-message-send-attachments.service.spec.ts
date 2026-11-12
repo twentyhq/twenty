@@ -116,14 +116,14 @@ describe('ApplicationMessageSendAttachmentsService', () => {
     });
   });
 
-  describe('copyIntoAttachmentFileField', () => {
+  describe('copyIntoAttachmentFileFieldOrThrow', () => {
     it('should copy each file into the attachment file field', async () => {
       copyFileIntoFilesField
         .mockResolvedValueOnce({ id: 'copy-1' })
         .mockResolvedValueOnce({ id: 'copy-2' });
 
       await expect(
-        service.copyIntoAttachmentFileField({
+        service.copyIntoAttachmentFileFieldOrThrow({
           attachments: ATTACHMENTS,
           workspaceId: 'workspace-1',
         }),
@@ -149,7 +149,7 @@ describe('ApplicationMessageSendAttachmentsService', () => {
       ]);
 
       await expect(
-        service.copyIntoAttachmentFileField({
+        service.copyIntoAttachmentFileFieldOrThrow({
           attachments: ATTACHMENTS,
           workspaceId: 'workspace-1',
         }),

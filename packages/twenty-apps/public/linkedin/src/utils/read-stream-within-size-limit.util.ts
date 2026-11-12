@@ -1,4 +1,4 @@
-export const readStreamWithinSizeLimit = async ({
+export const readStreamWithinSizeLimitOrThrow = async ({
   stream,
   maxSizeBytes,
 }: {

@@ -24,7 +24,7 @@ export const useSendPendingChatMessage = () => {
   const uploadAttachmentsOrThrow = async ({
     id,
     files,
-  }: PendingChatMessage): Promise<EmailAttachment[]> => {
+  }: Pick<PendingChatMessage, 'id' | 'files'>): Promise<EmailAttachment[]> => {
     const previousUploads = uploadsByPendingMessageId[id] ?? [];
 
     const uploads = await Promise.all(

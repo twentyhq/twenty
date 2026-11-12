@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { type SendAppMessageAttachment } from 'src/types/send-app-message-attachment.type';
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
-import { readStreamWithinSizeLimit } from 'src/utils/read-stream-within-size-limit.util';
+import { readStreamWithinSizeLimitOrThrow } from 'src/utils/read-stream-within-size-limit.util';
 
 export const downloadSendMessageAttachmentOrThrow = async ({
   attachment: { filename, contentType, size, downloadUrl },
@@ -29,7 +29,7 @@ export const downloadSendMessageAttachmentOrThrow = async ({
     );
   }
 
-  const content = await readStreamWithinSizeLimit({
+  const content = await readStreamWithinSizeLimitOrThrow({
     stream: response.body,
     maxSizeBytes,
   });

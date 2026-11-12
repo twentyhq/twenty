@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, type KeyboardEvent, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
+import { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from 'twenty-shared/application';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
@@ -11,7 +12,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
-import { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from '@/activities/emails/constants/MaxAppMessageAttachmentsPerMessage';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';

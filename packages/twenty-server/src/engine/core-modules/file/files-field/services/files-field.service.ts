@@ -27,6 +27,23 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
+type FieldMetadataReference =
+  | { fieldMetadataId: string }
+  | { fieldMetadataUniversalIdentifier: string };
+
+const buildFieldMetadataWhere = (
+  fieldMetadataReference: FieldMetadataReference,
+) => {
+  if ('fieldMetadataId' in fieldMetadataReference) {
+    return { id: fieldMetadataReference.fieldMetadataId };
+  }
+
+  return {
+    universalIdentifier:
+      fieldMetadataReference.fieldMetadataUniversalIdentifier,
+  };
+};
+
 @Injectable()
 export class FilesFieldService {
   constructor(
@@ -183,10 +200,7 @@ export class FilesFieldService {
   }: {
     fileId: string;
     workspaceId: string;
-  } & (
-    | { fieldMetadataId: string }
-    | { fieldMetadataUniversalIdentifier: string }
-  )): Promise<FileEntity> {
+  } & FieldMetadataReference): Promise<FileEntity> {
     const sourceFile = await this.fileRepository.findOne(workspaceId, {
       where: { id: fileId },
     });
@@ -213,13 +227,7 @@ export class FilesFieldService {
       workspaceId,
       {
         select: ['applicationId', 'universalIdentifier'],
-        where:
-          'fieldMetadataId' in fieldMetadataReference
-            ? { id: fieldMetadataReference.fieldMetadataId }
-            : {
-                universalIdentifier:
-                  fieldMetadataReference.fieldMetadataUniversalIdentifier,
-              },
+        where: buildFieldMetadataWhere(fieldMetadataReference),
       },
     );
 

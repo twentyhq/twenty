@@ -106,7 +106,7 @@ export class ApplicationMessageSendAttachmentsService {
   }
 
   // copies are temporary until an attachment row claims them, so callers must clean up with deleteUnclaimedCopies
-  async copyIntoAttachmentFileField({
+  async copyIntoAttachmentFileFieldOrThrow({
     attachments,
     workspaceId,
   }: {

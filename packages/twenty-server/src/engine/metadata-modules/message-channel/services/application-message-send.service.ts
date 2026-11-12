@@ -217,7 +217,7 @@ export class ApplicationMessageSendService {
           }));
 
         const copiedAttachments =
-          await this.applicationMessageSendAttachmentsService.copyIntoAttachmentFileField(
+          await this.applicationMessageSendAttachmentsService.copyIntoAttachmentFileFieldOrThrow(
             { attachments, workspaceId },
           );
 

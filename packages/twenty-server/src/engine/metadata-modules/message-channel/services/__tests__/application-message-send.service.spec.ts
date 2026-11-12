@@ -38,7 +38,7 @@ describe('ApplicationMessageSendService', () => {
   const sendOrThrow = jest.fn();
   const ingest = jest.fn();
   const buildAttachmentsToSendOrThrow = jest.fn();
-  const copyIntoAttachmentFileField = jest.fn();
+  const copyIntoAttachmentFileFieldOrThrow = jest.fn();
   const deleteUnclaimedCopies = jest.fn();
   const deleteFiles = jest.fn();
   let cache: Map<string, unknown>;
@@ -72,7 +72,7 @@ describe('ApplicationMessageSendService', () => {
     { ingest } as unknown as ApplicationMessageIngestionService,
     {
       buildAttachmentsToSendOrThrow,
-      copyIntoAttachmentFileField,
+      copyIntoAttachmentFileFieldOrThrow,
       deleteUnclaimedCopies,
     } as unknown as ApplicationMessageSendAttachmentsService,
     { deleteFiles } as unknown as FileEmailAttachmentService,
@@ -108,7 +108,7 @@ describe('ApplicationMessageSendService', () => {
       externalId: 'message-external-1',
       sentAt: '2026-01-01T00:00:00.000Z',
     });
-    copyIntoAttachmentFileField.mockResolvedValue([
+    copyIntoAttachmentFileFieldOrThrow.mockResolvedValue([
       { fileId: 'copy-1', label: 'deck.pdf' },
     ]);
     ingest.mockResolvedValue({
@@ -140,12 +140,12 @@ describe('ApplicationMessageSendService', () => {
 
     expect(sendOrThrow).toHaveBeenCalledTimes(1);
     expect(buildAttachmentsToSendOrThrow).toHaveBeenCalledTimes(1);
-    expect(copyIntoAttachmentFileField).toHaveBeenCalledTimes(1);
+    expect(copyIntoAttachmentFileFieldOrThrow).toHaveBeenCalledTimes(1);
     expect(ingest).toHaveBeenCalledTimes(1);
   });
 
   it('should fail without saving when an attachment copy fails, and copy again on retry without resending', async () => {
-    copyIntoAttachmentFileField.mockRejectedValueOnce(
+    copyIntoAttachmentFileFieldOrThrow.mockRejectedValueOnce(
       new MessageChannelException(
         'Failed to store sent app message attachment(s)',
         MessageChannelExceptionCode.MESSAGE_ATTACHMENT_STORAGE_FAILED,
@@ -165,7 +165,7 @@ describe('ApplicationMessageSendService', () => {
     });
 
     expect(sendOrThrow).toHaveBeenCalledTimes(1);
-    expect(copyIntoAttachmentFileField).toHaveBeenCalledTimes(2);
+    expect(copyIntoAttachmentFileFieldOrThrow).toHaveBeenCalledTimes(2);
     expect(ingest).toHaveBeenCalledWith(
       expect.objectContaining({
         messages: [
