@@ -11,6 +11,7 @@ import { turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGro
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useGetRecordGroupVisibilityFilters } from '@/views/hooks/useGetRecordGroupVisibilityFilters';
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import {
@@ -48,9 +49,13 @@ export const useRecordIndexTabRecordCounts = (
     flattenedFieldMetadataItemsSelector,
   );
 
+  // Hidden groups are left out of the view's total, so the tabs leave them out too
+  const { recordFilters: recordGroupVisibilityFilters, recordGroupGqlFilter } =
+    useGetRecordGroupVisibilityFilters();
+
   const viewFilter = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordFilters: currentRecordFilters,
+    recordFilters: [...currentRecordFilters, ...recordGroupVisibilityFilters],
     recordFilterGroups: currentRecordFilterGroups,
     fieldMetadataItems: flattenedFieldMetadataItems,
   });
@@ -74,7 +79,11 @@ export const useRecordIndexTabRecordCounts = (
 
   const { data } = useQuery(groupByAggregateQuery, {
     variables: {
-      filter: combineFilters([anyFieldFilter, viewFilter]),
+      filter: combineFilters([
+        anyFieldFilter,
+        viewFilter,
+        recordGroupGqlFilter ?? {},
+      ]),
       groupBy: buildGroupByFieldObject({
         field: recordIndexTabFieldMetadataItem,
       }),
