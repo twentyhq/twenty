@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
   markUnipileChatAsRead: vi.fn(),
-  kvStore: new Map<string, unknown>(),
+  kvStore: new Map<string, { areChatsMarkedAsRead: boolean }>(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
