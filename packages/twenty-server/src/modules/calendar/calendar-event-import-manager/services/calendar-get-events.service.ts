@@ -14,6 +14,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 export type GetCalendarEventsResponse = {
   calendarEventIds: string[];
   calendarEventIdsToDelete: string[];
+  recurringEventExternalIdsBeyondHorizon: string[];
   nextSyncCursor: string;
 };
 
@@ -37,12 +38,14 @@ export class CalendarGetCalendarEventsService {
       | 'workspaceId'
     >,
     syncCursor?: string,
+    recurringEventHorizon?: Date,
   ): Promise<GetCalendarEventsResponse> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return this.googleCalendarGetEventsService.getCalendarEvents(
           connectedAccount,
           syncCursor,
+          recurringEventHorizon,
         );
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftCalendarGetEventsService.getCalendarEvents(

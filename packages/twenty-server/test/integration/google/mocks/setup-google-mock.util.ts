@@ -7,6 +7,7 @@ import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { gmailMessageListHandler } from 'test/integration/google/mocks/gmail-message-list-handler.util';
 import { googleCalendarEventsHandlers } from 'test/integration/google/mocks/google-calendar-events-handlers.util';
 import { GOOGLE_CALENDAR_EVENTS_URL } from 'test/integration/google/mocks/google-calendar-events-url.constant';
+import { googleCalendarRecurringEventInstancesHandlers } from 'test/integration/google/mocks/google-calendar-recurring-event-instances-handlers.util';
 import { googleIdentityHandlers } from 'test/integration/google/mocks/google-identity-handlers.util';
 import {
   GOOGLE_TOKEN_URLS,
@@ -35,10 +36,18 @@ export type GoogleMock = {
     events: calendar_v3.Schema$Event[],
     options?: { nextSyncToken?: string },
   ) => void;
+  serveRecurringEventInstances: (
+    recurringEventId: string,
+    instances: calendar_v3.Schema$Event[],
+  ) => void;
   rateLimitMessageList: (retryAfterIso: string) => void;
   rateLimitCalendarEventList: () => void;
   failMessageList: (failure: GoogleApiFailure) => void;
   failCalendarEventList: (failure: GoogleApiFailure) => void;
+  failRecurringEventInstances: (
+    recurringEventId: string,
+    failure: GoogleApiFailure,
+  ) => void;
   failSentMessageHeaderRead: () => void;
   declineTokenRefresh: () => void;
 };
@@ -167,6 +176,13 @@ export const setupGoogleMock = ({
       events,
       { nextSyncToken = 'mock-calendar-sync-token' } = {},
     ) => httpMock.use(...googleCalendarEventsHandlers(events, nextSyncToken)),
+    serveRecurringEventInstances: (recurringEventId, instances) =>
+      httpMock.use(
+        ...googleCalendarRecurringEventInstancesHandlers(
+          recurringEventId,
+          instances,
+        ),
+      ),
     rateLimitMessageList: (retryAfterIso) =>
       httpMock.use(
         http.get('*/gmail/v1/users/me/messages', () =>
@@ -223,6 +239,13 @@ export const setupGoogleMock = ({
       httpMock.use(
         http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>
           googleApiErrorResponse(failure),
+        ),
+      ),
+    failRecurringEventInstances: (recurringEventId, failure) =>
+      httpMock.use(
+        http.get(
+          `${GOOGLE_CALENDAR_EVENTS_URL}/${recurringEventId}/instances`,
+          () => googleApiErrorResponse(failure),
         ),
       ),
     failSentMessageHeaderRead: () =>

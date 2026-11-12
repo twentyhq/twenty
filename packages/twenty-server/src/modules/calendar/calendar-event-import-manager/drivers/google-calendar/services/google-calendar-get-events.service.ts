@@ -1,9 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type GaxiosError } from 'gaxios';
-import { google } from 'googleapis';
+import { type calendar_v3 as calendarV3, google } from 'googleapis';
+import { isDefined } from 'twenty-shared/utils';
 
+import { type GoogleCalendarRecurringEventInstances } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/types/google-calendar-recurring-event-instances.type';
+import { getGoogleCalendarEventStartTime } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/get-google-calendar-event-start-time.util';
 import { parseGaxiosError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-gaxios-error.util';
 import { parseGoogleCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-google-calendar-error.util';
 import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
@@ -21,20 +24,16 @@ export class GoogleCalendarGetEventsService {
   public async getCalendarEvents(
     connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
     syncCursor?: string,
+    recurringEventHorizon?: Date,
   ): Promise<GetCalendarEventsResponse> {
-    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
-      connectedAccount.id,
-    );
-
-    const googleCalendarClient = google.calendar({
-      version: 'v3',
-      auth: oAuth2Client,
-    });
+    const googleCalendarClient =
+      await this.getGoogleCalendarClient(connectedAccount);
 
     let nextSyncToken: string | null | undefined;
     let nextPageToken: string | undefined;
     const calendarEventIds: string[] = [];
     const calendarEventIdsToDelete: string[] = [];
+    const recurringEventExternalIdsBeyondHorizon = new Set<string>();
 
     let hasMoreEvents = true;
 
@@ -76,6 +75,14 @@ export class GoogleCalendarGetEventsService {
 
         if (item.status === 'cancelled') {
           calendarEventIdsToDelete.push(item.id);
+        } else if (
+          isDefined(recurringEventHorizon) &&
+          isNonEmptyString(item.recurringEventId) &&
+          getGoogleCalendarEventStartTime(item) >=
+            recurringEventHorizon.getTime()
+        ) {
+          calendarEventIdsToDelete.push(item.id);
+          recurringEventExternalIdsBeyondHorizon.add(item.recurringEventId);
         } else {
           calendarEventIds.push(item.id);
         }
@@ -89,8 +96,98 @@ export class GoogleCalendarGetEventsService {
     return {
       calendarEventIds,
       calendarEventIdsToDelete,
+      recurringEventExternalIdsBeyondHorizon: [
+        ...recurringEventExternalIdsBeyondHorizon,
+      ],
       nextSyncCursor: nextSyncToken || '',
     };
+  }
+
+  public async getUpcomingRecurringEventInstances({
+    connectedAccount,
+    recurringEventExternalId,
+    recurringEventHorizon,
+  }: {
+    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>;
+    recurringEventExternalId: string;
+    recurringEventHorizon: Date;
+  }): Promise<GoogleCalendarRecurringEventInstances> {
+    const googleCalendarClient =
+      await this.getGoogleCalendarClient(connectedAccount);
+
+    const instanceExternalIdsWithinHorizon: string[] = [];
+    let earliestInstanceStartTimeBeyondHorizon: number | null = null;
+    let nextPageToken: string | undefined;
+
+    do {
+      const { data: recurringEventInstancesPage } =
+        await googleCalendarClient.events
+          .instances({
+            calendarId: 'primary',
+            eventId: recurringEventExternalId,
+            timeMin: new Date().toISOString(),
+            fields: 'items(id,start),nextPageToken',
+            maxResults: 2500,
+            pageToken: nextPageToken,
+          })
+          .catch((error: GaxiosError) => {
+            const httpStatus = error.response?.status;
+
+            if (httpStatus === 404 || httpStatus === 410) {
+              return { data: { items: [], nextPageToken: undefined } };
+            }
+
+            if (!isDefined(httpStatus)) {
+              throw parseGaxiosError(error);
+            }
+
+            throw parseGoogleCalendarError(
+              {
+                code: httpStatus,
+                reason: error.response?.data?.error?.errors?.[0].reason || '',
+                message: error.response?.data?.error?.errors?.[0].message || '',
+              },
+              { cause: error },
+            );
+          });
+
+      for (const instance of recurringEventInstancesPage.items ?? []) {
+        const instanceStartTime = getGoogleCalendarEventStartTime(instance);
+
+        if (!isString(instance.id) || Number.isNaN(instanceStartTime)) {
+          continue;
+        }
+
+        if (instanceStartTime < recurringEventHorizon.getTime()) {
+          instanceExternalIdsWithinHorizon.push(instance.id);
+        } else {
+          earliestInstanceStartTimeBeyondHorizon = Math.min(
+            earliestInstanceStartTimeBeyondHorizon ?? instanceStartTime,
+            instanceStartTime,
+          );
+        }
+      }
+
+      nextPageToken = recurringEventInstancesPage.nextPageToken ?? undefined;
+    } while (isDefined(nextPageToken));
+
+    return {
+      instanceExternalIdsWithinHorizon,
+      earliestInstanceStartTimeBeyondHorizon,
+    };
+  }
+
+  private async getGoogleCalendarClient(
+    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
+  ): Promise<calendarV3.Calendar> {
+    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
+
+    return google.calendar({
+      version: 'v3',
+      auth: oAuth2Client,
+    });
   }
 
   private handleError(error: GaxiosError) {
