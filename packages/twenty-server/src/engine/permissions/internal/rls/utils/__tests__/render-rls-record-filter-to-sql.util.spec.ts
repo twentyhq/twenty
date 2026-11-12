@@ -6,7 +6,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
-import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
+import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 
 const createFlatFieldMetadata = (
   overrides: Partial<FlatFieldMetadata>,
@@ -84,7 +84,7 @@ const findParameterKeyByValue = (
     ([, parameterValue]) => parameterValue === value,
   )?.[0];
 
-describe('renderRowLevelPermissionFilterToSql', () => {
+describe('renderRlsRecordFilterToSql', () => {
   const baseArgs = {
     tableAlias: 'company',
     objectMetadata: companyObjectMetadata,
@@ -94,7 +94,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
 
   it('returns null for an empty filter', () => {
     expect(
-      renderRowLevelPermissionFilterToSql({
+      renderRlsRecordFilterToSql({
         ...baseArgs,
         recordFilter: {},
       }),
@@ -103,7 +103,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
 
   it('renders the unsatisfiable filter as a sqlCondition no row meets', () => {
     expect(
-      renderRowLevelPermissionFilterToSql({
+      renderRlsRecordFilterToSql({
         ...baseArgs,
         recordFilter: UNSATISFIABLE_RECORD_FILTER,
       }),
@@ -111,7 +111,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('renders a single field sqlCondition referencing the join alias', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: { name: { ilike: '%Visible%' } },
     });
@@ -128,7 +128,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('combines multiple top-level keys with AND', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: { name: { ilike: '%x%' }, employees: { gte: 5 } },
     });
@@ -143,7 +143,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('combines multiple operators on a single field with AND', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: { employees: { gte: 1, lte: 5 } },
     });
@@ -159,7 +159,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('renders an or group', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: {
         or: [{ employees: { gte: 1 } }, { employees: { lte: 5 } }],
@@ -176,7 +176,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('renders a singleton or filter that is not wrapped in an array', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: { or: { name: { ilike: '%x%' } } },
     });
@@ -192,7 +192,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('renders a not group over a join column sqlCondition', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: { not: { accountOwnerId: { in: ['id-1'] } } },
     });
@@ -208,7 +208,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('renders the IS_NOT relation shape (or of not-in and is-null)', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: {
         or: [
@@ -227,7 +227,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('renders a composite sub field sqlCondition with the flattened column name', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: { annualRecurringRevenue: { amountMicros: { gte: 1000 } } },
     });
@@ -245,7 +245,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
 
   it('throws for an unknown composite sub field', () => {
     expect(() =>
-      renderRowLevelPermissionFilterToSql({
+      renderRlsRecordFilterToSql({
         ...baseArgs,
         recordFilter: {
           annualRecurringRevenue: { primaryEmail: { eq: 'a@example.com' } },
@@ -256,7 +256,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
 
   it('throws for a field that does not exist on the object', () => {
     expect(() =>
-      renderRowLevelPermissionFilterToSql({
+      renderRlsRecordFilterToSql({
         ...baseArgs,
         recordFilter: { nonexistent: { eq: 1 } },
       }),
@@ -265,7 +265,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
 
   it('throws for a relation whose target object cannot be found', () => {
     expect(() =>
-      renderRowLevelPermissionFilterToSql({
+      renderRlsRecordFilterToSql({
         ...baseArgs,
         recordFilter: { accountOwner: { name: { eq: 'x' } } },
       }),
@@ -291,7 +291,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     } as FlatObjectMetadata;
     const fields = [...companyFields, relationField];
 
-    const sqlCondition = renderRowLevelPermissionFilterToSql({
+    const sqlCondition = renderRlsRecordFilterToSql({
       recordFilter: { accountOwner: { name: { eq: 'x' } } },
       tableAlias: 'company',
       objectMetadata: {
@@ -331,7 +331,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
 
   it('throws for an array operator with an empty array', () => {
     expect(() =>
-      renderRowLevelPermissionFilterToSql({
+      renderRlsRecordFilterToSql({
         ...baseArgs,
         recordFilter: { name: { in: [] } },
       }),
@@ -339,7 +339,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('renders a nested empty logical group as always-true, like TypeORM empty Brackets', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: { or: [{ or: [] }, { name: { ilike: '%x%' } }] },
     });
@@ -355,7 +355,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('renders a top-level empty logical group as always-true', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: { or: [] },
     });
@@ -365,7 +365,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('renders not of an empty filter as the negation of always-true', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: { not: {} },
     });
@@ -374,7 +374,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
   });
 
   it('merges parameters from every leaf and conjoins the groups', () => {
-    const result = renderRowLevelPermissionFilterToSql({
+    const result = renderRlsRecordFilterToSql({
       ...baseArgs,
       recordFilter: {
         and: [{ name: { ilike: 'a' } }, { employees: { eq: 2 } }],

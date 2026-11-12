@@ -28,6 +28,7 @@ export { parseCallRecordingTranscriptEntries } from './callRecording/parseCallRe
 export { canAccessThroughAllRecordsOrRlsPermission } from './canAccessThroughAllRecordsOrRlsPermission';
 export { canAccessThroughAllRecordsPermission } from './canAccessThroughAllRecordsPermission';
 export { canAccessThroughRlsPermission } from './canAccessThroughRlsPermission';
+export { canRlsRuleAccessOperation } from './canRlsRuleAccessOperation';
 export { conditionalAvailabilityParser } from './command-menu-items/conditionalAvailabilityParser';
 export { evaluateConditionalAvailabilityExpression } from './command-menu-items/evaluateConditionalAvailabilityExpression';
 export { isCommandMenuCoreObjectName } from './command-menu-items/isCommandMenuCoreObjectName';
@@ -229,7 +230,6 @@ export {
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { isAutoSelectModelId } from './isAutoSelectModelId';
 export { isFieldValueRestricted } from './isFieldValueRestricted';
-export { isRowLevelRecordsPermissionsRuleGrantingOperation } from './isRowLevelRecordsPermissionsRuleGrantingOperation';
 export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';

@@ -5,7 +5,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 
-export const arePrivateRecordsEnabled = ({
+export const isPrivateRecordsEnabled = ({
   flatObjectMetadata,
   featureFlagsMap,
 }: {

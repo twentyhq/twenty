@@ -25,8 +25,8 @@ i18n.activate(SOURCE_LOCALE);
 
 const fetchMoreAgentChatThreads = jest.fn();
 
-jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads }),
+jest.mock('@/ai/hooks/useFetchMoreAgentChatThreads', () => ({
+  useFetchMoreAgentChatThreads: () => ({ fetchMoreAgentChatThreads }),
 }));
 
 const loadAgentChatChannelThreads = jest.fn();
