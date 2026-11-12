@@ -54,7 +54,7 @@ export const buildMcpGenericModeInstructions = (): string =>
     `  Analytics / grouped metrics     → group_records (COUNT, SUM, AVG, MIN, MAX)`,
     `  Multiple metrics                → run parallel group_records calls, merge results`,
     `  Per-record updates (different data per record) → find_records first, then upsert_records with each record's id and new values`,
-    `  Bulk update (same data for all) → update_records`,
+    `  Bulk update (same data for all) → update_records, or upsert_records when the records are known by id or unique field (it also creates the missing ones)`,
     `  Merge duplicate records         → find_records to get their ids, merge_records with dryRun: true to preview, ask the user which record to keep when values conflict, then merge_records. Never copy fields and delete a record: that loses its linked records`,
     ``,
     ...MCP_SHARED_INSTRUCTION_LINES.executionRules,
