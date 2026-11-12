@@ -316,6 +316,46 @@ describe('inbox tab pages', () => {
     ).toBeUndefined();
   });
 
+  it('keeps the tab pages when a chat update refreshes the list', async () => {
+    const store = buildStoreWithList();
+    store.set(agentChatThreadListState.atom, {
+      threadIds: ['recent-thread'],
+      hasNextPage: true,
+      endCursor: 'all-chats-page-1',
+      filterStatusPages: {
+        done: {
+          threadIds: ['done-thread'],
+          hasNextPage: true,
+          endCursor: 'done-page-1',
+        },
+      },
+    });
+    queryMock.mockResolvedValue(
+      buildPage([buildThread({ id: 'updated-thread', title: 'Updated' })], {
+        hasNextPage: true,
+      }),
+    );
+    const result = renderChatThreadLoadingHook({
+      store,
+      hook: useRefreshAgentChatThreads,
+    });
+
+    await act(async () => {
+      await result.current.refreshAgentChatThreadsKeepingFilterStatusPages();
+    });
+
+    expect(store.get(agentChatThreadListState.atom)).toMatchObject({
+      threadIds: ['updated-thread'],
+      filterStatusPages: {
+        done: {
+          threadIds: ['done-thread'],
+          hasNextPage: true,
+          endCursor: 'done-page-1',
+        },
+      },
+    });
+  });
+
   it('keeps the tab pages when the next page of every chat loads', async () => {
     const store = buildStoreWithList();
     store.set(agentChatThreadListState.atom, {

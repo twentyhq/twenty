@@ -10,5 +10,13 @@ export const useRefreshAgentChatThreads = () => {
     [loadAgentChatThreads],
   );
 
-  return { refreshAgentChatThreads };
+  const refreshAgentChatThreadsKeepingFilterStatusPages = useCallback(
+    () => loadAgentChatThreads('refresh-keeping-filter-status-pages'),
+    [loadAgentChatThreads],
+  );
+
+  return {
+    refreshAgentChatThreads,
+    refreshAgentChatThreadsKeepingFilterStatusPages,
+  };
 };

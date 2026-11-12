@@ -57,10 +57,10 @@ export const useLoadAgentChatThreads = () => {
   );
 
   const loadAgentChatThreads = useCallback(
-    (mode: 'refresh' | 'fetch-more') =>
+    (mode: 'refresh' | 'refresh-keeping-filter-status-pages' | 'fetch-more') =>
       loadAgentChatThreadsPage({
         getPageRequest: (list) => {
-          if (mode === 'refresh') {
+          if (mode !== 'fetch-more') {
             return { lastCursor: null };
           }
 
@@ -69,13 +69,17 @@ export const useLoadAgentChatThreads = () => {
             : undefined;
         },
         loadExtraThreads:
-          mode === 'refresh' ? loadFavoriteThreadsOutsidePage : undefined,
+          mode === 'fetch-more' ? undefined : loadFavoriteThreadsOutsidePage,
         buildNextList: ({ list, page }) => {
-          if (mode === 'refresh') {
+          if (mode !== 'fetch-more') {
             return {
               threadIds: page.threads.map(({ id }) => id),
               hasNextPage: page.hasNextPage,
               endCursor: page.endCursor,
+              filterStatusPages:
+                mode === 'refresh-keeping-filter-status-pages'
+                  ? list?.filterStatusPages
+                  : undefined,
             };
           }
 

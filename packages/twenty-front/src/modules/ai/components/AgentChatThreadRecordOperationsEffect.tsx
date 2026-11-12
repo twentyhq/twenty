@@ -41,7 +41,10 @@ export const AgentChatThreadRecordOperationsEffect = () => {
   );
   const { applyAgentChatThreadUpdate, addAgentChatThread } =
     useApplyAgentChatThreadUpdate();
-  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const {
+    refreshAgentChatThreads,
+    refreshAgentChatThreadsKeepingFilterStatusPages,
+  } = useRefreshAgentChatThreads();
   const { leaveRemovedAiChatThread } = useLeaveRemovedAiChatThread();
   const store = useStore();
   const { refreshAgentChatOpenThreadsSummary } =
@@ -105,7 +108,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
               ({ recordId }) => !listedThreadIds.includes(recordId),
             )
           ) {
-            void refreshAgentChatThreads();
+            void refreshAgentChatThreadsKeepingFilterStatusPages();
           }
           return;
         }
@@ -141,7 +144,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
       addAgentChatThread,
       applyAgentChatThreadUpdate,
       refreshAgentChatOpenThreadsSummary,
-      refreshAgentChatThreads,
+      refreshAgentChatThreadsKeepingFilterStatusPages,
       reloadAgentChatThreads,
       store,
     ],
