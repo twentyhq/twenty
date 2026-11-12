@@ -18,6 +18,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -75,6 +76,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
   const hasFieldRestriction = (settingsDraftRole.fieldPermissions ?? []).some(
     (fieldPermission) =>
       fieldPermission.objectMetadataId === objectMetadataItem.id &&
+      !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) &&
       (fieldPermission.canReadFieldValue === false ||
         fieldPermission.canUpdateFieldValue === false),
   );

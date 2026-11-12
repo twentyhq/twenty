@@ -1,6 +1,11 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder';
+import { SettingsRolePermissionsObjectFieldsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect';
+import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { isDefined } from 'twenty-shared/utils';
 import { SettingsRolePermissionsRuleUpgradeCard } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsRuleUpgradeCard';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -23,6 +28,19 @@ const StyledRuleEditor = styled.div`
     ${themeCssVariables.spacing[3]};
 `;
 
+const StyledFieldsRow = styled.div`
+  align-items: center;
+  display: grid;
+  grid-template-columns: ${OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS};
+  justify-items: start;
+`;
+
+const StyledFieldsLabel = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+`;
+
+const RULE_FIELD_MODES = ['read', 'update'] as const;
+
 const StyledActions = styled.div`
   display: flex;
 `;
@@ -41,6 +59,15 @@ export const SettingsRolePermissionsObjectRuleEditor = ({
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { deleteRule } = useRowLevelPermissionRulesInDraftRole(roleId);
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+
+  const rootPredicateGroup =
+    settingsDraftRole.rowLevelPermissionPredicateGroups?.find(
+      (predicateGroup) => predicateGroup.id === ruleRootGroupId,
+    );
 
   const hasRowLevelPermissionEntitlement =
     checkIfBillingEntitlementIsEnabledOnWorkspace(
@@ -59,6 +86,26 @@ export const SettingsRolePermissionsObjectRuleEditor = ({
       ) : (
         <SettingsRolePermissionsRuleUpgradeCard />
       )}
+      {hasRowLevelPermissionEntitlement &&
+        RULE_FIELD_MODES.map((mode) => (
+          <StyledFieldsRow key={mode}>
+            <StyledFieldsLabel>
+              {mode === 'read' ? t`Fields to see` : t`Fields to edit`}
+            </StyledFieldsLabel>
+            <SettingsRolePermissionsObjectFieldsSelect
+              roleId={roleId}
+              objectMetadataItem={objectMetadataItem}
+              mode={mode}
+              ruleRootGroupId={ruleRootGroupId}
+              disabled={
+                !isDefined(rootPredicateGroup) ||
+                (mode === 'read'
+                  ? !rootPredicateGroup.canReadRecords
+                  : !rootPredicateGroup.canUpdateRecords)
+              }
+            />
+          </StyledFieldsRow>
+        ))}
       <StyledActions>
         <Button
           size="sm"

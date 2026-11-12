@@ -1,3 +1,4 @@
+import { isSameFieldPermissionTarget } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isSameFieldPermissionTarget';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { produce } from 'immer';
@@ -16,8 +17,10 @@ export const getRoleWithUpsertedFieldPermission = (
 
     const indexOfExistingFieldPermission = draftRole.fieldPermissions.findIndex(
       (fieldPermissionToFind) =>
-        fieldPermissionToFind.fieldMetadataId ===
-        fieldPermissionToUpsert.fieldMetadataId,
+        isSameFieldPermissionTarget(
+          fieldPermissionToFind,
+          fieldPermissionToUpsert,
+        ),
     );
 
     if (indexOfExistingFieldPermission > -1) {

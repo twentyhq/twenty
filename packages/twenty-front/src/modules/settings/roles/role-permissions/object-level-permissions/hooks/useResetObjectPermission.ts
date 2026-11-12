@@ -25,7 +25,9 @@ export const useResetObjectPermission = (roleId: string) => {
   const resetObjectPermission = (objectMetadataItemId: string) => {
     const fieldPermissionsForCurrentObject =
       settingsDraftRole.fieldPermissions?.filter(
-        (permission) => permission.objectMetadataId === objectMetadataItemId,
+        (permission) =>
+          permission.objectMetadataId === objectMetadataItemId &&
+          !isDefined(permission.rowLevelPermissionPredicateGroupId),
       ) ?? [];
     const existingObjectPermission = settingsDraftRole.objectPermissions?.find(
       (objectPermissionToFind) =>

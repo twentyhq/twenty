@@ -82,6 +82,13 @@ export const useRowLevelPermissionRulesInDraftRole = (roleId: string) => {
         rowLevelPermissionPredicateGroups: predicateGroups.filter(
           (predicateGroup) => !deletedPredicateGroupIds.has(predicateGroup.id),
         ),
+        fieldPermissions: currentSettingsDraftRole.fieldPermissions?.filter(
+          (fieldPermission) =>
+            !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) ||
+            !deletedPredicateGroupIds.has(
+              fieldPermission.rowLevelPermissionPredicateGroupId,
+            ),
+        ),
         rowLevelPermissionPredicates: (
           currentSettingsDraftRole.rowLevelPermissionPredicates ?? []
         ).filter(

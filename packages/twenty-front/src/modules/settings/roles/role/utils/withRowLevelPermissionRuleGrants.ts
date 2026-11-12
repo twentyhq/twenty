@@ -11,6 +11,11 @@ export const withRowLevelPermissionRuleGrants = (
     return role;
   }
 
+  const fieldPermissions = [
+    ...(role.fieldPermissions ?? []),
+    ...(role.rowLevelPermissionFieldPermissions ?? []),
+  ];
+
   const ruleById = new Map(rules.map((rule) => [rule.id, rule]));
   const predicateGroups = [...(role.rowLevelPermissionPredicateGroups ?? [])];
   const groupIds = new Set(predicateGroups.map(({ id }) => id));
@@ -53,6 +58,7 @@ export const withRowLevelPermissionRuleGrants = (
 
   return {
     ...role,
+    fieldPermissions,
     rowLevelPermissionPredicates: predicates,
     rowLevelPermissionPredicateGroups: predicateGroups.map((predicateGroup) => {
       if (

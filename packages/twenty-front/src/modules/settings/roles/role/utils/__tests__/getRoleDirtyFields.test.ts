@@ -105,4 +105,42 @@ describe('getRoleDirtyFields', () => {
       ),
     ).toEqual({});
   });
+
+  it('treats saved field restrictions as clean despite temporary ids and cleared entries', () => {
+    const restriction = {
+      fieldMetadataId: 'field-id',
+      objectMetadataId: 'object-id',
+      roleId: role.id,
+      rowLevelPermissionPredicateGroupId: 'rule-group-id',
+      canUpdateFieldValue: false,
+    };
+
+    expect(
+      getRoleDirtyFields(
+        {
+          ...role,
+          fieldPermissions: [
+            { ...restriction, id: 'temporary-id' },
+            {
+              ...restriction,
+              id: 'cleared-id',
+              fieldMetadataId: 'other-field-id',
+              canUpdateFieldValue: null,
+            },
+          ],
+        },
+        {
+          ...role,
+          fieldPermissions: [
+            {
+              ...restriction,
+              __typename: 'FieldPermission',
+              id: 'server-id',
+              canReadFieldValue: null,
+            },
+          ],
+        },
+      ),
+    ).toEqual({});
+  });
 });

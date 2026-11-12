@@ -28,6 +28,7 @@ export const hasObjectPermissionOverride = ({
   const hasFieldRestriction = (role.fieldPermissions ?? []).some(
     (fieldPermission) =>
       fieldPermission.objectMetadataId === objectMetadataId &&
+      !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) &&
       (fieldPermission.canReadFieldValue === false ||
         fieldPermission.canUpdateFieldValue === false),
   );

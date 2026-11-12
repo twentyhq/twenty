@@ -12,6 +12,7 @@ const withoutServerDerivedRuleFields = (
 ): RoleWithPartialMembers => ({
   ...role,
   rowLevelPermissionRules: undefined,
+  rowLevelPermissionFieldPermissions: undefined,
   rowLevelPermissionPredicates: role.rowLevelPermissionPredicates
     ?.map(({ rowLevelPermissionRuleId: _ruleId, ...predicate }) => ({
       ...predicate,
@@ -26,6 +27,19 @@ const withoutServerDerivedRuleFields = (
     .sort(byId),
 });
 
+// Draft field permissions carry temporary ids and cleared entries the server does not return
+const getFieldRestrictionKeys = (role: RoleWithPartialMembers) =>
+  (role.fieldPermissions ?? [])
+    .filter(
+      ({ canReadFieldValue, canUpdateFieldValue }) =>
+        canReadFieldValue === false || canUpdateFieldValue === false,
+    )
+    .map(
+      (fieldPermission) =>
+        `${fieldPermission.fieldMetadataId}:${fieldPermission.rowLevelPermissionPredicateGroupId ?? ''}:${fieldPermission.canReadFieldValue === false}:${fieldPermission.canUpdateFieldValue === false}`,
+    )
+    .sort();
+
 export const getRoleDirtyFields = (
   draftRole: RoleWithPartialMembers,
   persistedRole: RoleWithPartialMembers | undefined,
@@ -37,18 +51,24 @@ export const getRoleDirtyFields = (
       : undefined,
   );
 
-  if (
-    isDefined(persistedRole) &&
-    isDeeplyEqual(
-      draftRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
-      persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
-    )
-  ) {
-    const { permissionFlags: _permissionFlags, ...otherDirtyFields } =
-      dirtyFields;
-
-    return otherDirtyFields;
+  if (!isDefined(persistedRole)) {
+    return dirtyFields;
   }
 
-  return dirtyFields;
+  const hasSamePermissionFlags = isDeeplyEqual(
+    draftRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
+    persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
+  );
+  const hasSameFieldRestrictions = isDeeplyEqual(
+    getFieldRestrictionKeys(draftRole),
+    getFieldRestrictionKeys(persistedRole),
+  );
+
+  return Object.fromEntries(
+    Object.entries(dirtyFields).filter(
+      ([key]) =>
+        !(key === 'permissionFlags' && hasSamePermissionFlags) &&
+        !(key === 'fieldPermissions' && hasSameFieldRestrictions),
+    ),
+  );
 };

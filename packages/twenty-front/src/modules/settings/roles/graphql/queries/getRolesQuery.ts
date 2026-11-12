@@ -49,6 +49,9 @@ export const GET_ROLES = gql`
       fieldPermissions {
         ...FieldPermissionFragment
       }
+      rowLevelPermissionFieldPermissions {
+        ...FieldPermissionFragment
+      }
       rowLevelPermissionPredicates {
         ...RowLevelPermissionPredicateFragment
       }

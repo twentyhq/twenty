@@ -2,6 +2,7 @@ import { getRoleWithRemovedFieldPermission } from '@/settings/roles/role-permiss
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useStore } from 'jotai';
+import { type FieldPermission } from '~/generated-metadata/graphql';
 import { useCallback } from 'react';
 
 export const useRemoveFieldPermissionInDraftRole = () => {
@@ -9,7 +10,13 @@ export const useRemoveFieldPermissionInDraftRole = () => {
   const routedFlowStateScopeId = useRoutedFlowStateScopeId();
 
   const removeFieldPermissionInDraftRole = useCallback(
-    (roleId: string, fieldPermissionFieldMetadataId: string) => {
+    (
+      roleId: string,
+      fieldPermissionToRemove: Pick<
+        FieldPermission,
+        'fieldMetadataId' | 'rowLevelPermissionPredicateGroupId'
+      >,
+    ) => {
       const draftRoleAtom = settingsDraftRoleFamilyState.getAtom(
         roleId,
         routedFlowStateScopeId,
@@ -18,7 +25,7 @@ export const useRemoveFieldPermissionInDraftRole = () => {
 
       const newRole = getRoleWithRemovedFieldPermission(
         currentSettingsDraftRole,
-        fieldPermissionFieldMetadataId,
+        fieldPermissionToRemove,
       );
 
       store.set(draftRoleAtom, newRole);

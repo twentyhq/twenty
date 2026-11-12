@@ -23,6 +23,7 @@ type SettingsRolePermissionsObjectFieldsSelectProps = {
   roleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   mode: 'read' | 'update';
+  ruleRootGroupId?: string;
   disabled?: boolean;
 };
 
@@ -30,6 +31,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   roleId,
   objectMetadataItem,
   mode,
+  ruleRootGroupId,
   disabled = false,
 }: SettingsRolePermissionsObjectFieldsSelectProps) => {
   const { t } = useLingui();
@@ -47,7 +49,9 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   const fieldPermissions =
     settingsDraftRole.fieldPermissions?.filter(
       (fieldPermission) =>
-        fieldPermission.objectMetadataId === objectMetadataItem.id,
+        fieldPermission.objectMetadataId === objectMetadataItem.id &&
+        (fieldPermission.rowLevelPermissionPredicateGroupId ?? null) ===
+          (ruleRootGroupId ?? null),
     ) ?? [];
 
   const fieldMetadataItems = objectMetadataItem.fields
@@ -118,6 +122,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
       id: v4(),
       fieldMetadataId,
       objectMetadataId: objectMetadataItem.id,
+      rowLevelPermissionPredicateGroupId: ruleRootGroupId ?? null,
       roleId,
     };
 
@@ -222,7 +227,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
 
   return (
     <DropdownRoot
-      dropdownId={`settings-role-object-fields-${mode}-${objectMetadataItem.id}`}
+      dropdownId={`settings-role-object-fields-${mode}-${ruleRootGroupId ?? objectMetadataItem.id}`}
       type="picker"
       onOpenChange={(open) => {
         if (!open) {
