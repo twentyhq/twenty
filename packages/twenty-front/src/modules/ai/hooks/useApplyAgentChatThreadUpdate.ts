@@ -41,26 +41,46 @@ export const useApplyAgentChatThreadUpdate = () => {
     [store, upsertRecordsInStore],
   );
 
-  const addAgentChatThread = useCallback(
-    (thread: AgentChatThreadUpdate) => {
-      applyAgentChatThreadUpdate(thread);
-
+  const listAgentChatThread = useCallback(
+    (threadId: string) => {
       const agentChatThreadList = store.get(agentChatThreadListState.atom);
 
       if (
         agentChatThreadList === null ||
-        agentChatThreadList.threadIds.includes(thread.id)
+        agentChatThreadList.threadIds.includes(threadId)
       ) {
         return;
       }
 
       store.set(agentChatThreadListState.atom, {
         ...agentChatThreadList,
-        threadIds: [thread.id, ...agentChatThreadList.threadIds],
+        threadIds: [threadId, ...agentChatThreadList.threadIds],
       });
     },
-    [applyAgentChatThreadUpdate, store],
+    [store],
   );
 
-  return { applyAgentChatThreadUpdate, addAgentChatThread };
+  const addAgentChatThread = useCallback(
+    (thread: AgentChatThreadUpdate) => {
+      applyAgentChatThreadUpdate(thread);
+      listAgentChatThread(thread.id);
+    },
+    [applyAgentChatThreadUpdate, listAgentChatThread],
+  );
+
+  const addLoadedAgentChatThread = useCallback(
+    (thread: AgentChatThreadUpdate) => {
+      upsertRecordsInStore({
+        partialRecords: [{ __typename: 'AgentChatThread', ...thread }],
+      });
+      listAgentChatThread(thread.id);
+    },
+    [listAgentChatThread, upsertRecordsInStore],
+  );
+
+  return {
+    applyAgentChatThreadUpdate,
+    addAgentChatThread,
+    addLoadedAgentChatThread,
+  };
 };

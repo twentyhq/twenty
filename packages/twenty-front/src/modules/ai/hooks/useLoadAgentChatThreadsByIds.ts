@@ -11,7 +11,7 @@ import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgent
 export const useLoadAgentChatThreadsByIds = () => {
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
-  const { addAgentChatThread } = useApplyAgentChatThreadUpdate();
+  const { addLoadedAgentChatThread } = useApplyAgentChatThreadUpdate();
   const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
   const { addAgentChatThreadParticipants } =
     useAddAgentChatThreadParticipants();
@@ -40,14 +40,14 @@ export const useLoadAgentChatThreadsByIds = () => {
         threads: page.threads,
         updateCount: updateCountBeforeRequest,
       })) {
-        addAgentChatThread(thread);
+        addLoadedAgentChatThread(thread);
       }
       addAgentChatThreadParticipants(page.participants);
 
       return page.threads;
     },
     [
-      addAgentChatThread,
+      addLoadedAgentChatThread,
       addAgentChatThreadParticipants,
       fetchAgentChatThreadsPage,
       applyLiveUpdatesSince,

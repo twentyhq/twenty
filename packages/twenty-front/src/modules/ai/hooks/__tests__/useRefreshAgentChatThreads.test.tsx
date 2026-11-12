@@ -599,4 +599,39 @@ describe('useRefreshAgentChatThreads', () => {
       { id: 'old-thread', title: 'Renamed meanwhile' },
     ]);
   });
+
+  it('lets a refresh in flight update a chat looked up meanwhile', async () => {
+    const store = buildStore();
+    let resolveRefresh: (value: ReturnType<typeof buildPage>) => void = () =>
+      undefined;
+
+    queryMock
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          resolveRefresh = resolve;
+        }),
+      )
+      .mockResolvedValueOnce(buildPage([buildThread('thread-1', 'Old title')]));
+    store.set(agentChatThreadListState.atom, {
+      threadIds: [],
+      hasNextPage: false,
+      endCursor: null,
+    });
+    const result = renderRefresh(store);
+
+    const refreshPromise = result.current.refreshAgentChatThreads();
+
+    await act(async () => {
+      await result.current.loadAgentChatThread('thread-1');
+    });
+
+    await act(async () => {
+      resolveRefresh(buildPage([buildThread('thread-1', 'New title')]));
+      await refreshPromise;
+    });
+
+    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
+      { id: 'thread-1', title: 'New title' },
+    ]);
+  });
 });

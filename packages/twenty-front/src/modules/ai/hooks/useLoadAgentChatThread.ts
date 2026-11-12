@@ -14,7 +14,7 @@ export const useLoadAgentChatThread = () => {
   const store = useStore();
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
-  const { addAgentChatThread } = useApplyAgentChatThreadUpdate();
+  const { addLoadedAgentChatThread } = useApplyAgentChatThreadUpdate();
   const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
   const { addAgentChatThreadParticipants } =
     useAddAgentChatThreadParticipants();
@@ -47,7 +47,7 @@ export const useLoadAgentChatThread = () => {
         updateCount: updateCountBeforeRequest,
       });
 
-      addAgentChatThread(loadedThread);
+      addLoadedAgentChatThread(loadedThread);
       addAgentChatThreadParticipants(page.participants);
 
       const usageAtom = agentChatUsageFamilyState.atomFamily({
@@ -61,7 +61,7 @@ export const useLoadAgentChatThread = () => {
       return loadedThread;
     },
     [
-      addAgentChatThread,
+      addLoadedAgentChatThread,
       addAgentChatThreadParticipants,
       fetchAgentChatThreadsPage,
       applyLiveUpdatesSince,
