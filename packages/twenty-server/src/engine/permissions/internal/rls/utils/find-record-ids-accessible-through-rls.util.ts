@@ -8,7 +8,15 @@ import { findRecordsMatchingRecordFilter } from 'src/engine/permissions/internal
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 
 export const findRecordIdsAccessibleThroughRls = async (
-  request: PermissionsRowAccessEvaluationRequest,
+  request: Pick<
+    PermissionsRowAccessEvaluationRequest,
+    | 'principals'
+    | 'metadataMaps'
+    | 'flatObjectMetadata'
+    | 'operationType'
+    | 'records'
+    | 'context'
+  >,
 ): Promise<string[]> => {
   if (!canRlsAccessOperation(request)) {
     return [];

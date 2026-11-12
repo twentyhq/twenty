@@ -11,9 +11,10 @@ export const findRecordIdsAccessibleThroughRecordShare = async ({
   context,
   ...request
 }: PermissionsRowAccessEvaluationRequest): Promise<string[]> => {
-  const shareGrant = resolveRecordShareAccessRequirement(request);
+  const recordShareAccessRequirement =
+    resolveRecordShareAccessRequirement(request);
 
-  if (!isDefined(shareGrant) || records.length === 0) {
+  if (!isDefined(recordShareAccessRequirement) || records.length === 0) {
     return [];
   }
 
@@ -23,8 +24,8 @@ export const findRecordIdsAccessibleThroughRecordShare = async ({
       objectMetadataId: request.flatObjectMetadata.id,
       recordIds,
     }),
-    principalIds: shareGrant.principalIds,
-    accessLevels: shareGrant.accessLevels,
+    principalIds: recordShareAccessRequirement.principalIds,
+    accessLevels: recordShareAccessRequirement.accessLevels,
   });
   return recordIds.filter((recordId) => sharedRecordIds.has(recordId));
 };

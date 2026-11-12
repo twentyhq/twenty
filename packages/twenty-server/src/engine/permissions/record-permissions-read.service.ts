@@ -172,9 +172,10 @@ export class RecordPermissionsReadService {
       return true;
     }
 
-    const shareGrant = resolveRecordShareAccessRequirement(request);
+    const recordShareAccessRequirement =
+      resolveRecordShareAccessRequirement(request);
 
-    if (!isDefined(shareGrant)) {
+    if (!isDefined(recordShareAccessRequirement)) {
       return false;
     }
 
@@ -184,7 +185,7 @@ export class RecordPermissionsReadService {
       ).get(request.flatObjectMetadata.id) ?? [];
 
     return sharedAccessLevels.some((accessLevel) =>
-      shareGrant.accessLevels.includes(accessLevel),
+      recordShareAccessRequirement.accessLevels.includes(accessLevel),
     );
   }
 

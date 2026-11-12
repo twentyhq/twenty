@@ -10,9 +10,10 @@ import { resolveRecordShareAccessRequirement } from 'src/engine/permissions/inte
 export const buildRecordShareAccessSQLCondition = (
   request: PermissionsRowAccessSqlRequest,
 ): SQLCondition | undefined => {
-  const shareGrant = resolveRecordShareAccessRequirement(request);
+  const recordShareAccessRequirement =
+    resolveRecordShareAccessRequirement(request);
 
-  if (!isDefined(shareGrant)) {
+  if (!isDefined(recordShareAccessRequirement)) {
     return undefined;
   }
 
@@ -20,8 +21,8 @@ export const buildRecordShareAccessSQLCondition = (
     tableAlias: request.tableAlias,
     recordShareTableExpression: request.recordShareTableExpression,
     objectMetadataId: request.flatObjectMetadata.id,
-    principalIds: shareGrant.principalIds,
-    accessLevels: shareGrant.accessLevels,
+    principalIds: recordShareAccessRequirement.principalIds,
+    accessLevels: recordShareAccessRequirement.accessLevels,
     isUncorrelated: true,
   });
 };

@@ -148,7 +148,7 @@ const deniedPrincipals: PermissionsPrincipalsWithRolesContext = {
 
 let isRoleRestrictedByRlsRule = false;
 
-const filterByStatus = (status: string) => {
+const restrictRoleToStatusThroughRlsRule = (status: string) => {
   isRoleRestrictedByRlsRule = true;
   jest
     .mocked(resolveRlsRuleRecordFilter)
@@ -224,7 +224,7 @@ describe('findAccessibleRecordIds', () => {
   });
 
   it('matches the role filter on public record values', async () => {
-    filterByStatus('active');
+    restrictRoleToStatusThroughRlsRule('active');
 
     expect(await findGranted({ principals: rolePrincipals })).toEqual(
       new Set(['active-shared']),
@@ -257,13 +257,13 @@ describe('findAccessibleRecordIds', () => {
   });
 
   it('grants private records to their creator whatever the role filter', async () => {
-    filterByStatus('none');
+    restrictRoleToStatusThroughRlsRule('none');
 
     expect(await findGranted({ principals: memberPrincipals })).toEqual(
       new Set(['active-private']),
     );
 
-    filterByStatus('active');
+    restrictRoleToStatusThroughRlsRule('active');
 
     expect(await findGranted({ principals: memberPrincipals })).toEqual(
       new Set(['active-shared', 'active-private']),
@@ -273,7 +273,7 @@ describe('findAccessibleRecordIds', () => {
   it('only asks shares about records the role did not grant', async () => {
     const context = buildContext();
 
-    filterByStatus('active');
+    restrictRoleToStatusThroughRlsRule('active');
 
     expect(
       await findGranted({

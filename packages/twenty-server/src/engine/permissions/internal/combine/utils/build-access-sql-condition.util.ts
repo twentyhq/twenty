@@ -2,7 +2,7 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildAllRecordsAccessSQLCondition } from 'src/engine/permissions/internal/all-records/utils/build-all-records-access-sql-condition.util';
+import { canAllRecordsAccessOperation } from 'src/engine/permissions/internal/all-records/utils/can-all-records-access-operation.util';
 import { buildRlsAccessSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-rls-access-sql-condition.util';
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
@@ -32,7 +32,7 @@ export const buildAccessSQLCondition = ({
   }
 
   const allRecordsOrRlsSQLCondition = combineSQLConditionOutcomesWithOr([
-    buildAllRecordsAccessSQLCondition(sqlRequest),
+    canAllRecordsAccessOperation(sqlRequest),
     buildRlsAccessSQLCondition(sqlRequest),
   ]);
 
