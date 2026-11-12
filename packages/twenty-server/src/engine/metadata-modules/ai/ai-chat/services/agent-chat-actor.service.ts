@@ -174,8 +174,7 @@ export class AgentChatActorService {
     );
   }
 
-  // resolved from the application context of the turn that made the call. Its prompt may have no
-  // member sender, like one a workflow run sent, and the person answering is checked on their own
+  // resolved from the application context of the turn that made the call
   async authorizeToolCallResolution({
     workspaceId,
     threadId,
