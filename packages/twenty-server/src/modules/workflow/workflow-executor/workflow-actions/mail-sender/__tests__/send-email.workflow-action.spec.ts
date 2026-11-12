@@ -76,7 +76,7 @@ describe('SendEmailWorkflowAction', () => {
             getExecutionContext: jest.fn().mockResolvedValue({
               authContext: { type: 'application' },
               isActingOnBehalfOfUser: false,
-              coreWorkflowId: 'workflow-id',
+              workflowId: 'workflow-id',
               workflowName: 'Churn win-back',
             }),
           },
