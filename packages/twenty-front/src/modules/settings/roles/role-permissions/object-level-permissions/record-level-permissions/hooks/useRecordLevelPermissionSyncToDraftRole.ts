@@ -11,6 +11,7 @@ import {
   convertRecordFilterToPredicate,
 } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
 import { getRulePredicateGroupIds } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getRulePredicateGroupIds';
+import { getFieldPermissionsOfKeptRuleGroups } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getFieldPermissionsOfKeptRuleGroups';
 import { replaceRuleItemsKeepingOrder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/replaceRuleItemsKeepingOrder';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -72,12 +73,11 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
 
       return {
         ...previousRole,
-        fieldPermissions: previousRole.fieldPermissions?.filter(
-          ({ rowLevelPermissionPredicateGroupId }) =>
-            !isDefined(rowLevelPermissionPredicateGroupId) ||
-            !rulePredicateGroupIds.has(rowLevelPermissionPredicateGroupId) ||
-            newPredicateGroupIds.has(rowLevelPermissionPredicateGroupId),
-        ),
+        fieldPermissions: getFieldPermissionsOfKeptRuleGroups({
+          fieldPermissions: previousRole.fieldPermissions ?? [],
+          rulePredicateGroupIds,
+          keptPredicateGroupIds: newPredicateGroupIds,
+        }),
         rowLevelPermissionPredicates: replaceRuleItemsKeepingOrder({
           previousItems: previousRole.rowLevelPermissionPredicates ?? [],
           nextRuleItems: newPredicates,

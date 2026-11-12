@@ -10,23 +10,26 @@ export const useRemoveFieldPermissionInDraftRole = () => {
   const routedFlowStateScopeId = useRoutedFlowStateScopeId();
 
   const removeFieldPermissionInDraftRole = useCallback(
-    (
-      roleId: string,
+    ({
+      roleId,
+      fieldPermissionToRemove,
+    }: {
+      roleId: string;
       fieldPermissionToRemove: Pick<
         FieldPermission,
         'fieldMetadataId' | 'rowLevelPermissionPredicateGroupId'
-      >,
-    ) => {
+      >;
+    }) => {
       const draftRoleAtom = settingsDraftRoleFamilyState.getAtom(
         roleId,
         routedFlowStateScopeId,
       );
       const currentSettingsDraftRole = store.get(draftRoleAtom);
 
-      const newRole = getRoleWithRemovedFieldPermission(
-        currentSettingsDraftRole,
+      const newRole = getRoleWithRemovedFieldPermission({
+        role: currentSettingsDraftRole,
         fieldPermissionToRemove,
-      );
+      });
 
       store.set(draftRoleAtom, newRole);
     },

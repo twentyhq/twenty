@@ -126,10 +126,10 @@ export const useSaveDraftRoleToDB = ({
       ) === true
     ) {
       for (const fieldPermissionToRemoveInDraftRole of fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless) {
-        removeFieldPermissionInDraftRole(
+        removeFieldPermissionInDraftRole({
           roleId,
-          fieldPermissionToRemoveInDraftRole,
-        );
+          fieldPermissionToRemove: fieldPermissionToRemoveInDraftRole,
+        });
       }
     }
   };
