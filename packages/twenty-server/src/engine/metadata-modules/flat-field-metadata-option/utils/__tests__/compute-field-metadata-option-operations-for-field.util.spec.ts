@@ -207,4 +207,49 @@ describe('computeFieldMetadataOptionOperationsForField', () => {
       },
     });
   });
+  it("writes the owning app's edit even when a workspace override already matches it", () => {
+    const closedOptionRowWithOverride = {
+      ...closedOptionRow,
+      overrides: {
+        [CALLER_APPLICATION_UNIVERSAL_IDENTIFIER]: { label: 'Done' },
+      },
+    };
+
+    const operations = computeOperations({
+      existingOptions: [openOptionRow, closedOptionRowWithOverride],
+      applicationUniversalIdentifier: FIELD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      targetUniversalFlatFieldMetadata: {
+        ...targetField,
+        options: targetField.options?.map((option) =>
+          option.id === CLOSED_OPTION_ID
+            ? { ...option, label: 'Done' }
+            : option,
+        ),
+      } as typeof targetField,
+    });
+
+    expect(operations.flatEntityToUpdate).toMatchObject({
+      [CLOSED_OPTION_ID]: { label: 'Done' },
+    });
+    expect(Object.keys(operations.flatEntityToUpdate)).toEqual([
+      CLOSED_OPTION_ID,
+    ]);
+  });
+
+  it("leaves a row alone when its owning app's values are unchanged under a workspace override", () => {
+    const operations = computeOperations({
+      existingOptions: [
+        openOptionRow,
+        {
+          ...closedOptionRow,
+          overrides: {
+            [CALLER_APPLICATION_UNIVERSAL_IDENTIFIER]: { label: 'Done' },
+          },
+        },
+      ],
+      applicationUniversalIdentifier: FIELD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(operations.flatEntityToUpdate).toEqual({});
+  });
 });
