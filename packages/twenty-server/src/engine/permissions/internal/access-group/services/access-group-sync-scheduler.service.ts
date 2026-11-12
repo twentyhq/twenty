@@ -7,10 +7,10 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-job-name.constant';
+import { APPLY_ACCESS_GROUP_PROPAGATION_PLAN_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/apply-access-group-propagation-plan-job-name.constant';
 import { RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-related-record-path-targets-job-name.constant';
 import { SYNC_ACCESS_GROUPS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/sync-access-groups-job-name.constant';
-import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
+import { type ApplyAccessGroupPropagationPlanJobData } from 'src/engine/permissions/internal/access-group/types/apply-access-group-propagation-plan-job-data.type';
 import { type RecomputeRelatedRecordPathTargetsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-related-record-path-targets-job-data.type';
 import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -48,20 +48,19 @@ export class AccessGroupSyncSchedulerService {
     });
   }
 
-  async scheduleRecordAccessGroupIdsRecompute({
-    workspaceId,
-    objectMetadataId,
-    propagatedFromObjectMetadataIds = [],
-  }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
-    await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
-      RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
-      { workspaceId, objectMetadataId, propagatedFromObjectMetadataIds },
+  async enqueueApplyAccessGroupPropagationPlanJob(
+    applyJobData: ApplyAccessGroupPropagationPlanJobData,
+  ): Promise<void> {
+    const { workspaceId } = applyJobData;
+
+    await this.messageQueueService.add<ApplyAccessGroupPropagationPlanJobData>(
+      APPLY_ACCESS_GROUP_PROPAGATION_PLAN_JOB_NAME,
+      applyJobData,
       {
         isWorkspaceJob: true,
         workspaceId,
-        retryLimit: 3,
         deduplication: {
-          id: `record-access-group-ids:${workspaceId}:${objectMetadataId}${propagatedFromObjectMetadataIds.length > 0 ? ':propagated' : ''}`,
+          id: `access-group-propagation-plan:${workspaceId}`,
           keepLastIfActive: true,
         },
       },

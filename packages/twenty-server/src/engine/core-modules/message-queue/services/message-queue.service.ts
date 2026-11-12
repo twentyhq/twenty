@@ -71,6 +71,14 @@ export class MessageQueueService {
     return this.driver.getInFlightJobs(this.queueName);
   }
 
+  removeJob(jobId: string): Promise<boolean> {
+    if (typeof this.driver.removeJob !== 'function') {
+      return Promise.resolve(false);
+    }
+
+    return this.driver.removeJob(this.queueName, jobId);
+  }
+
   reconcileJobMemory(): Promise<JobMemoryReconciliation> {
     if (typeof this.driver.reconcileJobMemory !== 'function') {
       return Promise.resolve({ releasedCount: 0, releasedBytes: 0 });

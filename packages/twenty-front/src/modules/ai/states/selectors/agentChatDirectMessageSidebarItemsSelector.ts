@@ -2,7 +2,7 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { getAgentChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
@@ -19,7 +19,7 @@ export const agentChatDirectMessageSidebarItemsSelector = createAtomSelector<
   get: ({ get }) => {
     const currentWorkspaceMemberId = get(currentWorkspaceMemberState)?.id;
     const workspaceMembers = get(currentWorkspaceMembersState);
-    const directMessageThreads = get(agentChatThreadsSelector).filter(
+    const directMessageThreads = get(agentChatRecentThreadsSelector).filter(
       (thread) =>
         !isDefined(thread.deletedAt) &&
         thread.conversationType ===
