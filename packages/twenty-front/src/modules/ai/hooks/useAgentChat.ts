@@ -324,7 +324,6 @@ export const useAgentChat = () => {
           store.set(lastSentBrowsingContextAtom, browsingContext);
         }
       } else {
-        // The fetched list predates this message until the refetch below lands
         store.set(
           agentChatIsAwaitingPersistedRefetchFamilyState.atomFamily({
             threadId,
