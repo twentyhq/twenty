@@ -62,7 +62,7 @@ const buildAction = async ({ isBuildUpToDate = true } = {}) => {
     getExecutionContext: jest.fn().mockResolvedValue({
       authContext: { type: 'application' },
       application: APPLICATION,
-      workflowId: 'workflow-id',
+      coreWorkflowId: 'workflow-id',
     }),
     assertRunApplicationCanTriggerStepTargetOrThrow: jest.fn(),
   };
