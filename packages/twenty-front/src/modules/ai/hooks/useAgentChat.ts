@@ -2,6 +2,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloClient } from '@apollo/client/react';
+import { isUndefined } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -141,11 +142,10 @@ export const useAgentChat = () => {
       const lastSentBrowsingContextAtom =
         agentChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
       const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
-      const isBrowsingContextChanged =
-        lastSentBrowsingContext === undefined
-          ? browsingContext !== null
-          : JSON.stringify(browsingContext) !==
-            JSON.stringify(lastSentBrowsingContext);
+      const isBrowsingContextChanged = isUndefined(lastSentBrowsingContext)
+        ? isDefined(browsingContext)
+        : JSON.stringify(browsingContext) !==
+          JSON.stringify(lastSentBrowsingContext);
       const browsingContextToSend = isBrowsingContextChanged
         ? browsingContext
         : null;
@@ -248,11 +248,10 @@ export const useAgentChat = () => {
         });
 
         const isAssistantReplying =
-          data?.sendChatMessage.queued === true ||
+          data?.sendChatMessage.queued ||
           isDefined(data?.sendChatMessage.streamId);
 
         if (isAssistantReplying) {
-          // The stream may already have set a newer credits-exhausted error; don't clear it.
           if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
             store.set(
               currentWorkspaceState.atom,
@@ -260,7 +259,6 @@ export const useAgentChat = () => {
             );
           }
 
-          // Only a turn reads the context, so a later turn still needs it otherwise
           if (isBrowsingContextChanged) {
             store.set(lastSentBrowsingContextAtom, browsingContext);
           }
@@ -268,7 +266,6 @@ export const useAgentChat = () => {
           store.set(isAwaitingFirstChunkAtom, false);
         }
 
-        // Filed after the send: a failed send restores the draft, so the retry files it.
         if (!isDirectMessage) {
           for (const conversationTarget of getConversationTargetsFromSerializedDocument(
             serializedContentToSend,
@@ -288,12 +285,10 @@ export const useAgentChat = () => {
           ],
         }).catch(logError);
 
-        if (data?.sendChatMessage.queued === true) {
+        if (data?.sendChatMessage.queued) {
           removeOptimisticUserMessage();
         }
 
-        // The send created the thread. Its permissions load before it stops
-        // being the new chat, so its composer never shows as loading.
         if (isNewChat) {
           await refreshAgentChatThreadPermissions([threadId]);
           store.set(newAiChatThreadIdState.atom, v4());
