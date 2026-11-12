@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: packages/twenty-front/node_modules/.cache/storybook
-          key: v4-storybook-vitest-deps-twenty-front-${{ inputs.scope }}-${{ hashFiles('yarn.lock', 'packages/twenty-front/vite.config.ts', 'packages/twenty-front/vitest.config.ts', 'packages/twenty-front/.storybook/main.ts', 'packages/twenty-shared/src/**', 'packages/twenty-ui/src/**') }}
+          key: v4-storybook-vitest-deps-twenty-front-${{ inputs.scope }}-${{ hashFiles('yarn.lock', 'packages/twenty-front/vite.config.ts', 'packages/twenty-front/vitest.config.ts', 'packages/twenty-front/.storybook/main.ts') }}
       - name: Build dependencies
         run: |
           npx nx build twenty-shared

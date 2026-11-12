@@ -38,6 +38,7 @@ export default defineConfig(() => {
         external: [
           ...Object.keys((packageJson as any).dependencies || {}),
           'typescript',
+          'node:fs',
           'node:fs/promises',
           'node:path',
           'node:zlib',

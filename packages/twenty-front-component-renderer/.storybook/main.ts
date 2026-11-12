@@ -2,7 +2,10 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getTwentySharedOptimizeDepsInclude } from 'twenty-shared/vite';
+import {
+  getTwentySharedBuildHash,
+  getTwentySharedOptimizeDepsInclude,
+} from 'twenty-shared/vite';
 
 import { createAvatarImageFixturePlugin } from '../scripts/front-component-stories/createAvatarImageFixturePlugin';
 
@@ -84,6 +87,20 @@ const config: StorybookConfig = {
             twentySharedPackageJson.exports,
           ),
         ],
+        rolldownOptions: {
+          ...viteConfig.optimizeDeps?.rolldownOptions,
+          transform: {
+            ...viteConfig.optimizeDeps?.rolldownOptions?.transform,
+            define: {
+              ...viteConfig.optimizeDeps?.rolldownOptions?.transform?.define,
+              __TWENTY_SHARED_BUILD_HASH__: JSON.stringify(
+                getTwentySharedBuildHash(
+                  path.resolve(dirname, '../../twenty-shared/dist'),
+                ),
+              ),
+            },
+          },
+        },
       },
     };
   },

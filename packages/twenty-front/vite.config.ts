@@ -17,6 +17,7 @@ import svgr from 'vite-plugin-svgr';
 
 import {
   createWywProfilingPlugin,
+  getTwentySharedBuildHash,
   getTwentySharedOptimizeDepsInclude,
 } from 'twenty-shared/vite';
 
@@ -230,6 +231,17 @@ export default defineConfig(({ mode }) => {
         // Linked packages aren't pre-bundled, and twenty-shared ships one file per module.
         ...getTwentySharedOptimizeDepsInclude(twentySharedPackageJson.exports),
       ],
+      rolldownOptions: {
+        transform: {
+          define: {
+            __TWENTY_SHARED_BUILD_HASH__: JSON.stringify(
+              getTwentySharedBuildHash(
+                path.resolve(__dirname, '../twenty-shared/dist'),
+              ),
+            ),
+          },
+        },
+      },
     },
 
     build: {

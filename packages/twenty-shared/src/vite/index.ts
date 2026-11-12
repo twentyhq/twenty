@@ -8,4 +8,5 @@
  */
 
 export { createWywProfilingPlugin } from './createWywProfilingPlugin';
+export { getTwentySharedBuildHash } from './getTwentySharedBuildHash';
 export { getTwentySharedOptimizeDepsInclude } from './getTwentySharedOptimizeDepsInclude';
