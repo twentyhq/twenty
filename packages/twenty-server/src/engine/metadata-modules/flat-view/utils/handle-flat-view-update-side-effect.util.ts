@@ -15,7 +15,9 @@ export type FlatViewUpdateSideEffects = {
 type HandleFlatViewUpdateSideEffectArgs = FromTo<FlatView, 'flatView'> &
   Pick<
     AllFlatEntityMaps,
-    'flatViewGroupMaps' | 'flatFieldMetadataMaps' | 'flatFieldMetadataOptionMaps'
+    | 'flatViewGroupMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatFieldMetadataOptionMaps'
   >;
 
 export const FLAT_VIEW_UPDATE_EMPTY_SIDE_EFFECTS: FlatViewUpdateSideEffects = {
