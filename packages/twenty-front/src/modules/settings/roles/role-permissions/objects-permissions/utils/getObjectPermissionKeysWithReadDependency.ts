@@ -8,10 +8,10 @@ export const getObjectPermissionKeysWithReadDependency = ({
   previousKeys: SettingsRoleObjectPermissionKey[];
   nextKeys: SettingsRoleObjectPermissionKey[];
 }): SettingsRoleObjectPermissionKey[] => {
-  const hadRead = previousKeys.includes('canReadObjectRecords');
-  const hasRead = nextKeys.includes('canReadObjectRecords');
+  const wasReadGranted = previousKeys.includes('canReadObjectRecords');
+  const isReadGranted = nextKeys.includes('canReadObjectRecords');
 
-  if (hadRead && !hasRead) {
+  if (wasReadGranted && !isReadGranted) {
     return [];
   }
 

@@ -55,11 +55,14 @@ export const withRowLevelPermissionRuleGrants = (
     ...role,
     rowLevelPermissionPredicates: predicates,
     rowLevelPermissionPredicateGroups: predicateGroups.map((predicateGroup) => {
-      const rule =
-        !isDefined(predicateGroup.parentRowLevelPermissionPredicateGroupId) &&
-        isDefined(predicateGroup.rowLevelPermissionRuleId)
-          ? ruleById.get(predicateGroup.rowLevelPermissionRuleId)
-          : undefined;
+      if (
+        isDefined(predicateGroup.parentRowLevelPermissionPredicateGroupId) ||
+        !isDefined(predicateGroup.rowLevelPermissionRuleId)
+      ) {
+        return predicateGroup;
+      }
+
+      const rule = ruleById.get(predicateGroup.rowLevelPermissionRuleId);
 
       if (!isDefined(rule)) {
         return predicateGroup;
