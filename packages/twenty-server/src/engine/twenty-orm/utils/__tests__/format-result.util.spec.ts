@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldActorSource,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -75,6 +79,49 @@ describe('formatResult', () => {
       { createdAt: null },
     ]);
     expect(rawRecords[0].createdAt).toBe(createdAt);
+  });
+
+  describe('non-nullable actor field', () => {
+    const createdByField = getFlatFieldMetadataMock({
+      universalIdentifier: '20202020-dc25-4d02-bf25-6aeccf7ea419',
+      objectMetadataId: '20202020-ec25-4d02-bf25-6aeccf7ea419',
+      name: 'createdBy',
+      type: FieldMetadataType.ACTOR,
+      isNullable: false,
+    });
+    const objectMetadata = getFlatObjectMetadataMock({
+      id: createdByField.objectMetadataId,
+      universalIdentifier: createdByField.objectMetadataUniversalIdentifier,
+      fieldIds: [createdByField.id],
+    });
+    const formatRecord = (rawRecord: Record<string, unknown>) =>
+      formatResult(
+        rawRecord,
+        objectMetadata,
+        buildFlatEntityMaps([objectMetadata]),
+        buildFlatEntityMaps([createdByField]),
+      );
+
+    it('keeps the stored context when source and name are not selected', () => {
+      const applicationId = '20202020-fc25-4d02-bf25-6aeccf7ea419';
+
+      expect(formatRecord({ createdByContext: { applicationId } })).toEqual({
+        createdBy: { context: { applicationId } },
+      });
+    });
+
+    it('falls back to the default actor when the selected source is null', () => {
+      expect(
+        formatRecord({ createdBySource: null, createdByContext: null }),
+      ).toEqual({
+        createdBy: {
+          source: FieldActorSource.MANUAL,
+          name: '',
+          workspaceMemberId: null,
+          context: {},
+        },
+      });
+    });
   });
 
   it('reuses derived field metadata per object type within one invocation', () => {

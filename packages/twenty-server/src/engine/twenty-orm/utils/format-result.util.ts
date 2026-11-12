@@ -392,13 +392,21 @@ function handleEmptyCompositeFields(
     // oxlint-disable-next-line typescript/no-explicit-any
     const typedFieldValue = fieldValue as Record<string, any>;
 
-    const allRequiredPropertiesAreNull = requiredPropertyNames.every(
-      (propertyName) =>
-        !isDefined(typedFieldValue[propertyName]) ||
-        isNull(typedFieldValue[propertyName]),
+    // A required subfield missing from the row was not selected, which says
+    // nothing about the stored value.
+    const selectedRequiredPropertyNames = requiredPropertyNames.filter(
+      (propertyName) => propertyName in typedFieldValue,
     );
 
-    if (allRequiredPropertiesAreNull && requiredPropertyNames.length > 0) {
+    const allSelectedRequiredPropertiesAreNull =
+      selectedRequiredPropertyNames.every(
+        (propertyName) => !isDefined(typedFieldValue[propertyName]),
+      );
+
+    if (
+      allSelectedRequiredPropertiesAreNull &&
+      selectedRequiredPropertyNames.length > 0
+    ) {
       if (fieldMetadata.isNullable) {
         data[fieldMetadata.name] = null;
       } else {

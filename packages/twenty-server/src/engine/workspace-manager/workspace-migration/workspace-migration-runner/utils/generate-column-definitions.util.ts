@@ -88,8 +88,10 @@ export const generateCompositeColumnDefinition = ({
       columnType === 'enum'
         ? `"${schemaName}"."${computePostgresEnumName({ tableName, columnName })}"`
         : columnType,
-    isNullable:
-      parentFlatFieldMetadata.isNullable || !compositeProperty.isRequired,
+    // Sub-columns stay nullable even when the sub-field is required: rows are
+    // written without them (raw inserts, pre-existing records) and reads
+    // default the composite instead.
+    isNullable: true,
     default: serializedDefaultValue,
     isArray: isArrayFlag,
     isPrimary: false,

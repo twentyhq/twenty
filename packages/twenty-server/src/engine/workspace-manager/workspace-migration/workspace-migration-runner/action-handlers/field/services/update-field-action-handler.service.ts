@@ -597,29 +597,13 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           flatFieldMetadata.name,
           property,
         );
-        const propertyIsNullable = toIsNullable || !property.isRequired;
-        const fieldDefaultValue = flatFieldMetadata.defaultValue;
-        // @ts-expect-error - composite default value is keyed by property name
-        const compositeDefaultValue = fieldDefaultValue?.[property.name];
-
         await this.workspaceSchemaManagerService.columnManager.alterColumnNullable(
           {
             queryRunner,
             schemaName,
             tableName,
             columnName: compositeColumnName,
-            isNullable: propertyIsNullable,
-            backfillValue: propertyIsNullable
-              ? undefined
-              : serializeDefaultValue({
-                  columnName: compositeColumnName,
-                  schemaName,
-                  tableName,
-                  columnType: fieldMetadataTypeToColumnType(
-                    property.type,
-                  ) as ColumnType,
-                  defaultValue: compositeDefaultValue,
-                }),
+            isNullable: true,
           },
         );
       }
