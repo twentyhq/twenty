@@ -1,8 +1,8 @@
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
-import { validateProxyHeader } from '@/proxy-headers/validate-proxy-header';
+import { validateProxyHeaderOrThrow } from '@/proxy-headers/validate-proxy-header-or-throw';
 
-export const parseProxyHeaderLines = ({
+export const parseProxyHeaderLinesOrThrow = ({
   lines,
   sourceName,
 }: {
@@ -27,7 +27,7 @@ export const parseProxyHeaderLines = ({
       });
     }
 
-    const [name, value] = validateProxyHeader({
+    const [name, value] = validateProxyHeaderOrThrow({
       name: line.slice(0, separatorIndex),
       value: line.slice(separatorIndex + 1),
       sourceName,

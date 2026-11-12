@@ -10,8 +10,8 @@ import { REQUEST_TIMEOUT_MILLISECONDS } from '@/transport/constants/request-time
 import { RESPONSE_BYTE_LIMIT } from '@/transport/constants/response-byte-limit.constant';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
 import { getProxySignInOrigin } from '@/transport/get-proxy-sign-in-origin';
-import { isProxyRejection } from '@/transport/is-proxy-rejection';
 import { readBoundedBody } from '@/transport/read-bounded-body';
+import { sendWithProxyHeaderRenewal } from '@/transport/send-with-proxy-header-renewal';
 
 const NULL_BODY_STATUSES = new Set([101, 204, 205, 304]);
 
@@ -176,22 +176,13 @@ export const createBoundedFetch =
       );
 
     try {
-      // Stays synchronous without proxy headers so an immediate abort reaches fetch.
-      const proxyHeaderValues = isDefined(proxyHeaders)
-        ? await proxyHeaders.read(signal)
-        : {};
-      let response = await send(proxyHeaderValues);
-
-      // Safe to replay: the proxy rejected it before Twenty saw it.
-      if (
-        proxyHeaders?.isRenewable &&
-        !(init.body instanceof ReadableStream) &&
-        isProxyRejection({ response, requestUrl: url })
-      ) {
-        await response.body?.cancel();
-        proxyHeaders.renew(proxyHeaderValues);
-        response = await send(await proxyHeaders.read(signal));
-      }
+      const response = await sendWithProxyHeaderRenewal({
+        proxyHeaders,
+        requestUrl: url,
+        canReplay: !(init.body instanceof ReadableStream),
+        signal,
+        send,
+      });
 
       if (isRedirectStatus(response.status)) {
         await response.body?.cancel();

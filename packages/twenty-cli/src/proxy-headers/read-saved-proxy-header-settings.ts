@@ -5,7 +5,7 @@ import { type RemoteEntry } from '@/config/types/config-file.type';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { type ProxyHeaderSettings } from '@/proxy-headers/types/proxy-header-settings.type';
-import { validateProxyHeader } from '@/proxy-headers/validate-proxy-header';
+import { validateProxyHeaderOrThrow } from '@/proxy-headers/validate-proxy-header-or-throw';
 
 const createInvalidSettingError = ({
   remoteName,
@@ -51,7 +51,7 @@ export const readSavedProxyHeaderSettings = ({
         throw createInvalidSettingError({ remoteName, field: 'proxyHeaders' });
       }
 
-      return validateProxyHeader({
+      return validateProxyHeaderOrThrow({
         name,
         value,
         sourceName: `Remote ${remoteName}`,

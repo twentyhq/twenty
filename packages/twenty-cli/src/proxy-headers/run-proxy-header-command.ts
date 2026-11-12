@@ -4,7 +4,7 @@ import execa from 'execa';
 import { CliError } from '@/output/cli-error';
 import { createCancelledError } from '@/output/create-cancelled-error';
 import { PROXY_HEADER_COMMAND } from '@/proxy-headers/constants/proxy-header-command.constant';
-import { parseProxyHeaderLines } from '@/proxy-headers/parse-proxy-header-lines';
+import { parseProxyHeaderLinesOrThrow } from '@/proxy-headers/parse-proxy-header-lines-or-throw';
 
 const SOURCE_NAME = 'The proxy header command';
 
@@ -77,7 +77,7 @@ export const runProxyHeaderCommand = async ({
       });
     }
 
-    return parseProxyHeaderLines({
+    return parseProxyHeaderLinesOrThrow({
       lines: (result.stdout ?? '').split(/\r?\n/),
       sourceName: SOURCE_NAME,
     });

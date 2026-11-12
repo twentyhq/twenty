@@ -6,7 +6,7 @@ import {
   readStringOption,
 } from '@/catalog/read-command-values';
 import { type RemoteEntry } from '@/config/types/config-file.type';
-import { parseProxyHeaderLines } from '@/proxy-headers/parse-proxy-header-lines';
+import { parseProxyHeaderLinesOrThrow } from '@/proxy-headers/parse-proxy-header-lines-or-throw';
 import { readSavedProxyHeaderSettings } from '@/proxy-headers/read-saved-proxy-header-settings';
 import { type ProxyHeaderSettings } from '@/proxy-headers/types/proxy-header-settings.type';
 import { parseApiUrl } from '@/target/parse-api-url';
@@ -53,7 +53,7 @@ export const readLoginProxyHeaderSettings = ({
       ? { headers: {} }
       : readSettingsSavedForServer({ existingRemote, remoteName, apiUrl });
   const headers = isDefined(headerOption)
-    ? parseProxyHeaderLines({
+    ? parseProxyHeaderLinesOrThrow({
         lines: headerOption,
         sourceName: '--proxy-header',
       })

@@ -18,6 +18,7 @@ import { readEventStream } from '@/transport/graphql/read-event-stream';
 import { readGraphqlStreamError } from '@/transport/graphql/read-graphql-stream-error';
 import { readBoundedBody } from '@/transport/read-bounded-body';
 import { resolveRequestUrl } from '@/transport/resolve-request-url';
+import { sendWithProxyHeaderRenewal } from '@/transport/send-with-proxy-header-renewal';
 
 const invalidStream = (message: string) =>
   new CliError({ code: 'INVALID_RESPONSE', message });
@@ -52,26 +53,31 @@ export const subscribeGraphql = async ({
   );
 
   try {
-    const response = await fetchWithProxy(
-      url,
-      {
-        method: 'POST',
-        headers: createRequestHeaders({
-          initHeaders: {
-            'Content-Type': 'application/json',
-            Accept: 'text/event-stream',
+    const response = await sendWithProxyHeaderRenewal({
+      proxyHeaders: target.proxyHeaders,
+      requestUrl: url,
+      canReplay: true,
+      signal: requestSignal,
+      send: (proxyHeaderValues) =>
+        fetchWithProxy(
+          url,
+          {
+            method: 'POST',
+            headers: createRequestHeaders({
+              initHeaders: {
+                'Content-Type': 'application/json',
+                Accept: 'text/event-stream',
+              },
+              bearerToken: target.bearerToken,
+              proxyHeaderValues,
+            }),
+            body: JSON.stringify({ query, variables }),
+            redirect: 'manual',
+            signal: requestSignal,
           },
-          bearerToken: target.bearerToken,
-          proxyHeaderValues: isDefined(target.proxyHeaders)
-            ? await target.proxyHeaders.read(requestSignal)
-            : {},
-        }),
-        body: JSON.stringify({ query, variables }),
-        redirect: 'manual',
-        signal: requestSignal,
-      },
-      REQUEST_TIMEOUT_MILLISECONDS,
-    );
+          REQUEST_TIMEOUT_MILLISECONDS,
+        ),
+    });
 
     if (response.status >= 300 && response.status < 400) {
       await response.body?.cancel();

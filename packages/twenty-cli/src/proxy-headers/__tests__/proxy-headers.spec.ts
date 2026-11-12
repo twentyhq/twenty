@@ -23,19 +23,26 @@ import { createAppWorkerEnvironment } from '@/app/create-app-worker-environment'
 import { putUploadFile } from '@/app/deployment/put-upload-file';
 import { createProxyHeaders } from '@/proxy-headers/create-proxy-headers';
 import { createBoundedFetch } from '@/transport/create-target-fetch';
+import { subscribeGraphql } from '@/transport/graphql/subscribe-graphql';
 
 const API_KEY = 'valid-key';
 
 const PROXY_SIGN_IN_URL =
   'https://team.cloudflareaccess.com/cdn-cgi/access/login/twenty.example.com';
 
-const proxy = { acceptedToken: 'proxy-token' };
+const proxy = { acceptedToken: 'proxy-token', signInUrl: PROXY_SIGN_IN_URL };
 
 const server = await startTestServer((request, response) => {
   if (request.headers['cf-access-token'] !== proxy.acceptedToken) {
-    response.writeHead(302, { location: PROXY_SIGN_IN_URL });
+    response.writeHead(302, { location: proxy.signInUrl });
 
     return response.end();
+  }
+
+  if (request.headers.accept === 'text/event-stream') {
+    response.writeHead(200, { 'content-type': 'text/event-stream' });
+
+    return response.end('event: complete\ndata:\n\n');
   }
 
   return sendJson(response, 200, {
@@ -47,8 +54,13 @@ const otherServerUrl = server.url.replace('127.0.0.1', 'localhost');
 
 const quoteForShell = (value: string) => `'${value.replaceAll("'", "'\\''")}'`;
 
-const createNodeCommand = (script: string, ...args: string[]) =>
-  [process.execPath, '-e', script, ...args].map(quoteForShell).join(' ');
+const createNodeCommand = ({
+  script,
+  args = [],
+}: {
+  script: string;
+  args?: string[];
+}) => [process.execPath, '-e', script, ...args].map(quoteForShell).join(' ');
 
 const COUNTING_TOKEN_SCRIPT = `
 const fs = require('node:fs');
@@ -90,6 +102,7 @@ describe('proxy headers', () => {
   beforeEach(async () => {
     home = await mkdtemp(join(tmpdir(), 'twenty-cli-home-'));
     proxy.acceptedToken = 'proxy-token';
+    proxy.signInUrl = PROXY_SIGN_IN_URL;
     server.requests.length = 0;
     vi.stubEnv('HOME', home);
     vi.stubEnv('TWENTY_API_URL', '');
@@ -161,34 +174,46 @@ describe('proxy headers', () => {
     });
   });
 
-  it('reruns the header command once when the proxy rejects its headers', async () => {
-    const counterPath = join(home, 'header-command-runs');
+  it.each([
+    ['another origin', PROXY_SIGN_IN_URL],
+    ['the API origin', '/oauth2/start?rd=%2Fmetadata'],
+  ])(
+    'reruns the header command once when the proxy redirects to a sign-in page on %s',
+    async (_origin, signInUrl) => {
+      const counterPath = join(home, 'header-command-runs');
 
-    vi.stubEnv('TWENTY_API_URL', server.url);
-    vi.stubEnv('TWENTY_API_KEY', API_KEY);
-    vi.stubEnv(
-      'TWENTY_PROXY_HEADER_COMMAND',
-      createNodeCommand(COUNTING_TOKEN_SCRIPT, counterPath),
-    );
-    proxy.acceptedToken = 'token-2';
+      proxy.signInUrl = signInUrl;
 
-    const { exitCode } = await readWorkspace();
+      vi.stubEnv('TWENTY_API_URL', server.url);
+      vi.stubEnv('TWENTY_API_KEY', API_KEY);
+      vi.stubEnv(
+        'TWENTY_PROXY_HEADER_COMMAND',
+        createNodeCommand({
+          script: COUNTING_TOKEN_SCRIPT,
+          args: [counterPath],
+        }),
+      );
+      proxy.acceptedToken = 'token-2';
 
-    expect(exitCode).toBe(0);
-    expect(await readFile(counterPath, 'utf8')).toBe('2');
-    expect(
-      server.requests.map((request) => request.headers['cf-access-token']),
-    ).toEqual(['token-1', 'token-2']);
-  });
+      const { exitCode } = await readWorkspace();
+
+      expect(exitCode).toBe(0);
+      expect(await readFile(counterPath, 'utf8')).toBe('2');
+      expect(
+        server.requests.map((request) => request.headers['cf-access-token']),
+      ).toEqual(['token-1', 'token-2']);
+    },
+  );
 
   it('reports a failing header command without echoing what it printed', async () => {
     vi.stubEnv('TWENTY_API_URL', server.url);
     vi.stubEnv('TWENTY_API_KEY', API_KEY);
     vi.stubEnv(
       'TWENTY_PROXY_HEADER_COMMAND',
-      createNodeCommand(
-        "console.log('cf-access-token: leaked-secret'); console.error('Run cloudflared access login first.'); process.exit(4);",
-      ),
+      createNodeCommand({
+        script:
+          "console.log('cf-access-token: leaked-secret'); console.error('Run cloudflared access login first.'); process.exit(4);",
+      }),
     );
 
     const { stdout, envelope, exitCode } = await readWorkspace();
@@ -203,6 +228,54 @@ describe('proxy headers', () => {
     });
     expect(stdout).not.toContain('leaked-secret');
     expect(server.requests).toEqual([]);
+  });
+
+  it('never quotes malformed command output in errors', async () => {
+    vi.stubEnv('TWENTY_API_URL', server.url);
+    vi.stubEnv('TWENTY_API_KEY', API_KEY);
+    vi.stubEnv(
+      'TWENTY_PROXY_HEADER_COMMAND',
+      createNodeCommand({
+        script: "console.log('Token leaked-secret: expired');",
+      }),
+    );
+
+    const { stdout, envelope } = await readWorkspace();
+
+    expect(envelope.error.code).toBe('INVALID_INPUT');
+    expect(stdout).not.toContain('leaked-secret');
+    expect(server.requests).toEqual([]);
+  });
+
+  it('renews command headers before opening a log stream', async () => {
+    const counterPath = join(home, 'header-command-runs');
+
+    proxy.acceptedToken = 'token-2';
+
+    await subscribeGraphql({
+      target: {
+        apiUrl: server.url,
+        bearerToken: API_KEY,
+        credentialKind: 'apiKey',
+        source: 'environment',
+        proxyHeaders: createProxyHeaders({
+          headers: {},
+          headerCommand: createNodeCommand({
+            script: COUNTING_TOKEN_SCRIPT,
+            args: [counterPath],
+          }),
+        }),
+      },
+      signal: new AbortController().signal,
+      query: 'subscription { logs }',
+      variables: {},
+      onConnected: async () => {},
+      onData: async () => {},
+    });
+
+    expect(
+      server.requests.map((request) => request.headers['cf-access-token']),
+    ).toEqual(['token-1', 'token-2']);
   });
 
   it('refuses headers the CLI sets itself', async () => {
@@ -322,7 +395,10 @@ describe('proxy headers', () => {
     const counterPath = join(home, 'header-command-runs');
     const proxyHeaders = createProxyHeaders({
       headers: { 'x-team': 'platform' },
-      headerCommand: createNodeCommand(COUNTING_TOKEN_SCRIPT, counterPath),
+      headerCommand: createNodeCommand({
+        script: COUNTING_TOKEN_SCRIPT,
+        args: [counterPath],
+      }),
     });
     const signal = new AbortController().signal;
 
