@@ -19,7 +19,9 @@ type ManyToOneRelation = {
 export type CascadeAnnotatedAction<TAction extends AnnotatableAction> =
   TAction & { cascadedFromUniversalIdentifier?: string };
 
-const getRequiredParentReferences = (action: AnnotatableAction) =>
+const getRequiredParentReferences = (
+  action: Pick<AnnotatableAction, 'metadataName' | 'flatEntity'>,
+) =>
   Object.values<ManyToOneRelation | null>(
     ALL_MANY_TO_ONE_METADATA_RELATIONS[action.metadataName],
   )
