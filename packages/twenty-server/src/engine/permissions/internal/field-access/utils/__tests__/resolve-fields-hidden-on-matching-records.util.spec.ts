@@ -170,7 +170,7 @@ describe('resolveFieldsHiddenOnMatchingRecords', () => {
     ]);
   });
 
-  it('should hide each rule fields on the records matching that rule only', async () => {
+  it('should return every rule with its hidden fields, including a rule hiding nothing', async () => {
     expect(
       await resolve({
         memberRules: [
@@ -198,6 +198,10 @@ describe('resolveFieldsHiddenOnMatchingRecords', () => {
       {
         fieldMetadataIds: ['secret-field-id'],
         recordFilter: { name: { eq: 'first-invoice' } },
+      },
+      {
+        fieldMetadataIds: [],
+        recordFilter: { name: { eq: 'second-invoice' } },
       },
       {
         fieldMetadataIds: ['amount-field-id'],

@@ -8,6 +8,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { buildFieldsHiddenByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-hidden-by-every-matching-rule-sql-conditions.util';
 import { findRlsRuleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { buildRlsRulesRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
@@ -67,7 +68,7 @@ export class RecordFieldPermissionsReadService {
     const { metadataMaps, flatObjectMetadata } =
       await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
 
-    return rlsRuleFields.map(
+    const rlsRuleSQLConditions = rlsRuleFields.map(
       ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
         fieldMetadataIds,
         sqlCondition: renderRlsRecordFilterToSql({
@@ -82,6 +83,10 @@ export class RecordFieldPermissionsReadService {
           flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
         }) ?? { sql: 'TRUE', parameters: {} },
       }),
+    );
+
+    return buildFieldsHiddenByEveryMatchingRuleSQLConditions(
+      rlsRuleSQLConditions,
     );
   }
 
