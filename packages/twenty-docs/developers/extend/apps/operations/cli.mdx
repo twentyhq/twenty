@@ -181,3 +181,14 @@ Build output belongs to the CLI. Do not read `.twenty/output/manifest.json` or i
 The [command reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) covers every flag, permission, output format and exit code.
 
 <PageBanner illustration="card-page-cli" />
+
+## Export workspace records
+
+```bash
+twenty data export companies --output companies.csv
+twenty data export companies --fields name,domainName,employees --filter 'employees[gte]:5000' --output large-companies.csv
+```
+
+`data export` requires the workspace's **Export CSV** permission. It follows the server's export progress, then streams the CSV to `--output`. Record and field permissions are enforced by the server. An app project is not required; select a saved connection with `--remote` or use the usual environment credentials.
+
+The output file appears only after a successful download. Existing files are kept unless you pass `--force`. Downloads are limited to 1 GiB and 15 minutes. If interrupted, run the export again; the download link cannot be reused. `--json` reports the export ID, path, size and duration; `--format ndjson` also streams progress. The CSV itself is written only to the named file.
