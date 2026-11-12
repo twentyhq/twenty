@@ -116,16 +116,26 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    await this.processRollover({
-      subscription,
-      // Stripe's own clock, comparable to subscription boundaries without skew
-      invoiceCreatedAt: new Date(invoiceCreatedAtInSeconds * 1000),
-    });
+    // Stripe's own clock, comparable to subscription boundaries without skew
+    const invoiceCreatedAt = new Date(invoiceCreatedAtInSeconds * 1000);
 
-    await this.enqueueSeatSyncForSeatArrangements(subscription.workspaceId);
+    await this.processRollover({ subscription, invoiceCreatedAt });
+
+    await this.enqueueSeatSyncForSeatArrangements({
+      subscription,
+      invoiceCreatedAt,
+    });
   }
 
-  private async enqueueSeatSyncForSeatArrangements(workspaceId: string) {
+  private async enqueueSeatSyncForSeatArrangements({
+    subscription,
+    invoiceCreatedAt,
+  }: {
+    subscription: BillingSubscriptionEntity;
+    invoiceCreatedAt: Date;
+  }) {
+    const { workspaceId } = subscription;
+
     const seatArrangements =
       await this.billingSeatService.findSeatArrangements(workspaceId);
 
@@ -135,7 +145,14 @@ export class BillingWebhookInvoiceService {
 
     await this.billingMessageQueueService.add<UpdateSubscriptionQuantityJobData>(
       UpdateSubscriptionQuantityJob.name,
-      { workspaceId, isBillingPeriodRenewal: true },
+      {
+        workspaceId,
+        renewalPeriodStartMs: resolveBillingTransitionBoundary({
+          invoiceCreatedAt,
+          subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
+          subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
+        }).getTime(),
+      },
       {
         ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
         workspaceId,

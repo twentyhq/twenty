@@ -55,6 +55,7 @@ import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-ph
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
 import { buildBillingSubscriptionUpdateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-update-lock-key.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -225,10 +226,10 @@ export class BillingSubscriptionUpdateService {
 
   async syncSeats({
     workspaceId,
-    isBillingPeriodRenewal = false,
+    renewalPeriodStart,
   }: {
     workspaceId: string;
-    isBillingPeriodRenewal?: boolean;
+    renewalPeriodStart?: Date;
   }) {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
@@ -256,7 +257,7 @@ export class BillingSubscriptionUpdateService {
             type: SubscriptionUpdateType.SEATS,
             newSeats: billedSeats,
           },
-          shouldResetCurrentPeriodMaxSeats: isBillingPeriodRenewal,
+          renewalPeriodStart,
         });
       },
     });
@@ -296,12 +297,12 @@ export class BillingSubscriptionUpdateService {
     workspaceId,
     subscriptionId,
     subscriptionUpdate,
-    shouldResetCurrentPeriodMaxSeats = false,
+    renewalPeriodStart,
   }: {
     workspaceId: string;
     subscriptionId: string;
     subscriptionUpdate: SubscriptionUpdate;
-    shouldResetCurrentPeriodMaxSeats?: boolean;
+    renewalPeriodStart?: Date;
   }): Promise<void> {
     const subscription = await this.billingSubscriptionRepository.findOneOrFail(
       workspaceId,
@@ -429,10 +430,24 @@ export class BillingSubscriptionUpdateService {
       }
     }
 
-    await this.billingSubscriptionService.syncSubscriptionToDatabase(
-      subscription.workspaceId,
-      subscription.stripeSubscriptionId,
-      { shouldResetCurrentPeriodMaxSeats },
+    const syncSubscriptionToDatabase = () =>
+      this.billingSubscriptionService.syncSubscriptionToDatabase({
+        workspaceId: subscription.workspaceId,
+        stripeSubscriptionId: subscription.stripeSubscriptionId,
+        renewalPeriodStart,
+      });
+
+    if (!isDefined(renewalPeriodStart)) {
+      await syncSubscriptionToDatabase();
+
+      return;
+    }
+
+    // Lowering the period's max seats is the one write the subscription webhook could undo, so it takes the webhook's lock.
+    await this.cacheLockService.withLock(
+      syncSubscriptionToDatabase,
+      buildBillingSubscriptionStateLockKey(subscription.stripeCustomerId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
     );
   }
 

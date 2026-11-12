@@ -26,11 +26,11 @@ type BillingPeriodBoundaryUpdate = {
 export const resolveBillingPeriodBoundaryUpdate = ({
   incomingPeriodStart,
   storedSubscription,
-  shouldResetCurrentPeriodMaxSeats = false,
+  renewalPeriodStart,
 }: {
   incomingPeriodStart: Date | undefined;
   storedSubscription: StoredBillingPeriod | null;
-  shouldResetCurrentPeriodMaxSeats?: boolean;
+  renewalPeriodStart?: Date;
 }): BillingPeriodBoundaryUpdate => {
   if (!isDefined(storedSubscription) || !isDefined(incomingPeriodStart)) {
     return {};
@@ -52,7 +52,8 @@ export const resolveBillingPeriodBoundaryUpdate = ({
     return { currentPeriodStart, currentPeriodEnd, currentPeriodMaxSeats };
   }
 
-  if (shouldResetCurrentPeriodMaxSeats) {
+  // The renewal seat sync sets the period's starting seats; the quantity it replaces belongs to the closed period.
+  if (renewalPeriodStart?.getTime() === incomingPeriodStart.getTime()) {
     return { currentPeriodMaxSeats: null };
   }
 

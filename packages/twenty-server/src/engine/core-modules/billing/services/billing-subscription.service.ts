@@ -318,10 +318,10 @@ export class BillingSubscriptionService {
         },
       );
 
-    await this.syncSubscriptionToDatabase(
-      billingSubscription.workspaceId,
-      updatedSubscription.id,
-    );
+    await this.syncSubscriptionToDatabase({
+      workspaceId: billingSubscription.workspaceId,
+      stripeSubscriptionId: updatedSubscription.id,
+    });
 
     return {
       status: getSubscriptionStatus(updatedSubscription.status),
@@ -329,11 +329,15 @@ export class BillingSubscriptionService {
     };
   }
 
-  async syncSubscriptionToDatabase(
-    workspaceId: string,
-    stripeSubscriptionId: string,
-    { shouldResetCurrentPeriodMaxSeats = false } = {},
-  ) {
+  async syncSubscriptionToDatabase({
+    workspaceId,
+    stripeSubscriptionId,
+    renewalPeriodStart,
+  }: {
+    workspaceId: string;
+    stripeSubscriptionId: string;
+    renewalPeriodStart?: Date;
+  }) {
     const subscription =
       await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
         stripeSubscriptionId,
@@ -382,7 +386,7 @@ export class BillingSubscriptionService {
         ...resolveBillingPeriodBoundaryUpdate({
           incomingPeriodStart: incomingSubscription.currentPeriodStart,
           storedSubscription,
-          shouldResetCurrentPeriodMaxSeats,
+          renewalPeriodStart,
         }),
       },
       {

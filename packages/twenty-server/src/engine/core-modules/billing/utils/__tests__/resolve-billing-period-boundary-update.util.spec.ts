@@ -83,7 +83,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
     ).toEqual({ currentPeriodMaxSeats: 8 });
   });
 
-  it('drops the seats about to be replaced from the max seats when asked to reset', () => {
+  it('drops the seats about to be replaced from the max seats on the renewal seat sync of the period', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({
         incomingPeriodStart: FEBRUARY,
@@ -93,12 +93,27 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
           currentPeriodMaxSeats: null,
           seats: 20,
         }),
-        shouldResetCurrentPeriodMaxSeats: true,
+        renewalPeriodStart: FEBRUARY,
       }),
     ).toEqual({ currentPeriodMaxSeats: null });
   });
 
-  it('still records the period the subscription moved off when asked to reset', () => {
+  it('keeps the max seats when the renewal seat sync belongs to an older period', () => {
+    expect(
+      resolveBillingPeriodBoundaryUpdate({
+        incomingPeriodStart: FEBRUARY,
+        storedSubscription: buildStoredSubscription({
+          currentPeriodStart: FEBRUARY,
+          currentPeriodEnd: MARCH,
+          currentPeriodMaxSeats: 8,
+          seats: 5,
+        }),
+        renewalPeriodStart: JANUARY,
+      }),
+    ).toEqual({ currentPeriodMaxSeats: 8 });
+  });
+
+  it('still records the period the subscription moved off on the renewal seat sync', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({
         incomingPeriodStart: FEBRUARY,
@@ -108,7 +123,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
           currentPeriodMaxSeats: 20,
           seats: 20,
         }),
-        shouldResetCurrentPeriodMaxSeats: true,
+        renewalPeriodStart: FEBRUARY,
       }),
     ).toEqual({
       previousPeriodStart: JANUARY,
