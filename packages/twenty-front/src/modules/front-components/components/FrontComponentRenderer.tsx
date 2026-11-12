@@ -139,8 +139,12 @@ const FrontComponentRendererContent = ({
     frontComponentSharedDependenciesChecksum,
   } = frontComponent;
 
-  // A crashed component may keep running in its worker, so it must stop editing what Approve submits.
-  const [hasRuntimeError, setHasRuntimeError] = useState(false);
+  // A crashed build may keep running in its worker, so it must stop editing what Approve submits; a rebuild recovers.
+  const [failedComponentChecksum, setFailedComponentChecksum] = useState<
+    string | null
+  >(null);
+  const hasRuntimeError =
+    failedComponentChecksum === frontComponent.builtComponentChecksum;
 
   const {
     executionContext,
@@ -179,13 +183,13 @@ const FrontComponentRendererContent = ({
         return;
       }
 
-      setHasRuntimeError(true);
+      setFailedComponentChecksum(frontComponent.builtComponentChecksum);
       enqueueToast({
         status: 'error',
         children: t`Failed to load front component: ${error.message}`,
       });
     },
-    [enqueueToast],
+    [enqueueToast, frontComponent.builtComponentChecksum],
   );
 
   const [initialApplicationVariables] = useState(
