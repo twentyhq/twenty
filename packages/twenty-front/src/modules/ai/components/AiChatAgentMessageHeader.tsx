@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -16,11 +17,13 @@ const AGENT_DETAILS_ERROR_TOAST_DEDUPE_KEY = 'agent-details-query-error';
 type AiChatAgentMessageHeaderProps = {
   agentId: string;
   createdAt: Date | string;
+  receipt?: ReactNode;
 };
 
 export const AiChatAgentMessageHeader = ({
   agentId,
   createdAt,
+  receipt,
 }: AiChatAgentMessageHeaderProps) => {
   const { t } = useLingui();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
@@ -53,6 +56,7 @@ export const AiChatAgentMessageHeader = ({
         }
         name={agentName}
         createdAt={createdAt}
+        receipt={receipt}
       />
     </>
   );

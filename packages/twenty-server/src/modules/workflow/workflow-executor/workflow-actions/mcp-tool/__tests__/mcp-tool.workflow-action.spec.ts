@@ -11,6 +11,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
+import { McpToolCallService } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-call.service';
 import { McpToolWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/mcp-tool.workflow-action';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -84,6 +85,7 @@ const setup = async (mcpServer: typeof MCP_SERVER = MCP_SERVER) => {
 
   const module = await Test.createTestingModule({
     providers: [
+      McpToolCallService,
       McpToolWorkflowAction,
       { provide: McpServerToolCallService, useValue: { callTool } },
       {

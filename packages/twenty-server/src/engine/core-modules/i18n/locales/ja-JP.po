@@ -2960,6 +2960,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "商談に結びつけられたチャット"
 
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "アクティブなタブと、そのレイアウトモードに一致するウィジェットの位置を選択してください。"
+
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
@@ -3454,6 +3459,11 @@ msgstr "このアプリケーションには、名前 {0} の接続プロバイ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "タイプが 'custom' の接続プロバイダーは、authorize および callback ロジック関数を参照する必要があります"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr ""
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5386,11 +5396,6 @@ msgstr "レコードの作成に失敗しました。"
 msgid "Failed to delete file {fileId}"
 msgstr "ファイルの削除に失敗しました: {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "ジョブの削除に失敗しました。後でもう一度お試しください。"
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -6162,6 +6167,11 @@ msgstr "engineComponentKey が TRIGGER_WORKFLOW_VERSION の場合は frontCompon
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "フロントエンドコンポーネントビルダーのリクエストが 6 MiB の制限を超えています。アプリの依存関係または生成された SDK のサイズを削減してください。"
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "フロントエンドコンポーネントが見つかりません。"
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9748,6 +9758,11 @@ msgstr "OAuth アクセスが拒否されました。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "OAuth 接続プロバイダーに oauth の設定ブロックがありません。"
+
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr ""
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13806,7 +13821,7 @@ msgstr "データベースイベントトリガーの条件はテキストであ
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "エージェントトリガーの条件が無効です"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14864,6 +14879,11 @@ msgstr "このファイルのアップロードはすでに完了済みです。
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "This form no longer waits for an answer."
 msgstr "このフォームは回答を待機していません。"
+
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "このフロントエンドコンポーネントは、このページレイアウトでは使用できません。"
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -17226,6 +17246,11 @@ msgstr "アクセスを受け取るユーザー"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "アクセスが付与された理由"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "ウィジェットの設定が必要です。"
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

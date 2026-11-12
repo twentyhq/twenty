@@ -14,6 +14,7 @@ import {
   generateTransientToken,
   generateTransientTokenResponse,
 } from 'test/integration/utils/generate-transient-token.util';
+import { buildSignedInBrowserHeaders } from 'test/integration/metadata/suites/connection-provider/utils/build-signed-in-browser-headers.util';
 import { getDataOrThrow } from 'test/integration/utils/query-messaging.util';
 import gql from 'graphql-tag';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -114,12 +115,14 @@ describe('app connection management guards (e2e)', () => {
     as?: keyof typeof transientTokenGenerators;
     providerName?: string;
   }): Promise<string> => {
+    const transientToken = await transientTokenGenerators[as]();
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
+      .set(await buildSignedInBrowserHeaders({ transientToken }))
       .query({
         applicationId: applicationDbId,
         providerName,
-        transientToken: await transientTokenGenerators[as](),
+        transientToken,
         ...(isDefined(reconnectingConnectedAccountId)
           ? { reconnectingConnectedAccountId }
           : {}),

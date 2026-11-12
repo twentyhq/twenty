@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type AiChatInboxSelectionEffectProps = {
@@ -23,8 +23,9 @@ export const AiChatInboxSelectionEffect = ({
   threads,
 }: AiChatInboxSelectionEffectProps) => {
   const navigate = useNavigateApp();
-  const agentChatRecentThreads = useAtomStateValue(
-    agentChatRecentThreadsSelector,
+  const agentChatThreadListThreads = useAtomFamilySelectorValue(
+    agentChatThreadListThreadsFamilySelector,
+    AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
   );
   const { scope: selectedThreadScope } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
@@ -32,7 +33,7 @@ export const AiChatInboxSelectionEffect = ({
   );
   const isSelectedThreadInInbox =
     selectedThreadScope === 'INBOX' &&
-    agentChatRecentThreads.some(({ id }) => id === selectedThreadId);
+    agentChatThreadListThreads.some(({ id }) => id === selectedThreadId);
   const [lastListedSelection, setLastListedSelection] = useState<{
     threadId: string;
     index: number;

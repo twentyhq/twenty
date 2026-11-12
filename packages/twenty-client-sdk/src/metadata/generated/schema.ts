@@ -3110,6 +3110,8 @@ export interface PreviewMessageCampaignSendOutputDTO {
 
 export interface PublicApplicationRegistration {
     id: Scalars['UUID']
+    isClaimingVerifiedClientName: Scalars['Boolean']
+    isVerified: Scalars['Boolean']
     logoUrl?: Scalars['String']
     name: Scalars['String']
     oAuthScopes: Scalars['String'][]
@@ -7238,7 +7240,7 @@ export interface MutationGenqlSelection{
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     attachRecordToInboxThread?: { __args: {input: InboxThreadRecordInput} }
-    authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), issuer?: (Scalars['String'] | null), redirectUrl: Scalars['String'], scope?: (Scalars['String'] | null), state?: (Scalars['String'] | null)} })
+    authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), issuer?: (Scalars['String'] | null), redirectUrl: Scalars['String'], resource?: (Scalars['String'] | null), scope?: (Scalars['String'] | null), state?: (Scalars['String'] | null)} })
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     cancelSwitchBillingInterval?: BillingUpdateGenqlSelection
     cancelSwitchBillingPlan?: BillingUpdateGenqlSelection
@@ -7959,6 +7961,8 @@ export interface PreviewMessageCampaignSendOutputDTOGenqlSelection{
 
 export interface PublicApplicationRegistrationGenqlSelection{
     id?: boolean | number
+    isClaimingVerifiedClientName?: boolean | number
+    isVerified?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
     oAuthScopes?: boolean | number

@@ -205,7 +205,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
   }
 
-  override getDeferredAction(
+  override getDeferredOperation(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>,
   ) {
     return getDeferredForeignKeyValidation(context);
