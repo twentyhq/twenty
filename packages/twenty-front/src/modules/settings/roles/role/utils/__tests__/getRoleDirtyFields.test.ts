@@ -75,6 +75,7 @@ describe('getRoleDirtyFields', () => {
     const predicate = {
       id: 'predicate-id',
       fieldMetadataId: 'field-id',
+      relationFieldMetadataId: null,
       objectMetadataId: 'pet',
       operand: RowLevelPermissionPredicateOperand.IS,
       roleId: role.id,
@@ -93,9 +94,6 @@ describe('getRoleDirtyFields', () => {
       objectPermissions: [
         { objectMetadataId: 'pet', canReadObjectRecords: null },
       ],
-      rowLevelPermissionPredicates: [
-        { ...predicate, relationFieldMetadataId: null },
-      ],
       rowLevelPermissionRules: [
         {
           __typename: 'RowLevelPermissionRule' as const,
@@ -111,6 +109,18 @@ describe('getRoleDirtyFields', () => {
     };
 
     expect(getRoleDirtyFields(draft, persisted)).toEqual({});
+
+    const otherPredicate = { ...predicate, id: 'other-predicate-id' };
+
+    expect(
+      getRoleDirtyFields(
+        { ...draft, rowLevelPermissionPredicates: [predicate, otherPredicate] },
+        {
+          ...persisted,
+          rowLevelPermissionPredicates: [otherPredicate, predicate],
+        },
+      ),
+    ).toEqual({});
     expect(
       Object.keys(
         getRoleDirtyFields(
