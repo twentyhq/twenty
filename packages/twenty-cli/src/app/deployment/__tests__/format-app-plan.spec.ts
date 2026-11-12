@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { describe, expect, it } from 'vitest';
 
 import { formatAppPlanActions } from '@/app/deployment/format-app-plan';
@@ -19,7 +20,7 @@ const deletion = ({
   metadataName,
   universalIdentifier,
   flatEntity,
-  ...(cascadedFromUniversalIdentifier !== undefined && {
+  ...(isDefined(cascadedFromUniversalIdentifier) && {
     cascadedFromUniversalIdentifier,
   }),
 });

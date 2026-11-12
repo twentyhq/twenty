@@ -240,7 +240,7 @@ const countFieldsOnOtherObjects = ({
   action,
   cascades,
 }: {
-  action: AppPlanAction;
+  action: Pick<AppPlanAction, 'metadataName' | 'universalIdentifier'>;
   cascades: AppPlanAction[];
 }) =>
   cascades.filter(
@@ -255,7 +255,7 @@ const formatDestructiveConsequence = ({
   action,
   cascades,
 }: {
-  action: AppPlanAction;
+  action: Pick<AppPlanAction, 'metadataName' | 'universalIdentifier'>;
   cascades: AppPlanAction[];
 }) => {
   const consequence =
