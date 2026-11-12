@@ -16,6 +16,10 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 export class TestMcpToolStepInput {
   @IsUUID()
   @Field(() => UUIDScalarType)
+  workflowVersionId: string;
+
+  @IsUUID()
+  @Field(() => UUIDScalarType)
   mcpServerId: string;
 
   @IsString()

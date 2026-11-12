@@ -46,7 +46,7 @@ export class McpToolStepTestService {
     toolArguments,
     isDestructiveToolConfirmed = false,
     workspace: { id: workspaceId, workspaceCustomApplicationId },
-    callingApplication,
+    workflowApplication,
     userWorkspaceId,
   }: {
     mcpServerId: string;
@@ -54,7 +54,7 @@ export class McpToolStepTestService {
     toolArguments: Record<string, unknown> | undefined;
     isDestructiveToolConfirmed: boolean | undefined;
     workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
-    callingApplication: FlatApplication | undefined;
+    workflowApplication: FlatApplication;
     userWorkspaceId: string;
   }): Promise<TestMcpToolStepDTO> {
     const lookup = await this.mcpToolCallService.findServerTool({
@@ -73,18 +73,18 @@ export class McpToolStepTestService {
 
     if (
       !canCallerReachApplication({
-        callingApplication,
+        callingApplication: workflowApplication,
         applicationId: lookup.mcpServer.applicationId,
         operation: 'trigger',
         workspaceCustomApplicationId,
       })
     ) {
-      const { code, userFriendlyMessage } = LOOKUP_FAILURES.server_not_found;
-
       throw new WorkflowVersionStepException(
-        `MCP server with id ${mcpServerId} not found`,
-        code,
-        { userFriendlyMessage },
+        `MCP server "${lookup.mcpServer.label}" belongs to another application than "${workflowApplication.name}", so this workflow cannot use it`,
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`This MCP server belongs to another application, so this workflow cannot use it.`,
+        },
       );
     }
 

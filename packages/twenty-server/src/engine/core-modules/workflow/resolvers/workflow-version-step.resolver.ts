@@ -26,7 +26,6 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -249,23 +248,28 @@ export class WorkflowVersionStepResolver {
   async testMcpToolStep(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApplication({ allowUndefined: true })
-    callingApplication: FlatApplication | undefined,
     @Args('input')
     {
+      workflowVersionId,
       mcpServerId,
       toolName,
       toolArguments,
       isDestructiveToolConfirmed,
     }: TestMcpToolStepInput,
   ): Promise<TestMcpToolStepDTO> {
+    const { flatApplication } = await this.findWorkflowFlatApplicationOrThrow({
+      workspace,
+      userWorkspaceId,
+      workflowVersionId,
+    });
+
     return this.mcpToolStepTestService.testTool({
       mcpServerId,
       toolName,
       toolArguments,
       isDestructiveToolConfirmed,
       workspace,
-      callingApplication,
+      workflowApplication: flatApplication,
       userWorkspaceId,
     });
   }
@@ -315,12 +319,12 @@ export class WorkflowVersionStepResolver {
     return fromLogicFunctionExecuteResultToDTO(result);
   }
 
-  private async findWorkflowApplicationOrThrow({
-    workspace: { id: workspaceId, workspaceCustomApplicationId },
+  private async findWorkflowFlatApplicationOrThrow({
+    workspace: { id: workspaceId },
     userWorkspaceId,
     workflowVersionId,
   }: {
-    workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
+    workspace: Pick<WorkspaceEntity, 'id'>;
     userWorkspaceId: string;
     workflowVersionId: string;
   }): Promise<{ flatApplication: FlatApplication; workflowId: string }> {
@@ -349,12 +353,9 @@ export class WorkflowVersionStepResolver {
       flatEntityId: coreWorkflowVersion.coreWorkflowId,
       flatEntityMaps: flatWorkflowMaps,
     });
-
-    // inline code runs with its application's token and variables, so only builder workflows may test it
-    const flatApplication =
-      flatWorkflow?.applicationId === workspaceCustomApplicationId
-        ? flatApplicationMaps.byId[workspaceCustomApplicationId]
-        : undefined;
+    const flatApplication = isDefined(flatWorkflow)
+      ? flatApplicationMaps.byId[flatWorkflow.applicationId]
+      : undefined;
 
     if (!isDefined(flatApplication)) {
       throw new WorkflowVersionStepException(
@@ -369,6 +370,33 @@ export class WorkflowVersionStepResolver {
         coreWorkflowVersion.workspaceWorkflowId ??
         coreWorkflowVersion.coreWorkflowId,
     };
+  }
+
+  private async findWorkflowApplicationOrThrow({
+    workspace,
+    userWorkspaceId,
+    workflowVersionId,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
+    userWorkspaceId: string;
+    workflowVersionId: string;
+  }): Promise<{ flatApplication: FlatApplication; workflowId: string }> {
+    const { flatApplication, workflowId } =
+      await this.findWorkflowFlatApplicationOrThrow({
+        workspace,
+        userWorkspaceId,
+        workflowVersionId,
+      });
+
+    // inline code runs with its application's token and variables, so only builder workflows may test it
+    if (flatApplication.id !== workspace.workspaceCustomApplicationId) {
+      throw new WorkflowVersionStepException(
+        'Application of the workflow not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    return { flatApplication, workflowId };
   }
 
   private async assertWorkflowRunIsReadableByRequesterOrThrow(

@@ -7,6 +7,7 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 import gql from 'graphql-tag';
 
 type TestMcpToolStepFactoryInput = {
+  workflowVersionId: string;
   mcpServerId: string;
   toolName: string;
   toolArguments?: Record<string, unknown>;

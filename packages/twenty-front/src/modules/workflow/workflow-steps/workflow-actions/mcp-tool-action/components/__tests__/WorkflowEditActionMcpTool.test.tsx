@@ -30,6 +30,9 @@ jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
   useMutation: () => [mockTestMcpToolStep],
 }));
+jest.mock('@/workflow/hooks/useWorkflowVersionIdOrThrow', () => ({
+  useWorkflowVersionIdOrThrow: () => 'workflow-version-id',
+}));
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({}),
 }));
@@ -252,6 +255,7 @@ describe('WorkflowEditActionMcpTool', () => {
     expect(mockTestMcpToolStep).toHaveBeenCalledWith({
       variables: {
         input: {
+          workflowVersionId: 'workflow-version-id',
           mcpServerId: 'mcp-server-id',
           toolName: 'search_docs',
           toolArguments: { query: 'invoices', cursor: null },
@@ -306,6 +310,7 @@ describe('WorkflowEditActionMcpTool', () => {
     expect(mockTestMcpToolStep).toHaveBeenCalledWith({
       variables: {
         input: {
+          workflowVersionId: 'workflow-version-id',
           mcpServerId: 'mcp-server-id',
           toolName: 'create_doc',
           toolArguments: { title: 'Roadmap' },

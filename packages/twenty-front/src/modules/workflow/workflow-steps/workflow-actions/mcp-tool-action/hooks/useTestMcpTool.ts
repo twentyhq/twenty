@@ -46,11 +46,13 @@ export const useTestMcpTool = (actionId: string) => {
   };
 
   const testMcpTool = async ({
+    workflowVersionId,
     mcpServerId,
     toolName,
     toolInput,
     isDestructiveToolConfirmed,
   }: WorkflowMcpToolAction['settings']['input'] & {
+    workflowVersionId: string;
     isDestructiveToolConfirmed: boolean;
   }): Promise<JsonObject | undefined> => {
     setIsTesting(true);
@@ -59,6 +61,7 @@ export const useTestMcpTool = (actionId: string) => {
       const { data } = await testMcpToolStep({
         variables: {
           input: {
+            workflowVersionId,
             mcpServerId,
             toolName,
             toolArguments: resolveMcpToolTestArgumentsOrThrow({

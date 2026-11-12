@@ -925,6 +925,7 @@ export type TestMcpToolStepInput = {
   /** Tool arguments with workflow variables already replaced */
   toolArguments?: InputMaybe<Scalars['JSON']['input']>;
   toolName: Scalars['String']['input'];
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type TestWorkflowCodeStepInput = {

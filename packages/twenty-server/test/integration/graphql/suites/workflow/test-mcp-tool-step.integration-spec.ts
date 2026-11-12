@@ -1,3 +1,7 @@
+import {
+  createCoreWorkflow,
+  deleteCoreWorkflows,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { testMcpToolStep } from 'test/integration/graphql/suites/workflow/utils/test-mcp-tool-step.util';
 import {
   type FakeMcpServer,
@@ -16,6 +20,8 @@ import { v4 as uuidv4 } from 'uuid';
 describe('testMcpToolStep (integration)', () => {
   let fakeMcpServer: FakeMcpServer;
   let mcpServerId: string;
+  let coreWorkflowId: string;
+  let workflowVersionId: string;
 
   beforeAll(async () => {
     await updateFeatureFlag({
@@ -39,9 +45,15 @@ describe('testMcpToolStep (integration)', () => {
 
     expect(response.body.errors).toBeUndefined();
     mcpServerId = response.body.data.createMcpServer.id;
+
+    const workflow = await createCoreWorkflow({ name: 'MCP tool step test' });
+
+    coreWorkflowId = workflow.coreWorkflowId;
+    workflowVersionId = workflow.coreWorkflowVersionId;
   });
 
   afterAll(async () => {
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     await deleteMcpServer(mcpServerId);
     await fakeMcpServer.close();
     await updateConfigVariable({
@@ -52,6 +64,7 @@ describe('testMcpToolStep (integration)', () => {
   it('calls the tool with the null arguments dropped and returns its content', async () => {
     const { data, errors } = await testMcpToolStep({
       input: {
+        workflowVersionId,
         mcpServerId,
         toolName: 'search_docs',
         toolArguments: { query: 'invoices', limit: null },
@@ -70,7 +83,12 @@ describe('testMcpToolStep (integration)', () => {
 
   it('returns the tool error instead of failing the mutation', async () => {
     const { data, errors } = await testMcpToolStep({
-      input: { mcpServerId, toolName: 'search_docs', toolArguments: {} },
+      input: {
+        workflowVersionId,
+        mcpServerId,
+        toolName: 'search_docs',
+        toolArguments: {},
+      },
     });
 
     expect(errors).toBeUndefined();
@@ -83,6 +101,7 @@ describe('testMcpToolStep (integration)', () => {
   it('runs a tool that may change data only once the author confirmed it', async () => {
     const callsBefore = fakeMcpServer.receivedAuthorizationHeaders.length;
     const input = {
+      workflowVersionId,
       mcpServerId,
       toolName: 'delete_page',
       toolArguments: { pageId: 'page-1' },
@@ -109,7 +128,12 @@ describe('testMcpToolStep (integration)', () => {
 
   it('rejects a tool the server does not offer', async () => {
     const { errors } = await testMcpToolStep({
-      input: { mcpServerId, toolName: 'archive_page', toolArguments: {} },
+      input: {
+        workflowVersionId,
+        mcpServerId,
+        toolName: 'archive_page',
+        toolArguments: {},
+      },
       expectToFail: true,
     });
 
@@ -123,7 +147,12 @@ describe('testMcpToolStep (integration)', () => {
     const callsBefore = fakeMcpServer.receivedAuthorizationHeaders.length;
 
     const { errors } = await testMcpToolStep({
-      input: { mcpServerId, toolName: 'search_docs', toolArguments: {} },
+      input: {
+        workflowVersionId,
+        mcpServerId,
+        toolName: 'search_docs',
+        toolArguments: {},
+      },
       expectToFail: true,
     });
 

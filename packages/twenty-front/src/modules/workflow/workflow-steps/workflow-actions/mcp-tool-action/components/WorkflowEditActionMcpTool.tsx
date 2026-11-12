@@ -1,4 +1,5 @@
 import { useFindManyMcpServers } from '@/mcp-servers/hooks/useFindManyMcpServers';
+import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -86,6 +87,7 @@ export const WorkflowEditActionMcpTool = ({
   actionOptions,
 }: WorkflowEditActionMcpToolProps) => {
   const { t } = useLingui();
+  const workflowVersionId = useWorkflowVersionIdOrThrow();
   const { mcpServers, loading, error } = useFindManyMcpServers();
   const { settings, updateSettings, flushPendingSave } = useMcpToolStepForm({
     action,
@@ -146,6 +148,7 @@ export const WorkflowEditActionMcpTool = ({
   }) => {
     const testResult = await testMcpTool({
       ...settings.input,
+      workflowVersionId,
       toolInput,
       isDestructiveToolConfirmed,
     });
