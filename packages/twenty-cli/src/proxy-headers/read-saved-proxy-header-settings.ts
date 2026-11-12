@@ -29,7 +29,7 @@ export const readSavedProxyHeaderSettings = ({
   remote,
   remoteName,
 }: {
-  remote: RemoteEntry;
+  remote: Pick<RemoteEntry, 'proxyHeaders' | 'proxyHeaderCommand'>;
   remoteName: string;
 }): ProxyHeaderSettings => {
   const { proxyHeaders = {}, proxyHeaderCommand } = remote;

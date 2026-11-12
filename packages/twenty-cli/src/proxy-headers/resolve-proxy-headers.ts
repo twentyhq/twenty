@@ -6,7 +6,6 @@ import { createProxyHeaders } from '@/proxy-headers/create-proxy-headers';
 import { parseProxyHeaderLinesOrThrow } from '@/proxy-headers/parse-proxy-header-lines-or-throw';
 import { type ProxyHeaderSettings } from '@/proxy-headers/types/proxy-header-settings.type';
 
-// Environment headers override saved ones by name; an environment command replaces the saved one.
 export const resolveProxyHeaders = ({
   environment,
   savedSettings = { headers: {} },

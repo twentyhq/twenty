@@ -426,6 +426,26 @@ describe('proxy headers', () => {
     expect(await readFile(counterPath, 'utf8')).toBe('2');
   });
 
+  it('keeps a shared header command running for callers that did not abort', async () => {
+    const counterPath = join(home, 'header-command-runs');
+    const proxyHeaders = createProxyHeaders({
+      headers: {},
+      headerCommand: createNodeCommand({
+        script: COUNTING_TOKEN_SCRIPT,
+        args: [counterPath],
+      }),
+    });
+    const abortedCaller = new AbortController();
+    const firstRead = proxyHeaders?.read(abortedCaller.signal);
+    const secondRead = proxyHeaders?.read(new AbortController().signal);
+
+    abortedCaller.abort();
+
+    await expect(firstRead).rejects.toBe(abortedCaller.signal.reason);
+    expect(await secondRead).toEqual({ 'cf-access-token': 'token-1' });
+    expect(await readFile(counterPath, 'utf8')).toBe('1');
+  });
+
   it('keeps proxy settings out of app worker environments', () => {
     expect(
       createAppWorkerEnvironment({
