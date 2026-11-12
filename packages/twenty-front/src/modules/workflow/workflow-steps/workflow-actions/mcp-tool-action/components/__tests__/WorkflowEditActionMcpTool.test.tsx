@@ -255,7 +255,7 @@ describe('WorkflowEditActionMcpTool', () => {
           mcpServerId: 'mcp-server-id',
           toolName: 'search_docs',
           toolArguments: { query: 'invoices', cursor: null },
-          allowDestructiveTool: false,
+          isDestructiveToolConfirmed: false,
         },
       },
     });
@@ -309,7 +309,7 @@ describe('WorkflowEditActionMcpTool', () => {
           mcpServerId: 'mcp-server-id',
           toolName: 'create_doc',
           toolArguments: { title: 'Roadmap' },
-          allowDestructiveTool: true,
+          isDestructiveToolConfirmed: true,
         },
       },
     });

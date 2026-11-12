@@ -49,9 +49,9 @@ export const useTestMcpTool = (actionId: string) => {
     mcpServerId,
     toolName,
     toolInput,
-    allowDestructiveTool,
+    isDestructiveToolConfirmed,
   }: WorkflowMcpToolAction['settings']['input'] & {
-    allowDestructiveTool: boolean;
+    isDestructiveToolConfirmed: boolean;
   }): Promise<JsonObject | undefined> => {
     setIsTesting(true);
 
@@ -65,7 +65,7 @@ export const useTestMcpTool = (actionId: string) => {
               toolInput,
               variableValues: store.get(mcpToolTestDataAtom).variableValues,
             }),
-            allowDestructiveTool,
+            isDestructiveToolConfirmed,
           },
         },
       });

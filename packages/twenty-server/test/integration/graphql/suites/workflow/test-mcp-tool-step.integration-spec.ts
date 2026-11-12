@@ -98,7 +98,7 @@ describe('testMcpToolStep (integration)', () => {
     );
 
     const confirmed = await testMcpToolStep({
-      input: { ...input, allowDestructiveTool: true },
+      input: { ...input, isDestructiveToolConfirmed: true },
     });
 
     expect(confirmed.data.testMcpToolStep).toMatchObject({

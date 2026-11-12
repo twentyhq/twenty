@@ -256,14 +256,14 @@ export class WorkflowVersionStepResolver {
       mcpServerId,
       toolName,
       toolArguments,
-      allowDestructiveTool,
+      isDestructiveToolConfirmed,
     }: TestMcpToolStepInput,
   ): Promise<TestMcpToolStepDTO> {
     return this.mcpToolStepTestService.testTool({
       mcpServerId,
       toolName,
       toolArguments,
-      allowDestructiveTool,
+      isDestructiveToolConfirmed,
       workspace,
       callingApplication,
       userWorkspaceId,

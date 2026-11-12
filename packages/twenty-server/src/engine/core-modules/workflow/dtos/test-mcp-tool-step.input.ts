@@ -38,5 +38,5 @@ export class TestMcpToolStepInput {
       'Must be true to run a tool that may change data, after the author confirmed it',
     nullable: true,
   })
-  allowDestructiveTool?: boolean;
+  isDestructiveToolConfirmed?: boolean;
 }

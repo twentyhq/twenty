@@ -44,7 +44,7 @@ export class McpToolStepTestService {
     mcpServerId,
     toolName,
     toolArguments,
-    allowDestructiveTool = false,
+    isDestructiveToolConfirmed = false,
     workspace: { id: workspaceId, workspaceCustomApplicationId },
     callingApplication,
     userWorkspaceId,
@@ -52,7 +52,7 @@ export class McpToolStepTestService {
     mcpServerId: string;
     toolName: string;
     toolArguments: Record<string, unknown> | undefined;
-    allowDestructiveTool: boolean | undefined;
+    isDestructiveToolConfirmed: boolean | undefined;
     workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
     callingApplication: FlatApplication | undefined;
     userWorkspaceId: string;
@@ -88,7 +88,10 @@ export class McpToolStepTestService {
       );
     }
 
-    if (isDestructiveMcpServerTool(lookup.tool) && !allowDestructiveTool) {
+    if (
+      isDestructiveMcpServerTool(lookup.tool) &&
+      !isDestructiveToolConfirmed
+    ) {
       throw new WorkflowVersionStepException(
         `Tool ${toolName} may change data and the test was not confirmed`,
         WorkflowVersionStepExceptionCode.INVALID_REQUEST,
