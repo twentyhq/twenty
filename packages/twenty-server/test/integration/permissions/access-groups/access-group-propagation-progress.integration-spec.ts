@@ -35,7 +35,7 @@ const readProgress = async (
       query: gql`
         query AccessGroupPropagationProgress {
           accessGroupPropagationProgress {
-            impactedRecordCount
+            totalRecordCount
             remainingRecordCount
             isInProgress
           }
@@ -114,7 +114,7 @@ describe('access group propagation progress (integration)', () => {
 
   it('should report nothing while no propagation runs', async () => {
     expect((await readProgress()).progress).toEqual({
-      impactedRecordCount: 0,
+      totalRecordCount: 0,
       remainingRecordCount: 0,
       isInProgress: false,
     });
@@ -191,7 +191,7 @@ describe('access group propagation progress (integration)', () => {
       await firstBatchReached;
 
       expect((await readProgress()).progress).toEqual({
-        impactedRecordCount: personCount,
+        totalRecordCount: personCount,
         remainingRecordCount: personCount,
         isInProgress: true,
       });
@@ -202,7 +202,7 @@ describe('access group propagation progress (integration)', () => {
     await waitForAllJobsToFinish();
 
     expect((await readProgress()).progress).toEqual({
-      impactedRecordCount: 0,
+      totalRecordCount: 0,
       remainingRecordCount: 0,
       isInProgress: false,
     });

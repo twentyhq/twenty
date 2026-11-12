@@ -18,9 +18,9 @@ export type Scalars = {
 
 export type AccessGroupPropagationProgress = {
   __typename?: 'AccessGroupPropagationProgress';
-  impactedRecordCount: Scalars['Int']['output'];
   isInProgress: Scalars['Boolean']['output'];
   remainingRecordCount: Scalars['Int']['output'];
+  totalRecordCount: Scalars['Int']['output'];
 };
 
 export type ActivateWorkspaceInput = {

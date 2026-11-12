@@ -1,7 +1,7 @@
 type AccessGroupPropagationProgress {
-  impactedRecordCount: Int!
   isInProgress: Boolean!
   remainingRecordCount: Int!
+  totalRecordCount: Int!
 }
 
 input ActivateWorkspaceInput {

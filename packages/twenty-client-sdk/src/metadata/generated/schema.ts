@@ -1,7 +1,7 @@
 // @ts-nocheck
 export type Scalars = {
-    Int: number,
     Boolean: boolean,
+    Int: number,
     String: string,
     Float: number,
     ID: string,
@@ -15,9 +15,9 @@ export type Scalars = {
 }
 
 export interface AccessGroupPropagationProgress {
-    impactedRecordCount: Scalars['Int']
     isInProgress: Scalars['Boolean']
     remainingRecordCount: Scalars['Int']
+    totalRecordCount: Scalars['Int']
     __typename: 'AccessGroupPropagationProgress'
 }
 
@@ -4508,9 +4508,9 @@ export interface WorkspaceUrlsAndId {
 }
 
 export interface AccessGroupPropagationProgressGenqlSelection{
-    impactedRecordCount?: boolean | number
     isInProgress?: boolean | number
     remainingRecordCount?: boolean | number
+    totalRecordCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

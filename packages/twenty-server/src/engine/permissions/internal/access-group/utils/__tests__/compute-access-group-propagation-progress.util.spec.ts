@@ -3,7 +3,7 @@ import { computeAccessGroupPropagationProgress } from 'src/engine/permissions/in
 describe('computeAccessGroupPropagationProgress', () => {
   it('should report nothing when no propagation is tracked', () => {
     expect(computeAccessGroupPropagationProgress({})).toEqual({
-      impactedRecordCount: 0,
+      totalRecordCount: 0,
       remainingRecordCount: 0,
       isInProgress: false,
     });
@@ -20,7 +20,7 @@ describe('computeAccessGroupPropagationProgress', () => {
         'touchedAt:company:propagated': '1',
       }),
     ).toEqual({
-      impactedRecordCount: 1050,
+      totalRecordCount: 1050,
       remainingRecordCount: 400,
       isInProgress: true,
     });
@@ -35,7 +35,7 @@ describe('computeAccessGroupPropagationProgress', () => {
         'remaining:company': '25',
       }),
     ).toEqual({
-      impactedRecordCount: 20,
+      totalRecordCount: 20,
       remainingRecordCount: 10,
       isInProgress: true,
     });
@@ -48,7 +48,7 @@ describe('computeAccessGroupPropagationProgress', () => {
         'touchedAt:sync': '1',
       }),
     ).toEqual({
-      impactedRecordCount: 0,
+      totalRecordCount: 0,
       remainingRecordCount: 0,
       isInProgress: true,
     });
@@ -62,7 +62,7 @@ describe('computeAccessGroupPropagationProgress', () => {
         'remaining:person': '0',
       }),
     ).toEqual({
-      impactedRecordCount: 10,
+      totalRecordCount: 10,
       remainingRecordCount: 0,
       isInProgress: false,
     });

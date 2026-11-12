@@ -8,7 +8,7 @@ const REMAINING_FIELD_PREFIX = 'remaining:';
 export const computeAccessGroupPropagationProgress = (
   progressFields: Record<string, string>,
 ): AccessGroupPropagationProgress => {
-  let impactedRecordCount = 0;
+  let totalRecordCount = 0;
   let remainingRecordCount = 0;
   let isSyncPending = false;
 
@@ -27,12 +27,12 @@ export const computeAccessGroupPropagationProgress = (
 
     const total = Math.max(0, Number(progressFields[`total:${unit}`] ?? 0));
 
-    impactedRecordCount += total;
+    totalRecordCount += total;
     remainingRecordCount += Math.min(remaining, total);
   }
 
   return {
-    impactedRecordCount,
+    totalRecordCount,
     remainingRecordCount,
     isInProgress: isSyncPending || remainingRecordCount > 0,
   };

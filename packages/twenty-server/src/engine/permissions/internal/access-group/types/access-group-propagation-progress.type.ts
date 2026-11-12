@@ -1,5 +1,5 @@
 export type AccessGroupPropagationProgress = {
-  impactedRecordCount: number;
+  totalRecordCount: number;
   remainingRecordCount: number;
   isInProgress: boolean;
 };

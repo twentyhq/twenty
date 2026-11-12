@@ -3,7 +3,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 @ObjectType('AccessGroupPropagationProgress')
 export class AccessGroupPropagationProgressDTO {
   @Field(() => Int)
-  impactedRecordCount: number;
+  totalRecordCount: number;
 
   @Field(() => Int)
   remainingRecordCount: number;
