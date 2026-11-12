@@ -17,6 +17,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { DragDropProvider } from '@dnd-kit/react';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewType } from '@/views/types/ViewType';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -28,6 +29,11 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+
+// The tab row measures its container, which would otherwise hug the tabs it renders
+const StyledFullWidthContainer = styled.div`
+  width: 100%;
+`;
 
 const companyView = mockedViews.find((view) => view.name === 'All Companies')!;
 
@@ -131,11 +137,13 @@ const meta: Meta<typeof RecordGroupTabs> = {
   ],
   args: { viewType: ViewType.TABLE, dndType: RECORD_TABLE_ROW_DND_TYPE },
   render: (args) => (
-    <DragDropProvider>
-      <RecordGroupTabsPortalProvider>
-        <RecordGroupTabs {...args} />
-      </RecordGroupTabsPortalProvider>
-    </DragDropProvider>
+    <StyledFullWidthContainer>
+      <DragDropProvider>
+        <RecordGroupTabsPortalProvider>
+          <RecordGroupTabs {...args} />
+        </RecordGroupTabsPortalProvider>
+      </DragDropProvider>
+    </StyledFullWidthContainer>
   ),
   parameters: {
     recordTableObjectNameSingular: 'company',
@@ -147,7 +155,6 @@ export default meta;
 type Story = StoryObj<typeof RecordGroupTabs>;
 
 export const SelectsAGroup: Story = {
-  // Wide enough that the last tab never collapses into the more dropdown
   parameters: { container: { width: 800 } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
