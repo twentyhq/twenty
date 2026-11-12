@@ -65,6 +65,7 @@ export const fromCreateWebhookInputToFlatWebhookToCreateOrThrow = ({
     operations: createWebhookInput.operations,
     description: description ?? null,
     condition: normalizeWebhookCondition(createWebhookInput.condition),
+    conditionBindings: null,
     secret,
     workspaceId,
     createdAt: now,

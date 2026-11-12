@@ -90,6 +90,7 @@ const buildFlatWebhook = ({
   operations,
   description: null,
   condition,
+  conditionBindings: null,
   secret: 'secret',
   workspaceId: 'workspace-id',
   applicationId: 'application-id',

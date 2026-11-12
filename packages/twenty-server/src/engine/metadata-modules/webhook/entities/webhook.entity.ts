@@ -1,3 +1,5 @@
+import { type ValidationRuleBindings } from 'twenty-shared/types';
+
 import {
   Column,
   CreateDateColumn,
@@ -11,6 +13,7 @@ import {
 import { ADD_CONDITION_TO_WEBHOOK_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-condition-to-webhook-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Index('IDX_WEBHOOK_WORKSPACE_ID', ['workspaceId'])
 @Entity({ name: 'webhook', schema: 'core' })
@@ -35,6 +38,12 @@ export class WebhookEntity
   })
   @Column({ type: 'text', nullable: true })
   condition: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CONDITION_TO_WEBHOOK_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  conditionBindings: JsonbProperty<ValidationRuleBindings> | null;
 
   @Column({ nullable: false })
   secret: string;

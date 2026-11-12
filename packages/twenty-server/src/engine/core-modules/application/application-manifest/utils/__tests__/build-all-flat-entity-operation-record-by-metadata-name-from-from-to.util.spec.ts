@@ -73,6 +73,7 @@ const WEBHOOK: FlatWebhook = {
   operations: ['*.*'],
   description: null,
   condition: null,
+  conditionBindings: null,
   secret: 'webhook-secret',
   deletedAt: null,
 };

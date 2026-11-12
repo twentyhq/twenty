@@ -7,9 +7,15 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class AddConditionToWebhookFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."webhook" ADD "condition" text');
+    await queryRunner.query(
+      'ALTER TABLE "core"."webhook" ADD "conditionBindings" jsonb',
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'ALTER TABLE "core"."webhook" DROP COLUMN "conditionBindings"',
+    );
     await queryRunner.query('ALTER TABLE "core"."webhook" DROP COLUMN "condition"');
   }
 }

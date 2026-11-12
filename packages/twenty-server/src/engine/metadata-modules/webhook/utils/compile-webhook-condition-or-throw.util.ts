@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   isDefined,
@@ -27,8 +28,9 @@ const buildInvalidConditionException = ({
     { userFriendlyMessage: msg`The condition of this webhook is invalid` },
   );
 
-// Metadata events ignore the condition; a wildcard object compiles it per object when an event arrives
-export const assertWebhookConditionCompilesOrThrow = ({
+// Metadata events ignore the condition; a wildcard object compiles it per object when an event arrives.
+// Bindings map names to one object's fields, so they are only kept for a webhook on a single object.
+export const compileWebhookConditionOrThrow = ({
   condition,
   operations,
   flatObjectMetadataMaps,
@@ -38,17 +40,20 @@ export const assertWebhookConditionCompilesOrThrow = ({
   operations: string[];
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-}) => {
+}): ValidationRuleBindings | null => {
   if (!isNonEmptyString(condition)) {
-    return;
+    return null;
   }
 
-  const objectNameSingulars = new Set(
+  const recordObjectNameSingulars = new Set(
     operations
       .filter((operation) => !operation.startsWith('metadata.'))
-      .map((operation) => operation.split('.')[0])
-      .filter((objectNameSingular) => objectNameSingular !== '*'),
+      .map((operation) => operation.split('.')[0]),
   );
+  const objectNameSingulars = [...recordObjectNameSingulars].filter(
+    (objectNameSingular) => objectNameSingular !== '*',
+  );
+  let conditionBindings: ValidationRuleBindings | null = null;
 
   const flatObjectMetadataByNameSingular = new Map(
     Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
@@ -85,5 +90,9 @@ export const assertWebhookConditionCompilesOrThrow = ({
         reason: compilation.errorMessage,
       });
     }
+
+    conditionBindings = compilation.bindings;
   }
+
+  return recordObjectNameSingulars.size === 1 ? conditionBindings : null;
 };

@@ -13,7 +13,7 @@ import { fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow } from 'src/engine/m
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
-import { assertWebhookConditionCompilesOrThrow } from 'src/engine/metadata-modules/webhook/utils/assert-webhook-condition-compiles-or-throw.util';
+import { compileWebhookConditionOrThrow } from 'src/engine/metadata-modules/webhook/utils/compile-webhook-condition-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
@@ -151,7 +151,7 @@ export class WebhookService {
         flatWebhookMaps,
       });
 
-    assertWebhookConditionCompilesOrThrow({
+    const conditionBindings = compileWebhookConditionOrThrow({
       condition: flatWebhookToCreate.condition,
       operations: flatWebhookToCreate.operations,
       flatObjectMetadataMaps,
@@ -163,7 +163,9 @@ export class WebhookService {
         {
           allFlatEntityOperationByMetadataName: {
             webhook: {
-              flatEntityToCreate: [flatWebhookToCreate],
+              flatEntityToCreate: [
+                { ...flatWebhookToCreate, conditionBindings },
+              ],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -271,14 +273,17 @@ export class WebhookService {
       flatWebhookToUpdate.operations.join() !==
         storedFlatWebhook?.operations.join();
 
-    if (isConditionOrOperationsUpdated) {
-      assertWebhookConditionCompilesOrThrow({
-        condition: flatWebhookToUpdate.condition,
-        operations: flatWebhookToUpdate.operations,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      });
-    }
+    const flatWebhookToUpdateWithBindings = isConditionOrOperationsUpdated
+      ? {
+          ...flatWebhookToUpdate,
+          conditionBindings: compileWebhookConditionOrThrow({
+            condition: flatWebhookToUpdate.condition,
+            operations: flatWebhookToUpdate.operations,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
+        }
+      : flatWebhookToUpdate;
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -287,7 +292,7 @@ export class WebhookService {
             webhook: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [flatWebhookToUpdate],
+              flatEntityToUpdate: [flatWebhookToUpdateWithBindings],
             },
             roleTarget: {
               flatEntityToCreate: flatRoleTargetsToCreate,

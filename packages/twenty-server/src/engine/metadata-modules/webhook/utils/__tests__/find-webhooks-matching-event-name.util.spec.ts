@@ -16,6 +16,7 @@ const buildFlatWebhookMaps = (
         operations,
         description: null,
         condition: null,
+        conditionBindings: null,
         secret: 'secret',
         workspaceId: 'workspace-id',
         applicationId: 'application-id',

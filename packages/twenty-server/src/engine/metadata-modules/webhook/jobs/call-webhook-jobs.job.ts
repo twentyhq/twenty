@@ -58,6 +58,7 @@ export class CallWebhookJobsJob {
         events,
         eventName: eventBatch.name,
         condition: webhook.condition,
+        conditionBindings: webhook.conditionBindings ?? undefined,
         authContext: webhookAuthContext,
       });
 
