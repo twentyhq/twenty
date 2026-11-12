@@ -2568,6 +2568,7 @@ export interface Mutation {
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
     markAgentChatThreadAsDoneInChannel: Scalars['Boolean']
+    markAppChannelThreadAsRead: Scalars['Boolean']
     moveAgentChatThreadToChannel: Scalars['Boolean']
     openDirectMessage: Scalars['UUID']
     prepareGettingStartedWorkflow: GettingStartedWorkflow
@@ -6948,6 +6949,8 @@ export interface LoginTokenGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MarkAppChannelThreadAsReadInput {messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID']}
+
 export interface MarketplaceAppGenqlSelection{
     author?: boolean | number
     category?: boolean | number
@@ -7375,6 +7378,7 @@ export interface MutationGenqlSelection{
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
+    markAppChannelThreadAsRead?: { __args: {input: MarkAppChannelThreadAsReadInput} }
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     openDirectMessage?: { __args: {workspaceMemberId: Scalars['UUID']} }
     prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {stepActionKey: GettingStartedStepActionKey} })

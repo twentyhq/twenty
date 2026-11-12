@@ -55,6 +55,10 @@ export const parseLinkedinSettingsUpdate = (
     update.isNameMatchingEnabled = body.isNameMatchingEnabled;
   }
 
+  if (isBoolean(body?.areChatsMarkedAsRead)) {
+    update.areChatsMarkedAsRead = body.areChatsMarkedAsRead;
+  }
+
   if (isOneOf(VISIBILITIES, body?.visibility)) {
     update.visibility = body.visibility;
   }
