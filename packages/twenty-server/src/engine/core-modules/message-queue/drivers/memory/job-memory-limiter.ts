@@ -9,12 +9,13 @@ import {
   JOB_MEMORY_RECONCILE_SUSPECTS_TTL_SECONDS,
   JOB_MEMORY_TOP_GROUP_KEYS_CACHE_MS,
   JOB_MEMORY_TOP_GROUP_KEYS_REPORTED,
+  NOT_CHARGED_QUEUES,
 } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
 import { JOB_MEMORY_RECONCILE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-reconcile-script.constant';
 import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-release-script.constant';
 import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
   MessageQueueException,
   MessageQueueExceptionCode,
@@ -112,12 +113,7 @@ export class JobMemoryLimiter {
     jobName: string;
     jobs: JobMemoryRequest[];
   }): Promise<JobMemoryAdmission> {
-    if (
-      !this.isEnabled() ||
-      queueName === MessageQueue.accessGroupQueue ||
-      queueName === MessageQueue.workspaceDestroyQueue ||
-      queueName === MessageQueue.deleteCascadeQueue
-    ) {
+    if (!this.isEnabled() || NOT_CHARGED_QUEUES.includes(queueName)) {
       return NOT_CHARGED;
     }
 

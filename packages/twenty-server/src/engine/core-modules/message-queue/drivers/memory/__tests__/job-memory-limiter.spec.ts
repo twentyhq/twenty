@@ -1,6 +1,7 @@
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 
+import { NOT_CHARGED_QUEUES } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JobMemoryLimiter } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
@@ -580,11 +581,7 @@ describe('JobMemoryLimiter', () => {
 });
 
 describe('critical maintenance queues', () => {
-  it.each([
-    MessageQueue.accessGroupQueue,
-    MessageQueue.workspaceDestroyQueue,
-    MessageQueue.deleteCascadeQueue,
-  ])(
+  it.each(NOT_CHARGED_QUEUES)(
     'admits %s when the workspace has no memory available',
     async (queueName) => {
       const { limiter, redis } = await createLimiter({
