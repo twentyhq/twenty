@@ -9,10 +9,10 @@ import {
   IconUsers,
   IconZzz,
 } from 'twenty-ui/icon';
-import { type AgentChatThreadFilterStatus } from 'twenty-shared/ai';
+import { type AgentChatThreadPresetFilter } from 'twenty-shared/ai';
 
-export const AGENT_CHAT_THREAD_FILTER_STATUS_ICONS: Record<
-  AgentChatThreadFilterStatus,
+export const AGENT_CHAT_THREAD_PRESET_FILTER_ICONS: Record<
+  AgentChatThreadPresetFilter,
   IconComponent
 > = {
   active: IconCircleDashed,

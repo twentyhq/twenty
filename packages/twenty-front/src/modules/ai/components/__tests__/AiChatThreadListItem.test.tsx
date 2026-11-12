@@ -9,7 +9,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -213,7 +213,7 @@ describe('AiChatThreadListItem', () => {
 
   it('shows no channel while viewing that channel', () => {
     jotaiStore.set(agentChatChannelsState.atom, [SALES_CHANNEL]);
-    setAgentChatShownChannelView(jotaiStore, {
+    setAgentChatSelectedChannelView(jotaiStore, {
       channelId: SALES_CHANNEL.id,
       channelStatus: AgentChatChannelThreadStatus.OPEN,
       assignment: AgentChatChannelAssignmentFilter.ANY,

@@ -6,10 +6,10 @@ import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agent
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isDefined } from 'twenty-shared/utils';
 
-export const agentChatThreadsSelector = createAtomSelector<
+export const agentChatRecentThreadsSelector = createAtomSelector<
   AgentChatThreadRecord[]
 >({
-  key: 'agentChatThreadsSelector',
+  key: 'agentChatRecentThreadsSelector',
   get: ({ get }) =>
     (
       get(

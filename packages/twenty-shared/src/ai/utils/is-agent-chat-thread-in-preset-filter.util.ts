@@ -1,11 +1,11 @@
-import { type AgentChatThreadFilterStatus } from '@/ai/constants/agent-chat-thread-filter-status.const';
+import { type AgentChatThreadPresetFilter } from '@/ai/constants/agent-chat-thread-preset-filter.const';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { isDefined } from '@/utils/validation/isDefined';
 
-export const isAgentChatThreadInFilterStatus = ({
+export const isAgentChatThreadInPresetFilter = ({
   thread,
   inboxStatus,
-  filterStatus,
+  presetFilter,
 }: {
   thread: {
     pendingQuestionMessageId?: string | null;
@@ -15,9 +15,9 @@ export const isAgentChatThreadInFilterStatus = ({
     AgentChatThreadInboxStatus,
     'scope' | 'isMentioned' | 'isAssignedToMe'
   >;
-  filterStatus: AgentChatThreadFilterStatus;
+  presetFilter: AgentChatThreadPresetFilter;
 }): boolean => {
-  switch (filterStatus) {
+  switch (presetFilter) {
     case 'active':
       return inboxStatus.scope === 'INBOX';
     case 'needsInput':

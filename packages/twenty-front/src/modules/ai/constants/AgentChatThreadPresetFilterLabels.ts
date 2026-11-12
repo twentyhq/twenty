@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
-import { type AgentChatThreadFilterStatus } from 'twenty-shared/ai';
+import { type AgentChatThreadPresetFilter } from 'twenty-shared/ai';
 
-export const AGENT_CHAT_THREAD_FILTER_STATUS_LABELS: Record<
-  AgentChatThreadFilterStatus,
+export const AGENT_CHAT_THREAD_PRESET_FILTER_LABELS: Record<
+  AgentChatThreadPresetFilter,
   MessageDescriptor
 > = {
   active: msg`Open`,

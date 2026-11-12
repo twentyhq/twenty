@@ -2,9 +2,9 @@ import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSel
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const agentChatShownChannelViewSelector =
+export const agentChatSelectedChannelViewSelector =
   createAtomSelector<AgentChatChannelView | null>({
-    key: 'agentChatShownChannelViewSelector',
+    key: 'agentChatSelectedChannelViewSelector',
     get: ({ get }) => {
       const agentChatSelectedThreadListSource = get(
         agentChatSelectedThreadListSourceState,
