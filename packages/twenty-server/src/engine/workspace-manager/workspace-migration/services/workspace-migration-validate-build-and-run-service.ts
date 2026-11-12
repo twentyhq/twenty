@@ -277,6 +277,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
         hasSchemaMetadataChanged: boolean;
+        deletionTriggerByUniversalIdentifier: Record<string, string>;
       })
   > {
     return await this.validateBuildAndRunWorkspaceMigrationFromRecordInternal({
@@ -333,6 +334,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
         hasSchemaMetadataChanged: boolean;
+        deletionTriggerByUniversalIdentifier: Record<string, string>;
       })
   > {
     const callerMetadataNames = Object.keys(
@@ -396,13 +398,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return result;
     }
 
-    return {
-      ...result,
-      workspaceMigration: {
-        ...result.workspaceMigration,
-        deletionTriggerByUniversalIdentifier,
-      },
-    };
+    return { ...result, deletionTriggerByUniversalIdentifier };
   }
 
   private async computeAndRunWorkspaceMigrationFromResolvedOperations({

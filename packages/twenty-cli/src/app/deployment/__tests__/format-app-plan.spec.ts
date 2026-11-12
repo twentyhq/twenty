@@ -169,6 +169,81 @@ describe('formatAppPlanActions', () => {
   });
 });
 
+describe('formatAppPlanActions folding guards', () => {
+  it('keeps a column drop listed when its root drops no data', () => {
+    const actions = [
+      deletion({
+        metadataName: 'view',
+        universalIdentifier: 'board',
+        flatEntity: { name: 'Board' },
+      }),
+      deletion({
+        metadataName: 'fieldMetadata',
+        universalIdentifier: 'stage',
+        cascadedFromUniversalIdentifier: 'board',
+        flatEntity: {
+          name: 'stage',
+          objectMetadataUniversalIdentifier: 'deal',
+        },
+      }),
+    ];
+
+    expect(format(actions)).toContain(
+      '  - fieldMetadata "stage": drops the column and its data',
+    );
+    expect(getAppPlanSummary(actions)).toMatchObject({
+      destructive: 1,
+      cascaded: 0,
+    });
+  });
+
+  it('does not count the inverse of a self-relation as a field on another object', () => {
+    const output = format([
+      deletion({
+        metadataName: 'fieldMetadata',
+        universalIdentifier: 'manager',
+        flatEntity: {
+          name: 'manager',
+          objectMetadataUniversalIdentifier: 'person',
+        },
+      }),
+      deletion({
+        metadataName: 'fieldMetadata',
+        universalIdentifier: 'reports',
+        cascadedFromUniversalIdentifier: 'manager',
+        flatEntity: {
+          name: 'reports',
+          objectMetadataUniversalIdentifier: 'person',
+        },
+      }),
+    ]);
+
+    expect(output).toContain(
+      '  - fieldMetadata "manager": drops the column and its data\n',
+    );
+    expect(output).not.toContain('on other objects');
+  });
+
+  it('only folds deletions', () => {
+    const output = format([
+      deletion({
+        metadataName: 'objectMetadata',
+        universalIdentifier: 'run-object',
+        flatEntity: { nameSingular: 'workflowRun' },
+      }),
+      {
+        type: 'update',
+        metadataName: 'view',
+        universalIdentifier: 'kept-view',
+        cascadedFromUniversalIdentifier: 'run-object',
+        flatEntity: { name: 'Kept view' },
+      },
+    ]);
+
+    expect(output).not.toContain('also destroys');
+  });
+});
+
 describe('getAppPlanSummary', () => {
   it('counts every deletion but only the independent ones as destructive', () => {
     expect(getAppPlanSummary(ACTIONS)).toEqual({

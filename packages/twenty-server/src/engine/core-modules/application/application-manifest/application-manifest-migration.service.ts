@@ -187,6 +187,7 @@ export class ApplicationManifestMigrationService {
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
+    deletionTriggerByUniversalIdentifier: Record<string, string>;
   }> {
     const now = new Date().toISOString();
 
@@ -357,6 +358,8 @@ export class ApplicationManifestMigrationService {
     return {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
+      deletionTriggerByUniversalIdentifier:
+        validateAndBuildResult.deletionTriggerByUniversalIdentifier,
     };
   }
 

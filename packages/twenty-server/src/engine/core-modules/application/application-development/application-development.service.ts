@@ -171,7 +171,7 @@ export class ApplicationDevelopmentService {
       });
 
     if (dryRun === true) {
-      const { workspaceMigration } =
+      const { workspaceMigration, deletionTriggerByUniversalIdentifier } =
         await this.applicationSyncService.synchronizeFromManifest({
           workspaceId,
           manifest,
@@ -183,7 +183,10 @@ export class ApplicationDevelopmentService {
       return {
         applicationUniversalIdentifier:
           workspaceMigration.applicationUniversalIdentifier,
-        actions: annotateCascadedDeletions(workspaceMigration),
+        actions: annotateCascadedDeletions({
+          actions: workspaceMigration.actions,
+          deletionTriggerByUniversalIdentifier,
+        }),
       };
     }
 
@@ -286,7 +289,7 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    const { workspaceMigration } =
+    const { workspaceMigration, deletionTriggerByUniversalIdentifier } =
       await this.applicationManifestApplyService.applyManifestToWorkspace({
         workspaceId,
         manifest,
@@ -304,7 +307,10 @@ export class ApplicationDevelopmentService {
     return {
       applicationUniversalIdentifier:
         workspaceMigration.applicationUniversalIdentifier,
-      actions: annotateCascadedDeletions(workspaceMigration),
+      actions: annotateCascadedDeletions({
+        actions: workspaceMigration.actions,
+        deletionTriggerByUniversalIdentifier,
+      }),
     };
   }
 

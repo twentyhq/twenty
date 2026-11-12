@@ -240,22 +240,33 @@ const countFieldsOnOtherObjects = ({
   action,
   cascades,
 }: {
-  action: Pick<AppPlanAction, 'metadataName' | 'universalIdentifier'>;
+  action: Pick<
+    AppPlanAction,
+    'metadataName' | 'universalIdentifier' | 'flatEntity'
+  >;
   cascades: AppPlanAction[];
-}) =>
-  cascades.filter(
+}) => {
+  const rootObjectUniversalIdentifier =
+    action.metadataName === 'objectMetadata'
+      ? action.universalIdentifier
+      : action.flatEntity?.objectMetadataUniversalIdentifier;
+
+  return cascades.filter(
     (cascade) =>
       cascade.metadataName === 'fieldMetadata' &&
-      (action.metadataName !== 'objectMetadata' ||
-        cascade.flatEntity?.objectMetadataUniversalIdentifier !==
-          action.universalIdentifier),
+      cascade.flatEntity?.objectMetadataUniversalIdentifier !==
+        rootObjectUniversalIdentifier,
   ).length;
+};
 
 const formatDestructiveConsequence = ({
   action,
   cascades,
 }: {
-  action: Pick<AppPlanAction, 'metadataName' | 'universalIdentifier'>;
+  action: Pick<
+    AppPlanAction,
+    'metadataName' | 'universalIdentifier' | 'flatEntity'
+  >;
   cascades: AppPlanAction[];
 }) => {
   const consequence =

@@ -6,5 +6,4 @@ export type WorkspaceMigration<
 > = {
   actions: TActions[];
   applicationUniversalIdentifier: string;
-  deletionTriggerByUniversalIdentifier?: Record<string, string>;
 };
