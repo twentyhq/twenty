@@ -229,20 +229,17 @@ export class MarketplaceQueryService {
       permissionFlagUniversalIdentifiers:
         role.permissionFlagUniversalIdentifiers,
       objectPermissions: recordsPermissions.objectPermissions.map(
-        (objectPermission) => {
+        (permission) => {
+          const { objectUniversalIdentifier } = permission;
           // The listing has no rules yet, so an object reached through rules shows what they grant
-          const permission = objectUniversalIdentifiersWithRules.has(
-            objectPermission.objectUniversalIdentifier,
+          const reachablePermissions = objectUniversalIdentifiersWithRules.has(
+            objectUniversalIdentifier,
           )
-            ? {
-                ...objectPermission,
-                ...getReachableObjectPermissionsFromRoleManifest({
-                  role: normalizedRole,
-                  objectUniversalIdentifier:
-                    objectPermission.objectUniversalIdentifier,
-                }),
-              }
-            : objectPermission;
+            ? getReachableObjectPermissionsFromRoleManifest({
+                role: normalizedRole,
+                objectUniversalIdentifier,
+              })
+            : undefined;
 
           return {
             universalIdentifier:
@@ -250,13 +247,21 @@ export class MarketplaceQueryService {
               getObjectPermissionUniversalIdentifier({
                 applicationUniversalIdentifier,
                 roleUniversalIdentifier: role.universalIdentifier,
-                objectUniversalIdentifier: permission.objectUniversalIdentifier,
+                objectUniversalIdentifier,
               }),
-            objectUniversalIdentifier: permission.objectUniversalIdentifier,
-            canReadObjectRecords: permission.canReadObjectRecords,
-            canUpdateObjectRecords: permission.canUpdateObjectRecords,
-            canSoftDeleteObjectRecords: permission.canSoftDeleteObjectRecords,
-            canDestroyObjectRecords: permission.canDestroyObjectRecords,
+            objectUniversalIdentifier,
+            canReadObjectRecords:
+              reachablePermissions?.canReadObjectRecords ??
+              permission.canReadObjectRecords,
+            canUpdateObjectRecords:
+              reachablePermissions?.canUpdateObjectRecords ??
+              permission.canUpdateObjectRecords,
+            canSoftDeleteObjectRecords:
+              reachablePermissions?.canSoftDeleteObjectRecords ??
+              permission.canSoftDeleteObjectRecords,
+            canDestroyObjectRecords:
+              reachablePermissions?.canDestroyObjectRecords ??
+              permission.canDestroyObjectRecords,
           };
         },
       ),

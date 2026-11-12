@@ -96,7 +96,7 @@ const addFieldPermissionToObject = ({
   };
 };
 
-// TODO: remove with the deprecated role properties once applications declare recordsPermissions
+// TODO(@charlesBochet): remove with the deprecated role properties once applications declare recordsPermissions
 export const normalizeRoleManifestRecordsPermissions = ({
   role,
   applicationUniversalIdentifier,
