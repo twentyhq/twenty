@@ -85,7 +85,7 @@ export const GlobalFilePreviewModal = () => {
         onClose={handleClose}
         positionLabel={
           isBrowsingGallery
-            ? t`${galleryPosition} / ${galleryLength}`
+            ? `${galleryPosition} / ${galleryLength}`
             : undefined
         }
         onPrevious={handlePrevious}

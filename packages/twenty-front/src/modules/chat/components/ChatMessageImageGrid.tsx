@@ -2,13 +2,12 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ChatMessageImageGridTile } from '@/chat/components/ChatMessageImageGridTile';
+import { CHAT_MESSAGE_IMAGE_GRID_MAX_TILE_COUNT } from '@/chat/constants/ChatMessageImageGridMaxTileCount';
+import { CHAT_MESSAGE_IMAGE_GRID_TILE_MAX_SIZE } from '@/chat/constants/ChatMessageImageGridTileMaxSize';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useOpenFilePreview } from '@/ui/field/display/hooks/useOpenFilePreview';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-
-const CHAT_MESSAGE_IMAGE_GRID_TILE_MAX_SIZE = '140px';
-const CHAT_MESSAGE_IMAGE_GRID_MAX_TILE_COUNT = 4;
 
 const StyledGrid = styled.div<{ columnCount: number }>`
   display: grid;
@@ -35,7 +34,9 @@ export const ChatMessageImageGrid = ({ files }: ChatMessageImageGridProps) => {
   const lastVisibleIndex = visibleFiles.length - 1;
   const hasHiddenImages = files.length > visibleFiles.length;
   const columnCount =
-    visibleFiles.length === 4 ? 2 : Math.min(visibleFiles.length, 3);
+    visibleFiles.length === CHAT_MESSAGE_IMAGE_GRID_MAX_TILE_COUNT
+      ? 2
+      : Math.min(visibleFiles.length, 3);
 
   return (
     <StyledGrid columnCount={columnCount}>

@@ -15,7 +15,7 @@ export const getChatMessageAttachmentGroups = (
   const images = attachments.filter(
     (attachment) =>
       isNonEmptyString(attachment.url) &&
-      attachment.isDeleted !== true &&
+      !attachment.isDeleted &&
       getFieldFilesValueCategory(attachment) === FILE_CATEGORIES.IMAGE,
   );
 
