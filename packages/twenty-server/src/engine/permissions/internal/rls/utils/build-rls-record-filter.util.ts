@@ -17,6 +17,7 @@ import {
   getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
   isDefined,
+  isFieldMetadataArrayKind,
   isFilterValueExpectedAsArray,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
@@ -147,18 +148,23 @@ const buildPredicateRecordFilter = ({
   }
 
   let predicateValue = predicate.value;
+  const workspaceMemberFieldMetadata = isDefined(
+    predicate.workspaceMemberFieldMetadataId,
+  )
+    ? findFieldMetadataOrThrow({
+        fieldMetadataId: predicate.workspaceMemberFieldMetadataId,
+        predicateId: predicate.id,
+        flatFieldMetadataMaps,
+        errorMessage: 'Workspace member field metadata not found',
+      })
+    : undefined;
 
-  if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
+  if (isDefined(workspaceMemberFieldMetadata)) {
     predicateValue = keepTargetFieldOptions({
       value: resolveMemberFieldValuesPredicateValue({
         memberFieldValues,
         predicate,
-        workspaceMemberFieldMetadata: findFieldMetadataOrThrow({
-          fieldMetadataId: predicate.workspaceMemberFieldMetadataId,
-          predicateId: predicate.id,
-          flatFieldMetadataMaps,
-          errorMessage: 'Workspace member field metadata not found',
-        }),
+        workspaceMemberFieldMetadata,
       }),
       targetFieldMetadata: fieldMetadata,
     });
@@ -199,7 +205,7 @@ const buildPredicateRecordFilter = ({
     return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
   };
 
-  if (!isDefined(predicate.workspaceMemberFieldMetadataId)) {
+  if (!isDefined(workspaceMemberFieldMetadata)) {
     return buildValueRecordFilter(predicateValue);
   }
 
@@ -213,7 +219,11 @@ const buildPredicateRecordFilter = ({
     );
   }
 
-  if (Array.isArray(predicateValue) && predicateValue.length > 1) {
+  // Not decided on how many values the list holds: access groups see them one by one
+  if (
+    isFieldMetadataArrayKind(workspaceMemberFieldMetadata.type) ||
+    (Array.isArray(predicateValue) && predicateValue.length > 1)
+  ) {
     return UNSATISFIABLE_RECORD_FILTER;
   }
 
