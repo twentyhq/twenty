@@ -9,4 +9,5 @@ export type WorkflowExecutionContext = {
   authContext: WorkspaceAuthContext;
   application: FlatApplication;
   workflowId: string | undefined;
+  workflowName: string | null;
 };

@@ -164,6 +164,7 @@ export class WorkflowExecutionContextService {
       authContext,
       application,
       workflowId: getWorkflowUsageSpenderId(workflow),
+      workflowName: workflow.name,
     };
   }
 
