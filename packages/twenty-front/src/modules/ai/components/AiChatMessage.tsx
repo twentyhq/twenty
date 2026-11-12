@@ -67,14 +67,12 @@ const StyledFilesContainer = styled.div`
 
 type AiChatUserMessageTextProps = {
   messageId: string;
-  text: string;
   children: ReactNode;
   isOtherMember: boolean;
 };
 
 const AiChatUserMessageText = ({
   messageId,
-  text,
   children,
   isOtherMember,
 }: AiChatUserMessageTextProps) => {
@@ -86,7 +84,7 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      <AiChatUserMessageCollapsibleContent text={text}>
+      <AiChatUserMessageCollapsibleContent messageId={messageId}>
         {children}
       </AiChatUserMessageCollapsibleContent>
     </StyledChatMessageBubble>
@@ -209,7 +207,6 @@ export const AiChatMessage = ({
           {isUser ? (
             <AiChatUserMessageText
               messageId={messageId}
-              text={messageText}
               isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
             >
               {messageContent}
