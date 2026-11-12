@@ -18,7 +18,9 @@ export const collectApplicationSourceFiles = ({
   entryPaths: string[];
   buildInputs: string[];
 }): string[] => {
-  if (entryPaths.length === 0) return [];
+  if (entryPaths.length === 0) {
+    return [];
+  }
 
   const root = realpathSync(appPath);
   const files = new Set<string>();
@@ -32,7 +34,9 @@ export const collectApplicationSourceFiles = ({
     })
       ? resolve(root, appRelativePath)
       : requestedPath;
-    if (absolutePath.split(sep).includes('node_modules')) return;
+    if (absolutePath.split(sep).includes('node_modules')) {
+      return;
+    }
     const localPath = relative(root, absolutePath);
     const realPath = realpathSync(absolutePath);
     if (
@@ -47,10 +51,14 @@ export const collectApplicationSourceFiles = ({
     ) {
       return;
     }
-    if (files.has(absolutePath)) return;
+    if (files.has(absolutePath)) {
+      return;
+    }
     files.add(absolutePath);
     recordWatchFile(absolutePath);
-    if (SCRIPT_EXTENSION.test(absolutePath)) pending.push(absolutePath);
+    if (SCRIPT_EXTENSION.test(absolutePath)) {
+      pending.push(absolutePath);
+    }
   };
 
   const configuration = ts.getParsedCommandLineOfConfigFile(
@@ -59,7 +67,9 @@ export const collectApplicationSourceFiles = ({
     {
       ...ts.sys,
       readFile: (path) => {
-        if (existsSync(path)) addFile(path);
+        if (existsSync(path)) {
+          addFile(path);
+        }
         return ts.sys.readFile(path);
       },
       onUnRecoverableConfigFileDiagnostic: (diagnostic) => {
@@ -69,8 +79,9 @@ export const collectApplicationSourceFiles = ({
       },
     },
   );
-  if (!isDefined(configuration))
+  if (!isDefined(configuration)) {
     throw new Error('Cannot read application tsconfig.json.');
+  }
 
   for (const path of configuration.fileNames.filter(
     (path) =>
@@ -78,9 +89,12 @@ export const collectApplicationSourceFiles = ({
       !relative(root, path)
         .split(sep)
         .some((part) => part.startsWith('.') || part === 'dist'),
-  ))
+  )) {
     addFile(path);
-  for (const path of entryPaths) addFile(resolve(root, path));
+  }
+  for (const path of entryPaths) {
+    addFile(resolve(root, path));
+  }
   const resolutionCache = ts.createModuleResolutionCache(
     root,
     (path) => path,
@@ -92,7 +106,9 @@ export const collectApplicationSourceFiles = ({
     if (!isDefined(path)) {
       for (const input of remainingBuildInputs.splice(0)) {
         // Virtual esbuild modules have no source file to restore.
-        if (existsSync(input)) addFile(input);
+        if (existsSync(input)) {
+          addFile(input);
+        }
       }
       continue;
     }
@@ -109,15 +125,18 @@ export const collectApplicationSourceFiles = ({
         resolutionCache,
       ).resolvedModule;
       if (isDefined(resolved)) {
-        if (!resolved.isExternalLibraryImport)
+        if (!resolved.isExternalLibraryImport) {
           addFile(resolved.resolvedFileName);
+        }
       } else if (imported.fileName.startsWith('.')) {
         const assetPath = resolve(dirname(path), imported.fileName);
-        if (existsSync(assetPath)) addFile(assetPath);
-        else
+        if (existsSync(assetPath)) {
+          addFile(assetPath);
+        } else {
           throw new Error(
             `Cannot preserve missing application source ${imported.fileName} imported by ${path}`,
           );
+        }
       }
     }
   }

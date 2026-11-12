@@ -17,7 +17,35 @@ import { buildApplication } from '@/app/bundles/build-application';
 import { collectApplicationSourceFiles } from '@/app/bundles/collect-application-source-files';
 import { collectWatchInputs } from '@/app/dev/collect-watch-inputs';
 import { manifestUpdateChecksums } from '@/app/manifest/manifest-update-checksums';
-import { type EntityFilePaths } from '@/app/manifest/types/entity-file-paths.type';
+
+const BASE_MANIFEST: Manifest = {
+  application: {
+    universalIdentifier: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    displayName: 'Source inventory',
+    description: '',
+    defaultRoleUniversalIdentifier: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+    packageJsonChecksum: '',
+    yarnLockChecksum: null,
+  },
+  objects: [],
+  fields: [],
+  roles: [],
+  permissionFlags: [],
+  skills: [],
+  agents: [],
+  logicFunctions: [],
+  frontComponents: [],
+  publicAssets: [],
+  views: [],
+  viewFields: [],
+  navigationMenuItems: [],
+  pageLayouts: [],
+  pageLayoutTabs: [],
+  pageLayoutWidgets: [],
+  commandMenuItems: [],
+  timelineActivityTypes: [],
+  settingsMenuItems: [],
+};
 
 const roots: string[] = [];
 afterEach(async () => {
@@ -62,17 +90,42 @@ describe('application source inventory', { timeout: 30_000 }, () => {
         "import type { Greeting } from '@app/types'; export const greeting: Greeting = 'hello';",
       'src/types.ts': 'export type Greeting = string;',
       'src/style.css': '@import "./nested.css";',
-      'src/nested.css': '.logo { background: url("./logo.png"); }',
+      'src/nested.css':
+        '.logo { background: url("./logo.png"); mask: url("../public/logo.svg"); }',
+      'public/logo.svg': '<svg/>',
       'src/logo.png': image,
       'src/unrelated.ts': 'export const unrelated = true;',
       '.env': 'SECRET=never-export',
     });
-    const manifest = {
-      application: {},
-      publicAssets: [],
-      logicFunctions: [{ builtHandlerPath: 'src/function.mjs' }],
-      frontComponents: [{ builtComponentPath: 'src/component.mjs' }],
-    } as unknown as Manifest;
+    const manifest: Manifest = {
+      ...BASE_MANIFEST,
+      publicAssets: [
+        {
+          filePath: 'public/logo.svg',
+          fileName: 'logo.svg',
+          fileType: 'svg',
+          checksum: null,
+        },
+      ],
+      logicFunctions: [
+        {
+          universalIdentifier: 'function-id',
+          sourceHandlerPath: 'src/function.ts',
+          builtHandlerPath: 'src/function.mjs',
+          builtHandlerChecksum: '',
+          handlerName: 'default',
+        },
+      ],
+      frontComponents: [
+        {
+          universalIdentifier: 'component-id',
+          sourceComponentPath: 'src/component.tsx',
+          builtComponentPath: 'src/component.mjs',
+          builtComponentChecksum: '',
+          componentName: 'Component',
+        },
+      ],
+    };
     const { result, watchInputs } = await collectWatchInputs(() =>
       buildApplication({
         appPath,
@@ -80,8 +133,8 @@ describe('application source inventory', { timeout: 30_000 }, () => {
         filePaths: {
           logicFunctions: ['src/function.ts'],
           frontComponents: ['src/component.tsx'],
-          publicAssets: [],
-        } as unknown as EntityFilePaths,
+          publicAssets: ['public/logo.svg'],
+        },
       }),
     );
     const updated = manifestUpdateChecksums({
@@ -90,6 +143,7 @@ describe('application source inventory', { timeout: 30_000 }, () => {
     });
     expect(updated.sourceFiles?.map((file) => file.filePath)).toEqual([
       'config/base.json',
+      'public/logo.svg',
       'src/component.tsx',
       'src/function.ts',
       'src/helper.ts',
@@ -120,11 +174,38 @@ describe('application source inventory', { timeout: 30_000 }, () => {
         /^[a-f0-9]{32}$/.test(file.checksum),
       ),
     ).toBe(true);
+    expect(
+      [...result.builtFileInfos.values()]
+        .filter(({ sourcePath }) => sourcePath === 'public/logo.svg')
+        .map(({ fileFolder }) => fileFolder),
+    ).toEqual([FileFolder.Source, FileFolder.PublicAsset]);
     const rebuilt = manifestUpdateChecksums({
       manifest: updated,
       builtFileInfos: new Map(),
     });
     expect(rebuilt.sourceFiles).toEqual([]);
+  });
+
+  it('rejects source paths colliding with a bundle before overwriting it', async () => {
+    const appPath = await fixture({
+      'src/run.ts': 'export const run = () => "original function";',
+      'src/run.mjs': 'export const replacement = "original source";',
+      'src/other.ts': "export { replacement } from './run.mjs';",
+    });
+    await expect(
+      buildApplication({
+        appPath,
+        manifest: BASE_MANIFEST,
+        filePaths: {
+          logicFunctions: ['src/run.ts', 'src/other.ts'],
+          frontComponents: [],
+          publicAssets: [],
+        },
+      }),
+    ).rejects.toThrow('collides with a built application file');
+    expect(
+      await readFile(join(appPath, '.twenty/output/src/run.mjs'), 'utf8'),
+    ).toContain('original function');
   });
 
   it('retains referenced declarations and ignores dependencies and unrelated files', async () => {

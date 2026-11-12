@@ -32,10 +32,12 @@ export const manifestUpdateChecksums = ({
 }: UpdateManifestChecksumParams): Manifest => {
   let result = structuredClone(manifest);
   result.sourceFiles = [];
-  for (const [
+  for (const {
     builtPath,
-    { fileFolder, checksum },
-  ] of builtFileInfos.entries()) {
+    fileFolder,
+    checksum,
+    usesSdkClient,
+  } of builtFileInfos.values()) {
     const rootBuiltPath = relative(outputDir, builtPath);
     if (fileFolder === FileFolder.Source) {
       result.sourceFiles?.push({
@@ -103,7 +105,6 @@ export const manifestUpdateChecksums = ({
       if (componentIndex === -1) {
         continue;
       }
-      const builtFileInfo = builtFileInfos.get(builtPath);
 
       result = {
         ...result,
@@ -112,7 +113,7 @@ export const manifestUpdateChecksums = ({
             ? {
                 ...component,
                 builtComponentChecksum: checksum,
-                usesSdkClient: builtFileInfo?.usesSdkClient ?? false,
+                usesSdkClient: usesSdkClient ?? false,
               }
             : component,
         ),

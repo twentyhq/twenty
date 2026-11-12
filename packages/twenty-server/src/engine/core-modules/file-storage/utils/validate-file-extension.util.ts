@@ -8,15 +8,14 @@ import { hasAllowedExtension } from 'src/engine/core-modules/file-storage/utils/
 export const validateFileExtension = ({
   resourcePath,
   fileFolder,
+  allowedExtensions = ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
+    fileFolder as keyof typeof ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER
+  ],
 }: {
   resourcePath: string;
   fileFolder: FileFolder | ServerFileFolder;
+  allowedExtensions?: Readonly<Record<string, true>>;
 }): ResourcePathValidationResult => {
-  const allowedExtensions =
-    ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
-      fileFolder as keyof typeof ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER
-    ];
-
   if (!allowedExtensions) {
     return { isValid: true };
   }

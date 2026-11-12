@@ -5,10 +5,41 @@ import { buildApplicationFileList } from 'src/engine/core-modules/application/ap
 
 describe('buildApplicationFileList', () => {
   it('requires every inventoried source once when installing a package', () => {
-    const manifest = {
-      application: {},
+    const manifest: Manifest = {
+      ...{
+        application: {
+          universalIdentifier: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+          displayName: 'Source inventory',
+          description: '',
+          defaultRoleUniversalIdentifier:
+            'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+          packageJsonChecksum: '',
+          yarnLockChecksum: null,
+        },
+        objects: [],
+        fields: [],
+        roles: [],
+        permissionFlags: [],
+        skills: [],
+        agents: [],
+        logicFunctions: [],
+        frontComponents: [],
+        publicAssets: [],
+        views: [],
+        viewFields: [],
+        navigationMenuItems: [],
+        pageLayouts: [],
+        pageLayoutTabs: [],
+        pageLayoutWidgets: [],
+        commandMenuItems: [],
+        timelineActivityTypes: [],
+        settingsMenuItems: [],
+      },
       frontComponents: [
         {
+          universalIdentifier: 'component-id',
+          componentName: 'Component',
+          builtComponentChecksum: '',
           sourceComponentPath: 'src/component.tsx',
           builtComponentPath: 'src/component.mjs',
         },
@@ -19,7 +50,7 @@ describe('buildApplicationFileList', () => {
         'src/logo.png',
         'tsconfig.json',
       ].map((filePath) => ({ filePath, checksum: 'checksum' })),
-    } as Manifest;
+    };
     const sources = buildApplicationFileList(manifest).filter(
       (file) => file.fileFolder === FileFolder.Source,
     );
