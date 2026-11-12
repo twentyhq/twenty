@@ -59,7 +59,7 @@ export const TeamsUserLinksSettings = () => {
     <StyledContainer>
       {!isPermissionLoading && !canManage && (
         <Callout
-          variant="warning"
+          status="warning"
           title={t('You need the roles permission')}
           description={t(
             'Only members with the roles permission can create or change Teams user links. You can review the existing links below.',
