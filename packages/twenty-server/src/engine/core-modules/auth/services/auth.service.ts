@@ -17,7 +17,8 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { isRedirectUriListedInClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-redirect-uri-listed-in-client-id-metadata-document.util';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 import {
   AuthException,
@@ -53,6 +54,7 @@ import {
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
+import { isLoopbackHostname } from 'src/engine/core-modules/auth/utils/is-loopback-hostname.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -105,7 +107,7 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly oAuthClientRegistrationResolverService: OAuthClientRegistrationResolverService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly createSsoConnectedAccountService: CreateSsoConnectedAccountService,
     private readonly userSessionService: UserSessionService,
@@ -543,23 +545,34 @@ export class AuthService {
     user,
     workspace,
     requestBaseUrl,
+    requestIp,
   }: {
     authorizeAppInput: AuthorizeAppInput;
     user: AuthContextUser;
     workspace: WorkspaceEntity;
     requestBaseUrl: string;
+    requestIp: string | undefined;
   }): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
-    const applicationRegistration =
-      await this.applicationRegistrationService.findOneByClientId(clientId);
+    await this.oAuthClientRegistrationResolverService.throttleClientIdMetadataDocumentFetchOrThrow(
+      { clientId, requestIp },
+    );
 
-    if (!applicationRegistration) {
+    const resolvedClient =
+      await this.oAuthClientRegistrationResolverService.findOrRegisterByClientId(
+        clientId,
+      );
+
+    if (!isDefined(resolvedClient)) {
       throw new AuthException(
         `Client not found for '${clientId}'`,
         AuthExceptionCode.CLIENT_NOT_FOUND,
       );
     }
+
+    const { registration: applicationRegistration, clientIdMetadataDocument } =
+      resolvedClient;
 
     if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
@@ -584,11 +597,16 @@ export class AuthService {
       applicationRegistration.oAuthRedirectUris.length > 0;
 
     if (hasRegisteredRedirectUris) {
-      if (
-        !applicationRegistration.oAuthRedirectUris.includes(
-          authorizeAppInput.redirectUrl,
-        )
-      ) {
+      const isRedirectUrlRegistered = isDefined(clientIdMetadataDocument)
+        ? isRedirectUriListedInClientIdMetadataDocument({
+            clientIdMetadataDocument,
+            redirectUri: authorizeAppInput.redirectUrl,
+          })
+        : applicationRegistration.oAuthRedirectUris.includes(
+            authorizeAppInput.redirectUrl,
+          );
+
+      if (!isRedirectUrlRegistered) {
         throw new AuthException(
           `redirectUrl mismatch for '${clientId}'`,
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -606,11 +624,7 @@ export class AuthService {
         );
       }
 
-      const isLoopback =
-        redirectUrl.hostname === 'localhost' ||
-        redirectUrl.hostname === '127.0.0.1';
-
-      if (!isLoopback) {
+      if (!isLoopbackHostname(redirectUrl.hostname)) {
         throw new AuthException(
           `redirectUrl mismatch for '${clientId}'`,
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
