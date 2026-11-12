@@ -1,5 +1,6 @@
 import { type ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { buildExecutionContextMock } from 'test/utils/build-execution-context-mock.util';
 
@@ -31,6 +32,7 @@ import { SettingPermissionsService } from 'src/engine/permissions/setting-permis
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const user = { id: 'user-id' };
@@ -1006,6 +1008,10 @@ describe('AccessPolicyGuard', () => {
           {
             provide: CoreEntityCacheService,
             useValue: { get: jest.fn().mockResolvedValue(activeWorkspace) },
+          },
+          {
+            provide: getRepositoryToken(WorkspaceEntity),
+            useValue: { findOne: jest.fn() },
           },
         ],
       }).compile();

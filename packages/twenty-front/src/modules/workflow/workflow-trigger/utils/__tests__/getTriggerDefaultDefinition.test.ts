@@ -29,10 +29,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${getTestEnrichedObjectMetadataItemsMock()[0].nameSingular}.created`,
         outputSchema: {},
       },
-      position: {
-        x: 0,
-        y: 0,
-      },
     });
   });
 
@@ -51,10 +47,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${getTestEnrichedObjectMetadataItemsMock()[0].nameSingular}.updated`,
         outputSchema: {},
       },
-      position: {
-        x: 0,
-        y: 0,
-      },
     });
   });
 
@@ -72,10 +64,6 @@ describe('getTriggerDefaultDefinition', () => {
       settings: {
         eventName: `${getTestEnrichedObjectMetadataItemsMock()[0].nameSingular}.deleted`,
         outputSchema: {},
-      },
-      position: {
-        x: 0,
-        y: 0,
       },
     });
   });
@@ -101,10 +89,6 @@ describe('getTriggerDefaultDefinition', () => {
         isPinned: false,
         objectType: undefined,
       },
-      position: {
-        x: 0,
-        y: 0,
-      },
     });
   });
 
@@ -124,10 +108,6 @@ describe('getTriggerDefaultDefinition', () => {
         schedule: { day: 1, hour: 0, minute: 0 },
         outputSchema: {},
       },
-      position: {
-        x: 0,
-        y: 0,
-      },
     });
   });
 
@@ -146,10 +126,6 @@ describe('getTriggerDefaultDefinition', () => {
         outputSchema: {},
         httpMethod: 'GET',
         authentication: null,
-      },
-      position: {
-        x: 0,
-        y: 0,
       },
     });
   });

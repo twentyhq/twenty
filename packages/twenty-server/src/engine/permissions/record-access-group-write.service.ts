@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
+import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
 import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
@@ -14,6 +15,7 @@ import { type RecordPermissionTransactionScope } from 'src/engine/permissions/ty
 export class RecordAccessGroupWriteService {
   constructor(
     private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
+    private readonly recordAccessGroupPropagationService: RecordAccessGroupPropagationService,
   ) {}
 
   async isWriteTransactionRequired({
@@ -47,12 +49,18 @@ export class RecordAccessGroupWriteService {
   }): Promise<boolean> {
     return (
       areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
-      (await this.recordAccessGroupComputationService.isObjectReachedByRlsRuleRelation(
+      ((await this.recordAccessGroupComputationService.isObjectReachedByRlsRuleRelation(
         {
           workspaceId,
           objectMetadataId,
         },
-      ))
+      )) ||
+        (await this.recordAccessGroupPropagationService.isObjectLeadingThroughRelatedRecordPath(
+          {
+            workspaceId,
+            objectMetadataId,
+          },
+        )))
     );
   }
 
@@ -71,15 +79,29 @@ export class RecordAccessGroupWriteService {
     recordsBefore: Record<string, unknown>[];
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<RelatedRecords[]> {
-    return areRecordAccessGroupsEnabled({ featureFlagsMap })
-      ? this.recordAccessGroupComputationService.findRelatedRecords({
+    if (!areRecordAccessGroupsEnabled({ featureFlagsMap })) {
+      return [];
+    }
+
+    return [
+      ...(await this.recordAccessGroupComputationService.findRelatedRecords({
+        workspaceId,
+        objectMetadataId,
+        recordIds,
+        recordsBefore,
+        transactionScope,
+      })),
+      ...(await this.recordAccessGroupPropagationService.findRecordsFollowingRelatedRecordPaths(
+        {
           workspaceId,
           objectMetadataId,
-          recordIds,
+          changedRecordIds: recordIds,
+          writtenRecordIds: recordIds,
           recordsBefore,
           transactionScope,
-        })
-      : [];
+        },
+      )),
+    ];
   }
 
   async recomputeAfterWrite({
@@ -111,27 +133,38 @@ export class RecordAccessGroupWriteService {
       isRecomputingWrittenRecords &&
       writtenRecordIds.length <= MAX_RECORDS_RECOMPUTED_IN_WRITE;
 
-    if (isRecomputingInWrite) {
-      await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecords(
-        {
-          workspaceId,
-          objectMetadataId,
-          recordIds: writtenRecordIds,
-          transactionScope,
-        },
-      );
-    }
-
-    const relatedRecords =
-      relatedRecordsBeforeDelete ??
-      (await this.recordAccessGroupComputationService.findRelatedRecords({
+    const changedRecordIds = isRecomputingInWrite
+      ? await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecords(
+          {
+            workspaceId,
+            objectMetadataId,
+            recordIds: writtenRecordIds,
+            transactionScope,
+          },
+        )
+      : [];
+    const relatedRecords = relatedRecordsBeforeDelete ?? [
+      ...(await this.recordAccessGroupComputationService.findRelatedRecords({
         workspaceId,
         objectMetadataId,
         recordIds: writtenRecordIds,
         recordsBefore,
         updatedColumnNames,
         transactionScope,
-      }));
+      })),
+      ...(await this.recordAccessGroupPropagationService.findRecordsFollowingRelatedRecordPaths(
+        {
+          workspaceId,
+          objectMetadataId,
+          changedRecordIds: isRecomputingWrittenRecords
+            ? changedRecordIds
+            : writtenRecordIds,
+          writtenRecordIds,
+          recordsBefore,
+          transactionScope,
+        },
+      )),
+    ];
 
     return isRecomputingWrittenRecords && !isRecomputingInWrite
       ? [{ objectMetadataId, recordIds: writtenRecordIds }, ...relatedRecords]
@@ -145,7 +178,11 @@ export class RecordAccessGroupWriteService {
     workspaceId: string;
     recordsToQueue: RelatedRecords[];
   }): Promise<void> {
-    for (const { objectMetadataId, recordIds } of recordsToQueue) {
+    for (const {
+      objectMetadataId,
+      recordIds,
+      propagatedFromObjectMetadataIds,
+    } of recordsToQueue) {
       if (
         await this.recordAccessGroupComputationService.isObjectUsingRecordAccessGroups(
           {
@@ -155,7 +192,12 @@ export class RecordAccessGroupWriteService {
         )
       ) {
         await this.recordAccessGroupComputationService.queueRecomputeRecordAccessGroupIdsOfRecords(
-          { workspaceId, objectMetadataId, recordIds },
+          {
+            workspaceId,
+            objectMetadataId,
+            recordIds,
+            propagatedFromObjectMetadataIds,
+          },
         );
       }
     }
