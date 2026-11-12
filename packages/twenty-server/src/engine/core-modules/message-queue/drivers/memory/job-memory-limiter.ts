@@ -9,6 +9,7 @@ import {
   JOB_MEMORY_RECONCILE_SUSPECTS_TTL_SECONDS,
   JOB_MEMORY_TOP_GROUP_KEYS_CACHE_MS,
   JOB_MEMORY_TOP_GROUP_KEYS_REPORTED,
+  NOT_CHARGED_QUEUES,
 } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
 import { JOB_MEMORY_RECONCILE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-reconcile-script.constant';
@@ -112,7 +113,7 @@ export class JobMemoryLimiter {
     jobName: string;
     jobs: JobMemoryRequest[];
   }): Promise<JobMemoryAdmission> {
-    if (!this.isEnabled()) {
+    if (!this.isEnabled() || NOT_CHARGED_QUEUES.includes(queueName)) {
       return NOT_CHARGED;
     }
 
