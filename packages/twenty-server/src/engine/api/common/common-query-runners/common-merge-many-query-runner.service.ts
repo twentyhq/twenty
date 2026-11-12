@@ -37,7 +37,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.util';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
+import { hasMergeableFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-mergeable-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -330,12 +330,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     });
 
     allFieldNames.forEach((fieldName) => {
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldIdByRecordKey[fieldName],
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
       const recordsWithValues: { value: unknown; recordId: string }[] = [];
 
       recordsToMerge.forEach((record) => {
         const fieldValue = record[fieldName];
 
-        if (hasRecordFieldValue(fieldValue)) {
+        if (hasMergeableFieldValue(fieldMetadata?.type, fieldValue)) {
           recordsWithValues.push({ value: fieldValue, recordId: record.id });
         }
       });
@@ -345,11 +350,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       } else if (recordsWithValues.length === 1) {
         mergedResult[fieldName] = recordsWithValues[0].value;
       } else {
-        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldIdByRecordKey[fieldName],
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
         if (!fieldMetadata) {
           return;
         }
