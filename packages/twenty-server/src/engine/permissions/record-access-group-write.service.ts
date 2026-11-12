@@ -181,7 +181,7 @@ export class RecordAccessGroupWriteService {
     for (const {
       objectMetadataId,
       recordIds,
-      propagatedFromObjectMetadataIds,
+      fromRelatedObjectMetadataIds,
     } of recordsToQueue) {
       if (
         await this.recordAccessGroupComputationService.isObjectUsingRecordAccessGroups(
@@ -196,7 +196,7 @@ export class RecordAccessGroupWriteService {
             workspaceId,
             objectMetadataId,
             recordIds,
-            propagatedFromObjectMetadataIds,
+            fromRelatedObjectMetadataIds,
           },
         );
       }
