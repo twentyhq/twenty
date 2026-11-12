@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
 
@@ -25,7 +26,7 @@ export const parseAgentChatMessageQuote = (
     .join('\n')
     .trim();
 
-  if (quoteHeaderMatch === null || !isNonEmptyString(replyText)) {
+  if (!isDefined(quoteHeaderMatch) || !isNonEmptyString(replyText)) {
     return null;
   }
 

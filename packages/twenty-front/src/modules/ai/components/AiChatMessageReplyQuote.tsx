@@ -28,7 +28,7 @@ const StyledQuoteContainer = styled.div<{ isClickable: boolean }>`
 
   &:focus-visible {
     outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: 2px;
+    outline-offset: ${themeCssVariables.spacing[0.5]};
   }
 `;
 

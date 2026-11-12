@@ -95,7 +95,7 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      {quote !== null && (
+      {isDefined(quote) && (
         <AiChatMessageReplyQuote replyMessageId={messageId} quote={quote} />
       )}
       <AiChatUserMessageCollapsibleContent text={quote?.replyText ?? text}>
@@ -185,15 +185,17 @@ export const AiChatMessage = ({
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
   const messageText =
     agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
-  const messageQuote = isUser ? parseAgentChatMessageQuote(messageText) : null;
-  const messageParts =
-    messageQuote === null
-      ? agentChatMessage.parts
-      : agentChatMessage.parts.map((part) =>
-          part.type === 'text' && part.text === messageText
-            ? { ...part, text: messageQuote.replyText }
-            : part,
-        );
+  const messageQuote =
+    isAiChatInboxEnabled && isUser
+      ? parseAgentChatMessageQuote(messageText)
+      : null;
+  const messageParts = !isDefined(messageQuote)
+    ? agentChatMessage.parts
+    : agentChatMessage.parts.map((part) =>
+        part.type === 'text' && part.text === messageText
+          ? { ...part, text: messageQuote.replyText }
+          : part,
+      );
   const messageContent = (
     <AiChatAssistantMessageRenderer
       isUserMessage={isUser}

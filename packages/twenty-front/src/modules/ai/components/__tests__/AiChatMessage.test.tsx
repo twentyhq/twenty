@@ -397,4 +397,15 @@ describe('AiChatMessage', () => {
       screen.queryByRole('button', { name: 'View original message' }),
     ).not.toBeInTheDocument();
   });
+
+  it('leaves a quote-shaped message as written outside the inbox', () => {
+    renderMessage({ messageId: REPLY_MESSAGE.id, isAiChatInboxEnabled: false });
+
+    expect(
+      screen.getByText(/\*\*Julia Martin:\*\* Which deals close this week\?/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'View original message' }),
+    ).not.toBeInTheDocument();
+  });
 });

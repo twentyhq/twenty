@@ -1,4 +1,5 @@
 import { type Nullable } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
 import { findAgentChatQuotedMessage } from '@/ai/utils/findAgentChatQuotedMessage';
@@ -19,7 +20,7 @@ export const agentChatReplyQuotedMessageIdFamilySelector =
             ?.parts.find((part) => part.type === 'text')?.text ?? '';
         const quote = parseAgentChatMessageQuote(replyText);
 
-        if (quote === null) {
+        if (!isDefined(quote)) {
           return null;
         }
 
