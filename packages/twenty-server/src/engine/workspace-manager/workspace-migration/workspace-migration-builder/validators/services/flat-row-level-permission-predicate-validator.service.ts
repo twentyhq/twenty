@@ -28,8 +28,8 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-union-operands.constant';
 import { RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-intersection-operands.constant';
-import { MULTI_VALUE_MEMBER_FIELD_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/multi-value-member-field-types.constant';
-import { SINGLE_VALUE_FILTER_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/single-value-filter-types.constant';
+import { RLS_PREDICATE_MULTI_VALUE_MEMBER_FIELD_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-multi-value-member-field-types.constant';
+import { RLS_PREDICATE_SINGLE_VALUE_FILTER_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-single-value-filter-types.constant';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -669,8 +669,8 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     const filterType = getFilterTypeFromFieldType(fieldMetadata.type);
 
     if (
-      SINGLE_VALUE_FILTER_TYPES.includes(filterType) &&
-      MULTI_VALUE_MEMBER_FIELD_TYPES.includes(
+      RLS_PREDICATE_SINGLE_VALUE_FILTER_TYPES.includes(filterType) &&
+      RLS_PREDICATE_MULTI_VALUE_MEMBER_FIELD_TYPES.includes(
         workspaceMemberFieldMetadata.type,
       ) &&
       !RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS.includes(operand) &&

@@ -25,7 +25,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-union-operands.constant';
 import { RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-intersection-operands.constant';
-import { SINGLE_VALUE_FILTER_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/single-value-filter-types.constant';
+import { RLS_PREDICATE_SINGLE_VALUE_FILTER_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-single-value-filter-types.constant';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
@@ -201,7 +201,7 @@ const buildPredicateRecordFilter = ({
   if (
     !isDefined(predicate.workspaceMemberFieldMetadataId) ||
     !Array.isArray(predicateValue) ||
-    !SINGLE_VALUE_FILTER_TYPES.includes(filterType)
+    !RLS_PREDICATE_SINGLE_VALUE_FILTER_TYPES.includes(filterType)
   ) {
     return buildValueRecordFilter(predicateValue);
   }
