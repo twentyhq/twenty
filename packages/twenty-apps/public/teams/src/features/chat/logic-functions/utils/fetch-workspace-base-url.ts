@@ -12,7 +12,6 @@ const readWorkspaceBaseUrl = async (): Promise<string | undefined> => {
     },
   });
 
-  // The custom domain is the one members open, so it wins over the subdomain.
   return [
     currentWorkspace?.workspaceUrls?.customUrl,
     currentWorkspace?.workspaceUrls?.subdomainUrl,
