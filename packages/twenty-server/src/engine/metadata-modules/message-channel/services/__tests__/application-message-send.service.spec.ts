@@ -144,6 +144,33 @@ describe('ApplicationMessageSendService', () => {
     expect(ingest).toHaveBeenCalledTimes(1);
   });
 
+  it('should copy the delivered attachments, not the ones a retry carries', async () => {
+    copyIntoAttachmentFileFieldOrThrow.mockRejectedValueOnce(
+      new MessageChannelException(
+        'Failed to store sent app message attachment(s)',
+        MessageChannelExceptionCode.MESSAGE_ATTACHMENT_STORAGE_FAILED,
+      ),
+    );
+
+    await expect(service.send(SEND_ARGS)).rejects.toThrow(
+      MessageChannelException,
+    );
+
+    await service.send({
+      ...SEND_ARGS,
+      attachments: [{ id: 'other-upload', name: 'other.pdf' }],
+    });
+
+    expect(copyIntoAttachmentFileFieldOrThrow).toHaveBeenLastCalledWith({
+      attachments: SEND_ARGS.attachments,
+      workspaceId: 'workspace-1',
+    });
+    expect(deleteFiles).toHaveBeenCalledWith({
+      fileIds: ['upload-1'],
+      workspaceId: 'workspace-1',
+    });
+  });
+
   it('should fail without saving when an attachment copy fails, and copy again on retry without resending', async () => {
     copyIntoAttachmentFileFieldOrThrow.mockRejectedValueOnce(
       new MessageChannelException(

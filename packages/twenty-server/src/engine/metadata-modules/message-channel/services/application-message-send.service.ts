@@ -94,6 +94,8 @@ type AppMessageDelivery = Conversation & {
   subject: string | null;
   cc: AppMessageReplyRecipient[];
   bcc: AppMessageReplyRecipient[];
+  // a retry records what was delivered, not what it carries; absent on deliveries cached before attachments
+  attachments?: SendAppChannelMessageAttachmentInput[];
 };
 
 @Injectable()
@@ -216,9 +218,11 @@ export class ApplicationMessageSendService {
             deliveryKey,
           }));
 
+        const deliveredAttachments = delivery.attachments ?? [];
+
         const copiedAttachments =
           await this.applicationMessageSendAttachmentsService.copyIntoAttachmentFileFieldOrThrow(
-            { attachments, workspaceId },
+            { attachments: deliveredAttachments, workspaceId },
           );
 
         try {
@@ -276,7 +280,7 @@ export class ApplicationMessageSendService {
           );
 
           await this.fileEmailAttachmentService.deleteFiles({
-            fileIds: attachments.map(({ id }) => id),
+            fileIds: deliveredAttachments.map(({ id }) => id),
             workspaceId,
           });
 
@@ -424,6 +428,7 @@ export class ApplicationMessageSendService {
       subject: reply.email?.subject ?? null,
       cc,
       bcc,
+      attachments,
     };
 
     await this.cacheStorageService.set(
