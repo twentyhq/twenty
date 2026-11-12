@@ -291,7 +291,7 @@ const files = await Promise.all(
 );
 ```
 
-`attachments` requires `"engines": { "twenty": ">=2.58.0" }`.
+`attachments` requires `"engines": { "twenty": ">=2.59.0" }`.
 
 Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients and its attachments, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
 

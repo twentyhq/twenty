@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 
@@ -181,6 +183,37 @@ describe('ApplicationMessageSendAttachmentsService', () => {
         fileId: 'copy-2',
         workspaceId: 'workspace-1',
       });
+    });
+
+    it('should warn about each copy it fails to delete without throwing', async () => {
+      const warn = jest
+        .spyOn(Logger.prototype, 'warn')
+        .mockImplementation(() => undefined);
+
+      findFiles.mockResolvedValue([
+        { id: 'copy-1', settings: { isTemporaryFile: true } },
+        { id: 'copy-2', settings: { isTemporaryFile: true } },
+      ]);
+      deleteFilesFieldFile
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(new Error('Storage unavailable'));
+
+      await expect(
+        service.deleteUnclaimedCopies({
+          copiedAttachments: [
+            { fileId: 'copy-1', label: 'deck.pdf' },
+            { fileId: 'copy-2', label: 'photo.png' },
+          ],
+          workspaceId: 'workspace-1',
+        }),
+      ).resolves.toBeUndefined();
+
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('copy-2 in workspace workspace-1'),
+      );
+
+      warn.mockRestore();
     });
 
     it('should not throw when looking up the copies fails', async () => {

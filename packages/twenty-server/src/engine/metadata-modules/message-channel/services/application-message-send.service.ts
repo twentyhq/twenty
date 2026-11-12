@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type SendAppMessageEmail } from 'twenty-shared/application';
 import {
@@ -130,6 +131,9 @@ export class ApplicationMessageSendService {
       throw new MessageChannelException(
         'A message needs text or at least one attachment',
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+        {
+          userFriendlyMessage: msg`A message needs text or at least one attachment.`,
+        },
       );
     }
 

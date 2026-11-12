@@ -10,7 +10,7 @@ import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/
 import { LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES } from 'src/constants/linkedin-attachment-max-size-bytes.constant';
 import { LINKEDIN_SEND_MESSAGE_TIMEOUT_SECONDS } from 'src/constants/linkedin-send-message-timeout-seconds.constant';
 import { LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { downloadSendMessageAttachment } from 'src/logic-functions/utils/download-send-message-attachment.util';
+import { downloadSendMessageAttachmentOrThrow } from 'src/logic-functions/utils/download-send-message-attachment.util';
 import { type SendAppMessageAttachment } from 'src/types/send-app-message-attachment.type';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
 
@@ -41,7 +41,7 @@ export const linkedinSendMessageHandler = async ({
 
   const unipileAttachments = await Promise.all(
     attachments.map((attachment) =>
-      downloadSendMessageAttachment({
+      downloadSendMessageAttachmentOrThrow({
         attachment,
         maxSizeBytes: LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES,
         deadlineAtMs,

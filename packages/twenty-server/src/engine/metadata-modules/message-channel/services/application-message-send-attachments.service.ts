@@ -168,16 +168,26 @@ export class ApplicationMessageSendAttachmentsService {
         select: { id: true, settings: true },
       });
 
-      await Promise.allSettled(
-        files
-          .filter((file) => file.settings?.isTemporaryFile)
-          .map((file) =>
-            this.filesFieldService.deleteFilesFieldFile({
-              fileId: file.id,
-              workspaceId,
-            }),
-          ),
+      const unclaimedCopies = files.filter(
+        (file) => file.settings?.isTemporaryFile,
       );
+
+      const deletionResults = await Promise.allSettled(
+        unclaimedCopies.map((file) =>
+          this.filesFieldService.deleteFilesFieldFile({
+            fileId: file.id,
+            workspaceId,
+          }),
+        ),
+      );
+
+      deletionResults.forEach((deletionResult, index) => {
+        if (deletionResult.status === 'rejected') {
+          this.logger.warn(
+            `Failed to delete sent app message attachment copy ${unclaimedCopies[index].id} in workspace ${workspaceId}: ${deletionResult.reason}`,
+          );
+        }
+      });
     } catch (error) {
       this.logger.warn(
         `Failed to clean up sent app message attachment copies in workspace ${workspaceId}: ${error}`,

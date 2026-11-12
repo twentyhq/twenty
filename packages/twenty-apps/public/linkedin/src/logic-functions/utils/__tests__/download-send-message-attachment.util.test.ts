@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { downloadSendMessageAttachment } from 'src/logic-functions/utils/download-send-message-attachment.util';
+import { downloadSendMessageAttachmentOrThrow } from 'src/logic-functions/utils/download-send-message-attachment.util';
 
 const ATTACHMENT = {
   filename: 'deck.pdf',
@@ -12,13 +12,13 @@ const ATTACHMENT = {
 const fetchMock = vi.fn();
 
 const download = (maxSizeBytes = 1024) =>
-  downloadSendMessageAttachment({
+  downloadSendMessageAttachmentOrThrow({
     attachment: ATTACHMENT,
     maxSizeBytes,
     deadlineAtMs: Date.now() + 10_000,
   });
 
-describe('downloadSendMessageAttachment', () => {
+describe('downloadSendMessageAttachmentOrThrow', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', fetchMock);
     fetchMock.mockReset();

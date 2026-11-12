@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
   sendUnipileChatMessage: vi.fn(),
-  downloadSendMessageAttachment: vi.fn(),
+  downloadSendMessageAttachmentOrThrow: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -17,7 +17,8 @@ vi.mock('src/unipile/utils/send-unipile-chat-message.util', () => ({
 vi.mock(
   'src/logic-functions/utils/download-send-message-attachment.util',
   () => ({
-    downloadSendMessageAttachment: mocks.downloadSendMessageAttachment,
+    downloadSendMessageAttachmentOrThrow:
+      mocks.downloadSendMessageAttachmentOrThrow,
   }),
 );
 
@@ -68,11 +69,11 @@ describe('linkedinSendMessageHandler', () => {
       text: 'Thanks, talk soon',
       attachments: [],
     });
-    expect(mocks.downloadSendMessageAttachment).not.toHaveBeenCalled();
+    expect(mocks.downloadSendMessageAttachmentOrThrow).not.toHaveBeenCalled();
   });
 
   it('downloads each attachment and sends it with the reply', async () => {
-    mocks.downloadSendMessageAttachment.mockResolvedValue({
+    mocks.downloadSendMessageAttachmentOrThrow.mockResolvedValue({
       content: 'cmVwb3J0',
       content_type: 'application/pdf',
       filename: 'deck.pdf',
@@ -84,13 +85,13 @@ describe('linkedinSendMessageHandler', () => {
       attachments: [ATTACHMENT],
     });
 
-    expect(mocks.downloadSendMessageAttachment).toHaveBeenCalledExactlyOnceWith(
-      {
-        attachment: ATTACHMENT,
-        maxSizeBytes: 25 * 1024 * 1024,
-        deadlineAtMs: expect.any(Number),
-      },
-    );
+    expect(
+      mocks.downloadSendMessageAttachmentOrThrow,
+    ).toHaveBeenCalledExactlyOnceWith({
+      attachment: ATTACHMENT,
+      maxSizeBytes: 25 * 1024 * 1024,
+      deadlineAtMs: expect.any(Number),
+    });
     expect(mocks.sendUnipileChatMessage).toHaveBeenCalledExactlyOnceWith({
       accountId: 'acc_1',
       chatId: 'chat-1',
@@ -106,7 +107,7 @@ describe('linkedinSendMessageHandler', () => {
   });
 
   it('sends nothing when an attachment cannot be downloaded', async () => {
-    mocks.downloadSendMessageAttachment.mockRejectedValue(
+    mocks.downloadSendMessageAttachmentOrThrow.mockRejectedValue(
       new Error('Attachment deck.pdf is larger than 26214400 bytes'),
     );
 

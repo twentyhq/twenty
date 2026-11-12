@@ -1,8 +1,10 @@
+import { isDefined } from 'twenty-sdk/utils';
+
 import { type SendAppMessageAttachment } from 'src/types/send-app-message-attachment.type';
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
 import { readStreamWithinSizeLimit } from 'src/utils/read-stream-within-size-limit.util';
 
-export const downloadSendMessageAttachment = async ({
+export const downloadSendMessageAttachmentOrThrow = async ({
   attachment: { filename, contentType, size, downloadUrl },
   maxSizeBytes,
   deadlineAtMs,
@@ -21,7 +23,7 @@ export const downloadSendMessageAttachment = async ({
     signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
   });
 
-  if (!response.ok || response.body === null) {
+  if (!response.ok || !isDefined(response.body)) {
     throw new Error(
       `Downloading attachment ${filename} failed (${response.status})`,
     );
