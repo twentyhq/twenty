@@ -86,6 +86,7 @@ describe('OAuth client ID metadata documents (integration)', () => {
   let isClientIdMetadataDocumentEnabled: boolean;
   let clientIdMetadataDocumentService: ClientIdMetadataDocumentService;
   let findDocumentSpy: jest.SpyInstance;
+  let isFetchDueSpy: jest.SpyInstance;
 
   const lookUp = (clientId: string) =>
     makeMetadataApiRequest(
@@ -137,9 +138,14 @@ describe('OAuth client ID metadata documents (integration)', () => {
         async (clientId) =>
           DOCUMENTS.find((document) => document.clientId === clientId) ?? null,
       );
-    jest
+    isFetchDueSpy = jest
       .spyOn(clientIdMetadataDocumentService, 'isFetchDue')
       .mockResolvedValue(false);
+  };
+
+  const restoreDocuments = () => {
+    findDocumentSpy.mockRestore();
+    isFetchDueSpy.mockRestore();
   };
 
   beforeAll(() => {
@@ -197,7 +203,7 @@ describe('OAuth client ID metadata documents (integration)', () => {
 
     afterEach(() => {
       expect(findDocumentSpy).not.toHaveBeenCalled();
-      findDocumentSpy.mockRestore();
+      restoreDocuments();
     });
 
     it('should not advertise support', async () => {
@@ -238,7 +244,7 @@ describe('OAuth client ID metadata documents (integration)', () => {
   describe('When enabled', () => {
     beforeEach(stubDocuments);
 
-    afterEach(() => findDocumentSpy.mockRestore());
+    afterEach(restoreDocuments);
 
     it('should advertise support', async () => {
       const response = await request(baseUrl)
