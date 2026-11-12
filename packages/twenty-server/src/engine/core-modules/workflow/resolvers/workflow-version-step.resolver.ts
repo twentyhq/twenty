@@ -66,8 +66,20 @@ const WORKFLOW_VERSION_STEP_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
 };
 
+// Matches the step authoring mutations: an application may not test an MCP tool it cannot configure
 const WORKFLOW_MCP_TOOL_STEP_ACCESS_POLICY: AccessPolicy = {
-  ...WORKFLOW_VERSION_STEP_ACCESS_POLICY,
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
   requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
 };
 
@@ -241,12 +253,18 @@ export class WorkflowVersionStepResolver {
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
     @Args('input')
-    { mcpServerId, toolName, toolArguments }: TestMcpToolStepInput,
+    {
+      mcpServerId,
+      toolName,
+      toolArguments,
+      allowDestructiveTool,
+    }: TestMcpToolStepInput,
   ): Promise<TestMcpToolStepDTO> {
     return this.mcpToolStepTestService.testTool({
       mcpServerId,
       toolName,
       toolArguments,
+      allowDestructiveTool,
       workspace,
       callingApplication,
       userWorkspaceId,

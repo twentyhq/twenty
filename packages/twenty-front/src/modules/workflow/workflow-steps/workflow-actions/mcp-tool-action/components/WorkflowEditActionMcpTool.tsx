@@ -140,8 +140,16 @@ export const WorkflowEditActionMcpTool = ({
     updateSettings({ ...settings, expectedOutputSchema: parsedValue });
   };
 
-  const runTest = async () => {
-    const testResult = await testMcpTool({ ...settings.input, toolInput });
+  const runTest = async ({
+    allowDestructiveTool,
+  }: {
+    allowDestructiveTool: boolean;
+  }) => {
+    const testResult = await testMcpTool({
+      ...settings.input,
+      toolInput,
+      allowDestructiveTool,
+    });
 
     if (!isDefined(testResult) || isEmptyObject(testResult)) {
       return;
@@ -165,7 +173,7 @@ export const WorkflowEditActionMcpTool = ({
       return;
     }
 
-    await runTest();
+    await runTest({ allowDestructiveTool: false });
   };
 
   if (loading) {
@@ -305,7 +313,7 @@ export const WorkflowEditActionMcpTool = ({
         dialogId={testConfirmationDialogId}
         title={t`Run this tool for real?`}
         subtitle={t`Testing calls ${toolName} on ${mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data.`}
-        onConfirmClick={runTest}
+        onConfirmClick={() => runTest({ allowDestructiveTool: true })}
         confirmButtonText={t`Run tool`}
         confirmButtonColor="accent"
       />

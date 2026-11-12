@@ -29,7 +29,7 @@ describe('testMcpToolStep (integration)', () => {
         value: ['127.0.0.1'],
       },
     });
-    fakeMcpServer = await startFakeMcpServer();
+    fakeMcpServer = await startFakeMcpServer({ isDeletePageOffered: true });
 
     const response = await createMcpServer({
       name: `fake_${uuidv4().slice(0, 8)}`,
@@ -80,14 +80,41 @@ describe('testMcpToolStep (integration)', () => {
     });
   });
 
+  it('runs a tool that may change data only once the author confirmed it', async () => {
+    const callsBefore = fakeMcpServer.receivedAuthorizationHeaders.length;
+    const input = {
+      mcpServerId,
+      toolName: 'delete_page',
+      toolArguments: { pageId: 'page-1' },
+    };
+
+    const refused = await testMcpToolStep({ input, expectToFail: true });
+
+    expect(refused.errors[0].message).toBe(
+      'Tool delete_page may change data and the test was not confirmed',
+    );
+    expect(fakeMcpServer.receivedAuthorizationHeaders).toHaveLength(
+      callsBefore,
+    );
+
+    const confirmed = await testMcpToolStep({
+      input: { ...input, allowDestructiveTool: true },
+    });
+
+    expect(confirmed.data.testMcpToolStep).toMatchObject({
+      success: true,
+      result: { content: [{ type: 'text', text: 'deleted page-1' }] },
+    });
+  });
+
   it('rejects a tool the server does not offer', async () => {
     const { errors } = await testMcpToolStep({
-      input: { mcpServerId, toolName: 'delete_page', toolArguments: {} },
+      input: { mcpServerId, toolName: 'archive_page', toolArguments: {} },
       expectToFail: true,
     });
 
     expect(errors[0].message).toBe(
-      'MCP server Fake docs no longer offers the tool delete_page',
+      'MCP server Fake docs no longer offers the tool archive_page',
     );
   });
 

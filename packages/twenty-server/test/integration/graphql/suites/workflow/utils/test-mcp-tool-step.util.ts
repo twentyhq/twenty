@@ -10,6 +10,7 @@ type TestMcpToolStepFactoryInput = {
   mcpServerId: string;
   toolName: string;
   toolArguments?: Record<string, unknown>;
+  allowDestructiveTool?: boolean;
 };
 
 type TestMcpToolStepOutput = {

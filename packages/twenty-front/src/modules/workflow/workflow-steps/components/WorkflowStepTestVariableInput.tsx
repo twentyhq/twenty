@@ -40,7 +40,13 @@ export const WorkflowStepTestVariableInput = <TTestData extends StepTestData>({
     return null;
   }
 
-  const setVariableValue = (variablePath: string, value: string | null) => {
+  const setVariableValue = ({
+    variablePath,
+    value,
+  }: {
+    variablePath: string;
+    value: string | null;
+  }) => {
     setTestData((previousTestData) => ({
       ...previousTestData,
       variableValues: {
@@ -60,7 +66,7 @@ export const WorkflowStepTestVariableInput = <TTestData extends StepTestData>({
             placeholder={t`Enter test value`}
             readonly={readonly}
             defaultValue={variableValues[variablePath] ?? ''}
-            onChange={(value) => setVariableValue(variablePath, value)}
+            onChange={(value) => setVariableValue({ variablePath, value })}
           />
         ))}
       </StyledVariableInputsContainer>

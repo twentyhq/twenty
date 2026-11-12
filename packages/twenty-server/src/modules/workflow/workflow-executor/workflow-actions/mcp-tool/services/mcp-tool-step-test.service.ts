@@ -7,6 +7,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type TestMcpToolStepDTO } from 'src/engine/core-modules/workflow/dtos/test-mcp-tool-step.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isDestructiveMcpServerTool } from 'src/engine/metadata-modules/mcp-server/utils/is-destructive-mcp-server-tool.util';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -43,6 +44,7 @@ export class McpToolStepTestService {
     mcpServerId,
     toolName,
     toolArguments,
+    allowDestructiveTool = false,
     workspace: { id: workspaceId, workspaceCustomApplicationId },
     callingApplication,
     userWorkspaceId,
@@ -50,6 +52,7 @@ export class McpToolStepTestService {
     mcpServerId: string;
     toolName: string;
     toolArguments: Record<string, unknown> | undefined;
+    allowDestructiveTool: boolean | undefined;
     workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
     callingApplication: FlatApplication | undefined;
     userWorkspaceId: string;
@@ -81,6 +84,16 @@ export class McpToolStepTestService {
         WorkflowVersionStepExceptionCode.NOT_FOUND,
         {
           userFriendlyMessage: msg`This MCP server is not available to this workflow.`,
+        },
+      );
+    }
+
+    if (isDestructiveMcpServerTool(lookup.tool) && !allowDestructiveTool) {
+      throw new WorkflowVersionStepException(
+        `Tool ${toolName} may change data and the test was not confirmed`,
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`This tool may change data. Confirm the test before running it.`,
         },
       );
     }

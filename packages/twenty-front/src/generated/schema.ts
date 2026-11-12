@@ -919,6 +919,8 @@ export type TestMcpToolStep = {
 };
 
 export type TestMcpToolStepInput = {
+  /** Must be true to run a tool that may change data, after the author confirmed it */
+  allowDestructiveTool?: InputMaybe<Scalars['Boolean']['input']>;
   mcpServerId: Scalars['UUID']['input'];
   /** Tool arguments with workflow variables already replaced */
   toolArguments?: InputMaybe<Scalars['JSON']['input']>;

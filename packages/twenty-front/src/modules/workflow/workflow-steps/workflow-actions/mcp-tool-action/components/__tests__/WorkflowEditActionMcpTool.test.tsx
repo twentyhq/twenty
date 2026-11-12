@@ -245,6 +245,7 @@ describe('WorkflowEditActionMcpTool', () => {
           mcpServerId: 'mcp-server-id',
           toolName: 'search_docs',
           toolArguments: { query: 'invoices', cursor: null },
+          allowDestructiveTool: false,
         },
       },
     });
@@ -292,6 +293,16 @@ describe('WorkflowEditActionMcpTool', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Run tool' }));
 
     await waitFor(() => expect(mockTestMcpToolStep).toHaveBeenCalledTimes(1));
+    expect(mockTestMcpToolStep).toHaveBeenCalledWith({
+      variables: {
+        input: {
+          mcpServerId: 'mcp-server-id',
+          toolName: 'create_doc',
+          toolArguments: { title: 'Roadmap' },
+          allowDestructiveTool: true,
+        },
+      },
+    });
     await waitFor(() => expect(onActionUpdate).toHaveBeenCalledTimes(1));
     expect(onActionUpdate).toHaveBeenCalledWith(
       expect.objectContaining({

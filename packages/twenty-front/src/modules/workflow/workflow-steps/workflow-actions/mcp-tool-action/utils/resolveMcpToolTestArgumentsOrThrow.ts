@@ -1,7 +1,7 @@
 import { type WorkflowMcpToolAction } from '@/workflow/types/Workflow';
 import { convertFlatVariablesToNestedContext } from '@/workflow/workflow-steps/utils/convertFlatVariablesToNestedContext';
 import { t } from '@lingui/core/macro';
-import { isPlainObject, resolveInput } from 'twenty-shared/utils';
+import { CustomError, isPlainObject, resolveInput } from 'twenty-shared/utils';
 
 export const resolveMcpToolTestArgumentsOrThrow = ({
   toolInput,
@@ -16,7 +16,10 @@ export const resolveMcpToolTestArgumentsOrThrow = ({
   );
 
   if (!isPlainObject(toolArguments)) {
-    throw new Error(t`The tool arguments must resolve to an object`);
+    throw new CustomError(
+      t`The tool arguments must resolve to an object`,
+      'MCP_TOOL_TEST_ARGUMENTS_NOT_AN_OBJECT',
+    );
   }
 
   return toolArguments;

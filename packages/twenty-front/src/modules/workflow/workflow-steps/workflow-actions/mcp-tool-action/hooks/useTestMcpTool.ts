@@ -1,4 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { type WorkflowMcpToolAction } from '@/workflow/types/Workflow';
@@ -8,6 +9,7 @@ import { type McpToolTestData } from '@/workflow/workflow-steps/workflow-actions
 import { resolveMcpToolTestArgumentsOrThrow } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { useState } from 'react';
 import { type JsonObject } from 'type-fest';
 import {
@@ -20,6 +22,12 @@ export const useTestMcpTool = (actionId: string) => {
   const { t } = useLingui();
   const apolloCoreClient = useApolloCoreClient();
   const [isTesting, setIsTesting] = useState(false);
+  const store = useStore();
+  const scopeId = useRoutedFlowStateScopeId();
+  const mcpToolTestDataAtom = mcpToolTestDataFamilyState.getAtom(
+    actionId,
+    scopeId,
+  );
   const mcpToolTestData = useAtomFamilyStateValue(
     mcpToolTestDataFamilyState,
     actionId,
@@ -41,9 +49,10 @@ export const useTestMcpTool = (actionId: string) => {
     mcpServerId,
     toolName,
     toolInput,
-  }: WorkflowMcpToolAction['settings']['input']): Promise<
-    JsonObject | undefined
-  > => {
+    allowDestructiveTool,
+  }: WorkflowMcpToolAction['settings']['input'] & {
+    allowDestructiveTool: boolean;
+  }): Promise<JsonObject | undefined> => {
     if (isTesting) {
       return undefined;
     }
@@ -58,8 +67,9 @@ export const useTestMcpTool = (actionId: string) => {
             toolName,
             toolArguments: resolveMcpToolTestArgumentsOrThrow({
               toolInput,
-              variableValues: mcpToolTestData.variableValues,
+              variableValues: store.get(mcpToolTestDataAtom).variableValues,
             }),
+            allowDestructiveTool,
           },
         },
       });
