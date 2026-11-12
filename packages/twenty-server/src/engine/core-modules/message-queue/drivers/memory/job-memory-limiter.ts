@@ -13,6 +13,7 @@ import {
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
 import { JOB_MEMORY_RECONCILE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-reconcile-script.constant';
 import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-release-script.constant';
+import { JOB_MEMORY_RESTORE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-restore-script.constant';
 import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
@@ -233,6 +234,21 @@ export class JobMemoryLimiter {
       script: JOB_MEMORY_RELEASE_SCRIPT,
       args: [this.buildMember({ queueName, jobId })],
       action: `release the job memory of job ${jobId}`,
+    });
+  }
+
+  async restore({
+    queueName,
+    jobId,
+    groupKeys,
+    sizeBytes,
+  }: ChargedJob & { sizeBytes: number }): Promise<void> {
+    await this.runChargeScript({
+      queueName,
+      groupKeys,
+      script: JOB_MEMORY_RESTORE_SCRIPT,
+      args: [this.buildMember({ queueName, jobId }), sizeBytes],
+      action: `restore the job memory of job ${jobId}`,
     });
   }
 
