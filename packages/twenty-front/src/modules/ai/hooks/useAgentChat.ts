@@ -40,6 +40,7 @@ import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agen
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
+import { agentChatIsResolvingQuotedAuthorFamilyState } from '@/ai/states/agentChatIsResolvingQuotedAuthorFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
@@ -152,13 +153,31 @@ export const useAgentChat = () => {
           variables: { id: quotedAgentId },
         }
       : undefined;
-    const quotedAgentName = isDefined(quotedAgentQuery)
-      ? (apolloClient.cache.readQuery(quotedAgentQuery)?.findOneAgent.label ??
-        (await apolloClient
-          .query(quotedAgentQuery)
-          .then(({ data }) => data?.findOneAgent.label ?? undefined)
-          .catch(() => undefined)))
+    const cachedQuotedAgentName = isDefined(quotedAgentQuery)
+      ? apolloClient.cache.readQuery(quotedAgentQuery)?.findOneAgent.label
       : undefined;
+    const isResolvingQuotedAuthorAtom =
+      agentChatIsResolvingQuotedAuthorFamilyState.atomFamily({ threadId });
+    const mustResolveQuotedAgentName =
+      isDefined(quotedAgentQuery) && !isDefined(cachedQuotedAgentName);
+
+    // the send state is set later, so a second submit during this fetch would send twice
+    if (mustResolveQuotedAgentName && store.get(isResolvingQuotedAuthorAtom)) {
+      return;
+    }
+
+    if (mustResolveQuotedAgentName) {
+      store.set(isResolvingQuotedAuthorAtom, true);
+    }
+
+    const quotedAgentName =
+      isDefined(quotedAgentQuery) && mustResolveQuotedAgentName
+        ? await apolloClient
+            .query(quotedAgentQuery)
+            .then(({ data }) => data?.findOneAgent.label ?? undefined)
+            .catch(() => undefined)
+            .finally(() => store.set(isResolvingQuotedAuthorAtom, false))
+        : (cachedQuotedAgentName ?? undefined);
     const quotedMessageSource = isDefined(quotedMessage)
       ? getAgentChatMessageQuoteSource({
           message: quotedMessage,
