@@ -151,20 +151,27 @@ export class ApplicationMessageSendAttachmentsService {
       return;
     }
 
-    const files = await this.fileRepository.find(workspaceId, {
-      where: { id: In(copiedAttachments.map(({ fileId }) => fileId)) },
-      select: { id: true, settings: true },
-    });
+    // runs after delivery, so a cleanup failure must not fail the send
+    try {
+      const files = await this.fileRepository.find(workspaceId, {
+        where: { id: In(copiedAttachments.map(({ fileId }) => fileId)) },
+        select: { id: true, settings: true },
+      });
 
-    await Promise.allSettled(
-      files
-        .filter((file) => file.settings?.isTemporaryFile)
-        .map((file) =>
-          this.filesFieldService.deleteFilesFieldFile({
-            fileId: file.id,
-            workspaceId,
-          }),
-        ),
-    );
+      await Promise.allSettled(
+        files
+          .filter((file) => file.settings?.isTemporaryFile)
+          .map((file) =>
+            this.filesFieldService.deleteFilesFieldFile({
+              fileId: file.id,
+              workspaceId,
+            }),
+          ),
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to clean up sent app message attachment copies in workspace ${workspaceId}: ${error}`,
+      );
+    }
   }
 }

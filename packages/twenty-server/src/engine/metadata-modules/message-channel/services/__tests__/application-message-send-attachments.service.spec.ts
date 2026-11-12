@@ -157,5 +157,18 @@ describe('ApplicationMessageSendAttachmentsService', () => {
         workspaceId: 'workspace-1',
       });
     });
+
+    it('should not throw when looking up the copies fails', async () => {
+      findFiles.mockRejectedValue(new Error('Database unavailable'));
+
+      await expect(
+        service.deleteUnclaimedCopies({
+          copiedAttachments: [{ fileId: 'copy-1', label: 'deck.pdf' }],
+          workspaceId: 'workspace-1',
+        }),
+      ).resolves.toBeUndefined();
+
+      expect(deleteFilesFieldFile).not.toHaveBeenCalled();
+    });
   });
 });
