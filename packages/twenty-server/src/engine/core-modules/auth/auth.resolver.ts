@@ -1124,6 +1124,7 @@ export class AuthResolver {
       user,
       workspace,
       requestBaseUrl: getRequestBaseUrl(context.req),
+      requestIp: context.req.ip,
     });
   }
 

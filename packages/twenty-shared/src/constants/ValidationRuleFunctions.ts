@@ -1,5 +1,7 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 
+import { computeValidationRuleDaysSince } from '@/utils/validation-rule/computeValidationRuleDaysSince';
+import { isValidationRuleDateInRelativeRange } from '@/utils/validation-rule/isValidationRuleDateInRelativeRange';
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
 import { isValidationRuleValueEmpty } from '@/utils/validation-rule/isValidationRuleValueEmpty';
 
@@ -26,5 +28,13 @@ export const VALIDATION_RULE_FUNCTIONS = {
   arrayLength: {
     signature: 'arrayLength(list)',
     evaluate: (value: unknown) => (Array.isArray(value) ? value.length : 0),
+  },
+  daysSince: {
+    signature: 'daysSince(date)',
+    evaluate: computeValidationRuleDaysSince,
+  },
+  isInRelativeDateRange: {
+    signature: 'isInRelativeDateRange(date, direction, amount, unit)',
+    evaluate: isValidationRuleDateInRelativeRange,
   },
 } as const;

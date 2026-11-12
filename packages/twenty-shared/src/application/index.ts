@@ -180,6 +180,7 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
+export type { EventTriggerManifestSettings } from './eventTriggerManifestSettingsType';
 export type { FieldManifestOptions } from './fieldManifestOptionsType';
 export type {
   RegularFieldManifest,
@@ -206,6 +207,7 @@ export type {
 export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
+export { isRecordEventTriggerManifestSettings } from './isRecordEventTriggerManifestSettings';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
@@ -224,6 +226,7 @@ export type {
 } from './normalizedPageLayoutManifestType';
 export { normalizePageLayoutTabManifest } from './normalizePageLayoutTabManifest';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
+export type { OAuthDiscoveryConnectionProviderConfig } from './oauthDiscoveryConnectionProviderConfigType';
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
@@ -247,6 +250,8 @@ export type {
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { RecordEventTriggerManifestAction } from './recordEventTriggerManifestActionType';
+export type { RecordEventTriggerManifestSettings } from './recordEventTriggerManifestSettingsType';
 export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
@@ -299,6 +304,7 @@ export {
 export type { SkillManifest } from './skillManifestType';
 export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
+export type { StoredOAuthDiscoveryConnectionProviderConfig } from './storedOAuthDiscoveryConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type {
   TimelineActivityTypeEmitThroughManifest,

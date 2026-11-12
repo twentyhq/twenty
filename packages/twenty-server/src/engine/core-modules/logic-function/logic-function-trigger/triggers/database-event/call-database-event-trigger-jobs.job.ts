@@ -28,6 +28,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 @Processor(MessageQueue.triggerQueue)
@@ -41,6 +42,7 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
     private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
+    private readonly databaseEventTriggerConditionService: DatabaseEventTriggerConditionService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
@@ -102,12 +104,23 @@ export class CallDatabaseEventTriggerJobsJob {
           },
           eventBatch: workspaceEventBatch,
         });
-      const logicFunctionPayloads = transformEventBatchToEventPayloads({
+      const logicFunctionPayloads = await transformEventBatchToEventPayloads({
         logicFunctions,
         workspaceEventBatch: {
           ...workspaceEventBatch,
           events: readableEvents,
         },
+        filterMatchingEvents: (trigger) =>
+          this.databaseEventTriggerConditionService.filterMatchingEvents({
+            ...trigger,
+            workspaceId: workspaceEventBatch.workspaceId,
+            objectMetadata: workspaceEventBatch.objectMetadata,
+            application,
+          }),
+        onConditionError: ({ logicFunctionId, errorMessage }) =>
+          this.logger.warn(
+            `Condition of logic function ${logicFunctionId} in workspace ${workspaceEventBatch.workspaceId} failed to evaluate: ${errorMessage}`,
+          ),
       });
 
       if (logicFunctionPayloads.length === 0) {

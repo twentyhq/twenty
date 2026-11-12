@@ -1,4 +1,8 @@
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
+import {
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from '~/generated-metadata/graphql';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
 const role = { ...mockedRoles[1], permissionFlags: [] };
@@ -68,5 +72,54 @@ describe('getRoleDirtyFields', () => {
 
   it('retains new-role fields when there is no persisted role', () => {
     expect(getRoleDirtyFields(draftRole, undefined)).toEqual(draftRole);
+  });
+
+  it('ignores the order of rule conditions and their groups', () => {
+    const predicate = {
+      id: 'predicate-id',
+      fieldMetadataId: 'field-id',
+      relationFieldMetadataId: null,
+      objectMetadataId: 'pet',
+      operand: RowLevelPermissionPredicateOperand.IS,
+      roleId: role.id,
+      value: '3',
+    };
+    const otherPredicate = { ...predicate, id: 'other-predicate-id' };
+    const predicateGroup = {
+      id: 'group-id',
+      objectMetadataId: 'pet',
+      roleId: role.id,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+      canReadRecords: true,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+    };
+    const otherPredicateGroup = { ...predicateGroup, id: 'other-group-id' };
+    const persisted = {
+      ...role,
+      rowLevelPermissionPredicates: [otherPredicate, predicate],
+      rowLevelPermissionPredicateGroups: [otherPredicateGroup, predicateGroup],
+    };
+
+    expect(
+      getRoleDirtyFields(
+        {
+          ...role,
+          rowLevelPermissionPredicates: [predicate, otherPredicate],
+          rowLevelPermissionPredicateGroups: [
+            predicateGroup,
+            otherPredicateGroup,
+          ],
+        },
+        persisted,
+      ),
+    ).toEqual({});
+    expect(
+      getRoleDirtyFields(
+        { ...persisted, rowLevelPermissionPredicates: [predicate] },
+        persisted,
+      ),
+    ).toEqual({ rowLevelPermissionPredicates: [predicate] });
   });
 });

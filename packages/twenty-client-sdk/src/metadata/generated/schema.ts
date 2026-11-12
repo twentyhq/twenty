@@ -1,9 +1,9 @@
 // @ts-nocheck
 export type Scalars = {
-    String: string,
     Boolean: boolean,
-    Float: number,
     Int: number,
+    String: string,
+    Float: number,
     ID: string,
     BigInt: any,
     ConnectionCursor: any,
@@ -12,6 +12,13 @@ export type Scalars = {
     JSONObject: any,
     UUID: string,
     Upload: File,
+}
+
+export interface AccessGroupPropagationProgress {
+    isInProgress: Scalars['Boolean']
+    remainingRecordCount: Scalars['Int']
+    totalRecordCount: Scalars['Int']
+    __typename: 'AccessGroupPropagationProgress'
 }
 
 export interface Agent {
@@ -197,6 +204,7 @@ export interface AgentMessageReactionSummary {
 }
 
 export interface AgentRun {
+    canReadThread: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     creatorName: Scalars['String']
     creatorSource: Scalars['String']
@@ -376,6 +384,7 @@ export interface Application {
     defaultRoleId?: Scalars['String']
     description?: Scalars['String']
     frontComponents: FrontComponent[]
+    grantRoleId?: Scalars['UUID']
     grantedIframeMediaPermissions: IframeMediaPermission[]
     healthCheckLogicFunctionId?: Scalars['UUID']
     id: Scalars['UUID']
@@ -1617,7 +1626,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_HTTP_EGRESS_LAMBDA_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_HTTP_EGRESS_LAMBDA_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2621,6 +2630,7 @@ export interface Mutation {
     startChannelSync: ChannelSyncSuccess
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
+    stopGenerate: Scalars['Boolean']
     stopImpersonation: StopImpersonation
     switchBillingPlan: BillingUpdate
     switchSubscriptionInterval: BillingUpdate
@@ -3163,6 +3173,7 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    accessGroupPropagationProgress: AccessGroupPropagationProgress
     agentChatChannelRoles: AgentChatChannelRole[]
     agentChatChannelSummaries: AgentChatChannelSummary[]
     agentChatChannelThreadIds: AgentChatChannelThreadIds
@@ -4069,11 +4080,7 @@ export interface UserWorkspace {
     id: Scalars['UUID']
     isImpersonating?: Scalars['Boolean']
     locale: Scalars['String']
-    /** @deprecated Use objectRecordsPermissions */
-    objectPermissions?: ObjectPermission[]
     objectRecordsPermissions?: ObjectRecordsPermissions[]
-    /** @deprecated Use objectRecordsPermissions */
-    objectsPermissions?: ObjectPermission[]
     permissionFlags?: PermissionFlagType[]
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummary[]
     updatedAt: Scalars['DateTime']
@@ -4308,7 +4315,7 @@ export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDA
 
 export type WidgetType = 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'GRAPH' | 'IFRAME' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
 
-export type WorkflowActionType = 'AI_AGENT' | 'CLASSIFY' | 'CODE' | 'CREATE_CALENDAR_EVENT' | 'CREATE_RECORD' | 'DELAY' | 'DELETE_RECORD' | 'DRAFT_EMAIL' | 'EMPTY' | 'FILTER' | 'FIND_RECORDS' | 'FORM' | 'HTTP_REQUEST' | 'IF_ELSE' | 'ITERATOR' | 'LOGIC_FUNCTION' | 'PICK_RECORD' | 'SEND_CHAT_MESSAGE' | 'SEND_EMAIL' | 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'WAIT_FOR_EVENT'
+export type WorkflowActionType = 'AI_AGENT' | 'CLASSIFY' | 'CODE' | 'CREATE_CALENDAR_EVENT' | 'CREATE_RECORD' | 'DELAY' | 'DELETE_RECORD' | 'DRAFT_EMAIL' | 'EMPTY' | 'FILTER' | 'FIND_RECORDS' | 'FORM' | 'HTTP_REQUEST' | 'IF_ELSE' | 'ITERATOR' | 'LOGIC_FUNCTION' | 'MCP_TOOL' | 'PICK_RECORD' | 'SEND_CHAT_MESSAGE' | 'SEND_EMAIL' | 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'WAIT_FOR_EVENT'
 
 export interface WorkflowConfiguration {
     configurationType: WidgetConfigurationType
@@ -4498,6 +4505,14 @@ export interface WorkspaceUrlsAndId {
     id: Scalars['UUID']
     workspaceUrls: WorkspaceUrls
     __typename: 'WorkspaceUrlsAndId'
+}
+
+export interface AccessGroupPropagationProgressGenqlSelection{
+    isInProgress?: boolean | number
+    remainingRecordCount?: boolean | number
+    totalRecordCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
 }
 
 export interface ActivateWorkspaceInput {
@@ -4697,6 +4712,7 @@ export interface AgentMessageReactionSummaryGenqlSelection{
 }
 
 export interface AgentRunGenqlSelection{
+    canReadThread?: boolean | number
     createdAt?: boolean | number
     creatorName?: boolean | number
     creatorSource?: boolean | number
@@ -4888,6 +4904,7 @@ export interface ApplicationGenqlSelection{
     defaultRoleId?: boolean | number
     description?: boolean | number
     frontComponents?: FrontComponentGenqlSelection
+    grantRoleId?: boolean | number
     grantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     healthCheckLogicFunctionId?: boolean | number
     id?: boolean | number
@@ -7429,6 +7446,7 @@ export interface MutationGenqlSelection{
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
+    stopGenerate?: { __args: {input: StopGenerateInput} }
     stopImpersonation?: StopImpersonationGenqlSelection
     switchBillingPlan?: (BillingUpdateGenqlSelection & { __args?: {plan?: (BillingPlanKey | null)} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
@@ -8012,6 +8030,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    accessGroupPropagationProgress?: AccessGroupPropagationProgressGenqlSelection
     agentChatChannelRoles?: AgentChatChannelRoleGenqlSelection
     agentChatChannelSummaries?: AgentChatChannelSummaryGenqlSelection
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], filter?: (AgentChatChannelThreadFilter | null), first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
@@ -8632,6 +8651,8 @@ export interface StartWorkspaceSetupChatResultGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface StopGenerateInput {runId: Scalars['UUID']}
 
 export interface StopImpersonationGenqlSelection{
     canRestoreImpersonatorSession?: boolean | number
@@ -9267,11 +9288,7 @@ export interface UserWorkspaceGenqlSelection{
     id?: boolean | number
     isImpersonating?: boolean | number
     locale?: boolean | number
-    /** @deprecated Use objectRecordsPermissions */
-    objectPermissions?: ObjectPermissionGenqlSelection
     objectRecordsPermissions?: ObjectRecordsPermissionsGenqlSelection
-    /** @deprecated Use objectRecordsPermissions */
-    objectsPermissions?: ObjectPermissionGenqlSelection
     permissionFlags?: boolean | number
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryGenqlSelection
     updatedAt?: boolean | number
@@ -9717,6 +9734,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+
+    const AccessGroupPropagationProgress_possibleTypes: string[] = ['AccessGroupPropagationProgress']
+    export const isAccessGroupPropagationProgress = (obj?: { __typename?: any } | null): obj is AccessGroupPropagationProgress => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAccessGroupPropagationProgress"')
+      return AccessGroupPropagationProgress_possibleTypes.includes(obj.__typename)
+    }
+    
 
 
     const Agent_possibleTypes: string[] = ['Agent']
@@ -13092,6 +13117,7 @@ export const enumFeatureFlagKey = {
    IS_HTTP_EGRESS_LAMBDA_ENABLED: 'IS_HTTP_EGRESS_LAMBDA_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
+   IS_PERMISSION_TABLES_ENABLED: 'IS_PERMISSION_TABLES_ENABLED' as const,
    IS_PRIVATE_RECORDS_ENABLED: 'IS_PRIVATE_RECORDS_ENABLED' as const,
    IS_RECORD_GROUP_TABS_ENABLED: 'IS_RECORD_GROUP_TABS_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
@@ -13691,6 +13717,7 @@ export const enumWorkflowActionType = {
    IF_ELSE: 'IF_ELSE' as const,
    ITERATOR: 'ITERATOR' as const,
    LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
+   MCP_TOOL: 'MCP_TOOL' as const,
    PICK_RECORD: 'PICK_RECORD' as const,
    SEND_CHAT_MESSAGE: 'SEND_CHAT_MESSAGE' as const,
    SEND_EMAIL: 'SEND_EMAIL' as const,

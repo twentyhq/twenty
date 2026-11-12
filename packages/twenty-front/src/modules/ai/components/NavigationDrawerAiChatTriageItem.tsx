@@ -2,15 +2,17 @@ import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  AGENT_CHAT_THREAD_FILTER_STATUS,
+  type AgentChatThreadFilterStatus,
+} from 'twenty-shared/ai';
 
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
 import { isAgentChatOpenThreadFilterStatus } from '@/ai/utils/isAgentChatOpenThreadFilterStatus';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';

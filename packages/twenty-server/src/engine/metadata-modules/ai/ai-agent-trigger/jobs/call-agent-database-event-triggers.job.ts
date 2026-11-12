@@ -20,7 +20,7 @@ import { findAgentDatabaseEventTriggersMatchingEvent } from 'src/engine/metadata
 import { isDatabaseEventCausedByAgent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/is-database-event-caused-by-agent.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
+import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
 
 @Processor(MessageQueue.triggerQueue)
 export class CallAgentDatabaseEventTriggersJob {
@@ -32,6 +32,7 @@ export class CallAgentDatabaseEventTriggersJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
     private readonly agentTriggerThrottlerService: AgentTriggerThrottlerService,
+    private readonly databaseEventTriggerConditionService: DatabaseEventTriggerConditionService,
   ) {}
 
   @Process(CallAgentDatabaseEventTriggersJob.name)
@@ -86,11 +87,24 @@ export class CallAgentDatabaseEventTriggersJob {
           ),
         });
 
-      const eventsToRunOn = filterEventsByUpdatedFields({
-        events: readableEvents,
-        eventName,
-        watchedFields: trigger.settings.updatedFields,
-      });
+      const { events: eventsToRunOn, conditionErrorMessage } =
+        await this.databaseEventTriggerConditionService.filterMatchingEvents({
+          workspaceId,
+          objectMetadata,
+          events: readableEvents,
+          eventName,
+          watchedFields: trigger.settings.updatedFields,
+          condition: trigger.settings.condition,
+          conditionBindings: trigger.settings.conditionBindings,
+          application,
+          agentId: flatAgent.id,
+        });
+
+      if (isDefined(conditionErrorMessage)) {
+        this.logger.warn(
+          `Condition of trigger ${trigger.id} on agent ${flatAgent.id} in workspace ${workspaceId} failed to evaluate: ${conditionErrorMessage}`,
+        );
+      }
 
       if (eventsToRunOn.length === 0) {
         continue;

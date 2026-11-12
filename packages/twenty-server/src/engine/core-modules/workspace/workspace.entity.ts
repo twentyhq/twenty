@@ -37,7 +37,7 @@ import { ADD_AI_DATA_POLICY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/databa
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { RENAME_WORKSPACE_IS_INTERNAL_MESSAGES_IMPORT_ENABLED_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/rename-workspace-is-internal-messages-import-enabled-upgrade-command-name.constant';
+import { RENAME_WORKSPACE_IS_INTERNAL_MESSAGES_IMPORT_ENABLED_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/rename-workspace-is-internal-messages-import-enabled-upgrade-command-name.constant';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';

@@ -6,7 +6,7 @@ import {
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
@@ -69,7 +69,7 @@ export const useFetchAgentChatThreadsPage = () => {
         return undefined;
       }
 
-      const hasReadPermission = canReachSomeRecords({
+      const hasReadPermission = canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           chatObjectMetadataItem.id,

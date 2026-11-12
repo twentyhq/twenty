@@ -1112,10 +1112,10 @@ msgstr "{roleLabel}는 {objectLabel} 기록을 {humanReadableAction}할 수 없�
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName}은(는) \"{newRoleName}\" 역할로 지정됩니다."
 
-#. js-lingui-id: Mkqwbv
+#. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
-msgid "{runCount, plural, one {# run} other {# runs}}"
-msgstr "{runCount, plural, other {#회 실행}}"
+msgid "{runCount, plural, one {# turn} other {# turns}}"
+msgstr "{runCount, plural, other {#턴}}"
 
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -2299,12 +2299,6 @@ msgstr "사용자 지정 공급자 추가"
 msgid "Add details for guests"
 msgstr "게스트 세부 정보 추가"
 
-#. Abbreviation of add direct message, sidebar button
-#. js-lingui-id: An/Fke
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
-msgid "Add DM"
-msgstr "DM 추가"
-
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 msgid "Add Email"
@@ -2989,6 +2983,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Agent run"
 msgstr "에이전트 실행"
+
+#. js-lingui-id: aeu9gE
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+msgid "Agent sections"
+msgstr "에이전트 섹션"
 
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -4861,6 +4860,11 @@ msgstr "아바타"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Average"
 msgstr "평균"
+
+#. js-lingui-id: RSsxRl
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Avg duration"
+msgstr "평균 지속 시간"
 
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -7069,6 +7073,7 @@ msgstr "완료됨"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7117,10 +7122,15 @@ msgid "Computed at"
 msgstr "계산 시각"
 
 #. js-lingui-id: wpT1VN
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Condition"
 msgstr "조건"
+
+#. js-lingui-id: jZ2sd2
+#: src/modules/object-core/agents/components/CoreAgentTriggerConditionInput.tsx
+msgid "Condition (Optional)"
+msgstr "조건 (선택사항)"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -7990,8 +8000,13 @@ msgstr "미리 보기를 로드할 수 없습니다."
 msgid "Could not load related records"
 msgstr "관련 레코드를 로드할 수 없습니다"
 
+#. js-lingui-id: 3167/q
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Could not load run insights"
+msgstr "실행 인사이트를 불러올 수 없습니다."
+
 #. js-lingui-id: Ft89Ck
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Could not load runs"
 msgstr "실행을 불러올 수 없습니다"
 
@@ -8004,6 +8019,11 @@ msgstr "이 워크플로 버전을 로드할 수 없습니다."
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Could not load this workflow."
 msgstr "이 워크플로를 로드할 수 없습니다."
+
+#. js-lingui-id: 6UPqqs
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Could not load turns"
+msgstr "턴을 불러올 수 없습니다."
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -8238,6 +8258,16 @@ msgstr "{0} 생성"
 msgid "Create {objectLabelSingular}"
 msgstr "{objectLabelSingular} 생성"
 
+#. js-lingui-id: RRkWki
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {recordCount} {objectLabel}"
+msgstr "{recordCount}개의 {objectLabel} 만들기"
+
+#. js-lingui-id: TryTER
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {selectedCount}"
+msgstr "{selectedCount} 생성"
+
 #. js-lingui-id: jmGqEp
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -8414,6 +8444,11 @@ msgstr "레코드 생성"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "레코드 생성"
+
+#. js-lingui-id: fYhMZY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
+msgstr "객체 대신 권한 엔진이 소유하는 테이블로 레코드 공유 및 액세스 그룹 저장소를 생성합니다. 워크스페이스를 생성할 때만 적용됩니다."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -9678,10 +9713,20 @@ msgstr "{objectLabel} 객체를 삭제하시겠습니까?"
 msgid "Delete {objectLabelPlural}"
 msgstr "{objectLabelPlural} 삭제"
 
+#. js-lingui-id: CF0F8U
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {recordCount} {objectLabel}"
+msgstr "{recordCount}개의 {objectLabel} 삭제"
+
 #. js-lingui-id: j8kv91
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete {relationObjectLabelSingular}"
 msgstr "{relationObjectLabelSingular} 삭제"
+
+#. js-lingui-id: ++479H
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {selectedCount}"
+msgstr "{selectedCount} 삭제"
 
 #. js-lingui-id: wU3o2t
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -9823,6 +9868,12 @@ msgstr "수준 삭제"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
 msgstr "제한 삭제"
+
+#. js-lingui-id: KDfTdX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Delete message"
+msgstr "메시지 삭제"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -10259,6 +10310,11 @@ msgstr "이 브라우저는 받아쓰기를 지원하지 않습니다."
 msgid "Direct message pair identity"
 msgstr "다이렉트 메시지 쌍 식별자"
 
+#. js-lingui-id: 23aX1b
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
+msgid "Direct messages"
+msgstr "다이렉트 메시지"
+
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
@@ -10409,9 +10465,7 @@ msgstr "구분선"
 msgid "DMARC policy"
 msgstr "DMARC 정책"
 
-#. Abbreviation of direct messages, sidebar section title
 #. js-lingui-id: TdAWxF
-#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "DMs"
 msgstr "DM"
@@ -10715,6 +10769,7 @@ msgstr ""
 
 #. js-lingui-id: lkz6PL
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -10987,6 +11042,12 @@ msgstr "링크 편집"
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Edit linked records"
 msgstr "연결된 레코드 편집"
+
+#. js-lingui-id: QjH+ZX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Edit message"
+msgstr "메시지 편집하기"
 
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -11395,6 +11456,7 @@ msgstr "직원"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
+#: src/modules/ai/components/AiChatRecordApprovalReview.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -11966,6 +12028,7 @@ msgstr "소프트 삭제된 기록 지우기"
 #: src/modules/log-console/constants/LogConsoleLevels.ts
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -12719,6 +12782,7 @@ msgstr "얼굴"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12735,6 +12799,11 @@ msgstr "얼굴"
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Failed"
 msgstr "실패"
+
+#. js-lingui-id: GUHLDy
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failed · 14d"
+msgstr "실패 · 14일"
 
 #. js-lingui-id: hGfbkg
 #: src/modules/activities/files/utils/downloadFile.ts
@@ -13272,6 +13341,11 @@ msgstr "파일 업로드 실패: {fileName}"
 #: src/modules/settings/workspace/components/WorkspaceLogoUploader.tsx
 msgid "Failed to upload picture"
 msgstr "사진 업로드 실패"
+
+#. js-lingui-id: D98pOW
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failure rate"
+msgstr "실패율"
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -13855,6 +13929,7 @@ msgid "Fix the payment issue to restore your premium features."
 msgstr "프리미엄 기능을 복원하려면 결제 문제를 해결하세요."
 
 #. js-lingui-id: ylQd2j
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Flow"
@@ -13987,6 +14062,7 @@ msgid "Formats"
 msgstr "형식"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
@@ -15508,6 +15584,16 @@ msgstr "CSV 파일 가져오기"
 msgid "Import data"
 msgstr "데이터 가져오기"
 
+#. js-lingui-id: Iu+TFD
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Import new emails from this account"
+msgstr "이 계정에서 새 이메일 가져오기"
+
+#. js-lingui-id: QOjodt
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Import new events from this account"
+msgstr "이 계정에서 새 이벤트 가져오기"
+
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16842,6 +16928,11 @@ msgstr "지난 결제에 실패했습니다. 청구 정보를 업데이트하세
 msgid "Last refreshed"
 msgstr "마지막 새로고침"
 
+#. js-lingui-id: WT1Ibn
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Last run"
+msgstr "마지막 실행"
+
 #. js-lingui-id: U011Uh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Last seen"
@@ -18155,6 +18246,7 @@ msgstr "최대 값"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -18178,6 +18270,11 @@ msgstr "MCP 서버"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "MCP 서버"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "MCP 서버를 사용할 수 없음"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -18989,6 +19086,8 @@ msgstr "해당 없음"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -19289,6 +19388,11 @@ msgstr "새 대화"
 msgid "New credit pack"
 msgstr "새 크레딧 팩"
 
+#. js-lingui-id: ctNfZE
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+msgid "New direct message"
+msgstr "새 다이렉트 메시지"
+
 #. js-lingui-id: 3RwJHq
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "New Email"
@@ -19496,6 +19600,11 @@ msgstr "다음 청구일 {totalRenewDate}. 기간 사이에 멤버나 크레딧�
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "다음 채팅"
+
+#. js-lingui-id: SKW82h
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Next file"
+msgstr "다음 파일"
 
 #. js-lingui-id: F/RdYr
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19956,6 +20065,11 @@ msgstr "이벤트를 찾을 수 없습니다"
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "이 {objectName}에 대해 예약된 이벤트가 아직 없습니다."
 
+#. js-lingui-id: dAMlIe
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+msgid "No failed runs"
+msgstr "실패한 실행이 없습니다"
+
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
 msgid "No field configured"
@@ -20014,6 +20128,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "이 작업에는 입력 필드가 없습니다"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "이 도구에는 입력 필드가 없습니다"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -20353,7 +20472,7 @@ msgid "No rules yet"
 msgstr "아직 규칙 없음"
 
 #. js-lingui-id: eOvDHm
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "No runs yet"
 msgstr "아직 실행 없음"
 
@@ -20458,6 +20577,11 @@ msgstr "이 함수에 대해 구성된 트리거가 없습니다."
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
 msgstr "활성화된 트리거가 없습니다. 위의 옵션 중 하나를 전환하여 이 함수가 호출되는 방식을 선택하세요."
+
+#. js-lingui-id: 96i2d6
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "No turns yet"
+msgstr "아직 턴이 없습니다"
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -20796,6 +20920,11 @@ msgstr "시작되지 않음"
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "동기화되지 않음"
+
+#. js-lingui-id: 5xvHen
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Not yet"
+msgstr "아직 안 됩니다"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -21745,6 +21874,7 @@ msgstr "원본 메시지를 사용할 수 없음"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -21888,6 +22018,7 @@ msgid "Override Draft"
 msgstr "초안 덮어쓰기"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
@@ -22148,12 +22279,22 @@ msgid "Path"
 msgstr "경로"
 
 #. js-lingui-id: IgrLD/
-#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Pause"
 msgstr "일시 중지"
+
+#. js-lingui-id: 03eLh4
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Pause or resume importing emails from this account"
+msgstr "이 계정에서 이메일 가져오기 일시 중지 또는 재개"
+
+#. js-lingui-id: ylzMCX
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Pause or resume importing events from this account"
+msgstr "이 계정에서 이벤트 가져오기를 일시 중지하거나 재개합니다"
 
 #. js-lingui-id: URAE3q
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -22316,6 +22457,11 @@ msgstr "권한 플래그"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Permission flags"
 msgstr "권한 플래그"
+
+#. js-lingui-id: yAZKh+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Permission tables"
+msgstr "권한 테이블"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -22558,7 +22704,7 @@ msgid "Plans"
 msgstr "플랜"
 
 #. js-lingui-id: T91vKp
-#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "재생"
@@ -22801,6 +22947,11 @@ msgstr "이전 승인"
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "이전 채팅"
+
+#. js-lingui-id: QY5Szd
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Previous file"
+msgstr "이전 파일"
 
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -23312,6 +23463,16 @@ msgstr "{target} 읽기 및 쓰기"
 msgid "Read and write data model configuration"
 msgstr "데이터 모델 구성 읽기 및 쓰기"
 
+#. js-lingui-id: RXivwU
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerCount} of {recipientCount}"
+msgstr "{recipientCount}명 중 {readerCount}명이 읽음"
+
+#. js-lingui-id: bgP1Ip
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerNames}"
+msgstr "{readerNames}님이 읽음"
+
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Read changelog"
@@ -23434,6 +23595,17 @@ msgstr "최근"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
 msgstr "최근 이벤트 (오래된 순 → 최신 순)"
+
+#. js-lingui-id: gKFqSG
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Recent failed runs"
+msgstr "최근 실패한 실행"
+
+#. js-lingui-id: dF8kMd
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Recent runs"
+msgstr "최근 실행"
 
 #. js-lingui-id: EoiSFI
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -23686,7 +23858,7 @@ msgid "Record-level filter"
 msgstr "레코드 수준 필터"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "기록:"
 
@@ -24992,6 +25164,7 @@ msgid "runs"
 msgstr "실행"
 
 #. js-lingui-id: Tpm2G9
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
@@ -24999,15 +25172,26 @@ msgstr "실행"
 msgid "Runs"
 msgstr "실행"
 
+#. js-lingui-id: 24xGtY
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Runs · 14d"
+msgstr "실행 · 14일"
+
 #. js-lingui-id: F4I4hU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Runs and failures per version"
 msgstr "버전별 실행 및 실패"
 
-#. js-lingui-id: RASTzS
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-msgid "Runs appear here once a workflow or an app uses this agent"
-msgstr "워크플로 또는 앱에서 이 에이전트를 사용하면 여기에 실행 내역이 표시됩니다"
+#. js-lingui-id: +L9ulP
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
+msgid "Runs appear here once this workflow is triggered"
+msgstr "이 워크플로가 트리거되면 실행이 여기에 표시됩니다"
+
+#. js-lingui-id: NQVS6K
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Runs per day"
+msgstr "일별 실행"
 
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -25871,16 +26055,10 @@ msgstr "레코드 보기"
 msgid "See Records on All Objects"
 msgstr "모든 객체의 기록 보기"
 
-#. js-lingui-id: dcr/0m
-#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
-msgid "See Runs"
-msgstr "실행 보기"
-
-#. js-lingui-id: dKYXK6
-#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
-msgid "See Settings"
-msgstr "설정 보기"
+msgid "See Turns"
+msgstr "턴 보기"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26684,6 +26862,7 @@ msgstr "<0>데이터베이스</0>를 설정하는 중..."
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -26880,6 +27059,11 @@ msgstr "레이블을 변경하면 API 이름도 변경해야 하나요?"
 msgid "Show {0}"
 msgstr "{0} 표시"
 
+#. js-lingui-id: TsjNI1
+#: src/modules/chat/components/ChatMessageImageGridTile.tsx
+msgid "Show {hiddenImageCount} more images"
+msgstr "이미지 {hiddenImageCount}개 더 표시"
+
 #. js-lingui-id: gmYDKt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Show {hiddenOptionalCount} optional arguments"
@@ -26947,6 +27131,7 @@ msgstr "받은 편지함 표시"
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "간략히 보기"
 
@@ -26957,6 +27142,7 @@ msgstr "로그 표시"
 
 #. js-lingui-id: fMPkxb
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -27682,6 +27868,8 @@ msgstr "귀하의 구독 시작"
 
 #. js-lingui-id: JEGlfK
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Started"
 msgstr "시작됨"
 
@@ -27736,6 +27924,7 @@ msgstr "통계"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -28270,15 +28459,26 @@ msgid "Switched to a production instance."
 msgstr "프로덕션 인스턴스로 전환되었습니다."
 
 #. js-lingui-id: Nu4DdT
+#: src/modules/settings/accounts/components/SettingsAccountsChannelSyncSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync"
 msgstr "동기화"
+
+#. js-lingui-id: sCZwJy
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Sync calendar"
+msgstr "캘린더 동기화"
 
 #. js-lingui-id: NmHVSC
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "카탈로그 동기화"
+
+#. js-lingui-id: uhtQRu
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Sync emails"
+msgstr "이메일 동기화"
 
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
@@ -28818,6 +29018,11 @@ msgstr "메일 서버 인증서가 유효하지 않습니다"
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "마켓플레이스를 불러올 수 없습니다. 연결을 확인하고 다시 시도하세요."
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "MCP 서버를 로드할 수 없어 현재 이 단계를 편집할 수 없습니다."
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -28874,6 +29079,11 @@ msgstr "수신자가 받은 편지함에서 주소만 보이는 대신, 주소 �
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "수신자가 귀하의 주소 옆에 표시되는 이름입니다. 채널을 생성할 때 설정됩니다."
+
+#. js-lingui-id: op7R9r
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
+msgstr "UTC 기준으로 해당 날짜부터 오늘까지의 일수입니다. 미래 날짜의 경우 음수입니다."
 
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -28934,6 +29144,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "사용할 공유 이메일입니다."
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "이 도구는 인수 없이 실행됩니다."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29490,7 +29705,7 @@ msgid "This record no longer exists or you cannot see it."
 msgstr "이 레코드가 더 이상 존재하지 않거나 볼 수 없습니다."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "이 레코드가 삭제됩니다:"
 
@@ -29549,6 +29764,11 @@ msgstr "이 하위 도메인은 예약되어 있습니다"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "이 작업을 수행하면 이 워크스페이스에서 즉시 {0} 크레딧이 회수됩니다. 취소는 되돌릴 수 없습니다."
+
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "이 도구는 더 이상 해당 MCP 서버에서 제공되지 않습니다. 서버 도구를 동기화하거나 다른 도구를 선택하세요."
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -29952,6 +30172,11 @@ msgstr "도구 삭제됨"
 msgid "Tool details: {displayMessage}"
 msgstr "도구 세부 정보: {displayMessage}"
 
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "도구를 찾을 수 없음"
+
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
@@ -30247,6 +30472,11 @@ msgstr "한쪽 이상이 true이면 true입니다."
 msgid "True when both sides are true."
 msgstr "양쪽 모두 true이면 true입니다."
 
+#. js-lingui-id: NYXoie
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
+msgstr "날짜가 UTC에서 오늘을 기준으로 계산한 기간, 즉 PAST, NEXT 또는 THIS, 수량, 그리고 DAY, WEEK 또는 MONTH 같은 단위에 해당하면 참입니다. PAST와 NEXT는 현재 기간을 제외합니다."
+
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is a text with at least one character."
@@ -30285,6 +30515,8 @@ msgstr "다시 시도해 주세요."
 
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "잠시 후 다시 시도하세요"
 
@@ -30329,6 +30561,16 @@ msgstr "변환"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages."
 msgstr "AI 탭을 분류, 할당, 다시 알림 및 채팅 팔로업을 위한 받은편지함으로 전환하고, 워크플로에서 구성원의 받은편지함으로 메시지와 에이전트 질문을 보내며, 레코드 페이지에 대화 탭을 표시합니다."
+
+#. js-lingui-id: R3c2/s
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+msgid "Turns"
+msgstr "턴"
+
+#. js-lingui-id: ZKeDcZ
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Turns appear here once a workflow or an app uses this agent"
+msgstr "워크플로 또는 앱에서 이 에이전트를 사용하면 턴이 여기에 표시됩니다"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -30458,7 +30700,7 @@ msgid "Type \"yes\" to confirm."
 msgstr "확인하려면 \"yes\"를 입력하세요."
 
 #. js-lingui-id: XhqvGG
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Type a field name or a function"
 msgstr "필드 이름 또는 함수를 입력하세요"
 
@@ -31094,6 +31336,16 @@ msgstr "{0} 업데이트"
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "{contextStoreNumberOfSelectedRecords}개의 레코드 업데이트"
+
+#. js-lingui-id: AHNNTF
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {recordCount} {objectLabel}"
+msgstr "{recordCount}개의 {objectLabel} 업데이트"
+
+#. js-lingui-id: ECfdor
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {selectedCount}"
+msgstr "{selectedCount} 업데이트"
 
 #. js-lingui-id: HELygz
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
@@ -31917,6 +32169,7 @@ msgstr "이메일을 검증하는 중"
 
 #. js-lingui-id: eE0JZ4
 #: src/modules/log-console/constants/LogConsoleSources.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementsTable.tsx
@@ -32880,6 +33133,11 @@ msgstr "워크플로우 실행"
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Workflow not found."
 msgstr "워크플로우를 찾을 수 없습니다."
+
+#. js-lingui-id: fezYCQ
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
+msgid "Workflow sections"
+msgstr "워크플로우 섹션"
 
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx

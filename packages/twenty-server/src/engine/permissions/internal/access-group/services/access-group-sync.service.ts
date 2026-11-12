@@ -5,17 +5,13 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
-import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-job-name.constant';
-import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
+import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
+import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
-import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -25,8 +21,8 @@ export class AccessGroupSyncService {
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupRepository: AccessGroupRepository,
-    @InjectMessageQueue(MessageQueue.accessGroupQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
+    private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
   ) {}
 
   async syncAccessGroups(workspaceId: string): Promise<void> {
@@ -72,19 +68,23 @@ export class AccessGroupSyncService {
         canDeleteStaleAccessGroups && !newGroupHashes.has(groupHash),
     );
 
-    await this.scheduleRecordAccessGroupIdsRecompute({
+    const objectMetadataIdsToRecompute =
+      await this.recordAccessGroupComputationService.filterObjectsUsingRecordAccessGroups(
+        {
+          workspaceId,
+          objectMetadataIds: [
+            ...new Set(
+              [...insertedAccessGroups, ...staleAccessGroups].map(
+                ({ objectMetadataId }) => objectMetadataId,
+              ),
+            ),
+          ],
+        },
+      );
+
+    await this.accessGroupPropagationPlanService.planAndApplyComputes({
       workspaceId,
-      objectMetadataIds: new Set(
-        [...insertedAccessGroups, ...staleAccessGroups]
-          .map(({ objectMetadataId }) => objectMetadataId)
-          .filter((objectMetadataId) =>
-            isObjectUsingRecordAccessGroups({
-              rolesPermissions: workspaceCache.rolesPermissions,
-              flatObjectMetadataMaps: workspaceCache.flatObjectMetadataMaps,
-              objectMetadataId,
-            }),
-          ),
-      ),
+      objectMetadataIds: objectMetadataIdsToRecompute,
     });
 
     await this.accessGroupRepository.insertAccessGroups({
@@ -97,31 +97,6 @@ export class AccessGroupSyncService {
         workspaceId,
         groupHashes: staleAccessGroups.map(({ groupHash }) => groupHash),
       });
-    }
-  }
-
-  private async scheduleRecordAccessGroupIdsRecompute({
-    workspaceId,
-    objectMetadataIds,
-  }: {
-    workspaceId: string;
-    objectMetadataIds: Set<string>;
-  }): Promise<void> {
-    for (const objectMetadataId of objectMetadataIds) {
-      await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
-        RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
-        { workspaceId, objectMetadataId },
-        {
-          isWorkspaceJob: true,
-          workspaceId,
-          retryLimit: 3,
-          // One recompute per object at a time, and at most one waiting behind it
-          deduplication: {
-            id: `record-access-group-ids:${workspaceId}:${objectMetadataId}`,
-            keepLastIfActive: true,
-          },
-        },
-      );
     }
   }
 }

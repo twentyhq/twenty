@@ -68,7 +68,7 @@ export const SidebarSelectionAndCollapse: Story = {
     const canvas = within(canvasElement);
     const anna = canvas.getByRole('button', { name: 'Anna' });
     const felix = canvas.getByRole('button', { name: /Felix\s*, unread/ });
-    const sectionTitle = canvas.getByText('DMs');
+    const sectionTitle = canvas.getByText('Direct messages');
 
     await expect(anna).toHaveAttribute('aria-current', 'true');
     await expect(
@@ -97,18 +97,59 @@ export const SidebarSelectionAndCollapse: Story = {
   },
 };
 
+export const ShowMoreDirectMessages: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.queryByRole('button', { name: 'Lucas' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Show more' }));
+    await expect(
+      await canvas.findByRole('button', { name: 'Lucas' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Former member' }),
+    ).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Show less' }));
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('button', { name: 'Lucas' }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const Presence: Story = {
+  args: { onlineWorkspaceMemberIds: ['anna', 'felix', 'alice'] },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findAllByRole('img', { name: 'Online' }),
+    ).toHaveLength(3);
+    await expect(
+      canvas.getAllByRole('img', { name: 'Offline' }).length,
+    ).toBeGreaterThan(0);
+  },
+};
+
 export const SearchAndKeyboardSelection: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: 'Add DM' });
+    const trigger = canvas.getByRole('button', { name: 'New direct message' });
 
     await expect(trigger).toBeVisible();
     await userEvent.click(trigger);
     const search = await body.findByRole('searchbox', {
       name: 'Search members',
     });
-    await expect(body.getByRole('dialog', { name: 'Add DM' })).toBeVisible();
+    await expect(
+      body.getByRole('dialog', { name: 'New direct message' }),
+    ).toBeVisible();
     await waitFor(() => expect(search).toHaveFocus());
     await expect(
       body.queryByRole('option', { name: /Raphael/ }),
@@ -128,7 +169,7 @@ export const SearchAndKeyboardSelection: Story = {
     await expect(args.onSelectMember).toHaveBeenCalledWith('alice');
     await waitFor(() =>
       expect(
-        body.queryByRole('dialog', { name: 'Add DM' }),
+        body.queryByRole('dialog', { name: 'New direct message' }),
       ).not.toBeInTheDocument(),
     );
     await waitFor(() => expect(trigger).toHaveFocus());
@@ -142,7 +183,7 @@ export const SearchAndKeyboardSelection: Story = {
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(
-        body.queryByRole('dialog', { name: 'Add DM' }),
+        body.queryByRole('dialog', { name: 'New direct message' }),
       ).not.toBeInTheDocument(),
     );
     await waitFor(() => expect(trigger).toHaveFocus());
@@ -156,7 +197,9 @@ export const LoadingMembers: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Add DM' }));
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'New direct message' }),
+    );
 
     await expect(await body.findByRole('status')).toHaveTextContent(
       'Loading members',
@@ -171,7 +214,9 @@ export const RefreshingMembersDisablesStaleRows: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Add DM' }));
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'New direct message' }),
+    );
     const search = await body.findByRole('searchbox', {
       name: 'Search members',
     });
@@ -327,7 +372,7 @@ export const OpenMemberConversation: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'Add DM' }),
+      await canvas.findByRole('button', { name: 'New direct message' }),
     );
     await userEvent.type(
       await body.findByRole('searchbox', { name: 'Search members' }),
