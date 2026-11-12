@@ -7237,6 +7237,9 @@ export default {
                         1,
                         "String!"
                     ],
+                    "resource": [
+                        1
+                    ],
                     "scope": [
                         1
                     ],

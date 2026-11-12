@@ -3472,7 +3472,7 @@ type Mutation {
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   attachRecordToInboxThread(input: InboxThreadRecordInput!): Boolean!
-  authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!
+  authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, resource: String, scope: String, state: String): AuthorizeApp!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   cancelSwitchBillingInterval: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
