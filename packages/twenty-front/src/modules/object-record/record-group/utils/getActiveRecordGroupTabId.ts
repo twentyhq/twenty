@@ -12,7 +12,8 @@ export const getActiveRecordGroupTabId = ({
 }: GetActiveRecordGroupTabIdArgs): string => {
   if (
     isDefined(selectedRecordGroupId) &&
-    visibleRecordGroupIds.includes(selectedRecordGroupId)
+    (selectedRecordGroupId === ALL_RECORD_GROUPS_TAB_ID ||
+      visibleRecordGroupIds.includes(selectedRecordGroupId))
   ) {
     return selectedRecordGroupId;
   }
