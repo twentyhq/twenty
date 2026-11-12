@@ -17,7 +17,7 @@ export class RecomputeRelatedRecordPathTargetsJob {
   async handle(
     jobData: RecomputeRelatedRecordPathTargetsJobData,
   ): Promise<void> {
-    await this.recordAccessGroupPropagationService.planRecomputeOfRelatedRecordPathTargets(
+    await this.recordAccessGroupPropagationService.planAndScheduleRecomputeOfRelatedRecordPathTargets(
       jobData,
     );
   }

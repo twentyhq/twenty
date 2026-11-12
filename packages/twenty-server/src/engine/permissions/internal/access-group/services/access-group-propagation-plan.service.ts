@@ -96,10 +96,6 @@ export class AccessGroupPropagationPlanService {
         totalRecordCount: totalRecordCount + plannedRecordCount,
       });
     });
-
-    await this.accessGroupSyncSchedulerService.scheduleAccessGroupPropagationPlanRun(
-      workspaceId,
-    );
   }
 
   async findNextObjectMetadataIdToCompute(

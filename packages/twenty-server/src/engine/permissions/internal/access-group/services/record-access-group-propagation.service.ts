@@ -6,6 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
+import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
@@ -26,6 +27,7 @@ export class RecordAccessGroupPropagationService {
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
+    private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
   ) {}
 
   async computeNextPlannedObject(workspaceId: string): Promise<void> {
@@ -55,7 +57,7 @@ export class RecordAccessGroupPropagationService {
     });
   }
 
-  async planRecomputeOfRelatedRecordPathTargets({
+  async planAndScheduleRecomputeOfRelatedRecordPathTargets({
     workspaceId,
   }: {
     workspaceId: string;
@@ -76,6 +78,9 @@ export class RecordAccessGroupPropagationService {
         isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
       ),
     });
+    await this.accessGroupSyncSchedulerService.scheduleAccessGroupPropagationPlanRun(
+      workspaceId,
+    );
   }
 
   async recomputeRecordAccessGroupIdsOfRecordsAndPropagate({
