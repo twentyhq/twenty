@@ -17,11 +17,10 @@ const SMALL_COMPANY_ID = randomUUID();
 
 const buildOpportunityCreatedEvent = (
   companyId: string | null,
-): ObjectRecordEvent =>
-  ({
-    recordId: randomUUID(),
-    properties: { after: { stage: 'NEW', companyId } },
-  }) as ObjectRecordEvent;
+): ObjectRecordEvent => ({
+  recordId: randomUUID(),
+  properties: { after: { stage: 'NEW', companyId } },
+});
 
 describe('Database event trigger conditions on related records', () => {
   beforeAll(async () => {

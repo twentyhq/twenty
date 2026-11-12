@@ -174,10 +174,12 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
     const bigCompany = buildEvent({ after: { companyId: 'big' } }, 'big');
     const smallCompany = buildEvent({ after: { companyId: 'small' } }, 'small');
     const sameBigCompany = buildEvent({ after: { companyId: 'big' } }, 'big-2');
-    const findRelatedRecords = jest.fn().mockResolvedValue([
-      { id: 'big', employees: 500 },
-      { id: 'small', employees: 5 },
-    ]);
+    const findRelatedRecords = jest.fn().mockResolvedValue({
+      relatedRecords: [
+        { id: 'big', employees: 500 },
+        { id: 'small', employees: 5 },
+      ],
+    });
 
     const { events } = await filterEventsMatchingDatabaseEventTrigger({
       events: [bigCompany, smallCompany, sameBigCompany],
@@ -204,7 +206,7 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
       eventName: 'opportunity.created',
       condition: 'not isDefined(company) and not isDefined(company.employees)',
       fields: FIELDS,
-      findRelatedRecords: jest.fn().mockResolvedValue([]),
+      findRelatedRecords: jest.fn().mockResolvedValue({ relatedRecords: [] }),
     });
 
     expect(events).toEqual([deletedCompany]);
@@ -219,7 +221,7 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
         fields: FIELDS,
         findRelatedRecords: jest
           .fn()
-          .mockRejectedValue(new Error('Cannot read employees')),
+          .mockResolvedValue({ errorMessage: 'Cannot read employees' }),
       }),
     ).toEqual({ events: [], conditionErrorMessage: 'Cannot read employees' });
   });

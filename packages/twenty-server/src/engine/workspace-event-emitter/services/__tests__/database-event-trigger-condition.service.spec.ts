@@ -1,23 +1,22 @@
+import { Test } from '@nestjs/testing';
+
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
-import { type RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
-import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
 
-const COMPANY_FIELD = getFlatFieldMetadataMock({
+const COMPANY_FIELD = getFlatFieldMetadataMock<FieldMetadataType.RELATION>({
   id: 'opportunity-company-id',
   universalIdentifier: 'opportunity-company',
   objectMetadataId: 'opportunity-id',
@@ -25,7 +24,7 @@ const COMPANY_FIELD = getFlatFieldMetadataMock({
   name: 'company',
   relationTargetObjectMetadataId: 'company-id',
   settings: { relationType: RelationType.MANY_TO_ONE },
-} as Parameters<typeof getFlatFieldMetadataMock>[0]);
+});
 const EMPLOYEES_FIELD = getFlatFieldMetadataMock({
   id: 'company-employees-id',
   universalIdentifier: 'company-employees',
@@ -47,18 +46,22 @@ const COMPANY = getFlatObjectMetadataMock({
   fieldIds: [EMPLOYEES_FIELD.id],
 });
 
-const flatFieldMetadataMaps = [COMPANY_FIELD, EMPLOYEES_FIELD].reduce(
-  (flatEntityMaps, flatEntity) =>
-    addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
-  createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
-);
-const flatObjectMetadataMaps = [OPPORTUNITY, COMPANY].reduce(
-  (flatEntityMaps, flatEntity) =>
-    addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
-  createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>,
-);
+const flatFieldMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
+  flatEntity: EMPLOYEES_FIELD,
+  flatEntityMaps: addFlatEntityToFlatEntityMapsOrThrow({
+    flatEntity: COMPANY_FIELD,
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  }),
+});
+const flatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
+  flatEntity: COMPANY,
+  flatEntityMaps: addFlatEntityToFlatEntityMapsOrThrow({
+    flatEntity: OPPORTUNITY,
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  }),
+});
 
-const buildService = ({
+const buildService = async ({
   hiddenFieldIds = [],
   unreadableFieldIds = [],
 }: {
@@ -68,43 +71,66 @@ const buildService = ({
   const find = jest.fn().mockResolvedValue([{ id: 'big', employees: 500 }]);
   const executeInWorkspaceContext = jest.fn((run: () => unknown) => run());
 
-  const service = new DatabaseEventTriggerConditionService(
-    {
-      getOrRecompute: jest
-        .fn()
-        .mockResolvedValue({ flatObjectMetadataMaps, flatFieldMetadataMaps }),
-    } as unknown as WorkspaceCacheService,
-    {
-      get: jest.fn().mockResolvedValue({ id: 'workspace-id' }),
-    } as unknown as CoreEntityCacheService,
-    {
-      executeInWorkspaceContext,
-      getRepository: jest.fn().mockReturnValue({ find }),
-    } as unknown as WorkspaceOrmManager,
-    {
-      resolvePermissionsPrincipals: jest.fn().mockResolvedValue({}),
-    } as unknown as PrincipalPermissionsReadService,
-    {
-      findUnreadableFields: jest
-        .fn()
-        .mockResolvedValue(new Set(unreadableFieldIds)),
-      findFieldsHiddenOnMatchingRecords: jest
-        .fn()
-        .mockResolvedValue(
-          hiddenFieldIds.length > 0
-            ? [{ fieldMetadataIds: hiddenFieldIds }]
-            : [],
-        ),
-    } as unknown as RecordFieldPermissionsReadService,
-  );
+  const module = await Test.createTestingModule({
+    providers: [
+      DatabaseEventTriggerConditionService,
+      {
+        provide: WorkspaceCacheService,
+        useValue: {
+          getOrRecompute: jest
+            .fn()
+            .mockResolvedValue({
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+            }),
+        },
+      },
+      {
+        provide: CoreEntityCacheService,
+        useValue: { get: jest.fn().mockResolvedValue({ id: 'workspace-id' }) },
+      },
+      {
+        provide: WorkspaceOrmManager,
+        useValue: {
+          executeInWorkspaceContext,
+          getRepository: jest.fn().mockReturnValue({ find }),
+        },
+      },
+      {
+        provide: PrincipalPermissionsReadService,
+        useValue: {
+          resolvePermissionsPrincipals: jest.fn().mockResolvedValue({}),
+        },
+      },
+      {
+        provide: RecordFieldPermissionsReadService,
+        useValue: {
+          findUnreadableFields: jest
+            .fn()
+            .mockResolvedValue(new Set(unreadableFieldIds)),
+          findFieldsHiddenOnMatchingRecords: jest
+            .fn()
+            .mockResolvedValue(
+              hiddenFieldIds.length > 0
+                ? [{ fieldMetadataIds: hiddenFieldIds }]
+                : [],
+            ),
+        },
+      },
+    ],
+  }).compile();
 
-  return { service, find, executeInWorkspaceContext };
+  return {
+    service: module.get(DatabaseEventTriggerConditionService),
+    find,
+    executeInWorkspaceContext,
+  };
 };
 
-const BIG_COMPANY_EVENT = {
+const BIG_COMPANY_EVENT: ObjectRecordEvent = {
   recordId: 'opportunity-1',
   properties: { after: { companyId: 'big' } },
-} as ObjectRecordEvent;
+};
 
 const filterBigCompanyEvent = (service: DatabaseEventTriggerConditionService) =>
   service.filterMatchingEvents({
@@ -119,7 +145,7 @@ const filterBigCompanyEvent = (service: DatabaseEventTriggerConditionService) =>
 
 describe('DatabaseEventTriggerConditionService', () => {
   it('reads related fields as the trigger owner', async () => {
-    const { service, find, executeInWorkspaceContext } = buildService({});
+    const { service, find, executeInWorkspaceContext } = await buildService({});
 
     expect(await filterBigCompanyEvent(service)).toEqual({
       events: [BIG_COMPANY_EVENT],
@@ -144,7 +170,7 @@ describe('DatabaseEventTriggerConditionService', () => {
   ])(
     'matches nothing when a related field is %s for the trigger',
     async (_, permissions) => {
-      const { service, find } = buildService(permissions);
+      const { service, find } = await buildService(permissions);
 
       expect(await filterBigCompanyEvent(service)).toEqual({
         events: [],

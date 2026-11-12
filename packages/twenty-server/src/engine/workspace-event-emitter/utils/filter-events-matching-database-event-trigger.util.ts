@@ -17,22 +17,21 @@ import {
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { type DatabaseEventConditionRelation } from 'src/engine/workspace-event-emitter/types/database-event-condition-relation.type';
 import { type FindDatabaseEventRelatedRecords } from 'src/engine/workspace-event-emitter/types/find-database-event-related-records.type';
 import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
+import {
+  loadDatabaseEventConditionRelatedRecords,
+  toApiShapedDatabaseEventRecord,
+} from 'src/engine/workspace-event-emitter/utils/load-database-event-condition-related-records.util';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 
 type ConditionRecord = Record<string, unknown>;
 
-type ConditionRelation = {
-  fieldName: string;
-  joinColumnName: string;
-  targetFieldNames: string[];
-};
-
 type ConditionReads = {
   eventFieldNames: string[];
   previousFieldNames: string[];
-  relations: ConditionRelation[];
+  relations: DatabaseEventConditionRelation[];
 };
 
 const toConditionReads = ({
@@ -88,103 +87,6 @@ const hasConditionFields = ({
     conditionReads.previousFieldNames.every(
       (fieldName) => fieldName in previousRecord,
     ));
-
-const readRecordId = (value: unknown): string | undefined =>
-  isNonEmptyString(value) ? value : undefined;
-
-// Only fields beyond the id need the related record itself
-const findRelatedRecordsById = async ({
-  relations,
-  records,
-  findRelatedRecords,
-}: {
-  relations: ConditionRelation[];
-  records: ConditionRecord[];
-  findRelatedRecords?: FindDatabaseEventRelatedRecords;
-}): Promise<Map<string, Map<string, ConditionRecord>>> => {
-  const relatedRecordsByRelation = new Map<
-    string,
-    Map<string, ConditionRecord>
-  >();
-
-  for (const relation of relations) {
-    const fieldNames = relation.targetFieldNames.filter(
-      (fieldName) => fieldName !== 'id',
-    );
-
-    if (fieldNames.length === 0) {
-      continue;
-    }
-
-    if (!isDefined(findRelatedRecords)) {
-      throw new Error(
-        `This trigger cannot read the fields of "${relation.fieldName}"`,
-      );
-    }
-
-    const recordIds = [
-      ...new Set(
-        records
-          .map((record) => readRecordId(record[relation.joinColumnName]))
-          .filter(isDefined),
-      ),
-    ];
-    const relatedRecords =
-      recordIds.length > 0
-        ? await findRelatedRecords({
-            relationFieldName: relation.fieldName,
-            recordIds,
-            fieldNames,
-          })
-        : [];
-
-    relatedRecordsByRelation.set(
-      relation.fieldName,
-      new Map(
-        relatedRecords
-          .map((relatedRecord) => [
-            readRecordId(relatedRecord.id),
-            relatedRecord,
-          ])
-          .filter((entry): entry is [string, ConditionRecord] =>
-            isDefined(entry[0]),
-          ),
-      ),
-    );
-  }
-
-  return relatedRecordsByRelation;
-};
-
-// A relation reads as the API shows it: company is { id, ... } or null, never companyId
-const toApiShapedRecord = ({
-  record,
-  relations,
-  relatedRecordsByRelation,
-}: {
-  record: ConditionRecord;
-  relations: ConditionRelation[];
-  relatedRecordsByRelation: Map<string, Map<string, ConditionRecord>>;
-}): ConditionRecord => {
-  const apiShapedRecord = { ...record };
-
-  for (const { fieldName, joinColumnName } of relations) {
-    const relatedRecordId = readRecordId(record[joinColumnName]);
-    const loadedRelatedRecords = relatedRecordsByRelation.get(fieldName);
-
-    if (!isDefined(relatedRecordId)) {
-      apiShapedRecord[fieldName] = null;
-      continue;
-    }
-
-    // A loaded relation reads null when its record is deleted or hidden, as the API returns it
-    apiShapedRecord[fieldName] = isDefined(loadedRelatedRecords)
-      ? (loadedRelatedRecords.get(relatedRecordId) ?? null)
-      : { id: relatedRecordId };
-  }
-
-  return apiShapedRecord;
-};
 
 type DatabaseEventTriggerMatch<TEvent extends ObjectRecordEvent> = {
   events: TEvent[];
@@ -265,16 +167,11 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
       return isReadable;
     });
 
-  const relatedRecordsLoad = await findRelatedRecordsById({
+  const relatedRecordsLoad = await loadDatabaseEventConditionRelatedRecords({
     relations: conditionReads.relations,
     records: readableEvents.map(({ record }) => record),
     findRelatedRecords,
-  }).then(
-    (relatedRecordsByRelation) => ({ relatedRecordsByRelation }),
-    (error: unknown) => ({
-      errorMessage: error instanceof Error ? error.message : String(error),
-    }),
-  );
+  });
 
   if ('errorMessage' in relatedRecordsLoad) {
     return {
@@ -294,7 +191,7 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
 
   for (const { event, record, previousRecord } of readableEvents) {
     const result = evaluate({
-      record: toApiShapedRecord({
+      record: toApiShapedDatabaseEventRecord({
         record,
         relations: conditionReads.relations,
         relatedRecordsByRelation,

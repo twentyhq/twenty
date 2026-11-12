@@ -37,17 +37,23 @@ export const listDatabaseEventTriggerManifestConditionFields = ({
       return toScalarConditionField(field);
     }
 
+    if (
+      field.relationType !== RelationType.MANY_TO_ONE ||
+      !isDefined(field.relationTargetObjectUniversalIdentifier)
+    ) {
+      return {
+        ...toScalarConditionField(field),
+        relationType: field.relationType,
+      };
+    }
+
     return {
       ...toScalarConditionField(field),
       relationType: field.relationType,
-      relationTargetFields:
-        field.relationType === RelationType.MANY_TO_ONE &&
-        isDefined(field.relationTargetObjectUniversalIdentifier)
-          ? listDatabaseEventTriggerManifestObjectFields({
-              lookup,
-              objectUniversalIdentifier:
-                field.relationTargetObjectUniversalIdentifier,
-            }).map(toScalarConditionField)
-          : undefined,
+      relationTargetFields: listDatabaseEventTriggerManifestObjectFields({
+        lookup,
+        objectUniversalIdentifier:
+          field.relationTargetObjectUniversalIdentifier,
+      }).map(toScalarConditionField),
     };
   });

@@ -44,7 +44,6 @@ import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/work
 import {
   type AutomatedTriggerSettings,
   type BaseDatabaseEventTriggerSettings,
-  type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import {
@@ -407,8 +406,10 @@ export class WorkflowDatabaseEventTriggerListener {
       const eventsWithWatchedFields = filterEventsByUpdatedFields({
         events: readableEventsByApplicationId.get(applicationId) ?? [],
         eventName: databaseEventName,
-        watchedFields: (eventListener.settings as UpdateEventTriggerSettings)
-          .fields,
+        watchedFields:
+          'fields' in eventListener.settings
+            ? eventListener.settings.fields
+            : undefined,
       });
 
       for (const eventPayload of eventsWithWatchedFields) {

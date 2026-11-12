@@ -1,3 +1,7 @@
+import {
+  type AgentDatabaseEventTrigger,
+  type AgentTrigger,
+} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { addAgentTriggerConditionBindingsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util';
@@ -29,33 +33,48 @@ const flatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
   flatEntityMaps: createEmptyFlatEntityMaps(),
 });
 
-const addConditionBindings = (eventName: string, condition: string) =>
+const buildDatabaseEventTrigger = (
+  settings: AgentDatabaseEventTrigger['settings'],
+): AgentDatabaseEventTrigger => ({
+  id: 'trigger-id',
+  type: 'DATABASE_EVENT',
+  isActive: true,
+  instructions: null,
+  settings,
+});
+
+const addConditionBindings = ({
+  triggers,
+  storedTriggers,
+}: {
+  triggers: AgentTrigger[];
+  storedTriggers?: AgentTrigger[];
+}) =>
   addAgentTriggerConditionBindingsOrThrow({
-    triggers: [
-      {
-        id: 'trigger-id',
-        type: 'DATABASE_EVENT',
-        isActive: true,
-        instructions: null,
-        settings: { eventName, condition },
-      },
-    ],
+    triggers,
+    storedTriggers,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
 
 describe('addAgentTriggerConditionBindingsOrThrow', () => {
   it('stores the field each condition path reads', () => {
+    const condition = "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'";
+
     expect(
-      addConditionBindings(
-        'opportunity.updated',
-        "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
-      ),
+      addConditionBindings({
+        triggers: [
+          buildDatabaseEventTrigger({
+            eventName: 'opportunity.updated',
+            condition,
+          }),
+        ],
+      }),
     ).toEqual([
       expect.objectContaining({
         settings: {
           eventName: 'opportunity.updated',
-          condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+          condition,
           conditionBindings: {
             stage: 'opportunity-stage',
             'previous.stage': 'opportunity-stage',
@@ -66,109 +85,95 @@ describe('addAgentTriggerConditionBindingsOrThrow', () => {
   });
 
   it('keeps the bindings of a stored condition sent back unchanged', () => {
-    const storedTrigger = {
-      type: 'DATABASE_EVENT',
-      settings: {
-        eventName: 'opportunity.created',
-        condition: 'amount > 0',
-        conditionBindings: { amount: 'opportunity-amount' },
-      },
-    };
+    const storedTrigger = buildDatabaseEventTrigger({
+      eventName: 'opportunity.created',
+      condition: 'amount > 0',
+      conditionBindings: { amount: 'opportunity-amount' },
+    });
 
     expect(
-      addAgentTriggerConditionBindingsOrThrow({
+      addConditionBindings({
         triggers: [
-          {
-            type: 'DATABASE_EVENT',
-            settings: {
-              eventName: 'opportunity.created',
-              condition: 'amount > 0',
-            },
-          },
+          buildDatabaseEventTrigger({
+            eventName: 'opportunity.created',
+            condition: 'amount > 0',
+          }),
         ],
         storedTriggers: [storedTrigger],
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
       }),
     ).toEqual([storedTrigger]);
   });
 
-  it('accepts a condition on the fields of the trigger object', () => {
-    expect(() =>
-      addConditionBindings(
-        'opportunity.updated',
-        "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
-      ),
-    ).not.toThrow();
-  });
-
   it('rejects a condition reading a field the object does not have', () => {
     expect(() =>
-      addConditionBindings('opportunity.created', 'amount > 0'),
+      addConditionBindings({
+        triggers: [
+          buildDatabaseEventTrigger({
+            eventName: 'opportunity.created',
+            condition: 'amount > 0',
+          }),
+        ],
+      }),
     ).toThrow(/Condition "amount > 0" of an agent trigger is invalid/);
   });
 
   it('rejects a condition on an unknown object', () => {
     expect(() =>
-      addConditionBindings('invoice.created', "stage == 'PAID'"),
+      addConditionBindings({
+        triggers: [
+          buildDatabaseEventTrigger({
+            eventName: 'invoice.created',
+            condition: "stage == 'PAID'",
+          }),
+        ],
+      }),
     ).toThrow(/Unknown object invoice/);
   });
 
-  it('ignores triggers without a condition', () => {
-    expect(() =>
-      addAgentTriggerConditionBindingsOrThrow({
-        triggers: [
-          {
-            type: 'DATABASE_EVENT',
-            settings: { eventName: 'invoice.created' },
-          },
-          { type: 'CRON', settings: { pattern: '0 9 * * 1' } },
-        ],
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      }),
-    ).not.toThrow();
+  it('leaves triggers without a condition unchanged', () => {
+    const triggers: AgentTrigger[] = [
+      buildDatabaseEventTrigger({ eventName: 'invoice.created' }),
+      {
+        id: 'cron-trigger-id',
+        type: 'CRON',
+        isActive: true,
+        instructions: null,
+        settings: { pattern: '0 9 * * 1' },
+      },
+    ];
+
+    expect(addConditionBindings({ triggers })).toEqual(triggers);
   });
 
   it('accepts a stored condition sent back unchanged, even if its field is gone', () => {
-    const staleTrigger = {
-      type: 'DATABASE_EVENT',
-      settings: { eventName: 'opportunity.created', condition: 'amount > 0' },
-    };
+    const staleTrigger = buildDatabaseEventTrigger({
+      eventName: 'opportunity.created',
+      condition: 'amount > 0',
+    });
 
     expect(() =>
-      addAgentTriggerConditionBindingsOrThrow({
+      addConditionBindings({
         triggers: [staleTrigger],
         storedTriggers: [staleTrigger],
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
       }),
     ).not.toThrow();
   });
 
   it('still checks a stored condition once it is edited', () => {
     expect(() =>
-      addAgentTriggerConditionBindingsOrThrow({
+      addConditionBindings({
         triggers: [
-          {
-            type: 'DATABASE_EVENT',
-            settings: {
-              eventName: 'opportunity.created',
-              condition: 'amount > 1',
-            },
-          },
+          buildDatabaseEventTrigger({
+            eventName: 'opportunity.created',
+            condition: 'amount > 1',
+          }),
         ],
         storedTriggers: [
-          {
-            type: 'DATABASE_EVENT',
-            settings: {
-              eventName: 'opportunity.created',
-              condition: 'amount > 0',
-            },
-          },
+          buildDatabaseEventTrigger({
+            eventName: 'opportunity.created',
+            condition: 'amount > 0',
+          }),
         ],
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
       }),
     ).toThrow(/Condition "amount > 1" of an agent trigger is invalid/);
   });

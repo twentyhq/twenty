@@ -140,7 +140,9 @@ export class DatabaseEventTriggerConditionService {
       );
 
       if (!isDefined(targetObjectMetadata) || !isDefined(workspace)) {
-        throw new Error(`Cannot read the records of "${relationFieldName}"`);
+        return {
+          errorMessage: `Cannot read the records of "${relationFieldName}"`,
+        };
       }
 
       const targetFields = targetObjectMetadata.fieldIds
@@ -165,9 +167,9 @@ export class DatabaseEventTriggerConditionService {
           ({ id }) => id === hiddenFieldId,
         )?.name;
 
-        throw new Error(
-          `The condition reads "${relationFieldName}.${hiddenFieldName}", which this trigger cannot always see`,
-        );
+        return {
+          errorMessage: `The condition reads "${relationFieldName}.${hiddenFieldName}", which this trigger cannot always see`,
+        };
       }
 
       const columnNames = targetFields.flatMap((field) => {
@@ -180,16 +182,19 @@ export class DatabaseEventTriggerConditionService {
           : [field.name];
       });
 
-      return this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
-            .getRepository(targetObjectMetadata.nameSingular)
-            .find({
-              where: { id: In(recordIds) },
-              select: ['id', ...columnNames],
-            }),
-        buildApplicationAuthContext({ workspace, application, agentId }),
-      );
+      const relatedRecords =
+        await this.workspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            this.workspaceOrmManager
+              .getRepository(targetObjectMetadata.nameSingular)
+              .find({
+                where: { id: In(recordIds) },
+                select: ['id', ...columnNames],
+              }),
+          buildApplicationAuthContext({ workspace, application, agentId }),
+        );
+
+      return { relatedRecords };
     };
 
     return filterEventsMatchingDatabaseEventTrigger({
