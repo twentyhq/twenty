@@ -28,8 +28,7 @@ const getRequiredParentReferences = (action: AnnotatableAction) =>
     .map((relation) => action.flatEntity?.[relation.universalForeignKey])
     .filter(isNonEmptyString);
 
-// A deletion's cause is the deletion that made the side-effect engine emit it,
-// otherwise a deleted parent it cannot exist without.
+// A deletion's cause is its side-effect trigger, else a deleted parent it cannot exist without.
 export const annotateCascadedDeletions = <TAction extends AnnotatableAction>({
   actions,
   deletionTriggerByUniversalIdentifier = {},
