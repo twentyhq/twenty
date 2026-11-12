@@ -2963,7 +2963,7 @@ msgstr "Հնարավորությանը կապակցված զրույցներ"
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
-msgstr ""
+msgstr "Ընտրեք ակտիվ ներդիր և դրա դասավորության ռեժիմին համապատասխանող վիջեթի դիրք։"
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -6171,7 +6171,7 @@ msgstr "Frontend component builder-ի հարցումը գերազանցում է
 #. js-lingui-id: SOTpsW
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Frontend component not found."
-msgstr ""
+msgstr "Ֆրոնտենդ բաղադրիչը չի գտնվել։"
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13816,7 +13816,7 @@ msgstr "Տվյալների բազայի իրադարձության գործար�
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "Գործակալի գործարկիչի պայմանն անվավեր է"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14878,7 +14878,7 @@ msgstr "Այս ձևն այլևս պատասխան չի սպասում։"
 #. js-lingui-id: phhLXX
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "This frontend component is not available on this page layout."
-msgstr ""
+msgstr "Այս ֆրոնտենդ բաղադրիչը հասանելի չէ էջի այս դասավորությունում։"
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -17245,7 +17245,7 @@ msgstr "Ինչու է մուտքը տրամադրվել"
 #. js-lingui-id: ciRAJR
 #: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
 msgid "Widget configuration is required."
-msgstr ""
+msgstr "Վիջեթի կազմաձևումը պարտադիր է։"
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
