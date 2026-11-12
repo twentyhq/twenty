@@ -11,7 +11,7 @@ export const mergeLoadedAgentChatThread = ({
 }): AgentChatThreadRecord => {
   if (
     !isDefined(storedThread?.updatedAt) ||
-    new Date(storedThread.updatedAt) <= new Date(loadedThread.updatedAt)
+    new Date(storedThread.updatedAt) < new Date(loadedThread.updatedAt)
   ) {
     return loadedThread;
   }

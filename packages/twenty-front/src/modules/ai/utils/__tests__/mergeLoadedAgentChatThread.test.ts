@@ -31,6 +31,15 @@ describe('mergeLoadedAgentChatThread', () => {
     ).toEqual(LOADED_THREAD);
   });
 
+  it('keeps a local change made on the same version of the chat', () => {
+    expect(
+      mergeLoadedAgentChatThread({
+        loadedThread: LOADED_THREAD,
+        storedThread: { ...LOADED_THREAD, title: 'Renamed locally' },
+      }),
+    ).toEqual({ ...LOADED_THREAD, title: 'Renamed locally' });
+  });
+
   it('keeps what a more recent update stored, and fills the rest', () => {
     expect(
       mergeLoadedAgentChatThread({
