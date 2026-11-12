@@ -70,6 +70,21 @@ fs.writeFileSync(counterPath, String(runs));
 console.log('cf-access-token: token-' + runs);
 `;
 
+// A killed process the container's init never reaps stays a zombie ("Z").
+const isProcessRunning = async (processId: number) => {
+  try {
+    process.kill(processId, 0);
+  } catch {
+    return false;
+  }
+
+  const stat = await readFile(`/proc/${processId}/stat`, 'utf8').catch(
+    () => '',
+  );
+
+  return stat.split(') ')[1]?.[0] !== 'Z';
+};
+
 const runJson = async (args: string[]) => {
   const { stdout, exitCode } = await runCliForTest([...args, '--json']);
 
@@ -474,6 +489,32 @@ describe('proxy headers', () => {
     expect(await secondRead).toEqual({ 'cf-access-token': 'token-1' });
     expect(await readFile(counterPath, 'utf8')).toBe('1');
   });
+
+  it.skipIf(process.platform === 'win32')(
+    'stops processes started by the header command when it is cancelled',
+    async () => {
+      const pidPath = join(home, 'grandchild-pid');
+      const abortController = new AbortController();
+      const proxyHeaders = createProxyHeaders({
+        headers: {},
+        headerCommand: `echo "cf-access-token: $(sh -c 'echo $$ > ${pidPath}; exec sleep 30')"`,
+      });
+      const read = proxyHeaders?.read(abortController.signal);
+
+      await vi.waitFor(async () => {
+        expect((await readFile(pidPath, 'utf8')).trim()).not.toBe('');
+      });
+      abortController.abort();
+
+      await expect(read).rejects.toBe(abortController.signal.reason);
+
+      const grandchildPid = Number((await readFile(pidPath, 'utf8')).trim());
+
+      await vi.waitFor(async () => {
+        expect(await isProcessRunning(grandchildPid)).toBe(false);
+      });
+    },
+  );
 
   it('keeps proxy settings out of app worker environments', () => {
     expect(

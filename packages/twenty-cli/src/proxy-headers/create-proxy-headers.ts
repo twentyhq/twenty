@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { runProxyHeaderCommand } from '@/proxy-headers/run-proxy-header-command';
+import { runProxyHeaderCommandOrThrow } from '@/proxy-headers/run-proxy-header-command-or-throw';
 import { type ProxyHeaderSettings } from '@/proxy-headers/types/proxy-header-settings.type';
 import { type ProxyHeaders } from '@/proxy-headers/types/proxy-headers.type';
 
@@ -56,7 +56,7 @@ export const createProxyHeaders = ({
     const commandRun: CommandRun = {
       controller,
       waitingSignals: new Set(),
-      headers: runProxyHeaderCommand({
+      headers: runProxyHeaderCommandOrThrow({
         command: headerCommand,
         signal: controller.signal,
       }).then((commandHeaders) => ({ ...headers, ...commandHeaders })),

@@ -8,6 +8,38 @@ import { parseProxyHeaderLinesOrThrow } from '@/proxy-headers/parse-proxy-header
 
 const SOURCE_NAME = 'The proxy header command';
 
+const IS_WINDOWS = process.platform === 'win32';
+
+const signalProcessGroup = ({
+  processId,
+  signalName,
+}: {
+  processId: number;
+  signalName: NodeJS.Signals;
+}) => {
+  try {
+    process.kill(-processId, signalName);
+  } catch {
+    // The group already exited.
+  }
+};
+
+const stopProcessTree = (subprocess: execa.ExecaChildProcess) => {
+  const processId = subprocess.pid;
+
+  if (IS_WINDOWS || !isNumber(processId)) {
+    subprocess.kill('SIGTERM', { forceKillAfterTimeout: 1000 });
+
+    return;
+  }
+
+  signalProcessGroup({ processId, signalName: 'SIGTERM' });
+  setTimeout(
+    () => signalProcessGroup({ processId, signalName: 'SIGKILL' }),
+    1000,
+  ).unref();
+};
+
 const describeFailure = ({
   isTimedOut,
   exitCode,
@@ -26,7 +58,7 @@ const describeFailure = ({
   return `${SOURCE_NAME} failed.`;
 };
 
-export const runProxyHeaderCommand = async ({
+export const runProxyHeaderCommandOrThrow = async ({
   command,
   signal,
 }: {
@@ -35,21 +67,26 @@ export const runProxyHeaderCommand = async ({
 }) => {
   signal.throwIfAborted();
 
-  // A shell, like git credential helpers, lets users compose $(...) commands.
+  // A shell, like git credential helpers, lets users compose $(...) commands;
+  // its own process group lets a stop reach processes those commands start.
   const subprocess = execa(command, {
     shell: true,
     stdio: ['ignore', 'pipe', 'pipe'],
     reject: false,
-    timeout: PROXY_HEADER_COMMAND.TIMEOUT_MILLISECONDS,
+    detached: !IS_WINDOWS,
     maxBuffer: PROXY_HEADER_COMMAND.MAX_OUTPUT_BYTES,
   });
-  const cancel = () =>
-    subprocess.kill('SIGTERM', { forceKillAfterTimeout: 1000 });
+  let isTimedOut = false;
+  const stop = () => stopProcessTree(subprocess);
+  const timer = setTimeout(() => {
+    isTimedOut = true;
+    stop();
+  }, PROXY_HEADER_COMMAND.TIMEOUT_MILLISECONDS);
 
-  signal.addEventListener('abort', cancel, { once: true });
+  signal.addEventListener('abort', stop, { once: true });
 
   if (signal.aborted) {
-    cancel();
+    stop();
   }
 
   try {
@@ -64,7 +101,7 @@ export const runProxyHeaderCommand = async ({
       throw new CliError({
         code: 'PROXY_HEADERS_FAILED',
         message: describeFailure({
-          isTimedOut: result.timedOut,
+          isTimedOut,
           exitCode: result.exitCode,
         }),
         hint: 'Run the command yourself to check it prints "Name: value" lines, for example after signing in to the proxy again.',
@@ -82,6 +119,7 @@ export const runProxyHeaderCommand = async ({
       sourceName: SOURCE_NAME,
     });
   } finally {
-    signal.removeEventListener('abort', cancel);
+    clearTimeout(timer);
+    signal.removeEventListener('abort', stop);
   }
 };
