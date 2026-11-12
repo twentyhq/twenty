@@ -70,6 +70,54 @@ describe('useSendPendingChatMessage', () => {
     });
   });
 
+  it('only uploads the failed files again on retry', async () => {
+    const photo = new File(['photo'], 'photo.png', { type: 'image/png' });
+    const pendingMessageWithTwoFiles: PendingChatMessage = {
+      ...pendingMessage,
+      files: [deck, photo],
+    };
+
+    mockUploadEmailAttachment.mockImplementation(async (file: File) =>
+      file === deck ? { id: 'file-1', name: 'deck.pdf' } : null,
+    );
+    mockSendAppChannelMessage.mockResolvedValue(null);
+
+    const { result } = renderHook(() => useSendPendingChatMessage());
+
+    await act(async () => {
+      await expect(
+        result.current.sendPendingChatMessage({
+          ...sendArgs,
+          pendingMessage: pendingMessageWithTwoFiles,
+        }),
+      ).rejects.toThrow();
+    });
+
+    mockUploadEmailAttachment.mockResolvedValueOnce({
+      id: 'file-2',
+      name: 'photo.png',
+    });
+
+    await act(async () => {
+      await result.current.sendPendingChatMessage({
+        ...sendArgs,
+        pendingMessage: pendingMessageWithTwoFiles,
+      });
+    });
+
+    expect(mockUploadEmailAttachment).toHaveBeenCalledTimes(3);
+    expect(mockUploadEmailAttachment).toHaveBeenLastCalledWith(photo);
+    expect(mockSendAppChannelMessage).toHaveBeenCalledTimes(1);
+    expect(mockSendAppChannelMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        attachments: [
+          { id: 'file-1', name: 'deck.pdf' },
+          { id: 'file-2', name: 'photo.png' },
+        ],
+      }),
+    );
+  });
+
   it('does not send when a file fails to upload', async () => {
     mockUploadEmailAttachment.mockResolvedValue(null);
 

@@ -16,33 +16,34 @@ type SendPendingChatMessageArgs = {
 export const useSendPendingChatMessage = () => {
   const { sendAppChannelMessage } = useSendAppChannelMessage();
   const { uploadEmailAttachment } = useUploadEmailAttachment();
-  // a retry reuses the uploads of its first attempt instead of uploading the files again
-  const [
-    uploadedAttachmentsByPendingMessageId,
-    setUploadedAttachmentsByPendingMessageId,
-  ] = useState<Record<string, EmailAttachment[]>>({});
+  // a retry reuses the uploads that succeeded and only uploads the failed files again
+  const [uploadsByPendingMessageId, setUploadsByPendingMessageId] = useState<
+    Record<string, (EmailAttachment | null)[]>
+  >({});
 
   const uploadAttachmentsOrThrow = async ({
     id,
     files,
   }: PendingChatMessage): Promise<EmailAttachment[]> => {
-    const uploadedAttachments = uploadedAttachmentsByPendingMessageId[id];
+    const previousUploads = uploadsByPendingMessageId[id] ?? [];
 
-    if (isDefined(uploadedAttachments)) {
-      return uploadedAttachments;
-    }
+    const uploads = await Promise.all(
+      files.map(
+        (file, index) => previousUploads[index] ?? uploadEmailAttachment(file),
+      ),
+    );
 
-    const attachments = await Promise.all(files.map(uploadEmailAttachment));
+    setUploadsByPendingMessageId((currentUploads) => ({
+      ...currentUploads,
+      [id]: uploads,
+    }));
+
+    const attachments = uploads.filter(isDefined);
 
     // the upload already toasted the failure; throwing marks the message as failed
-    if (!attachments.every(isDefined)) {
+    if (attachments.length < files.length) {
       throw new Error(doNotTranslate('Some attachments failed to upload'));
     }
-
-    setUploadedAttachmentsByPendingMessageId((currentAttachments) => ({
-      ...currentAttachments,
-      [id]: attachments,
-    }));
 
     return attachments;
   };
@@ -62,9 +63,9 @@ export const useSendPendingChatMessage = () => {
       idempotencyKey: pendingMessage.id,
     });
 
-    setUploadedAttachmentsByPendingMessageId(
-      ({ [pendingMessage.id]: _sentAttachments, ...currentAttachments }) =>
-        currentAttachments,
+    setUploadsByPendingMessageId(
+      ({ [pendingMessage.id]: _sentUploads, ...currentUploads }) =>
+        currentUploads,
     );
 
     return sentMessage;
