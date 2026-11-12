@@ -41,7 +41,7 @@ export class RecordFieldPermissionsReadService {
     });
   }
 
-  async findFieldsHiddenOnMatchingRecords({
+  async findUnreadableFieldsOnMatchingRecords({
     principals,
     objectMetadataId,
     tableAlias,

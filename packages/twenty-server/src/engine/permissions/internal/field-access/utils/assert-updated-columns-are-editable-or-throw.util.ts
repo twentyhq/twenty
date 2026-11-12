@@ -8,7 +8,7 @@ import {
   type RowAccessEvaluationContext,
 } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findUneditableFieldMetadataIdsOnRecord } from 'src/engine/permissions/internal/field-access/utils/find-uneditable-field-metadata-ids-on-record.util';
-import { resolveFieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-fields-hidden-on-matching-records.util';
+import { resolveUneditableFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-uneditable-fields-on-matching-records.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -34,19 +34,18 @@ export const assertUpdatedColumnsAreEditableOrThrow = async ({
   formatRecords: (rawRecords: ObjectRecord[]) => ObjectRecord[];
   findRelationJoinValues: RowAccessEvaluationContext['findRelationJoinValues'];
 }): Promise<void> => {
-  const fieldsUneditableOnMatchingRecords =
-    await resolveFieldsHiddenOnMatchingRecords({
+  const uneditableFieldsOnMatchingRecords =
+    await resolveUneditableFieldsOnMatchingRecords({
       principals,
       metadataMaps,
       flatObjectMetadata,
-      fieldList: 'uneditableFields',
       records: formatRecords(
         updates.map(({ rawRecordBefore }) => rawRecordBefore),
       ),
       findRelationJoinValues,
     });
 
-  if (!isNonEmptyArray(fieldsUneditableOnMatchingRecords)) {
+  if (!isNonEmptyArray(uneditableFieldsOnMatchingRecords)) {
     return;
   }
 
@@ -60,7 +59,7 @@ export const assertUpdatedColumnsAreEditableOrThrow = async ({
       flatObjectMetadata,
       flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
       record: formatRecords([rawRecordBefore])[0],
-      fieldsUneditableOnMatchingRecords,
+      uneditableFieldsOnMatchingRecords,
     });
 
     if (

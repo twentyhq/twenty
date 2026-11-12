@@ -117,7 +117,7 @@ const buildRepository = ({
         assertUpdatesKeepRecordAccessOrThrow: jest.fn(),
       },
       recordFieldPermissions: {
-        findFieldsHiddenOnMatchingRecords: jest.fn().mockResolvedValue([]),
+        findUnreadableFieldsOnMatchingRecords: jest.fn().mockResolvedValue([]),
       },
       recordAccessGroupWrite: {
         isWriteTransactionRequired: jest.fn().mockResolvedValue(false),

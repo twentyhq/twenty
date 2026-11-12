@@ -4,7 +4,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type FieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/fields-hidden-on-matching-records.type';
+import { type UnreadableFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/unreadable-fields-on-matching-records.type';
 import { findUneditableFieldMetadataIdsOnRecord } from 'src/engine/permissions/internal/field-access/utils/find-uneditable-field-metadata-ids-on-record.util';
 import { findUnreadableFieldMetadataIdsOnRecords } from 'src/engine/permissions/internal/field-access/utils/find-unreadable-field-metadata-ids-on-records.util';
 
@@ -39,7 +39,7 @@ const MATCHING_BY_STATUS = { status: { eq: 'open' } };
 const NOT_MATCHING = { name: { eq: 'another invoice' } };
 
 const findUnreadable = (
-  fieldsHiddenOnMatchingRecords: FieldsHiddenOnMatchingRecords[],
+  unreadableFieldsOnMatchingRecords: UnreadableFieldsOnMatchingRecords[],
 ) =>
   [
     ...findUnreadableFieldMetadataIdsOnRecords({
@@ -47,7 +47,7 @@ const findUnreadable = (
       flatFieldMetadataMaps,
       objectUnreadableFieldMetadataIds: ['object-level-field-id'],
       records: [{ name: 'invoice', status: 'open' }],
-      fieldsHiddenOnMatchingRecords,
+      unreadableFieldsOnMatchingRecords,
     }),
   ].sort();
 
@@ -107,7 +107,7 @@ describe('findUneditableFieldMetadataIdsOnRecord', () => {
         flatObjectMetadata: invoice,
         flatFieldMetadataMaps,
         record: { name: 'invoice', status: 'open' },
-        fieldsUneditableOnMatchingRecords: [
+        uneditableFieldsOnMatchingRecords: [
           {
             fieldMetadataIds: ['secret-field-id', 'amount-field-id'],
             recordFilter: MATCHING_BY_NAME,

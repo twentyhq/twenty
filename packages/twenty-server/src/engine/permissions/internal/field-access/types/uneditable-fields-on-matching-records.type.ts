@@ -1,6 +1,6 @@
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
-export type FieldsHiddenOnMatchingRecords = {
+export type UneditableFieldsOnMatchingRecords = {
   fieldMetadataIds: string[];
   recordFilter: RecordGqlOperationFilter;
 };

@@ -10,7 +10,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
-import { resolveFieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-fields-hidden-on-matching-records.util';
+import { resolveUnreadableFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-unreadable-fields-on-matching-records.util';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
 const MEMBER_ROLE_ID = 'member-role-id';
@@ -98,7 +98,7 @@ const resolve = ({
   memberRules: RowLevelRecordsPermissions[];
   agentRules?: RowLevelRecordsPermissions[];
 }) =>
-  resolveFieldsHiddenOnMatchingRecords({
+  resolveUnreadableFieldsOnMatchingRecords({
     principals: {
       workspaceId: 'workspace-id',
       mainPrincipal: {
@@ -139,12 +139,11 @@ const resolve = ({
       },
     },
     flatObjectMetadata: invoice,
-    fieldList: 'unreadableFields',
     records: [],
     findRelationJoinValues: jest.fn(),
   });
 
-describe('resolveFieldsHiddenOnMatchingRecords', () => {
+describe('resolveUnreadableFieldsOnMatchingRecords', () => {
   it('should take the hidden fields and filter of the main role only', async () => {
     expect(
       await resolve({

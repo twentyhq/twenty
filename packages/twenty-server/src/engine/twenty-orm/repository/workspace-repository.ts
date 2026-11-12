@@ -1909,8 +1909,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
-      const fieldsHiddenOnMatchingRecords =
-        await this.options.internalContext.recordFieldPermissions.findFieldsHiddenOnMatchingRecords(
+      const unreadableFieldsOnMatchingRecords =
+        await this.options.internalContext.recordFieldPermissions.findUnreadableFieldsOnMatchingRecords(
           {
             principals: this.resolvePermissionsPrincipalsOrThrow(),
             objectMetadataId: tableShape.objectMetadataId,
@@ -1918,7 +1918,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           },
         );
 
-      if (!isNonEmptyArray(fieldsHiddenOnMatchingRecords)) {
+      if (!isNonEmptyArray(unreadableFieldsOnMatchingRecords)) {
         continue;
       }
 
@@ -1934,7 +1934,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       for (const {
         fieldMetadataIds,
         sqlCondition,
-      } of fieldsHiddenOnMatchingRecords) {
+      } of unreadableFieldsOnMatchingRecords) {
         queryBuilder.nullifyColumnsWhen({
           alias,
           columnNames: columnEntries
