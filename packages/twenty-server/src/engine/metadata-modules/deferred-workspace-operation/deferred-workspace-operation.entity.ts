@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { type PersistedDeferredWorkspaceOperation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation.type';
 import { type DeferredWorkspaceOperationStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation-status.type';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
@@ -16,6 +17,13 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   'status',
 ])
 @Entity({ name: 'deferredWorkspaceOperation', schema: 'core' })
+@WasRenamedInUpgrade([
+  {
+    previousName: 'deferredWorkspaceMigrationAction',
+    upgradeCommandName:
+      '2.59.0_RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand_1794508996000',
+  },
+])
 export class DeferredWorkspaceOperationEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
