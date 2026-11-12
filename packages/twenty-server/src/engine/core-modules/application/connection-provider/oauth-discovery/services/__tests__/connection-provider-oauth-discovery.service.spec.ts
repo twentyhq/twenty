@@ -1,4 +1,8 @@
 import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 
 import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
 import { ConnectionProviderOAuthDiscoveryService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery.service';
@@ -83,6 +87,16 @@ const buildService = ({
 }) => {
   const oauthClientService = {
     findStoredClient: jest.fn().mockResolvedValue(storedClient),
+    findStoredClientOrThrow: jest.fn().mockImplementation(async () => {
+      if (!isDefined(storedClient)) {
+        throw new ConnectionProviderException(
+          'no client yet',
+          ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED,
+        );
+      }
+
+      return storedClient;
+    }),
     insertClientIfAbsent: jest.fn().mockResolvedValue(true),
     replaceClientIfUnchanged: jest.fn().mockResolvedValue(true),
     deleteClient: jest.fn().mockResolvedValue(undefined),

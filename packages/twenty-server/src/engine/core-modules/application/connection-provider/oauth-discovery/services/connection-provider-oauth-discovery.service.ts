@@ -46,7 +46,6 @@ export class ConnectionProviderOAuthDiscoveryService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  // Discovers and registers when no usable client is stored yet; the probe scope only applies to this sign-in.
   async resolveClientForAuthorization(
     target: DiscoveryTarget,
   ): Promise<ResolvedOAuthClient> {
@@ -69,22 +68,14 @@ export class ConnectionProviderOAuthDiscoveryService {
   async resolveClientForTokenRequest(
     target: DiscoveryTarget,
   ): Promise<ResolvedOAuthClient> {
-    const storedClient = await this.oauthClientService.findStoredClient({
+    const storedClient = await this.oauthClientService.findStoredClientOrThrow({
       connectionProviderId: target.provider.id,
       workspaceId: target.workspaceId,
     });
 
-    if (!isDefined(storedClient)) {
-      throw new ConnectionProviderException(
-        `Connection provider ${target.provider.id} has no OAuth client yet: sign in again`,
-        ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED,
-      );
-    }
-
     return this.toResolvedClient({ storedClient, scope: undefined });
   }
 
-  // The authorization server forgot the client: the next sign-in registers a new one.
   async forgetRejectedClient({
     target,
     clientId,
@@ -176,7 +167,6 @@ export class ConnectionProviderOAuthDiscoveryService {
         })
       : await this.oauthClientService.insertClientIfAbsent(client);
 
-    // Another member's sign-in registered a client meanwhile: use theirs, so one client issues every token
     if (!isClientSaved) {
       const concurrentClient = await this.oauthClientService.findStoredClient({
         connectionProviderId: provider.id,
@@ -242,8 +232,7 @@ export class ConnectionProviderOAuthDiscoveryService {
     );
 
     if (
-      authorizationServerMetadata?.client_id_metadata_document_supported ===
-        true &&
+      authorizationServerMetadata?.client_id_metadata_document_supported &&
       isDefined(clientMetadataUrl)
     ) {
       return { client_id: clientMetadataUrl, ...clientMetadata };
@@ -320,7 +309,6 @@ export class ConnectionProviderOAuthDiscoveryService {
     return buildAppOAuthCallbackUrl(this.twentyConfigService.get('SERVER_URL'));
   }
 
-  // An authorization server only fetches a metadata document over HTTPS.
   private getClientMetadataUrl(): string | null {
     const clientMetadataUrl = buildOAuthDiscoveryClientMetadataUrl(
       this.twentyConfigService.get('SERVER_URL'),

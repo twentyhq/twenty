@@ -13,7 +13,6 @@ type ResolveArgs = {
   workspaceId: string;
 };
 
-// Both provider types run the same authorization code flow once their client is known.
 @Injectable()
 export class ConnectionProviderOAuthClientResolverService {
   constructor(

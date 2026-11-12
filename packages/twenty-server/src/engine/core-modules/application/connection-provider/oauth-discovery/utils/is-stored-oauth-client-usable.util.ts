@@ -24,7 +24,6 @@ export const isStoredOAuthClientUsable = ({
   const secretExpiresAt =
     storedClient.clientInformation.client_secret_expires_at;
 
-  // 0 means the secret never expires (RFC 7591)
   return (
     !isDefined(secretExpiresAt) ||
     secretExpiresAt === 0 ||

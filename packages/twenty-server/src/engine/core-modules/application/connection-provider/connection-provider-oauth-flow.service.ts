@@ -154,7 +154,6 @@ export class ConnectionProviderOAuthFlowService {
       { provider, workspaceId: statePayload.workspaceId },
     );
 
-    // The code was issued to the client and server the flow started with
     if (
       client.clientId !== flowSecrets.clientId ||
       client.tokenEndpoint !== flowSecrets.tokenEndpoint
@@ -251,7 +250,7 @@ export class ConnectionProviderOAuthFlowService {
       const message = error instanceof Error ? error.message : String(error);
 
       this.logger.error(
-        `OAuth token exchange failed for provider ${provider.id}: ${message}`,
+        `OAuth token exchange failed for provider ${provider.id} in workspace ${workspaceId}: ${message}`,
       );
 
       throw new ConnectionProviderException(
