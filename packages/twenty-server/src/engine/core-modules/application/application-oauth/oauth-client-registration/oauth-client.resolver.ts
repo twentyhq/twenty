@@ -11,6 +11,7 @@ import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-mo
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { isVerifiedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-registration.util';
 import { findVerifiedOAuthClientLogoPath } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-logo-path.util';
+import { isVerifiedOAuthClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-id-metadata-document-url.util';
 import { isVerifiedOAuthClientName } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-name.util';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
@@ -69,6 +70,7 @@ export class OAuthClientResolver {
       };
     }
 
+    const isVerified = isVerifiedOAuthClientIdMetadataDocumentUrl(clientId);
     const { name, logo } = toClientIdMetadataDocumentRegistrationFields(
       resolvedClient.clientIdMetadataDocument,
     );
@@ -79,8 +81,9 @@ export class OAuthClientResolver {
       logoUrl: logo,
       websiteUrl: null,
       oAuthScopes: [...ALL_OAUTH_SCOPES],
-      isVerified: false,
-      isClaimingVerifiedClientName: isVerifiedOAuthClientName(name),
+      isVerified,
+      isClaimingVerifiedClientName:
+        !isVerified && isVerifiedOAuthClientName(name),
     };
   }
 }
