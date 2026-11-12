@@ -99,10 +99,11 @@ const StyledFormFieldInputWrapper = styled.div`
   overflow: visible;
 `;
 
-const StyledRelativeDateWrapper = styled.div`
+const StyledRelativeDateContainer = styled.div`
   display: flex;
-  flex: 1;
+  flex: 3;
   flex-direction: column;
+  max-width: 100%;
   min-width: 0;
 `;
 
@@ -279,21 +280,17 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
       recordFilter.operand === RecordFilterOperand.IS_RELATIVE
     ) {
       return (
-        <StyledContainer>
-          <StyledRelativeDateWrapper>
-            <FormRelativeDatePicker
-              defaultValue={recordFilter.value}
-              onChange={(relativeDateFilter: RelativeDateFilter) =>
-                applyObjectFilterDropdownFilterValue(
-                  stringifyRelativeDateFilter(relativeDateFilter),
-                )
-              }
-              isDateTimeField={
-                recordFilter.type === FieldMetadataType.DATE_TIME
-              }
-            />
-          </StyledRelativeDateWrapper>
-        </StyledContainer>
+        <StyledRelativeDateContainer>
+          <FormRelativeDatePicker
+            defaultValue={recordFilter.value}
+            onChange={(relativeDateFilter: RelativeDateFilter) =>
+              applyObjectFilterDropdownFilterValue(
+                stringifyRelativeDateFilter(relativeDateFilter),
+              )
+            }
+            isDateTimeField={recordFilter.type === FieldMetadataType.DATE_TIME}
+          />
+        </StyledRelativeDateContainer>
       );
     }
 

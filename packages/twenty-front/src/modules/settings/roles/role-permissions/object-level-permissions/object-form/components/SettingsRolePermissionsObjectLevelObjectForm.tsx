@@ -20,6 +20,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -64,7 +65,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const { data: agentData } = useQuery(FindOneAgentDocument, {
     variables: { id: fromAgentId || '' },
-    skip: !fromAgentId,
+    skip: !isNonEmptyString(fromAgentId),
   });
 
   const { objectMetadataItem } = useObjectMetadataItemById({
@@ -84,7 +85,9 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const rolePath = getSettingsPath(SettingsPath.RoleDetail, { roleId });
   const finishPath =
-    fromAgentId && isDefined(agent) ? getCoreAgentLink(agent.id) : rolePath;
+    isNonEmptyString(fromAgentId) && isDefined(agent)
+      ? getCoreAgentLink(agent.id)
+      : rolePath;
 
   const rootPredicateGroup =
     settingsDraftRole.rowLevelPermissionPredicateGroups?.find(
@@ -108,7 +111,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     : t`New rule`;
 
   const breadcrumbLinks =
-    fromAgentId && isDefined(agent)
+    isNonEmptyString(fromAgentId) && isDefined(agent)
       ? getCoreAgentBreadcrumbLinks([
           { children: agent.label, href: getCoreAgentLink(agent.id) },
           { children: objectLabelPlural },
