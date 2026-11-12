@@ -26,8 +26,8 @@ import {
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { MATCHING_ANY_MEMBER_VALUE_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/matching-any-member-value-operands.constant';
-import { MATCHING_NO_MEMBER_VALUE_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/matching-no-member-value-operands.constant';
+import { RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-union-operands.constant';
+import { RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-intersection-operands.constant';
 import { MULTI_VALUE_MEMBER_FIELD_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/multi-value-member-field-types.constant';
 import { SINGLE_VALUE_FILTER_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/single-value-filter-types.constant';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
@@ -673,8 +673,8 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       MULTI_VALUE_MEMBER_FIELD_TYPES.includes(
         workspaceMemberFieldMetadata.type,
       ) &&
-      !MATCHING_ANY_MEMBER_VALUE_OPERANDS.includes(operand) &&
-      !MATCHING_NO_MEMBER_VALUE_OPERANDS.includes(operand)
+      !RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS.includes(operand) &&
+      !RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS.includes(operand)
     ) {
       const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
 

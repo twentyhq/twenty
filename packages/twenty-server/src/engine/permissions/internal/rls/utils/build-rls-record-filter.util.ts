@@ -23,8 +23,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { MATCHING_ANY_MEMBER_VALUE_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/matching-any-member-value-operands.constant';
-import { MATCHING_NO_MEMBER_VALUE_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/matching-no-member-value-operands.constant';
+import { RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-union-operands.constant';
+import { RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-intersection-operands.constant';
 import { SINGLE_VALUE_FILTER_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/single-value-filter-types.constant';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
@@ -206,14 +206,15 @@ const buildPredicateRecordFilter = ({
     return buildValueRecordFilter(predicateValue);
   }
 
-  const isMatchingNoMemberValue = MATCHING_NO_MEMBER_VALUE_OPERANDS.includes(
-    predicate.operand,
-  );
+  const isArrayMatchedByIntersection =
+    RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS.includes(
+      predicate.operand,
+    );
 
   if (
     predicateValue.length > 1 &&
-    !isMatchingNoMemberValue &&
-    !MATCHING_ANY_MEMBER_VALUE_OPERANDS.includes(predicate.operand)
+    !isArrayMatchedByIntersection &&
+    !RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS.includes(predicate.operand)
   ) {
     return UNSATISFIABLE_RECORD_FILTER;
   }
@@ -223,7 +224,7 @@ const buildPredicateRecordFilter = ({
     .filter(isDefined);
 
   // Values that give no filter, as blank strings do, must not drop an any-of predicate
-  if (valueRecordFilters.length === 0 && !isMatchingNoMemberValue) {
+  if (valueRecordFilters.length === 0 && !isArrayMatchedByIntersection) {
     return UNSATISFIABLE_RECORD_FILTER;
   }
 
@@ -231,7 +232,7 @@ const buildPredicateRecordFilter = ({
     return valueRecordFilters[0];
   }
 
-  return isMatchingNoMemberValue
+  return isArrayMatchedByIntersection
     ? { and: valueRecordFilters }
     : { or: valueRecordFilters };
 };
