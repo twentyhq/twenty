@@ -2,7 +2,7 @@ import { type ObjectRecordsOperationType } from '@/types/ObjectRecordsOperationT
 import { type RowLevelRecordsPermissions } from '@/types/RowLevelRecordsPermissions';
 import { assertUnreachable } from '@/utils/assertUnreachable';
 
-export const isRowLevelRecordsPermissionsRuleGrantingOperation = ({
+export const canRlsRuleAccessOperation = ({
   rule,
   operationType,
 }: {

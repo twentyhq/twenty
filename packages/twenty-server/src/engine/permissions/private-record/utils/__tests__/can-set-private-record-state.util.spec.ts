@@ -2,9 +2,9 @@
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { canSetRecordPrivacy } from 'src/engine/permissions/private-record/utils/can-set-record-privacy.util';
+import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
 
-describe('canSetRecordPrivacy', () => {
+describe('canSetPrivateRecordState', () => {
   it.each([
     { featureFlagsMap: {}, expected: false },
     {
@@ -20,7 +20,7 @@ describe('canSetRecordPrivacy', () => {
   ])(
     'should return $expected for flags $featureFlagsMap',
     ({ featureFlagsMap, expected }) => {
-      expect(canSetRecordPrivacy({ featureFlagsMap })).toBe(expected);
+      expect(canSetPrivateRecordState({ featureFlagsMap })).toBe(expected);
     },
   );
 });

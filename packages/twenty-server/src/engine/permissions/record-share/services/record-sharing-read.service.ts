@@ -31,7 +31,7 @@ import {
   type RecordSharingRoleDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
-import { canSetRecordPrivacy } from 'src/engine/permissions/private-record/utils/can-set-record-privacy.util';
+import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { resolveRecordSharePrincipalRoleIds } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-role-ids.util';
@@ -373,7 +373,7 @@ export class RecordSharingReadService {
       ],
       implicitAccessLevels:
         isRecordSharingEnabled({ featureFlagsMap }) ||
-        canSetRecordPrivacy({ featureFlagsMap })
+        canSetPrivateRecordState({ featureFlagsMap })
           ? [
               isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
               creatorWorkspaceMemberId === authContext.workspaceMemberId ||

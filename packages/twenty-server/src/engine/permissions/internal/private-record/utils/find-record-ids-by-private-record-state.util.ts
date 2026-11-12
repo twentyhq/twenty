@@ -1,9 +1,9 @@
 /* @license Enterprise */
 
-import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { resolvePrivateRecordState } from 'src/engine/permissions/internal/private-record/utils/resolve-private-record-state.util';
 
-export const findRecordIdsByPrivacy = async ({
+export const findRecordIdsByPrivateRecordState = async ({
   recordIds,
   flatObjectMetadata,
   context,

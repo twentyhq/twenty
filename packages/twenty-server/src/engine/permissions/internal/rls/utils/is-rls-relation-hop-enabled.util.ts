@@ -2,7 +2,7 @@
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-export const isRowLevelPermissionRelationHopEnabled = (
+export const isRlsRelationHopEnabled = (
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>,
 ): boolean =>
   (featureFlagsMap[

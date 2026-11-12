@@ -14,14 +14,14 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
+import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 import {
   buildRecordFilterForRule,
-  buildRowLevelPermissionRecordFilter,
-} from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
+  buildRlsRecordFilter,
+} from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 
 const OBJECT_ID = 'object-1';
 const WORKSPACE_MEMBER_OBJECT_ID = 'workspace-member-object';
@@ -355,11 +355,8 @@ const buildWorkspaceMember = (workspaceMember: Record<string, unknown>) => ({
   ...workspaceMember,
 });
 
-const build = (
-  roleIds: string[],
-  workspaceMember?: RowLevelPermissionWorkspaceMember,
-) =>
-  buildRowLevelPermissionRecordFilter({
+const build = (roleIds: string[], workspaceMember?: RlsWorkspaceMember) =>
+  buildRlsRecordFilter({
     isRelationHopEnabled: false,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
@@ -372,7 +369,7 @@ const build = (
     currentWorkspaceMemberId: workspaceMember?.id,
   });
 
-describe('buildRowLevelPermissionRecordFilter', () => {
+describe('buildRlsRecordFilter', () => {
   it('should match nothing when no rule is given', () => {
     expect(build([])).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });

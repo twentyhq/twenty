@@ -8,15 +8,15 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 export const buildRecordAccessGroupsSQLCondition = ({
   tableAlias,
-  callerAccessGroupCompactIds,
+  principalsAccessGroupCompactIds,
 }: {
   tableAlias: string;
-  callerAccessGroupCompactIds: number[];
+  principalsAccessGroupCompactIds: number[];
 }): SQLCondition => {
-  const parameterName = `callerAccessGroupCompactIds_${randomBytes(5).toString('hex')}`;
+  const parameterName = `principalsAccessGroupCompactIds_${randomBytes(5).toString('hex')}`;
 
   return {
     sql: `${escapeIdentifier(tableAlias)}.${escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME)} && CAST(:${parameterName} AS integer[])`,
-    parameters: { [parameterName]: callerAccessGroupCompactIds },
+    parameters: { [parameterName]: principalsAccessGroupCompactIds },
   };
 };
