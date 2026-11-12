@@ -11,6 +11,7 @@ import {
 } from 'twenty-shared/types';
 
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 type StoredOption = FieldMetadataComplexOption & { id: string };
@@ -436,6 +437,12 @@ describe('field metadata option rows follow field options', () => {
       'flatFieldMetadataOptionMaps',
     ]);
 
+    const workspaceSchema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+    const [{ id: recordId }] = await globalThis.testDataSource.query(
+      `INSERT INTO "${workspaceSchema}"."_optionRowsSync" ("missingRowsField", "createdByName", "updatedByName")
+        VALUES ('CLOSED', 'Test', 'Test') RETURNING id`,
+    );
+
     try {
       await updateOneFieldMetadata({
         expectToFail: false,
@@ -444,6 +451,13 @@ describe('field metadata option rows follow field options', () => {
           updatePayload: { label: 'Missing Rows Field Renamed' },
         },
       });
+
+      const [{ missingRowsField }] = await globalThis.testDataSource.query(
+        `SELECT "missingRowsField" FROM "${workspaceSchema}"."_optionRowsSync" WHERE id = $1`,
+        [recordId],
+      );
+
+      expect(missingRowsField).toBe('CLOSED');
 
       expect(await findOptionRows(fieldMetadataId)).toEqual(
         toExpectedRows({

@@ -13,6 +13,7 @@ import {
   type ExistingFieldMetadataOptionRow,
 } from 'src/database/commands/upgrade-version-command/2-59/utils/compute-field-metadata-option-rows-alignment.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @RegisteredWorkspaceCommand('2.59.0', 1794508090443)
@@ -112,9 +113,12 @@ export class AlignFieldMetadataOptionRowsWithStoredOptionsCommand extends Provis
       return;
     }
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatFieldMetadataMaps',
-      'flatFieldMetadataOptionMaps',
-    ]);
+    await this.workspaceCacheService.invalidateAndRecompute(
+      workspaceId,
+      withDerivedFieldMetadataMaps([
+        'flatFieldMetadataMaps',
+        'flatFieldMetadataOptionMaps',
+      ]),
+    );
   }
 }
