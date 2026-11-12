@@ -2,7 +2,7 @@ import { PROPOSE_TOOL_CALL_TOOL_NAME, ToolCategory } from 'twenty-shared/ai';
 
 import { type McpToolTarget } from 'src/engine/core-modules/tool-provider/types/mcp-tool-target.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
-import { isDestructiveMcpServerTool } from 'src/engine/metadata-modules/mcp-server/utils/is-destructive-mcp-server-tool.util';
+import { isDestructiveMcpServerTool } from 'twenty-shared/ai';
 
 const MCP_TOOL_ICON = 'IconSparkles';
 

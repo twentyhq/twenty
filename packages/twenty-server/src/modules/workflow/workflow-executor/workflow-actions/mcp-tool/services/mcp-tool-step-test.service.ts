@@ -7,7 +7,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type TestMcpToolStepDTO } from 'src/engine/core-modules/workflow/dtos/test-mcp-tool-step.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { isDestructiveMcpServerTool } from 'src/engine/metadata-modules/mcp-server/utils/is-destructive-mcp-server-tool.util';
+import { isDestructiveMcpServerTool } from 'twenty-shared/ai';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,

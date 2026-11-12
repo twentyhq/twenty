@@ -20,7 +20,7 @@ import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/
 import { McpServerClientService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-client.service';
 import { McpServerToolCallService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-call.service';
 import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
-import { isDestructiveMcpServerTool } from 'src/engine/metadata-modules/mcp-server/utils/is-destructive-mcp-server-tool.util';
+import { isDestructiveMcpServerTool } from 'twenty-shared/ai';
 import { isMcpServerDueForToolSync } from 'src/engine/metadata-modules/mcp-server/utils/is-mcp-server-due-for-tool-sync.util';
 
 const CATALOG_TOOL_SYNC_TIMEOUT_MS = 5_000;

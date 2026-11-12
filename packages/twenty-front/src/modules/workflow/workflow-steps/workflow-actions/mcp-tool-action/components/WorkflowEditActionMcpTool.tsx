@@ -21,12 +21,12 @@ import { WORKFLOW_MCP_TOOL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-ste
 import { mcpToolTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/states/mcpToolTestDataFamilyState';
 import { useTestMcpTool } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool';
 import { type WorkflowMcpToolTabId } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/types/WorkflowMcpToolTabId';
-import { isMcpToolSafeToTestWithoutConfirmation } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/isMcpToolSafeToTestWithoutConfirmation';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isObject } from '@sniptt/guards';
+import { isDestructiveMcpServerTool } from 'twenty-shared/ai';
 import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
@@ -163,7 +163,7 @@ export const WorkflowEditActionMcpTool = ({
       return;
     }
 
-    if (!isMcpToolSafeToTestWithoutConfirmation(tool)) {
+    if (isDestructiveMcpServerTool(tool)) {
       openDialog(testConfirmationDialogId);
 
       return;
