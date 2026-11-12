@@ -5,7 +5,7 @@ const throughParticipants = (
   participantFilter: RecordGqlOperationFilter,
 ): RecordGqlOperationFilter => ({ participants: participantFilter });
 
-// Keep in sync with getAgentChatThreadInboxStatus in twenty-front, which places loaded chats
+// Keep in sync with getAgentChatThreadInboxStatus, which places loaded chats on the client
 export const computeAgentChatThreadFilterStatusGqlFilter = ({
   filterStatus,
   workspaceMemberId,

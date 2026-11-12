@@ -1,6 +1,5 @@
-import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
+import { getAgentChatThreadInboxStatus } from '@/ai/utils/get-agent-chat-thread-inbox-status.util';
 
-const THREAD_ID = 'thread';
 const ARCHIVED_AT = '2026-10-01T10:00:00.000Z';
 
 const getStatus = ({
@@ -23,16 +22,12 @@ const getStatus = ({
   getAgentChatThreadInboxStatus({
     lastActivityAt,
     participant: {
-      id: 'participant',
-      threadId: THREAD_ID,
       lastReadAt,
       archivedAt,
       snoozedUntil,
       isSubscribed,
       lastMentionedAt,
       mentionsResolvedAt,
-      updatedAt: ARCHIVED_AT,
-      __typename: 'AgentChatThreadParticipant',
     },
   });
 

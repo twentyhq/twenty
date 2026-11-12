@@ -1,9 +1,10 @@
-import { isAfter } from 'date-fns';
-import { isAgentChatMentionUnresolved } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
-
+import { type AgentChatInboxState } from '@/ai/types/AgentChatInboxState';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
-import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
+import { isAgentChatMentionUnresolved } from '@/ai/utils/is-agent-chat-mention-unresolved.util';
+import { isDefined } from '@/utils/validation/isDefined';
+
+const isAfter = (date: string, dateToCompare: string): boolean =>
+  new Date(date) > new Date(dateToCompare);
 
 // Activity and archiving have different writers and are compared rather than
 // folded into a status, so a message landing right after an archive brings the
@@ -13,13 +14,13 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 // under done whatever happens in it. A chat the member can open but does not
 // follow stays out of their inbox until they take part in it or file it, and
 // only has unread messages once they have opened it.
-// Keep in sync with computeAgentChatThreadFilterStatusGqlFilter in twenty-shared.
+// Keep in sync with computeAgentChatThreadFilterStatusGqlFilter, which loads the tabs from the server.
 export const getAgentChatThreadInboxStatus = ({
   lastActivityAt,
   participant,
 }: {
   lastActivityAt: string | null | undefined;
-  participant: AgentChatThreadParticipantFieldsFragment | undefined;
+  participant: AgentChatInboxState | undefined;
 }): Omit<AgentChatThreadInboxStatus, 'isAssignedToMe' | 'isChannelCopy'> => {
   const isUnread =
     isDefined(lastActivityAt) &&

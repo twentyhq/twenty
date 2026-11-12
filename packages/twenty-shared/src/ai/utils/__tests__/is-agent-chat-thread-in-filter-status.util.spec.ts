@@ -1,4 +1,4 @@
-import { isAgentChatThreadInFilterStatus } from '@/ai/utils/isAgentChatThreadInFilterStatus';
+import { isAgentChatThreadInFilterStatus } from '@/ai/utils/is-agent-chat-thread-in-filter-status.util';
 
 const OPEN_STATUS = {
   scope: 'INBOX',
