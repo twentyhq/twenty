@@ -642,6 +642,7 @@ describe('core workflow visibility (e2e)', () => {
       );
 
       expect(response.body.errors).toBeUndefined();
+      expect(emitMetadataEvents).toHaveBeenCalledTimes(1);
       expect(emitMetadataEvents).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
