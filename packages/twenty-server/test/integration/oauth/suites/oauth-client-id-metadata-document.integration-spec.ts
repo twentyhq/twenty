@@ -13,7 +13,6 @@ import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/ap
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const CODE_VERIFIER = 'integration-verifier';
 
@@ -83,7 +82,6 @@ describe('OAuth client ID metadata documents (integration)', () => {
   );
 
   let dataSource: DataSource;
-  let isClientIdMetadataDocumentEnabled: boolean;
   let clientIdMetadataDocumentService: ClientIdMetadataDocumentService;
   let findDocumentSpy: jest.SpyInstance;
   let isFetchDueSpy: jest.SpyInstance;
@@ -154,25 +152,9 @@ describe('OAuth client ID metadata documents (integration)', () => {
       getAppProviderByClassName<ClientIdMetadataDocumentService>(
         'ClientIdMetadataDocumentService',
       );
-
-    const twentyConfigService = getAppProviderByClassName<TwentyConfigService>(
-      'TwentyConfigService',
-    );
-    const readConfig = twentyConfigService.get.bind(twentyConfigService);
-
-    jest
-      .spyOn(twentyConfigService, 'get')
-      .mockImplementation((key) =>
-        key === 'IS_OAUTH_CLIENT_ID_METADATA_DOCUMENT_ENABLED'
-          ? isClientIdMetadataDocumentEnabled
-          : readConfig(key),
-      );
   });
 
-  beforeEach(async () => {
-    isClientIdMetadataDocumentEnabled = true;
-    await clearFetchRateLimit();
-  });
+  beforeEach(clearFetchRateLimit);
 
   afterAll(async () => {
     jest.restoreAllMocks();
@@ -195,53 +177,7 @@ describe('OAuth client ID metadata documents (integration)', () => {
     );
   });
 
-  describe('When disabled', () => {
-    beforeEach(() => {
-      isClientIdMetadataDocumentEnabled = false;
-      stubDocuments();
-    });
-
-    afterEach(() => {
-      expect(findDocumentSpy).not.toHaveBeenCalled();
-      restoreDocuments();
-    });
-
-    it('should not advertise support', async () => {
-      const response = await request(baseUrl)
-        .get('/.well-known/oauth-authorization-server')
-        .expect(200);
-
-      expect(response.body.client_id_metadata_document_supported).toBe(false);
-    });
-
-    it('should treat a document URL as an unknown client', async () => {
-      const lookUpResponse = await lookUp(WEB_CLIENT_DOCUMENT.clientId);
-
-      expect(
-        lookUpResponse.body.data.findApplicationRegistrationByClientId,
-      ).toBeNull();
-
-      const authorizationResponse = await requestAuthorization({
-        clientId: WEB_CLIENT_DOCUMENT.clientId,
-        redirectUrl: WEB_CLIENT_CALLBACK,
-      });
-
-      expect(authorizationResponse.body.errors?.[0]?.message).toContain(
-        'Client not found',
-      );
-
-      const tokenResponse = await postToken({
-        grant_type: 'refresh_token',
-        refresh_token: 'not-a-refresh-token',
-        client_id: WEB_CLIENT_DOCUMENT.clientId,
-      });
-
-      expect(tokenResponse.status).toBe(401);
-      expect(tokenResponse.body.error).toBe('invalid_client');
-    });
-  });
-
-  describe('When enabled', () => {
+  describe('Document clients', () => {
     beforeEach(stubDocuments);
 
     afterEach(restoreDocuments);

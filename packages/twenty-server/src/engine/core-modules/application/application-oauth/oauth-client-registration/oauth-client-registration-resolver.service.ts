@@ -18,7 +18,6 @@ import { PUBLIC_OAUTH_CLIENT_REGISTRATION_VALUES } from 'src/engine/core-modules
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class OAuthClientRegistrationResolverService {
@@ -27,7 +26,6 @@ export class OAuthClientRegistrationResolverService {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly clientIdMetadataDocumentService: ClientIdMetadataDocumentService,
     private readonly throttlerService: ThrottlerService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async throttleClientIdMetadataDocumentFetchOrThrow({
@@ -38,7 +36,7 @@ export class OAuthClientRegistrationResolverService {
     requestIp: string | undefined;
   }): Promise<void> {
     if (
-      !this.isClientIdMetadataDocumentClient(clientId) ||
+      !isClientIdMetadataDocumentUrl(clientId) ||
       !(await this.clientIdMetadataDocumentService.isFetchDue(clientId))
     ) {
       return;
@@ -71,10 +69,6 @@ export class OAuthClientRegistrationResolverService {
         : null;
     }
 
-    if (!this.isClientIdMetadataDocumentClient(clientId)) {
-      return null;
-    }
-
     const clientIdMetadataDocument =
       await this.clientIdMetadataDocumentService.findDocument(clientId);
 
@@ -87,14 +81,6 @@ export class OAuthClientRegistrationResolverService {
       registration: await this.findRegistrationByOAuthClientId(clientId),
       clientIdMetadataDocument,
     };
-  }
-
-  private isClientIdMetadataDocumentClient(clientId: string): boolean {
-    return (
-      this.twentyConfigService.get(
-        'IS_OAUTH_CLIENT_ID_METADATA_DOCUMENT_ENABLED',
-      ) && isClientIdMetadataDocumentUrl(clientId)
-    );
   }
 
   private findRegistrationByOAuthClientId(oAuthClientId: string) {

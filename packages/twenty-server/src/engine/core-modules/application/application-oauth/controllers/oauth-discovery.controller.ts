@@ -53,9 +53,7 @@ export class OAuthDiscoveryController {
         'refresh_token',
       ],
       code_challenge_methods_supported: ['S256'],
-      client_id_metadata_document_supported: this.twentyConfigService.get(
-        'IS_OAUTH_CLIENT_ID_METADATA_DOCUMENT_ENABLED',
-      ),
+      client_id_metadata_document_supported: true,
       token_endpoint_auth_methods_supported: ['client_secret_post', 'none'],
       revocation_endpoint_auth_methods_supported: ['client_secret_post'],
       introspection_endpoint_auth_methods_supported: ['client_secret_post'],

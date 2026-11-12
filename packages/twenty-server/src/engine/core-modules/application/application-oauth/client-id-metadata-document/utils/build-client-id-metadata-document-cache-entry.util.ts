@@ -53,7 +53,6 @@ export const buildClientIdMetadataDocumentCacheEntry = ({
     };
   }
 
-  // An outage is worth retrying soon; a rejected document is not
   return {
     entry,
     ttlMs:

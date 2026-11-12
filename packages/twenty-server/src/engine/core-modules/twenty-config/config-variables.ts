@@ -2757,16 +2757,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   APP_REGISTRY_TOKEN: string;
-
-  // TODO(felix): remove once Claude and ChatGPT are confirmed to connect through CIMD in production
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Accept OAuth clients identified by a Client ID Metadata Document, a URL the server fetches to learn about the client',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_OAUTH_CLIENT_ID_METADATA_DOCUMENT_ENABLED = false;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {
