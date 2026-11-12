@@ -1,6 +1,7 @@
 import { getRowLevelPermissionRuleUniversalIdentifier } from '@/application/deterministic-identifier/get-row-level-permission-rule-universal-identifier.util';
 import {
   type AllRecordsPermissionsManifest,
+  type FieldPermissionManifest,
   type NormalizedRoleManifest,
   type ObjectRecordsPermissionsManifest,
   type RoleManifest,
@@ -60,6 +61,39 @@ const findTopLevelPredicateGroupUniversalIdentifier = ({
   }
 
   return currentUniversalIdentifier;
+};
+
+const addFieldPermissionToObject = ({
+  object,
+  fieldPermission,
+}: {
+  object: ObjectRecordsPermissionsManifest;
+  fieldPermission: FieldPermissionManifest;
+}): ObjectRecordsPermissionsManifest => {
+  const { fieldUniversalIdentifier, universalIdentifier } = fieldPermission;
+  const unreadableFields =
+    fieldPermission.canReadFieldValue === false
+      ? [...(object.unreadableFields ?? []), fieldUniversalIdentifier]
+      : object.unreadableFields;
+  const uneditableFields =
+    fieldPermission.canUpdateFieldValue === false
+      ? [...(object.uneditableFields ?? []), fieldUniversalIdentifier]
+      : object.uneditableFields;
+  const fieldPermissionIdentifiers = isDefined(universalIdentifier)
+    ? [
+        ...(object.fieldPermissionIdentifiers ?? []),
+        { fieldUniversalIdentifier, universalIdentifier },
+      ]
+    : object.fieldPermissionIdentifiers;
+
+  return {
+    ...object,
+    ...(isDefined(unreadableFields) ? { unreadableFields } : {}),
+    ...(isDefined(uneditableFields) ? { uneditableFields } : {}),
+    ...(isDefined(fieldPermissionIdentifiers)
+      ? { fieldPermissionIdentifiers }
+      : {}),
+  };
 };
 
 export const normalizeRoleManifestRecordsPermissions = ({
@@ -140,37 +174,10 @@ export const normalizeRoleManifestRecordsPermissions = ({
       fieldPermission.objectUniversalIdentifier,
     );
 
-    objectByUniversalIdentifier.set(object.objectUniversalIdentifier, {
-      ...object,
-      ...(fieldPermission.canReadFieldValue === false
-        ? {
-            unreadableFields: [
-              ...(object.unreadableFields ?? []),
-              fieldPermission.fieldUniversalIdentifier,
-            ],
-          }
-        : {}),
-      ...(fieldPermission.canUpdateFieldValue === false
-        ? {
-            uneditableFields: [
-              ...(object.uneditableFields ?? []),
-              fieldPermission.fieldUniversalIdentifier,
-            ],
-          }
-        : {}),
-      ...(isDefined(fieldPermission.universalIdentifier)
-        ? {
-            fieldPermissionIdentifiers: [
-              ...(object.fieldPermissionIdentifiers ?? []),
-              {
-                fieldUniversalIdentifier:
-                  fieldPermission.fieldUniversalIdentifier,
-                universalIdentifier: fieldPermission.universalIdentifier,
-              },
-            ],
-          }
-        : {}),
-    });
+    objectByUniversalIdentifier.set(
+      object.objectUniversalIdentifier,
+      addFieldPermissionToObject({ object, fieldPermission }),
+    );
   }
 
   const predicateGroupByUniversalIdentifier = new Map(
