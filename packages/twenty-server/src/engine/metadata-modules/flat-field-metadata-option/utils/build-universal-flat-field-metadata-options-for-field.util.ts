@@ -28,7 +28,6 @@ export const buildUniversalFlatFieldMetadataOptionsForField = ({
     fieldMetadataUniversalIdentifier:
       universalFlatFieldMetadata.universalIdentifier,
     ...optionColumns,
-    isActive: true,
     overrides: null,
     createdAt: now,
     updatedAt: now,

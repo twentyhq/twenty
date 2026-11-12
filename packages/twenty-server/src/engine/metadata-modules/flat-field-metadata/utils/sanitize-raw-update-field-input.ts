@@ -4,7 +4,6 @@ import {
   isFieldMetadataSelectKind,
   isMorphRelationHead,
 } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
@@ -18,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { normalizeUpdatedFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-updated-field-metadata-options.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
@@ -85,18 +85,20 @@ export const sanitizeRawUpdateFieldInput = ({
   }
 
   if (isDefined(updatedEditableFieldProperties.options)) {
-    const optionsWithIds = updatedEditableFieldProperties.options.map(
-      (option) => ({
-        id: v4(),
-        ...option,
-      }),
-    );
+    const normalizedOptions = normalizeUpdatedFieldMetadataOptions({
+      updatedOptions: updatedEditableFieldProperties.options,
+      existingOptions: existingFlatFieldMetadata.options ?? [],
+      isFieldOwnedByAnotherApplication:
+        !isSystemBuild &&
+        existingFlatFieldMetadata.applicationUniversalIdentifier !==
+          workspaceCustomApplicationUniversalIdentifier,
+    });
 
     updatedEditableFieldProperties.options = isFieldMetadataSelectKind(
       existingFlatFieldMetadata.type,
     )
-      ? sanitizeSelectOptionColors(optionsWithIds)
-      : optionsWithIds;
+      ? sanitizeSelectOptionColors(normalizedOptions)
+      : normalizedOptions;
   }
 
   if (

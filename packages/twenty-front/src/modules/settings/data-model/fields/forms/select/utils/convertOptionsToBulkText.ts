@@ -3,5 +3,8 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 export const convertOptionsToBulkText = (
   options: FieldMetadataItemOption[],
 ): string => {
-  return options.map((option) => option.label).join('\n');
+  return options
+    .filter((option) => option.isActive !== false)
+    .map((option) => option.label)
+    .join('\n');
 };

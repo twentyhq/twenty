@@ -25,7 +25,12 @@ export const MultiSelectFieldInput = () => {
       fieldMetadataId: fieldDefinition.fieldMetadataId,
       objectMetadataNameSingular:
         fieldDefinition.metadata.objectMetadataNameSingular,
-      options: fieldDefinition.metadata.options,
+      // An inactive option already on the record stays listed so it can be unchecked.
+      options: fieldDefinition.metadata.options.filter(
+        (option) =>
+          option.isActive !== false ||
+          (draftValue ?? []).includes(option.value),
+      ),
     });
 
   const handleOptionSelected = (newDraftValue: FieldMultiSelectValue) => {

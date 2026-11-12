@@ -13,12 +13,14 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
   flatFieldMetadatasToDelete = [],
   existingFlatFieldMetadataOptionMaps,
   applicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   flatFieldMetadatasToCreate?: UniversalFlatFieldMetadata[];
   flatFieldMetadatasToUpdate?: UniversalFlatFieldMetadata[];
   flatFieldMetadatasToDelete?: UniversalFlatFieldMetadata[];
   existingFlatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   applicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier?: string;
 }): FlatEntityToCreateDeleteUpdate<'fieldMetadataOption'> => {
   const operations: FlatEntityToCreateDeleteUpdate<'fieldMetadataOption'> = {
     flatEntityToCreate: [],
@@ -89,6 +91,7 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
         );
       },
       applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
     });
 
     operations.flatEntityToCreate.push(

@@ -16,4 +16,10 @@ export const normalizeSelectOptions = (
         ? option.color
         : DEFAULT_SELECT_OPTION_COLOR,
     }))
-    .sort((optionA, optionB) => optionA.position - optionB.position);
+    .sort(
+      (optionA, optionB) =>
+        Number(optionA.isActive === false) -
+          Number(optionB.isActive === false) ||
+        optionA.position - optionB.position,
+    )
+    .map((option, position) => ({ ...option, position }));

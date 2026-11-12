@@ -49,19 +49,53 @@ const openOptionRow: UniversalFlatFieldMetadataOption = {
   updatedAt: '2024-01-01T00:00:00.000Z',
 };
 
+const closedOptionRow: UniversalFlatFieldMetadataOption = {
+  ...openOptionRow,
+  universalIdentifier: CLOSED_OPTION_ID,
+  value: 'CLOSED',
+  label: 'Closed',
+  color: 'red',
+  position: 1,
+};
+
 const computeOperations = ({
   existingOptions,
   applicationUniversalIdentifier,
+  targetUniversalFlatFieldMetadata = targetField,
 }: {
   existingOptions: UniversalFlatFieldMetadataOption[];
   applicationUniversalIdentifier: string;
+  targetUniversalFlatFieldMetadata?: typeof targetField;
 }) =>
   computeFieldMetadataOptionOperationsForField({
-    targetUniversalFlatFieldMetadata: targetField,
+    targetUniversalFlatFieldMetadata,
     existingOptions,
     isUniversalIdentifierUsedByOtherField: () => false,
     applicationUniversalIdentifier,
+    workspaceCustomApplicationUniversalIdentifier:
+      CALLER_APPLICATION_UNIVERSAL_IDENTIFIER,
   });
+
+const editedTargetField = {
+  ...targetField,
+  options: [
+    {
+      id: CLOSED_OPTION_ID,
+      value: 'CLOSED',
+      label: 'Done',
+      color: 'blue',
+      position: 0,
+    },
+    {
+      id: OPEN_OPTION_ID,
+      value: 'OPEN',
+      label: 'Open',
+      color: 'green',
+      position: 1,
+      isActive: false,
+    },
+  ],
+} as typeof targetField;
 
 describe('computeFieldMetadataOptionOperationsForField', () => {
   it("leaves another app's field without rows to the backfill", () => {
@@ -94,5 +128,81 @@ describe('computeFieldMetadataOptionOperationsForField', () => {
     expect(Object.keys(operations.flatEntityToCreate)).toEqual([
       CLOSED_OPTION_ID,
     ]);
+  });
+
+  it("stores a workspace edit of another app's rows as overrides", () => {
+    const operations = computeOperations({
+      existingOptions: [openOptionRow, closedOptionRow],
+      applicationUniversalIdentifier: CALLER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      targetUniversalFlatFieldMetadata: editedTargetField,
+    });
+
+    expect(operations.flatEntityToDelete).toEqual({});
+    expect(operations.flatEntityToCreate).toEqual({});
+    expect(operations.flatEntityToUpdate).toMatchObject({
+      [OPEN_OPTION_ID]: {
+        label: 'Open',
+        position: 0,
+        isActive: true,
+        overrides: {
+          [CALLER_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+            position: 1,
+            isActive: false,
+          },
+        },
+      },
+      [CLOSED_OPTION_ID]: {
+        label: 'Closed',
+        color: 'red',
+        position: 1,
+        overrides: {
+          [CALLER_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+            label: 'Done',
+            color: 'blue',
+            position: 0,
+          },
+        },
+      },
+    });
+  });
+
+  it('drops the overrides once the workspace is back on the app values', () => {
+    const operations = computeOperations({
+      existingOptions: [
+        openOptionRow,
+        {
+          ...closedOptionRow,
+          overrides: {
+            [CALLER_APPLICATION_UNIVERSAL_IDENTIFIER]: { label: 'Done' },
+          },
+        },
+      ],
+      applicationUniversalIdentifier: CALLER_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(operations.flatEntityToUpdate).toMatchObject({
+      [CLOSED_OPTION_ID]: { label: 'Closed', overrides: null },
+    });
+    expect(Object.keys(operations.flatEntityToUpdate)).toEqual([
+      CLOSED_OPTION_ID,
+    ]);
+  });
+
+  it("writes the owning app's edit to the row itself", () => {
+    const operations = computeOperations({
+      existingOptions: [openOptionRow, closedOptionRow],
+      applicationUniversalIdentifier: FIELD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      targetUniversalFlatFieldMetadata: editedTargetField,
+    });
+
+    expect(operations.flatEntityToUpdate).toMatchObject({
+      [OPEN_OPTION_ID]: { position: 1, isActive: false, overrides: null },
+      [CLOSED_OPTION_ID]: {
+        label: 'Done',
+        color: 'blue',
+        position: 0,
+        overrides: null,
+      },
+    });
   });
 });

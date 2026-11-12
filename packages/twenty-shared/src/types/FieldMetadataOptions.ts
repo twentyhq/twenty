@@ -7,6 +7,10 @@ export class FieldMetadataDefaultOption {
   position: number;
   label: string;
   value: string;
+  // Only stored when false: an inactive option stays on records but can no longer be picked.
+  isActive?: boolean;
+  // Set by the server on options a workspace added to a field owned by another application.
+  isCustom?: boolean;
 }
 
 export class FieldMetadataComplexOption extends FieldMetadataDefaultOption {

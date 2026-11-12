@@ -4,8 +4,12 @@ import {
   getTargetOptionColumnsByUniversalIdentifier,
   type FieldMetadataOptionColumns,
 } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/get-target-option-columns-by-universal-identifier.util';
+import { type FieldMetadataOptionOverrides } from 'src/engine/metadata-modules/field-metadata-option/entities/field-metadata-option.entity';
 import { buildUniversalFlatFieldMetadataOptionsForField } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/build-universal-flat-field-metadata-options-for-field.util';
 import { isFieldMetadataOptionSyncSkipped } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-sync-skipped.util';
+import { resolveEffectiveFieldMetadataOptionColumns } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-effective-field-metadata-option-columns.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
 
@@ -16,16 +20,17 @@ type FieldMetadataOptionOperations = {
 };
 
 const hasOptionColumnsChanged = ({
-  existingOption,
+  effectiveOptionColumns,
   targetOptionColumns,
 }: {
-  existingOption: UniversalFlatFieldMetadataOption;
+  effectiveOptionColumns: FieldMetadataOptionColumns;
   targetOptionColumns: FieldMetadataOptionColumns;
 }) =>
-  existingOption.value !== targetOptionColumns.value ||
-  existingOption.label !== targetOptionColumns.label ||
-  existingOption.color !== targetOptionColumns.color ||
-  existingOption.position !== targetOptionColumns.position;
+  effectiveOptionColumns.value !== targetOptionColumns.value ||
+  effectiveOptionColumns.label !== targetOptionColumns.label ||
+  effectiveOptionColumns.color !== targetOptionColumns.color ||
+  effectiveOptionColumns.position !== targetOptionColumns.position ||
+  effectiveOptionColumns.isActive !== targetOptionColumns.isActive;
 
 // A row's universal identifier is its option id.
 export const computeFieldMetadataOptionOperationsForField = ({
@@ -33,6 +38,7 @@ export const computeFieldMetadataOptionOperationsForField = ({
   existingOptions,
   isUniversalIdentifierUsedByOtherField,
   applicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   targetUniversalFlatFieldMetadata: UniversalFlatFieldMetadata | undefined;
   existingOptions: UniversalFlatFieldMetadataOption[];
@@ -40,6 +46,8 @@ export const computeFieldMetadataOptionOperationsForField = ({
     universalIdentifier: string,
   ) => boolean;
   applicationUniversalIdentifier: string;
+  // Without it the caller is never overriding, so rows are written directly.
+  workspaceCustomApplicationUniversalIdentifier?: string;
 }): FieldMetadataOptionOperations => {
   const now = new Date().toISOString();
   const operations: FieldMetadataOptionOperations = {
@@ -78,13 +86,50 @@ export const computeFieldMetadataOptionOperationsForField = ({
       continue;
     }
 
-    if (hasOptionColumnsChanged({ existingOption, targetOptionColumns })) {
-      operations.flatEntityToUpdate[existingOption.universalIdentifier] = {
-        ...existingOption,
-        ...targetOptionColumns,
-        updatedAt: now,
-      };
+    const effectiveOptionColumns = resolveEffectiveFieldMetadataOptionColumns({
+      universalFlatFieldMetadataOption: existingOption,
+      workspaceCustomApplicationUniversalIdentifier,
+    });
+
+    if (
+      !hasOptionColumnsChanged({ effectiveOptionColumns, targetOptionColumns })
+    ) {
+      continue;
     }
+
+    const { value, ...overridableOptionColumns } = targetOptionColumns;
+    const isCallerOverridingOption =
+      isDefined(workspaceCustomApplicationUniversalIdentifier) &&
+      isCallerOverridingEntity({
+        callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+        entityApplicationUniversalIdentifier:
+          existingOption.applicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
+        isSystemSideEffect: false,
+      });
+    const { overrides, updatedEditableProperties } =
+      sanitizeOverridableEntityInput<
+        'fieldMetadataOption',
+        Partial<Omit<FieldMetadataOptionColumns, 'value'>>,
+        FieldMetadataOptionOverrides
+      >({
+        metadataName: 'fieldMetadataOption',
+        existingFlatEntity: existingOption,
+        updatedEditableProperties: overridableOptionColumns,
+        shouldOverride: isCallerOverridingOption,
+        callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier ??
+          applicationUniversalIdentifier,
+      });
+
+    operations.flatEntityToUpdate[existingOption.universalIdentifier] = {
+      ...existingOption,
+      ...updatedEditableProperties,
+      value,
+      overrides,
+      updatedAt: now,
+    };
   }
 
   const existingOptionUniversalIdentifiers = new Set(

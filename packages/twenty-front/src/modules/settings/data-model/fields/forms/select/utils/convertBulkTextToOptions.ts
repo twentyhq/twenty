@@ -6,6 +6,7 @@ import { generateNewSelectOption } from '@/settings/data-model/fields/forms/sele
 export const convertBulkTextToOptions = (
   text: string,
   currentOptions: FieldMetadataItemOption[],
+  nonRemovableOptionIds: ReadonlySet<string> = new Set(),
 ): FieldMetadataItemOption[] => {
   const parsedBulkTextOptions = text
     .trim()
@@ -13,33 +14,35 @@ export const convertBulkTextToOptions = (
     .map((line) => line.trim())
     .filter((line) => line.length > 0);
 
-  const newBulkSelectOptions: FieldMetadataItemOption[] = [];
+  const listedOptions: FieldMetadataItemOption[] = [];
 
-  for (
-    let optionIndex = 0;
-    optionIndex < parsedBulkTextOptions.length;
-    optionIndex++
-  ) {
-    const label = parsedBulkTextOptions[optionIndex];
-
+  for (const label of parsedBulkTextOptions) {
     // try to find an existing option with the same label, so we can keep its id, color, value, and label
     const existingOption = currentOptions.find(
       (opt) => opt.label.toLowerCase() === label.toLowerCase(),
     );
 
     if (isDefined(existingOption)) {
-      // reuse existing option meta (including original label), just update position
-      newBulkSelectOptions.push({
-        ...existingOption,
-        position: optionIndex,
-      });
+      const { isActive: _isActive, ...activeExistingOption } = existingOption;
+
+      listedOptions.push(activeExistingOption);
     } else {
-      newBulkSelectOptions.push({
-        ...generateNewSelectOption(newBulkSelectOptions, label),
-        position: optionIndex,
-      });
+      listedOptions.push(generateNewSelectOption(listedOptions, label));
     }
   }
 
-  return newBulkSelectOptions;
+  const listedOptionIds = new Set(listedOptions.map(({ id }) => id));
+  // The text only lists active options: an unlisted one is dropped when it can be,
+  // deactivated otherwise, and an inactive one stays as it was.
+  const unlistedInactiveOptions = currentOptions
+    .filter(
+      (option) =>
+        !listedOptionIds.has(option.id) &&
+        (option.isActive === false || nonRemovableOptionIds.has(option.id)),
+    )
+    .map((option) => ({ ...option, isActive: false }));
+
+  return [...listedOptions, ...unlistedInactiveOptions].map(
+    (option, position) => ({ ...option, position }),
+  );
 };

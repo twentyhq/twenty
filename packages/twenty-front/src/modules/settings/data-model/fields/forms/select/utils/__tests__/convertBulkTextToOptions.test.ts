@@ -170,4 +170,81 @@ describe('convertBulkTextToOptions', () => {
     expect(result[3].label).toBe('New 2');
     expect(result[3].position).toBe(3);
   });
+
+  describe('with inactive and application options', () => {
+    const newOption: FieldMetadataItemOption = {
+      id: 'new',
+      label: 'New',
+      value: 'NEW',
+      color: 'green',
+      position: 0,
+    };
+    const screeningOption: FieldMetadataItemOption = {
+      id: 'screening',
+      label: 'Screening',
+      value: 'SCREENING',
+      color: 'blue',
+      position: 1,
+    };
+    const partnerOption: FieldMetadataItemOption = {
+      id: 'partner',
+      label: 'Partner',
+      value: 'PARTNER',
+      color: 'purple',
+      position: 2,
+      isCustom: true,
+    };
+    const lostOption: FieldMetadataItemOption = {
+      id: 'lost',
+      label: 'Lost',
+      value: 'LOST',
+      color: 'red',
+      position: 3,
+      isActive: false,
+    };
+    const currentOptions = [
+      newOption,
+      screeningOption,
+      partnerOption,
+      lostOption,
+    ];
+    const applicationOptionIds = new Set(['new', 'screening', 'lost']);
+
+    it('deactivates an unlisted application option and drops an unlisted custom one', () => {
+      expect(
+        convertBulkTextToOptions('New', currentOptions, applicationOptionIds),
+      ).toEqual([
+        newOption,
+        { ...screeningOption, position: 1, isActive: false },
+        { ...lostOption, position: 2 },
+      ]);
+    });
+
+    it('keeps an inactive option out of the text inactive', () => {
+      expect(
+        convertBulkTextToOptions(
+          'New\nScreening\nPartner',
+          currentOptions,
+          applicationOptionIds,
+        ),
+      ).toEqual(currentOptions);
+    });
+
+    it('reactivates an inactive option whose label is listed again', () => {
+      const { isActive: _isActive, ...activeLostOption } = lostOption;
+
+      expect(
+        convertBulkTextToOptions(
+          'Lost\nNew\nScreening\nPartner',
+          currentOptions,
+          applicationOptionIds,
+        ),
+      ).toEqual([
+        { ...activeLostOption, position: 0 },
+        { ...newOption, position: 1 },
+        { ...screeningOption, position: 2 },
+        { ...partnerOption, position: 3 },
+      ]);
+    });
+  });
 });

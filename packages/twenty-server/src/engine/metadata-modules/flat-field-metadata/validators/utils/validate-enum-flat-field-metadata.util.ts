@@ -44,16 +44,27 @@ const validateSelectDefaultValue = ({
     });
   }
 
-  const matchesOptionValue = options.some(
+  const defaultOption = options.find(
     (option) =>
       option.value === defaultValue.replace(QUOTED_STRING_REGEX, '$1'),
   );
 
-  if (!matchesOptionValue) {
+  if (!isDefined(defaultOption)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message: t`Default value "${defaultValue}" must be one of the option values`,
       userFriendlyMessage: msg`Default value "${defaultValue}" must be one of the option values`,
+      value: defaultValue,
+    });
+
+    return errors;
+  }
+
+  if (defaultOption.isActive === false) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: t`Default value "${defaultValue}" must be an active option`,
+      userFriendlyMessage: msg`The default option cannot be deactivated`,
       value: defaultValue,
     });
   }

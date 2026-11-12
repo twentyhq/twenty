@@ -28,7 +28,9 @@ export const SelectFieldInput = () => {
     fieldMetadataId: fieldDefinition.fieldMetadataId,
     objectMetadataNameSingular:
       fieldDefinition.metadata.objectMetadataNameSingular,
-    options: fieldDefinition.metadata.options,
+    options: fieldDefinition.metadata.options.filter(
+      (option) => option.isActive !== false,
+    ),
   });
 
   const {

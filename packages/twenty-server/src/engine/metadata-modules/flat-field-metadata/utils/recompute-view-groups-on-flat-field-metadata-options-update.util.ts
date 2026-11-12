@@ -37,8 +37,11 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
     created: createdFieldMetadataOptions,
   } = compareTwoFlatFieldMetadataEnumOptions({
     compareLabel: false,
-    fromOptions: fromFlatFieldMetadata.options,
-    toOptions,
+    // An inactive option has no group, so deactivating removes it and reactivating recreates it.
+    fromOptions: fromFlatFieldMetadata.options.filter(
+      (option) => option.isActive !== false,
+    ),
+    toOptions: toOptions.filter((option) => option.isActive !== false),
   });
 
   const flatViewsAffected = findManyFlatEntityByIdInFlatEntityMapsOrThrow({

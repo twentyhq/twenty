@@ -11,20 +11,22 @@ import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields
 import { convertBulkTextToOptions } from '@/settings/data-model/fields/forms/select/utils/convertBulkTextToOptions';
 import { convertOptionsToBulkText } from '@/settings/data-model/fields/forms/select/utils/convertOptionsToBulkText';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
+import { setSelectOptionIsActive } from '@/settings/data-model/fields/forms/select/utils/setSelectOptionIsActive';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { toSpliced } from '~/utils/array/toSpliced';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -116,6 +118,14 @@ const StyledTextAreaContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledInactiveOptionsLabel = styled.div`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing['1.5']};
+  margin-top: ${themeCssVariables.spacing[3]};
+`;
+
 const StyledHelpText = styled.div`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.xs};
@@ -137,6 +147,21 @@ export const SettingsDataModelFieldSelectForm = ({
     existingFieldMetadataId,
   );
   const isNullable = fieldMetadataItem?.isNullable;
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
+  const isFieldOwnedByAnotherApplication =
+    isDefined(fieldMetadataItem?.applicationId) &&
+    isDefined(workspaceCustomApplicationId) &&
+    fieldMetadataItem.applicationId !== workspaceCustomApplicationId;
+  // Options the field's application ships can only be deactivated, and keep their API value.
+  const applicationOptionIds = new Set(
+    isFieldOwnedByAnotherApplication
+      ? (fieldMetadataItem?.options ?? [])
+          .filter((option) => option.isCustom !== true)
+          .map((option) => option.id)
+      : [],
+  );
 
   const [searchParams] = useSearchParams();
 
@@ -184,10 +209,17 @@ export const SettingsDataModelFieldSelectForm = ({
       return;
     }
 
-    const nextOptions = moveArrayItem(values, {
-      fromIndex: result.source.index,
-      toIndex: result.destination.index,
-    }).map((option, index) => ({ ...option, position: index }));
+    const activeOptions = values.filter((option) => option.isActive !== false);
+    const inactiveOptions = values.filter(
+      (option) => option.isActive === false,
+    );
+    const nextOptions = [
+      ...moveArrayItem(activeOptions, {
+        fromIndex: result.source.index,
+        toIndex: result.destination.index,
+      }),
+      ...inactiveOptions,
+    ].map((option, index) => ({ ...option, position: index }));
 
     onChange(nextOptions);
   };
@@ -262,14 +294,59 @@ export const SettingsDataModelFieldSelectForm = ({
 
   const getOptionsWithNewOption = () => {
     const currentOptions = getValues('options');
+    const activeOptions = currentOptions.filter(
+      (option) => option.isActive !== false,
+    );
+    const inactiveOptions = currentOptions.filter(
+      (option) => option.isActive === false,
+    );
 
-    const newOptions = [
-      ...currentOptions,
+    return [
+      ...activeOptions,
       generateNewSelectOption(currentOptions),
-    ];
-
-    return newOptions;
+      ...inactiveOptions,
+    ].map((option, position) => ({ ...option, position }));
   };
+
+  const handleRemoveOption = (optionId: string) => {
+    if (disabled) {
+      return;
+    }
+
+    setFormValue(
+      'options',
+      getValues('options')
+        .filter((option) => option.id !== optionId)
+        .map((option, position) => ({ ...option, position })),
+      { shouldDirty: true, shouldValidate: true },
+    );
+  };
+
+  const handleSetOptionIsActive = (optionId: string, isActive: boolean) => {
+    if (disabled) {
+      return;
+    }
+
+    setFormValue(
+      'options',
+      setSelectOptionIsActive({
+        options: getValues('options'),
+        optionId,
+        isActive,
+      }),
+      { shouldDirty: true, shouldValidate: true },
+    );
+  };
+
+  // Application options stay, deactivated unless a default value still points at them.
+  const removeAllSelectOptions = (options: FieldMetadataItemOption[]) =>
+    options
+      .filter((option) => applicationOptionIds.has(option.id))
+      .map((option, position) => ({
+        ...option,
+        position,
+        ...(isOptionDefaultValue(option.value) ? {} : { isActive: false }),
+      }));
 
   const handleAddOption = () => {
     const newOptions = getOptionsWithNewOption();
@@ -373,7 +450,9 @@ export const SettingsDataModelFieldSelectForm = ({
                         <Dropdown.ActionItem
                           color="danger"
                           startIcon={<IconTrash />}
-                          onClick={() => onChange([])}
+                          onClick={() =>
+                            onChange(removeAllSelectOptions(options))
+                          }
                         >{t`Remove all`}</Dropdown.ActionItem>
                       </Dropdown.Section>
                     </DropdownContent>
@@ -395,6 +474,7 @@ export const SettingsDataModelFieldSelectForm = ({
                       const nextOptions = convertBulkTextToOptions(
                         nextOptionAsText,
                         options,
+                        applicationOptionIds,
                       );
 
                       onChange(nextOptions);
@@ -405,7 +485,9 @@ export const SettingsDataModelFieldSelectForm = ({
                     disabled={disabled}
                   />
                   <StyledHelpText>
-                    {t`Enter one option per line. Each line will become a new option.`}
+                    {applicationOptionIds.size > 0
+                      ? t`Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed.`
+                      : t`Enter one option per line. Each line will become a new option.`}
                   </StyledHelpText>
                 </StyledTextAreaContainer>
               ) : (
@@ -418,78 +500,103 @@ export const SettingsDataModelFieldSelectForm = ({
                     }
                     draggableItems={
                       <>
-                        {options.map((option, index) => (
-                          <DraggableItem
-                            key={option.id}
-                            draggableId={option.id}
-                            index={index}
-                            itemComponent={
-                              <SettingsDataModelFieldSelectFormOptionRow
-                                key={option.id}
-                                option={option}
-                                isNewRow={index === options.length - 1}
-                                isApiValueVisible={isApiValuesVisible}
-                                onChange={(nextOption) => {
-                                  if (disabled) {
-                                    return;
-                                  }
-                                  const nextOptions = toSpliced(
-                                    options,
-                                    index,
-                                    1,
-                                    nextOption,
-                                  );
-                                  onChange(nextOptions);
+                        {options
+                          .filter((option) => option.isActive !== false)
+                          .map((option, index, activeOptions) => (
+                            <DraggableItem
+                              key={option.id}
+                              draggableId={option.id}
+                              index={index}
+                              itemComponent={
+                                <SettingsDataModelFieldSelectFormOptionRow
+                                  key={option.id}
+                                  option={option}
+                                  isNewRow={index === activeOptions.length - 1}
+                                  isApiValueVisible={isApiValuesVisible}
+                                  isApiValueReadOnly={applicationOptionIds.has(
+                                    option.id,
+                                  )}
+                                  onChange={(nextOption) => {
+                                    if (disabled) {
+                                      return;
+                                    }
+                                    onChange(
+                                      options.map((currentOption) =>
+                                        currentOption.id === option.id
+                                          ? nextOption
+                                          : currentOption,
+                                      ),
+                                    );
 
-                                  if (
-                                    nextOption.value !== option.value &&
-                                    isOptionDefaultValue(option.value)
-                                  ) {
+                                    if (
+                                      nextOption.value !== option.value &&
+                                      isOptionDefaultValue(option.value)
+                                    ) {
+                                      handleRemoveOptionAsDefault(option.value);
+                                      handleSetOptionAsDefault(
+                                        nextOption.value,
+                                      );
+                                    }
+                                  }}
+                                  onRemove={
+                                    applicationOptionIds.has(option.id)
+                                      ? undefined
+                                      : () => handleRemoveOption(option.id)
+                                  }
+                                  onDeactivate={() =>
+                                    handleSetOptionIsActive(option.id, false)
+                                  }
+                                  isDefault={isOptionDefaultValue(option.value)}
+                                  fieldIsNullable={!!isNullable}
+                                  onSetAsDefault={() => {
+                                    if (disabled) {
+                                      return;
+                                    }
+                                    handleSetOptionAsDefault(option.value);
+                                  }}
+                                  onRemoveAsDefault={() => {
+                                    if (disabled) {
+                                      return;
+                                    }
                                     handleRemoveOptionAsDefault(option.value);
-                                    handleSetOptionAsDefault(nextOption.value);
-                                  }
-                                }}
-                                onRemove={() => {
-                                  if (disabled) {
-                                    return;
-                                  }
-                                  const nextOptions = toSpliced(
-                                    options,
-                                    index,
-                                    1,
-                                  ).map((option, nextOptionIndex) => ({
-                                    ...option,
-                                    position: nextOptionIndex,
-                                  }));
-                                  onChange(nextOptions);
-                                }}
-                                isDefault={isOptionDefaultValue(option.value)}
-                                fieldIsNullable={!!isNullable}
-                                onSetAsDefault={() => {
-                                  if (disabled) {
-                                    return;
-                                  }
-                                  handleSetOptionAsDefault(option.value);
-                                }}
-                                onRemoveAsDefault={() => {
-                                  if (disabled) {
-                                    return;
-                                  }
-                                  handleRemoveOptionAsDefault(option.value);
-                                }}
-                                onInputEnter={() => {
-                                  if (disabled) {
-                                    return;
-                                  }
-                                  handleInputEnter();
-                                }}
-                              />
-                            }
-                          />
-                        ))}
+                                  }}
+                                  onInputEnter={() => {
+                                    if (disabled) {
+                                      return;
+                                    }
+                                    handleInputEnter();
+                                  }}
+                                />
+                              }
+                            />
+                          ))}
                       </>
                     }
                   />
+                  {options.some((option) => option.isActive === false) && (
+                    <>
+                      <StyledInactiveOptionsLabel>{t`Inactive`}</StyledInactiveOptionsLabel>
+                      {options
+                        .filter((option) => option.isActive === false)
+                        .map((option) => (
+                          <SettingsDataModelFieldSelectFormOptionRow
+                            key={option.id}
+                            option={option}
+                            isApiValueVisible={isApiValuesVisible}
+                            isApiValueReadOnly
+                            onChange={() => undefined}
+                            onRemove={
+                              applicationOptionIds.has(option.id)
+                                ? undefined
+                                : () => handleRemoveOption(option.id)
+                            }
+                            onActivate={() =>
+                              handleSetOptionIsActive(option.id, true)
+                            }
+                          />
+                        ))}
+                    </>
+                  )}
                 </>
               )}
             </Card.Content>
