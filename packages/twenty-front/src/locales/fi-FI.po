@@ -1112,10 +1112,10 @@ msgstr "{roleLabel} ei voi {humanReadableAction} {objectLabel} tietoja"
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} liitetään \"{newRoleName}\" -rooliin."
 
-#. js-lingui-id: Mkqwbv
+#. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
-msgid "{runCount, plural, one {# run} other {# runs}}"
-msgstr "{runCount, plural, one {# suoritus} other {# suoritusta}}"
+msgid "{runCount, plural, one {# turn} other {# turns}}"
+msgstr "{runCount, plural, one {# kierros} other {# kierrosta}}"
 
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -2990,6 +2990,11 @@ msgstr ""
 msgid "Agent run"
 msgstr "Agentin ajo"
 
+#. js-lingui-id: aeu9gE
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+msgid "Agent sections"
+msgstr "Agentin osiot"
+
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Agent Web Search"
@@ -4861,6 +4866,11 @@ msgstr "Avatar"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Average"
 msgstr "Keskiarvo"
+
+#. js-lingui-id: RSsxRl
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Avg duration"
+msgstr "Keskim. kesto"
 
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -7069,6 +7079,7 @@ msgstr "valmis"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7990,8 +8001,13 @@ msgstr "Esikatselua ei voitu ladata."
 msgid "Could not load related records"
 msgstr "Liittyviä tietueita ei voitu ladata"
 
+#. js-lingui-id: 3167/q
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Could not load run insights"
+msgstr "Suorituksen tietojen lataaminen epäonnistui"
+
 #. js-lingui-id: Ft89Ck
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Could not load runs"
 msgstr "Suorituksia ei voitu ladata"
 
@@ -8004,6 +8020,11 @@ msgstr "Tätä työnkulun versiota ei voitu ladata."
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Could not load this workflow."
 msgstr "Työnkulkua ei voitu ladata."
+
+#. js-lingui-id: 6UPqqs
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Could not load turns"
+msgstr "Kierrosten lataaminen epäonnistui"
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -8238,6 +8259,16 @@ msgstr "Luo {0}"
 msgid "Create {objectLabelSingular}"
 msgstr "Luo {objectLabelSingular}"
 
+#. js-lingui-id: RRkWki
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {recordCount} {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: TryTER
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {selectedCount}"
+msgstr ""
+
 #. js-lingui-id: jmGqEp
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -8414,6 +8445,11 @@ msgstr "Luo tietue"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Luo tietue"
+
+#. js-lingui-id: fYhMZY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
+msgstr "Luo tietueiden jakamisen ja käyttöoikeusryhmien tallennustila tauluina, որոնք ovat käyttöoikeusmoottorin omistuksessa, objektien sijaan. Koskee vain työtilan luomista."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -9678,10 +9714,20 @@ msgstr "Poistetaanko {objectLabel}-objekti?"
 msgid "Delete {objectLabelPlural}"
 msgstr "Poista {objectLabelPlural}"
 
+#. js-lingui-id: CF0F8U
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {recordCount} {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: j8kv91
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete {relationObjectLabelSingular}"
 msgstr "Poista {relationObjectLabelSingular}"
+
+#. js-lingui-id: ++479H
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {selectedCount}"
+msgstr ""
 
 #. js-lingui-id: wU3o2t
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -9823,6 +9869,12 @@ msgstr "Poista taso"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
 msgstr "Poista rajoitus"
+
+#. js-lingui-id: KDfTdX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Delete message"
+msgstr ""
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -10715,6 +10767,7 @@ msgstr ""
 
 #. js-lingui-id: lkz6PL
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -10987,6 +11040,12 @@ msgstr ""
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Edit linked records"
 msgstr "Muokkaa linkitettyjä tietueita"
+
+#. js-lingui-id: QjH+ZX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Edit message"
+msgstr ""
 
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -11395,6 +11454,7 @@ msgstr "Työntekijät"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
+#: src/modules/ai/components/AiChatRecordApprovalReview.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -11966,6 +12026,7 @@ msgstr "Pehmeästi poistettujen tietueiden poistaminen"
 #: src/modules/log-console/constants/LogConsoleLevels.ts
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -12719,6 +12780,7 @@ msgstr "Kasvot"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12735,6 +12797,11 @@ msgstr "Kasvot"
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Failed"
 msgstr "Epäonnistui"
+
+#. js-lingui-id: GUHLDy
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failed · 14d"
+msgstr "Epäonnistui · 14 pv"
 
 #. js-lingui-id: hGfbkg
 #: src/modules/activities/files/utils/downloadFile.ts
@@ -13272,6 +13339,11 @@ msgstr "Tiedostoa ei voitu ladata: {fileName}"
 #: src/modules/settings/workspace/components/WorkspaceLogoUploader.tsx
 msgid "Failed to upload picture"
 msgstr "Kuvan lähetys epäonnistui"
+
+#. js-lingui-id: D98pOW
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failure rate"
+msgstr "Epäonnistumisprosentti"
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -13855,6 +13927,7 @@ msgid "Fix the payment issue to restore your premium features."
 msgstr "Korjaa maksuongelma palauttaaksesi premium-ominaisuudet."
 
 #. js-lingui-id: ylQd2j
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Flow"
@@ -15508,6 +15581,16 @@ msgstr "Tuo CSV-tiedostoja"
 msgid "Import data"
 msgstr "Tuo tietoja"
 
+#. js-lingui-id: Iu+TFD
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Import new emails from this account"
+msgstr "Tuo uudet sähköpostit tästä tilistä"
+
+#. js-lingui-id: QOjodt
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Import new events from this account"
+msgstr "Tuo uudet tapahtumat tästä tilistä"
+
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16842,6 +16925,11 @@ msgstr "Viimeinen maksu epäonnistui. Päivitä laskutustietosi."
 msgid "Last refreshed"
 msgstr "Viimeksi päivitetty"
 
+#. js-lingui-id: WT1Ibn
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Last run"
+msgstr "Viimeisin suoritus"
+
 #. js-lingui-id: U011Uh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Last seen"
@@ -18155,6 +18243,7 @@ msgstr "Arvojen enimmäismäärä"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -18178,6 +18267,11 @@ msgstr "MCP-palvelin"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "MCP-palvelimet"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "MCP-palvelimet eivät ole käytettävissä"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -18989,6 +19083,8 @@ msgstr "N/A"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -19956,6 +20052,11 @@ msgstr "Tapahtumia ei löytynyt"
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Tälle kohteelle {objectName} ei ole vielä ajoitettu tapahtumia."
 
+#. js-lingui-id: dAMlIe
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+msgid "No failed runs"
+msgstr "Ei epäonnistuneita suorituksia"
+
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
 msgid "No field configured"
@@ -20014,6 +20115,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "Tälle toiminnolle ei ole syötekenttiä"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "Tälle työkalulle ei ole syötekenttiä"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -20353,7 +20459,7 @@ msgid "No rules yet"
 msgstr "Ei vielä sääntöjä"
 
 #. js-lingui-id: eOvDHm
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "No runs yet"
 msgstr "Ei vielä suorituksia"
 
@@ -20458,6 +20564,11 @@ msgstr "Tälle funktiolle ei ole määritetty laukaisinta."
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
 msgstr "Mikään laukaisin ei ole käytössä. Ota käyttöön jokin yllä olevista vaihtoehdoista valitaksesi, miten tätä funktiota kutsutaan."
+
+#. js-lingui-id: 96i2d6
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "No turns yet"
+msgstr "Ei vielä kierroksia"
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -21745,6 +21856,7 @@ msgstr "Alkuperäinen viesti ei ole saatavilla"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -21888,6 +22000,7 @@ msgid "Override Draft"
 msgstr "Ohita luonnos"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
@@ -22155,6 +22268,16 @@ msgstr "Polku"
 msgid "Pause"
 msgstr "Keskeytä"
 
+#. js-lingui-id: 03eLh4
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Pause or resume importing emails from this account"
+msgstr "Keskeytä tai jatka sähköpostien tuontia tästä tilistä"
+
+#. js-lingui-id: ylzMCX
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Pause or resume importing events from this account"
+msgstr "Keskeytä tai jatka tapahtumien tuontia tältä tililtä"
+
 #. js-lingui-id: URAE3q
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -22316,6 +22439,11 @@ msgstr "käyttöoikeuslippu"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Permission flags"
 msgstr "Käyttöoikeusliput"
+
+#. js-lingui-id: yAZKh+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Permission tables"
+msgstr "Käyttöoikeustaulut"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -23435,6 +23563,17 @@ msgstr "Viimeisin"
 msgid "Recent Events (oldest → newest)"
 msgstr "Viimeisimmät tapahtumat (vanhin → uusin)"
 
+#. js-lingui-id: gKFqSG
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Recent failed runs"
+msgstr "Viimeisimmät epäonnistuneet suoritukset"
+
+#. js-lingui-id: dF8kMd
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Recent runs"
+msgstr "Viimeisimmät suoritukset"
+
 #. js-lingui-id: EoiSFI
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Recent Users"
@@ -23686,7 +23825,7 @@ msgid "Record-level filter"
 msgstr "Tietuetason suodatin"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "Tietue:"
 
@@ -24992,6 +25131,7 @@ msgid "runs"
 msgstr "suoritukset"
 
 #. js-lingui-id: Tpm2G9
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
@@ -24999,15 +25139,26 @@ msgstr "suoritukset"
 msgid "Runs"
 msgstr "Suoritukset"
 
+#. js-lingui-id: 24xGtY
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Runs · 14d"
+msgstr "Suoritukset · 14 pv"
+
 #. js-lingui-id: F4I4hU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Runs and failures per version"
 msgstr "Ajot ja virheet version mukaan"
 
-#. js-lingui-id: RASTzS
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-msgid "Runs appear here once a workflow or an app uses this agent"
-msgstr "Suoritukset näkyvät täällä, kun työnkulku tai sovellus käyttää tätä agenttia"
+#. js-lingui-id: +L9ulP
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
+msgid "Runs appear here once this workflow is triggered"
+msgstr "Suoritukset näkyvät täällä, kun tämä työnkulku käynnistetään"
+
+#. js-lingui-id: NQVS6K
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Runs per day"
+msgstr "Suorituksia päivässä"
 
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -25871,16 +26022,10 @@ msgstr "Näytä tietueet"
 msgid "See Records on All Objects"
 msgstr "Näytä tietueet kaikista objekteista"
 
-#. js-lingui-id: dcr/0m
-#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
-msgid "See Runs"
-msgstr "Näytä suoritukset"
-
-#. js-lingui-id: dKYXK6
-#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
-msgid "See Settings"
-msgstr "Näytä asetukset"
+msgid "See Turns"
+msgstr "Näytä kierrokset"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26684,6 +26829,7 @@ msgstr "Asetetaan <0>tietokantaasi</0>..."
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -27682,6 +27828,8 @@ msgstr "Aloita tilauksesi"
 
 #. js-lingui-id: JEGlfK
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Started"
 msgstr "Aloitettu"
 
@@ -27736,6 +27884,7 @@ msgstr "Tilastot"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -28270,15 +28419,26 @@ msgid "Switched to a production instance."
 msgstr "Vaihdettu tuotantoympäristöön."
 
 #. js-lingui-id: Nu4DdT
+#: src/modules/settings/accounts/components/SettingsAccountsChannelSyncSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync"
 msgstr "Synkronoi"
+
+#. js-lingui-id: sCZwJy
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Sync calendar"
+msgstr "Synkronoi kalenteri"
 
 #. js-lingui-id: NmHVSC
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Synkronoi luettelo"
+
+#. js-lingui-id: uhtQRu
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Sync emails"
+msgstr "Synkronoi sähköpostit"
 
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
@@ -28818,6 +28978,11 @@ msgstr "Sähköpostipalvelimen varmenne on virheellinen"
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "Markkinapaikkaa ei voitu ladata. Tarkista yhteytesi ja yritä uudelleen."
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "MCP-palvelimia ei voitu ladata, joten tätä vaihetta ei voi muokata juuri nyt."
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -28874,6 +29039,11 @@ msgstr "Nimi, jonka vastaanottajat näkevät osoitteesi vieressä postilaatikoss
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "Nimi, jonka vastaanottajat näkevät osoitteesi vieressä. Se määritetään, kun kanava luodaan."
+
+#. js-lingui-id: op7R9r
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
+msgstr "Päivien määrä päivämäärästä tähän päivään UTC-ajassa. Negatiivinen, jos päivämäärä on tulevaisuudessa."
 
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -28934,6 +29104,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Jaettu sähköpostiosoite, jota haluat käyttää."
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "Työkalu toimii ilman argumentteja."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29490,7 +29665,7 @@ msgid "This record no longer exists or you cannot see it."
 msgstr "Tätä tietuetta ei enää ole tai et voi nähdä sitä."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "Tämä tietue poistetaan:"
 
@@ -29549,6 +29724,11 @@ msgstr "Tämä aliverkkotunnus on varattu"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "Tämä ottaa tältä työtilalta välittömästi takaisin {0} krediittiä. Perumista ei voi kumota."
+
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "Tätä työkalua ei enää tarjota sen MCP-palvelimella. Synkronoi palvelimen työkalut tai valitse toinen työkalu."
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -29952,6 +30132,11 @@ msgstr "Työkalu poistettu"
 msgid "Tool details: {displayMessage}"
 msgstr "Työkalun tiedot: {displayMessage}"
 
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "Työkalua ei löytynyt"
+
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
@@ -30247,6 +30432,11 @@ msgstr "Tosi, kun vähintään toinen puoli on tosi."
 msgid "True when both sides are true."
 msgstr "Tosi, kun molemmat puolet ovat tosia."
 
+#. js-lingui-id: NYXoie
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
+msgstr "Tosi, kun päivämäärä osuu UTC-ajassa tästä päivästä laskettuun ajanjaksoon: PAST, NEXT tai THIS, määrä sekä yksikkö, kuten DAY, WEEK tai MONTH. PAST ja NEXT eivät sisällä nykyistä ajanjaksoa."
+
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is a text with at least one character."
@@ -30285,6 +30475,8 @@ msgstr "Yritä uudelleen"
 
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "Yritä hetken kuluttua uudelleen"
 
@@ -30329,6 +30521,16 @@ msgstr "Muunna muotoon"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages."
 msgstr "Muuta AI-välilehti saapuneiksi, jotta voit luokitella, osoittaa, torkuttaa ja seurata keskusteluja, anna työnkulkujen lähettää viestejä ja agenttikysymyksiä jäsenen saapuneisiin sekä näytä Keskustelut-välilehti tietuesivuilla."
+
+#. js-lingui-id: R3c2/s
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+msgid "Turns"
+msgstr "Kierrokset"
+
+#. js-lingui-id: ZKeDcZ
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Turns appear here once a workflow or an app uses this agent"
+msgstr "Kierrokset näkyvät täällä, kun työnkulku tai sovellus käyttää tätä agenttia"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -31094,6 +31296,16 @@ msgstr "Päivitä {0}"
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "Päivitä {contextStoreNumberOfSelectedRecords} tietuetta"
+
+#. js-lingui-id: AHNNTF
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {recordCount} {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: ECfdor
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {selectedCount}"
+msgstr ""
 
 #. js-lingui-id: HELygz
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
@@ -31917,6 +32129,7 @@ msgstr "Vahvistetaan sähköpostiosoitettasi"
 
 #. js-lingui-id: eE0JZ4
 #: src/modules/log-console/constants/LogConsoleSources.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementsTable.tsx
@@ -32880,6 +33093,11 @@ msgstr "Työnkulun suoritus"
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Workflow not found."
 msgstr "Työnkulkua ei löytynyt."
+
+#. js-lingui-id: fezYCQ
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
+msgid "Workflow sections"
+msgstr "Työnkulun osiot"
 
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx

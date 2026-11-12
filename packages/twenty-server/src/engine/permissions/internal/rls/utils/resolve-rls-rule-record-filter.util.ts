@@ -5,7 +5,7 @@ import {
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import {
-  canReachAllRecords,
+  canAccessThroughAllRecordsPermission,
   isDefined,
   isRowLevelRecordsPermissionsRuleGrantingOperation,
 } from 'twenty-shared/utils';
@@ -76,7 +76,7 @@ export const resolveRlsRuleRecordFilter = ({
 
   if (
     !isDefined(objectRecordsPermissions?.rowLevelRecordsPermissions) ||
-    canReachAllRecords({
+    canAccessThroughAllRecordsPermission({
       objectRecordsPermissions,
       operationType: enforcedOperationType,
     })

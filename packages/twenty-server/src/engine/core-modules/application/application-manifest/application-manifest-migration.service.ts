@@ -76,7 +76,14 @@ export class ApplicationManifestMigrationService {
       application: manifest.application,
       objects: [],
       fields: [],
-      logicFunctions: [preInstallLogicFunctionManifest],
+      // The app's objects don't exist yet: the full sync that follows adds the event triggers
+      logicFunctions: [
+        {
+          ...preInstallLogicFunctionManifest,
+          eventTriggerSettings: undefined,
+          databaseEventTriggerSettings: undefined,
+        },
+      ],
       frontComponents: [],
       permissionFlags: [],
       roles: [],
@@ -126,6 +133,7 @@ export class ApplicationManifestMigrationService {
         manifest: preInstallOnlyManifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
+        existingAllFlatEntityMaps,
         now,
       });
 
@@ -213,6 +221,7 @@ export class ApplicationManifestMigrationService {
         manifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
+        existingAllFlatEntityMaps,
         now,
       });
 

@@ -13,7 +13,7 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   CustomError,
   isDefined,
 } from 'twenty-shared/utils';
@@ -56,7 +56,7 @@ export const useSingleRecordPickerPerformSearch = ({
         return false;
       }
 
-      return canReachSomeRecords({
+      return canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           objectMetadataItem.id,

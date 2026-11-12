@@ -4,7 +4,10 @@ import {
   type RowLevelPermissionPredicate,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -46,6 +49,8 @@ const buildRoleMaps = (
   userWorkspaceRoleMap: {},
   apiKeyRoleMap: {},
   flatRoleTargetByAgentIdMaps: {},
+  flatRoleTargetByApplicationIdMaps: {},
+  workspaceCustomApplicationId: 'workspace-custom-application-id',
   flatApplicationMaps,
 });
 
@@ -88,7 +93,6 @@ const computeForPrincipals = (principals: PrincipalsWithRoles) =>
     rolesPermissions,
     flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
     flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-    flatApplicationMaps: { byId: {} },
   });
 
 const buildMemberAuthContext = ({
@@ -141,7 +145,6 @@ const computeForAuthContext = ({
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: roleMaps.flatApplicationMaps,
       })
     : NO_ROLE_RECORDS_PERMISSIONS;
 };
@@ -189,7 +192,7 @@ describe('computePrincipalsRecordsPermissions', () => {
     ).toEqual(defaultRolePermissions);
   });
 
-  it('should mask with the object access of a limiting role, ignoring its RLS rule', () => {
+  it('should deny an object a limiting role only reaches through an RLS rule', () => {
     const readAllRecords: ObjectRecordsPermissions = {
       canCreateAllRecords: false,
       canReadAllRecords: true,
@@ -237,10 +240,63 @@ describe('computePrincipalsRecordsPermissions', () => {
       },
       flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
       flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-      flatApplicationMaps: { byId: {} },
     });
 
-    expect(recordsPermissions.objects[OBJECT_ID]).toEqual(readAllRecords);
+    expect(recordsPermissions.objects[OBJECT_ID]).toEqual({
+      ...readAllRecords,
+      canReadAllRecords: false,
+    });
+  });
+
+  it('should deny an object a limiting agent only reaches through the RLS rule of the role it shares with the main principal', () => {
+    const rowLevelOnly: ObjectRecordsPermissions = {
+      canCreateAllRecords: false,
+      canReadAllRecords: false,
+      canUpdateAllRecords: false,
+      canSoftDeleteAllRecords: false,
+      canDestroyAllRecords: false,
+      unreadableFields: [],
+      uneditableFields: [],
+      rowLevelRecordsPermissions: [
+        {
+          ruleId: 'rule-id',
+          canCreateRecords: false,
+          canReadRecords: true,
+          canUpdateRecords: false,
+          canSoftDeleteRecords: false,
+          canDestroyRecords: false,
+          predicates: [],
+          predicateGroups: [],
+          unreadableFields: [],
+          uneditableFields: [],
+        },
+      ],
+    };
+
+    const recordsPermissions = computePrincipalsRecordsPermissions({
+      principals: {
+        mainPrincipal: { type: 'role', roleId: 'shared-role-id' },
+        limitingPrincipal: {
+          type: 'agent',
+          agentId: 'agent-id',
+          roleId: 'shared-role-id',
+        },
+        applicationPrincipal: { type: 'customApplication' },
+      },
+      rolesPermissions: {
+        'shared-role-id': buildRoleRecordsPermissions({
+          [OBJECT_ID]: rowLevelOnly,
+        }),
+      },
+      flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+      flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
+    });
+
+    expect(
+      recordsPermissions.objects[OBJECT_ID]?.rowLevelRecordsPermissions,
+    ).toEqual([
+      expect.objectContaining({ ruleId: 'rule-id', canReadRecords: false }),
+    ]);
   });
 
   it('should not grant a permission that only one of the roles allows', () => {
@@ -635,7 +691,6 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
         rolesPermissions: disabledActionRolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        flatApplicationMaps,
       }).objects[INVOICE_ID];
 
       expect(invoicePermissions?.canDestroyAllRecords).toBe(canDestroy);
@@ -647,6 +702,66 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
       ).toBe(false);
     },
   );
+
+  describe('once the owning application runs with its grant', () => {
+    const grantRolesPermissions = {
+      ...disabledActionRolesPermissions,
+      'owning-application-grant-role-id': buildRoleRecordsPermissions({
+        [INVOICE_ID]: FULL_ACCESS,
+      }),
+    };
+
+    const computeInvoicePermissions = (authContext: PermissionsAuthContext) => {
+      const principals = resolvePermissionsPrincipalsWithRoles({
+        authContext,
+        roleMaps: {
+          ...buildRoleMaps(flatApplicationMaps),
+          flatRoleTargetByApplicationIdMaps: {
+            'owning-application-id': {
+              roleId: 'owning-application-grant-role-id',
+            },
+          },
+          flatWorkspaceMemberMaps: {
+            byId: { 'member-id': { userId: 'user-id' } },
+            userWorkspaceIdByUserId: { 'user-id': 'user-workspace-id' },
+          },
+          userWorkspaceRoleMap: {
+            'user-workspace-id': 'owning-application-role-id',
+          },
+        },
+      });
+
+      return isDefined(principals)
+        ? computePrincipalsRecordsPermissions({
+            principals,
+            rolesPermissions: grantRolesPermissions,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }).objects[INVOICE_ID]
+        : undefined;
+    };
+
+    it('keeps its rights on its own objects through the grant', () => {
+      expect(
+        computeInvoicePermissions({
+          type: 'application',
+          workspace: { id: 'workspace-id' },
+          application: { id: 'owning-application-id' },
+        })?.canDestroyAllRecords,
+      ).toBe(true);
+    });
+
+    it('still gives no owner rights to a member holding its requested role', () => {
+      expect(
+        computeInvoicePermissions(
+          buildMemberAuthContext({
+            workspaceMemberId: 'member-id',
+            applicationId: 'owning-application-id',
+          }),
+        )?.canDestroyAllRecords,
+      ).toBe(false);
+    });
+  });
 
   it('should keep the label identifier readable and restrict the inverse of a relation or morph relation', () => {
     const COMPANY_ID = 'company-id';
@@ -723,7 +838,6 @@ describe('computePrincipalsRecordsPermissions disabled actions', () => {
       },
       flatObjectMetadataMaps: objectMaps,
       flatFieldMetadataMaps: fieldMaps,
-      flatApplicationMaps,
     });
 
     expect(objects[INVOICE_ID]?.unreadableFields).not.toContain(
@@ -816,7 +930,6 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
           rolesPermissions: rolesPermissionsWithPredicate,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          flatApplicationMaps,
         }).objects[INVOICE_ID]
       : undefined;
   };
@@ -830,13 +943,13 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     });
 
     expect(
-      canReachSomeRecords({
+      canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: invoicePermissions,
         operationType: 'read',
       }),
     ).toBe(true);
     expect(
-      canReachSomeRecords({
+      canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: invoicePermissions,
         operationType: 'update',
       }),
@@ -849,7 +962,7 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     });
 
     expect(
-      canReachSomeRecords({
+      canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: invoicePermissions,
         operationType: 'destroy',
       }),
@@ -860,13 +973,13 @@ describe('computePrincipalsRecordsPermissions with a scope', () => {
     const invoicePermissions = compute({});
 
     expect(
-      canReachSomeRecords({
+      canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: invoicePermissions,
         operationType: 'read',
       }),
     ).toBe(false);
     expect(
-      canReachSomeRecords({
+      canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: invoicePermissions,
         operationType: 'update',
       }),
