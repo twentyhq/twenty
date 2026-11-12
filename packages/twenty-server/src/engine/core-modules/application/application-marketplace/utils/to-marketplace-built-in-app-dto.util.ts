@@ -5,7 +5,16 @@ export const toMarketplaceBuiltInAppDTO = ({
   builtInApplication,
   frontBaseUrl,
 }: {
-  builtInApplication: MarketplaceBuiltInApplication;
+  builtInApplication: Pick<
+    MarketplaceBuiltInApplication,
+    | 'universalIdentifier'
+    | 'name'
+    | 'description'
+    | 'author'
+    | 'category'
+    | 'logoPath'
+    | 'connectUrl'
+  >;
   frontBaseUrl: URL;
 }): MarketplaceAppDTO => ({
   id: builtInApplication.universalIdentifier,

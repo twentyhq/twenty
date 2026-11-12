@@ -1,6 +1,5 @@
 import { buildMcpServerUrl } from '@/settings/mcp/utils/mcpSetup';
-
-const MCP_SERVER_URL_PLACEHOLDER = '{mcpServerUrl}';
+import { MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER } from 'twenty-shared/application';
 
 export const getMarketplaceAppConnectLink = ({
   connectUrl,
@@ -10,6 +9,6 @@ export const getMarketplaceAppConnectLink = ({
   serverBaseUrl: string;
 }) =>
   connectUrl.replace(
-    MCP_SERVER_URL_PLACEHOLDER,
+    MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER,
     encodeURIComponent(buildMcpServerUrl(serverBaseUrl)),
   );

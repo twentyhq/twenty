@@ -92,12 +92,13 @@ export class MarketplaceQueryService {
     );
   }
 
-  async findMarketplaceAppDetail(
-    universalIdentifier: string,
-    {
-      shouldIncludeBuiltInApplications = false,
-    }: { shouldIncludeBuiltInApplications?: boolean } = {},
-  ): Promise<MarketplaceAppDetailDTO> {
+  async findMarketplaceAppDetail({
+    universalIdentifier,
+    shouldIncludeBuiltInApplications = false,
+  }: {
+    universalIdentifier: string;
+    shouldIncludeBuiltInApplications?: boolean;
+  }): Promise<MarketplaceAppDetailDTO> {
     const builtInApplication = shouldIncludeBuiltInApplications
       ? findMarketplaceBuiltInApplication(universalIdentifier)
       : undefined;

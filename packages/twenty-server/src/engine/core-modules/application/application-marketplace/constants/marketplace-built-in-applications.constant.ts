@@ -1,7 +1,9 @@
+import { MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER } from 'twenty-shared/application';
+
 import { type MarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-built-in-application.type';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
-// The front end serves logoPath and fills in {mcpServerUrl}.
+// The front end serves logoPath and fills in the MCP server URL placeholder.
 export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] =
   [
     {
@@ -15,8 +17,7 @@ export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] 
       category: 'Productivity',
       logoPath: '/images/oauth-clients/claude.webp',
       websiteUrl: 'https://claude.ai',
-      connectUrl:
-        'https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Twenty&connectorUrl={mcpServerUrl}',
+      connectUrl: `https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Twenty&connectorUrl=${MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER}`,
     },
     {
       universalIdentifier: '20202020-2cef-4d6c-9c88-05b40177ce9e',

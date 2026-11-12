@@ -66,10 +66,10 @@ export class MarketplaceResolver {
   async findMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
   ): Promise<MarketplaceAppDetailDTO> {
-    return this.marketplaceQueryService.findMarketplaceAppDetail(
+    return this.marketplaceQueryService.findMarketplaceAppDetail({
       universalIdentifier,
-      { shouldIncludeBuiltInApplications: true },
-    );
+      shouldIncludeBuiltInApplications: true,
+    });
   }
 
   @Mutation(() => Boolean)
