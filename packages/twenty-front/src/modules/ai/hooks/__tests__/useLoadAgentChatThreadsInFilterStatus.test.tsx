@@ -341,7 +341,9 @@ describe('inbox tab pages', () => {
     });
 
     await act(async () => {
-      await result.current.refreshAgentChatThreadsKeepingFilterStatusPages();
+      await result.current.refreshAgentChatThreads({
+        shouldKeepFilterStatusPages: true,
+      });
     });
 
     expect(store.get(agentChatThreadListState.atom)).toMatchObject({

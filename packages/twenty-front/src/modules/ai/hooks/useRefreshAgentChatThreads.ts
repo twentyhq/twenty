@@ -6,17 +6,16 @@ export const useRefreshAgentChatThreads = () => {
   const { loadAgentChatThreads } = useLoadAgentChatThreads();
 
   const refreshAgentChatThreads = useCallback(
-    () => loadAgentChatThreads('refresh'),
+    ({
+      shouldKeepFilterStatusPages = false,
+    }: { shouldKeepFilterStatusPages?: boolean } = {}) =>
+      loadAgentChatThreads(
+        shouldKeepFilterStatusPages
+          ? 'refresh-keeping-filter-status-pages'
+          : 'refresh',
+      ),
     [loadAgentChatThreads],
   );
 
-  const refreshAgentChatThreadsKeepingFilterStatusPages = useCallback(
-    () => loadAgentChatThreads('refresh-keeping-filter-status-pages'),
-    [loadAgentChatThreads],
-  );
-
-  return {
-    refreshAgentChatThreads,
-    refreshAgentChatThreadsKeepingFilterStatusPages,
-  };
+  return { refreshAgentChatThreads };
 };
