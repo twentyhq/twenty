@@ -706,6 +706,65 @@ describe('useAgentChat', () => {
       }),
     );
     expect(readPersistedDrafts()[THREAD_ID]).toBe(laterEdit);
+    expect(
+      jotaiStore.get(
+        agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
+      ),
+    ).toEqual({
+      isAssistantParticipant: false,
+      recipientWorkspaceMemberIds: [RECIPIENT_ID],
+    });
+  });
+
+  it('stays on the chat opened while the direct message opens', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['failed'],
+      isAiChatInboxEnabled: true,
+      isDirectMessageIdentityEnabled: true,
+      newThreadRecipients: {
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [RECIPIENT_ID],
+      },
+    });
+    const restoreEditorContent = jest.fn();
+    const releaseOpenDirectMessage = holdNextMutation(
+      result.current.apolloClient,
+    );
+
+    window.addEventListener(
+      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      restoreEditorContent,
+    );
+
+    let pendingSend: Promise<void> | undefined;
+
+    await act(async () => {
+      pendingSend = result.current.handleSendMessage();
+    });
+
+    act(() => {
+      jotaiStore.set(currentAiChatThreadState.atom, EXISTING_THREAD_ID);
+    });
+    releaseOpenDirectMessage();
+
+    await act(async () => {
+      await pendingSend;
+    });
+
+    window.removeEventListener(
+      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      restoreEditorContent,
+    );
+
+    expect(sentMessageVariables).toHaveBeenCalledWith(
+      expect.objectContaining({ threadId: DIRECT_MESSAGE_THREAD_ID }),
+    );
+    expect(result.current.currentAiChatThread).toBe(EXISTING_THREAD_ID);
+    expect(restoreEditorContent).not.toHaveBeenCalled();
+    expect(readPersistedDrafts()[DIRECT_MESSAGE_THREAD_ID]).toContain('Hello');
   });
 
   it('keeps a new chat to one person as a draft while it has attachments', async () => {

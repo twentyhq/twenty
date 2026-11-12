@@ -14,6 +14,7 @@ import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNe
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 
@@ -67,19 +68,27 @@ export const useOpenNewAgentChatAsDirectMessage = () => {
         );
         assertIsDefinedOrThrow(directMessageThread);
 
-        store.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
-          ...drafts,
-          [newChatThreadId]:
-            drafts[newChatThreadId] === serializedDraft
-              ? ''
-              : drafts[newChatThreadId],
-        }));
-        store.set(
-          agentChatNewThreadRecipientsFamilyState.atomFamily(newChatThreadId),
-          AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
-        );
-        store.set(currentAiChatThreadState.atom, directMessageThreadId);
-        projectAiChatThreadToUrl(directMessageThreadId);
+        if (
+          store.get(agentChatDraftsByThreadIdState.atom)[newChatThreadId] ===
+          serializedDraft
+        ) {
+          store.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+            ...drafts,
+            [newChatThreadId]: '',
+          }));
+          store.set(
+            agentChatNewThreadRecipientsFamilyState.atomFamily(newChatThreadId),
+            AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+          );
+        }
+
+        if (
+          (store.get(currentAiChatThreadState.atom) ??
+            store.get(newAiChatThreadIdState.atom)) === newChatThreadId
+        ) {
+          store.set(currentAiChatThreadState.atom, directMessageThreadId);
+          projectAiChatThreadToUrl(directMessageThreadId);
+        }
 
         return directMessageThreadId;
       } catch (error) {

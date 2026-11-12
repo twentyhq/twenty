@@ -342,9 +342,11 @@ export const useAgentChat = () => {
           store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
         }
 
-        dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-          content: serializedContentToSend,
-        });
+        if (store.get(currentAiChatThreadState.atom) === threadId) {
+          dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
+            content: serializedContentToSend,
+          });
+        }
       } finally {
         store.set(isSendingMessageAtom, false);
       }
