@@ -635,6 +635,9 @@ export class WorkspaceService {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
         ...(isDefined(aiChatAssistantProfile) && { aiChatAssistantProfile }),
+        ...(isDefined(payload.isInternalMessagesImportEnabled) && {
+          isInternalImportEnabled: payload.isInternalMessagesImportEnabled,
+        }),
         ...(isDefined(payload.aiDataPolicy) && {
           aiDataPolicy: buildAiDataPolicy({
             aiDataPolicyInput: payload.aiDataPolicy,
