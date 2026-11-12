@@ -9,7 +9,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
-import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
+import { type ApplicationManifestSyncResult } from 'src/engine/core-modules/application/application-manifest/types/application-manifest-sync-result.type';
 
 // Shared by marketplace/tarball installs and CLI dev sync so every source
 // applies a manifest through the same steps with the same guards.
@@ -46,11 +46,7 @@ export class ApplicationManifestApplyService {
     forceSdkClientGeneration?: boolean;
     persistVersion?: boolean;
     shouldDeferActions?: boolean;
-  }): Promise<{
-    workspaceMigration: WorkspaceMigration;
-    hasSchemaMetadataChanged: boolean;
-    cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
-  }> {
+  }): Promise<ApplicationManifestSyncResult> {
     // The application version is only persisted by a successful sync: no
     // version means no sync ever completed, so the SDK client must be
     // generated regardless of schema changes.
