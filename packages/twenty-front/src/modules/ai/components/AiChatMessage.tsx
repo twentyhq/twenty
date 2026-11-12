@@ -33,7 +33,6 @@ import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/sta
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
 import { isAgentChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
 import { parseAgentChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
-import { type AgentChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { isSilentAgentChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 import { getAgentChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
@@ -75,7 +74,6 @@ const StyledFilesContainer = styled.div`
 type AiChatUserMessageTextProps = {
   messageId: string;
   text: string;
-  quote: AgentChatMessageQuote | null;
   children: ReactNode;
   isOtherMember: boolean;
 };
@@ -83,7 +81,6 @@ type AiChatUserMessageTextProps = {
 const AiChatUserMessageText = ({
   messageId,
   text,
-  quote,
   children,
   isOtherMember,
 }: AiChatUserMessageTextProps) => {
@@ -95,10 +92,7 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      {isDefined(quote) && (
-        <AiChatMessageReplyQuote replyMessageId={messageId} quote={quote} />
-      )}
-      <AiChatUserMessageCollapsibleContent text={quote?.replyText ?? text}>
+      <AiChatUserMessageCollapsibleContent text={text}>
         {children}
       </AiChatUserMessageCollapsibleContent>
     </StyledChatMessageBubble>
@@ -239,11 +233,16 @@ export const AiChatMessage = ({
           </StyledSender>
         )}
         <StyledMessageContainer isUser={isUser}>
+          {isDefined(messageQuote) && (
+            <AiChatMessageReplyQuote
+              replyMessageId={messageId}
+              quote={messageQuote}
+            />
+          )}
           {isUser ? (
             <AiChatUserMessageText
               messageId={messageId}
-              text={messageText}
-              quote={messageQuote}
+              text={messageQuote?.replyText ?? messageText}
               isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
             >
               {messageContent}

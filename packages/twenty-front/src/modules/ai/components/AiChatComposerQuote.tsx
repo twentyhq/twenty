@@ -1,20 +1,21 @@
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatComposerQuotePreview } from '@/ai/components/AiChatComposerQuotePreview';
-import { AiChatMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
 import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
 import { useAgentChatMessageAuthor } from '@/ai/hooks/useAgentChatMessageAuthor';
+import { useIsOwnAgentChatMessage } from '@/ai/hooks/useIsOwnAgentChatMessage';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
-import { getAgentChatMessageQuoteSource } from '@/ai/utils/getAgentChatMessageQuoteSource';
-import { scrollToAgentChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
+import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const AiChatComposerQuote = () => {
+  const { t } = useLingui();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
@@ -28,6 +29,7 @@ export const AiChatComposerQuote = () => {
     { threadId: agentChatDisplayedThread, messageId: agentChatQuotedMessageId },
   );
   const quotedMessageAuthor = useAgentChatMessageAuthor(quotedMessage);
+  const isOwnQuotedMessage = useIsOwnAgentChatMessage(quotedMessage);
 
   if (!isDefined(agentChatQuotedMessageId)) {
     return null;
@@ -40,33 +42,22 @@ export const AiChatComposerQuote = () => {
       <AiChatComposerQuotePreview
         source={{ status: 'unavailable' }}
         onRemove={removeQuote}
-        onNavigateToMessage={scrollToAgentChatMessage}
       />
     );
   }
 
   return (
     <AiChatMessageAuthorResolver author={quotedMessageAuthor}>
-      {(author) => {
-        const { messageId, excerpt } = getAgentChatMessageQuoteSource({
-          message: quotedMessage,
-          author,
-        });
-
-        return (
-          <AiChatComposerQuotePreview
-            source={{
-              status: 'available',
-              messageId,
-              authorName: author.name,
-              authorAvatar: <AiChatMessageAuthorAvatar author={author} />,
-              excerpt,
-            }}
-            onRemove={removeQuote}
-            onNavigateToMessage={scrollToAgentChatMessage}
-          />
-        );
-      }}
+      {(author) => (
+        <AiChatComposerQuotePreview
+          source={{
+            status: 'available',
+            authorName: isOwnQuotedMessage ? t`You` : author.name,
+            excerpt: getAgentChatMessageQuoteExcerpt(quotedMessage),
+          }}
+          onRemove={removeQuote}
+        />
+      )}
     </AiChatMessageAuthorResolver>
   );
 };

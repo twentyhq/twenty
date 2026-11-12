@@ -420,6 +420,31 @@ describe('AiChatMessage', () => {
     expect(scrollToAgentChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
   });
 
+  it('names the current member "You" when a reply quotes their own message', () => {
+    renderMessage({
+      messageId: REPLY_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+    });
+
+    expect(screen.getByText('You')).toBeInTheDocument();
+    expect(screen.queryByText('Julia Martin')).not.toBeInTheDocument();
+  });
+
+  it('shows "Replying to You" when the composer quotes an own message', async () => {
+    renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+      hasComposerQuote: true,
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
+
+    expect(screen.getByText('Replying to')).toBeInTheDocument();
+    expect(screen.getByText('You')).toBeInTheDocument();
+  });
+
   it('opens the original message from the keyboard', async () => {
     renderMessage({ messageId: REPLY_MESSAGE.id, isAiChatInboxEnabled: true });
 

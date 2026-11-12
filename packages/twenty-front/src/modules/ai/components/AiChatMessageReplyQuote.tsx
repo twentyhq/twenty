@@ -4,9 +4,8 @@ import { type KeyboardEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatMessageReplyQuoteAvatar } from '@/ai/components/AiChatMessageReplyQuoteAvatar';
 import { AiChatQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
-import { useAgentChatMessageAuthor } from '@/ai/hooks/useAgentChatMessageAuthor';
+import { useIsOwnAgentChatMessage } from '@/ai/hooks/useIsOwnAgentChatMessage';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
 import { agentChatReplyQuotedMessageIdFamilySelector } from '@/ai/states/selectors/agentChatReplyQuotedMessageIdFamilySelector';
@@ -15,16 +14,14 @@ import { scrollToAgentChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledQuoteContainer = styled.div<{ isClickable: boolean }>`
+// width 0 with min-width 100% keeps the one-line excerpt from widening a fit-content bubble
+const StyledReplyLine = styled.div<{ isClickable: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
   cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'default')};
   display: flex;
-  margin-bottom: ${themeCssVariables.spacing[2]};
-
-  &:hover {
-    background: ${({ isClickable }) =>
-      isClickable ? themeCssVariables.background.transparent.light : 'none'};
-  }
+  margin-bottom: ${themeCssVariables.spacing[1]};
+  min-width: 100%;
+  width: 0;
 
   &:focus-visible {
     outline: 2px solid ${themeCssVariables.color.blue};
@@ -53,35 +50,20 @@ export const AiChatMessageReplyQuote = ({
     agentChatThreadMessageFamilySelector,
     { threadId: agentChatDisplayedThread, messageId: quotedMessageId },
   );
-  const quotedMessageAuthor = useAgentChatMessageAuthor(quotedMessage);
+  const isOwnQuotedMessage = useIsOwnAgentChatMessage(quotedMessage);
+  const authorName = isOwnQuotedMessage ? t`You` : quote.authorName;
 
   const preview = (
     <AiChatQuotedMessagePreview
-      source={{
-        status: 'available',
-        authorName: quote.authorName,
-        authorAvatar: (
-          <AiChatMessageReplyQuoteAvatar
-            quotedMessageAuthor={quotedMessageAuthor}
-            quotedAuthorName={quote.authorName}
-          />
-        ),
-        excerpt: quote.excerpt,
-      }}
+      source={{ status: 'available', authorName, excerpt: quote.excerpt }}
     />
   );
 
   if (!isDefined(quotedMessageId)) {
-    return (
-      <StyledQuoteContainer isClickable={false}>{preview}</StyledQuoteContainer>
-    );
+    return <StyledReplyLine isClickable={false}>{preview}</StyledReplyLine>;
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget) {
-      return;
-    }
-
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       scrollToAgentChatMessage(quotedMessageId);
@@ -89,7 +71,7 @@ export const AiChatMessageReplyQuote = ({
   };
 
   return (
-    <StyledQuoteContainer
+    <StyledReplyLine
       isClickable
       role="button"
       tabIndex={0}
@@ -98,6 +80,6 @@ export const AiChatMessageReplyQuote = ({
       onKeyDown={handleKeyDown}
     >
       {preview}
-    </StyledQuoteContainer>
+    </StyledReplyLine>
   );
 };

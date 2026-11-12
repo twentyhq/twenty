@@ -2,88 +2,82 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
-import { IconArrowUpRight } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { IconArrowBackUp } from 'twenty-ui/icon';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { type AiChatQuotedMessageSource } from '@/ai/types/AiChatQuotedMessageSource';
 
-const StyledQuote = styled.div`
-  border-left: 2px solid ${themeCssVariables.border.color.medium};
-  color: ${themeCssVariables.font.color.secondary};
+const StyledReply = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex: 1;
-  flex-direction: column;
-  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
-  overflow-wrap: anywhere;
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
-const StyledHeader = styled.div`
-  align-items: center;
+const StyledIcon = styled.span`
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  flex-shrink: 0;
+`;
+
+const StyledAuthorName = styled.span`
+  flex-shrink: 0;
+  max-width: 50%;
   min-width: 0;
 `;
 
-const StyledNavigation = styled.div`
-  align-self: flex-start;
+const StyledExcerpt = styled.span`
+  flex: 1;
+  min-width: 0;
 `;
 
 type AiChatQuotedMessagePreviewProps = {
   source: AiChatQuotedMessageSource;
-  onNavigateToMessage?: (messageId: string) => void;
+  label?: string;
 };
 
 export const AiChatQuotedMessagePreview = ({
   source,
-  onNavigateToMessage,
+  label,
 }: AiChatQuotedMessagePreviewProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
 
-  if (source.status === 'unavailable') {
-    return (
-      <StyledQuote>
-        <Text size="sm" color="tertiary">
-          {t`Original message unavailable`}
-        </Text>
-      </StyledQuote>
-    );
-  }
-
-  const { messageId } = source;
+  const isAvailable = source.status === 'available';
+  const excerpt =
+    isAvailable && isNonEmptyString(source.excerpt)
+      ? source.excerpt
+      : isAvailable
+        ? t`No text content`
+        : t`Original message unavailable`;
 
   return (
-    <StyledQuote>
-      <StyledHeader>
-        {source.authorAvatar}
-        <Text size="sm" weight="medium" color="primary" truncate>
-          {source.authorName}
-        </Text>
-      </StyledHeader>
-      {isNonEmptyString(source.excerpt) ? (
-        <LazyMarkdownRenderer text={source.excerpt} noImage />
-      ) : (
+    <StyledReply>
+      <StyledIcon>
+        <IconArrowBackUp
+          size={theme.icon.size.sm}
+          stroke={theme.icon.stroke.sm}
+        />
+      </StyledIcon>
+      {isDefined(label) && (
         <Text size="sm" color="tertiary">
-          {t`No text content`}
+          {label}
         </Text>
       )}
-      {isDefined(onNavigateToMessage) && isDefined(messageId) && (
-        <StyledNavigation>
-          <Button
-            size="sm"
-            variant="ghost"
-            startIcon={<IconArrowUpRight />}
-            onClick={() => onNavigateToMessage(messageId)}
-          >
-            {t`View original message`}
-          </Button>
-        </StyledNavigation>
+      {isAvailable && (
+        <StyledAuthorName>
+          <Text size="sm" weight="medium" color="secondary" truncate>
+            {source.authorName}
+          </Text>
+        </StyledAuthorName>
       )}
-    </StyledQuote>
+      <StyledExcerpt>
+        <Text size="sm" color="tertiary" truncate>
+          {excerpt}
+        </Text>
+      </StyledExcerpt>
+    </StyledReply>
   );
 };
