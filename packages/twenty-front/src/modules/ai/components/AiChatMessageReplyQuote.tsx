@@ -2,11 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
-import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
+import { AiChatMessageReplyQuoteAvatar } from '@/ai/components/AiChatMessageReplyQuoteAvatar';
 import { AiChatQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
 import { useAgentChatMessageAuthor } from '@/ai/hooks/useAgentChatMessageAuthor';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -57,26 +55,16 @@ export const AiChatMessageReplyQuote = ({
   );
   const quotedMessageAuthor = useAgentChatMessageAuthor(quotedMessage);
 
-  const preview = isDefined(quotedMessageAuthor) ? (
-    <AiChatMessageAuthorResolver author={quotedMessageAuthor}>
-      {(author) => (
-        <AiChatQuotedMessagePreview
-          source={{
-            status: 'available',
-            authorName: quote.authorName,
-            authorAvatar: <AiChatMessageAuthorAvatar author={author} />,
-            excerpt: quote.excerpt,
-          }}
-        />
-      )}
-    </AiChatMessageAuthorResolver>
-  ) : (
+  const preview = (
     <AiChatQuotedMessagePreview
       source={{
         status: 'available',
         authorName: quote.authorName,
         authorAvatar: (
-          <Avatar name={quote.authorName} size="sm" shape="circle" />
+          <AiChatMessageReplyQuoteAvatar
+            quotedMessageAuthor={quotedMessageAuthor}
+            quotedAuthorName={quote.authorName}
+          />
         ),
         excerpt: quote.excerpt,
       }}
