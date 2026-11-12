@@ -4,7 +4,8 @@ import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   isDefined,
   isValidationRuleReservedName,
-  tokenizeValidationRuleExpression,
+  renameValidationRuleExpressionFields,
+  renameValidationRulePath,
 } from 'twenty-shared/utils';
 
 import { type ValidationRuleFieldChange } from 'src/engine/metadata-modules/validation-rule/types/validation-rule-field-change.type';
@@ -14,32 +15,6 @@ type ValidationRuleFieldChangeTarget = {
   bindings: ValidationRuleBindings;
   isActive: boolean;
   errorFieldMetadataUniversalIdentifier: string | null;
-};
-
-// Each bound prefix (company, company.employees, previous.company.employees) names one field
-const renamePath = ({
-  path,
-  bindings,
-  newFieldNameByUniversalIdentifier,
-}: {
-  path: string;
-  bindings: ValidationRuleBindings;
-  newFieldNameByUniversalIdentifier: Map<string, string>;
-}): string => {
-  const segments = path.split('.');
-
-  return segments
-    .map((segment, index) => {
-      const boundUniversalIdentifier =
-        bindings[segments.slice(0, index + 1).join('.')];
-
-      return (
-        (isDefined(boundUniversalIdentifier)
-          ? newFieldNameByUniversalIdentifier.get(boundUniversalIdentifier)
-          : undefined) ?? segment
-      );
-    })
-    .join('.');
 };
 
 const renameFieldsInValidationRule = <
@@ -69,10 +44,10 @@ const renameFieldsInValidationRule = <
       return null;
     }
 
-    const renamedPath = renamePath({
+    const renamedPath = renameValidationRulePath({
       path,
       bindings,
-      newFieldNameByUniversalIdentifier,
+      fieldNameByUniversalIdentifier: newFieldNameByUniversalIdentifier,
     });
 
     if (
@@ -87,17 +62,11 @@ const renameFieldsInValidationRule = <
 
   return {
     ...validationRule,
-    expression: tokenizeValidationRuleExpression(validationRule.expression)
-      .map((token) =>
-        token.type === 'path'
-          ? renamePath({
-              path: token.text,
-              bindings,
-              newFieldNameByUniversalIdentifier,
-            })
-          : token.text,
-      )
-      .join(''),
+    expression: renameValidationRuleExpressionFields({
+      expression: validationRule.expression,
+      bindings,
+      fieldNameByUniversalIdentifier: newFieldNameByUniversalIdentifier,
+    }),
     bindings: renamedBindings,
   };
 };

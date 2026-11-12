@@ -62,6 +62,21 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
     expect(events).toEqual([wonEvent]);
   });
 
+  it('should follow a field renamed after the condition was written', async () => {
+    const wonEvent = buildEvent({ after: { stage: 'WON' } }, 'won');
+    const newEvent = buildEvent({ after: { stage: 'NEW' } }, 'new');
+
+    const { events } = await filterEventsMatchingDatabaseEventTrigger({
+      events: [wonEvent, newEvent],
+      eventName: 'opportunity.created',
+      condition: 'status == "WON"',
+      conditionBindings: { status: 'opportunity-stage' },
+      fields: FIELDS,
+    });
+
+    expect(events).toEqual([wonEvent]);
+  });
+
   it('should read previous values on an update to match a transition', async () => {
     const becameWon = buildEvent(
       {

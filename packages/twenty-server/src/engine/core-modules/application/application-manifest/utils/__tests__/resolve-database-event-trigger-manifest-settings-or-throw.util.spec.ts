@@ -120,6 +120,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
       eventName: 'opportunity.updated',
       updatedFields: ['stage', 'companyId'],
       condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+      conditionBindings: { stage: STAGE, 'previous.stage': STAGE },
       batchMode: true,
     });
   });
@@ -132,7 +133,11 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
         action: 'created',
         condition: "status == 'NEW'",
       }),
-    ).toEqual({ eventName: 'signal.created', condition: "status == 'NEW'" });
+    ).toEqual({
+      eventName: 'signal.created',
+      condition: "status == 'NEW'",
+      conditionBindings: { status: SIGNAL_STATUS },
+    });
   });
 
   it('listens to every object when no object is given', () => {
@@ -150,6 +155,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow', () => {
     ).toEqual({
       eventName: 'opportunity.created',
       condition: "isDefined(company) and company.name != 'Acme'",
+      conditionBindings: { company: COMPANY, 'company.name': COMPANY_NAME },
     });
 
     expect(() =>
@@ -233,6 +239,7 @@ describe('resolveDatabaseEventTriggerManifestSettingsOrThrow built-in fields', (
     ).toEqual({
       eventName: 'signal.created',
       condition: 'isDefined(createdAt)',
+      conditionBindings: { createdAt: expect.any(String) },
     });
   });
 
