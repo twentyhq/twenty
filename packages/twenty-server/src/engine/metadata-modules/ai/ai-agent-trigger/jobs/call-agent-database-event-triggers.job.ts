@@ -95,6 +95,7 @@ export class CallAgentDatabaseEventTriggersJob {
           eventName,
           watchedFields: trigger.settings.updatedFields,
           condition: trigger.settings.condition,
+          conditionBindings: trigger.settings.conditionBindings,
           application,
           agentId: flatAgent.id,
         });
