@@ -1,3 +1,5 @@
+import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
+import { isDefined } from 'twenty-shared/utils';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
@@ -7,6 +9,11 @@ export const getRoleWithoutServerDerivedRuleFields = (
 ): RoleWithPartialMembers => ({
   ...role,
   rowLevelPermissionRules: undefined,
+  objectPermissions: role.objectPermissions?.filter((objectPermission) =>
+    SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.some((key) =>
+      isDefined(objectPermission[key]),
+    ),
+  ),
   rowLevelPermissionFieldPermissions: undefined,
   rowLevelPermissionPredicates: role.rowLevelPermissionPredicates
     ?.map(({ rowLevelPermissionRuleId: _ruleId, ...predicate }) => ({

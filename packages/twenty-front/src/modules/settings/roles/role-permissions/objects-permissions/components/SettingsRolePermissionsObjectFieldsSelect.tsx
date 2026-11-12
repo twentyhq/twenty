@@ -131,28 +131,27 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
       roleId,
     };
 
-    if (mode === 'read') {
-      upsertFieldPermissionInDraftRole(
-        isAllowed
-          ? {
-              ...fieldPermission,
-              canReadFieldValue: null,
-              canUpdateFieldValue: null,
-            }
-          : {
-              ...fieldPermission,
-              canReadFieldValue: false,
-              canUpdateFieldValue: false,
-            },
-      );
+    if (mode === 'update') {
+      upsertFieldPermissionInDraftRole({
+        ...fieldPermission,
+        canUpdateFieldValue: isAllowed ? null : false,
+      });
       return;
     }
 
-    upsertFieldPermissionInDraftRole(
-      isAllowed
-        ? { ...fieldPermission, canUpdateFieldValue: null }
-        : { ...fieldPermission, canUpdateFieldValue: false },
-    );
+    if (isAllowed) {
+      upsertFieldPermissionInDraftRole({
+        ...fieldPermission,
+        canReadFieldValue: null,
+      });
+      return;
+    }
+
+    upsertFieldPermissionInDraftRole({
+      ...fieldPermission,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    });
   };
 
   const handleSelectedFieldIdsChange = (nextAllowedFieldIds: string[]) => {

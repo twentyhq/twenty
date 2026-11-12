@@ -1,3 +1,4 @@
+import { isFieldPermissionRestrictive } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldPermissionRestrictive';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -29,8 +30,7 @@ export const hasObjectPermissionOverride = ({
     (fieldPermission) =>
       fieldPermission.objectMetadataId === objectMetadataId &&
       !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) &&
-      (fieldPermission.canReadFieldValue === false ||
-        fieldPermission.canUpdateFieldValue === false),
+      isFieldPermissionRestrictive(fieldPermission),
   );
 
   return (

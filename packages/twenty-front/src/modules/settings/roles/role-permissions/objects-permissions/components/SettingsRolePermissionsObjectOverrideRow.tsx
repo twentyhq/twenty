@@ -1,3 +1,4 @@
+import { isFieldPermissionRestrictive } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldPermissionRestrictive';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -79,8 +80,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     (fieldPermission) =>
       fieldPermission.objectMetadataId === objectMetadataItem.id &&
       !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) &&
-      (fieldPermission.canReadFieldValue === false ||
-        fieldPermission.canUpdateFieldValue === false),
+      isFieldPermissionRestrictive(fieldPermission),
   );
 
   const grantedKeys = getGrantedObjectPermissionKeys({
