@@ -230,7 +230,7 @@ describe('upsert (createMany with upsert:true)', () => {
     );
   });
 
-  it('should restore a soft-deleted record matched on its unique fields only', async () => {
+  it('should create a new record rather than restore a soft-deleted record matched on its unique fields only', async () => {
     const createResponse = await makeGraphqlApiRequest({
       query: createRecordsQuery,
       variables: {
@@ -269,9 +269,9 @@ describe('upsert (createMany with upsert:true)', () => {
 
     const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
 
-    expect(upsertedRecord.id).toEqual(createdRecord.id);
+    expect(upsertedRecord.id).not.toEqual(createdRecord.id);
     expect(upsertedRecord.deletedAt).toBeNull();
-    expect(upsertedRecord.name).toEqual('originalRecord');
+    expect(upsertedRecord.name).not.toEqual('originalRecord');
   });
 
   it('should update the live record rather than restore a soft-deleted record holding the same unique fields', async () => {

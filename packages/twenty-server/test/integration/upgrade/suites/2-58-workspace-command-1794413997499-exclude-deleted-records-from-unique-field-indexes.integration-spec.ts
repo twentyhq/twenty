@@ -1,4 +1,5 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -48,6 +49,7 @@ const CUSTOM_REFERENCE: UniqueField = {
 describe('2-58 workspace command - exclude deleted records from unique field indexes (integration)', () => {
   let command: ExcludeDeletedRecordsFromUniqueFieldIndexesCommand;
   let customObjectMetadataId: string;
+  let customFieldMetadataId: string;
 
   const runOnWorkspace = (options: { dryRun?: boolean } = {}) =>
     command.runOnWorkspace({
@@ -177,7 +179,7 @@ describe('2-58 workspace command - exclude deleted records from unique field ind
 
     customObjectMetadataId = objectData.createOneObject.id;
 
-    await createOneFieldMetadata({
+    const { data: fieldData } = await createOneFieldMetadata({
       input: {
         name: CUSTOM_REFERENCE.fieldName,
         label: 'Reference',
@@ -188,6 +190,8 @@ describe('2-58 workspace command - exclude deleted records from unique field ind
       },
       gqlFields: 'id',
     });
+
+    customFieldMetadataId = fieldData.createOneField.id;
   });
 
   afterAll(async () => {
@@ -253,5 +257,22 @@ describe('2-58 workspace command - exclude deleted records from unique field ind
     expect(
       await findPhysicalIndexDefinition(groupHashIndexMetadata.name),
     ).not.toContain('WHERE');
+  });
+
+  it('lets a field with a legacy index stop being unique before the command runs', async () => {
+    const { legacyIndexName } =
+      await turnUniqueFieldIndexIntoLegacyIndex(CUSTOM_REFERENCE);
+
+    await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: customFieldMetadataId,
+        updatePayload: { isUnique: false },
+      },
+      gqlFields: 'id isUnique',
+    });
+
+    expect(await findPhysicalIndexDefinition(legacyIndexName)).toBeUndefined();
+    expect(await findUniqueFieldIndexMetadatas(CUSTOM_REFERENCE)).toEqual([]);
   });
 });

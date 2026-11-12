@@ -498,11 +498,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     return (await queryBuilder
       .withDeleted()
-      .orderBy(
-        `${flatObjectMetadata.nameSingular}.deletedAt`,
-        'DESC',
-        'NULLS FIRST',
-      )
       .setFindOptions({
         select: selectOptions,
       })

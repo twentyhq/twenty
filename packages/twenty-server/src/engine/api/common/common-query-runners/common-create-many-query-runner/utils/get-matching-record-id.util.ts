@@ -15,49 +15,44 @@ export const getMatchingRecordId = (
   conflictingFieldGroups: ConflictingFieldGroup[],
   existingRecords: PartialObjectRecordWithId[],
 ): string | undefined => {
-  const matches = conflictingFieldGroups.reduce<
-    { matchingRecord: PartialObjectRecordWithId; isReplaceable: boolean }[]
-  >((acc, fieldGroup) => {
-    const requestFieldValues = fieldGroup.conflictingProperties.map(
-      (conflictingProperty) => ({
-        conflictingProperty,
-        value: getValueFromPath(record, conflictingProperty.fullPath),
-      }),
-    );
+  const matchingRecordIds = conflictingFieldGroups.reduce<string[]>(
+    (acc, fieldGroup) => {
+      const requestFieldValues = fieldGroup.conflictingProperties.map(
+        (conflictingProperty) => ({
+          conflictingProperty,
+          value: getValueFromPath(record, conflictingProperty.fullPath),
+        }),
+      );
 
-    if (requestFieldValues.some(({ value }) => !isDefined(value))) {
+      if (requestFieldValues.some(({ value }) => !isDefined(value))) {
+        return acc;
+      }
+
+      const candidateRecords = fieldGroup.isIgnoringDeletedRecords
+        ? existingRecords.filter(
+            (existingRecord) => !isDefined(existingRecord.deletedAt),
+          )
+        : existingRecords;
+
+      const matchingRecord = candidateRecords.find((existingRecord) =>
+        requestFieldValues.every(({ conflictingProperty, value }) => {
+          const existingFieldValue = getValueFromPath(
+            existingRecord,
+            conflictingProperty.fullPath,
+          );
+
+          return isDefined(existingFieldValue) && existingFieldValue === value;
+        }),
+      );
+
+      if (isDefined(matchingRecord)) {
+        acc.push(matchingRecord.id);
+      }
+
       return acc;
-    }
-
-    const matchingRecord = existingRecords.find((existingRecord) =>
-      requestFieldValues.every(({ conflictingProperty, value }) => {
-        const existingFieldValue = getValueFromPath(
-          existingRecord,
-          conflictingProperty.fullPath,
-        );
-
-        return isDefined(existingFieldValue) && existingFieldValue === value;
-      }),
-    );
-
-    if (isDefined(matchingRecord)) {
-      acc.push({
-        matchingRecord,
-        isReplaceable:
-          (fieldGroup.isIgnoringDeletedRecords ?? false) &&
-          isDefined(matchingRecord.deletedAt),
-      });
-    }
-
-    return acc;
-  }, []);
-
-  const hasLiveMatch = matches.some(
-    ({ matchingRecord }) => !isDefined(matchingRecord.deletedAt),
+    },
+    [],
   );
-  const matchingRecordIds = matches
-    .filter(({ isReplaceable }) => !(hasLiveMatch && isReplaceable))
-    .map(({ matchingRecord }) => matchingRecord.id);
 
   if ([...new Set(matchingRecordIds)].length > 1) {
     const conflictingFieldsValues = conflictingFieldGroups
