@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import * as Sentry from '@sentry/node';
 import { type ToolSet } from 'ai';
+import { type ToolCategory } from 'twenty-shared/ai';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.constant';
 import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-excluded-tool-names.constant';
+import { MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES } from 'src/engine/api/mcp/constants/mcp-generic-mode-listed-tool-categories.constant';
 import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
 import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.constant';
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
@@ -18,6 +20,7 @@ import {
 } from 'src/engine/api/mcp/exceptions/mcp.exception';
 import { McpInstructionBuilderService } from 'src/engine/api/mcp/services/mcp-instruction-builder.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
+import { createGenericRecordTools } from 'src/engine/api/mcp/tools/generic-record-tools.tool';
 import {
   createListObjectMetadataNamesTool,
   LIST_OBJECT_METADATA_NAMES_TOOL_NAME,
@@ -109,7 +112,7 @@ export class McpProtocolService {
       await this.mcpInstructionBuilderService.buildInstructions({
         workspaceId: context.workspace.id,
         authContext: context.authContext,
-        isDirectMode: context.isDirectMode,
+        toolMode: context.toolMode,
       });
 
     return {
@@ -338,24 +341,33 @@ export class McpProtocolService {
   ): Promise<McpToolsListResult> {
     const { toolSet, toolContext } = await this.resolveMcpToolSet(context);
 
-    if (!context.isDirectMode) {
-      return this.mcpToolExecutorService.handleToolsListing(toolSet);
+    switch (context.toolMode) {
+      case 'meta':
+        return this.mcpToolExecutorService.handleToolsListing(toolSet);
+      case 'direct': {
+        const {
+          [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
+          [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
+          [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
+          ...nativeTools
+        } = toolSet;
+
+        return this.mcpToolExecutorService.handleToolsListing({
+          ...(await this.buildAnnotatedRegistryTools({ toolContext })),
+          ...nativeTools,
+        });
+      }
+      case 'generic':
+        return this.mcpToolExecutorService.handleToolsListing({
+          ...(await this.buildAnnotatedRegistryTools({
+            toolContext,
+            categories: MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES,
+          })),
+          ...toolSet,
+        });
+      default:
+        return assertUnreachable(context.toolMode);
     }
-
-    const {
-      [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
-      [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
-      [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
-      ...nativeTools
-    } = toolSet;
-
-    const annotatedRegistryTools =
-      await this.buildAnnotatedRegistryTools(toolContext);
-
-    return this.mcpToolExecutorService.handleToolsListing({
-      ...annotatedRegistryTools,
-      ...nativeTools,
-    });
   }
 
   private async handleToolsCall({
@@ -380,8 +392,9 @@ export class McpProtocolService {
 
     const { toolSet } = await this.resolveMcpToolSet(context);
 
+    // Also keeps per-object names working for clients that snapshotted an earlier tools/list
     const shouldForwardToExecuteTool =
-      context.isDirectMode && !isDefined(toolSet[toolName]);
+      context.toolMode !== 'meta' && !isDefined(toolSet[toolName]);
 
     return this.mcpToolExecutorService.handleToolCall({
       toolSet,
@@ -397,7 +410,7 @@ export class McpProtocolService {
   }
 
   private async resolveMcpToolSet(context: McpCoreQueryContext) {
-    return Sentry.startSpan(
+    const { toolSet, toolContext } = await Sentry.startSpan(
       { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
       () =>
         this.buildMcpToolSet(context.workspace, {
@@ -409,17 +422,37 @@ export class McpProtocolService {
           agentId: context.agentId,
         }),
     );
+
+    if (context.toolMode !== 'generic') {
+      return { toolSet, toolContext };
+    }
+
+    return {
+      toolSet: {
+        ...createGenericRecordTools({
+          toolRegistry: this.toolRegistry,
+          context: toolContext,
+        }),
+        ...toolSet,
+      },
+      toolContext,
+    };
   }
 
-  private buildAnnotatedRegistryTools(
-    toolContext: ToolProviderContext,
-  ): Promise<McpToolSet> {
+  private buildAnnotatedRegistryTools({
+    toolContext,
+    categories,
+  }: {
+    toolContext: ToolProviderContext;
+    categories?: ToolCategory[];
+  }): Promise<McpToolSet> {
     return Sentry.startSpan(
       { name: 'mcp list registry tools', op: 'mcp.tools', onlyIfParent: true },
       async () => {
         const descriptors = await this.toolRegistry.getCatalog(toolContext, {
           excludeTools: MCP_EXCLUDED_TOOL_NAMES,
           includeSchemas: true,
+          categories,
         });
 
         const registryTools = this.toolRegistry.hydrateToolSet(
