@@ -293,6 +293,7 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
     {
       "color": "green",
       "id": Any<String>,
+      "isCustom": true,
       "label": "Closed",
       "position": 5,
       "value": "CLOSED",

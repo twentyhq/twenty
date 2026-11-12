@@ -51,6 +51,24 @@ describe('normalizeUpdatedFieldMetadataOptions', () => {
     ]);
   });
 
+  it('keeps an id the input provides and gives same-value options distinct ids', () => {
+    const PROVIDED_OPTION_ID = '20202020-0000-4000-8000-000000000999';
+    const normalizedOptions =
+      normalizeUpdatedFieldMetadataOptions<FieldMetadataComplexOption>({
+        updatedOptions: [
+          { ...openOption, id: PROVIDED_OPTION_ID },
+          { value: 'CLOSED', label: 'Closed', color: 'red', position: 1 },
+          { value: 'CLOSED', label: 'Closed again', color: 'red', position: 2 },
+        ],
+        existingOptions: [openOption, closedOption],
+        isFieldOwnedByAnotherApplication: false,
+      });
+
+    expect(normalizedOptions[0].id).toBe(PROVIDED_OPTION_ID);
+    expect(normalizedOptions[1].id).toBe(CLOSED_OPTION_ID);
+    expect(normalizedOptions[2].id).not.toBe(CLOSED_OPTION_ID);
+  });
+
   it('marks options added to another application field as custom, whatever the input says', () => {
     const normalizedOptions = normalizeUpdatedFieldMetadataOptions({
       updatedOptions: [

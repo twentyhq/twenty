@@ -74,7 +74,7 @@ export const normalizeUpdatedFieldMetadataOptions = <
       .map((option) => [option.id, option]),
   );
   const updatedOptionIds = new Set(updatedOptions.map(({ id }) => id));
-  // An input without ids, or with fresh ones, still targets the option holding the same value.
+  // An input without ids still targets the options holding the same values, each matched once.
   const unclaimedExistingOptionByValue = new Map(
     existingOptions
       .filter((option) => !updatedOptionIds.has(option.id))
@@ -83,21 +83,28 @@ export const normalizeUpdatedFieldMetadataOptions = <
 
   const normalizedOptions = updatedOptions.map((updatedOption) => {
     const {
+      id: updatedOptionId,
       isActive,
       isCustom: _isCustom,
       ...optionProperties
     } = updatedOption;
     const existingOption =
-      (isDefined(updatedOption.id)
-        ? existingOptionById.get(updatedOption.id)
-        : undefined) ?? unclaimedExistingOptionByValue.get(updatedOption.value);
+      updatedOptionId === undefined
+        ? unclaimedExistingOptionByValue.get(updatedOption.value)
+        : existingOptionById.get(updatedOptionId);
+
+    unclaimedExistingOptionByValue.delete(updatedOption.value);
+
     const isCustom = isDefined(existingOption)
       ? existingOption.isCustom === true
       : isFieldOwnedByAnotherApplication;
 
     return {
+      id:
+        updatedOptionId === undefined
+          ? (existingOption?.id ?? v4())
+          : updatedOptionId,
       ...optionProperties,
-      id: existingOption?.id ?? updatedOption.id ?? v4(),
       ...(isActive === false ? { isActive: false } : {}),
       ...(isCustom ? { isCustom: true } : {}),
     } as TOption;
