@@ -56,7 +56,7 @@ const findRecordsInputSchema = z.object({
     .number()
     .int()
     .positive()
-    .optional()
+    .default(10)
     .describe(
       'Maximum number of records to return (default: 10, max: 100). Start small and increase only if needed.',
     ),
@@ -93,7 +93,7 @@ const groupRecordsInputSchema = z.object({
     .number()
     .int()
     .positive()
-    .optional()
+    .default(50)
     .describe('Maximum number of groups to return (default: 50, max: 100).'),
   orderBy: z
     .enum(['ASC', 'DESC'])

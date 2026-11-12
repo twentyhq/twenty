@@ -83,7 +83,7 @@ describe('createGenericRecordTools', () => {
         filter: { closeDate: { is: 'NOT_NULL' } },
       },
       'group_by',
-      { closeDate: { is: 'NOT_NULL' }, groupBy: [{ stage: true }] },
+      { closeDate: { is: 'NOT_NULL' }, groupBy: [{ stage: true }], limit: 50 },
     ],
     [
       'create_records',
@@ -151,6 +151,7 @@ describe('createGenericRecordTools', () => {
 
       await call(toolName, toolArguments);
 
+      expect(resolveAndExecuteDatabaseCrud).toHaveBeenCalledTimes(1);
       expect(resolveAndExecuteDatabaseCrud).toHaveBeenCalledWith({
         objectName: toolArguments.objectName,
         operation,
@@ -159,6 +160,17 @@ describe('createGenericRecordTools', () => {
       });
     },
   );
+
+  it('should cap find_records at ten records when no limit is passed', async () => {
+    const { call, resolveAndExecuteDatabaseCrud } = setup();
+
+    await call('find_records', { objectName: 'company', select: ['id'] });
+
+    expect(resolveAndExecuteDatabaseCrud).toHaveBeenCalledTimes(1);
+    expect(resolveAndExecuteDatabaseCrud).toHaveBeenCalledWith(
+      expect.objectContaining({ args: { select: ['id'], limit: 10 } }),
+    );
+  });
 
   it('should refuse arguments that do not match the schema without running anything', async () => {
     const { call, resolveAndExecuteDatabaseCrud } = setup();
