@@ -36,6 +36,19 @@ describe('getAgentChatMessageQuoteExcerpt', () => {
     ).toBe('Yes, on it.');
   });
 
+  it('keeps a blockquote that is not a reply quote', () => {
+    expect(
+      getAgentChatMessageQuoteExcerpt({
+        parts: [
+          {
+            type: 'text',
+            text: '> Stripe renews on Friday.\n\nI drafted the follow-up.',
+          },
+        ],
+      }),
+    ).toBe('> Stripe renews on Friday.\n\nI drafted the follow-up.');
+  });
+
   it('keeps the text an assistant wrote around its tool calls', () => {
     expect(
       getAgentChatMessageQuoteExcerpt({
