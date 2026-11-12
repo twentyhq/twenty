@@ -44099,19 +44099,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-chain@npm:^3.6.1":
-  version: 3.6.3
-  resolution: "stream-chain@npm:3.6.3"
-  checksum: 10c0/4af869a28a8d55dcfdbdaf25cfc03c3d31860bffabdb649cd82320a12ac9e71440d42078a3441f93dd288cf3b7077c524eceaa6cf2af637c202dea07014e3b96
+"stream-chain@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "stream-chain@npm:4.4.1"
+  checksum: 10c0/130fc6d677f378a223c8fe3e5ee47e10ad898f2551f1e2b2134c2f77d0f8ac98d62d6ba185f99603332ac02f56b4c7b4abc86f23cecfed81b217885a306d410c
   languageName: node
   linkType: hard
 
-"stream-json@npm:2.1.0":
-  version: 2.1.0
-  resolution: "stream-json@npm:2.1.0"
+"stream-json@npm:3.8.0":
+  version: 3.8.0
+  resolution: "stream-json@npm:3.8.0"
   dependencies:
-    stream-chain: "npm:^3.6.1"
-  checksum: 10c0/7ec5f0f7a795d5843c52c2f79383ee1c414d544b69e153b9f60869fee150597143a38e17fcf7ec4a0092732ed062c493559a29763b0f76481e72fde22c847af7
+    stream-chain: "npm:^4.4.1"
+  checksum: 10c0/4c652f988b391477d37ad32a58751e3898b50b132696907d6f407591a42408b4a4bbe7e2f6ef9d27a02a2030637c0c892e7f348cc5ff8f9cfc4d797671873a76
   languageName: node
   linkType: hard
 
@@ -46327,7 +46327,7 @@ __metadata:
     sanitize-html: "npm:2.18.1"
     semver: "npm:7.6.3"
     sns-payload-validator: "npm:^2.1.0"
-    stream-json: "npm:2.1.0"
+    stream-json: "npm:3.8.0"
     stripe: "npm:20.4.1"
     supertest: "npm:^6.1.3"
     tar: "npm:^7.5.9"
