@@ -19,15 +19,23 @@ type ManyToOneRelation = {
 export type CascadeAnnotatedAction<TAction extends AnnotatableAction> =
   TAction & { cascadedFromUniversalIdentifier?: string };
 
+const REQUIRED_PARENT_FOREIGN_KEYS_BY_METADATA_NAME = new Map(
+  Object.entries(ALL_MANY_TO_ONE_METADATA_RELATIONS).map(
+    ([metadataName, relations]) => [
+      metadataName,
+      Object.values<ManyToOneRelation | null>(relations)
+        .filter(isDefined)
+        .filter((relation) => !relation.isNullable)
+        .map((relation) => relation.universalForeignKey),
+    ],
+  ),
+);
+
 const getRequiredParentReferences = (
   action: Pick<AnnotatableAction, 'metadataName' | 'flatEntity'>,
 ) =>
-  Object.values<ManyToOneRelation | null>(
-    ALL_MANY_TO_ONE_METADATA_RELATIONS[action.metadataName],
-  )
-    .filter(isDefined)
-    .filter((relation) => !relation.isNullable)
-    .map((relation) => action.flatEntity?.[relation.universalForeignKey])
+  (REQUIRED_PARENT_FOREIGN_KEYS_BY_METADATA_NAME.get(action.metadataName) ?? [])
+    .map((foreignKey) => action.flatEntity?.[foreignKey])
     .filter(isNonEmptyString);
 
 // A deletion's cause is its side-effect trigger, else a deleted parent it cannot exist without.
