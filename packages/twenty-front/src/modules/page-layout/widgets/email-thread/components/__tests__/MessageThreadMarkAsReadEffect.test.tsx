@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { ChatThreadWidgetContent } from '@/page-layout/widgets/email-thread/components/ChatThreadWidgetContent';
+import { MessageThreadMarkAsReadEffect } from '@/page-layout/widgets/email-thread/components/MessageThreadMarkAsReadEffect';
 
 const mockMarkAppChannelThreadAsRead = jest.fn();
 const mockUseReplyConnectedAccount = jest.fn();
@@ -10,10 +10,6 @@ jest.mock('@/activities/emails/hooks/useMarkAppChannelThreadAsRead', () => ({
   useMarkAppChannelThreadAsRead: () => ({
     markAppChannelThreadAsRead: mockMarkAppChannelThreadAsRead,
   }),
-}));
-
-jest.mock('@/activities/emails/hooks/useSendAppChannelMessage', () => ({
-  useSendAppChannelMessage: () => ({ sendAppChannelMessage: jest.fn() }),
 }));
 
 jest.mock('@/activities/emails/hooks/useReplyConnectedAccount', () => ({
@@ -26,36 +22,6 @@ jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => ({ userWorkspaceId: 'owner-user-workspace-id' }),
-}));
-
-jest.mock(
-  '@/settings/app-preferences/hooks/useApplicationsWithPreferences',
-  () => ({
-    useApplicationsWithPreferences: () => ({ applicationsWithPreferences: [] }),
-  }),
-);
-
-jest.mock('@/activities/emails/hooks/useChatThreadCounterparts', () => ({
-  useChatThreadCounterparts: () => [],
-}));
-
-jest.mock('@/activities/emails/hooks/useStickToBottomScroll', () => ({
-  useStickToBottomScroll: () => ({
-    scrollContainerRef: { current: null },
-    handleScroll: jest.fn(),
-  }),
-}));
-
-jest.mock('@/page-layout/widgets/components/WidgetRelationsHeader', () => ({
-  WidgetRelationsHeader: () => null,
-}));
-
-jest.mock('@/activities/emails/components/ChatThreadMessages', () => ({
-  ChatThreadMessages: () => null,
-}));
-
-jest.mock('@/activities/components/CustomResolverFetchMoreLoader', () => ({
-  CustomResolverFetchMoreLoader: () => null,
 }));
 
 const mockChannel = ({
@@ -80,19 +46,15 @@ const mockChannel = ({
     },
   });
 
-const renderContent = (messageThreadId = 'thread-id') =>
+const renderEffect = () =>
   render(
-    <ChatThreadWidgetContent
-      messageThreadId={messageThreadId}
-      messages={[]}
-      loading={false}
-      onFetchMoreMessages={jest.fn()}
+    <MessageThreadMarkAsReadEffect
       messageChannelId="channel-id"
-      onMessageSent={jest.fn()}
+      messageThreadId="thread-id"
     />,
   );
 
-describe('ChatThreadWidgetContent', () => {
+describe('MessageThreadMarkAsReadEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockHasSendPermission.mockReturnValue(true);
@@ -100,16 +62,12 @@ describe('ChatThreadWidgetContent', () => {
   });
 
   it('marks the thread as read once when its channel owner opens it', () => {
-    const { rerender } = renderContent();
+    const { rerender } = renderEffect();
 
     rerender(
-      <ChatThreadWidgetContent
-        messageThreadId="thread-id"
-        messages={[]}
-        loading={false}
-        onFetchMoreMessages={jest.fn()}
+      <MessageThreadMarkAsReadEffect
         messageChannelId="channel-id"
-        onMessageSent={jest.fn()}
+        messageThreadId="thread-id"
       />,
     );
 
@@ -123,7 +81,7 @@ describe('ChatThreadWidgetContent', () => {
   it('does not mark the thread as read for a member the channel is shared with', () => {
     mockChannel({ ownerUserWorkspaceId: 'other-user-workspace-id' });
 
-    renderContent();
+    renderEffect();
 
     expect(mockMarkAppChannelThreadAsRead).not.toHaveBeenCalled();
   });
@@ -131,7 +89,7 @@ describe('ChatThreadWidgetContent', () => {
   it('does not mark the thread as read without the permission to send', () => {
     mockHasSendPermission.mockReturnValue(false);
 
-    renderContent();
+    renderEffect();
 
     expect(mockMarkAppChannelThreadAsRead).not.toHaveBeenCalled();
   });
@@ -139,7 +97,7 @@ describe('ChatThreadWidgetContent', () => {
   it('does not mark the thread as read on a channel without a messaging provider', () => {
     mockChannel({ messagingProviderUniversalIdentifier: null });
 
-    renderContent();
+    renderEffect();
 
     expect(mockMarkAppChannelThreadAsRead).not.toHaveBeenCalled();
   });

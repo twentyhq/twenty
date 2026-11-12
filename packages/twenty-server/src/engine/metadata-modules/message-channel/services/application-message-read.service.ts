@@ -88,40 +88,49 @@ export class ApplicationMessageReadService {
 
     const throttleKey = `app-thread-mark-as-read:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${messageThreadId}`;
 
-    if (isDefined(await this.cacheStorageService.get<boolean>(throttleKey))) {
-      return;
-    }
-
-    await this.cacheStorageService.set(
+    const hasClaimedThrottle = await this.cacheStorageService.setIfAbsent(
       throttleKey,
       true,
       APP_THREAD_MARK_AS_READ_THROTTLE_TTL_MS,
     );
 
-    const latestThreadMessages =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          findAppThreadLatestMessages({
-            workspaceOrmManager: this.workspaceOrmManager,
-            messageChannelId,
-            messageThreadId,
-          }),
-        buildSystemAuthContext(workspaceId),
-        { lite: true },
-      );
-
-    if (!isDefined(latestThreadMessages)) {
+    if (!hasClaimedThrottle) {
       return;
     }
 
-    await this.messagingProviderThreadReadMarkerService.markAsReadOrThrow({
-      marker,
-      workspaceId,
-      payload: {
-        connectedAccountId: ownedConnectedAccount.id,
-        messageChannelId,
-        threadExternalId: latestThreadMessages.threadExternalId,
-      },
-    });
+    try {
+      const latestThreadMessages =
+        await this.workspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            findAppThreadLatestMessages({
+              workspaceOrmManager: this.workspaceOrmManager,
+              messageChannelId,
+              messageThreadId,
+            }),
+          buildSystemAuthContext(workspaceId),
+          { lite: true },
+        );
+
+      if (!isDefined(latestThreadMessages)) {
+        await this.cacheStorageService.del(throttleKey);
+
+        return;
+      }
+
+      await this.messagingProviderThreadReadMarkerService.markAsReadOrThrow({
+        marker,
+        workspaceId,
+        payload: {
+          connectedAccountId: ownedConnectedAccount.id,
+          messageChannelId,
+          threadExternalId: latestThreadMessages.threadExternalId,
+        },
+      });
+    } catch (error) {
+      // a failed mark must not block the next open from retrying
+      await this.cacheStorageService.del(throttleKey);
+
+      throw error;
+    }
   }
 }

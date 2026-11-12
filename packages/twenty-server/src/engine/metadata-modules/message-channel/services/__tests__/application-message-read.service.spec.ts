@@ -69,8 +69,8 @@ describe('ApplicationMessageReadService', () => {
       ),
     };
     const cacheStorageService = {
-      get: jest.fn().mockResolvedValue(cachedThrottle),
-      set: jest.fn().mockResolvedValue(undefined),
+      setIfAbsent: jest.fn().mockResolvedValue(cachedThrottle !== true),
+      del: jest.fn().mockResolvedValue(undefined),
     };
 
     const service = new ApplicationMessageReadService(
@@ -181,7 +181,7 @@ describe('ApplicationMessageReadService', () => {
 
     await service.markThreadAsRead(MARK_AS_READ_ARGS);
 
-    expect(cacheStorageService.set).toHaveBeenCalledWith(
+    expect(cacheStorageService.setIfAbsent).toHaveBeenCalledWith(
       `app-thread-mark-as-read:${WORKSPACE_ID}:${USER_WORKSPACE_ID}:${MESSAGE_CHANNEL_ID}:${MESSAGE_THREAD_ID}`,
       true,
       30 * 1000,
@@ -190,13 +190,36 @@ describe('ApplicationMessageReadService', () => {
 
   it('does nothing when the thread has no message in the channel', async () => {
     jest.mocked(findAppThreadLatestMessages).mockResolvedValue(null);
-    const { service, messagingProviderThreadReadMarkerService } =
-      buildService();
+    const {
+      service,
+      messagingProviderThreadReadMarkerService,
+      cacheStorageService,
+    } = buildService();
 
     await service.markThreadAsRead(MARK_AS_READ_ARGS);
 
     expect(
       messagingProviderThreadReadMarkerService.markAsReadOrThrow,
     ).not.toHaveBeenCalled();
+    expect(cacheStorageService.del).toHaveBeenCalledTimes(1);
+  });
+
+  it('releases the window when the provider fails so the next open retries', async () => {
+    const {
+      service,
+      messagingProviderThreadReadMarkerService,
+      cacheStorageService,
+    } = buildService();
+    messagingProviderThreadReadMarkerService.markAsReadOrThrow.mockRejectedValue(
+      new Error('Provider unavailable'),
+    );
+
+    await expect(service.markThreadAsRead(MARK_AS_READ_ARGS)).rejects.toThrow(
+      'Provider unavailable',
+    );
+
+    expect(cacheStorageService.del).toHaveBeenCalledWith(
+      `app-thread-mark-as-read:${WORKSPACE_ID}:${USER_WORKSPACE_ID}:${MESSAGE_CHANNEL_ID}:${MESSAGE_THREAD_ID}`,
+    );
   });
 });

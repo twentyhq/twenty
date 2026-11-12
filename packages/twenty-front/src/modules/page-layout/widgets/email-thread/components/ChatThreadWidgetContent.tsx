@@ -10,7 +10,6 @@ import { type EmailThreadMessageWithSender } from '@/activities/emails/types/Ema
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
-import { ChatThreadMarkAsReadEffect } from '@/page-layout/widgets/email-thread/components/ChatThreadMarkAsReadEffect';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { isPersonalConnectedAccount } from '@/settings/app-preferences/utils/isPersonalConnectedAccount';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
@@ -91,20 +90,9 @@ export const ChatThreadWidgetContent = ({
     isNonEmptyString(messageChannel.messagingProviderUniversalIdentifier) &&
     messageChannel.isSyncEnabled;
 
-  const isChannelOwner =
-    isDefined(connectedAccount) &&
-    isNonEmptyString(userWorkspaceId) &&
-    connectedAccount.userWorkspaceId === userWorkspaceId;
-
   return (
     <StyledWidgetContentContainer>
       <WidgetRelationsHeader />
-      {hasSendPermission && canChannelSend && isChannelOwner && (
-        <ChatThreadMarkAsReadEffect
-          messageChannelId={messageChannel.id}
-          messageThreadId={messageThreadId}
-        />
-      )}
       <StyledChatThreadBody>
         {isDisconnected &&
           isDefined(connectionProvider) &&
