@@ -26,6 +26,8 @@ type SyncDeleteAction = {
   metadataName: AllMetadataName;
   universalIdentifier: string;
   flatEntity?: SyncActionFlatEntity;
+  // Set when another deletion in the same migration causes this one.
+  cascadedFromUniversalIdentifier?: string;
 };
 
 export type SyncAction = SyncCreateAction | SyncUpdateAction | SyncDeleteAction;

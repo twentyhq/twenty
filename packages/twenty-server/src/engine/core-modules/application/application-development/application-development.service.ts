@@ -12,6 +12,7 @@ import { type ApplicationInput } from 'src/engine/core-modules/application/appli
 import { type DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
 import { type WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
+import { annotateCascadedDeletions } from 'src/engine/core-modules/application/application-manifest/utils/annotate-cascaded-deletions.util';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationManifestExportService } from 'src/engine/core-modules/application/application-manifest/services/application-manifest-export.service';
 import { type ApplicationExport } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
@@ -182,7 +183,7 @@ export class ApplicationDevelopmentService {
       return {
         applicationUniversalIdentifier:
           workspaceMigration.applicationUniversalIdentifier,
-        actions: workspaceMigration.actions,
+        actions: annotateCascadedDeletions(workspaceMigration.actions),
       };
     }
 
@@ -303,7 +304,7 @@ export class ApplicationDevelopmentService {
     return {
       applicationUniversalIdentifier:
         workspaceMigration.applicationUniversalIdentifier,
-      actions: workspaceMigration.actions,
+      actions: annotateCascadedDeletions(workspaceMigration.actions),
     };
   }
 

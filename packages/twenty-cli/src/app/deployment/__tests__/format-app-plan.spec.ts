@@ -4,67 +4,89 @@ import { formatAppPlanActions } from '@/app/deployment/format-app-plan';
 import { getAppPlanSummary } from '@/app/deployment/get-app-plan-summary';
 import { type AppPlanAction } from '@/app/deployment/types/app-plan.type';
 
-const deletion = (
-  metadataName: string,
-  universalIdentifier: string,
-  flatEntity: Record<string, unknown> = {},
-): AppPlanAction => ({
+const deletion = ({
+  metadataName,
+  universalIdentifier,
+  cascadedFromUniversalIdentifier,
+  flatEntity = {},
+}: {
+  metadataName: string;
+  universalIdentifier: string;
+  cascadedFromUniversalIdentifier?: string;
+  flatEntity?: Record<string, unknown>;
+}): AppPlanAction => ({
   type: 'delete',
   metadataName,
   universalIdentifier,
   flatEntity,
+  ...(cascadedFromUniversalIdentifier !== undefined && {
+    cascadedFromUniversalIdentifier,
+  }),
 });
 
-// Shaped after a real plan: an app object is removed along with everything
-// the server attaches to it, next to a field removed from a kept object.
+// As the server annotates a real plan: an app object with its attachments, and a field of a kept object.
 const ACTIONS: AppPlanAction[] = [
-  deletion('objectMetadata', 'run-object', { nameSingular: 'workflowRun' }),
-  deletion('fieldMetadata', 'run-name', {
-    name: 'workflowName',
-    objectMetadataUniversalIdentifier: 'run-object',
+  deletion({
+    metadataName: 'objectMetadata',
+    universalIdentifier: 'run-object',
+    flatEntity: { nameSingular: 'workflowRun' },
   }),
-  deletion('fieldMetadata', 'run-created-at', {
-    name: 'createdAt',
-    isSystemSideEffect: true,
-    objectMetadataUniversalIdentifier: 'run-object',
-  }),
-  deletion('fieldMetadata', 'run-note-targets', {
-    name: 'noteTargets',
-    isSystemSideEffect: true,
-    objectMetadataUniversalIdentifier: 'run-object',
-    relationTargetFieldMetadataUniversalIdentifier: 'note-target-run',
-  }),
-  deletion('fieldMetadata', 'note-target-run', {
-    name: 'targetWorkflowRun',
-    isSystemSideEffect: true,
-    objectMetadataUniversalIdentifier: 'note-target-object',
-    relationTargetFieldMetadataUniversalIdentifier: 'run-note-targets',
-    relationTargetObjectMetadataUniversalIdentifier: 'run-object',
-  }),
-  deletion('view', 'run-view', {
-    name: 'All runs',
-    isSystemSideEffect: true,
-    objectMetadataUniversalIdentifier: 'run-object',
-  }),
-  deletion('viewField', 'run-view-created-at', {
-    isSystemSideEffect: true,
-    viewUniversalIdentifier: 'run-view',
-    fieldMetadataUniversalIdentifier: 'run-created-at',
-  }),
-  deletion('fieldMetadata', 'workspace-segmentation', {
-    name: 'segmentation',
-    objectMetadataUniversalIdentifier: 'workspace-object',
-  }),
-  deletion('pageLayoutWidget', 'workspace-segmentation-widget', {
-    isSystemSideEffect: true,
-    objectMetadataUniversalIdentifier: 'workspace-object',
-    pageLayoutTabUniversalIdentifier: 'workspace-tab',
-    universalConfiguration: {
-      configurationType: 'FORM_FIELD',
-      fieldMetadataId: 'workspace-segmentation',
+  deletion({
+    metadataName: 'fieldMetadata',
+    universalIdentifier: 'run-name',
+    cascadedFromUniversalIdentifier: 'run-object',
+    flatEntity: {
+      name: 'workflowName',
+      objectMetadataUniversalIdentifier: 'run-object',
     },
   }),
-  deletion('view', 'old-view', { name: 'Old view' }),
+  deletion({
+    metadataName: 'fieldMetadata',
+    universalIdentifier: 'run-created-at',
+    cascadedFromUniversalIdentifier: 'run-object',
+    flatEntity: {
+      name: 'createdAt',
+      objectMetadataUniversalIdentifier: 'run-object',
+    },
+  }),
+  deletion({
+    metadataName: 'fieldMetadata',
+    universalIdentifier: 'note-target-run',
+    cascadedFromUniversalIdentifier: 'run-object',
+    flatEntity: {
+      name: 'targetWorkflowRun',
+      objectMetadataUniversalIdentifier: 'note-target-object',
+    },
+  }),
+  deletion({
+    metadataName: 'view',
+    universalIdentifier: 'run-view',
+    cascadedFromUniversalIdentifier: 'run-object',
+    flatEntity: { name: 'All runs' },
+  }),
+  deletion({
+    metadataName: 'viewField',
+    universalIdentifier: 'run-view-created-at',
+    cascadedFromUniversalIdentifier: 'run-object',
+  }),
+  deletion({
+    metadataName: 'fieldMetadata',
+    universalIdentifier: 'workspace-segmentation',
+    flatEntity: {
+      name: 'segmentation',
+      objectMetadataUniversalIdentifier: 'workspace-object',
+    },
+  }),
+  deletion({
+    metadataName: 'pageLayoutWidget',
+    universalIdentifier: 'workspace-segmentation-widget',
+    cascadedFromUniversalIdentifier: 'workspace-segmentation',
+  }),
+  deletion({
+    metadataName: 'view',
+    universalIdentifier: 'old-view',
+    flatEntity: { name: 'Old view' },
+  }),
 ];
 
 const format = (actions: AppPlanAction[]) =>
@@ -75,14 +97,14 @@ const format = (actions: AppPlanAction[]) =>
   });
 
 describe('formatAppPlanActions', () => {
-  it('folds cascaded deletions into the deletion that causes them', () => {
+  it('folds cascaded deletions into the deletion the server names as their cause', () => {
     const output = format(ACTIONS);
 
     expect(output).toContain(
       '  # objectMetadata "workflowRun" will be destroyed',
     );
     expect(output).toContain(
-      '  - also destroys 6 dependent entities: 4 fieldMetadata, 1 view, 1 viewField',
+      '  - also destroys 5 dependent entities: 3 fieldMetadata, 1 view, 1 viewField',
     );
     expect(output).toContain(
       '  # fieldMetadata "segmentation" will be destroyed',
@@ -92,18 +114,16 @@ describe('formatAppPlanActions', () => {
     );
     expect(output).toContain('  # view "Old view" will be destroyed');
     for (const cascaded of [
-      '"workflowName"',
-      '"createdAt"',
-      '"noteTargets"',
-      '"targetWorkflowRun"',
-      '"All runs"',
+      'fieldMetadata "workflowName"',
+      'fieldMetadata "createdAt"',
+      'fieldMetadata "targetWorkflowRun"',
+      'view "All runs"',
     ]) {
-      expect(output).not.toContain(`# fieldMetadata ${cascaded}`);
-      expect(output).not.toContain(`# view ${cascaded}`);
+      expect(output).not.toContain(`# ${cascaded}`);
     }
-    expect(output).toContain('Plan: 0 to add, 0 to change, 10 to destroy.');
+    expect(output).toContain('Plan: 0 to add, 0 to change, 9 to destroy.');
     expect(output).toContain(
-      '7 of the 10 deletions cascade from the ones listed above.',
+      '6 of the 9 deletions cascade from the ones listed above.',
     );
   });
 
@@ -122,44 +142,29 @@ describe('formatAppPlanActions', () => {
     expect(output).not.toContain('"createdAt": drops the column');
   });
 
-  it('keeps a deleted relation field and its side-effect inverse as one deletion', () => {
-    const output = format([
-      deletion('fieldMetadata', 'company-people', {
-        name: 'people',
-        objectMetadataUniversalIdentifier: 'company-object',
-        relationTargetFieldMetadataUniversalIdentifier: 'person-company',
-      }),
-      deletion('fieldMetadata', 'person-company', {
-        name: 'company',
-        isSystemSideEffect: true,
-        objectMetadataUniversalIdentifier: 'person-object',
-        relationTargetFieldMetadataUniversalIdentifier: 'company-people',
-      }),
-    ]);
+  it('lists every deletion when the server does not annotate cascades', () => {
+    const output = format(
+      ACTIONS.map(
+        ({ cascadedFromUniversalIdentifier: _cascade, ...action }) => action,
+      ),
+    );
 
-    expect(output).toContain('  # fieldMetadata "people" will be destroyed');
-    expect(output).not.toContain(
-      '  # fieldMetadata "company" will be destroyed',
-    );
-    expect(output).toContain(
-      '  - fieldMetadata "people": drops the column and its data, and 1 field on other objects',
-    );
+    expect(output).toContain('  # fieldMetadata "createdAt" will be destroyed');
+    expect(output).toContain('  # view "All runs" will be destroyed');
+    expect(output).not.toContain('cascade');
   });
 
-  it('shows both fields of a relation deleted explicitly on each side', () => {
+  it('lists a deletion whose named cause is not in the plan', () => {
     const output = format([
-      deletion('fieldMetadata', 'company-people', {
-        name: 'people',
-        relationTargetFieldMetadataUniversalIdentifier: 'person-company',
-      }),
-      deletion('fieldMetadata', 'person-company', {
-        name: 'company',
-        relationTargetFieldMetadataUniversalIdentifier: 'company-people',
+      deletion({
+        metadataName: 'view',
+        universalIdentifier: 'orphan-view',
+        cascadedFromUniversalIdentifier: 'missing-object',
+        flatEntity: { name: 'Orphan view' },
       }),
     ]);
 
-    expect(output).toContain('  # fieldMetadata "people" will be destroyed');
-    expect(output).toContain('  # fieldMetadata "company" will be destroyed');
+    expect(output).toContain('  # view "Orphan view" will be destroyed');
     expect(output).not.toContain('cascade');
   });
 });
@@ -169,9 +174,9 @@ describe('getAppPlanSummary', () => {
     expect(getAppPlanSummary(ACTIONS)).toEqual({
       create: 0,
       update: 0,
-      delete: 10,
+      delete: 9,
       destructive: 2,
-      cascaded: 7,
+      cascaded: 6,
     });
   });
 });
