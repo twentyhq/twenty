@@ -23,17 +23,20 @@ const BEFORE_FILED_AT = '2026-01-01T09:00:00.000Z';
 const AFTER_FILED_AT = '2026-01-01T11:00:00.000Z';
 const SNOOZED_UNTIL = '2099-01-01T00:00:00.000Z';
 
+type ParticipantState = {
+  archivedAt?: string;
+  snoozedUntil?: string;
+  isSubscribed?: boolean;
+  lastMentionedAt?: string;
+  mentionsResolvedAt?: string;
+};
+
 type ThreadState = {
   lastActivityAt?: string | null;
   pendingQuestionMessageId?: string;
   assigneeId?: string;
-  participant?: {
-    archivedAt?: string;
-    snoozedUntil?: string;
-    isSubscribed?: boolean;
-    lastMentionedAt?: string;
-    mentionsResolvedAt?: string;
-  };
+  participant?: ParticipantState;
+  otherMemberParticipant?: ParticipantState;
 };
 
 const THREAD_STATES = {
@@ -79,6 +82,18 @@ const THREAD_STATES = {
     participant: { archivedAt: FILED_AT, isSubscribed: false },
   },
   notFollowed: { participant: { isSubscribed: false } },
+  doneWhileAnotherMemberIsMentioned: {
+    lastActivityAt: BEFORE_FILED_AT,
+    participant: { archivedAt: FILED_AT },
+    otherMemberParticipant: { lastMentionedAt: FILED_AT },
+  },
+  openWhileAnotherMemberSnoozed: {
+    lastActivityAt: BEFORE_FILED_AT,
+    otherMemberParticipant: {
+      archivedAt: FILED_AT,
+      snoozedUntil: SNOOZED_UNTIL,
+    },
+  },
 } satisfies Record<string, ThreadState>;
 
 type ThreadStateName = keyof typeof THREAD_STATES;
@@ -97,6 +112,7 @@ const EXPECTED_THREAD_STATES_BY_FILTER_STATUS: Record<
     'assignedToSomeoneElse',
     'doneThenNewActivity',
     'snoozedThenNewActivity',
+    'openWhileAnotherMemberSnoozed',
   ],
   needsInput: ['needsInput'],
   mentions: ['mentioned', 'mentionedAgainAfterResolving'],
@@ -110,9 +126,15 @@ const EXPECTED_THREAD_STATES_BY_FILTER_STATUS: Record<
     'mentionResolved',
     'doneThenNewActivity',
     'snoozedThenNewActivity',
+    'openWhileAnotherMemberSnoozed',
   ],
   snoozed: ['snoozed'],
-  done: ['done', 'doneWithoutActivity', 'unsubscribed'],
+  done: [
+    'done',
+    'doneWithoutActivity',
+    'unsubscribed',
+    'doneWhileAnotherMemberIsMentioned',
+  ],
 };
 
 const createThreadInState = async ({
@@ -120,6 +142,7 @@ const createThreadInState = async ({
   pendingQuestionMessageId,
   assigneeId,
   participant = {},
+  otherMemberParticipant,
 }: ThreadState): Promise<string> => {
   const threadId = randomUUID();
 
@@ -161,6 +184,21 @@ const createThreadInState = async ({
       participant.mentionsResolvedAt ?? null,
     ],
   );
+
+  if (otherMemberParticipant !== undefined) {
+    await global.testDataSource.query(
+      `INSERT INTO ${SCHEMA}."agentChatThreadParticipant"
+         ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt")
+       VALUES ($1, $2, $3, $4, true, $5)`,
+      [
+        threadId,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+        otherMemberParticipant.archivedAt ?? null,
+        otherMemberParticipant.snoozedUntil ?? null,
+        otherMemberParticipant.lastMentionedAt ?? null,
+      ],
+    );
+  }
 
   return threadId;
 };
