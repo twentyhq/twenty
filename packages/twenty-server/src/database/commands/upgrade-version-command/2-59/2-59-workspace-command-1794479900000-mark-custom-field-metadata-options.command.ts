@@ -11,7 +11,7 @@ import {
   computeCustomFieldMetadataOptionMarks,
   type EnumFieldToMark,
   type OptionRowToMark,
-} from 'src/database/commands/upgrade-version-command/2-58/utils/compute-custom-field-metadata-option-marks.util';
+} from 'src/database/commands/upgrade-version-command/2-59/utils/compute-custom-field-metadata-option-marks.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
@@ -19,9 +19,9 @@ import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
-@RegisteredWorkspaceCommand('2.58.0', 1794473400000)
+@RegisteredWorkspaceCommand('2.59.0', 1794479900000)
 @Command({
-  name: 'upgrade:2-58:mark-custom-field-metadata-options',
+  name: 'upgrade:2-59:mark-custom-field-metadata-options',
   description:
     "Mark the options a workspace added to another application's select fields, so they stay removable while the application's own options can only be deactivated.",
 })

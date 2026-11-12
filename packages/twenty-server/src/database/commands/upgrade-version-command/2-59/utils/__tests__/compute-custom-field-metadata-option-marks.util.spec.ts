@@ -2,7 +2,7 @@ import {
   computeCustomFieldMetadataOptionMarks,
   type EnumFieldToMark,
   type OptionRowToMark,
-} from 'src/database/commands/upgrade-version-command/2-58/utils/compute-custom-field-metadata-option-marks.util';
+} from 'src/database/commands/upgrade-version-command/2-59/utils/compute-custom-field-metadata-option-marks.util';
 
 const STANDARD_APPLICATION_ID = '20202020-0000-4000-8000-0000000000aa';
 const WORKSPACE_CUSTOM_APPLICATION_ID = '20202020-0000-4000-8000-0000000000bb';
