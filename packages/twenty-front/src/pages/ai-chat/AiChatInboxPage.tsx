@@ -12,9 +12,6 @@ import { IconChevronLeft, IconX } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
-import { AgentChatChannelThreadsFetchMoreTrigger } from '@/ai/components/AgentChatChannelThreadsFetchMoreTrigger';
-import { AgentChatChannelThreadsLoadEffect } from '@/ai/components/AgentChatChannelThreadsLoadEffect';
-import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
 import { AiChatInboxConversationPane } from '@/ai/components/AiChatInboxConversationPane';
@@ -27,11 +24,15 @@ import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { useAgentChatInboxShownThreads } from '@/ai/hooks/useAgentChatInboxShownThreads';
 import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
-import { useFetchMoreAgentChatInboxShownThreads } from '@/ai/hooks/useFetchMoreAgentChatInboxShownThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
+import { AgentChatThreadListLoadEffect } from '@/ai/components/AgentChatThreadListLoadEffect';
+import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
+import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
@@ -122,9 +123,18 @@ const AiChatInboxPageContent = () => {
     agentChatShownChannelViewSelector,
   );
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const { threads, isLoading } = useAgentChatInboxShownThreads();
-  const { fetchMoreAgentChatInboxShownThreads } =
-    useFetchMoreAgentChatInboxShownThreads();
+  const agentChatSelectedThreadListSource = useAtomStateValue(
+    agentChatSelectedThreadListSourceState,
+  );
+  const { threads, isLoading } = useAgentChatThreadList(
+    agentChatSelectedThreadListSource,
+  );
+  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
+  const fetchMoreShownThreads = () =>
+    void loadAgentChatThreadList({
+      source: agentChatSelectedThreadListSource,
+      mode: 'fetch-more',
+    });
 
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
@@ -182,7 +192,7 @@ const AiChatInboxPageContent = () => {
     selectableItemsContainerRef: threadListContainerRef,
     activeRecordId: keyboardCursorThreadId,
     onActiveRecordChange: selectThread,
-    onEndReached: fetchMoreAgentChatInboxShownThreads,
+    onEndReached: fetchMoreShownThreads,
   });
 
   const handleThreadCheckboxClick = (
@@ -262,7 +272,9 @@ const AiChatInboxPageContent = () => {
 
   return (
     <StyledInbox>
-      <AgentChatChannelThreadsLoadEffect />
+      <AgentChatThreadListLoadEffect
+        source={agentChatSelectedThreadListSource}
+      />
       <AiChatInboxNewThreadChannelEffect key={newAiChatThreadId} />
       <RecordSelectionRecordIdsEffect records={threads} />
       <AiChatInboxSelectionEffect
@@ -319,11 +331,12 @@ const AiChatInboxPageContent = () => {
                         onThreadCheckboxClick={handleThreadCheckboxClick}
                       />
                     )}
-                    {isDefined(agentChatShownChannelView) ? (
-                      <AgentChatChannelThreadsFetchMoreTrigger />
-                    ) : (
-                      <AgentChatThreadsFetchMoreTrigger />
-                    )}
+                    <AgentChatThreadListFetchMoreTrigger
+                      key={getAgentChatThreadListSourceKey(
+                        agentChatSelectedThreadListSource,
+                      )}
+                      source={agentChatSelectedThreadListSource}
+                    />
                   </StyledThreadList>
                   {!isMobile && (
                     <RecordSelectionDragSelect

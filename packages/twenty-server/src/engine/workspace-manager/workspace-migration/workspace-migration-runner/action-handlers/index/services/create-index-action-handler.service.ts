@@ -100,7 +100,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     });
   }
 
-  protected override getDeferredAction(
+  protected override getDeferredOperation(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>,
   ) {
     if (!this.shouldDeferIndexCreation(context)) {

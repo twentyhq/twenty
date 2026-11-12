@@ -1,4 +1,6 @@
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
@@ -9,7 +11,12 @@ export const agentChatThreadsSelector = createAtomSelector<
 >({
   key: 'agentChatThreadsSelector',
   get: ({ get }) =>
-    (get(agentChatThreadListState)?.threadIds ?? [])
+    (
+      get(
+        agentChatThreadListFamilyState,
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      )?.threadIds ?? []
+    )
       .map((threadId) => get(agentChatThreadRecordFamilySelector, threadId))
       .filter(isDefined),
 });
