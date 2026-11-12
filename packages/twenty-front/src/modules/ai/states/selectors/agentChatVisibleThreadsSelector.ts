@@ -17,7 +17,6 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
     const filterStatus = get(agentChatThreadFilterStatusState);
     const agentChatThreadList = get(agentChatThreadListState);
     const listedThreadIds = new Set(agentChatThreadList?.threadIds ?? []);
-    // The list holds the most recent chats, so the tab's other chats are older
     const tabOnlyThreads = (
       agentChatThreadList?.filterStatusPages?.[filterStatus]?.threadIds ?? []
     )

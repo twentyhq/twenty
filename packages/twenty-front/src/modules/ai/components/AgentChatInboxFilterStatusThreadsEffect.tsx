@@ -10,7 +10,6 @@ import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// Also runs after a refresh, which replaces the list along with its tab pages
 export const AgentChatInboxFilterStatusThreadsEffect = () => {
   const store = useStore();
   const agentChatThreadFilterStatus = useAtomStateValue(
@@ -35,7 +34,6 @@ export const AgentChatInboxFilterStatusThreadsEffect = () => {
     let isCancelled = false;
     let retryTimeout: ReturnType<typeof setTimeout> | undefined;
 
-    // A failed or twice-raced first page would otherwise leave the tab without pages
     const loadFirstPage = async ({
       attempt,
       retryDelayInMs,

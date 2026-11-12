@@ -95,7 +95,6 @@ export const useLoadAgentChatThreadsPage = () => {
           return undefined;
         }
 
-        // Retry rather than overwrite a record event applied mid-request.
         if (hasChangedSinceRequest()) {
           continue;
         }
