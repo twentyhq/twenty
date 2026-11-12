@@ -1,11 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type AgentChatThreadInboxStatus,
+  getAgentChatThreadInboxStatus,
+} from 'twenty-shared/ai';
 
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
-import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 

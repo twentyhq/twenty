@@ -199,7 +199,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
 
     return {
       [traversalFieldName]: innerFilter,
-    } as RecordGqlOperationFilter;
+    };
   }
 
   return buildDirectFieldGqlOperationFilter({

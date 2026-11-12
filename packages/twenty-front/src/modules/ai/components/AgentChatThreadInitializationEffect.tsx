@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
@@ -53,7 +53,7 @@ export const AgentChatThreadInitializationEffect = () => {
     !isWorkspaceSuspended &&
     isDefined(chatObjectMetadataItem) &&
     isNonEmptyArray(chatObjectMetadataItem.readableFields) &&
-    canReachSomeRecords({
+    canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: chatObjectPermissions,
       operationType: 'read',
     });
