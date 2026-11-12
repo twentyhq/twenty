@@ -12,16 +12,27 @@ We did not build a parallel system. We traced the existing flow, confirmed it in
 | History rows are read only for users and API keys | Any logged in user could rewrite history through the API |
 | The Timeline type filter is sent to the server | The filter ran in the browser, which made "updated" look empty until more pages loaded |
 
+## Path roots
+
+Paths in the tables below are relative to these roots.
+
+| Root | Full path |
+| --- | --- |
+| `server/` | `packages/twenty-server/src/` |
+| `timeline/` | `packages/twenty-server/src/modules/timeline/` |
+| `front/` | `packages/twenty-front/src/modules/` |
+| `timeline-ui/` | `packages/twenty-front/src/modules/activities/timeline-activities/` |
+
 ## What already existed (verified)
 
 | Requirement | Where it lives |
 | --- | --- |
-| Field name, before, after | `twenty-server/src/engine/core-modules/event-emitter/utils/object-record-changed-values.ts:116` builds `{ before, after }` per field |
-| Time of change and author | `twenty-server/src/modules/timeline/repositories/timeline-activity.repository.ts:431` stores `happensAt`, `properties.diff`, `workspaceMemberId` |
-| Async write | `entity-events-to-db.listener.ts:57` queues a job, the worker runs `upsert-timeline-activity-from-internal-event.job.ts:18` |
+| Field name, before, after | `server/engine/core-modules/event-emitter/utils/object-record-changed-values.ts:116` builds `{ before, after }` per field |
+| Time of change and author | `timeline/repositories/timeline-activity.repository.ts:431` stores `happensAt`, `properties.diff`, `workspaceMemberId` |
+| Async write | `entity-events-to-db.listener.ts:57` queues a job, the worker runs `timeline/jobs/upsert-timeline-activity-from-internal-event.job.ts:18` |
 | Backend API | Generated GraphQL `timelineActivities` and REST `/rest/timelineActivities` |
-| UI, newest first | `twenty-front/src/modules/activities/timeline-activities/hooks/useTimelineActivities.ts` with `orderBy: happensAt DescNullsFirst` |
-| Filter by activity type | `twenty-front/src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx` (funnel icon, select "updated") |
+| UI, newest first | `timeline-ui/hooks/useTimelineActivities.ts` with `orderBy: happensAt DescNullsFirst` |
+| Filter by activity type | `front/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx` (funnel icon, select "updated") |
 
 ### Update flow
 
@@ -57,10 +68,10 @@ UI edit -> GraphQL updatePerson
 
 | File | Change |
 | --- | --- |
-| `packages/twenty-server/src/modules/timeline/query-hooks/utils/timeline-activity-mutation-input.util.ts` | New guard `assertTimelineActivityIsNotMutatedByUserOrApiKey`. Throws `PermissionsException` (`PERMISSION_DENIED`) for `user` and `apiKey`, the same error class the blocklist module uses |
-| `packages/twenty-server/src/modules/timeline/query-hooks/timeline-activity-update-one.pre-query-hook.ts` | Calls the guard first |
-| `packages/twenty-server/src/modules/timeline/query-hooks/timeline-activity-update-many.pre-query-hook.ts` | Calls the guard first |
-| `packages/twenty-front/src/modules/activities/timeline-activities/hooks/useTimelineActivities.ts` | Adds `timelineActivityTypeId: { in: [...] }` to the API filter when types are selected. The ids are joined into a string key so the filter memo stays stable across renders |
+| `timeline/query-hooks/utils/timeline-activity-mutation-input.util.ts` | New guard `assertTimelineActivityIsNotMutatedByUserOrApiKey`. Throws `PermissionsException` (`PERMISSION_DENIED`) for `user` and `apiKey`, the same error class the blocklist module uses |
+| `timeline/query-hooks/timeline-activity-update-one.pre-query-hook.ts` | Calls the guard first |
+| `timeline/query-hooks/timeline-activity-update-many.pre-query-hook.ts` | Calls the guard first |
+| `timeline-ui/hooks/useTimelineActivities.ts` | Adds `timelineActivityTypeId: { in: [...] }` to the API filter when types are selected. The ids are joined into a string key so the filter memo stays stable across renders |
 
 ### Windows local setup only (not part of the feature)
 
@@ -69,16 +80,16 @@ Twenty supports Windows only through WSL. These fixes were needed to run the sta
 | File | Change |
 | --- | --- |
 | `packages/twenty-shared/vite.bundled-source-plugin.ts` | Accept absolute `C:/` entry paths |
-| `packages/twenty-server/src/constants/assets-path.ts` | Use `path.sep` instead of `/dist/` |
-| `packages/twenty-server/src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service.ts` | Same `path.sep` fix for seed sample files |
+| `server/constants/assets-path.ts` | Use `path.sep` instead of `/dist/` |
+| `server/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service.ts` | Same `path.sep` fix for seed sample files |
 
 ## Edge cases
 
 | Edge case | Handled by | Status |
 | --- | --- | --- |
 | Unauthenticated user reads history | Workspace API auth | Returns `UNAUTHENTICATED` |
-| Restricted fields | Server: `apply-timeline-activities-visibility-restrictions.service.ts:35`. UI: `filterOutInvalidTimelineActivities.ts:81` keeps only readable fields | Hidden at two levels |
-| No-op update | Server skips unchanged fields (`object-record-changed-values.ts:112`) and empty diffs (`timeline-activity.service.ts:284`). UI drops rows with no readable diff | No misleading row |
+| Restricted fields | Server: `timeline/query-hooks/apply-timeline-activities-visibility-restrictions.service.ts:35`. UI: `timeline-ui/utils/filterOutInvalidTimelineActivities.ts:81` keeps only readable fields | Hidden at two levels |
+| No-op update | Server skips unchanged fields (`object-record-changed-values.ts:112`) and empty diffs (`timeline/services/timeline-activity.service.ts:284`). UI drops rows with no readable diff | No misleading row |
 | User or API key rewrites history | New guard in the update hooks | Returns `FORBIDDEN` / HTTP 403 |
 | Concurrent updates | Each update emits its own event with its own before and after | One row per update |
 | Failed writes | The history row is written by the worker after the record write. A failed record write emits no event | No orphan history |
