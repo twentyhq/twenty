@@ -1,51 +1,18 @@
+import { getFieldRestrictionKeys } from '@/settings/roles/role/utils/getFieldRestrictionKeys';
+import { getRoleWithoutServerDerivedRuleFields } from '@/settings/roles/role/utils/getRoleWithoutServerDerivedRuleFields';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
-import { sortByProperty } from '~/utils/array/sortByProperty';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-
-// The server derives rules and their ids, and syncing a rule edit reorders these lists
-const withoutServerDerivedRuleFields = (
-  role: RoleWithPartialMembers,
-): RoleWithPartialMembers => ({
-  ...role,
-  rowLevelPermissionRules: undefined,
-  rowLevelPermissionFieldPermissions: undefined,
-  rowLevelPermissionPredicates: role.rowLevelPermissionPredicates
-    ?.map(({ rowLevelPermissionRuleId: _ruleId, ...predicate }) => ({
-      ...predicate,
-      relationFieldMetadataId: predicate.relationFieldMetadataId ?? null,
-    }))
-    .sort(sortByProperty('id')),
-  rowLevelPermissionPredicateGroups: role.rowLevelPermissionPredicateGroups
-    ?.map(
-      ({ rowLevelPermissionRuleId: _ruleId, ...predicateGroup }) =>
-        predicateGroup,
-    )
-    .sort(sortByProperty('id')),
-});
-
-// Draft field permissions carry temporary ids and cleared entries the server does not return
-const getFieldRestrictionKeys = (role: RoleWithPartialMembers) =>
-  (role.fieldPermissions ?? [])
-    .filter(
-      ({ canReadFieldValue, canUpdateFieldValue }) =>
-        canReadFieldValue === false || canUpdateFieldValue === false,
-    )
-    .map(
-      (fieldPermission) =>
-        `${fieldPermission.fieldMetadataId}:${fieldPermission.rowLevelPermissionPredicateGroupId ?? ''}:${fieldPermission.canReadFieldValue === false}:${fieldPermission.canUpdateFieldValue === false}`,
-    )
-    .sort();
 
 export const getRoleDirtyFields = (
   draftRole: RoleWithPartialMembers,
   persistedRole: RoleWithPartialMembers | undefined,
 ): Partial<RoleWithPartialMembers> => {
   const dirtyFields = getDirtyFields(
-    withoutServerDerivedRuleFields(draftRole),
+    getRoleWithoutServerDerivedRuleFields(draftRole),
     isDefined(persistedRole)
-      ? withoutServerDerivedRuleFields(persistedRole)
+      ? getRoleWithoutServerDerivedRuleFields(persistedRole)
       : undefined,
   );
 

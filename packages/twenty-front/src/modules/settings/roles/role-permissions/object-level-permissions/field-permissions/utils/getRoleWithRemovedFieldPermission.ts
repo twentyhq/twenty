@@ -21,10 +21,10 @@ export const getRoleWithRemovedFieldPermission = ({
 
     const indexOfExistingFieldPermission = draftRole.fieldPermissions.findIndex(
       (fieldPermissionToFind) =>
-        isSameFieldPermissionTarget(
-          fieldPermissionToFind,
-          fieldPermissionToRemove,
-        ),
+        isSameFieldPermissionTarget({
+          firstFieldPermission: fieldPermissionToFind,
+          secondFieldPermission: fieldPermissionToRemove,
+        }),
     );
 
     if (indexOfExistingFieldPermission > -1) {

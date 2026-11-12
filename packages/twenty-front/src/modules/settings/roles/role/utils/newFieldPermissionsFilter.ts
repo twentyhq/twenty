@@ -7,10 +7,10 @@ export const newFieldPermissionsFilter = (
 ) => {
   const existingFieldPermission = existingFieldPermissions?.find(
     (persistedFieldPermission) =>
-      isSameFieldPermissionTarget(
-        persistedFieldPermission,
-        dirtyFieldPermission,
-      ),
+      isSameFieldPermissionTarget({
+        firstFieldPermission: persistedFieldPermission,
+        secondFieldPermission: dirtyFieldPermission,
+      }),
   );
 
   if (!existingFieldPermission) {

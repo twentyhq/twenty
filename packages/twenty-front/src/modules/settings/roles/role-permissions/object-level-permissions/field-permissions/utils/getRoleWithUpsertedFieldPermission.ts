@@ -17,10 +17,10 @@ export const getRoleWithUpsertedFieldPermission = (
 
     const indexOfExistingFieldPermission = draftRole.fieldPermissions.findIndex(
       (fieldPermissionToFind) =>
-        isSameFieldPermissionTarget(
-          fieldPermissionToFind,
-          fieldPermissionToUpsert,
-        ),
+        isSameFieldPermissionTarget({
+          firstFieldPermission: fieldPermissionToFind,
+          secondFieldPermission: fieldPermissionToUpsert,
+        }),
     );
 
     if (indexOfExistingFieldPermission > -1) {

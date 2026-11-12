@@ -83,10 +83,10 @@ export const useSaveDraftRoleToDB = ({
       const fieldPermissionDoesntExistYetInPersistedFieldPermissions =
         !settingsPersistedRole?.fieldPermissions?.some(
           (persistedFieldPermissionToFilter) =>
-            isSameFieldPermissionTarget(
-              persistedFieldPermissionToFilter,
-              fieldPermissionToFilter,
-            ),
+            isSameFieldPermissionTarget({
+              firstFieldPermission: persistedFieldPermissionToFilter,
+              secondFieldPermission: fieldPermissionToFilter,
+            }),
         );
 
       return (
@@ -101,10 +101,11 @@ export const useSaveDraftRoleToDB = ({
       (dirtyFieldPermissionToFilter) =>
         !fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless?.some(
           (fieldPermissionThatShouldntBeCreatedToFilter) =>
-            isSameFieldPermissionTarget(
-              dirtyFieldPermissionToFilter,
-              fieldPermissionThatShouldntBeCreatedToFilter,
-            ),
+            isSameFieldPermissionTarget({
+              firstFieldPermission: dirtyFieldPermissionToFilter,
+              secondFieldPermission:
+                fieldPermissionThatShouldntBeCreatedToFilter,
+            }),
         ),
     ) ?? [];
 

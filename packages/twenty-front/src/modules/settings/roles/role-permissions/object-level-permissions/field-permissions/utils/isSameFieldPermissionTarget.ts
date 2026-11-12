@@ -6,10 +6,13 @@ type FieldPermissionTarget = Pick<
 >;
 
 // A field has one permission for all records, plus one per rule that restricts it
-export const isSameFieldPermissionTarget = (
-  firstFieldPermission: FieldPermissionTarget,
-  secondFieldPermission: FieldPermissionTarget,
-) =>
+export const isSameFieldPermissionTarget = ({
+  firstFieldPermission,
+  secondFieldPermission,
+}: {
+  firstFieldPermission: FieldPermissionTarget;
+  secondFieldPermission: FieldPermissionTarget;
+}) =>
   firstFieldPermission.fieldMetadataId ===
     secondFieldPermission.fieldMetadataId &&
   (firstFieldPermission.rowLevelPermissionPredicateGroupId ?? null) ===
