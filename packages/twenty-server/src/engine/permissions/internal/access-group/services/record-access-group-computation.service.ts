@@ -28,7 +28,7 @@ import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/
 import { isRlsRuleRelationAffectedByUpdate } from 'src/engine/permissions/internal/access-group/utils/is-rls-rule-relation-affected-by-update.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
-import { arePrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/are-private-records-enabled.util';
+import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/is-private-records-enabled.util';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 
@@ -145,7 +145,7 @@ export class RecordAccessGroupComputationService {
                     sourceFlatObjectMetadata.id,
                 )
                 .map(({ compactId }) => compactId),
-          isSourcePrivacyApplicable: arePrivateRecordsEnabled({
+          isSourcePrivacyApplicable: isPrivateRecordsEnabled({
             flatObjectMetadata: sourceFlatObjectMetadata,
             featureFlagsMap: metadataMaps.featureFlagsMap,
           }),
@@ -216,7 +216,7 @@ export class RecordAccessGroupComputationService {
     );
   }
 
-  async isObjectReachedByRlsRuleRelation({
+  async isObjectReferencedByRlsRuleRelation({
     workspaceId,
     objectMetadataId,
   }: {

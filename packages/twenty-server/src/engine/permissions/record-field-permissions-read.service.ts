@@ -7,9 +7,9 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findRlsRuleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields.util';
-import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
+import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { buildRlsRulesRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import {
   PermissionsException,
@@ -70,7 +70,7 @@ export class RecordFieldPermissionsReadService {
     return rlsRuleFields.map(
       ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
         fieldMetadataIds,
-        sqlCondition: renderRowLevelPermissionFilterToSql({
+        sqlCondition: renderRlsRecordFilterToSql({
           recordFilter: buildRlsRulesRecordFilter({
             principals,
             metadataMaps,

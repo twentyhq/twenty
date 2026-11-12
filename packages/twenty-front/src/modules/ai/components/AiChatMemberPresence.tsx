@@ -28,7 +28,7 @@ const StyledDot = styled.span<{ isOnline: boolean }>`
 `;
 
 type AiChatMemberPresenceProps = {
-  workspaceMemberId: string;
+  workspaceMemberId: string | undefined;
   children: ReactNode;
 };
 
@@ -41,7 +41,10 @@ export const AiChatMemberPresence = ({
     agentChatOnlineWorkspaceMemberIdsState,
   );
 
-  if (!isDefined(agentChatOnlineWorkspaceMemberIds)) {
+  if (
+    !isDefined(agentChatOnlineWorkspaceMemberIds) ||
+    !isDefined(workspaceMemberId)
+  ) {
     return children;
   }
 

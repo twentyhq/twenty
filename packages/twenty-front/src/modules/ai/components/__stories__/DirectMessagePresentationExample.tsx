@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconHash, IconMessage } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -51,7 +52,10 @@ export const DirectMessagePresentationExample = ({
   const [searchValue, setSearchValue] = useState('');
   const { currentMember, directMessages } = DIRECT_MESSAGE_PRESENTATION_FIXTURE;
   const matchingHumanMembers = filterBySearchQuery({
-    items: [currentMember, ...directMessages.map(({ peer }) => peer)],
+    items: [
+      currentMember,
+      ...directMessages.flatMap(({ peer }) => (isDefined(peer) ? [peer] : [])),
+    ],
     searchQuery: searchValue,
     getSearchableValues: ({ name, email }) => [name, email],
   });

@@ -1,16 +1,16 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { arePrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/are-private-records-enabled.util';
+import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/is-private-records-enabled.util';
 
 const ORDINARY_OBJECT = {
   universalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
 };
 
-describe('arePrivateRecordsEnabled', () => {
+describe('isPrivateRecordsEnabled', () => {
   it('should be off on an ordinary object with both flags off', () => {
     expect(
-      arePrivateRecordsEnabled({
+      isPrivateRecordsEnabled({
         flatObjectMetadata: ORDINARY_OBJECT,
         featureFlagsMap: {},
       }),
@@ -19,7 +19,7 @@ describe('arePrivateRecordsEnabled', () => {
 
   it('should be on with the private records flag', () => {
     expect(
-      arePrivateRecordsEnabled({
+      isPrivateRecordsEnabled({
         flatObjectMetadata: ORDINARY_OBJECT,
         featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
       }),
@@ -28,7 +28,7 @@ describe('arePrivateRecordsEnabled', () => {
 
   it('should stay off when only record sharing is on', () => {
     expect(
-      arePrivateRecordsEnabled({
+      isPrivateRecordsEnabled({
         flatObjectMetadata: ORDINARY_OBJECT,
         featureFlagsMap: {
           [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
@@ -44,7 +44,7 @@ describe('arePrivateRecordsEnabled', () => {
     'should stay on for AI chat object %s with both flags off',
     (universalIdentifier) => {
       expect(
-        arePrivateRecordsEnabled({
+        isPrivateRecordsEnabled({
           flatObjectMetadata: { universalIdentifier },
           featureFlagsMap: {},
         }),
