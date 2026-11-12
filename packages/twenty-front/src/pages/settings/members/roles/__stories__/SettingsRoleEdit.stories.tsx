@@ -37,7 +37,7 @@ export type Story = StoryObj<typeof SettingsRoleEdit>;
 
 export const Default: Story = {};
 
-export const ObjectPermissionRowMenu: Story = {
+export const ObjectOverrideExpandsInPlace: Story = {
   args: {
     routeParams: {
       ':roleId': OBJECT_RESTRICTED_ROLE_ID,
@@ -45,34 +45,25 @@ export const ObjectPermissionRowMenu: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
-    const [trigger] = await canvas.findAllByRole(
+    const overrideRow = await canvas.findByRole(
       'button',
-      { name: 'Object permission options' },
+      { name: /Rockets/ },
       { timeout: 5000 },
     );
 
-    await userEvent.click(trigger);
-    const menu = await body.findByRole('menu', {
-      name: 'Object permission options',
-    });
+    expect(overrideRow).toHaveAttribute('aria-expanded', 'false');
+    expect(within(overrideRow).getByText('No access')).toBeVisible();
 
-    expect(canvas.getByRole('link', { name: 'Assignment' })).toBeVisible();
-    expect(
-      within(menu).getByRole('menuitem', { name: 'Edit' }),
-    ).toHaveAttribute(
-      'href',
-      expect.stringContaining(
-        `/settings/members/roles/${OBJECT_RESTRICTED_ROLE_ID}/object/`,
-      ),
+    await userEvent.click(overrideRow);
+
+    await waitFor(() =>
+      expect(overrideRow).toHaveAttribute('aria-expanded', 'true'),
     );
+    expect(await canvas.findByText('All records')).toBeVisible();
     expect(
-      within(menu).getByRole('menuitem', { name: 'Remove rule' }),
+      canvas.getByRole('button', { name: 'Remove override' }),
     ).toBeVisible();
-
-    await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(menu).not.toBeInTheDocument());
-    await waitFor(() => expect(trigger).toHaveFocus());
+    expect(canvas.getByRole('button', { name: 'Add rule' })).toBeVisible();
   },
 };
 

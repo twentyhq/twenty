@@ -4,8 +4,6 @@ import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable';
-import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel';
 import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -107,10 +105,6 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       ? getCoreAgentLink(agent.id)
       : getSettingsPath(SettingsPath.RoleDetail, { roleId });
 
-  const previousStepPath = `${getSettingsPath(SettingsPath.RoleAddObjectLevel, {
-    roleId,
-  })}${fromAgentId ? `?fromAgent=${fromAgentId}` : ''}`;
-
   const headerTitle =
     fromAgentId && isDefined(agent) ? agent.label : settingsDraftRole.label;
 
@@ -139,8 +133,8 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       links={breadcrumbLinks}
       secondaryBar={
         <SettingsWizardStepBar
-          label={t`2. Set ${objectLabelPlural} permissions`}
-          onBack={() => navigate(previousStepPath)}
+          label={t`${objectLabelPlural} rule`}
+          onBack={() => navigate(finishButtonPath)}
           trailing={
             <NavigationButton
               size="sm"
@@ -154,14 +148,6 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       }
     >
       <SettingsPageContainer>
-        <SettingsRolePermissionsObjectLevelObjectFormObjectLevel
-          objectMetadataItem={objectMetadataItem}
-          roleId={roleId}
-        />
-        <SettingsRolePermissionsObjectLevelObjectFieldPermissionTable
-          objectMetadataItem={objectMetadataItem}
-          roleId={roleId}
-        />
         <SettingsRolePermissionsObjectLevelRecordLevelSection
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}

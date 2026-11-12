@@ -1,3 +1,5 @@
+import { getFieldRestrictionKeys } from '@/settings/roles/role/utils/getFieldRestrictionKeys';
+import { getRoleWithoutSaveArtifacts } from '@/settings/roles/role/utils/getRoleWithoutSaveArtifacts';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
 import { getDirtyFields } from '~/utils/getDirtyFields';
@@ -7,20 +9,31 @@ export const getRoleDirtyFields = (
   draftRole: RoleWithPartialMembers,
   persistedRole: RoleWithPartialMembers | undefined,
 ): Partial<RoleWithPartialMembers> => {
-  const dirtyFields = getDirtyFields(draftRole, persistedRole);
+  const dirtyFields = getDirtyFields(
+    getRoleWithoutSaveArtifacts(draftRole),
+    isDefined(persistedRole)
+      ? getRoleWithoutSaveArtifacts(persistedRole)
+      : undefined,
+  );
 
-  if (
-    isDefined(persistedRole) &&
-    isDeeplyEqual(
-      draftRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
-      persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
-    )
-  ) {
-    const { permissionFlags: _permissionFlags, ...otherDirtyFields } =
-      dirtyFields;
-
-    return otherDirtyFields;
+  if (!isDefined(persistedRole)) {
+    return dirtyFields;
   }
 
-  return dirtyFields;
+  const hasSamePermissionFlags = isDeeplyEqual(
+    draftRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
+    persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
+  );
+  const hasSameFieldRestrictions = isDeeplyEqual(
+    getFieldRestrictionKeys(draftRole),
+    getFieldRestrictionKeys(persistedRole),
+  );
+
+  return Object.fromEntries(
+    Object.entries(dirtyFields).filter(
+      ([key]) =>
+        !(key === 'permissionFlags' && hasSamePermissionFlags) &&
+        !(key === 'fieldPermissions' && hasSameFieldRestrictions),
+    ),
+  );
 };

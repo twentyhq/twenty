@@ -1,0 +1,16 @@
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
+
+// Draft field permissions carry temporary ids and cleared entries the server does not return
+export const getFieldRestrictionKeys = ({
+  fieldPermissions,
+}: Pick<RoleWithPartialMembers, 'fieldPermissions'>) =>
+  (fieldPermissions ?? [])
+    .filter(
+      ({ canReadFieldValue, canUpdateFieldValue }) =>
+        canReadFieldValue === false || canUpdateFieldValue === false,
+    )
+    .map(
+      (fieldPermission) =>
+        `${fieldPermission.fieldMetadataId}:${fieldPermission.canReadFieldValue === false}:${fieldPermission.canUpdateFieldValue === false}`,
+    )
+    .sort();
