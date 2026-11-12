@@ -59,4 +59,19 @@ describe('getChatMessageAttachmentGroups', () => {
       'removed.png',
     ]);
   });
+
+  it('leaves images the preview cannot show out of the grid', () => {
+    const groups = getChatMessageAttachmentGroups([
+      buildAttachment('chart.png'),
+      buildAttachment('logo.svg'),
+      buildAttachment('team.jpg'),
+      buildAttachment('favicon.ico'),
+    ]);
+
+    expect(getLabels(groups.gridImages)).toEqual(['chart.png', 'team.jpg']);
+    expect(getLabels(groups.standaloneAttachments)).toEqual([
+      'logo.svg',
+      'favicon.ico',
+    ]);
+  });
 });

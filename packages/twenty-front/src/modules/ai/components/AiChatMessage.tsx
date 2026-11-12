@@ -9,7 +9,7 @@ import { type ReactNode } from 'react';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai/constants/AiChatUserMessageMaxWidth';
-import { getAgentChatFilePartFieldFilesValue } from '@/ai/utils/getAgentChatFilePartFieldFilesValue';
+import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueFromFilePart';
 
 import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
@@ -147,7 +147,7 @@ export const AiChatMessage = ({
 
   const attachments = agentChatMessage.parts
     .filter(isExtendedFileUIPart)
-    .map(getAgentChatFilePartFieldFilesValue);
+    .map(getFieldFilesValueFromFilePart);
   const messageText =
     agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
   const messageContent = (

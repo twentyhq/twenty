@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { FILE_CATEGORIES } from 'twenty-shared/types';
 
+import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/constants/PreviewableExtensions';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 
@@ -16,7 +17,10 @@ export const getChatMessageAttachmentGroups = (
     (attachment) =>
       isNonEmptyString(attachment.url) &&
       !attachment.isDeleted &&
-      getFieldFilesValueCategory(attachment) === FILE_CATEGORIES.IMAGE,
+      getFieldFilesValueCategory(attachment) === FILE_CATEGORIES.IMAGE &&
+      PREVIEWABLE_EXTENSIONS.includes(
+        (attachment.extension ?? '').toLowerCase().replace('.', ''),
+      ),
   );
 
   if (images.length < 2) {

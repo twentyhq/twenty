@@ -1,11 +1,11 @@
 import { FILE_CATEGORIES } from 'twenty-shared/types';
 
-import { getAgentChatFilePartFieldFilesValue } from '@/ai/utils/getAgentChatFilePartFieldFilesValue';
+import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueFromFilePart';
 import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 
-describe('getAgentChatFilePartFieldFilesValue', () => {
+describe('getFieldFilesValueFromFilePart', () => {
   it('maps an uploaded screenshot to an image file value', () => {
-    const fileValue = getAgentChatFilePartFieldFilesValue({
+    const fileValue = getFieldFilesValueFromFilePart({
       type: 'file',
       fileId: 'file-id',
       filename: 'Screenshot 2026-11-10.png',
@@ -23,7 +23,7 @@ describe('getAgentChatFilePartFieldFilesValue', () => {
   });
 
   it('keeps a part without a filename as a non-image file', () => {
-    const fileValue = getAgentChatFilePartFieldFilesValue({
+    const fileValue = getFieldFilesValueFromFilePart({
       type: 'file',
       fileId: 'file-id',
       mediaType: 'application/octet-stream',

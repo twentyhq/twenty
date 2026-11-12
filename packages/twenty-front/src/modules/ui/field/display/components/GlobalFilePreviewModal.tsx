@@ -5,6 +5,7 @@ import { GLOBAL_FILE_PREVIEW_MODAL_ID } from '@/ui/field/display/constants/Globa
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { filePreviewGalleryFilesState } from '@/ui/field/display/states/filePreviewGalleryFilesState';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
+import { getFilePreviewGalleryNavigation } from '@/ui/field/display/utils/getFilePreviewGalleryNavigation';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { styled } from '@linaria/react';
@@ -52,25 +53,11 @@ export const GlobalFilePreviewModal = () => {
     return null;
   }
 
-  const galleryIndex = filePreviewGalleryFiles.findIndex(
-    (galleryFile) => galleryFile.fileId === filePreview.fileId,
-  );
-  const galleryPosition = galleryIndex + 1;
-  const galleryLength = filePreviewGalleryFiles.length;
-  const isBrowsingGallery = galleryLength > 1 && galleryIndex >= 0;
-  const previousGalleryFile = isBrowsingGallery
-    ? filePreviewGalleryFiles[galleryIndex - 1]
-    : undefined;
-  const nextGalleryFile = isBrowsingGallery
-    ? filePreviewGalleryFiles[galleryIndex + 1]
-    : undefined;
-
-  const handlePrevious = isDefined(previousGalleryFile)
-    ? () => setFilePreview(previousGalleryFile)
-    : undefined;
-  const handleNext = isDefined(nextGalleryFile)
-    ? () => setFilePreview(nextGalleryFile)
-    : undefined;
+  const galleryNavigation = getFilePreviewGalleryNavigation({
+    galleryFiles: filePreviewGalleryFiles,
+    fileId: filePreview.fileId,
+    onSelectFile: setFilePreview,
+  });
 
   return (
     <>
@@ -83,13 +70,9 @@ export const GlobalFilePreviewModal = () => {
         documentUrl={filePreview.url ?? ''}
         documentExtension={filePreview.extension ?? ''}
         onClose={handleClose}
-        positionLabel={
-          isBrowsingGallery
-            ? `${galleryPosition} / ${galleryLength}`
-            : undefined
-        }
-        onPrevious={handlePrevious}
-        onNext={handleNext}
+        positionLabel={galleryNavigation?.positionLabel}
+        onPrevious={galleryNavigation?.onPrevious}
+        onNext={galleryNavigation?.onNext}
         onDownload={hasDownloadPermission ? handleDownload : undefined}
         downloadLabel={t`Download file`}
         loadingFallback={

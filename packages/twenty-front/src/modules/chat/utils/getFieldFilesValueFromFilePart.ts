@@ -2,7 +2,7 @@ import { type FieldFilesValue } from '@/object-record/record-field/ui/types/Fiel
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
-export const getAgentChatFilePartFieldFilesValue = (
+export const getFieldFilesValueFromFilePart = (
   filePart: ExtendedFileUIPart,
 ): FieldFilesValue => {
   const label = filePart.filename ?? '';
