@@ -18,13 +18,13 @@ const StyledDot = styled.span<{ isOnline: boolean }>`
       ? themeCssVariables.color.green
       : themeCssVariables.font.color.light};
   border: 1px solid ${themeCssVariables.background.primary};
-  border-radius: 50%;
-  bottom: -1px;
+  border-radius: ${themeCssVariables.border.radius.rounded};
+  bottom: -2px;
   box-sizing: border-box;
-  height: ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing['1.5']};
   position: absolute;
-  right: -1px;
-  width: ${themeCssVariables.spacing[2]};
+  right: -2px;
+  width: ${themeCssVariables.spacing['1.5']};
 `;
 
 type AiChatMemberPresenceProps = {
