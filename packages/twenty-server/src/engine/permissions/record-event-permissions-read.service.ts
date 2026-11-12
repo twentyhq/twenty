@@ -15,6 +15,7 @@ import { resolveEventRecordSnapshots } from 'src/engine/permissions/internal/com
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { PrivateRecordRepository } from 'src/engine/permissions/internal/private-record/repositories/private-record.repository';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { omitUnreadableFieldsFromEvents } from 'src/engine/permissions/internal/field-access/utils/omit-unreadable-fields-from-events.util';
@@ -42,6 +43,7 @@ export class RecordEventPermissionsReadService {
   constructor(
     private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
+    private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
@@ -187,7 +189,7 @@ export class RecordEventPermissionsReadService {
     const findPrivateRecordStates = () =>
       (privateRecordStates ??= loadMetadataMaps().then(
         ({ flatFieldMetadataMaps }) =>
-          this.recordPermissionReadRepository.findPrivateRecordStates({
+          this.privateRecordRepository.findPrivateRecordStates({
             workspaceId,
             flatObjectMetadata: objectMetadata,
             flatFieldMetadataMaps,

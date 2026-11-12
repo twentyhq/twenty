@@ -159,7 +159,10 @@ const buildPredicateRecordFilter = ({
     });
 
     // Without the member's value the predicate matches nothing rather than being dropped
-    if (!isDefined(predicateValue)) {
+    if (
+      !isDefined(predicateValue) ||
+      (Array.isArray(predicateValue) && !isNonEmptyArray(predicateValue))
+    ) {
       return UNSATISFIABLE_RECORD_FILTER;
     }
   }

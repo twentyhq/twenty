@@ -14,7 +14,7 @@ import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/ac
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
+import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 
 type AccessGroupWorkspaceMemberMaps = Pick<
   FlatWorkspaceMemberMaps,
@@ -89,7 +89,7 @@ export const buildWorkspaceAccessGroups = ({
 
       if (
         !isDefined(flatObjectMetadata) ||
-        isPermissionStorageObject(flatObjectMetadata)
+        temporaryExcludePermissionStorageObject(flatObjectMetadata)
       ) {
         continue;
       }

@@ -31,5 +31,9 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
     return msg`Application`;
   }
 
+  if (actionType === 'MCP_TOOL') {
+    return msg`MCP`;
+  }
+
   return msg`Action`;
 };
