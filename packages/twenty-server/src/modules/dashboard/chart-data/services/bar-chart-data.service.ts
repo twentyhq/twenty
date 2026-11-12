@@ -25,6 +25,7 @@ import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services
 import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
 import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
 import { filterOutUnresolvedRelationBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-unresolved-relation-buckets.util';
+import { getEffectiveBarChartGroupMode } from 'src/modules/dashboard/chart-data/utils/get-effective-bar-chart-group-mode.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { wrapChartDataQueryError } from 'src/modules/dashboard/chart-data/utils/wrap-chart-data-query-error.util';
 import { transformToOneDimensionalBarChartData } from 'src/modules/dashboard/chart-data/utils/transform-to-one-dimensional-bar-chart-data.util';
@@ -113,7 +114,8 @@ export class BarChartDataService {
 
       const isStackedTwoDimensional =
         isTwoDimensional &&
-        configuration.groupMode === BarChartGroupMode.STACKED;
+        getEffectiveBarChartGroupMode(configuration.groupMode) ===
+          BarChartGroupMode.STACKED;
 
       const limit = isStackedTwoDimensional
         ? BAR_CHART_MAXIMUM_NUMBER_OF_BARS *

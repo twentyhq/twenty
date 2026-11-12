@@ -21,6 +21,7 @@ import { applyCumulativeToTwoDimensionalBarData } from 'src/modules/dashboard/ch
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
 import { getAggregateValueLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util';
+import { getEffectiveBarChartGroupMode } from 'src/modules/dashboard/chart-data/utils/get-effective-bar-chart-group-mode.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
@@ -52,8 +53,9 @@ export const transformToTwoDimensionalBarChartData = ({
   const layout = configuration.layout ?? BarChartLayout.VERTICAL;
   const isHorizontal = layout === BarChartLayout.HORIZONTAL;
 
-  const effectiveGroupMode =
-    configuration.groupMode ?? BarChartGroupMode.STACKED;
+  const effectiveGroupMode = getEffectiveBarChartGroupMode(
+    configuration.groupMode,
+  );
   const isStacked = effectiveGroupMode === BarChartGroupMode.STACKED;
 
   const isDescOrder =
