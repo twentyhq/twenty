@@ -18,6 +18,7 @@ import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReacti
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AiChatMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
@@ -154,9 +155,12 @@ export const AiChatMessage = ({
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const agentChatDisplayedThread = useAtomStateValue(
+    agentChatDisplayedThreadState,
+  );
   const agentChatThreadReadPositions = useAtomFamilyStateValue(
     agentChatThreadReadPositionsFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId: agentChatDisplayedThread },
   );
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const isDirectMessage = useAtomFamilySelectorValue(
