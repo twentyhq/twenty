@@ -7,6 +7,8 @@ import { refreshOAuthSession } from '@/oauth/refresh-oauth-session';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { type CliWarning } from '@/output/types/cli-warning.type';
+import { readSavedProxyHeaderSettings } from '@/proxy-headers/read-saved-proxy-header-settings';
+import { resolveProxyHeaders } from '@/proxy-headers/resolve-proxy-headers';
 import { TARGET_ENVIRONMENT_VARIABLE } from '@/target/constants/target-environment-variable.constant';
 import { parseApiUrl } from '@/target/parse-api-url';
 import { selectTarget } from '@/target/select-target';
@@ -20,12 +22,14 @@ type AuthenticationRecovery = (context: {
 const toRemoteTarget = async ({
   remoteName,
   remote,
+  environment,
   configPath,
   signal,
   onAuthenticationRequired,
 }: {
   remoteName: string;
   remote: RemoteEntry;
+  environment: NodeJS.ProcessEnv;
   configPath: string;
   signal: AbortSignal;
   onAuthenticationRequired?: AuthenticationRecovery;
@@ -35,6 +39,10 @@ const toRemoteTarget = async ({
     rawUrl: remote.apiUrl,
     sourceName: `The URL of remote ${remoteName}`,
   });
+  const proxyHeaders = resolveProxyHeaders({
+    environment,
+    savedSettings: readSavedProxyHeaderSettings({ remote, remoteName }),
+  });
 
   if (isNonEmptyString(accessToken)) {
     const target: ResolvedTarget = {
@@ -43,6 +51,7 @@ const toRemoteTarget = async ({
       credentialKind: 'oauth',
       source: 'remote',
       remoteName,
+      proxyHeaders,
     };
 
     if (!isAccessTokenExpiring(accessToken)) {
@@ -56,6 +65,7 @@ const toRemoteTarget = async ({
           configPath,
           remoteName,
           apiUrl,
+          proxyHeaders,
           signal,
         }),
       };
@@ -86,6 +96,7 @@ const toRemoteTarget = async ({
     credentialKind: 'apiKey',
     source: 'remote',
     remoteName,
+    proxyHeaders,
   };
 };
 
@@ -115,6 +126,7 @@ export const resolveTarget = async ({
     return toRemoteTarget({
       remoteName: selection.remoteName,
       remote: selection.remote,
+      environment,
       configPath,
       signal,
       onAuthenticationRequired,
@@ -129,5 +141,6 @@ export const resolveTarget = async ({
     bearerToken: selection.apiKey,
     credentialKind: 'apiKey',
     source: 'environment',
+    proxyHeaders: resolveProxyHeaders({ environment }),
   };
 };

@@ -7,6 +7,7 @@ import { REQUEST_TIMEOUT_MILLISECONDS } from '@/transport/constants/request-time
 import { RESPONSE_BYTE_LIMIT } from '@/transport/constants/response-byte-limit.constant';
 import {
   createRedirectError,
+  createRequestHeaders,
   toTransportError,
 } from '@/transport/create-target-fetch';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
@@ -55,11 +56,16 @@ export const subscribeGraphql = async ({
       url,
       {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${target.bearerToken}`,
-          'Content-Type': 'application/json',
-          Accept: 'text/event-stream',
-        },
+        headers: createRequestHeaders({
+          initHeaders: {
+            'Content-Type': 'application/json',
+            Accept: 'text/event-stream',
+          },
+          bearerToken: target.bearerToken,
+          proxyHeaderValues: isDefined(target.proxyHeaders)
+            ? await target.proxyHeaders.read(requestSignal)
+            : {},
+        }),
         body: JSON.stringify({ query, variables }),
         redirect: 'manual',
         signal: requestSignal,
@@ -69,7 +75,11 @@ export const subscribeGraphql = async ({
 
     if (response.status >= 300 && response.status < 400) {
       await response.body?.cancel();
-      throw createRedirectError(response, url);
+      throw createRedirectError({
+        response,
+        url,
+        proxyHeaders: target.proxyHeaders,
+      });
     }
     if (
       response.headers

@@ -10,6 +10,8 @@ import { type DoctorCheck } from '@/doctor/types/doctor-check.type';
 import { getMetadataDoctorFailure } from '@/doctor/get-metadata-doctor-failure';
 import { getAccessTokenExpiry } from '@/oauth/is-access-token-expiring';
 import { CliError } from '@/output/cli-error';
+import { readSavedProxyHeaderSettings } from '@/proxy-headers/read-saved-proxy-header-settings';
+import { resolveProxyHeaders } from '@/proxy-headers/resolve-proxy-headers';
 import { TARGET_ENVIRONMENT_VARIABLE } from '@/target/constants/target-environment-variable.constant';
 import { parseApiUrl } from '@/target/parse-api-url';
 import { selectTarget } from '@/target/select-target';
@@ -190,6 +192,17 @@ export const getConnectionDoctorChecks = async ({
         : {}),
       credentialKind,
       bearerToken,
+      proxyHeaders: resolveProxyHeaders({
+        environment,
+        ...(selection.source === 'remote'
+          ? {
+              savedSettings: readSavedProxyHeaderSettings({
+                remote: selection.remote,
+                remoteName: selection.remoteName,
+              }),
+            }
+          : {}),
+      }),
     };
     checks.push({
       id: 'credentials',
