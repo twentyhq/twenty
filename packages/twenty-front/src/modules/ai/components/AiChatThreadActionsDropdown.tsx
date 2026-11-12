@@ -33,7 +33,7 @@ type AiChatThreadActionsDropdownProps = {
     lastActivityAt?: string | null;
   };
   instanceId: string;
-  onRenameRequested: () => void;
+  onRenameRequested?: () => void;
   onDetach?: () => void;
   shouldShowTriageActions?: boolean;
   shouldShowMore?: boolean;
@@ -71,13 +71,14 @@ export const AiChatThreadActionsDropdown = ({
   const canUpdate = isDefined(permissions) && permissions.canUpdate;
   const isDeleted = isDefined(thread.deletedAt);
   const canRename =
+    isDefined(onRenameRequested) &&
     canUpdate &&
     !isDeleted &&
     thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE;
 
   const handleRename = (event: MouseEvent) => {
     event.stopPropagation();
-    onRenameRequested();
+    onRenameRequested?.();
   };
 
   const handleDetach = (event: MouseEvent) => {

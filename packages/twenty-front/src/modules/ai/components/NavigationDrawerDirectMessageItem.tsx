@@ -1,6 +1,14 @@
+import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useLingui } from '@lingui/react/macro';
+import { useId } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
 type NavigationDrawerDirectMessageItemProps = {
@@ -16,6 +24,15 @@ export const NavigationDrawerDirectMessageItem = ({
 }: NavigationDrawerDirectMessageItemProps) => {
   const { t } = useLingui();
   const peerName = directMessage.peer?.name ?? t`Former member`;
+  const thread = useAtomFamilySelectorValue(
+    agentChatThreadRecordFamilySelector,
+    directMessage.threadId,
+  );
+  const actionsInstanceId = useId();
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    getCommandMenuDropdownIdFromCommandMenuId(actionsInstanceId),
+  );
 
   return (
     <NavigationDrawerItem
@@ -36,6 +53,15 @@ export const NavigationDrawerDirectMessageItem = ({
       onClick={() => onSelect(directMessage.threadId)}
       triggerEvent="CLICK"
       preventCollapseOnMobile
+      isRightOptionsDropdownOpen={isDropdownOpen}
+      rightOptions={
+        isDefined(thread) ? (
+          <AiChatThreadActionsDropdown
+            thread={thread}
+            instanceId={actionsInstanceId}
+          />
+        ) : undefined
+      }
     />
   );
 };
