@@ -9,5 +9,14 @@ export type ResolvedOAuthClient = {
   resource: string | null;
   authorizationParams: Record<string, string> | null;
   tokenRequestContentType: OAuthProviderTokenRequestContentType;
-  usePkce: boolean;
+  shouldUsePkce: boolean;
 };
+
+export type OAuthTokenRequestClient = Pick<
+  ResolvedOAuthClient,
+  | 'tokenEndpoint'
+  | 'tokenRequestContentType'
+  | 'clientId'
+  | 'clientSecret'
+  | 'resource'
+>;

@@ -1,9 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const readCookieValue = (
-  cookieHeader: string,
-  cookieName: string,
-): string | undefined => {
+export const readCookieValue = ({
+  cookieHeader,
+  cookieName,
+}: {
+  cookieHeader: string;
+  cookieName: string;
+}): string | undefined => {
   for (const cookiePart of cookieHeader.split(';')) {
     const separatorIndex = cookiePart.indexOf('=');
 

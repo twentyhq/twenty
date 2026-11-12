@@ -102,7 +102,7 @@ export class ConnectionProviderOAuthClientResolverService {
       resource: null,
       authorizationParams,
       tokenRequestContentType,
-      usePkce,
+      shouldUsePkce: usePkce,
     };
   }
 }

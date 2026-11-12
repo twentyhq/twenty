@@ -9,12 +9,12 @@ export type ProtectedResourceProbe = {
 
 export const probeProtectedResource = async ({
   resourceUrl,
-  fetchFn,
+  fetchFunction,
 }: {
   resourceUrl: string;
-  fetchFn: FetchLike;
+  fetchFunction: FetchLike;
 }): Promise<ProtectedResourceProbe> => {
-  const response = await fetchFn(resourceUrl, {
+  const response = await fetchFunction(resourceUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

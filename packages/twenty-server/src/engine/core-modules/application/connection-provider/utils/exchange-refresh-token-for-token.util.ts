@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/connection-provider/types/resolved-oauth-client.type';
+import { type OAuthTokenRequestClient } from 'src/engine/core-modules/application/connection-provider/types/resolved-oauth-client.type';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { postOAuthTokenRequest } from 'src/engine/core-modules/application/connection-provider/utils/post-oauth-token-request.util';
 
@@ -12,7 +12,7 @@ export const exchangeRefreshTokenForToken = ({
   refreshToken,
 }: {
   fetchFn: FetchFn;
-  client: ResolvedOAuthClient;
+  client: OAuthTokenRequestClient;
   refreshToken: string;
 }): Promise<TokenExchangeResponse> =>
   postOAuthTokenRequest({

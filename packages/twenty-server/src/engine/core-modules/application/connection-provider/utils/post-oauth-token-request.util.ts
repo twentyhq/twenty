@@ -10,13 +10,22 @@ type FetchFn = typeof globalThis.fetch;
 // Carries the HTTP status alongside the message so callers can distinguish
 // transient (5xx, network) from permanent (4xx) failures.
 export class OAuthTokenEndpointError extends Error {
-  constructor(
-    message: string,
-    public readonly status: number,
-    public readonly errorCode: string | null,
-  ) {
+  readonly status: number;
+  readonly errorCode: string | null;
+
+  constructor({
+    message,
+    status,
+    errorCode,
+  }: {
+    message: string;
+    status: number;
+    errorCode: string | null;
+  }) {
     super(message);
     this.name = 'OAuthTokenEndpointError';
+    this.status = status;
+    this.errorCode = errorCode;
   }
 }
 
@@ -55,11 +64,11 @@ export const postOAuthTokenRequest = async (args: {
   if (!response.ok) {
     const text = await response.text();
 
-    throw new OAuthTokenEndpointError(
-      `Token endpoint responded with ${response.status}: ${text.slice(0, 500)}`,
-      response.status,
-      readOAuthErrorCode(text),
-    );
+    throw new OAuthTokenEndpointError({
+      message: `Token endpoint responded with ${response.status}: ${text.slice(0, 500)}`,
+      status: response.status,
+      errorCode: readOAuthErrorCode(text),
+    });
   }
 
   return parseTokenResponse((await response.json()) as Record<string, unknown>);

@@ -76,7 +76,7 @@ export class ConnectionProviderOAuthFlowService {
         provider: connectionProvider,
         workspaceId,
       });
-    const codeVerifier = client.usePkce ? generatePkceVerifier() : null;
+    const codeVerifier = client.shouldUsePkce ? generatePkceVerifier() : null;
 
     const state = await this.authorizationStateService.sign({
       ...authorizationArgs,
@@ -264,7 +264,7 @@ export class ConnectionProviderOAuthFlowService {
     statePayload,
     browserNonces,
   }: {
-    statePayload: AppOAuthStateJwtPayload;
+    statePayload: Pick<AppOAuthStateJwtPayload, 'flowSecretId'>;
     browserNonces: string[];
   }): Promise<ConnectionProviderFlowSecrets> {
     if (!isDefined(statePayload.flowSecretId)) {

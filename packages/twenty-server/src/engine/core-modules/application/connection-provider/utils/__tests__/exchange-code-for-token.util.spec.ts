@@ -27,7 +27,7 @@ const CLIENT: ResolvedOAuthClient = {
   resource: null,
   authorizationParams: null,
   tokenRequestContentType: 'form-urlencoded',
-  usePkce: false,
+  shouldUsePkce: false,
 };
 
 const baseExchangeArgs = {

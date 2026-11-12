@@ -21,7 +21,13 @@ const NONCE_SEPARATOR = '.';
 export class ConnectionProviderFlowCookieService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  attachBrowserNonce(request: Request, response: Response): string {
+  attachBrowserNonce({
+    request,
+    response,
+  }: {
+    request: Request;
+    response: Response;
+  }): string {
     const browserNonce = randomUUID();
     const browserNonces = [
       ...this.readBrowserNonces(request),
@@ -40,7 +46,7 @@ export class ConnectionProviderFlowCookieService {
   readBrowserNonces(request: Request): string[] {
     const cookieHeader = request.headers.cookie;
     const cookieValue = isNonEmptyString(cookieHeader)
-      ? readCookieValue(cookieHeader, this.resolveCookieName())
+      ? readCookieValue({ cookieHeader, cookieName: this.resolveCookieName() })
       : undefined;
 
     return cookieValue?.split(NONCE_SEPARATOR).filter(Boolean) ?? [];

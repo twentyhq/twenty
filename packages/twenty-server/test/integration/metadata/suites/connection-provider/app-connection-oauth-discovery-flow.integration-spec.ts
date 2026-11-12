@@ -178,7 +178,13 @@ describe('app connection OAuth discovery flow', () => {
   const decodeStatePayload = (state: string): Record<string, unknown> =>
     JSON.parse(Buffer.from(state.split('.')[1], 'base64url').toString());
 
-  const callback = async (state: string, code: string): Promise<URL> => {
+  const callback = async ({
+    state,
+    code,
+  }: {
+    state: string;
+    code: string;
+  }): Promise<URL> => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/callback')
       .set('Cookie', browserCookie ?? '')
@@ -294,7 +300,7 @@ describe('app connection OAuth discovery flow', () => {
 
   it('exchanges the code as a public client bound to the resource and stores the connection', async () => {
     const state = getState(await authorize());
-    const redirect = await callback(state, 'first-code');
+    const redirect = await callback({ state: state, code: 'first-code' });
     const [connection] = await readAccounts();
     const [tokenRequest] = tokenRequests;
 
@@ -327,7 +333,10 @@ describe('app connection OAuth discovery flow', () => {
   it('forgets the stored client once the token endpoint rejects it', async () => {
     const state = getState(await authorize());
 
-    const redirect = await callback(state, 'rejected-client-code');
+    const redirect = await callback({
+      state: state,
+      code: 'rejected-client-code',
+    });
 
     expect(redirect.searchParams.get('errorMessage')).toEqual(
       expect.any(String),
@@ -340,8 +349,14 @@ describe('app connection OAuth discovery flow', () => {
     const firstState = getState(await authorize());
     const secondState = getState(await authorize());
 
-    const firstRedirect = await callback(firstState, 'first-code');
-    const secondRedirect = await callback(secondState, 'second-code');
+    const firstRedirect = await callback({
+      state: firstState,
+      code: 'first-code',
+    });
+    const secondRedirect = await callback({
+      state: secondState,
+      code: 'second-code',
+    });
 
     expect(firstRedirect.searchParams.get('errorMessage')).toBeNull();
     expect(secondRedirect.searchParams.get('errorMessage')).toBeNull();
@@ -354,8 +369,8 @@ describe('app connection OAuth discovery flow', () => {
   it('refuses a callback whose flow secrets were already consumed', async () => {
     const state = getState(await authorize());
 
-    await callback(state, 'first-code');
-    await callback(state, 'replayed-code');
+    await callback({ state: state, code: 'first-code' });
+    await callback({ state: state, code: 'replayed-code' });
 
     expect(tokenRequests.map((params) => params.get('code'))).toEqual([
       'first-code',

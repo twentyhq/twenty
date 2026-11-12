@@ -8,7 +8,6 @@ import {
   registerClient,
 } from '@modelcontextprotocol/sdk/client/auth.js';
 import {
-  type AuthorizationServerMetadata,
   type OAuthClientInformationFull,
   type OAuthProtectedResourceMetadata,
 } from '@modelcontextprotocol/sdk/shared/auth.js';
@@ -22,7 +21,10 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
-import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
+import {
+  ConnectionProviderOAuthClientService,
+  type OAuthDiscoveryClientToSave,
+} from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
 import { buildOAuthDiscoveryClientMetadataUrl } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata-url.util';
 import { buildOAuthDiscoveryClientMetadata } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
@@ -36,8 +38,11 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 const OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS = 15_000;
 
-type DiscoveryTarget = {
-  provider: OAuthDiscoveryConnectionProvider;
+export type DiscoveryTarget = {
+  provider: Pick<
+    OAuthDiscoveryConnectionProvider,
+    'id' | 'oauthDiscoveryConfig'
+  >;
   workspaceId: string;
 };
 
@@ -52,27 +57,37 @@ export class ConnectionProviderOAuthDiscoveryService {
   async resolveClientForAuthorization(
     target: DiscoveryTarget,
   ): Promise<ResolvedOAuthClient> {
-    const fetchFn = this.buildFetch(target.workspaceId);
+    const fetchFunction = this.buildFetch(target.workspaceId);
     const { resourceMetadataUrl, scope } = await this.probeResource({
-      provider: target.provider,
-      fetchFn,
+      target,
+      fetchFunction,
     });
     const discoveryState = await this.discover({
       resourceUrl: target.provider.oauthDiscoveryConfig.resourceUrl,
       resourceMetadataUrl,
-      fetchFn,
+      fetchFunction,
     });
-    const usableStoredClient = await this.findUsableStoredClient({
-      target,
-      discoveryState,
+    const existingClient = await this.oauthClientService.findStoredClient({
+      connectionProviderId: target.provider.id,
+      workspaceId: target.workspaceId,
     });
-    const storedClient = isDefined(usableStoredClient)
-      ? await this.refreshDiscoveryState({
-          target,
-          storedClient: usableStoredClient,
-          discoveryState,
-        })
-      : await this.registerAndStoreClient({ target, discoveryState, fetchFn });
+    const storedClient =
+      isDefined(existingClient) &&
+      this.canReuseStoredClient({
+        storedClient: existingClient,
+        discoveryState,
+      })
+        ? await this.refreshDiscoveryState({
+            target,
+            storedClient: existingClient,
+            discoveryState,
+          })
+        : await this.registerAndStoreClient({
+            target,
+            existingClient,
+            discoveryState,
+            fetchFunction,
+          });
 
     return this.toResolvedClient({ storedClient, scope });
   }
@@ -102,20 +117,14 @@ export class ConnectionProviderOAuthDiscoveryService {
     });
   }
 
-  private async findUsableStoredClient({
-    target,
+  private canReuseStoredClient({
+    storedClient,
     discoveryState,
   }: {
-    target: DiscoveryTarget;
+    storedClient: OAuthDiscoveryStoredClient;
     discoveryState: OAuthDiscoveryState;
-  }): Promise<OAuthDiscoveryStoredClient | null> {
-    const storedClient = await this.oauthClientService.findStoredClient({
-      connectionProviderId: target.provider.id,
-      workspaceId: target.workspaceId,
-    });
-
-    if (
-      isDefined(storedClient) &&
+  }): boolean {
+    return (
       storedClient.discoveryState.authorizationServerUrl ===
         discoveryState.authorizationServerUrl &&
       isStoredOAuthClientUsable({
@@ -124,11 +133,7 @@ export class ConnectionProviderOAuthDiscoveryService {
         clientMetadataUrl: this.getClientMetadataUrl(),
         now: new Date(),
       })
-    ) {
-      return storedClient;
-    }
-
-    return null;
+    );
   }
 
   private async refreshDiscoveryState({
@@ -144,38 +149,80 @@ export class ConnectionProviderOAuthDiscoveryService {
       return storedClient;
     }
 
+    const client = { ...storedClient, discoveryState };
+
     await this.oauthClientService.replaceClientIfUnchanged({
-      client: {
-        ...storedClient,
-        connectionProviderId: target.provider.id,
-        workspaceId: target.workspaceId,
-        discoveryState,
-      },
+      client: this.toClientToSave({ target, client }),
       expectedClientId: storedClient.clientInformation.client_id,
     });
 
-    return { ...storedClient, discoveryState };
+    return client;
+  }
+
+  private async registerAndStoreClient({
+    target,
+    existingClient,
+    discoveryState,
+    fetchFunction,
+  }: {
+    target: DiscoveryTarget;
+    existingClient: OAuthDiscoveryStoredClient | null;
+    discoveryState: OAuthDiscoveryState;
+    fetchFunction: FetchLike;
+  }): Promise<OAuthDiscoveryStoredClient> {
+    const clientInformation = await this.identifyClient({
+      discoveryState,
+      fetchFunction,
+    });
+    const client: OAuthDiscoveryStoredClient = {
+      redirectUri: this.getRedirectUrl(),
+      registrationMethod:
+        clientInformation.client_id === this.getClientMetadataUrl()
+          ? 'CLIENT_ID_METADATA_DOCUMENT'
+          : 'DYNAMIC_CLIENT_REGISTRATION',
+      clientInformation,
+      discoveryState,
+    };
+    const clientToSave = this.toClientToSave({ target, client });
+    const isClientSaved = isDefined(existingClient)
+      ? await this.oauthClientService.replaceClientIfUnchanged({
+          client: clientToSave,
+          expectedClientId: existingClient.clientInformation.client_id,
+        })
+      : await this.oauthClientService.insertClientIfAbsent(clientToSave);
+
+    if (isClientSaved) {
+      return client;
+    }
+
+    // Another member's sign-in stored a client meanwhile: one client must issue every token
+    const concurrentClient = await this.oauthClientService.findStoredClient({
+      connectionProviderId: target.provider.id,
+      workspaceId: target.workspaceId,
+    });
+
+    return concurrentClient ?? client;
   }
 
   private async discover({
     resourceUrl,
     resourceMetadataUrl,
-    fetchFn,
+    fetchFunction,
   }: {
     resourceUrl: string;
     resourceMetadataUrl: URL | undefined;
-    fetchFn: FetchLike;
+    fetchFunction: FetchLike;
   }): Promise<OAuthDiscoveryState> {
     const resourceMetadata = await this.discoverResourceMetadata({
       resourceUrl,
       resourceMetadataUrl,
-      fetchFn,
+      fetchFunction,
     });
     const authorizationServerUrl =
       resourceMetadata?.authorization_servers?.[0] ?? resourceUrl;
     const authorizationServerMetadata =
       await discoverAuthorizationServerMetadata(authorizationServerUrl, {
-        fetchFn,
+        fetchFn: fetchFunction,
       });
 
     // jsonb drops undefined keys, so the stored state must compare equal to a fresh one
@@ -191,65 +238,14 @@ export class ConnectionProviderOAuthDiscoveryService {
     };
   }
 
-  private async registerAndStoreClient({
-    target,
-    discoveryState,
-    fetchFn,
-  }: {
-    target: DiscoveryTarget;
-    discoveryState: OAuthDiscoveryState;
-    fetchFn: FetchLike;
-  }): Promise<OAuthDiscoveryStoredClient> {
-    const { provider, workspaceId } = target;
-    const clientInformation = await this.identifyClient({
-      authorizationServerUrl: discoveryState.authorizationServerUrl,
-      authorizationServerMetadata: discoveryState.authorizationServerMetadata,
-      fetchFn,
-    });
-    const client = {
-      connectionProviderId: provider.id,
-      workspaceId,
-      redirectUri: this.getRedirectUrl(),
-      registrationMethod:
-        clientInformation.client_id === this.getClientMetadataUrl()
-          ? ('CLIENT_ID_METADATA_DOCUMENT' as const)
-          : ('DYNAMIC_CLIENT_REGISTRATION' as const),
-      clientInformation,
-      discoveryState,
-    };
-    const existingClient = await this.oauthClientService.findStoredClient({
-      connectionProviderId: provider.id,
-      workspaceId,
-    });
-    const isClientSaved = isDefined(existingClient)
-      ? await this.oauthClientService.replaceClientIfUnchanged({
-          client,
-          expectedClientId: existingClient.clientInformation.client_id,
-        })
-      : await this.oauthClientService.insertClientIfAbsent(client);
-
-    if (!isClientSaved) {
-      const concurrentClient = await this.oauthClientService.findStoredClient({
-        connectionProviderId: provider.id,
-        workspaceId,
-      });
-
-      if (isDefined(concurrentClient)) {
-        return concurrentClient;
-      }
-    }
-
-    return client;
-  }
-
   private async discoverResourceMetadata({
     resourceUrl,
     resourceMetadataUrl,
-    fetchFn,
+    fetchFunction,
   }: {
     resourceUrl: string;
     resourceMetadataUrl: URL | undefined;
-    fetchFn: FetchLike;
+    fetchFunction: FetchLike;
   }): Promise<OAuthProtectedResourceMetadata | undefined> {
     let resourceMetadata: OAuthProtectedResourceMetadata;
 
@@ -257,7 +253,7 @@ export class ConnectionProviderOAuthDiscoveryService {
       resourceMetadata = await discoverOAuthProtectedResourceMetadata(
         resourceUrl,
         { resourceMetadataUrl },
-        fetchFn,
+        fetchFunction,
       );
     } catch {
       return undefined;
@@ -279,14 +275,14 @@ export class ConnectionProviderOAuthDiscoveryService {
   }
 
   private async identifyClient({
-    authorizationServerUrl,
-    authorizationServerMetadata,
-    fetchFn,
+    discoveryState,
+    fetchFunction,
   }: {
-    authorizationServerUrl: string;
-    authorizationServerMetadata: AuthorizationServerMetadata | undefined;
-    fetchFn: FetchLike;
+    discoveryState: OAuthDiscoveryState;
+    fetchFunction: FetchLike;
   }): Promise<OAuthClientInformationFull> {
+    const { authorizationServerUrl, authorizationServerMetadata } =
+      discoveryState;
     const clientMetadataUrl = this.getClientMetadataUrl();
     const clientMetadata = buildOAuthDiscoveryClientMetadata(
       this.twentyConfigService.get('SERVER_URL'),
@@ -302,30 +298,44 @@ export class ConnectionProviderOAuthDiscoveryService {
     return registerClient(authorizationServerUrl, {
       metadata: authorizationServerMetadata,
       clientMetadata,
-      fetchFn,
+      fetchFn: fetchFunction,
     });
   }
 
   private async probeResource({
-    provider,
-    fetchFn,
+    target,
+    fetchFunction,
   }: {
-    provider: OAuthDiscoveryConnectionProvider;
-    fetchFn: FetchLike;
+    target: DiscoveryTarget;
+    fetchFunction: FetchLike;
   }) {
     try {
       return await probeProtectedResource({
-        resourceUrl: provider.oauthDiscoveryConfig.resourceUrl,
-        fetchFn,
+        resourceUrl: target.provider.oauthDiscoveryConfig.resourceUrl,
+        fetchFunction,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
 
       throw new ConnectionProviderException(
-        `Could not reach the resource of connection provider ${provider.id}: ${message}`,
+        `Could not reach the resource of connection provider ${target.provider.id}: ${message}`,
         ConnectionProviderExceptionCode.INVALID_REQUEST,
       );
     }
+  }
+
+  private toClientToSave({
+    target,
+    client,
+  }: {
+    target: DiscoveryTarget;
+    client: OAuthDiscoveryStoredClient;
+  }): OAuthDiscoveryClientToSave {
+    return {
+      ...client,
+      connectionProviderId: target.provider.id,
+      workspaceId: target.workspaceId,
+    };
   }
 
   private toResolvedClient({
@@ -341,9 +351,6 @@ export class ConnectionProviderOAuthDiscoveryService {
       resourceMetadata,
     } = storedClient.discoveryState;
     const probedScopes = scope?.split(/\s+/).filter(Boolean) ?? [];
-    const scopes = isNonEmptyArray(probedScopes)
-      ? probedScopes
-      : (resourceMetadata?.scopes_supported ?? []);
 
     return {
       authorizationEndpoint:
@@ -354,15 +361,15 @@ export class ConnectionProviderOAuthDiscoveryService {
         new URL('/token', authorizationServerUrl).toString(),
       clientId: storedClient.clientInformation.client_id,
       clientSecret: storedClient.clientInformation.client_secret ?? null,
-      scopes,
+      scopes: isNonEmptyArray(probedScopes)
+        ? probedScopes
+        : (resourceMetadata?.scopes_supported ?? []),
       resource:
         resourceMetadata?.resource ??
-        resourceUrlFromServerUrl(
-          storedClient.discoveryState.authorizationServerUrl,
-        ).toString(),
+        resourceUrlFromServerUrl(authorizationServerUrl).toString(),
       authorizationParams: null,
       tokenRequestContentType: 'form-urlencoded',
-      usePkce: true,
+      shouldUsePkce: true,
     };
   }
 

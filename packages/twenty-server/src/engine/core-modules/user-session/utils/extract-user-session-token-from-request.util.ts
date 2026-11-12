@@ -24,9 +24,9 @@ export const extractUserSessionTokenFromRequestCookie = (
   }
 
   const token =
-    readCookieValue(cookieHeader, secureCookieName) ??
+    readCookieValue({ cookieHeader, cookieName: secureCookieName }) ??
     (allowInsecureCookieName
-      ? readCookieValue(cookieHeader, insecureCookieName)
+      ? readCookieValue({ cookieHeader, cookieName: insecureCookieName })
       : undefined);
 
   if (!isNonEmptyString(token) || !isUserSessionToken(token)) {

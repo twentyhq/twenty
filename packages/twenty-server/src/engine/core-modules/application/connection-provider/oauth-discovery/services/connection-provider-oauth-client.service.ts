@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { type OAuthDiscoveryState } from '@modelcontextprotocol/sdk/client/auth.js';
-import { type OAuthClientInformationMixed } from '@modelcontextprotocol/sdk/shared/auth.js';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -9,21 +8,19 @@ import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/applica
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { isUniqueViolationError } from 'src/engine/workspace-query-executor/utils/is-unique-violation-error.util';
 import { ConnectionProviderOAuthClientEntity } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/entities/connection-provider-oauth-client.entity';
-import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-type OAuthDiscoveryClientToSave = {
+export type OAuthDiscoveryClientToSave = OAuthDiscoveryStoredClient & {
   connectionProviderId: string;
   workspaceId: string;
-  registrationMethod: OAuthDiscoveryRegistrationMethod;
-  redirectUri: string;
-  clientInformation: OAuthClientInformationMixed;
-  discoveryState: OAuthDiscoveryState;
 };
+
+// RFC 7591: a client_secret_expires_at of 0 means the secret never expires
+const NEVER_EXPIRES = 0;
 
 @Injectable()
 export class ConnectionProviderOAuthClientService {
@@ -167,9 +164,11 @@ export class ConnectionProviderOAuthClientService {
           workspaceId,
         },
       ),
-      clientSecretExpiresAt: clientInformation.client_secret_expires_at
-        ? new Date(clientInformation.client_secret_expires_at * 1000)
-        : null,
+      clientSecretExpiresAt:
+        isDefined(clientInformation.client_secret_expires_at) &&
+        clientInformation.client_secret_expires_at !== NEVER_EXPIRES
+          ? new Date(clientInformation.client_secret_expires_at * 1000)
+          : null,
       tokenEndpointAuthMethod:
         'token_endpoint_auth_method' in clientInformation
           ? (clientInformation.token_endpoint_auth_method ?? null)

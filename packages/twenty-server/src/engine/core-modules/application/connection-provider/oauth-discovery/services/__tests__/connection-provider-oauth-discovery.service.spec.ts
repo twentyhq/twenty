@@ -5,9 +5,11 @@ import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/applica
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 
 import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
-import { ConnectionProviderOAuthDiscoveryService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery.service';
+import {
+  ConnectionProviderOAuthDiscoveryService,
+  type DiscoveryTarget,
+} from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery.service';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
-import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -18,11 +20,10 @@ const RESOURCE_URL = 'https://mcp.example.com/mcp';
 const AUTHORIZATION_SERVER_URL = 'https://auth.example.com';
 const WORKSPACE_ID = 'workspace-id';
 
-const PROVIDER = {
+const PROVIDER: DiscoveryTarget['provider'] = {
   id: 'provider-id',
-  type: 'oauth-discovery',
   oauthDiscoveryConfig: { resourceUrl: RESOURCE_URL },
-} as OAuthDiscoveryConnectionProvider;
+};
 
 const buildAuthorizationServerFetch = ({
   isClientIdMetadataDocumentSupported,
@@ -31,7 +32,7 @@ const buildAuthorizationServerFetch = ({
 }) => {
   const requestedPaths: string[] = [];
 
-  const fetchFn: FetchLike = async (url, init) => {
+  const fetchFunction: FetchLike = async (url, init) => {
     const { pathname } = new URL(url);
 
     requestedPaths.push(`${init?.method ?? 'GET'} ${pathname}`);
@@ -75,14 +76,14 @@ const buildAuthorizationServerFetch = ({
     return new Response(null, { status: 404 });
   };
 
-  return { fetchFn, requestedPaths };
+  return { fetchFunction, requestedPaths };
 };
 
 const buildService = ({
-  fetchFn,
+  fetchFunction,
   storedClient = null,
 }: {
-  fetchFn: FetchLike;
+  fetchFunction: FetchLike;
   storedClient?: OAuthDiscoveryStoredClient | null;
 }) => {
   const oauthClientService = {
@@ -104,7 +105,7 @@ const buildService = ({
   const service = new ConnectionProviderOAuthDiscoveryService(
     oauthClientService as unknown as ConnectionProviderOAuthClientService,
     {
-      createFetchLike: () => fetchFn,
+      createFetchLike: () => fetchFunction,
     } as unknown as SecureHttpClientService,
     { get: () => SERVER_URL } as unknown as TwentyConfigService,
   );
@@ -114,10 +115,10 @@ const buildService = ({
 
 describe('ConnectionProviderOAuthDiscoveryService', () => {
   it('identifies Twenty by its metadata document when the authorization server reads them', async () => {
-    const { fetchFn, requestedPaths } = buildAuthorizationServerFetch({
+    const { fetchFunction, requestedPaths } = buildAuthorizationServerFetch({
       isClientIdMetadataDocumentSupported: true,
     });
-    const { service, oauthClientService } = buildService({ fetchFn });
+    const { service, oauthClientService } = buildService({ fetchFunction });
 
     const client = await service.resolveClientForAuthorization({
       provider: PROVIDER,
@@ -131,7 +132,7 @@ describe('ConnectionProviderOAuthDiscoveryService', () => {
       clientSecret: null,
       scopes: ['read', 'write'],
       resource: RESOURCE_URL,
-      usePkce: true,
+      shouldUsePkce: true,
     });
     expect(requestedPaths).not.toContain('POST /register');
     expect(oauthClientService.insertClientIfAbsent).toHaveBeenCalledWith(
@@ -143,10 +144,10 @@ describe('ConnectionProviderOAuthDiscoveryService', () => {
   });
 
   it('registers a client dynamically otherwise', async () => {
-    const { fetchFn } = buildAuthorizationServerFetch({
+    const { fetchFunction } = buildAuthorizationServerFetch({
       isClientIdMetadataDocumentSupported: false,
     });
-    const { service, oauthClientService } = buildService({ fetchFn });
+    const { service, oauthClientService } = buildService({ fetchFunction });
 
     const client = await service.resolveClientForAuthorization({
       provider: PROVIDER,
@@ -162,11 +163,11 @@ describe('ConnectionProviderOAuthDiscoveryService', () => {
   });
 
   it('reuses a stored client of the same authorization server without registering again', async () => {
-    const { fetchFn, requestedPaths } = buildAuthorizationServerFetch({
+    const { fetchFunction, requestedPaths } = buildAuthorizationServerFetch({
       isClientIdMetadataDocumentSupported: false,
     });
     const { service, oauthClientService } = buildService({
-      fetchFn,
+      fetchFunction,
       storedClient: {
         registrationMethod: 'DYNAMIC_CLIENT_REGISTRATION',
         redirectUri: REDIRECT_URL,
@@ -200,11 +201,11 @@ describe('ConnectionProviderOAuthDiscoveryService', () => {
   });
 
   it('registers again when the resource moved to another authorization server', async () => {
-    const { fetchFn } = buildAuthorizationServerFetch({
+    const { fetchFunction } = buildAuthorizationServerFetch({
       isClientIdMetadataDocumentSupported: false,
     });
     const { service, oauthClientService } = buildService({
-      fetchFn,
+      fetchFunction,
       storedClient: {
         registrationMethod: 'DYNAMIC_CLIENT_REGISTRATION',
         redirectUri: REDIRECT_URL,
@@ -230,10 +231,10 @@ describe('ConnectionProviderOAuthDiscoveryService', () => {
   });
 
   it('refuses a token request before any sign-in stored a client', async () => {
-    const { fetchFn } = buildAuthorizationServerFetch({
+    const { fetchFunction } = buildAuthorizationServerFetch({
       isClientIdMetadataDocumentSupported: false,
     });
-    const { service } = buildService({ fetchFn });
+    const { service } = buildService({ fetchFunction });
 
     await expect(
       service.resolveClientForTokenRequest({

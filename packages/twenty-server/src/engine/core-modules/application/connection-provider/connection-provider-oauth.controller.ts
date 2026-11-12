@@ -155,7 +155,10 @@ export class ConnectionProviderOAuthController {
       const { authorizationUrl } =
         await this.oauthProviderFlowService.startAuthorizationFlow({
           ...authorizationArgs,
-          browserNonce: this.flowCookieService.attachBrowserNonce(req, res),
+          browserNonce: this.flowCookieService.attachBrowserNonce({
+            request: req,
+            response: res,
+          }),
         });
 
       return res.redirect(authorizationUrl);

@@ -4,7 +4,7 @@ const RESOURCE_URL = 'https://mcp.example.com/mcp';
 
 describe('probeProtectedResource', () => {
   it('reports the metadata and scope named by a 401', async () => {
-    const fetchFn = jest.fn().mockResolvedValue(
+    const fetchFunction = jest.fn().mockResolvedValue(
       new Response(null, {
         status: 401,
         headers: {
@@ -16,7 +16,7 @@ describe('probeProtectedResource', () => {
 
     const probe = await probeProtectedResource({
       resourceUrl: RESOURCE_URL,
-      fetchFn,
+      fetchFunction,
     });
 
     expect(probe.isSignInRequired).toBe(true);
@@ -27,12 +27,12 @@ describe('probeProtectedResource', () => {
   });
 
   it('does not require a sign-in when the resource answers', async () => {
-    const fetchFn = jest
+    const fetchFunction = jest
       .fn()
       .mockResolvedValue(new Response('{}', { status: 200 }));
 
     await expect(
-      probeProtectedResource({ resourceUrl: RESOURCE_URL, fetchFn }),
+      probeProtectedResource({ resourceUrl: RESOURCE_URL, fetchFunction }),
     ).resolves.toEqual({ isSignInRequired: false });
   });
 });
