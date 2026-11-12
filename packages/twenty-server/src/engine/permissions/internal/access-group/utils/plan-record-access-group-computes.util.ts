@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
-import { buildRecordAccessGroupComputeKey } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-compute-key.util';
+import { buildRecordAccessGroupComputeId } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-compute-id.util';
 import { isRelatedRecordPathFollowed } from 'src/engine/permissions/internal/access-group/utils/is-related-record-path-followed.util';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 
@@ -24,10 +24,7 @@ export const planRecordAccessGroupComputes = ({
   >[];
   isObjectUsingRecordAccessGroups: (objectMetadataId: string) => boolean;
 }): PlannedRecordAccessGroupCompute[] => {
-  const plannedComputeByKey = new Map<
-    string,
-    PlannedRecordAccessGroupCompute
-  >();
+  const plannedComputeById = new Map<string, PlannedRecordAccessGroupCompute>();
   const computesToVisit: PlannedRecordAccessGroupCompute[] =
     objectMetadataIds.map((objectMetadataId) => ({
       objectMetadataId,
@@ -35,13 +32,13 @@ export const planRecordAccessGroupComputes = ({
     }));
 
   for (const compute of computesToVisit) {
-    const computeKey = buildRecordAccessGroupComputeKey(compute);
+    const computeId = buildRecordAccessGroupComputeId(compute);
 
-    if (plannedComputeByKey.has(computeKey)) {
+    if (plannedComputeById.has(computeId)) {
       continue;
     }
 
-    plannedComputeByKey.set(computeKey, compute);
+    plannedComputeById.set(computeId, compute);
 
     const { objectMetadataId, propagatedFromObjectMetadataIds } = compute;
     const followingObjectMetadataIds = new Set(
@@ -72,5 +69,5 @@ export const planRecordAccessGroupComputes = ({
     }
   }
 
-  return [...plannedComputeByKey.values()];
+  return [...plannedComputeById.values()];
 };

@@ -12,7 +12,7 @@ import { ACCESS_GROUP_PROPAGATION_PROGRESS_TTL_MS } from 'src/engine/permissions
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { type AccessGroupPropagationProgress } from 'src/engine/permissions/internal/access-group/types/access-group-propagation-progress.type';
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
-import { buildRecordAccessGroupComputeKey } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-compute-key.util';
+import { buildRecordAccessGroupComputeId } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-compute-id.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
@@ -35,17 +35,16 @@ export class AccessGroupPropagationProgressService {
   }): Promise<void> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const [plannedObjectComputeKeys, pendingObjectComputeCount] =
-      await Promise.all([
-        this.cacheStorageService.setMembers(
-          this.buildPlannedObjectComputesCacheKey(workspaceId),
-        ),
-        this.cacheStorageService.getSetLength(
-          this.buildPendingObjectComputesCacheKey(workspaceId),
-        ),
-      ]);
-    const isPropagationRunning = pendingObjectComputeCount > 0;
-    const newObjectComputes = planRecordAccessGroupComputes({
+    const [plannedComputeIds, pendingComputeIdCount] = await Promise.all([
+      this.cacheStorageService.setMembers(
+        this.buildPlannedComputeIdsCacheKey(workspaceId),
+      ),
+      this.cacheStorageService.getSetLength(
+        this.buildPendingComputeIdsCacheKey(workspaceId),
+      ),
+    ]);
+    const isPropagationRunning = pendingComputeIdCount > 0;
+    const newComputes = planRecordAccessGroupComputes({
       objectMetadataIds,
       resolvedRelatedRecordPaths: metadataMaps.resolvedRelatedRecordPaths,
       isObjectUsingRecordAccessGroups: (objectMetadataId) =>
@@ -53,12 +52,10 @@ export class AccessGroupPropagationProgressService {
     }).filter(
       (compute) =>
         !isPropagationRunning ||
-        !plannedObjectComputeKeys.includes(
-          buildRecordAccessGroupComputeKey(compute),
-        ),
+        !plannedComputeIds.includes(buildRecordAccessGroupComputeId(compute)),
     );
 
-    if (newObjectComputes.length === 0) {
+    if (newComputes.length === 0) {
       return;
     }
 
@@ -69,7 +66,7 @@ export class AccessGroupPropagationProgressService {
     const plannedRecordCount =
       await this.recordAccessGroupRepository.estimateRecordCount({
         workspaceId,
-        flatObjectMetadatas: newObjectComputes
+        flatObjectMetadatas: newComputes
           .map(({ objectMetadataId }) =>
             findFlatEntityByIdInFlatEntityMaps({
               flatEntityId: objectMetadataId,
@@ -80,8 +77,8 @@ export class AccessGroupPropagationProgressService {
       });
 
     await this.cacheStorageService.setAdd(
-      this.buildPlannedObjectComputesCacheKey(workspaceId),
-      newObjectComputes.map(buildRecordAccessGroupComputeKey),
+      this.buildPlannedComputeIdsCacheKey(workspaceId),
+      newComputes.map(buildRecordAccessGroupComputeId),
       ACCESS_GROUP_PROPAGATION_PROGRESS_TTL_MS,
     );
     await this.incrementRecordCount({
@@ -95,8 +92,8 @@ export class AccessGroupPropagationProgressService {
     jobData: RecomputeRecordAccessGroupIdsJobData,
   ): Promise<void> {
     await this.cacheStorageService.setAdd(
-      this.buildPendingObjectComputesCacheKey(jobData.workspaceId),
-      [buildRecordAccessGroupComputeKey(jobData)],
+      this.buildPendingComputeIdsCacheKey(jobData.workspaceId),
+      [buildRecordAccessGroupComputeId(jobData)],
       ACCESS_GROUP_PROPAGATION_PROGRESS_TTL_MS,
     );
   }
@@ -113,7 +110,7 @@ export class AccessGroupPropagationProgressService {
       recordCount,
     });
     await this.cacheStorageService.expire(
-      this.buildPendingObjectComputesCacheKey(workspaceId),
+      this.buildPendingComputeIdsCacheKey(workspaceId),
       ACCESS_GROUP_PROPAGATION_PROGRESS_TTL_MS,
     );
   }
@@ -121,16 +118,17 @@ export class AccessGroupPropagationProgressService {
   async finishCompute(
     jobData: RecomputeRecordAccessGroupIdsJobData,
   ): Promise<void> {
-    const pendingObjectComputesCacheKey =
-      this.buildPendingObjectComputesCacheKey(jobData.workspaceId);
+    const pendingComputeIdsCacheKey = this.buildPendingComputeIdsCacheKey(
+      jobData.workspaceId,
+    );
 
-    await this.cacheStorageService.setRemove(pendingObjectComputesCacheKey, [
-      buildRecordAccessGroupComputeKey(jobData),
+    await this.cacheStorageService.setRemove(pendingComputeIdsCacheKey, [
+      buildRecordAccessGroupComputeId(jobData),
     ]);
 
     if (
       (await this.cacheStorageService.getSetLength(
-        pendingObjectComputesCacheKey,
+        pendingComputeIdsCacheKey,
       )) === 0
     ) {
       await this.clearPlan(jobData.workspaceId);
@@ -140,12 +138,11 @@ export class AccessGroupPropagationProgressService {
   async findProgress(
     workspaceId: string,
   ): Promise<AccessGroupPropagationProgress> {
-    const pendingObjectComputeCount =
-      await this.cacheStorageService.getSetLength(
-        this.buildPendingObjectComputesCacheKey(workspaceId),
-      );
+    const pendingComputeIdCount = await this.cacheStorageService.getSetLength(
+      this.buildPendingComputeIdsCacheKey(workspaceId),
+    );
 
-    if (pendingObjectComputeCount === 0) {
+    if (pendingComputeIdCount === 0) {
       return {
         totalRecordCount: 0,
         remainingRecordCount: 0,
@@ -184,18 +181,18 @@ export class AccessGroupPropagationProgressService {
 
   private async clearPlan(workspaceId: string): Promise<void> {
     await this.cacheStorageService.mdel([
-      this.buildPlannedObjectComputesCacheKey(workspaceId),
+      this.buildPlannedComputeIdsCacheKey(workspaceId),
       this.buildTotalRecordCountCacheKey(workspaceId),
       this.buildComputedRecordCountCacheKey(workspaceId),
     ]);
   }
 
-  private buildPendingObjectComputesCacheKey(workspaceId: string): string {
-    return `access-group-propagation:${workspaceId}:pending-object-computes`;
+  private buildPendingComputeIdsCacheKey(workspaceId: string): string {
+    return `access-group-propagation:${workspaceId}:pending-compute-ids`;
   }
 
-  private buildPlannedObjectComputesCacheKey(workspaceId: string): string {
-    return `access-group-propagation:${workspaceId}:planned-object-computes`;
+  private buildPlannedComputeIdsCacheKey(workspaceId: string): string {
+    return `access-group-propagation:${workspaceId}:planned-compute-ids`;
   }
 
   private buildTotalRecordCountCacheKey(workspaceId: string): string {

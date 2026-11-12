@@ -14,7 +14,7 @@ import { SYNC_ACCESS_GROUPS_JOB_NAME } from 'src/engine/permissions/internal/acc
 import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { type RecomputeRelatedRecordPathTargetsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-related-record-path-targets-job-data.type';
 import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
-import { buildRecordAccessGroupComputeKey } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-compute-key.util';
+import { buildRecordAccessGroupComputeId } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-compute-id.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -69,7 +69,7 @@ export class AccessGroupSyncSchedulerService {
         workspaceId,
         retryLimit: 3,
         deduplication: {
-          id: `record-access-group-ids:${workspaceId}:${buildRecordAccessGroupComputeKey({ objectMetadataId, propagatedFromObjectMetadataIds })}`,
+          id: `record-access-group-ids:${workspaceId}:${buildRecordAccessGroupComputeId({ objectMetadataId, propagatedFromObjectMetadataIds })}`,
           keepLastIfActive: true,
         },
       },
