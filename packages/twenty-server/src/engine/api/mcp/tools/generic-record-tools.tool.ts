@@ -2,7 +2,12 @@ import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { MCP_DATABASE_CRUD_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-database-crud-tool-annotations.constant';
+import { type McpAnnotatedTool } from 'src/engine/api/mcp/types/mcp-annotated-tool.type';
 import { type McpToolSet } from 'src/engine/api/mcp/types/mcp-tool-set.type';
+import { FIND_RECORDS_TOOL_DEFAULT_LIMIT } from 'src/engine/core-modules/record-crud/constants/find-records-tool-default-limit.constant';
+import { GROUP_BY_RECORDS_TOOL_DEFAULT_LIMIT } from 'src/engine/core-modules/record-crud/constants/group-by-records-tool-default-limit.constant';
+import { GROUP_BY_RECORDS_TOOL_MAX_DIMENSIONS } from 'src/engine/core-modules/record-crud/constants/group-by-records-tool-max-dimensions.constant';
+import { WRITE_RECORDS_TOOL_MAX_RECORDS } from 'src/engine/core-modules/record-crud/constants/write-records-tool-max-records.constant';
 import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provider/constants/database-crud-operation.const';
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
@@ -32,9 +37,9 @@ const record = z.record(z.string(), z.unknown());
 const records = z
   .array(record)
   .min(1)
-  .max(20)
+  .max(WRITE_RECORDS_TOOL_MAX_RECORDS)
   .describe(
-    `Records keyed by field name. Maximum 20 per call. Composite fields take an object of sub-fields, relations take <name>Id. ${FIELD_NAMES_HINT}`,
+    `Records keyed by field name. Maximum ${WRITE_RECORDS_TOOL_MAX_RECORDS} per call. Composite fields take an object of sub-fields, relations take <name>Id. ${FIELD_NAMES_HINT}`,
   );
 
 const findRecordsInputSchema = z.object({
@@ -56,9 +61,9 @@ const findRecordsInputSchema = z.object({
     .number()
     .int()
     .positive()
-    .default(10)
+    .default(FIND_RECORDS_TOOL_DEFAULT_LIMIT)
     .describe(
-      'Maximum number of records to return (default: 10, max: 100). Start small and increase only if needed.',
+      `Maximum number of records to return (default: ${FIND_RECORDS_TOOL_DEFAULT_LIMIT}, max: 100). Start small and increase only if needed.`,
     ),
   offset: z
     .number()
@@ -72,9 +77,9 @@ const groupRecordsInputSchema = z.object({
   groupBy: z
     .array(z.record(z.string(), z.unknown()))
     .min(1)
-    .max(2)
+    .max(GROUP_BY_RECORDS_TOOL_MAX_DIMENSIONS)
     .describe(
-      'Fields to group by (max 2), one field per item: {"stage": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}, {"name": {"firstName": true}}.',
+      `Fields to group by (max ${GROUP_BY_RECORDS_TOOL_MAX_DIMENSIONS}), one field per item: {"stage": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}, {"name": {"firstName": true}}.`,
     ),
   aggregateOperation: z
     .string()
@@ -93,8 +98,10 @@ const groupRecordsInputSchema = z.object({
     .number()
     .int()
     .positive()
-    .default(50)
-    .describe('Maximum number of groups to return (default: 50, max: 100).'),
+    .default(GROUP_BY_RECORDS_TOOL_DEFAULT_LIMIT)
+    .describe(
+      `Maximum number of groups to return (default: ${GROUP_BY_RECORDS_TOOL_DEFAULT_LIMIT}, max: 100).`,
+    ),
   orderBy: z
     .enum(['ASC', 'DESC'])
     .optional()
@@ -150,20 +157,58 @@ const mergeRecordsInputSchema = z.object({
     ),
 });
 
-type GenericRecordToolDefinition<TSchema extends z.ZodType> = {
+type GenericRecordToolFactory = {
+  name: string;
+  create: (args: {
+    toolRegistry: Pick<ToolRegistryService, 'resolveAndExecuteDatabaseCrud'>;
+    context: ToolContext;
+  }) => McpAnnotatedTool;
+};
+
+const defineGenericRecordTool = <
+  TSchema extends z.ZodType<{ objectName: string }>,
+>({
+  name,
+  operation,
+  description,
+  inputSchema,
+  toOperationArguments,
+}: {
+  name: string;
   operation: DatabaseCrudOperation;
   description: string;
   inputSchema: TSchema;
   toOperationArguments: (input: z.infer<TSchema>) => Record<string, unknown>;
-};
+}): GenericRecordToolFactory => ({
+  name,
+  create: ({ toolRegistry, context }) => ({
+    description,
+    inputSchema,
+    annotations: MCP_DATABASE_CRUD_TOOL_ANNOTATIONS[operation],
+    execute: async (parameters: unknown): Promise<ToolOutput> => {
+      const parsed = await inputSchema.safeParseAsync(parameters);
 
-const defineGenericRecordTool = <TSchema extends z.ZodType>(
-  definition: GenericRecordToolDefinition<TSchema>,
-) => definition;
+      if (!parsed.success) {
+        return buildInvalidToolArgumentsOutput({
+          toolName: name,
+          error: parsed.error,
+        });
+      }
+
+      return toolRegistry.resolveAndExecuteDatabaseCrud({
+        objectName: parsed.data.objectName,
+        operation,
+        args: toOperationArguments(parsed.data),
+        context,
+      });
+    },
+  }),
+});
 
 // Same definitions in every workspace: the object is an argument, so clients that snapshot tools/list stay valid
-const GENERIC_RECORD_TOOL_DEFINITIONS = {
-  find_records: defineGenericRecordTool({
+const GENERIC_RECORD_TOOL_FACTORIES: GenericRecordToolFactory[] = [
+  defineGenericRecordTool({
+    name: 'find_records',
     operation: 'find_many',
     description:
       'Search the records of an object with filters, sorting and pagination. Returns the matching records, a "count" of total matches and a "hasNextPage" flag: when it is true, continue with a higher offset before concluding a record is absent or answering count questions.',
@@ -174,7 +219,8 @@ const GENERIC_RECORD_TOOL_DEFINITIONS = {
       ...rest
     }) => ({ ...recordFilter, ...rest }),
   }),
-  group_records: defineGenericRecordTool({
+  defineGenericRecordTool({
+    name: 'group_records',
     operation: 'group_by',
     description:
       'Group the records of an object by one or two fields and compute an aggregate per group. Use for questions like "how many deals per stage?" or "total revenue by company".',
@@ -185,21 +231,24 @@ const GENERIC_RECORD_TOOL_DEFINITIONS = {
       ...rest
     }) => ({ ...recordFilter, ...rest }),
   }),
-  create_records: defineGenericRecordTool({
+  defineGenericRecordTool({
+    name: 'create_records',
     operation: 'create_many',
     description:
       'Create one or more records of an object. Returns the created records.',
     inputSchema: createRecordsInputSchema,
     toOperationArguments: (input) => ({ records: input.records }),
   }),
-  update_record: defineGenericRecordTool({
+  defineGenericRecordTool({
+    name: 'update_record',
     operation: 'update_one',
     description:
       'Update one record by id. Only the fields passed in data change.',
     inputSchema: updateRecordInputSchema,
     toOperationArguments: ({ id, data }) => ({ ...data, id }),
   }),
-  update_records: defineGenericRecordTool({
+  defineGenericRecordTool({
+    name: 'update_records',
     operation: 'update_many',
     description:
       'Apply the SAME field values to every record matching a filter (e.g. a bulk status change). When each record needs its own values, use upsert_records.',
@@ -209,21 +258,24 @@ const GENERIC_RECORD_TOOL_DEFINITIONS = {
       data: input.data,
     }),
   }),
-  upsert_records: defineGenericRecordTool({
+  defineGenericRecordTool({
+    name: 'upsert_records',
     operation: 'upsert_many',
     description:
       'Insert or update several records, each with its own values. Existing records are matched by id or unique fields and updated; the others are created.',
     inputSchema: createRecordsInputSchema,
     toOperationArguments: (input) => ({ records: input.records }),
   }),
-  delete_records: defineGenericRecordTool({
+  defineGenericRecordTool({
+    name: 'delete_records',
     operation: 'delete_many',
     description:
       'Soft-delete the records matching a filter. Deleted records are hidden from normal queries and can be restored.',
     inputSchema: deleteRecordsInputSchema,
     toOperationArguments: (input) => ({ filter: input.filter }),
   }),
-  merge_records: defineGenericRecordTool({
+  defineGenericRecordTool({
+    name: 'merge_records',
     operation: 'merge_many',
     description: `Merge 2 to ${MUTATION_MAX_MERGE_RECORDS} duplicate records into one, like the Merge action in the app. The record at conflictPriorityIndex is kept, its empty fields are filled from the others, and every linked record is moved to it. The other records are permanently deleted. Call it with dryRun: true first to preview the result.`,
     inputSchema: mergeRecordsInputSchema,
@@ -233,54 +285,22 @@ const GENERIC_RECORD_TOOL_DEFINITIONS = {
       dryRun,
     }),
   }),
-};
+];
 
-export const GENERIC_RECORD_TOOL_NAMES = Object.keys(
-  GENERIC_RECORD_TOOL_DEFINITIONS,
+export const GENERIC_RECORD_TOOL_NAMES = GENERIC_RECORD_TOOL_FACTORIES.map(
+  ({ name }) => name,
 );
 
-const createGenericRecordTool = <TSchema extends z.ZodType>(
-  toolName: string,
-  definition: GenericRecordToolDefinition<TSchema>,
-  toolRegistry: Pick<ToolRegistryService, 'resolveAndExecuteDatabaseCrud'>,
-  context: ToolContext,
-) => ({
-  description: definition.description,
-  inputSchema: definition.inputSchema,
-  annotations: MCP_DATABASE_CRUD_TOOL_ANNOTATIONS[definition.operation],
-  execute: async (parameters: unknown): Promise<ToolOutput> => {
-    const parsed = await definition.inputSchema.safeParseAsync(parameters);
-
-    if (!parsed.success) {
-      return buildInvalidToolArgumentsOutput({
-        toolName,
-        error: parsed.error,
-      });
-    }
-
-    return toolRegistry.resolveAndExecuteDatabaseCrud({
-      objectName: (parsed.data as { objectName: string }).objectName,
-      operation: definition.operation,
-      args: definition.toOperationArguments(parsed.data),
-      context,
-    });
-  },
-});
-
-export const createGenericRecordTools = (
-  toolRegistry: Pick<ToolRegistryService, 'resolveAndExecuteDatabaseCrud'>,
-  context: ToolContext,
-): McpToolSet =>
+export const createGenericRecordTools = ({
+  toolRegistry,
+  context,
+}: {
+  toolRegistry: Pick<ToolRegistryService, 'resolveAndExecuteDatabaseCrud'>;
+  context: ToolContext;
+}): McpToolSet =>
   Object.fromEntries(
-    Object.entries(GENERIC_RECORD_TOOL_DEFINITIONS).map(
-      ([toolName, definition]) => [
-        toolName,
-        createGenericRecordTool(
-          toolName,
-          definition as GenericRecordToolDefinition<z.ZodType>,
-          toolRegistry,
-          context,
-        ),
-      ],
-    ),
+    GENERIC_RECORD_TOOL_FACTORIES.map(({ name, create }) => [
+      name,
+      create({ toolRegistry, context }),
+    ]),
   );

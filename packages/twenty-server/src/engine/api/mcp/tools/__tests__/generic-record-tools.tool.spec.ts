@@ -1,30 +1,31 @@
-import { type ToolExecuteFunction, asSchema } from 'ai';
+import { asSchema } from 'ai';
+import { ToolCategory } from 'twenty-shared/ai';
 
 import {
   createGenericRecordTools,
   GENERIC_RECORD_TOOL_NAMES,
 } from 'src/engine/api/mcp/tools/generic-record-tools.tool';
+import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 
-const TOOL_CONTEXT = { workspaceId: 'workspace-id' } as ToolContext;
+const TOOL_CONTEXT: ToolContext = { workspaceId: 'workspace-id' };
 
 const setup = () => {
   const resolveAndExecuteDatabaseCrud = jest
     .fn()
     .mockResolvedValue({ success: true, message: 'ok' });
-  const tools = createGenericRecordTools(
-    { resolveAndExecuteDatabaseCrud },
-    TOOL_CONTEXT,
-  );
+  const tools = createGenericRecordTools({
+    toolRegistry: { resolveAndExecuteDatabaseCrud },
+    context: TOOL_CONTEXT,
+  });
 
-  const call = (toolName: string, toolArguments: unknown) =>
-    (
-      tools[toolName].execute as ToolExecuteFunction<
-        unknown,
-        unknown,
-        undefined
-      >
-    )(toolArguments, { toolCallId: '1', messages: [], context: undefined });
+  const call = (toolName: string, toolArguments: Record<string, unknown>) =>
+    executeToolFromToolSet(
+      tools,
+      toolName,
+      toolArguments,
+      ToolCategory.DATABASE_CRUD,
+    );
 
   return { tools, call, resolveAndExecuteDatabaseCrud };
 };

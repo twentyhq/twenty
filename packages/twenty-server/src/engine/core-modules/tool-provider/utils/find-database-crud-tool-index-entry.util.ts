@@ -12,7 +12,6 @@ export type DatabaseCrudToolIndexEntryLookup =
 const normalizeObjectName = (objectName: string): string =>
   objectName.replace(/[\s_-]/g, '').toLowerCase();
 
-// Accepts the singular or plural name in camelCase or snake_case, since tool names carry either form
 export const findDatabaseCrudToolIndexEntry = ({
   toolIndex,
   objectName,

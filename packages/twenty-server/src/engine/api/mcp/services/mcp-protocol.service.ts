@@ -353,17 +353,20 @@ export class McpProtocolService {
         } = toolSet;
 
         return this.mcpToolExecutorService.handleToolsListing({
-          ...(await this.buildAnnotatedRegistryTools(toolContext)),
+          ...(await this.buildAnnotatedRegistryTools({ toolContext })),
           ...nativeTools,
         });
       }
       case 'generic':
         return this.mcpToolExecutorService.handleToolsListing({
-          ...(await this.buildAnnotatedRegistryTools(
+          ...(await this.buildAnnotatedRegistryTools({
             toolContext,
-            MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES,
-          )),
-          ...createGenericRecordTools(this.toolRegistry, toolContext),
+            categories: MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES,
+          })),
+          ...createGenericRecordTools({
+            toolRegistry: this.toolRegistry,
+            context: toolContext,
+          }),
           ...toolSet,
         });
       default:
@@ -397,7 +400,10 @@ export class McpProtocolService {
     const toolSet =
       context.toolMode === 'generic'
         ? {
-            ...createGenericRecordTools(this.toolRegistry, toolContext),
+            ...createGenericRecordTools({
+              toolRegistry: this.toolRegistry,
+              context: toolContext,
+            }),
             ...baseToolSet,
           }
         : baseToolSet;
@@ -434,10 +440,13 @@ export class McpProtocolService {
     );
   }
 
-  private buildAnnotatedRegistryTools(
-    toolContext: ToolProviderContext,
-    categories?: ToolCategory[],
-  ): Promise<McpToolSet> {
+  private buildAnnotatedRegistryTools({
+    toolContext,
+    categories,
+  }: {
+    toolContext: ToolProviderContext;
+    categories?: ToolCategory[];
+  }): Promise<McpToolSet> {
     return Sentry.startSpan(
       { name: 'mcp list registry tools', op: 'mcp.tools', onlyIfParent: true },
       async () => {

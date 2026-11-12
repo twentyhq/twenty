@@ -345,30 +345,34 @@ export class ToolRegistryService {
     context: ToolContext,
     options?: { compactOutput?: boolean; spillLargeOutput?: boolean },
   ): Promise<ToolOutput> {
-    return this.executeOrBuildFailure({ toolName, context }, async () => {
-      const fullContext = this.buildContextFromToolContext(context);
+    return this.executeOrBuildFailure({
+      toolName,
+      context,
+      execute: async () => {
+        const fullContext = this.buildContextFromToolContext(context);
 
-      const index = await this.getCatalog(fullContext);
-      const entry = index.find((indexEntry) => indexEntry.name === toolName);
+        const index = await this.getCatalog(fullContext);
+        const entry = index.find((indexEntry) => indexEntry.name === toolName);
 
-      if (!entry) {
-        const similarToolNames = findSimilarToolNames(
-          toolName,
-          index.map((indexEntry) => indexEntry.name),
-        );
-        const suggestionHint =
-          similarToolNames.length > 0
-            ? ` Did you mean: ${similarToolNames.join(', ')}?`
-            : '';
+        if (!entry) {
+          const similarToolNames = findSimilarToolNames(
+            toolName,
+            index.map((indexEntry) => indexEntry.name),
+          );
+          const suggestionHint =
+            similarToolNames.length > 0
+              ? ` Did you mean: ${similarToolNames.join(', ')}?`
+              : '';
 
-        return {
-          success: false,
-          message: `Tool "${toolName}" not found`,
-          error: `Tool "${toolName}" not found.${suggestionHint} Pass your best candidate name to learn_tools to confirm it before executing.`,
-        };
-      }
+          return {
+            success: false,
+            message: `Tool "${toolName}" not found`,
+            error: `Tool "${toolName}" not found.${suggestionHint} Pass your best candidate name to learn_tools to confirm it before executing.`,
+          };
+        }
 
-      return this.executeCatalogEntry({ entry, args, fullContext, options });
+        return this.executeCatalogEntry({ entry, args, fullContext, options });
+      },
     });
   }
 
@@ -383,9 +387,10 @@ export class ToolRegistryService {
     args: Record<string, unknown>;
     context: ToolContext;
   }): Promise<ToolOutput> {
-    return this.executeOrBuildFailure(
-      { toolName: operation, context },
-      async () => {
+    return this.executeOrBuildFailure({
+      toolName: operation,
+      context,
+      execute: async () => {
         const fullContext = this.buildContextFromToolContext(context);
 
         const lookup = findDatabaseCrudToolIndexEntry({
@@ -423,7 +428,7 @@ export class ToolRegistryService {
             return assertUnreachable(lookup);
         }
       },
-    );
+    });
   }
 
   private async executeCatalogEntry({
@@ -458,10 +463,15 @@ export class ToolRegistryService {
     return normalizeToolOutputToJsonValues(inlined);
   }
 
-  private async executeOrBuildFailure(
-    { toolName, context }: { toolName: string; context: ToolContext },
-    execute: () => Promise<ToolOutput>,
-  ): Promise<ToolOutput> {
+  private async executeOrBuildFailure({
+    toolName,
+    context,
+    execute,
+  }: {
+    toolName: string;
+    context: ToolContext;
+    execute: () => Promise<ToolOutput>;
+  }): Promise<ToolOutput> {
     try {
       return await execute();
     } catch (error) {

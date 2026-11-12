@@ -4,11 +4,15 @@ import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provide
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { findDatabaseCrudToolIndexEntry } from 'src/engine/core-modules/tool-provider/utils/find-database-crud-tool-index-entry.util';
 
-const buildEntry = (
-  name: string,
-  objectNameSingular: string,
-  operation: DatabaseCrudOperation,
-): ToolIndexEntry => ({
+const buildEntry = ({
+  name,
+  objectNameSingular,
+  operation,
+}: {
+  name: string;
+  objectNameSingular: string;
+  operation: DatabaseCrudOperation;
+}): ToolIndexEntry => ({
   name,
   label: name,
   description: name,
@@ -17,9 +21,21 @@ const buildEntry = (
 });
 
 const TOOL_INDEX: ToolIndexEntry[] = [
-  buildEntry('find_many_companies', 'company', 'find_many'),
-  buildEntry('update_one_company', 'company', 'update_one'),
-  buildEntry('find_many_pet_care_agreements', 'petCareAgreement', 'find_many'),
+  buildEntry({
+    name: 'find_many_companies',
+    objectNameSingular: 'company',
+    operation: 'find_many',
+  }),
+  buildEntry({
+    name: 'update_one_company',
+    objectNameSingular: 'company',
+    operation: 'update_one',
+  }),
+  buildEntry({
+    name: 'find_many_pet_care_agreements',
+    objectNameSingular: 'petCareAgreement',
+    operation: 'find_many',
+  }),
   {
     name: 'send_email',
     label: 'Send email',
@@ -84,8 +100,16 @@ describe('findDatabaseCrudToolIndexEntry', () => {
 
   describe('objects whose names differ only by case', () => {
     const toolIndex = [
-      buildEntry('find_many_foo_bars', 'fooBar', 'find_many'),
-      buildEntry('find_many_foobars', 'foobar', 'find_many'),
+      buildEntry({
+        name: 'find_many_foo_bars',
+        objectNameSingular: 'fooBar',
+        operation: 'find_many',
+      }),
+      buildEntry({
+        name: 'find_many_foobars',
+        objectNameSingular: 'foobar',
+        operation: 'find_many',
+      }),
     ];
 
     it('should resolve the exactly named object', () => {
