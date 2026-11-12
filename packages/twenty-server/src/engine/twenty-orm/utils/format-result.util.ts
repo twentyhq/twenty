@@ -403,16 +403,30 @@ function handleEmptyCompositeFields(
         (propertyName) => !isDefined(typedFieldValue[propertyName]),
       );
 
-    if (
-      allSelectedRequiredPropertiesAreNull &&
-      selectedRequiredPropertyNames.length > 0
-    ) {
-      if (fieldMetadata.isNullable) {
+    if (selectedRequiredPropertyNames.length === 0) {
+      continue;
+    }
+
+    if (fieldMetadata.isNullable) {
+      if (allSelectedRequiredPropertiesAreNull) {
         data[fieldMetadata.name] = null;
-      } else {
-        data[fieldMetadata.name] = getDefaultCompositeFieldValue(
-          fieldMetadata.type,
-        );
+      }
+      continue;
+    }
+
+    const defaultFieldValue = getDefaultCompositeFieldValue(fieldMetadata.type);
+
+    if (allSelectedRequiredPropertiesAreNull) {
+      data[fieldMetadata.name] = defaultFieldValue;
+      continue;
+    }
+
+    for (const propertyName of selectedRequiredPropertyNames) {
+      if (
+        !isDefined(typedFieldValue[propertyName]) &&
+        isDefined(defaultFieldValue)
+      ) {
+        typedFieldValue[propertyName] = defaultFieldValue[propertyName];
       }
     }
   }

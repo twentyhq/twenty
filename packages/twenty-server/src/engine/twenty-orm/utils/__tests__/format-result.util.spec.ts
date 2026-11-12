@@ -110,6 +110,24 @@ describe('formatResult', () => {
       });
     });
 
+    it('defaults a null source without dropping the other selected sub-fields', () => {
+      const applicationId = '20202020-fc25-4d02-bf25-6aeccf7ea419';
+
+      expect(
+        formatRecord({
+          createdBySource: null,
+          createdByName: null,
+          createdByContext: { applicationId },
+        }),
+      ).toEqual({
+        createdBy: {
+          source: FieldActorSource.MANUAL,
+          name: '',
+          context: { applicationId },
+        },
+      });
+    });
+
     it('falls back to the default actor when the selected source is null', () => {
       expect(
         formatRecord({ createdBySource: null, createdByContext: null }),
