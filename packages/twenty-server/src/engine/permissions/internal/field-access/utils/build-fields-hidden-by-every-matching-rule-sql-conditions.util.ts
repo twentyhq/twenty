@@ -13,7 +13,6 @@ const combineWithOr = (sqlConditions: SQLCondition[]): SQLCondition =>
     ? sqlConditions[0]
     : combineSQLConditions({ sqlConditions, operator: 'OR' });
 
-// A field is hidden where a rule listing it matches and no rule leaving it visible does
 export const buildFieldsHiddenByEveryMatchingRuleSQLConditions = (
   rlsRuleSQLConditions: RlsRuleFieldsSQLCondition[],
 ): RlsRuleFieldsSQLCondition[] => {

@@ -130,7 +130,10 @@ const resolve = ({
         [AGENT_ROLE_ID]: {
           ...NO_ROLE_RECORDS_PERMISSIONS,
           objects: {
-            [OBJECT_METADATA_ID]: buildObjectRecordsPermissions(agentRules),
+            [OBJECT_METADATA_ID]: {
+              ...buildObjectRecordsPermissions(agentRules),
+              canReadAllRecords: true,
+            },
           },
         },
       },
