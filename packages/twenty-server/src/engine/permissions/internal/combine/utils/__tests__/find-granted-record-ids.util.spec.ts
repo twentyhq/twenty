@@ -143,6 +143,11 @@ const buildContext = (): RowAccessEvaluationContext => ({
   findPrivateRecordStates: jest.fn(async () => privateRecordStates),
 });
 
+const SHARING_WORKSPACE_FEATURE_FLAG_KEYS = [
+  FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+  FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+];
+
 const findGranted = ({
   principals,
   featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED],
@@ -163,7 +168,6 @@ const findGranted = ({
           objects: { [flatObjectMetadata.id]: fullAccess },
         },
       },
-      flatApplicationMaps: { byId: {} },
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
@@ -179,9 +183,9 @@ describe('findGrantedRecordIds', () => {
     jest.mocked(resolveRlsRuleRecordFilter).mockReturnValue(null);
   });
 
-  it('grants no record to a role without access', async () => {
+  it('grants a member whose role has no access only the private records they created', async () => {
     expect(await findGranted({ principals: deniedPrincipals })).toEqual(
-      new Set(),
+      new Set(['active-private']),
     );
   });
 
@@ -203,16 +207,32 @@ describe('findGrantedRecordIds', () => {
     expect(
       await findGranted({
         principals: deniedPrincipals,
-        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        featureFlagKeys: SHARING_WORKSPACE_FEATURE_FLAG_KEYS,
       }),
     ).toEqual(new Set(['active-shared', 'active-private', 'archived-shared']));
   });
 
-  it('grants private records to their creator within the role filter', async () => {
+  it('grants no shared or created record when a limiting role lacks all records', async () => {
+    expect(
+      await findGranted({
+        principals: {
+          ...memberPrincipals,
+          limitingPrincipal: {
+            type: 'agent',
+            agentId: 'agent-1',
+            roleId: 'missing-role',
+          },
+        },
+        featureFlagKeys: SHARING_WORKSPACE_FEATURE_FLAG_KEYS,
+      }),
+    ).toEqual(new Set());
+  });
+
+  it('grants private records to their creator whatever the role filter', async () => {
     filterByStatus('none');
 
     expect(await findGranted({ principals: memberPrincipals })).toEqual(
-      new Set(),
+      new Set(['active-private']),
     );
 
     filterByStatus('active');
@@ -230,7 +250,7 @@ describe('findGrantedRecordIds', () => {
     expect(
       await findGranted({
         principals: memberPrincipals,
-        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        featureFlagKeys: SHARING_WORKSPACE_FEATURE_FLAG_KEYS,
         context,
       }),
     ).toEqual(new Set(records.map((record) => record.id)));

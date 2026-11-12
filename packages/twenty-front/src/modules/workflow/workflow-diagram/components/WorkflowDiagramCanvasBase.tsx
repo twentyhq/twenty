@@ -27,6 +27,7 @@ import {
   type WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
+import { getDisplayedWorkflowDiagram } from '@/workflow/workflow-diagram/utils/getDisplayedWorkflowDiagram';
 import { getWorkflowReconnectionForbiddenTargetStepIds } from '@/workflow/workflow-diagram/utils/getWorkflowReconnectionForbiddenTargetStepIds';
 import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramConnection';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
@@ -188,6 +189,8 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramComponentState,
   );
   const flow = useAtomComponentStateValue(flowComponentState);
+  const flowCallbackState =
+    useAtomComponentStateCallbackState(flowComponentState);
   const workflowDiagramPanOnDrag = useAtomComponentStateValue(
     workflowDiagramPanOnDragComponentState,
   );
@@ -240,8 +243,13 @@ export const WorkflowDiagramCanvasBase = ({
       return { nodes: [], edges: [] };
     }
 
-    const nodes = [...workflowDiagram.nodes];
-    const edges = [...workflowDiagram.edges];
+    const displayedWorkflowDiagram = getDisplayedWorkflowDiagram({
+      diagram: workflowDiagram,
+      flow,
+    });
+
+    const nodes = [...displayedWorkflowDiagram.nodes];
+    const edges = [...displayedWorkflowDiagram.edges];
 
     if (
       isDefined(workflowInsertStepIds.position) &&
@@ -280,7 +288,13 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     return { nodes, edges };
-  }, [workflowDiagram, workflowInsertStepIds, emptyNodeMeasuredDimensions, t]);
+  }, [
+    workflowDiagram,
+    flow,
+    workflowInsertStepIds,
+    emptyNodeMeasuredDimensions,
+    t,
+  ]);
 
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const { commandMenuContextApi } = useContext(CommandMenuContext);
@@ -329,7 +343,12 @@ export const WorkflowDiagramCanvasBase = ({
       }
 
       const currentViewport = reactflow.getViewport();
-      const nodes = workflowDiagram?.nodes ?? [];
+      const nodes = isDefined(workflowDiagram)
+        ? getDisplayedWorkflowDiagram({
+            diagram: workflowDiagram,
+            flow: store.get(flowCallbackState),
+          }).nodes
+        : [];
 
       const canComputeNodesBounds = nodes.every((node) =>
         isDefined(node.measured),
@@ -368,7 +387,12 @@ export const WorkflowDiagramCanvasBase = ({
         { duration: hasViewportBeenMoved ? 300 : 0 },
       );
     },
-    [reactflow, setWorkflowDiagramWaitingNodesDimensions, store],
+    [
+      reactflow,
+      setWorkflowDiagramWaitingNodesDimensions,
+      store,
+      flowCallbackState,
+    ],
   );
 
   const handleSetFlowViewportOnChange = useCallback(
