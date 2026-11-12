@@ -115,23 +115,48 @@ describe('ApplicationMessageSendAttachmentsService', () => {
   });
 
   describe('copyIntoAttachmentFileField', () => {
-    it('should copy each file into the attachment file field and skip the ones that fail', async () => {
+    it('should copy each file into the attachment file field', async () => {
       copyFileIntoFilesField
         .mockResolvedValueOnce({ id: 'copy-1' })
-        .mockRejectedValueOnce(new Error('Storage unavailable'));
+        .mockResolvedValueOnce({ id: 'copy-2' });
 
       await expect(
         service.copyIntoAttachmentFileField({
           attachments: ATTACHMENTS,
           workspaceId: 'workspace-1',
         }),
-      ).resolves.toEqual([{ fileId: 'copy-1', label: 'deck.pdf' }]);
+      ).resolves.toEqual([
+        { fileId: 'copy-1', label: 'deck.pdf' },
+        { fileId: 'copy-2', label: 'photo.png' },
+      ]);
 
       expect(copyFileIntoFilesField).toHaveBeenCalledWith({
         fileId: 'file-1',
         workspaceId: 'workspace-1',
         fieldMetadataUniversalIdentifier:
           STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
+      });
+    });
+
+    it('should delete the successful copies and throw when a copy fails', async () => {
+      copyFileIntoFilesField
+        .mockResolvedValueOnce({ id: 'copy-1' })
+        .mockRejectedValueOnce(new Error('Storage unavailable'));
+      findFiles.mockResolvedValue([
+        { id: 'copy-1', settings: { isTemporaryFile: true } },
+      ]);
+
+      await expect(
+        service.copyIntoAttachmentFileField({
+          attachments: ATTACHMENTS,
+          workspaceId: 'workspace-1',
+        }),
+      ).rejects.toThrow(/photo\.png \(Error: Storage unavailable\)/);
+
+      expect(deleteFilesFieldFile).toHaveBeenCalledTimes(1);
+      expect(deleteFilesFieldFile).toHaveBeenCalledWith({
+        fileId: 'copy-1',
+        workspaceId: 'workspace-1',
       });
     });
   });

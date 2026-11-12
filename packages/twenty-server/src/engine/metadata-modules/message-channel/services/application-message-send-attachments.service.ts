@@ -126,17 +126,27 @@ export class ApplicationMessageSendAttachmentsService {
       }),
     );
 
-    return copyResults.flatMap((copyResult, index) => {
-      if (copyResult.status === 'fulfilled') {
-        return [copyResult.value];
-      }
+    const copiedAttachments = copyResults.flatMap((copyResult) =>
+      copyResult.status === 'fulfilled' ? [copyResult.value] : [],
+    );
 
-      this.logger.warn(
-        `Failed to store sent app message attachment "${attachments[index].name}" in workspace ${workspaceId}: ${copyResult.reason}`,
+    const copyFailures = copyResults.flatMap((copyResult, index) =>
+      copyResult.status === 'rejected'
+        ? [`${attachments[index].name} (${copyResult.reason})`]
+        : [],
+    );
+
+    // ingestion never adds attachments to a message that already has some, so a partial set could not be completed later
+    if (isNonEmptyArray(copyFailures)) {
+      await this.deleteUnclaimedCopies({ copiedAttachments, workspaceId });
+
+      throw new MessageChannelException(
+        `Failed to store sent app message attachment(s) in workspace ${workspaceId}: ${copyFailures.join(', ')}`,
+        MessageChannelExceptionCode.MESSAGE_ATTACHMENT_STORAGE_FAILED,
       );
+    }
 
-      return [];
-    });
+    return copiedAttachments;
   }
 
   // unclaimed copies have no expiry, so cleanup crons never collect them

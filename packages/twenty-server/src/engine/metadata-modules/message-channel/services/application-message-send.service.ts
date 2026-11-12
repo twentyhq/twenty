@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  type SendAppMessageAttachment,
-  type SendAppMessageEmail,
-} from 'twenty-shared/application';
+import { type SendAppMessageEmail } from 'twenty-shared/application';
 import {
   MessageChannelType,
   MessageParticipantRole,
@@ -26,6 +23,7 @@ import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils
 import { sanitizeOutboundEmailSubject } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
 import { getEmailRecipientsError } from 'src/engine/core-modules/email/utils/get-email-recipients-error.util';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/email/utils/parse-comma-separated-emails.util';
+import { FileEmailAttachmentService } from 'src/engine/core-modules/file/file-email-attachment/services/file-email-attachment.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import {
   type SendAppChannelMessageAttachmentInput,
@@ -106,6 +104,7 @@ export class ApplicationMessageSendService {
     private readonly messagingProviderMessageSenderService: MessagingProviderMessageSenderService,
     private readonly applicationMessageIngestionService: ApplicationMessageIngestionService,
     private readonly applicationMessageSendAttachmentsService: ApplicationMessageSendAttachmentsService,
+    private readonly fileEmailAttachmentService: FileEmailAttachmentService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
@@ -182,15 +181,21 @@ export class ApplicationMessageSendService {
         'flatWorkspaceMemberMaps',
       ]);
 
-    const attachmentsToSend =
-      await this.applicationMessageSendAttachmentsService.buildAttachmentsToSendOrThrow(
-        { attachments, workspaceId },
-      );
-
     const deliveryKey = `app-message-delivery:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${messageThreadId}:${idempotencyKey}`;
+    const sentMessageKey = `${deliveryKey}:sent`;
 
     return this.cacheLockService.withLock(
       async () => {
+        // the source uploads are deleted once a send completes, so a retry must not need them again
+        const sentMessage =
+          await this.cacheStorageService.get<SendAppChannelMessageOutput>(
+            sentMessageKey,
+          );
+
+        if (isDefined(sentMessage)) {
+          return sentMessage;
+        }
+
         const delivery =
           (await this.cacheStorageService.get<AppMessageDelivery>(
             deliveryKey,
@@ -203,7 +208,7 @@ export class ApplicationMessageSendService {
             messageThreadId,
             idempotencyKey,
             reply,
-            attachmentsToSend,
+            attachments,
             deliveryKey,
           }));
 
@@ -255,10 +260,23 @@ export class ApplicationMessageSendService {
             ],
           });
 
-          return {
+          const ingestedSentMessage = {
             messageId: ingestedMessage.messageId,
             messageThreadId: ingestedMessage.messageThreadId,
           };
+
+          await this.cacheStorageService.set(
+            sentMessageKey,
+            ingestedSentMessage,
+            APP_MESSAGE_DELIVERY_TTL_MS,
+          );
+
+          await this.fileEmailAttachmentService.deleteFiles({
+            fileIds: attachments.map(({ id }) => id),
+            workspaceId,
+          });
+
+          return ingestedSentMessage;
         } finally {
           await this.applicationMessageSendAttachmentsService.deleteUnclaimedCopies(
             { copiedAttachments, workspaceId },
@@ -278,7 +296,7 @@ export class ApplicationMessageSendService {
     messageThreadId,
     idempotencyKey,
     reply,
-    attachmentsToSend,
+    attachments,
     deliveryKey,
   }: {
     workspaceId: string;
@@ -288,9 +306,14 @@ export class ApplicationMessageSendService {
     messageThreadId: string;
     idempotencyKey: string;
     reply: ValidatedAppReply;
-    attachmentsToSend: SendAppMessageAttachment[];
+    attachments: SendAppChannelMessageAttachmentInput[];
     deliveryKey: string;
   }): Promise<AppMessageDelivery> {
+    const attachmentsToSend =
+      await this.applicationMessageSendAttachmentsService.buildAttachmentsToSendOrThrow(
+        { attachments, workspaceId },
+      );
+
     const sender =
       await this.messagingProviderMessageSenderService.resolveSenderOrThrow({
         messagingProviderUniversalIdentifier:
