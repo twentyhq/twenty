@@ -7,7 +7,6 @@ const UTF8_ENCODER = new TextEncoder();
 export const countUtf8Bytes = (text: string): number =>
   UTF8_ENCODER.encode(text).length;
 
-// Cuts on grapheme boundaries so sequences such as 👨‍👩‍👧‍👦 stay whole.
 export const truncateToUtf8Bytes = ({
   text,
   maxBytes,
