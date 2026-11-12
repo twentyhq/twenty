@@ -183,9 +183,7 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
   const exportedRuleUniversalIdentifiers = new Set<string>();
   const addExportedRuleUniversalIdentifier = ({
     rowLevelPermissionRuleUniversalIdentifier,
-  }: {
-    rowLevelPermissionRuleUniversalIdentifier: string | null;
-  }): void => {
+  }: RowLevelPermissionRuleLink): void => {
     if (isDefined(rowLevelPermissionRuleUniversalIdentifier)) {
       exportedRuleUniversalIdentifiers.add(
         rowLevelPermissionRuleUniversalIdentifier,

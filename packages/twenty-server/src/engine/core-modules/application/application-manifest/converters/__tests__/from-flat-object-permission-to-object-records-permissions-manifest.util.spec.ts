@@ -8,10 +8,11 @@ import { fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission } f
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
 
-const APP_UID = '11111111-1111-4111-8111-111111111111';
-const ROLE_UID = '22222222-2222-4222-8222-222222222222';
-const OBJECT_UID = '33333333-3333-4333-8333-333333333333';
-const OBJECT_PERMISSION_UID = '44444444-4444-4444-8444-444444444444';
+const APPLICATION_UNIVERSAL_IDENTIFIER = '11111111-1111-4111-8111-111111111111';
+const ROLE_UNIVERSAL_IDENTIFIER = '22222222-2222-4222-8222-222222222222';
+const OBJECT_UNIVERSAL_IDENTIFIER = '33333333-3333-4333-8333-333333333333';
+const OBJECT_PERMISSION_UNIVERSAL_IDENTIFIER =
+  '44444444-4444-4444-8444-444444444444';
 const NOW = '2026-09-14T10:00:00.000Z';
 
 type AllRecordsManifest = Omit<
@@ -20,8 +21,8 @@ type AllRecordsManifest = Omit<
 >;
 
 const ALL_RECORDS_MANIFEST: Required<AllRecordsManifest> = {
-  universalIdentifier: OBJECT_PERMISSION_UID,
-  objectUniversalIdentifier: OBJECT_UID,
+  universalIdentifier: OBJECT_PERMISSION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   canReadAllRecords: true,
   canCreateAllRecords: true,
   canUpdateAllRecords: false,
@@ -32,8 +33,8 @@ const ALL_RECORDS_MANIFEST: Required<AllRecordsManifest> = {
 const forward = (objectRecordsPermissionsManifest: AllRecordsManifest) =>
   fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission({
     objectRecordsPermissionsManifest,
-    roleUniversalIdentifier: ROLE_UID,
-    applicationUniversalIdentifier: APP_UID,
+    roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     now: NOW,
   });
 
