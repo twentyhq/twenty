@@ -31,6 +31,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
+import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
 import {
   FlatUpdateFieldAction,
   UniversalUpdateFieldAction,
@@ -49,6 +50,10 @@ import {
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
+import {
+  type EnumOptionsChangePlan,
+  planEnumOptionsChange,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/plan-enum-options-change.util';
 import {
   collectEnumOperationsForField,
   EnumOperation,
@@ -232,10 +237,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           ...optimisticFlatFieldMetadata,
           defaultValue: update.defaultValue,
         };
-        wasDefaultValueHandledByEnumUpdate = true;
       }
 
-      await this.handleFieldOptionsUpdate({
+      const isEnumColumnRebuilt = await this.handleFieldOptionsUpdate({
         queryRunner,
         schemaName,
         tableName,
@@ -245,6 +249,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         workspaceId,
         update,
       });
+
+      wasDefaultValueHandledByEnumUpdate =
+        isEnumColumnRebuilt && update.defaultValue !== undefined;
       optimisticFlatFieldMetadata.options = update.options ?? [];
     }
 
@@ -655,7 +662,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     toOptions,
     flatObjectMetadata,
     workspaceId,
-  }: OptionsUpdateHandlerArgs) {
+    update,
+  }: OptionsUpdateHandlerArgs): Promise<boolean> {
     const fromOptions = flatFieldMetadata.options;
     const fromOptionsById = new Map(
       (fromOptions ?? [])
@@ -685,7 +693,47 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       workspaceId,
     });
 
+    // A generated searchVector reads the enum column, and Postgres rejects using a
+    // value added in the same transaction. Keep the rebuild for searched fields.
+    const isIndexedInSearchVector =
+      flatFieldMetadata.searchFieldMetadataUniversalIdentifiers.length > 0;
+
+    let isEnumColumnRebuilt = false;
+
     for (const enumColumnDefinition of enumColumnDefinitions) {
+      const enumName = computePostgresEnumName({
+        tableName,
+        columnName: enumColumnDefinition.name,
+      });
+
+      const plan = planEnumOptionsChange({
+        fromOptions: fromOptions ?? [],
+        toOptions: toOptions ?? [],
+        existingEnumValues:
+          await this.workspaceSchemaManagerService.enumManager.getEnumValues({
+            queryRunner,
+            schemaName,
+            enumName,
+          }),
+      });
+
+      // A new default may name an added value, which Postgres cannot use in the
+      // same transaction either.
+      if (
+        !isIndexedInSearchVector &&
+        plan.kind === 'inPlace' &&
+        plan.removedValues.length === 0 &&
+        (update.defaultValue === undefined || plan.addedValues.length === 0)
+      ) {
+        await this.changeEnumValuesInPlace({
+          queryRunner,
+          schemaName,
+          enumName,
+          plan,
+        });
+        continue;
+      }
+
       await this.workspaceSchemaManagerService.enumManager.alterEnumValues({
         queryRunner,
         schemaName,
@@ -693,6 +741,43 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         columnDefinition: enumColumnDefinition,
         enumValues: toOptions?.map((opt) => opt.value) ?? [],
         oldToNewEnumOptionMap: valueMapping,
+      });
+      isEnumColumnRebuilt = true;
+    }
+
+    return isEnumColumnRebuilt;
+  }
+
+  private async changeEnumValuesInPlace({
+    queryRunner,
+    schemaName,
+    enumName,
+    plan,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    enumName: string;
+    plan: Extract<EnumOptionsChangePlan, { kind: 'inPlace' }>;
+  }): Promise<void> {
+    const { enumManager } = this.workspaceSchemaManagerService;
+
+    for (const { fromValue, toValue } of plan.renamedValues) {
+      await enumManager.renameEnumValue({
+        queryRunner,
+        schemaName,
+        enumName,
+        oldValue: fromValue,
+        newValue: toValue,
+      });
+    }
+
+    for (const { value, beforeValue } of plan.addedValues) {
+      await enumManager.addEnumValue({
+        queryRunner,
+        schemaName,
+        enumName,
+        value,
+        beforeValue,
       });
     }
   }

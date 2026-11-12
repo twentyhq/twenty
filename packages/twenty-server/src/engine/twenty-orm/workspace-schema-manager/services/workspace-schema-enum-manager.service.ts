@@ -143,6 +143,28 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
+  async getEnumValues({
+    queryRunner,
+    schemaName,
+    enumName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    enumName: string;
+  }): Promise<string[]> {
+    const rows = (await queryRunner.query(
+      `SELECT e.enumlabel AS "value"
+         FROM pg_enum e
+         JOIN pg_type t ON t.oid = e.enumtypid
+         JOIN pg_namespace n ON n.oid = t.typnamespace
+        WHERE n.nspname = $1 AND t.typname = $2
+        ORDER BY e.enumsortorder`,
+      [schemaName, enumName],
+    )) as Array<{ value: string }>;
+
+    return rows.map((row) => row.value);
+  }
+
   async alterEnumValues({
     queryRunner,
     schemaName,
