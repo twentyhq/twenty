@@ -1,4 +1,5 @@
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
+import { RowLevelPermissionPredicateOperand } from '~/generated-metadata/graphql';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
 const role = { ...mockedRoles[1], permissionFlags: [] };
@@ -68,5 +69,80 @@ describe('getRoleDirtyFields', () => {
 
   it('retains new-role fields when there is no persisted role', () => {
     expect(getRoleDirtyFields(draftRole, undefined)).toEqual(draftRole);
+  });
+
+  it('treats a saved rule as clean despite the rule list and grants the server derives', () => {
+    const predicate = {
+      id: 'predicate-id',
+      fieldMetadataId: 'field-id',
+      objectMetadataId: 'pet',
+      operand: RowLevelPermissionPredicateOperand.IS,
+      roleId: role.id,
+      value: '3',
+    };
+    const draft = {
+      ...role,
+      canReadAllObjectRecords: true,
+      objectPermissions: [
+        { objectMetadataId: 'pet', canReadObjectRecords: true },
+      ],
+      rowLevelPermissionPredicates: [predicate],
+    };
+    const persisted = {
+      ...draft,
+      objectPermissions: [
+        { objectMetadataId: 'pet', canReadObjectRecords: null },
+      ],
+      rowLevelPermissionPredicates: [
+        { ...predicate, relationFieldMetadataId: null },
+      ],
+      rowLevelPermissionRules: [
+        {
+          __typename: 'RowLevelPermissionRule' as const,
+          id: 'rule-id',
+          objectMetadataId: 'pet',
+          canCreateRecords: false,
+          canReadRecords: true,
+          canUpdateRecords: false,
+          canSoftDeleteRecords: false,
+          canDestroyRecords: false,
+        },
+      ],
+    };
+
+    expect(getRoleDirtyFields(draft, persisted)).toEqual({});
+    expect(
+      Object.keys(
+        getRoleDirtyFields(
+          {
+            ...draft,
+            objectPermissions: [
+              { objectMetadataId: 'pet', canReadObjectRecords: false },
+            ],
+          },
+          persisted,
+        ),
+      ),
+    ).toEqual(['objectPermissions']);
+  });
+
+  it('treats a saved field restriction as clean despite its generated ID', () => {
+    const buildRole = (fieldPermissionId: string) => ({
+      ...role,
+      fieldPermissions: [
+        {
+          id: fieldPermissionId,
+          roleId: role.id,
+          objectMetadataId: 'pet',
+          fieldMetadataId: 'bio',
+          canReadFieldValue: null,
+          canUpdateFieldValue: false,
+        },
+      ],
+    });
+
+    expect(
+      getRoleDirtyFields(buildRole('temporary-id'), buildRole('server-id')),
+    ).toEqual({});
   });
 });
