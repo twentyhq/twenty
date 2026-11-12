@@ -18,8 +18,6 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED:
     case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
     case PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:
-    case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
-    case PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT:
       return 403;
     case PermissionsExceptionCode.INVALID_ARG:
     case PermissionsExceptionCode.INVALID_SETTING:

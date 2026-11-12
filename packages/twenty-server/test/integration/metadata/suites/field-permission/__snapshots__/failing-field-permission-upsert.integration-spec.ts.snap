@@ -36,18 +36,6 @@ exports[`Field permission upsert should fail when fieldMetadataId does not exist
 }
 `;
 
-exports[`Field permission upsert should fail when object is system object 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT",
-    "userFriendlyMessage": "You cannot set field permissions on system objects as they are managed by the platform.",
-  },
-  "message": "Cannot add field permission on system object",
-  "name": "ForbiddenError",
-}
-`;
-
 exports[`Field permission upsert should fail when objectMetadataId does not exist 1`] = `
 {
   "extensions": {

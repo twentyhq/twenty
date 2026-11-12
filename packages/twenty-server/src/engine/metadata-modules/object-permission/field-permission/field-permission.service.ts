@@ -407,16 +407,6 @@ export class FieldPermissionService {
       );
     }
 
-    if (flatObjectMetadata.isSystem === true) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
-        PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
-        {
-          userFriendlyMessage: msg`You cannot set field permissions on system objects as they are managed by the platform.`,
-        },
-      );
-    }
-
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldPermission.fieldMetadataId,
       flatEntityMaps: flatFieldMetadataMaps,

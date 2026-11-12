@@ -34,8 +34,6 @@ export enum PermissionsExceptionCode {
   MEMBER_ROLE_CANNOT_BE_DELETED = 'MEMBER_ROLE_CANNOT_BE_DELETED',
   CUSTOM_ROLES_NOT_ENTITLED = 'CUSTOM_ROLES_NOT_ENTITLED',
   NO_PERMISSIONS_FOUND_IN_DATASOURCE = 'NO_PERMISSIONS_FOUND_IN_DATASOURCE',
-  CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT',
-  CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT = 'CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT',
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
   RAW_SQL_NOT_ALLOWED = 'RAW_SQL_NOT_ALLOWED',
   CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT = 'CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT',
@@ -121,10 +119,6 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Custom roles are part of the Organization plan.`;
     case PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE:
       return msg`No permissions found in datasource.`;
-    case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
-      return msg`Cannot add permissions on system objects.`;
-    case PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT:
-      return msg`Cannot add field permissions on system objects.`;
     case PermissionsExceptionCode.METHOD_NOT_ALLOWED:
       return msg`This method is not allowed.`;
     case PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED:
@@ -209,8 +203,6 @@ export enum PermissionsExceptionMessage {
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'Default role cannot be deleted',
   MEMBER_ROLE_CANNOT_BE_DELETED = 'Member role cannot be deleted',
   CUSTOM_ROLES_NOT_ENTITLED = 'Custom roles require the Organization plan',
-  CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add object permission on system object',
-  CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add field permission on system object',
   CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT = 'Cannot give update permission to non-readable object',
   CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION = 'Cannot give writing permission without reading permission',
   FIELD_METADATA_NOT_FOUND = 'Field metadata not found',

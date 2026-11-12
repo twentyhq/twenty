@@ -20,7 +20,6 @@ import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/ob
 type GlobalTestContext = {
   editableRoleId: string;
   nonEditableRoleId: string;
-  systemObjectMetadataId: string;
   nonSystemObjectMetadataId: string;
   oneFieldMetadataId: string;
 };
@@ -112,22 +111,6 @@ const failingFieldPermissionUpsertTestCases: EachTestingContext<TestContext>[] =
       },
     },
     {
-      title: 'when object is system object',
-      context: {
-        input: (globalContext: GlobalTestContext) => ({
-          roleId: globalContext.editableRoleId,
-          fieldPermissions: [
-            {
-              objectMetadataId: globalContext.systemObjectMetadataId,
-              fieldMetadataId: globalContext.oneFieldMetadataId,
-              canReadFieldValue: false,
-              canUpdateFieldValue: false,
-            },
-          ],
-        }),
-      },
-    },
-    {
       title: 'when canReadFieldValue is true (only restriction allowed)',
       context: {
         input: (globalContext: GlobalTestContext) => ({
@@ -164,7 +147,6 @@ const failingFieldPermissionUpsertTestCases: EachTestingContext<TestContext>[] =
 describe('Field permission upsert should fail', () => {
   let editableRoleId: string;
   let nonEditableRoleId: string;
-  let systemObjectMetadataId: string;
   let nonSystemObjectMetadataId: string;
   let oneFieldMetadataId: string;
 
@@ -227,13 +209,6 @@ describe('Field permission upsert should fail', () => {
       getObjectMetadataOperation,
     );
     const edges = objectMetadataResponse.body.data?.objects?.edges ?? [];
-    const systemObjectNode = edges.find(
-      (edge: { node: { isSystem: boolean | string } }) =>
-        edge.node.isSystem === true || String(edge.node.isSystem) === 'true',
-    )?.node;
-    jestExpectToBeDefined(systemObjectNode);
-    systemObjectMetadataId = systemObjectNode.id;
-
     const nonSystemObjectNode = edges.find(
       (edge: { node: { isSystem: boolean | string } }) =>
         edge.node.isSystem === false || String(edge.node.isSystem) === 'false',
@@ -289,7 +264,6 @@ describe('Field permission upsert should fail', () => {
       const globalContext: GlobalTestContext = {
         editableRoleId: editableRoleId ?? '',
         nonEditableRoleId: nonEditableRoleId ?? '',
-        systemObjectMetadataId: systemObjectMetadataId ?? '',
         nonSystemObjectMetadataId: nonSystemObjectMetadataId ?? '',
         oneFieldMetadataId: oneFieldMetadataId ?? '',
       };

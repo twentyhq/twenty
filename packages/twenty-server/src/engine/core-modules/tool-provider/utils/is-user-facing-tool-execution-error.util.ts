@@ -93,8 +93,6 @@ const USER_FACING_PERMISSIONS_EXCEPTION_CODES = [
   PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER,
   PermissionsExceptionCode.ROLE_NOT_EDITABLE,
   PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
-  PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
-  PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
   PermissionsExceptionCode.INVALID_ARG,
   PermissionsExceptionCode.RECORD_PERMISSION_QUERY_INVALID,
   PermissionsExceptionCode.RLS_VALIDATION_FAILED,
