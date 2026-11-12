@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatThreadLastUpdateCountByIdState } from '@/ai/states/agentChatThreadLastUpdateCountByIdState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -20,9 +21,16 @@ export const useApplyAgentChatThreadUpdate = () => {
       upsertRecordsInStore({
         partialRecords: [{ __typename: 'AgentChatThread', ...update }],
       });
+      const updateCount =
+        store.get(agentChatThreadRecordUpdateCountState.atom) + 1;
+
+      store.set(agentChatThreadRecordUpdateCountState.atom, updateCount);
       store.set(
-        agentChatThreadRecordUpdateCountState.atom,
-        (updateCount) => updateCount + 1,
+        agentChatThreadLastUpdateCountByIdState.atom,
+        (lastUpdateCountById) => ({
+          ...lastUpdateCountById,
+          [update.id]: updateCount,
+        }),
       );
     },
     [store, upsertRecordsInStore],

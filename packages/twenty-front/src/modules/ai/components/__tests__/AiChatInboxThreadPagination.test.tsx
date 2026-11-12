@@ -112,6 +112,7 @@ describe('AiChatInboxThreadPagination', () => {
 
     expect(onThreadSelect).toHaveBeenCalledTimes(1);
     expect(onThreadSelect).toHaveBeenCalledWith('thread-3');
+    expect(loadAgentChatInboxTabThreads).toHaveBeenCalledTimes(1);
     expect(loadAgentChatInboxTabThreads).toHaveBeenCalledWith('fetch-more');
   });
 
@@ -127,6 +128,7 @@ describe('AiChatInboxThreadPagination', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
 
     expect(onThreadSelect).not.toHaveBeenCalled();
+    expect(loadAgentChatInboxTabThreads).toHaveBeenCalledTimes(1);
     expect(loadAgentChatInboxTabThreads).toHaveBeenCalledWith('fetch-more');
   });
 

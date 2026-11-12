@@ -8,9 +8,9 @@ import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThread
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatInboxTabThreadListState } from '@/ai/states/agentChatInboxTabThreadListState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatThreadLastUpdateCountByIdState } from '@/ai/states/agentChatThreadLastUpdateCountByIdState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
@@ -48,74 +48,68 @@ export const useLoadAgentChatInboxTabThreads = () => {
         return;
       }
 
-      for (let attempt = 0; attempt < 2; attempt++) {
-        const updateCountBeforeRequest = store.get(
-          agentChatThreadRecordUpdateCountState.atom,
-        );
-        const page = await fetchAgentChatThreadsPage({
-          lastCursor: isFetchMore
-            ? (listBeforeRequest?.endCursor ?? null)
-            : null,
-          threadIdFilter: {
-            and: [
-              { deletedAt: { is: 'NULL' } },
-              computeAgentChatThreadFilterStatusGqlFilter({
-                filterStatus,
-                workspaceMemberId,
-              }),
-            ],
-          },
-        });
-
-        if (!isDefined(page)) {
-          return;
-        }
-
-        await refreshAgentChatThreadPermissions(
-          page.threads.map(({ id }) => id),
-        );
-
-        if (
-          store.get(agentChatThreadRecordUpdateCountState.atom) !==
-          updateCountBeforeRequest
-        ) {
-          continue;
-        }
-
-        if (
-          !isShownTab() ||
-          (isFetchMore &&
-            store.get(agentChatInboxTabThreadListState.atom) !==
-              listBeforeRequest)
-        ) {
-          return;
-        }
-
-        upsertRecordsInStore({ partialRecords: page.threads });
-        addAgentChatThreadParticipants(page.participants);
-
-        const previousThreadIds = isFetchMore
-          ? (listBeforeRequest?.threadIds ?? [])
-          : [];
-        const lastPageThread = page.threads.at(-1);
-
-        store.set(agentChatInboxTabThreadListState.atom, {
-          filterStatus,
-          threadIds: [
-            ...previousThreadIds,
-            ...page.threads
-              .map(({ id }) => id)
-              .filter((threadId) => !previousThreadIds.includes(threadId)),
+      const updateCountBeforeRequest = store.get(
+        agentChatThreadRecordUpdateCountState.atom,
+      );
+      const page = await fetchAgentChatThreadsPage({
+        lastCursor: isFetchMore ? (listBeforeRequest?.endCursor ?? null) : null,
+        threadIdFilter: {
+          and: [
+            { deletedAt: { is: 'NULL' } },
+            computeAgentChatThreadFilterStatusGqlFilter({
+              filterStatus,
+              workspaceMemberId,
+            }),
           ],
-          hasNextPage: page.hasNextPage,
-          endCursor: page.endCursor,
-          lastLoadedActivityAt: isDefined(lastPageThread)
-            ? getAgentChatThreadLastActivityAt(lastPageThread)
-            : (listBeforeRequest?.lastLoadedActivityAt ?? null),
-        });
+        },
+      });
 
+      if (!isDefined(page)) {
         return;
       }
+
+      await refreshAgentChatThreadPermissions(page.threads.map(({ id }) => id));
+
+      if (
+        !isShownTab() ||
+        (isFetchMore &&
+          store.get(agentChatInboxTabThreadListState.atom) !==
+            listBeforeRequest)
+      ) {
+        return;
+      }
+
+      const lastUpdateCountById = store.get(
+        agentChatThreadLastUpdateCountByIdState.atom,
+      );
+
+      upsertRecordsInStore({
+        partialRecords: page.threads.filter(
+          ({ id }) =>
+            (lastUpdateCountById[id] ?? 0) <= updateCountBeforeRequest,
+        ),
+      });
+      addAgentChatThreadParticipants(page.participants);
+
+      const previousThreadIds = isFetchMore
+        ? (listBeforeRequest?.threadIds ?? [])
+        : [];
+      const lastPageThread = page.threads.at(-1);
+
+      store.set(agentChatInboxTabThreadListState.atom, {
+        filterStatus,
+        threadIds: [
+          ...previousThreadIds,
+          ...page.threads
+            .map(({ id }) => id)
+            .filter((threadId) => !previousThreadIds.includes(threadId)),
+        ],
+        hasNextPage: page.hasNextPage,
+        endCursor: page.endCursor,
+        lastLoadedActivityAt: isDefined(lastPageThread)
+          ? (lastPageThread.lastActivityAt ?? null)
+          : (listBeforeRequest?.lastLoadedActivityAt ?? null),
+      });
     },
     [
       addAgentChatThreadParticipants,
