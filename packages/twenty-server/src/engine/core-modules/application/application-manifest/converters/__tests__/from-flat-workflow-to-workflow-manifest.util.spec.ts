@@ -429,44 +429,6 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       expectRoundTrip(buildWorkflow({ steps: BRANCHING_STEPS[type] }));
     });
 
-    it('exports the conditions of a filter step and of if/else branches', () => {
-      const [ifElseStep, ...otherSteps] = BRANCHING_STEPS.IF_ELSE;
-      const condition = "{{trigger.properties.after.status}} == 'open'";
-
-      expectRoundTrip(
-        buildWorkflow({
-          steps: [
-            {
-              ...ifElseStep,
-              input: {
-                ...ifElseStep.input,
-                branches: [
-                  {
-                    id: 'open',
-                    nextStepIds: [SECOND_STEP_ID],
-                    filterGroupId: 'group',
-                    condition,
-                  },
-                  { id: 'otherwise', nextStepIds: [THIRD_STEP_ID] },
-                ],
-              },
-            } as WorkflowStepManifest,
-            ...otherSteps,
-          ],
-        }),
-      );
-      expectRoundTrip(
-        buildWorkflow({
-          steps: [
-            {
-              ...buildStep({ type: 'FILTER' }),
-              input: { ...STEP_FILTERS, condition },
-            } as WorkflowStepManifest,
-          ],
-        }),
-      );
-    });
-
     it('exports a position, outputs and error handling that differ from the defaults', () => {
       expectRoundTrip(
         buildWorkflow({
@@ -653,16 +615,6 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
           action: 'updated',
           fieldUniversalIdentifiers: [STATUS_FIELD_ID, COMPANY_FIELD_ID],
           filter: STEP_FILTERS,
-        },
-      },
-      {
-        universalIdentifier: TRIGGER_ID,
-        type: 'DATABASE_EVENT',
-        nextStepIds: [STEP_ID],
-        settings: {
-          objectUniversalIdentifier: OBJECT_ID,
-          action: 'updated',
-          condition: "status == 'open' and previous.status != 'open'",
         },
       },
     ])('exports a $type trigger as it was declared', (trigger) => {

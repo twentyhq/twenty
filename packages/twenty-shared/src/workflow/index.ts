@@ -145,7 +145,6 @@ export type {
   InputSchemaProperty,
   InputSchema,
 } from './types/InputSchema';
-export type { StepFiltersToRuleExpressionConversionResult } from './types/StepFiltersToRuleExpressionConversionResult';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export { WorkflowActionType } from './types/WorkflowActionType';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
@@ -172,12 +171,7 @@ export type {
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
 export { computeCronPatternFromWorkflowCronSchedule } from './utils/computeCronPatternFromWorkflowCronSchedule';
-export { computeDatabaseEventTriggerConditionFromFilter } from './utils/computeDatabaseEventTriggerConditionFromFilter';
-export { computeIfElseBranchConditionFromFilter } from './utils/computeIfElseBranchConditionFromFilter';
 export { computeWorkflowCronScheduleFromCronPattern } from './utils/computeWorkflowCronScheduleFromCronPattern';
-export { computeWorkflowStepConditionFromFilter } from './utils/computeWorkflowStepConditionFromFilter';
-export { convertStepFiltersToRuleExpression } from './utils/convertStepFiltersToRuleExpression';
-export { convertWorkflowStepFiltersToRuleExpression } from './utils/convertWorkflowStepFiltersToRuleExpression';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';

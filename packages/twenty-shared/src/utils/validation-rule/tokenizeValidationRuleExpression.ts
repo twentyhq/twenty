@@ -4,7 +4,6 @@ import { isDefined } from '@/utils/validation/isDefined';
 const PATH_PATTERN = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*/;
 const NUMBER_PATTERN = /^\d+(?:\.\d+)?/;
 const WHITESPACE_PATTERN = /^\s+/;
-const VARIABLE_PATTERN = /^\{\{[^{}]+\}\}/;
 const QUOTE_CHARACTERS = ['"', "'"];
 
 const readString = (
@@ -40,7 +39,6 @@ const readToken = (
   const rest = expression.slice(start);
 
   const patternMatches: [ValidationRuleExpressionToken['type'], RegExp][] = [
-    ['variable', VARIABLE_PATTERN],
     ['whitespace', WHITESPACE_PATTERN],
     ['number', NUMBER_PATTERN],
     ['path', PATH_PATTERN],

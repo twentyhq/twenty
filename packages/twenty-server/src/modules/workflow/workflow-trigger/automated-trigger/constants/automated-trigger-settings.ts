@@ -8,7 +8,6 @@ export type DatabaseEventTriggerFilterSettings = {
 
 export type BaseDatabaseEventTriggerSettings = {
   eventName: string;
-  condition?: string;
   filter?: DatabaseEventTriggerFilterSettings;
 };
 

@@ -147,20 +147,4 @@ describe('getValidationRuleErrorMessage', () => {
       getValidationRuleErrorMessage({ errorMessage: 'Unexpected token' }),
     ).toBe('Unexpected token');
   });
-
-  it('should suggest the whole variable path for a member read after a variable', () => {
-    const compilationResult = compileValidationRuleExpression({
-      expression: '{{step-1}}.amount > 1',
-      fields: [],
-      allowsVariables: true,
-    });
-
-    if (compilationResult.isValid) {
-      throw new Error('Expected the expression to be invalid');
-    }
-
-    expect(getValidationRuleErrorMessage(compilationResult)).toBe(
-      'Write {{step-1.amount}} instead of {{step-1}}.amount',
-    );
-  });
 });

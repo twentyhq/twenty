@@ -393,7 +393,6 @@ describe('application workflow definitions', () => {
               objectUniversalIdentifier: OBJECT_ID,
               action: 'updated',
               fieldUniversalIdentifiers: [FIELD_ID],
-              condition: "status == 'open'",
               filter: {
                 stepFilterGroups: [
                   { id: 'group', logicalOperator: StepLogicalOperator.AND },
@@ -437,7 +436,6 @@ describe('application workflow definitions', () => {
       settings: {
         eventName: 'ticket.updated',
         fields: ['status'],
-        condition: "status == 'open'",
         filter: {
           stepFilters: [
             { id: 'filter', fieldMetadataId: 'status-field-id', value: 'open' },

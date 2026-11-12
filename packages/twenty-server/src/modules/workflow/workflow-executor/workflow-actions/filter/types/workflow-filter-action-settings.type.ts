@@ -6,6 +6,5 @@ export type WorkflowFilterActionSettings = BaseWorkflowActionSettings & {
   input: {
     stepFilterGroups?: StepFilterGroup[];
     stepFilters?: StepFilter[];
-    condition?: string;
   };
 };

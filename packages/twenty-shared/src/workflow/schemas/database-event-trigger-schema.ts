@@ -24,12 +24,6 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema
         ),
       objectType: z.string().optional(),
       fields: z.array(z.string()).optional().nullable(),
-      condition: z
-        .string()
-        .optional()
-        .describe(
-          'Optional rule expression evaluated against the triggering record, e.g. `stage == "WON" and previous.stage != "WON"` or `company.employees > 100`. When set, `filter` is ignored.',
-        ),
       filter: z
         .object({
           stepFilterGroups: z.array(stepFilterGroupSchema),

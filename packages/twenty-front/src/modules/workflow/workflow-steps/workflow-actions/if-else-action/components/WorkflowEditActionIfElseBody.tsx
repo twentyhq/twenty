@@ -19,17 +19,12 @@ import { calculateExistingBranchPositions } from '@/workflow/workflow-steps/work
 import { createElseIfBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/createElseIfBranch';
 import { getBranchLabel } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchLabel';
 import { getBranchesToDelete } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/getBranchesToDelete';
-import { removeIfElseBranchFilterRows } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/removeIfElseBranchFilterRows';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  computeIfElseBranchConditionFromFilter,
-  type StepIfElseBranch,
-} from 'twenty-shared/workflow';
+import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Separator } from 'twenty-ui/primitives/layout';
@@ -141,32 +136,10 @@ export const WorkflowEditActionIfElseBody = ({
       branches,
       remainingFilterGroupIds,
     );
-    // A branch whose condition came from its rows follows them; a written expression stays
-    const updatedBranches = branches
-      .filter((branch) => !branchesToDelete.includes(branch))
-      .map((branch) => {
-        if (
-          isNonEmptyString(branch.condition) &&
-          branch.condition !==
-            computeIfElseBranchConditionFromFilter({
-              branch,
-              stepFilterGroups,
-              stepFilters,
-            })
-        ) {
-          return branch;
-        }
-
-        const condition = computeIfElseBranchConditionFromFilter({
-          branch,
-          stepFilterGroups: updatedStepFilterGroups,
-          stepFilters: updatedStepFilters,
-        });
-
-        return condition === branch.condition
-          ? branch
-          : { ...branch, condition };
-      });
+    const updatedBranches =
+      branchesToDelete.length > 0
+        ? branches.filter((branch) => !branchesToDelete.includes(branch))
+        : branches;
 
     await cleanupEmptyChildStepsFromDeletedBranches({
       branchesToDelete,
@@ -187,56 +160,6 @@ export const WorkflowEditActionIfElseBody = ({
           branches: updatedBranches,
         },
       },
-    });
-  };
-
-  const updateBranches = ({
-    updatedBranch,
-    filterSettings,
-  }: {
-    updatedBranch: StepIfElseBranch;
-    filterSettings?: Required<FilterSettings>;
-  }) => {
-    if (isReadonly) {
-      return;
-    }
-
-    if (isDefined(filterSettings)) {
-      setCurrentStepFilterGroups(filterSettings.stepFilterGroups);
-      setCurrentStepFilters(filterSettings.stepFilters);
-    }
-
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          ...action.settings.input,
-          ...filterSettings,
-          branches: branches.map((branch) =>
-            branch.id === updatedBranch.id ? updatedBranch : branch,
-          ),
-        },
-      },
-    });
-  };
-
-  // Rows can't hold a free expression, so editing one drops the branch's rows
-  const handleBranchConditionChange = (
-    branch: StepIfElseBranch,
-    condition: string,
-  ) => {
-    if (!isDefined(branch.filterGroupId)) {
-      return;
-    }
-
-    updateBranches({
-      updatedBranch: { ...branch, condition },
-      filterSettings: removeIfElseBranchFilterRows({
-        branchFilterGroupId: branch.filterGroupId,
-        stepFilterGroups: currentStepFilterGroups,
-        stepFilters: currentStepFilters,
-      }),
     });
   };
 
@@ -366,19 +289,8 @@ export const WorkflowEditActionIfElseBody = ({
                     : undefined
                 }
                 branchFilterGroup={branchFilterGroup}
-                conditionFromFilter={computeIfElseBranchConditionFromFilter({
-                  branch,
-                  stepFilterGroups,
-                  stepFilters,
-                })}
                 readonly={isReadonly}
                 onFilterSettingsUpdate={onFilterSettingsUpdate}
-                onConditionSeed={(condition) =>
-                  updateBranches({ updatedBranch: { ...branch, condition } })
-                }
-                onConditionChange={(condition) =>
-                  handleBranchConditionChange(branch, condition)
-                }
               />
             </Fragment>
           );

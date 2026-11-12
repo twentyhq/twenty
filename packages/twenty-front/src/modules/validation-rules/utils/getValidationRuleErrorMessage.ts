@@ -20,7 +20,6 @@ export const getValidationRuleErrorMessage = ({
   const relationFieldName = errorParams?.relationFieldName ?? '';
   const subfieldName = errorParams?.subfieldName ?? '';
   const token = errorParams?.token;
-  const variable = errorParams?.variable ?? '';
 
   switch (errorCode) {
     case 'EMPTY_EXPRESSION':
@@ -55,8 +54,6 @@ export const getValidationRuleErrorMessage = ({
       return isDefined(token)
         ? t`Unexpected "${token}"`
         : t`Expression is not valid`;
-    case 'VARIABLE_MEMBER_ACCESS':
-      return t`Write ${path} instead of ${variable}`;
     default:
       return errorMessage;
   }

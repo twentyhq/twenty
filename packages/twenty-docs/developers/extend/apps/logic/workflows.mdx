@@ -88,7 +88,7 @@ A reference Twenty can't resolve fails the install.
 |------|-----------|----------|
 | `MANUAL` | A user launches it | `availability` (optional): `GLOBAL`, or `SINGLE_RECORD` / `BULK_RECORDS` with an `objectUniversalIdentifier`. Adds a command menu entry, with an optional `icon` and `isPinned`. |
 | `CRON` | On a schedule | `pattern`: a cron expression such as `0 9 * * 1`, the same settings as an agent's `CRON` trigger and a logic function's `cronTriggerSettings`. The earlier `type` settings (`DAYS`, `HOURS` or `MINUTES` with a `schedule`, or `CUSTOM` with a `pattern`) are still accepted. |
-| `DATABASE_EVENT` | A record changes | `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), optional `fieldUniversalIdentifiers` to watch (updates and upserts only), and an optional `condition` ([rule expression](/user-guide/data-model/capabilities/validation-rules#write-a-condition), with `previous.<field>` on updates) or `filter`. A set `condition` is used instead of `filter`. |
+| `DATABASE_EVENT` | A record changes | `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), optional `fieldUniversalIdentifiers` to watch (updates and upserts only) and `filter`. |
 | `WEBHOOK` | An HTTP request reaches the workflow URL | `httpMethod` (`GET` or `POST`), and `expectedBody` for `POST`. |
 
 A manual workflow without `availability` gets no command menu entry.
@@ -107,7 +107,6 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
 - Record steps take `objectUniversalIdentifier` instead of an object name.
 - Filters and sorts point at fields with `fieldMetadataUniversalIdentifier`.
 - Filter operands take `ViewFilterOperand` values. Filter group operators take `StepLogicalOperator` values in step filters and `RecordFilterGroupLogicalOperator` values in record filters, both `AND` or `OR`. `twenty-sdk/define` exports all three, along with `ViewFilterOperandDeprecated` for the operands older workflows still store.
-- A `FILTER` step, and each `IF_ELSE` branch, take an optional `condition`: a [rule expression](/user-guide/data-model/capabilities/validation-rules#write-a-condition) that reads workflow variables, such as `{{trigger.properties.after.amount}} > 1000`. A set `condition` is used instead of the step filters.
 - Form fields of type `RECORD` name their object with `settings.objectUniversalIdentifier`. Fields of type `SELECT` and `MULTI_SELECT` offer the options of an existing field of the same type, named with `settings.selectedFieldUniversalIdentifier`.
 - A `CODE` step carries its TypeScript source in `input.code`: a module exporting a `main` function, which receives `input.logicFunctionInput`. To share code across workflows, use a `LOGIC_FUNCTION` step instead.
 

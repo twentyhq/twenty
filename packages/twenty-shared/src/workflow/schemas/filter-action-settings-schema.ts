@@ -8,11 +8,5 @@ export const workflowFilterActionSettingsSchema =
     input: z.object({
       stepFilterGroups: z.array(stepFilterGroupSchema),
       stepFilters: z.array(stepFilterSchema),
-      condition: z
-        .string()
-        .optional()
-        .describe(
-          'Optional rule expression over workflow variables, e.g. `{{trigger.properties.after.amount}} > 1000 and {{step-id.status}} == "WON"`. When set, the step filters are ignored.',
-        ),
     }),
   });

@@ -1,13 +1,9 @@
-import { useLingui } from '@lingui/react/macro';
-import { computeWorkflowStepConditionFromFilter } from 'twenty-shared/workflow';
-
 import { type WorkflowFilterAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { hasFilledStepFilter } from '@/workflow/workflow-steps/conditions/utils/hasFilledStepFilter';
-import { WorkflowStepConditionInput } from '@/workflow/workflow-steps/conditions/components/WorkflowStepConditionInput';
 import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type WorkflowEditActionFilterProps = {
   action: WorkflowFilterAction;
@@ -25,59 +21,31 @@ export const WorkflowEditActionFilter = ({
   action,
   actionOptions,
 }: WorkflowEditActionFilterProps) => {
-  const { t } = useLingui();
-  const { input } = action.settings;
-
-  const updateInput = (
-    nextInput: WorkflowFilterAction['settings']['input'],
-  ) => {
+  const handleFilterSettingsUpdate = (filterSettings: FilterSettings) => {
     if (actionOptions.readonly === true) {
       return;
     }
 
     actionOptions.onActionUpdate({
       ...action,
-      settings: { ...action.settings, input: nextInput },
+      settings: {
+        ...action.settings,
+        input: {
+          stepFilterGroups: filterSettings.stepFilterGroups ?? [],
+          stepFilters: filterSettings.stepFilters ?? [],
+        },
+      },
     });
-  };
-
-  const handleFilterSettingsUpdate = (filterSettings: FilterSettings) => {
-    const nextFilter = {
-      stepFilterGroups: filterSettings.stepFilterGroups ?? [],
-      stepFilters: filterSettings.stepFilters ?? [],
-    };
-
-    updateInput({
-      ...nextFilter,
-      condition: computeWorkflowStepConditionFromFilter(nextFilter),
-    });
-  };
-
-  // Rows can't hold a free expression, so editing one drops them
-  const handleConditionChange = (condition: string) => {
-    updateInput({ stepFilterGroups: [], stepFilters: [], condition });
   };
 
   return (
     <>
-      <WorkflowStepBody>
-        <WorkflowStepConditionInput
+      <WorkflowStepBody rowGap={themeCssVariables.spacing[0]}>
+        <WorkflowStepFilterBuilder
           instanceId={action.id}
-          expressionLabel={t`Conditions`}
-          condition={input.condition}
-          conditionFromFilter={computeWorkflowStepConditionFromFilter(input)}
-          hasFilterRows={hasFilledStepFilter(input.stepFilters ?? [])}
-          readonly={actionOptions.readonly === true}
-          onConditionSeed={(condition) => updateInput({ ...input, condition })}
-          onConditionChange={handleConditionChange}
-          filters={
-            <WorkflowStepFilterBuilder
-              instanceId={action.id}
-              defaultValue={input}
-              readonly={actionOptions.readonly}
-              onFilterSettingsUpdate={handleFilterSettingsUpdate}
-            />
-          }
+          defaultValue={action.settings.input}
+          readonly={actionOptions.readonly}
+          onFilterSettingsUpdate={handleFilterSettingsUpdate}
         />
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}

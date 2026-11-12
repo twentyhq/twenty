@@ -52,7 +52,6 @@ export class IfElseWorkflowAction implements WorkflowAction {
       branches,
       stepFilterGroups,
       resolvedFilters,
-      context,
     });
 
     return {
