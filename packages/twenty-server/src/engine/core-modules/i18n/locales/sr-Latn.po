@@ -3463,7 +3463,7 @@ msgstr "Provajder konekcije tipa 'custom' mora da upućuje na funkciju logike au
 #. js-lingui-id: 4l+vBP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
-msgstr ""
+msgstr "Provajder veze tipa 'oauth-discovery' zahteva HTTP ili HTTPS oauthDiscoveryConfig.resourceUrl"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5501,7 +5501,7 @@ msgstr "Polje \"{fieldName}\" nije relacija više-prema-jedan, nema kolonu spaja
 #. js-lingui-id: pxJKic
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
-msgstr ""
+msgstr "Polje \"{fieldName}\" prihvata jednu vrednost sa operatorom \"{operand}\", ne može se porediti sa listom koju sadrži polje člana radnog prostora \"{workspaceMemberFieldName}\""
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9767,7 +9767,7 @@ msgstr "OAuth provajderu konekcije nedostaje njegov oauth config blok"
 #. js-lingui-id: c5inG4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
-msgstr ""
+msgstr "Provajder OAuth discovery veze zahteva URL resursa na koji se prijavljuje"
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14816,7 +14816,7 @@ msgstr "Ova funkcija nije omogućena."
 #. js-lingui-id: 2DYjsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to a list of values"
-msgstr ""
+msgstr "Ovo polje se ne može porediti sa listom vrednosti"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -14958,17 +14958,17 @@ msgstr "Ova MCP metoda nije podržana."
 #. js-lingui-id: KiQGlB
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This MCP server belongs to another application, so this workflow cannot use it."
-msgstr ""
+msgstr "Ovaj MCP server pripada drugoj aplikaciji, pa ga ovaj tok rada ne može koristiti."
 
 #. js-lingui-id: zNa23j
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This MCP server is inactive. Activate it before testing its tools."
-msgstr ""
+msgstr "Ovaj MCP server je neaktivan. Aktivirajte ga pre testiranja njegovih alata."
 
 #. js-lingui-id: RA2ec2
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This MCP server is not available to this workflow."
-msgstr ""
+msgstr "Ovaj MCP server nije dostupan ovom toku rada."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15264,12 +15264,12 @@ msgstr "Ova radnja aktivnosti vremenske linije nije podržana"
 #. js-lingui-id: Sypv2k
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This tool is no longer offered by its MCP server."
-msgstr ""
+msgstr "Ovaj alat njegov MCP server više ne nudi."
 
 #. js-lingui-id: 3BMm2X
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This tool may change data. Confirm the test before running it."
-msgstr ""
+msgstr "Ovaj alat može promeniti podatke. Potvrdite test pre nego što ga pokrenete."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts

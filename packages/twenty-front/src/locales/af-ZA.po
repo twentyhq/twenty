@@ -10321,7 +10321,7 @@ msgstr "Direkte boodskappe"
 #. js-lingui-id: Rz4s9r
 #: src/modules/ai/hooks/useOpenNewAgentChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
-msgstr ""
+msgstr "Direkte boodskappe ondersteun nie aanhegsels nie."
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -18290,7 +18290,7 @@ msgstr "MCP-bedieners nie beskikbaar nie"
 #. js-lingui-id: iwK6Ak
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "MCP tool step"
-msgstr ""
+msgstr "MCP-nutsstap"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20314,7 +20314,7 @@ msgstr "Geen uitvoer beskikbaar"
 #. js-lingui-id: LF3XrW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "No output returned"
-msgstr ""
+msgstr "Geen uitvoer teruggestuur nie"
 
 #. js-lingui-id: 20ONq7
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -20556,7 +20556,7 @@ msgstr "Geen teikens beskikbaar nie"
 #. js-lingui-id: n75Kxz
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "No test result yet"
-msgstr ""
+msgstr "Nog geen toetsresultaat nie"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -21238,7 +21238,7 @@ msgstr "Amptelike toepassing"
 #. js-lingui-id: 6Aih4U
 #: src/modules/ai/components/AiChatMemberPresence.tsx
 msgid "Offline"
-msgstr ""
+msgstr "Vanlyn"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -21370,7 +21370,7 @@ msgstr "Een-tot-een gesprekke tussen mense"
 #. js-lingui-id: oXOSPE
 #: src/modules/ai/components/AiChatMemberPresence.tsx
 msgid "Online"
-msgstr ""
+msgstr "Aanlyn"
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -21380,7 +21380,7 @@ msgstr "Slegs toepassings wat na npm gepubliseer is, kan op hierdie manier geëi
 #. js-lingui-id: Bo34mz
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "Only continue if you started this connection from {appName}."
-msgstr ""
+msgstr "Gaan slegs voort indien jy hierdie verbinding vanaf {appName} begin het."
 
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
@@ -22039,7 +22039,7 @@ msgstr "Uitvoerkoste"
 #. js-lingui-id: SkbJO4
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Output saved"
-msgstr ""
+msgstr "Uitvoer gestoor"
 
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -24080,7 +24080,7 @@ msgstr "Geregistreer as 'n ontwikkelingsinstansie. Hierdie instansie sal nie gef
 #. js-lingui-id: 5k0oOn
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "Registered with Twenty as the official {appName}"
-msgstr ""
+msgstr "Geregistreer by Twenty as die amptelike {appName}"
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -25160,7 +25160,7 @@ msgstr "Reël opgedateer."
 #. js-lingui-id: 1GQ5z+
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Run a test to see what the tool returns and use its fields in the next steps."
-msgstr ""
+msgstr "Voer 'n toets uit om te sien wat die hulpmiddel terugstuur en gebruik die velde daarvan in die volgende stappe."
 
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -25190,12 +25190,12 @@ msgstr "Voer Funksie Uit"
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Run this tool for real?"
-msgstr ""
+msgstr "Voer hierdie hulpmiddel werklik uit?"
 
 #. js-lingui-id: dLtKV9
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Run tool"
-msgstr ""
+msgstr "Voer hulpmiddel uit"
 
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
@@ -25222,7 +25222,7 @@ msgstr "Funksie word uitgevoer"
 #. js-lingui-id: cHCb42
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Running the tool..."
-msgstr ""
+msgstr "Hulpmiddel word uitgevoer..."
 
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -28878,7 +28878,7 @@ msgstr "Toets jou funksie"
 #. js-lingui-id: 4WDbC6
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Testing calls {toolName} on {mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data."
-msgstr ""
+msgstr "Toetsing roep {toolName} op {mcpServerLabel} met die huidige argumente aan. Hierdie hulpmiddel is nie as leesalleen gemerk nie, dus kan dit data skep, verander of uitvee."
 
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -29081,7 +29081,7 @@ msgstr "Die uitvoer is onderbreek. Probeer asseblief weer."
 #. js-lingui-id: KXe+rm
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "The fields below are now available as variables in the next steps."
-msgstr ""
+msgstr "Die velde hieronder is nou as veranderlikes in die volgende stappe beskikbaar."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -29233,19 +29233,19 @@ msgstr "Die gedeelde e-posadres wat jy wil gebruik."
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
 msgid "The tool arguments must resolve to an object"
-msgstr ""
+msgstr "Die hulpmiddelargumente moet na 'n objek oplos"
 
 #. js-lingui-id: vglXPW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
 msgid "The tool call failed"
-msgstr ""
+msgstr "Die hulpmiddeloproep het misluk"
 
 #. js-lingui-id: xOR8cR
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "The tool ran but returned no fields, so the expected output was left unchanged."
-msgstr ""
+msgstr "Die hulpmiddel is uitgevoer, maar het geen velde teruggestuur nie; daarom is die verwagte uitvoer onveranderd gelaat."
 
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -29498,7 +29498,7 @@ msgstr "Hierdie agent deel sy rol met ander lede of agente. Verander sy nutsgoed
 #. js-lingui-id: Debhph
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
-msgstr ""
+msgstr "Hierdie toepassing noem homself {appName}, maar Twenty kon nie bevestig dat dit so is nie. Gaan slegs voort indien jy hierdie verbinding vanaf {appName} begin het."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx

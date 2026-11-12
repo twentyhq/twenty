@@ -10321,7 +10321,7 @@ msgstr "Tin nhắn trực tiếp"
 #. js-lingui-id: Rz4s9r
 #: src/modules/ai/hooks/useOpenNewAgentChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
-msgstr ""
+msgstr "Tin nhắn trực tiếp không hỗ trợ tệp đính kèm."
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -18290,7 +18290,7 @@ msgstr "Máy chủ MCP không khả dụng"
 #. js-lingui-id: iwK6Ak
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "MCP tool step"
-msgstr ""
+msgstr "Bước công cụ MCP"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20314,7 +20314,7 @@ msgstr "Không có kết quả hiển thị"
 #. js-lingui-id: LF3XrW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "No output returned"
-msgstr ""
+msgstr "Không có đầu ra được trả về"
 
 #. js-lingui-id: 20ONq7
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -20556,7 +20556,7 @@ msgstr "Không có mục tiêu nào khả dụng"
 #. js-lingui-id: n75Kxz
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "No test result yet"
-msgstr ""
+msgstr "Chưa có kết quả kiểm thử"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -21238,7 +21238,7 @@ msgstr "Ứng dụng chính thức"
 #. js-lingui-id: 6Aih4U
 #: src/modules/ai/components/AiChatMemberPresence.tsx
 msgid "Offline"
-msgstr ""
+msgstr "Ngoại tuyến"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -21370,7 +21370,7 @@ msgstr "Cuộc trò chuyện một-một giữa mọi người"
 #. js-lingui-id: oXOSPE
 #: src/modules/ai/components/AiChatMemberPresence.tsx
 msgid "Online"
-msgstr ""
+msgstr "Trực tuyến"
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -21380,7 +21380,7 @@ msgstr "Chỉ những ứng dụng được phát hành lên npm mới có thể
 #. js-lingui-id: Bo34mz
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "Only continue if you started this connection from {appName}."
-msgstr ""
+msgstr "Chỉ tiếp tục nếu bạn đã bắt đầu kết nối này từ {appName}."
 
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
@@ -22039,7 +22039,7 @@ msgstr "Chi phí đầu ra"
 #. js-lingui-id: SkbJO4
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Output saved"
-msgstr ""
+msgstr "Đầu ra đã được lưu"
 
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -24080,7 +24080,7 @@ msgstr "Đã đăng ký làm môi trường phát triển. Môi trường này s
 #. js-lingui-id: 5k0oOn
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "Registered with Twenty as the official {appName}"
-msgstr ""
+msgstr "Đã đăng ký với Twenty là {appName} chính thức"
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -25160,7 +25160,7 @@ msgstr "Đã cập nhật quy tắc."
 #. js-lingui-id: 1GQ5z+
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Run a test to see what the tool returns and use its fields in the next steps."
-msgstr ""
+msgstr "Chạy kiểm thử để xem công cụ trả về gì và sử dụng các trường của công cụ trong các bước tiếp theo."
 
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -25190,12 +25190,12 @@ msgstr "Chạy chức năng"
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Run this tool for real?"
-msgstr ""
+msgstr "Chạy công cụ này thật chứ?"
 
 #. js-lingui-id: dLtKV9
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Run tool"
-msgstr ""
+msgstr "Chạy công cụ"
 
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
@@ -25222,7 +25222,7 @@ msgstr "Đang chạy hàm"
 #. js-lingui-id: cHCb42
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Running the tool..."
-msgstr ""
+msgstr "Đang chạy công cụ..."
 
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -28878,7 +28878,7 @@ msgstr "Kiểm tra chức năng của bạn"
 #. js-lingui-id: 4WDbC6
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Testing calls {toolName} on {mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data."
-msgstr ""
+msgstr "Việc kiểm thử gọi {toolName} trên {mcpServerLabel} bằng các đối số hiện tại. Công cụ này không được đánh dấu là chỉ đọc, vì vậy có thể tạo, thay đổi hoặc xóa dữ liệu."
 
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -29081,7 +29081,7 @@ msgstr "Quá trình xuất dữ liệu đã bị gián đoạn. Vui lòng thử 
 #. js-lingui-id: KXe+rm
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "The fields below are now available as variables in the next steps."
-msgstr ""
+msgstr "Các trường bên dưới hiện đã có sẵn dưới dạng biến trong các bước tiếp theo."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -29233,19 +29233,19 @@ msgstr "Email dùng chung mà bạn muốn sử dụng."
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
 msgid "The tool arguments must resolve to an object"
-msgstr ""
+msgstr "Các đối số của công cụ phải phân giải thành một đối tượng"
 
 #. js-lingui-id: vglXPW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
 msgid "The tool call failed"
-msgstr ""
+msgstr "Lệnh gọi công cụ không thành công"
 
 #. js-lingui-id: xOR8cR
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "The tool ran but returned no fields, so the expected output was left unchanged."
-msgstr ""
+msgstr "Công cụ đã chạy nhưng không trả về trường nào, nên đầu ra dự kiến được giữ nguyên."
 
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -29498,7 +29498,7 @@ msgstr "Tác nhân này dùng chung vai trò với các thành viên hoặc tác
 #. js-lingui-id: Debhph
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
-msgstr ""
+msgstr "Ứng dụng này tự gọi mình là {appName}, nhưng Twenty không thể xác nhận điều đó. Chỉ tiếp tục nếu bạn đã bắt đầu kết nối này từ {appName}."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx

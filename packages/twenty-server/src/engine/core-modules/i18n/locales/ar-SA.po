@@ -3463,7 +3463,7 @@ msgstr "يجب أن يشير موفّر الاتصال من النوع 'custom' 
 #. js-lingui-id: 4l+vBP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
-msgstr ""
+msgstr "يتطلب موفر الاتصال من النوع 'oauth-discovery' عنوان oauthDiscoveryConfig.resourceUrl ببروتوكول HTTP أو HTTPS"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5501,7 +5501,7 @@ msgstr "الحقل \"{fieldName}\" ليس علاقة متعدد إلى واحد�
 #. js-lingui-id: pxJKic
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
-msgstr ""
+msgstr "يأخذ الحقل \"{fieldName}\" قيمة واحدة مع المعامل \"{operand}\"، ولا يمكن مقارنته بالقائمة التي يحتفظ بها حقل عضو مساحة العمل \"{workspaceMemberFieldName}\""
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9767,7 +9767,7 @@ msgstr "لا تحتوي جهة توفير اتصال OAuth على كتلة إع�
 #. js-lingui-id: c5inG4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
-msgstr ""
+msgstr "يتطلب موفر اتصال اكتشاف OAuth عنوان URL للمورد الذي يسجّل الدخول إليه"
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14816,7 +14816,7 @@ msgstr "هذه الميزة غير مُمكَّنة."
 #. js-lingui-id: 2DYjsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to a list of values"
-msgstr ""
+msgstr "لا يمكن مقارنة هذا الحقل بقائمة من القيم"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -14958,17 +14958,17 @@ msgstr "طريقة MCP هذه غير مدعومة."
 #. js-lingui-id: KiQGlB
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This MCP server belongs to another application, so this workflow cannot use it."
-msgstr ""
+msgstr "ينتمي خادم MCP هذا إلى تطبيق آخر، لذلك لا يمكن لسير العمل هذا استخدامه."
 
 #. js-lingui-id: zNa23j
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This MCP server is inactive. Activate it before testing its tools."
-msgstr ""
+msgstr "خادم MCP هذا غير نشط. فعّله قبل اختبار أدواته."
 
 #. js-lingui-id: RA2ec2
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This MCP server is not available to this workflow."
-msgstr ""
+msgstr "خادم MCP هذا غير متاح لسير العمل هذا."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15264,12 +15264,12 @@ msgstr "إجراء نشاط الجدول الزمني هذا غير مدعوم"
 #. js-lingui-id: Sypv2k
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This tool is no longer offered by its MCP server."
-msgstr ""
+msgstr "لم يعد خادم MCP الخاص به يوفّر هذه الأداة."
 
 #. js-lingui-id: 3BMm2X
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This tool may change data. Confirm the test before running it."
-msgstr ""
+msgstr "قد تغيّر هذه الأداة البيانات. أكّد الاختبار قبل تشغيله."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts

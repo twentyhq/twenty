@@ -10321,7 +10321,7 @@ msgstr "Suorat viestit"
 #. js-lingui-id: Rz4s9r
 #: src/modules/ai/hooks/useOpenNewAgentChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
-msgstr ""
+msgstr "Suorat viestit eivät tue liitteitä."
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -18290,7 +18290,7 @@ msgstr "MCP-palvelimet eivät ole käytettävissä"
 #. js-lingui-id: iwK6Ak
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "MCP tool step"
-msgstr ""
+msgstr "MCP-työkaluvaihe"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20314,7 +20314,7 @@ msgstr "Ei tulosta saatavilla"
 #. js-lingui-id: LF3XrW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "No output returned"
-msgstr ""
+msgstr "Tulostetta ei palautettu"
 
 #. js-lingui-id: 20ONq7
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -20556,7 +20556,7 @@ msgstr "Kohteita ei ole saatavilla"
 #. js-lingui-id: n75Kxz
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "No test result yet"
-msgstr ""
+msgstr "Testitulosta ei vielä ole saatavilla"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -21238,7 +21238,7 @@ msgstr "Virallinen sovellus"
 #. js-lingui-id: 6Aih4U
 #: src/modules/ai/components/AiChatMemberPresence.tsx
 msgid "Offline"
-msgstr ""
+msgstr "Ei yhteydessä"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -21370,7 +21370,7 @@ msgstr "Kahdenkeskiset keskustelut ihmisten välillä"
 #. js-lingui-id: oXOSPE
 #: src/modules/ai/components/AiChatMemberPresence.tsx
 msgid "Online"
-msgstr ""
+msgstr "Yhteydessä"
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -21380,7 +21380,7 @@ msgstr "Vain npm:ään julkaistuja sovelluksia voidaan ottaa omistukseen tällä
 #. js-lingui-id: Bo34mz
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "Only continue if you started this connection from {appName}."
-msgstr ""
+msgstr "Jatka vain, jos aloitit tämän yhteyden sovelluksesta {appName}."
 
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
@@ -22039,7 +22039,7 @@ msgstr "Tulostuskustannus"
 #. js-lingui-id: SkbJO4
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Output saved"
-msgstr ""
+msgstr "Tuloste tallennettu"
 
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -24080,7 +24080,7 @@ msgstr "Rekisteröity kehitysympäristönä. Tästä instanssista ei laskuteta e
 #. js-lingui-id: 5k0oOn
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "Registered with Twenty as the official {appName}"
-msgstr ""
+msgstr "Rekisteröity Twentyyn virallisena sovelluksena {appName}"
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -25160,7 +25160,7 @@ msgstr "Sääntö päivitetty."
 #. js-lingui-id: 1GQ5z+
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Run a test to see what the tool returns and use its fields in the next steps."
-msgstr ""
+msgstr "Suorita testi nähdäksesi, mitä työkalu palauttaa, ja käytä sen kenttiä seuraavissa vaiheissa."
 
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -25190,12 +25190,12 @@ msgstr "Suorita toiminto"
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Run this tool for real?"
-msgstr ""
+msgstr "Suoritetaanko tämä työkalu oikeasti?"
 
 #. js-lingui-id: dLtKV9
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Run tool"
-msgstr ""
+msgstr "Suorita työkalu"
 
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
@@ -25222,7 +25222,7 @@ msgstr "Suoritetaan funktiota"
 #. js-lingui-id: cHCb42
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Running the tool..."
-msgstr ""
+msgstr "Työkalua suoritetaan..."
 
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -28878,7 +28878,7 @@ msgstr "Testaa toimintoasi"
 #. js-lingui-id: 4WDbC6
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Testing calls {toolName} on {mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data."
-msgstr ""
+msgstr "Testauksessa kutsutaan työkalua {toolName} palvelimella {mcpServerLabel} nykyisillä argumenteilla. Tätä työkalua ei ole merkitty vain luku -tilaan, joten se voi luoda, muuttaa tai poistaa tietoja."
 
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -29081,7 +29081,7 @@ msgstr "Vienti keskeytyi. Yritä uudelleen."
 #. js-lingui-id: KXe+rm
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "The fields below are now available as variables in the next steps."
-msgstr ""
+msgstr "Alla olevat kentät ovat nyt käytettävissä muuttujina seuraavissa vaiheissa."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -29233,19 +29233,19 @@ msgstr "Jaettu sähköpostiosoite, jota haluat käyttää."
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
 msgid "The tool arguments must resolve to an object"
-msgstr ""
+msgstr "Työkalun argumenttien on muodostuttava objektiksi"
 
 #. js-lingui-id: vglXPW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
 msgid "The tool call failed"
-msgstr ""
+msgstr "Työkalukutsu epäonnistui"
 
 #. js-lingui-id: xOR8cR
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "The tool ran but returned no fields, so the expected output was left unchanged."
-msgstr ""
+msgstr "Työkalu suoritettiin, mutta se ei palauttanut kenttiä, joten odotettu tuloste jätettiin ennalleen."
 
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -29498,7 +29498,7 @@ msgstr "Tämä agentti jakaa roolinsa muiden jäsenten tai agenttien kanssa. Muu
 #. js-lingui-id: Debhph
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
-msgstr ""
+msgstr "Tämä sovellus kutsuu itseään nimellä {appName}, mutta Twenty ei voinut vahvistaa sitä. Jatka vain, jos aloitit tämän yhteyden sovelluksesta {appName}."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx

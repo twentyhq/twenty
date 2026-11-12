@@ -10321,7 +10321,7 @@ msgstr "私信"
 #. js-lingui-id: Rz4s9r
 #: src/modules/ai/hooks/useOpenNewAgentChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
-msgstr ""
+msgstr "私信不支持附件。"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -18290,7 +18290,7 @@ msgstr "MCP 服务器不可用"
 #. js-lingui-id: iwK6Ak
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "MCP tool step"
-msgstr ""
+msgstr "MCP 工具步骤"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20314,7 +20314,7 @@ msgstr "没有可用的输出"
 #. js-lingui-id: LF3XrW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "No output returned"
-msgstr ""
+msgstr "未返回输出"
 
 #. js-lingui-id: 20ONq7
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -20556,7 +20556,7 @@ msgstr "没有可用的目标"
 #. js-lingui-id: n75Kxz
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "No test result yet"
-msgstr ""
+msgstr "尚无测试结果"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -21238,7 +21238,7 @@ msgstr "官方应用"
 #. js-lingui-id: 6Aih4U
 #: src/modules/ai/components/AiChatMemberPresence.tsx
 msgid "Offline"
-msgstr ""
+msgstr "离线"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -21370,7 +21370,7 @@ msgstr "人员之间的一对一对话"
 #. js-lingui-id: oXOSPE
 #: src/modules/ai/components/AiChatMemberPresence.tsx
 msgid "Online"
-msgstr ""
+msgstr "在线"
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -21380,7 +21380,7 @@ msgstr "只有发布到 npm 的应用程序才能通过此方式认领。"
 #. js-lingui-id: Bo34mz
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "Only continue if you started this connection from {appName}."
-msgstr ""
+msgstr "仅当您是从 {appName} 发起此连接时才继续。"
 
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
@@ -22039,7 +22039,7 @@ msgstr "输出成本"
 #. js-lingui-id: SkbJO4
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Output saved"
-msgstr ""
+msgstr "输出已保存"
 
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
@@ -24080,7 +24080,7 @@ msgstr "已注册为开发实例。此实例不会产生计费。"
 #. js-lingui-id: 5k0oOn
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "Registered with Twenty as the official {appName}"
-msgstr ""
+msgstr "已在 Twenty 中注册为官方 {appName}"
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -25160,7 +25160,7 @@ msgstr "规则已更新。"
 #. js-lingui-id: 1GQ5z+
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Run a test to see what the tool returns and use its fields in the next steps."
-msgstr ""
+msgstr "运行测试以查看工具返回的内容，并在后续步骤中使用其字段。"
 
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -25190,12 +25190,12 @@ msgstr "运行函数"
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Run this tool for real?"
-msgstr ""
+msgstr "要实际运行此工具吗？"
 
 #. js-lingui-id: dLtKV9
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Run tool"
-msgstr ""
+msgstr "运行工具"
 
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
@@ -25222,7 +25222,7 @@ msgstr "正在运行函数"
 #. js-lingui-id: cHCb42
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Running the tool..."
-msgstr ""
+msgstr "正在运行工具……"
 
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -28878,7 +28878,7 @@ msgstr "测试您的功能"
 #. js-lingui-id: 4WDbC6
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Testing calls {toolName} on {mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data."
-msgstr ""
+msgstr "测试会使用当前参数在 {mcpServerLabel} 上调用 {toolName}。此工具未标记为只读，因此可能会创建、更改或删除数据。"
 
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -29081,7 +29081,7 @@ msgstr "导出已中断。请重试。"
 #. js-lingui-id: KXe+rm
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "The fields below are now available as variables in the next steps."
-msgstr ""
+msgstr "以下字段现可作为变量在后续步骤中使用。"
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -29233,19 +29233,19 @@ msgstr "您想要使用的共享电子邮件地址。"
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
 msgid "The tool arguments must resolve to an object"
-msgstr ""
+msgstr "工具参数必须解析为对象"
 
 #. js-lingui-id: vglXPW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
 msgid "The tool call failed"
-msgstr ""
+msgstr "工具调用失败"
 
 #. js-lingui-id: xOR8cR
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "The tool ran but returned no fields, so the expected output was left unchanged."
-msgstr ""
+msgstr "工具已运行，但未返回任何字段，因此预期输出保持不变。"
 
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -29498,7 +29498,7 @@ msgstr "此代理与其他成员或代理共享其角色。请在设置 > 角色
 #. js-lingui-id: Debhph
 #: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
 msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
-msgstr ""
+msgstr "此应用自称为 {appName}，但 Twenty 无法确认其身份。仅当您是从 {appName} 发起此连接时才继续。"
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx

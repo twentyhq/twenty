@@ -3463,7 +3463,7 @@ msgstr "Dostawca połączenia typu 'custom' musi odwoływać się do funkcji log
 #. js-lingui-id: 4l+vBP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
-msgstr ""
+msgstr "Dostawca połączenia typu 'oauth-discovery' wymaga adresu HTTP lub HTTPS oauthDiscoveryConfig.resourceUrl"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5501,7 +5501,7 @@ msgstr "Pole \"{fieldName}\" nie jest relacją wiele-do-jednego, nie ma kolumny 
 #. js-lingui-id: pxJKic
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
-msgstr ""
+msgstr "Pole „{fieldName}” przyjmuje pojedynczą wartość z operatorem „{operand}”, nie można go porównać z listą przechowywaną w polu elementu obszaru roboczego „{workspaceMemberFieldName}”"
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9767,7 +9767,7 @@ msgstr "Brakuje bloku konfiguracji oauth u dostawcy połączenia OAuth"
 #. js-lingui-id: c5inG4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
-msgstr ""
+msgstr "Dostawca połączenia OAuth discovery wymaga adresu URL zasobu, do którego się loguje"
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14816,7 +14816,7 @@ msgstr "Ta funkcja nie jest włączona."
 #. js-lingui-id: 2DYjsy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to a list of values"
-msgstr ""
+msgstr "Tego pola nie można porównać z listą wartości"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -14958,17 +14958,17 @@ msgstr "Ta metoda MCP nie jest obsługiwana."
 #. js-lingui-id: KiQGlB
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This MCP server belongs to another application, so this workflow cannot use it."
-msgstr ""
+msgstr "Ten serwer MCP należy do innej aplikacji, więc ten przepływ pracy nie może go używać."
 
 #. js-lingui-id: zNa23j
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This MCP server is inactive. Activate it before testing its tools."
-msgstr ""
+msgstr "Ten serwer MCP jest nieaktywny. Aktywuj go przed przetestowaniem jego narzędzi."
 
 #. js-lingui-id: RA2ec2
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This MCP server is not available to this workflow."
-msgstr ""
+msgstr "Ten serwer MCP nie jest dostępny dla tego przepływu pracy."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15264,12 +15264,12 @@ msgstr "To działanie aktywności na osi czasu nie jest obsługiwane"
 #. js-lingui-id: Sypv2k
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This tool is no longer offered by its MCP server."
-msgstr ""
+msgstr "To narzędzie nie jest już oferowane przez jego serwer MCP."
 
 #. js-lingui-id: 3BMm2X
 #: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
 msgid "This tool may change data. Confirm the test before running it."
-msgstr ""
+msgstr "To narzędzie może zmienić dane. Potwierdź test przed jego uruchomieniem."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
