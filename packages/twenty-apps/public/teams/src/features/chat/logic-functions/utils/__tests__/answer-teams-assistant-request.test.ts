@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TEAMS_ASSISTANT_DEADLINE_ERROR } from 'src/features/chat/logic-functions/constants/teams-assistant-deadline-error';
+import { TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-deadline-failure-text';
 import { TEAMS_ASSISTANT_FAILURE_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-failure-text';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
 import { TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-sender-text';
@@ -187,6 +189,13 @@ describe('answerTeamsAssistantRequest', () => {
     await expect(answer()).resolves.toMatchObject({ status: 'declined' });
     expect(runAgentMock).not.toHaveBeenCalled();
     expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT]);
+  });
+
+  it('should tell the member when the agent ran out of time', async () => {
+    runAgentMock.mockRejectedValue(new Error(TEAMS_ASSISTANT_DEADLINE_ERROR));
+
+    await expect(answer()).resolves.toMatchObject({ status: 'failed' });
+    expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT]);
   });
 
   it('should reply with a generic message and record the error when the agent fails', async () => {

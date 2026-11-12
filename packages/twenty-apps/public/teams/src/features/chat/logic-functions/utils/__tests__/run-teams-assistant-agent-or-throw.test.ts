@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { runTeamsAssistantAgentOrThrow } from 'src/features/chat/logic-functions/utils/run-teams-assistant-agent-or-throw';
+import { TEAMS_ASSISTANT_DEADLINE_ERROR } from 'src/features/chat/logic-functions/constants/teams-assistant-deadline-error';
+import { TEAMS_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/features/chat/logic-functions/constants/teams-assistant-empty-response-error';
 
 const runAgentMock = vi.hoisted(() => vi.fn());
 
@@ -72,7 +74,7 @@ describe('runTeamsAssistantAgentOrThrow', () => {
   it('should not start the agent when the deadline has already passed', async () => {
     await expect(
       runTeamsAssistantAgentOrThrow({ ...INPUT, deadlineAtMs: Date.now() - 1 }),
-    ).rejects.toThrow('Teams deadline passed before the agent could start');
+    ).rejects.toThrow(TEAMS_ASSISTANT_DEADLINE_ERROR);
 
     expect(runAgentMock).not.toHaveBeenCalled();
   });
@@ -91,7 +93,7 @@ describe('runTeamsAssistantAgentOrThrow', () => {
       deadlineAtMs: Date.now() + 1_000,
     });
     const expectation = expect(run).rejects.toThrow(
-      'Agent did not answer before the Teams deadline',
+      TEAMS_ASSISTANT_DEADLINE_ERROR,
     );
 
     await vi.advanceTimersByTimeAsync(1_000);
@@ -131,6 +133,6 @@ describe('runTeamsAssistantAgentOrThrow', () => {
         ...INPUT,
         deadlineAtMs: Date.now() + 60_000,
       }),
-    ).rejects.toThrow('Agent returned an empty response');
+    ).rejects.toThrow(TEAMS_ASSISTANT_EMPTY_RESPONSE_ERROR);
   });
 });

@@ -2,6 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { runAgent } from 'twenty-sdk/logic-function';
 
 import { TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
+import { TEAMS_ASSISTANT_DEADLINE_ERROR } from 'src/features/chat/logic-functions/constants/teams-assistant-deadline-error';
+import { TEAMS_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/features/chat/logic-functions/constants/teams-assistant-empty-response-error';
 import { type TeamsAssistantTurn } from 'src/features/chat/logic-functions/types/teams-assistant-turn.type';
 import { buildTeamsAssistantMessages } from 'src/features/chat/logic-functions/utils/build-teams-assistant-messages';
 
@@ -22,14 +24,14 @@ export const runTeamsAssistantAgentOrThrow = async ({
   deadlineAtMs: number;
 }): Promise<string> => {
   if (deadlineAtMs <= Date.now()) {
-    throw new Error('Teams deadline passed before the agent could start');
+    throw new Error(TEAMS_ASSISTANT_DEADLINE_ERROR);
   }
 
   let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
 
   const deadline = new Promise<never>((_, reject) => {
     deadlineTimer = setTimeout(
-      () => reject(new Error('Agent did not answer before the Teams deadline')),
+      () => reject(new Error(TEAMS_ASSISTANT_DEADLINE_ERROR)),
       Math.max(deadlineAtMs - Date.now(), 0),
     );
   });
@@ -60,7 +62,7 @@ export const runTeamsAssistantAgentOrThrow = async ({
       : '';
 
     if (!isNonEmptyString(responseText)) {
-      throw new Error('Agent returned an empty response');
+      throw new Error(TEAMS_ASSISTANT_EMPTY_RESPONSE_ERROR);
     }
 
     return responseText;
