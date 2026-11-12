@@ -18,6 +18,7 @@ import { PrincipalPermissionsReadService } from 'src/engine/permissions/principa
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { PrivateRecordRepository } from 'src/engine/permissions/internal/private-record/repositories/private-record.repository';
 import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
@@ -47,6 +48,7 @@ export class RecordSharingReadService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
+    private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
@@ -218,16 +220,18 @@ export class RecordSharingReadService {
       isRecordSharingEnabled({ featureFlagsMap }) &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordPermissionsReadService.canRoleAccessSomeRecords({
-        principals:
-          await this.principalPermissionsReadService.resolvePermissionsPrincipals(
-            {
-              authContext: args.authContext,
-            },
-          ),
-        objectMetadataId: flatObjectMetadata.id,
-        operationType: 'update',
-      }))
+      (await this.recordPermissionsReadService.canAllRecordsOrRowLevelPermissionsGrantOperation(
+        {
+          principals:
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+              {
+                authContext: args.authContext,
+              },
+            ),
+          objectMetadataId: flatObjectMetadata.id,
+          operationType: 'update',
+        },
+      ))
     );
   }
 
@@ -401,7 +405,7 @@ export class RecordSharingReadService {
         'flatFieldMetadataMaps',
       ]);
     const privateRecordStates =
-      await this.recordPermissionReadRepository.findPrivateRecordStates({
+      await this.privateRecordRepository.findPrivateRecordStates({
         workspaceId,
         flatObjectMetadata,
         flatFieldMetadataMaps,

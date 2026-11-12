@@ -61,7 +61,7 @@ Tipi di trigger disponibili:
 Per richiamare, da un componente front-end (headless), una funzione logica attivata da una rotta, vedi [Chiamare una funzione logica](/it/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 * **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
-* **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro. Quando l'operazione dell'evento è `updated`, è possibile specificare campi specifici da monitorare nell'array `updatedFields`. Se lasciato non definito o vuoto, qualsiasi aggiornamento attiverà la funzione.
+* **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro. Quando l'operazione dell'evento è `updated`, è possibile specificare campi specifici da monitorare nell'array `updatedFields`. Se lasciato non definito o vuoto, qualsiasi aggiornamento attiverà la funzione. Una `condition` lo limita ai record che soddisfano un'espressione di regola.
 > ad es. `person.updated`, `*.created`, `company.*`
 * **serverRoute**: espone una singola route HTTP con ambito di registrazione. Una funzione di **resolver** (dichiarata con `serverRouteTriggerSettings`) viene eseguita nel workspace proprietario e restituisce una `Response` sincrona, oppure il workspace di destinazione e la funzione logica di destinazione da mettere in coda; nel percorso di messa in coda la piattaforma conferma con `202` ed esegue tale **destinazione** nella coda dei worker. Vedi [Trigger route del server](#server-route-trigger).
 
@@ -439,11 +439,12 @@ Per le eliminazioni permanenti, usa `.destroyed`.
 
 `databaseEventTriggerSettings` accetta:
 
-| Proprietà       | Descrizione                                                                                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `eventName`     | Evento da ascoltare, ad esempio `person.updated`. Supporta `*` per il nome dell'oggetto, l'operazione o entrambi.                                                                              |
-| `updatedFields` | Elenco facoltativo di nomi di campo. Negli eventi `.updated`, solo le modifiche che interessano uno di essi attivano la funzione.                                                              |
-| `batchMode`     | Booleano facoltativo. Quando è `true`, l'handler viene chiamato una volta per ogni batch di record anziché una volta per record. Il server decide quanti record contiene un batch, fino a 200. |
+| Proprietà       | Descrizione                                                                                                                                                                                                                                                                                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `eventName`     | Evento da ascoltare, ad esempio `person.updated`. Supporta `*` per il nome dell'oggetto, l'operazione o entrambi.                                                                                                                                                                                                                                                              |
+| `updatedFields` | Elenco facoltativo di nomi di campo. Negli eventi `.updated` e `.upserted`, solo le modifiche che interessano uno di essi attivano la funzione.                                                                                                                                                                                                                                |
+| `condizione`    | Espressione di [regola](/it/user-guide/data-model/capabilities/validation-rules#write-a-condition) facoltativa che il record deve soddisfare, ad esempio `stage == 'CUSTOMER'`. `precedente.\<field>` legge il record prima di un aggiornamento. Legge i campi del record stesso; una relazione molti-a-uno è il suo campo ID (`companyId`), non `company.name`. |
+| `batchMode`     | Booleano facoltativo. Quando è `true`, l'handler viene chiamato una volta per ogni batch di record anziché una volta per record. Il server decide quanti record contiene un batch, fino a 200.                                                                                                                                                                                 |
 
 Esempio di evento "created":
 

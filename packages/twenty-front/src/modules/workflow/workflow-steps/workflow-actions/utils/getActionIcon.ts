@@ -25,6 +25,8 @@ export const getActionIcon = (actionType: WorkflowActionType) => {
       return CORE_ACTIONS.find((item) => item.type === actionType)?.icon;
     case 'LOGIC_FUNCTION':
       return 'IconFunction';
+    case 'MCP_TOOL':
+      return 'IconSparkles';
     case 'FORM':
     case 'SEND_CHAT_MESSAGE':
       return HUMAN_INPUT_ACTIONS.find((item) => item.type === actionType)?.icon;

@@ -167,16 +167,18 @@ export const useAuth = () => {
         const targetWorkspace =
           getFirstAvailableWorkspaces(availableWorkspaces);
 
-        return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(targetWorkspace.workspaceUrls),
-          targetWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
-          {
+        return await redirectToWorkspaceDomain({
+          baseUrl: getWorkspaceUrl(targetWorkspace.workspaceUrls),
+          pathname: targetWorkspace.loginToken
+            ? AppPath.Verify
+            : AppPath.SignInUp,
+          searchParams: {
             ...(targetWorkspace.loginToken && {
               loginToken: targetWorkspace.loginToken,
             }),
             email,
           },
-        );
+        });
       }
 
       setSignInUpStep(SignInUpStep.WorkspaceSelection);
@@ -513,20 +515,22 @@ export const useAuth = () => {
       }
 
       if (isMultiWorkspaceEnabled) {
-        return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(
+        return await redirectToWorkspaceDomain({
+          baseUrl: getWorkspaceUrl(
             signUpInWorkspaceResult.data.signUpInWorkspace.workspace
               .workspaceUrls,
           ),
-          isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
-          {
+          pathname: isEmailVerificationRequired
+            ? AppPath.SignInUp
+            : AppPath.Verify,
+          searchParams: {
             ...(!isEmailVerificationRequired && {
               loginToken:
                 signUpInWorkspaceResult.data.signUpInWorkspace.loginToken.token,
             }),
             email,
           },
-        );
+        });
       }
 
       await handleGetAuthTokensFromLoginToken(

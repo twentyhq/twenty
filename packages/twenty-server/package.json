@@ -166,7 +166,7 @@
     "sanitize-html": "2.18.1",
     "semver": "7.6.3",
     "sns-payload-validator": "^2.1.0",
-    "stream-json": "2.1.0",
+    "stream-json": "3.8.0",
     "stripe": "20.4.1",
     "tar": "^7.5.9",
     "temporal-polyfill": "^0.3.0",
