@@ -69,45 +69,48 @@ export class AccessGroupPropagationPlanService {
           .filter(isDefined),
       });
 
-    await this.withPlanLock(workspaceId, async () => {
-      const { objectMetadataIdsToCompute, totalRecordCount } =
-        await this.findPlan(workspaceId);
+    await this.withPlanLock({
+      workspaceId,
+      callback: async () => {
+        const { objectMetadataIdsToCompute, totalRecordCount } =
+          await this.findPlan(workspaceId);
 
-      if (
-        areRecordAccessGroupComputesAlreadyPlanned({
-          waitingObjectMetadataIds: objectMetadataIdsToCompute.slice(1),
-          objectMetadataIds: plannedObjectMetadataIds,
-        })
-      ) {
-        return;
-      }
+        if (
+          areRecordAccessGroupComputesAlreadyPlanned({
+            waitingObjectMetadataIds: objectMetadataIdsToCompute.slice(1),
+            objectMetadataIds: plannedObjectMetadataIds,
+          })
+        ) {
+          return;
+        }
 
-      if (!isNonEmptyArray(objectMetadataIdsToCompute)) {
-        await this.cacheStorageService.mdel([
-          this.buildComputedRecordCountCacheKey(workspaceId),
-          this.buildIsPlanStoppedCacheKey(workspaceId),
-        ]);
-      }
+        if (!isNonEmptyArray(objectMetadataIdsToCompute)) {
+          await this.cacheStorageService.mdel([
+            this.buildComputedRecordCountCacheKey(workspaceId),
+            this.buildIsPlanStoppedCacheKey(workspaceId),
+          ]);
+        }
 
-      const plan = {
-        objectMetadataIdsToCompute: [
-          ...objectMetadataIdsToCompute,
-          ...plannedObjectMetadataIds,
-        ],
-        totalRecordCount: totalRecordCount + plannedRecordCount,
-      };
+        const plan = {
+          objectMetadataIdsToCompute: [
+            ...objectMetadataIdsToCompute,
+            ...plannedObjectMetadataIds,
+          ],
+          totalRecordCount: totalRecordCount + plannedRecordCount,
+        };
 
-      await this.saveAndApplyPlan({ workspaceId, plan });
+        await this.saveAndApplyPlan({ workspaceId, plan });
+      },
     });
   }
 
   async findNextObjectMetadataIdToCompute(
     applyJobData: ApplyAccessGroupPropagationPlanJobData,
   ): Promise<string | undefined> {
-    const { objectMetadataIdsToCompute } = await this.withPlanLock(
-      applyJobData.workspaceId,
-      () => this.findPlanOrRestoreFromApplyJobData(applyJobData),
-    );
+    const { objectMetadataIdsToCompute } = await this.withPlanLock({
+      workspaceId: applyJobData.workspaceId,
+      callback: () => this.findPlanOrRestoreFromApplyJobData(applyJobData),
+    });
 
     return objectMetadataIdsToCompute[0];
   }
@@ -145,36 +148,45 @@ export class AccessGroupPropagationPlanService {
   }): Promise<void> {
     const { workspaceId } = applyJobData;
 
-    await this.withPlanLock(workspaceId, async () => {
-      const plan = await this.findPlanOrRestoreFromApplyJobData(applyJobData);
-      const [runningObjectMetadataId, ...waitingObjectMetadataIds] =
-        plan.objectMetadataIdsToCompute;
+    await this.withPlanLock({
+      workspaceId,
+      callback: async () => {
+        const plan = await this.findPlanOrRestoreFromApplyJobData(applyJobData);
+        const [runningObjectMetadataId, ...waitingObjectMetadataIds] =
+          plan.objectMetadataIdsToCompute;
 
-      if (runningObjectMetadataId !== objectMetadataId) {
-        return;
-      }
+        if (runningObjectMetadataId !== objectMetadataId) {
+          return;
+        }
 
-      if (!isNonEmptyArray(waitingObjectMetadataIds)) {
-        await this.clearPlan(workspaceId);
+        if (!isNonEmptyArray(waitingObjectMetadataIds)) {
+          await this.clearPlan(workspaceId);
 
-        return;
-      }
+          return;
+        }
 
-      await this.saveAndApplyPlan({
-        workspaceId,
-        plan: { ...plan, objectMetadataIdsToCompute: waitingObjectMetadataIds },
-      });
+        await this.saveAndApplyPlan({
+          workspaceId,
+          plan: {
+            ...plan,
+            objectMetadataIdsToCompute: waitingObjectMetadataIds,
+          },
+        });
+      },
     });
   }
 
   async stopPlan(workspaceId: string): Promise<void> {
-    await this.withPlanLock(workspaceId, async () => {
-      await this.clearPlan(workspaceId);
-      await this.cacheStorageService.set(
-        this.buildIsPlanStoppedCacheKey(workspaceId),
-        true,
-        ACCESS_GROUP_PROPAGATION_PLAN_TTL_MS,
-      );
+    await this.withPlanLock({
+      workspaceId,
+      callback: async () => {
+        await this.clearPlan(workspaceId);
+        await this.cacheStorageService.set(
+          this.buildIsPlanStoppedCacheKey(workspaceId),
+          true,
+          ACCESS_GROUP_PROPAGATION_PLAN_TTL_MS,
+        );
+      },
     });
   }
 
@@ -226,7 +238,7 @@ export class AccessGroupPropagationPlanService {
     const computedRecordCountCacheKey =
       this.buildComputedRecordCountCacheKey(workspaceId);
 
-    await this.savePlan(workspaceId, plan);
+    await this.savePlan({ workspaceId, plan });
     await this.cacheStorageService.del(computedRecordCountCacheKey);
     await this.cacheStorageService.incrBy(
       computedRecordCountCacheKey,
@@ -247,7 +259,7 @@ export class AccessGroupPropagationPlanService {
     workspaceId: string;
     plan: AccessGroupPropagationPlan;
   }): Promise<void> {
-    await this.savePlan(workspaceId, plan);
+    await this.savePlan({ workspaceId, plan });
     await this.accessGroupSyncSchedulerService.enqueueApplyAccessGroupPropagationPlanJob(
       {
         workspaceId,
@@ -282,10 +294,13 @@ export class AccessGroupPropagationPlanService {
     );
   }
 
-  private async savePlan(
-    workspaceId: string,
-    plan: AccessGroupPropagationPlan,
-  ): Promise<void> {
+  private async savePlan({
+    workspaceId,
+    plan,
+  }: {
+    workspaceId: string;
+    plan: AccessGroupPropagationPlan;
+  }): Promise<void> {
     await this.cacheStorageService.set(
       this.buildPlanCacheKey(workspaceId),
       plan,
@@ -293,10 +308,13 @@ export class AccessGroupPropagationPlanService {
     );
   }
 
-  private withPlanLock<TResult>(
-    workspaceId: string,
-    callback: () => Promise<TResult>,
-  ): Promise<TResult> {
+  private withPlanLock<TResult>({
+    workspaceId,
+    callback,
+  }: {
+    workspaceId: string;
+    callback: () => Promise<TResult>;
+  }): Promise<TResult> {
     return this.cacheLockService.withLock(
       callback,
       `access-group-propagation-plan:${workspaceId}`,

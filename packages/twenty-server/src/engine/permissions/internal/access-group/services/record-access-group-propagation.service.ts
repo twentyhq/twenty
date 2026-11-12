@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -22,6 +22,10 @@ import { type RelatedRecords } from 'src/engine/permissions/types/related-record
 
 @Injectable()
 export class RecordAccessGroupPropagationService {
+  private readonly logger = new Logger(
+    RecordAccessGroupPropagationService.name,
+  );
+
   constructor(
     private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
@@ -48,7 +52,13 @@ export class RecordAccessGroupPropagationService {
       );
 
     try {
-      await computeObject().catch(computeObject);
+      await computeObject().catch((error) => {
+        this.logger.warn(
+          `Retrying the access group compute of object ${objectMetadataId} in workspace ${workspaceId}: ${error}`,
+        );
+
+        return computeObject();
+      });
     } catch (error) {
       await this.accessGroupPropagationPlanService.stopPlan(workspaceId);
 
