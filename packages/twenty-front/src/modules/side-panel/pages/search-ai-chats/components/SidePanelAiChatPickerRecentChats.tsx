@@ -19,7 +19,7 @@ export const SidePanelAiChatPickerRecentChats = ({
   isSearchPending,
 }: SidePanelAiChatPickerRecentChatsProps) => {
   const { t } = useLingui();
-  const { threads, agentChatThreadList, loading } = useAgentChatThreadList(
+  const { threads, agentChatThreadList, isLoading } = useAgentChatThreadList(
     AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
   );
   const aiChatPickerOpeningThreadId = useAtomComponentStateValue(
@@ -45,7 +45,7 @@ export const SidePanelAiChatPickerRecentChats = ({
   return (
     <SidePanelAiChatPickerList
       threads={threads}
-      isLoading={isSearchPending || loading}
+      isLoading={isSearchPending || isLoading}
       loadingLabel={
         isSearchPending ? t`Searching chats...` : t`Loading chats...`
       }

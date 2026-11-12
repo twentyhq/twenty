@@ -126,7 +126,7 @@ const AiChatInboxPageContent = () => {
   const agentChatSelectedThreadListSource = useAtomStateValue(
     agentChatSelectedThreadListSourceState,
   );
-  const { threads, loading: isLoading } = useAgentChatThreadList(
+  const { threads, isLoading } = useAgentChatThreadList(
     agentChatSelectedThreadListSource,
   );
   const { loadAgentChatThreadList } = useLoadAgentChatThreadList();

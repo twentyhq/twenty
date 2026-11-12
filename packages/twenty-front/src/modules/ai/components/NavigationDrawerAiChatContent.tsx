@@ -66,7 +66,7 @@ export const NavigationDrawerAiChatContent = () => {
       : { resetNavigationStack: true },
   );
 
-  const { threads, loading } = useAgentChatThreadList(
+  const { threads, isLoading } = useAgentChatThreadList(
     AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
   );
   const agentChatFavoriteThreads = useAtomStateValue(
@@ -79,7 +79,7 @@ export const NavigationDrawerAiChatContent = () => {
     agentChatDirectMessageSidebarItemsSelector,
   );
 
-  if (loading && threads.length === 0) {
+  if (isLoading && threads.length === 0) {
     return (
       <StyledContainer>
         {isExpanded && <AiChatSkeletonLoader />}

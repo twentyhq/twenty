@@ -7,6 +7,7 @@ import { useRefreshAgentChatChannelSummaries } from '@/ai/hooks/useRefreshAgentC
 import { AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatDefaultSelectedThreadListSource';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { isAgentChatSelectedThreadListSourceAccessible } from '@/ai/utils/isAgentChatSelectedThreadListSourceAccessible';
 import { GetAgentChatChannelsDocument } from '~/generated-metadata/graphql';
 
 // A failed load keeps what was shown, as the next change loads again
@@ -35,17 +36,11 @@ export const useRefreshAgentChatChannels = () => {
 
     store.set(agentChatChannelsState.atom, channels);
 
-    const agentChatSelectedThreadListSource = store.get(
-      agentChatSelectedThreadListSourceState.atom,
-    );
-
     if (
-      agentChatSelectedThreadListSource.type === 'channel' &&
-      !channels.some(
-        ({ id, isAccessible }) =>
-          isAccessible &&
-          id === agentChatSelectedThreadListSource.channelView.channelId,
-      )
+      !isAgentChatSelectedThreadListSourceAccessible({
+        source: store.get(agentChatSelectedThreadListSourceState.atom),
+        channels,
+      })
     ) {
       store.set(
         agentChatSelectedThreadListSourceState.atom,

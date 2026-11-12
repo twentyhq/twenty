@@ -113,7 +113,7 @@ jest.mock(
 );
 
 jest.mock('@/ai/hooks/useAgentChatThreadList', () => ({
-  useAgentChatThreadList: () => ({ threads: mockThreads, loading: false }),
+  useAgentChatThreadList: () => ({ threads: mockThreads, isLoading: false }),
 }));
 
 jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({

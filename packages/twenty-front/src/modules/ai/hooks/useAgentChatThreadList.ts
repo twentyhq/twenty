@@ -27,6 +27,6 @@ export const useAgentChatThreadList = (source: AgentChatThreadListSource) => {
   return {
     threads: sortedThreads,
     agentChatThreadList,
-    loading: !isDefined(agentChatThreadList),
+    isLoading: !isDefined(agentChatThreadList),
   };
 };
