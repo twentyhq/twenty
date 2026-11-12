@@ -95,7 +95,7 @@ jobs:
           path: |
             packages/twenty-ui/node_modules/.cache/storybook
             packages/twenty-ui/node_modules/.vite
-          key: v4-storybook-vitest-deps-twenty-ui-${{ hashFiles('yarn.lock', 'packages/twenty-ui/vite.config.ts', 'packages/twenty-ui/vitest.config.ts', 'packages/twenty-ui/.storybook/main.ts') }}
+          key: v4-storybook-vitest-deps-twenty-ui-${{ hashFiles('yarn.lock', 'packages/twenty-ui/vite.config.ts', 'packages/twenty-ui/vitest.config.ts', 'packages/twenty-ui/.storybook/main.ts', 'packages/twenty-shared/src/**') }}
       - name: Resolve Playwright version
         id: playwright-version
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
