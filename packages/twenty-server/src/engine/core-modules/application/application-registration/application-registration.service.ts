@@ -1445,7 +1445,10 @@ export class ApplicationRegistrationService {
       params.applicationRegistrationId,
     );
 
-    if (isDefined(registration.ownerWorkspaceId)) {
+    if (
+      isDefined(registration.ownerWorkspaceId) ||
+      isVerifiedOAuthClientUniversalIdentifier(registration.universalIdentifier)
+    ) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,
