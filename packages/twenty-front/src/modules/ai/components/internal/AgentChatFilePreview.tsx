@@ -1,9 +1,9 @@
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { getFileType } from '@/activities/files/utils/getFileType';
+import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueFromFilePart';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
-import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -67,24 +67,17 @@ export const AgentChatFilePreview = ({
   const fileId = file instanceof File ? undefined : file.fileId;
 
   const fileCategory: AttachmentFileCategory = getFileType(fileName);
-  const extension = fileName.split('.').pop() ?? '';
 
   const FileCategoryIcon: IconComponent = IconMapping[fileCategory];
   const iconBackgroundColor: string = iconColors[fileCategory];
 
   const handleClick = useCallback(() => {
-    if (!isDefined(fileUrl) || !isDefined(fileId)) {
+    if (file instanceof File) {
       return;
     }
 
-    setFilePreview({
-      fileId,
-      label: fileName,
-      extension,
-      url: fileUrl,
-      fileCategory: getFileCategoryFromExtension(extension),
-    });
-  }, [fileUrl, fileId, fileName, extension, setFilePreview]);
+    setFilePreview(getFieldFilesValueFromFilePart(file));
+  }, [file, setFilePreview]);
 
   const leftComponent = isUploading ? (
     <Loader color="yellow" />

@@ -2960,6 +2960,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Imkoniyat bilan bogʻlangan suhbatlar"
 
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Faol varaqni va uning joylashuv rejimiga mos vidjet o‘rnini tanlang."
+
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
@@ -3454,6 +3459,11 @@ msgstr "Bu ilova uchun {0} nomli ulanish provayderi allaqachon mavjud"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "'custom' turidagi ulanish provayderi authorize va callback mantiqiy funksiyalariga havola qilishi kerak"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr ""
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5386,11 +5396,6 @@ msgstr "Yozuvni yaratib bo‘lmadi."
 msgid "Failed to delete file {fileId}"
 msgstr "{fileId} faylini o‘chirish muvaffaqiyatsiz tugadi"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Ishlarni o‘chirib bo‘lmadi. Iltimos, birozdan so‘ng qayta urinib ko‘ring."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -6162,6 +6167,11 @@ msgstr "engineComponentKey TRIGGER_WORKFLOW_VERSION bo‘lganda frontComponentId
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Frontend komponent yaratuvchisi so‘rovi 6 MiB limitidan oshadi. Ilova bog‘liqliklarini yoki yaratilgan SDK hajmini kamaytiring."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Frontend komponent topilmadi."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9748,6 +9758,11 @@ msgstr "OAuth orqali kirish rad etildi."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "OAuth ulanish provayderida oauth config bloki yetishmaydi"
+
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr ""
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13803,6 +13818,11 @@ msgstr "Komponent bog‘liqliklarini tekshirib bo‘lmadi. Komponentni yana yara
 msgid "The condition of a database event trigger must be text"
 msgstr "Ma’lumotlar bazasi hodisasi triggerining sharti matn bo‘lishi kerak"
 
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr "Agent triggerining sharti yaroqsiz"
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -14859,6 +14879,11 @@ msgstr "Ushbu faylni yuklab qo‘yish allaqachon yakunlangan."
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "This form no longer waits for an answer."
 msgstr "Bu shakl endi javob kutmaydi."
+
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "Ushbu frontend komponent ushbu sahifa joylashuvida mavjud emas."
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -17221,6 +17246,11 @@ msgstr "Kirishni kim olishi"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "Kirish nima sababdan berilgani"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Vidjet konfiguratsiyasi talab qilinadi."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

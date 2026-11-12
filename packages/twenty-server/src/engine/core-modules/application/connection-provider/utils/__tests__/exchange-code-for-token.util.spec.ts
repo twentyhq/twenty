@@ -1,5 +1,6 @@
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
 import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-refresh-token-for-token.util';
+import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/connection-provider/types/resolved-oauth-client.type';
 
 type FetchCall = [
   url: string,
@@ -17,11 +18,21 @@ const buildResponse = (
     text: async () => JSON.stringify(json),
   }) as Response;
 
-const baseExchangeArgs = {
+const CLIENT: ResolvedOAuthClient = {
+  authorizationEndpoint: 'https://example.com/authorize',
   tokenEndpoint: 'https://example.com/token',
-  contentType: 'form-urlencoded' as const,
   clientId: 'cid',
   clientSecret: 'csec',
+  tokenEndpointAuthMethod: 'client_secret_post',
+  scopes: ['read'],
+  resource: null,
+  authorizationParams: null,
+  tokenRequestContentType: 'form-urlencoded',
+  shouldUsePkce: false,
+};
+
+const baseExchangeArgs = {
+  client: CLIENT,
   code: 'c',
   redirectUri: 'https://example.com/cb',
   codeVerifier: null,
@@ -65,6 +76,73 @@ describe('exchangeCodeForToken', () => {
     expect(params.get('client_id')).toBe('cid');
     expect(params.get('client_secret')).toBe('csec');
     expect(params.get('code_verifier')).toBe('verifier_123');
+    expect(params.has('resource')).toBe(false);
+  });
+
+  it('omits the secret for a public client and binds the token to the resource', async () => {
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
+      buildResponse({ access_token: 'a' }),
+    );
+
+    await exchangeCodeForToken({
+      ...baseExchangeArgs,
+      client: {
+        ...CLIENT,
+        clientSecret: null,
+        resource: 'https://mcp.example.com/mcp',
+      },
+      fetchFn,
+    });
+
+    const params = new URLSearchParams(fetchFn.mock.calls[0][1].body);
+
+    expect(params.has('client_secret')).toBe(false);
+    expect(params.get('resource')).toBe('https://mcp.example.com/mcp');
+  });
+
+  it('sends the credentials in a Basic header for a client_secret_basic client', async () => {
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
+      buildResponse({ access_token: 'a' }),
+    );
+
+    await exchangeCodeForToken({
+      ...baseExchangeArgs,
+      client: {
+        ...CLIENT,
+        clientId: 'c id',
+        clientSecret: 's:c/ret',
+        tokenEndpointAuthMethod: 'client_secret_basic',
+      },
+      fetchFn,
+    });
+
+    const init = fetchFn.mock.calls[0][1];
+    const params = new URLSearchParams(init.body);
+
+    expect(init.headers.Authorization).toBe(
+      `Basic ${Buffer.from('c+id:s%3Ac%2Fret').toString('base64')}`,
+    );
+    expect(params.has('client_id')).toBe(false);
+    expect(params.has('client_secret')).toBe(false);
+  });
+
+  it('keeps the secret out of the request when the client registered as public', async () => {
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
+      buildResponse({ access_token: 'a' }),
+    );
+
+    await exchangeCodeForToken({
+      ...baseExchangeArgs,
+      client: { ...CLIENT, tokenEndpointAuthMethod: 'none' },
+      fetchFn,
+    });
+
+    const init = fetchFn.mock.calls[0][1];
+    const params = new URLSearchParams(init.body);
+
+    expect(init.headers.Authorization).toBeUndefined();
+    expect(params.get('client_id')).toBe('cid');
+    expect(params.has('client_secret')).toBe(false);
   });
 
   it('POSTs JSON when contentType is json', async () => {
@@ -74,7 +152,7 @@ describe('exchangeCodeForToken', () => {
 
     await exchangeCodeForToken({
       ...baseExchangeArgs,
-      contentType: 'json',
+      client: { ...CLIENT, tokenRequestContentType: 'json' },
       fetchFn,
     });
 
@@ -115,13 +193,7 @@ describe('exchangeCodeForToken', () => {
 });
 
 describe('exchangeRefreshTokenForToken', () => {
-  const baseRefreshArgs = {
-    tokenEndpoint: 'https://example.com/token',
-    contentType: 'form-urlencoded' as const,
-    clientId: 'cid',
-    clientSecret: 'csec',
-    refreshToken: 'old_refresh',
-  };
+  const baseRefreshArgs = { client: CLIENT, refreshToken: 'old_refresh' };
 
   it('uses grant_type=refresh_token and returns the rotated tokens', async () => {
     const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
