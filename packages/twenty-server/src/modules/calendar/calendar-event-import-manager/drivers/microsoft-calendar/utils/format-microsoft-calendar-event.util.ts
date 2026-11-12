@@ -51,6 +51,12 @@ const formatMicrosoftCalendarEvent = (event: Event): FetchedCalendarEvent => {
     recurringEventExternalId: event.id ?? '',
     organizerHandle:
       event.organizer?.emailAddress?.address?.toLowerCase() ?? '',
+    resourceHandles:
+      event.attendees
+        ?.filter((attendee) => attendee.type === 'resource')
+        .map(
+          (attendee) => attendee.emailAddress?.address?.toLowerCase() ?? '',
+        ) ?? [],
     participants:
       event.attendees?.map((attendee) => ({
         handle: attendee.emailAddress?.address?.toLowerCase() ?? '',
