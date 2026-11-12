@@ -1,4 +1,4 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -9,7 +9,7 @@ import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPa
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -32,7 +32,7 @@ jest.mock('@/ai/hooks/useLoadAgentChatThreadList', () => ({
 
 const ACTIVE_PRESET_FILTER_SOURCE: AgentChatThreadListSource = {
   type: 'presetFilter',
-  presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+  presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
 };
 
 const THREADS = [{ id: 'thread-1' }, { id: 'thread-2' }, { id: 'thread-3' }];
@@ -157,7 +157,7 @@ describe('AiChatInboxThreadPagination', () => {
       filter: AgentChatChannelThreadFilter.ANY,
     };
 
-    setAgentChatShownChannelView(jotaiStore, channelView);
+    setAgentChatSelectedChannelView(jotaiStore, channelView);
     jotaiStore.set(
       agentChatThreadListFamilyState.atomFamily(
         getAgentChatThreadListSourceKey({ type: 'channel', channelView }),

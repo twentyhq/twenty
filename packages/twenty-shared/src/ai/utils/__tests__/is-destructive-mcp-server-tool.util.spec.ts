@@ -1,4 +1,4 @@
-import { isDestructiveMcpServerTool } from 'src/engine/metadata-modules/mcp-server/utils/is-destructive-mcp-server-tool.util';
+import { isDestructiveMcpServerTool } from '@/ai/utils/is-destructive-mcp-server-tool.util';
 
 describe('isDestructiveMcpServerTool', () => {
   it.each([

@@ -9,16 +9,17 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 // The record API refuses a suspended workspace, so its chats never load
-export const agentChatThreadsLoadingSelector = createAtomSelector<boolean>({
-  key: 'agentChatThreadsLoadingSelector',
-  get: ({ get }) =>
-    !isDefined(
-      get(
-        agentChatThreadListFamilyState,
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-      ),
-    ) &&
-    get(permissionFlagMapSelector)[PermissionFlagType.AI] &&
-    get(currentWorkspaceState)?.activationStatus !==
-      WorkspaceActivationStatus.SUSPENDED,
-});
+export const agentChatRecentThreadsLoadingSelector =
+  createAtomSelector<boolean>({
+    key: 'agentChatRecentThreadsLoadingSelector',
+    get: ({ get }) =>
+      !isDefined(
+        get(
+          agentChatThreadListFamilyState,
+          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+        ),
+      ) &&
+      get(permissionFlagMapSelector)[PermissionFlagType.AI] &&
+      get(currentWorkspaceState)?.activationStatus !==
+        WorkspaceActivationStatus.SUSPENDED,
+  });
