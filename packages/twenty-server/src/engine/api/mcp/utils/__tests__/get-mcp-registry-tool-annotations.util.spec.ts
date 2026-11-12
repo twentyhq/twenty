@@ -7,38 +7,28 @@ import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provide
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 
 describe('getMcpRegistryToolAnnotations', () => {
-  it.each<[DatabaseCrudOperation]>([['find_many'], ['find_one'], ['group_by']])(
-    'should return closed world read-only annotations for the database read operation %p',
-    (operation) => {
-      expect(
-        getMcpRegistryToolAnnotations({
-          kind: 'database_crud',
-          objectNameSingular: 'person',
-          operation,
-        }),
-      ).toEqual(MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS);
-    },
-  );
-
-  it.each<[DatabaseCrudOperation]>([
-    ['create_one'],
-    ['create_many'],
-    ['update_one'],
-    ['update_many'],
-    ['upsert_many'],
-    ['delete_one'],
-    ['delete_many'],
-    ['merge_many'],
+  it.each<[DatabaseCrudOperation, boolean, boolean]>([
+    ['find_many', true, false],
+    ['find_one', true, false],
+    ['group_by', true, false],
+    ['create_one', false, false],
+    ['create_many', false, false],
+    ['update_one', false, true],
+    ['update_many', false, true],
+    ['upsert_many', false, true],
+    ['delete_one', false, false],
+    ['delete_many', false, false],
+    ['merge_many', false, true],
   ])(
-    'should return execute annotations for the database write operation %p',
-    (operation) => {
+    'should describe the safety of database operation %p',
+    (operation, readOnlyHint, destructiveHint) => {
       expect(
         getMcpRegistryToolAnnotations({
           kind: 'database_crud',
           objectNameSingular: 'person',
           operation,
         }),
-      ).toEqual(MCP_EXECUTE_TOOL_ANNOTATIONS);
+      ).toEqual({ readOnlyHint, openWorldHint: false, destructiveHint });
     },
   );
 

@@ -392,7 +392,7 @@ describe('MCP tool catalog (integration)', () => {
       expect(isDispatchFailure(result)).toBe(true);
     });
 
-    it('should mark read tools read-only and write tools destructive', async () => {
+    it('should distinguish read, reversible write and destructive tools', async () => {
       const annotationsByToolName = Object.fromEntries(
         (await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)).map((tool) => [
           tool.name,
@@ -407,15 +407,20 @@ describe('MCP tool catalog (integration)', () => {
       };
       const destructiveHints = {
         readOnlyHint: false,
-        openWorldHint: true,
+        openWorldHint: false,
         destructiveHint: true,
       };
 
       expect(annotationsByToolName).toMatchObject({
         find_many_people: readOnlyHints,
         get_views: readOnlyHints,
-        create_one_person: destructiveHints,
-        create_view: destructiveHints,
+        create_one_person: { ...destructiveHints, destructiveHint: false },
+        delete_one_person: { ...destructiveHints, destructiveHint: false },
+        update_one_person: destructiveHints,
+        update_many_people: destructiveHints,
+        upsert_many_people: destructiveHints,
+        merge_many_people: destructiveHints,
+        create_view: { ...destructiveHints, openWorldHint: true },
       });
     });
 
@@ -431,11 +436,17 @@ describe('MCP tool catalog (integration)', () => {
     });
 
     it('should keep ?mode=meta on the meta-tools', async () => {
-      const toolNames = (
-        await listMcpTools(adminApiKeyToken, META_MODE_PATH)
-      ).map((tool) => tool.name);
+      const tools = await listMcpTools(adminApiKeyToken, META_MODE_PATH);
+      const toolNames = tools.map((tool) => tool.name);
 
       expect([...toolNames].sort()).toEqual(META_MODE_TOOL_NAMES);
+      expect(
+        tools.find((tool) => tool.name === 'execute_tool')?.annotations,
+      ).toMatchObject({
+        readOnlyHint: false,
+        openWorldHint: true,
+        destructiveHint: true,
+      });
 
       const response = await postMcp(
         {

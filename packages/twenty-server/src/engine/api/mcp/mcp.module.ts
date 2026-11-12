@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 
 import { McpCoreController } from 'src/engine/api/mcp/controllers/mcp-core.controller';
+import { McpClientModeService } from 'src/engine/api/mcp/services/mcp-client-mode.service';
 import { McpInstructionBuilderService } from 'src/engine/api/mcp/services/mcp-instruction-builder.service';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
@@ -18,6 +20,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     ApiKeyModule,
+    ApplicationRegistrationLookupModule,
     MetricsModule,
     TokenModule,
     WorkspaceCacheStorageModule,
@@ -29,6 +32,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   controllers: [McpCoreController],
   providers: [
     JwtAuthGuard,
+    McpClientModeService,
     McpInstructionBuilderService,
     McpProtocolService,
     McpToolExecutorService,

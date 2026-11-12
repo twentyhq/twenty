@@ -3,11 +3,14 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import gql from 'graphql-tag';
 import request from 'supertest';
+import { listDirectModeMcpToolNames } from 'test/integration/graphql/suites/application-role-intersection/utils/list-direct-mode-mcp-tool-names.util';
+import { listMcpTools } from 'test/integration/graphql/suites/user-session/utils/list-mcp-tools.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { assertIsDefinedOrThrow, base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
@@ -34,6 +37,7 @@ const insertRegistration = async (
     clientSecretHash: string | null;
     redirectUris: string[];
     scopes: string[];
+    sourceType?: ApplicationRegistrationSourceType;
   },
 ): Promise<TestRegistration> => {
   const id = crypto.randomUUID();
@@ -42,8 +46,8 @@ const insertRegistration = async (
 
   await ds.query(
     `INSERT INTO core."applicationRegistration"
-      (id, "universalIdentifier", name, "oAuthClientId", "oAuthClientSecretHash", "oAuthRedirectUris", "oAuthScopes", "workspaceId")
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      (id, "universalIdentifier", name, "oAuthClientId", "oAuthClientSecretHash", "oAuthRedirectUris", "oAuthScopes", "workspaceId", "sourceType")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
     [
       id,
       universalIdentifier,
@@ -53,6 +57,7 @@ const insertRegistration = async (
       params.redirectUris,
       params.scopes,
       TEST_WORKSPACE_ID,
+      params.sourceType ?? ApplicationRegistrationSourceType.LOCAL,
     ],
   );
 
@@ -432,6 +437,61 @@ describe('OAuth (integration)', () => {
       expect(res.body.refresh_token).toBeDefined();
       expect(res.body.token_type).toBe('Bearer');
       expect(res.body.expires_in).toBeGreaterThan(0);
+    });
+
+    it('should expose meta-tools to ChatGPT on the unchanged MCP URL', async () => {
+      const redirectUri =
+        'https://chatgpt.com/connector_platform_oauth_redirect';
+      const chatGptRegistration = await insertRegistration(ds, {
+        name: 'ChatGPT MCP integration test',
+        clientSecretHash: await bcrypt.hash(testClientSecret, 10),
+        redirectUris: [redirectUri],
+        scopes: ['api'],
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      });
+
+      createdEntityIds.registrations.push(chatGptRegistration.id);
+
+      const code = await createAuthorizationCode(
+        chatGptRegistration.oAuthClientId,
+        redirectUri,
+      );
+      const tokenResponse = await postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: chatGptRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+        redirect_uri: redirectUri,
+      }).expect(200);
+      const [installedApplication] = await ds.query(
+        `SELECT id FROM core."application" WHERE "applicationRegistrationId" = $1 AND "workspaceId" = $2`,
+        [chatGptRegistration.id, TEST_WORKSPACE_ID],
+      );
+
+      assertIsDefinedOrThrow(installedApplication);
+      createdEntityIds.applications.push(installedApplication.id);
+
+      const token: string = tokenResponse.body.access_token;
+      const { status, body } = await listMcpTools({ token });
+
+      expect(status).toBe(200);
+
+      const tools: { name: string }[] = body.result.tools;
+      const toolNames = tools.map(({ name }) => name);
+
+      expect(toolNames).toEqual(
+        expect.arrayContaining([
+          'get_tool_catalog',
+          'learn_tools',
+          'execute_tool',
+        ]),
+      );
+      expect(toolNames).not.toContain('find_many_companies');
+
+      const directToolNames = await listDirectModeMcpToolNames({ token });
+
+      expect(directToolNames).toContain('find_many_companies');
+      expect(directToolNames).not.toContain('execute_tool');
     });
 
     it('should reject a reused authorization code', async () => {
