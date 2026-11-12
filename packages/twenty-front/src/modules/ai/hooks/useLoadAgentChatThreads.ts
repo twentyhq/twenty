@@ -70,22 +70,25 @@ export const useLoadAgentChatThreads = () => {
         },
         loadExtraThreads:
           mode === 'refresh' ? loadFavoriteThreadsOutsidePage : undefined,
-        buildNextList: ({ list, page }) =>
-          mode === 'refresh'
-            ? {
-                threadIds: page.threads.map(({ id }) => id),
-                hasNextPage: page.hasNextPage,
-                endCursor: page.endCursor,
-              }
-            : {
-                ...list,
-                threadIds: appendAgentChatThreadIds({
-                  threadIds: list?.threadIds ?? [],
-                  threads: page.threads,
-                }),
-                hasNextPage: page.hasNextPage,
-                endCursor: page.endCursor,
-              },
+        buildNextList: ({ list, page }) => {
+          if (mode === 'refresh') {
+            return {
+              threadIds: page.threads.map(({ id }) => id),
+              hasNextPage: page.hasNextPage,
+              endCursor: page.endCursor,
+            };
+          }
+
+          return {
+            ...list,
+            threadIds: appendAgentChatThreadIds({
+              threadIds: list?.threadIds ?? [],
+              threads: page.threads,
+            }),
+            hasNextPage: page.hasNextPage,
+            endCursor: page.endCursor,
+          };
+        },
       }),
     [loadAgentChatThreadsPage, loadFavoriteThreadsOutsidePage],
   );

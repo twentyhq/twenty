@@ -11,6 +11,10 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  mockedUserData,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 
 const queryMock = jest.fn();
 const mockApolloCoreClient = { query: queryMock };
@@ -19,7 +23,7 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => mockApolloCoreClient,
 }));
 
-const chatObjectMetadataItemAtom = atom<unknown>({
+const chatObjectMetadataItemAtom = atom({
   id: 'chat-object',
   nameSingular: 'agentChatThread',
   namePlural: 'agentChatThreads',
@@ -46,7 +50,13 @@ jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
   }),
 }));
 
-const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
+const buildThread = ({
+  id,
+  title,
+}: {
+  id: string;
+  title: string;
+}): AgentChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title,
@@ -77,8 +87,9 @@ const buildStore = () => {
   const store = createStore();
 
   store.set(currentUserWorkspaceState.atom, {
+    ...mockedUserData.currentUserWorkspace,
     permissionFlags: [PermissionFlagType.AI],
-  } as never);
+  });
 
   return store;
 };
@@ -105,7 +116,7 @@ describe('inbox tab pages', () => {
   const buildStoreWithList = () => {
     const store = buildStore();
 
-    store.set(currentWorkspaceMemberState.atom, { id: 'member-id' } as never);
+    store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
     store.set(agentChatThreadListState.atom, {
       threadIds: ['recent-thread'],
       hasNextPage: true,
@@ -120,8 +131,8 @@ describe('inbox tab pages', () => {
     queryMock.mockResolvedValue(
       buildPage(
         [
-          buildThread('recent-thread', 'Recent'),
-          buildThread('old-open-thread', 'Old'),
+          buildThread({ id: 'recent-thread', title: 'Recent' }),
+          buildThread({ id: 'old-open-thread', title: 'Old' }),
         ],
         { hasNextPage: true, endCursor: 'tab-page-1' },
       ),
@@ -147,7 +158,7 @@ describe('inbox tab pages', () => {
                   { deletedAt: { is: 'NULL' } },
                   expect.objectContaining({
                     participants: expect.objectContaining({
-                      workspaceMemberId: { eq: 'member-id' },
+                      workspaceMemberId: { eq: mockedWorkspaceMemberData.id },
                     }),
                   }),
                 ],
@@ -158,11 +169,12 @@ describe('inbox tab pages', () => {
       }),
     );
     expect(store.get(agentChatThreadListState.atom)).toEqual({
-      threadIds: ['recent-thread', 'old-open-thread'],
+      threadIds: ['recent-thread'],
       hasNextPage: true,
       endCursor: 'all-chats-page-1',
       filterStatusPages: {
         active: {
+          threadIds: ['recent-thread', 'old-open-thread'],
           hasNextPage: true,
           endCursor: 'tab-page-1',
         },
@@ -177,12 +189,16 @@ describe('inbox tab pages', () => {
       hasNextPage: true,
       endCursor: 'all-chats-page-1',
       filterStatusPages: {
-        done: { hasNextPage: true, endCursor: 'done-page-1' },
-        active: { hasNextPage: false, endCursor: null },
+        done: {
+          threadIds: ['earlier-done-thread'],
+          hasNextPage: true,
+          endCursor: 'done-page-1',
+        },
+        active: { threadIds: [], hasNextPage: false, endCursor: null },
       },
     });
     queryMock.mockResolvedValue(
-      buildPage([buildThread('done-thread', 'Done')], {
+      buildPage([buildThread({ id: 'done-thread', title: 'Done' })], {
         endCursor: 'done-page-2',
       }),
     );
@@ -209,6 +225,7 @@ describe('inbox tab pages', () => {
     expect(
       store.get(agentChatThreadListState.atom)?.filterStatusPages?.done,
     ).toEqual({
+      threadIds: ['earlier-done-thread', 'done-thread'],
       hasNextPage: false,
       endCursor: 'done-page-2',
     });
@@ -222,6 +239,7 @@ describe('inbox tab pages', () => {
       endCursor: 'all-chats-page-1',
       filterStatusPages: {
         assigned: {
+          threadIds: [],
           hasNextPage: true,
           endCursor: 'assigned-page-1',
         },
@@ -229,13 +247,13 @@ describe('inbox tab pages', () => {
     });
     queryMock
       .mockResolvedValueOnce(
-        buildPage([buildThread('recent-thread', 'Recent')], {
+        buildPage([buildThread({ id: 'recent-thread', title: 'Recent' })], {
           hasNextPage: true,
           endCursor: 'assigned-page-2',
         }),
       )
       .mockResolvedValue(
-        buildPage([buildThread('older-thread', 'Older')], {
+        buildPage([buildThread({ id: 'older-thread', title: 'Older' })], {
           endCursor: 'assigned-page-3',
         }),
       );
@@ -254,9 +272,13 @@ describe('inbox tab pages', () => {
       }),
     );
     expect(store.get(agentChatThreadListState.atom)).toMatchObject({
-      threadIds: ['recent-thread', 'older-thread'],
+      threadIds: ['recent-thread'],
       filterStatusPages: {
-        assigned: { hasNextPage: false, endCursor: 'assigned-page-3' },
+        assigned: {
+          threadIds: ['recent-thread', 'older-thread'],
+          hasNextPage: false,
+          endCursor: 'assigned-page-3',
+        },
       },
     });
   });
@@ -264,15 +286,19 @@ describe('inbox tab pages', () => {
   it('starts the tabs over when the list is refreshed', async () => {
     const store = buildStoreWithList();
     store.set(agentChatThreadListState.atom, {
-      threadIds: ['recent-thread', 'old-open-thread'],
+      threadIds: ['recent-thread'],
       hasNextPage: true,
       endCursor: 'all-chats-page-1',
       filterStatusPages: {
-        active: { hasNextPage: false, endCursor: null },
+        active: {
+          threadIds: ['old-open-thread'],
+          hasNextPage: false,
+          endCursor: null,
+        },
       },
     });
     queryMock.mockResolvedValue(
-      buildPage([buildThread('recent-thread', 'Recent')], {
+      buildPage([buildThread({ id: 'recent-thread', title: 'Recent' })], {
         hasNextPage: true,
       }),
     );
@@ -297,11 +323,15 @@ describe('inbox tab pages', () => {
       hasNextPage: true,
       endCursor: 'all-chats-page-1',
       filterStatusPages: {
-        done: { hasNextPage: true, endCursor: 'done-page-1' },
+        done: {
+          threadIds: ['done-thread'],
+          hasNextPage: true,
+          endCursor: 'done-page-1',
+        },
       },
     });
     queryMock.mockResolvedValue(
-      buildPage([buildThread('older-thread', 'Older')]),
+      buildPage([buildThread({ id: 'older-thread', title: 'Older' })]),
     );
     const result = renderChatThreadLoadingHook({
       store,
@@ -315,7 +345,11 @@ describe('inbox tab pages', () => {
     expect(store.get(agentChatThreadListState.atom)).toMatchObject({
       threadIds: ['recent-thread', 'older-thread'],
       filterStatusPages: {
-        done: { hasNextPage: true, endCursor: 'done-page-1' },
+        done: {
+          threadIds: ['done-thread'],
+          hasNextPage: true,
+          endCursor: 'done-page-1',
+        },
       },
     });
   });

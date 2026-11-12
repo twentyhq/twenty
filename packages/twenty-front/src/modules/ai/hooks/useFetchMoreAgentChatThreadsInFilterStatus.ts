@@ -16,9 +16,11 @@ export const useFetchMoreAgentChatThreadsInFilterStatus = () => {
       let isPageAlreadyListed = true;
 
       while (isPageAlreadyListed) {
-        const listedThreadIds = new Set(
-          store.get(agentChatThreadListState.atom)?.threadIds ?? [],
-        );
+        const list = store.get(agentChatThreadListState.atom);
+        const listedThreadIds = new Set([
+          ...(list?.threadIds ?? []),
+          ...(list?.filterStatusPages?.[filterStatus]?.threadIds ?? []),
+        ]);
         const threads = await loadAgentChatThreadsInFilterStatus({
           filterStatus,
           mode: 'next',

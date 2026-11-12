@@ -53,7 +53,7 @@ const renderPagination = ({
     hasNextPage: false,
     endCursor: null,
     filterStatusPages: {
-      active: { hasNextPage, endCursor: null },
+      active: { threadIds: [], hasNextPage, endCursor: null },
     },
   });
 

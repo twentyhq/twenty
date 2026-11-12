@@ -52,15 +52,19 @@ export const useLoadAgentChatThreadsInFilterStatus = () => {
           };
         },
         buildNextList: ({ list, page }) => ({
-          threadIds: appendAgentChatThreadIds({
-            threadIds: list?.threadIds ?? [],
-            threads: page.threads,
-          }),
+          threadIds: list?.threadIds ?? [],
           hasNextPage: list?.hasNextPage ?? false,
           endCursor: list?.endCursor ?? null,
           filterStatusPages: {
             ...list?.filterStatusPages,
             [filterStatus]: {
+              threadIds: appendAgentChatThreadIds({
+                threadIds:
+                  mode === 'next'
+                    ? (list?.filterStatusPages?.[filterStatus]?.threadIds ?? [])
+                    : [],
+                threads: page.threads,
+              }),
               hasNextPage: page.hasNextPage,
               endCursor: page.endCursor,
             },

@@ -435,7 +435,7 @@ describe('AiChatInboxPage', () => {
         hasNextPage: false,
         endCursor: null,
         filterStatusPages: {
-          snoozed: { hasNextPage: false, endCursor: null },
+          snoozed: { threadIds: [], hasNextPage: false, endCursor: null },
         },
       });
     });

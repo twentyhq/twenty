@@ -5,9 +5,13 @@ import {
 } from 'twenty-shared/ai';
 
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
@@ -218,5 +222,75 @@ describe('agentChatVisibleThreadsSelector', () => {
     ],
   ])('lists the %s threads', (filterStatus, expectedThreadIds) => {
     expect(getVisibleThreadIds(filterStatus)).toEqual(expectedThreadIds);
+  });
+
+  it("lists a tab's older chats after the recent ones, only in that tab", () => {
+    const store = createStore();
+    const buildThread = (id: string): AgentChatThreadRecord => ({
+      __typename: 'AgentChatThread',
+      id,
+      title: id,
+      deletedAt: null,
+      createdAt: LAST_ACTIVITY_AT,
+      updatedAt: LAST_ACTIVITY_AT,
+      lastActivityAt: LAST_ACTIVITY_AT,
+    });
+    const buildParticipant = ({
+      id,
+      archivedAt,
+    }: {
+      id: string;
+      archivedAt: string | null;
+    }) => ({
+      ...READ,
+      id,
+      threadId: id,
+      archivedAt,
+      __typename: 'AgentChatThreadParticipant' as const,
+    });
+
+    setAgentChatThreadList(store, [
+      buildThread('recent-open'),
+      buildThread('recent-done'),
+    ]);
+    store.set(
+      recordStoreFamilyState.atomFamily('older-done'),
+      buildThread('older-done'),
+    );
+    store.set(agentChatThreadListState.atom, {
+      threadIds: ['recent-open', 'recent-done'],
+      hasNextPage: true,
+      endCursor: 'cursor',
+      filterStatusPages: {
+        done: {
+          threadIds: ['older-done', 'recent-done'],
+          hasNextPage: false,
+          endCursor: null,
+        },
+      },
+    });
+    store.set(agentChatThreadParticipantsState.atom, {
+      'recent-open': buildParticipant({ id: 'recent-open', archivedAt: null }),
+      'recent-done': buildParticipant({
+        id: 'recent-done',
+        archivedAt: '2026-10-01T11:00:00.000Z',
+      }),
+      'older-done': buildParticipant({
+        id: 'older-done',
+        archivedAt: '2026-10-01T11:00:00.000Z',
+      }),
+    });
+
+    store.set(
+      agentChatThreadFilterStatusState.atom,
+      AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+    );
+    expect(
+      store.get(agentChatVisibleThreadsSelector.atom).map(({ id }) => id),
+    ).toEqual(['recent-done', 'older-done']);
+
+    expect(
+      store.get(agentChatRecentThreadsSelector.atom).map(({ id }) => id),
+    ).toEqual(['recent-open', 'recent-done']);
   });
 });

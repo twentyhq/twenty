@@ -23,7 +23,7 @@ const loadActiveTabPage = () =>
       : {
           ...list,
           filterStatusPages: {
-            active: { hasNextPage: false, endCursor: null },
+            active: { threadIds: [], hasNextPage: false, endCursor: null },
           },
         },
   );

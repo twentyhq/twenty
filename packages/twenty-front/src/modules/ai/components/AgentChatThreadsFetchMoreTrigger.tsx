@@ -41,7 +41,7 @@ export const AgentChatThreadsFetchMoreTrigger = ({
     ? agentChatThreadList?.filterStatusPages?.[filterStatus]?.hasNextPage
     : agentChatThreadList?.hasNextPage;
 
-  if (hasNextPage !== true) {
+  if (!hasNextPage) {
     return null;
   }
 
