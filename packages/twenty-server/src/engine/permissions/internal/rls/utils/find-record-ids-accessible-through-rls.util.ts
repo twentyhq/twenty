@@ -1,29 +1,41 @@
 /* @license Enterprise */
 
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { canRlsAccessOperation } from 'src/engine/permissions/internal/rls/utils/can-rls-access-operation.util';
 import { findRecordsMatchingRecordFilter } from 'src/engine/permissions/internal/rls/utils/find-records-matching-record-filter.util';
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 
-export const findRowLevelPermissionMatchingRecordIds = async ({
-  request,
-  rlsRuleFilter,
-}: {
+export const findRecordIdsAccessibleThroughRls = async (
   request: Pick<
     PermissionsRowAccessEvaluationRequest,
-    'records' | 'flatObjectMetadata' | 'metadataMaps' | 'context'
-  >;
-  rlsRuleFilter: RecordGqlOperationFilter;
-}): Promise<string[]> => {
+    | 'principals'
+    | 'metadataMaps'
+    | 'flatObjectMetadata'
+    | 'operationType'
+    | 'records'
+    | 'context'
+  >,
+): Promise<string[]> => {
+  if (!canRlsAccessOperation(request)) {
+    return [];
+  }
+
+  const rlsRuleRecordFilter = resolveRlsRuleRecordFilter(request);
+
+  if (!isDefined(rlsRuleRecordFilter)) {
+    return [];
+  }
+
   const matchingRecords = await findRecordsMatchingRecordFilter({
     records: request.records,
-    recordFilter: rlsRuleFilter,
+    recordFilter: rlsRuleRecordFilter,
     flatObjectMetadata: request.flatObjectMetadata,
     metadataMaps: request.metadataMaps,
     findRelationJoinValues: request.context.findRelationJoinValues,
     shouldIgnoreSoftDeleteDefaultFilter:
       request.context.shouldIgnoreSoftDeleteDefaultFilter,
   });
-
   return matchingRecords.map((record) => record.id);
 };
