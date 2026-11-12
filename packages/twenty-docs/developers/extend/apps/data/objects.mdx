@@ -146,6 +146,17 @@ When provided, `color` must be one of: `red`, `ruby`, `crimson`, `tomato`, `oran
 
 Both `defineObject()` and `defineField()` return validation errors for unsupported colors or option entries that are null, primitives, or arrays.
 
+#### Workspace changes to your options
+
+A workspace can relabel, recolor, reorder and deactivate the options your app ships, and add options of its own. It cannot remove your options or change their `value`.
+
+These changes are kept when your app is synced again. Changing an option's `label`, `color` or `position` in your app changes the default, not what a workspace already overrode. Options the workspace added and options it deactivated stay as they are.
+
+When you read a field's `options` from the metadata API, two flags describe that workspace state. Twenty sets them; your app does not declare them:
+
+- `isActive: false` marks an option the workspace deactivated. Records keep the value, but it is no longer offered when picking a value.
+- `isCustom: true` marks an option the workspace added to your field.
+
 ## Default values
 
 Literal string defaults must be wrapped in single quotes **inside** the string — `defaultValue: "'Draft'"`, not `defaultValue: "Draft"`. That's why the `status` field above uses `` `'${PostCardStatus.DRAFT}'` ``.
