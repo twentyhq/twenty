@@ -7,7 +7,10 @@ import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-exe
 const DEFAULT_WORKFLOW_ACTOR_NAME = 'Workflow';
 
 export const buildWorkflowActorMetadata = (
-  executionContext: WorkflowExecutionContext,
+  executionContext: Pick<
+    WorkflowExecutionContext,
+    'isActingOnBehalfOfUser' | 'initiator' | 'workflowId' | 'workflowName'
+  >,
 ): ActorMetadata => {
   const workflowContext = isDefined(executionContext.workflowId)
     ? { workflowId: executionContext.workflowId }

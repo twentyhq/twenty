@@ -1,6 +1,5 @@
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
-import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-executor/utils/build-workflow-actor-metadata.util';
 
 const MEMBER_INITIATOR: ActorMetadata = {
@@ -10,16 +9,17 @@ const MEMBER_INITIATOR: ActorMetadata = {
   context: { applicationId: 'application-id' },
 };
 
+type WorkflowActorInput = Parameters<typeof buildWorkflowActorMetadata>[0];
+
 const buildExecutionContext = (
-  overrides: Partial<WorkflowExecutionContext> = {},
-): WorkflowExecutionContext =>
-  ({
-    isActingOnBehalfOfUser: false,
-    initiator: MEMBER_INITIATOR,
-    workflowId: 'workflow-id',
-    workflowName: 'Churn win-back',
-    ...overrides,
-  }) as WorkflowExecutionContext;
+  overrides: Partial<WorkflowActorInput> = {},
+): WorkflowActorInput => ({
+  isActingOnBehalfOfUser: false,
+  initiator: MEMBER_INITIATOR,
+  workflowId: 'workflow-id',
+  workflowName: 'Churn win-back',
+  ...overrides,
+});
 
 describe('buildWorkflowActorMetadata', () => {
   it('attributes an automated run to the workflow by name and id', () => {

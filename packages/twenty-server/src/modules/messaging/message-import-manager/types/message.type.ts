@@ -20,7 +20,6 @@ export type Message = Omit<
   | 'attachments'
   | 'createdBy'
 > & {
-  // Only set by the outbound path; imported messages keep the column default
   createdBy?: ActorMetadata;
   attachments: MessageAttachmentMetadata[];
   externalId: string;

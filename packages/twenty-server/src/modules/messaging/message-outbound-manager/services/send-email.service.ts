@@ -77,12 +77,17 @@ export class SendEmailService {
     };
   }
 
-  async persistSentMessage(
-    sendResult: SendMessageResult,
-    data: ComposedEmail,
-    workspaceId: string,
-    createdBy?: ActorMetadata,
-  ): Promise<PersistedSentMessage | undefined> {
+  async persistSentMessage({
+    sendResult,
+    data,
+    workspaceId,
+    createdBy,
+  }: {
+    sendResult: SendMessageResult;
+    data: ComposedEmail;
+    workspaceId: string;
+    createdBy?: ActorMetadata;
+  }): Promise<PersistedSentMessage | undefined> {
     try {
       return await this.sentMessagePersistenceService.persistSentMessage({
         sendResult,

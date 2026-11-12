@@ -114,10 +114,10 @@ describe('SendEmailTool', () => {
     await tool.execute(baseInput, { workspaceId: 'workspace-1', actorContext });
 
     expect(mockPersistSentMessage).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.anything(),
-      'workspace-1',
-      actorContext,
+      expect.objectContaining({
+        workspaceId: 'workspace-1',
+        createdBy: actorContext,
+      }),
     );
   });
 

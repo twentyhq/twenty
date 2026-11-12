@@ -117,11 +117,11 @@ export class SendEmailResolver {
 
       try {
         const persistedSentMessage = data.shouldPersistMessage
-          ? await this.sendEmailService.persistSentMessage(
+          ? await this.sendEmailService.persistSentMessage({
               sendResult,
               data,
-              workspace.id,
-            )
+              workspaceId: workspace.id,
+            })
           : undefined;
 
         if (isDefined(input.draftMessageId)) {
