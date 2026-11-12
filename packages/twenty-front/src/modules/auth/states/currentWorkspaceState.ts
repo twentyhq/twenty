@@ -50,7 +50,7 @@ export type CurrentWorkspace = Pick<
   | 'aiAdditionalInstructions'
   | 'aiDataPolicy'
   | 'editableProfileFields'
-  | 'isInternalImportEnabled'
+  | 'isInternalMessagesImportEnabled'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;

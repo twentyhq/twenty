@@ -10,7 +10,7 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   contacts: Contact[],
   connectedAccount: ConnectedAccountEntity,
   workspaceMembers: WorkspaceMemberWorkspaceEntity[],
-  isInternalImportEnabled: boolean = false,
+  isInternalMessagesImportEnabled: boolean = false,
 ): Contact[] {
   if (!isDefined(connectedAccount.handle)) {
     throw new Error('Connected account handle is missing');
@@ -43,7 +43,7 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
     (contact) =>
       (isDifferentDomain(contact, selfDomainName) ||
         !isWorkDomain(selfDomainName) ||
-        isInternalImportEnabled) &&
+        isInternalMessagesImportEnabled) &&
       // @ts-expect-error legacy noImplicitAny
       !workspaceMembersMap[contact.handle.toLowerCase()] &&
       !allHandles.includes(contact.handle.toLowerCase()),

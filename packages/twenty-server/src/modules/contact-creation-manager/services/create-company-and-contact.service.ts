@@ -77,7 +77,7 @@ export class CreateCompanyAndPersonService {
 
       const workspace = await this.workspaceRepository.findOne({
         where: { id: workspaceId },
-        select: ['id', 'isInternalImportEnabled'],
+        select: ['id', 'isInternalMessagesImportEnabled'],
       });
 
       const peopleToCreateFromOtherCompanies =
@@ -85,7 +85,7 @@ export class CreateCompanyAndPersonService {
           contactsToCreate,
           connectedAccount,
           workspaceMembers,
-          workspace?.isInternalImportEnabled ?? false,
+          workspace?.isInternalMessagesImportEnabled ?? false,
         );
 
       const { uniqueContacts, uniqueHandles } = getUniqueContactsAndHandles(

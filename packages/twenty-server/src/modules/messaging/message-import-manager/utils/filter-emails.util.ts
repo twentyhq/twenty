@@ -12,7 +12,7 @@ export const filterEmails = (
   messages: MessageWithParticipants[],
   blocklist: string[],
   excludeGroupEmails: boolean = true,
-  isInternalImportEnabled: boolean = false,
+  isInternalMessagesImportEnabled: boolean = false,
 ) => {
   const messagesWithoutIcsAttachments = filterOutIcsAttachments(messages);
 
@@ -28,7 +28,7 @@ export const filterEmails = (
   );
 
   const shouldFilterOutInternals =
-    isWorkEmail(primaryHandle) && !isInternalImportEnabled;
+    isWorkEmail(primaryHandle) && !isInternalMessagesImportEnabled;
 
   const messagesWithoutInternals = shouldFilterOutInternals
     ? filterOutInternals({ primaryHandle, items: messagesWithoutBlocklisted })

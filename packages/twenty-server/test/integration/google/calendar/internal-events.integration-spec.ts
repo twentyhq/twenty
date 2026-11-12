@@ -1,8 +1,9 @@
 import { randomUUID } from 'node:crypto';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
 
 import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
@@ -32,6 +33,11 @@ describe('Google calendar internal events (integration)', () => {
   };
 
   beforeAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
     channel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,
       handle: HANDLE,
@@ -39,8 +45,13 @@ describe('Google calendar internal events (integration)', () => {
   }, 60000);
 
   afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
     await updateWorkspace({
-      data: { isInternalImportEnabled: false },
+      data: { isInternalMessagesImportEnabled: false },
     });
     await channel?.cleanup().catch(() => undefined);
   });
@@ -86,7 +97,7 @@ describe('Google calendar internal events (integration)', () => {
 
   it('imports internal events when internal import is enabled on the workspace', async () => {
     await updateWorkspace({
-      data: { isInternalImportEnabled: true },
+      data: { isInternalMessagesImportEnabled: true },
     });
 
     const internalTitle = `Internal event ${randomUUID()}`;

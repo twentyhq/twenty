@@ -37,7 +37,7 @@ describe('filterEmails', () => {
     expect(filteredMessages).toEqual([]);
   });
 
-  it('Should keep same-domain emails when isInternalImportEnabled is true', () => {
+  it('Should keep same-domain emails when isInternalMessagesImportEnabled is true', () => {
     // Workspace opted into syncing internal emails (e.g. university or
     // shared-domain institution). Same-domain participants must not be
     // dropped — the toggle bypasses filterOutInternals.

@@ -301,7 +301,6 @@ import { AddWorkflowAndAgentNavigationMenuItemsFastInstanceCommand } from 'src/d
 import { AddRowLevelPermissionRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794327249159-add-row-level-permission-rule-table';
 import { AddRowLevelPermissionRuleLinksFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794337540366-add-row-level-permission-rule-links';
 import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794507959766-add-oauth-discovery-to-connection-provider';
-import { RenameWorkspaceIsInternalMessagesImportEnabledToIsInternalImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794511663060-rename-workspace-is-internal-messages-import-enabled-to-is-internal-import-enabled';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -605,5 +604,4 @@ export const INSTANCE_COMMANDS = [
   AddRowLevelPermissionRuleTableFastInstanceCommand,
   AddRowLevelPermissionRuleLinksFastInstanceCommand,
   AddOauthDiscoveryToConnectionProviderFastInstanceCommand,
-  RenameWorkspaceIsInternalMessagesImportEnabledToIsInternalImportEnabledFastInstanceCommand,
 ];
