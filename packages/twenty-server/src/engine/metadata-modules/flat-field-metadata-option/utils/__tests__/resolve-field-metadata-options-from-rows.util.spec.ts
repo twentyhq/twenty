@@ -52,6 +52,35 @@ describe('resolveFieldMetadataOptionsFromRows', () => {
     ]);
   });
 
+  it('keeps the stored options while one of them has no row, when rows must cover them', () => {
+    const options = [
+      ...storedOptions,
+      {
+        id: CLOSED_OPTION_ID,
+        value: 'CLOSED',
+        label: 'Closed',
+        color: 'red' as const,
+        position: 1,
+      },
+    ];
+
+    expect(
+      resolveFieldMetadataOptionsFromRows({
+        fieldMetadataEntity: { type: FieldMetadataType.SELECT, options },
+        fieldMetadataOptionRows: [
+          {
+            universalIdentifier: OPEN_OPTION_ID,
+            value: 'OPEN',
+            label: 'Open',
+            color: 'green',
+            position: 0,
+          },
+        ],
+        shouldRowsCoverStoredOptions: true,
+      }),
+    ).toBe(options);
+  });
+
   it('keeps the stored options of a field without rows', () => {
     expect(
       resolveFieldMetadataOptionsFromRows({

@@ -407,7 +407,7 @@ describe('field metadata option rows follow field options', () => {
     );
   });
 
-  it('recreates the missing rows of a field on its next edit', async () => {
+  it('keeps the options and records of a field with a missing row, and recreates the row on its next edit', async () => {
     const { data } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -427,7 +427,8 @@ describe('field metadata option rows follow field options', () => {
     const options = data.createOneField.options as StoredOption[];
 
     await globalThis.testDataSource.query(
-      `DELETE FROM core."fieldMetadataOption" WHERE "fieldMetadataId" = $1`,
+      `DELETE FROM core."fieldMetadataOption"
+        WHERE "fieldMetadataId" = $1 AND value = 'CLOSED'`,
       [fieldMetadataId],
     );
     await getAppProviderByClassName<WorkspaceCacheService>(
@@ -444,13 +445,16 @@ describe('field metadata option rows follow field options', () => {
     );
 
     try {
-      await updateOneFieldMetadata({
+      const { data: updateData } = await updateOneFieldMetadata({
         expectToFail: false,
         input: {
           idToUpdate: fieldMetadataId,
           updatePayload: { label: 'Missing Rows Field Renamed' },
         },
+        gqlFields: 'id options',
       });
+
+      expect(updateData.updateOneField.options).toEqual(options);
 
       const [{ missingRowsField }] = await globalThis.testDataSource.query(
         `SELECT "missingRowsField" FROM "${workspaceSchema}"."_optionRowsSync" WHERE id = $1`,
