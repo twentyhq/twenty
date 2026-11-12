@@ -441,6 +441,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
       preDeletionFlatViewFieldMaps,
       fromFlatFieldMetadataMaps:
         fromToAllFlatEntityMaps.flatFieldMetadataMaps?.from,
+      fromFlatFieldMetadataOptionMaps:
+        fromToAllFlatEntityMaps.flatFieldMetadataOptionMaps?.from,
     });
 
     mergeOrchestratorFailureReports({
