@@ -592,11 +592,11 @@ export const useSaveDraftRoleToDB = ({
       return;
     }
 
-    await replaceDraftRoleWithSavedRole(savedDraftRole);
-
     if (isDefined(onSuccess)) {
       await onSuccess(savedRoleId);
     }
+
+    await replaceDraftRoleWithSavedRole(savedDraftRole);
   };
 
   return {
