@@ -1,7 +1,7 @@
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatMessageAuthorContextSelector } from '@/ai/states/selectors/agentChatMessageAuthorContextSelector';
+import { agentChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
 import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
 import { findAgentChatQuotedMessage } from '@/ai/utils/findAgentChatQuotedMessage';
 import { parseAgentChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
@@ -29,7 +29,7 @@ export const agentChatReplyQuotedMessageIdFamilySelector =
             messages,
             replyMessageId,
             quote,
-            authorContext: get(agentChatMessageAuthorContextSelector),
+            authorLookup: get(agentChatMessageAuthorLookupSelector),
           })?.id ?? null
         );
       },

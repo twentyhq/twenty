@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { type AgentChatMessageAuthorContext } from '@/ai/types/AgentChatMessageAuthorContext';
+import { type AgentChatMessageAuthorLookup } from '@/ai/types/AgentChatMessageAuthorLookup';
 import { type AgentChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
 import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
 import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
@@ -11,12 +11,12 @@ export const findAgentChatQuotedMessage = ({
   messages,
   replyMessageId,
   quote,
-  authorContext,
+  authorLookup,
 }: {
   messages: ExtendedUIMessage[];
   replyMessageId: string;
   quote: Pick<AgentChatMessageQuote, 'authorName' | 'excerpt'>;
-  authorContext: AgentChatMessageAuthorContext<
+  authorLookup: AgentChatMessageAuthorLookup<
     Pick<PartialWorkspaceMember, 'id' | 'name' | 'userEmail'>
   >;
 }) => {
@@ -33,7 +33,7 @@ export const findAgentChatQuotedMessage = ({
       return false;
     }
 
-    const author = getAgentChatMessageAuthor({ message, authorContext });
+    const author = getAgentChatMessageAuthor({ message, authorLookup });
 
     // a placeholder name (former member, agent not loaded here) cannot be compared
     return !author.isNameResolved || author.name === quote.authorName;

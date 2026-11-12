@@ -50,7 +50,7 @@ const findQuotedMessageId = ({
     messages,
     replyMessageId: REPLY.id,
     quote,
-    authorContext: {
+    authorLookup: {
       workspaceMembers: [JULIA, MARCO],
       assistantDisplayName: 'Ada',
       currentWorkspace: null,

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { type AgentChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
-import { type AgentChatMessageAuthorContext } from '@/ai/types/AgentChatMessageAuthorContext';
+import { type AgentChatMessageAuthorLookup } from '@/ai/types/AgentChatMessageAuthorLookup';
 import { getAgentChatAgentAuthor } from '@/ai/utils/getAgentChatAgentAuthor';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
@@ -17,11 +17,11 @@ export const getAgentChatMessageAuthor = <
   >,
 >({
   message,
-  authorContext,
+  authorLookup,
   agentName,
 }: {
   message: Pick<ExtendedUIMessage, 'id' | 'role' | 'metadata'>;
-  authorContext: AgentChatMessageAuthorContext<TWorkspaceMember>;
+  authorLookup: AgentChatMessageAuthorLookup<TWorkspaceMember>;
   agentName?: string;
 }): AgentChatMessageAuthor<TWorkspaceMember> => {
   const applicationId = message.metadata?.senderApplicationId;
@@ -31,7 +31,7 @@ export const getAgentChatMessageAuthor = <
   if (message.metadata?.isBuiltInAssistant) {
     return {
       type: 'builtInAssistant',
-      name: authorContext.assistantDisplayName,
+      name: authorLookup.assistantDisplayName,
       isNameResolved: true,
     };
   }
@@ -42,7 +42,7 @@ export const getAgentChatMessageAuthor = <
       applicationId,
       name: getInstalledApplicationDisplayName({
         applicationId,
-        currentWorkspace: authorContext.currentWorkspace,
+        currentWorkspace: authorLookup.currentWorkspace,
       }),
       isNameResolved: true,
     };
@@ -53,7 +53,7 @@ export const getAgentChatMessageAuthor = <
   }
 
   if (isDefined(senderWorkspaceMemberId)) {
-    const sender = authorContext.workspaceMembers.find(
+    const sender = authorLookup.workspaceMembers.find(
       ({ id }) => id === senderWorkspaceMemberId,
     );
 

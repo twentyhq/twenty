@@ -3,7 +3,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { AiChatMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
 import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
 import { AiChatMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
-import { agentChatMessageAuthorContextSelector } from '@/ai/states/selectors/agentChatMessageAuthorContextSelector';
+import { agentChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
 import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
 import { ChatMessageHeader } from '@/chat/components/ChatMessageHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,12 +21,12 @@ export const AiChatMessageAuthorHeader = ({
   metadata,
   createdAt,
 }: AiChatMessageAuthorHeaderProps) => {
-  const agentChatMessageAuthorContext = useAtomStateValue(
-    agentChatMessageAuthorContextSelector,
+  const agentChatMessageAuthorLookup = useAtomStateValue(
+    agentChatMessageAuthorLookupSelector,
   );
   const author = getAgentChatMessageAuthor({
     message: { id: messageId, role, metadata },
-    authorContext: agentChatMessageAuthorContext,
+    authorLookup: agentChatMessageAuthorLookup,
   });
 
   return (

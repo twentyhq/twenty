@@ -21,7 +21,7 @@ describe('getAgentChatMessageAuthor', () => {
           role: 'user',
           metadata: { senderWorkspaceMemberId: JULIA.id },
         },
-        authorContext: AUTHOR_CONTEXT,
+        authorLookup: AUTHOR_CONTEXT,
       }),
     ).toEqual({
       type: 'member',
@@ -40,7 +40,7 @@ describe('getAgentChatMessageAuthor', () => {
           role: 'user',
           metadata: { senderWorkspaceMemberId: 'former-member-id' },
         },
-        authorContext: AUTHOR_CONTEXT,
+        authorLookup: AUTHOR_CONTEXT,
       }),
     ).toMatchObject({ name: 'Former member', isNameResolved: false });
   });
@@ -53,7 +53,7 @@ describe('getAgentChatMessageAuthor', () => {
           role: 'assistant',
           metadata: { isBuiltInAssistant: true, agentId: 'agent-id' },
         },
-        authorContext: AUTHOR_CONTEXT,
+        authorLookup: AUTHOR_CONTEXT,
       }),
     ).toEqual({ type: 'builtInAssistant', name: 'Ada', isNameResolved: true });
   });
@@ -66,7 +66,7 @@ describe('getAgentChatMessageAuthor', () => {
     };
 
     expect(
-      getAgentChatMessageAuthor({ message, authorContext: AUTHOR_CONTEXT }),
+      getAgentChatMessageAuthor({ message, authorLookup: AUTHOR_CONTEXT }),
     ).toEqual({
       type: 'agent',
       agentId: 'agent-id',
@@ -76,7 +76,7 @@ describe('getAgentChatMessageAuthor', () => {
     expect(
       getAgentChatMessageAuthor({
         message,
-        authorContext: AUTHOR_CONTEXT,
+        authorLookup: AUTHOR_CONTEXT,
         agentName: 'Sales agent',
       }),
     ).toMatchObject({ name: 'Sales agent', isNameResolved: true });
@@ -90,7 +90,7 @@ describe('getAgentChatMessageAuthor', () => {
           role: 'assistant',
           metadata: { senderApplicationId: 'application-id' },
         },
-        authorContext: AUTHOR_CONTEXT,
+        authorLookup: AUTHOR_CONTEXT,
       }),
     ).toEqual({
       type: 'application',
@@ -104,13 +104,13 @@ describe('getAgentChatMessageAuthor', () => {
     expect(
       getAgentChatMessageAuthor({
         message: { id: 'message-id', role: 'assistant' },
-        authorContext: AUTHOR_CONTEXT,
+        authorLookup: AUTHOR_CONTEXT,
       }).name,
     ).toBe('Assistant');
     expect(
       getAgentChatMessageAuthor({
         message: { id: 'message-id', role: 'user' },
-        authorContext: AUTHOR_CONTEXT,
+        authorLookup: AUTHOR_CONTEXT,
       }).name,
     ).toBe('Unknown sender');
   });
