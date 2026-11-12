@@ -18238,7 +18238,7 @@ msgstr "שרתי MCP"
 #. js-lingui-id: WgtWCW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "MCP servers unavailable"
-msgstr ""
+msgstr "שרתי MCP אינם זמינים"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20086,7 +20086,7 @@ msgstr "אין שדות קלט לפעולה זו"
 #. js-lingui-id: XJwcH2
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "No input fields for this tool"
-msgstr ""
+msgstr "אין שדות קלט עבור כלי זה"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -28948,7 +28948,7 @@ msgstr "לא ניתן היה לטעון את חנות האפליקציות. בד
 #. js-lingui-id: jDq7X1
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
-msgstr ""
+msgstr "לא ניתן היה לטעון את שרתי MCP, ולכן לא ניתן לערוך שלב זה כרגע."
 
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -29075,7 +29075,7 @@ msgstr "הדוא\"ל המשותף שברצונך להשתמש בו."
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
-msgstr ""
+msgstr "הכלי פועל ללא ארגומנטים."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29695,7 +29695,7 @@ msgstr "פעולה זו תחזיר מיד {0} קרדיטים מסביבת עבו
 #. js-lingui-id: Q0Ii+3
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
-msgstr ""
+msgstr "כלי זה אינו מוצע עוד על ידי שרת ה-MCP שלו. סנכרנו את כלי השרת או בחרו כלי אחר."
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -30102,7 +30102,7 @@ msgstr "פרטי כלי: {displayMessage}"
 #. js-lingui-id: YsAptn
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Tool not found"
-msgstr ""
+msgstr "הכלי לא נמצא"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx

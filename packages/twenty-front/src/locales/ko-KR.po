@@ -18238,7 +18238,7 @@ msgstr "MCP 서버"
 #. js-lingui-id: WgtWCW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "MCP servers unavailable"
-msgstr ""
+msgstr "MCP 서버를 사용할 수 없음"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20086,7 +20086,7 @@ msgstr "이 작업에는 입력 필드가 없습니다"
 #. js-lingui-id: XJwcH2
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "No input fields for this tool"
-msgstr ""
+msgstr "이 도구에는 입력 필드가 없습니다"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -28948,7 +28948,7 @@ msgstr "마켓플레이스를 불러올 수 없습니다. 연결을 확인하고
 #. js-lingui-id: jDq7X1
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
-msgstr ""
+msgstr "MCP 서버를 로드할 수 없어 현재 이 단계를 편집할 수 없습니다."
 
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -29075,7 +29075,7 @@ msgstr "사용할 공유 이메일입니다."
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
-msgstr ""
+msgstr "이 도구는 인수 없이 실행됩니다."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29695,7 +29695,7 @@ msgstr "이 작업을 수행하면 이 워크스페이스에서 즉시 {0} 크�
 #. js-lingui-id: Q0Ii+3
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
-msgstr ""
+msgstr "이 도구는 더 이상 해당 MCP 서버에서 제공되지 않습니다. 서버 도구를 동기화하거나 다른 도구를 선택하세요."
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -30102,7 +30102,7 @@ msgstr "도구 세부 정보: {displayMessage}"
 #. js-lingui-id: YsAptn
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Tool not found"
-msgstr ""
+msgstr "도구를 찾을 수 없음"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx

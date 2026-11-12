@@ -18238,7 +18238,7 @@ msgstr "MCP szerverek"
 #. js-lingui-id: WgtWCW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "MCP servers unavailable"
-msgstr ""
+msgstr "Az MCP-kiszolgálók nem érhetők el"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20086,7 +20086,7 @@ msgstr "Ehhez a művelethez nincsenek bemeneti mezők."
 #. js-lingui-id: XJwcH2
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "No input fields for this tool"
-msgstr ""
+msgstr "Ehhez az eszközhöz nincsenek bemeneti mezők"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -28948,7 +28948,7 @@ msgstr "A piactér nem tölthető be. Ellenőrizze a kapcsolatát, és próbálj
 #. js-lingui-id: jDq7X1
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
-msgstr ""
+msgstr "Az MCP-kiszolgálókat nem sikerült betölteni, ezért ez a lépés jelenleg nem szerkeszthető."
 
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -29075,7 +29075,7 @@ msgstr "A megosztott e-mail, amelyet használni szeretne."
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
-msgstr ""
+msgstr "Az eszköz argumentumok nélkül fut."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29695,7 +29695,7 @@ msgstr "Ez azonnal visszavesz {0} kreditet ettől a munkaterülettől. A visszav
 #. js-lingui-id: Q0Ii+3
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
-msgstr ""
+msgstr "Ezt az eszközt már nem kínálja az MCP-szervere. Szinkronizálja a szerver eszközeit, vagy válasszon másik eszközt."
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -30102,7 +30102,7 @@ msgstr "Eszköz részletei: {displayMessage}"
 #. js-lingui-id: YsAptn
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Tool not found"
-msgstr ""
+msgstr "Az eszköz nem található"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx

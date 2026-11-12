@@ -18238,7 +18238,7 @@ msgstr "Servidors MCP"
 #. js-lingui-id: WgtWCW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "MCP servers unavailable"
-msgstr ""
+msgstr "Servidors MCP no disponibles"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20086,7 +20086,7 @@ msgstr "No hi ha camps d'entrada per a aquesta acció"
 #. js-lingui-id: XJwcH2
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "No input fields for this tool"
-msgstr ""
+msgstr "No hi ha camps d'entrada per a aquesta eina"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -28948,7 +28948,7 @@ msgstr "No s'ha pogut carregar el marketplace. Comprova la connexió i torna-ho 
 #. js-lingui-id: jDq7X1
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
-msgstr ""
+msgstr "No s'han pogut carregar els servidors MCP, per tant aquest pas no es pot editar ara mateix."
 
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -29075,7 +29075,7 @@ msgstr "El correu electrònic compartit que vols utilitzar."
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
-msgstr ""
+msgstr "L'eina s'executa sense arguments."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29695,7 +29695,7 @@ msgstr "Això retira immediatament {0} crèdits d’aquest espai de treball. La 
 #. js-lingui-id: Q0Ii+3
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
-msgstr ""
+msgstr "Aquesta eina ja no l'ofereix el seu servidor MCP. Sincronitzeu les eines del servidor o trieu-ne una altra."
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -30102,7 +30102,7 @@ msgstr "Detalls de l'eina: {displayMessage}"
 #. js-lingui-id: YsAptn
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Tool not found"
-msgstr ""
+msgstr "Eina no trobada"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx

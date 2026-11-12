@@ -18238,7 +18238,7 @@ msgstr "سرورهای MCP"
 #. js-lingui-id: WgtWCW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "MCP servers unavailable"
-msgstr ""
+msgstr "سرورهای MCP در دسترس نیستند"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20086,7 +20086,7 @@ msgstr "هیچ فیلد ورودی برای این عمل وجود ندارد"
 #. js-lingui-id: XJwcH2
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "No input fields for this tool"
-msgstr ""
+msgstr "هیچ فیلد ورودی برای این ابزار وجود ندارد"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -28948,7 +28948,7 @@ msgstr "بازارچه بارگیری نشد. اتصال خود را بررسی 
 #. js-lingui-id: jDq7X1
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
-msgstr ""
+msgstr "سرورهای MCP بارگذاری نشدند، بنابراین این مرحله در حال حاضر قابل ویرایش نیست."
 
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -29075,7 +29075,7 @@ msgstr "ایمیل مشترکی که می‌خواهید استفاده کنید
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
-msgstr ""
+msgstr "این ابزار بدون آرگومان اجرا می‌شود."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29695,7 +29695,7 @@ msgstr "این کار فوراً {0} اعتبار را از این فضای کا
 #. js-lingui-id: Q0Ii+3
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
-msgstr ""
+msgstr "این ابزار دیگر توسط سرور MCP آن ارائه نمی‌شود. ابزارهای سرور را همگام‌سازی کنید یا ابزار دیگری را انتخاب کنید."
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -30102,7 +30102,7 @@ msgstr "جزئیات ابزار: {displayMessage}"
 #. js-lingui-id: YsAptn
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Tool not found"
-msgstr ""
+msgstr "ابزار یافت نشد"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
