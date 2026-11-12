@@ -44,8 +44,11 @@ export default defineLogicFunction({
     httpMethod: 'POST',
     isAuthRequired: true,
   },
-  /*databaseEventTriggerSettings: {
-    eventName: 'people.created',
+  /*eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'created',
   },*/
   /*cronTriggerSettings: {
     pattern: '0 0 1 1 *',
@@ -61,8 +64,7 @@ Tipuri de declanșatoare disponibile:
 Pentru a apela o funcție logică declanșată de o rută dintr-o componentă front-end (headless), consultă [Apelarea unei funcții logice](/ro/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 * **cron**: Rulează funcția pe un program folosind o expresie CRON.
-* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția. O `condition` o limitează la înregistrările care îndeplinesc o expresie de regulă.
-> de ex. `person.updated`, `*.created`, `company.*`
+* **databaseEvent**: Se execută când înregistrările unui obiect sunt create, actualizate, șterse, distruse, restaurate sau upsertate. Îl puteți limita la actualizările unor câmpuri și la înregistrările care îndeplinesc o condiție. Consultați [încărcăturile utile ale evenimentelor bazei de date](#database-event-trigger-payload).
 * **serverRoute**: Expune o singură rută HTTP la nivelul înregistrării. O funcție de tip **resolver** (declarată cu `serverRouteTriggerSettings`) rulează în workspace-ul proprietar și fie returnează un `Response` sincron, fie workspace-ul țintă ȘI funcția logică de pus în coadă; pe ramura de punere în coadă, platforma confirmă cu `202` și rulează acea **țintă** în coada worker-ului. Consultați [declanșatorul de rută de server](#server-route-trigger).
 
 <Note>
@@ -433,19 +435,29 @@ Pentru ștergeri logice (soft delete), `.deleted` urmează structura de tip upda
 Pentru ștergeri permanente, folosiți `.destroyed`.
 
 <Note>
-  `databaseEventTriggerSettings.updatedFields` filtrează ce evenimente de actualizare
+  `eventTriggerSettings.watchedFieldUniversalIdentifiers` filtrează ce evenimente de actualizare
   declanșează funcția. `event.properties.updatedFields` vă indică ce câmpuri
   s-au modificat efectiv în evenimentul curent.
 </Note>
 
-`databaseEventTriggerSettings` acceptă:
+`eventTriggerSettings` cu `on: 'recordEvent'` acceptă:
 
-| Proprietate     | Descriere                                                                                                                                                                                                                                                                                                                                                                                                              |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `eventName`     | Eveniment de ascultat, cum ar fi `person.updated`. Acceptă `*` pentru numele obiectului, operație sau ambele.                                                                                                                                                                                                                                                                                                          |
-| `updatedFields` | Listă opțională de nume de câmpuri. La evenimentele `.updated` și `.upserted`, numai modificările care afectează una dintre ele declanșează funcția.                                                                                                                                                                                                                                                                   |
-| `condiție`      | [Expresie de regulă](/ro/user-guide/data-model/capabilities/validation-rules#write-a-condition) opțională pe care înregistrarea trebuie să o îndeplinească, cum ar fi `stage == 'CUSTOMER'`. `anterior.\<field>` citește înregistrarea înainte de o actualizare. Aceasta citește propriile câmpuri ale înregistrării; o relație de tip mulți-la-unu este câmpul său id (`companyId`), nu `company.name`. |
-| `batchMode`     | Boolean opțional. Când este `true`, funcția de gestionare este apelată o dată pentru fiecare lot de înregistrări, în loc de o dată pentru fiecare înregistrare. Serverul decide câte înregistrări conține un lot, până la 200.                                                                                                                                                                                         |
+| Proprietate                        | Descriere                                                                                                                                                                                                                                                               |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `on`                               | `'recordEvent'`: declanșatorul monitorizează evenimentele privind înregistrările.                                                                                                                                                                                       |
+| `objectUniversalIdentifier`        | Obiect opțional de monitorizat. Omiteți-l pentru a monitoriza fiecare obiect.                                                                                                                                                                                           |
+| `acțiune`                          | `created`, `updated`, `deleted`, `destroyed`, `restored`, `upserted` sau `*` pentru toate acestea.                                                                                                                                                                      |
+| `watchedFieldUniversalIdentifiers` | Listă opțională de câmpuri ale obiectului. La actualizări și upserturi, numai modificările care afectează unul dintre ele declanșează funcția. Relațiile către mai multe înregistrări nu pot fi listate.                                                                |
+| `condiție`                         | [Expresie de regulă](/ro/user-guide/data-model/capabilities/validation-rules#write-a-condition) opțională pe care înregistrarea trebuie să o îndeplinească. `anterior.\<field>` o citește înainte de o actualizare. Necesită `objectUniversalIdentifier`. |
+| `batchMode`                        | Boolean opțional. Când este `true`, funcția de gestionare este apelată o dată pentru fiecare lot de înregistrări, în loc de o dată pentru fiecare înregistrare. Serverul decide câte înregistrări conține un lot, până la 200.                                          |
+
+Compilarea eșuează atunci când un obiect sau un câmp este necunoscut ori când condiția citește un câmp pe care obiectul nu îl are. O condiție citește câmpurile proprii ale înregistrării; o relație de tip mulți-la-unu este citită prin ID-ul său, cum ar fi `companyId`.
+
+<Note>
+  Anteriorul `databaseEventTriggerSettings`, cu `eventName` (precum
+  `person.updated` sau `*.created`) și `updatedFields` (nume de câmpuri), este în continuare
+  acceptat, dar va fi eliminat într-o versiune viitoare. Setați una dintre cele două, nu pe ambele.
+</Note>
 
 Exemplu de eveniment de creare:
 
@@ -483,11 +495,32 @@ const handler = async (event: PersonUpdatedEvent) => {
 Declanșare doar la actualizări ale e-mailului:
 
 ```ts
+const PERSON = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person;
+
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
-    updatedFields: ['emails'],
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: PERSON.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [PERSON.fields.emails.universalIdentifier],
+  },
+});
+```
+
+Declanșați doar atunci când o oportunitate trece în etapa de client:
+
+```ts
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineLogicFunction({
+  ...,
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+    condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
   },
 });
 ```
@@ -516,8 +549,11 @@ O scriere în masă emite multe evenimente simultan: de exemplu, importarea unei
 ```ts
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'updated',
     batchMode: true,
   },
 });
@@ -546,7 +582,7 @@ const handler = async (batch: PeopleUpdatedBatch) => {
   Scrieți funcția de gestionare astfel încât să parcurgă `events`, indiferent de lungimea sa.
 </Note>
 
-Evenimentele sunt grupate după utilizatorul care le-a provocat înainte de a fi incluse în loturi, astfel încât fiecare apel acoperă un singur actor, iar `context.workspaceMemberId` rămâne relevant. Filtrarea `updatedFields` se aplică înainte de gruparea în loturi, astfel încât un lot conține numai înregistrările solicitate.
+Evenimentele sunt grupate după utilizatorul care le-a provocat înainte de a fi incluse în loturi, astfel încât fiecare apel acoperă un singur actor, iar `context.workspaceMemberId` rămâne relevant. Filtrarea după câmpuri și condiții se aplică înainte de gruparea în loturi, astfel încât un lot conține doar înregistrările pe care le-ați solicitat.
 
 Fără `batchMode`, funcția de gestionare continuă să primească un `DatabaseEventPayload` pentru fiecare înregistrare.
 
@@ -631,7 +667,7 @@ Funcțiile logice pot fi expuse în două locuri, fiecare cu propriul declanșat
 * **`toolTriggerSettings`** — face funcția descoperibilă de către funcționalitățile AI ale Twenty (chat, MCP, apelarea de funcții). Folosește JSON Schema standard, formatul pe care LLM-urile îl înțeleg nativ.
 * **`workflowActionTriggerSettings`** — determină ca funcția să apară ca un pas în constructorul vizual de fluxuri de lucru. Folosește `InputSchema` bogat al Twenty, astfel încât constructorul să poată afișa editori de câmp adecvați, selectoare de variabile și etichete.
 
-O funcție poate opta pentru una, cealaltă sau ambele. Acestea stau alături de `cronTriggerSettings`, `databaseEventTriggerSettings` și `httpRouteTriggerSettings` — același tipar, aceeași formă.
+O funcție poate opta pentru una, cealaltă sau ambele. Acestea stau alături de `cronTriggerSettings`, `eventTriggerSettings` și `httpRouteTriggerSettings` — același tipar, aceeași formă.
 
 <Note>
   **Relația cu acțiunea Code din fluxul de lucru.** Acțiunea integrată **Code** din
