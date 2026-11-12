@@ -899,10 +899,11 @@ export class BullMQDriver
   }
 
   private async clearOversizedCompletedJobData(job: Job): Promise<void> {
-    const memorySizeBytes = computeJobSizeBytes({
-      data: job.data,
-      options: job.opts,
-    });
+    const { memorySizeBytes: chargedSizeBytes }: BullMQJobsOptions = job.opts;
+    // A charged job was already sized at enqueue, so its payload is not serialized again here
+    const memorySizeBytes =
+      chargedSizeBytes ??
+      computeJobSizeBytes({ data: job.data, options: job.opts });
 
     if (
       memorySizeBytes <=
