@@ -300,7 +300,7 @@ import { AddAvatarToAgentFastInstanceCommand } from 'src/database/commands/upgra
 import { AddWorkflowAndAgentNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794298453467-add-workflow-and-agent-navigation-menu-items';
 import { AddRowLevelPermissionRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794327249159-add-row-level-permission-rule-table';
 import { AddRowLevelPermissionRuleLinksFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794337540366-add-row-level-permission-rule-links';
-import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794497644229-add-oauth-discovery-to-connection-provider';
+import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794507959766-add-oauth-discovery-to-connection-provider';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
