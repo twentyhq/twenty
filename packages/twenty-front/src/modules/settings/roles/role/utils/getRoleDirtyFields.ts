@@ -4,6 +4,10 @@ import { sortByProperty } from '~/utils/array/sortByProperty';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+const sortById = <TItem extends { id: string }>(
+  items: TItem[] | null | undefined,
+) => (items ?? []).toSorted(sortByProperty('id'));
+
 export const getRoleDirtyFields = (
   draftRole: RoleWithPartialMembers,
   persistedRole: RoleWithPartialMembers | undefined,
@@ -20,20 +24,12 @@ export const getRoleDirtyFields = (
       persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
     ),
     rowLevelPermissionPredicates: isDeeplyEqual(
-      (draftRole.rowLevelPermissionPredicates ?? []).toSorted(
-        sortByProperty('id'),
-      ),
-      (persistedRole.rowLevelPermissionPredicates ?? []).toSorted(
-        sortByProperty('id'),
-      ),
+      sortById(draftRole.rowLevelPermissionPredicates),
+      sortById(persistedRole.rowLevelPermissionPredicates),
     ),
     rowLevelPermissionPredicateGroups: isDeeplyEqual(
-      (draftRole.rowLevelPermissionPredicateGroups ?? []).toSorted(
-        sortByProperty('id'),
-      ),
-      (persistedRole.rowLevelPermissionPredicateGroups ?? []).toSorted(
-        sortByProperty('id'),
-      ),
+      sortById(draftRole.rowLevelPermissionPredicateGroups),
+      sortById(persistedRole.rowLevelPermissionPredicateGroups),
     ),
   };
 
