@@ -2,7 +2,6 @@ import {
   type WorkflowAction,
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
-import { keepServerStepResourceIds } from '@/workflow/utils/keepServerStepResourceIds';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
@@ -40,9 +39,7 @@ export const buildFlowWithLocalEdits = ({
         (candidateStep) => candidateStep.id === serverStep.id,
       );
 
-      return isDefined(localStep)
-        ? keepServerStepResourceIds({ localStep, serverStep })
-        : serverStep;
+      return localStep ?? serverStep;
     }) ?? null;
 
   return { workflowVersionId: serverFlow.workflowVersionId, trigger, steps };

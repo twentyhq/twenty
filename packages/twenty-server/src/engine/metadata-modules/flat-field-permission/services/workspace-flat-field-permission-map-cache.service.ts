@@ -13,6 +13,7 @@ const FLAT_FIELD_PERMISSION_ROWS_REQUIREMENT = {
   fieldPermission: true,
   application: ['id', 'universalIdentifier'],
   role: ['id', 'universalIdentifier'],
+  rowLevelPermissionRule: ['id', 'universalIdentifier'],
   objectMetadata: ['id', 'universalIdentifier'],
   fieldMetadata: ['id', 'universalIdentifier'],
   rowLevelPermissionPredicateGroup: ['id', 'universalIdentifier'],
@@ -32,6 +33,7 @@ export class WorkspaceFlatFieldPermissionMapCacheService extends MetadataFlatEnt
       fieldPermission: fieldPermissions,
       application: applications,
       role: roles,
+      rowLevelPermissionRule: rowLevelPermissionRules,
       objectMetadata: objectMetadatas,
       fieldMetadata: fieldMetadatas,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
@@ -41,6 +43,8 @@ export class WorkspaceFlatFieldPermissionMapCacheService extends MetadataFlatEnt
       createIdToUniversalIdentifierMap(applications);
     const roleIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(roles);
+    const rowLevelPermissionRuleIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(rowLevelPermissionRules);
     const objectMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(objectMetadatas);
     const fieldMetadataIdToUniversalIdentifierMap =
@@ -56,6 +60,7 @@ export class WorkspaceFlatFieldPermissionMapCacheService extends MetadataFlatEnt
           entity: fieldPermissionEntity,
           applicationIdToUniversalIdentifierMap,
           roleIdToUniversalIdentifierMap,
+          rowLevelPermissionRuleIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
           fieldMetadataIdToUniversalIdentifierMap,
           rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,

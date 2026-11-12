@@ -39,6 +39,11 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Proszę zweryfikować tę domenę, aby umożliwić użytkownikom z adresami e-mail <1>@{domain}</1> dołączenie do Twojej przestrzeni roboczej bez potrzeby zaproszenia."
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
+msgstr "Kod zapasowy został użyty do zalogowania się do {workspaceDisplayName}. Pozostałe kody zapasowe: {remainingBackupCodeCount}."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr "Powiadomienie, zanim zakończy się Twój okres próbny"
@@ -62,6 +67,11 @@ msgstr "Dodaj metodę płatności"
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
 msgstr "Po tym czasie przestrzeń robocza i wszystkie jej dane zostaną trwale usunięte — nie będziemy mogli ich przywrócić."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "Backup code used"
+msgstr "Użyto kodu zapasowego"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -138,6 +148,17 @@ msgid "Hi {userName},"
 msgstr "Cześć {userName},"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
+msgstr "Jeśli to nie Ty, zmień hasło i wygeneruj nowe kody zapasowe w Ustawieniach, Profilu, Uwierzytelnianiu dwuskładnikowym."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "If this was not you, change your password and generate new backup codes."
+msgstr "Jeśli to nie Ty, zmień hasło i wygeneruj nowe kody zapasowe."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
 msgstr "Jeśli to nie Ty, skontaktuj się z administratorem swojego obszaru roboczego i zmień hasło."
@@ -204,6 +225,16 @@ msgid "Manage subscription"
 msgstr "Zarządzaj subskrypcją"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "New backup codes generated"
+msgstr "Wygenerowano nowe kody zapasowe"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
+msgstr "Dla Twojego konta w {workspaceDisplayName} wygenerowano nowe kody zapasowe. Twoje poprzednie kody zapasowe już nie działają."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Jeśli chcesz kontynuować, nie są wymagane żadne działania. Jeśli wolisz nie odnawiać, możesz anulować w dowolnym momencie przed tą datą."
@@ -254,6 +285,7 @@ msgid "Set"
 msgstr "Ustaw"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
 msgstr "Skonfiguruj ponownie uwierzytelnianie dwuskładnikowe w Ustawieniach, w sekcji Profil."
@@ -277,6 +309,11 @@ msgstr "Testowy email"
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
 msgstr "Dziękujemy za rejestrację konta w Twenty! Zanim zaczniemy, musimy tylko potwierdzić, że to Ty. Kliknij poniżej, aby zweryfikować swój adres email."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
+msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
+msgstr "Aplikacja uwierzytelniająca dla Twojego konta w {workspaceDisplayName} została usunięta w Ustawieniach. Twoje kody zapasowe dla tej przestrzeni roboczej już nie działają."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -317,6 +354,11 @@ msgstr "Twenty.com, Korporacja Non-Profit"
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
 msgstr "Wydano kod odzyskiwania uwierzytelniania dwuskładnikowego"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
+msgid "Two-factor authentication removed"
+msgstr "Uwierzytelnianie dwuskładnikowe usunięte"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -379,6 +421,11 @@ msgstr "Czym jest Twenty?"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
 msgstr "Logo miejsca pracy"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
+msgstr "Możesz wygenerować nowe kody zapasowe w Ustawieniach, Profilu, Uwierzytelnianiu dwuskładnikowym."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

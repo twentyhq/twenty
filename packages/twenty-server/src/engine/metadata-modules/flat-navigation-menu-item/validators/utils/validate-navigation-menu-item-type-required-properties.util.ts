@@ -56,6 +56,8 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     pageLayoutUniversalIdentifier,
     agentChatChannelUniversalIdentifier,
     nativePageKey,
+    workflowUniversalIdentifier,
+    agentUniversalIdentifier,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -139,6 +141,20 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
               msg`A valid nativePageKey is required for NATIVE_PAGE type`,
             ),
           ];
+    }
+    case NavigationMenuItemType.WORKFLOW: {
+      return validateUuidProperty({
+        value: workflowUniversalIdentifier,
+        message: t`A valid workflowUniversalIdentifier is required for WORKFLOW type`,
+        userFriendlyMessage: msg`A valid workflowUniversalIdentifier is required for WORKFLOW type`,
+      });
+    }
+    case NavigationMenuItemType.AGENT: {
+      return validateUuidProperty({
+        value: agentUniversalIdentifier,
+        message: t`A valid agentUniversalIdentifier is required for AGENT type`,
+        userFriendlyMessage: msg`A valid agentUniversalIdentifier is required for AGENT type`,
+      });
     }
     default: {
       // oxlint-disable-next-line unused-imports/no-unused-vars

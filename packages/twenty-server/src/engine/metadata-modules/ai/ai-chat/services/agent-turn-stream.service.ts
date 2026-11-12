@@ -103,6 +103,8 @@ export type AgentTurnStreamInput<
   // where a turn without a claim streams, when its caller follows it; a claimed turn streams to its thread
   streamChannelId?: string;
   turnId: string;
+  agentId: string | null;
+  isBuiltInAssistant?: boolean;
   abortSignal?: AbortSignal;
   startTurn: (
     writer: UIMessageStreamWriter<ExtendedUIMessage>,
@@ -187,6 +189,7 @@ export class AgentTurnStreamService {
     const abortController = new AbortController();
     const cancelChannel = getCancelChannel(threadId, streamId);
     let stopHeartbeat: (() => void) | undefined;
+    let unsubscribeFromCancel: (() => Promise<void>) | undefined;
     let isStoppedByMember = false;
     let turnError: StreamErrorPayload | undefined;
 
@@ -197,10 +200,13 @@ export class AgentTurnStreamService {
       });
       stopHeartbeat = this.streamHeartbeatService.startRunning(streamId);
 
-      await this.cancelSubscriberService.subscribe(cancelChannel, () => {
-        isStoppedByMember = true;
-        abortController.abort();
-      });
+      unsubscribeFromCancel = await this.cancelSubscriberService.subscribe(
+        cancelChannel,
+        () => {
+          isStoppedByMember = true;
+          abortController.abort();
+        },
+      );
 
       jobAbortSignal?.addEventListener(
         'abort',
@@ -222,7 +228,7 @@ export class AgentTurnStreamService {
       throw error;
     } finally {
       stopHeartbeat?.();
-      await this.cancelSubscriberService.unsubscribe(cancelChannel);
+      await unsubscribeFromCancel?.();
       // what a member queued while they stopped the turn stays queued; a worker shutdown sends it
       await this.streamRecoveryService.release({
         ...claim,
@@ -288,6 +294,8 @@ export class AgentTurnStreamService {
     claim,
     streamChannelId,
     turnId,
+    agentId,
+    isBuiltInAssistant = false,
     abortSignal,
     startTurn,
     completeTurn,
@@ -302,6 +310,8 @@ export class AgentTurnStreamService {
       claim,
       channelId,
       turnId,
+      agentId,
+      isBuiltInAssistant,
       startTurn,
     });
     const completion = await completeTurn(streamed).catch(
@@ -321,6 +331,7 @@ export class AgentTurnStreamService {
       workspaceId,
       claim,
       turnId,
+      agentId,
       result: {
         ...streamed,
         isAborted: streamed.isAborted || (completion.isAborted ?? false),
@@ -378,12 +389,15 @@ export class AgentTurnStreamService {
     claim,
     channelId,
     turnId,
+    agentId,
+    isBuiltInAssistant,
     startTurn,
   }: Pick<
     AgentTurnStreamInput<TStarted, AgentTurnCompletion>,
-    'workspaceId' | 'claim' | 'turnId' | 'startTurn'
+    'workspaceId' | 'claim' | 'turnId' | 'agentId' | 'startTurn'
   > & {
     channelId: string | undefined;
+    isBuiltInAssistant: boolean;
   }): Promise<AgentTurnStreamResult & { started: TStarted }> {
     // a turn without a claim keeps no reply, so its id only has to be its own
     const assistantMessageId = uuidv5(
@@ -439,6 +453,9 @@ export class AgentTurnStreamService {
                 part,
                 modelConfig: source.modelConfig,
                 usage,
+                turnId,
+                agentId,
+                isBuiltInAssistant,
               }),
             onEnd: async ({ responseMessage, isAborted }) => {
               try {
@@ -498,6 +515,7 @@ export class AgentTurnStreamService {
                   id: assistantMessageId,
                   threadId: claim.threadId,
                   turnId,
+                  agentId,
                   parts,
                 });
               })
@@ -546,6 +564,7 @@ export class AgentTurnStreamService {
     workspaceId,
     claim,
     turnId,
+    agentId,
     result,
     modelId,
     stopReason,
@@ -556,7 +575,7 @@ export class AgentTurnStreamService {
       { source: AgentTurnStreamSource },
       AgentTurnCompletion
     >,
-    'workspaceId' | 'claim' | 'turnId'
+    'workspaceId' | 'claim' | 'turnId' | 'agentId'
   > & {
     result: AgentTurnStreamResult;
     modelId: string;
@@ -643,6 +662,7 @@ export class AgentTurnStreamService {
       id: assistantMessageId,
       threadId: claim.threadId,
       turnId,
+      agentId,
       parts: replyParts,
     });
 
@@ -751,10 +771,16 @@ export class AgentTurnStreamService {
     part,
     modelConfig,
     usage,
+    turnId,
+    agentId,
+    isBuiltInAssistant,
   }: {
     part: { type: string } & AgentTurnUsageStep;
     modelConfig: AiModelConfig;
     usage: AgentTurnStreamUsage;
+    turnId: string;
+    agentId: string | null;
+    isBuiltInAssistant: boolean;
   }) {
     // a step that failed before the model answered still ends with a finish-step, one without token counts;
     // one whose model answered with an error finish reason reports real usage and is billed
@@ -769,7 +795,12 @@ export class AgentTurnStreamService {
     }
 
     if (part.type === 'start') {
-      return { startedAt: new Date().toISOString() };
+      return {
+        startedAt: new Date().toISOString(),
+        turnId,
+        agentId,
+        isBuiltInAssistant,
+      };
     }
 
     if (part.type === 'finish') {

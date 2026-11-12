@@ -1,5 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`SAML identity provider creation should fail when the certificate is followed by a second certificate 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "The string is not a valid X509 certificate",
+  "name": "UserInputError",
+}
+`;
+
+exports[`SAML identity provider creation should fail when the certificate is followed by trailing data 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "The string is not a valid X509 certificate",
+  "name": "UserInputError",
+}
+`;
+
 exports[`SAML identity provider creation should fail when the id is already used by an identity provider 1`] = `
 {
   "extensions": {

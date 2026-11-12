@@ -12,6 +12,10 @@ export const isAgentChatMessageOwn = ({
   currentWorkspaceMemberId: string | undefined;
   isSenderlessUserMessageOwn: boolean;
 }) => {
+  if (isDefined(message.metadata?.senderApplicationId)) {
+    return false;
+  }
+
   const senderWorkspaceMemberId = message.metadata?.senderWorkspaceMemberId;
 
   if (isDefined(senderWorkspaceMemberId)) {

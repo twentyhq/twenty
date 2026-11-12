@@ -113,6 +113,7 @@ describe('filterGettingStartedStepActionKeys', () => {
         },
         hasSendingMailbox: true,
         hasFeaturedApp: true,
+        hasCalendarBookingPage: false,
       }),
     ).toEqual([
       GettingStartedStepActionKey.CONNECT_MAILBOX,

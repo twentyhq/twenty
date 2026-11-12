@@ -1,12 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type LinkedinMessageAttachmentFile } from 'src/logic-functions/types/linkedin-message-attachment-file.type';
+import { type LinkedinMessageAttachments } from 'src/logic-functions/types/linkedin-message-attachments.type';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileMessageAttachment } from 'src/unipile/types/unipile-message-attachment.type';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
 const mocks = vi.hoisted(() => ({
   downloadUnipileMessageAttachment: vi.fn(),
+  uploadMessageAttachment: vi.fn(),
+}));
+
+vi.mock('twenty-sdk/logic-function', () => ({
+  uploadMessageAttachment: mocks.uploadMessageAttachment,
 }));
 
 vi.mock('src/unipile/utils/download-unipile-message-attachment.util', () => ({
@@ -39,17 +44,21 @@ const importAttachments = async ({
   attachments: UnipileMessageAttachment[];
   deadlineAtMs?: number;
 }) => {
-  const files: LinkedinMessageAttachmentFile[] = [];
+  const importedMessages: LinkedinMessageAttachments[] = [];
   const importedCount = await importLinkedinMessageAttachments({
     unipileAccountId: 'acc_1',
     messages: [buildMessage(attachments)],
     deadlineAtMs,
-    onAttachmentFile: async (file) => {
-      files.push(file);
+    onMessageAttachments: async (messageAttachments) => {
+      importedMessages.push(messageAttachments);
     },
   });
 
-  return { files, importedCount };
+  return {
+    files: importedMessages.flatMap(({ attachments }) => attachments),
+    importedMessages,
+    importedCount,
+  };
 };
 
 describe('importLinkedinMessageAttachments', () => {
@@ -59,24 +68,47 @@ describe('importLinkedinMessageAttachments', () => {
     mocks.downloadUnipileMessageAttachment.mockResolvedValue(
       Buffer.from('downloaded'),
     );
+    mocks.uploadMessageAttachment.mockImplementation(
+      async ({ filename }: { filename: string }) => ({
+        fileId: `file-id-${mocks.uploadMessageAttachment.mock.calls.length}`,
+        label: filename,
+      }),
+    );
   });
 
-  it('downloads images, videos and audio', async () => {
+  const uploadedContents = () =>
+    mocks.uploadMessageAttachment.mock.calls.map(([{ content }]) =>
+      Buffer.from(content).toString(),
+    );
+
+  it('uploads images, videos, audio and documents and reports them per message', async () => {
     const deadlineAtMs = Date.now() + 60_000;
-    const { files, importedCount } = await importAttachments({
+    const { importedMessages, importedCount } = await importAttachments({
       attachments: [
         { id: 'img-1', type: 'img', mimetype: 'image/jpeg' },
         { id: 'video-1', type: 'video', mimetype: 'video/mp4' },
         { id: 'audio-1', type: 'audio', mimetype: 'audio/mpeg' },
+        {
+          id: 'file-1',
+          type: 'file',
+          mimetype: 'application/pdf',
+          filename: 'Proposal.pdf',
+        },
       ],
       deadlineAtMs,
     });
 
-    expect(importedCount).toBe(3);
-    expect(files.map(({ attachmentId }) => attachmentId)).toEqual([
-      'img-1',
-      'video-1',
-      'audio-1',
+    expect(importedCount).toBe(4);
+    expect(importedMessages).toEqual([
+      {
+        messageExternalId: 'message-1',
+        attachments: [
+          { fileId: 'file-id-1', label: 'linkedin-image.jpg' },
+          { fileId: 'file-id-2', label: 'linkedin-video.mp4' },
+          { fileId: 'file-id-3', label: 'linkedin-audio.mpeg' },
+          { fileId: 'file-id-4', label: 'Proposal.pdf' },
+        ],
+      },
     ]);
     expect(mocks.downloadUnipileMessageAttachment).toHaveBeenCalledWith({
       accountId: 'acc_1',
@@ -86,15 +118,11 @@ describe('importLinkedinMessageAttachments', () => {
       maxSizeBytes: MAX_SIZE_BYTES,
       deadlineAtMs,
     });
-    expect(files[0]).toMatchObject({
-      messageExternalId: 'message-1',
-      mimeType: 'image/jpeg',
-      content: Buffer.from('downloaded'),
-    });
+    expect(uploadedContents()[0]).toBe('downloaded');
   });
 
   it('uses the inline content instead of downloading it', async () => {
-    const { files } = await importAttachments({
+    await importAttachments({
       attachments: [
         {
           id: 'img-1',
@@ -105,7 +133,7 @@ describe('importLinkedinMessageAttachments', () => {
       ],
     });
 
-    expect(files[0]?.content.toString()).toBe('inline');
+    expect(uploadedContents()).toEqual(['inline']);
     expect(mocks.downloadUnipileMessageAttachment).not.toHaveBeenCalled();
   });
 
@@ -113,7 +141,6 @@ describe('importLinkedinMessageAttachments', () => {
     await expect(
       importAttachments({
         attachments: [
-          { id: 'file-1', type: 'file', mimetype: 'application/pdf' },
           { id: 'post-1', type: 'shared_content', mimetype: 'text/html' },
           {
             id: 'img-1',
@@ -129,8 +156,9 @@ describe('importLinkedinMessageAttachments', () => {
           },
         ],
       }),
-    ).resolves.toEqual({ files: [], importedCount: 0 });
+    ).resolves.toEqual({ files: [], importedMessages: [], importedCount: 0 });
     expect(mocks.downloadUnipileMessageAttachment).not.toHaveBeenCalled();
+    expect(mocks.uploadMessageAttachment).not.toHaveBeenCalled();
   });
 
   it('drops inline content over the size limit when no size was listed', async () => {
@@ -145,7 +173,8 @@ describe('importLinkedinMessageAttachments', () => {
           },
         ],
       }),
-    ).resolves.toEqual({ files: [], importedCount: 0 });
+    ).resolves.toEqual({ files: [], importedMessages: [], importedCount: 0 });
+    expect(mocks.uploadMessageAttachment).not.toHaveBeenCalled();
   });
 
   it('drops a file that fails to download and keeps the others', async () => {
@@ -160,10 +189,27 @@ describe('importLinkedinMessageAttachments', () => {
       ],
     });
 
-    expect(files.map(({ attachmentId }) => attachmentId)).toEqual(['img-2']);
+    expect(files).toEqual([
+      { fileId: 'file-id-1', label: 'linkedin-image.png' },
+    ]);
   });
 
-  it('skips the remaining files once the deadline is reached', async () => {
+  it('drops a file that fails to upload and keeps the others', async () => {
+    mocks.uploadMessageAttachment.mockRejectedValueOnce(
+      new Error('upload failed'),
+    );
+
+    const { importedCount } = await importAttachments({
+      attachments: [
+        { id: 'img-1', type: 'img', mimetype: 'image/png' },
+        { id: 'img-2', type: 'img', mimetype: 'image/png' },
+      ],
+    });
+
+    expect(importedCount).toBe(1);
+  });
+
+  it('attaches nothing to a message cut by the deadline', async () => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(Date.parse('2026-10-29T08:00:00.000Z'));
     mocks.downloadUnipileMessageAttachment.mockImplementation(async () => {
@@ -173,7 +219,7 @@ describe('importLinkedinMessageAttachments', () => {
     });
 
     try {
-      const { files, importedCount } = await importAttachments({
+      const { importedMessages, importedCount } = await importAttachments({
         attachments: [
           { id: 'img-1', type: 'img', mimetype: 'image/png' },
           { id: 'img-2', type: 'img', mimetype: 'image/png' },
@@ -181,12 +227,95 @@ describe('importLinkedinMessageAttachments', () => {
         deadlineAtMs: Date.now() + 1_000,
       });
 
-      expect(importedCount).toBe(1);
-      expect(files.map(({ attachmentId }) => attachmentId)).toEqual(['img-1']);
+      expect(importedCount).toBe(0);
+      expect(importedMessages).toEqual([]);
       expect(mocks.downloadUnipileMessageAttachment).toHaveBeenCalledOnce();
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('attaches nothing when the last file of a message hits the deadline', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(Date.parse('2026-10-29T08:00:00.000Z'));
+    mocks.downloadUnipileMessageAttachment
+      .mockResolvedValueOnce(Buffer.from('downloaded'))
+      .mockImplementationOnce(async () => {
+        vi.advanceTimersByTime(2_000);
+
+        throw new Error('The operation was aborted due to timeout');
+      });
+
+    try {
+      const { importedMessages, importedCount } = await importAttachments({
+        attachments: [
+          { id: 'img-1', type: 'img', mimetype: 'image/png' },
+          { id: 'img-2', type: 'img', mimetype: 'image/png' },
+        ],
+        deadlineAtMs: Date.now() + 1_000,
+      });
+
+      expect(mocks.uploadMessageAttachment).not.toHaveBeenCalled();
+      expect(importedCount).toBe(0);
+      expect(importedMessages).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('attaches nothing when an upload fails at the deadline', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(Date.parse('2026-10-29T08:00:00.000Z'));
+    mocks.uploadMessageAttachment
+      .mockResolvedValueOnce({
+        fileId: 'file-id-1',
+        label: 'linkedin-image.png',
+      })
+      .mockImplementationOnce(async () => {
+        vi.advanceTimersByTime(2_000);
+
+        throw new Error('The operation was aborted due to timeout');
+      });
+
+    try {
+      const { importedMessages, importedCount } = await importAttachments({
+        attachments: [
+          { id: 'img-1', type: 'img', mimetype: 'image/png' },
+          { id: 'img-2', type: 'img', mimetype: 'image/png' },
+        ],
+        deadlineAtMs: Date.now() + 1_000,
+      });
+
+      expect(importedCount).toBe(0);
+      expect(importedMessages).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps going when attaching the files of a message fails', async () => {
+    const onMessageAttachments = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('attachments unavailable'))
+      .mockResolvedValue(undefined);
+
+    const importedCount = await importLinkedinMessageAttachments({
+      unipileAccountId: 'acc_1',
+      messages: [
+        buildMessage([{ id: 'img-1', type: 'img', mimetype: 'image/png' }]),
+        {
+          ...buildMessage([
+            { id: 'img-2', type: 'img', mimetype: 'image/png' },
+          ]),
+          id: 'message-2',
+        },
+      ],
+      deadlineAtMs: Date.now() + 60_000,
+      onMessageAttachments,
+    });
+
+    expect(importedCount).toBe(1);
+    expect(onMessageAttachments).toHaveBeenCalledTimes(2);
   });
 
   it('lets a rate limit through so the import can pause', async () => {

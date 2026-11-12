@@ -126,7 +126,7 @@ When adding permissions:
 
 ## Validation Rules
 
-Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`.
+Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`. Two date functions are available in both forms: `daysSince(date)` returns whole days since the date (negative for a future date), and `isInRelativeDateRange(date, direction, amount, unit)` checks a period, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 ```ts
 import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';
@@ -140,6 +140,15 @@ export default defineValidationRule({
   expression: and(gt(field('amount'), 0), isNonEmptyString(field('reference'))),
   message: 'An invoice needs an amount and a reference',
 });
+```
+
+To check a transition, read the value stored before the update with `previous('stage')` in the builder, or `previous.stage` in a string. On creation every previous value is empty. `previous` reads the object's own fields and their composite subfields, not relations.
+
+```ts
+const { eq, field, notEq, or, previous } = ruleExpression;
+
+// Won is final
+expression: or(eq(field('stage'), previous('stage')), notEq(previous('stage'), 'WON')),
 ```
 
 A sync fails if the app removes a field one of its rules reads. If the field is deactivated outside the app, or deleted outside the app while the rule's expression is unchanged, the sync succeeds and the rule stays off. A new or edited rule that names a deleted field fails the sync. A sync keeps an existing rule's `isActive`.

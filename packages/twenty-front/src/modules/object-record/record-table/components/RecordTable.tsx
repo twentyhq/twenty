@@ -3,6 +3,7 @@ import { useRef } from 'react';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
 import { RecordTableContent } from '@/object-record/record-table/components/RecordTableContent';
@@ -18,7 +19,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import isEmpty from 'lodash.isempty';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 export const RecordTable = () => {
   const {
@@ -58,6 +59,12 @@ export const RecordTable = () => {
     recordTableId,
   );
 
+  // The group tabs render inside the table body, so it stays mounted for them
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+    recordTableId,
+  );
+
   const { resetRecordSelection } = useResetRecordSelection(recordTableId);
 
   const recordTableIsEmpty =
@@ -78,7 +85,7 @@ export const RecordTable = () => {
 
   return (
     <>
-      {canReachSomeRecords({
+      {canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: objectPermissions,
         operationType: 'read',
       }) && (
@@ -94,6 +101,7 @@ export const RecordTable = () => {
       {isRecordTableInitialLoading &&
       isEmpty(visibleRecordFields) ? null : recordTableIsEmpty &&
         !hasRecordGroups &&
+        !isRecordGroupTabsDisplayed &&
         !isRecordTableEmptyStateHidden ? (
         <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (

@@ -13,7 +13,7 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -24,7 +24,7 @@ export class RolePermissionsService {
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
   ) {}
 
   public findRoleIds({
@@ -136,7 +136,7 @@ export class RolePermissionsService {
     }
 
     const principals =
-      await this.principalPermissionsService.resolvePermissionsPrincipals({
+      await this.principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext,
       });
 

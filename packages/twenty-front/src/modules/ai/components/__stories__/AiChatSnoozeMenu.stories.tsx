@@ -23,7 +23,6 @@ const ControlledSnoozeMenu = ({
   onPickDate,
   onSomeoneReplies,
   onAssistantFinishes,
-  assistantName,
   disabled,
 }: ComponentProps<typeof AiChatSnoozeMenu>) => {
   const [open, setOpen] = useState(initialOpen);
@@ -40,7 +39,6 @@ const ControlledSnoozeMenu = ({
       onPickDate={onPickDate}
       onSomeoneReplies={onSomeoneReplies}
       onAssistantFinishes={onAssistantFinishes}
-      assistantName={assistantName}
       disabled={disabled}
     />
   );

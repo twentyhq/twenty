@@ -71,6 +71,7 @@ const buildFlatAgent = (
   id: `${universalIdentifier}-id`,
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
+  navigationMenuItemIds: [],
   ...overrides,
 });
 

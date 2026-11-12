@@ -10,8 +10,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -32,8 +32,8 @@ const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
 export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
@@ -75,7 +75,7 @@ export class MessageListDuplicationService {
     userWorkspaceId: string;
   }): Promise<void> {
     const [principals, { flatObjectMetadataMaps }] = await Promise.all([
-      this.principalPermissionsService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
+      this.principalPermissionsReadService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
         { workspaceId, userWorkspaceId },
       ),
       this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -93,12 +93,12 @@ export class MessageListDuplicationService {
       (
         await Promise.all(
           duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
-            this.recordPermissionsService.canRoleAccessSomeRecords({
+            this.recordPermissionsReadService.canAccessSomeRecords({
               operationType: 'read',
               principals,
               objectMetadataId,
             }),
-            this.recordPermissionsService.canRoleAccessSomeRecords({
+            this.recordPermissionsReadService.canAccessSomeRecords({
               operationType: 'create',
               principals,
               objectMetadataId,

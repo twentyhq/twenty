@@ -5,6 +5,7 @@ import {
   type RowLevelPermissionPredicateGroup,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
+  type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -88,6 +89,31 @@ const ROOT_AND_NESTED_GROUPS = [
   }),
 ];
 
+const buildRule = ({
+  ruleId = RULE_ID,
+  predicates,
+  predicateGroups = ROOT_AND_NESTED_GROUPS,
+  canReadRecords = true,
+  canUpdateRecords = false,
+}: {
+  ruleId?: string;
+  predicates: RowLevelPermissionPredicate[];
+  predicateGroups?: RowLevelPermissionPredicateGroup[];
+  canReadRecords?: boolean;
+  canUpdateRecords?: boolean;
+}): RowLevelRecordsPermissions => ({
+  ruleId,
+  canCreateRecords: false,
+  canReadRecords,
+  canUpdateRecords,
+  canSoftDeleteRecords: false,
+  canDestroyRecords: false,
+  predicates,
+  predicateGroups,
+  unreadableFields: [],
+  uneditableFields: [],
+});
+
 const buildRowLevelPermissions = ({
   predicates,
   predicateGroups = ROOT_AND_NESTED_GROUPS,
@@ -96,15 +122,7 @@ const buildRowLevelPermissions = ({
   predicateGroups?: RowLevelPermissionPredicateGroup[];
 }): ObjectRecordsPermissions => ({
   ...noAccess,
-  rowLevelRecordsPermissions: {
-    canCreateRecords: false,
-    canReadRecords: true,
-    canUpdateRecords: false,
-    canSoftDeleteRecords: false,
-    canDestroyRecords: false,
-    predicates,
-    predicateGroups,
-  },
+  rowLevelRecordsPermissions: [buildRule({ predicates, predicateGroups })],
 });
 
 const UNGROUPED_RULE_PERMISSIONS = buildRowLevelPermissions({
@@ -129,6 +147,7 @@ const build = (
     objectMetadataId: OBJECT_METADATA_ID,
     workspaceMembers: [],
     flatFieldMetadataMaps,
+    isRelationHopEnabled: true,
     ...overrides,
   });
 
@@ -293,7 +312,45 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       build({ objectRecordsPermissions: UNGROUPED_RULE_PERMISSIONS }).map(
         (accessGroup) => accessGroup.rowLevelPermissionPredicateGroupId,
       ),
-    ).toEqual([null]);
+    ).toEqual([RULE_ID]);
+  });
+
+  it('should make one group per rule granting an asked operation', () => {
+    const objectRecordsPermissions: ObjectRecordsPermissions = {
+      ...noAccess,
+      rowLevelRecordsPermissions: [
+        buildRule({ predicates: [buildPredicate({ id: 'first' })] }),
+        buildRule({
+          ruleId: 'second-rule-id',
+          predicates: [buildPredicate({ id: 'second', value: 'London' })],
+        }),
+        buildRule({
+          ruleId: 'update-rule-id',
+          predicates: [buildPredicate({ id: 'third', value: 'Berlin' })],
+          canReadRecords: false,
+          canUpdateRecords: true,
+        }),
+      ],
+    };
+
+    expect(
+      build({ objectRecordsPermissions, operationTypes: ['read'] }).map(
+        (accessGroup) => accessGroup.rowLevelPermissionPredicateGroupId,
+      ),
+    ).toEqual([RULE_ID, 'second-rule-id']);
+  });
+
+  it('should make an all records group next to the rule groups when the role reaches all records', () => {
+    expect(
+      build({
+        objectRecordsPermissions: {
+          ...buildRowLevelPermissions({
+            predicates: [buildPredicate({ id: 'predicate' })],
+          }),
+          canReadAllRecords: true,
+        },
+      }).map((accessGroup) => accessGroup.rowLevelPermissionPredicateGroupId),
+    ).toEqual([null, RULE_ID]);
   });
 
   it('should not give predicates without a predicate group the hash of an all records group', () => {

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRef } from 'react';
+import { type ComponentProps, useRef } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -19,7 +19,9 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatThreadChannelPicker } from '@/ai/components/AiChatThreadChannelPicker';
+import { AiChatThreadDetailsFollowing } from '@/ai/components/AiChatThreadDetailsFollowing';
 import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
+import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
@@ -65,10 +67,12 @@ const StyledDetails = styled.dl`
 
 type AiChatThreadDetailsDropdownProps = {
   threadId: string;
+  labels?: ComponentProps<typeof AiChatThreadLabelsField>;
 };
 
 export const AiChatThreadDetailsDropdown = ({
   threadId,
+  labels,
 }: AiChatThreadDetailsDropdownProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -265,6 +269,15 @@ export const AiChatThreadDetailsDropdown = ({
                 <StyledEmptyValue>{t`None`}</StyledEmptyValue>
               )}
             </DetailsRow>
+            {isDefined(labels) && (
+              <AiChatThreadLabelsField
+                labels={labels.labels}
+                selectedLabelIds={labels.selectedLabelIds}
+                isSaving={labels.isSaving}
+                onLabelsChange={labels.onLabelsChange}
+              />
+            )}
+            <AiChatThreadDetailsFollowing threadId={threadId} />
           </StyledDetails>
         </DropdownContent>
       </DropdownRoot>

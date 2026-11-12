@@ -1,5 +1,7 @@
+import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -14,8 +16,8 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
-import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
+import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
+import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -23,14 +25,14 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const ACCESS_GROUP_TABLE = `${SCHEMA}."accessGroup"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
+const PARIS_PERSON_ID = v4();
+const LONDON_PERSON_ID = v4();
+const TEST_PERSON_IDS = [PARIS_PERSON_ID, LONDON_PERSON_ID];
 
 describe('querying many records through access groups (integration)', () => {
   let objectMetadataId: string;
-  let originalPeople: { id: string; jobTitle: string }[];
   let originalMemberRoleId: string;
   let roleId: string;
-
-  const parisPersonId = () => originalPeople[0].id;
 
   const findPersonIdsAsMember = async (): Promise<string[]> => {
     const response = await makeGraphqlApiRequest(
@@ -38,7 +40,7 @@ describe('querying many records through access groups (integration)', () => {
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
         gqlFields: 'id',
-        filter: { id: { in: originalPeople.map(({ id }) => id) } },
+        filter: { id: { in: TEST_PERSON_IDS } },
       }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
@@ -67,13 +69,19 @@ describe('querying many records through access groups (integration)', () => {
       [objectMetadataId],
     );
 
-    originalPeople = await global.testDataSource.query(
-      `SELECT "id", "jobTitle" FROM ${PERSON_TABLE} WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 2`,
+    const createPeopleResponse = await makeGraphqlApiRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        data: [
+          { id: PARIS_PERSON_ID, jobTitle: 'Paris office' },
+          { id: LONDON_PERSON_ID, jobTitle: 'London office' },
+        ],
+      }),
     );
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = CASE "id" WHEN $1 THEN 'Paris office' ELSE 'London office' END WHERE "id" = ANY($2)`,
-      [parisPersonId(), originalPeople.map(({ id }) => id)],
-    );
+
+    expect(createPeopleResponse.body.errors).toBeUndefined();
 
     const { data } = await createOneRole({
       expectToFail: false,
@@ -91,11 +99,13 @@ describe('querying many records through access groups (integration)', () => {
 
     const predicateGroupId = v4();
 
+    await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
+        canReadRecords: true,
         predicateGroups: [
           {
             id: predicateGroupId,
@@ -126,11 +136,11 @@ describe('querying many records through access groups (integration)', () => {
       },
     });
     await setAccessGroupsEnabled(true);
-    await getAppProviderByClassName<AccessGroupService>(
-      'AccessGroupService',
+    await getAppProviderByClassName<AccessGroupSyncService>(
+      'AccessGroupSyncService',
     ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
-    await getAppProviderByClassName<RecordAccessGroupService>(
-      'RecordAccessGroupService',
+    await getAppProviderByClassName<RecordAccessGroupComputationService>(
+      'RecordAccessGroupComputationService',
     ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
@@ -148,12 +158,10 @@ describe('querying many records through access groups (integration)', () => {
     });
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
 
-    for (const { id, jobTitle } of originalPeople) {
-      await global.testDataSource.query(
-        `UPDATE ${PERSON_TABLE} SET "jobTitle" = $1 WHERE "id" = $2`,
-        [jobTitle, id],
-      );
-    }
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
+      [TEST_PERSON_IDS],
+    );
 
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
@@ -162,18 +170,18 @@ describe('querying many records through access groups (integration)', () => {
   });
 
   it('should return the records the rule reaches', async () => {
-    expect(await findPersonIdsAsMember()).toEqual([parisPersonId()]);
+    expect(await findPersonIdsAsMember()).toEqual([PARIS_PERSON_ID]);
   });
 
   it('should read the stored groups rather than the rule', async () => {
     const [{ accessGroupIds }] = await global.testDataSource.query(
       `SELECT "_accessGroupIds" AS "accessGroupIds" FROM ${PERSON_TABLE} WHERE "id" = $1`,
-      [parisPersonId()],
+      [PARIS_PERSON_ID],
     );
 
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = '{}' WHERE "id" = $1`,
-      [parisPersonId()],
+      [PARIS_PERSON_ID],
     );
 
     try {
@@ -181,12 +189,12 @@ describe('querying many records through access groups (integration)', () => {
 
       await setAccessGroupsEnabled(false);
 
-      expect(await findPersonIdsAsMember()).toEqual([parisPersonId()]);
+      expect(await findPersonIdsAsMember()).toEqual([PARIS_PERSON_ID]);
     } finally {
       await setAccessGroupsEnabled(true);
       await global.testDataSource.query(
         `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = $1 WHERE "id" = $2`,
-        [accessGroupIds, parisPersonId()],
+        [accessGroupIds, PARIS_PERSON_ID],
       );
     }
   });

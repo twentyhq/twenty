@@ -174,6 +174,7 @@ const threadContentHandlers = [
           type: 'EMAIL',
           provider: 'google',
           applicationId: null,
+          conversationStyle: 'email',
         },
       },
     }),

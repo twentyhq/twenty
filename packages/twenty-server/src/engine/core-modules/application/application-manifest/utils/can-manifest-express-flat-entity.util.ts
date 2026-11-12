@@ -18,7 +18,9 @@ const WORKSPACE_BOUND_PROPERTIES = [
 
 type ProbedPropertyName =
   | (typeof WORKSPACE_BOUND_PROPERTIES)[number]
-  | 'frontComponentUniversalIdentifier';
+  | 'frontComponentUniversalIdentifier'
+  | 'workflowId'
+  | 'agentId';
 
 type ProbedFlatEntity = {
   universalIdentifier: string;
@@ -47,6 +49,13 @@ export const canManifestExpressFlatEntity = ({
   }
 
   if (metadataName === 'role' && flatEntity.isEditable === false) {
+    return false;
+  }
+
+  if (
+    metadataName === 'navigationMenuItem' &&
+    (isDefined(flatEntity.workflowId) || isDefined(flatEntity.agentId))
+  ) {
     return false;
   }
 

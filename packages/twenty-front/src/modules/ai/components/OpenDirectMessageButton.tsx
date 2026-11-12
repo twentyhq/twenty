@@ -5,7 +5,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { DirectMessageMemberPicker } from '@/ai/components/DirectMessageMemberPicker';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -17,7 +17,7 @@ import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 export const OpenDirectMessageButton = () => {
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
-  const { loadAgentChatThread } = useRefreshAgentChatThreads();
+  const { loadAgentChatThread } = useLoadAgentChatThread();
   const { handleThreadClick } = useAiChatThreadClick({
     shouldOpenInFullPage: true,
   });

@@ -1,3 +1,4 @@
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -8,7 +9,8 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
+import { type AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
+import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -41,11 +43,16 @@ const readAccessGroups = async (): Promise<
   );
 
 describe('access group sync (integration)', () => {
-  let accessGroupService: AccessGroupService;
+  let accessGroupSyncService: AccessGroupSyncService;
+  let accessGroupReadService: AccessGroupReadService;
 
   beforeAll(() => {
-    accessGroupService =
-      getAppProviderByClassName<AccessGroupService>('AccessGroupService');
+    accessGroupSyncService = getAppProviderByClassName<AccessGroupSyncService>(
+      'AccessGroupSyncService',
+    );
+    accessGroupReadService = getAppProviderByClassName<AccessGroupReadService>(
+      'AccessGroupReadService',
+    );
   });
 
   afterAll(async () => {
@@ -53,7 +60,7 @@ describe('access group sync (integration)', () => {
   });
 
   it('should create a group per grant, keep their ids and remove stale ones', async () => {
-    await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
     const accessGroups = await readAccessGroups();
 
@@ -64,7 +71,7 @@ describe('access group sync (integration)', () => {
       [await findAdminRoleId(), await findPersonObjectMetadataId()],
     );
 
-    await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
     expect(await readAccessGroups()).toEqual(accessGroups);
   });
@@ -95,6 +102,7 @@ describe('access group sync (integration)', () => {
         input: {
           roleId,
           objectMetadataId,
+          canReadRecords: true,
           predicateGroups: [
             {
               id: predicateGroupId,
@@ -118,18 +126,21 @@ describe('access group sync (integration)', () => {
       { compactId: number; groupHash: string }[]
     > =>
       global.testDataSource.query(
-        `SELECT "compactId", "groupHash" FROM ${ACCESS_GROUP_TABLE} WHERE "rowLevelPermissionPredicateGroupId" = $1`,
+        `SELECT "compactId", "groupHash" FROM ${ACCESS_GROUP_TABLE} WHERE "rowLevelPermissionPredicateGroupId" = (
+          SELECT "rowLevelPermissionRuleId" FROM core."rowLevelPermissionPredicateGroup" WHERE "id" = $1
+        )`,
         [predicateGroupId],
       );
 
     try {
+      await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
       await upsertRule('Paris');
-      await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+      await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
       const [parisAccessGroup] = await readRuleAccessGroups();
 
       await upsertRule('London');
-      await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+      await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
       const londonAccessGroups = await readRuleAccessGroups();
 
@@ -150,14 +161,14 @@ describe('access group sync (integration)', () => {
   });
 
   it('should resolve the caller to the groups of its role', async () => {
-    await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
 
     const principals = buildRolePermissionsPrincipals({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       roleId: await findAdminRoleId(),
     });
     const objectMetadataId = await findPersonObjectMetadataId();
-    const compactIds = await accessGroupService.findCallerCompactIds({
+    const compactIds = await accessGroupReadService.findPrincipalsCompactIds({
       principals,
       objectMetadataId,
       operationType: 'read',

@@ -49,4 +49,37 @@ describe('SAML identity provider creation should fail', () => {
 
     expect(identityProvider).toEqual(existingIdentityProvider);
   });
+
+  it.each([
+    {
+      title: 'when the certificate is followed by a second certificate',
+      certificate: `${SAML_IDENTITY_PROVIDER_CERTIFICATE}\n${SAML_IDENTITY_PROVIDER_CERTIFICATE}`,
+    },
+    {
+      title: 'when the certificate is followed by trailing data',
+      certificate: `${SAML_IDENTITY_PROVIDER_CERTIFICATE}\nQUJDRA==`,
+    },
+  ])('$title', async ({ certificate }) => {
+    const id = uuidv4();
+
+    const { errors } = await createOneSamlIdentityProvider({
+      expectToFail: true,
+      input: {
+        id,
+        name: 'Identity provider',
+        issuer: 'https://identity-provider.example.com',
+        ssoURL: 'https://identity-provider.example.com/sso',
+        certificate,
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+
+    const identityProviders = await globalThis.testDataSource.query(
+      `SELECT "id" FROM core."workspaceSSOIdentityProvider" WHERE id = $1`,
+      [id],
+    );
+
+    expect(identityProviders).toEqual([]);
+  });
 });

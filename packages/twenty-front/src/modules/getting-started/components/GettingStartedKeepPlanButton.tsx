@@ -2,6 +2,7 @@ import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStarte
 import { getGettingStartedKeepPlanDescription } from '@/getting-started/utils/getGettingStartedKeepPlanDescription';
 import { UpdatePaymentMethodModal } from '@/settings/billing/components/UpdatePaymentMethodModal';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCreditCard } from 'twenty-ui/icon';
@@ -9,18 +10,17 @@ import { Button, type ButtonProps } from 'twenty-ui/primitives/input';
 
 type GettingStartedKeepPlanButtonProps = Pick<
   ButtonProps,
-  'size' | 'color' | 'fullWidth'
+  'size' | 'fullWidth'
 >;
 
 export const GettingStartedKeepPlanButton = ({
   size,
-  color,
   fullWidth,
 }: GettingStartedKeepPlanButtonProps) => {
+  const { t } = useLingui();
   const modalInstanceId = `getting-started-keep-plan-${useId()}`;
   const { openDialog } = useDialog();
-  const { keepPlanLabel, planLabel, formattedTrialEnd } =
-    useGettingStartedTrial();
+  const { planLabel, formattedTrialEnd } = useGettingStartedTrial();
 
   if (!isDefined(formattedTrialEnd)) {
     return null;
@@ -30,16 +30,15 @@ export const GettingStartedKeepPlanButton = ({
     <>
       <Button
         size={size}
-        color={color}
         fullWidth={fullWidth}
         startIcon={<IconCreditCard />}
         onClick={() => openDialog(modalInstanceId)}
       >
-        {keepPlanLabel}
+        {t`Keep Twenty`}
       </Button>
       <UpdatePaymentMethodModal
         modalInstanceId={modalInstanceId}
-        title={keepPlanLabel}
+        title={t`Keep Twenty`}
         description={getGettingStartedKeepPlanDescription({
           planLabel,
           formattedTrialEnd,

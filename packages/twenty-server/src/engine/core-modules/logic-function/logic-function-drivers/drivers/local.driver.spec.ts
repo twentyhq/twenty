@@ -15,12 +15,17 @@ import { PageLayoutType } from 'twenty-shared/types';
 import { ZodError } from 'zod';
 
 import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
+import { LocalChildProcessRunnerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-child-process-runner.service';
+import { LocalLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-layer-manager.service';
 import { type LocalDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-driver.type';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
 import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util';
-import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionExecutionMode,
+  LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 const driverOptions: LocalDriverOptions = {
   logicFunctionResourceService: jest.createMockFromModule<
@@ -40,6 +45,10 @@ const driverOptions: LocalDriverOptions = {
     typeof import('src/engine/core-modules/cache-lock/cache-lock.service')
   >('src/engine/core-modules/cache-lock/cache-lock.service').CacheLockService
     .prototype,
+  secureHttpClientService: jest.createMockFromModule<
+    typeof import('src/engine/core-modules/secure-http-client/secure-http-client.service')
+  >('src/engine/core-modules/secure-http-client/secure-http-client.service')
+    .SecureHttpClientService.prototype,
 };
 
 const mockBuilderOptions = {
@@ -419,5 +428,86 @@ setInterval(() => {}, 1000);
 
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(await readFile(heartbeatFile, 'utf8')).toBe(heartbeat);
+  });
+});
+
+describe('LocalDriver.execute', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('returns only the function output as logs and leaves the server console untouched', async () => {
+    jest
+      .spyOn(LocalLayerManagerService.prototype, 'ensureDepsLayer')
+      .mockResolvedValue(undefined);
+    jest
+      .spyOn(LocalLayerManagerService.prototype, 'ensureSdkLayer')
+      .mockResolvedValue(undefined);
+    jest
+      .spyOn(LocalChildProcessRunnerService.prototype, 'assembleNodeModules')
+      .mockResolvedValue(undefined);
+    jest
+      .spyOn(
+        driverOptions.logicFunctionResourceService,
+        'copyBuiltCodeInMemory',
+      )
+      .mockImplementation(async ({ inMemoryDestinationPath }) => {
+        const builtHandlerPath = join(inMemoryDestinationPath, 'handler.mjs');
+
+        await writeFile(
+          builtHandlerPath,
+          `export const handler = async () => {
+            console.log('function output');
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            return { done: true };
+          };`,
+        );
+
+        return builtHandlerPath;
+      });
+
+    const hostSideLines: string[] = [];
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation((...args) => {
+        hostSideLines.push(args.join(' '));
+      });
+
+    const driver = new LocalDriver(driverOptions);
+    const execution = driver.execute({
+      flatLogicFunction: {
+        id: 'logic-function-id',
+        workspaceId: 'workspace-id',
+        executionMode: LogicFunctionExecutionMode.LIVE,
+        handlerName: 'handler',
+        builtHandlerPath: 'handler.mjs',
+      } as never,
+      flatApplication: {
+        universalIdentifier: 'application-universal-identifier',
+        workspaceId: 'workspace-id',
+      } as never,
+      payload: {},
+      context: {
+        retryCount: 0,
+        maxRetries: 0,
+        workspaceId: 'workspace-id',
+        userWorkspaceId: null,
+        workspaceMemberId: null,
+      },
+      timeoutMs: 10_000,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    console.error('server-side line from another workspace');
+
+    const result = await execution;
+
+    expect(result.data).toEqual({ done: true });
+    expect(result.logs).toContain('function output');
+    expect(result.logs).not.toContain(
+      'server-side line from another workspace',
+    );
+    expect(hostSideLines).toEqual(['server-side line from another workspace']);
+    expect(console.error).toBe(consoleErrorSpy);
   });
 });

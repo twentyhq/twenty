@@ -4,15 +4,11 @@ import { Injectable } from '@nestjs/common';
 
 import { isObject } from '@sniptt/guards';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
-import { type PrivateRecordStateRow } from 'src/engine/permissions/internal/record-permission-repository/types/private-record-state-row.type';
-import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-private-record-states-query.util';
 import { buildFindRecordSharesQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-record-shares-query.util';
 import {
   buildFindRuleRecordSharesQuery,
@@ -20,7 +16,6 @@ import {
 } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-rule-record-shares-query.util';
 import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-share-table-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
-import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/internal/record-permission-repository/utils/index-private-record-states-by-record-id.util';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -116,56 +111,21 @@ export class RecordPermissionReadRepository {
     }, new Map<string, RecordShareAccessLevel[]>());
   }
 
-  async findPrivateRecordStates({
-    workspaceId,
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
-    recordIds,
-    transactionScope,
-  }: {
-    workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    recordIds: string[];
-    transactionScope?: RecordPermissionTransactionScope;
-  }): Promise<Map<string, PrivateRecordState>> {
-    if (recordIds.length === 0) {
-      return new Map();
-    }
-
-    const rows =
-      await this.recordPermissionQueryService.execute<PrivateRecordStateRow>({
-        workspaceId,
-        transactionScope,
-        query: buildFindPrivateRecordStatesQuery({
-          tableExpression: buildWorkspaceTableExpression({
-            workspaceId,
-            tableName: computeObjectTargetTable(flatObjectMetadata),
-          }),
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-          recordIds,
-        }),
-      });
-
-    return indexPrivateRecordStatesByRecordId(rows);
-  }
-
-  async findRecordIdsMatchingConditions({
+  async findRecordIdsMatchingSQLConditions({
     workspaceId,
     flatObjectMetadata,
     recordIds,
-    conditions,
+    sqlConditions,
     transactionScope,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordIds: string[];
-    conditions: (SqlCondition | boolean)[];
+    sqlConditions: (SQLCondition | boolean)[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<Set<string>[]> {
-    if (conditions.every((condition) => condition === false)) {
-      return conditions.map(() => new Set());
+    if (sqlConditions.every((sqlCondition) => sqlCondition === false)) {
+      return sqlConditions.map(() => new Set());
     }
 
     const tableExpression = buildWorkspaceTableExpression({
@@ -173,10 +133,10 @@ export class RecordPermissionReadRepository {
       tableName: computeObjectTargetTable(flatObjectMetadata),
     });
     const tableAlias = escapeIdentifier(flatObjectMetadata.nameSingular);
-    const conditionColumns = conditions.flatMap((condition, index) =>
-      isObject(condition)
+    const sqlConditionColumns = sqlConditions.flatMap((sqlCondition, index) =>
+      isObject(sqlCondition)
         ? [
-            `CASE WHEN ${condition.sql} THEN TRUE ELSE FALSE END AS "matches_${index}"`,
+            `CASE WHEN ${sqlCondition.sql} THEN TRUE ELSE FALSE END AS "matches_${index}"`,
           ]
         : [],
     );
@@ -187,12 +147,12 @@ export class RecordPermissionReadRepository {
       workspaceId,
       transactionScope,
       query: {
-        sql: `SELECT ${[`${tableAlias}."id" AS "id"`, ...conditionColumns].join(', ')} FROM ${tableExpression} AS ${tableAlias} WHERE ${tableAlias}."id" = ANY(:candidateRecordIds)`,
+        sql: `SELECT ${[`${tableAlias}."id" AS "id"`, ...sqlConditionColumns].join(', ')} FROM ${tableExpression} AS ${tableAlias} WHERE ${tableAlias}."id" = ANY(:candidateRecordIds)`,
         parameters: {
           ...Object.assign(
             {},
-            ...conditions.map((condition) =>
-              isObject(condition) ? condition.parameters : {},
+            ...sqlConditions.map((sqlCondition) =>
+              isObject(sqlCondition) ? sqlCondition.parameters : {},
             ),
           ),
           candidateRecordIds: recordIds,
@@ -200,29 +160,74 @@ export class RecordPermissionReadRepository {
       },
     });
 
-    return conditions.map(
-      (condition, index) =>
+    return sqlConditions.map(
+      (sqlCondition, index) =>
         new Set(
           rows
             .filter(
-              (row) => condition === true || row[`matches_${index}`] === true,
+              (row) =>
+                sqlCondition === true || row[`matches_${index}`] === true,
             )
             .map(({ id }) => id),
         ),
     );
   }
 
-  async findRecordIdsMatchingCondition({
+  async findRelationJoinValues({
+    workspaceId,
+    targetFlatObjectMetadata,
+    targetColumnName,
+    tableAlias,
+    sqlCondition,
+    joinValues,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    targetFlatObjectMetadata: FlatObjectMetadata;
+    targetColumnName: string;
+    tableAlias: string;
+    sqlCondition: SQLCondition | null;
+    joinValues: string[];
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<string[]> {
+    if (joinValues.length === 0) {
+      return [];
+    }
+
+    const quotedTableAlias = escapeIdentifier(tableAlias);
+    const quotedColumn = `${quotedTableAlias}.${escapeIdentifier(targetColumnName)}`;
+    const rows = await this.recordPermissionQueryService.execute<{
+      joinValue: string;
+    }>({
+      workspaceId,
+      transactionScope,
+      query: {
+        sql: `SELECT DISTINCT ${quotedColumn} AS "joinValue"
+          FROM ${buildWorkspaceTableExpression({
+            workspaceId,
+            tableName: computeObjectTargetTable(targetFlatObjectMetadata),
+          })} AS ${quotedTableAlias}
+          WHERE ${quotedColumn} = ANY(:joinValues)
+            AND ${quotedTableAlias}."deletedAt" IS NULL
+            ${isDefined(sqlCondition) ? `AND (${sqlCondition.sql})` : ''}`,
+        parameters: { ...(sqlCondition?.parameters ?? {}), joinValues },
+      },
+    });
+
+    return rows.map(({ joinValue }) => joinValue);
+  }
+
+  async findRecordIdsMatchingSQLCondition({
     workspaceId,
     flatObjectMetadata,
     recordIds,
-    condition,
+    sqlCondition,
     transactionScope,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordIds: string[];
-    condition: SqlCondition | true;
+    sqlCondition: SQLCondition | true;
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<Set<string>> {
     const tableExpression = buildWorkspaceTableExpression({
@@ -230,8 +235,8 @@ export class RecordPermissionReadRepository {
       tableName: computeObjectTargetTable(flatObjectMetadata),
     });
     const tableAlias = escapeIdentifier(flatObjectMetadata.nameSingular);
-    const conditionClause = isObject(condition)
-      ? ` AND (${condition.sql})`
+    const sqlConditionClause = isObject(sqlCondition)
+      ? ` AND (${sqlCondition.sql})`
       : '';
 
     const rows = await this.recordPermissionQueryService.execute<{
@@ -240,9 +245,9 @@ export class RecordPermissionReadRepository {
       workspaceId,
       transactionScope,
       query: {
-        sql: `SELECT ${tableAlias}."id" FROM ${tableExpression} AS ${tableAlias} WHERE ${tableAlias}."id" = ANY(:candidateRecordIds)${conditionClause}`,
+        sql: `SELECT ${tableAlias}."id" FROM ${tableExpression} AS ${tableAlias} WHERE ${tableAlias}."id" = ANY(:candidateRecordIds)${sqlConditionClause}`,
         parameters: {
-          ...(isObject(condition) ? condition.parameters : {}),
+          ...(isObject(sqlCondition) ? sqlCondition.parameters : {}),
           candidateRecordIds: recordIds,
         },
       },

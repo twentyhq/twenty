@@ -9,7 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
+import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 
 const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
   entries.map((entry) => JSON.stringify(entry)).sort();
@@ -18,10 +18,12 @@ const buildPredicateGroupContent = ({
   parentPredicateGroupId,
   predicates,
   predicateGroups,
+  isRelationHopEnabled,
 }: {
   parentPredicateGroupId: string | null;
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
+  isRelationHopEnabled: boolean;
 }): { predicates: string[]; predicateGroups: string[] } => ({
   predicates: sortByContent(
     predicates
@@ -31,6 +33,9 @@ const buildPredicateGroupContent = ({
           parentPredicateGroupId,
       )
       .map((predicate) => [
+        ...(isDefined(predicate.relationFieldMetadataId)
+          ? [predicate.relationFieldMetadataId, isRelationHopEnabled]
+          : []),
         predicate.fieldMetadataId,
         predicate.subFieldName,
         predicate.operand,
@@ -52,6 +57,7 @@ const buildPredicateGroupContent = ({
           parentPredicateGroupId: predicateGroup.id,
           predicates,
           predicateGroups,
+          isRelationHopEnabled,
         }),
       ]),
   ),
@@ -60,26 +66,32 @@ const buildPredicateGroupContent = ({
 export const computeAccessGroupHash = ({
   roleId,
   objectMetadataId,
-  rowLevelRecordsPermissions,
+  rowLevelPermissionRule,
   rowLevelPermissionPredicateGroupId,
   memberFieldValues,
+  isRelationHopEnabled,
 }: {
   roleId: string;
   objectMetadataId: string;
-  rowLevelRecordsPermissions: RowLevelRecordsPermissions | null | undefined;
+  rowLevelPermissionRule: Pick<
+    RowLevelRecordsPermissions,
+    'predicates' | 'predicateGroups'
+  > | null;
   rowLevelPermissionPredicateGroupId: string | null;
-  memberFieldValues: RowLevelPermissionMemberFieldValues | null;
+  memberFieldValues: RlsMemberFieldValues | null;
+  isRelationHopEnabled: boolean;
 }): string =>
   createHash('sha256')
     .update(
       JSON.stringify([
         roleId,
         objectMetadataId,
-        isDefined(rowLevelRecordsPermissions)
+        isDefined(rowLevelPermissionRule)
           ? buildPredicateGroupContent({
               parentPredicateGroupId: null,
-              predicates: rowLevelRecordsPermissions.predicates,
-              predicateGroups: rowLevelRecordsPermissions.predicateGroups,
+              predicates: rowLevelPermissionRule.predicates,
+              predicateGroups: rowLevelPermissionRule.predicateGroups,
+              isRelationHopEnabled,
             })
           : null,
         rowLevelPermissionPredicateGroupId,

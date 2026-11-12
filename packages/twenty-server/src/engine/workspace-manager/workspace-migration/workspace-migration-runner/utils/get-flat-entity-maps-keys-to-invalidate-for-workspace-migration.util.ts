@@ -19,6 +19,15 @@ const EXTRA_AFFECTED_METADATA_NAMES: Partial<
   index: ['objectMetadata', 'fieldMetadata'],
 };
 
+// Their deletion cascades row-level permission predicates in the database, which fields aggregate
+const EXTRA_DELETE_AFFECTED_METADATA_NAMES: Partial<
+  Record<AllMetadataName, AllMetadataName[]>
+> = {
+  role: ['fieldMetadata'],
+  rowLevelPermissionPredicateGroup: ['fieldMetadata'],
+  rowLevelPermissionRule: ['fieldMetadata'],
+};
+
 const getUpdateAffectedMetadataNames = ({
   metadataName,
   changedProperties,
@@ -57,6 +66,9 @@ export const getFlatEntityMapsKeysToInvalidateForWorkspaceMigration = (
           })
         : getMetadataRelatedMetadataNames(action.metadataName)),
       ...(EXTRA_AFFECTED_METADATA_NAMES[action.metadataName] ?? []),
+      ...(action.type === 'delete'
+        ? (EXTRA_DELETE_AFFECTED_METADATA_NAMES[action.metadataName] ?? [])
+        : []),
     ];
 
     for (const metadataName of affectedMetadataNames) {

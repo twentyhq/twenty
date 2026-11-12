@@ -13,6 +13,10 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 const FLAT_AGENT_ROWS_REQUIREMENT = {
   agent: true,
   application: ['id', 'universalIdentifier'],
+  navigationMenuItem: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['agentId'],
+  },
 } as const;
 
 @Injectable()
@@ -25,7 +29,11 @@ export class WorkspaceFlatAgentMapCacheService extends MetadataFlatEntityMapsCac
   }: WorkspaceCacheProviderContext<
     typeof FLAT_AGENT_ROWS_REQUIREMENT
   >): FlatAgentMaps {
-    const { agent: agents, application: applications } = rows;
+    const {
+      agent: agents,
+      application: applications,
+      navigationMenuItem: navigationMenuItems,
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
@@ -34,7 +42,11 @@ export class WorkspaceFlatAgentMapCacheService extends MetadataFlatEntityMapsCac
 
     for (const agentEntity of agents) {
       const flatAgent = transformAgentEntityToFlatAgent({
-        entity: agentEntity,
+        entity: {
+          ...agentEntity,
+          navigationMenuItems:
+            navigationMenuItems.byAgentId.get(agentEntity.id) || [],
+        },
         applicationIdToUniversalIdentifierMap,
       });
 

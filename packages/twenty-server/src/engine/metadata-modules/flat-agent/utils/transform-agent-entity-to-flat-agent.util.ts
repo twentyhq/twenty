@@ -29,6 +29,8 @@ export const transformAgentEntityToFlatAgent = ({
     name: agentEntity.name,
     label: agentEntity.label,
     icon: agentEntity.icon,
+    avatarColor: agentEntity.avatarColor,
+    avatarShape: agentEntity.avatarShape,
     description: agentEntity.description,
     prompt: agentEntity.prompt,
     modelId: agentEntity.modelId,
@@ -42,5 +44,9 @@ export const transformAgentEntityToFlatAgent = ({
     isActive: agentEntity.isActive,
     overrides: agentEntity.overrides,
     applicationUniversalIdentifier,
+    navigationMenuItemIds: agentEntity.navigationMenuItems.map(({ id }) => id),
+    navigationMenuItemUniversalIdentifiers: agentEntity.navigationMenuItems.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
   };
 };

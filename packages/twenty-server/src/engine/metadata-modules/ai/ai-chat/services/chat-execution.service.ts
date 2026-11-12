@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { convertToModelMessages, hasToolCall } from 'ai';
 import {
   AgentChatThreadConversationType,
-  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+  ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
   REACT_TO_MESSAGE_TOOL_NAME,
@@ -27,7 +27,6 @@ import {
   type AgentTurn,
   AgentTurnService,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
-import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
@@ -39,7 +38,7 @@ import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
+import { createAttachConversationToRecordsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-records.tool';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
@@ -56,12 +55,11 @@ import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/ut
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
 import { injectChatMessageSenders } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-chat-message-senders.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
+import { sanitizeMessagePartsForModel } from 'src/engine/metadata-modules/ai/ai-chat/utils/sanitize-message-parts-for-model.util';
 import { splitContextInstructions } from 'src/engine/metadata-modules/ai/ai-chat/utils/split-context-instructions.util';
 import { tagAiChatExecutionScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-execution-scope.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
-
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import {
@@ -224,7 +222,7 @@ export class ChatExecutionService {
         );
         const { contexts, conversation } = splitContextInstructions(
           await convertToModelMessages(
-            this.sanitizeMessagePartsForModel(
+            sanitizeMessagePartsForModel(
               preparedMessages,
               new Set(Object.keys(toolset.tools)),
             ),
@@ -388,8 +386,8 @@ export class ChatExecutionService {
             : {}),
           ...(canAttachConversationToRecords
             ? {
-                [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
-                  createAttachConversationToRecordTool({
+                [ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME]:
+                  createAttachConversationToRecordsTool({
                     agentChatThreadTargetService:
                       this.agentChatThreadTargetService,
                     toolContext,
@@ -477,19 +475,6 @@ export class ChatExecutionService {
       ),
       codeInterpreterFiles,
     };
-  }
-
-  private sanitizeMessagePartsForModel(
-    messages: ExtendedUIMessage[],
-    directlyCallableToolNames: Set<string>,
-  ): ExtendedUIMessage[] {
-    return messages.map((message) => ({
-      ...message,
-      parts: guideUncallableToolCallsToMetaTool(
-        finalizeDanglingToolParts(message.parts),
-        directlyCallableToolNames,
-      ),
-    }));
   }
 
   private injectBrowsingContextIntoLastUserMessage(

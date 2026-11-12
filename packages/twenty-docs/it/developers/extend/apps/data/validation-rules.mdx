@@ -56,11 +56,12 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 
 * `field('name')` legge un campo e `field('company.employees')` legge un campo tramite una relazione molti-a-uno.
 * `now` è la data e l'ora correnti.
+* `previous('stage')` legge il valore memorizzato prima dell'aggiornamento, per limitare le transizioni. È vuoto quando viene creato un record e legge i campi del record stesso, non i campi tramite una relazione.
 * `and`, `or` e `not` combinano le condizioni.
 * `eq`, `notEq`, `gt`, `gte`, `lt` e `lte` confrontano i valori.
 * `add`, `subtract`, `multiply` e `divide` calcolano i valori.
 * `isIn(field('stage'), ['NEW', 'WON'])` confronta un valore con un elenco.
-* Funzioni come `isNonEmptyString` e `isDefined`.
+* Funzioni come `isNonEmptyString` e `isDefined`, e le funzioni di data `daysSince(date)` (giorni interi dalla data, negativi per una data futura) e `isInRelativeDateRange(date, direction, amount, unit)`, con direction `'PAST'`, `'NEXT'` o `'THIS'` e unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` o `'YEAR'`, come `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 Il builder produce una stringa semplice, che è ciò che [`twenty app pull`](/it/developers/extend/apps/operations/cli) riscrive. Puoi scrivere direttamente quella stringa:
 
@@ -68,7 +69,12 @@ Il builder produce una stringa semplice, che è ciò che [`twenty app pull`](/it
 expression: 'amount > 0 and isNonEmptyString(reference)',
 ```
 
-Le stringhe usano `and`, `or`, `not`, `==`, `!=`, `\<`, `\<=`, `>`, `>=`, `+`, `-`, `*`, `/` e `in [...]`, non `&&` o `||`. Il testo va racchiuso tra virgolette singole o doppie.
+Le stringhe usano `and`, `or`, `not`, `==`, `!=`, `\<`, `\<=`, `>`, `>=`, `+`, `-`, `*`, `/` e `in [...]`, non `&&` o `||`. Il testo va racchiuso tra virgolette singole o doppie. Un valore precedente viene scritto in `previous.stage`:
+
+```ts
+// A proposal only follows a meeting
+expression: 'stage != "PROPOSAL" or previous.stage in ["MEETING", "PROPOSAL"]',
+```
 
 Una regola può leggere i campi che dichiari e i [campi di sistema](/it/developers/extend/apps/data/system-fields) forniti da Twenty, come `createdAt`. La CLI verifica le espressioni rispetto agli oggetti della tua app. Su un oggetto esterno alla tua app, verifica solo la sintassi e il server verifica i campi al momento della sincronizzazione.
 

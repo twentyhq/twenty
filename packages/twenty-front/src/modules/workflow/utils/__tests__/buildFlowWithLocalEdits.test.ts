@@ -8,18 +8,16 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 const buildStep = ({
   id,
   name,
-  logicFunctionId = 'logic-function-id',
 }: {
   id: string;
   name: string;
-  logicFunctionId?: string;
 }): WorkflowCodeAction => ({
   id,
   name,
   valid: true,
   type: 'CODE',
   settings: {
-    input: { logicFunctionId, logicFunctionInput: {} },
+    input: { code: `// ${name}`, logicFunctionInput: {} },
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: { value: 0 },
@@ -58,73 +56,6 @@ describe('buildFlowWithLocalEdits', () => {
         buildStep({ id: 'b', name: 'server b' }),
       ],
     });
-  });
-
-  it("keeps the server step's logic function when a draft copied it", () => {
-    expect(
-      buildFlowWithLocalEdits({
-        serverFlow: {
-          ...serverFlow,
-          steps: [
-            buildStep({
-              id: 'a',
-              name: 'server a',
-              logicFunctionId: 'draft-logic-function-id',
-            }),
-          ],
-        },
-        localFlow,
-        localFlowKeys: ['a'],
-      }).steps,
-    ).toEqual([
-      buildStep({
-        id: 'a',
-        name: 'local a',
-        logicFunctionId: 'draft-logic-function-id',
-      }),
-    ]);
-  });
-
-  it('keeps a local step whose code moved inline', () => {
-    const inlineLocalStep: WorkflowCodeAction = {
-      ...buildStep({ id: 'a', name: 'local a' }),
-      settings: {
-        ...buildStep({ id: 'a', name: 'local a' }).settings,
-        input: {
-          code: 'export const main = async () => ({});',
-          logicFunctionInput: {},
-        },
-      },
-    };
-
-    expect(
-      buildFlowWithLocalEdits({
-        serverFlow,
-        localFlow: { ...localFlow, steps: [inlineLocalStep] },
-        localFlowKeys: ['a'],
-      }).steps,
-    ).toEqual([inlineLocalStep, buildStep({ id: 'b', name: 'server b' })]);
-  });
-
-  it('keeps a legacy local step when the server step moved inline', () => {
-    const inlineServerStep: WorkflowCodeAction = {
-      ...buildStep({ id: 'a', name: 'server a' }),
-      settings: {
-        ...buildStep({ id: 'a', name: 'server a' }).settings,
-        input: {
-          code: 'export const main = async () => ({});',
-          logicFunctionInput: {},
-        },
-      },
-    };
-
-    expect(
-      buildFlowWithLocalEdits({
-        serverFlow: { ...serverFlow, steps: [inlineServerStep] },
-        localFlow,
-        localFlowKeys: ['a'],
-      }).steps,
-    ).toEqual([buildStep({ id: 'a', name: 'local a' })]);
   });
 
   it('returns the server flow when nothing is edited locally', () => {

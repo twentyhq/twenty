@@ -44,12 +44,14 @@ export class AgentConversationWriterService {
     id,
     threadId,
     turnId,
+    agentId,
     parts,
   }: {
     workspaceId: string;
     id: string;
     threadId: string;
     turnId: string;
+    agentId: string | null;
     parts: ExtendedUIMessagePart[];
   }): Promise<void> {
     const dbParts = mapUIMessagePartsToDBParts(parts, id);
@@ -64,6 +66,7 @@ export class AgentConversationWriterService {
             id,
             threadId,
             turnId,
+            agentId,
             role: AgentMessageRole.ASSISTANT,
             processedAt: new Date().toISOString(),
           },

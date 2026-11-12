@@ -3,6 +3,7 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
+import { agentChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -106,6 +107,23 @@ describe('useUpdateAgentChatThreadInboxState', () => {
       expect.any(String),
     );
     expect(mutate).toHaveBeenCalledTimes(1);
+  });
+
+  it('remembers the activity of each thread the member reopens', async () => {
+    mutate.mockResolvedValue({ data: {} });
+    const { result, store } = renderUpdateInboxState();
+
+    await act(async () => {
+      await result.current.updateAgentChatThreadInboxState({
+        threadIds: [THREAD_ID, OTHER_THREAD_ID],
+        action: AgentChatInboxAction.MOVE_TO_INBOX,
+      });
+    });
+
+    expect(store.get(agentChatReopenedThreadActivityState.atom)).toEqual({
+      [THREAD_ID]: LAST_ACTIVITY_AT,
+      [OTHER_THREAD_ID]: null,
+    });
   });
 
   it('puts the member state back and reports a refused snooze', async () => {

@@ -1,6 +1,7 @@
 import {
   VALIDATION_RULE_FUNCTIONS,
   VALIDATION_RULE_NOW_VARIABLE_NAME,
+  VALIDATION_RULE_PREVIOUS_VARIABLE_NAME,
 } from 'twenty-shared/constants';
 
 export type RuleExpression = {
@@ -75,6 +76,8 @@ const functionBuilders = Object.fromEntries(
 export const ruleExpression = {
   ...functionBuilders,
   field: (path: string) => buildAtom(path),
+  previous: (path: string) =>
+    buildAtom(`${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.${path}`),
   now: buildAtom(VALIDATION_RULE_NOW_VARIABLE_NAME),
   and: buildLogical('and'),
   or: buildLogical('or'),

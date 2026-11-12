@@ -308,6 +308,7 @@
       "IconChartPie": "icon/components/TablerIcons",
       "IconCheck": "icon/components/TablerIcons",
       "IconCheckbox": "icon/components/TablerIcons",
+      "IconChecks": "icon/components/TablerIcons",
       "IconChevronDown": "icon/components/TablerIcons",
       "IconChevronLeft": "icon/components/TablerIcons",
       "IconChevronRight": "icon/components/TablerIcons",
@@ -1083,7 +1084,8 @@
       "TabsTabProps": "primitives/navigation/Tabs/types/TabsTabProps",
       "TabsTabSize": "primitives/navigation/Tabs/types/TabsTabSize",
       "TabsTabState": "primitives/navigation/Tabs/types/TabsTabState",
-      "TabsTabValue": "primitives/navigation/Tabs/types/TabsTabValue"
+      "TabsTabValue": "primitives/navigation/Tabs/types/TabsTabValue",
+      "TabsVariant": "primitives/navigation/Tabs/types/TabsVariant"
     }
   },
   "primitives/surfaces": {

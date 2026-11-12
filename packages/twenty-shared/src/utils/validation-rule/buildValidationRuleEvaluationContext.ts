@@ -1,9 +1,11 @@
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNowVariableName';
+import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from '@/constants/ValidationRulePreviousVariableName';
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
+import { getValidationRulePreviousValueFieldPath } from '@/utils/validation-rule/getValidationRulePreviousValueFieldPath';
 import {
   validationRuleCompositeFieldTypeByValue,
   validationRuleNullPlaceholders,
@@ -79,17 +81,38 @@ const descendIntoContainer = (
 
 export const buildValidationRuleEvaluationContext = ({
   record,
+  previousRecord,
   fieldByName,
   identifierPaths,
   now,
+  isPreviousRecordContext = false,
 }: {
   record: Record<string, unknown>;
+  previousRecord?: Record<string, unknown>;
   fieldByName: ReadonlyMap<string, ValidationRuleFieldDescriptor>;
   identifierPaths: string[];
   now: string;
+  isPreviousRecordContext?: boolean;
 }): EvaluationContainer => {
   const context: EvaluationContainer = {};
   const ownedContainers = new WeakSet<object>();
+
+  const previousValuePaths = isPreviousRecordContext
+    ? []
+    : identifierPaths
+        .map(getValidationRulePreviousValueFieldPath)
+        .filter(isDefined);
+
+  if (previousValuePaths.length > 0) {
+    context[VALIDATION_RULE_PREVIOUS_VARIABLE_NAME] =
+      buildValidationRuleEvaluationContext({
+        record: previousRecord ?? {},
+        fieldByName: isDefined(previousRecord) ? fieldByName : new Map(),
+        identifierPaths: previousValuePaths,
+        now,
+        isPreviousRecordContext: true,
+      });
+  }
 
   for (const path of identifierPaths) {
     const segments = path.split('.');
@@ -99,9 +122,16 @@ export const buildValidationRuleEvaluationContext = ({
       continue;
     }
 
-    if (rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME) {
-      context[VALIDATION_RULE_NOW_VARIABLE_NAME] = now;
-      continue;
+    // After previous. every name is a field, as after a relation
+    if (!isPreviousRecordContext) {
+      if (rootSegment === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME) {
+        continue;
+      }
+
+      if (rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME) {
+        context[VALIDATION_RULE_NOW_VARIABLE_NAME] = now;
+        continue;
+      }
     }
 
     const rootField = fieldByName.get(rootSegment);

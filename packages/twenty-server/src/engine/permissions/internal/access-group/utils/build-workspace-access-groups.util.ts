@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -8,11 +9,12 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
-import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
+import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
+import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 
 type AccessGroupWorkspaceMemberMaps = Pick<
   FlatWorkspaceMemberMaps,
@@ -25,11 +27,8 @@ const groupWorkspaceMembersByRoleId = ({
 }: {
   userWorkspaceRoleMap: Record<string, string>;
   flatWorkspaceMemberMaps: AccessGroupWorkspaceMemberMaps;
-}): Map<string, RowLevelPermissionWorkspaceMember[]> => {
-  const workspaceMembersByRoleId = new Map<
-    string,
-    RowLevelPermissionWorkspaceMember[]
-  >();
+}): Map<string, RlsWorkspaceMember[]> => {
+  const workspaceMembersByRoleId = new Map<string, RlsWorkspaceMember[]>();
 
   for (const [userWorkspaceId, roleId] of Object.entries(
     userWorkspaceRoleMap,
@@ -52,12 +51,14 @@ const groupWorkspaceMembersByRoleId = ({
 };
 
 export const buildWorkspaceAccessGroups = ({
+  featureFlagsMap,
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   userWorkspaceRoleMap,
   flatWorkspaceMemberMaps,
 }: {
+  featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   rolesPermissions: Record<string, RoleRecordsPermissions>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -85,7 +86,7 @@ export const buildWorkspaceAccessGroups = ({
 
       if (
         !isDefined(flatObjectMetadata) ||
-        isPermissionStorageObject(flatObjectMetadata)
+        temporaryExcludePermissionStorageObject(flatObjectMetadata)
       ) {
         continue;
       }
@@ -97,6 +98,7 @@ export const buildWorkspaceAccessGroups = ({
           objectRecordsPermissions,
           workspaceMembers: workspaceMembersByRoleId.get(roleId) ?? [],
           flatFieldMetadataMaps,
+          isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
         })) {
           accessGroupByGroupHash.set(accessGroup.groupHash, accessGroup);
         }

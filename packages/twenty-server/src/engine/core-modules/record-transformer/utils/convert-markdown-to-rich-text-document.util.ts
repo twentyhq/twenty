@@ -7,6 +7,7 @@ import {
   type TipTapNode,
 } from 'twenty-shared/utils';
 
+import { SPACES_AND_TABS_ONLY_PATTERN } from 'src/engine/core-modules/record-transformer/constants/spaces-and-tabs-only-pattern.constant';
 import {
   convertMarkdownInlineTokens,
   isImageToken,
@@ -22,7 +23,7 @@ const isBlankContent = (content: TipTapNode[]) =>
   content.every(
     (node) =>
       node.type === TIPTAP_NODE_TYPES.HARD_BREAK ||
-      (node.text ?? '').trim() === '',
+      SPACES_AND_TABS_ONLY_PATTERN.test(node.text ?? ''),
   );
 
 const isListToken = (token: Token): token is Tokens.List =>
@@ -232,7 +233,12 @@ const convertBlockTokens = (tokens: Token[]): TipTapNode[] =>
         return isTableToken(token) ? [convertTable(token)] : [];
       default:
         return convertParagraph([
-          { type: 'text', raw: token.raw, text: token.raw.trimEnd() },
+          {
+            type: 'text',
+            raw: token.raw,
+            text: token.raw.trimEnd(),
+            escaped: true,
+          },
         ]);
     }
   });

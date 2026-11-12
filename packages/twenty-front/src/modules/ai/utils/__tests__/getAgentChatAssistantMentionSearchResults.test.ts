@@ -1,3 +1,5 @@
+import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
+
 import { getAgentChatAssistantMentionSearchResults } from '@/ai/utils/getAgentChatAssistantMentionSearchResults';
 
 describe('getAgentChatAssistantMentionSearchResults', () => {
@@ -5,6 +7,7 @@ describe('getAgentChatAssistantMentionSearchResults', () => {
     expect(
       getAgentChatAssistantMentionSearchResults({
         query: '',
+        assistantDisplayName: 'Ada',
         objectLabelSingular: 'Assistant',
         objectLabelPlural: 'Teammates',
       }).map(({ label }) => label),
@@ -15,6 +18,7 @@ describe('getAgentChatAssistantMentionSearchResults', () => {
     expect(
       getAgentChatAssistantMentionSearchResults({
         query: 'AD',
+        assistantDisplayName: 'Ada',
         objectLabelSingular: 'Assistant',
         objectLabelPlural: 'Teammates',
       }),
@@ -25,9 +29,30 @@ describe('getAgentChatAssistantMentionSearchResults', () => {
     expect(
       getAgentChatAssistantMentionSearchResults({
         query: 'jane',
+        assistantDisplayName: 'Ada',
         objectLabelSingular: 'Assistant',
         objectLabelPlural: 'Teammates',
       }),
     ).toEqual([]);
+  });
+
+  it('uses the renamed display label while preserving the canonical identity', () => {
+    expect(
+      getAgentChatAssistantMentionSearchResults({
+        query: 'SCOUT',
+        assistantDisplayName: 'Scout Bot',
+        objectLabelSingular: 'Assistant',
+        objectLabelPlural: 'Teammates',
+      }),
+    ).toEqual([
+      {
+        recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+        objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+        objectLabelSingular: 'Assistant',
+        objectLabelPlural: 'Teammates',
+        label: 'Scout Bot',
+        imageUrl: '',
+      },
+    ]);
   });
 });

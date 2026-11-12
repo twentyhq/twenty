@@ -1,0 +1,6 @@
+export type RecomputeRecordAccessGroupIdsOfRecordsJobData = {
+  workspaceId: string;
+  objectMetadataId: string;
+  recordIds: string[];
+  propagatedFromObjectMetadataIds?: string[];
+};

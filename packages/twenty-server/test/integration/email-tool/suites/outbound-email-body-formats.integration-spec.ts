@@ -394,26 +394,26 @@ describe('Outbound email body formats (integration)', () => {
   });
 
   describe('upgrade command', () => {
-    const legacyWorkspaceWorkflowIds: string[] = [];
+    const legacyWorkspaceWorkflowVersionIds: string[] = [];
 
     const linkLegacyWorkspaceCopy = async (coreWorkflowVersionId: string) => {
       const [{ coreWorkflowId }] = await global.testDataSource.query(
         `SELECT "coreWorkflowId" FROM core."workflowVersion" WHERE id = $1`,
         [coreWorkflowVersionId],
       );
-      const { workspaceWorkflowId } =
+      const { workspaceWorkflowVersionIds } =
         await linkCoreWorkflowToLegacyWorkspaceIds({
           coreWorkflowId,
           withWorkspaceRecords: true,
         });
 
-      legacyWorkspaceWorkflowIds.push(workspaceWorkflowId);
+      legacyWorkspaceWorkflowVersionIds.push(...workspaceWorkflowVersionIds);
     };
 
     afterAll(async () => {
-      for (const workspaceWorkflowId of legacyWorkspaceWorkflowIds) {
-        await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
-      }
+      await deleteLegacyWorkspaceWorkflowRecords({
+        workspaceWorkflowVersionIds: legacyWorkspaceWorkflowVersionIds,
+      });
     });
 
     const runUpgradeCommand = (dryRun: boolean) =>

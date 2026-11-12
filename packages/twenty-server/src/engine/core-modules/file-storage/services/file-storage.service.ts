@@ -136,6 +136,9 @@ export class FileStorageService {
       .select('COUNT(*)::bigint', 'quantity')
       .addSelect('COALESCE(SUM(file.size), 0)::bigint', 'bytes')
       .where('file.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('file.status IN (:...storedFileStatuses)', {
+        storedFileStatuses: [FILE_STATUS.PENDING, FILE_STATUS.UPLOADED],
+      })
       .withDeleted();
 
     if (spenderType === 'application') {
@@ -656,6 +659,51 @@ export class FileStorageService {
     });
 
     return file;
+  }
+
+  async createRemoteFiles({
+    fileFolder,
+    applicationUniversalIdentifier,
+    applicationId,
+    workspaceId,
+    files,
+  }: Omit<ResourceIdentifier, 'resourcePath'> & {
+    applicationId: string;
+    files: (Pick<
+      FileEntity,
+      'id' | 'size' | 'mimeType' | 'settings' | 'remoteOrigin'
+    > & {
+      resourcePath: string;
+    })[];
+  }): Promise<void> {
+    const rows = files.map(
+      ({ id, resourcePath, size, mimeType, settings, remoteOrigin }) => {
+        const { filePath } = this.validateAndBuildFileStoragePathOrThrow({
+          workspaceId,
+          applicationUniversalIdentifier,
+          fileFolder,
+          resourcePath,
+        });
+
+        return {
+          id,
+          path: filePath,
+          size,
+          mimeType,
+          settings,
+          remoteOrigin,
+          workspaceId,
+          applicationId,
+          status: FILE_STATUS.REMOTE,
+        };
+      },
+    );
+
+    await this.fileRepository
+      .createQueryBuilder()
+      .insert()
+      .values(rows)
+      .execute();
   }
 
   async promotePendingFile({

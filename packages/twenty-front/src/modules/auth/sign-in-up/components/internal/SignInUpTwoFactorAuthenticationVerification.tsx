@@ -275,7 +275,7 @@ export const SignInUpTOTPVerification = () => {
       >{t`Submit`}</MainButton>
       <StyledActionBackLinkContainer>
         <Button variant="link" onClick={handleUseRecoveryCode}>
-          <Trans>Lost your authenticator? Use a recovery code</Trans>
+          <Trans>Lost your authenticator? Use a backup or recovery code</Trans>
         </Button>
       </StyledActionBackLinkContainer>
       <StyledActionBackLinkContainer>

@@ -8,7 +8,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type LegacyWorkflowVersionWorkspaceEntity } from 'src/database/commands/upgrade-version-command/2-20/types/legacy-workflow-version-workspace-entity.type';
 
 @RegisteredWorkspaceCommand('2.20.0', 1783526282685)
 @Command({
@@ -29,14 +29,14 @@ export class BackfillWorkflowVersionToCoreCommand extends ProvisionedWorkspaceCo
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    let workspaceWorkflowVersions: WorkflowVersionWorkspaceEntity[];
+    let workspaceWorkflowVersions: LegacyWorkflowVersionWorkspaceEntity[];
 
     try {
       workspaceWorkflowVersions =
         await this.workspaceOrmManager.executeInWorkspaceContext(
           async () => {
             const workflowVersionRepository =
-              this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>('workflowVersion');
+              this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<LegacyWorkflowVersionWorkspaceEntity>('workflowVersion');
 
             return workflowVersionRepository.find();
           },

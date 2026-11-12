@@ -51,6 +51,8 @@ export const createStandardAgentFlatMetadata = ({
     name,
     label,
     icon,
+    avatarColor: null,
+    avatarShape: null,
     description,
     prompt,
     modelId,
@@ -60,6 +62,8 @@ export const createStandardAgentFlatMetadata = ({
     triggers: [],
     isActive: true,
     overrides: null,
+    navigationMenuItemIds: [],
+    navigationMenuItemUniversalIdentifiers: [],
     workspaceId,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

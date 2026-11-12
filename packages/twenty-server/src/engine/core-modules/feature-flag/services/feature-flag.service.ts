@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { FEATURE_FLAG_DISABLED_EVENT } from 'src/engine/core-modules/feature-flag/constants/feature-flag-disabled-event.constant';
 import { FEATURE_FLAG_ENABLED_EVENT } from 'src/engine/core-modules/feature-flag/constants/feature-flag-enabled-event.constant';
 import { type FeatureFlagEnabledEvent } from 'src/engine/core-modules/feature-flag/types/feature-flag-enabled-event.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -132,9 +133,11 @@ export class FeatureFlagService {
       'featureFlagsMap',
     ]);
 
-    if (value) {
-      this.emitFeatureFlagsEnabled({ keys: [featureFlag], workspaceId });
-    }
+    this.workspaceEventEmitter.emitCustomBatchEvent<FeatureFlagEnabledEvent>(
+      value ? FEATURE_FLAG_ENABLED_EVENT : FEATURE_FLAG_DISABLED_EVENT,
+      [{ key: featureFlag }],
+      workspaceId,
+    );
 
     return result;
   }

@@ -120,6 +120,7 @@ const buildExistingFlatView = ({
     calendarEndFieldMetadataUniversalIdentifier: null,
     anyFieldFilterValue: null,
     shouldHideEmptyGroups: false,
+    shouldDisplayGroupsAsTabs: false,
     kanbanColumnWidth: null,
     groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     isSystemSideEffect: false,

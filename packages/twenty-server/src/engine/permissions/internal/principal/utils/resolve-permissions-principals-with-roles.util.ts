@@ -9,7 +9,7 @@ import {
   type PermissionsLimitingPrincipal,
   type PermissionsMainPrincipal,
 } from 'src/engine/permissions/internal/principal/types/permissions-principal.type';
-import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
+import { type RuntimeLimitingRole } from 'src/engine/permissions/principal/types/runtime-limiting-role.type';
 import {
   type PermissionsApplicationPrincipalWithRole,
   type PermissionsLimitingPrincipalWithRole,
@@ -46,7 +46,38 @@ export type PermissionsPrincipalsRoleMaps = {
       >
     >;
   };
+  flatRoleTargetByApplicationIdMaps: Partial<
+    Record<string, Pick<FlatRoleTarget, 'roleId'>>
+  >;
+  workspaceCustomApplicationId: string;
   flatRoleTargetMaps?: AllFlatEntityMaps['flatRoleTargetMaps'];
+};
+
+const findApplicationRoleId = ({
+  applicationId,
+  userRoleId,
+  workspaceId,
+  roleMaps,
+}: {
+  applicationId: string;
+  userRoleId?: string;
+  workspaceId: string;
+  roleMaps: PermissionsPrincipalsRoleMaps;
+}): string | undefined => {
+  const flatApplication = roleMaps.flatApplicationMaps.byId[applicationId];
+
+  if (!isDefined(flatApplication) || isDefined(flatApplication.deletedAt)) {
+    return undefined;
+  }
+
+  return resolveApplicationRoleId({
+    application: flatApplication,
+    userRoleId,
+    workspaceId,
+    workspaceCustomApplicationId: roleMaps.workspaceCustomApplicationId,
+    flatRoleTargetByApplicationIdMaps:
+      roleMaps.flatRoleTargetByApplicationIdMaps,
+  });
 };
 
 const findWorkspaceMemberRoleId = ({
@@ -72,9 +103,11 @@ const findWorkspaceMemberRoleId = ({
 
 const findMainPrincipalRoleId = ({
   mainPrincipal,
+  workspaceId,
   roleMaps,
 }: {
   mainPrincipal: PermissionsMainPrincipal;
+  workspaceId: string;
   roleMaps: PermissionsPrincipalsRoleMaps;
 }): string | undefined => {
   switch (mainPrincipal.type) {
@@ -90,14 +123,12 @@ const findMainPrincipalRoleId = ({
     case 'agent':
       return roleMaps.flatRoleTargetByAgentIdMaps[mainPrincipal.agentId]
         ?.roleId;
-    case 'application': {
-      const flatApplication =
-        roleMaps.flatApplicationMaps.byId[mainPrincipal.applicationId];
-
-      return isDefined(flatApplication) && !isDefined(flatApplication.deletedAt)
-        ? (flatApplication.defaultRoleId ?? undefined)
-        : undefined;
-    }
+    case 'application':
+      return findApplicationRoleId({
+        applicationId: mainPrincipal.applicationId,
+        workspaceId,
+        roleMaps,
+      });
     case 'webhook':
       return isDefined(roleMaps.flatRoleTargetMaps)
         ? findFlatRoleTargetFromForeignKey({
@@ -127,28 +158,25 @@ const resolveLimitingPrincipal = ({
 const resolveApplicationPrincipal = ({
   applicationPrincipal,
   mainPrincipal,
+  workspaceId,
   roleMaps,
 }: {
   applicationPrincipal: PermissionsApplicationPrincipal;
   mainPrincipal: PermissionsMainPrincipalWithRole;
+  workspaceId: string;
   roleMaps: PermissionsPrincipalsRoleMaps;
 }): PermissionsApplicationPrincipalWithRole | undefined => {
   if (applicationPrincipal.type !== 'application') {
     return applicationPrincipal;
   }
 
-  const flatApplication =
-    roleMaps.flatApplicationMaps.byId[applicationPrincipal.applicationId];
-
-  if (!isDefined(flatApplication) || isDefined(flatApplication.deletedAt)) {
-    return undefined;
-  }
-
-  const applicationRoleId = resolveApplicationRoleId({
-    application: flatApplication,
+  const applicationRoleId = findApplicationRoleId({
+    applicationId: applicationPrincipal.applicationId,
     userRoleId: isPermissionMainPrincipalWorkspaceMember(mainPrincipal)
       ? mainPrincipal.roleId
       : undefined,
+    workspaceId,
+    roleMaps,
   });
 
   return isDefined(applicationRoleId)
@@ -164,7 +192,7 @@ type PermissionsIdentities = {
   mainPrincipal: PermissionsMainPrincipal;
   limitingPrincipal?: PermissionsLimitingPrincipal;
   applicationPrincipal: PermissionsApplicationPrincipal;
-  aiRunScope?: AiRunPermissionScope;
+  runtimeLimitingRole?: RuntimeLimitingRole;
 };
 
 const toApplicationPrincipal = (
@@ -193,7 +221,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        aiRunScope: authContext.aiRunScope,
+        runtimeLimitingRole: authContext.runtimeLimitingRole,
       };
     case 'apiKey':
       return {
@@ -202,7 +230,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application?.id,
         ),
-        aiRunScope: authContext.aiRunScope,
+        runtimeLimitingRole: authContext.runtimeLimitingRole,
       };
     case 'application':
       return {
@@ -212,7 +240,7 @@ const getPermissionsIdentitiesFromAuthContext = (
         applicationPrincipal: toApplicationPrincipal(
           authContext.application.id,
         ),
-        aiRunScope: authContext.aiRunScope,
+        runtimeLimitingRole: authContext.runtimeLimitingRole,
       };
     case 'webhook':
       return {
@@ -240,8 +268,10 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     return undefined;
   }
 
+  const workspaceId = authContext.workspace.id;
   const mainRoleId = findMainPrincipalRoleId({
     mainPrincipal: identities.mainPrincipal,
+    workspaceId,
     roleMaps,
   });
 
@@ -257,6 +287,7 @@ export const resolvePermissionsPrincipalsWithRoles = ({
   const applicationPrincipal = resolveApplicationPrincipal({
     applicationPrincipal: identities.applicationPrincipal,
     mainPrincipal,
+    workspaceId,
     roleMaps,
   });
 
@@ -275,12 +306,12 @@ export const resolvePermissionsPrincipalsWithRoles = ({
   }
 
   return {
-    workspaceId: authContext.workspace.id,
+    workspaceId,
     mainPrincipal,
     limitingPrincipal: limitingPrincipalWithRole,
     applicationPrincipal,
-    ...(isDefined(identities.aiRunScope)
-      ? { aiRunScope: identities.aiRunScope }
+    ...(isDefined(identities.runtimeLimitingRole)
+      ? { runtimeLimitingRole: identities.runtimeLimitingRole }
       : {}),
   };
 };

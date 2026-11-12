@@ -67,6 +67,7 @@ const GET_MESSAGE_THREAD_CHANNEL_QUERY = gql`
       type
       provider
       applicationId
+      conversationStyle
     }
   }
 `;
@@ -88,6 +89,7 @@ const GET_TIMELINE_THREADS_QUERY = gql`
           type
           provider
           applicationId
+          conversationStyle
         }
       }
     }
@@ -879,6 +881,7 @@ describe('app message channels API (e2e)', () => {
               type: MessageChannelType.APP,
               provider: ConnectedAccountProvider.APP,
               applicationId: owningApplicationDbId,
+              conversationStyle: null,
             },
           },
         ]);
@@ -894,6 +897,7 @@ describe('app message channels API (e2e)', () => {
             type: MessageChannelType.APP,
             provider: ConnectedAccountProvider.APP,
             applicationId: owningApplicationDbId,
+            conversationStyle: null,
           },
         );
       } finally {

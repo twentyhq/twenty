@@ -64,6 +64,7 @@ export class ApplicationMessageSendResolver {
       messageChannelId: input.messageChannelId,
       messageThreadId: input.messageThreadId,
       text: input.text,
+      email: input.email,
       idempotencyKey: input.idempotencyKey,
     });
   }

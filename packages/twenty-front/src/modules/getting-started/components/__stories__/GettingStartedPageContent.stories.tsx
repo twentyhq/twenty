@@ -310,13 +310,71 @@ export const DoneStepWithoutThread: Story = {
     });
 
     await expect(
-      within(followUpStepCard).queryByRole('button'),
+      within(followUpStepCard).queryByRole('button', {
+        name: 'Continue thread',
+      }),
     ).not.toBeInTheDocument();
+    await expect(
+      within(followUpStepCard).getByRole('button', { name: 'Next' }),
+    ).toBeVisible();
     await expect(
       within(followUpStepCard).queryByRole('group', {
         name: 'Follow-up instructions',
       }),
     ).not.toBeInTheDocument();
+  },
+};
+
+const COMPLETED_NEXT_STEP_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] =
+  {
+    ...TRIAL_PROGRESS,
+    completedStepActionKeys: [
+      GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.HANDOVER_DEALS,
+    ],
+    selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+  };
+
+export const CompletedNextStep: Story = {
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: {
+          data: { gettingStartedProgress: COMPLETED_NEXT_STEP_PROGRESS },
+        },
+      },
+      {
+        request: { query: UpdateGettingStartedDocument, variables: () => true },
+        maxUsageCount: Infinity,
+        result: ({ input }: UpdateGettingStartedMutationVariables) => ({
+          data: {
+            updateGettingStarted: {
+              ...COMPLETED_NEXT_STEP_PROGRESS,
+              selectedStepActionKey: input.selectedStepActionKey ?? null,
+            },
+          },
+        }),
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      within(
+        await canvas.findByRole('navigation', {
+          name: 'Getting started steps',
+        }),
+      ).getByRole('button', { name: 'Next step' }),
+    );
+    const handoverStepCard = await canvas.findByRole('region', {
+      name: 'Handover ready',
+    });
+
+    await waitFor(() => expect(handoverStepCard).toBeVisible());
   },
 };
 
@@ -436,6 +494,17 @@ export const DoneSteps: Story = {
     expect(
       canvas.queryByRole('textbox', { name: 'Teammate email 1' }),
     ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      within(
+        canvas.getByRole('region', { name: 'Invitations sent' }),
+      ).getByRole('button', { name: 'Next' }),
+    );
+    await waitFor(() =>
+      expect(
+        canvas.getByRole('region', { name: 'Handover ready' }),
+      ).toBeVisible(),
+    );
 
     const steps = canvas.getByRole('navigation', {
       name: 'Getting started steps',

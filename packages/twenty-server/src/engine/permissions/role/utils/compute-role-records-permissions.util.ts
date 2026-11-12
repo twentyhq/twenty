@@ -5,6 +5,7 @@ import {
   type ObjectRecordsPermissions,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
+  type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,10 +13,12 @@ import { type FieldPermissionEntity } from 'src/engine/metadata-modules/object-p
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type RowLevelPermissionRuleEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-rule.entity';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/workflow/common/constants/legacy-workspace-workflow-object-universal-identifiers.constant';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
-  STANDARD_OBJECTS.workflow.universalIdentifier,
+  LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
   STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ];
@@ -44,12 +47,26 @@ type RoleDefinitionForRecordsPermissions = Pick<
     FieldPermissionEntity,
     | 'objectMetadataId'
     | 'fieldMetadataId'
-    | 'rowLevelPermissionPredicateGroupId'
+    | 'rowLevelPermissionRuleId'
     | 'canReadFieldValue'
     | 'canUpdateFieldValue'
   >[];
-  rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
-  rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];
+  rowLevelPermissionRules: Pick<
+    RowLevelPermissionRuleEntity,
+    | 'id'
+    | 'objectMetadataId'
+    | 'canCreateRecords'
+    | 'canReadRecords'
+    | 'canUpdateRecords'
+    | 'canSoftDeleteRecords'
+    | 'canDestroyRecords'
+  >[];
+  rowLevelPermissionPredicates: (RowLevelPermissionPredicate & {
+    rowLevelPermissionRuleId: string | null;
+  })[];
+  rowLevelPermissionPredicateGroups: (RowLevelPermissionPredicateGroup & {
+    rowLevelPermissionRuleId: string | null;
+  })[];
 };
 
 type ObjectRecordsAccess = {
@@ -179,46 +196,20 @@ const NO_FIELDS = { unreadableFields: [], uneditableFields: [] };
 const buildObjectRecordsPermissions = ({
   objectRecordsAccess,
   objectFields,
-  predicates,
-  predicateGroups,
-  rlsRuleFields,
+  rowLevelRecordsPermissions,
 }: {
   objectRecordsAccess: ObjectRecordsAccess;
   objectFields: { unreadableFields: string[]; uneditableFields: string[] };
-  predicates: RowLevelPermissionPredicate[];
-  predicateGroups: RowLevelPermissionPredicateGroup[];
-  rlsRuleFields: { unreadableFields: string[]; uneditableFields: string[] };
-}): ObjectRecordsPermissions => {
-  if (predicates.length === 0) {
-    return {
-      canCreateAllRecords: objectRecordsAccess.canCreate,
-      canReadAllRecords: objectRecordsAccess.canRead,
-      canUpdateAllRecords: objectRecordsAccess.canUpdate,
-      canSoftDeleteAllRecords: objectRecordsAccess.canSoftDelete,
-      canDestroyAllRecords: objectRecordsAccess.canDestroy,
-      ...objectFields,
-    };
-  }
-
-  return {
-    canCreateAllRecords: false,
-    canReadAllRecords: false,
-    canUpdateAllRecords: false,
-    canSoftDeleteAllRecords: false,
-    canDestroyAllRecords: false,
-    ...objectFields,
-    rowLevelRecordsPermissions: {
-      canCreateRecords: objectRecordsAccess.canCreate,
-      canReadRecords: objectRecordsAccess.canRead,
-      canUpdateRecords: objectRecordsAccess.canUpdate,
-      canSoftDeleteRecords: objectRecordsAccess.canSoftDelete,
-      canDestroyRecords: objectRecordsAccess.canDestroy,
-      predicates,
-      predicateGroups,
-      ...rlsRuleFields,
-    },
-  };
-};
+  rowLevelRecordsPermissions: RowLevelRecordsPermissions[];
+}): ObjectRecordsPermissions => ({
+  canCreateAllRecords: objectRecordsAccess.canCreate,
+  canReadAllRecords: objectRecordsAccess.canRead,
+  canUpdateAllRecords: objectRecordsAccess.canUpdate,
+  canSoftDeleteAllRecords: objectRecordsAccess.canSoftDelete,
+  canDestroyAllRecords: objectRecordsAccess.canDestroy,
+  ...objectFields,
+  ...(rowLevelRecordsPermissions.length > 0 && { rowLevelRecordsPermissions }),
+});
 
 export const computeRoleRecordsPermissions = ({
   roleDefinition,
@@ -235,6 +226,7 @@ export const computeRoleRecordsPermissions = ({
   const {
     isPermissionFlagGranted,
     fieldPermissions,
+    rowLevelPermissionRules,
     rowLevelPermissionPredicates,
     rowLevelPermissionPredicateGroups,
   } = roleDefinition;
@@ -256,19 +248,39 @@ export const computeRoleRecordsPermissions = ({
         STANDARD_OBJECTS.agentChatThread.universalIdentifier ||
       isPermissionFlagGranted(PermissionFlagType.AI);
 
-    const predicateGroups = rowLevelPermissionPredicateGroups.filter(
-      (rowLevelPermissionPredicateGroup) =>
-        rowLevelPermissionPredicateGroup.objectMetadataId === objectMetadataId,
-    );
-
-    const rootPredicateGroupIds = new Set(
-      predicateGroups
-        .filter(
-          ({ parentRowLevelPermissionPredicateGroupId }) =>
-            !isDefined(parentRowLevelPermissionPredicateGroupId),
-        )
-        .map(({ id }) => id),
-    );
+    const rowLevelRecordsPermissions = rowLevelPermissionRules
+      .filter((rule) => rule.objectMetadataId === objectMetadataId)
+      .map((rule) => ({
+        rule,
+        predicates: rowLevelPermissionPredicates.filter(
+          ({ rowLevelPermissionRuleId }) =>
+            rowLevelPermissionRuleId === rule.id,
+        ),
+      }))
+      .filter(({ predicates }) => predicates.length > 0)
+      .map(({ rule, predicates }): RowLevelRecordsPermissions => ({
+        ruleId: rule.id,
+        canCreateRecords: rule.canCreateRecords && hasAiAccess,
+        canReadRecords: rule.canReadRecords && hasAiAccess,
+        canUpdateRecords: rule.canUpdateRecords && hasAiAccess,
+        canSoftDeleteRecords: rule.canSoftDeleteRecords && hasAiAccess,
+        canDestroyRecords: rule.canDestroyRecords && hasAiAccess,
+        predicates,
+        predicateGroups: rowLevelPermissionPredicateGroups.filter(
+          ({ rowLevelPermissionRuleId }) =>
+            rowLevelPermissionRuleId === rule.id,
+        ),
+        ...(isWorkflowObject
+          ? NO_FIELDS
+          : buildUnreadableAndUneditableFields({
+              objectMetadata,
+              fieldPermissions: fieldPermissions.filter(
+                ({ rowLevelPermissionRuleId }) =>
+                  rowLevelPermissionRuleId === rule.id,
+              ),
+              resolveMorphRelationPermissionFieldIds,
+            })),
+      }));
 
     objects[objectMetadataId] = buildObjectRecordsPermissions({
       objectFields: isWorkflowObject
@@ -278,7 +290,7 @@ export const computeRoleRecordsPermissions = ({
             fieldPermissions: fieldPermissions.filter(
               (fieldPermission) =>
                 fieldPermission.objectMetadataId === objectMetadataId &&
-                !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId),
+                !isDefined(fieldPermission.rowLevelPermissionRuleId),
             ),
             resolveMorphRelationPermissionFieldIds,
           }),
@@ -289,22 +301,7 @@ export const computeRoleRecordsPermissions = ({
         canSoftDelete: objectRecordsAccess.canSoftDelete && hasAiAccess,
         canDestroy: objectRecordsAccess.canDestroy && hasAiAccess,
       },
-      predicates: rowLevelPermissionPredicates.filter(
-        (rowLevelPermissionPredicate) =>
-          rowLevelPermissionPredicate.objectMetadataId === objectMetadataId,
-      ),
-      predicateGroups,
-      rlsRuleFields: isWorkflowObject
-        ? NO_FIELDS
-        : buildUnreadableAndUneditableFields({
-            objectMetadata,
-            fieldPermissions: fieldPermissions.filter(
-              ({ rowLevelPermissionPredicateGroupId }) =>
-                isDefined(rowLevelPermissionPredicateGroupId) &&
-                rootPredicateGroupIds.has(rowLevelPermissionPredicateGroupId),
-            ),
-            resolveMorphRelationPermissionFieldIds,
-          }),
+      rowLevelRecordsPermissions,
     });
   }
 

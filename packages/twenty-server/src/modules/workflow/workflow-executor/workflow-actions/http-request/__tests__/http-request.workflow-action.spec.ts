@@ -56,7 +56,7 @@ describe('HttpRequestWorkflowAction', () => {
     action = module.get(HttpRequestWorkflowAction);
   });
 
-  it('resolves variables in the request input and forwards them to the HTTP tool', async () => {
+  it('resolves variables in the request input and forwards them to the HTTP tool with the run and step', async () => {
     await action.execute({
       currentStepId: 'step-1',
       steps: [
@@ -74,7 +74,12 @@ describe('HttpRequestWorkflowAction', () => {
         url: 'https://api.example.com/users/42',
         method: 'GET',
       }),
-      expect.objectContaining({ workspaceId: 'workspace-1' }),
+      {
+        workspaceId: 'workspace-1',
+        workflowRunId: 'run-1',
+        workflowStepId: 'step-1',
+        outboundRequestSource: 'workflow-http',
+      },
     );
   });
 

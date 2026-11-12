@@ -1,20 +1,25 @@
 import { type AgentTrigger } from 'twenty-shared/application';
 import { v4 } from 'uuid';
 
-export const buildDefaultCoreAgentTrigger = ({
-  type,
-  objectNameSingular,
-}: {
-  type: AgentTrigger['type'];
-  objectNameSingular: string;
-}): AgentTrigger => {
-  if (type === 'CRON') {
+import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/convertScheduleToCronExpression';
+import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
+
+export const buildDefaultCoreAgentTrigger = (
+  trigger: { type: 'CRON' } | { type: 'DATABASE_EVENT'; eventName: string },
+): AgentTrigger => {
+  if (trigger.type === 'CRON') {
     return {
       id: v4(),
       type: 'CRON',
       isActive: true,
       instructions: null,
-      settings: { pattern: '0 9 * * 1' },
+      settings: {
+        pattern:
+          convertScheduleToCronExpression({
+            type: 'CRON',
+            settings: getCronTriggerDefaultSettings('DAYS'),
+          }) ?? '',
+      },
     };
   }
 
@@ -23,6 +28,6 @@ export const buildDefaultCoreAgentTrigger = ({
     type: 'DATABASE_EVENT',
     isActive: true,
     instructions: null,
-    settings: { eventName: `${objectNameSingular}.created` },
+    settings: { eventName: trigger.eventName },
   };
 };

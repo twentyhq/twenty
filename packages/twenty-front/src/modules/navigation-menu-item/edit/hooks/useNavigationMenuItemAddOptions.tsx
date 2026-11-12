@@ -10,6 +10,7 @@ import {
   IconFolder,
   IconLink,
   IconPerspective,
+  IconSettingsAutomation,
   IconTable,
 } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -29,6 +30,7 @@ import { NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item
 import { hasNativePagePermission } from '@/navigation-menu-item/display/native-page/utils/hasNativePagePermission';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { useNavigationMenuItemAutomationOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions';
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
 import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/utils/getAvailableObjectMetadataForNewSidebarItem';
@@ -114,6 +116,13 @@ export const useNavigationMenuItemAddOptions = ({
         .map((view) => view.objectMetadataId),
     ),
   });
+  const { hasAutomationAccess, automationItemGroups, automationLoading } =
+    useNavigationMenuItemAutomationOptions({
+      search,
+      skip: step !== 'automation' && !isSearchingAllItems,
+      currentItems,
+      addItem,
+    });
 
   const getItems = (
     targetStep: NavigationMenuItemAddStep = step,
@@ -143,6 +152,21 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('record'),
           hasSubMenu: true,
         },
+        ...(hasAutomationAccess
+          ? [
+              {
+                id: 'automation',
+                label: t`Automations`,
+                icon: (
+                  <TintedIconTile
+                    icon={<IconSettingsAutomation size={theme.icon.size.md} />}
+                  />
+                ),
+                onClick: () => navigateToStep('automation'),
+                hasSubMenu: true,
+              },
+            ]
+          : []),
         {
           id: 'folder',
           label: t`Folder`,
@@ -374,6 +398,9 @@ export const useNavigationMenuItemAddOptions = ({
             firstPage.label.localeCompare(secondPage.label),
         );
     }
+    if (targetStep === 'automation') {
+      return automationItemGroups.flatMap((group) => group.items);
+    }
     if (targetStep === 'record') {
       return navigationMenuItemSearchRecords.flatMap((record) => {
         const object = objectMetadataItems.find(
@@ -417,6 +444,8 @@ export const useNavigationMenuItemAddOptions = ({
 
   return {
     getItems,
+    automationItemGroups,
+    automationLoading,
     standalonePagesLoading,
     standalonePagesError,
     recordSearchLoading,

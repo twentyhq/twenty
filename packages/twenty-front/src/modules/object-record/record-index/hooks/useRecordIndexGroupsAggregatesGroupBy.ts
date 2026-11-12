@@ -21,10 +21,11 @@ import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   combineFilters,
   computeRecordGqlOperationFilter,
   isDefined,
+  isNonEmptyArray,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -97,7 +98,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = canReachSomeRecords({
+  const hasReadPermission = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: objectPermissions,
     operationType: 'read',
   });
@@ -110,11 +111,13 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
     recordGroupDefinitionsComponentSelector,
   );
 
+  const visibleRecordGroupValues = recordGroupDefinitions
+    .filter((recordGroupDefinition) => recordGroupDefinition.isVisible)
+    .map((recordGroupDefinition) => recordGroupDefinition.value);
+
   const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
     recordGroupFieldMetadata: groupByFieldMetadataItem,
-    recordGroupValues: recordGroupDefinitions
-      .filter((recordGroupDefinition) => recordGroupDefinition.isVisible)
-      .map((recordGroupDefinition) => recordGroupDefinition.value),
+    recordGroupValues: visibleRecordGroupValues,
   });
 
   const { data, loading, error } = useQuery(groupByAggregateQuery, {
@@ -132,6 +135,10 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
       groupBy: {
         ...groupByGqlInput,
       },
+      // Without a limit the server caps the result at its default number of groups
+      ...(isNonEmptyArray(visibleRecordGroupValues)
+        ? { limit: visibleRecordGroupValues.length }
+        : {}),
     },
     client: apolloCoreClient,
   });

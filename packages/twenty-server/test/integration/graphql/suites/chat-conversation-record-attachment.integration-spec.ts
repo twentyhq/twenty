@@ -11,7 +11,7 @@ import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-ch
 import { type AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
+import { createAttachConversationToRecordsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-records.tool';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -85,7 +85,7 @@ describe('Attaching a conversation to a record from a chat turn', () => {
       userWorkspaceId,
     });
 
-    return createAttachConversationToRecordTool({
+    return createAttachConversationToRecordsTool({
       agentChatThreadTargetService: targets,
       toolContext: {
         workspaceId,
@@ -117,10 +117,20 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     const tool = await buildTool();
 
     await expect(
-      tool.execute({ objectNameSingular: 'company', recordId: companyId }),
+      tool.execute({
+        records: [
+          { objectNameSingular: 'company', recordId: companyId },
+          { objectNameSingular: 'company', recordId: companyId },
+        ],
+      }),
     ).resolves.toMatchObject({ success: true });
     await expect(
-      tool.execute({ objectNameSingular: 'company', recordId: companyId }),
+      tool.execute({
+        records: [
+          { objectNameSingular: 'company', recordId: companyId },
+          { objectNameSingular: 'company', recordId: companyId },
+        ],
+      }),
     ).resolves.toMatchObject({ success: true });
 
     const attachedConversationIds =
@@ -139,12 +149,11 @@ describe('Attaching a conversation to a record from a chat turn', () => {
 
     await expect(
       tool.execute({
-        objectNameSingular: 'company',
-        recordId: missingRecordId,
+        records: [{ objectNameSingular: 'company', recordId: missingRecordId }],
       }),
-    ).resolves.toEqual({
+    ).resolves.toMatchObject({
       success: false,
-      message: 'Failed to attach this conversation to the company record',
+      message: 'Failed to attach this conversation to records',
       error: expect.stringContaining('Record not found'),
     });
   });
@@ -154,8 +163,7 @@ describe('Attaching a conversation to a record from a chat turn', () => {
 
     await expect(
       tool.execute({
-        objectNameSingular: 'unknownObject',
-        recordId: companyId,
+        records: [{ objectNameSingular: 'unknownObject', recordId: companyId }],
       }),
     ).resolves.toMatchObject({
       success: false,

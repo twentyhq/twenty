@@ -61,5 +61,8 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
     fieldMetadataOptionUniversalIdentifiers: [],
+    rowLevelPermissionPredicateUniversalIdentifiers: [],
+    relationRowLevelPermissionPredicateUniversalIdentifiers: [],
+    workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers: [],
   };
 };

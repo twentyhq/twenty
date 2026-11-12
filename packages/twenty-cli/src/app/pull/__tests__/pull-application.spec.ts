@@ -23,6 +23,7 @@ import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { generateMessageId } from 'twenty-shared/i18n';
 
 import { buildAndValidateManifest } from '@/app/manifest/build-and-validate-manifest';
+import { buildManifest } from '@/app/manifest/manifest-build';
 import { buildApplication } from '@/app/bundles/build-application';
 import { manifestUpdateChecksums } from '@/app/manifest/manifest-update-checksums';
 import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
@@ -1122,6 +1123,52 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     ]);
     await expect(read(workflowPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
+
+  it.each(['pull', 'build'])(
+    'does not execute workspace code steps during a later %s',
+    async (operation) => {
+      const markerPath = join(appPath, 'code-step-executed');
+      const source = `import { writeFileSync } from 'node:fs';
+writeFileSync(${JSON.stringify(markerPath)}, 'executed');
+const defineSkill = (config) => ({ success: true, config, errors: [] });
+export default defineSkill({ universalIdentifier: '${SKILL_IDENTIFIER}', name: 'Not a local skill' });
+export const main = async () => ({});
+`;
+      const withCodeStep = createWorkflowExport({
+        name: 'Format name',
+        ...createCodeStep(source),
+      });
+      const codeStepPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+      requireSuccess(await pull(withCodeStep));
+      expect(await read(codeStepPath)).toBe(source);
+      await expect(readFile(markerPath)).rejects.toMatchObject({
+        code: 'ENOENT',
+      });
+
+      if (operation === 'pull') {
+        requireSuccess(await pull(withCodeStep));
+      } else {
+        const result = await buildManifest(appPath);
+        await expect(readFile(markerPath)).rejects.toMatchObject({
+          code: 'ENOENT',
+        });
+        expect(result.errors).toEqual([]);
+        expect(result.manifest?.skills).toEqual([]);
+        expect(
+          result.manifest?.workflows?.[0].version.steps[0].input,
+        ).toMatchObject({
+          code: source,
+        });
+      }
+      await expect(readFile(markerPath)).rejects.toMatchObject({
+        code: 'ENOENT',
+      });
+      requireSuccess(await pull(createExport()));
+      await expect(read(codeStepPath)).rejects.toMatchObject({
+        code: 'ENOENT',
+      });
+    },
+  );
 
   it('writes the source of a code step next to its workflow, which reads it back', async () => {
     const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';

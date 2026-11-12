@@ -2,6 +2,7 @@ import { createOneOperation } from 'test/integration/graphql/utils/create-one-op
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -14,8 +15,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type RecordAccessGroupService } from 'src/engine/permissions/internal/access-group/services/record-access-group.service';
-import { type AccessGroupService } from 'src/engine/permissions/internal/access-group/services/access-group.service';
+import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
+import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -23,11 +24,19 @@ const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const ACCESS_GROUP_TABLE = `${SCHEMA}."accessGroup"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
 
+const RULE_GRANTS = {
+  canCreateRecords: true,
+  canReadRecords: true,
+  canUpdateRecords: true,
+  canSoftDeleteRecords: true,
+  canDestroyRecords: true,
+};
+
 type PersonRow = { id: string; jobTitle: string; accessGroupIds: number[] };
 
 describe('access group ids on records (integration)', () => {
-  let accessGroupService: AccessGroupService;
-  let recordAccessGroupService: RecordAccessGroupService;
+  let accessGroupSyncService: AccessGroupSyncService;
+  let recordAccessGroupComputationService: RecordAccessGroupComputationService;
   let objectMetadataId: string;
   let jobTitleFieldMetadataId: string;
   let originalPeople: Pick<PersonRow, 'id' | 'jobTitle'>[];
@@ -49,7 +58,9 @@ describe('access group ids on records (integration)', () => {
       `SELECT "accessGroup"."compactId" FROM ${ACCESS_GROUP_TABLE} "accessGroup"
         JOIN core."role" "role" ON "role"."id" = "accessGroup"."roleId"
         WHERE "role"."label" = $1 AND "accessGroup"."objectMetadataId" = $2
-          AND "accessGroup"."rowLevelPermissionPredicateGroupId" IS NOT DISTINCT FROM $3`,
+          AND "accessGroup"."rowLevelPermissionPredicateGroupId" IS NOT DISTINCT FROM (
+            SELECT "rowLevelPermissionRuleId" FROM core."rowLevelPermissionPredicateGroup" WHERE "id" = $3
+          )`,
       [roleLabel, objectMetadataId, predicateGroupId],
     );
 
@@ -57,8 +68,8 @@ describe('access group ids on records (integration)', () => {
   };
 
   const syncAndRecompute = async () => {
-    await accessGroupService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
-    await recordAccessGroupService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
+    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
       {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         objectMetadataId,
@@ -67,11 +78,12 @@ describe('access group ids on records (integration)', () => {
   };
 
   beforeAll(async () => {
-    accessGroupService =
-      getAppProviderByClassName<AccessGroupService>('AccessGroupService');
-    recordAccessGroupService =
-      getAppProviderByClassName<RecordAccessGroupService>(
-        'RecordAccessGroupService',
+    accessGroupSyncService = getAppProviderByClassName<AccessGroupSyncService>(
+      'AccessGroupSyncService',
+    );
+    recordAccessGroupComputationService =
+      getAppProviderByClassName<RecordAccessGroupComputationService>(
+        'RecordAccessGroupComputationService',
       );
 
     [{ id: objectMetadataId }] = await global.testDataSource.query(
@@ -133,12 +145,15 @@ describe('access group ids on records (integration)', () => {
     });
     const roleId = data.createOneRole.id;
     const predicateGroupId = v4();
+
+    await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     const upsertRule = (value: string) =>
       upsertRowLevelPermissionPredicates({
         expectToFail: false,
         input: {
           roleId,
           objectMetadataId,
+          ...RULE_GRANTS,
           predicateGroups: [
             {
               id: predicateGroupId,
@@ -216,6 +231,8 @@ describe('access group ids on records (integration)', () => {
     });
     const roleId = data.createOneRole.id;
     const predicateGroupId = v4();
+
+    await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     let createdPersonId: string | undefined;
 
     await upsertRowLevelPermissionPredicates({
@@ -223,6 +240,7 @@ describe('access group ids on records (integration)', () => {
       input: {
         roleId,
         objectMetadataId,
+        ...RULE_GRANTS,
         predicateGroups: [
           {
             id: predicateGroupId,

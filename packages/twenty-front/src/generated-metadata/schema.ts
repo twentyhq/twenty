@@ -16,6 +16,13 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type AccessGroupPropagationProgress = {
+  __typename?: 'AccessGroupPropagationProgress';
+  isInProgress: Scalars['Boolean']['output'];
+  remainingRecordCount: Scalars['Int']['output'];
+  totalRecordCount: Scalars['Int']['output'];
+};
+
 export type ActivateWorkspaceInput = {
   /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
   displayName?: InputMaybe<Scalars['String']['input']>;
@@ -30,6 +37,8 @@ export type AddQuerySubscriptionInput = {
 export type Agent = {
   __typename?: 'Agent';
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  avatarColor?: Maybe<Scalars['String']['output']>;
+  avatarShape?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
@@ -182,10 +191,12 @@ export type AgentMessage = {
   agentId?: Maybe<Scalars['UUID']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
+  isBuiltInAssistant: Scalars['Boolean']['output'];
   parts: Array<AgentMessagePart>;
   processedAt?: Maybe<Scalars['DateTime']['output']>;
   reactions: Array<AgentMessageReactionSummary>;
   role: Scalars['String']['output'];
+  senderApplicationId?: Maybe<Scalars['UUID']['output']>;
   senderUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   senderWorkspaceMemberId?: Maybe<Scalars['UUID']['output']>;
   status: Scalars['String']['output'];
@@ -233,6 +244,7 @@ export type AgentMessageReactionSummary = {
 
 export type AgentRun = {
   __typename?: 'AgentRun';
+  canReadThread: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   creatorName: Scalars['String']['output'];
   creatorSource: Scalars['String']['output'];
@@ -398,6 +410,7 @@ export enum AllMetadataName {
   roleTarget = 'roleTarget',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
+  rowLevelPermissionRule = 'rowLevelPermissionRule',
   searchFieldMetadata = 'searchFieldMetadata',
   settingsMenuItem = 'settingsMenuItem',
   skill = 'skill',
@@ -533,6 +546,7 @@ export type Application = {
   defaultRoleId?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   frontComponents: Array<FrontComponent>;
+  grantRoleId?: Maybe<Scalars['UUID']['output']>;
   grantedIframeMediaPermissions: Array<IframeMediaPermission>;
   healthCheckLogicFunctionId?: Maybe<Scalars['UUID']['output']>;
   id: Scalars['UUID']['output'];
@@ -925,6 +939,11 @@ export type ApprovedAccessDomain = {
   domain: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   isValidated: Scalars['Boolean']['output'];
+};
+
+export type ArchiveInboxThreadInput = {
+  threadId: Scalars['UUID']['input'];
+  workspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
 };
 
 export type AuthBypassProviders = {
@@ -1671,6 +1690,8 @@ export type CreateAgentChatChannelInput = {
 };
 
 export type CreateAgentInput = {
+  avatarColor?: InputMaybe<Scalars['String']['input']>;
+  avatarShape?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
@@ -1858,6 +1879,7 @@ export type CreateMessageSuppressionInput = {
 
 export type CreateNavigationMenuItemInput = {
   agentChatChannelId?: InputMaybe<Scalars['UUID']['input']>;
+  agentId?: InputMaybe<Scalars['UUID']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
   folderId?: InputMaybe<Scalars['UUID']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
@@ -1872,6 +1894,7 @@ export type CreateNavigationMenuItemInput = {
   type: NavigationMenuItemType;
   userWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
   viewId?: InputMaybe<Scalars['UUID']['input']>;
+  workflowId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type CreateObjectInput = {
@@ -2064,6 +2087,7 @@ export type CreateViewInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
@@ -2570,9 +2594,12 @@ export enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
+  IS_HTTP_EGRESS_LAMBDA_ENABLED = 'IS_HTTP_EGRESS_LAMBDA_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
+  IS_PERMISSION_TABLES_ENABLED = 'IS_PERMISSION_TABLES_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
+  IS_RECORD_GROUP_TABS_ENABLED = 'IS_RECORD_GROUP_TABS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
@@ -3641,6 +3668,7 @@ export type Mutation = {
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   approveApplicationIframeMediaPermissions: Application;
+  archiveInboxThread: Scalars['Boolean']['output'];
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3780,6 +3808,7 @@ export type Mutation = {
   generateFrontComponentApplicationTokenPair: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
   generateTransientToken: TransientToken;
+  generateTwoFactorAuthenticationBackupCodes: TwoFactorAuthenticationBackupCodes;
   generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
@@ -3852,6 +3881,7 @@ export type Mutation = {
   startChannelSync: ChannelSyncSuccess;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
+  stopGenerate: Scalars['Boolean']['output'];
   stopImpersonation: StopImpersonation;
   switchBillingPlan: BillingUpdate;
   switchSubscriptionInterval: BillingUpdate;
@@ -3974,6 +4004,11 @@ export type MutationAddQueryToEventStreamArgs = {
 export type MutationApproveApplicationIframeMediaPermissionsArgs = {
   applicationId: Scalars['UUID']['input'];
   approvedIframeMediaPermissions: Array<IframeMediaPermissionInput>;
+};
+
+
+export type MutationArchiveInboxThreadArgs = {
+  input: ArchiveInboxThreadInput;
 };
 
 
@@ -4647,6 +4682,11 @@ export type MutationGenerateFrontComponentApplicationTokenPairArgs = {
 };
 
 
+export type MutationGenerateTwoFactorAuthenticationBackupCodesArgs = {
+  otp?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type MutationGenerateTwoFactorAuthenticationRecoveryCodeArgs = {
   otp?: InputMaybe<Scalars['String']['input']>;
   userId: Scalars['UUID']['input'];
@@ -5027,6 +5067,11 @@ export type MutationStartWorkspaceSetupChatArgs = {
 
 export type MutationStopAgentChatStreamArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationStopGenerateArgs = {
+  input: StopGenerateInput;
 };
 
 
@@ -5492,6 +5537,7 @@ export type NativeModelCapabilities = {
 export type NavigationMenuItem = {
   __typename?: 'NavigationMenuItem';
   agentChatChannelId?: Maybe<Scalars['UUID']['output']>;
+  agentId?: Maybe<Scalars['UUID']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
@@ -5510,9 +5556,11 @@ export type NavigationMenuItem = {
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
+  workflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export enum NavigationMenuItemType {
+  AGENT = 'AGENT',
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
@@ -5520,7 +5568,8 @@ export enum NavigationMenuItemType {
   OBJECT = 'OBJECT',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
-  VIEW = 'VIEW'
+  VIEW = 'VIEW',
+  WORKFLOW = 'WORKFLOW'
 }
 
 export type NotesConfiguration = {
@@ -5711,7 +5760,7 @@ export type ObjectRecordsPermissions = {
   objectMetadataId: Scalars['UUID']['output'];
   /** @deprecated Use unreadableFields and uneditableFields */
   restrictedFields: Scalars['JSON']['output'];
-  rowLevelRecordsPermissions?: Maybe<RowLevelRecordsPermissions>;
+  rowLevelRecordsPermissions?: Maybe<Array<RowLevelRecordsPermissions>>;
   uneditableFields: Array<Scalars['UUID']['output']>;
   unreadableFields: Array<Scalars['UUID']['output']>;
 };
@@ -6048,6 +6097,7 @@ export type PublicWorkspaceDataSummary = {
 
 export type Query = {
   __typename?: 'Query';
+  accessGroupPropagationProgress: AccessGroupPropagationProgress;
   agentChatChannelRoles: Array<AgentChatChannelRole>;
   agentChatChannelSummaries: Array<AgentChatChannelSummary>;
   agentChatChannelThreadIds: AgentChatChannelThreadIds;
@@ -6194,6 +6244,7 @@ export type Query = {
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
+  twoFactorAuthenticationBackupCodeStatus: TwoFactorAuthenticationBackupCodeStatus;
   twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus;
   unsubscribeTopics: Array<UnsubscribeTopic>;
   usageLimits: Array<UsageLimit>;
@@ -6936,6 +6987,7 @@ export type Role = {
   rowLevelPermissionFieldPermissions?: Maybe<Array<FieldPermission>>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
+  rowLevelPermissionRules?: Maybe<Array<RowLevelPermissionRule>>;
   universalIdentifier?: Maybe<Scalars['UUID']['output']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
@@ -7031,6 +7083,17 @@ export enum RowLevelPermissionPredicateOperand {
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
 
+export type RowLevelPermissionRule = {
+  __typename?: 'RowLevelPermissionRule';
+  canCreateRecords: Scalars['Boolean']['output'];
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
+  id: Scalars['UUID']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+};
+
 export type RowLevelRecordsPermissions = {
   __typename?: 'RowLevelRecordsPermissions';
   canCreateRecords: Scalars['Boolean']['output'];
@@ -7040,8 +7103,9 @@ export type RowLevelRecordsPermissions = {
   canUpdateRecords: Scalars['Boolean']['output'];
   predicateGroups: Array<RowLevelPermissionPredicateGroup>;
   predicates: Array<RowLevelPermissionPredicate>;
-  uneditableFields?: Maybe<Array<Scalars['UUID']['output']>>;
-  unreadableFields?: Maybe<Array<Scalars['UUID']['output']>>;
+  ruleId: Scalars['UUID']['output'];
+  uneditableFields: Array<Scalars['UUID']['output']>;
+  unreadableFields: Array<Scalars['UUID']['output']>;
 };
 
 export type RunAgentInput = {
@@ -7125,11 +7189,21 @@ export type SearchField = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type SendAppChannelMessageEmailInput = {
+  bcc?: InputMaybe<Scalars['String']['input']>;
+  body: Scalars['String']['input'];
+  cc?: InputMaybe<Scalars['String']['input']>;
+  inReplyTo?: InputMaybe<Scalars['String']['input']>;
+  subject: Scalars['String']['input'];
+  to: Scalars['String']['input'];
+};
+
 export type SendAppChannelMessageInput = {
+  email?: InputMaybe<SendAppChannelMessageEmailInput>;
   idempotencyKey: Scalars['UUID']['input'];
   messageChannelId: Scalars['UUID']['input'];
   messageThreadId: Scalars['UUID']['input'];
-  text: Scalars['String']['input'];
+  text?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SendAppChannelMessageOutput = {
@@ -7324,6 +7398,10 @@ export type StartWorkspaceSetupChatResult = {
   __typename?: 'StartWorkspaceSetupChatResult';
   outcome: WorkspaceSetupChatOutcome;
   thread?: Maybe<AgentChatThread>;
+};
+
+export type StopGenerateInput = {
+  runId: Scalars['UUID']['input'];
 };
 
 export type StopImpersonation = {
@@ -7527,6 +7605,16 @@ export type TriggerUpgradeApplicationResult = {
   jobId: Scalars['String']['output'];
 };
 
+export type TwoFactorAuthenticationBackupCodeStatus = {
+  __typename?: 'TwoFactorAuthenticationBackupCodeStatus';
+  remainingBackupCodeCount: Scalars['Int']['output'];
+};
+
+export type TwoFactorAuthenticationBackupCodes = {
+  __typename?: 'TwoFactorAuthenticationBackupCodes';
+  backupCodes: Array<Scalars['String']['output']>;
+};
+
 export type TwoFactorAuthenticationMethodSummary = {
   __typename?: 'TwoFactorAuthenticationMethodSummary';
   status: Scalars['String']['output'];
@@ -7542,6 +7630,7 @@ export type TwoFactorAuthenticationRecoveryCode = {
 
 export type TwoFactorAuthenticationRecoveryCodeRedemption = {
   __typename?: 'TwoFactorAuthenticationRecoveryCodeRedemption';
+  isTwoFactorAuthenticationReset: Scalars['Boolean']['output'];
   provisioningUri?: Maybe<Scalars['String']['output']>;
   tokens?: Maybe<AuthTokenPair>;
 };
@@ -7600,6 +7689,8 @@ export type UpdateAgentChatChannelInput = {
 };
 
 export type UpdateAgentInput = {
+  avatarColor?: InputMaybe<Scalars['String']['input']>;
+  avatarShape?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['UUID']['input'];
@@ -8052,6 +8143,7 @@ export type UpdateViewInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
   type?: InputMaybe<ViewType>;
@@ -8178,6 +8270,11 @@ export type UpsertPermissionFlagsInput = {
 };
 
 export type UpsertRowLevelPermissionPredicatesInput = {
+  canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
   objectMetadataId: Scalars['UUID']['input'];
   predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
   predicates: Array<RowLevelPermissionPredicateInput>;
@@ -8496,11 +8593,7 @@ export type UserWorkspace = {
   id: Scalars['UUID']['output'];
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
-  /** @deprecated Use objectRecordsPermissions */
-  objectPermissions?: Maybe<Array<ObjectPermission>>;
   objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
-  /** @deprecated Use objectRecordsPermissions */
-  objectsPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;
   updatedAt: Scalars['DateTime']['output'];
@@ -8550,6 +8643,7 @@ export type VerifyEmailAndGetLoginToken = {
 
 export type VerifyTwoFactorAuthenticationMethod = {
   __typename?: 'VerifyTwoFactorAuthenticationMethod';
+  backupCodes?: Maybe<Array<Scalars['String']['output']>>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -8587,6 +8681,7 @@ export type View = {
   /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn: ViewOpenRecordIn;
   position: Scalars['Float']['output'];
+  shouldDisplayGroupsAsTabs?: Maybe<Scalars['Boolean']['output']>;
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
   type: ViewType;
   universalIdentifier: Scalars['UUID']['output'];
@@ -8857,6 +8952,7 @@ export enum WorkflowActionType {
   IF_ELSE = 'IF_ELSE',
   ITERATOR = 'ITERATOR',
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
+  MCP_TOOL = 'MCP_TOOL',
   PICK_RECORD = 'PICK_RECORD',
   SEND_CHAT_MESSAGE = 'SEND_CHAT_MESSAGE',
   SEND_EMAIL = 'SEND_EMAIL',

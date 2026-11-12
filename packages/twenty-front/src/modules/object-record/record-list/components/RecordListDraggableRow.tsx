@@ -12,7 +12,7 @@ import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/
 import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
 import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { preventNativeDragStart } from '@/ui/utilities/drag-and-drop/utils/preventNativeDragStart';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 const StyledDraggableRow = styled.div<{ $isDragSourceFaded: boolean }>`
   opacity: ${({ $isDragSourceFaded }) =>
@@ -60,7 +60,7 @@ export const RecordListDraggableRow = ({
     type: RECORD_LIST_ROW_DND_TYPE,
     accept: RECORD_LIST_ROW_DND_TYPE,
     data: rowDragData,
-    disabled: !canReachSomeRecords({
+    disabled: !canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: objectPermissions,
       operationType: 'update',
     }),

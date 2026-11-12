@@ -69,6 +69,15 @@ Puneți textul între ghilimele simple sau duble și utilizați paranteze pentru
 
 Pentru a face obligatoriu un câmp, utilizați `not isEmpty(fieldName)`. Acest lucru funcționează și pentru câmpuri compuse, cum ar fi e-mailurile și adresele.
 
+### Comparați datele
+
+| Funcție                                                | Folosiți                                                                                                                                                                                                                                                |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `daysSince(date)`                                      | Obține numărul de zile de la o dată până astăzi, în UTC. O dată din viitor produce un număr negativ.                                                                                                                                                    |
+| `isInRelativeDateRange(date, direction, amount, unit)` | Verifică dacă o dată se încadrează într-o perioadă calculată de astăzi, în UTC. `direction` este `"PAST"`, `"NEXT"` sau `"THIS"`, iar `unit` este `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` sau `"YEAR"`. `"PAST"` și `"NEXT"` exclud perioada curentă. |
+
+De exemplu, `daysSince(closeDate) >= 0 and daysSince(closeDate) \<= 30` permite o salvare numai la data de închidere sau în cele 30 de zile de după aceasta.
+
 ### Faceți referire la câmpuri compuse și asociate
 
 Utilizați un punct pentru a citi o parte a unui câmp compus, cum ar fi `name.firstName` sau `amount.amountMicros`. De asemenea, puteți citi un câmp printr-o relație de tip mulți-la-unu, cum ar fi `company.name` pentru o persoană. Selectați câmpuri din asistent pentru a găsi căile disponibile.

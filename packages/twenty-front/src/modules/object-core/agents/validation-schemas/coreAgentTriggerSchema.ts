@@ -3,6 +3,7 @@ import {
   AGENT_TRIGGER_EVENT_NAME_PATTERN,
   AGENT_TRIGGER_LIMITS,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 const isValidCronPattern = (pattern: string): boolean => {
@@ -32,11 +33,14 @@ export const coreAgentTriggerSchema = z.discriminatedUnion('type', [
       .object({
         eventName: z.string().regex(AGENT_TRIGGER_EVENT_NAME_PATTERN),
         updatedFields: z.array(z.string().min(1)).optional(),
+        condition: z.string().optional(),
         batchMode: z.boolean().optional(),
       })
       .refine(
         ({ eventName, updatedFields }) =>
-          updatedFields === undefined || eventName.endsWith('.updated'),
+          !isDefined(updatedFields) ||
+          eventName.endsWith('.updated') ||
+          eventName.endsWith('.upserted'),
       ),
   }),
   z.object({

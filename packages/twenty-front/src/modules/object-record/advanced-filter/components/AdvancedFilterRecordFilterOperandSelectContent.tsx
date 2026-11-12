@@ -55,13 +55,12 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
 
   const { isSystemTimezone } = useUserTimezone();
 
-  const timeZoneAbbreviation =
-    isWorkflowFindRecords === true
-      ? // Date and time syntax must stay stable across locales.
-        doNotTranslate('UTC')
-      : !isSystemTimezone
-        ? userTimeZoneAbbreviation
-        : null;
+  const timeZoneAbbreviation = isWorkflowFindRecords
+    ? // Date and time syntax must stay stable across locales.
+      doNotTranslate('UTC')
+    : !isSystemTimezone
+      ? userTimeZoneAbbreviation
+      : null;
 
   return (
     <DropdownRoot

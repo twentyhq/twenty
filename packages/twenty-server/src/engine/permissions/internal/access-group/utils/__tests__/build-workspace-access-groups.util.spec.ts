@@ -50,41 +50,47 @@ const rolesPermissions: Record<string, RoleRecordsPermissions> = {
   }),
   [BROKEN_ROLE_ID]: buildRoleRecordsPermissions({
     ...noAccess,
-    rowLevelRecordsPermissions: {
-      canCreateRecords: false,
-      canReadRecords: true,
-      canUpdateRecords: false,
-      canSoftDeleteRecords: false,
-      canDestroyRecords: false,
-      predicates: [
-        {
-          id: 'stale',
-          fieldMetadataId: 'field-id',
-          objectMetadataId: OBJECT_ID,
-          operand: RowLevelPermissionPredicateOperand.IS,
-          value: null,
-          subFieldName: null,
-          rowLevelPermissionPredicateGroupId: 'rule',
-          workspaceMemberFieldMetadataId: 'gone-field',
-          workspaceMemberSubFieldName: null,
-          roleId: BROKEN_ROLE_ID,
-        },
-      ],
-      predicateGroups: [
-        {
-          id: 'rule',
-          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
-          objectMetadataId: OBJECT_ID,
-          parentRowLevelPermissionPredicateGroupId: null,
-          positionInRowLevelPermissionPredicateGroup: null,
-          canReadRecords: true,
-          canUpdateRecords: false,
-          canSoftDeleteRecords: false,
-          canDestroyRecords: false,
-          roleId: BROKEN_ROLE_ID,
-        },
-      ],
-    },
+    rowLevelRecordsPermissions: [
+      {
+        ruleId: 'rule',
+        canCreateRecords: false,
+        canReadRecords: true,
+        canUpdateRecords: false,
+        canSoftDeleteRecords: false,
+        canDestroyRecords: false,
+        predicates: [
+          {
+            id: 'stale',
+            fieldMetadataId: 'field-id',
+            objectMetadataId: OBJECT_ID,
+            operand: RowLevelPermissionPredicateOperand.IS,
+            value: null,
+            subFieldName: null,
+            rowLevelPermissionPredicateGroupId: 'rule',
+            workspaceMemberFieldMetadataId: 'gone-field',
+            workspaceMemberSubFieldName: null,
+            roleId: BROKEN_ROLE_ID,
+          },
+        ],
+        predicateGroups: [
+          {
+            id: 'rule',
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            objectMetadataId: OBJECT_ID,
+            parentRowLevelPermissionPredicateGroupId: null,
+            positionInRowLevelPermissionPredicateGroup: null,
+            canReadRecords: true,
+            canUpdateRecords: false,
+            canSoftDeleteRecords: false,
+            canDestroyRecords: false,
+            roleId: BROKEN_ROLE_ID,
+          },
+        ],
+        unreadableFields: [],
+        uneditableFields: [],
+      },
+    ],
   }),
 };
 
@@ -127,6 +133,7 @@ const workspaceMember: FlatWorkspaceMember = {
 describe('buildWorkspaceAccessGroups', () => {
   it('should report a role it cannot compute and still build the others', () => {
     const { accessGroups, hasFailures } = buildWorkspaceAccessGroups({
+      featureFlagsMap: {},
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),

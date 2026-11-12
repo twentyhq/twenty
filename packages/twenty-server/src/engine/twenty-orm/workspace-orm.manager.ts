@@ -23,8 +23,8 @@ import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/works
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 
 type OrmRepositoryOptions = WorkspaceRepositoryOptions & {
   useReplica?: boolean;
@@ -37,8 +37,8 @@ export class WorkspaceOrmManager {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
@@ -138,11 +138,11 @@ export class WorkspaceOrmManager {
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
     const permissionsPrincipals =
-      await this.principalPermissionsService.resolvePermissionsPrincipals({
+      await this.principalPermissionsReadService.resolvePermissionsPrincipals({
         authContext,
       });
     const recordReadRestrictions = isDefined(permissionsPrincipals)
-      ? await this.recordPermissionsService.findRecordReadRestrictions({
+      ? await this.recordPermissionsReadService.findRecordReadRestrictions({
           principals: permissionsPrincipals,
         })
       : NO_RECORD_READ_RESTRICTIONS;

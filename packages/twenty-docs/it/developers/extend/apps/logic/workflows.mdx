@@ -107,7 +107,7 @@ I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user
 
 * I passaggi relativi ai record usano `objectUniversalIdentifier` anziché un nome di oggetto.
 * I filtri e gli ordinamenti puntano ai campi con `fieldMetadataUniversalIdentifier`.
-* Gli operandi di filtro accettano valori `ViewFilterOperand`, esportati da `twenty-sdk/define`. Gli operatori del gruppo di filtri accettano valori stringa come `'AND'` o `'OR'`.
+* Gli operandi di filtro accettano valori `ViewFilterOperand`. Gli operatori dei gruppi di filtri accettano valori `StepLogicalOperator` nei filtri dei passaggi e valori `RecordFilterGroupLogicalOperator` nei filtri dei record; in entrambi i casi, `AND` o `OR`. `twenty-sdk/define` esporta tutti e tre, insieme a `ViewFilterOperandDeprecated` per gli operandi che i workflow meno recenti archiviano ancora.
 * I campi del modulo di tipo `RECORD` denominano il proprio oggetto con `settings.objectUniversalIdentifier`. I campi di tipo `SELECT` e `MULTI_SELECT` offrono le opzioni di un campo esistente dello stesso tipo, denominato con `settings.selectedFieldUniversalIdentifier`.
 * Un passaggio `CODE` contiene il proprio codice sorgente TypeScript in `input.code`: un modulo che esporta una funzione `main`, la quale riceve `input.logicFunctionInput`. Per condividere il codice tra workflow, usa invece un passaggio `LOGIC_FUNCTION`.
 
@@ -137,7 +137,7 @@ I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user
   * `connectedAccountId`: una variabile, ad esempio `{{trigger.properties.after.connectedAccountId}}`. I passaggi Email accettano anche un ID membro dell'area di lavoro, ad esempio `{{trigger.properties.after.assigneeId}}`, che viene risolto nel primo account di quel membro in grado di inviare.
 
   Imposta esattamente uno dei due.
-* `SEND_CHAT_MESSAGE` invia un messaggio alla posta in arrivo di un membro del workspace, impostato con `workspaceMemberId`. Anche gli ID dei membri sono locali a ciascun workspace, quindi un'app passa una variabile, ad esempio `{{trigger.properties.after.assigneeId}}`.
+* `SEND_CHAT_MESSAGE` invia un messaggio alla posta in arrivo di un membro del workspace, impostato con `workspaceMemberId`. Anche gli ID dei membri sono locali a ciascun workspace, quindi un'app passa una variabile, ad esempio `{{trigger.properties.after.assigneeId}}`. I membri menzionati nel relativo `text`, ad esempio quelli nel corpo di una nota passato come `{{trigger.properties.after.bodyV2.markdown}}`, ricevono una notifica, come per i [messaggi della posta in arrivo](/it/developers/extend/apps/logic/inbox#mentions-and-record-references).
 
 ## Dopo l'installazione
 

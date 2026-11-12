@@ -120,7 +120,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonExtendedInput<MergeManyQueryArgs>,
   ): Promise<ObjectRecord[]> {
     const unreadableFieldMetadataIds =
-      await this.recordPermissionsService.findUnreadableFields({
+      await this.recordFieldPermissionsReadService.findUnreadableFields({
         principals: context.permissionsPrincipals,
         objectMetadataId: context.flatObjectMetadata.id,
       });
@@ -216,7 +216,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     } = queryRunnerContext;
 
     const unreadableFieldMetadataIds =
-      await this.recordPermissionsService.findUnreadableFields({
+      await this.recordFieldPermissionsReadService.findUnreadableFields({
         principals: permissionsPrincipals,
         objectMetadataId: flatObjectMetadata.id,
       });

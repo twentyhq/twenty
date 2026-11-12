@@ -100,6 +100,13 @@ export class WorkspaceDataSource {
             ),
           ),
       },
+      recordAccessGroupQueue: {
+        queueRecompute: async (args) => {
+          afterCommit(() =>
+            this.internalContext.recordAccessGroupQueue.queueRecompute(args),
+          );
+        },
+      },
       recordStock: {
         assertRecordStockAvailable: (args) =>
           this.internalContext.recordStock.assertRecordStockAvailable(args),

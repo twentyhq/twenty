@@ -12,15 +12,20 @@ export const getAgentChatThreadPreviewText = ({
   thread,
   workspaceMembers,
   currentWorkspaceMemberId,
+  assistantDisplayName,
 }: {
   thread: Pick<
     AgentChatThreadRecord,
     'lastMessageText' | 'lastMessageSenderWorkspaceMemberId'
   >;
-  workspaceMembers: PartialWorkspaceMember[];
+  workspaceMembers: Pick<PartialWorkspaceMember, 'id' | 'name' | 'userEmail'>[];
   currentWorkspaceMemberId: string | undefined;
+  assistantDisplayName: string;
 }): string | null => {
-  const text = getAgentChatPreviewPlainText(thread.lastMessageText ?? '');
+  const text = getAgentChatPreviewPlainText({
+    markdown: thread.lastMessageText ?? '',
+    assistantDisplayName,
+  });
 
   if (!isNonEmptyString(text)) {
     return null;

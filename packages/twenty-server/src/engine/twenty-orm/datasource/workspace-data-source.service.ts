@@ -4,7 +4,9 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
@@ -16,7 +18,9 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 export class WorkspaceDataSourceService {
   constructor(
     private readonly workspaceQueryExecutorService: WorkspaceQueryExecutorService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
+    private readonly recordAccessGroupWriteService: RecordAccessGroupWriteService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -57,7 +61,10 @@ export class WorkspaceDataSourceService {
       recordReadRestrictions: workspaceContext.recordReadRestrictions,
       eventEmitterService: this.workspaceEventEmitter,
       recordStock: this.workspaceRecordStockService,
-      recordPermissions: this.recordPermissionsService,
+      recordPermissions: this.recordPermissionsReadService,
+      recordFieldPermissions: this.recordFieldPermissionsReadService,
+      recordAccessGroupWrite: this.recordAccessGroupWriteService,
+      recordAccessGroupQueue: this.recordAccessGroupWriteService,
       coreDataSource: this.coreDataSource,
     };
   }
