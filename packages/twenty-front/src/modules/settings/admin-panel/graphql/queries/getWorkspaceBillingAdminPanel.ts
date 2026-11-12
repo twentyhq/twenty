@@ -17,6 +17,24 @@ export const GET_WORKSPACE_BILLING_ADMIN_PANEL = gql`
         isActive
         createdAt
       }
+      billingArrangements {
+        id
+        type
+        label
+        comment
+        seats
+        seatCapMode
+        stripeDiscountId
+        creditAllowance
+        stripeCreditNoteId
+        creditGrantId
+        usageLimitId
+        startsAt
+        endsAt
+        revokedAt
+        isActive
+        createdAt
+      }
       usage {
         periodStart
         periodEnd

@@ -181,11 +181,32 @@ export type AdminPanelWorkerQueueHealth = {
 
 export type AdminPanelWorkspaceBilling = {
   __typename?: 'AdminPanelWorkspaceBilling';
+  billingArrangements: Array<AdminPanelWorkspaceBillingArrangement>;
   creditBalance?: Maybe<Scalars['Float']['output']>;
   creditGrants: Array<AdminPanelWorkspaceCreditGrant>;
   stripeCustomerId?: Maybe<Scalars['String']['output']>;
   subscription?: Maybe<AdminPanelWorkspaceSubscription>;
   usage?: Maybe<AdminPanelWorkspaceUsage>;
+};
+
+export type AdminPanelWorkspaceBillingArrangement = {
+  __typename?: 'AdminPanelWorkspaceBillingArrangement';
+  comment?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  creditAllowance?: Maybe<Scalars['Float']['output']>;
+  creditGrantId?: Maybe<Scalars['UUID']['output']>;
+  endsAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['UUID']['output'];
+  isActive: Scalars['Boolean']['output'];
+  label: BillingArrangementLabel;
+  revokedAt?: Maybe<Scalars['DateTime']['output']>;
+  seatCapMode?: Maybe<BillingArrangementSeatCapMode>;
+  seats?: Maybe<Scalars['Int']['output']>;
+  startsAt: Scalars['DateTime']['output'];
+  stripeCreditNoteId?: Maybe<Scalars['String']['output']>;
+  stripeDiscountId?: Maybe<Scalars['String']['output']>;
+  type: BillingArrangementType;
+  usageLimitId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type AdminPanelWorkspaceCreditGrant = {
@@ -422,6 +443,31 @@ export type ApplicationRegistrationVariable = {
   updatedAt: Scalars['DateTime']['output'];
   value?: Maybe<Scalars['String']['output']>;
 };
+
+/** Why a billing arrangement was granted, used for reporting */
+export enum BillingArrangementLabel {
+  APP_OWNER_WORKSPACE = 'APP_OWNER_WORKSPACE',
+  COMPENSATION = 'COMPENSATION',
+  OTHER = 'OTHER'
+}
+
+/** Whether members above committed seats are billed or blocked */
+export enum BillingArrangementSeatCapMode {
+  HARD = 'HARD',
+  SOFT = 'SOFT'
+}
+
+/** The kind of commercial exception a billing arrangement grants */
+export enum BillingArrangementType {
+  COMMITTED_SEATS = 'COMMITTED_SEATS',
+  CREDIT_GRANT = 'CREDIT_GRANT',
+  DISCOUNT = 'DISCOUNT',
+  FREE_SEATS = 'FREE_SEATS',
+  LIMIT_OVERRIDE = 'LIMIT_OVERRIDE',
+  REFUND = 'REFUND',
+  TRIAL_EXTENSION = 'TRIAL_EXTENSION',
+  WORKSPACE_CREDIT_ALLOWANCE = 'WORKSPACE_CREDIT_ALLOWANCE'
+}
 
 /** The origin of a batch of credits granted to a workspace */
 export enum BillingCreditGrantType {
@@ -667,11 +713,13 @@ export type Mutation = {
   addModelToProvider: Scalars['Boolean']['output'];
   clearMaintenanceMode: Scalars['Boolean']['output'];
   createDatabaseConfigVariable: Scalars['Boolean']['output'];
+  createWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
   createWorkspaceDataExport: WorkspaceDataExport;
   createWorkspaceUsageLimit: AdminPanelUsageLimit;
   deleteDatabaseConfigVariable: Scalars['Boolean']['output'];
   deleteJobs: DeleteJobsResponse;
   deleteWorkspaceUsageLimit: Scalars['Boolean']['output'];
+  endWorkspaceBillingArrangement: AdminPanelWorkspaceBillingArrangement;
   generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin: TwoFactorAuthenticationRecoveryCode;
   grantWorkspaceCredits: AdminPanelWorkspaceCreditGrant;
   refreshUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus;
@@ -712,6 +760,18 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateWorkspaceBillingArrangementArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  creditAllowance?: InputMaybe<Scalars['Float']['input']>;
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  label: BillingArrangementLabel;
+  seatCapMode?: InputMaybe<BillingArrangementSeatCapMode>;
+  seats?: InputMaybe<Scalars['Int']['input']>;
+  type: BillingArrangementType;
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
 export type MutationCreateWorkspaceDataExportArgs = {
   workspaceId: Scalars['UUID']['input'];
 };
@@ -736,6 +796,12 @@ export type MutationDeleteJobsArgs = {
 
 export type MutationDeleteWorkspaceUsageLimitArgs = {
   usageLimitId: Scalars['UUID']['input'];
+  workspaceId: Scalars['UUID']['input'];
+};
+
+
+export type MutationEndWorkspaceBillingArrangementArgs = {
+  billingArrangementId: Scalars['UUID']['input'];
   workspaceId: Scalars['UUID']['input'];
 };
 

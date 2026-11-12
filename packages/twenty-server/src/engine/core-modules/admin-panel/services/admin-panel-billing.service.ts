@@ -2,28 +2,50 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
+import { type AdminPanelWorkspaceBillingArrangementDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing-arrangement.dto';
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
 import { type AdminPanelWorkspaceCreditGrantDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-credit-grant.dto';
 import { type AdminPanelWorkspaceUsageDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-usage.dto';
+import { type CreateWorkspaceBillingArrangementInput } from 'src/engine/core-modules/admin-panel/dtos/create-workspace-billing-arrangement.input';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
+import {
+  ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES,
+  BillingArrangementType,
+} from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import {
   ADMIN_GRANTABLE_CREDIT_GRANT_TYPES,
   type BillingCreditGrantType,
 } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { SEAT_BILLING_ARRANGEMENT_TYPES } from 'src/engine/core-modules/billing/constants/seat-billing-arrangement-types.constant';
+import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
+import {
+  UpdateSubscriptionQuantityJob,
+  type UpdateSubscriptionQuantityJobData,
+} from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
+import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
+import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -44,6 +66,10 @@ export class AdminPanelBillingService {
     private readonly billingPriceRepository: Repository<BillingPriceEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.billingQueue)
+    private readonly billingMessageQueueService: MessageQueueService,
+    private readonly billingArrangementService: BillingArrangementService,
+    private readonly billingSeatService: BillingSeatService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingUsageService: BillingUsageService,
     private readonly billingCreditService: BillingCreditService,
@@ -132,6 +158,202 @@ export class AdminPanelBillingService {
     return this.toCreditGrantDTO(grant);
   }
 
+  async createWorkspaceBillingArrangement({
+    input: {
+      workspaceId,
+      type,
+      label,
+      comment,
+      endsAt,
+      seats,
+      seatCapMode,
+      creditAllowance,
+    },
+    grantedByUserId,
+  }: {
+    input: CreateWorkspaceBillingArrangementInput;
+    grantedByUserId: string;
+  }): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
+    this.assertBillingArrangementIsManageable(type);
+
+    const startsAt = new Date();
+
+    if (
+      type === BillingArrangementType.COMMITTED_SEATS &&
+      seatCapMode === BillingArrangementSeatCapMode.HARD &&
+      isDefined(seats)
+    ) {
+      await this.assertHardSeatCapCoversBilledMembers({ workspaceId, seats });
+    }
+
+    const trimmedComment = comment?.trim();
+
+    const arrangement = await this.billingArrangementService.insertArrangement({
+      workspaceId,
+      arrangement: {
+        type,
+        label,
+        comment: isNonEmptyString(trimmedComment) ? trimmedComment : null,
+        startsAt,
+        endsAt: endsAt ?? null,
+        seats: seats ?? null,
+        seatCapMode: seatCapMode ?? null,
+        stripePriceId: null,
+        stripeDiscountId: null,
+        creditAllowanceMicro: isDefined(creditAllowance)
+          ? Math.round(creditAllowance * INTERNAL_CREDITS_PER_DISPLAY_CREDIT)
+          : null,
+        stripeCreditNoteId: null,
+        creditGrantId: null,
+        usageLimitId: null,
+      },
+      grantedByUserId,
+    });
+
+    await this.applyBillingArrangementChange(arrangement);
+
+    return this.toBillingArrangementDTO(arrangement);
+  }
+
+  async endWorkspaceBillingArrangement({
+    workspaceId,
+    billingArrangementId,
+    revokedByUserId,
+  }: {
+    workspaceId: string;
+    billingArrangementId: string;
+    revokedByUserId: string;
+  }): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
+    this.assertBillingIsEnabled();
+
+    const arrangement =
+      await this.billingArrangementService.findArrangementOrFail({
+        workspaceId,
+        arrangementId: billingArrangementId,
+      });
+
+    this.assertBillingArrangementIsManageable(arrangement.type);
+
+    const endedArrangement =
+      await this.billingArrangementService.endArrangement({
+        arrangement,
+        revokedByUserId,
+      });
+
+    await this.applyBillingArrangementChange(endedArrangement);
+
+    return this.toBillingArrangementDTO(endedArrangement);
+  }
+
+  private assertBillingIsEnabled(): void {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      throw new BillingException(
+        'Billing arrangements need billing to be enabled on this instance',
+        BillingExceptionCode.BILLING_ARRANGEMENT_NOT_MANAGEABLE,
+      );
+    }
+  }
+
+  private assertBillingArrangementIsManageable(
+    type: BillingArrangementType,
+  ): void {
+    this.assertBillingIsEnabled();
+
+    if (!ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES.includes(type)) {
+      throw new BillingException(
+        `Cannot create or end a ${type} arrangement by hand`,
+        BillingExceptionCode.BILLING_ARRANGEMENT_NOT_MANAGEABLE,
+      );
+    }
+  }
+
+  private async assertHardSeatCapCoversBilledMembers({
+    workspaceId,
+    seats,
+  }: {
+    workspaceId: string;
+    seats: number;
+  }): Promise<void> {
+    const [memberCount, activeSeatArrangements] = await Promise.all([
+      this.billingSeatService.countWorkspaceMembers(workspaceId),
+      this.billingSeatService.findActiveSeatArrangements(workspaceId),
+    ]);
+
+    const billedSeatsWithoutCommitment = computeBilledSeats({
+      memberCount,
+      seatArrangements: activeSeatArrangements.filter(
+        (arrangement) => arrangement.type === BillingArrangementType.FREE_SEATS,
+      ),
+    });
+
+    if (billedSeatsWithoutCommitment > seats) {
+      throw new BillingException(
+        `Hard cap of ${seats} seats is below the ${billedSeatsWithoutCommitment} billed members of workspace ${workspaceId}`,
+        BillingExceptionCode.BILLING_ARRANGEMENT_SEAT_CAP_BELOW_MEMBERS,
+      );
+    }
+  }
+
+  private async applyBillingArrangementChange(
+    arrangement: BillingArrangementEntity,
+  ): Promise<void> {
+    if (SEAT_BILLING_ARRANGEMENT_TYPES.includes(arrangement.type)) {
+      await this.billingMessageQueueService.add<UpdateSubscriptionQuantityJobData>(
+        UpdateSubscriptionQuantityJob.name,
+        { workspaceId: arrangement.workspaceId },
+        {
+          ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
+          workspaceId: arrangement.workspaceId,
+          isWorkspaceJob: true,
+        },
+      );
+    }
+
+    if (
+      arrangement.type === BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE
+    ) {
+      await this.billingCreditService.refreshWorkspaceCreditState(
+        arrangement.workspaceId,
+      );
+    }
+  }
+
+  private async getWorkspaceBillingArrangements(
+    workspaceId: string,
+  ): Promise<AdminPanelWorkspaceBillingArrangementDTO[]> {
+    const arrangements =
+      await this.billingArrangementService.findArrangements(workspaceId);
+
+    return arrangements.map((arrangement) =>
+      this.toBillingArrangementDTO(arrangement),
+    );
+  }
+
+  private toBillingArrangementDTO(
+    arrangement: BillingArrangementEntity,
+  ): AdminPanelWorkspaceBillingArrangementDTO {
+    return {
+      id: arrangement.id,
+      type: arrangement.type,
+      label: arrangement.label,
+      comment: arrangement.comment,
+      seats: arrangement.seats,
+      seatCapMode: arrangement.seatCapMode,
+      stripeDiscountId: arrangement.stripeDiscountId,
+      creditAllowance: isDefined(arrangement.creditAllowanceMicro)
+        ? toDisplayCredits(arrangement.creditAllowanceMicro)
+        : null,
+      stripeCreditNoteId: arrangement.stripeCreditNoteId,
+      creditGrantId: arrangement.creditGrantId,
+      usageLimitId: arrangement.usageLimitId,
+      startsAt: arrangement.startsAt,
+      endsAt: arrangement.endsAt,
+      revokedAt: arrangement.revokedAt,
+      isActive: isBillingArrangementActive({ arrangement, now: new Date() }),
+      createdAt: arrangement.createdAt,
+    };
+  }
+
   private async getWorkspaceCreditGrants(
     workspaceId: string,
   ): Promise<AdminPanelWorkspaceCreditGrantDTO[]> {
@@ -169,16 +391,23 @@ export class AdminPanelBillingService {
       return null;
     }
 
-    const [customer, subscription, creditGrants] = await Promise.all([
-      this.billingCustomerRepository.findOne(workspaceId, { where: {} }),
-      this.billingSubscriptionService.getCurrentBillingSubscription({
-        workspaceId,
-      }),
-      this.getWorkspaceCreditGrants(workspaceId),
-    ]);
+    const [customer, subscription, creditGrants, billingArrangements] =
+      await Promise.all([
+        this.billingCustomerRepository.findOne(workspaceId, { where: {} }),
+        this.billingSubscriptionService.getCurrentBillingSubscription({
+          workspaceId,
+        }),
+        this.getWorkspaceCreditGrants(workspaceId),
+        this.getWorkspaceBillingArrangements(workspaceId),
+      ]);
 
-    // Granted credits can exist before a customer or subscription does
-    if (!customer && !subscription && creditGrants.length === 0) {
+    // Granted credits and arrangements can exist before a customer or subscription does
+    if (
+      !customer &&
+      !subscription &&
+      creditGrants.length === 0 &&
+      billingArrangements.length === 0
+    ) {
       return null;
     }
 
@@ -193,6 +422,7 @@ export class AdminPanelBillingService {
         stripeCustomerId,
         creditBalance,
         creditGrants,
+        billingArrangements,
         subscription: null,
         usage: null,
       };
@@ -221,6 +451,7 @@ export class AdminPanelBillingService {
       stripeCustomerId,
       creditBalance,
       creditGrants,
+      billingArrangements,
       usage,
       subscription: {
         stripeSubscriptionId: subscription.stripeSubscriptionId,

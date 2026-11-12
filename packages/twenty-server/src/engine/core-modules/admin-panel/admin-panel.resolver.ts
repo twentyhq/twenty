@@ -19,8 +19,11 @@ import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admi
 import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
 import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
 import { AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
+import { AdminPanelWorkspaceBillingArrangementDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing-arrangement.dto';
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
 import { AdminPanelWorkspaceCreditGrantDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-credit-grant.dto';
+import { CreateWorkspaceBillingArrangementInput } from 'src/engine/core-modules/admin-panel/dtos/create-workspace-billing-arrangement.input';
+import { EndWorkspaceBillingArrangementInput } from 'src/engine/core-modules/admin-panel/dtos/end-workspace-billing-arrangement.input';
 import { GrantWorkspaceCreditsInput } from 'src/engine/core-modules/admin-panel/dtos/grant-workspace-credits.input';
 import { RevokeWorkspaceCreditGrantInput } from 'src/engine/core-modules/admin-panel/dtos/revoke-workspace-credit-grant.input';
 import { AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
@@ -735,6 +738,31 @@ export class AdminPanelResolver {
     return this.adminBillingService.revokeWorkspaceCreditGrant({
       workspaceId: input.workspaceId,
       creditGrantId: input.creditGrantId,
+      revokedByUserId: actor.id,
+    });
+  }
+
+  @UseGuards(AccessPolicyGuard(ADMIN_PANEL_ACCESS_POLICY), AdminPanelGuard)
+  @Mutation(() => AdminPanelWorkspaceBillingArrangementDTO)
+  async createWorkspaceBillingArrangement(
+    @Args() input: CreateWorkspaceBillingArrangementInput,
+    @AuthUser() actor: AuthContextUser,
+  ): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
+    return this.adminBillingService.createWorkspaceBillingArrangement({
+      input,
+      grantedByUserId: actor.id,
+    });
+  }
+
+  @UseGuards(AccessPolicyGuard(ADMIN_PANEL_ACCESS_POLICY), AdminPanelGuard)
+  @Mutation(() => AdminPanelWorkspaceBillingArrangementDTO)
+  async endWorkspaceBillingArrangement(
+    @Args() input: EndWorkspaceBillingArrangementInput,
+    @AuthUser() actor: AuthContextUser,
+  ): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
+    return this.adminBillingService.endWorkspaceBillingArrangement({
+      workspaceId: input.workspaceId,
+      billingArrangementId: input.billingArrangementId,
       revokedByUserId: actor.id,
     });
   }

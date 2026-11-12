@@ -23,6 +23,8 @@ import {
 import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminWorkspaceBillingArrangementModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal';
+import { SettingsAdminWorkspaceBillingArrangementsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsTable';
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
 import { SettingsAdminWorkspaceUsageLimitsSection } from '@/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection';
@@ -47,6 +49,8 @@ import {
 const STRIPE_DASHBOARD_BASE_URL = 'https://dashboard.stripe.com';
 const EM_DASH = '\u2014';
 const GRANT_CREDITS_MODAL_ID = 'settings-admin-grant-workspace-credits';
+const ADD_BILLING_ARRANGEMENT_MODAL_ID =
+  'settings-admin-add-workspace-billing-arrangement';
 
 type SettingsAdminWorkspaceBillingContentProps = {
   workspaceId: string;
@@ -162,8 +166,14 @@ export const SettingsAdminWorkspaceBillingContent = ({
     );
   }
 
-  const { stripeCustomerId, creditBalance, creditGrants, subscription, usage } =
-    billing;
+  const {
+    stripeCustomerId,
+    creditBalance,
+    creditGrants,
+    billingArrangements,
+    subscription,
+    usage,
+  } = billing;
 
   const formatCredits = (credits: number): string =>
     formatNumber(credits, { abbreviate: true, decimals: 2 });
@@ -392,6 +402,14 @@ export const SettingsAdminWorkspaceBillingContent = ({
         )}
       </Section.Root>
 
+      <SettingsAdminWorkspaceBillingArrangementsTable
+        workspaceId={workspaceId}
+        billingArrangements={billingArrangements}
+        onAddArrangementClick={() =>
+          openDialog(ADD_BILLING_ARRANGEMENT_MODAL_ID)
+        }
+      />
+
       <SettingsAdminWorkspaceUsageLimitsSection workspaceId={workspaceId} />
 
       <SettingsAdminWorkspaceCreditGrantsTable
@@ -402,6 +420,11 @@ export const SettingsAdminWorkspaceBillingContent = ({
 
       <SettingsAdminWorkspaceCreditGrantModal
         modalInstanceId={GRANT_CREDITS_MODAL_ID}
+        workspaceId={workspaceId}
+      />
+
+      <SettingsAdminWorkspaceBillingArrangementModal
+        modalInstanceId={ADD_BILLING_ARRANGEMENT_MODAL_ID}
         workspaceId={workspaceId}
       />
     </StyledContainer>

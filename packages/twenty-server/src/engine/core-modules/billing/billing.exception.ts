@@ -41,6 +41,10 @@ export enum BillingExceptionCode {
   BILLING_CREDIT_TOP_UP_NOT_GRANTED = 'BILLING_CREDIT_TOP_UP_NOT_GRANTED',
   BILLING_SEAT_LIMIT_REACHED = 'BILLING_SEAT_LIMIT_REACHED',
   BILLING_ARRANGEMENT_INVALID = 'BILLING_ARRANGEMENT_INVALID',
+  BILLING_ARRANGEMENT_OVERLAP = 'BILLING_ARRANGEMENT_OVERLAP',
+  BILLING_ARRANGEMENT_NOT_FOUND = 'BILLING_ARRANGEMENT_NOT_FOUND',
+  BILLING_ARRANGEMENT_NOT_MANAGEABLE = 'BILLING_ARRANGEMENT_NOT_MANAGEABLE',
+  BILLING_ARRANGEMENT_SEAT_CAP_BELOW_MEMBERS = 'BILLING_ARRANGEMENT_SEAT_CAP_BELOW_MEMBERS',
   BILLING_PARTNER_CODE_INVALID = 'BILLING_PARTNER_CODE_INVALID',
   BILLING_PARTNER_CODE_LOCKED = 'BILLING_PARTNER_CODE_LOCKED',
   BILLING_PARTNER_CODE_NOT_ELIGIBLE = 'BILLING_PARTNER_CODE_NOT_ELIGIBLE',
@@ -105,8 +109,17 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
       return msg`Your payment method was declined. Please update it and try again.`;
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED:
-    case BillingExceptionCode.BILLING_ARRANGEMENT_INVALID:
       return msg`An unexpected billing error occurred. Please contact support.`;
+    case BillingExceptionCode.BILLING_ARRANGEMENT_INVALID:
+      return msg`This billing arrangement has invalid settings.`;
+    case BillingExceptionCode.BILLING_ARRANGEMENT_OVERLAP:
+      return msg`This workspace already has an arrangement of this type over that period.`;
+    case BillingExceptionCode.BILLING_ARRANGEMENT_NOT_FOUND:
+      return msg`Billing arrangement not found.`;
+    case BillingExceptionCode.BILLING_ARRANGEMENT_NOT_MANAGEABLE:
+      return msg`This kind of billing arrangement cannot be created or ended by hand.`;
+    case BillingExceptionCode.BILLING_ARRANGEMENT_SEAT_CAP_BELOW_MEMBERS:
+      return msg`A hard seat cap cannot be below the current number of billed members.`;
     case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED:
       return msg`Your purchased credits could not be added. Please contact support.`;
     case BillingExceptionCode.BILLING_PARTNER_CODE_INVALID:
