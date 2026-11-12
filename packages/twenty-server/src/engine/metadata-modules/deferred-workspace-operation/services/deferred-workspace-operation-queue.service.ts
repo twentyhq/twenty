@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -14,7 +15,12 @@ import { DEFERRED_WORKSPACE_OPERATION_JOB_PRIORITY } from 'src/engine/workspace-
 import { DEFERRED_WORKSPACE_OPERATION_MAX_ATTEMPTS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-operation-max-attempts.constant';
 import { DEFERRED_WORKSPACE_OPERATION_RETRY_BACKOFF } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-operation-retry-backoff.constant';
 import { RUN_DEFERRED_WORKSPACE_OPERATIONS_JOB_NAME } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/run-deferred-workspace-operations-job-name.constant';
-import { type DeferredWorkspaceOperation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation.type';
+import { type DeferredWorkspaceOperationStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation-status.type';
+import {
+  type DeferredWorkspaceOperation,
+  type DeferredWorkspaceOperationName,
+  type DeferredWorkspaceOperationPayload,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation.type';
 
 @Injectable()
 export class DeferredWorkspaceOperationQueueService {
@@ -57,6 +63,60 @@ export class DeferredWorkspaceOperationQueueService {
       ),
     );
     await this.enqueue(workspaceId);
+  }
+
+  async findOperationPayloads<TName extends DeferredWorkspaceOperationName>({
+    workspaceId,
+    name,
+    statuses,
+  }: {
+    workspaceId: string;
+    name: TName;
+    statuses: DeferredWorkspaceOperationStatus[];
+  }): Promise<DeferredWorkspaceOperationPayload<TName>[]> {
+    const deferredOperations =
+      await this.deferredWorkspaceOperationRepository.find(workspaceId, {
+        where: { name, status: In(statuses) },
+        order: { createdAt: 'ASC', position: 'ASC' },
+      });
+
+    return deferredOperations.map(
+      ({ payload }) => payload as DeferredWorkspaceOperationPayload<TName>,
+    );
+  }
+
+  async updateInProgressOperationPayload<
+    TName extends DeferredWorkspaceOperationName,
+  >({
+    workspaceId,
+    name,
+    updatePayload,
+  }: {
+    workspaceId: string;
+    name: TName;
+    updatePayload: (
+      payload: DeferredWorkspaceOperationPayload<TName>,
+    ) => DeferredWorkspaceOperationPayload<TName>;
+  }): Promise<void> {
+    const inProgressOperation =
+      await this.deferredWorkspaceOperationRepository.findOne(workspaceId, {
+        where: { name, status: 'IN_PROGRESS' },
+      });
+
+    if (!isDefined(inProgressOperation)) {
+      return;
+    }
+
+    await this.deferredWorkspaceOperationRepository.update(
+      workspaceId,
+      { id: inProgressOperation.id, status: 'IN_PROGRESS' },
+      {
+        payload: updatePayload(
+          inProgressOperation.payload as DeferredWorkspaceOperationPayload<TName>,
+        ),
+        startedAt: new Date(),
+      } as QueryDeepPartialEntity<DeferredWorkspaceOperationEntity>,
+    );
   }
 
   async enqueue(workspaceId: string): Promise<void> {

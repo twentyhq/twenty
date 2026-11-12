@@ -239,6 +239,10 @@ describe('access group propagation progress (integration)', () => {
       expectToFail: false,
     });
     await waitForAllJobsToFinish();
+    await global.testDataSource.query(
+      `DELETE FROM core."deferredWorkspaceOperation" WHERE "workspaceId" = $1`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
     await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
   });
 
