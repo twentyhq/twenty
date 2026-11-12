@@ -70,18 +70,14 @@ export const DirectMessagePresentationExample = ({
             setCurrentThreadId(threadId);
             onSelectThread(threadId);
           }}
-          memberPicker={
-            <DirectMessageMemberPicker
-              humanMembers={
-                memberState === 'loading' ? [] : matchingHumanMembers
-              }
-              currentWorkspaceMemberId={currentMember.workspaceMemberId}
-              searchValue={searchValue}
-              onSearchChange={setSearchValue}
-              isLoading={memberState !== 'results'}
-              onSelect={onSelectMember}
-            />
-          }
+        />
+        <DirectMessageMemberPicker
+          humanMembers={memberState === 'loading' ? [] : matchingHumanMembers}
+          currentWorkspaceMemberId={currentMember.workspaceMemberId}
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          isLoading={memberState !== 'results'}
+          onSelect={onSelectMember}
         />
         <CollapsibleNavigationDrawerSection
           sectionId="stories/direct-messages/recent"

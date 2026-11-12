@@ -7,7 +7,7 @@ import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-d
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 const AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID = 'AiChatDirectMessages';
@@ -16,14 +16,12 @@ type NavigationDrawerDirectMessagesSectionProps = {
   directMessages: readonly DirectMessageSidebarItem[];
   currentThreadId: string | null;
   onSelect: (threadId: string) => void;
-  memberPicker: ReactNode;
 };
 
 export const NavigationDrawerDirectMessagesSection = ({
   directMessages,
   currentThreadId,
   onSelect,
-  memberPicker,
 }: NavigationDrawerDirectMessagesSectionProps) => {
   const { t } = useLingui();
   const isNavigationDrawerContentExpanded =
@@ -50,8 +48,6 @@ export const NavigationDrawerDirectMessagesSection = ({
     <CollapsibleNavigationDrawerSection
       sectionId={AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID}
       label={t`Direct messages`}
-      rightIcon={memberPicker}
-      alwaysShowRightIcon
     >
       {visibleDirectMessages.map((directMessage) => (
         <NavigationDrawerDirectMessageItem
