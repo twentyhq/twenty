@@ -1,4 +1,4 @@
-import { humanizeSubFieldLabel } from 'src/modules/dashboard/tools/utils/humanize-sub-field-label.util';
+import { humanizeSubFieldLabel } from 'src/engine/metadata-modules/page-layout/tools/utils/humanize-sub-field-label.util';
 
 describe('humanizeSubFieldLabel', () => {
   it('returns empty string for empty input', () => {

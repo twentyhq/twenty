@@ -3,6 +3,7 @@ import {
   AggregateOperations,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
@@ -272,7 +273,7 @@ const withRangeMinMaxRefinement = <T extends z.ZodType<RangeMinMaxFields>>(
     },
   );
 
-export const widgetPositionSchema = z.object({
+export const widgetGridPositionSchema = z.object({
   layoutMode: z.literal(PageLayoutTabLayoutMode.GRID),
   row: z.number().min(0).describe('Row position (0-based)'),
   column: z
@@ -288,12 +289,24 @@ export const widgetPositionSchema = z.object({
     .describe('Number of columns the widget spans (1-12)'),
 });
 
+export const widgetPositionSchema = z.discriminatedUnion('layoutMode', [
+  widgetGridPositionSchema,
+  z.object({
+    layoutMode: z.literal(PageLayoutTabLayoutMode.VERTICAL_LIST),
+    index: z.number().int().min(0),
+    heightBehavior: z
+      .enum(PageLayoutWidgetVerticalListHeightBehavior)
+      .optional(),
+  }),
+]);
+
 export const widgetTypeSchema = z.enum([
   WidgetType.VIEW,
   WidgetType.GRAPH,
   WidgetType.IFRAME,
   WidgetType.STANDALONE_RICH_TEXT,
   WidgetType.RECORD_TABLE,
+  WidgetType.FRONT_COMPONENT,
 ]);
 
 const aggregateChartConfigSchemaBase = z.object({
@@ -587,6 +600,13 @@ const iframeConfigSchema = z.object({
   url: z.string().url().optional().describe('URL to embed'),
 });
 
+const frontComponentConfigSchema = z.object({
+  configurationType: z.literal(WidgetConfigurationType.FRONT_COMPONENT),
+  frontComponentId: z
+    .uuid()
+    .describe('UUID of an existing registered frontend component'),
+});
+
 const richTextConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.STANDALONE_RICH_TEXT),
   body: z
@@ -633,6 +653,7 @@ export const widgetConfigurationSchema = z
     iframeConfigSchema,
     richTextConfigSchema,
     recordTableConfigSchema,
+    frontComponentConfigSchema,
   ])
   .optional()
   .describe('Widget configuration - structure depends on widget type');
@@ -646,6 +667,7 @@ export const widgetConfigurationSchemaWithoutDefaults = z
     iframeConfigSchema,
     richTextConfigSchema,
     recordTableConfigSchema,
+    frontComponentConfigSchema,
   ])
   .optional()
   .describe('Widget configuration - structure depends on widget type');

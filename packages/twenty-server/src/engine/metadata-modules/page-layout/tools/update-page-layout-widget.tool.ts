@@ -1,35 +1,36 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import {
-  type PageLayoutWidgetGridPosition,
-  type WidgetType,
-} from 'twenty-shared/types';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { PAGE_LAYOUT_TOOL_ACCESS_POLICY } from 'src/engine/metadata-modules/page-layout/tools/constants/page-layout-tool-access-policy.constant';
+import { PageLayoutToolService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service';
+import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import {
   widgetPositionSchema,
   widgetConfigurationSchemaWithoutDefaults,
   widgetTypeSchema,
-} from 'src/modules/dashboard/tools/schemas/widget.schema';
-import {
-  type DashboardToolContext,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
-import { computeDashboardIdentifierMaps } from 'src/modules/dashboard/tools/utils/compute-dashboard-identifier-maps.util';
+} from 'src/engine/metadata-modules/page-layout/tools/schemas/widget.schema';
 import {
   getObjectMetadataId,
   resolveConfigurationFieldNamesToIds,
-} from 'src/modules/dashboard/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
+} from 'src/engine/metadata-modules/page-layout/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
 
-const updateDashboardWidgetSchema = z.object({
+const updatePageLayoutWidgetSchema = z.object({
   widgetId: z.string().uuid().describe('The UUID of the widget to update'),
   title: z.string().optional().describe('New widget title'),
   type: widgetTypeSchema.optional().describe('New widget type'),
   position: widgetPositionSchema
     .optional()
-    .describe('New position and size in the grid layout'),
+    .describe(
+      'New position matching the tab layoutMode: grid coordinates or vertical-list index',
+    ),
   objectMetadataId: z
     .uuid()
     .optional()
@@ -43,37 +44,37 @@ const updateDashboardWidgetSchema = z.object({
   configuration: widgetConfigurationSchemaWithoutDefaults.optional(),
 });
 
-export const createUpdateDashboardWidgetTool = (
-  deps: {
-    pageLayoutWidgetService: Pick<
-      DashboardToolDependencies['pageLayoutWidgetService'],
-      'findByIdOrThrow' | 'update'
-    >;
-    flatEntityMapsCacheService: Pick<
-      DashboardToolDependencies['flatEntityMapsCacheService'],
-      'getOrRecomputeManyOrAllFlatEntityMaps'
-    >;
-  },
-  context: DashboardToolContext,
-) => ({
-  name: 'update_dashboard_widget' as const,
-  description: `Update an existing widget's properties, position, or configuration.
+@DefineTool({
+  name: 'update_page_layout_widget',
+  description: `Update a widget's properties, position, or configuration in a page layout (dashboard or record page).
 
-Use get_dashboard first to find the widgetId.
+Use get_dashboard or list_record_page_layouts first to find the widgetId and tab layoutMode. Record-page changes affect the shared layout for that object, not only the currently open record.
 
 You can reference the object and fields by NAME instead of UUID: pass objectName and the *FieldName variants in configuration (aggregateFieldName, primaryAxisGroupByFieldName, secondaryAxisGroupByFieldName, groupByFieldName) and fieldName inside filter recordFilters. They are resolved server-side against the widget object, falling back to the widget's existing object when you don't change it. UUID variants still work and take precedence.
 
 Only provide fields you want to change - others remain unchanged.`,
-  inputSchema: updateDashboardWidgetSchema,
-  execute: async (parameters: {
-    widgetId: string;
-    title?: string;
-    type?: WidgetType;
-    position?: PageLayoutWidgetGridPosition;
-    objectMetadataId?: string;
-    objectName?: string;
-    configuration?: WidgetConfigurationInput;
-  }) => {
+  category: ToolCategory.PAGE_LAYOUT,
+  accessPolicy: PAGE_LAYOUT_TOOL_ACCESS_POLICY,
+  icon: 'IconAppWindow',
+})
+export class UpdatePageLayoutWidgetTool extends BaseTool<
+  typeof updatePageLayoutWidgetSchema
+> {
+  readonly inputSchema = updatePageLayoutWidgetSchema;
+
+  constructor(
+    private readonly pageLayoutToolService: PageLayoutToolService,
+    private readonly pageLayoutWidgetService: PageLayoutWidgetService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: parameters,
+    context,
+  }: ToolExecuteArgs<
+    typeof updatePageLayoutWidgetSchema
+  >): Promise<ToolOutput> {
     try {
       const { widgetId, objectName, configuration, ...rest } = parameters;
 
@@ -85,11 +86,36 @@ Only provide fields you want to change - others remain unchanged.`,
       let resolvedObjectMetadataId = rest.objectMetadataId;
       let resolvedConfiguration: AllPageLayoutWidgetConfiguration | undefined;
 
-      if (shouldResolveIdentifiers) {
-        const identifierMaps = await computeDashboardIdentifierMaps(
-          deps,
-          context,
+      if (
+        configuration?.configurationType ===
+        WidgetConfigurationType.FRONT_COMPONENT
+      ) {
+        const existingWidget =
+          await this.pageLayoutWidgetService.findByIdOrThrow({
+            id: widgetId,
+            workspaceId: context.workspaceId,
+          });
+        await this.pageLayoutToolService.assertFrontComponentWidgetAvailableOnPageLayoutOrThrow(
+          {
+            configuration,
+            pageLayoutTabId: existingWidget.pageLayoutTabId,
+            position: parameters.position,
+            context: {
+              workspaceId: context.workspaceId,
+              callingApplication: context.application,
+              workspaceCustomApplicationId:
+                context.authContext?.workspace.workspaceCustomApplicationId ??
+                undefined,
+            },
+          },
         );
+      }
+
+      if (shouldResolveIdentifiers) {
+        const identifierMaps =
+          await this.pageLayoutToolService.computePageLayoutIdentifierMaps({
+            workspaceId: context.workspaceId,
+          });
 
         resolvedObjectMetadataId = getObjectMetadataId({
           objectMetadataId: rest.objectMetadataId,
@@ -101,7 +127,7 @@ Only provide fields you want to change - others remain unchanged.`,
           const objectMetadataIdForFields =
             resolvedObjectMetadataId ??
             (
-              await deps.pageLayoutWidgetService.findByIdOrThrow({
+              await this.pageLayoutWidgetService.findByIdOrThrow({
                 id: widgetId,
                 workspaceId: context.workspaceId,
               })
@@ -132,7 +158,7 @@ Only provide fields you want to change - others remain unchanged.`,
         }),
       );
 
-      const widget = await deps.pageLayoutWidgetService.update({
+      const widget = await this.pageLayoutWidgetService.update({
         id: widgetId,
         workspaceId: context.workspaceId,
         updateData,
@@ -156,5 +182,5 @@ Only provide fields you want to change - others remain unchanged.`,
         error: error.message,
       };
     }
-  },
-});
+  }
+}

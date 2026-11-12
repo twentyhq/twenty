@@ -1,3 +1,5 @@
+import type { PageLayoutToolService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import type { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
@@ -7,7 +9,12 @@ import type { PageLayoutService } from 'src/engine/metadata-modules/page-layout/
 import type { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import type { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
-export type DashboardToolDependencies = {
+export type PageLayoutToolDependencies = {
+  pageLayoutToolService: Pick<
+    PageLayoutToolService,
+    | 'computePageLayoutIdentifierMaps'
+    | 'assertFrontComponentWidgetAvailableOnPageLayoutOrThrow'
+  >;
   pageLayoutService: PageLayoutService;
   pageLayoutTabService: PageLayoutTabService;
   pageLayoutWidgetService: PageLayoutWidgetService;
@@ -17,10 +24,12 @@ export type DashboardToolDependencies = {
   applicationService: ApplicationService;
 };
 
-export type DashboardToolContext = {
+export type PageLayoutToolContext = {
   workspaceId: string;
+  callingApplication?: ApplicationCallerOperation['callingApplication'];
+  workspaceCustomApplicationId?: string;
 };
 
-export type DashboardToolContextWithPermissions = DashboardToolContext & {
+export type PageLayoutToolContextWithPermissions = PageLayoutToolContext & {
   authContext: WorkspaceAuthContext;
 };

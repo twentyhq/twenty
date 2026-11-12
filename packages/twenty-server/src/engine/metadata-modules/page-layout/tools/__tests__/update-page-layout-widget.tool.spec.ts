@@ -1,3 +1,4 @@
+import { Test } from '@nestjs/testing';
 import {
   AggregateOperations,
   PageLayoutTabLayoutMode,
@@ -5,45 +6,16 @@ import {
   WidgetType,
 } from 'twenty-shared/types';
 
+import { PageLayoutToolService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service';
+import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { createUpdateDashboardWidgetTool } from 'src/modules/dashboard/tools/update-dashboard-widget.tool';
+import { UpdatePageLayoutWidgetTool } from 'src/engine/metadata-modules/page-layout/tools/update-page-layout-widget.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const WIDGET_ID = '20202020-ffff-4d02-bf25-6aeccf7ea419';
 const OPPORTUNITY_OBJECT_ID = '20202020-dddd-4d02-bf25-6aeccf7ea419';
 const AMOUNT_FIELD_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
 const STAGE_FIELD_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
-
-const flatObjectMetadataMaps = {
-  byUniversalIdentifier: {
-    'object-opportunity': {
-      id: OPPORTUNITY_OBJECT_ID,
-      nameSingular: 'opportunity',
-      namePlural: 'opportunities',
-    },
-  },
-};
-
-const flatFieldMetadataMaps = {
-  byUniversalIdentifier: {
-    'field-amount': {
-      id: AMOUNT_FIELD_ID,
-      name: 'amount',
-      label: 'Amount',
-      objectMetadataId: OPPORTUNITY_OBJECT_ID,
-      isActive: true,
-      type: 'CURRENCY',
-    },
-    'field-stage': {
-      id: STAGE_FIELD_ID,
-      name: 'stage',
-      label: 'Stage',
-      objectMetadataId: OPPORTUNITY_OBJECT_ID,
-      isActive: true,
-      type: 'SELECT',
-    },
-  },
-};
 
 const buildDeps = () => ({
   pageLayoutWidgetService: {
@@ -64,39 +36,61 @@ const buildDeps = () => ({
       configuration: updateData.configuration,
     })),
   },
-  flatEntityMapsCacheService: {
-    getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+  pageLayoutToolService: {
+    assertFrontComponentWidgetAvailableOnPageLayoutOrThrow: jest.fn(),
+    computePageLayoutIdentifierMaps: jest.fn().mockResolvedValue({
+      objectIdByName: {
+        opportunity: OPPORTUNITY_OBJECT_ID,
+        opportunities: OPPORTUNITY_OBJECT_ID,
+      },
+      fieldIdByObjectIdAndName: new Map([
+        [`${OPPORTUNITY_OBJECT_ID}:amount`, AMOUNT_FIELD_ID],
+        [`${OPPORTUNITY_OBJECT_ID}:stage`, STAGE_FIELD_ID],
+      ]),
     }),
   },
 });
 
-const createTool = (deps: ReturnType<typeof buildDeps>) =>
-  createUpdateDashboardWidgetTool(deps, { workspaceId: WORKSPACE_ID });
+const createTool = async (deps: ReturnType<typeof buildDeps>) => {
+  const module = await Test.createTestingModule({
+    providers: [
+      UpdatePageLayoutWidgetTool,
+      { provide: PageLayoutToolService, useValue: deps.pageLayoutToolService },
+      {
+        provide: PageLayoutWidgetService,
+        useValue: deps.pageLayoutWidgetService,
+      },
+    ],
+  }).compile();
 
-describe('update_dashboard_widget tool', () => {
+  return module.get(UpdatePageLayoutWidgetTool);
+};
+
+describe('update_page_layout_widget tool', () => {
   it('resolves filter field names using the existing widget object when the object is not changed', async () => {
     const deps = buildDeps();
-    const tool = createTool(deps);
+    const tool = await createTool(deps);
 
     const result = await tool.execute({
-      widgetId: WIDGET_ID,
-      configuration: {
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldName: 'amount',
-        aggregateOperation: AggregateOperations.SUM,
-        displayDataLabel: false,
-        filter: {
-          recordFilters: [
-            {
-              fieldName: 'stage',
-              operand: ViewFilterOperand.IS,
-              value: '["WON"]',
-            },
-          ],
+      context: { workspaceId: WORKSPACE_ID },
+      input: tool.inputSchema.parse({
+        widgetId: WIDGET_ID,
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldName: 'amount',
+          aggregateOperation: AggregateOperations.SUM,
+          displayDataLabel: false,
+          filter: {
+            recordFilters: [
+              {
+                fieldName: 'stage',
+                operand: ViewFilterOperand.IS,
+                value: '["WON"]',
+              },
+            ],
+          },
         },
-      },
+      }),
     });
 
     expect(result.success).toBe(true);
@@ -127,17 +121,20 @@ describe('update_dashboard_widget tool', () => {
 
   it('resolves objectName to a UUID and uses it to resolve field names', async () => {
     const deps = buildDeps();
-    const tool = createTool(deps);
+    const tool = await createTool(deps);
 
     const result = await tool.execute({
-      widgetId: WIDGET_ID,
-      objectName: 'opportunities',
-      configuration: {
-        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-        aggregateFieldName: 'amount',
-        aggregateOperation: AggregateOperations.SUM,
-        displayDataLabel: false,
-      },
+      context: { workspaceId: WORKSPACE_ID },
+      input: tool.inputSchema.parse({
+        widgetId: WIDGET_ID,
+        objectName: 'opportunities',
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldName: 'amount',
+          aggregateOperation: AggregateOperations.SUM,
+          displayDataLabel: false,
+        },
+      }),
     });
 
     expect(result.success).toBe(true);
@@ -159,16 +156,19 @@ describe('update_dashboard_widget tool', () => {
 
   it('does not resolve identifiers when only non-field properties change', async () => {
     const deps = buildDeps();
-    const tool = createTool(deps);
+    const tool = await createTool(deps);
 
     const result = await tool.execute({
-      widgetId: WIDGET_ID,
-      title: 'Renamed widget',
+      context: { workspaceId: WORKSPACE_ID },
+      input: tool.inputSchema.parse({
+        widgetId: WIDGET_ID,
+        title: 'Renamed widget',
+      }),
     });
 
     expect(result.success).toBe(true);
     expect(
-      deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
+      deps.pageLayoutToolService.computePageLayoutIdentifierMaps,
     ).not.toHaveBeenCalled();
     expect(deps.pageLayoutWidgetService.findByIdOrThrow).not.toHaveBeenCalled();
 

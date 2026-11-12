@@ -10,11 +10,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-by-object-id-and-name-key.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
-import { type ChartFilterInput } from 'src/modules/dashboard/tools/types/chart-filter-input.type';
-import { type DashboardIdentifierMaps } from 'src/modules/dashboard/tools/types/dashboard-identifier-maps.type';
-import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
-import { type WidgetIdentifiersInput } from 'src/modules/dashboard/tools/types/widget-identifiers-input.type';
-import { type WidgetWithMetadataIds } from 'src/modules/dashboard/tools/types/widget-with-metadata-ids.type';
+import { type ChartFilterInput } from 'src/engine/metadata-modules/page-layout/tools/types/chart-filter-input.type';
+import { type PageLayoutIdentifierMaps } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-identifier-maps.type';
+import { type WidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-configuration-input.type';
+import { type WidgetIdentifiersInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-identifiers-input.type';
+import { type WidgetWithMetadataIds } from 'src/engine/metadata-modules/page-layout/tools/types/widget-with-metadata-ids.type';
 
 const getFieldMetadataIdOrThrow = (
   {
@@ -26,7 +26,7 @@ const getFieldMetadataIdOrThrow = (
     fieldMetadataId: string | undefined;
     fieldName: string | undefined;
     objectMetadataId: string | undefined;
-    maps: DashboardIdentifierMaps;
+    maps: PageLayoutIdentifierMaps;
   },
   referenceLabel: string,
 ): string => {
@@ -66,7 +66,7 @@ export const getObjectMetadataId = ({
 }: {
   objectMetadataId: string | undefined;
   objectName: string | undefined;
-  maps: DashboardIdentifierMaps;
+  maps: PageLayoutIdentifierMaps;
 }): string | undefined => {
   if (isDefined(objectMetadataId)) {
     return objectMetadataId;
@@ -90,7 +90,7 @@ export const getObjectMetadataId = ({
 const resolveChartFilterFieldNamesToIds = (
   filter: ChartFilterInput | undefined,
   objectMetadataId: string | undefined,
-  maps: DashboardIdentifierMaps,
+  maps: PageLayoutIdentifierMaps,
 ): ChartFilter | undefined => {
   if (!isDefined(filter)) {
     return undefined;
@@ -176,7 +176,7 @@ const resolveChartFilterFieldNamesToIds = (
 export const resolveConfigurationFieldNamesToIds = (
   configuration: WidgetConfigurationInput,
   objectMetadataId: string | undefined,
-  maps: DashboardIdentifierMaps,
+  maps: PageLayoutIdentifierMaps,
 ): AllPageLayoutWidgetConfiguration => {
   switch (configuration.configurationType) {
     case WidgetConfigurationType.AGGREGATE_CHART: {
@@ -323,13 +323,14 @@ export const resolveConfigurationFieldNamesToIds = (
       };
     case WidgetConfigurationType.IFRAME:
     case WidgetConfigurationType.RECORD_TABLE:
+    case WidgetConfigurationType.FRONT_COMPONENT:
       return configuration;
   }
 };
 
 export const resolveWidgetFieldNamesToIds = (
   widget: WidgetIdentifiersInput,
-  maps: DashboardIdentifierMaps,
+  maps: PageLayoutIdentifierMaps,
 ): WidgetWithMetadataIds => {
   const objectMetadataId = getObjectMetadataId({
     objectMetadataId: widget.objectMetadataId,
