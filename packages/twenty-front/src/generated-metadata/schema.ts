@@ -705,6 +705,7 @@ export enum ApplicationExportCoverageStatus {
 
 export type ApplicationExportFile = {
   __typename?: 'ApplicationExportFile';
+  /** Base64 for public-asset files, UTF-8 text for other folders. */
   content: Scalars['String']['output'];
   folder: Scalars['String']['output'];
   path: Scalars['String']['output'];
@@ -6404,6 +6405,7 @@ export type QueryEventLogsArgs = {
 
 export type QueryExportApplicationArgs = {
   shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
+  shouldIncludePublicAssets?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceFiles?: InputMaybe<Scalars['Boolean']['input']>;
   universalIdentifier: Scalars['UUID']['input'];
 };
