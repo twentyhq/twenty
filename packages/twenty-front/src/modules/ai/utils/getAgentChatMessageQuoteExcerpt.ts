@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH } from '@/ai/constants/AiChatQuoteExcerptMaxLength';
@@ -14,8 +15,9 @@ export const getAgentChatMessageQuoteExcerpt = (
   const textWithoutLeadingQuote = fullText
     .replace(LEADING_QUOTE_REGEX, '')
     .trim();
-  const text =
-    textWithoutLeadingQuote === '' ? fullText : textWithoutLeadingQuote;
+  const text = isNonEmptyString(textWithoutLeadingQuote)
+    ? textWithoutLeadingQuote
+    : fullText;
 
   return text.length > AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH
     ? `${text.slice(0, AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH).trimEnd()}…`

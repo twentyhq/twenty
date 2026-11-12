@@ -32,8 +32,20 @@ export const AiChatComposerQuote = () => {
     return null;
   }
 
+  const removeQuote = () => setAgentChatQuotedMessageId(null);
+
+  if (!isDefined(quotedMessage)) {
+    return (
+      <AiChatComposerQuotePreview
+        source={{ status: 'unavailable' }}
+        onRemove={removeQuote}
+        onNavigateToMessage={scrollToAgentChatMessage}
+      />
+    );
+  }
+
   const sender = currentWorkspaceMembers.find(
-    ({ id }) => id === quotedMessage?.metadata?.senderWorkspaceMemberId,
+    ({ id }) => id === quotedMessage.metadata?.senderWorkspaceMemberId,
   );
   const authorName = getAgentChatSenderLabel({
     sender,
@@ -42,26 +54,22 @@ export const AiChatComposerQuote = () => {
 
   return (
     <AiChatComposerQuotePreview
-      source={
-        isDefined(quotedMessage)
-          ? {
-              status: 'available',
-              messageId: quotedMessage.id,
-              authorName,
-              authorAvatar: (
-                <Avatar
-                  name={authorName}
-                  colorSeed={sender?.id}
-                  src={getAbsoluteImageUrl(sender?.avatarUrl)}
-                  size="sm"
-                  shape="circle"
-                />
-              ),
-              excerpt: getAgentChatMessageQuoteExcerpt(quotedMessage),
-            }
-          : { status: 'unavailable' }
-      }
-      onRemove={() => setAgentChatQuotedMessageId(null)}
+      source={{
+        status: 'available',
+        messageId: quotedMessage.id,
+        authorName,
+        authorAvatar: (
+          <Avatar
+            name={authorName}
+            colorSeed={sender?.id}
+            src={getAbsoluteImageUrl(sender?.avatarUrl)}
+            size="sm"
+            shape="circle"
+          />
+        ),
+        excerpt: getAgentChatMessageQuoteExcerpt(quotedMessage),
+      }}
+      onRemove={removeQuote}
       onNavigateToMessage={scrollToAgentChatMessage}
     />
   );

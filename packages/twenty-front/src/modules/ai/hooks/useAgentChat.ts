@@ -137,16 +137,16 @@ export const useAgentChat = () => {
     const quotedMessage = store
       .get(agentChatMessagesFamilyState.atomFamily({ threadId }))
       .find(({ id }) => id === quotedMessageId);
+    const quotedMessageSender = store
+      .get(currentWorkspaceMembersState.atom)
+      .find(
+        ({ id }) => id === quotedMessage?.metadata?.senderWorkspaceMemberId,
+      );
     const contentToSend = isDefined(quotedMessage)
       ? prependAgentChatQuoteToText({
           text: draftText,
           authorName: getAgentChatSenderLabel({
-            sender: store
-              .get(currentWorkspaceMembersState.atom)
-              .find(
-                ({ id }) =>
-                  id === quotedMessage.metadata?.senderWorkspaceMemberId,
-              ),
+            sender: quotedMessageSender,
             isCurrentWorkspaceMember: false,
           }),
           excerpt: getAgentChatMessageQuoteExcerpt(quotedMessage),
