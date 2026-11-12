@@ -154,7 +154,7 @@ export const SeveralImages: Story = {
               ],
             },
           ],
-        } as EmailThreadMessageWithSender,
+        },
       ],
     },
   },
