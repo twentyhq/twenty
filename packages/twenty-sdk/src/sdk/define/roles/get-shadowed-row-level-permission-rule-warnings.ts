@@ -1,48 +1,62 @@
-import {
-  getEffectiveObjectPermissionsFromRoleManifest,
-  type ObjectRecordsPermissionGrants,
-  type RowLevelPermissionRuleManifest,
-} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+
+type RoleAllRecordsGrants = {
+  canReadAllObjectRecords?: boolean;
+  canUpdateAllObjectRecords?: boolean;
+  canSoftDeleteAllObjectRecords?: boolean;
+  canDestroyAllObjectRecords?: boolean;
+};
+
+type ObjectRecordsPermissions = {
+  canReadAllRecords?: boolean;
+  canUpdateAllRecords?: boolean;
+  canSoftDeleteAllRecords?: boolean;
+  canDestroyAllRecords?: boolean;
+  rowLevelRecordsPermissions?: {
+    universalIdentifier: string;
+    canReadRecords?: boolean;
+    canUpdateRecords?: boolean;
+    canSoftDeleteRecords?: boolean;
+    canDestroyRecords?: boolean;
+  }[];
+};
 
 export const getShadowedRowLevelPermissionRuleWarnings = ({
   role,
-  rowLevelPermissionRules = [],
+  objectRecordsPermissions = [],
 }: {
-  role: ObjectRecordsPermissionGrants;
-  rowLevelPermissionRules?: Pick<
-    RowLevelPermissionRuleManifest,
-    | 'universalIdentifier'
-    | 'objectUniversalIdentifier'
-    | 'canReadRecords'
-    | 'canUpdateRecords'
-    | 'canSoftDeleteRecords'
-    | 'canDestroyRecords'
-  >[];
+  role: RoleAllRecordsGrants;
+  objectRecordsPermissions?: ObjectRecordsPermissions[];
 }): string[] =>
-  rowLevelPermissionRules.flatMap((rule) => {
-    const allRecordsPermissions = getEffectiveObjectPermissionsFromRoleManifest(
-      { role, objectUniversalIdentifier: rule.objectUniversalIdentifier },
-    );
-    const shadowedOperations = [
-      rule.canReadRecords && allRecordsPermissions.canReadObjectRecords
-        ? 'read'
-        : undefined,
-      rule.canUpdateRecords && allRecordsPermissions.canUpdateObjectRecords
-        ? 'update'
-        : undefined,
-      rule.canSoftDeleteRecords &&
-      allRecordsPermissions.canSoftDeleteObjectRecords
-        ? 'soft delete'
-        : undefined,
-      rule.canDestroyRecords && allRecordsPermissions.canDestroyObjectRecords
-        ? 'destroy'
-        : undefined,
-    ].filter(isDefined);
+  objectRecordsPermissions.flatMap(
+    ({ rowLevelRecordsPermissions = [], ...allRecordsGrants }) =>
+      rowLevelRecordsPermissions.flatMap((rule) => {
+        const shadowedOperations = [
+          rule.canReadRecords &&
+          (allRecordsGrants.canReadAllRecords ?? role.canReadAllObjectRecords)
+            ? 'read'
+            : undefined,
+          rule.canUpdateRecords &&
+          (allRecordsGrants.canUpdateAllRecords ??
+            role.canUpdateAllObjectRecords)
+            ? 'update'
+            : undefined,
+          rule.canSoftDeleteRecords &&
+          (allRecordsGrants.canSoftDeleteAllRecords ??
+            role.canSoftDeleteAllObjectRecords)
+            ? 'soft delete'
+            : undefined,
+          rule.canDestroyRecords &&
+          (allRecordsGrants.canDestroyAllRecords ??
+            role.canDestroyAllObjectRecords)
+            ? 'destroy'
+            : undefined,
+        ].filter(isDefined);
 
-    return shadowedOperations.length > 0
-      ? [
-          `Row level permission rule "${rule.universalIdentifier}" is ignored for ${shadowedOperations.join(', ')}: the role already grants it on all records of the object. Remove that grant from objectPermissions or from the role so the rule applies.`,
-        ]
-      : [];
-  });
+        return shadowedOperations.length > 0
+          ? [
+              `Row level records permissions "${rule.universalIdentifier}" are ignored for ${shadowedOperations.join(', ')}: the role already grants it on all records of the object. Set the matching can…AllRecords to false on the object so the rule applies.`,
+            ]
+          : [];
+      }),
+  );

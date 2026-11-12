@@ -1,5 +1,6 @@
 import {
   getRoleTargetUniversalIdentifier,
+  getRecordsPermissionsFromRoleManifest,
   getRowLevelPermissionPredicatesFromRoleManifest,
   type Manifest,
 } from 'twenty-shared/application';
@@ -230,7 +231,10 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'object permission',
     getCandidates: (manifest) =>
       (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.objectPermissions, () => undefined),
+        toCandidates(
+          getRecordsPermissionsFromRoleManifest({ role }).objectPermissions,
+          () => undefined,
+        ),
       ),
   },
   fieldPermission: {
@@ -308,7 +312,11 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'row-level permission rule',
     getCandidates: (manifest) =>
       (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.rowLevelPermissionRules, () => undefined),
+        toCandidates(
+          getRecordsPermissionsFromRoleManifest({ role })
+            .rowLevelPermissionRules,
+          () => undefined,
+        ),
       ),
   },
   fieldMetadataOption: {

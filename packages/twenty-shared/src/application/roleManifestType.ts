@@ -48,8 +48,7 @@ export type RowLevelPermissionRulePredicateGroupManifest =
     predicateGroups?: RowLevelPermissionRulePredicateGroupManifest[];
   };
 
-export type RowLevelPermissionRuleManifest = SyncableEntityOptions & {
-  objectUniversalIdentifier: string;
+export type RowLevelRecordsPermissionsManifest = SyncableEntityOptions & {
   canReadRecords?: boolean;
   canCreateRecords?: boolean;
   canUpdateRecords?: boolean;
@@ -58,6 +57,22 @@ export type RowLevelPermissionRuleManifest = SyncableEntityOptions & {
   predicates?: RowLevelPermissionRulePredicateManifest[];
   predicateGroups?: RowLevelPermissionRulePredicateGroupManifest[];
 };
+
+export type ObjectRecordsPermissionsManifest =
+  Partial<SyncableEntityOptions> & {
+    objectUniversalIdentifier: string;
+    canReadAllRecords?: boolean;
+    canCreateAllRecords?: boolean;
+    canUpdateAllRecords?: boolean;
+    canSoftDeleteAllRecords?: boolean;
+    canDestroyAllRecords?: boolean;
+    rowLevelRecordsPermissions?: RowLevelRecordsPermissionsManifest[];
+  };
+
+export type RowLevelPermissionRuleManifest =
+  RowLevelRecordsPermissionsManifest & {
+    objectUniversalIdentifier: string;
+  };
 
 export type RoleManifest = SyncableEntityOptions &
   Omit<RolePermissionGrants, 'objectPermissions' | 'fieldPermissions'> & {
@@ -69,7 +84,7 @@ export type RoleManifest = SyncableEntityOptions &
     canBeAssignedToApiKeys?: boolean;
     objectPermissions?: ObjectPermissionManifest[];
     fieldPermissions?: FieldPermissionManifest[];
-    rowLevelPermissionRules?: RowLevelPermissionRuleManifest[];
+    objectRecordsPermissions?: ObjectRecordsPermissionsManifest[];
     rowLevelPermissionPredicates?: RowLevelPermissionPredicateManifest[];
     rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupManifest[];
   };

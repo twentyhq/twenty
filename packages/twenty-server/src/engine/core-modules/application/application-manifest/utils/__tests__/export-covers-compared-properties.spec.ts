@@ -55,7 +55,7 @@ import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/cor
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromFlatNavigationMenuItemToNavigationMenuItemManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-navigation-menu-item-to-navigation-menu-item-manifest.util';
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
-import { fromFlatObjectPermissionToObjectPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-permission-manifest.util';
+import { fromFlatObjectPermissionToObjectRecordsPermissionsManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-records-permissions-manifest.util';
 import { fromFlatPageLayoutTabToPageLayoutTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-tab-to-page-layout-tab-manifest.util';
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
 import { fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-standalone-page-layout-widget-manifest.util';
@@ -754,7 +754,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
   {
     metadataName: 'objectPermission',
     emittedProperties: Object.keys(
-      fromFlatObjectPermissionToObjectPermissionManifest({
+      fromFlatObjectPermissionToObjectRecordsPermissionsManifest({
         flatObjectPermission:
           fromObjectPermissionManifestToUniversalFlatObjectPermission({
             objectPermissionManifest: OBJECT_PERMISSION_MANIFEST,
@@ -764,12 +764,14 @@ const EXPORTED_KINDS: ExportedKind[] = [
     ),
     renamedProperties: {
       objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
+      canReadObjectRecords: 'canReadAllRecords',
+      canCreateObjectRecords: 'canCreateAllRecords',
+      canUpdateObjectRecords: 'canUpdateAllRecords',
+      canSoftDeleteObjectRecords: 'canSoftDeleteAllRecords',
+      canDestroyObjectRecords: 'canDestroyAllRecords',
     },
     workspaceLocalProperties: [],
-    knownGaps: {
-      ...NESTED_ROLE_CHILD_GAPS,
-      canCreateObjectRecords: CREATE_PERMISSION_DERIVED_ON_IMPORT,
-    },
+    knownGaps: NESTED_ROLE_CHILD_GAPS,
   },
   {
     metadataName: 'fieldPermission',

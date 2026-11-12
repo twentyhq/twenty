@@ -525,34 +525,39 @@ describe('writeDefineFile', () => {
     expect(file).toContain("'application-permission-flag-uid'");
   });
 
-  it('should write the predicates and predicate groups nested in a row-level rule as enum members', () => {
+  it('should write the predicates and predicate groups nested in row-level records permissions as enum members', () => {
     const { content: file } = writeDefineFile({
       definer: 'defineRole',
       config: {
         universalIdentifier: 'role-uid',
         label: 'Auditor',
-        rowLevelPermissionRules: [
+        objectRecordsPermissions: [
           {
-            universalIdentifier: 'rule-uid',
             objectUniversalIdentifier: 'object-uid',
-            canReadRecords: true,
-            predicates: [
+            canUpdateAllRecords: true,
+            rowLevelRecordsPermissions: [
               {
-                universalIdentifier: 'predicate-uid',
-                fieldUniversalIdentifier: 'field-uid',
-                operand: 'CONTAINS',
-                value: 'Rex',
-              },
-            ],
-            predicateGroups: [
-              {
-                universalIdentifier: 'predicate-group-uid',
-                logicalOperator: 'OR',
+                universalIdentifier: 'rule-uid',
+                canReadRecords: true,
                 predicates: [
                   {
-                    universalIdentifier: 'predicate-in-group-uid',
+                    universalIdentifier: 'predicate-uid',
                     fieldUniversalIdentifier: 'field-uid',
-                    operand: 'IS_EMPTY',
+                    operand: 'CONTAINS',
+                    value: 'Rex',
+                  },
+                ],
+                predicateGroups: [
+                  {
+                    universalIdentifier: 'predicate-group-uid',
+                    logicalOperator: 'OR',
+                    predicates: [
+                      {
+                        universalIdentifier: 'predicate-in-group-uid',
+                        fieldUniversalIdentifier: 'field-uid',
+                        operand: 'IS_EMPTY',
+                      },
+                    ],
                   },
                 ],
               },

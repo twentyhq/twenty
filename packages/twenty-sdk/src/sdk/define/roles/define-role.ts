@@ -4,7 +4,7 @@ import { createValidationResult } from '@/sdk/define/common/utils/create-validat
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { getShadowedRowLevelPermissionRuleWarnings } from '@/sdk/define/roles/get-shadowed-row-level-permission-rule-warnings';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
-import { validateRowLevelPermissionRules } from '@/sdk/define/roles/validate-row-level-permission-rules';
+import { validateObjectRecordsPermissions } from '@/sdk/define/roles/validate-object-records-permissions';
 
 const keepEachPermissionFlagOnce = <
   TConfig extends Pick<RoleConfig, 'permissionFlagUniversalIdentifiers'>,
@@ -130,17 +130,17 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
-  const rowLevelPermissionRulesValidation =
-    validateRowLevelPermissionRules(config);
+  const objectRecordsPermissionsValidation =
+    validateObjectRecordsPermissions(config);
 
   return createValidationResult({
     config: keepEachPermissionFlagOnce(config),
-    errors: [...errors, ...rowLevelPermissionRulesValidation.errors],
+    errors: [...errors, ...objectRecordsPermissionsValidation.errors],
     warnings: [
-      ...rowLevelPermissionRulesValidation.warnings,
+      ...objectRecordsPermissionsValidation.warnings,
       ...getShadowedRowLevelPermissionRuleWarnings({
         role: config,
-        rowLevelPermissionRules: config.rowLevelPermissionRules,
+        objectRecordsPermissions: config.objectRecordsPermissions,
       }),
     ],
   });

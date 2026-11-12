@@ -1,13 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
   type FieldPermissionManifest,
-  type ObjectPermissionManifest,
+  type ObjectRecordsPermissionsManifest,
   type PermissionFlagManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
 
 import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-field-permission-manifest.util';
-import { fromFlatObjectPermissionToObjectPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-permission-manifest.util';
+import { fromFlatObjectPermissionToObjectRecordsPermissionsManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-records-permissions-manifest.util';
 import { fromFlatPermissionFlagToPermissionFlagManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-permission-flag-to-permission-flag-manifest.util';
 import { fromFlatRoleToRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-role-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
@@ -15,6 +15,7 @@ import {
   type ChildMetadataName,
   type ParentStatus,
 } from 'src/engine/core-modules/application/application-manifest/types/export-classification.type';
+import { buildObjectRecordsPermissionsManifests } from 'src/engine/core-modules/application/application-manifest/utils/build-object-records-permissions-manifests.util';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
 import { createChildDecider } from 'src/engine/core-modules/application/application-manifest/utils/create-child-decider.util';
@@ -32,7 +33,10 @@ type FlatRoleChild =
   | UniversalFlatRolePermissionFlag;
 
 type RoleChildren = {
-  objectPermissions: ObjectPermissionManifest[];
+  objectPermissions: Omit<
+    ObjectRecordsPermissionsManifest,
+    'rowLevelRecordsPermissions'
+  >[];
   fieldPermissions: FieldPermissionManifest[];
   permissionFlagUniversalIdentifiers: string[];
 };
@@ -152,7 +156,7 @@ export const reconstructRolesManifest = ({
       childrenOf(
         flatObjectPermission.roleUniversalIdentifier,
       )?.objectPermissions.push(
-        fromFlatObjectPermissionToObjectPermissionManifest({
+        fromFlatObjectPermissionToObjectRecordsPermissionsManifest({
           flatObjectPermission,
         }),
       );
@@ -255,9 +259,11 @@ export const reconstructRolesManifest = ({
     return fromFlatRoleToRoleManifest({
       flatRole,
       children: {
-        objectPermissions: children?.objectPermissions,
+        objectRecordsPermissions: buildObjectRecordsPermissionsManifests({
+          allRecordsPermissions: children?.objectPermissions ?? [],
+          rowLevelPermissionRules: rowLevelPermissions?.rules ?? [],
+        }),
         fieldPermissions: children?.fieldPermissions,
-        rowLevelPermissionRules: rowLevelPermissions?.rules,
         rowLevelPermissionPredicateGroups: rowLevelPermissions?.predicateGroups,
         rowLevelPermissionPredicates: rowLevelPermissions?.predicates,
         permissionFlagUniversalIdentifiers:

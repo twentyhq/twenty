@@ -63,8 +63,10 @@ export type RowLevelPermissionPredicateGroupManifest =
   LooseEnumValues<SharedApplication.RowLevelPermissionPredicateGroupManifest>;
 export type RowLevelPermissionPredicateManifest =
   LooseEnumValues<SharedApplication.RowLevelPermissionPredicateManifest>;
-export type RowLevelPermissionRuleManifest =
-  LooseEnumValues<SharedApplication.RowLevelPermissionRuleManifest>;
+export type ObjectRecordsPermissionsManifest =
+  LooseEnumValues<SharedApplication.ObjectRecordsPermissionsManifest>;
+export type RowLevelRecordsPermissionsManifest =
+  LooseEnumValues<SharedApplication.RowLevelRecordsPermissionsManifest>;
 export type SendInboxMessageInput =
   LooseEnumValues<SharedApplication.SendInboxMessageInput>;
 export type SettingsFrontComponentConfig =

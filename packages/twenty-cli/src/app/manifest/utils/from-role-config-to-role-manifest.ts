@@ -39,7 +39,19 @@ export const fromRoleConfigToRoleManifest = ({
           }),
       }),
     ),
-    rowLevelPermissionRules: roleConfig.rowLevelPermissionRules ?? [],
+    objectRecordsPermissions: (roleConfig.objectRecordsPermissions ?? []).map(
+      (objectRecordsPermissions) => ({
+        ...objectRecordsPermissions,
+        universalIdentifier:
+          objectRecordsPermissions.universalIdentifier ??
+          getObjectPermissionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            roleUniversalIdentifier: roleConfig.universalIdentifier,
+            objectUniversalIdentifier:
+              objectRecordsPermissions.objectUniversalIdentifier,
+          }),
+      }),
+    ),
     rowLevelPermissionPredicateGroups:
       roleConfig.rowLevelPermissionPredicateGroups ?? [],
     rowLevelPermissionPredicates: roleConfig.rowLevelPermissionPredicates ?? [],

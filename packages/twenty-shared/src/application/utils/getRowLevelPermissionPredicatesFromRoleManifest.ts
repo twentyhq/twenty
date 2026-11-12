@@ -4,13 +4,14 @@ import {
   type RowLevelPermissionPredicateManifest,
 } from '@/application/roleManifestType';
 import { flattenRowLevelPermissionRuleManifests } from '@/application/utils/flattenRowLevelPermissionRuleManifests';
+import { getRecordsPermissionsFromRoleManifest } from '@/application/utils/getRecordsPermissionsFromRoleManifest';
 
 export const getRowLevelPermissionPredicatesFromRoleManifest = ({
   role,
 }: {
   role: Pick<
     RoleManifest,
-    | 'rowLevelPermissionRules'
+    | 'objectRecordsPermissions'
     | 'rowLevelPermissionPredicateGroups'
     | 'rowLevelPermissionPredicates'
   >;
@@ -20,7 +21,8 @@ export const getRowLevelPermissionPredicatesFromRoleManifest = ({
 } => {
   const { predicateGroups, predicates } =
     flattenRowLevelPermissionRuleManifests({
-      rules: role.rowLevelPermissionRules ?? [],
+      rules: getRecordsPermissionsFromRoleManifest({ role })
+        .rowLevelPermissionRules,
     });
 
   return {

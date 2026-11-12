@@ -30,7 +30,7 @@ const buildManifest = (
   role: Pick<
     RoleManifest,
     | 'objectPermissions'
-    | 'rowLevelPermissionRules'
+    | 'objectRecordsPermissions'
     | 'rowLevelPermissionPredicates'
   >,
 ): Manifest =>
@@ -65,12 +65,17 @@ const {
 } = companyNamePredicate;
 
 const manifestWithRule = buildManifest({
-  rowLevelPermissionRules: [
+  objectRecordsPermissions: [
     {
-      universalIdentifier: TEST_RULE_ID,
       objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
-      canReadRecords: true,
-      predicates: [companyNameRulePredicate],
+      canUpdateAllRecords: true,
+      rowLevelRecordsPermissions: [
+        {
+          universalIdentifier: TEST_RULE_ID,
+          canReadRecords: true,
+          predicates: [companyNameRulePredicate],
+        },
+      ],
     },
   ],
 });
@@ -143,7 +148,7 @@ describe('Manifest sync - row level permission rules declared on a role', () => 
     ]);
   }, 60000);
 
-  it('writes a rule with its grants and nested predicates and leaves the object permission to the manifest', async () => {
+  it('writes the all records grants of an object and its rule with nested predicates', async () => {
     await syncApplication({ manifest: manifestWithRule, expectToFail: false });
 
     expect(await findRuleRows()).toMatchObject([
@@ -152,6 +157,7 @@ describe('Manifest sync - row level permission rules declared on a role', () => 
         canReadRecords: true,
         canUpdateRecords: false,
         canReadObjectRecords: null,
+        canUpdateObjectRecords: true,
       },
     ]);
   }, 60000);

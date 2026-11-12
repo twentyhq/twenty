@@ -5,27 +5,24 @@ import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-m
 
 export type RoleChildrenManifests = Pick<
   RoleManifest,
-  | 'objectPermissions'
+  | 'objectRecordsPermissions'
   | 'fieldPermissions'
-  | 'rowLevelPermissionRules'
   | 'rowLevelPermissionPredicateGroups'
   | 'rowLevelPermissionPredicates'
   | 'permissionFlagUniversalIdentifiers'
 >;
 
 const withoutEmptyCollections = ({
-  objectPermissions,
+  objectRecordsPermissions,
   fieldPermissions,
-  rowLevelPermissionRules,
   rowLevelPermissionPredicateGroups,
   rowLevelPermissionPredicates,
   permissionFlagUniversalIdentifiers,
 }: RoleChildrenManifests): RoleChildrenManifests => ({
-  ...(isNonEmptyArray(objectPermissions) ? { objectPermissions } : {}),
-  ...(isNonEmptyArray(fieldPermissions) ? { fieldPermissions } : {}),
-  ...(isNonEmptyArray(rowLevelPermissionRules)
-    ? { rowLevelPermissionRules }
+  ...(isNonEmptyArray(objectRecordsPermissions)
+    ? { objectRecordsPermissions }
     : {}),
+  ...(isNonEmptyArray(fieldPermissions) ? { fieldPermissions } : {}),
   ...(isNonEmptyArray(rowLevelPermissionPredicateGroups)
     ? { rowLevelPermissionPredicateGroups }
     : {}),

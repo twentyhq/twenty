@@ -2,41 +2,31 @@ import { getShadowedRowLevelPermissionRuleWarnings } from '@/sdk/define/roles/ge
 
 const RULE = {
   universalIdentifier: 'rule',
-  objectUniversalIdentifier: 'company',
   canReadRecords: true,
   canUpdateRecords: true,
 };
 
 describe('getShadowedRowLevelPermissionRuleWarnings', () => {
-  it('should not warn when the role grants nothing on all records of the object', () => {
+  it('should not warn when the object grants nothing on all records for the operations of its rule', () => {
     expect(
       getShadowedRowLevelPermissionRuleWarnings({
-        role: {
-          canReadAllObjectRecords: true,
-          objectPermissions: [
-            {
-              objectUniversalIdentifier: 'company',
-              canReadObjectRecords: false,
-            },
-          ],
-        },
-        rowLevelPermissionRules: [RULE],
+        role: { canReadAllObjectRecords: true },
+        objectRecordsPermissions: [
+          { canReadAllRecords: false, rowLevelRecordsPermissions: [RULE] },
+        ],
       }),
     ).toEqual([]);
   });
 
-  it('should warn about the operations an object permission or the role already grants on all records', () => {
+  it('should warn about the operations the object or the role already grants on all records', () => {
     const warnings = getShadowedRowLevelPermissionRuleWarnings({
-      role: {
-        canUpdateAllObjectRecords: true,
-        objectPermissions: [
-          { objectUniversalIdentifier: 'company', canReadObjectRecords: true },
-        ],
-      },
-      rowLevelPermissionRules: [RULE],
+      role: { canUpdateAllObjectRecords: true },
+      objectRecordsPermissions: [
+        { canReadAllRecords: true, rowLevelRecordsPermissions: [RULE] },
+      ],
     });
 
     expect(warnings).toHaveLength(1);
-    expect(warnings[0]).toContain('is ignored for read, update');
+    expect(warnings[0]).toContain('are ignored for read, update');
   });
 });

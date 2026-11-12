@@ -1,5 +1,5 @@
 import {
-  type ObjectPermissionManifest,
+  type ObjectRecordsPermissionsManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
 
@@ -32,10 +32,10 @@ const ROLE_MANIFEST: RoleManifest = {
   canBeAssignedToApiKeys: true,
 };
 
-const OBJECT_PERMISSION_MANIFEST: ObjectPermissionManifest = {
+const OBJECT_RECORDS_PERMISSIONS_MANIFEST: ObjectRecordsPermissionsManifest = {
   universalIdentifier: OBJECT_PERMISSION_UID,
   objectUniversalIdentifier: OBJECT_UID,
-  canReadObjectRecords: true,
+  canReadAllRecords: true,
 };
 
 const forward = (roleManifest: RoleManifest) =>
@@ -92,14 +92,14 @@ describe('fromFlatRoleToRoleManifest', () => {
       fromFlatRoleToRoleManifest({
         flatRole: forward(ROLE_MANIFEST),
         children: {
-          objectPermissions: [OBJECT_PERMISSION_MANIFEST],
+          objectRecordsPermissions: [OBJECT_RECORDS_PERMISSIONS_MANIFEST],
           fieldPermissions: [],
           permissionFlagUniversalIdentifiers: [PERMISSION_FLAG_UID],
         },
       }),
     ).toStrictEqual({
       ...ROLE_MANIFEST,
-      objectPermissions: [OBJECT_PERMISSION_MANIFEST],
+      objectRecordsPermissions: [OBJECT_RECORDS_PERMISSIONS_MANIFEST],
       permissionFlagUniversalIdentifiers: [PERMISSION_FLAG_UID],
     });
   });

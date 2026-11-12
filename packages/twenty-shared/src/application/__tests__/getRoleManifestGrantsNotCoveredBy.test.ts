@@ -354,30 +354,34 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       });
       const role = buildRole({
         universalIdentifier: 'role',
-        rowLevelPermissionRules: [
+        objectRecordsPermissions: [
           {
-            universalIdentifier: 'role-rule',
             objectUniversalIdentifier: PERSON,
-            canReadRecords: true,
-            predicateGroups: (
-              restrictedRole.rowLevelPermissionPredicateGroups ?? []
-            ).map(({ universalIdentifier, logicalOperator }) => ({
-              universalIdentifier,
-              logicalOperator,
-              predicates: (
-                restrictedRole.rowLevelPermissionPredicates ?? []
-              ).map(
-                ({
+            rowLevelRecordsPermissions: [
+              {
+                universalIdentifier: 'role-rule',
+                canReadRecords: true,
+                predicateGroups: (
+                  restrictedRole.rowLevelPermissionPredicateGroups ?? []
+                ).map(({ universalIdentifier, logicalOperator }) => ({
                   universalIdentifier,
-                  fieldUniversalIdentifier,
-                  operand,
-                }) => ({
-                  universalIdentifier,
-                  fieldUniversalIdentifier,
-                  operand,
-                }),
-              ),
-            })),
+                  logicalOperator,
+                  predicates: (
+                    restrictedRole.rowLevelPermissionPredicates ?? []
+                  ).map(
+                    ({
+                      universalIdentifier,
+                      fieldUniversalIdentifier,
+                      operand,
+                    }) => ({
+                      universalIdentifier,
+                      fieldUniversalIdentifier,
+                      operand,
+                    }),
+                  ),
+                })),
+              },
+            ],
           },
         ],
       });
@@ -397,16 +401,20 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
 
     it('reports an operation a role only grants through a rule', () => {
       const role = buildRole({
-        rowLevelPermissionRules: [
+        objectRecordsPermissions: [
           {
-            universalIdentifier: 'role-rule',
             objectUniversalIdentifier: PERSON,
-            canReadRecords: true,
-            predicates: [
+            rowLevelRecordsPermissions: [
               {
-                universalIdentifier: 'role-predicate',
-                fieldUniversalIdentifier: EMAIL_FIELD,
-                operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+                universalIdentifier: 'role-rule',
+                canReadRecords: true,
+                predicates: [
+                  {
+                    universalIdentifier: 'role-predicate',
+                    fieldUniversalIdentifier: EMAIL_FIELD,
+                    operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+                  },
+                ],
               },
             ],
           },

@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/types';
 
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
-import { fromRoleManifestToUniversalFlatRowLevelPermissions } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-row-level-permissions.util';
+import { fromRoleManifestToUniversalFlatRecordsPermissions } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
 
 const APPLICATION = '20202020-0000-4000-8000-000000000001';
 const ROLE = '20202020-0000-4000-8000-000000000002';
@@ -22,7 +22,7 @@ const PREDICATE = {
 const convert = (
   roleManifest: Omit<RoleManifest, 'universalIdentifier' | 'label'>,
 ) =>
-  fromRoleManifestToUniversalFlatRowLevelPermissions({
+  fromRoleManifestToUniversalFlatRecordsPermissions({
     roleManifest,
     universalFlatRole: fromRoleManifestToUniversalFlatRole({
       roleManifest: {
@@ -44,7 +44,7 @@ const NO_OBJECT_RECORDS_GRANTS = {
   canDestroyObjectRecords: false,
 };
 
-describe('fromRoleManifestToUniversalFlatRowLevelPermissions', () => {
+describe('fromRoleManifestToUniversalFlatRecordsPermissions', () => {
   it('should move the object permission onto the derived rule of predicates declared outside a rule', () => {
     const { rules, predicates, objectPermissions } = convert({
       objectPermissions: [
@@ -116,24 +116,27 @@ describe('fromRoleManifestToUniversalFlatRowLevelPermissions', () => {
     ]);
   });
 
-  it('should write a rule with the predicates and groups nested in it and leave the object permission as declared', () => {
+  it('should write the all records grants and the rules of an object, with the predicates and groups nested in them', () => {
     const { rules, predicateGroups, predicates, objectPermissions } = convert({
-      objectPermissions: [
-        { objectUniversalIdentifier: 'company', canReadObjectRecords: false },
-      ],
-      rowLevelPermissionRules: [
+      objectRecordsPermissions: [
         {
-          universalIdentifier: 'rule',
           objectUniversalIdentifier: 'company',
-          canReadRecords: true,
-          predicates: [{ ...PREDICATE, universalIdentifier: 'predicate' }],
-          predicateGroups: [
+          canReadAllRecords: false,
+          canUpdateAllRecords: true,
+          rowLevelRecordsPermissions: [
             {
-              universalIdentifier: 'group',
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.OR,
-              predicates: [
-                { ...PREDICATE, universalIdentifier: 'predicate-in-group' },
+              universalIdentifier: 'rule',
+              canReadRecords: true,
+              predicates: [{ ...PREDICATE, universalIdentifier: 'predicate' }],
+              predicateGroups: [
+                {
+                  universalIdentifier: 'group',
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.OR,
+                  predicates: [
+                    { ...PREDICATE, universalIdentifier: 'predicate-in-group' },
+                  ],
+                },
               ],
             },
           ],
@@ -142,7 +145,11 @@ describe('fromRoleManifestToUniversalFlatRowLevelPermissions', () => {
     });
 
     expect(rules).toMatchObject([
-      { universalIdentifier: 'rule', canReadRecords: true },
+      {
+        universalIdentifier: 'rule',
+        objectMetadataUniversalIdentifier: 'company',
+        canReadRecords: true,
+      },
     ]);
     expect(predicateGroups).toMatchObject([
       {
@@ -166,23 +173,53 @@ describe('fromRoleManifestToUniversalFlatRowLevelPermissions', () => {
       },
     ]);
     expect(objectPermissions).toMatchObject([
-      { canReadObjectRecords: false, canUpdateObjectRecords: null },
+      {
+        objectMetadataUniversalIdentifier: 'company',
+        canReadObjectRecords: false,
+        canCreateObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: null,
+      },
     ]);
+  });
+
+  it('should write no object permission for an object that only declares rules', () => {
+    const { rules, objectPermissions } = convert({
+      objectRecordsPermissions: [
+        {
+          objectUniversalIdentifier: 'company',
+          rowLevelRecordsPermissions: [
+            {
+              universalIdentifier: 'rule',
+              canReadRecords: true,
+              predicates: [{ ...PREDICATE, universalIdentifier: 'predicate' }],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(rules).toHaveLength(1);
+    expect(objectPermissions).toEqual([]);
   });
 
   it('should only fall back on the objects whose predicates sit outside a rule', () => {
     const { rules, objectPermissions } = convert({
       objectPermissions: [
-        { objectUniversalIdentifier: 'company', canReadObjectRecords: true },
         { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
       ],
-      rowLevelPermissionRules: [
+      objectRecordsPermissions: [
         {
-          universalIdentifier: 'company-rule',
           objectUniversalIdentifier: 'company',
-          canUpdateRecords: true,
-          predicates: [
-            { ...PREDICATE, universalIdentifier: 'company-predicate' },
+          canReadAllRecords: true,
+          rowLevelRecordsPermissions: [
+            {
+              universalIdentifier: 'company-rule',
+              canUpdateRecords: true,
+              predicates: [
+                { ...PREDICATE, universalIdentifier: 'company-predicate' },
+              ],
+            },
           ],
         },
       ],
@@ -205,12 +242,12 @@ describe('fromRoleManifestToUniversalFlatRowLevelPermissions', () => {
     ]);
     expect(objectPermissions).toMatchObject([
       {
-        objectMetadataUniversalIdentifier: 'company',
-        canReadObjectRecords: true,
-      },
-      {
         objectMetadataUniversalIdentifier: 'person',
         ...NO_OBJECT_RECORDS_GRANTS,
+      },
+      {
+        objectMetadataUniversalIdentifier: 'company',
+        canReadObjectRecords: true,
       },
     ]);
   });

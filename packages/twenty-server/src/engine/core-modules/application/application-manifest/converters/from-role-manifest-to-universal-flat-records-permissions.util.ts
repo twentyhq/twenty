@@ -1,8 +1,11 @@
 import {
   flattenRowLevelPermissionRuleManifests,
+  getRecordsPermissionsFromRoleManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
+import { fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-records-permissions-manifest-to-universal-flat-object-permission.util';
 import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-permission-manifest-to-universal-flat-object-permission.util';
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
@@ -14,7 +17,15 @@ import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/w
 import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 import { type UniversalFlatRowLevelPermissionRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-rule.type';
 
-export const fromRoleManifestToUniversalFlatRowLevelPermissions = ({
+const ALL_RECORDS_GRANT_KEYS = [
+  'canReadAllRecords',
+  'canCreateAllRecords',
+  'canUpdateAllRecords',
+  'canSoftDeleteAllRecords',
+  'canDestroyAllRecords',
+] as const;
+
+export const fromRoleManifestToUniversalFlatRecordsPermissions = ({
   roleManifest,
   universalFlatRole,
   now,
@@ -22,7 +33,7 @@ export const fromRoleManifestToUniversalFlatRowLevelPermissions = ({
   roleManifest: Pick<
     RoleManifest,
     | 'objectPermissions'
-    | 'rowLevelPermissionRules'
+    | 'objectRecordsPermissions'
     | 'rowLevelPermissionPredicateGroups'
     | 'rowLevelPermissionPredicates'
   >;
@@ -50,7 +61,9 @@ export const fromRoleManifestToUniversalFlatRowLevelPermissions = ({
     now,
   };
 
-  const ruleManifests = roleManifest.rowLevelPermissionRules ?? [];
+  const ruleManifests = getRecordsPermissionsFromRoleManifest({
+    role: roleManifest,
+  }).rowLevelPermissionRules;
   const declaredRules = ruleManifests.map((rowLevelPermissionRuleManifest) =>
     fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule({
       rowLevelPermissionRuleManifest,
@@ -63,13 +76,29 @@ export const fromRoleManifestToUniversalFlatRowLevelPermissions = ({
 
   const undeclared = deriveUndeclaredRowLevelPermissionRules({
     universalFlatRole,
-    universalFlatObjectPermissions: (roleManifest.objectPermissions ?? []).map(
-      (objectPermissionManifest) =>
-        fromObjectPermissionManifestToUniversalFlatObjectPermission({
-          objectPermissionManifest,
-          ...owner,
-        }),
-    ),
+    universalFlatObjectPermissions: [
+      ...(roleManifest.objectPermissions ?? []).map(
+        (objectPermissionManifest) =>
+          fromObjectPermissionManifestToUniversalFlatObjectPermission({
+            objectPermissionManifest,
+            ...owner,
+          }),
+      ),
+      ...(roleManifest.objectRecordsPermissions ?? [])
+        .filter(
+          (objectRecordsPermissionsManifest) =>
+            isDefined(objectRecordsPermissionsManifest.universalIdentifier) ||
+            ALL_RECORDS_GRANT_KEYS.some((allRecordsGrantKey) =>
+              isDefined(objectRecordsPermissionsManifest[allRecordsGrantKey]),
+            ),
+        )
+        .map((objectRecordsPermissionsManifest) =>
+          fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission({
+            objectRecordsPermissionsManifest,
+            ...owner,
+          }),
+        ),
+    ],
     declaredRuleUniversalIdentifiers: new Set(
       declaredRules.map(({ universalIdentifier }) => universalIdentifier),
     ),

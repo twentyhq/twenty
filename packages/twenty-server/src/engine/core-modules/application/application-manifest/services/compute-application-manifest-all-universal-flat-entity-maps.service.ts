@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
-import { fromRoleManifestToUniversalFlatRowLevelPermissions } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-row-level-permissions.util';
+import { fromRoleManifestToUniversalFlatRecordsPermissions } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
 import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromMcpServerManifestToUniversalFlatMcpServer } from 'src/engine/core-modules/application/application-manifest/converters/from-mcp-server-manifest-to-universal-flat-mcp-server.util';
@@ -409,7 +409,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         predicateGroups: linkedPredicateGroups,
         predicates: linkedPredicates,
         objectPermissions,
-      } = fromRoleManifestToUniversalFlatRowLevelPermissions({
+      } = fromRoleManifestToUniversalFlatRecordsPermissions({
         roleManifest,
         universalFlatRole,
         now,

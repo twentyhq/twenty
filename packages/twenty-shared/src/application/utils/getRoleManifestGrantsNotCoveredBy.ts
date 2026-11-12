@@ -2,6 +2,7 @@ import { OBJECT_PERMISSION_ACTIONS } from '@/application/objectPermissionActionT
 import { type RoleManifestGrant } from '@/application/roleManifestGrantType';
 import { type RoleManifest } from '@/application/roleManifestType';
 import { ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
+import { getRecordsPermissionsFromRoleManifest } from '@/application/utils/getRecordsPermissionsFromRoleManifest';
 import { getReachableObjectPermissionsFromRoleManifest } from '@/application/utils/getReachableObjectPermissionsFromRoleManifest';
 import { getRowLevelRestrictionSignature } from '@/application/utils/getRowLevelRestrictionSignature';
 import { SystemPermissionFlag } from '@/constants/SystemPermissionFlag';
@@ -89,12 +90,18 @@ const getObjectGrantsNotCoveredBy = ({
   role: RoleManifest;
   superset: RoleManifest;
 }): RoleManifestGrant[] => {
+  const roleRecordsPermissions = getRecordsPermissionsFromRoleManifest({
+    role,
+  });
+  const supersetRecordsPermissions = getRecordsPermissionsFromRoleManifest({
+    role: superset,
+  });
   const objectUniversalIdentifiers = new Set([
     ...[
-      ...(role.objectPermissions ?? []),
-      ...(superset.objectPermissions ?? []),
-      ...(role.rowLevelPermissionRules ?? []),
-      ...(superset.rowLevelPermissionRules ?? []),
+      ...roleRecordsPermissions.objectPermissions,
+      ...supersetRecordsPermissions.objectPermissions,
+      ...roleRecordsPermissions.rowLevelPermissionRules,
+      ...supersetRecordsPermissions.rowLevelPermissionRules,
     ].map((permission) => permission.objectUniversalIdentifier),
     ...(superset.rowLevelPermissionPredicates ?? []).map(
       (predicate) => predicate.objectUniversalIdentifier,

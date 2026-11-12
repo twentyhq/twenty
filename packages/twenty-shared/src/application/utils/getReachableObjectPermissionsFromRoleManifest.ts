@@ -3,6 +3,7 @@ import {
   type EffectiveObjectPermissions,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
+import { getRecordsPermissionsFromRoleManifest } from '@/application/utils/getRecordsPermissionsFromRoleManifest';
 
 export const getReachableObjectPermissionsFromRoleManifest = ({
   role,
@@ -11,11 +12,13 @@ export const getReachableObjectPermissionsFromRoleManifest = ({
   role: RoleManifest;
   objectUniversalIdentifier: string;
 }): EffectiveObjectPermissions => {
+  const { objectPermissions, rowLevelPermissionRules } =
+    getRecordsPermissionsFromRoleManifest({ role });
   const allRecordsPermissions = getEffectiveObjectPermissionsFromRoleManifest({
-    role,
+    role: { ...role, objectPermissions },
     objectUniversalIdentifier,
   });
-  const rules = (role.rowLevelPermissionRules ?? []).filter(
+  const rules = rowLevelPermissionRules.filter(
     (rule) => rule.objectUniversalIdentifier === objectUniversalIdentifier,
   );
 

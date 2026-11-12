@@ -260,6 +260,8 @@ export type {
   RowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateManifest,
   RowLevelPermissionRulePredicateGroupManifest,
+  RowLevelRecordsPermissionsManifest,
+  ObjectRecordsPermissionsManifest,
   RowLevelPermissionRuleManifest,
   RoleManifest,
 } from './roleManifestType';
@@ -340,6 +342,7 @@ export {
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export { getReachableObjectPermissionsFromRoleManifest } from './utils/getReachableObjectPermissionsFromRoleManifest';
+export { getRecordsPermissionsFromRoleManifest } from './utils/getRecordsPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelPermissionPredicatesFromRoleManifest } from './utils/getRowLevelPermissionPredicatesFromRoleManifest';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';

@@ -1436,12 +1436,31 @@ describe('Application export - data model', () => {
       expect(data.exportApplication.manifest.roles).toContainEqual(
         expect.objectContaining({
           label: 'Export Custom Application Recruiter',
-          objectPermissions: [
+          objectRecordsPermissions: [
             expect.objectContaining({
               objectUniversalIdentifier:
                 STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              canReadObjectRecords: true,
-              canUpdateObjectRecords: false,
+              canReadAllRecords: true,
+              canUpdateAllRecords: false,
+              rowLevelRecordsPermissions: [
+                expect.objectContaining({
+                  predicateGroups: [
+                    expect.objectContaining({
+                      universalIdentifier: predicateGroupId,
+                      logicalOperator:
+                        RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                      predicates: [
+                        expect.objectContaining({
+                          universalIdentifier: keptPredicateId,
+                          operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                          value: 'Engineer',
+                          position: 0,
+                        }),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
             }),
           ],
           fieldPermissions: [
@@ -1449,27 +1468,6 @@ describe('Application export - data model', () => {
               objectUniversalIdentifier:
                 STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
               canUpdateFieldValue: false,
-            }),
-          ],
-          rowLevelPermissionRules: [
-            expect.objectContaining({
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              predicateGroups: [
-                expect.objectContaining({
-                  universalIdentifier: predicateGroupId,
-                  logicalOperator:
-                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                  predicates: [
-                    expect.objectContaining({
-                      universalIdentifier: keptPredicateId,
-                      operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                      value: 'Engineer',
-                      position: 0,
-                    }),
-                  ],
-                }),
-              ],
             }),
           ],
           permissionFlagUniversalIdentifiers: [SystemPermissionFlag.EXPORT_CSV],

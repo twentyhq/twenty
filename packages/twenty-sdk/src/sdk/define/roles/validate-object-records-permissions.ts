@@ -13,21 +13,27 @@ type RulePredicateGroup = {
   predicateGroups?: RulePredicateGroup[];
 };
 
-type Rule = {
+type RowLevelRecordsPermissions = {
   universalIdentifier: string;
-  objectUniversalIdentifier: string;
   predicates?: RulePredicate[];
   predicateGroups?: RulePredicateGroup[];
 };
 
-export const validateRowLevelPermissionRules = ({
+type ObjectRecordsPermissions = {
+  objectUniversalIdentifier: string;
+  rowLevelRecordsPermissions?: RowLevelRecordsPermissions[];
+};
+
+export const validateObjectRecordsPermissions = ({
   label,
-  rowLevelPermissionRules = [],
+  objectPermissions = [],
+  objectRecordsPermissions = [],
   rowLevelPermissionPredicateGroups = [],
   rowLevelPermissionPredicates = [],
 }: {
   label: string;
-  rowLevelPermissionRules?: Rule[];
+  objectPermissions?: { objectUniversalIdentifier: string }[];
+  objectRecordsPermissions?: ObjectRecordsPermissions[];
   rowLevelPermissionPredicateGroups?: { universalIdentifier: string }[];
   rowLevelPermissionPredicates?: { universalIdentifier: string }[];
 }): { errors: string[]; warnings: string[] } => {
@@ -111,29 +117,46 @@ export const validateRowLevelPermissionRules = ({
     }
   };
 
-  for (const rule of rowLevelPermissionRules) {
-    addUniversalIdentifier({
-      kind: 'rule',
-      universalIdentifier: rule.universalIdentifier,
-      universalIdentifiers: ruleUniversalIdentifiers,
-    });
+  const objectUniversalIdentifiers = new Set(
+    objectPermissions.map(
+      ({ objectUniversalIdentifier }) => objectUniversalIdentifier,
+    ),
+  );
 
-    if (!isNonEmptyString(rule.objectUniversalIdentifier)) {
+  for (const {
+    objectUniversalIdentifier,
+    rowLevelRecordsPermissions = [],
+  } of objectRecordsPermissions) {
+    if (!isNonEmptyString(objectUniversalIdentifier)) {
       errors.push(
-        'Row level permission rule must have an objectUniversalIdentifier',
+        'Object records permissions must have an objectUniversalIdentifier',
       );
+    } else if (objectUniversalIdentifiers.has(objectUniversalIdentifier)) {
+      errors.push(
+        `Object "${objectUniversalIdentifier}" is declared more than once across objectRecordsPermissions and objectPermissions`,
+      );
+    } else {
+      objectUniversalIdentifiers.add(objectUniversalIdentifier);
     }
 
-    if (
-      !isNonEmptyArray(rule.predicates) &&
-      !isNonEmptyArray(rule.predicateGroups)
-    ) {
-      errors.push(
-        `Row level permission rule "${rule.universalIdentifier}" must have at least one predicate or predicate group`,
-      );
-    }
+    for (const rule of rowLevelRecordsPermissions) {
+      addUniversalIdentifier({
+        kind: 'rule',
+        universalIdentifier: rule.universalIdentifier,
+        universalIdentifiers: ruleUniversalIdentifiers,
+      });
 
-    validateChildren(rule);
+      if (
+        !isNonEmptyArray(rule.predicates) &&
+        !isNonEmptyArray(rule.predicateGroups)
+      ) {
+        errors.push(
+          `Row level permission rule "${rule.universalIdentifier}" must have at least one predicate or predicate group`,
+        );
+      }
+
+      validateChildren(rule);
+    }
   }
 
   return {
@@ -142,7 +165,7 @@ export const validateRowLevelPermissionRules = ({
       isNonEmptyArray(rowLevelPermissionPredicateGroups) ||
       isNonEmptyArray(rowLevelPermissionPredicates)
         ? [
-            `Role "${label}" declares rowLevelPermissionPredicates or rowLevelPermissionPredicateGroups, which are deprecated. Move them inside rowLevelPermissionRules, with the operations each rule grants, and remove those operations from the object permission. Until then the object permission is applied to the matching records only.`,
+            `Role "${label}" declares rowLevelPermissionPredicates or rowLevelPermissionPredicateGroups, which are deprecated. Move them inside the rowLevelRecordsPermissions of the object in objectRecordsPermissions, with the operations each rule grants, and set the object's can…AllRecords to false for those operations. Until then the object permission is applied to the matching records only.`,
           ]
         : [],
   };

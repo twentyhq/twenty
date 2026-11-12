@@ -538,16 +538,16 @@ describe('reconstructRolesManifest', () => {
       expect.objectContaining({
         universalIdentifier: SUPPORT_ROLE_UID,
         label: 'Support',
-        objectPermissions: [
+        objectRecordsPermissions: [
           {
             universalIdentifier: PERSON_OBJECT_PERMISSION_UID,
             objectUniversalIdentifier: PERSON_UID,
-            canReadObjectRecords: true,
+            canReadAllRecords: true,
           },
           {
             universalIdentifier: PET_OBJECT_PERMISSION_UID,
             objectUniversalIdentifier: PET_UID,
-            canReadObjectRecords: true,
+            canReadAllRecords: true,
           },
         ],
         fieldPermissions: [
