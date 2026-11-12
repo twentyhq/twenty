@@ -12,7 +12,7 @@ import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/
 import { ConnectionProviderOAuthClientResolverService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-client-resolver.service';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderOAuthClientEntity } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/entities/connection-provider-oauth-client.entity';
-import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
+import { ConnectionProviderDiscoveredOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-discovered-oauth-client.service';
 import { ConnectionProviderOAuthDiscoveryService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery.service';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
@@ -57,7 +57,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   providers: [
     provideWorkspaceScopedRepository(ConnectionProviderEntity),
     provideWorkspaceScopedRepository(ConnectionProviderOAuthClientEntity),
-    ConnectionProviderOAuthClientService,
+    ConnectionProviderDiscoveredOAuthClientService,
     ConnectionProviderOAuthDiscoveryService,
     ConnectionProviderOAuthClientResolverService,
     AppConnectionAccessService,

@@ -23,7 +23,7 @@ export type OAuthDiscoveryClientToSave = OAuthDiscoveryStoredClient & {
 const NEVER_EXPIRES = 0;
 
 @Injectable()
-export class ConnectionProviderOAuthClientService {
+export class ConnectionProviderDiscoveredOAuthClientService {
   constructor(
     @InjectWorkspaceScopedRepository(ConnectionProviderOAuthClientEntity)
     private readonly oauthClientRepository: WorkspaceScopedRepository<ConnectionProviderOAuthClientEntity>,

@@ -22,9 +22,9 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import {
-  ConnectionProviderOAuthClientService,
+  ConnectionProviderDiscoveredOAuthClientService,
   type OAuthDiscoveryClientToSave,
-} from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
+} from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-discovered-oauth-client.service';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
 import { buildOAuthDiscoveryClientMetadataUrl } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata-url.util';
 import { buildOAuthDiscoveryClientMetadata } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
@@ -50,7 +50,7 @@ export type DiscoveryTarget = {
 @Injectable()
 export class ConnectionProviderOAuthDiscoveryService {
   constructor(
-    private readonly oauthClientService: ConnectionProviderOAuthClientService,
+    private readonly discoveredOAuthClientService: ConnectionProviderDiscoveredOAuthClientService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -68,10 +68,11 @@ export class ConnectionProviderOAuthDiscoveryService {
       resourceMetadataUrl,
       fetchFunction,
     });
-    const existingClient = await this.oauthClientService.findStoredClient({
-      connectionProviderId: target.provider.id,
-      workspaceId: target.workspaceId,
-    });
+    const existingClient =
+      await this.discoveredOAuthClientService.findStoredClient({
+        connectionProviderId: target.provider.id,
+        workspaceId: target.workspaceId,
+      });
     const storedClient =
       isDefined(existingClient) &&
       this.canReuseStoredClient({
@@ -96,10 +97,11 @@ export class ConnectionProviderOAuthDiscoveryService {
   async resolveClientForTokenRequest(
     target: DiscoveryTarget,
   ): Promise<ResolvedOAuthClient> {
-    const storedClient = await this.oauthClientService.findStoredClientOrThrow({
-      connectionProviderId: target.provider.id,
-      workspaceId: target.workspaceId,
-    });
+    const storedClient =
+      await this.discoveredOAuthClientService.findStoredClientOrThrow({
+        connectionProviderId: target.provider.id,
+        workspaceId: target.workspaceId,
+      });
 
     return this.toResolvedClient({ storedClient, scope: undefined });
   }
@@ -111,7 +113,7 @@ export class ConnectionProviderOAuthDiscoveryService {
     target: DiscoveryTarget;
     clientId: string;
   }): Promise<void> {
-    await this.oauthClientService.deleteClient({
+    await this.discoveredOAuthClientService.deleteClient({
       connectionProviderId: target.provider.id,
       workspaceId: target.workspaceId,
       clientId,
@@ -152,7 +154,7 @@ export class ConnectionProviderOAuthDiscoveryService {
 
     const client = { ...storedClient, discoveryState };
 
-    await this.oauthClientService.replaceClientIfUnchanged({
+    await this.discoveredOAuthClientService.replaceClientIfUnchanged({
       client: this.toClientToSave({ target, client }),
       expectedClientId: storedClient.clientInformation.client_id,
     });
@@ -186,21 +188,24 @@ export class ConnectionProviderOAuthDiscoveryService {
     };
     const clientToSave = this.toClientToSave({ target, client });
     const isClientSaved = isDefined(existingClient)
-      ? await this.oauthClientService.replaceClientIfUnchanged({
+      ? await this.discoveredOAuthClientService.replaceClientIfUnchanged({
           client: clientToSave,
           expectedClientId: existingClient.clientInformation.client_id,
         })
-      : await this.oauthClientService.insertClientIfAbsent(clientToSave);
+      : await this.discoveredOAuthClientService.insertClientIfAbsent(
+          clientToSave,
+        );
 
     if (isClientSaved) {
       return client;
     }
 
     // Another member's sign-in stored a client meanwhile: one client must issue every token
-    const concurrentClient = await this.oauthClientService.findStoredClient({
-      connectionProviderId: target.provider.id,
-      workspaceId: target.workspaceId,
-    });
+    const concurrentClient =
+      await this.discoveredOAuthClientService.findStoredClient({
+        connectionProviderId: target.provider.id,
+        workspaceId: target.workspaceId,
+      });
 
     return concurrentClient ?? client;
   }
