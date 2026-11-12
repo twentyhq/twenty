@@ -1,7 +1,7 @@
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { type RowLevelPermissionRule } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 export const findRlsRuleFields = ({
@@ -15,7 +15,7 @@ export const findRlsRuleFields = ({
   objectMetadataId: string;
   fieldList: 'unreadableFields' | 'uneditableFields';
 }): {
-  rowLevelPermissionRule: RowLevelPermissionRule;
+  rowLevelPermissionRule: RlsRule;
   fieldMetadataIds: string[];
 }[] =>
   (

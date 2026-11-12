@@ -2,6 +2,6 @@ import { type DirectMessageMember } from '@/ai/types/DirectMessageMember';
 
 export type DirectMessageSidebarItem = {
   threadId: string;
-  peer: DirectMessageMember;
+  peer: DirectMessageMember | null;
   isUnread: boolean;
 };
