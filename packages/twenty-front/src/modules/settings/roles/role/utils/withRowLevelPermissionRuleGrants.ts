@@ -2,7 +2,6 @@ import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPart
 import { isDefined } from 'twenty-shared/utils';
 import { RowLevelPermissionPredicateGroupLogicalOperator } from '~/generated-metadata/graphql';
 
-// Rules are edited as root groups carrying their grants, so ungrouped rule predicates get one
 export const withRowLevelPermissionRuleGrants = (
   role: RoleWithPartialMembers,
 ): RoleWithPartialMembers => {
