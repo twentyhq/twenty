@@ -67,8 +67,13 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
         }),
       );
 
-      const newPredicateGroupIds = new Set(
-        newPredicateGroups.map(({ id }) => id),
+      // The root group is the rule itself: it outlives its last condition
+      const keptPredicateGroupIds = new Set([
+        ruleRootGroupId,
+        ...newPredicateGroups.map(({ id }) => id),
+      ]);
+      const hasRootPredicateGroup = newPredicateGroups.some(
+        ({ id }) => id === ruleRootGroupId,
       );
 
       return {
@@ -76,7 +81,7 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
         fieldPermissions: getFieldPermissionsOfKeptRuleGroups({
           fieldPermissions: previousRole.fieldPermissions ?? [],
           rulePredicateGroupIds,
-          keptPredicateGroupIds: newPredicateGroupIds,
+          keptPredicateGroupIds,
         }),
         rowLevelPermissionPredicates: replaceRuleItemsKeepingOrder({
           previousItems: previousRole.rowLevelPermissionPredicates ?? [],
@@ -93,7 +98,8 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
           previousItems: previousRole.rowLevelPermissionPredicateGroups ?? [],
           nextRuleItems: newPredicateGroups,
           isRuleItem: (predicateGroup) =>
-            rulePredicateGroupIds.has(predicateGroup.id),
+            rulePredicateGroupIds.has(predicateGroup.id) &&
+            (hasRootPredicateGroup || predicateGroup.id !== ruleRootGroupId),
         }),
       };
     });

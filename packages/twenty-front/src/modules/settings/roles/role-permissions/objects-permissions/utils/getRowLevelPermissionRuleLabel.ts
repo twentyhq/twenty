@@ -1,10 +1,13 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString, isNumber } from '@sniptt/guards';
+import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
+import { RecordFilterOperand } from 'twenty-shared/types';
 import {
   isDefined,
   mapRLSOperandToRecordFilterOperand,
+  resolveRelativeDateFilterStringified,
 } from 'twenty-shared/utils';
 import { type RowLevelPermissionPredicate } from '~/generated-metadata/graphql';
 
@@ -14,7 +17,10 @@ const getPredicateValueLabel = ({
 }: {
   predicate: Pick<
     RowLevelPermissionPredicate,
-    'workspaceMemberFieldMetadataId' | 'workspaceMemberSubFieldName' | 'value'
+    | 'workspaceMemberFieldMetadataId'
+    | 'workspaceMemberSubFieldName'
+    | 'value'
+    | 'operand'
   >;
   workspaceMemberObjectMetadataItem?: Pick<
     EnrichedObjectMetadataItem,
@@ -41,6 +47,16 @@ const getPredicateValueLabel = ({
       .join(' ');
 
     return t`my ${workspaceMemberFieldLabel}`;
+  }
+
+  const relativeDateFilter =
+    mapRLSOperandToRecordFilterOperand(predicate.operand) ===
+      RecordFilterOperand.IS_RELATIVE && isString(predicate.value)
+      ? resolveRelativeDateFilterStringified(predicate.value)
+      : null;
+
+  if (isDefined(relativeDateFilter)) {
+    return getRelativeDateDisplayValue(relativeDateFilter).toLocaleLowerCase();
   }
 
   if (isNonEmptyString(predicate.value) || isNumber(predicate.value)) {
