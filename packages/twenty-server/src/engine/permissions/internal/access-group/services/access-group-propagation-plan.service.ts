@@ -176,6 +176,27 @@ export class AccessGroupPropagationPlanService {
     });
   }
 
+  async resetComputedRecordCount({
+    workspaceId,
+    computedRecordCount,
+  }: Pick<
+    ApplyAccessGroupPropagationPlanJobData,
+    'workspaceId' | 'computedRecordCount'
+  >): Promise<void> {
+    const computedRecordCountCacheKey =
+      this.buildComputedRecordCountCacheKey(workspaceId);
+
+    await this.cacheStorageService.del(computedRecordCountCacheKey);
+    await this.cacheStorageService.incrBy(
+      computedRecordCountCacheKey,
+      computedRecordCount,
+    );
+    await this.cacheStorageService.expire(
+      computedRecordCountCacheKey,
+      ACCESS_GROUP_PROPAGATION_PLAN_TTL_MS,
+    );
+  }
+
   async stopPlan(workspaceId: string): Promise<void> {
     await this.withPlanLock({
       workspaceId,
@@ -235,19 +256,8 @@ export class AccessGroupPropagationPlanService {
       return cachedPlan;
     }
 
-    const computedRecordCountCacheKey =
-      this.buildComputedRecordCountCacheKey(workspaceId);
-
     await this.savePlan({ workspaceId, plan });
-    await this.cacheStorageService.del(computedRecordCountCacheKey);
-    await this.cacheStorageService.incrBy(
-      computedRecordCountCacheKey,
-      computedRecordCount,
-    );
-    await this.cacheStorageService.expire(
-      computedRecordCountCacheKey,
-      ACCESS_GROUP_PROPAGATION_PLAN_TTL_MS,
-    );
+    await this.resetComputedRecordCount({ workspaceId, computedRecordCount });
 
     return plan;
   }

@@ -52,9 +52,12 @@ export class RecordAccessGroupPropagationService {
       );
 
     try {
-      await computeObject().catch((error) => {
+      await computeObject().catch(async (error) => {
         this.logger.warn(
           `Retrying the access group compute of object ${objectMetadataId} in workspace ${workspaceId}: ${error}`,
+        );
+        await this.accessGroupPropagationPlanService.resetComputedRecordCount(
+          applyJobData,
         );
 
         return computeObject();
