@@ -29,7 +29,10 @@ export const fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermission
     objectMetadataUniversalIdentifier:
       rowLevelPermissionRuleManifest.objectUniversalIdentifier,
     canReadRecords: rowLevelPermissionRuleManifest.canReadRecords ?? false,
-    canCreateRecords: rowLevelPermissionRuleManifest.canCreateRecords ?? false,
+    canCreateRecords:
+      rowLevelPermissionRuleManifest.canCreateRecords ??
+      rowLevelPermissionRuleManifest.canUpdateRecords ??
+      false,
     canUpdateRecords: rowLevelPermissionRuleManifest.canUpdateRecords ?? false,
     canSoftDeleteRecords:
       rowLevelPermissionRuleManifest.canSoftDeleteRecords ?? false,

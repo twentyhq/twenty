@@ -81,7 +81,8 @@ example, a self-service role where each external user sees only their own record
 An object of `recordsPermissions.objects` can restrict some operations to part of its records with
 `rowLevelRecordsPermissions`, a list of rules. A rule grants operations (`canReadRecords`,
 `canCreateRecords`, `canUpdateRecords`, `canSoftDeleteRecords`, `canDestroyRecords`) on the records
-matched by the predicates nested inside it. A rule can also carry its own `unreadableFields` and
+matched by the predicates nested inside it; `canCreateRecords` follows `canUpdateRecords` when
+omitted. A rule can also carry its own `unreadableFields` and
 `uneditableFields`, which apply to the records it matches; such a rule needs at least one predicate
 group.
 
