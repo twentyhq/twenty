@@ -18,9 +18,16 @@ export class RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationF
     await queryRunner.query(
       'ALTER TABLE "core"."deferredWorkspaceOperation" RENAME CONSTRAINT "FK_c3810cd3a6109f5e1bf6f84c60f" TO "FK_06e51a1b028fc008516500af503"',
     );
+    // TODO: drop this view in the next version, it only keeps pods still on the pre-rename code working during the rollout
+    await queryRunner.query(
+      'CREATE VIEW "core"."deferredWorkspaceMigrationAction" AS SELECT * FROM "core"."deferredWorkspaceOperation"',
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'DROP VIEW "core"."deferredWorkspaceMigrationAction"',
+    );
     await queryRunner.query(
       'ALTER TABLE "core"."deferredWorkspaceOperation" RENAME CONSTRAINT "FK_06e51a1b028fc008516500af503" TO "FK_c3810cd3a6109f5e1bf6f84c60f"',
     );
