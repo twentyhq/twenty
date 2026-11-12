@@ -226,7 +226,7 @@ describe('field metadata option rows follow field options', () => {
     );
   });
 
-  it('accepts an option id already used by another field, leaving the copy without its row', async () => {
+  it('rejects an option id already used by another field', async () => {
     const { data: createData } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -243,23 +243,21 @@ describe('field metadata option rows follow field options', () => {
     const sourceFieldId: string = createData.createOneField.id;
     const sourceOptions = createData.createOneField.options as StoredOption[];
 
-    const { data: copyData } = await createOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        objectMetadataId,
-        type: FieldMetadataType.SELECT,
-        name: 'copiedSourceField',
-        label: 'Copied Source Field',
-        isLabelSyncedWithName: false,
-        options: sourceOptions,
-      },
-      gqlFields: 'id',
-    });
-
-    const copiedFieldId: string = copyData.createOneField.id;
-
     try {
-      expect(await findOptionRows(copiedFieldId)).toEqual([]);
+      const { errors } = await createOneFieldMetadata({
+        expectToFail: true,
+        input: {
+          objectMetadataId,
+          type: FieldMetadataType.SELECT,
+          name: 'copiedSourceField',
+          label: 'Copied Source Field',
+          isLabelSyncedWithName: false,
+          options: sourceOptions,
+        },
+        gqlFields: 'id',
+      });
+
+      expect(JSON.stringify(errors)).toContain('ENTITY_ALREADY_EXISTS');
       expect(await findOptionRows(sourceFieldId)).toEqual(
         toExpectedRows({
           options: sourceOptions,
@@ -267,19 +265,17 @@ describe('field metadata option rows follow field options', () => {
         }),
       );
     } finally {
-      for (const fieldMetadataId of [copiedFieldId, sourceFieldId]) {
-        await updateOneFieldMetadata({
-          expectToFail: false,
-          input: {
-            idToUpdate: fieldMetadataId,
-            updatePayload: { isActive: false },
-          },
-        });
-        await deleteOneFieldMetadata({
-          expectToFail: false,
-          input: { idToDelete: fieldMetadataId },
-        });
-      }
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: sourceFieldId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: sourceFieldId },
+      });
     }
   });
 
@@ -349,36 +345,27 @@ describe('field metadata option rows follow field options', () => {
     );
   });
 
-  it('keeps editing a field whose legacy option ids await the backfill', async () => {
+  it('recreates the missing rows of a field on its next edit', async () => {
     const { data } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
         objectMetadataId,
         type: FieldMetadataType.SELECT,
-        name: 'legacyIdsField',
-        label: 'Legacy Ids Field',
+        name: 'missingRowsField',
+        label: 'Missing Rows Field',
         isLabelSyncedWithName: false,
         options: [
           { label: 'Open', value: 'OPEN', color: 'green', position: 0 },
           { label: 'Closed', value: 'CLOSED', color: 'red', position: 1 },
         ],
       },
-      gqlFields: 'id',
+      gqlFields: 'id options',
     });
     const fieldMetadataId: string = data.createOneField.id;
+    const options = data.createOneField.options as StoredOption[];
 
-    // A field from before the backfill: no rows, and option ids that cannot be universal identifiers.
     await globalThis.testDataSource.query(
       `DELETE FROM core."fieldMetadataOption" WHERE "fieldMetadataId" = $1`,
-      [fieldMetadataId],
-    );
-    await globalThis.testDataSource.query(
-      `UPDATE core."fieldMetadata"
-        SET options = (
-          SELECT jsonb_agg(option || jsonb_build_object('id', upper(option->>'id')))
-          FROM jsonb_array_elements(options::jsonb) option
-        )
-        WHERE id = $1`,
       [fieldMetadataId],
     );
     await getAppProviderByClassName<WorkspaceCacheService>(
@@ -393,32 +380,16 @@ describe('field metadata option rows follow field options', () => {
         expectToFail: false,
         input: {
           idToUpdate: fieldMetadataId,
-          updatePayload: { label: 'Legacy Ids Field Renamed' },
+          updatePayload: { label: 'Missing Rows Field Renamed' },
         },
       });
 
-      expect(await findOptionRows(fieldMetadataId)).toEqual([]);
-
-      const [{ options: legacyOptions }]: { options: StoredOption[] }[] =
-        await globalThis.testDataSource.query(
-          `SELECT options FROM core."fieldMetadata" WHERE id = $1`,
-          [fieldMetadataId],
-        );
-
-      await updateOneFieldMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: fieldMetadataId,
-          updatePayload: {
-            options: legacyOptions.map((option) => ({
-              ...option,
-              label: `${option.label} edited`,
-            })),
-          },
-        },
-      });
-
-      expect(await findOptionRows(fieldMetadataId)).toEqual([]);
+      expect(await findOptionRows(fieldMetadataId)).toEqual(
+        toExpectedRows({
+          options,
+          applicationId: await findFieldApplicationId(fieldMetadataId),
+        }),
+      );
     } finally {
       await updateOneFieldMetadata({
         expectToFail: false,
@@ -432,6 +403,31 @@ describe('field metadata option rows follow field options', () => {
         input: { idToDelete: fieldMetadataId },
       });
     }
+  });
+
+  it('rejects an option id that is not a universal identifier', async () => {
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        objectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'upperCaseIdField',
+        label: 'Upper Case Id Field',
+        isLabelSyncedWithName: false,
+        options: [
+          {
+            id: 'D1B2C3D4-0200-4000-A000-0000000000A1',
+            label: 'Open',
+            value: 'OPEN',
+            color: 'green',
+            position: 0,
+          },
+        ],
+      },
+      gqlFields: 'id',
+    });
+
+    expect(JSON.stringify(errors)).toContain('must be lowercase');
   });
 
   it('keeps a row for every option of the standard fields', async () => {

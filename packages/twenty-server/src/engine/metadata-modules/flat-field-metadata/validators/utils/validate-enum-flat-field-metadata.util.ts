@@ -165,7 +165,6 @@ export const validateEnumSelectFlatFieldMetadata = ({
       })
     : [];
 
-  // Option ids are not checked until the 2.57 backfill has regenerated legacy ones on every workspace.
   return [
     ...optionsValidationErrors,
     ...optionColorValidationErrors,
