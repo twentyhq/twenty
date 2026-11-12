@@ -99,7 +99,7 @@ export const buildRelatedRecordPathsSQLCondition = ({
 
     return {
       sql: isUncorrelated
-        ? `${escapeIdentifier(targetTableAlias)}.${escapeIdentifier(lastHop.targetColumnName)} IN (SELECT ${escapeIdentifier(hopTableAliases[lastHopIndex])}.${escapeIdentifier(lastHop.sourceColumnName)} ${fromAndWhere})`
+        ? `${escapeIdentifier(targetTableAlias)}.${escapeIdentifier(lastHop.targetColumnName)} = ANY(ARRAY(SELECT ${escapeIdentifier(hopTableAliases[lastHopIndex])}.${escapeIdentifier(lastHop.sourceColumnName)} ${fromAndWhere}))`
         : `EXISTS (SELECT 1 ${fromAndWhere})`,
       parameters:
         sourceSQLCondition === true ? {} : sourceSQLCondition.parameters,
