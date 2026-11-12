@@ -11,4 +11,5 @@ export type AppPlanSummary = {
   update: number;
   delete: number;
   destructive: number;
+  cascaded: number;
 };
